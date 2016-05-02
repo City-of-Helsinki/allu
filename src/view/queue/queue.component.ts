@@ -9,7 +9,9 @@ import {WorkqueueComponent} from '../../component/workqueue/workqueue.component'
   viewProviders: [],
   moduleId: module.id,
   templateUrl: './view/queue/queue.component.html',
-  styleUrls: ['./view/queue/queue.component.scss'],
+  styles: [
+    require('./queue.component.scss')
+  ],
   directives: [ToolbarComponent, MapComponent, WorkqueueComponent]
 })
 
