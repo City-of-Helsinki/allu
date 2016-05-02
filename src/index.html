@@ -28,6 +28,8 @@
   <meta name="msapplication-TileImage" content="/assets/icon/ms-icon-144x144.png">
   <meta name="theme-color" content="#00bcd4">
   <!-- end favicon -->
+  <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+
 
   <!-- base url -->
   <base href="<%= webpackConfig.metadata.baseUrl %>">
@@ -37,9 +39,9 @@
 
 <body>
 
-  <sd-app>
+  <allu>
     Loading...
-  </sd-app>
+  </allu>
 
   <!-- Google Analytics: change UA-71073175-1 to be your site's ID -->
   <script>
@@ -48,7 +50,7 @@
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
-    ga('create', 'UA-71073175-1', 'auto');
+    // ga('create', 'UA-71073175-1', 'auto');
     ga('send', 'pageview');
   </script>
 
@@ -56,7 +58,7 @@
   <!-- Webpack Dev Server reload -->
   <script src="/webpack-dev-server.js"></script>
   <% } %>
-  
+
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
 </body>

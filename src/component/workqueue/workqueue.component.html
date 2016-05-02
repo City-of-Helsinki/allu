@@ -1,0 +1,42 @@
+
+<div id="sidebar">
+  <h1>Työjonosi</h1>
+  <!-- <md-content class="md-padding" layout="row" layout-wrap layout-align="center start">
+    <md-card (click)="jobClick(joblist)" *ngFor="#joblist of WorkqueueService.get()">
+      <md-card-title>
+        <md-card-title-text>
+          <span class="md-headline">{{joblist.title}}</span>
+          <span class="md-subhead">{{joblist.type}}</span>
+        </md-card-title-text>
+      </md-card-title>
+      <md-card-content>
+        <p>
+          {{joblist.name}}
+        </p>
+        <p>
+          {{joblist.time}}
+        </p>
+      </md-card-content>
+      <md-card-actions layout="row" layout-align="end center">
+        <button md-button>Action 1</button>
+        <button md-button>Action 2</button>
+      </md-card-actions>
+    </md-card>
+  </md-content> -->
+
+  <ul class="tapahtumat">
+    <li class="tapahtuma" (click)="jobClick(joblist)" *ngFor="#joblist of WorkqueueService.get()">
+
+      <h5>{{joblist.title}}</h5>
+      <p>
+        {{joblist.name}}
+      </p>
+      <p>
+        {{joblist.type}}
+      </p>
+      <p>
+        {{joblist.time}}
+      </p>
+    </li>
+  </ul>
+</div>
