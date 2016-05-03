@@ -1,0 +1,19 @@
+# Set up sshd configuration
+
+- name: install SSH keys for root user
+  authorized_key: user=root
+                  key="{{ lookup('file', '{{ root_public_key }}') }}"
+
+- name: install SSH keys for allu user
+  authorized_key: user=allu
+                  key="{{ lookup('file', '{{ allu_public_key }}') }}"
+
+- name: replace server default sshd configuration with custom
+  copy: src=sshd_config
+        dest=/etc/ssh/sshd_config
+        owner=root
+        group=root
+        mode="u=rw"
+        force=yes # because we're replacing, we need to force copying over existing file
+  notify:
+    - reload sshd

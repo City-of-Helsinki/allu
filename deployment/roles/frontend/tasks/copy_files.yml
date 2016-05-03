@@ -1,0 +1,4 @@
+- name: copy frontend files under web server
+  copy: src=../frontend/dist/ dest=/var/www/html
+        owner=www-data
+        group=www-data
