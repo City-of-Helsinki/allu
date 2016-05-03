@@ -7,7 +7,7 @@ import {Map, LeafletMouseEvent, Marker} from 'leaflet';
 @Component({
     selector: 'marker',
     moduleId: module.id,
-    templateUrl: './component/marker/marker.component.html',
+    template: require('./marker.component.html'),
     styles: [
       require('./marker.component.scss')
         // './component/marker/marker.component.scss'

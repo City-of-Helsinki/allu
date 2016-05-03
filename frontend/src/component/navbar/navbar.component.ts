@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES} from 'angular2/router';
 @Component({
   selector: 'navbar',
   moduleId: module.id,
-  templateUrl: './component/navbar/navbar.component.html',
+  template: require('./navbar.component.html'),
   styles: [
     require('./navbar.component.scss')
   ],

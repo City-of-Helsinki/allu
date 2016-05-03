@@ -12,7 +12,7 @@ import {EventService} from '../../event/event.service';
   selector: 'allu',
   viewProviders: [],
   moduleId: module.id,
-  templateUrl: './view/allu/allu.component.html',
+  template: require('./allu.component.html'),
   encapsulation: ViewEncapsulation.None,
   styles: [
     require('../../assets/main.scss')

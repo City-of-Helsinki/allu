@@ -7,7 +7,7 @@ import {Map} from 'leaflet';
 @Component({
     selector: 'navigator',
     moduleId: module.id,
-    templateUrl: './component/navigator/navigator.component.html',
+    template: require('./navigator.component.html'),
     styles: [
         // './component/navigator/navigator.component.scss',
         // '../../main.scss'

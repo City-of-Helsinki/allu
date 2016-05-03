@@ -15,7 +15,7 @@ import {ApplicationSelectionEvent} from '../../event/selection/application-selec
 @Component({
     selector: 'map',
     moduleId: module.id,
-    templateUrl: './component/map/map.component.html',
+    template: require('./map.component.html'),
     styles: [
         require('./map.component.scss')
     ],

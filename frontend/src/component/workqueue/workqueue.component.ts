@@ -14,7 +14,7 @@ import {LatLng} from '../../model/location/latlng';
 @Component({
   selector: 'workqueue',
   moduleId: module.id,
-  templateUrl: './component/workqueue/workqueue.component.html',
+  template: require('./workqueue.component.html'),
   styles: [
     require('./workqueue.component.scss')
   ],

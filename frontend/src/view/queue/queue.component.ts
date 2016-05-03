@@ -8,7 +8,7 @@ import {WorkqueueComponent} from '../../component/workqueue/workqueue.component'
   selector: 'queue',
   viewProviders: [],
   moduleId: module.id,
-  templateUrl: './view/queue/queue.component.html',
+  template: require('./queue.component.html'),
   styles: [
     require('./queue.component.scss')
   ],
