@@ -2,7 +2,7 @@ import {provide, enableProdMode} from 'angular2/core';
 // import {APP_BASE_HREF} from 'angular2/router';
 import {bootstrap} from 'angular2/platform/browser';
 import {ROUTER_PROVIDERS, APP_BASE_HREF} from 'angular2/router';
-import {AppComponent} from './app/components/app.component';
+// import {AppComponent} from './app/components/app.component';
 import {AlluComponent} from './view/allu/allu.component';
 import {EventService} from './shared/services/event/event.service';
 import {TaskManager} from './shared/services/task/task-manager.service';

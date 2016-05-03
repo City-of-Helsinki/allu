@@ -6,6 +6,8 @@ import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 
 import {QueueComponent} from '../queue/queue.component';
 
+import {EventService} from '../../event/event.service';
+
 @Component({
   selector: 'allu',
   viewProviders: [],
@@ -19,7 +21,8 @@ import {QueueComponent} from '../queue/queue.component';
   // <toolbar></toolbar>
   // <router-outlet></router-outlet>
   // `,
-  directives: [ROUTER_DIRECTIVES, ToolbarComponent]
+  directives: [ROUTER_DIRECTIVES, ToolbarComponent],
+  providers: [EventService]
 })
 @RouteConfig([
   { path: '/', name: 'Queue', component: QueueComponent },
