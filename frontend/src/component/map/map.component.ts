@@ -49,6 +49,7 @@ export class MapComponent implements EventListener{
           }),
           draggable: false,
         }).addTo(this.mapService.map).bindPopup(event.title).openPopup();
+        this.mapService.map.setView([event.latLng.latitude, event.latLng.longitude]);
       }
 
     }
