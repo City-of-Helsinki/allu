@@ -1,0 +1,3 @@
+# installs Apache for frontend
+- name: install Apache using Ubuntu repository
+  apt: name=apache2 state=present
