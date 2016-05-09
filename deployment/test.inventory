@@ -1,5 +1,5 @@
 [frontend]
-10.176.127.67
+185.26.49.172
 
 [test:children]
 frontend
