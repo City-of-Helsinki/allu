@@ -7,3 +7,6 @@
   user: name=allu uid=1000 group=allu groups=adm,sudo
         password=$6$n4SJeU9XE$yI.E52oKLnzfYlbNKUSLpV8m.NI9UYD71x.3lWrpA0Rl8Jv8SOCOqXI77iQWCsc6xgUFbnIvHYusN/GYvIqfg0
         shell=/bin/bash
+
+- name: allow all sudo users to sudo without password
+  lineinfile: "dest=/etc/sudoers state=present regexp='^%sudo' line='%sudo ALL=(ALL:ALL) NOPASSWD: ALL'"

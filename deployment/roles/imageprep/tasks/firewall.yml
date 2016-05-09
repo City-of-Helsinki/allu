@@ -1,0 +1,11 @@
+- name: install uncomplicated firewall (UFW) using Ubuntu repository
+  apt: name=ufw state=present
+
+- name: reset firewall rules
+  shell: "echo y | /usr/sbin/ufw reset"
+
+- name: enable UFW
+  ufw: state=enabled policy=deny
+
+- name: allow SSH connections
+  ufw: rule=allow port=22

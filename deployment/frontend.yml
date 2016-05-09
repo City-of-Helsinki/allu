@@ -3,6 +3,5 @@
   hosts: frontend
   remote_user: allu
   become: yes
-  gather_facts: no
   roles:
     - frontend

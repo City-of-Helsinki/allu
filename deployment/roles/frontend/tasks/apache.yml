@@ -1,3 +1,9 @@
 # installs Apache for frontend
 - name: install Apache using Ubuntu repository
   apt: name=apache2 state=present
+
+- name: allow HTTP connections
+  ufw: rule=allow port=80
+
+- name: allow HTTPS connections
+  ufw: rule=allow port=443
