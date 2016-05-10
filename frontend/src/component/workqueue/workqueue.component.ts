@@ -22,10 +22,10 @@ import {LatLng} from '../../model/location/latlng';
   providers: [WorkqueueService]
 })
 
-export class WorkqueueComponent implements EventListener{
+export class WorkqueueComponent implements EventListener {
   marker: MarkerComponent;
 
-  constructor(public WorkqueueService: WorkqueueService, private eventService: EventService) {
+  constructor(public workqueueService: WorkqueueService, private eventService: EventService) {
     this.eventService.subscribe(this);
   }
 
@@ -33,14 +33,14 @@ export class WorkqueueComponent implements EventListener{
     console.log('Handle and incoming WorkqueueComponent event');
   }
 
-  jobClick(job:any) {
-    //Show marker in map
+  jobClick(job: any) {
+    // Show marker in map
     // console.log(job);
 
-    this.eventService.send(this, new ApplicationSelectionEvent(new LatLng(job.latitude, job.longitude), job.title))
+    this.eventService.send(this, new ApplicationSelectionEvent(new LatLng(job.latitude, job.longitude), job.title));
 
     /* This needs to be done in Perttutechture */
-    //this.marker.showJobMarker();
+    // this.marker.showJobMarker();
 
  }
 }

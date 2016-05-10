@@ -2,14 +2,13 @@ import {provide, enableProdMode} from 'angular2/core';
 // import {APP_BASE_HREF} from 'angular2/router';
 import {bootstrap} from 'angular2/platform/browser';
 import {ROUTER_PROVIDERS, APP_BASE_HREF} from 'angular2/router';
+import {HTTP_PROVIDERS} from 'angular2/http';
 // import {AppComponent} from './app/components/app.component';
 import {AlluComponent} from './view/allu/allu.component';
-import {EventService} from './shared/services/event/event.service';
-import {TaskManager} from './shared/services/task/task-manager.service';
-import {NameListService} from './shared/services/name-list.service';
 import {MapService} from './service/map.service';
 import {GeocodingService} from './service/geocoding.service';
-import {HTTP_PROVIDERS} from 'angular2/http';
+import {EventService} from './event/event.service';
+import {TaskManager} from './service/task/task-manager.service';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -18,7 +17,6 @@ bootstrap(AlluComponent, [
   HTTP_PROVIDERS,
   EventService,
   TaskManager,
-  NameListService,
   MapService,
   GeocodingService,
   provide(APP_BASE_HREF, { useValue: '/' })

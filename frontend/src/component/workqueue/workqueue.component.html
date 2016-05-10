@@ -25,7 +25,7 @@
   </md-content> -->
 
   <ul class="tapahtumat">
-    <li class="tapahtuma" (click)="jobClick(joblist)" *ngFor="#joblist of WorkqueueService.get()">
+    <li class="tapahtuma" (click)="jobClick(joblist)" *ngFor="#joblist of workqueueService.get()">
 
       <h5>{{joblist.title}}</h5>
       <p>

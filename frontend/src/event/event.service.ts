@@ -3,7 +3,7 @@ import {Injectable} from 'angular2/core';
 import {EventListener} from './event-listener';
 import {Event} from './event';
 import {Subject} from 'rxjs/Subject';
-import {listeners} from "cluster";
+import {listeners} from 'cluster';
 
 // @Injectable()
 export class EventService {
@@ -24,7 +24,7 @@ export class EventService {
 
   unsubscribe(eventListener: EventListener): void {
     let index = this.listeners.indexOf(eventListener, 0);
-    console.log("Unsubscribe index: " + index)
+    console.log('Unsubscribe index: ' + index);
     if (index > -1) {
       this.listeners.splice(index, 1);
     }
@@ -37,7 +37,7 @@ export class EventService {
   }
 
   private processQueue(event: Event) {
-    for(var el of this.listeners) {
+    for (let el of this.listeners) {
       console.log(el);
 
       if (el !== event.sender) {

@@ -1,6 +1,6 @@
 import {Component} from 'angular2/core';
 import {ROUTER_DIRECTIVES, RouteConfig} from 'angular2/router';
-import {ViewEncapsulation} from 'angular2/core'
+import {ViewEncapsulation} from 'angular2/core';
 
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 
@@ -25,7 +25,7 @@ import {EventService} from '../../event/event.service';
   providers: [EventService]
 })
 @RouteConfig([
-  { path: '/', name: 'Queue', component: QueueComponent },
+  { path: '/', name: 'Queue', component: QueueComponent }
   // { path: '/map', name: 'Map', component: FullMapComponent }
 ])
 export class AlluComponent {}

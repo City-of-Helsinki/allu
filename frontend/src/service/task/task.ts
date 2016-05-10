@@ -1,7 +1,7 @@
-import {Event} from '../event/event';
-import {EventService} from '../event/event.service';
-import {EventListener} from '../event/event-listener';
 
+import {EventListener} from '../../event/event-listener';
+import {EventService} from '../../event/event.service';
+import {Event} from '../../event/event';
 export abstract class Task {
   public execute(runner: EventListener, eventService: EventService, event: Event): void {
     // TODO: fire start task event

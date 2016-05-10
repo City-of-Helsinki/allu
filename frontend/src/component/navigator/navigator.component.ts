@@ -34,7 +34,7 @@ export class NavigatorComponent {
     }
 
     goto() {
-        if (!this.address) { return;}
+        if (!this.address) { return; }
 
         this.geocoder.geocode(this.address)
         .subscribe(location => {

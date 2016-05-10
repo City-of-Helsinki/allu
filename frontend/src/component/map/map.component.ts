@@ -21,7 +21,7 @@ import {ApplicationSelectionEvent} from '../../event/selection/application-selec
     ],
     directives: [NavigatorComponent]
 })
-export class MapComponent implements EventListener{
+export class MapComponent implements EventListener {
     // @ViewChild(MarkerComponent) markerComponent:MarkerComponent;
 
     private mapService: MapService;
@@ -47,7 +47,7 @@ export class MapComponent implements EventListener{
             iconUrl: '../../assets/svg/marker.svg',
             iconSize: [40, 40]
           }),
-          draggable: false,
+          draggable: false
         }).addTo(this.mapService.map).bindPopup(event.title).openPopup();
         this.mapService.map.setView([event.latLng.latitude, event.latLng.longitude]);
       }
@@ -55,7 +55,7 @@ export class MapComponent implements EventListener{
     }
 
     ngOnInit() {
-        var map = new L.Map('map', {
+        let map = new L.Map('map', {
           zoomControl: false,
           center: new L.LatLng(60.175264, 24.940692),
           zoom: 14,

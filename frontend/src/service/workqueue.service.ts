@@ -34,10 +34,10 @@ export class WorkqueueService {
     }
   ];
 
-  get(): {title:string, name:string, type:string, time:string, latitude:number, longitude:number}[] {
+  get(): {title: string, name: string, type: string, time: string, latitude: number, longitude: number}[] {
     return this.joblist;
   }
-  add(value: {title:string, name:string, type:string, time:string, latitude:number, longitude:number}): void {
+  add(value: {title: string, name: string, type: string, time: string, latitude: number, longitude: number}): void {
     this.joblist.push(value);
   }
 }
