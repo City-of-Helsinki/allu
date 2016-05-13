@@ -1,0 +1,39 @@
+
+- name: create {{ database_name }}'s database
+  postgresql_db: name={{ database_name }}
+                 encoding='UTF-8'
+                 lc_collate='fi_FI.UTF-8'
+                 lc_ctype='fi_FI.UTF-8'
+                 template='template0'
+  become: yes
+  become_user: postgres
+
+- name: drop all public access rights to {{ database_name }} database
+  postgresql_privs:
+    database={{ database_name }}
+    state=absent
+    roles=PUBLIC
+    privs=ALL
+    type=database
+  become: yes
+  become_user: postgres
+
+- name: create {{ database_name }}'s database user
+  postgresql_user:
+    name={{ database_user }}
+    password={{ database_password }}
+    state=present
+    role_attr_flags=NOCREATEDB,NOSUPERUSER,LOGIN
+  become: yes
+  become_user: postgres
+
+- name: add all access rights to {{ database_name }} database for {{ database_user }} user
+  postgresql_privs:
+    database={{ database_name }}
+    roles={{ database_user }}
+    state=present
+    privs=ALL
+    type=database
+    grant_option=yes
+  become: yes
+  become_user: postgres

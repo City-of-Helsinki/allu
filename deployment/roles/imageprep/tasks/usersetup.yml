@@ -5,7 +5,7 @@
 
 - name: add allu user to system
   user: name=allu uid=1000 group=allu groups=adm,sudo
-        password=$6$n4SJeU9XE$yI.E52oKLnzfYlbNKUSLpV8m.NI9UYD71x.3lWrpA0Rl8Jv8SOCOqXI77iQWCsc6xgUFbnIvHYusN/GYvIqfg0
+        password={{ system_password_allu }}
         shell=/bin/bash
 
 - name: allow all sudo users to sudo without password

@@ -1,0 +1,7 @@
+# setup all databases for different services
+
+- include: create_database.yml
+  vars:
+    database_name: model_service
+    database_user: model_service
+    database_password: "{{ database_password_model_service }}"

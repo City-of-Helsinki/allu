@@ -1,5 +1,9 @@
-[frontend]
+[webservers]
 185.26.49.172
 
+[dbservers]
+
+
 [test:children]
-frontend
+webservers
+dbservers

@@ -1,5 +1,11 @@
+# TODO: add apt-get update to make sure everything is up-to-date
+
+- include: firewall.yml
+
+- name: add Finnish locale to system
+  locale_gen: name=fi_FI.UTF-8 state=present
+
 - include: usersetup.yml
 
 - include: sshsetup.yml
 
-- include: firewall.yml
