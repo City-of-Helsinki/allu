@@ -1,6 +1,6 @@
 ---
 - name: install Allu frontend
-  hosts: frontend
+  hosts: webservers
   remote_user: allu
   become: yes
   roles:

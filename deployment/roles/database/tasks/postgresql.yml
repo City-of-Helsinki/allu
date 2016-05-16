@@ -1,0 +1,25 @@
+- name: install Postgresql using Ubuntu repository
+  apt: name=postgresql-9.5 state=present
+
+- name: install Postgresql Python module needed by Ansible postgresql_user module
+  apt: name=python-psycopg2 state=present
+
+# TODO: set data directory to some permanent location (see /etc/postgresql/9.5/main/postgresql.conf)
+- name: copy postgresql.conf under configuration directory
+  copy: src=postgresql.conf dest=/etc/postgresql/9.5/main
+        owner=postgres
+        group=postgres
+        mode="u=rw,g=r,o=r"
+  notify:
+    - restart postgresql
+
+- name: copy pg_hba.conf under configuration directory
+  copy: src=pg_hba.conf dest=/etc/postgresql/9.5/main
+        owner=postgres
+        group=postgres
+        mode="u=rw,g=r,o="
+  notify:
+    - restart postgresql
+
+- name: allow postgresql connections from local network
+  ufw: rule=allow src=10.0.0.0/8 port=5432
