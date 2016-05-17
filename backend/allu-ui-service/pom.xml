@@ -31,4 +31,12 @@
             <version>19.0</version>
         </dependency>
     </dependencies>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>libs-snapshot</name>
+      <url>http://185.26.51.92:8081/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
+  </distributionManagement>
 </project>

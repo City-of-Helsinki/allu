@@ -25,8 +25,8 @@
     </properties>
 
     <modules>
-        <!--<module>tos-service</module>
-        <module>allu-ui-service</module>-->
+        <!--<module>tos-service</module>-->
+        <module>allu-ui-service</module>
     </modules>
 
     <build>
@@ -107,7 +107,16 @@
         </dependency>
     </dependencies>
 
-    <repositories>
+
+  <distributionManagement>
+    <snapshotRepository>
+      <id>snapshots</id>
+      <name>libs-snapshot</name>
+      <url>http://185.26.51.92:8081/artifactory/libs-snapshot-local</url>
+    </snapshotRepository>
+  </distributionManagement>
+
+  <repositories>
         <repository>
             <snapshots>
                 <enabled>false</enabled>
