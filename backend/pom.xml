@@ -25,7 +25,6 @@
     </properties>
 
     <modules>
-        <!--<module>tos-service</module>-->
         <module>allu-ui-service</module>
     </modules>
 
@@ -76,6 +75,10 @@
                         <phase>compile</phase>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
