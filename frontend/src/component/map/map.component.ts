@@ -1,4 +1,5 @@
 import 'leaflet';
+import 'leaflet-draw';
 import {Component, ViewChild} from '@angular/core';
 import {NavigatorComponent} from '../navigator/navigator.component';
 // import {MarkerComponent} from '../marker/marker.component';
@@ -36,6 +37,7 @@ export class MapComponent implements EventListener {
     }
 
     public handle(event: Event): void {
+      console.log('EVENT: ' + event);
 
       if (event instanceof ApplicationSelectionEvent) {
         if (this.marker) {
@@ -55,20 +57,56 @@ export class MapComponent implements EventListener {
     }
 
     ngOnInit() {
-        let map = new L.Map('map', {
-          zoomControl: false,
-          center: new L.LatLng(60.175264, 24.940692),
-          zoom: 14,
-          minZoom: 4,
-          maxZoom: 19,
-          layers: [this.mapService.baseMaps.OpenStreetMap]
-        });
 
-        L.control.zoom({ position: 'topright' }).addTo(map);
-        L.control.layers(this.mapService.baseMaps).addTo(map);
-        L.control.scale().addTo(map);
+      let map = new L.Map('map', {
+        zoomControl: false,
+        center: new L.LatLng(60.175264, 24.940692),
+        zoom: 14,
+        minZoom: 4,
+        maxZoom: 18,
+        layers: [this.mapService.baseMaps.OpenStreetMap]
+      });
 
-        this.mapService.map = map;
+
+      var drawnItems = new L.FeatureGroup();
+      map.addLayer(drawnItems);
+
+      var drawControl = new L.Control.Draw({
+        position: 'topright',
+        draw: {
+          polygon: {
+            shapeOptions: {
+              color: '#BA1200'
+            }
+          },
+          marker: false
+        },
+        edit: {
+          featureGroup: drawnItems
+        }
+      });
+      map.addControl(drawControl);
+
+      map.on('draw:created', function (e) {
+        var type = e.layerType,
+            layer = e.layer;
+
+        if (type === 'marker') {
+          layer.bindPopup('A popup!');
+        }
+
+        console.log(e.layer);
+
+        drawnItems.addLayer(layer);
+      });
+
+      // Add zoom controls
+      L.control.zoom({ position: 'topright' }).addTo(map);
+      L.control.layers(this.mapService.baseMaps).addTo(map);
+      L.control.scale().addTo(map);
+
+      this.mapService.map = map;
+
 
         // this.geocoder.getCurrentLocation()
         // .subscribe(
