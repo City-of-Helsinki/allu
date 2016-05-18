@@ -1,0 +1,6 @@
+- name: install Allu backend services
+  hosts: backendservers
+  remote_user: allu
+  become: no
+  roles:
+    - backend

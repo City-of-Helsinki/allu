@@ -1,0 +1,14 @@
+- name: add systemd scripts under /etc/systemd/system
+  template: src=systemd.service dest=/etc/systemd/system/{{ item }}.service
+  with_items: "{{ allu_service_list }}"
+  become: yes
+
+- name: enable start-up scripts
+  service: name={{ item }}.service enabled=yes
+  with_items: "{{ allu_service_list }}"
+  become: yes
+
+- name: start all services
+  service: name={{ item }}.service state=started
+  with_items: "{{ allu_service_list }}"
+  become: yes
