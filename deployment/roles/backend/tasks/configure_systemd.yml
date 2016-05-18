@@ -9,6 +9,6 @@
   become: yes
 
 - name: start all services
-  service: name={{ item }}.service state=started
+  service: name={{ item }}.service state=restarted
   with_items: "{{ allu_service_list }}"
   become: yes
