@@ -1,0 +1,10 @@
+[Unit]
+Description=Allu service {{ item }}
+
+[Service]
+Type=forking
+User=allu
+ExecStart=/home/allu/{{ item }}/run_{{ item }}.sh
+
+[Install]
+WantedBy=multi-user.target

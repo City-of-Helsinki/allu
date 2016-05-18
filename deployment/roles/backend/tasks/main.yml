@@ -1,0 +1,4 @@
+- include: apt_get.yml
+- include: create_directories.yml
+- include: copy_files.yml
+- include: configure_systemd.yml

@@ -4,6 +4,9 @@
 [dbservers]
 185.26.48.184
 
+[backendservers]
+185.26.48.184
+
 [test:children]
 webservers
 dbservers
