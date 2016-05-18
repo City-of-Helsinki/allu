@@ -26,6 +26,12 @@ import 'rxjs/add/operator/mergeMap';
 // import '@angular2-material/card';
 // look in platform/directives and platform/providers
 
+// Leaflet CSS
+require('../node_modules/leaflet/dist/leaflet.css');
+
+// Leaflet.Draw CSS
+require('../node_modules/leaflet-draw/dist/leaflet.draw.css');
+
 if ('production' === ENV) {
   // Production
 
