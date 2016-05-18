@@ -1,4 +1,4 @@
-package fi.hel.allu.security;
+package fi.hel.allu.ui.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;

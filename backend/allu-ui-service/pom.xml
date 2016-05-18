@@ -13,6 +13,13 @@
 
     <dependencies>
         <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>allu-ui-domain</artifactId>
+            <version>${parent.version}</version>
+        </dependency>
+
+
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
         </dependency>
@@ -30,13 +37,37 @@
             <artifactId>guava</artifactId>
             <version>19.0</version>
         </dependency>
+        <!--  support for Java 8 Date & Time API types -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
+        <!-- support for testing exceptions -->
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+            <version>3.4.1</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- support for validation -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-el</artifactId>
+        </dependency>
     </dependencies>
 
-  <distributionManagement>
-    <snapshotRepository>
-      <id>snapshots</id>
-      <name>libs-snapshot</name>
-      <url>http://185.26.51.92:8081/artifactory/libs-snapshot-local</url>
-    </snapshotRepository>
-  </distributionManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>

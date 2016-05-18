@@ -1,4 +1,4 @@
-package fi.hel.allu;
+package fi.hel.allu.ui;
 
 
 import org.springframework.boot.SpringApplication;

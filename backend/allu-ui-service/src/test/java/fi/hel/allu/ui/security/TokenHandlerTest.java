@@ -1,7 +1,7 @@
-package fi.hel.allu.security;
+package fi.hel.allu.ui.security;
 
 import com.google.common.collect.Sets;
-import fi.hel.allu.service.UserService;
+import fi.hel.allu.ui.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;

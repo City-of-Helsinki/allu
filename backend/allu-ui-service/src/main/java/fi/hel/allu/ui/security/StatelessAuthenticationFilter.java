@@ -1,4 +1,4 @@
-package fi.hel.allu.security;
+package fi.hel.allu.ui.security;
 
 import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
