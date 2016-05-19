@@ -1,5 +1,5 @@
-import {Component} from 'angular2/core';
-import {CORE_DIRECTIVES, NgClass} from 'angular2/common';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES, NgClass} from '@angular/common';
 import {MapService} from '../../service/map.service';
 import {Map, LeafletMouseEvent, Marker} from 'leaflet';
 // import {ButtonCheckbox} from '../../../node_modules/ng2-bootstrap/ng2-bootstrap';

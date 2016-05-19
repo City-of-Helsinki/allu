@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 import {WorkqueueService} from '../../service/workqueue.service';
 
 // import {MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS} from "ng2-material/all";

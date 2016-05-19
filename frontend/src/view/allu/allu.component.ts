@@ -1,6 +1,6 @@
-import {Component} from 'angular2/core';
-import {ROUTER_DIRECTIVES, RouteConfig} from 'angular2/router';
-import {ViewEncapsulation} from 'angular2/core';
+import {Component} from '@angular/core';
+import {ROUTER_DIRECTIVES, RouteConfig} from '@angular/router-deprecated';
+import {ViewEncapsulation} from '@angular/core';
 
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 

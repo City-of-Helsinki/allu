@@ -1,5 +1,5 @@
 import 'leaflet';
-import {Component, ViewChild} from 'angular2/core';
+import {Component, ViewChild} from '@angular/core';
 import {NavigatorComponent} from '../navigator/navigator.component';
 // import {MarkerComponent} from '../marker/marker.component';
 import {MapService} from '../../service/map.service';

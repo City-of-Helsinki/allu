@@ -1,8 +1,8 @@
-import {provide, enableProdMode} from 'angular2/core';
-// import {APP_BASE_HREF} from 'angular2/router';
-import {bootstrap} from 'angular2/platform/browser';
-import {ROUTER_PROVIDERS, APP_BASE_HREF} from 'angular2/router';
-import {HTTP_PROVIDERS} from 'angular2/http';
+import {provide, enableProdMode} from '@angular/core';
+import {APP_BASE_HREF} from '@angular/common';
+import {bootstrap} from '@angular/platform-browser-dynamic';
+import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
+import {HTTP_PROVIDERS} from '@angular/http';
 // import {AppComponent} from './app/components/app.component';
 import {AlluComponent} from './view/allu/allu.component';
 import {MapService} from './service/map.service';
