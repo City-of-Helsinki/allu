@@ -13,15 +13,13 @@
   width: 100%;
 }
 
-map {
-  float: left;
-  min-height: 900px;
-  position: relative;
-  width: 80%;
-  // max-height: 1000px;
+workqueue {
+  width: 100%;
 }
 
-workqueue {
-  float: left;
-  width: 20%;
+.card-media {
+  background-color: #999999;
+}
+[md-button] [md-icon] {
+  color: rgba(0, 0, 0, 0.8);
 }
