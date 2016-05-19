@@ -152,7 +152,11 @@ module.exports = {
        */
       {
         test: /\.css$/,
-        loader: 'raw-loader'
+        loader: 'style-loader!css-loader'
+      },
+
+      { test: /\.(png|jpg)$/,
+        loader: 'file-loader'
       },
 
       {
