@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {WorkqueueService} from '../../service/workqueue.service';
-
+import {ROUTER_DIRECTIVES} from 'angular2/router';
 
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
@@ -29,8 +29,8 @@ import {LatLng} from '../../model/location/latlng';
   styles: [
     require('./workqueue.component.scss')
   ],
-  directives: [],
-  providers: [MD_CARD_DIRECTIVES, MdButton, WorkqueueService]
+  directives: [MD_CARD_DIRECTIVES, MdButton],
+  providers: [WorkqueueService]
 })
 
 export class WorkqueueComponent implements EventListener {
