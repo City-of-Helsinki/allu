@@ -1,10 +1,10 @@
-package fi.hel.allu.controller;
+package fi.hel.allu.ui.controller;
 
 import com.google.common.collect.Sets;
-import fi.hel.allu.security.AlluUser;
-import fi.hel.allu.security.Roles;
-import fi.hel.allu.security.TokenHandler;
-import fi.hel.allu.service.UserService;
+import fi.hel.allu.ui.security.AlluUser;
+import fi.hel.allu.ui.security.Roles;
+import fi.hel.allu.ui.security.TokenHandler;
+import fi.hel.allu.ui.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

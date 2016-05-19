@@ -1,6 +1,6 @@
-package fi.hel.allu.security;
+package fi.hel.allu.ui.security;
 
-import fi.hel.allu.service.UserService;
+import fi.hel.allu.ui.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

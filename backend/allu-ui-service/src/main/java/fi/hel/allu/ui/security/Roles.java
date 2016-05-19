@@ -1,4 +1,4 @@
-package fi.hel.allu.security;
+package fi.hel.allu.ui.security;
 
 public enum Roles {
     /**

@@ -1,9 +1,9 @@
-package fi.hel.allu.config;
+package fi.hel.allu.ui.config;
 
-import fi.hel.allu.service.UserService;
-import fi.hel.allu.security.StatelessAuthenticationFilter;
-import fi.hel.allu.security.TokenAuthenticationService;
-import fi.hel.allu.security.TokenHandler;
+import fi.hel.allu.ui.service.UserService;
+import fi.hel.allu.ui.security.StatelessAuthenticationFilter;
+import fi.hel.allu.ui.security.TokenAuthenticationService;
+import fi.hel.allu.ui.security.TokenHandler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

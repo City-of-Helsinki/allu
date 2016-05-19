@@ -1,6 +1,6 @@
-package fi.hel.allu.security;
+package fi.hel.allu.ui.security;
 
-import fi.hel.allu.config.SecurityConfig;
+import fi.hel.allu.ui.config.SecurityConfig;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
