@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 import {WorkqueueService} from '../../service/workqueue.service';
-import {ROUTER_DIRECTIVES} from 'angular2/router';
+import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
