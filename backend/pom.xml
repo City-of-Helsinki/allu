@@ -27,6 +27,8 @@
     <modules>
         <module>allu-ui-domain</module>
         <module>allu-ui-service</module>
+        <module>model-service</module>
+        <module>model-domain</module>
     </modules>
 
     <build>
