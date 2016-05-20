@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ROUTER_DIRECTIVES, RouteConfig} from '@angular/router-deprecated';
+import {ROUTER_DIRECTIVES, RouteConfig, Router} from '@angular/router-deprecated';
 import {ViewEncapsulation} from '@angular/core';
 
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
@@ -8,6 +8,8 @@ import {QueueComponent} from '../queue/queue.component';
 import {ApplicationComponent} from '../application/application.component';
 
 import {EventService} from '../../event/event.service';
+import {Login} from '../../component/login/login.component';
+import {LoginRouterOutlet} from '../../component/login/login-router-outlet.component';
 
 @Component({
   selector: 'allu',
@@ -18,15 +20,15 @@ import {EventService} from '../../event/event.service';
   styles: [
     require('../../assets/main.scss')
   ],
-  // template: `
-  // <toolbar></toolbar>
-  // <router-outlet></router-outlet>
-  // `,
-  directives: [ROUTER_DIRECTIVES, ToolbarComponent],
+  directives: [ToolbarComponent, LoginRouterOutlet],
   providers: [EventService]
 })
 @RouteConfig([
   { path: '/', name: 'FrontPage', component: QueueComponent },
-  { path: '/applications', name: 'Applications', component: ApplicationComponent }
+  { path: '/applications', name: 'Applications', component: ApplicationComponent },
+  { path: '/login', name: 'Login', component: Login }
 ])
-export class AlluComponent {}
+export class AlluComponent {
+  constructor(public router: Router) {
+  }
+}

@@ -25,7 +25,7 @@ public class AuthController {
     @Autowired
     UserService userService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<String> login() {
         return new ResponseEntity<String>(tokenHandler.createTokenForUser(createMockUser()), HttpStatus.OK);
     }
