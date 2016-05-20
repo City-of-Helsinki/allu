@@ -1,70 +1,58 @@
-<infobar>Loading...</infobar>
+<md-toolbar>
+  <span>UUSI HAKEMUS</span>
+</md-toolbar>
 
-<div class="md-inline-form" layout="column">
-  <md-content>
-    <form name="userForm">
-        <div layout-gt-sm="row">
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>Title</label>
-            <input md-input [(value)]="user.title">
-          </md-input-container>
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>Email</label>
-            <input md-input [(value)]="user.email" type="email">
-          </md-input-container>
-        </div>
-        <div layout-gt-xs="row">
-          <md-input-container class="md-block" flex-gt-xs>
-            <label>Company (Disabled)</label>
-            <input md-input [(value)]="user.company" disabled>
-          </md-input-container>
-        </div>
-        <div layout-gt-sm="row">
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>First name</label>
-            <input md-input [(value)]="user.firstName">
-          </md-input-container>
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>Last Name</label>
-            <input md-input [(value)]="user.lastName">
-          </md-input-container>
-        </div>
-        <md-input-container class="md-block">
-          <label>Address</label>
-          <input md-input [(value)]="user.address">
-        </md-input-container>
-        <md-input-container md-no-float class="md-block">
-          <input md-input [(value)]="user.address2" placeholder="Address 2">
-        </md-input-container>
-        <div layout-gt-sm="row">
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>City</label>
-            <input md-input [(value)]="user.city">
-          </md-input-container>
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>State</label>
-            <select [(value)]="user.state">
-              <option *ngFor="#state of states" [value]="state.abbrev">
-                {{state.abbrev}}
-              </option>
-            </select>
-          </md-input-container>
-          <md-input-container class="md-block" flex-gt-sm>
-            <label>Postal Code</label>
-            <input md-input ngControl="postalCode" [(value)]="user.postalCode" placeholder="12345"
-                   required mdPattern="^[0-9]{5}$" #postalCode="ngForm" mdMaxLength="5">
-            <!-- <div [md-messages]="postalCode" role="alert">
-              <div md-message="required">You must supply a postal code.</div>
-              <div md-message="mdPattern">That doesn't look like a valid postal code.</div>
-              <div md-message="mdMaxLength">Don't use the long version silly...we don't need to be that specific...
-              </div>
-            </div> -->
-          </md-input-container>
-        </div>
-        <md-input-container class="md-block">
-          <label>Biography</label>
-          <textarea md-input [(value)]="user.biography" columns="1" md-maxlength="150" rows="5"></textarea>
-        </md-input-container>
-      </form>
-  </md-content>
-</div>
+<md-content layout-padding layout-wrap style="">
+  <div style="display:flex; flex-direction: row;">
+    <md-card class="demo-card demo-basic" style="margin: 10px; padding-right:100px; flex:50;">
+      <md-card-title>Hakija</md-card-title>
+      <md-card-content>
+        <form>
+          <md-input class="demo-full-width" placeholder="Yritys" style="width:50%;">
+          </md-input>
+
+          <table style="width: 100%;" cellspacing="0"><tr>
+            <td style="width: 80%;"><md-input placeholder="Yrityksen nimi" value="{{application.applicant.companyName}}" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Y-tunnus" value="{{application.applicant.businessID}}" style="width: 100%"></md-input></td>
+          </tr></table>
+          <table style="width: 100%;" cellspacing="0"><tr>
+            <td style="width: 80%;"><md-input placeholder="Hakijan nimi" value="{{application.applicant.name}}" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Hekilötunnus" value="{{application.applicant.social}}" style="width: 100%"></md-input></td>
+          </tr></table>
+          <table style="width: 100%;" cellspacing="0"><tr>
+            <td style="width: 60%;"><md-input placeholder="Osoite" value="{{application.applicant.address}}" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Postinumero" value="{{application.applicant.postalCode}}" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Toimipaikka" value="{{application.applicant.city}}" style="width: 100%"></md-input></td>
+          </tr></table>
+          <table style="width: 100%;" cellspacing="0"><tr>
+            <td style="width: 40%;"><md-input placeholder="Puhelin" value="{{application.applicant.phone}}" style="width: 100%"></md-input></td>
+            <td style="width: 60%;"><md-input placeholder="Sähköpostiosoite" value="{{application.applicant.email}}" style="width: 100%"></md-input></td>
+          </tr></table>
+        </form>
+      </md-card-content>
+    </md-card>
+    <md-card class="demo-card demo-basic" style="margin: 10px; padding-right:100px; flex:50;">
+      <md-card-title>Yhteyshenkilö</md-card-title>
+      <md-card-content>
+        <form>
+          <table style="width: 100%;" cellspacing="0"><tr>
+            <td style="width: 80%;"><md-input placeholder="Yhteyshenkilön nimi" value="{{application.contact.name}}" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Henkilötunnus" value="{{application.contact.social}}" style="width: 100%"></md-input></td>
+          </tr></table>
+          <table style="width: 100%;" cellspacing="0"><tr>
+            <td style="width: 60%;"><md-input placeholder="Osoite" value="{{application.contact.address}}" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Postinumero" value="{{application.contact.postalCode}}" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Toimipaikka" value="{{application.contact.city}}" style="width: 100%"></md-input></td>
+          </tr></table>
+          <table style="width: 100%;" cellspacing="0"><tr>
+            <td style="width: 40%;"><md-input placeholder="Puhelin" value="{{application.contact.phone}}" style="width: 100%"></md-input></td>
+            <td style="width: 40%;"><md-input placeholder="Sähköpostiosoite" value="{{application.contact.email}}" style="width: 100%"></md-input></td>
+          </tr></table>
+        </form>
+        <button md-raised-button>TALLENNA REKISTERIIN</button>
+      </md-card-content>
+    </md-card>
+  </div>
+
+
+</md-content>
