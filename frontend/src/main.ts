@@ -3,7 +3,6 @@ import {APP_BASE_HREF} from '@angular/common';
 import {bootstrap} from '@angular/platform-browser-dynamic';
 import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
 import {HTTP_PROVIDERS} from '@angular/http';
-// import {AppComponent} from './app/components/app.component';
 import {AlluComponent} from './view/allu/allu.component';
 import {MapService} from './service/map.service';
 import {GeocodingService} from './service/geocoding.service';
