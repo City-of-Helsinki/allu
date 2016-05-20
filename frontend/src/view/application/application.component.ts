@@ -17,7 +17,6 @@ import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 
 import {MapComponent} from '../../component/map/map.component';
 import {WorkqueueComponent} from '../../component/workqueue/workqueue.component';
-import {InfobarComponent} from '../../component/infobar/infobar.component';
 
 @Component({
   selector: 'application',
