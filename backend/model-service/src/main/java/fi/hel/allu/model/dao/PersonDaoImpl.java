@@ -38,4 +38,10 @@ public class PersonDaoImpl implements PersonDao {
         return findById(id);
     }
 
+    @Override
+    public void deleteAll() {
+        QPerson person = new QPerson("p");
+        queryFactory.delete(person).execute();
+    }
+
 }
