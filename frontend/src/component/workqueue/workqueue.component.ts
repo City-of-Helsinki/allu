@@ -1,7 +1,18 @@
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 import {WorkqueueService} from '../../service/workqueue.service';
 
-// import {MATERIAL_DIRECTIVES, MATERIAL_PROVIDERS} from "ng2-material/all";
+
+import { MdAnchor, MdButton } from '@angular2-material/button';
+import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
+// import { MdCheckbox } from '@angular2-material/checkbox';
+// import { MD_INPUT_DIRECTIVES } from '@angular2-material/input';
+// import { MD_LIST_DIRECTIVES } from '@angular2-material/list';
+// import { MdProgressBar } from '@angular2-material/progress-bar';
+// import { MdProgressCircle, MdSpinner } from '@angular2-material/progress-circle';
+// import { MdRadioButton, MdRadioDispatcher, MdRadioGroup } from '@angular2-material/radio';
+// import { MD_SIDENAV_DIRECTIVES } from '@angular2-material/sidenav';
+// import { MdToolbar } from '@angular2-material/toolbar';
+
 import {MarkerComponent} from '../marker/marker.component';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
@@ -19,7 +30,7 @@ import {LatLng} from '../../model/location/latlng';
     require('./workqueue.component.scss')
   ],
   directives: [],
-  providers: [WorkqueueService]
+  providers: [MD_CARD_DIRECTIVES, MdButton, WorkqueueService]
 })
 
 export class WorkqueueComponent implements EventListener {

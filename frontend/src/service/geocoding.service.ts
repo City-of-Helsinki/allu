@@ -1,6 +1,6 @@
-import {Http, Response} from 'angular2/http';
+import {Http, Response} from '@angular/http';
 import {Location} from './location.class';
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 import {LatLngBounds} from 'leaflet';
 
 import 'rxjs/add/operator/map';

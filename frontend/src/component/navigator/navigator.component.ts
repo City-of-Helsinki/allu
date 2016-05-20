@@ -1,4 +1,4 @@
-import {Component} from 'angular2/core';
+import {Component} from '@angular/core';
 import {GeocodingService} from '../../service/geocoding.service';
 import {MapService} from '../../service/map.service';
 import {Location} from '../../service/location.class';

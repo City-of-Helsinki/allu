@@ -1,8 +1,8 @@
-import {Component} from 'angular2/core';
-import {CORE_DIRECTIVES, NgClass} from 'angular2/common';
+import {Component} from '@angular/core';
+import {CORE_DIRECTIVES, NgClass} from '@angular/common';
 import {MapService} from '../../service/map.service';
 import {Map, LeafletMouseEvent, Marker} from 'leaflet';
-// import {ButtonCheckbox} from '../../../node_modules/ng2-bootstrap/ng2-bootstrap';
+// import { MdCheckbox } from '@angular2-material/checkbox';
 
 @Component({
     selector: 'marker',
@@ -12,7 +12,7 @@ import {Map, LeafletMouseEvent, Marker} from 'leaflet';
       require('./marker.component.scss')
         // './component/marker/marker.component.scss'
     ],
-    // directives: [CORE_DIRECTIVES, ButtonCheckbox]
+    // directives: [CORE_DIRECTIVES, MdCheckbox]
     directives: [CORE_DIRECTIVES]
 
 })

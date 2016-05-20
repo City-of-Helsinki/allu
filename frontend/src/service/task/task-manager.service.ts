@@ -1,4 +1,4 @@
-import {Injectable} from 'angular2/core';
+import {Injectable} from '@angular/core';
 import {EventService} from '../../event/event.service';
 import {Event} from '../../event/event';
 import {EventListener} from '../../event/event-listener';
