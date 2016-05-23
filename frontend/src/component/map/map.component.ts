@@ -51,11 +51,11 @@ export class MapComponent implements EventListener {
         if (job.area) {
 
           if (job.area.type === 'polyline') {
-            this.marker = L.polyline(job.area.latlngs, {color: 'red'});
+            this.marker = L.polyline(job.area.latlngs, {color: '#BA1200'});
           } else if (job.area.type === 'circle') {
-            this.marker = L.circle(job.area.latlngs[0], job.area.radius, {color: 'red'});
+            this.marker = L.circle(job.area.latlngs[0], job.area.radius, {color: '#BA1200'});
           } else {
-            this.marker = L.polygon(job.area.latlngs, {color: 'red'});
+            this.marker = L.polygon(job.area.latlngs, {color: '#BA1200'});
           }
 
           this.marker.addTo(this.mapService.map).bindPopup(job.title).openPopup();
@@ -83,7 +83,7 @@ export class MapComponent implements EventListener {
         zoom: 14,
         minZoom: 4,
         maxZoom: 18,
-        layers: [this.mapService.baseMaps.OpenStreetMap]
+        layers: [this.mapService.baseMaps.CartoDB]
       });
 
 

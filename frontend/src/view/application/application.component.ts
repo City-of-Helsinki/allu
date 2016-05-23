@@ -69,5 +69,10 @@ export class ApplicationComponent {
         'information': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
       }
     };
-  }
+  };
+
+  save(application: any) {
+      // Save application
+      console.log(this.application);
+   }
 }

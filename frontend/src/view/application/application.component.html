@@ -49,10 +49,10 @@
             <td style="width: 40%;"><md-input placeholder="Sähköpostiosoite" value="{{application.contact.email}}" style="width: 100%"></md-input></td>
           </tr></table>
         </form>
-        <button md-raised-button>TALLENNA REKISTERIIN</button>
+
       </md-card-content>
     </md-card>
   </div>
-
+  <button md-raised-button style="margin-left: 10px;" (click)="save(application)" >TALLENNA</button>
 
 </md-content>

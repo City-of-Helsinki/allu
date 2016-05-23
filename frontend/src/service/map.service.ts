@@ -8,6 +8,12 @@ export class MapService {
 
     constructor() {
         this.baseMaps = {
+          CartoDB: new L.TileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+            attribution: `
+              &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
+              &copy; <a href="http://cartodb.com/attributions">CartoDB</a>
+            `
+          }),
             OpenStreetMap: new L.TileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
               attribution: `
                 &copy;
@@ -23,15 +29,6 @@ export class MapService {
               iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey,
               Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community
               `
-            }),
-            CartoDB: new L.TileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-              attribution: `
-                &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
-                &copy; <a href="http://cartodb.com/attributions">CartoDB</a>
-              `
-            }),
-            Helsinki: new L.TileLayer.WMS('http://kartta.hel.fi/ws/geoserver/avoindata/wms', {
-                format: 'image/png'
             })
         };
     }
