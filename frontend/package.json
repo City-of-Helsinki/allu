@@ -62,6 +62,7 @@
     "@angular2-material/core": "2.0.0-alpha.4",
     "@angular2-material/input": "2.0.0-alpha.4",
     "@angular2-material/toolbar": "^2.0.0-alpha.4",
+    "angular2-jwt": "0.1.15",
     "es6-module-loader": "0.17.8",
     "es6-promise": "3.1.2",
     "es6-shim": "0.35.0",
