@@ -2,12 +2,13 @@ import {provide, enableProdMode} from '@angular/core';
 import {APP_BASE_HREF} from '@angular/common';
 import {bootstrap} from '@angular/platform-browser-dynamic';
 import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
-import {HTTP_PROVIDERS} from '@angular/http';
+import {Http, HTTP_PROVIDERS} from '@angular/http';
 import {AlluComponent} from './view/allu/allu.component';
 import {MapService} from './service/map.service';
 import {GeocodingService} from './service/geocoding.service';
 import {EventService} from './event/event.service';
 import {TaskManager} from './service/task/task-manager.service';
+import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -18,7 +19,23 @@ bootstrap(AlluComponent, [
   TaskManager,
   MapService,
   GeocodingService,
-  provide(APP_BASE_HREF, { useValue: '/' })
+  provide(
+    APP_BASE_HREF, { useValue: '/' }),
+  provide(
+    AuthHttp, {
+      useFactory: (http) => {
+        return new AuthHttp(new AuthConfig({
+          headerName: 'Authorization',
+          headerPrefix: 'Bearer ',
+          tokenName: 'jwt',
+          tokenGetter: (() => localStorage.getItem('jwt')),
+          globalHeaders: [{'Content-Type': 'application/json'}],
+          noJwtError: true,
+          noTokenScheme: false
+        }), http);
+      },
+      deps: [Http]
+    })
 ]);
 
 // In order to start the Service Worker located at "./sw.js"

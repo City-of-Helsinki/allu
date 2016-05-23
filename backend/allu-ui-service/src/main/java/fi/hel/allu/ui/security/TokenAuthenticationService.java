@@ -33,4 +33,13 @@ public class TokenAuthenticationService {
         }
         return null;
     }
+
+    public boolean isEmptyAuthentication(HttpServletRequest request) {
+        final String token = request.getHeader(AUTH_HEADER_NAME);
+        if (token == null || token.isEmpty()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

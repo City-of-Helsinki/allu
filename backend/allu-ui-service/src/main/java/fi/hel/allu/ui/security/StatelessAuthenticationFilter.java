@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.security;
 
+import fi.hel.allu.ui.config.SecurityConfig;
 import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,21 +31,31 @@ public class StatelessAuthenticationFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
 
         Authentication authentication;
-        try {
-            authentication = authenticationService.getAuthentication(httpRequest);
-        }
-        catch (JwtException e) {
-            logger.info("Unauthorized request to resource {}", httpRequest);
-            HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-            httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+
+        // If empty authentication (no JWT) is used and path is different that login, we're handling unauthorized case
+        if (authenticationService.isEmptyAuthentication(httpRequest) &&
+                !SecurityConfig.SECURITY_PATHS.LOGIN.toString().equals(httpRequest.getRequestURI())) {
+            setUnauthorizedResponse(httpRequest, response);
             return;
         }
-        catch (Exception e) {
+
+        try {
+            authentication = authenticationService.getAuthentication(httpRequest);
+        } catch (JwtException e) {
+            setUnauthorizedResponse(httpRequest, response);
+            return;
+        } catch (Exception e) {
             // Let fail later
             authentication = null;
         }
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
         SecurityContextHolder.getContext().setAuthentication(null);
+    }
+
+    private void setUnauthorizedResponse(HttpServletRequest httpRequest, ServletResponse response) throws IOException {
+        logger.info("Unauthorized request to resource {}", httpRequest);
+        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+        httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
