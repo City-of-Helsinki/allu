@@ -15,18 +15,11 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/mergeMap';
 
 // Angular 2 Material 2
-// TODO(gdi2290): uncomment when material is fixed
 import '@angular2-material/core';
-require('../node_modules/@angular2-material/core/style/core.css');
-// import '@angular2-material/sidenav';
-// import '@angular2-material/toolbar';
+import '@angular2-material/toolbar';
 import '@angular2-material/button';
-require('../node_modules/@angular2-material/button/button.css');
-// import '@angular2-material/checkbox';
-// import '@angular2-material/radio';
-// import '@angular2-material/progress-circle';
+import '@angular2-material/checkbox';
 import '@angular2-material/card';
-require('../node_modules/@angular2-material/card/card.css');
 // look in platform/directives and platform/providers
 
 // Leaflet CSS

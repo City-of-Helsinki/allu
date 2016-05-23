@@ -5,6 +5,7 @@ import {ViewEncapsulation} from '@angular/core';
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 
 import {QueueComponent} from '../queue/queue.component';
+import {ApplicationComponent} from '../application/application.component';
 
 import {EventService} from '../../event/event.service';
 
@@ -25,7 +26,7 @@ import {EventService} from '../../event/event.service';
   providers: [EventService]
 })
 @RouteConfig([
-  { path: '/', name: 'Queue', component: QueueComponent }
-  // { path: '/map', name: 'Map', component: FullMapComponent }
+  { path: '/', name: 'FrontPage', component: QueueComponent },
+  { path: '/applications', name: 'Applications', component: ApplicationComponent }
 ])
 export class AlluComponent {}

@@ -1,0 +1,17 @@
+@import '../../assets/colors';
+
+:host {
+  max-width: 1450px;
+  width: 100%;
+}
+
+workqueue {
+  width: 100%;
+}
+
+.card-media {
+  background-color: #999999;
+}
+[md-button] [md-icon] {
+  color: rgba(0, 0, 0, 0.8);
+}
