@@ -3,7 +3,7 @@ import {Router, RouterOutlet, ComponentInstruction} from '@angular/router-deprec
 import {JwtHelper} from 'angular2-jwt/angular2-jwt';
 
 @Directive({
-  selector: 'router-outlet'
+  /* tslint:disable */ selector: 'router-outlet'
 })
 export class LoginRouterOutlet extends RouterOutlet {
   private parentRouter: Router;
