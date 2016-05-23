@@ -12,6 +12,8 @@ import com.querydsl.sql.SQLTemplates;
 
 import fi.hel.allu.model.dao.PersonDao;
 import fi.hel.allu.model.dao.PersonDaoImpl;
+import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.dao.ProjectDaoImpl;
 
 @Configuration
 @EnableAutoConfiguration
@@ -31,5 +33,10 @@ public class AppConfig {
     @Bean
     public PersonDao personDao() {
         return new PersonDaoImpl();
+    }
+
+    @Bean
+    public ProjectDao projectDao() {
+        return new ProjectDaoImpl();
     }
 }

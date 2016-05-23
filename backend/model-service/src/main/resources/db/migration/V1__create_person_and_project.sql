@@ -10,9 +10,10 @@ create table person (
     phone text );
 
 create table project (
-    id serial primary key,
-    name text,
+    project_id serial primary key,
+    owner_id integer,
+    contact_id integer,
+    project_name text,
     start_date date,
     end_date date,
-    additional_info text,
-    contact_person int );
+    additional_info text );
