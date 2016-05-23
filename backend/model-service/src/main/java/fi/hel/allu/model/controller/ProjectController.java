@@ -24,12 +24,17 @@ public class ProjectController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Project> find(@PathVariable int id) {
-        return responseEntity(projectDao.findById(id));
+        Optional<Project> project = projectDao.findById(id);
+        if (project.isPresent()) {
+            return new ResponseEntity<Project>(project.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<Project>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     public ResponseEntity<Project> update(@PathVariable int id, @RequestBody(required = true) Project project) {
-        return responseEntity(projectDao.update(id, project));
+        return new ResponseEntity<Project>(projectDao.update(id, project), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST)
@@ -37,14 +42,6 @@ public class ProjectController {
         if (project.getProjectId() != null) {
             throw new IllegalArgumentException("Id must be null for insert");
         }
-        return responseEntity(projectDao.insert(project));
-    }
-
-    private ResponseEntity<Project> responseEntity(Optional<Project> project) {
-        if (project.isPresent()) {
-            return new ResponseEntity<Project>(project.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<Project>(HttpStatus.NOT_FOUND);
-        }
+        return new ResponseEntity<Project>(projectDao.insert(project), HttpStatus.OK);
     }
 }

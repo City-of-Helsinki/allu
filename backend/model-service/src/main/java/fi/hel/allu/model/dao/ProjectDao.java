@@ -8,7 +8,7 @@ public interface ProjectDao {
 
     public Optional<Project> findById(int id);
 
-    public Optional<Project> insert(Project project);
+    public Project insert(Project project);
 
-    public Optional<Project> update(int id, Project project);
+    public Project update(int id, Project project);
 }

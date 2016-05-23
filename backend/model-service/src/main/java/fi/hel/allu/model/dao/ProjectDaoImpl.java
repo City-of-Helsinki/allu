@@ -26,23 +26,22 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     @Override
-    public Optional<Project> insert(Project p) {
+    public Project insert(Project p) {
         Integer id = queryFactory.insert(project).populate(p).executeWithKey(project.projectId);
         if (id == null) {
             throw new RuntimeException("Failed to insert record");
         }
-        return findById(id);
+        return findById(id).get();
     }
 
     @Override
-    public Optional<Project> update(int id, Project p) {
+    public Project update(int id, Project p) {
         p.setProjectId(id);
         long changed = queryFactory.update(project).populate(p).where(project.projectId.eq(id)).execute();
         if (changed != 1) {
             throw new RuntimeException("Failed to update the record");
         }
-        return findById(id);
+        return findById(id).get();
     }
-
 
 }

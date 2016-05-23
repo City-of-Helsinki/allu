@@ -68,7 +68,9 @@
                 <artifactId>flyway-maven-plugin</artifactId>
                 <version>${flyway.version}</version>
                 <configuration>
-                    <locations>filesystem:src/main/resources/db/migration</locations>
+                    <locations>
+                        <location>filesystem:src/main/resources/db/migration</location>
+                    </locations>
                     <url>${database.uri}</url>
                     <user>${database.user}</user>
                 </configuration>

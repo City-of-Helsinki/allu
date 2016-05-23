@@ -7,41 +7,23 @@ import java.util.Date;
  */
 public class Project {
 
+    private Integer projectId; // serial primary key
+
+    private Integer ownerId;
+
+    private Integer contactId;
+
+    private String projectName;
+
+    private Date startDate;
+
+    private Date endDate;
+
+    private String additionalInfo;
+
     /**
      * In Finnish: Hankkeen tunnus
      */
-    private Integer projectId; // serial primary key
-
-    /**
-     * In Finnish: hankkeen omistaja
-     */
-    private Integer ownerId;
-
-    /**
-     * In Finnish: hankkeen yhteyshenkilä
-     */
-    private Integer contactId;
-
-    /**
-     * In Finnish: Hankkeen nimi
-     */
-    private String projectName; // Hankkeen nimi
-
-    /**
-     * In Finnish: alkupäivä
-     */
-    private Date startDate;
-
-    /**
-     * In Finnish: loppupäivä
-     */
-    private Date endDate;
-
-    /**
-     * In Finnish: lisätiedot
-     */
-    private String additionalInfo;
-
     public Integer getProjectId() {
         return projectId;
     }
@@ -50,6 +32,9 @@ public class Project {
         this.projectId = projectId;
     }
 
+    /**
+     * In Finnish: hankkeen omistaja
+     */
     public Integer getOwnerId() {
         return ownerId;
     }
@@ -58,6 +43,9 @@ public class Project {
         this.ownerId = ownerId;
     }
 
+    /**
+     * In Finnish: hankkeen yhteyshenkilä
+     */
     public Integer getContactId() {
         return contactId;
     }
@@ -66,6 +54,9 @@ public class Project {
         this.contactId = contactId;
     }
 
+    /**
+     * In Finnish: Hankkeen nimi
+     */
     public String getProjectName() {
         return projectName;
     }
@@ -74,6 +65,9 @@ public class Project {
         this.projectName = projectName;
     }
 
+    /**
+     * In Finnish: alkupäivä
+     */
     public Date getStartDate() {
         return startDate;
     }
@@ -82,6 +76,9 @@ public class Project {
         this.startDate = startDate;
     }
 
+    /**
+     * In Finnish: loppupäivä
+     */
     public Date getEndDate() {
         return endDate;
     }
@@ -90,6 +87,9 @@ public class Project {
         this.endDate = endDate;
     }
 
+    /**
+     * In Finnish: lisätiedot
+     */
     public String getAdditionalInfo() {
         return additionalInfo;
     }
