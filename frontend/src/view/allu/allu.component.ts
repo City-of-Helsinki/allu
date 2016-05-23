@@ -27,8 +27,6 @@ import {EventService} from '../../event/event.service';
 })
 @RouteConfig([
   { path: '/', name: 'FrontPage', component: QueueComponent },
-  // { path: '/queue', name: 'Queue', component: QueueComponent },
   { path: '/applications', name: 'Applications', component: ApplicationComponent }
-  // { path: '/map', name: 'Map', component: FullMapComponent }
 ])
 export class AlluComponent {}
