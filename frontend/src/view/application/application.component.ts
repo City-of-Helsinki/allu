@@ -40,7 +40,7 @@ export class ApplicationComponent {
         'postalCode': '00100',
         'city': 'Helsinki',
         'phone': '0505291920',
-        'email': 'sadi.hossain@vincit.fi'
+        'email': 'mail@mail.com'
       },
       'contact': {
         'name': 'Jan Nikander',
@@ -49,7 +49,7 @@ export class ApplicationComponent {
         'postalCode': '00100',
         'city': 'Helsinki',
         'phone': '0505291920',
-        'email': 'jan.nikander@vincit.fi'
+        'email': 'mail@mail.com'
       },
       'customer': {
         'id': undefined,
@@ -69,5 +69,10 @@ export class ApplicationComponent {
         'information': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'
       }
     };
-  }
+  };
+
+  save(application: any) {
+      // Save application
+      console.log(this.application);
+   }
 }

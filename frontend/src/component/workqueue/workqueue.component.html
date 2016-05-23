@@ -1,8 +1,8 @@
 
 <div id="sidebar">
   <h1>Työjonosi</h1>
-  <md-content class="md-padding" layout="row" layout-wrap layout-align="center start">
-    <md-card (click)="jobClick(joblist)" *ngFor="let joblist of workqueueService.get()" style="margin-bottom: 10px;">
+  <md-content layout="row" layout-wrap layout-align="center start">
+    <md-card (click)="jobClick(joblist)" *ngFor="let joblist of workqueueService.getAll()" style="margin-bottom: 10px;">
       <md-card-title>{{joblist.title}}</md-card-title>
       <md-card-subtitle>{{joblist.type}}</md-card-subtitle>
       <md-card-content>

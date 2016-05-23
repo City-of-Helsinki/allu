@@ -48,7 +48,7 @@ export class WorkqueueComponent implements EventListener {
     // Show marker in map
     // console.log(job);
 
-    this.eventService.send(this, new ApplicationSelectionEvent(new LatLng(job.latitude, job.longitude), job.title));
+    this.eventService.send(this, new ApplicationSelectionEvent(job.id));
 
     /* This needs to be done in Perttutechture */
     // this.marker.showJobMarker();
