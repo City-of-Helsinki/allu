@@ -16,7 +16,7 @@
         <!-- database configuration for source generation: -->
         <database.user>jenkins</database.user>
         <database.db>jenkins</database.db>
-        <database.uri>jdbc:postgresql://localhost:5432/${database.db}</database.uri>
+        <database.uri>jdbc:postgresql:///${database.db}</database.uri>
         <flyway.baselineOnMigrate>true</flyway.baselineOnMigrate>
     </properties>
 
