@@ -17,3 +17,15 @@ create table project (
     start_date date,
     end_date date,
     additional_info text );
+
+create table application (
+	application_id serial primary key,
+	project_id integer references project,
+	name text,
+	description text,
+	handler text,
+	customer_id integer references person (id),
+	status text,   -- TODO: enum
+	type text,     -- TODO: enum
+	creation_time timestamp with time zone,
+	start_time timestamp with time zone );

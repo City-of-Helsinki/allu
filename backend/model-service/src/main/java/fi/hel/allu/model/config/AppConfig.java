@@ -10,6 +10,7 @@ import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.SQLTemplates;
 
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.PersonDao;
 import fi.hel.allu.model.dao.PersonDaoImpl;
 import fi.hel.allu.model.dao.ProjectDao;
@@ -38,5 +39,10 @@ public class AppConfig {
     @Bean
     public ProjectDao projectDao() {
         return new ProjectDaoImpl();
+    }
+
+    @Bean
+    public ApplicationDao applicationDao() {
+        return new ApplicationDao();
     }
 }

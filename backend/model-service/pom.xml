@@ -111,6 +111,19 @@
                     <jdbcPassword>${database.password}</jdbcPassword>
                     <packageName>fi.vincit.allu</packageName>
                     <targetFolder>${project.basedir}/target/generated-sources/java</targetFolder>
+                    <typeMappings>
+                        <!-- Override default DateTime mapping -->
+                        <typeMapping>
+                            <table>application</table>
+                            <column>creation_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
+                            <column>start_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                    </typeMappings>
                 </configuration>
                 <dependencies>
                     <dependency>
