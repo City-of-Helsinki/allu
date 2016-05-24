@@ -8,7 +8,6 @@
 - name: allow HTTPS connections
   ufw: rule=allow port=443
 
-# enables the apache2 modules proxy and proxy_http
 - name: enable module proxy
   apache2_module: state=present name=proxy
   notify:
@@ -19,11 +18,9 @@
   notify:
     - restart apache2
 
-# Create Virtual Host Configuration
 - name: create virtual host file
   template: src=virtualhost.conf dest=/etc/apache2/sites-available/{{ proxy_domain }}.conf
 
-# enable virtual host
 - name: a2ensite {{ proxy_domain }}
   command: creates=/etc/apache2/sites-enabled/{{ proxy_domain }}.conf a2ensite {{ proxy_domain }}
   notify:
