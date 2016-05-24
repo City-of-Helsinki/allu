@@ -12,21 +12,21 @@
           </md-input>
 
           <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 80%;"><md-input placeholder="Yrityksen nimi" value="{{application.applicant.companyName}}" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Y-tunnus" value="{{application.applicant.businessID}}" style="width: 100%"></md-input></td>
+            <td style="width: 80%;"><md-input placeholder="Yrityksen nimi" [(ngModel)]="application.applicant.companyName" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Y-tunnus" [(ngModel)]="application.applicant.businessID" style="width: 100%"></md-input></td>
           </tr></table>
           <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 80%;"><md-input placeholder="Hakijan nimi" value="{{application.applicant.name}}" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Hekilötunnus" value="{{application.applicant.social}}" style="width: 100%"></md-input></td>
+            <td style="width: 80%;"><md-input placeholder="Hakijan nimi" [(ngModel)]="application.applicant.name" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Hekilötunnus" [(ngModel)]="application.applicant.social" style="width: 100%"></md-input></td>
           </tr></table>
           <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 60%;"><md-input placeholder="Osoite" value="{{application.applicant.address}}" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Postinumero" value="{{application.applicant.postalCode}}" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Toimipaikka" value="{{application.applicant.city}}" style="width: 100%"></md-input></td>
+            <td style="width: 60%;"><md-input placeholder="Osoite" [(ngModel)]="application.applicant.address" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Postinumero" [(ngModel)]="application.applicant.postalCode" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Toimipaikka" [(ngModel)]="application.applicant.city" style="width: 100%"></md-input></td>
           </tr></table>
           <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 40%;"><md-input placeholder="Puhelin" value="{{application.applicant.phone}}" style="width: 100%"></md-input></td>
-            <td style="width: 60%;"><md-input placeholder="Sähköpostiosoite" value="{{application.applicant.email}}" style="width: 100%"></md-input></td>
+            <td style="width: 40%;"><md-input placeholder="Puhelin" [(ngModel)]="application.applicant.phone" style="width: 100%"></md-input></td>
+            <td style="width: 60%;"><md-input placeholder="Sähköpostiosoite" [(ngModel)]="application.applicant.email" style="width: 100%"></md-input></td>
           </tr></table>
         </form>
       </md-card-content>
@@ -36,17 +36,17 @@
       <md-card-content>
         <form>
           <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 80%;"><md-input placeholder="Yhteyshenkilön nimi" value="{{application.contact.name}}" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Henkilötunnus" value="{{application.contact.social}}" style="width: 100%"></md-input></td>
+            <td style="width: 80%;"><md-input placeholder="Yhteyshenkilön nimi" [(ngModel)]="application.contact.name" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Henkilötunnus" [(ngModel)]="application.contact.social" style="width: 100%"></md-input></td>
           </tr></table>
           <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 60%;"><md-input placeholder="Osoite" value="{{application.contact.address}}" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Postinumero" value="{{application.contact.postalCode}}" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Toimipaikka" value="{{application.contact.city}}" style="width: 100%"></md-input></td>
+            <td style="width: 60%;"><md-input placeholder="Osoite" [(ngModel)]="application.contact.address" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Postinumero" [(ngModel)]="application.contact.postalCode" style="width: 100%"></md-input></td>
+            <td style="width: 20%;"><md-input placeholder="Toimipaikka" [(ngModel)]="application.contact.city" style="width: 100%"></md-input></td>
           </tr></table>
           <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 40%;"><md-input placeholder="Puhelin" value="{{application.contact.phone}}" style="width: 100%"></md-input></td>
-            <td style="width: 40%;"><md-input placeholder="Sähköpostiosoite" value="{{application.contact.email}}" style="width: 100%"></md-input></td>
+            <td style="width: 40%;"><md-input placeholder="Puhelin" [(ngModel)]="application.contact.phone" style="width: 100%"></md-input></td>
+            <td style="width: 40%;"><md-input placeholder="Sähköpostiosoite" [(ngModel)]="application.contact.email" style="width: 100%"></md-input></td>
           </tr></table>
         </form>
 

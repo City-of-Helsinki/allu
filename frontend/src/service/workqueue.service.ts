@@ -193,7 +193,7 @@ export class WorkqueueService {
     });
   }
 
-  add(value: {id: number, title: string, name: string, type: string, time: string, area: any, latitude: number, longitude: number}): void {
+  add(value: any): void {
     this.joblist.push(value);
   }
 }

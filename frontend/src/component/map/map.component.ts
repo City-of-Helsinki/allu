@@ -19,8 +19,7 @@ import {WorkqueueService} from '../../service/workqueue.service';
     styles: [
         require('./map.component.scss')
     ],
-    directives: [NavigatorComponent],
-    providers: [WorkqueueService]
+    directives: [NavigatorComponent]
 })
 export class MapComponent implements EventListener {
     // @ViewChild(MarkerComponent) markerComponent:MarkerComponent;
@@ -59,7 +58,7 @@ export class MapComponent implements EventListener {
           }
 
           this.marker.addTo(this.mapService.map).bindPopup(job.title).openPopup();
-          this.mapService.map.setView([job.area.latlngs[0].lat, job.area.latlngs[0].lng]);
+          this.mapService.map.setView([job.latitude, job.longitude]);
 
         } else {
           this.marker = L.marker([job.latitude, job.longitude], {
@@ -85,7 +84,6 @@ export class MapComponent implements EventListener {
         maxZoom: 18,
         layers: [this.mapService.baseMaps.CartoDB]
       });
-
 
       let drawnItems = new L.FeatureGroup();
       map.addLayer(drawnItems);
@@ -123,5 +121,10 @@ export class MapComponent implements EventListener {
       L.control.scale().addTo(map);
 
       this.mapService.map = map;
+    }
+
+    ngOnDestroy() {
+      // TODO: See how to destroy map, so that it will be built again.
+      console.log(this.mapService.map);
     }
 }
