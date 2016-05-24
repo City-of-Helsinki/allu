@@ -7,3 +7,26 @@
 
 - name: allow HTTPS connections
   ufw: rule=allow port=443
+
+- name: enable module proxy
+  apache2_module: state=present name=proxy
+  notify:
+    - restart apache2
+
+- name: enable module proxy_http
+  apache2_module: state=present name=proxy_http
+  notify:
+    - restart apache2
+
+- name: create virtual host file
+  template: src=virtualhost.conf dest=/etc/apache2/sites-available/{{ proxy_domain }}.conf
+
+- name: a2ensite {{ proxy_domain }}
+  command: creates=/etc/apache2/sites-enabled/{{ proxy_domain }}.conf a2ensite {{ proxy_domain }}
+  notify:
+  - restart apache2
+
+- name: remove default virtual host configuration
+  command: a2dissite 000-default
+  notify:
+    - restart apache2
