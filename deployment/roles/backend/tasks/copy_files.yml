@@ -21,6 +21,13 @@
 - name: remove local temporary directory for copying Artifactory files
   local_action: file path={{ download_directory_name }} state=absent mode="u=rwx,g=r,o=r"
 
+- name: copy Spring-Boot configuration files
+  template: src={{ item }}.properties dest=/home/allu/{{ item }}/{{ item }}.properties
+            owner=allu
+            group=allu
+            mode="u=rwx,g=rx,o=rx"
+  with_items: "{{ allu_service_list }}"
+
 - name: add service runner scripts
   template: src=run_service.sh dest=/home/allu/{{ item }}/run_{{ item }}.sh
             owner=allu
