@@ -15,7 +15,7 @@ import java.util.Map;
 public class UserService implements UserDetailsService {
     private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @Value("${backend.user.url}")
+    @Value("${domain.user.findbyusername.url}")
     private String userUrl;
 
     private final Map<String, User> userMap = new HashMap<String, User>();

@@ -89,10 +89,12 @@ public class CreateApplicationServiceTest {
                 Mockito.eq(ApplicationDTO.class)))
                 .thenAnswer((Answer<ApplicationDTO>) invocation -> createMockApplication());
 
+        Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.any(fi.hel.allu.model.domain.Application.class),
+                Mockito.eq(fi.hel.allu.model.domain.Application.class)))
+                .thenAnswer((Answer<fi.hel.allu.model.domain.Application>) invocation -> createMockDomainApplication());
+
         ApplicationDTO response = applicationService.createApplication(applicationDTO);
 
-        Mockito.verify(restTemplate, Mockito.times(1)).postForObject(Mockito.any(String.class), Mockito.any(ApplicationDTO.class),
-                Mockito.eq(ApplicationDTO.class));
         assertNotNull(response);
     }
 
@@ -100,6 +102,7 @@ public class CreateApplicationServiceTest {
     private ApplicationDTO createMockApplication() {
         ApplicationDTO appDTO = new ApplicationDTO();
         Application app = new Application();
+        app.setId("123");
         app.setName("Tapahtuma 1");
         app.setType("Ulkoilmatapahtuma");
         app.setInformation("Suspendisse quis arcu dolor. Donec fringilla nunc mollis aliquet mollis. Donec commodo tempus erat. " +
@@ -109,7 +112,7 @@ public class CreateApplicationServiceTest {
         app.setStatus("Vireillä");
 
         Customer customer = new Customer();
-        customer.setId("23433452");
+        customer.setId("23456");
         customer.setName("Asiakas");
         customer.setType("Henkilöasiakas");
         customer.setAddress("Jokutie");
@@ -119,7 +122,7 @@ public class CreateApplicationServiceTest {
         app.setCustomer(customer);
 
         Project project = new Project();
-        project.setId("8754937398");
+        project.setId("1234");
         project.setName("Hanke1");
         project.setType("Sähkötyö");
         project.setInformation("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis congue erat. Aenean eget suscipit " +
@@ -132,4 +135,16 @@ public class CreateApplicationServiceTest {
         return appDTO;
     }
 
+    private fi.hel.allu.model.domain.Application createMockDomainApplication() {
+        fi.hel.allu.model.domain.Application applicationDomain = new fi.hel.allu.model.domain.Application();
+        applicationDomain.setApplicationId(4321);
+        applicationDomain.setName("Mock name");
+        applicationDomain.setProjectId(12345);
+        applicationDomain.setCreationTime(ZonedDateTime.now());
+        applicationDomain.setCustomerId(111);
+        applicationDomain.setDescription("Mock description");
+        applicationDomain.setHandler("Mock handler");
+        applicationDomain.setType("Mock type");
+        return applicationDomain;
+    }
 }

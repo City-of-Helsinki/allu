@@ -14,8 +14,9 @@ public class Customer {
     private String address;
     private String postOffice;
     private String zipCode;
-    private String district;
+    private String city;
     private String email;
+    private String ssn;
 
     public String getId() {
         return id;
@@ -65,12 +66,12 @@ public class Customer {
         this.zipCode = zipCode;
     }
 
-    public String getDistrict() {
-        return district;
+    public String getCity() {
+        return city;
     }
 
-    public void setDistrict(String district) {
-        this.district = district;
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public String getEmail() {
@@ -79,5 +80,13 @@ public class Customer {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getSsn() {
+        return ssn;
+    }
+
+    public void setSsn(String ssn) {
+        this.ssn = ssn;
     }
 }
