@@ -14,7 +14,7 @@
     <dependencies>
         <dependency>
             <groupId>fi.hel.allu</groupId>
-            <artifactId>allu-ui-domain</artifactId>
+            <artifactId>ui-domain</artifactId>
             <version>${parent.version}</version>
         </dependency>
 

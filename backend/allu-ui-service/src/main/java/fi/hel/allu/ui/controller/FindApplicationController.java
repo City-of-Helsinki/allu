@@ -6,21 +6,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/applications")
 public class FindApplicationController {
 
     @Autowired
     private ApplicationService applicationService;
 
-    @RequestMapping(value = "/applications/findbyid/{identifier}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-    public ResponseEntity<ApplicationDTO> findByIdentifier(@PathVariable final String identifier) {
-        return new ResponseEntity<ApplicationDTO>(applicationService.findApplicationById(identifier), HttpStatus.OK);
+    public ResponseEntity<ApplicationDTO> findByIdentifier(@PathVariable final String id) {
+        return new ResponseEntity<ApplicationDTO>(applicationService.findApplicationById(id), HttpStatus.OK);
+    }
+
+
+    @RequestMapping(method = RequestMethod.GET)
+    @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+    public ResponseEntity<ApplicationDTO> findBy(@RequestParam(value = "handler") final String handlerId) {
+        return new ResponseEntity<ApplicationDTO>(applicationService.findApplicationByHandler(handlerId), HttpStatus.OK);
     }
 }
+

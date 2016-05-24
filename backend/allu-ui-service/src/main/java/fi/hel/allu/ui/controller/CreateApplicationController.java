@@ -15,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/applications")
 public class CreateApplicationController {
 
     @Autowired
     private ApplicationService applicationService;
 
-    @RequestMapping(value = "/applications/create", method = RequestMethod.POST)
+    @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
     public ResponseEntity<ApplicationDTO> create(@RequestBody @Valid ApplicationDTO applicationDTO) {
         return new ResponseEntity<ApplicationDTO>(applicationService.createApplication(applicationDTO), HttpStatus.OK);
