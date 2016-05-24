@@ -38,116 +38,114 @@ import fi.hel.allu.model.domain.Person;
 @WebAppConfiguration
 public class PersonControllerTest {
 
-    private MockMvc mockMvc;
+  private MockMvc mockMvc;
 
-    @SuppressWarnings("rawtypes")
-    private HttpMessageConverter mappingJackson2HttpMessageConverter;
+  @SuppressWarnings("rawtypes")
+  private HttpMessageConverter mappingJackson2HttpMessageConverter;
 
-    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
+  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(),
+      MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
 
-    @Autowired
-    private WebApplicationContext webApplicationContext;
+  @Autowired
+  private WebApplicationContext webApplicationContext;
 
-    @Autowired
-    private PersonDao personDao;
+  @Autowired
+  private PersonDao personDao;
 
-    @Autowired
-    void setConverters(HttpMessageConverter<?>[] converters) {
+  @Autowired
+  void setConverters(HttpMessageConverter<?>[] converters) {
 
-        mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
-                .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().get();
+    mappingJackson2HttpMessageConverter = Arrays.asList(converters).stream()
+        .filter(hmc -> hmc instanceof MappingJackson2HttpMessageConverter).findAny().get();
 
-        Assert.assertNotNull("the JSON message converter must not be null", mappingJackson2HttpMessageConverter);
-    }
+    Assert.assertNotNull("the JSON message converter must not be null", mappingJackson2HttpMessageConverter);
+  }
 
-    @Before
-    public void setup() throws Exception {
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        personDao.deleteAll();
-    }
+  @Before
+  public void setup() throws Exception {
+    this.mockMvc = webAppContextSetup(webApplicationContext).build();
+    personDao.deleteAll();
+  }
 
-    // Helper to add person
-    private ResultActions addPerson(String firstName, String lastName, String email, Integer id) throws Exception {
-        Person person = new Person();
-        person.setFirstName(firstName);
-        person.setLastName(lastName);
-        person.setEmail(email);
-        person.setId(id);
-        return mockMvc.perform(post("/persons").content(json(person)).contentType(contentType));
-    }
+  // Helper to add person
+  private ResultActions addPerson(String firstName, String lastName, String email, Integer id) throws Exception {
+    Person person = new Person();
+    person.setFirstName(firstName);
+    person.setLastName(lastName);
+    person.setEmail(email);
+    person.setId(id);
+    return mockMvc.perform(post("/persons").content(json(person)).contentType(contentType));
+  }
 
-    // Add person, read response as Person
-    private Person addPersonAndGetResult(String firstName, String lastName, String email, Integer id) throws Exception {
-        ResultActions resultActions = addPerson(firstName, lastName, email, id)
-                .andExpect(status().isOk());
-        return parsePersonFromResult(resultActions);
-    }
+  // Add person, read response as Person
+  private Person addPersonAndGetResult(String firstName, String lastName, String email, Integer id) throws Exception {
+    ResultActions resultActions = addPerson(firstName, lastName, email, id).andExpect(status().isOk());
+    return parsePersonFromResult(resultActions);
+  }
 
-    private Person parsePersonFromResult(ResultActions resultActions) throws Exception {
-        String resultString = resultActions.andReturn().getResponse().getContentAsString();
-        // Parse the response as Person
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(resultString, Person.class);
-    }
+  private Person parsePersonFromResult(ResultActions resultActions) throws Exception {
+    String resultString = resultActions.andReturn().getResponse().getContentAsString();
+    // Parse the response as Person
+    ObjectMapper mapper = new ObjectMapper();
+    return mapper.readValue(resultString, Person.class);
+  }
 
-    @Test
-    public void addPerson() throws Exception {
-        // Add person without id. Should succeed:
-        addPerson("Pekka", "Pekkala", "pekka@pekkalat.net", null).andExpect(status().isOk());
-    }
+  @Test
+  public void addPerson() throws Exception {
+    // Add person without id. Should succeed:
+    addPerson("Pekka", "Pekkala", "pekka@pekkalat.net", null).andExpect(status().isOk());
+  }
 
-    @Test
-    public void addPersonWithId() throws Exception {
-        // add person with id. Should fail:
-        addPerson("Paavo", "Ruotsalainen", "ei-oo", 239).andExpect(status().isBadRequest());
-    }
+  @Test
+  public void addPersonWithId() throws Exception {
+    // add person with id. Should fail:
+    addPerson("Paavo", "Ruotsalainen", "ei-oo", 239).andExpect(status().isBadRequest());
+  }
 
-    @Test
-    public void getPerson() throws Exception {
-        // Setup: add person
-        Person result = addPersonAndGetResult("Jaakko", "Jokkela", "jaska193@mbnet.fi", null);
+  @Test
+  public void getPerson() throws Exception {
+    // Setup: add person
+    Person result = addPersonAndGetResult("Jaakko", "Jokkela", "jaska193@mbnet.fi", null);
 
-        // Now check Jaakko got there.
-        mockMvc.perform(get(String.format("/persons/%d", result.getId()))).andExpect(status().isOk())
-                .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.firstName", is("Jaakko")));
-    }
+    // Now check Jaakko got there.
+    mockMvc.perform(get(String.format("/persons/%d", result.getId()))).andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.firstName", is("Jaakko")));
+  }
 
-    @Test
-    public void getNonexistentPerson() throws Exception {
-        mockMvc.perform(get("/persons/239")).andExpect(status().isNotFound());
-    }
+  @Test
+  public void getNonexistentPerson() throws Exception {
+    mockMvc.perform(get("/persons/239")).andExpect(status().isNotFound());
+  }
 
-    @Test
-    public void updatePerson() throws Exception {
-       // Setup: add person
-        Person result = addPersonAndGetResult("Timofei", "Tsurunenko", "timofei@tsurunen.org", null);
+  @Test
+  public void updatePerson() throws Exception {
+    // Setup: add person
+    Person result = addPersonAndGetResult("Timofei", "Tsurunenko", "timofei@tsurunen.org", null);
 
-        Person newPerson = new Person();
-        newPerson.setFirstName("Timpe");
-        newPerson.setCity("Imatra");
-        newPerson.setId(999);
-        mockMvc.perform(
-                put(String.format("/persons/%d", result.getId())).content(json(newPerson)).contentType(contentType))
-                .andExpect(status().isOk()).andExpect(jsonPath("$.id", is(result.getId())))
-                .andExpect(jsonPath("$.city", is("Imatra")));
+    Person newPerson = new Person();
+    newPerson.setFirstName("Timpe");
+    newPerson.setCity("Imatra");
+    newPerson.setId(999);
+    mockMvc.perform(put(String.format("/persons/%d", result.getId())).content(json(newPerson)).contentType(contentType))
+        .andExpect(status().isOk()).andExpect(jsonPath("$.id", is(result.getId())))
+        .andExpect(jsonPath("$.city", is("Imatra")));
 
-    }
+  }
 
-    @Test
-    public void updateNonexistent() throws Exception {
-        Person person = new Person();
-        person.setFirstName("Timpe");
-        person.setCity("Imatra");
-        person.setId(999);
-        mockMvc.perform(put(String.format("/persons/27312")).content(json(person)).contentType(contentType))
-                .andExpect(status().isNotFound());
-    }
+  @Test
+  public void updateNonexistent() throws Exception {
+    Person person = new Person();
+    person.setFirstName("Timpe");
+    person.setCity("Imatra");
+    person.setId(999);
+    mockMvc.perform(put(String.format("/persons/27312")).content(json(person)).contentType(contentType))
+        .andExpect(status().isNotFound());
+  }
 
-    @SuppressWarnings("unchecked")
-    protected String json(Object o) throws IOException {
-        MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
-        this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
-        return mockHttpOutputMessage.getBodyAsString();
-    }
+  @SuppressWarnings("unchecked")
+  protected String json(Object o) throws IOException {
+    MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
+    this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
+    return mockHttpOutputMessage.getBodyAsString();
+  }
 }
