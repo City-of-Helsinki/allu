@@ -2,4 +2,4 @@
 http_port: 80
 proxy_domain: allufront
 proxypass_context: /api/
-proxypass_target: http://185.26.48.184:9000/
+proxypass_target: http://10.1.4.205:9000/
