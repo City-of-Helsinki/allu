@@ -1,5 +1,6 @@
 allu_service_list:
   - allu-ui-service
+  - model-service
 
 deployment_dir_root: /home/allu
 deployment_dir_allu_ui_service: "{{ deployment_dir_root }}/allu-ui-service"
