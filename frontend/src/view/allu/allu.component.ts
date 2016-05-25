@@ -11,6 +11,7 @@ import {EventService} from '../../event/event.service';
 import {WorkqueueService} from '../../service/workqueue.service';
 import {Login} from '../../component/login/login.component';
 import {LoginRouterOutlet} from '../../component/login/login-router-outlet.component';
+import {TaskManager} from '../../service/task/task-manager.service';
 
 @Component({
   selector: 'allu',
@@ -22,7 +23,7 @@ import {LoginRouterOutlet} from '../../component/login/login-router-outlet.compo
     require('../../assets/main.scss')
   ],
   directives: [ToolbarComponent, LoginRouterOutlet],
-  providers: [EventService, WorkqueueService]
+  providers: [EventService, TaskManager, WorkqueueService]
 })
 @RouteConfig([
   { path: '/', name: 'FrontPage', component: QueueComponent },
@@ -30,6 +31,5 @@ import {LoginRouterOutlet} from '../../component/login/login-router-outlet.compo
   { path: '/login', name: 'Login', component: Login }
 ])
 export class AlluComponent {
-  constructor(public router: Router) {
-  }
+  constructor(public router: Router, public eventService: EventService, public taskManager: TaskManager) {}
 }
