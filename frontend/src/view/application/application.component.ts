@@ -11,6 +11,8 @@ import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 import {MapComponent} from '../../component/map/map.component';
 import {WorkqueueComponent} from '../../component/workqueue/workqueue.component';
 
+import {WorkqueueService} from '../../service/workqueue.service';
+
 @Component({
   selector: 'application',
   viewProviders: [],
@@ -24,10 +26,13 @@ import {WorkqueueComponent} from '../../component/workqueue/workqueue.component'
 
 export class ApplicationComponent {
   public application: any;
+  public workqueue: WorkqueueService;
 
-  constructor() {
+  constructor(workqueue: WorkqueueService) {
+    this.workqueue = workqueue;
     this.application = {
-      'name': 'Tapahtuma 1',
+      'id': 12121,
+      'title': 'Fenniakortteli julkisivuremontti',
       'type': 'Ulkoilmatapahtuma',
       'status': 'Vireillä',
       'information': 'Suspendisse quis arcu dolor. Donec fringilla nunc mollis.',
@@ -60,6 +65,26 @@ export class ApplicationComponent {
         'district': undefined,
         'email': 'mail@mail.com'
       },
+      'area': {
+        'type': 'polygon',
+        'latlngs': [
+          {'lat': 60.171976960061016, 'lng': 24.945332407951355},
+          {'lat': 60.17092298340843, 'lng': 24.94544506072998},
+          {'lat': 60.17092565174643, 'lng': 24.945541620254517},
+          {'lat': 60.17090697337575, 'lng': 24.945541620254517},
+          {'lat': 60.17090964171508, 'lng': 24.945627450942993},
+          {'lat': 60.17103238508943, 'lng': 24.946051239967343},
+          {'lat': 60.17135791964392, 'lng': 24.94696855545044},
+          {'lat': 60.17141662225308, 'lng': 24.9471241235733},
+          {'lat': 60.17146998817038, 'lng': 24.947209954261776},
+          {'lat': 60.17154470030895, 'lng': 24.947285056114193},
+          {'lat': 60.171659436476645, 'lng': 24.947327971458435},
+          {'lat': 60.17177950878116, 'lng': 24.947327971458435},
+          {'lat': 60.17202498857124, 'lng': 24.947301149368286}
+        ]
+      },
+      'latitude': 60.17157405145976,
+      'longitude': 24.94623363018036,
       'createDate': '2016-05-18T10:24:06.565+03:00',
       'startDate': undefined,
       'project': {
@@ -73,6 +98,9 @@ export class ApplicationComponent {
 
   save(application: any) {
       // Save application
-      console.log(this.application);
+      console.log(application);
+      this.workqueue.add(application);
+      console.log(this.workqueue.getAll());
+
    }
 }

@@ -29,15 +29,18 @@ import {LatLng} from '../../model/location/latlng';
   styles: [
     require('./workqueue.component.scss')
   ],
-  directives: [MD_CARD_DIRECTIVES, MdButton],
-  providers: [WorkqueueService]
+  directives: [MD_CARD_DIRECTIVES, MdButton]
 })
 
 export class WorkqueueComponent implements EventListener {
   marker: MarkerComponent;
+  joblist: any;
+  workqueue: WorkqueueService;
 
-  constructor(public workqueueService: WorkqueueService, private eventService: EventService) {
+  constructor(workqueue: WorkqueueService, private eventService: EventService) {
     this.eventService.subscribe(this);
+    this.workqueue = workqueue;
+    this.joblist = this.workqueue.getAll();
   }
 
   public handle(event: Event): void {
@@ -53,5 +56,9 @@ export class WorkqueueComponent implements EventListener {
     /* This needs to be done in Perttutechture */
     // this.marker.showJobMarker();
 
+ }
+
+ ngOnInit() {
+   this.joblist = this.workqueue.getAll();
  }
 }

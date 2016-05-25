@@ -8,6 +8,7 @@ import {QueueComponent} from '../queue/queue.component';
 import {ApplicationComponent} from '../application/application.component';
 
 import {EventService} from '../../event/event.service';
+import {WorkqueueService} from '../../service/workqueue.service';
 import {Login} from '../../component/login/login.component';
 import {LoginRouterOutlet} from '../../component/login/login-router-outlet.component';
 
@@ -21,7 +22,7 @@ import {LoginRouterOutlet} from '../../component/login/login-router-outlet.compo
     require('../../assets/main.scss')
   ],
   directives: [ToolbarComponent, LoginRouterOutlet],
-  providers: [EventService]
+  providers: [EventService, WorkqueueService]
 })
 @RouteConfig([
   { path: '/', name: 'FrontPage', component: QueueComponent },

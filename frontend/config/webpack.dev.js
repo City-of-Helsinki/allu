@@ -140,7 +140,7 @@ module.exports = webpackMerge(commonConfig, {
     },
     proxy: {
       '/api/*': {
-        target: 'http://localhost:9000',
+        target: 'http://185.26.48.184:9000',
         rewrite: function(req) {
           req.url = req.url.replace(/^\/api/, '');
         },
