@@ -68,5 +68,4 @@ export class WorkqueueComponent implements EventListener, OnInit, OnDestroy {
     // this.marker.showJobMarker();
 
  }
-
 }
