@@ -30,7 +30,7 @@ public class ApplicationService {
     @Value("${domain.application.findbyid.url}")
     private String findApplicationByIdUrl;
 
-    @Value("${doamin.application.findbyhandler.url}")
+    @Value("${domain.application.findbyhandler.url}")
     private String findApplicationByHandlerUrl;
 
     @Autowired
