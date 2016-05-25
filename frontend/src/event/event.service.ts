@@ -12,6 +12,7 @@ export class EventService {
   private eventQueue: Subject<Event> = new Subject();
 
   constructor() {
+    console.log("Event service created");
     this.eventQueue.subscribe(
       (e) => this.processQueue(e));
   }

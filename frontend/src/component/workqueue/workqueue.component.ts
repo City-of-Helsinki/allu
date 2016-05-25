@@ -1,18 +1,8 @@
-import {Component} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
 import {WorkqueueService} from '../../service/workqueue.service';
 import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
-// import { MdCheckbox } from '@angular2-material/checkbox';
-// import { MD_INPUT_DIRECTIVES } from '@angular2-material/input';
-// import { MD_LIST_DIRECTIVES } from '@angular2-material/list';
-// import { MdProgressBar } from '@angular2-material/progress-bar';
-// import { MdProgressCircle, MdSpinner } from '@angular2-material/progress-circle';
-// import { MdRadioButton, MdRadioDispatcher, MdRadioGroup } from '@angular2-material/radio';
-// import { MD_SIDENAV_DIRECTIVES } from '@angular2-material/sidenav';
-// import { MdToolbar } from '@angular2-material/toolbar';
-
 import {MarkerComponent} from '../marker/marker.component';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
@@ -21,6 +11,10 @@ import {EventService} from '../../event/event.service';
 import {Event} from '../../event/event';
 
 import {LatLng} from '../../model/location/latlng';
+import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
+import {Application} from '../../model/application/application';
+import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
+import {TaskManager} from '../../service/task/task-manager.service';
 
 @Component({
   selector: 'workqueue',
@@ -32,19 +26,36 @@ import {LatLng} from '../../model/location/latlng';
   directives: [MD_CARD_DIRECTIVES, MdButton]
 })
 
-export class WorkqueueComponent implements EventListener {
+export class WorkqueueComponent implements EventListener, OnInit, OnDestroy {
   marker: MarkerComponent;
   joblist: any;
   workqueue: WorkqueueService;
 
-  constructor(workqueue: WorkqueueService, private eventService: EventService) {
+  private applicationsQueue: Array<Application> = [];
+
+  constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
+    this.applicationsQueue = [];
+  }
+
+  // ngOnInit() {
+  //   this.joblist = this.workqueue.getAll();
+  // }
+
+  ngOnInit() {
     this.eventService.subscribe(this);
-    this.workqueue = workqueue;
-    this.joblist = this.workqueue.getAll();
+    this.eventService.send(this, new ApplicationsLoadEvent());
+  }
+
+  ngOnDestroy() {
+    this.eventService.unsubscribe(this);
   }
 
   public handle(event: Event): void {
     console.log('Handle and incoming WorkqueueComponent event');
+    if (event instanceof ApplicationsAnnounceEvent) {
+      let aaEvent = <ApplicationsAnnounceEvent>event;
+      this.applicationsQueue = aaEvent.applications.slice();
+    }
   }
 
   jobClick(job: any) {
@@ -58,7 +69,4 @@ export class WorkqueueComponent implements EventListener {
 
  }
 
- ngOnInit() {
-   this.joblist = this.workqueue.getAll();
- }
 }

@@ -7,8 +7,9 @@ import {AlluComponent} from './view/allu/allu.component';
 import {MapService} from './service/map.service';
 import {GeocodingService} from './service/geocoding.service';
 import {EventService} from './event/event.service';
-import {TaskManager} from './service/task/task-manager.service';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
+import {TaskManager} from './service/task/task-manager.service';
+import {ApplicationService} from './service/application.service';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -17,6 +18,7 @@ bootstrap(AlluComponent, [
   HTTP_PROVIDERS,
   EventService,
   TaskManager,
+  ApplicationService,
   MapService,
   GeocodingService,
   provide(
