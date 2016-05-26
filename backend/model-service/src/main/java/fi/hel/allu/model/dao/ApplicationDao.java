@@ -12,6 +12,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.UpdateException;
 
 public class ApplicationDao {
 
@@ -46,7 +47,7 @@ public class ApplicationDao {
     appl.setApplicationId(id);
     long changed = queryFactory.update(application).populate(appl).where(application.applicationId.eq(id)).execute();
     if (changed != 1) {
-      throw new RuntimeException("Failed to update the record");
+      throw new UpdateException("Failed to update the record");
     }
     return findById(id).get();
   }
