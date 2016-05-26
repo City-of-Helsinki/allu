@@ -1,15 +1,12 @@
 package fi.hel.allu.model.controller;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,10 +19,6 @@ import fi.hel.allu.model.domain.Application;
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
-  @ExceptionHandler
-  void handleIllegalArgumentException(IllegalArgumentException e, HttpServletResponse response) throws IOException {
-    response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-  }
 
   @Inject
   private ApplicationDao applicationDao;

@@ -31,7 +31,6 @@ public class ProjectControllerTest {
   @Before
   public void setup() throws Exception {
     wtc.setup();
-    wtc.runSql(DELETE_ALL_PROJECTS);
   }
 
   private ResultActions addProject(Project project) throws Exception {
@@ -98,6 +97,4 @@ public class ProjectControllerTest {
   public void testUpdateNonexistent() throws Exception {
 
   }
-
-  private static final String DELETE_ALL_PROJECTS = "delete from project";
 }

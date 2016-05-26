@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.querydsl.sql.SQLQueryFactory;;
 
 @Component
@@ -59,6 +60,7 @@ public final class WebTestCommon {
    */
   public void setup() throws Exception {
     mockMvc = webAppContextSetup(webApplicationContext).build();
+    deleteAllData();
   }
 
   /*
@@ -85,23 +87,30 @@ public final class WebTestCommon {
     String resultString = resultActions.andReturn().getResponse().getContentAsString();
     // Parse the response as Person
     ObjectMapper mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
     return mapper.readValue(resultString, theClass);
   }
 
   /*
-   * Execute the given SQL statement.
+   * Execute the given SQL statements.
    */
-  public void runSql(String sql) throws SQLException {
+  public void runSql(String... sql) throws SQLException {
     Statement stmt = null;
     try {
       Connection conn = queryFactory.getConnection();
       stmt = conn.createStatement();
-      stmt.executeUpdate(sql);
+      for (String s : sql) {
+        stmt.executeUpdate(s);
+      }
     } finally {
       if (stmt != null) {
         stmt.close();
       }
     }
+  }
+
+  private void deleteAllData() throws SQLException {
+    runSql(DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_PERSONS);
   }
 
   @SuppressWarnings("unchecked")
@@ -110,5 +119,9 @@ public final class WebTestCommon {
     this.mappingJackson2HttpMessageConverter.write(o, MediaType.APPLICATION_JSON, mockHttpOutputMessage);
     return mockHttpOutputMessage.getBodyAsString();
   }
+
+  private static final String DELETE_ALL_APPLICATIONS = "delete from application";
+  private static final String DELETE_ALL_PERSONS = "delete from person";
+  private static final String DELETE_ALL_PROJECTS = "delete from project";
 
 }

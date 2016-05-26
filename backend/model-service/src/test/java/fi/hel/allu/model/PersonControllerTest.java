@@ -16,7 +16,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import fi.hel.allu.model.dao.PersonDao;
 import fi.hel.allu.model.domain.Person;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,15 +24,11 @@ import fi.hel.allu.model.domain.Person;
 public class PersonControllerTest {
 
   @Autowired
-  private PersonDao personDao;
-
-  @Autowired
   private WebTestCommon wtc;
 
   @Before
   public void setup() throws Exception {
     wtc.setup();
-    personDao.deleteAll();
   }
 
   // Helper to add person
