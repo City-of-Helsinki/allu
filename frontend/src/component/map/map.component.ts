@@ -121,6 +121,8 @@ export class MapComponent implements EventListener {
     ngOnDestroy() {
       // TODO: See how to destroy map, so that it will be built again.
       this.eventService.unsubscribe(this);
-      this.mapService.map.removeLayer(this.mapService.baseMaps.CartoDB);
+      if (this.mapService.map) {
+        this.mapService.map.removeLayer(this.mapService.baseMaps.CartoDB);
+      }
     }
 }
