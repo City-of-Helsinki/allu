@@ -20,6 +20,7 @@ import '@angular2-material/toolbar';
 import '@angular2-material/button';
 import '@angular2-material/checkbox';
 import '@angular2-material/card';
+import '@angular2-material/radio';
 // look in platform/directives and platform/providers
 
 // Leaflet CSS

@@ -2,9 +2,12 @@ import {Component} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
-import { MdAnchor, MdButton } from '@angular2-material/button';
+import {MdAnchor, MdButton} from '@angular2-material/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import { MdToolbar } from '@angular2-material/toolbar';
+import {MdToolbar} from '@angular2-material/toolbar';
+import {MdRadioButton} from '@angular2-material/radio';
+import {MdRadioDispatcher} from '@angular2-material/radio/radio_dispatcher';
+import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 
@@ -21,7 +24,17 @@ import {WorkqueueService} from '../../service/workqueue.service';
   styles: [
     require('./application.component.scss')
   ],
-  directives: [MD_INPUT_DIRECTIVES, MD_CARD_DIRECTIVES, MdToolbar, MapComponent, WorkqueueComponent]
+  directives: [
+    MD_INPUT_DIRECTIVES,
+    MD_CARD_DIRECTIVES,
+    MdToolbar,
+    MapComponent,
+    WorkqueueComponent,
+    MdButton,
+    MdRadioButton,
+    MdCheckbox
+  ],
+  providers: [MdRadioDispatcher]
 })
 
 export class ApplicationComponent {
@@ -35,7 +48,7 @@ export class ApplicationComponent {
       'title': 'Fenniakortteli julkisivuremontti',
       'type': 'Ulkoilmatapahtuma',
       'status': 'Vireillä',
-      'information': 'Suspendisse quis arcu dolor. Donec fringilla nunc mollis.',
+      'description': 'Suspendisse quis arcu dolor. Donec fringilla nunc mollis.',
       'applicant': {
         'companyName': 'Vincit Helsinki Oy',
         'businessID': 'Y-VINCIT',
@@ -44,8 +57,17 @@ export class ApplicationComponent {
         'address': 'Mikonkatu 15 A',
         'postalCode': '00100',
         'city': 'Helsinki',
-        'phone': '0505291920',
+        'phone': '0501234567',
         'email': 'mail@mail.com'
+      },
+      'billing': {
+        'type': 'Paperilasku',
+        'workNumber': 12121,
+        'reference': 5315,
+        'address': 'Mikonkatu 15 A',
+        'postalCode': '00100',
+        'city': 'Helsinki',
+        'sales': true
       },
       'contact': {
         'name': 'Jan Nikander',
@@ -83,10 +105,17 @@ export class ApplicationComponent {
           {'lat': 60.17202498857124, 'lng': 24.947301149368286}
         ]
       },
+      'structure': {
+        'size': 15.24,
+        'description': 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        'startDate': '10.06.2016',
+        'endDate': '17.06.2016'
+      },
       'latitude': 60.17157405145976,
       'longitude': 24.94623363018036,
       'createDate': '2016-05-18T10:24:06.565+03:00',
-      'startDate': undefined,
+      'startDate': '12.06.2016',
+      'endDate': '15.06.2016',
       'project': {
         'id': undefined,
         'name': 'Hanke1',
