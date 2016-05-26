@@ -40,7 +40,7 @@ public class ApplicationController {
     }
   }
 
-  @RequestMapping(value = "/byhandler/{id}", method = RequestMethod.GET)
+  @RequestMapping(value = "/byhandler/{handler}", method = RequestMethod.GET)
   public ResponseEntity<List<Application>> findByHandler(@PathVariable String handler) {
     List<Application> applications = applicationDao.findByHandler(handler);
     if (applications.isEmpty()) {
@@ -50,7 +50,7 @@ public class ApplicationController {
     }
   }
 
-  @RequestMapping(value = "/byproject/{id}", method = RequestMethod.GET)
+  @RequestMapping(value = "/byproject/{projectId}", method = RequestMethod.GET)
   public ResponseEntity<List<Application>> findByProject(@PathVariable int projectId) {
     List<Application> applications = applicationDao.findByProject(projectId);
     if (applications.isEmpty()) {
