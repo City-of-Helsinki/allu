@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.querydsl.core.QueryException;
 
-import fi.hel.allu.model.domain.UpdateException;
+import fi.hel.allu.NoSuchEntityException;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
@@ -21,7 +21,7 @@ public class ControllerExceptionHandler {
   }
 
   @ExceptionHandler
-  void handleNotFound(UpdateException e, HttpServletResponse response) throws IOException {
+  void handleNotFound(NoSuchEntityException e, HttpServletResponse response) throws IOException {
     response.sendError(HttpStatus.NOT_FOUND.value(), e.getMessage());
   }
 }
