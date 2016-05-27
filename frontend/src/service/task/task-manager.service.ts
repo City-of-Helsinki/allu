@@ -24,7 +24,7 @@ export class TaskManager implements EventListener {
     console.log('Task Manager handles event');
     if (event instanceof ApplicationsLoadEvent) {
       let task = new LoadApplicationsTask(this.applicationService);
-      task.execute(this, this.eventService, event);
+      // task.execute(this, this.eventService, event);
     }
     if (event instanceof ApplicationSaveEvent) {
       let task = new SaveApplicationTask(this.applicationService);
