@@ -28,7 +28,7 @@ bootstrap(AlluComponent, [
       useFactory: (http) => {
         return new AuthHttp(new AuthConfig({
           headerName: 'Authorization',
-          headerPrefix: 'Bearer ',
+          headerPrefix: 'Bearer',
           tokenName: 'jwt',
           tokenGetter: (() => localStorage.getItem('jwt')),
           globalHeaders: [{'Content-Type': 'application/json'}],
