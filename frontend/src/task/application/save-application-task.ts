@@ -5,20 +5,24 @@ import {EventListener} from '../../event/event-listener';
 import {Event} from '../../event/event';
 import {ApplicationService} from '../../service/application.service';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
+import {ApplicationSaveEvent} from '../../event/save/application-save-event';
+import {Application} from '../../model/application/application';
+import {ErrorEvent} from '../../event/error-event';
 
 @Injectable()
-export class LoadApplicationsTask extends Task {
+export class SaveApplicationTask extends Task {
 
   constructor(private applicationService: ApplicationService) {
     super();
   }
 
   protected createTask(runner: EventListener, eventService: EventService, event: Event): Promise<void> {
-    let applications = this.applicationService.listApplications();
-    let aaEvent = new ApplicationsAnnounceEvent(applications);
-    eventService.send(runner, aaEvent);
+    let saEvent = <ApplicationSaveEvent>event;
+    let addPromise = this.applicationService.addApplication(saEvent.application);
 
-    // TODO
-    return undefined;
+    return addPromise.then((appl: Application) => {
+      let aaEvent = new ApplicationsAnnounceEvent([appl]);
+      eventService.send(runner, aaEvent);
+    }).catch((err: any) => { eventService.send(runner, new ErrorEvent(saEvent)); });
   }
 }

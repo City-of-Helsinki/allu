@@ -5,6 +5,8 @@ import {EventListener} from '../../event/event-listener';
 import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {LoadApplicationsTask} from '../../task/application/load-applications-task';
 import {ApplicationService} from '../application.service';
+import {ApplicationSaveEvent} from '../../event/save/application-save-event';
+import {SaveApplicationTask} from '../../task/application/save-application-task';
 
 @Injectable()
 export class TaskManager implements EventListener {
@@ -24,6 +26,11 @@ export class TaskManager implements EventListener {
       let task = new LoadApplicationsTask(this.applicationService);
       task.execute(this, this.eventService, event);
     }
+    if (event instanceof ApplicationSaveEvent) {
+      let task = new SaveApplicationTask(this.applicationService);
+      task.execute(this, this.eventService, event);
+    }
+
 
     // if (event.type === 'AddScientistEvent') {
     //   let task: AddScientistTask = new AddScientistTask(this.nameListService);

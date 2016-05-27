@@ -6,5 +6,5 @@
 import {LatLng} from './latlng';
 export class Area {
 
-  constructor(public type: string, public latlngs: Array<LatLng>, public radius: number) {}
+  constructor(public type: string, public latlngs: Array<LatLng>, public radius?: number) {}
 }

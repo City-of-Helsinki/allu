@@ -15,6 +15,13 @@ import {MapComponent} from '../../component/map/map.component';
 import {WorkqueueComponent} from '../../component/workqueue/workqueue.component';
 
 import {WorkqueueService} from '../../service/workqueue.service';
+import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
+import {Event} from '../../event/event';
+import {EventListener} from '../../event/event-listener';
+import {Application} from '../../model/application/application';
+import {Customer} from '../../model/customer/customer';
+import {EventService} from '../../event/event.service';
+import {ApplicationSaveEvent} from '../../event/save/application-save-event';
 
 @Component({
   selector: 'application',
@@ -37,11 +44,11 @@ import {WorkqueueService} from '../../service/workqueue.service';
   providers: [MdRadioDispatcher]
 })
 
-export class ApplicationComponent {
+export class ApplicationComponent implements EventListener {
   public application: any;
   public workqueue: WorkqueueService;
 
-  constructor(workqueue: WorkqueueService) {
+  constructor(private eventService: EventService, workqueue: WorkqueueService) {
     this.workqueue = workqueue;
     this.application = {
       'id': 12121,
@@ -125,11 +132,24 @@ export class ApplicationComponent {
     };
   };
 
+  public handle(event: Event): void {
+    if (event instanceof ApplicationsAnnounceEvent) {
+      alert('Application stored!');
+    }
+  }
+
+
   save(application: any) {
-      // Save application
-      console.log(application);
-      this.workqueue.add(application);
-      console.log(this.workqueue.getAll());
+    // Save application
+    console.log('Saving application', application);
+    let customer = new Customer(application.applicant.name);
+    let newApplication = new Application(undefined, 'uusi hakemus', 'uusi hakemus', 'tyyppi', 'aika', 1, 1, undefined, customer);
+    let saveEvent = new ApplicationSaveEvent(newApplication);
+    this.eventService.send(this, saveEvent);
+
+      // console.log(application);
+      // this.workqueue.add(application);
+      // console.log(this.workqueue.getAll());
 
    }
 }
