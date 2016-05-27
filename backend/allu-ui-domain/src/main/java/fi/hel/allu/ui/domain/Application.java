@@ -14,7 +14,7 @@ public class Application{
      * Identifier of the application
      * in Finnish: Hakemuksen tunniste
      */
-    private String id;
+    private int id;
 
     /**
      * Name of the application
@@ -75,12 +75,16 @@ public class Application{
     @Valid
     private Project project;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
+    }
+
+    public void setStartDate(ZonedDateTime startDate) {
+        this.startDate = startDate;
     }
 
     public String getName() {

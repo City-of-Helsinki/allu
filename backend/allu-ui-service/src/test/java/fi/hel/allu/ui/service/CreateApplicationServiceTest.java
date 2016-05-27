@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.service;
 
 
+import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.Application;
 import fi.hel.allu.ui.domain.ApplicationDTO;
 import fi.hel.allu.ui.domain.Customer;
@@ -26,6 +27,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class CreateApplicationServiceTest {
+    @Mock
+    private ApplicationProperties props;
     @Mock
     private RestTemplate restTemplate;
     @InjectMocks
@@ -85,11 +88,7 @@ public class CreateApplicationServiceTest {
 
     @Test
     public void testCreateWithValidApplication() {
-        Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.any(ApplicationDTO.class),
-                Mockito.eq(ApplicationDTO.class)))
-                .thenAnswer((Answer<ApplicationDTO>) invocation -> createMockApplication());
-
-        Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.any(fi.hel.allu.model.domain.Application.class),
+        Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
                 Mockito.eq(fi.hel.allu.model.domain.Application.class)))
                 .thenAnswer((Answer<fi.hel.allu.model.domain.Application>) invocation -> createMockDomainApplication());
 
@@ -102,7 +101,7 @@ public class CreateApplicationServiceTest {
     private ApplicationDTO createMockApplication() {
         ApplicationDTO appDTO = new ApplicationDTO();
         Application app = new Application();
-        app.setId("123");
+        app.setId(123);
         app.setName("Tapahtuma 1");
         app.setType("Ulkoilmatapahtuma");
         app.setInformation("Suspendisse quis arcu dolor. Donec fringilla nunc mollis aliquet mollis. Donec commodo tempus erat. " +
@@ -112,7 +111,7 @@ public class CreateApplicationServiceTest {
         app.setStatus("Vireillä");
 
         Customer customer = new Customer();
-        customer.setId("23456");
+        customer.setId(23456);
         customer.setName("Asiakas");
         customer.setType("Henkilöasiakas");
         customer.setAddress("Jokutie");
@@ -122,7 +121,7 @@ public class CreateApplicationServiceTest {
         app.setCustomer(customer);
 
         Project project = new Project();
-        project.setId("1234");
+        project.setId(1234);
         project.setName("Hanke1");
         project.setType("Sähkötyö");
         project.setInformation("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis congue erat. Aenean eget suscipit " +
