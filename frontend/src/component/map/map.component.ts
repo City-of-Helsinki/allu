@@ -75,8 +75,7 @@ export class MapComponent implements EventListener {
     }
 
     ngOnInit() {
-
-      let map = new L.Map('map', {
+      this.mapService.map = new L.Map('map', {
         zoomControl: false,
         center: new L.LatLng(60.175264, 24.940692),
         zoom: 14,
@@ -84,9 +83,10 @@ export class MapComponent implements EventListener {
         maxZoom: 18,
         layers: [this.mapService.baseMaps.CartoDB]
       });
+      L.control.zoom({ position: 'topright' }).addTo(this.mapService.map);
 
       let drawnItems = new L.FeatureGroup();
-      map.addLayer(drawnItems);
+      this.mapService.map.addLayer(drawnItems);
 
       let drawControl = new L.Control.Draw({
         position: 'topright',
@@ -102,29 +102,27 @@ export class MapComponent implements EventListener {
           featureGroup: drawnItems
         }
       });
-      map.addControl(drawControl);
+      this.mapService.map.addControl(drawControl);
 
-      map.on('draw:created', function (e: any) {
+      this.mapService.map.on('draw:created', function (e: any) {
         let type = e.layerType,
             layer = e.layer;
-
-        if (type === 'marker') {
-          layer.bindPopup('A popup!');
-        }
 
         drawnItems.addLayer(layer);
       });
 
       // Add zoom controls
-      L.control.zoom({ position: 'topright' }).addTo(map);
-      L.control.layers(this.mapService.baseMaps).addTo(map);
-      L.control.scale().addTo(map);
 
-      this.mapService.map = map;
+      L.control.layers(this.mapService.baseMaps).addTo(this.mapService.map);
+      L.control.scale().addTo(this.mapService.map);
+
     }
 
     ngOnDestroy() {
       // TODO: See how to destroy map, so that it will be built again.
-      console.log(this.mapService.map);
+      this.eventService.unsubscribe(this);
+      if (this.mapService.map) {
+        this.mapService.map.removeLayer(this.mapService.baseMaps.CartoDB);
+      }
     }
 }
