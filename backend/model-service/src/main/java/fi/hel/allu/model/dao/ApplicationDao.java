@@ -47,7 +47,7 @@ public class ApplicationDao {
     appl.setApplicationId(id);
     long changed = queryFactory.update(application).populate(appl).where(application.applicationId.eq(id)).execute();
     if (changed != 1) {
-      throw new NoSuchEntityException("Failed to update the record");
+      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
     return findById(id).get();
   }
