@@ -11,14 +11,15 @@
   // display: block;
   max-width: 1450px;
   width: 100%;
+  map {
+    float: left;
+    height: 100%;
+    position: absolute;
+    width: 100%;
+  }
 }
 
-map {
-  float: left;
-  height: 100%;
-  position: absolute;
-  width: 100%;
-}
+
 
 workqueue {
   float: left;

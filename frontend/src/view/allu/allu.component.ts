@@ -26,9 +26,9 @@ import {TaskManager} from '../../service/task/task-manager.service';
   providers: [EventService, TaskManager, WorkqueueService]
 })
 @RouteConfig([
-  { path: '/', name: 'FrontPage', component: QueueComponent },
-  { path: '/applications', name: 'Applications', component: ApplicationComponent },
-  { path: '/login', name: 'Login', component: Login }
+  { path: '/', as: 'FrontPage', component: QueueComponent },
+  { path: '/applications/...', as: 'Applications', component: ApplicationComponent },
+  { path: '/login', as: 'Login', component: Login }
 ])
 export class AlluComponent {
   constructor(public router: Router, public eventService: EventService, public taskManager: TaskManager) {}
