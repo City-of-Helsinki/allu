@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
  * in Finnish: Asiakas
  */
 public class Customer {
-    private String id;
+    private int id;
     @NotBlank (message="{customer.name}")
     private String name;
     private String type;
@@ -18,11 +18,11 @@ public class Customer {
     private String email;
     private String ssn;
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.config;
 
+import fi.hel.allu.ui.fi.hel.allu.ui.handler.ServiceResponseErrorHandler;
 import fi.hel.allu.ui.security.PreAuthorizeEnforcerInterceptor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +19,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Bean
     public RestTemplate restTemplate() {
-        return new RestTemplate();
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setErrorHandler(new ServiceResponseErrorHandler());
+        return restTemplate;
     }
 }
