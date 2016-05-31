@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -25,8 +27,9 @@ public class TokenHandlerTest {
     public void setUp() {
         userService = new UserService();
         tokenHandler = new TokenHandler(secret, 12, userService);
-        Set<GrantedAuthority> roles = Sets.newHashSet(new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()),
-                new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()));
+        List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+        roles.add(new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()));
+        roles.add(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()));
         user = new AlluUser("johndoe", "pwd", roles, "email");
         userService.addUser(user);
     }
@@ -54,7 +57,7 @@ public class TokenHandlerTest {
         assertNotNull("User must not be null", alluUser);
         assertEquals("email", alluUser.getEmailAddress());
         assertEquals("johndoe", alluUser.getUsername());
-        assertEquals("pwd", alluUser.getPassword());
+        assertEquals("johndoe", alluUser.getPassword());
         assertEquals(2, alluUser.getAuthorities().size());
         Set<GrantedAuthority> roles = Sets.newHashSet(
                 new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()),

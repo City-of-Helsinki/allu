@@ -1,11 +1,9 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.Application;
-import fi.hel.allu.ui.domain.ApplicationDTO;
-import fi.hel.allu.ui.domain.Customer;
+import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.validator.CustomerValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ApplicationService {
@@ -33,31 +33,35 @@ public class ApplicationService {
      * @param applications List of applications that are going to be created
      * @return List of created applications and their identifiers
      */
-    public ApplicationDTO createApplication(ApplicationDTO applications) {
+    public List<ApplicationJson> createApplication(ApplicationListJson applications) {
 
-        for (Application applicationUI : applications.getApplicationList()) {
-            if (applicationUI.getCustomer().getId() == 0) {
-                Person personModel = restTemplate.postForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_PERSON_CREATE), createPersonModel(applicationUI), Person.class);
-                applicationUI.getCustomer().setId(personModel.getId());
+        for (ApplicationJson applicationJson : applications.getApplicationList()) {
+            if (applicationJson.getCustomer().getId() == 0) {
+                CustomerValidator.validateCustomer(applicationJson.getCustomer());
+                Customer customerModel = createNewCustomer(applicationJson.getCustomer());
+                applicationJson.getCustomer().setId(customerModel.getId());
             }
 
-            if (applicationUI.getProject() == null || applicationUI.getProject().getId() == 0) {
+            if (applicationJson.getProject() == null || applicationJson.getProject().getId() == 0) {
                 Project projectModel = restTemplate.postForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_CREATE), createProjectModel(applicationUI), Project.class);
-                fi.hel.allu.ui.domain.Project projectUI = new fi.hel.allu.ui.domain.Project();
-                mapProjectModelToUi(projectUI, projectModel);
-                applicationUI.setProject(projectUI);
+                        .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_CREATE), createProjectModel(applicationJson.getProject()), Project.class);
+                ProjectJson projectJson = new ProjectJson();
+                mapProjectToJson(projectJson, projectModel);
+                applicationJson.setProject(projectJson);
             }
 
-            fi.hel.allu.model.domain.Application applicationModel = restTemplate.postForObject(applicationProperties
-                    .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
-                    createApplicationModel
-                    (applicationUI), fi.hel.allu.model.domain.Application.class);
+            if (applicationJson.getApplicant().getId() == 0) {
+                Applicant applicantModel = createNewApplicant(applicationJson.getApplicant());
+                applicationJson.getApplicant().setId(applicantModel.getId());
+            }
 
-            applicationUI.setId(applicationModel.getId());
+            Application applicationModel = restTemplate.postForObject(applicationProperties
+                    .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
+                    createApplicationModel(applicationJson), Application.class);
+
+            applicationJson.setId(applicationModel.getId());
         }
-        return applications;
+        return applications.getApplicationList();
     }
 
 
@@ -67,13 +71,10 @@ public class ApplicationService {
      * @param applicationId application identifier that is used to find details
      * @return Application details or empty application list in DTO
      */
-    public ApplicationDTO findApplicationById(String applicationId) {
-        ApplicationDTO resultDTO = new ApplicationDTO();
-        fi.hel.allu.model.domain.Application applicationModel =  restTemplate.getForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), fi.hel.allu.model.domain.Application.class,
-                applicationId);
-        resultDTO.getApplicationList().add(getApplication(applicationModel));
-        return resultDTO;
+    public ApplicationJson findApplicationById(String applicationId) {
+        Application applicationModel =  restTemplate.getForObject(applicationProperties
+                        .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
+        return getApplication(applicationModel);
     }
 
     /**
@@ -82,96 +83,242 @@ public class ApplicationService {
      * @param handlerId handler identifier that is used to find details
      * @return List of found application with details
      */
-    public ApplicationDTO findApplicationByHandler(String handlerId) {
-        ApplicationDTO resultDTO = new ApplicationDTO();
-        ResponseEntity<fi.hel.allu.model.domain.Application[]> applicationResult = restTemplate.getForEntity(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_HANDLER), fi
-                .hel.allu.model.domain.Application[].class, handlerId);
-            for (fi.hel.allu.model.domain.Application applicationModel : applicationResult.getBody()) {
-                resultDTO.getApplicationList().add(getApplication(applicationModel));
+    public List<ApplicationJson> findApplicationByHandler(String handlerId) {
+        List<ApplicationJson> resultList = new ArrayList<>();
+        ResponseEntity<Application[]> applicationResult = restTemplate.getForEntity(applicationProperties
+                .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_HANDLER), Application[].class, handlerId);
+            for (Application applicationModel : applicationResult.getBody()) {
+                resultList.add(getApplication(applicationModel));
             }
-        return resultDTO;
+        return resultList;
     }
 
-    private Application getApplication(fi.hel.allu.model.domain.Application applicationModel) {
-        Application applicationUI = new Application();
-        mapApplicationModelToUi(applicationUI, applicationModel);
-        applicationUI.setCustomer(findPersonById(applicationModel.getCustomerId()));
-        applicationUI.setProject(findProjectById(applicationModel.getProjectId()));
-        return applicationUI;
+    private ApplicationJson getApplication(Application applicationModel) {
+        ApplicationJson applicationJson = new ApplicationJson();
+        mapApplicationToJson(applicationJson, applicationModel);
+        applicationJson.setCustomer(findCustomerById(applicationModel.getCustomerId()));
+        applicationJson.setProject(findProjectById(applicationModel.getProjectId()));
+        applicationJson.setApplicant(findApplicantById(applicationModel.getApplicantId()));
+        return applicationJson;
     }
 
-    private Customer findPersonById(int personId) {
-        Customer customerUI = new Customer();
+    private PersonJson findPersonById(int personId) {
+        PersonJson personJson = new PersonJson();
         ResponseEntity<Person> personResult = restTemplate.getForEntity(applicationProperties
                 .getUrl(ApplicationProperties.PATH_MODEL_PERSON_FIND_BY_ID), Person.class, personId);
-        mapPersonToCustomer(customerUI, personResult.getBody());
-        return customerUI;
+        mapPersonToJson(personJson, personResult.getBody());
+        return personJson;
     }
 
-    private fi.hel.allu.ui.domain.Project findProjectById(int projectId)  {
-        fi.hel.allu.ui.domain.Project projectUI = new fi.hel.allu.ui.domain.Project();
+    private ApplicantJson findApplicantById(int applicantId) {
+        ApplicantJson applicantJson = new ApplicantJson();
+        ResponseEntity<Applicant> applicantResult = restTemplate.getForEntity(applicationProperties
+                .getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_FIND_BY_ID), Applicant.class, applicantId);
+        mapApplicantToJson(applicantJson, applicantResult.getBody());
+        if (applicantResult.getBody().getPersonId() != null) {
+            applicantJson.setPerson(findPersonById(applicantResult.getBody().getPersonId()));
+        }
+        if (applicantResult.getBody().getOrganizationId() != null) {
+            applicantJson.setOrganization(findOrganizationById(applicantResult.getBody().getOrganizationId()));
+        }
+        return applicantJson;
+    }
+
+    private OrganizationJson findOrganizationById(int organizationId) {
+        OrganizationJson organizationJson = new OrganizationJson();
+        ResponseEntity<Organization> organizationResult = restTemplate.getForEntity(applicationProperties
+                .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_FIND_BY_ID), Organization.class, organizationId);
+        mapOrganizationToJson(organizationJson, organizationResult.getBody());
+        return organizationJson;
+    }
+
+    private CustomerJson findCustomerById(int customerId) {
+        CustomerJson customerJson = new CustomerJson();
+        ResponseEntity<Customer> customerResult = restTemplate.getForEntity(applicationProperties
+                .getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_FIND_BY_ID), Customer.class, customerId);
+        mapCustomerToJson(customerJson, customerResult.getBody());
+        if (customerResult.getBody().getOrganizationId() != null) {
+            customerJson.setOrganization(findOrganizationById(customerResult.getBody().getOrganizationId()));
+        }
+        if (customerResult.getBody().getPersonId() != null) {
+            customerJson.setPerson(findPersonById(customerResult.getBody().getPersonId()));
+        }
+        return customerJson;
+    }
+
+
+    private ProjectJson findProjectById(int projectId)  {
+        ProjectJson projectJson = new ProjectJson();
         ResponseEntity<Project> projectResult = restTemplate.getForEntity(applicationProperties
                 .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);
-        mapProjectModelToUi(projectUI, projectResult.getBody());
-        return projectUI;
+        mapProjectToJson(projectJson, projectResult.getBody());
+        return projectJson;
     }
 
-    private Person createPersonModel(Application applicationUI) {
-        Customer customerUI = applicationUI.getCustomer();
-        Person personDomain = new Person();
-        personDomain.setCity(customerUI.getCity());
-        personDomain.setEmail(customerUI.getEmail());
-        personDomain.setName(customerUI.getName());
-        personDomain.setSsn(customerUI.getSsn());
-        personDomain.setStreetAddress(customerUI.getAddress());
-        personDomain.setPostalCode(customerUI.getZipCode());
-        return personDomain;
+    private Customer createCustomerModel(CustomerJson customerJson) {
+        Customer customerModel = new Customer();
+        customerModel.setSapId(customerJson.getSapId());
+        customerModel.setType(customerJson.getType());
+        if (customerJson.getOrganization() != null) {
+            customerModel.setOrganizationId(customerJson.getOrganization().getId());
+        }
+        if (customerJson.getPerson() != null) {
+            customerModel.setPersonId(customerJson.getPerson().getId());
+        }
+        return customerModel;
     }
 
-    private Project createProjectModel(Application applicationUI) {
+    private Organization createOrganizationModel(OrganizationJson organizationJson) {
+        Organization organizationModel = new Organization();
+        organizationModel.setPostalCode(organizationJson.getPostalCode());
+        organizationModel.setStreetAddress(organizationJson.getStreetAddress());
+        organizationModel.setPhone(organizationJson.getPhone());
+        organizationModel.setName(organizationJson.getName());
+        organizationModel.setBusinessId(organizationJson.getBusinessId());
+        organizationModel.setCity(organizationJson.getCity());
+        organizationModel.setEmail(organizationJson.getEmail());
+        return organizationModel;
+    }
+
+    private Person createPersonModel(PersonJson personJson) {
+        Person personModel = new Person();
+        personModel.setStreetAddress(personJson.getStreetAddress());
+        personModel.setPhone(personJson.getPhone());
+        personModel.setName(personJson.getName());
+        personModel.setSsn(personJson.getSsn());
+        personModel.setCity(personJson.getCity());
+        personModel.setEmail(personJson.getEmail());
+        personModel.setPostalCode(personJson.getPostalCode());
+        return personModel;
+    }
+
+    private Applicant createApplicantModel(ApplicantJson applicantJson) {
+        Applicant applicantModel = new Applicant();
+        if (applicantJson.getPerson() != null) {
+            applicantModel.setPersonId(applicantJson.getPerson().getId());
+        }
+        if (applicantJson.getOrganization() != null) {
+            applicantModel.setOrganizationId(applicantJson.getOrganization().getId());
+        }
+        return applicantModel;
+    }
+
+    private Project createProjectModel(ProjectJson projectJson) {
         Project projectDomain = new Project();
-        if (applicationUI.getProject() == null || applicationUI.getProject().getName() == null) {
+        if (projectJson == null || projectJson.getName() == null) {
             projectDomain.setName("Mock Project");
         } else {
-            projectDomain.setName(applicationUI.getProject().getName());
+            projectDomain.setName(projectJson.getName());
         }
         return projectDomain;
     }
 
-    private fi.hel.allu.model.domain.Application createApplicationModel(Application applicationUI) {
-        fi.hel.allu.model.domain.Application applicationDomain = new fi.hel.allu.model.domain.Application();
-        applicationDomain.setName(applicationUI.getName());
-        applicationDomain.setProjectId(applicationUI.getProject().getId());
+    private Application createApplicationModel(ApplicationJson applicationJson) {
+        Application applicationDomain = new fi.hel.allu.model.domain.Application();
+        applicationDomain.setName(applicationJson.getName());
+        applicationDomain.setProjectId(applicationJson.getProject().getId());
         applicationDomain.setCreationTime(ZonedDateTime.now());
-        applicationDomain.setCustomerId(applicationUI.getCustomer().getId());
-        applicationDomain.setHandler(applicationUI.getHandler());
-        applicationDomain.setType(applicationUI.getType());
+        applicationDomain.setCustomerId(applicationJson.getCustomer().getId());
+        applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
+        applicationDomain.setHandler(applicationJson.getHandler());
+        applicationDomain.setType(applicationJson.getType());
+        applicationDomain.setStatus(applicationJson.getStatus());
         return applicationDomain;
     }
 
 
-    private void mapProjectModelToUi(fi.hel.allu.ui.domain.Project projectUI, Project projectDomain) {
-        projectUI.setId(projectDomain.getId());
-        projectUI.setName(projectDomain.getName());
+    private void mapProjectToJson(ProjectJson projectJson, Project projectDomain) {
+        projectJson.setId(projectDomain.getId());
+        projectJson.setName(projectDomain.getName());
     }
 
-    private void mapPersonToCustomer(Customer customerUI, Person personDomain) {
-        customerUI.setName(personDomain.getName());
-        customerUI.setAddress(personDomain.getStreetAddress());
-        customerUI.setCity(personDomain.getCity());
-        customerUI.setEmail(personDomain.getEmail());
-        customerUI.setId(personDomain.getId());
-        customerUI.setZipCode(personDomain.getPostalCode());
-        customerUI.setSsn(personDomain.getSsn());
+    private void mapPersonToJson(PersonJson personJson, Person personDomain) {
+        personJson.setId(personDomain.getId());
+        personJson.setPostalCode(personDomain.getPostalCode());
+        personJson.setStreetAddress(personDomain.getStreetAddress());
+        personJson.setSsn(personDomain.getSsn());
+        personJson.setPhone(personDomain.getPhone());
+        personJson.setName(personDomain.getName());
+        personJson.setEmail(personDomain.getEmail());
+        personJson.setCity(personDomain.getCity());
     }
 
-    private void mapApplicationModelToUi(Application applicationUI, fi.hel.allu.model.domain.Application applicationDomain) {
-        applicationUI.setId(applicationDomain.getId());
-        applicationUI.setType(applicationDomain.getType());
-        applicationUI.setHandler(applicationDomain.getHandler());
-        applicationUI.setCreateDate(applicationDomain.getCreationTime());
-        applicationUI.setName(applicationDomain.getName());
-        applicationUI.setStatus(applicationDomain.getStatus());
+    private void mapCustomerToJson(CustomerJson customerJson, Customer customer) {
+        customerJson.setId(customer.getId());
+        customerJson.setType(customer.getType());
+        customerJson.setSapId(customer.getSapId());
+    }
+
+    private void mapApplicantToJson(ApplicantJson applicantJson, Applicant applicant) {
+        applicantJson.setId(applicant.getId());
+    }
+
+    private void mapOrganizationToJson(OrganizationJson organizationJson, Organization organization) {
+        organizationJson.setId(organization.getId());
+        organizationJson.setStreetAddress(organization.getStreetAddress());
+        organizationJson.setPostalCode(organization.getPostalCode());
+        organizationJson.setPhone(organization.getPhone());
+        organizationJson.setName(organization.getName());
+        organizationJson.setEmail(organization.getEmail());
+        organizationJson.setCity(organization.getCity());
+        organizationJson.setBusinessId(organization.getBusinessId());
+    }
+
+    private void mapContactToJson(ContactJson contactJson, Contact contact) {
+        contactJson.setId(contact.getId());
+    }
+
+    private void mapApplicationToJson(ApplicationJson applicationJson, Application application) {
+        applicationJson.setId(application.getId());
+        applicationJson.setStatus(application.getStatus());
+        applicationJson.setType(application.getType());
+        applicationJson.setHandler(application.getHandler());
+        applicationJson.setCreationTime(application.getCreationTime());
+        applicationJson.setName(application.getName());
+    }
+
+    private Customer createNewCustomer(CustomerJson customerJson) {
+        if (customerJson.getPerson() != null && customerJson.getPerson().getId() == 0) {
+            Person personModel = restTemplate.postForObject(applicationProperties
+                            .getUrl(ApplicationProperties.PATH_MODEL_PERSON_CREATE), createPersonModel(customerJson.getPerson()),
+                    Person.class);
+            mapPersonToJson(customerJson.getPerson(), personModel);
+        }
+
+        if (customerJson.getOrganization() != null && customerJson.getOrganization().getId() == 0) {
+            Organization organizationModel = restTemplate.postForObject(applicationProperties
+                            .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(customerJson.getOrganization()),
+                    Organization.class);
+            mapOrganizationToJson(customerJson.getOrganization(), organizationModel);
+        }
+
+        Customer customerModel = restTemplate.postForObject(applicationProperties
+                        .getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_CREATE), createCustomerModel(customerJson),
+                Customer.class);
+
+        return customerModel;
+    }
+
+    private Applicant createNewApplicant(ApplicantJson applicantJson) {
+        if (applicantJson.getPerson() != null && applicantJson.getPerson().getId() == 0) {
+            Person personModel = restTemplate.postForObject(applicationProperties
+                            .getUrl(ApplicationProperties.PATH_MODEL_PERSON_CREATE), createPersonModel(applicantJson.getPerson()),
+                    Person.class);
+            mapPersonToJson(applicantJson.getPerson(), personModel);
+        }
+
+        if (applicantJson.getOrganization() != null && applicantJson.getOrganization().getId() == 0) {
+            Organization organizationModel = restTemplate.postForObject(applicationProperties
+                            .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(applicantJson.getOrganization()),
+                    Organization.class);
+            mapOrganizationToJson(applicantJson.getOrganization(), organizationModel);
+        }
+
+        Applicant applicantModel = restTemplate.postForObject(applicationProperties
+                        .getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_CREATE), createApplicantModel(applicantJson),
+                Applicant.class);
+
+        return applicantModel;
     }
 }
+

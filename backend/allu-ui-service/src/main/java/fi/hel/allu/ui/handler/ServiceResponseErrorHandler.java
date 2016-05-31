@@ -1,6 +1,6 @@
-package fi.hel.allu.ui.fi.hel.allu.ui.handler;
+package fi.hel.allu.ui.handler;
 
-import fi.hel.allu.ui.exception.NotFoundException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -16,8 +16,8 @@ public class ServiceResponseErrorHandler implements ResponseErrorHandler {
     @Override
     public boolean hasError(ClientHttpResponse clientHttpResponse) throws IOException {
         if (clientHttpResponse.getStatusCode() != HttpStatus.OK) {
-            logger.debug("Status code: " + clientHttpResponse.getStatusCode());
-            logger.debug("Response" + clientHttpResponse.getStatusText());
+            logger.debug("Status code: {}", clientHttpResponse.getStatusCode());
+            logger.debug("Status text: {}", clientHttpResponse.getStatusText());
             return true;
         }
         return false;
@@ -26,8 +26,8 @@ public class ServiceResponseErrorHandler implements ResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
         if (clientHttpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-            logger.debug(HttpStatus.NOT_FOUND + " response. Throwing not found exception");
-            throw new NotFoundException(clientHttpResponse.getStatusText());
+            logger.debug("{} response. Throwing not such entity exception", HttpStatus.NOT_FOUND);
+            throw new NoSuchEntityException(clientHttpResponse.getStatusText());
         }
     }
 }
