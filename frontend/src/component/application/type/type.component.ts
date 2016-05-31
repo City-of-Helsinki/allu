@@ -18,6 +18,7 @@ import {Application} from '../../../model/application/application';
 import {Customer} from '../../../model/customer/customer';
 import {EventService} from '../../../event/event.service';
 import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
+import {PostalAddress} from '../../../model/common/postal-address';
 
 @Component({
   selector: 'type',
@@ -136,8 +137,32 @@ export class TypeComponent implements EventListener {
   save(application: any) {
     // Save application
     console.log('Saving application', application);
-    let customer = new Customer(application.applicant.name);
-    let newApplication = new Application(undefined, 'uusi hakemus', 'uusi hakemus', 'tyyppi', 'aika', 1, 1, undefined, customer);
+    let postalAddress =
+      new PostalAddress(application.customer.address, application.customer.postOffice, application.customer.zipCode, undefined);
+    // TODO: applicant is not the customer? Or is it?
+    let customer =
+      new Customer(
+        undefined,
+        application.applicant.name,
+        application.customer.type,
+        postalAddress,
+        application.customer.email,
+        undefined);
+    console.log('Mapped customer', customer);
+    let newApplication =
+      new Application(
+        undefined, // application.id,
+        application.title,
+        application.type,
+        application.status,
+        1,
+        1,
+        undefined,
+        customer,
+        undefined,
+        undefined,
+        undefined,
+        undefined);
     let saveEvent = new ApplicationSaveEvent(newApplication);
     this.eventService.send(this, saveEvent);
 

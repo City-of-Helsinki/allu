@@ -3,6 +3,8 @@ import { Router, RouterLink } from '@angular/router-deprecated';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { Http, Headers } from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
+import {Customer} from '../../model/customer/customer';
+import {CustomerMapper} from '../../service/mapper/customer-mapper';
 
 @Component({
   selector: 'login',
@@ -36,11 +38,21 @@ export class Login {
 
   testAuthHttp(): void {
     console.log('clicko!');
-    this.authHttp.get('/api/api/applications/findbyid/1')
+    // console.log('Customer',
+    //   JSON.stringify(new Customer(undefined, 'appName', undefined, undefined, undefined, undefined, undefined, undefined, undefined)));
+
+    this.authHttp.get('/api/applications/15')
       .subscribe(
-        data => console.log('got data!', data),
-        err => console.log(err),
-        () => console.log('Request Complete')
-      );
-  }
+        (data) => {
+          console.log('parsed JSON', JSON.parse(data.text()));
+          let jsonCustomer = JSON.parse(data.text()).applicationList[0].customer;
+          console.log('got data!', jsonCustomer);
+          let customer = CustomerMapper.mapBackend(jsonCustomer);
+          console.log(customer);
+        },
+            err => console.log(err),
+            () => console.log('Request Complete')
+          );
+    }
 }
+
