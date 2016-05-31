@@ -9,16 +9,16 @@ import {MdRadioButton} from '@angular2-material/radio';
 import {MdRadioDispatcher} from '@angular2-material/radio/radio_dispatcher';
 import {MdCheckbox} from '@angular2-material/checkbox';
 
-import {MapComponent} from '../../map/map.component';
+import {MapComponent} from '../map/map.component';
 
-import {WorkqueueService} from '../../../service/workqueue.service';
-import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-announce-event';
-import {Event} from '../../../event/event';
-import {EventListener} from '../../../event/event-listener';
-import {Application} from '../../../model/application/application';
-import {Customer} from '../../../model/customer/customer';
-import {EventService} from '../../../event/event.service';
-import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
+import {WorkqueueService} from '../../service/workqueue.service';
+import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
+import {Event} from '../../event/event';
+import {EventListener} from '../../event/event-listener';
+import {Application} from '../../model/application/application';
+import {Customer} from '../../model/customer/customer';
+import {EventService} from '../../event/event.service';
+import {ApplicationSaveEvent} from '../../event/save/application-save-event';
 
 @Component({
   selector: 'type',
@@ -29,6 +29,7 @@ import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
     require('./location.component.scss')
   ],
   directives: [
+    MdToolbar,
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,
     MdButton,

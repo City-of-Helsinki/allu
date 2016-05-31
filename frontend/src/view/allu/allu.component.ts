@@ -6,6 +6,7 @@ import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 
 import {QueueComponent} from '../queue/queue.component';
 import {ApplicationComponent} from '../application/application.component';
+import {LocationComponent} from '../../component/location/location.component';
 
 import {EventService} from '../../event/event.service';
 import {WorkqueueService} from '../../service/workqueue.service';
@@ -28,6 +29,7 @@ import {TaskManager} from '../../service/task/task-manager.service';
 @RouteConfig([
   { path: '/', as: 'FrontPage', component: QueueComponent },
   { path: '/applications/...', as: 'Applications', component: ApplicationComponent },
+  { path: '/location', as: 'Location', component: LocationComponent },
   { path: '/login', as: 'Login', component: Login }
 ])
 export class AlluComponent {

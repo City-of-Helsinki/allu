@@ -3,11 +3,11 @@ import {FORM_DIRECTIVES} from '@angular/common';
 import {ROUTER_DIRECTIVES, RouteConfig, Router} from '@angular/router-deprecated';
 
 import {MdToolbar} from '@angular2-material/toolbar';
+import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 import {TypeComponent} from '../../component/application/type/type.component';
-import {LocationComponent} from '../../component/application/location/location.component';
-
+import {OutdoorEventComponent} from '../../component/application/outdoor-event/outdoor-event.component';
 
 import {MapComponent} from '../../component/map/map.component';
 import {WorkqueueComponent} from '../../component/workqueue/workqueue.component';
@@ -32,21 +32,31 @@ import {ApplicationSaveEvent} from '../../event/save/application-save-event';
   ],
   directives: [
     ROUTER_DIRECTIVES,
-    MdToolbar
+    MdToolbar,
+    MD_CARD_DIRECTIVES
   ]
 })
 
 @RouteConfig([
   { path: '/', as: 'Type', component: TypeComponent }, //  useAsDefault: true }, coming soon!
-  { path: '/location', as: 'Location', component: LocationComponent }
+  { path: '/outdoor-event', as: 'OutdoorEventComponent', component: OutdoorEventComponent }
 ])
 
 export class ApplicationComponent implements EventListener {
   public application: any;
   public workqueue: WorkqueueService;
+  public applications: any;
 
   constructor(public router: Router, private eventService: EventService, workqueue: WorkqueueService) {
     this.workqueue = workqueue;
+    this.applications = [{
+      name: 'Muu',
+      id: 'Type'
+    },
+    {
+      name: 'Ulkoilmatapahtuma',
+      id: 'OutdoorEventComponent'
+    }];
   };
 
   public handle(event: Event): void {
@@ -54,4 +64,24 @@ export class ApplicationComponent implements EventListener {
       alert('Application stored!');
     }
   }
+
+  typeSelection(value) {
+    console.log(value);
+    this.router.navigate(['/Applications/' + value]);
+  }
+
+
+  save(application: any) {
+    // Save application
+    console.log('Saving application', application);
+    let customer = new Customer(application.applicant.name);
+    let newApplication = new Application(undefined, 'uusi hakemus', 'uusi hakemus', 'tyyppi', 'aika', 1, 1, undefined, customer);
+    let saveEvent = new ApplicationSaveEvent(newApplication);
+    this.eventService.send(this, saveEvent);
+
+      // console.log(application);
+      // this.workqueue.add(application);
+      // console.log(this.workqueue.getAll());
+
+   }
 }
