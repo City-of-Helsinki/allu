@@ -45,23 +45,11 @@ export class LocationComponent implements EventListener {
   };
 
   public handle(event: Event): void {
-    if (event instanceof ApplicationsAnnounceEvent) {
-      alert('Application stored!');
-    }
   }
 
 
   save(application: any) {
-    // Save application
     console.log('Saving application', application);
-    let customer = new Customer(application.applicant.name);
-    let newApplication = new Application(undefined, 'uusi hakemus', 'uusi hakemus', 'tyyppi', 'aika', 1, 1, undefined, customer);
-    let saveEvent = new ApplicationSaveEvent(newApplication);
-    this.eventService.send(this, saveEvent);
-
-      // console.log(application);
-      // this.workqueue.add(application);
-      // console.log(this.workqueue.getAll());
-
-   }
+    // TODO: implement
+  }
 }
