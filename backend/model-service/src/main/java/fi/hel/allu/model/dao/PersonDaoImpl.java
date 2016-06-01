@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.types.Projections;
 import com.querydsl.sql.SQLQueryFactory;
 
@@ -16,6 +18,7 @@ public class PersonDaoImpl implements PersonDao {
     private SQLQueryFactory queryFactory;
 
     @Override
+    @Transactional(readOnly = true)
     public Person findById(int id) {
         QPerson person = new QPerson("p");
         List<Person> persons = queryFactory.select(Projections.bean(Person.class, person.all())).from(person)
@@ -24,6 +27,7 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     @Override
+    @Transactional
     public Person insert(Person personData) {
         QPerson person = new QPerson("p");
         int id = queryFactory.insert(person).populate(personData).executeWithKey(person.id);
@@ -31,6 +35,7 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     @Override
+    @Transactional
     public Person update(int id, Person personData) {
         QPerson person = new QPerson("p");
         personData.setId(id);
@@ -39,6 +44,7 @@ public class PersonDaoImpl implements PersonDao {
     }
 
     @Override
+    @Transactional
     public void deleteAll() {
         QPerson person = new QPerson("p");
         queryFactory.delete(person).execute();
