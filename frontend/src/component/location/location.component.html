@@ -4,9 +4,25 @@
 <div class="">
   <md-card style="padding-right:100px;">
     <md-card-title>Sijainti</md-card-title>
-    <md-card-content>
+    <md-card-content class="mapcontainer">
       <map></map>
     </md-card-content>
   </md-card>
 
+</div>
+<div style="display:flex; flex-direction: column;">
+  <md-card style="padding-right:100px;">
+    <md-card-title>Tallennus</md-card-title>
+    <md-card-content style="display:flex; flex-direction: row;">
+      <div class="" style="flex: 75;">
+        <button md-raised-button style="margin-left: 10px;" (click)="console.log('Todo: go back to application');" >EDELLINEN</button>
+      </div>
+      <div class="" style="flex: 25;">
+        <button md-raised-button style="margin-left: 10px;" (click)="save(application)">TALLENNA</button>
+        <button md-raised-button style="margin-left: 10px;">YHTEENVETO</button>
+
+      </div>
+
+    </md-card-content>
+  </md-card>
 </div>

@@ -109,6 +109,8 @@ export class MapComponent implements EventListener {
             layer = e.layer;
 
         drawnItems.addLayer(layer);
+        console.log(layer);
+        // this.eventService.send(this, new ShapeCreatedEvent());
       });
 
       // Add zoom controls
