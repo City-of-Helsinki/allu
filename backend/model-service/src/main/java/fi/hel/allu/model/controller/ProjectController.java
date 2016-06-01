@@ -1,25 +1,19 @@
 package fi.hel.allu.model.controller;
 
-import java.util.Optional;
-
-import javax.inject.Inject;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Project;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
 
-    @Inject
+    @Autowired
     private ProjectDao projectDao;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
@@ -39,7 +33,7 @@ public class ProjectController {
 
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity<Project> insert(@RequestBody(required = true) Project project) {
-        if (project.getProjectId() != null) {
+        if (project.getId() != null) {
             throw new IllegalArgumentException("Id must be null for insert");
         }
         return new ResponseEntity<Project>(projectDao.insert(project), HttpStatus.OK);

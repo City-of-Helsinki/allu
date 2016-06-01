@@ -1,29 +1,29 @@
 package fi.hel.allu.model.controller;
 
-import javax.inject.Inject;
-
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import fi.hel.allu.model.dao.PersonDao;
 import fi.hel.allu.model.domain.Person;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/persons")
 public class PersonController {
 
-    @Inject
+    @Autowired
     private PersonDao personDao;
 
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Person> person(@PathVariable int id) {
-        Person person = personDao.findById(id);
-        return new ResponseEntity<>(person, person != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+        Optional<Person> person = personDao.findById(id);
+        if (person.isPresent()) {
+            return new ResponseEntity<>(person.get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

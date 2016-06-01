@@ -1,15 +1,10 @@
 package fi.hel.allu.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-
+import fi.hel.allu.model.dao.PersonDao;
+import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,11 +15,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import fi.hel.allu.model.dao.PersonDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -54,7 +51,7 @@ public class ApplicationControllerTest {
   @Test
   public void testAddApplicationWithId() throws Exception {
     Application app = prepareApplication("Test Application", "Handlaaja");
-    app.setApplicationId(123);
+    app.setId(123);
     wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
   }
 
@@ -81,14 +78,14 @@ public class ApplicationControllerTest {
   public void testFindExisting() throws Exception {
     // Setup: insert an application
     Application appIn = prepareApplication("Test Application", "Handler");
-    appIn.setDescription("Test Application description");
+    appIn.setStatus("Test Application status");
     ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
     Application appInResult = wtc.parseObjectFromResult(resultActions, Application.class);
     // Test: try to read the same application back
-    resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getApplicationId())))
+    resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
         .andExpect(status().isOk());
     Application appOut = wtc.parseObjectFromResult(resultActions, Application.class);
-    assertEquals(appIn.getDescription(), appOut.getDescription());
+    assertEquals(appIn.getStatus(), appOut.getStatus());
   }
 
   @Test
@@ -142,12 +139,11 @@ public class ApplicationControllerTest {
   public void testUpdateExisting() throws Exception {
     // Setup: insert an application
     Application appIn = prepareApplication("Test Application", "Handler");
-    appIn.setDescription("Test Application description");
     ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
     Application appInResult = wtc.parseObjectFromResult(resultActions, Application.class);
     // Test: try to update the application
     appInResult.setStatus("draft");
-    resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getApplicationId())), appInResult)
+    resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
     assertEquals("draft", updateResult.getStatus());
@@ -175,18 +171,17 @@ public class ApplicationControllerTest {
 
   private Pair<Integer, Integer> addPersonAndProject() throws Exception {
     Person person = new Person();
-    person.setFirstName("Pentti");
+    person.setName("Pentti");
     person.setSsn("121212-xxxx");
     person.setEmail("pena@dev.null");
     Person insertedPerson = personDao.insert(person);
     Project project = new Project();
-    project.setProjectName("Viemärityö");
+    project.setName("Viemärityö");
     project.setOwnerId(insertedPerson.getId());
     project.setContactId(insertedPerson.getId());
-    project.setProjectName("Vimäriprojekti");
     project.setStartDate(Calendar.getInstance().getTime());
     Project insertedProject = projectDao.insert(project);
-    return new Pair<>(insertedPerson.getId(), insertedProject.getProjectId());
+    return new Pair<>(insertedPerson.getId(), insertedProject.getId());
   }
 
 }

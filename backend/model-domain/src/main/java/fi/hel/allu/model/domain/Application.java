@@ -2,41 +2,70 @@ package fi.hel.allu.model.domain;
 
 import java.time.ZonedDateTime;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
-
 /**
  * In Finnish: hakemus
  */
 public class Application {
 
-  private Integer applicationId;
-  private Integer projectId;
-  private String name;
-  private String description;
-  private String handler;
-  private Integer customerId;
-  private String status;
-  private String type;
-  private ZonedDateTime creationTime;
+  /**
+   * in Finnish: Hakemuksen tunniste
+   */
+  private Integer id;
 
-  @JsonSerialize(using = ZonedDateTimeSerializer.class)
-  private ZonedDateTime startTime;
+  /**
+   * in Finnish: Hakemukseen liittyvän hankkeen tunniste
+   */
+  private Integer projectId;
+
+  /**
+   * in Finnish: Hakemuksen käsittelijä
+   */
+  private String handler;
+
+  /**
+   * in Finnish: Hakemukseen liittyvän toimeksiantajan tunniste
+   */
+  private Integer customerId;
+
+  /**
+   * in Finnish: Hakemukseen liittyvän hakijan tunniste
+   */
+  private Integer applicantId;
+
+  /**
+   * in Finnish: Hakemuksen tila
+   */
+  private String status;
+
+  /**
+   * in Finnish: Hakemuksen tyyppi
+   */
+  private String type;
+
+  /**
+   * in Finnish: Hakemuksen nimi
+   */
+  private String name;
+
+  /**
+   * in Finnish: Hakemuksen luontiaika
+   */
+  private ZonedDateTime creationTime;
 
   /*
    * Application ID, database primary key
    */
-  public Integer getApplicationId() {
-    return applicationId;
+  public Integer getId() {
+    return id;
   }
 
-  public void setApplicationId(Integer applicationId) {
-    this.applicationId = applicationId;
+  public void setId(Integer id) {
+    this.id = id;
   }
 
   /*
-   * Project ID, refers Project.projectId
-   */
+     * Project ID, refers Project.projectId
+     */
   public Integer getProjectId() {
     return projectId;
   }
@@ -46,7 +75,7 @@ public class Application {
   }
 
   /*
-   * Application name, in Finnish: Hakemuksen nimi
+   * Application name, in Finnish: Tapahtuman nimi
    */
   public String getName() {
     return name;
@@ -54,17 +83,6 @@ public class Application {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  /*
-   * Application description, in Finnish: Hakemuksen kuvaus
-   */
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
   }
 
   /*
@@ -122,15 +140,11 @@ public class Application {
     this.creationTime = creationTime;
   }
 
-  /*
-   * Start time, in Finnish: Hakemuksen aloituspäivämäärä
-   */
-  public ZonedDateTime getStartTime() {
-    return startTime;
+  public Integer getApplicantId() {
+    return applicantId;
   }
 
-  public void setStartTime(ZonedDateTime startTime) {
-    this.startTime = startTime;
+  public void setApplicantId(Integer applicantId) {
+    this.applicantId = applicantId;
   }
-
 }

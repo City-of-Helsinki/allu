@@ -24,7 +24,7 @@ public class ApplicationDao {
 
   @Transactional(readOnly = true)
   public Optional<Application> findById(int id) {
-    Application appl = queryFactory.select(applicationBean).from(application).where(application.applicationId.eq(id))
+    Application appl = queryFactory.select(applicationBean).from(application).where(application.id.eq(id))
         .fetchOne();
     return Optional.ofNullable(appl);
   }
@@ -41,7 +41,7 @@ public class ApplicationDao {
 
   @Transactional
   public Application insert(Application appl) {
-    Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.applicationId);
+    Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
     if (id == null) {
       throw new RuntimeException("Failed to insert record");
     }
@@ -50,8 +50,8 @@ public class ApplicationDao {
 
   @Transactional
   public Application update(int id, Application appl) {
-    appl.setApplicationId(id);
-    long changed = queryFactory.update(application).populate(appl).where(application.applicationId.eq(id)).execute();
+    appl.setId(id);
+    long changed = queryFactory.update(application).populate(appl).where(application.id.eq(id)).execute();
     if (changed != 1) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
