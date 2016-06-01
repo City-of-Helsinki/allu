@@ -1,0 +1,33 @@
+@import '../../assets/colors';
+
+:host {
+  max-width: 1450px;
+  width: 100%;
+  // .md-input-underline {
+  //   border-top: 1px solid rgba(2, 150, 136, 1);
+  // }
+  md-card {
+    margin: 10px;
+  }
+
+  .mapcontainer {
+    height: 500px;
+  }
+
+  map {
+    height: 80%;
+    position: absolute;
+    width: 97%;
+  }
+}
+
+workqueue {
+  width: 100%;
+}
+
+.card-media {
+  background-color: #999999;
+}
+[md-button] [md-icon] {
+  color: rgba(0, 0, 0, 0.8);
+}

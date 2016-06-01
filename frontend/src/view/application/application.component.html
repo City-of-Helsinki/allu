@@ -1,4 +1,23 @@
 <md-toolbar>
   <span>UUSI HAKEMUS</span>
 </md-toolbar>
-<router-outlet></router-outlet>
+<div class="" style="background: whitesmoke; padding-top:10px;">
+  <md-content layout-padding layout-wrap style="">
+    <div class="" style="width: 40%;">
+      <md-card style="padding-right:100px;">
+        <md-card-title>Hakemuksen tyyppi</md-card-title>
+        <md-card-content>
+          <md-input-container>
+            <label class="md-input-placeholder md-float" for="type">Valitse hakemuksen tyyppi</label>
+            <br>
+            <select style="width: 100%;" class="" name="type" (change)="typeSelection($event.target.value)">
+              <option *ngFor="let application of applications" [value]="application.id">{{application.name}}</option>
+            </select>
+          </md-input-container>
+        </md-card-content>
+      </md-card>
+    </div>
+    <router-outlet></router-outlet>
+  </md-content>
+
+</div>
