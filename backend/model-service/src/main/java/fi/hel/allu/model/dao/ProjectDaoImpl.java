@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
@@ -20,12 +22,14 @@ public class ProjectDaoImpl implements ProjectDao {
     final QBean<Project> projectBean = bean(Project.class, project.all());
 
     @Override
+    @Transactional(readOnly = true)
     public Optional<Project> findById(int id) {
         Project proj = queryFactory.select(projectBean).from(project).where(project.projectId.eq(id)).fetchOne();
         return Optional.ofNullable(proj);
     }
 
     @Override
+    @Transactional
     public Project insert(Project p) {
         Integer id = queryFactory.insert(project).populate(p).executeWithKey(project.projectId);
         if (id == null) {
@@ -35,6 +39,7 @@ public class ProjectDaoImpl implements ProjectDao {
     }
 
     @Override
+    @Transactional
     public Project update(int id, Project p) {
         p.setProjectId(id);
         long changed = queryFactory.update(project).populate(p).where(project.projectId.eq(id)).execute();

@@ -4,9 +4,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Arrays;
 
 import org.junit.Assert;
@@ -24,13 +22,12 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.querydsl.sql.SQLQueryFactory;;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;;
 
 @Component
 @SpringApplicationConfiguration(classes = App.class)
 @WebAppConfiguration
-public final class WebTestCommon {
+public class WebTestCommon {
 
   private MockMvc mockMvc;
 
@@ -53,8 +50,7 @@ public final class WebTestCommon {
   }
 
   @Autowired
-  private SQLQueryFactory queryFactory;
-
+  private WebTestSqlRunner webTestSqlRunner;
   /*
    * Setup: creates mockMvc
    */
@@ -91,26 +87,9 @@ public final class WebTestCommon {
     return mapper.readValue(resultString, theClass);
   }
 
-  /*
-   * Execute the given SQL statements.
-   */
-  public void runSql(String... sql) throws SQLException {
-    Statement stmt = null;
-    try {
-      Connection conn = queryFactory.getConnection();
-      stmt = conn.createStatement();
-      for (String s : sql) {
-        stmt.executeUpdate(s);
-      }
-    } finally {
-      if (stmt != null) {
-        stmt.close();
-      }
-    }
-  }
 
   private void deleteAllData() throws SQLException {
-    runSql(DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_PERSONS);
+    webTestSqlRunner.runSql(DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_PERSONS);
   }
 
   @SuppressWarnings("unchecked")
