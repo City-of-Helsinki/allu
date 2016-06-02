@@ -136,12 +136,11 @@ public class CreateApplicationServiceTest {
 
     private fi.hel.allu.model.domain.Application createMockDomainApplication() {
         fi.hel.allu.model.domain.Application applicationDomain = new fi.hel.allu.model.domain.Application();
-        applicationDomain.setApplicationId(4321);
+        applicationDomain.setId(4321);
         applicationDomain.setName("Mock name");
         applicationDomain.setProjectId(12345);
         applicationDomain.setCreationTime(ZonedDateTime.now());
         applicationDomain.setCustomerId(111);
-        applicationDomain.setDescription("Mock description");
         applicationDomain.setHandler("Mock handler");
         applicationDomain.setType("Mock type");
         return applicationDomain;

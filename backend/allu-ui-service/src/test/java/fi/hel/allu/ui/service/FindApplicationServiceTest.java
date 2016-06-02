@@ -106,7 +106,7 @@ public class FindApplicationServiceTest {
     private ResponseEntity<fi.hel.allu.model.domain.Application[]> createMockModelDomainApplicationResponse() {
         fi.hel.allu.model.domain.Application applicationModelArray[] = new fi.hel.allu.model.domain.Application[2];
         fi.hel.allu.model.domain.Application applicationModel = new fi.hel.allu.model.domain.Application();
-        applicationModel.setApplicationId(123);
+        applicationModel.setId(123);
         applicationModel.setType("MockType");
         applicationModel.setHandler("MockHandler");
         applicationModel.setStatus("MockStatus");
@@ -116,7 +116,7 @@ public class FindApplicationServiceTest {
         applicationModelArray[0] = applicationModel;
 
         applicationModel = new fi.hel.allu.model.domain.Application();
-        applicationModel.setApplicationId(1234);
+        applicationModel.setId(1234);
         applicationModel.setType("MockType2");
         applicationModel.setHandler("MockHandler2");
         applicationModel.setStatus("MockStatus2");
@@ -130,7 +130,7 @@ public class FindApplicationServiceTest {
 
     private fi.hel.allu.model.domain.Application createMockModelDomainApplication() {
         fi.hel.allu.model.domain.Application applicationModel = new fi.hel.allu.model.domain.Application();
-        applicationModel.setApplicationId(123);
+        applicationModel.setId(123);
         applicationModel.setType("MockType");
         applicationModel.setHandler("MockHandler");
         applicationModel.setStatus("MockStatus");
@@ -143,12 +143,11 @@ public class FindApplicationServiceTest {
     private ResponseEntity<Person> createMockModelPerson() {
         Person personModel = new Person();
         personModel.setStreetAddress("Mock address");
-        personModel.setZipCode("123");
+        personModel.setPostalCode("123");
         personModel.setPhone("33333");
-        personModel.setLastName("Last");
+        personModel.setName("Last");
         personModel.setId(222);
         personModel.setSsn("3242423");
-        personModel.setFirstName("First");
         personModel.setEmail("email");
         return new ResponseEntity<>(personModel, HttpStatus.OK);
     }
@@ -156,8 +155,8 @@ public class FindApplicationServiceTest {
     private ResponseEntity<fi.hel.allu.model.domain.Project> createMockModelProject() {
         fi.hel.allu.model.domain.Project projectModel = new fi.hel.allu.model.domain.Project();
         projectModel.setOwnerId(111);
-        projectModel.setProjectId(555);
-        projectModel.setProjectName("MockName");
+        projectModel.setId(555);
+        projectModel.setName("MockName");
         projectModel.setContactId(666);
         return new ResponseEntity<>(projectModel, HttpStatus.OK);
     }
