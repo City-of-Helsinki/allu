@@ -13,9 +13,9 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.querydsl.sql.PostgreSQLTemplates;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.SQLTemplates;
+import com.querydsl.sql.spatial.PostGISTemplates;
 import com.querydsl.sql.spring.SpringConnectionProvider;
 import com.querydsl.sql.spring.SpringExceptionTranslator;
 
@@ -37,7 +37,7 @@ public class JdbcConfiguration {
 
   @Bean
   public com.querydsl.sql.Configuration querydslConfiguration() {
-    SQLTemplates templates = PostgreSQLTemplates.builder().build();
+    SQLTemplates templates = PostGISTemplates.builder().printSchema().build();
     com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
     configuration.setExceptionTranslator(new SpringExceptionTranslator());
     return configuration;

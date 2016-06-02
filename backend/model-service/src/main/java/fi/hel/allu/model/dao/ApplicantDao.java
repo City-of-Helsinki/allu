@@ -1,16 +1,19 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.QueryException;
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.model.domain.Applicant;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import static com.querydsl.core.types.Projections.bean;
+import static fi.vincit.allu.QApplicant.applicant;
 
 import java.util.Optional;
 
-import static com.querydsl.core.types.Projections.bean;
-import static fi.vincit.allu.QApplicant.applicant;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.QueryException;
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQueryFactory;
+
+import fi.hel.allu.NoSuchEntityException;
+import fi.hel.allu.model.domain.Applicant;
 
 public class ApplicantDao {
     @Autowired
@@ -37,8 +40,8 @@ public class ApplicantDao {
     public Applicant update(int id, Applicant applicantData) {
         applicantData.setId(id);
         long changed = queryFactory.update(applicant).populate(applicantData).where(applicant.id.eq(id)).execute();
-        if (changed != 1) {
-            throw new QueryException("Failed to update the record");
+        if (changed == 0) {
+            throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
         }
         return findById(id).get();
     }

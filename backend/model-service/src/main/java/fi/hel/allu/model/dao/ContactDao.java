@@ -1,17 +1,20 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.QueryException;
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.model.domain.Contact;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import static com.querydsl.core.types.Projections.bean;
+import static fi.vincit.allu.QContact.contact;
 
 import java.util.List;
 import java.util.Optional;
 
-import static com.querydsl.core.types.Projections.bean;
-import static fi.vincit.allu.QContact.contact;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.QueryException;
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQueryFactory;
+
+import fi.hel.allu.NoSuchEntityException;
+import fi.hel.allu.model.domain.Contact;
 
 public class ContactDao {
     @Autowired
@@ -43,8 +46,8 @@ public class ContactDao {
     public Contact update(int id, Contact contactData) {
         contactData.setId(id);
         long changed = queryFactory.update(contact).populate(contactData).where(contact.id.eq(id)).execute();
-        if (changed != 1) {
-            throw new QueryException("Failed to update the record");
+        if (changed == 0) {
+            throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
         }
         return findById(id).get();
     }

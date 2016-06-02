@@ -1,10 +1,15 @@
 package fi.hel.allu.model;
 
-import fi.hel.allu.model.dao.PersonDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+
 import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,13 +20,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import fi.hel.allu.model.dao.PersonDao;
+import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -156,7 +159,7 @@ public class ApplicationControllerTest {
   @Test
   public void updateNonexistent() throws Exception {
     Application app = prepareApplication("Test Application", "Hanskaaja");
-    wtc.perform(put("/applications/314159"), app).andExpect(status().isBadRequest());
+    wtc.perform(put("/applications/314159"), app).andExpect(status().isNotFound());
   }
 
   // Create and prepare an application for insertion:

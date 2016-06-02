@@ -1,17 +1,19 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.QueryException;
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.NoSuchEntityException;
-import fi.hel.allu.model.domain.Person;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
+import static com.querydsl.core.types.Projections.bean;
+import static fi.vincit.allu.QPerson.person;
 
 import java.util.Optional;
 
-import static com.querydsl.core.types.Projections.bean;
-import static fi.vincit.allu.QPerson.person;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.querydsl.core.QueryException;
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQueryFactory;
+
+import fi.hel.allu.NoSuchEntityException;
+import fi.hel.allu.model.domain.Person;
 
 public class PersonDao {
 
@@ -39,8 +41,8 @@ public class PersonDao {
     public Person update(int id, Person personData) {
         personData.setId(id);
         long changed = queryFactory.update(person).populate(personData).where(person.id.eq(id)).execute();
-        if (changed != 1) {
-            throw new QueryException("Failed to update the record");
+        if (changed == 0) {
+            throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
         }
         return findById(id).get();
     }

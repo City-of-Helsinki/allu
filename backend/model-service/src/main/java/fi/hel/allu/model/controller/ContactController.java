@@ -1,15 +1,21 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.NoSuchEntityException;
-import fi.hel.allu.model.dao.ContactDao;
-import fi.hel.allu.model.domain.Contact;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
+import fi.hel.allu.NoSuchEntityException;
+import fi.hel.allu.model.dao.ContactDao;
+import fi.hel.allu.model.domain.Contact;
 
 @RestController
 @RequestMapping("/contacts")
@@ -21,7 +27,8 @@ public class ContactController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Contact> find(@PathVariable int id) {
         Optional<Contact> contact = contactDao.findById(id);
-        Contact contactValue = contact.orElseThrow(() -> new NoSuchEntityException("Contact not found"));
+        Contact contactValue = contact
+                .orElseThrow(() -> new NoSuchEntityException("Contact not found", Integer.toString(id)));
         return new ResponseEntity<>(contactValue, HttpStatus.OK);
     }
 

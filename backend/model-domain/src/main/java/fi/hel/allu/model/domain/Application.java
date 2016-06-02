@@ -16,6 +16,7 @@ public class Application {
   private String type;
   private String name;
   private ZonedDateTime creationTime;
+  private Integer locationId;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -114,5 +115,16 @@ public class Application {
 
   public void setApplicantId(Integer applicantId) {
     this.applicantId = applicantId;
+  }
+
+  /**
+   * In Finnish: Hakemuksen sijainnin tunniste
+   */
+  public Integer getLocationId() {
+    return locationId;
+  }
+
+  public void setLocationId(Integer locationId) {
+    this.locationId = locationId;
   }
 }

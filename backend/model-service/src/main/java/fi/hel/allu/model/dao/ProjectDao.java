@@ -5,15 +5,14 @@ import static fi.vincit.allu.QProject.project;
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.NoSuchEntityException;
 import fi.hel.allu.model.domain.Project;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 public class ProjectDao {
 
@@ -38,8 +37,8 @@ public class ProjectDao {
     public Project update(int id, Project p) {
         p.setId(id);
         long changed = queryFactory.update(project).populate(p).where(project.id.eq(id)).execute();
-        if (changed != 1) {
-            throw new QueryException("Failed to update the record");
+        if (changed == 0) {
+            throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
         }
         return findById(id).get();
     }
