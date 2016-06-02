@@ -6,6 +6,7 @@ import {TaskStartedEvent} from '../../event/task-started-event';
 import {TaskFinishedEvent} from '../../event/task-finished-event';
 
 export abstract class Task {
+
   public execute(runner: EventListener, eventService: EventService, event: Event): void {
     eventService.send(runner, new TaskStartedEvent(this.getTaskName()));
     this.createTask(runner, eventService, event).then(() => eventService.send(runner, new TaskFinishedEvent(this.getTaskName())));

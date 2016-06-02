@@ -139,7 +139,7 @@ export class OutdoorEventComponent implements EventListener {
     // Save application
     console.log('Saving application', application);
     let postalAddress =
-      new PostalAddress(application.customer.address, application.customer.postOffice, application.customer.zipCode, undefined);
+      new PostalAddress(application.customer.address, application.customer.zipCode, undefined);
     // TODO: applicant is not the customer? Or is it?
     let customer =
       new Customer(

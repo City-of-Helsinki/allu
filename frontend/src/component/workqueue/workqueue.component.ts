@@ -14,7 +14,7 @@ import {LatLng} from '../../model/location/latlng';
 import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {Application} from '../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
-import {TaskManager} from '../../service/task/task-manager.service';
+import {TaskManagerService} from '../../service/task/task-manager.service';
 
 @Component({
   selector: 'workqueue',
@@ -37,13 +37,9 @@ export class WorkqueueComponent implements EventListener, OnInit, OnDestroy {
     this.applicationsQueue = [];
   }
 
-  // ngOnInit() {
-  //   this.joblist = this.workqueue.getAll();
-  // }
-
   ngOnInit() {
     this.eventService.subscribe(this);
-    this.eventService.send(this, new ApplicationsLoadEvent());
+    // this.eventService.send(this, new ApplicationsLoadEvent());
   }
 
   ngOnDestroy() {
@@ -59,13 +55,6 @@ export class WorkqueueComponent implements EventListener, OnInit, OnDestroy {
   }
 
   jobClick(job: any) {
-    // Show marker in map
-    // console.log(job);
-
     this.eventService.send(this, new ApplicationSelectionEvent(job.id));
-
-    /* This needs to be done in Perttutechture */
-    // this.marker.showJobMarker();
-
- }
+  }
 }

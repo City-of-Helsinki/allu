@@ -23,7 +23,7 @@ export class ApplicationMapper {
   public static mapFrontend(application: Application): BackendApplication {
     return {
       id: application.id,
-      name: application.title,
+      name: application.name,
       type: application.type,
       status: application.status,
       handler: undefined, // TODO: missing from application

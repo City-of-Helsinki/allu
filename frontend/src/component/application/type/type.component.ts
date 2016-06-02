@@ -52,4 +52,42 @@ export class TypeComponent implements EventListener {
       alert('Application stored!');
     }
   }
+
+  save(application: any) {
+    // Save application
+    console.log('Saving application', application);
+    let postalAddress =
+      new PostalAddress(application.customer.address, application.customer.zipCode, undefined);
+    // TODO: applicant is not the customer? Or is it?
+    let customer =
+      new Customer(
+        undefined,
+        application.applicant.name,
+        application.customer.type,
+        postalAddress,
+        application.customer.email,
+        undefined);
+    console.log('Mapped customer', customer);
+    let newApplication =
+      new Application(
+        undefined, // application.id,
+        application.title,
+        application.type,
+        application.status,
+        1,
+        1,
+        undefined,
+        customer,
+        undefined,
+        undefined,
+        undefined,
+        undefined);
+    let saveEvent = new ApplicationSaveEvent(newApplication);
+    this.eventService.send(this, saveEvent);
+
+      // console.log(application);
+      // this.workqueue.add(application);
+      // console.log(this.workqueue.getAll());
+
+   }
 }

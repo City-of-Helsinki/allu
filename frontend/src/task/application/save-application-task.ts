@@ -8,6 +8,7 @@ import {ApplicationsAnnounceEvent} from '../../event/announce/applications-annou
 import {ApplicationSaveEvent} from '../../event/save/application-save-event';
 import {Application} from '../../model/application/application';
 import {ErrorEvent} from '../../event/error-event';
+import {ApplicationAddedAnnounceEvent} from '../../event/announce/application-added-announce-event';
 
 @Injectable()
 export class SaveApplicationTask extends Task {
@@ -21,7 +22,7 @@ export class SaveApplicationTask extends Task {
     let addPromise = this.applicationService.addApplication(saEvent.application);
 
     return addPromise.then((appl: Application) => {
-      let aaEvent = new ApplicationsAnnounceEvent([appl]);
+      let aaEvent = new ApplicationAddedAnnounceEvent(appl);
       eventService.send(runner, aaEvent);
     }).catch((err: any) => { eventService.send(runner, new ErrorEvent(saEvent)); });
   }
