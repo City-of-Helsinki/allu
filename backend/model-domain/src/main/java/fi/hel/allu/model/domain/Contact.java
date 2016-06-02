@@ -4,19 +4,9 @@ package fi.hel.allu.model.domain;
  * in Finnish: Yhteyshenkilö
  */
 public class Contact {
-    /**
-     * in Finnish: Yhteyshenkilön tunniste
-     */
+
     private Integer id;
-
-    /**
-     * in Finnish: Yhteyshenkilön organisaation tunniste
-     */
     private Integer organizationId;
-
-    /**
-     * in Finnish: Yhteyshenkilön henkilön tunniste
-     */
     private Integer personId;
 
 

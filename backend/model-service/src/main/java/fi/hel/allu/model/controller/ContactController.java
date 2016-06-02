@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.NoSuchEntityException;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.domain.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,21 +21,14 @@ public class ContactController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Contact> find(@PathVariable int id) {
         Optional<Contact> contact = contactDao.findById(id);
-        if (contact.isPresent()) {
-            return new ResponseEntity<>(contact.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Contact contactValue = contact.orElseThrow(() -> new NoSuchEntityException("Contact not found"));
+        return new ResponseEntity<>(contactValue, HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public ResponseEntity<List<Contact>> findByOrganization(@RequestParam(value = "organizationId") final int organizationId) {
         List<Contact> contacts = contactDao.findByOrganization(organizationId);
-        if (contacts.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
-            return new ResponseEntity<>(contacts, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(contacts, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

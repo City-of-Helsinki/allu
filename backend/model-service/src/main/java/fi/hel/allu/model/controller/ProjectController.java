@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.NoSuchEntityException;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Project;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,8 @@ public class ProjectController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Project> find(@PathVariable int id) {
         Optional<Project> project = projectDao.findById(id);
-        if (project.isPresent()) {
-            return new ResponseEntity<Project>(project.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<Project>(HttpStatus.NOT_FOUND);
-        }
+        Project projectValue = project.orElseThrow(() -> new NoSuchEntityException("Project not found"));
+        return new ResponseEntity<Project>(projectValue, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

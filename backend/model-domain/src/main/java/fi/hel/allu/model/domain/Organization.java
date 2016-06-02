@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+
 public class Organization {
     private Integer id;
     private String name;

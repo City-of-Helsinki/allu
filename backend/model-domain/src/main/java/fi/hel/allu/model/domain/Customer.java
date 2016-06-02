@@ -4,29 +4,11 @@ package fi.hel.allu.model.domain;
  * in Finnish: Toimeksiantaja
  */
 public class Customer {
-    /**
-     * in Finnish: Toimeksiantajan tunniste
-     */
+
     private Integer id;
-
-    /**
-     * in Finnish: tyyppi, ihminen tai yritys/yhteisö
-     */
     private String type;
-
-    /**
-     * in Finnish: SAP-tunnus
-     */
     private String sapId;
-
-    /**
-     * in Finnish: Toimeksiantajaan liittyvän henkilön tunniste
-     */
     private Integer personId;
-
-    /**
-     * in Finnish: Toimeksiantajaan liittyvän organisaation tunniste
-     */
     private Integer organizationId;
 
 

@@ -6,6 +6,7 @@ import static fi.vincit.allu.QApplication.application;
 import java.util.List;
 import java.util.Optional;
 
+import com.querydsl.core.QueryException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,9 +43,6 @@ public class ApplicationDao {
   @Transactional
   public Application insert(Application appl) {
     Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
-    if (id == null) {
-      throw new RuntimeException("Failed to insert record");
-    }
     return findById(id).get();
   }
 
@@ -53,13 +51,8 @@ public class ApplicationDao {
     appl.setId(id);
     long changed = queryFactory.update(application).populate(appl).where(application.id.eq(id)).execute();
     if (changed != 1) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+      throw new QueryException("Failed to update the record");
     }
     return findById(id).get();
-  }
-
-  @Transactional
-  public void deleteAll() {
-    queryFactory.delete(application).execute();
   }
 }

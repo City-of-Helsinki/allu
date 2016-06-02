@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.model.domain.Customer;
@@ -28,9 +29,6 @@ public class CustomerDao {
     @Transactional
     public Customer insert(Customer customerData) {
         Integer id = queryFactory.insert(customer).populate(customerData).executeWithKey(customer.id);
-        if (id == null) {
-            throw new RuntimeException("Failed to insert record");
-        }
         return findById(id).get();
     }
 
@@ -39,7 +37,7 @@ public class CustomerDao {
         customerData.setId(id);
         long changed = queryFactory.update(customer).populate(customerData).where(customer.id.eq(id)).execute();
         if (changed != 1) {
-            throw new RuntimeException("Failed to update the record");
+            throw new QueryException("Failed to update the record");
         }
         return findById(id).get();
     }

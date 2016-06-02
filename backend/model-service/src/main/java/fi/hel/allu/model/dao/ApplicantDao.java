@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.model.domain.Applicant;
@@ -26,9 +27,6 @@ public class ApplicantDao {
     @Transactional
     public Applicant insert(Applicant applicantData) {
         Integer id = queryFactory.insert(applicant).populate(applicantData).executeWithKey(applicant.id);
-        if (id == null) {
-            throw new RuntimeException("Failed to insert record");
-        }
         return findById(id).get();
     }
 
@@ -37,7 +35,7 @@ public class ApplicantDao {
         applicantData.setId(id);
         long changed = queryFactory.update(applicant).populate(applicantData).where(applicant.id.eq(id)).execute();
         if (changed != 1) {
-            throw new RuntimeException("Failed to update the record");
+            throw new QueryException("Failed to update the record");
         }
         return findById(id).get();
     }

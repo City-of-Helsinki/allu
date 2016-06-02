@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.NoSuchEntityException;
 import fi.hel.allu.model.dao.OrganizationDao;
 import fi.hel.allu.model.domain.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,8 @@ public class OrganizationController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Organization> find(@PathVariable int id) {
         Optional<Organization> organization = organizationDao.findById(id);
-        if (organization.isPresent()) {
-            return new ResponseEntity<>(organization.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Organization organizationValue = organization.orElseThrow(() -> new NoSuchEntityException("Organization not found"));
+        return new ResponseEntity<>(organizationValue, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

@@ -1,13 +1,6 @@
 package fi.hel.allu.model;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import fi.hel.allu.NoSuchEntityException;
+import fi.hel.allu.model.domain.Person;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,7 +10,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import fi.hel.allu.model.domain.Person;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -86,5 +82,14 @@ public class PersonControllerTest {
     wtc.perform(put(String.format("/persons/%d", result.getId())), newPerson).andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.city", is("Imatra")));
 
+  }
+
+  @Test
+  public void updateNonexistent() throws Exception {
+    Person person = new Person();
+    person.setName("Timpe");
+    person.setCity("Imatra");
+    person.setId(999);
+    wtc.perform(put(String.format("/persons/27312")), person).andExpect(status().isBadRequest());
   }
 }

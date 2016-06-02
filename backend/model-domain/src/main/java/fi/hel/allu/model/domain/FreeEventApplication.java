@@ -9,51 +9,17 @@ import java.time.ZonedDateTime;
  * in Finnish: Ilmaistapahtuma
  */
 public class FreeEventApplication {
-    /**
-     * in Finnish: Ilmaistapahtuman tunniste
-     */
+
     private Integer id;
-
-    /**
-     * in Finnish: Tapahtuman nimi
-     */
     private String name;
-
-    /**
-     * in Finnish: Viittaus yhteisiin hakemuksen tietoihin
-     */
     private Integer applicationId;
-
-    /**
-     * in Finnish: Tapahtuman kuvaus
-     */
     private String description;
-
-    /**
-     * in Finnish: Tapahtuman luonne
-     */
     private String nature;
-
-    /**
-     * in Finnish: Tapahtuman alkupäivä
-     */
     @JsonSerialize(using = ZonedDateTimeSerializer.class)
     private ZonedDateTime startTime;
-
-    /**
-     * in Finnish: Tapahtuman loppupäivä
-     */
     @JsonSerialize(using = ZonedDateTimeSerializer.class)
     private ZonedDateTime endTime;
-
-    /**
-     * in Finnish: Tapahtuman www-sivu
-     */
     private String url;
-
-    /**
-     * in Finnish: Tapahtuman arvioitu yleisömäärä
-     */
     private Integer audience;
 
     /**

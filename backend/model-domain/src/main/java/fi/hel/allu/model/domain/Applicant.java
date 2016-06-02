@@ -4,20 +4,8 @@ package fi.hel.allu.model.domain;
  * in Finnish: Hakija
  */
 public class Applicant {
-
-    /**
-     * in Finnish: Hakijan tunniste
-     */
     private Integer id;
-
-    /**
-     * in Finnish: Hakijaan liittyvän henkilön tunniste
-     */
     private Integer personId;
-
-    /**
-     * in Finnish: Hakijaan liittyvän organisaation tunniste
-     */
     private Integer organizationId;
 
 

@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.inject.Inject;
 
+import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
@@ -30,9 +31,6 @@ public class ProjectDao {
     @Transactional
     public Project insert(Project p) {
         Integer id = queryFactory.insert(project).populate(p).executeWithKey(project.id);
-        if (id == null) {
-            throw new RuntimeException("Failed to insert record");
-        }
         return findById(id).get();
     }
 
@@ -41,7 +39,7 @@ public class ProjectDao {
         p.setId(id);
         long changed = queryFactory.update(project).populate(p).where(project.id.eq(id)).execute();
         if (changed != 1) {
-            throw new RuntimeException("Failed to update the record");
+            throw new QueryException("Failed to update the record");
         }
         return findById(id).get();
     }

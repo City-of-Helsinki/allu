@@ -107,7 +107,9 @@ public class ApplicationControllerTest {
     Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(NUM_HENKKA, results.length);
     // Try also with nonexistent handler:
-    wtc.perform(get("/applications/byhandler/Jimi")).andExpect(status().isNotFound());
+    resultActions = wtc.perform(get("/applications/byhandler/Jimi")).andExpect(status().isOk());
+    results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    assertEquals(0, results.length);
   }
 
   @Test
@@ -131,8 +133,10 @@ public class ApplicationControllerTest {
    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(NUM_FIRST, results.length);
     // Try also with nonexistent project id:
-    wtc.perform(get(String.format("/applications/byproject/%d", app1.getProjectId() + app2.getProjectId())))
-        .andExpect(status().isNotFound());
+    resultActions =  wtc.perform(get(String.format("/applications/byproject/%d", app1.getProjectId() + app2.getProjectId())))
+        .andExpect(status().isOk());
+    results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    assertEquals(0, results.length);
   }
 
   @Test
@@ -152,7 +156,7 @@ public class ApplicationControllerTest {
   @Test
   public void updateNonexistent() throws Exception {
     Application app = prepareApplication("Test Application", "Hanskaaja");
-    wtc.perform(put("/applications/314159"), app).andExpect(status().isNotFound());
+    wtc.perform(put("/applications/314159"), app).andExpect(status().isBadRequest());
   }
 
   // Create and prepare an application for insertion:

@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.model.domain.Contact;
@@ -32,9 +33,6 @@ public class ContactDao {
     @Transactional
     public Contact insert(Contact contactData) {
         Integer id = queryFactory.insert(contact).populate(contactData).executeWithKey(contact.id);
-        if (id == null) {
-            throw new RuntimeException("Failed to insert record");
-        }
         return findById(id).get();
     }
 
@@ -43,7 +41,7 @@ public class ContactDao {
         contactData.setId(id);
         long changed = queryFactory.update(contact).populate(contactData).where(contact.id.eq(id)).execute();
         if (changed != 1) {
-            throw new RuntimeException("Failed to update the record");
+            throw new QueryException("Failed to update the record");
         }
         return findById(id).get();
     }

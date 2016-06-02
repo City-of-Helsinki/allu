@@ -7,18 +7,12 @@ import java.util.Date;
  */
 public class Project {
 
-    private Integer id; // serial primary key
-
+    private Integer id;
     private Integer ownerId;
-
     private Integer contactId;
-
     private String name;
-
     private Date startDate;
-
     private Date endDate;
-
     private String additionalInfo;
 
     /**

@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.domain.Applicant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +20,8 @@ public class ApplicantController {
     @RequestMapping(value = "/{id}", method = RequestMethod.GET)
     public ResponseEntity<Applicant> applicant(@PathVariable int id) {
         Optional<Applicant> applicant = applicantDao.findById(id);
-        if (applicant.isPresent()) {
-            return new ResponseEntity<>(applicant.get(), HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        Applicant applicantValue = applicant.orElseThrow(() -> new NoSuchEntityException("Applicant not found"));
+        return new ResponseEntity<>(applicantValue, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

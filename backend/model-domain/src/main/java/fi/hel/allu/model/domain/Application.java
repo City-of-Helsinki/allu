@@ -7,53 +7,18 @@ import java.time.ZonedDateTime;
  */
 public class Application {
 
-  /**
-   * in Finnish: Hakemuksen tunniste
-   */
   private Integer id;
-
-  /**
-   * in Finnish: Hakemukseen liittyvän hankkeen tunniste
-   */
   private Integer projectId;
-
-  /**
-   * in Finnish: Hakemuksen käsittelijä
-   */
   private String handler;
-
-  /**
-   * in Finnish: Hakemukseen liittyvän toimeksiantajan tunniste
-   */
   private Integer customerId;
-
-  /**
-   * in Finnish: Hakemukseen liittyvän hakijan tunniste
-   */
   private Integer applicantId;
-
-  /**
-   * in Finnish: Hakemuksen tila
-   */
   private String status;
-
-  /**
-   * in Finnish: Hakemuksen tyyppi
-   */
   private String type;
-
-  /**
-   * in Finnish: Hakemuksen nimi
-   */
   private String name;
-
-  /**
-   * in Finnish: Hakemuksen luontiaika
-   */
   private ZonedDateTime creationTime;
 
-  /*
-   * Application ID, database primary key
+  /**
+   * in Finnish: Hakemuksen tunniste
    */
   public Integer getId() {
     return id;
@@ -63,9 +28,9 @@ public class Application {
     this.id = id;
   }
 
-  /*
-     * Project ID, refers Project.projectId
-     */
+  /**
+   * in Finnish: Hakemukseen liittyvän hankkeen tunniste
+   */
   public Integer getProjectId() {
     return projectId;
   }
@@ -74,8 +39,8 @@ public class Application {
     this.projectId = projectId;
   }
 
-  /*
-   * Application name, in Finnish: Tapahtuman nimi
+  /**
+   * in Finnish: Hakemuksen nimi
    */
   public String getName() {
     return name;
@@ -85,8 +50,8 @@ public class Application {
     this.name = name;
   }
 
-  /*
-   * Application handler, in Finnish: Hakemuksen käsittelijä
+  /**
+   * in Finnish: Hakemuksen käsittelijä
    */
   public String getHandler() {
     return handler;
@@ -96,8 +61,8 @@ public class Application {
     this.handler = handler;
   }
 
-  /*
-   * Application's customer, in Finnish: Hakemuksen asiakas
+  /**
+   * in Finnish: Hakemukseen liittyvän toimeksiantajan tunniste
    */
   public Integer getCustomerId() {
     return customerId;
@@ -107,8 +72,8 @@ public class Application {
     this.customerId = customerId;
   }
 
-  /*
-   * Application's status, in Finnish: Hakemuksen tila
+  /**
+   * in Finnish: Hakemuksen tila
    */
   public String getStatus() {
     return status;
@@ -118,8 +83,8 @@ public class Application {
     this.status = status;
   }
 
-  /*
-   * Application type, in Finnish: Hakemuksen tyyppi
+  /**
+   * in Finnish: Hakemuksen tyyppi
    */
   public String getType() {
     return type;
@@ -129,8 +94,8 @@ public class Application {
     this.type = type;
   }
 
-  /*
-   * Creation time, in Finnish: Hakemuksen luontipäivämäärä
+  /**
+   * in Finnish: Hakemuksen luontiaika
    */
   public ZonedDateTime getCreationTime() {
     return creationTime;
@@ -140,6 +105,9 @@ public class Application {
     this.creationTime = creationTime;
   }
 
+  /**
+   * in Finnish: Hakemukseen liittyvän hakijan tunniste
+   */
   public Integer getApplicantId() {
     return applicantId;
   }
