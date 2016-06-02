@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
+import {RouteParams} from '@angular/router-deprecated';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -19,6 +20,7 @@ import {Application} from '../../model/application/application';
 import {Customer} from '../../model/customer/customer';
 import {EventService} from '../../event/event.service';
 import {ApplicationSaveEvent} from '../../event/save/application-save-event';
+import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 
 @Component({
   selector: 'type',
@@ -41,16 +43,30 @@ import {ApplicationSaveEvent} from '../../event/save/application-save-event';
 export class LocationComponent implements EventListener {
   public application: any;
   public workqueue: WorkqueueService;
+  private id: string;
+  private features: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
 
-  constructor(private eventService: EventService) {
+  constructor(private eventService: EventService, params: RouteParams) {
+    this.eventService.subscribe(this);
+    this.id = params.get('id');
   };
 
   public handle(event: Event): void {
+    // ShapeAnnounceEvent
+    if (event instanceof ShapeAnnounceEvent) {
+      this.features = event.shape;
+      console.log('JEE!');
+    }
   }
 
 
-  save(application: any) {
-    console.log('Saving application', application);
+  save(id: number) {
+    console.log('Saving location for application id: ', id);
+    console.log(this.features);
     // TODO: implement
+  }
+
+  ngOnDestroy() {
+    this.eventService.unsubscribe(this);
   }
 }

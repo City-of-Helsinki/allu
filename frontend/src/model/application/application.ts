@@ -15,7 +15,7 @@ export class Application {
     public status: string,
     public latitude: number,
     public longitude: number,
-    public area: Area,
+    public area: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>,
     public customer: Customer,
     public contact: Person,
     public billing: Billing,

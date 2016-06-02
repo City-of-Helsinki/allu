@@ -137,7 +137,7 @@
           </div>
           <div class="" style="flex: 25;">
             <button md-raised-button style="margin-left: 10px;" (click)="save(application)">TALLENNA</button>
-            <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Location']">SIJAINTIIN</button>
+            <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Location', {id: application.id}]">SIJAINTIIN</button>
 
           </div>
 

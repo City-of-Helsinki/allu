@@ -10,6 +10,7 @@ import {Event} from '../../event/event';
 import {EventService} from '../../event/event.service';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
+import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 import {WorkqueueService} from '../../service/workqueue.service';
 
 @Component({
@@ -28,7 +29,6 @@ export class MapComponent implements EventListener {
     private geocoder: GeocodingService;
     private workqueue: WorkqueueService;
     private marker: any;
-
 
     constructor(mapService: MapService, geocoder: GeocodingService, workqueue: WorkqueueService, private eventService: EventService) {
         this.eventService.subscribe(this);
@@ -71,7 +71,6 @@ export class MapComponent implements EventListener {
           this.mapService.map.setView([job.latitude, job.longitude]);
         }
       }
-
     }
 
     ngOnInit() {
@@ -85,7 +84,7 @@ export class MapComponent implements EventListener {
       });
       L.control.zoom({ position: 'topright' }).addTo(this.mapService.map);
 
-      let drawnItems = new L.FeatureGroup();
+      let drawnItems = new L.GeoJSON();
       this.mapService.map.addLayer(drawnItems);
 
       let drawControl = new L.Control.Draw({
@@ -103,14 +102,13 @@ export class MapComponent implements EventListener {
         }
       });
       this.mapService.map.addControl(drawControl);
-
+      let that = this;
       this.mapService.map.on('draw:created', function (e: any) {
         let type = e.layerType,
             layer = e.layer;
 
         drawnItems.addLayer(layer);
-        console.log(layer);
-        // this.eventService.send(this, new ShapeCreatedEvent());
+        that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
       });
 
       // Add zoom controls
