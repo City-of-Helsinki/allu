@@ -1,14 +1,15 @@
 package fi.hel.allu.model.domain;
 
-public class Person {
+
+public class Organization {
     private Integer id;
     private String name;
+    private String businessId;
     private String streetAddress;
     private String postalCode;
     private String city;
     private String email;
     private String phone;
-    private String ssn;
 
     public Integer getId() {
         return id;
@@ -24,6 +25,14 @@ public class Person {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBusinessId() {
+        return businessId;
+    }
+
+    public void setBusinessId(String businessId) {
+        this.businessId = businessId;
     }
 
     public String getStreetAddress() {
@@ -64,13 +73,5 @@ public class Person {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public String getSsn() {
-        return ssn;
-    }
-
-    public void setSsn(String ssn) {
-        this.ssn = ssn;
     }
 }

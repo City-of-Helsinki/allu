@@ -53,8 +53,8 @@ public class ProjectControllerTest {
 
   private Project createProject(Integer projectID, String projectName, Date startDate) {
     Project p = new Project();
-    p.setProjectId(projectID);
-    p.setProjectName(projectName);
+    p.setId(projectID);
+    p.setName(projectName);
     p.setStartDate(startDate);
     return p;
   }
@@ -83,9 +83,9 @@ public class ProjectControllerTest {
     Project result = addProjectGetResult(p);
 
     // Now check TestProject got there.
-    wtc.perform(get(String.format("/projects/%d", result.getProjectId()))).andExpect(status().isOk())
-        .andExpect(jsonPath("$.projectId", is(result.getProjectId())))
-        .andExpect(jsonPath("$.projectName", is("TestProject")));
+    wtc.perform(get(String.format("/projects/%d", result.getId()))).andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(result.getId())))
+        .andExpect(jsonPath("$.name", is("TestProject")));
   }
 
   @Test

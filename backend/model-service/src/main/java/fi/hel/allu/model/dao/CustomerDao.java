@@ -3,32 +3,32 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.NoSuchEntityException;
-import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Customer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.vincit.allu.QPerson.person;
+import static fi.vincit.allu.QCustomer.customer;
 
-public class PersonDao {
+public class CustomerDao {
 
     @Autowired
     private SQLQueryFactory queryFactory;
 
-    final QBean<Person> personBean = bean(Person.class, person.all());
+    private final QBean<Customer> customerBean = bean(Customer.class, customer.all());
+
 
     @Transactional(readOnly = true)
-    public Optional<Person> findById(int id) {
-        Person pers = queryFactory.select(personBean).from(person).where(person.id.eq(id)).fetchOne();
-        return Optional.ofNullable(pers);
+    public Optional<Customer> findById(int id) {
+        Customer cust = queryFactory.select(customerBean).from(customer).where(customer.id.eq(id)).fetchOne();
+        return Optional.ofNullable(cust);
     }
 
     @Transactional
-    public Person insert(Person personData) {
-        Integer id = queryFactory.insert(person).populate(personData).executeWithKey(person.id);
+    public Customer insert(Customer customerData) {
+        Integer id = queryFactory.insert(customer).populate(customerData).executeWithKey(customer.id);
         if (id == null) {
             throw new QueryException("Failed to insert record");
         }
@@ -36,13 +36,12 @@ public class PersonDao {
     }
 
     @Transactional
-    public Person update(int id, Person personData) {
-        personData.setId(id);
-        long changed = queryFactory.update(person).populate(personData).where(person.id.eq(id)).execute();
+    public Customer update(int id, Customer customerData) {
+        customerData.setId(id);
+        long changed = queryFactory.update(customer).populate(customerData).where(customer.id.eq(id)).execute();
         if (changed != 1) {
             throw new QueryException("Failed to update the record");
         }
         return findById(id).get();
     }
-
 }

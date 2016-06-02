@@ -7,29 +7,23 @@ import java.util.Date;
  */
 public class Project {
 
-    private Integer projectId; // serial primary key
-
+    private Integer id;
     private Integer ownerId;
-
     private Integer contactId;
-
-    private String projectName;
-
+    private String name;
     private Date startDate;
-
     private Date endDate;
-
     private String additionalInfo;
 
     /**
      * In Finnish: Hankkeen tunnus
      */
-    public Integer getProjectId() {
-        return projectId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
+    public void setId(Integer id) {
+        this.id = id;
     }
 
     /**
@@ -57,12 +51,12 @@ public class Project {
     /**
      * In Finnish: Hankkeen nimi
      */
-    public String getProjectName() {
-        return projectName;
+    public String getName() {
+        return name;
     }
 
-    public void setProjectName(String projectName) {
-        this.projectName = projectName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     /**
