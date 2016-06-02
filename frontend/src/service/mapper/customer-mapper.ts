@@ -5,7 +5,7 @@ import {PostalAddress} from '../../model/common/postal-address';
 export class CustomerMapper {
 
   public static mapBackend(backendCustomer: BackendCustomer): Customer {
-    let addr = new PostalAddress(backendCustomer.address, backendCustomer.postOffice, backendCustomer.zipCode, backendCustomer.city);
+    let addr = new PostalAddress(backendCustomer.address, backendCustomer.zipCode, backendCustomer.city);
     return new Customer(backendCustomer.id, backendCustomer.name, backendCustomer.type, addr, backendCustomer.email, backendCustomer.ssn);
   }
 

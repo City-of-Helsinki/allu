@@ -10,7 +10,7 @@ export class Application {
 
   constructor(
     public id: number,
-    public title: string,
+    public name: string,
     public type: string,
     public status: string,
     public latitude: number,
