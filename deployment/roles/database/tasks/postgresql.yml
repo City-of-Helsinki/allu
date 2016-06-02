@@ -1,8 +1,11 @@
-- name: install Postgresql using Ubuntu repository
+- name: install PostgreSQL using Ubuntu repository
   apt: name=postgresql-9.5 state=present
 
-- name: install Postgresql Python module needed by Ansible postgresql_user module
+- name: install PostgreSQL Python module needed by Ansible postgresql_user module
   apt: name=python-psycopg2 state=present
+
+- name: install Geographic objects support (POSTGIS) for PostgreSQL
+  apt: name=postgis state=present
 
 # TODO: set data directory to some permanent location (see /etc/postgresql/9.5/main/postgresql.conf)
 - name: copy postgresql.conf under configuration directory
