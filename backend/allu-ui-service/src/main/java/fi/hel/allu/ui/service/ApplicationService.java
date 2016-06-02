@@ -55,7 +55,7 @@ public class ApplicationService {
                     createApplicationModel
                     (applicationUI), fi.hel.allu.model.domain.Application.class);
 
-            applicationUI.setId(applicationModel.getApplicationId());
+            applicationUI.setId(applicationModel.getId());
         }
         return applications;
     }
@@ -122,19 +122,19 @@ public class ApplicationService {
         Person personDomain = new Person();
         personDomain.setCity(customerUI.getCity());
         personDomain.setEmail(customerUI.getEmail());
-        personDomain.setFirstName(customerUI.getName());
+        personDomain.setName(customerUI.getName());
         personDomain.setSsn(customerUI.getSsn());
         personDomain.setStreetAddress(customerUI.getAddress());
-        personDomain.setZipCode(customerUI.getZipCode());
+        personDomain.setPostalCode(customerUI.getZipCode());
         return personDomain;
     }
 
     private Project createProjectModel(Application applicationUI) {
         Project projectDomain = new Project();
         if (applicationUI.getProject() == null || applicationUI.getProject().getName() == null) {
-            projectDomain.setProjectName("Mock Project");
+            projectDomain.setName("Mock Project");
         } else {
-            projectDomain.setProjectName(applicationUI.getProject().getName());
+            projectDomain.setName(applicationUI.getProject().getName());
         }
         return projectDomain;
     }
@@ -145,7 +145,6 @@ public class ApplicationService {
         applicationDomain.setProjectId(applicationUI.getProject().getId());
         applicationDomain.setCreationTime(ZonedDateTime.now());
         applicationDomain.setCustomerId(applicationUI.getCustomer().getId());
-        applicationDomain.setDescription(applicationUI.getInformation());
         applicationDomain.setHandler(applicationUI.getHandler());
         applicationDomain.setType(applicationUI.getType());
         return applicationDomain;
@@ -153,26 +152,25 @@ public class ApplicationService {
 
 
     private void mapProjectModelToUi(fi.hel.allu.ui.domain.Project projectUI, Project projectDomain) {
-        projectUI.setId(projectDomain.getProjectId());
-        projectUI.setName(projectDomain.getProjectName());
+        projectUI.setId(projectDomain.getId());
+        projectUI.setName(projectDomain.getName());
     }
 
     private void mapPersonToCustomer(Customer customerUI, Person personDomain) {
-        customerUI.setName(personDomain.getFirstName());
+        customerUI.setName(personDomain.getName());
         customerUI.setAddress(personDomain.getStreetAddress());
         customerUI.setCity(personDomain.getCity());
         customerUI.setEmail(personDomain.getEmail());
         customerUI.setId(personDomain.getId());
-        customerUI.setZipCode(personDomain.getZipCode());
+        customerUI.setZipCode(personDomain.getPostalCode());
         customerUI.setSsn(personDomain.getSsn());
     }
 
     private void mapApplicationModelToUi(Application applicationUI, fi.hel.allu.model.domain.Application applicationDomain) {
-        applicationUI.setId(applicationDomain.getApplicationId());
+        applicationUI.setId(applicationDomain.getId());
         applicationUI.setType(applicationDomain.getType());
         applicationUI.setHandler(applicationDomain.getHandler());
         applicationUI.setCreateDate(applicationDomain.getCreationTime());
-        applicationUI.setInformation(applicationDomain.getDescription());
         applicationUI.setName(applicationDomain.getName());
         applicationUI.setStatus(applicationDomain.getStatus());
     }

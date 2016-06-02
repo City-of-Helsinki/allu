@@ -1,11 +1,9 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.model.domain.FreeEventApplication;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
-public class FreeEventApplicationJson extends {
+public class FreeEventApplicationJson {
 
     /**
      *
