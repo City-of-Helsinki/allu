@@ -29,6 +29,9 @@ public class PersonDao {
     @Transactional
     public Person insert(Person personData) {
         Integer id = queryFactory.insert(person).populate(personData).executeWithKey(person.id);
+        if (id == null) {
+            throw new QueryException("Failed to insert record");
+        }
         return findById(id).get();
     }
 

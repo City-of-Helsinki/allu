@@ -33,6 +33,9 @@ public class ContactDao {
     @Transactional
     public Contact insert(Contact contactData) {
         Integer id = queryFactory.insert(contact).populate(contactData).executeWithKey(contact.id);
+        if (id == null) {
+            throw new QueryException("Failed to insert record");
+        }
         return findById(id).get();
     }
 

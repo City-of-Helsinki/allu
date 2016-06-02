@@ -29,6 +29,9 @@ public class CustomerDao {
     @Transactional
     public Customer insert(Customer customerData) {
         Integer id = queryFactory.insert(customer).populate(customerData).executeWithKey(customer.id);
+        if (id == null) {
+            throw new QueryException("Failed to insert record");
+        }
         return findById(id).get();
     }
 

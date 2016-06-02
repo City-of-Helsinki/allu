@@ -43,6 +43,9 @@ public class ApplicationDao {
   @Transactional
   public Application insert(Application appl) {
     Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
+    if (id == null) {
+      throw new QueryException("Failed to insert record");
+    }
     return findById(id).get();
   }
 

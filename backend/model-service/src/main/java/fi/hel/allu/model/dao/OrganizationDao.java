@@ -29,6 +29,9 @@ public class OrganizationDao {
     @Transactional
     public Organization insert(Organization organizationData) {
         Integer id = queryFactory.insert(organization).populate(organizationData).executeWithKey(organization.id);
+        if (id == null) {
+            throw new QueryException("Failed to insert record");
+        }
         return findById(id).get();
     }
 
