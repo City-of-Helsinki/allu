@@ -158,6 +158,7 @@ export class OutdoorEventComponent implements EventListener {
         application.status,
         1,
         1,
+        'Minna',
         undefined,
         customer,
         undefined,

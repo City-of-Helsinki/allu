@@ -10,6 +10,8 @@ import {Event} from '../../event/event';
 import {EventService} from '../../event/event.service';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
+import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
+import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 import {WorkqueueService} from '../../service/workqueue.service';
 
@@ -29,47 +31,23 @@ export class MapComponent implements EventListener {
     private geocoder: GeocodingService;
     private workqueue: WorkqueueService;
     private marker: any;
+    private applicationArea: L.LayerGroup<L.ILayer>;
 
     constructor(mapService: MapService, geocoder: GeocodingService, workqueue: WorkqueueService, private eventService: EventService) {
         this.eventService.subscribe(this);
         this.mapService = mapService;
         this.geocoder = geocoder;
         this.workqueue = workqueue;
+        this.applicationArea = undefined;
     }
 
     public handle(event: Event): void {
-
       if (event instanceof ApplicationSelectionEvent) {
-        let id = event.id;
-        let job = this.workqueue.get(id);
-
-        if (this.marker) {
-          this.mapService.map.removeLayer(this.marker);
+        let area = event.area;
+        if (this.applicationArea) {
+          this.mapService.map.removeLayer(this.applicationArea);
         }
-
-        if (job.area) {
-
-          if (job.area.type === 'polyline') {
-            this.marker = L.polyline(job.area.latlngs, {color: '#BA1200'});
-          } else if (job.area.type === 'circle') {
-            this.marker = L.circle(job.area.latlngs[0], job.area.radius, {color: '#BA1200'});
-          } else {
-            this.marker = L.polygon(job.area.latlngs, {color: '#BA1200'});
-          }
-
-          this.marker.addTo(this.mapService.map).bindPopup(job.title).openPopup();
-          this.mapService.map.setView([job.latitude, job.longitude]);
-
-        } else {
-          this.marker = L.marker([job.latitude, job.longitude], {
-            icon: L.icon({
-              iconUrl: '../../assets/svg/marker.svg',
-              iconSize: [40, 40]
-            }),
-            draggable: false
-          }).addTo(this.mapService.map).bindPopup(job.title).openPopup();
-          this.mapService.map.setView([job.latitude, job.longitude]);
-        }
+        this.applicationArea = new L.GeoJSON(area).addTo(this.mapService.map);
       }
     }
 

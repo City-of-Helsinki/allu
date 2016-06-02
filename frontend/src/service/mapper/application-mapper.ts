@@ -12,6 +12,7 @@ export class ApplicationMapper {
       backendApplication.status,
       undefined,
       undefined,
+      backendApplication.handler,
       undefined,
       CustomerMapper.mapBackend(backendApplication.customer),
       undefined,
@@ -26,7 +27,7 @@ export class ApplicationMapper {
       name: application.name,
       type: application.type,
       status: application.status,
-      handler: undefined, // TODO: missing from application
+      handler: application.handler,
       information: undefined, // TODO: what's information?
       createDate: undefined, // TODO: missing from application
       startDate: undefined, // TODO: missing from application
