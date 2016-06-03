@@ -54,7 +54,6 @@ export class LocationComponent implements EventListener {
     // ShapeAnnounceEvent
     if (event instanceof ShapeAnnounceEvent) {
       this.features = event.shape;
-      console.log('JEE!');
     } else if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent> event;
       let applications = aaEvent.applications;
