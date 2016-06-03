@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
+import {RouteParams} from '@angular/router-deprecated';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -11,7 +12,6 @@ import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {MapComponent} from '../map/map.component';
 
-import {WorkqueueService} from '../../service/workqueue.service';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
 import {EventListener} from '../../event/event-listener';
@@ -19,6 +19,8 @@ import {Application} from '../../model/application/application';
 import {Customer} from '../../model/customer/customer';
 import {EventService} from '../../event/event.service';
 import {ApplicationSaveEvent} from '../../event/save/application-save-event';
+import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
+import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 
 @Component({
   selector: 'type',
@@ -39,18 +41,43 @@ import {ApplicationSaveEvent} from '../../event/save/application-save-event';
 })
 
 export class LocationComponent implements EventListener {
-  public application: any;
-  public workqueue: WorkqueueService;
+  private application: Application;
+  private id: number;
+  private features: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
 
-  constructor(private eventService: EventService) {
+
+  constructor(private eventService: EventService, params: RouteParams) {
+    this.id = Number(params.get('id'));
   };
 
   public handle(event: Event): void {
+    // ShapeAnnounceEvent
+    if (event instanceof ShapeAnnounceEvent) {
+      this.features = event.shape;
+    } else if (event instanceof ApplicationsAnnounceEvent) {
+      let aaEvent = <ApplicationsAnnounceEvent> event;
+      let applications = aaEvent.applications;
+      this.application = applications.filter((a) => a.id === 8)[0];
+    }
   }
 
 
-  save(application: any) {
-    console.log('Saving application', application);
-    // TODO: implement
+  save() {
+    console.log('Saving location for application id: ', this.id);
+    this.application.area = this.features;
+    this.application.name = 'Foobar';
+    let saveEvent = new ApplicationSaveEvent(this.application);
+    this.eventService.send(this, saveEvent);
+    localStorage.setItem('application', JSON.stringify(this.features));
+
+  }
+
+  ngOnInit() {
+    this.eventService.subscribe(this);
+    this.eventService.send(this, new ApplicationsLoadEvent('Minna'));
+  }
+
+  ngOnDestroy() {
+    this.eventService.unsubscribe(this);
   }
 }

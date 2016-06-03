@@ -29,7 +29,7 @@ import {TaskManagerService} from '../../service/task/task-manager.service';
 @RouteConfig([
   { path: '/', as: 'FrontPage', component: QueueComponent },
   { path: '/applications/...', as: 'Applications', component: ApplicationComponent },
-  { path: '/location', as: 'Location', component: LocationComponent },
+  { path: '/location/:id', as: 'Location', component: LocationComponent },
   { path: '/login', as: 'Login', component: Login }
 ])
 export class AlluComponent {

@@ -76,6 +76,7 @@ export class TypeComponent implements EventListener {
         application.status,
         1,
         1,
+        'Minna',
         undefined,
         customer,
         undefined,

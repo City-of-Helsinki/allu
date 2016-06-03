@@ -158,6 +158,7 @@ export class OutdoorEventComponent implements EventListener {
         application.status,
         1,
         1,
+        'Minna',
         undefined,
         customer,
         undefined,
@@ -166,9 +167,5 @@ export class OutdoorEventComponent implements EventListener {
         undefined);
     let saveEvent = new ApplicationSaveEvent(newApplication);
     this.eventService.send(this, saveEvent);
-      // console.log(application);
-      // this.workqueue.add(application);
-      // console.log(this.workqueue.getAll());
-
    }
 }

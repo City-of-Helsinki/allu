@@ -16,6 +16,7 @@ import {Application} from '../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {TaskManagerService} from '../../service/task/task-manager.service';
 
+
 @Component({
   selector: 'workqueue',
   moduleId: module.id,
@@ -35,11 +36,12 @@ export class WorkqueueComponent implements EventListener, OnInit, OnDestroy {
 
   constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
     this.applicationsQueue = [];
+
   }
 
   ngOnInit() {
     this.eventService.subscribe(this);
-    // this.eventService.send(this, new ApplicationsLoadEvent());
+    this.eventService.send(this, new ApplicationsLoadEvent('Minna'));
   }
 
   ngOnDestroy() {
@@ -51,10 +53,11 @@ export class WorkqueueComponent implements EventListener, OnInit, OnDestroy {
     if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent>event;
       this.applicationsQueue = aaEvent.applications.slice();
+      this.applicationsQueue.forEach((app) => app.area = JSON.parse(localStorage.getItem('application')));
     }
   }
 
   jobClick(job: any) {
-    this.eventService.send(this, new ApplicationSelectionEvent(job.id));
+    this.eventService.send(this, new ApplicationSelectionEvent(job.area));
   }
 }
