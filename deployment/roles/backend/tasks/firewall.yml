@@ -12,3 +12,11 @@
   with_items:
       - 9000 # allu-ui-service
       - 9010 # model-service
+
+- name: allow developer connections to test environment from VPN
+  ufw: rule=allow port={{ item }} src=83.102.45.242
+  when: "'test' in group_names"
+  become: yes
+  with_items:
+      - 9000 # allu-ui-service
+      - 9010 # model-service
