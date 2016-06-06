@@ -19,27 +19,28 @@ import fi.hel.allu.model.domain.Organization;
 @RequestMapping("/organizations")
 public class OrganizationController {
 
-    @Autowired
-    private OrganizationDao organizationDao;
+  @Autowired
+  private OrganizationDao organizationDao;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Organization> find(@PathVariable int id) {
-        Optional<Organization> organization = organizationDao.findById(id);
-        Organization organizationValue = organization
-                .orElseThrow(() -> new NoSuchEntityException("Organization not found", Integer.toString(id)));
-        return new ResponseEntity<>(organizationValue, HttpStatus.OK);
-    }
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  public ResponseEntity<Organization> find(@PathVariable int id) {
+    Optional<Organization> organization = organizationDao.findById(id);
+    Organization organizationValue = organization
+        .orElseThrow(() -> new NoSuchEntityException("Organization not found", Integer.toString(id)));
+    return new ResponseEntity<>(organizationValue, HttpStatus.OK);
+  }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Organization> update(@PathVariable int id, @RequestBody(required = true) Organization organization) {
-        return new ResponseEntity<>(organizationDao.update(id, organization), HttpStatus.OK);
-    }
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  public ResponseEntity<Organization> update(@PathVariable int id,
+      @RequestBody(required = true) Organization organization) {
+    return new ResponseEntity<>(organizationDao.update(id, organization), HttpStatus.OK);
+  }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Organization> insert(@RequestBody(required = true) Organization organization) {
-        if (organization.getId() != null) {
-            throw new IllegalArgumentException("Id must be null for insert");
-        }
-        return new ResponseEntity<>(organizationDao.insert(organization), HttpStatus.OK);
+  @RequestMapping(method = RequestMethod.POST)
+  public ResponseEntity<Organization> insert(@RequestBody(required = true) Organization organization) {
+    if (organization.getId() != null) {
+      throw new IllegalArgumentException("Id must be null for insert");
     }
+    return new ResponseEntity<>(organizationDao.insert(organization), HttpStatus.OK);
+  }
 }

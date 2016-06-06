@@ -19,29 +19,28 @@ import fi.hel.allu.model.domain.Person;
 @RequestMapping("/persons")
 public class PersonController {
 
-    @Autowired
-    private PersonDao personDao;
+  @Autowired
+  private PersonDao personDao;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    public ResponseEntity<Person> person(@PathVariable int id) {
-        Optional<Person> person = personDao.findById(id);
-        Person personValue = person
-                .orElseThrow(() -> new NoSuchEntityException("Person not found", Integer.toString(id)));
-        return new ResponseEntity<>(personValue, HttpStatus.OK);
-    }
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  public ResponseEntity<Person> person(@PathVariable int id) {
+    Optional<Person> person = personDao.findById(id);
+    Person personValue = person.orElseThrow(() -> new NoSuchEntityException("Person not found", Integer.toString(id)));
+    return new ResponseEntity<>(personValue, HttpStatus.OK);
+  }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    public ResponseEntity<Person> updatePerson(@PathVariable int id, @RequestBody(required = true) Person person) {
-        Person resultPerson = personDao.update(id, person);
-        return new ResponseEntity<>(resultPerson, resultPerson != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
-    }
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  public ResponseEntity<Person> updatePerson(@PathVariable int id, @RequestBody(required = true) Person person) {
+    Person resultPerson = personDao.update(id, person);
+    return new ResponseEntity<>(resultPerson, resultPerson != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+  }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public ResponseEntity<Person> addPerson(@RequestBody(required = true) Person person) {
-        if (person.getId() != null) {
-            throw new IllegalArgumentException("Id must be null for insert");
-        }
-        return new ResponseEntity<>(personDao.insert(person), HttpStatus.OK);
+  @RequestMapping(method = RequestMethod.POST)
+  public ResponseEntity<Person> addPerson(@RequestBody(required = true) Person person) {
+    if (person.getId() != null) {
+      throw new IllegalArgumentException("Id must be null for insert");
     }
+    return new ResponseEntity<>(personDao.insert(person), HttpStatus.OK);
+  }
 
 }

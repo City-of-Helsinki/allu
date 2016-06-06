@@ -18,42 +18,42 @@ import fi.hel.allu.model.dao.ProjectDao;
 public class AppConfig {
 
   @Bean
-    public PersonDao personDao() {
-        return new PersonDao();
-    }
+  public PersonDao personDao() {
+    return new PersonDao();
+  }
 
-    @Bean
-    public ProjectDao projectDao() {
-        return new ProjectDao();
-    }
+  @Bean
+  public ProjectDao projectDao() {
+    return new ProjectDao();
+  }
 
-    @Bean
-    public ApplicationDao applicationDao() {
-        return new ApplicationDao();
-    }
+  @Bean
+  public ApplicationDao applicationDao() {
+    return new ApplicationDao();
+  }
 
-    @Bean
-    public ApplicantDao applicantDao() {
-        return new ApplicantDao();
-    }
+  @Bean
+  public ApplicantDao applicantDao() {
+    return new ApplicantDao();
+  }
 
-    @Bean
-    public ContactDao contactDao() {
-        return new ContactDao();
-    }
+  @Bean
+  public ContactDao contactDao() {
+    return new ContactDao();
+  }
 
-    @Bean
-    public CustomerDao customerDao() {
-        return new CustomerDao();
-    }
+  @Bean
+  public CustomerDao customerDao() {
+    return new CustomerDao();
+  }
 
-    @Bean
-    public OrganizationDao organizationDao() {
-        return new OrganizationDao();
-    }
+  @Bean
+  public OrganizationDao organizationDao() {
+    return new OrganizationDao();
+  }
 
-    @Bean
-    public LocationDao locationDao() {
-        return new LocationDao();
-    }
+  @Bean
+  public LocationDao locationDao() {
+    return new LocationDao();
+  }
 }

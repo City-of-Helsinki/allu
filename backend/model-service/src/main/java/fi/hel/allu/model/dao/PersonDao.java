@@ -17,34 +17,34 @@ import fi.hel.allu.model.domain.Person;
 
 public class PersonDao {
 
-    @Autowired
-    private SQLQueryFactory queryFactory;
+  @Autowired
+  private SQLQueryFactory queryFactory;
 
-    final QBean<Person> personBean = bean(Person.class, person.all());
+  final QBean<Person> personBean = bean(Person.class, person.all());
 
-    @Transactional(readOnly = true)
-    public Optional<Person> findById(int id) {
-        Person pers = queryFactory.select(personBean).from(person).where(person.id.eq(id)).fetchOne();
-        return Optional.ofNullable(pers);
+  @Transactional(readOnly = true)
+  public Optional<Person> findById(int id) {
+    Person pers = queryFactory.select(personBean).from(person).where(person.id.eq(id)).fetchOne();
+    return Optional.ofNullable(pers);
+  }
+
+  @Transactional
+  public Person insert(Person personData) {
+    Integer id = queryFactory.insert(person).populate(personData).executeWithKey(person.id);
+    if (id == null) {
+      throw new QueryException("Failed to insert record");
     }
+    return findById(id).get();
+  }
 
-    @Transactional
-    public Person insert(Person personData) {
-        Integer id = queryFactory.insert(person).populate(personData).executeWithKey(person.id);
-        if (id == null) {
-            throw new QueryException("Failed to insert record");
-        }
-        return findById(id).get();
+  @Transactional
+  public Person update(int id, Person personData) {
+    personData.setId(id);
+    long changed = queryFactory.update(person).populate(personData).where(person.id.eq(id)).execute();
+    if (changed == 0) {
+      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
-
-    @Transactional
-    public Person update(int id, Person personData) {
-        personData.setId(id);
-        long changed = queryFactory.update(person).populate(personData).where(person.id.eq(id)).execute();
-        if (changed == 0) {
-            throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
-        }
-        return findById(id).get();
-    }
+    return findById(id).get();
+  }
 
 }

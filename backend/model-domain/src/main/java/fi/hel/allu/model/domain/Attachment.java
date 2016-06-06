@@ -1,32 +1,31 @@
 package fi.hel.allu.model.domain;
 
-public class Attachment{
-    private Integer id;
-    private String name;
-    private byte[] data;
+public class Attachment {
+  private Integer id;
+  private String name;
+  private byte[] data;
 
+  public Integer getId() {
+    return id;
+  }
 
-    public Integer getId() {
-        return id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public String getName() {
+    return name;
+  }
 
-    public String getName() {
-        return name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public byte[] getData() {
+    return data;
+  }
 
-    public byte[] getData() {
-        return data;
-    }
-
-    public void setData(byte[] data) {
-        this.data = data;
-    }
+  public void setData(byte[] data) {
+    this.data = data;
+  }
 }
