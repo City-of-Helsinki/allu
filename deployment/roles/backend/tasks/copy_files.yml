@@ -28,6 +28,13 @@
             mode="u=rwx,g=rx,o=rx"
   with_items: "{{ allu_service_list }}"
 
+- name: copy logging configuration files
+  template: src=included-logback.xml dest=/home/allu/{{ item }}/included-logback.xml
+            owner=allu
+            group=allu
+            mode="u=rwx,g=rx,o=rx"
+  with_items: "{{ allu_service_list }}"
+
 - name: add service runner scripts
   template: src=run_service.sh dest=/home/allu/{{ item }}/run_{{ item }}.sh
             owner=allu
