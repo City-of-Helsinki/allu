@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import fi.hel.allu.NoSuchEntityException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.OrganizationDao;
 import fi.hel.allu.model.domain.Organization;
 

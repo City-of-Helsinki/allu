@@ -1,4 +1,4 @@
-package fi.hel.allu;
+package fi.hel.allu.common.exception;
 
 /*
  * Tried to access a non-existing entity
