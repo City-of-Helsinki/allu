@@ -3,12 +3,15 @@ package fi.hel.allu.ui.domain;
 /**
  * in Finnish: Hanke
  */
-public class Project {
+public class ProjectJson {
     private int id;
     private String name;
     private String type;
     private String information;
 
+    /**
+     * in Finnish: Hankkeen tunniste
+     */
     public int getId() {
         return id;
     }
@@ -17,6 +20,9 @@ public class Project {
         this.id = id;
     }
 
+    /**
+     * in Finnish: Hankkeen nimi
+     */
     public String getName() {
         return name;
     }
@@ -25,6 +31,9 @@ public class Project {
         this.name = name;
     }
 
+    /**
+     * in Finnish: Hankkeen tyyppi
+     */
     public String getType() {
         return type;
     }
@@ -33,6 +42,10 @@ public class Project {
         this.type = type;
     }
 
+
+    /**
+     * in Finnish: Hankkeen lisätietoa
+     */
     public String getInformation() {
         return information;
     }

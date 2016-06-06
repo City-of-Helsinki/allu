@@ -1,11 +1,8 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.Application;
-import fi.hel.allu.ui.domain.ApplicationDTO;
-import fi.hel.allu.ui.domain.Customer;
-import fi.hel.allu.ui.domain.Project;
+import fi.hel.allu.ui.domain.ApplicationJson;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -17,10 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.ZonedDateTime;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class FindApplicationServiceTest {
     @Mock
@@ -29,83 +27,93 @@ public class FindApplicationServiceTest {
     private RestTemplate restTemplate;
     @InjectMocks
     private ApplicationService applicationService;
-    private ApplicationDTO applicationDTO;
 
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        applicationDTO = createMockApplication();
     }
 
     @Test
     public void testFindApplicationById() {
-        Mockito.when(restTemplate.getForObject(Mockito.any(String.class), Mockito.eq(fi.hel.allu.model.domain.Application.class), Mockito.any
+        Mockito.when(restTemplate.getForObject(Mockito.any(String.class), Mockito.eq(Application.class), Mockito.any
                 (String.class)))
-                .thenAnswer((Answer<fi.hel.allu.model.domain.Application>) invocation -> createMockModelDomainApplication());
+                .thenAnswer((Answer<Application>) invocation -> createMockApplicationResponse());
 
         Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Person.class), Mockito.anyInt()))
-                .thenAnswer((Answer<ResponseEntity<fi.hel.allu.model.domain.Person>>) invocation -> createMockModelPerson());
+                .thenAnswer((Answer<ResponseEntity<Person>>) invocation -> createMockPersonResponse());
 
-        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(fi.hel.allu.model.domain.Project.class), Mockito.anyInt()))
-                .thenAnswer((Answer<ResponseEntity<fi.hel.allu.model.domain.Project>>) invocation -> createMockModelProject());
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Customer.class), Mockito.anyInt()))
+                .thenAnswer((Answer<ResponseEntity<Customer>>) invocation -> createMockCustomerResponse());
+
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Project.class), Mockito.anyInt()))
+                .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> createMockProjectResponse());
+
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
+                .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockApplicantResponse());
 
         Mockito.when(props.getUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
 
-        ApplicationDTO response = applicationService.findApplicationById("123");
+        ApplicationJson response = applicationService.findApplicationById("123");
 
         assertNotNull(response);
-        assertNotNull(response.getApplicationList());
-        assertEquals(1, response.getApplicationList().size());
-        assertNotNull(response.getApplicationList().get(0));
-        assertNotNull(response.getApplicationList().get(0).getCustomer());
-        assertNotNull(response.getApplicationList().get(0).getProject());
-        assertEquals(222, response.getApplicationList().get(0).getCustomer().getId());
-        assertEquals(555, response.getApplicationList().get(0).getProject().getId());
-        assertEquals("MockName", response.getApplicationList().get(0).getName());
-        assertEquals(123, response.getApplicationList().get(0).getId());
+        assertNotNull(response.getCustomer());
+        assertNotNull(response.getProject());
+        assertNotNull(response.getApplicant());
+        assertEquals(1, response.getCustomer().getId());
+        assertEquals(555, response.getProject().getId());
+        assertEquals(222, response.getApplicant().getId());
+        assertNull(response.getCustomer().getOrganization());
+        assertNull(response.getApplicant().getOrganization());
+        assertNotNull(response.getApplicant().getPerson());
+        assertNotNull(response.getCustomer().getPerson());
+        assertEquals(222, response.getApplicant().getPerson().getId());
+        assertEquals(222, response.getCustomer().getPerson().getId());
     }
 
     @Test
     public void testFindApplicationByHandler() {
-        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(fi.hel.allu.model.domain.Application[].class), Mockito.any
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Application[].class), Mockito.any
                 (String.class)))
-                .thenAnswer((Answer<ResponseEntity<fi.hel.allu.model.domain.Application[]>>) invocation ->
-                        createMockModelDomainApplicationResponse());
+                .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
+                        createMockApplicationListResponse());
 
         Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Person.class), Mockito.anyInt()))
-                .thenAnswer((Answer<ResponseEntity<fi.hel.allu.model.domain.Person>>) invocation -> createMockModelPerson());
+                .thenAnswer((Answer<ResponseEntity<Person>>) invocation -> createMockPersonResponse());
 
-        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(fi.hel.allu.model.domain.Project.class), Mockito.anyInt()))
-                .thenAnswer((Answer<ResponseEntity<fi.hel.allu.model.domain.Project>>) invocation -> createMockModelProject());
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Customer.class), Mockito.anyInt()))
+                .thenAnswer((Answer<ResponseEntity<Customer>>) invocation -> createMockCustomerResponse());
+
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Project.class), Mockito.anyInt()))
+                .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> createMockProjectResponse());
+
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
+                .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockApplicantResponse());
 
         Mockito.when(props.getUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
 
-        ApplicationDTO response = applicationService.findApplicationByHandler("222");
+        List<ApplicationJson> response = applicationService.findApplicationByHandler("222");
 
-        assertNotNull(response);
-        assertNotNull(response.getApplicationList());
-        assertEquals(2, response.getApplicationList().size());
-        assertNotNull(response.getApplicationList().get(0));
-        assertNotNull(response.getApplicationList().get(0).getCustomer());
-        assertNotNull(response.getApplicationList().get(0).getProject());
-        assertEquals(222, response.getApplicationList().get(0).getCustomer().getId());
-        assertEquals(555, response.getApplicationList().get(0).getProject().getId());
-        assertEquals("MockName", response.getApplicationList().get(0).getName());
-        assertEquals(123, response.getApplicationList().get(0).getId());
+        assertNotNull(response);;
+        assertEquals(2, response.size());
+        assertNotNull(response.get(0));
+        assertNotNull(response.get(0).getCustomer());
+        assertNotNull(response.get(0).getProject());
+        assertEquals(1, response.get(0).getCustomer().getId());
+        assertEquals(555, response.get(0).getProject().getId());
+        assertEquals("MockName", response.get(0).getName());
+        assertEquals(123, response.get(0).getId());
 
-        assertNotNull(response.getApplicationList().get(1));
-        assertNotNull(response.getApplicationList().get(1).getCustomer());
-        assertNotNull(response.getApplicationList().get(1).getProject());
-        assertEquals(222, response.getApplicationList().get(1).getCustomer().getId());
-        assertEquals(555, response.getApplicationList().get(1).getProject().getId());
-        assertEquals("MockName2", response.getApplicationList().get(1).getName());
-        assertEquals(1234, response.getApplicationList().get(1).getId());
+        assertNotNull(response.get(1));
+        assertNotNull(response.get(1).getCustomer());
+        assertNotNull(response.get(1).getProject());
+        assertEquals(1, response.get(1).getCustomer().getId());
+        assertEquals(555, response.get(1).getProject().getId());
+        assertEquals("MockName2", response.get(1).getName());
+        assertEquals(1234, response.get(1).getId());
     }
 
-
-    private ResponseEntity<fi.hel.allu.model.domain.Application[]> createMockModelDomainApplicationResponse() {
-        fi.hel.allu.model.domain.Application applicationModelArray[] = new fi.hel.allu.model.domain.Application[2];
-        fi.hel.allu.model.domain.Application applicationModel = new fi.hel.allu.model.domain.Application();
+    private Application createMockApplicationResponse() {
+        Application applicationModel = new Application();
         applicationModel.setId(123);
         applicationModel.setType("MockType");
         applicationModel.setHandler("MockHandler");
@@ -113,6 +121,22 @@ public class FindApplicationServiceTest {
         applicationModel.setProjectId(321);
         applicationModel.setName("MockName");
         applicationModel.setCustomerId(345);
+        applicationModel.setApplicantId(555);
+        return applicationModel;
+    }
+
+
+    private ResponseEntity<Application[]> createMockApplicationListResponse() {
+        Application applicationModelArray[] = new Application[2];
+        Application applicationModel = new Application();
+        applicationModel.setId(123);
+        applicationModel.setType("MockType");
+        applicationModel.setHandler("MockHandler");
+        applicationModel.setStatus("MockStatus");
+        applicationModel.setProjectId(321);
+        applicationModel.setName("MockName");
+        applicationModel.setCustomerId(345);
+        applicationModel.setApplicantId(555);
         applicationModelArray[0] = applicationModel;
 
         applicationModel = new fi.hel.allu.model.domain.Application();
@@ -123,24 +147,13 @@ public class FindApplicationServiceTest {
         applicationModel.setProjectId(4321);
         applicationModel.setName("MockName2");
         applicationModel.setCustomerId(3456);
+        applicationModel.setApplicantId(655);
         applicationModelArray[1] = applicationModel;
 
         return new ResponseEntity<>(applicationModelArray, HttpStatus.OK);
     }
 
-    private fi.hel.allu.model.domain.Application createMockModelDomainApplication() {
-        fi.hel.allu.model.domain.Application applicationModel = new fi.hel.allu.model.domain.Application();
-        applicationModel.setId(123);
-        applicationModel.setType("MockType");
-        applicationModel.setHandler("MockHandler");
-        applicationModel.setStatus("MockStatus");
-        applicationModel.setProjectId(321);
-        applicationModel.setName("MockName");
-        applicationModel.setCustomerId(345);
-        return applicationModel;
-    }
-
-    private ResponseEntity<Person> createMockModelPerson() {
+    private ResponseEntity<Person> createMockPersonResponse() {
         Person personModel = new Person();
         personModel.setStreetAddress("Mock address");
         personModel.setPostalCode("123");
@@ -152,8 +165,8 @@ public class FindApplicationServiceTest {
         return new ResponseEntity<>(personModel, HttpStatus.OK);
     }
 
-    private ResponseEntity<fi.hel.allu.model.domain.Project> createMockModelProject() {
-        fi.hel.allu.model.domain.Project projectModel = new fi.hel.allu.model.domain.Project();
+    private ResponseEntity<Project> createMockProjectResponse() {
+        Project projectModel = new Project();
         projectModel.setOwnerId(111);
         projectModel.setId(555);
         projectModel.setName("MockName");
@@ -161,64 +174,19 @@ public class FindApplicationServiceTest {
         return new ResponseEntity<>(projectModel, HttpStatus.OK);
     }
 
-    private ApplicationDTO createMockApplication() {
-        ApplicationDTO appDTO = new ApplicationDTO();
-        Application app = new Application();
-        app.setName("Tapahtuma 1");
-        app.setType("Ulkoilmatapahtuma");
-        app.setInformation("Suspendisse quis arcu dolor. Donec fringilla nunc mollis aliquet mollis. Donec commodo tempus erat. " +
-                "Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Duis convallis sem tincidunt " +
-                "enim mattis eleifend eget eu ante");
-        app.setCreateDate(ZonedDateTime.now());
-        app.setStatus("Vireillä");
-        app.setId(123);
-
+    private ResponseEntity<Customer> createMockCustomerResponse() {
         Customer customer = new Customer();
-        customer.setId(23433);
-        customer.setName("Asiakas");
-        customer.setType("Henkilöasiakas");
-        customer.setAddress("Jokutie");
-        customer.setEmail("mail@mail.com");
-        customer.setZipCode("00100");
-        customer.setPostOffice("HELSINKI");
-        app.setCustomer(customer);
+        customer.setId(1);
+        customer.setType("Type");
+        customer.setSapId("333");
+        customer.setPersonId(222);
+        return new ResponseEntity<>(customer, HttpStatus.OK);
+    }
 
-        Project project = new Project();
-        project.setId(398);
-        project.setName("Hanke1");
-        project.setType("Sähkötyö");
-        project.setInformation("Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec quis congue erat. Aenean eget suscipit " +
-                "neque. Quisque et tincidunt dui. Donec dictum tellus lectus, ut lobortis nulla mollis nec. Morbi ante est, tristique eu " +
-                "eros ut, cursus consectetur justo. Donec varius sodales arcu, a posuere velit porta quis. Aliquam erat volutpat. Aliquam" +
-                " bibendum in lectus ac ornare. Aenean lacus massa, maximus et metus eu, rutrum bibendum massa.");
-        app.setProject(project);
-
-        appDTO.getApplicationList().add(app);
-
-        app = new Application();
-        app.setName("Tapahtuma 2");
-        app.setType("Ulkoilmatapahtuma2");
-        app.setCreateDate(ZonedDateTime.now());
-        app.setStatus("Käsittelyssä");
-        app.setId(456);
-
-        customer = new Customer();
-        customer.setId(321);
-        customer.setName("Asiakas2");
-        customer.setType("Henkilöasiakas2");
-        customer.setAddress("Jokutie2");
-        customer.setEmail("mail@mail.com2");
-        customer.setZipCode("00200");
-        customer.setPostOffice("HELSINKI");
-        app.setCustomer(customer);
-
-        project = new Project();
-        project.setId(789);
-        project.setName("Hanke2");
-        project.setType("Sähkötyö2");
-        app.setProject(project);
-
-        appDTO.getApplicationList().add(app);
-        return appDTO;
+    private ResponseEntity<Applicant> createMockApplicantResponse() {
+        Applicant applicant = new Applicant();
+        applicant.setId(222);
+        applicant.setPersonId(1);
+        return new ResponseEntity<>(applicant, HttpStatus.OK);
     }
 }

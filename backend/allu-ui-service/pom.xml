@@ -15,12 +15,17 @@
         <dependency>
             <groupId>fi.hel.allu</groupId>
             <artifactId>ui-domain</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.hel.allu</groupId>
             <artifactId>model-domain</artifactId>
-            <version>${parent.version}</version>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
 
         <dependency>

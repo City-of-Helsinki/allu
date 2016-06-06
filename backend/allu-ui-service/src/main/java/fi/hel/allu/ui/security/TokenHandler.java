@@ -1,14 +1,18 @@
 package fi.hel.allu.ui.security;
 
+import com.google.common.collect.Sets;
 import fi.hel.allu.ui.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TokenHandler {
 
@@ -56,7 +60,25 @@ public class TokenHandler {
     public User parseUserFromToken(String token) {
         final Claims claims = Jwts.parser().setSigningKey(secret)
                 .parseClaimsJws(token).getBody();
-        return userService.loadUserByUsername(claims.getSubject());
+
+        return new AlluUser(claims.getSubject(), claims.getSubject(), getRoles(claims), claims.get(EMAIL)
+                .toString());
     }
 
+    private Set<GrantedAuthority> getRoles(Claims claims) {
+        Collection<? extends GrantedAuthority> roles = (Collection<? extends GrantedAuthority>)claims.get(ROLES);
+
+        Set<GrantedAuthority> roleSet = Sets.newHashSet();
+
+        Iterator roleIterator = roles.iterator();
+
+        while (roleIterator.hasNext()) {
+            Map<String, String> roleMap = (Map<String, String>)roleIterator.next();
+            roleSet.addAll(roleMap.entrySet()
+                    .stream()
+                    .map(entry -> new SimpleGrantedAuthority(entry.getValue()))
+                    .collect(Collectors.toList()));
+        }
+        return roleSet;
+    }
 }

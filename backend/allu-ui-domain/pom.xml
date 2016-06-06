@@ -11,4 +11,11 @@
     <packaging>jar</packaging>
     <artifactId>ui-domain</artifactId>
 
+    <dependencies>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>model-domain</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+    </dependencies>
 </project>
