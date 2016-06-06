@@ -25,8 +25,7 @@ public class ApplicationDao {
 
   @Transactional(readOnly = true)
   public Optional<Application> findById(int id) {
-    Application appl = queryFactory.select(applicationBean).from(application).where(application.id.eq(id))
-        .fetchOne();
+    Application appl = queryFactory.select(applicationBean).from(application).where(application.id.eq(id)).fetchOne();
     return Optional.ofNullable(appl);
   }
 

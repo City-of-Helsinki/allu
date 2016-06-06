@@ -16,31 +16,31 @@ import fi.hel.allu.model.domain.Project;
 
 public class ProjectDao {
 
-    @Autowired
-    private SQLQueryFactory queryFactory;
+  @Autowired
+  private SQLQueryFactory queryFactory;
 
-    final QBean<Project> projectBean = bean(Project.class, project.all());
+  final QBean<Project> projectBean = bean(Project.class, project.all());
 
-    @Transactional(readOnly = true)
-    public Optional<Project> findById(int id) {
-        Project proj = queryFactory.select(projectBean).from(project).where(project.id.eq(id)).fetchOne();
-        return Optional.ofNullable(proj);
+  @Transactional(readOnly = true)
+  public Optional<Project> findById(int id) {
+    Project proj = queryFactory.select(projectBean).from(project).where(project.id.eq(id)).fetchOne();
+    return Optional.ofNullable(proj);
+  }
+
+  @Transactional
+  public Project insert(Project p) {
+    Integer id = queryFactory.insert(project).populate(p).executeWithKey(project.id);
+    return findById(id).get();
+  }
+
+  @Transactional
+  public Project update(int id, Project p) {
+    p.setId(id);
+    long changed = queryFactory.update(project).populate(p).where(project.id.eq(id)).execute();
+    if (changed == 0) {
+      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
-
-    @Transactional
-    public Project insert(Project p) {
-        Integer id = queryFactory.insert(project).populate(p).executeWithKey(project.id);
-        return findById(id).get();
-    }
-
-    @Transactional
-    public Project update(int id, Project p) {
-        p.setId(id);
-        long changed = queryFactory.update(project).populate(p).where(project.id.eq(id)).execute();
-        if (changed == 0) {
-            throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
-        }
-        return findById(id).get();
-    }
+    return findById(id).get();
+  }
 
 }

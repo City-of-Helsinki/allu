@@ -51,6 +51,7 @@ public class WebTestCommon {
 
   @Autowired
   private WebTestSqlRunner webTestSqlRunner;
+
   /*
    * Setup: creates mockMvc
    */
@@ -86,7 +87,6 @@ public class WebTestCommon {
     mapper.registerModule(new JavaTimeModule());
     return mapper.readValue(resultString, theClass);
   }
-
 
   private void deleteAllData() throws SQLException {
     webTestSqlRunner.runSql(DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_PERSONS, DELETE_ALL_LOCATIONS);

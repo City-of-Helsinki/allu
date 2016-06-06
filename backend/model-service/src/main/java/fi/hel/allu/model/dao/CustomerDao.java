@@ -17,34 +17,33 @@ import fi.hel.allu.model.domain.Customer;
 
 public class CustomerDao {
 
-    @Autowired
-    private SQLQueryFactory queryFactory;
+  @Autowired
+  private SQLQueryFactory queryFactory;
 
-    private final QBean<Customer> customerBean = bean(Customer.class, customer.all());
+  private final QBean<Customer> customerBean = bean(Customer.class, customer.all());
 
+  @Transactional(readOnly = true)
+  public Optional<Customer> findById(int id) {
+    Customer cust = queryFactory.select(customerBean).from(customer).where(customer.id.eq(id)).fetchOne();
+    return Optional.ofNullable(cust);
+  }
 
-    @Transactional(readOnly = true)
-    public Optional<Customer> findById(int id) {
-        Customer cust = queryFactory.select(customerBean).from(customer).where(customer.id.eq(id)).fetchOne();
-        return Optional.ofNullable(cust);
+  @Transactional
+  public Customer insert(Customer customerData) {
+    Integer id = queryFactory.insert(customer).populate(customerData).executeWithKey(customer.id);
+    if (id == null) {
+      throw new QueryException("Failed to insert record");
     }
+    return findById(id).get();
+  }
 
-    @Transactional
-    public Customer insert(Customer customerData) {
-        Integer id = queryFactory.insert(customer).populate(customerData).executeWithKey(customer.id);
-        if (id == null) {
-            throw new QueryException("Failed to insert record");
-        }
-        return findById(id).get();
+  @Transactional
+  public Customer update(int id, Customer customerData) {
+    customerData.setId(id);
+    long changed = queryFactory.update(customer).populate(customerData).where(customer.id.eq(id)).execute();
+    if (changed == 0) {
+      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
-
-    @Transactional
-    public Customer update(int id, Customer customerData) {
-        customerData.setId(id);
-        long changed = queryFactory.update(customer).populate(customerData).where(customer.id.eq(id)).execute();
-        if (changed == 0) {
-            throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
-        }
-        return findById(id).get();
-    }
+    return findById(id).get();
+  }
 }

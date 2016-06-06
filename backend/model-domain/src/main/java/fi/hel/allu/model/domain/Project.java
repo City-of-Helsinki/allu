@@ -7,89 +7,89 @@ import java.util.Date;
  */
 public class Project {
 
-    private Integer id;
-    private Integer ownerId;
-    private Integer contactId;
-    private String name;
-    private Date startDate;
-    private Date endDate;
-    private String additionalInfo;
+  private Integer id;
+  private Integer ownerId;
+  private Integer contactId;
+  private String name;
+  private Date startDate;
+  private Date endDate;
+  private String additionalInfo;
 
-    /**
-     * In Finnish: Hankkeen tunnus
-     */
-    public Integer getId() {
-        return id;
-    }
+  /**
+   * In Finnish: Hankkeen tunnus
+   */
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    /**
-     * In Finnish: hankkeen omistaja
-     */
-    public Integer getOwnerId() {
-        return ownerId;
-    }
+  /**
+   * In Finnish: hankkeen omistaja
+   */
+  public Integer getOwnerId() {
+    return ownerId;
+  }
 
-    public void setOwnerId(Integer ownerId) {
-        this.ownerId = ownerId;
-    }
+  public void setOwnerId(Integer ownerId) {
+    this.ownerId = ownerId;
+  }
 
-    /**
-     * In Finnish: hankkeen yhteyshenkilä
-     */
-    public Integer getContactId() {
-        return contactId;
-    }
+  /**
+   * In Finnish: hankkeen yhteyshenkilä
+   */
+  public Integer getContactId() {
+    return contactId;
+  }
 
-    public void setContactId(Integer contactId) {
-        this.contactId = contactId;
-    }
+  public void setContactId(Integer contactId) {
+    this.contactId = contactId;
+  }
 
-    /**
-     * In Finnish: Hankkeen nimi
-     */
-    public String getName() {
-        return name;
-    }
+  /**
+   * In Finnish: Hankkeen nimi
+   */
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    /**
-     * In Finnish: alkupäivä
-     */
-    public Date getStartDate() {
-        return startDate;
-    }
+  /**
+   * In Finnish: alkupäivä
+   */
+  public Date getStartDate() {
+    return startDate;
+  }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
+  public void setStartDate(Date startDate) {
+    this.startDate = startDate;
+  }
 
-    /**
-     * In Finnish: loppupäivä
-     */
-    public Date getEndDate() {
-        return endDate;
-    }
+  /**
+   * In Finnish: loppupäivä
+   */
+  public Date getEndDate() {
+    return endDate;
+  }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
+  public void setEndDate(Date endDate) {
+    this.endDate = endDate;
+  }
 
-    /**
-     * In Finnish: lisätiedot
-     */
-    public String getAdditionalInfo() {
-        return additionalInfo;
-    }
+  /**
+   * In Finnish: lisätiedot
+   */
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
 
-    public void setAdditionalInfo(String additionalInfo) {
-        this.additionalInfo = additionalInfo;
-    }
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
+  }
 
 }

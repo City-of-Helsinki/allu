@@ -85,8 +85,7 @@ public class ApplicationControllerTest {
     ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
     Application appInResult = wtc.parseObjectFromResult(resultActions, Application.class);
     // Test: try to read the same application back
-    resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
-        .andExpect(status().isOk());
+    resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId()))).andExpect(status().isOk());
     Application appOut = wtc.parseObjectFromResult(resultActions, Application.class);
     assertEquals(appIn.getStatus(), appOut.getStatus());
   }
@@ -133,10 +132,11 @@ public class ApplicationControllerTest {
     // Now get applications for the first project:
     ResultActions resultActions = wtc.perform(get(String.format("/applications/byproject/%d", app1.getProjectId())))
         .andExpect(status().isOk());
-   Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(NUM_FIRST, results.length);
     // Try also with nonexistent project id:
-    resultActions =  wtc.perform(get(String.format("/applications/byproject/%d", app1.getProjectId() + app2.getProjectId())))
+    resultActions = wtc
+        .perform(get(String.format("/applications/byproject/%d", app1.getProjectId() + app2.getProjectId())))
         .andExpect(status().isOk());
     results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(0, results.length);
