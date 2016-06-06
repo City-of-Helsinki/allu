@@ -5,12 +5,13 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletResponse;
 
 import com.querydsl.core.QueryException;
+
+import fi.hel.allu.common.exception.NoSuchEntityException;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import fi.hel.allu.NoSuchEntityException;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {

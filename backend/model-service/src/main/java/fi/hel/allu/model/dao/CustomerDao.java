@@ -12,7 +12,7 @@ import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
-import fi.hel.allu.NoSuchEntityException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Customer;
 
 public class CustomerDao {
