@@ -16,9 +16,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.*;
 
 public class FindApplicationServiceTest {
     @Mock
@@ -89,6 +88,9 @@ public class FindApplicationServiceTest {
         Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
                 .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockApplicantResponse());
 
+        Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
+                .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse());
+
         Mockito.when(props.getUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
 
         List<ApplicationJson> response = applicationService.findApplicationByHandler("222");
@@ -110,6 +112,9 @@ public class FindApplicationServiceTest {
         assertEquals(555, response.get(1).getProject().getId());
         assertEquals("MockName2", response.get(1).getName());
         assertEquals(1234, response.get(1).getId());
+        assertNotNull(response.get(1).getLocation());
+        assertNotNull(response.get(1).getLocation().getGeometry());
+        assertEquals(777, response.get(1).getLocation().getId());
     }
 
     private Application createMockApplicationResponse() {
@@ -148,6 +153,7 @@ public class FindApplicationServiceTest {
         applicationModel.setName("MockName2");
         applicationModel.setCustomerId(3456);
         applicationModel.setApplicantId(655);
+        applicationModel.setLocationId(345);
         applicationModelArray[1] = applicationModel;
 
         return new ResponseEntity<>(applicationModelArray, HttpStatus.OK);
@@ -188,5 +194,14 @@ public class FindApplicationServiceTest {
         applicant.setId(222);
         applicant.setPersonId(1);
         return new ResponseEntity<>(applicant, HttpStatus.OK);
+    }
+
+    private ResponseEntity<Location> createMockLocationResponse() {
+        Location location = new Location();
+        location.setCity("City1");
+        location.setPostalCode("33333");
+        location.setId(777);
+        location.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
+        return new ResponseEntity<>(location, HttpStatus.OK);
     }
 }

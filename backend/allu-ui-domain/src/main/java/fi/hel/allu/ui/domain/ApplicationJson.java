@@ -30,6 +30,8 @@ public class ApplicationJson {
     private ApplicantJson applicant;
     @Valid
     private List<ContactJson> contactList;
+    @Valid
+    private LocationJson location;
 
     /**
      * in Finnish: Hakemuksen toimeksiantaja
@@ -139,5 +141,16 @@ public class ApplicationJson {
 
     public void setContactList(List<ContactJson> contactList) {
         this.contactList = contactList;
+    }
+
+    /**
+     * in Finnish: Hakemuksen sijainti
+     */
+    public LocationJson getLocation() {
+        return location;
+    }
+
+    public void setLocation(LocationJson location) {
+        this.location = location;
     }
 }
