@@ -3,6 +3,8 @@ package fi.hel.allu.model.controller;
 import java.util.List;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,12 +42,12 @@ public class ContactController {
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Contact> update(@PathVariable int id, @RequestBody(required = true) Contact contact) {
+  public ResponseEntity<Contact> update(@PathVariable int id, @Valid @RequestBody(required = true) Contact contact) {
     return new ResponseEntity<>(contactDao.update(id, contact), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Contact> insert(@RequestBody(required = true) Contact contact) {
+  public ResponseEntity<Contact> insert(@Valid @RequestBody(required = true) Contact contact) {
     if (contact.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }

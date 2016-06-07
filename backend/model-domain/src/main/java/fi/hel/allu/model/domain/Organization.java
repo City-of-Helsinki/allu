@@ -1,8 +1,12 @@
 package fi.hel.allu.model.domain;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class Organization {
   private Integer id;
+  @NotBlank
   private String name;
+  @NotBlank
   private String businessId;
   private String streetAddress;
   private String postalCode;

@@ -1,7 +1,10 @@
 package fi.hel.allu.model.domain;
+import org.hibernate.validator.constraints.NotBlank;
 
 public class Person {
   private Integer id;
+
+  @NotBlank
   private String name;
   private String streetAddress;
   private String postalCode;

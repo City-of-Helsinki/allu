@@ -2,6 +2,8 @@ package fi.hel.allu.model.controller;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,12 +33,12 @@ public class LocationController {
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Location> update(@PathVariable int id, @RequestBody(required = true) Location location) {
+  public ResponseEntity<Location> update(@PathVariable int id, @Valid @RequestBody(required = true) Location location) {
     return new ResponseEntity<Location>(locationDao.update(id, location), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Location> insert(@RequestBody(required = true) Location location) {
+  public ResponseEntity<Location> insert(@Valid @RequestBody(required = true) Location location) {
     if (location.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }

@@ -2,6 +2,8 @@ package fi.hel.allu.model.controller;
 
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,12 +34,12 @@ public class OrganizationController {
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Organization> update(@PathVariable int id,
-      @RequestBody(required = true) Organization organization) {
+      @Valid @RequestBody(required = true) Organization organization) {
     return new ResponseEntity<>(organizationDao.update(id, organization), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Organization> insert(@RequestBody(required = true) Organization organization) {
+  public ResponseEntity<Organization> insert(@Valid @RequestBody(required = true) Organization organization) {
     if (organization.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
