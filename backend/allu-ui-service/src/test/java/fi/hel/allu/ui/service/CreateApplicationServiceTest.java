@@ -4,6 +4,10 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryType;
+import org.geolatte.geom.GeometryVisitor;
+import org.geolatte.geom.PointCollection;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -110,6 +117,10 @@ public class CreateApplicationServiceTest {
                 Mockito.eq(Applicant.class)))
                 .thenAnswer((Answer<Applicant>) invocation -> createMockApplicant());
 
+        Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
+                Mockito.eq(Location.class)))
+                .thenAnswer((Answer<Location>) invocation -> createMockLocation());
+
         List<ApplicationJson> response = applicationService.createApplication(applicationJsonList);
 
         assertNotNull(response);
@@ -118,6 +129,7 @@ public class CreateApplicationServiceTest {
         assertNotNull(response.get(0).getApplicant());
         assertNotNull(response.get(0).getCustomer());
         assertNotNull(response.get(0).getProject());
+        assertNotNull(response.get(0).getLocation());
         assertEquals(555, response.get(0).getApplicant().getId());
         assertEquals(1234, response.get(0).getProject().getId());
         assertEquals(3, response.get(0).getCustomer().getId());
@@ -128,6 +140,8 @@ public class CreateApplicationServiceTest {
         assertNull(response.get(0).getCustomer().getOrganization());
         assertNotNull(response.get(0).getCustomer().getPerson());
         assertEquals(1, response.get(0).getCustomer().getPerson().getId());
+        assertNotNull(response.get(0).getLocation().getGeometry());
+        assertEquals(777, response.get(0).getLocation().getId());
     }
 
 
@@ -173,9 +187,17 @@ public class CreateApplicationServiceTest {
         ApplicantJson applicantJson = new ApplicantJson();
         applicantJson.setOrganization(organizationJson2);
 
+        LocationJson locationJson = new LocationJson();
+        locationJson.setStreetAddress("address");
+        locationJson.setPostalCode("33333");
+        locationJson.setCity("city");
+        locationJson.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
+
+
         applicationJson.setCustomer(customer);
         applicationJson.setApplicant(applicantJson);
         applicationJson.setProject(project);
+        applicationJson.setLocation(locationJson);
 
         applicationJsonList.add(applicationJson);
 
@@ -192,6 +214,7 @@ public class CreateApplicationServiceTest {
         application.setCustomerId(111);
         application.setHandler("Mock handler");
         application.setType("Mock type");
+        application.setLocationId(1);
         return application;
     }
 
@@ -242,7 +265,15 @@ public class CreateApplicationServiceTest {
         Applicant applicant = new Applicant();
         applicant.setId(555);
         applicant.setOrganizationId(2);
-        //applicant.setPersonId(1);
         return applicant;
+    }
+
+    private Location createMockLocation() {
+        Location location = new Location();
+        location.setCity("City1");
+        location.setPostalCode("33333");
+        location.setId(777);
+        location.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
+        return location;
     }
 }

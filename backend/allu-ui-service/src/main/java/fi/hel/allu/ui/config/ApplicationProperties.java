@@ -101,6 +101,17 @@ public class ApplicationProperties {
      */
     public static final String PATH_MODEL_CONTACT_FIND_BY_ORGANIZATION = "/contacts?organizationId={organizationId}";
 
+    /**
+     * Model-service path to create a new location
+     */
+    public static final String PATH_MODEL_LOCATION_CREATE = "/locations";
+
+    /**
+     * Model-service path to find contact by identifier
+     */
+    public static final String PATH_MODEL_LOCATION_FIND_BY_ID = "/locations/{locationId}";
+
+
 
     /**
      * Create absolute url to model-service. Host and port values are read from the application.properties.

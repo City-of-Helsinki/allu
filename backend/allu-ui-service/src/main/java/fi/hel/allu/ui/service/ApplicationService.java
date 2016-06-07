@@ -55,6 +55,13 @@ public class ApplicationService {
                 applicationJson.getApplicant().setId(applicantModel.getId());
             }
 
+            if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() == 0) {
+                Location location = restTemplate.postForObject(applicationProperties
+                        .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(applicationJson.getLocation()),
+                        Location.class);
+                applicationJson.getLocation().setId(location.getId());
+            }
+
             Application applicationModel = restTemplate.postForObject(applicationProperties
                     .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
                     createApplicationModel(applicationJson), Application.class);
@@ -99,6 +106,9 @@ public class ApplicationService {
         applicationJson.setCustomer(findCustomerById(applicationModel.getCustomerId()));
         applicationJson.setProject(findProjectById(applicationModel.getProjectId()));
         applicationJson.setApplicant(findApplicantById(applicationModel.getApplicantId()));
+        if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
+            applicationJson.setLocation(findLocationById(applicationModel.getLocationId()));
+        }
         return applicationJson;
     }
 
@@ -153,6 +163,14 @@ public class ApplicationService {
                 .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);
         mapProjectToJson(projectJson, projectResult.getBody());
         return projectJson;
+    }
+
+    private LocationJson findLocationById(int locationId)  {
+        LocationJson locationJson = new LocationJson();
+        ResponseEntity<Location> locationResult = restTemplate.getForEntity(applicationProperties
+                .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_FIND_BY_ID), Location.class, locationId);
+        mapLocationToJson(locationJson, locationResult.getBody());
+        return locationJson;
     }
 
     private Customer createCustomerModel(CustomerJson customerJson) {
@@ -223,9 +241,28 @@ public class ApplicationService {
         applicationDomain.setHandler(applicationJson.getHandler());
         applicationDomain.setType(applicationJson.getType());
         applicationDomain.setStatus(applicationJson.getStatus());
+        if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() > 0) {
+            applicationDomain.setLocationId(applicationJson.getLocation().getId());
+        }
         return applicationDomain;
     }
 
+    private Location createLocationModel(LocationJson locationJson) {
+        Location location = new Location();
+        location.setStreetAddress(locationJson.getStreetAddress());
+        location.setPostalCode(locationJson.getPostalCode());
+        location.setGeometry(locationJson.getGeometry());
+        location.setCity(locationJson.getCity());
+        return location;
+    }
+
+    private void mapLocationToJson(LocationJson locationJson, Location location) {
+        locationJson.setId(location.getId());
+        locationJson.setCity(location.getCity());
+        locationJson.setGeometry(location.getGeometry());
+        locationJson.setPostalCode(location.getPostalCode());
+        locationJson.setStreetAddress(location.getStreetAddress());
+    }
 
     private void mapProjectToJson(ProjectJson projectJson, Project projectDomain) {
         projectJson.setId(projectDomain.getId());
