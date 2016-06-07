@@ -171,6 +171,7 @@ public class ApplicationControllerTest {
     app.setCustomerId(personAndProject.getValue0());
     app.setProjectId(personAndProject.getValue1());
     app.setCreationTime(ZonedDateTime.now());
+    app.setType("FreeEvent");
     app.setName(name);
     app.setHandler(handler);
     return app;

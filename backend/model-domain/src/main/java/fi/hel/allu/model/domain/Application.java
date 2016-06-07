@@ -2,18 +2,25 @@ package fi.hel.allu.model.domain;
 
 import java.time.ZonedDateTime;
 
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.validator.constraints.NotBlank;
 /**
  * In Finnish: hakemus
  */
 public class Application {
 
   private Integer id;
+  @NotNull
   private Integer projectId;
   private String handler;
+  @NotNull
   private Integer customerId;
   private Integer applicantId;
   private String status;
+  @NotBlank
   private String type;
+  @NotBlank
   private String name;
   private ZonedDateTime creationTime;
   private Integer locationId;
