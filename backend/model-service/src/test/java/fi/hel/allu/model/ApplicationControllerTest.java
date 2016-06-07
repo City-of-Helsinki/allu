@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 
-import org.javatuples.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,8 +19,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
+import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.PersonDao;
 import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.domain.Applicant;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Person;
 import fi.hel.allu.model.domain.Project;
@@ -39,6 +40,9 @@ public class ApplicationControllerTest {
 
   @Autowired
   PersonDao personDao;
+
+  @Autowired
+  ApplicantDao applicantDao;
 
   @Before
   public void setup() throws Exception {
@@ -166,10 +170,13 @@ public class ApplicationControllerTest {
   // - Create dummy person and project to get valid ids
   // - Set some values for the application
   private Application prepareApplication(String name, String handler) throws Exception {
-    Pair<Integer, Integer> personAndProject = addPersonAndProject();
+    Integer personId = addPerson();
+    Integer projectId = addProject(personId);
+    Integer applicantId = addApplicant(personId);
     Application app = new Application();
-    app.setCustomerId(personAndProject.getValue0());
-    app.setProjectId(personAndProject.getValue1());
+    app.setCustomerId(personId);
+    app.setApplicantId(applicantId);
+    app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.now());
     app.setType("FreeEvent");
     app.setName(name);
@@ -177,19 +184,30 @@ public class ApplicationControllerTest {
     return app;
   }
 
-  private Pair<Integer, Integer> addPersonAndProject() throws Exception {
+  private Integer addPerson() throws Exception {
     Person person = new Person();
     person.setName("Pentti");
     person.setSsn("121212-xxxx");
     person.setEmail("pena@dev.null");
     Person insertedPerson = personDao.insert(person);
+    return insertedPerson.getId();
+  }
+
+  private Integer addProject(Integer personId) throws Exception {
     Project project = new Project();
     project.setName("Viemärityö");
-    project.setOwnerId(insertedPerson.getId());
-    project.setContactId(insertedPerson.getId());
+    project.setOwnerId(personId);
+    project.setContactId(personId);
     project.setStartDate(Calendar.getInstance().getTime());
     Project insertedProject = projectDao.insert(project);
-    return new Pair<>(insertedPerson.getId(), insertedProject.getId());
+    return insertedProject.getId();
+  }
+
+  private Integer addApplicant(Integer personId) {
+    Applicant applicant = new Applicant();
+    applicant.setPersonId(personId);
+    Applicant insertedApplicant = applicantDao.insert(applicant);
+    return insertedApplicant.getId();
   }
 
 }

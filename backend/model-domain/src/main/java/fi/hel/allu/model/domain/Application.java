@@ -16,6 +16,7 @@ public class Application {
   private String handler;
   @NotNull
   private Integer customerId;
+  @NotNull
   private Integer applicantId;
   private String status;
   @NotBlank
