@@ -1,27 +1,36 @@
-import {Area} from '../location/area';
-import {Customer} from '../customer/customer';
-import {Person} from './person';
-import {Billing} from './billing';
 import {Applicant} from './applicant';
 import {Project} from './project';
-import {BackendApplication} from '../../service/backend-model/backend-application';
+import {Contact} from './contact';
+import {Customer} from '../common/customer';
+import {Person} from '../common/person';
+import {PostalAddress} from '../common/postal-address';
 
 export class Application {
 
   constructor(
     public id: number,
-    public name: string,
-    public type: string,
-    public status: string,
-    public latitude: number,
-    public longitude: number,
+    public project: Project,
     public handler: string,
-    public area: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>,
     public customer: Customer,
-    public contact: Person,
-    public billing: Billing,
+    public status: string,
+    public type: string,
+    public name: string,
+    public creationTime: Date,
     public applicant: Applicant,
-    public project: Project) {
-    // ALL APPLICATIONS DO NOT HAVE A SINGLE LATLNG COORDINATE, E.G. AREA
+    public contactList: Array<Contact>,
+    public location: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {}
+
+  public static emptyApplication(): Application {
+    let customerPostalAddress = new PostalAddress(undefined, undefined, undefined);
+    let customerPerson = new Person(undefined, undefined, customerPostalAddress, undefined, undefined, undefined);
+    let customer = new Customer(undefined, 'Person', '123', customerPerson, undefined);
+    let applicantPostalAddress = new PostalAddress(undefined, undefined, undefined);
+    let applicantPerson = new Person(undefined, undefined, applicantPostalAddress, undefined, undefined, undefined);
+    let applicant = new Applicant(undefined, applicantPerson, undefined);
+    let contactPostalAddress = new PostalAddress(undefined, undefined, undefined);
+    let contactPerson = new Person(undefined, undefined, contactPostalAddress, undefined, undefined, undefined);
+    let contact = new Contact(undefined, contactPerson, undefined);
+    return new
+      Application(undefined, undefined, undefined, customer, undefined, undefined, undefined, undefined, applicant, [contact], undefined);
   }
 }

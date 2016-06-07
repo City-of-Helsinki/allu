@@ -27,15 +27,21 @@ export class ApplicationService {
   }
 
   public addApplication(application: Application): Promise<Application> {
+    console.log('ApplicationService.addApplication', application);
     return new Promise<Application>((resolve, reject) =>
       this.authHttp.post('/api/applications', JSON.stringify({ 'applicationList': [ApplicationMapper.mapFrontend(application)] }))
         .subscribe(
           data => { 
+            console.log('ApplicationService.addApplication processing', data.json());
+            console.log('ApplicationService.addApplication map', data.json()[0]);
             let appl = ApplicationMapper.mapBackend(data.json().applicationList[0]);
             console.log('Created application', appl);
             resolve(appl);
           },
-          err => reject(err),
+          err => {
+            console.log('ApplicationService.addApplication error', err);
+            reject(err);
+          },
           () => console.log('Request Complete')
         )
     );

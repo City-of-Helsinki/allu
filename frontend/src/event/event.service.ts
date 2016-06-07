@@ -5,7 +5,7 @@ import {Event} from './event';
 import {Subject} from 'rxjs/Subject';
 import {listeners} from 'cluster';
 
-// @Injectable()
+@Injectable()
 export class EventService {
 
   private listeners: Array<EventListener> = [];
@@ -38,12 +38,10 @@ export class EventService {
   }
 
   private processQueue(event: Event) {
+    console.log('EventService.processQueue', event);
     for (let el of this.listeners) {
-      console.log(el);
-
       if (el !== event.sender) {
         el.handle(event);
-        console.log('EventService.emptyQueue sending event', el);
       }
     }
   }

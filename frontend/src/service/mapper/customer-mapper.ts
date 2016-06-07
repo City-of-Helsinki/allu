@@ -1,25 +1,28 @@
 import {BackendCustomer} from '../backend-model/backend-customer';
-import {Customer} from '../../model/customer/customer';
-import {PostalAddress} from '../../model/common/postal-address';
+import {PersonMapper} from './person-mapper';
+import {OrganizationMapper} from './organization-mapper';
+import {Customer} from '../../model/common/customer';
 
 export class CustomerMapper {
 
   public static mapBackend(backendCustomer: BackendCustomer): Customer {
-    let addr = new PostalAddress(backendCustomer.address, backendCustomer.zipCode, backendCustomer.city);
-    return new Customer(backendCustomer.id, backendCustomer.name, backendCustomer.type, addr, backendCustomer.email, backendCustomer.ssn);
+    return (backendCustomer) ?
+      new Customer(
+        backendCustomer.id,
+        backendCustomer.type,
+        backendCustomer.sapId,
+        PersonMapper.mapBackend(backendCustomer.person),
+        OrganizationMapper.mapBackend(backendCustomer.organization)) : undefined;
   }
 
   public static mapFrontend(customer: Customer): BackendCustomer {
-    return {
+    return (customer) ?
+    {
       id: undefined,
-      name: customer.name,
-      type: undefined,
-      address: undefined,
-      postOffice: undefined,
-      zipCode: undefined,
-      city: undefined,
-      email: undefined,
-      ssn: undefined
-    };
+      type: customer.type,
+      sapId: customer.sapId,
+      person: PersonMapper.mapFrontend(customer.person),
+      organization: OrganizationMapper.mapFrontend(customer.organization)
+    } : undefined;
   }
 }

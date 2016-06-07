@@ -1,7 +1,6 @@
-
-import {Person} from '../common/person';
 import {Organization} from '../common/organization';
+import {Person} from '../common/person';
 
-export class Applicant {
+export class Contact {
   constructor(public id: number, public person: Person, public organization: Organization) {}
 }

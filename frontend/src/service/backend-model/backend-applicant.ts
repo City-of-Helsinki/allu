@@ -1,10 +1,8 @@
 import {BackendPerson} from './backend-person';
 import {BackendOrganization} from './backend-organization';
 
-export interface BackendCustomer {
+export interface BackendApplicant {
   id: number;
-  type: string;
-  sapId: string;
   person: BackendPerson;
   organization: BackendOrganization;
 }

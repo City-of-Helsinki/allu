@@ -51,7 +51,7 @@ export class LocationSearchComponent implements EventListener, OnInit, OnDestroy
     if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent>event;
       this.applicationsQueue = aaEvent.applications.slice();
-      this.applicationsQueue.forEach((app) => app.area = JSON.parse(localStorage.getItem('application')));
+      this.applicationsQueue.forEach((app) => app.location = JSON.parse(localStorage.getItem('application')));
     }
   }
 
