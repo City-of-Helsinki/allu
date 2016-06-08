@@ -18,16 +18,18 @@ import {TaskManagerService} from '../../service/task/task-manager.service';
 
 
 @Component({
-  selector: 'workqueue',
+  selector: 'locationsearch',
   moduleId: module.id,
-  template: require('./workqueue.component.html'),
+  template: require('./locationsearch.component.html'),
   styles: [
-    require('./workqueue.component.scss')
+    require('./locationsearch.component.scss')
   ],
   directives: [MD_CARD_DIRECTIVES, MdButton]
 })
 
-export class WorkQueueComponent implements EventListener, OnInit, OnDestroy {
+export class LocationSearchComponent implements EventListener, OnInit, OnDestroy {
+  marker: MarkerComponent;
+
   private applicationsQueue: Array<Application> = [];
 
   constructor(private workqueueService: WorkqueueService, private eventService: EventService) {

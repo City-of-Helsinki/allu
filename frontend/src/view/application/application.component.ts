@@ -10,7 +10,7 @@ import {TypeComponent} from '../../component/application/type/type.component';
 import {OutdoorEventComponent} from '../../component/application/outdoor-event/outdoor-event.component';
 
 import {MapComponent} from '../../component/map/map.component';
-import {WorkqueueComponent} from '../../component/workqueue/workqueue.component';
+import {WorkQueueComponent} from '../../component/workqueue/workqueue.component';
 
 
 import {WorkqueueService} from '../../service/workqueue.service';
