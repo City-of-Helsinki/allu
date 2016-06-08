@@ -25,7 +25,7 @@ public class CreateApplicationController {
 
     @RequestMapping(method = RequestMethod.POST)
     @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
-    public ResponseEntity<List<ApplicationJson>> create(@Valid @RequestBody ApplicationListJson applicationListJson) {
+    public ResponseEntity<ApplicationListJson> create(@Valid @RequestBody ApplicationListJson applicationListJson) {
         return new ResponseEntity<>(applicationService.createApplication(applicationListJson), HttpStatus.OK);
     }
 

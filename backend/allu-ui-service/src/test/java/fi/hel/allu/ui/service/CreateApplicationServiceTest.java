@@ -88,7 +88,7 @@ public class CreateApplicationServiceTest {
     public void testCreateWithEmptyCustomerOrganizationAndPerson() {
         applicationJsonList.getApplicationList().get(0).getCustomer().setOrganization(null);
         applicationJsonList.getApplicationList().get(0).getCustomer().setPerson(null);
-        List<ApplicationJson> response = applicationService.createApplication(applicationJsonList);
+        ApplicationListJson response = applicationService.createApplication(applicationJsonList);
     }
 
     @Test
@@ -121,27 +121,28 @@ public class CreateApplicationServiceTest {
                 Mockito.eq(Location.class)))
                 .thenAnswer((Answer<Location>) invocation -> createMockLocation());
 
-        List<ApplicationJson> response = applicationService.createApplication(applicationJsonList);
+        ApplicationListJson response = applicationService.createApplication(applicationJsonList);
 
         assertNotNull(response);
-        assertEquals(1, response.size());
-        assertEquals(4321, response.get(0).getId());
-        assertNotNull(response.get(0).getApplicant());
-        assertNotNull(response.get(0).getCustomer());
-        assertNotNull(response.get(0).getProject());
-        assertNotNull(response.get(0).getLocation());
-        assertEquals(555, response.get(0).getApplicant().getId());
-        assertEquals(1234, response.get(0).getProject().getId());
-        assertEquals(3, response.get(0).getCustomer().getId());
-        assertEquals("Kalle käsittelijä", response.get(0).getHandler());
-        assertNull(response.get(0).getApplicant().getPerson());
-        assertNotNull(response.get(0).getApplicant().getOrganization());
-        assertEquals(2, response.get(0).getApplicant().getOrganization().getId());
-        assertNull(response.get(0).getCustomer().getOrganization());
-        assertNotNull(response.get(0).getCustomer().getPerson());
-        assertEquals(1, response.get(0).getCustomer().getPerson().getId());
-        assertNotNull(response.get(0).getLocation().getGeometry());
-        assertEquals(777, response.get(0).getLocation().getId());
+        assertNotNull(response.getApplicationList());
+        assertEquals(1, response.getApplicationList().size());
+        assertEquals(4321, response.getApplicationList().get(0).getId());
+        assertNotNull(response.getApplicationList().get(0).getApplicant());
+        assertNotNull(response.getApplicationList().get(0).getCustomer());
+        assertNotNull(response.getApplicationList().get(0).getProject());
+        assertNotNull(response.getApplicationList().get(0).getLocation());
+        assertEquals(555, response.getApplicationList().get(0).getApplicant().getId());
+        assertEquals(1234, response.getApplicationList().get(0).getProject().getId());
+        assertEquals(3, response.getApplicationList().get(0).getCustomer().getId());
+        assertEquals("Kalle käsittelijä", response.getApplicationList().get(0).getHandler());
+        assertNull(response.getApplicationList().get(0).getApplicant().getPerson());
+        assertNotNull(response.getApplicationList().get(0).getApplicant().getOrganization());
+        assertEquals(2, response.getApplicationList().get(0).getApplicant().getOrganization().getId());
+        assertNull(response.getApplicationList().get(0).getCustomer().getOrganization());
+        assertNotNull(response.getApplicationList().get(0).getCustomer().getPerson());
+        assertEquals(1, response.getApplicationList().get(0).getCustomer().getPerson().getId());
+        assertNotNull(response.getApplicationList().get(0).getLocation().getGeometry());
+        assertEquals(777, response.getApplicationList().get(0).getLocation().getId());
     }
 
 

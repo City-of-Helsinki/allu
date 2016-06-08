@@ -30,10 +30,10 @@ public class ApplicationService {
     /**
      * Create applications by calling backend service.
      *
-     * @param applications List of applications that are going to be created
-     * @return List of created applications and their identifiers
+     * @param applications Transfer object that contains list of applications that are going to be created
+     * @return Transfer object that contains list of created applications and their identifiers
      */
-    public List<ApplicationJson> createApplication(ApplicationListJson applications) {
+    public ApplicationListJson createApplication(ApplicationListJson applications) {
 
         for (ApplicationJson applicationJson : applications.getApplicationList()) {
             if (applicationJson.getCustomer().getId() == 0) {
@@ -68,7 +68,7 @@ public class ApplicationService {
 
             applicationJson.setId(applicationModel.getId());
         }
-        return applications.getApplicationList();
+        return applications;
     }
 
 
