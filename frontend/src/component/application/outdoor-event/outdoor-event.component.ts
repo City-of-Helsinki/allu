@@ -10,6 +10,8 @@ import {MdRadioButton} from '@angular2-material/radio';
 import {MdRadioDispatcher} from '@angular2-material/radio/radio_dispatcher';
 import {MdCheckbox} from '@angular2-material/checkbox';
 
+import {MaterializeDirective} from 'angular2-materialize';
+
 import {WorkqueueService} from '../../../service/workqueue.service';
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
@@ -29,6 +31,7 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
   ],
   directives: [
     ROUTER_DIRECTIVES,
+    MaterializeDirective,
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,
     MdToolbar,
