@@ -3,7 +3,6 @@ import { Router, RouterLink } from '@angular/router-deprecated';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { Http, Headers } from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
-import {Customer} from '../../model/customer/customer';
 import {CustomerMapper} from '../../service/mapper/customer-mapper';
 
 @Component({

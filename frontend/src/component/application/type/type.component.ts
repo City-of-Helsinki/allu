@@ -15,10 +15,12 @@ import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-an
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
 import {Application} from '../../../model/application/application';
-import {Customer} from '../../../model/customer/customer';
 import {EventService} from '../../../event/event.service';
 import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
 import {PostalAddress} from '../../../model/common/postal-address';
+import {Customer} from '../../../model/common/customer';
+import {Applicant} from '../../../model/application/applicant';
+import {Person} from '../../../model/common/person';
 
 @Component({
   selector: 'type',
@@ -58,37 +60,31 @@ export class TypeComponent implements EventListener {
     console.log('Saving application', application);
     let postalAddress =
       new PostalAddress(application.customer.address, application.customer.zipCode, undefined);
-    // TODO: applicant is not the customer? Or is it?
+    let person = new Person(undefined, application.customer.type, postalAddress, application.customer.email, undefined, undefined);
     let customer =
       new Customer(
         undefined,
-        application.applicant.name,
         application.customer.type,
-        postalAddress,
-        application.customer.email,
+        undefined,
+        person,
         undefined);
-    console.log('Mapped customer', customer);
+    let applicant = new Applicant(application.applicant.businessID, person, undefined);
+
     let newApplication =
       new Application(
         undefined, // application.id,
-        application.title,
-        application.type,
-        application.status,
-        1,
-        1,
-        'Minna',
         undefined,
+        'handler',
         customer,
+        application.status,
+        application.type,
+        application.title,
         undefined,
+        applicant,
         undefined,
-        undefined,
-        undefined);
+        undefined
+      );
     let saveEvent = new ApplicationSaveEvent(newApplication);
     this.eventService.send(this, saveEvent);
-
-      // console.log(application);
-      // this.workqueue.add(application);
-      // console.log(this.workqueue.getAll());
-
-   }
+  }
 }

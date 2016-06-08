@@ -24,6 +24,6 @@ export class SaveApplicationTask extends Task {
     return addPromise.then((appl: Application) => {
       let aaEvent = new ApplicationAddedAnnounceEvent(appl);
       eventService.send(runner, aaEvent);
-    }).catch((err: any) => { eventService.send(runner, new ErrorEvent(saEvent)); });
+    }).catch((err: any) => { console.log(err); eventService.send(runner, new ErrorEvent(saEvent)); });
   }
 }

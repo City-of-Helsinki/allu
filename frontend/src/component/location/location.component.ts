@@ -16,7 +16,6 @@ import {ApplicationsAnnounceEvent} from '../../event/announce/applications-annou
 import {Event} from '../../event/event';
 import {EventListener} from '../../event/event-listener';
 import {Application} from '../../model/application/application';
-import {Customer} from '../../model/customer/customer';
 import {EventService} from '../../event/event.service';
 import {ApplicationSaveEvent} from '../../event/save/application-save-event';
 import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
@@ -64,7 +63,7 @@ export class LocationComponent implements EventListener {
 
   save() {
     console.log('Saving location for application id: ', this.id);
-    this.application.area = this.features;
+    this.application.location = this.features;
     this.application.name = 'Foobar';
     let saveEvent = new ApplicationSaveEvent(this.application);
     this.eventService.send(this, saveEvent);
