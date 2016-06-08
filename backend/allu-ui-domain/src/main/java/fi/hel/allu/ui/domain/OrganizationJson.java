@@ -2,6 +2,8 @@ package fi.hel.allu.ui.domain;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.Valid;
+
 /**
  * in Finnish: Organisaation tiedot
  */
@@ -11,9 +13,8 @@ public class OrganizationJson {
     private String name;
     @NotBlank(message="{organization.businessId}")
     private String businessId;
-    private String streetAddress;
-    private String postalCode;
-    private String city;
+    @Valid
+    private PostalAddressJson postalAddress;
     private String email;
     private String phone;
 
@@ -52,39 +53,6 @@ public class OrganizationJson {
     }
 
     /**
-     * in Finnish: Organisaation postiosoite
-     */
-    public String getStreetAddress() {
-        return streetAddress;
-    }
-
-    public void setStreetAddress(String streetAddress) {
-        this.streetAddress = streetAddress;
-    }
-
-    /**
-     * in Finnish: Organisaation postinumero
-     */
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    /**
-     * in Finnish: Organisaation kaupunki
-     */
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    /**
      * in Finnish: Organisaation sähköpostiosoite
      */
     public String getEmail() {
@@ -104,5 +72,16 @@ public class OrganizationJson {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    /**
+     * in Finnish: Organisaation osoitetiedot
+     */
+    public PostalAddressJson getPostalAddress() {
+        return postalAddress;
+    }
+
+    public void setPostalAddress(PostalAddressJson postalAddress) {
+        this.postalAddress = postalAddress;
     }
 }

@@ -84,12 +84,40 @@ public class CreateApplicationServiceTest {
         assertEquals("Person name is required", constraintViolations.iterator().next().getMessage());
     }
 
-    @Test (expected = IllegalArgumentException.class)
+    @Test
     public void testCreateWithEmptyCustomerOrganizationAndPerson() {
         applicationJsonList.getApplicationList().get(0).getCustomer().setOrganization(null);
         applicationJsonList.getApplicationList().get(0).getCustomer().setPerson(null);
-        ApplicationListJson response = applicationService.createApplication(applicationJsonList);
+        Set<ConstraintViolation<ApplicationJson>> constraintViolations =
+                validator.validate( applicationJsonList.getApplicationList().get(0) );
+        assertEquals(1, constraintViolations.size() );
+        assertEquals("person is required, type is Person", constraintViolations.iterator().next().getMessage());
     }
+
+    @Test
+    public void testCreateWithNotEmptyCustomerOrganization() {
+        OrganizationJson organizationJson = new OrganizationJson();
+        organizationJson.setBusinessId("444444");
+        organizationJson.setName("Organisaatio 2");;
+        organizationJson.setEmail("organization2 email");
+        applicationJsonList.getApplicationList().get(0).getCustomer().setOrganization(organizationJson);
+
+        Set<ConstraintViolation<ApplicationJson>> constraintViolations =
+                validator.validate( applicationJsonList.getApplicationList().get(0) );
+        assertEquals(1, constraintViolations.size() );
+        assertEquals("organization must be null, type is Person", constraintViolations.iterator().next().getMessage());
+    }
+
+    @Test
+    public void testCreateWithEmptyApplicantOrganization() {
+        applicationJsonList.getApplicationList().get(0).getApplicant().setOrganization(null);
+
+        Set<ConstraintViolation<ApplicationJson>> constraintViolations =
+                validator.validate( applicationJsonList.getApplicationList().get(0) );
+        assertEquals(1, constraintViolations.size() );
+        assertEquals("organization is required, type is Organization", constraintViolations.iterator().next().getMessage());
+    }
+
 
     @Test
     public void testCreateWithValidApplication() {
@@ -159,9 +187,12 @@ public class CreateApplicationServiceTest {
         applicationJson.setHandler("Kalle käsittelijä");
 
         PersonJson personJson = new PersonJson();
-        personJson.setCity("Person city");
-        personJson.setPostalCode("postalcode");
-        personJson.setStreetAddress("street address 2");
+
+        PostalAddressJson postalAddressJson = new PostalAddressJson();
+        postalAddressJson.setCity("Person city");
+        postalAddressJson.setPostalCode("postalcode");
+        postalAddressJson.setStreetAddress("street address 2");
+        personJson.setPostalAddress(postalAddressJson);
         personJson.setSsn("343232");
         personJson.setPhone("43244323");
         personJson.setName("Mock person");
@@ -178,9 +209,11 @@ public class CreateApplicationServiceTest {
 
         OrganizationJson organizationJson2 = new OrganizationJson();
         organizationJson2.setBusinessId("444444");
-        organizationJson2.setCity("Kaupunki2");
-        organizationJson2.setStreetAddress("Osoite 213");
-        organizationJson2.setPostalCode("002113");
+        PostalAddressJson postalAddressJsonOrgnization = new PostalAddressJson();
+        postalAddressJsonOrgnization.setCity("Kaupunki2");
+        postalAddressJsonOrgnization.setStreetAddress("Osoite 213");
+        postalAddressJsonOrgnization.setPostalCode("002113");
+        organizationJson2.setPostalAddress(postalAddressJsonOrgnization);
         organizationJson2.setPhone("323423421");
         organizationJson2.setName("Organisaatio 2");;
         organizationJson2.setEmail("organization2 email");
@@ -189,12 +222,15 @@ public class CreateApplicationServiceTest {
         applicantJson.setOrganization(organizationJson2);
 
         LocationJson locationJson = new LocationJson();
-        locationJson.setStreetAddress("address");
-        locationJson.setPostalCode("33333");
-        locationJson.setCity("city");
+        PostalAddressJson postalAddressJsonLocation = new PostalAddressJson();
+        postalAddressJsonLocation.setStreetAddress("address");
+        postalAddressJsonLocation.setPostalCode("33333");
+        postalAddressJsonLocation.setCity("city");
+        locationJson.setPostalAddress(postalAddressJsonLocation);
         locationJson.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
 
 
+        applicantJson.setType("Organization");
         applicationJson.setCustomer(customer);
         applicationJson.setApplicant(applicantJson);
         applicationJson.setProject(project);

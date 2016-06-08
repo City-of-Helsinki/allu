@@ -3,7 +3,6 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
-import fi.hel.allu.ui.validator.CustomerValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ public class ApplicationService {
 
         for (ApplicationJson applicationJson : applications.getApplicationList()) {
             if (applicationJson.getCustomer().getId() == 0) {
-                CustomerValidator.validateCustomer(applicationJson.getCustomer());
                 Customer customerModel = createNewCustomer(applicationJson.getCustomer());
                 applicationJson.getCustomer().setId(customerModel.getId());
             }
@@ -188,25 +186,29 @@ public class ApplicationService {
 
     private Organization createOrganizationModel(OrganizationJson organizationJson) {
         Organization organizationModel = new Organization();
-        organizationModel.setPostalCode(organizationJson.getPostalCode());
-        organizationModel.setStreetAddress(organizationJson.getStreetAddress());
+        if (organizationJson.getPostalAddress() != null) {
+            organizationModel.setPostalCode(organizationJson.getPostalAddress().getPostalCode());
+            organizationModel.setStreetAddress(organizationJson.getPostalAddress().getStreetAddress());
+            organizationModel.setCity(organizationJson.getPostalAddress().getCity());
+        }
         organizationModel.setPhone(organizationJson.getPhone());
         organizationModel.setName(organizationJson.getName());
         organizationModel.setBusinessId(organizationJson.getBusinessId());
-        organizationModel.setCity(organizationJson.getCity());
         organizationModel.setEmail(organizationJson.getEmail());
         return organizationModel;
     }
 
     private Person createPersonModel(PersonJson personJson) {
         Person personModel = new Person();
-        personModel.setStreetAddress(personJson.getStreetAddress());
+        if (personJson.getPostalAddress() != null) {
+            personModel.setStreetAddress(personJson.getPostalAddress().getStreetAddress());
+            personModel.setCity(personJson.getPostalAddress().getCity());
+            personModel.setPostalCode(personJson.getPostalAddress().getPostalCode());
+        }
         personModel.setPhone(personJson.getPhone());
         personModel.setName(personJson.getName());
         personModel.setSsn(personJson.getSsn());
-        personModel.setCity(personJson.getCity());
         personModel.setEmail(personJson.getEmail());
-        personModel.setPostalCode(personJson.getPostalCode());
         return personModel;
     }
 
@@ -249,19 +251,23 @@ public class ApplicationService {
 
     private Location createLocationModel(LocationJson locationJson) {
         Location location = new Location();
-        location.setStreetAddress(locationJson.getStreetAddress());
-        location.setPostalCode(locationJson.getPostalCode());
+        if (locationJson.getPostalAddress() != null) {
+            location.setStreetAddress(locationJson.getPostalAddress().getStreetAddress());
+            location.setPostalCode(locationJson.getPostalAddress().getPostalCode());
+            location.setCity(locationJson.getPostalAddress().getCity());
+        }
         location.setGeometry(locationJson.getGeometry());
-        location.setCity(locationJson.getCity());
         return location;
     }
 
     private void mapLocationToJson(LocationJson locationJson, Location location) {
         locationJson.setId(location.getId());
-        locationJson.setCity(location.getCity());
+        PostalAddressJson postalAddressJson = new PostalAddressJson();
+        postalAddressJson.setCity(location.getCity());
+        postalAddressJson.setPostalCode(location.getPostalCode());
+        postalAddressJson.setStreetAddress(location.getStreetAddress());
+        locationJson.setPostalAddress(postalAddressJson);
         locationJson.setGeometry(location.getGeometry());
-        locationJson.setPostalCode(location.getPostalCode());
-        locationJson.setStreetAddress(location.getStreetAddress());
     }
 
     private void mapProjectToJson(ProjectJson projectJson, Project projectDomain) {
@@ -271,13 +277,15 @@ public class ApplicationService {
 
     private void mapPersonToJson(PersonJson personJson, Person personDomain) {
         personJson.setId(personDomain.getId());
-        personJson.setPostalCode(personDomain.getPostalCode());
-        personJson.setStreetAddress(personDomain.getStreetAddress());
+        PostalAddressJson postalAddressJson = new PostalAddressJson();
+        postalAddressJson.setPostalCode(personDomain.getPostalCode());
+        postalAddressJson.setStreetAddress(personDomain.getStreetAddress());
+        postalAddressJson.setCity(personDomain.getCity());
+        personJson.setPostalAddress(postalAddressJson);
         personJson.setSsn(personDomain.getSsn());
         personJson.setPhone(personDomain.getPhone());
         personJson.setName(personDomain.getName());
         personJson.setEmail(personDomain.getEmail());
-        personJson.setCity(personDomain.getCity());
     }
 
     private void mapCustomerToJson(CustomerJson customerJson, Customer customer) {
@@ -292,12 +300,14 @@ public class ApplicationService {
 
     private void mapOrganizationToJson(OrganizationJson organizationJson, Organization organization) {
         organizationJson.setId(organization.getId());
-        organizationJson.setStreetAddress(organization.getStreetAddress());
-        organizationJson.setPostalCode(organization.getPostalCode());
+        PostalAddressJson postalAddressJson = new PostalAddressJson();
+        postalAddressJson.setStreetAddress(organization.getStreetAddress());
+        postalAddressJson.setPostalCode(organization.getPostalCode());
+        postalAddressJson.setCity(organization.getCity());
+        organizationJson.setPostalAddress(postalAddressJson);
         organizationJson.setPhone(organization.getPhone());
         organizationJson.setName(organization.getName());
         organizationJson.setEmail(organization.getEmail());
-        organizationJson.setCity(organization.getCity());
         organizationJson.setBusinessId(organization.getBusinessId());
     }
 
