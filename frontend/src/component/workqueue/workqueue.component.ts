@@ -28,10 +28,6 @@ import {TaskManagerService} from '../../service/task/task-manager.service';
 })
 
 export class WorkQueueComponent implements EventListener, OnInit, OnDestroy {
-  marker: MarkerComponent;
-  joblist: any;
-  workqueue: WorkqueueService;
-
   private applicationsQueue: Array<Application> = [];
 
   constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
