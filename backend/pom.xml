@@ -27,6 +27,7 @@
     <modules>
         <module>common</module>
         <module>model-domain</module>
+        <module>model-querydsl-support</module>
         <module>model-service</module>
         <module>allu-ui-domain</module>
         <module>allu-ui-service</module>

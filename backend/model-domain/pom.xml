@@ -11,6 +11,11 @@
   <description>Allu database DTO classes</description>
   <dependencies>
     <dependency>
+      <groupId>fi.hel.allu</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.parent.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-jsr310</artifactId>
     </dependency>

@@ -1,7 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.vincit.allu.QContact.contact;
+import static fi.hel.allu.QContact.contact;
 
 import java.util.List;
 import java.util.Optional;

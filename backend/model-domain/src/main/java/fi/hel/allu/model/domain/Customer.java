@@ -1,12 +1,14 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.types.CustomerType;
+
 /**
  * in Finnish: Toimeksiantaja
  */
 public class Customer {
 
   private Integer id;
-  private String type;
+  private CustomerType type;
   private String sapId;
   private Integer personId;
   private Integer organizationId;
@@ -25,11 +27,11 @@ public class Customer {
   /**
    * in Finnish: tyyppi, ihminen tai yritys/yhteisö
    */
-  public String getType() {
+  public CustomerType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(CustomerType type) {
     this.type = type;
   }
 

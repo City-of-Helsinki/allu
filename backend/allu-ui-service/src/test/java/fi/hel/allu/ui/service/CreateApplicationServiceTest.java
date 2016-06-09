@@ -1,13 +1,23 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
-import org.geolatte.geom.Geometry;
-import org.geolatte.geom.GeometryType;
-import org.geolatte.geom.GeometryVisitor;
-import org.geolatte.geom.PointCollection;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,21 +28,24 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.springframework.web.client.RestTemplate;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.geometrycollection;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.Organization;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ApplicationListJson;
+import fi.hel.allu.ui.domain.CustomerJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.OrganizationJson;
+import fi.hel.allu.ui.domain.PersonJson;
+import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.ui.domain.ProjectJson;
 
 public class CreateApplicationServiceTest {
     @Mock
@@ -201,7 +214,7 @@ public class CreateApplicationServiceTest {
         CustomerJson customer = new CustomerJson();
         customer.setPerson(personJson);
         customer.setSapId("444-1");
-        customer.setType("Person");
+        customer.setType(CustomerType.Person);
 
         ProjectJson project = new ProjectJson();
         project.setName("Hanke1");
@@ -230,7 +243,7 @@ public class CreateApplicationServiceTest {
         locationJson.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
 
 
-        applicantJson.setType("Organization");
+        applicantJson.setType(CustomerType.Company);
         applicationJson.setCustomer(customer);
         applicationJson.setApplicant(applicantJson);
         applicationJson.setProject(project);
@@ -287,7 +300,7 @@ public class CreateApplicationServiceTest {
         //customer.setOrganizationId(2);
         customer.setPersonId(1);
         customer.setSapId("444-1");
-        customer.setType("Tyyppi");
+        customer.setType(CustomerType.Person);
         return customer;
     }
 
