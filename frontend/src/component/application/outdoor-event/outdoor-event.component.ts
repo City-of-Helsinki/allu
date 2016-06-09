@@ -12,7 +12,6 @@ import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {MaterializeDirective} from 'angular2-materialize';
 
-import {WorkqueueService} from '../../../service/workqueue.service';
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
 import {Application} from '../../../model/application/application';
@@ -43,8 +42,8 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
 })
 
 export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
-  public application: Application;
-  public workqueue: WorkqueueService;
+  private application: Application;
+  private savedOk: boolean = false;
 
   constructor(private eventService: EventService) {
     this.application = Application.emptyApplication();
@@ -61,6 +60,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   public handle(event: Event): void {
     if (event instanceof ApplicationAddedAnnounceEvent) {
       console.log('Successfully added new application', event);
+      this.savedOk = true;
     }
   }
 

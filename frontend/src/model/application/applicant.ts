@@ -3,5 +3,5 @@ import {Person} from '../common/person';
 import {Organization} from '../common/organization';
 
 export class Applicant {
-  constructor(public id: number, public person: Person, public organization: Organization) {}
+  constructor(public id: number, public type: string, public person: Person, public organization: Organization) {}
 }

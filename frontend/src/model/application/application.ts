@@ -26,7 +26,7 @@ export class Application {
     let customer = new Customer(undefined, 'Person', '123', customerPerson, undefined);
     let applicantPostalAddress = new PostalAddress(undefined, undefined, undefined);
     let applicantPerson = new Person(undefined, undefined, applicantPostalAddress, undefined, undefined, undefined);
-    let applicant = new Applicant(undefined, applicantPerson, undefined);
+    let applicant = new Applicant(undefined, 'Person', applicantPerson, undefined);
     let contactPostalAddress = new PostalAddress(undefined, undefined, undefined);
     let contactPerson = new Person(undefined, undefined, contactPostalAddress, undefined, undefined, undefined);
     let contact = new Contact(undefined, contactPerson, undefined);

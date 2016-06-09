@@ -9,6 +9,7 @@ export class ApplicantMapper {
     return (backendApplicant) ?
       new Applicant(
         backendApplicant.id,
+        backendApplicant.type,
         PersonMapper.mapBackend(backendApplicant.person),
         OrganizationMapper.mapBackend(backendApplicant.organization)) : undefined;
   }
@@ -16,6 +17,7 @@ export class ApplicantMapper {
     return (applicant) ?
     {
       id: applicant.id,
+      type: applicant.type,
       person: PersonMapper.mapFrontend(applicant.person),
       organization: OrganizationMapper.mapFrontend(applicant.organization)
     } : undefined;

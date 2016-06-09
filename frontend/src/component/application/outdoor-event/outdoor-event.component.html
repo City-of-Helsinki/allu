@@ -188,11 +188,11 @@
       <md-card-title>Liitteet ja tallennus</md-card-title>
       <md-card-content style="display:flex; flex-direction: row;">
         <div class="" style="flex: 75;">
-          <button md-raised-button disabled style="margin-left: 10px;" (click)="save(application)" >LISÄÄ LIITE</button>
+          <button md-raised-button [disabled]="true" style="margin-left: 10px;" (click)="save(application)" >LISÄÄ LIITE</button>
         </div>
         <div class="" style="flex: 25;">
           <button md-raised-button style="margin-left: 10px;" (click)="save(application)">TALLENNA</button>
-          <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Location', {id: application.id}]">SIJAINTIIN</button>
+          <button md-raised-button [disabled]="!savedOk" style="margin-left: 10px;" [routerLink]="['/Location', {id: application.id}]">SIJAINTIIN</button>
 
         </div>
 

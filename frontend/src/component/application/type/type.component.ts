@@ -42,49 +42,5 @@ import {Person} from '../../../model/common/person';
   providers: [MdRadioDispatcher]
 })
 
-export class TypeComponent implements EventListener {
-  public application: any;
-  public workqueue: WorkqueueService;
-
-  constructor(private eventService: EventService) {
-  }
-
-  public handle(event: Event): void {
-    if (event instanceof ApplicationsAnnounceEvent) {
-      alert('Application stored!');
-    }
-  }
-
-  save(application: any) {
-    // Save application
-    console.log('Saving application', application);
-    let postalAddress =
-      new PostalAddress(application.customer.address, application.customer.zipCode, undefined);
-    let person = new Person(undefined, application.customer.type, postalAddress, application.customer.email, undefined, undefined);
-    let customer =
-      new Customer(
-        undefined,
-        application.customer.type,
-        undefined,
-        person,
-        undefined);
-    let applicant = new Applicant(application.applicant.businessID, person, undefined);
-
-    let newApplication =
-      new Application(
-        undefined, // application.id,
-        undefined,
-        'handler',
-        customer,
-        application.status,
-        application.type,
-        application.title,
-        undefined,
-        applicant,
-        undefined,
-        undefined
-      );
-    let saveEvent = new ApplicationSaveEvent(newApplication);
-    this.eventService.send(this, saveEvent);
-  }
+export class TypeComponent {
 }
