@@ -16,7 +16,7 @@ public class ApplicationJson {
     @Valid
     private ProjectJson project;
     private String handler;
-    @NotNull
+    @NotNull (message="{application.customer}")
     @Valid
     private CustomerJson customer;
     private String status;
@@ -25,7 +25,7 @@ public class ApplicationJson {
     @NotBlank (message="{application.name}")
     private String name;
     private ZonedDateTime creationTime;
-    @NotNull
+    @NotNull (message="{application.applicant}")
     @Valid
     private ApplicantJson applicant;
     @Valid

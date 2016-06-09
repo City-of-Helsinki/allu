@@ -2,6 +2,8 @@ package fi.hel.allu.ui.domain;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.Valid;
+
 /**
  * in Finnish: Henkilön tiedot
  */
@@ -9,9 +11,8 @@ public class PersonJson {
     private int id;
     @NotBlank(message="{person.name}")
     private String name;
-    private String streetAddress;
-    private String postalCode;
-    private String city;
+    @Valid
+    private PostalAddressJson postalAddress;
     private String email;
     private String phone;
     private String ssn;
@@ -39,36 +40,14 @@ public class PersonJson {
     }
 
     /**
-     * in Finnish: Henkilön postiosoite
+     * in Finnish: Henkilön osoitetiedot
      */
-    public String getStreetAddress() {
-        return streetAddress;
+    public PostalAddressJson getPostalAddress() {
+        return postalAddress;
     }
 
-    public void setStreetAddress(String streetAddress) {
-        this.streetAddress = streetAddress;
-    }
-
-    /**
-     * in Finnish: Henkilön postinumero
-     */
-    public String getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(String postalCode) {
-        this.postalCode = postalCode;
-    }
-
-    /**
-     * in Finnish: Henkilön kaupunki
-     */
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
+    public void setPostalAddress(PostalAddressJson postalAddress) {
+        this.postalAddress = postalAddress;
     }
 
     /**

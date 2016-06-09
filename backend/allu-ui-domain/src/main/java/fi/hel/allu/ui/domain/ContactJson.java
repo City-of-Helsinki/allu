@@ -1,14 +1,17 @@
 package fi.hel.allu.ui.domain;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 /**
  * in Finnish: Yhteyshenkilö
  */
 public class ContactJson {
     private int id;
-    @Valid
-    private OrganizationJson organization;
+    private int organizationId;
+    @NotNull(message="{contact.person.notnull}")
     @Valid
     private PersonJson person;
 
@@ -24,12 +27,15 @@ public class ContactJson {
         this.id = id;
     }
 
-    public OrganizationJson getOrganization() {
-        return organization;
+    /**
+     * in Finnish: Yhteyshenkilön organisaation tunniste
+     */
+    public int getOrganizationId() {
+        return organizationId;
     }
 
-    public void setOrganization(OrganizationJson organization) {
-        this.organization = organization;
+    public void setOrganizationId(int organizationId) {
+        this.organizationId = organizationId;
     }
 
     public PersonJson getPerson() {
