@@ -63,6 +63,7 @@
     "@angular2-material/input": "2.0.0-alpha.4",
     "@angular2-material/radio": "2.0.0-alpha.4",
     "@angular2-material/toolbar": "2.0.0-alpha.4",
+    "ng2-select": "1.0.3",
     "angular2-jwt": "0.1.15",
     "angular2-materialize": "3.0.0",
     "es6-module-loader": "0.17.8",
