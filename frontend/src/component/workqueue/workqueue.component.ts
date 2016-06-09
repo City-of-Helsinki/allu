@@ -4,6 +4,8 @@ import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 import {MarkerComponent} from '../marker/marker.component';
+import {SELECT_DIRECTIVES} from 'ng2-select/ng2-select';
+import {MaterializeDirective} from 'angular2-materialize';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
 import {EventListener} from '../../event/event-listener';
@@ -24,11 +26,12 @@ import {TaskManagerService} from '../../service/task/task-manager.service';
   styles: [
     require('./workqueue.component.scss')
   ],
-  directives: [MD_CARD_DIRECTIVES, MdButton]
+  directives: [MD_CARD_DIRECTIVES, MaterializeDirective, MdButton]
 })
 
 export class WorkQueueComponent implements EventListener, OnInit, OnDestroy {
   private applicationsQueue: Array<Application> = [];
+  private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
 
   constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
     this.applicationsQueue = [];
@@ -42,6 +45,10 @@ export class WorkQueueComponent implements EventListener, OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.eventService.unsubscribe(this);
+  }
+
+  public selected(value: any): void {
+    console.log('Selected value is: ', value);
   }
 
   public handle(event: Event): void {

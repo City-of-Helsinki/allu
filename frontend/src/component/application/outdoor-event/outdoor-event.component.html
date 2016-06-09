@@ -1,73 +1,211 @@
+<div materialize class="row" style="background: whitesmoke; padding-top:10px;">
+  <div class="col m6">
+    <md-card>
+      <md-card-title>Hakija</md-card-title>
+      <md-card-content>
+        <div class="row">
+          <div class="input-field col m6">
+            <input id="company" type="text" class="validate">
+            <label for="company">Yritys</label>
+          </div>
+          <div class="input-field col m8">
+            <input id="companyName" type="text" class="validate" [(ngModel)]="application.applicant.companyName">
+            <label for="companyName">Yrityksen nimi</label>
+          </div>
+          <div class="input-field col m4">
+            <input id="businessID" type="text" class="validate" [(ngModel)]="application.applicant.businessID">
+            <label for="businessID">Y-tunnus</label>
+          </div>
+          <div class="input-field col m8">
+            <input id="applicantName" type="text" class="validate" [(ngModel)]="application.applicant.person.name">
+            <label for="applicantName">Hakijan nimi</label>
+          </div>
+          <div class="input-field col m4">
+            <input id="applicantSSN" type="text" class="validate" [(ngModel)]="application.applicant.person.ssn">
+            <label for="applicantSSN">Henkilötunnus</label>
+          </div>
+          <div class="input-field col m6">
+            <input id="applicantAddress" type="text" class="validate" [(ngModel)]="application.applicant.person.postalAddress.streetAddress">
+            <label for="applicantAddress">Osoite</label>
+          </div>
+          <div class="input-field col m3">
+            <input id="applicantPostalCode" type="text" class="validate" [(ngModel)]="application.applicant.person.postalAddress.postalCode">
+            <label for="applicantPostalCode">Postinumero</label>
+          </div>
+          <div class="input-field col m3">
+            <input id="applicantCity" type="text" class="validate" [(ngModel)]="application.applicant.person.postalAddress.city">
+            <label for="applicantCity">Toimipaikka</label>
+          </div>
+          <div class="input-field col m5">
+            <input id="applicantPhone" type="text" class="validate" [(ngModel)]="application.applicant.phone">
+            <label for="applicantPhone">Puhelin</label>
+          </div>
+          <div class="input-field col m7">
+            <input id="applicantEmail" type="text" class="validate" [(ngModel)]="application.applicant.email">
+            <label for="applicantEmail">Sähköpostiosoite</label>
+          </div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
 
-    <div style="display:flex; flex-direction: row;">
-      <md-card class="demo-card demo-basic" style="padding-right:100px; flex:50;">
-        <md-card-title>Hakija</md-card-title>
-        <md-card-content>
-          <md-input class="demo-full-width" placeholder="Yritys" style="width:50%;">
-          </md-input>
+  <div class="col m6">
+    <md-card>
+      <md-card-title>Yhteyshenkilö</md-card-title>
+      <md-card-content>
+        <div class="row">
+          <div class="input-field col m8">
+            <input id="contactName" type="text" class="validate" [(ngModel)]="application.contactList[0].person.name" style="width: 100%">
+            <label for="contactName">Yhteyshenkilön nimi</label>
+          </div>
+          <div class="input-field col m4">
+            <input id="contactSSN" type="text" class="validate" [(ngModel)]="application.contactList[0].person.ssn" style="width: 100%">
+            <label for="contactSSN">Henkilötunnus</label>
+          </div>
+          <div class="input-field col m6">
+            <input id="contactStreetAddress" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.steetAddress" style="width: 100%">
+            <label for="contactStreetAddress">Osoite</label>
+          </div>
+          <div class="input-field col m3">
+            <input id="contactPostalCode" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.postalCode" style="width: 100%">
+            <label for="contactPostalCode">Postinumero</label>
+          </div>
+          <div class="input-field col m3">
+            <input id="contactCity" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.city" style="width: 100%">
+            <label for="contactCity">Toimipaikka</label>
+          </div>
+          <div class="input-field col m5">
+            <input id="contactPhone" type="text" class="validate" [(ngModel)]="application.contactList[0].person.phone" style="width: 100%">
+            <label for="contactPhone">Puhelin</label>
+          </div>
+          <div class="input-field col m7">
+            <input id="contactEmail" type="text" class="validate" [(ngModel)]="application.contactList[0].person.email" style="width: 100%">
+            <label for="contactEmail">Sähköpostiosoite</label>
+          </div>
 
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 80%;"><md-input placeholder="Yrityksen nimi" [(ngModel)]="application.applicant.companyName" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Y-tunnus" [(ngModel)]="application.applicant.businessID" style="width: 100%"></md-input></td>
-          </tr></table>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 80%;"><md-input placeholder="Hakijan nimi" [(ngModel)]="application.applicant.person.name" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Hekilötunnus" [(ngModel)]="application.applicant.person.ssn" style="width: 100%"></md-input></td>
-          </tr></table>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 60%;"><md-input placeholder="Osoite" [(ngModel)]="application.applicant.person.postalAddress.streetAddress" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Postinumero" [(ngModel)]="application.applicant.person.postalAddress.postalCode" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Toimipaikka" [(ngModel)]="application.applicant.person.postalAddress.city" style="width: 100%"></md-input></td>
-          </tr></table>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 40%;"><md-input placeholder="Puhelin" [(ngModel)]="application.applicant.phone" style="width: 100%"></md-input></td>
-            <td style="width: 60%;"><md-input placeholder="Sähköpostiosoite" [(ngModel)]="application.applicant.email" style="width: 100%"></md-input></td>
-          </tr></table>
-        </md-card-content>
-      </md-card>
-      <md-card class="demo-card demo-basic" style="padding-right:100px; flex:50;">
-        <md-card-title>Yhteyshenkilö</md-card-title>
-        <md-card-content>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 80%;"><md-input placeholder="Yhteyshenkilön nimi" [(ngModel)]="application.contactList[0].person.name" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Henkilötunnus" [(ngModel)]="application.contactList[0].person.ssn" style="width: 100%"></md-input></td>
-          </tr></table>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 60%;"><md-input placeholder="Osoite" [(ngModel)]="application.contactList[0].person.postalAddress.steetAddress" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Postinumero" [(ngModel)]="application.contactList[0].person.postalAddress.postalCode" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Toimipaikka" [(ngModel)]="application.contactList[0].person.postalAddress.city" style="width: 100%"></md-input></td>
-          </tr></table>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 40%;"><md-input placeholder="Puhelin" [(ngModel)]="application.contactList[0].person.phone" style="width: 100%"></md-input></td>
-            <td style="width: 40%;"><md-input placeholder="Sähköpostiosoite" [(ngModel)]="application.contactList[0].person.email" style="width: 100%"></md-input></td>
-          </tr></table>
-        </md-card-content>
-      </md-card>
-    </div>
-    <div style="display:flex; flex-direction: column;">
-      <md-card style="padding-right:100px;">
-        <md-card-title>Asiakas</md-card-title>
-        <md-card-content>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 80%;"><md-input placeholder="Yhteyshenkilön nimi" [(ngModel)]="application.customer.person.name" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Henkilötunnus" [(ngModel)]="application.customer.person.ssn" style="width: 100%"></md-input></td>
-          </tr></table>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 60%;"><md-input placeholder="Osoite" [(ngModel)]="application.customer.person.postalAddress.steetAddress" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Postinumero" [(ngModel)]="application.customer.person.postalAddress.postalCode" style="width: 100%"></md-input></td>
-            <td style="width: 20%;"><md-input placeholder="Toimipaikka" [(ngModel)]="application.customer.person.postalAddress.city" style="width: 100%"></md-input></td>
-          </tr></table>
-          <table style="width: 100%;" cellspacing="0"><tr>
-            <td style="width: 40%;"><md-input placeholder="Puhelin" [(ngModel)]="application.customer.person.phone" style="width: 100%"></md-input></td>
-            <td style="width: 40%;"><md-input placeholder="Sähköpostiosoite" [(ngModel)]="application.customer.person.email" style="width: 100%"></md-input></td>
-          </tr></table>
-        </md-card-content>
-      </md-card>
-    </div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
+
+  <div class="col m12">
+    <md-card>
+      <md-card-title>Asiakas</md-card-title>
+      <md-card-content>
+        <div class="row">
+          <div class="input-field col m8">
+            <input id="customerName"  type="text" class="validate" [(ngModel)]="application.customer.person.name">
+            <label for="customerName">Asiakkaan nimi</label>
+          </div>
+          <div class="input-field col m4">
+            <input id="customerSSN"  type="text" class="validate" [(ngModel)]="application.customer.person.ssn">
+            <label for="customerSSN">Henkilötunnus</label>
+          </div>
+          <div class="input-field col m6">
+            <input id="customerStreetAddress"  type="text" class="validate" [(ngModel)]="application.customer.person.postalAddress.steetAddress">
+            <label for="customerStreetAddress">Osoite</label>
+          </div>
+          <div class="input-field col m3">
+            <input id="customerPostalCode"  type="text" class="validate" [(ngModel)]="application.customer.person.postalAddress.postalCode">
+            <label for="customerPostalCode">Postinumero</label>
+          </div>
+          <div class="input-field col m3">
+            <input id="customerCity"  type="text" class="validate" [(ngModel)]="application.customer.person.postalAddress.city">
+            <label for="customerCity">Toimipaikka</label>
+          </div>
+          <div class="input-field col m5">
+            <input id="customerPhone"  type="text" class="validate" [(ngModel)]="application.customer.person.phone">
+            <label for="customerPhone">Puhelin</label>
+          </div>
+          <div class="input-field col m7">
+            <input id="customerEmail"  type="text" class="validate" [(ngModel)]="application.customer.person.email">
+            <label for="customerEmail">Sähköpostiosoite</label>
+          </div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
+
+  <div class="col m12">
+    <md-card>
+      <md-card-title>Tapahtuman tiedot</md-card-title>
+      <md-card-content>
+        <div class="row">
+          <div class="col m6">
+            <div class="input-field">
+              <input id="applicationName" type="text" class="validate" [(ngModel)]="application.name">
+              <label for="applicationName">Tapahtuman nimi</label>
+            </div>
+            <div class="input-field">
+              <input id="applicationType" type="text" class="validate" [(ngModel)]="application.type">
+              <label for="applicationType">Tapahtuman luonne</label>
+            </div>
+          </div>
+          <div class="col m6">
+            <!-- TODO: add when available
+            <md-input-container>
+              <label for="description">Tapahtuman kuvaus</label>
+              <br>
+
+              <textarea style="width: 73%;" placeholder="Tapahtuman kuvaus" [(ngModel)]="application.description" name="description" rows="8"></textarea>
+            </md-input-container>  -->
+            <div class="input-field">
+              <label for="applicationCreationTime">Alkupäivämäärä</label>
+              <input id="applicationCreationTime"
+              [(ngModel)]="application.creationTime"
+              materialize="pickadate"
+              [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+              type="text" />
+            </div>
+            <div class="input-field">
+              <input id="applicationEndTime"
+              [(ngModel)]="application.creationTime"
+              materialize="pickadate"
+              [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+              type="text" />
+              <label for="applicationEndTime">Loppupäivämäärä</label>
+            </div>
+
+            <div class="">
+              <md-input-container>
+                <label>Myynti- tai mainostoiminta</label>
+                <br>
+                <md-radio-button class="">Tapahtuma ei sisällä myynti- tai mainostoimintaa</md-radio-button>
+                <br>
+                <md-radio-button class="">Tapahtuma sisältää myynti- tai mainostoimintaa</md-radio-button>
+              </md-input-container>
+            </div>
+
+
+          </div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
+
+  <div class="col m12">
+    <md-card style="padding-right:100px;">
+      <md-card-title>Liitteet ja tallennus</md-card-title>
+      <md-card-content style="display:flex; flex-direction: row;">
+        <div class="" style="flex: 75;">
+          <button md-raised-button disabled style="margin-left: 10px;" (click)="save(application)" >LISÄÄ LIITE</button>
+        </div>
+        <div class="" style="flex: 25;">
+          <button md-raised-button style="margin-left: 10px;" (click)="save(application)">TALLENNA</button>
+          <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Location', {id: application.id}]">SIJAINTIIN</button>
+
+        </div>
+
+      </md-card-content>
+    </md-card>
+  </div>
+
+</div>
+<!-- TODO: add when available
     <div style="display:flex; flex-direction: column;">
       <md-card style="padding-right:100px;">
         <md-card-title>Laskutusosoite</md-card-title>
-        <!-- TODO: add when available
+
         <md-card-content style="display:flex; flex-direction: row;">
           <div class="" style="flex: 60;">
             <md-input-container>
@@ -92,44 +230,14 @@
           </div>
 
         </md-card-content>
-        -->
-      </md-card>
-    </div>
-    <div style="display:flex; flex-direction: column;">
-      <md-card style="padding-right:100px;">
-        <md-card-title>Tapahtuman tiedot</md-card-title>
-        <md-card-content style="display:flex; flex-direction: row;">
-          <div class="" style="flex: 60;">
-            <md-input style="width: 73%;" placeholder="Tapahtuman nimi" [(ngModel)]="application.name"></md-input>
-            <md-input style="width: 73%;" placeholder="Tapahtuman luonne" [(ngModel)]="application.type"></md-input>
-            <br>
-            <md-input-container>
-              <label for="description">Tapahtuman kuvaus</label>
-              <br>
-              <!-- TODO: add when available -->
-              <!--<textarea style="width: 73%;" placeholder="Tapahtuman kuvaus" [(ngModel)]="application.description" name="description" rows="8"></textarea>-->
-            </md-input-container>
-          </div>
-          <div class="" style="flex: 40;">
-            <md-input placeholder="Alkupäivämäärä" [(ngModel)]="application.creationTime"></md-input>
-            <br>
-            <md-input placeholder="Loppupäivämäärä" [(ngModel)]="application.creationTime"></md-input>
-            <br>
-            <md-input-container>
-              <label>Myynti- tai mainostoiminta</label>
-              <br>
-              <md-radio-button>Tapahtuma ei sisällä myynti- tai mainostoimintaa</md-radio-button>
-              <md-radio-button>Tapahtuma sisältää myynti- tai mainostoimintaa</md-radio-button>
-            </md-input-container>
-          </div>
 
-        </md-card-content>
       </md-card>
-    </div>
+    </div>-->
+    <!-- TODO: add when available
     <div style="display:flex; flex-direction: column;">
       <md-card style="padding-right:100px;">
         <md-card-title>Rakenteet</md-card-title>
-        <!-- TODO: add when available
+
         <md-card-content style="display:flex; flex-direction: row;">
           <div class="" style="flex: 60;">
             <table style="width: 73%;" cellspacing="0"><tr>
@@ -150,22 +258,6 @@
           </div>
 
         </md-card-content>
-        -->
-      </md-card>
-    </div>
-    <div style="display:flex; flex-direction: column;">
-      <md-card style="padding-right:100px;">
-        <md-card-title>Liitteet ja tallennus</md-card-title>
-        <md-card-content style="display:flex; flex-direction: row;">
-          <div class="" style="flex: 75;">
-            <button md-raised-button disabled style="margin-left: 10px;" (click)="save(application)" >LISÄÄ LIITE</button>
-          </div>
-          <div class="" style="flex: 25;">
-            <button md-raised-button style="margin-left: 10px;" (click)="save(application)">TALLENNA</button>
-            <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Location', {id: application.id}]">SIJAINTIIN</button>
 
-          </div>
-
-        </md-card-content>
       </md-card>
-    </div>
+    </div>-->

@@ -70,7 +70,14 @@ module.exports = {
     root: helpers.root('src'),
 
     // remove other default values
-    modulesDirectories: ['node_modules']
+    modulesDirectories: ['node_modules'],
+
+    alias: {
+      leafletcss: 'leaflet/dist/leaflet.css',
+      leafletdrawcss: 'leaflet-draw/dist/leaflet.draw.css',
+      materializecss: 'materialize-css/dist/css/materialize.css',
+      materialize: 'materialize-css/dist/js/materialize.js',
+    }
 
   },
 
@@ -143,6 +150,14 @@ module.exports = {
       {
         test: /\.json$/,
         loader: 'json-loader'
+      },
+
+      /*
+       * Additional resource loader
+       */
+      {
+        test: /.(png|woff(2)?|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/,
+        loader: 'url-loader?limit=100000'
       },
 
       /*

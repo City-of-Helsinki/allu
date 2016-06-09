@@ -21,13 +21,17 @@ import '@angular2-material/button';
 import '@angular2-material/checkbox';
 import '@angular2-material/card';
 import '@angular2-material/radio';
+
 // look in platform/directives and platform/providers
 
 // Leaflet CSS
-require('../node_modules/leaflet/dist/leaflet.css');
+import 'leafletcss';
+
+// Materialize CSS
+import 'materializecss';
 
 // Leaflet.Draw CSS
-require('../node_modules/leaflet-draw/dist/leaflet.draw.css');
+import 'leafletdrawcss';
 
 if ('production' === ENV) {
   // Production

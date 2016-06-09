@@ -3,6 +3,7 @@ import {ROUTER_DIRECTIVES, RouteConfig, Router} from '@angular/router-deprecated
 
 import {MdToolbar} from '@angular2-material/toolbar';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
+import {MaterializeDirective} from 'angular2-materialize';
 
 import {TypeComponent} from '../../component/application/type/type.component';
 import {OutdoorEventComponent} from '../../component/application/outdoor-event/outdoor-event.component';
@@ -22,6 +23,7 @@ import {EventService} from '../../event/event.service';
     require('./application.component.scss')
   ],
   directives: [
+    MaterializeDirective,
     ROUTER_DIRECTIVES,
     MdToolbar,
     MD_CARD_DIRECTIVES
