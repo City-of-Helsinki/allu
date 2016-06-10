@@ -27,6 +27,11 @@
             <artifactId>model-domain</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>model-querydsl-support</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>fi.hel.allu</groupId>
@@ -142,7 +147,7 @@
                     <jdbcUrl>${database.uri}</jdbcUrl>
                     <jdbcUser>${database.user}</jdbcUser>
                     <jdbcPassword>${database.password}</jdbcPassword>
-                    <packageName>fi.vincit.allu</packageName>
+                    <packageName>fi.hel.allu</packageName>
                     <targetFolder>${project.basedir}/target/generated-sources/java</targetFolder>
                     <typeMappings>
                         <!-- Override default DateTime mapping -->
@@ -156,6 +161,17 @@
                             <column>start_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                        <!-- Map enumeration types -->
+                        <typeMapping>
+                            <table>customer</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToCustomerType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>applicant</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToCustomerType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>
@@ -165,6 +181,11 @@
                         <groupId>org.postgresql</groupId>
                         <artifactId>postgresql</artifactId>
                         <version>${postgresql.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>fi.hel.allu</groupId>
+                        <artifactId>model-querydsl-support</artifactId>
+                        <version>${project.parent.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>

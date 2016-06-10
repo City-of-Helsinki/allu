@@ -1,10 +1,13 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.types.CustomerType;
+
 /**
  * in Finnish: Hakija
  */
 public class Applicant {
   private Integer id;
+  private CustomerType type;
   private Integer personId;
   private Integer organizationId;
 
@@ -17,6 +20,17 @@ public class Applicant {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  /**
+   * Is applicant person or organization?
+   */
+  public CustomerType getType() {
+    return type;
+  }
+
+  public void setType(CustomerType type) {
+    this.type = type;
   }
 
   /**

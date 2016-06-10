@@ -1,13 +1,20 @@
 package fi.hel.allu.common.validator;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import javax.validation.*;
-import java.util.Set;
-
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class NotFalseValidatorTest {
     private static Validator validator;
@@ -54,8 +61,8 @@ public class NotFalseValidatorTest {
         Set<ConstraintViolation<NotFalseTestClass>> constraintViolations =
                 validator.validate(testClass);
         assertEquals(2, constraintViolations.size() );
-        Object results[] = constraintViolations.toArray();
-        assertEquals("values must match", ((ConstraintViolation<NotFalseTestClass>) results[0]).getMessage());
-        assertEquals("may not be empty", ((ConstraintViolation<NotFalseTestClass>) results[1]).getMessage());
+        Set<String> messages = constraintViolations.stream().map((cv) -> cv.getMessage()).collect(Collectors.toSet());
+        assertTrue(messages.contains("values must match"));
+        assertTrue(messages.contains("may not be empty"));
     }
 }

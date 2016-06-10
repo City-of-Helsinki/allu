@@ -20,7 +20,7 @@ create table allu.organization (
 
 create table allu.customer (
     id serial primary key,
-    type text,
+    type text not null,
     sap_id text,
     person_id integer references allu.person(id),
     organization_id integer references allu.organization(id));
@@ -48,6 +48,7 @@ create table allu.contact (
 
 create table allu.applicant (
     id serial primary key,
+    type text not null,
     person_id integer references allu.person(id),
     organization_id integer references allu.organization(id));
 
@@ -56,7 +57,7 @@ create table allu.application (
     project_id integer references allu.project(id),
     name text,
     handler text,
-    customer_id integer references allu.person(id),
+    customer_id integer references allu.customer(id),
     applicant_id integer references allu.applicant(id),
     status text,   -- TODO: enum
     type text,     -- TODO: enum

@@ -1,7 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.vincit.allu.QLocation.location;
+import static fi.hel.allu.QLocation.location;
 
 import java.util.Optional;
 

@@ -1,18 +1,20 @@
 package fi.hel.allu.ui.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import fi.hel.allu.common.validator.NotFalse;
-import org.hibernate.validator.constraints.NotEmpty;
-
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.validator.NotFalse;
 
 @NotFalse(rules = {"person, validatePersonTypeHasPersonObject, {type.person.emptyperson}",
         "person, validatePersonTypeHasNotOrganizationObject, {type.person.notemptyorganization}",
         "organization, validateOrganizationTypeHasOrganizationObject, {type.organization.emptyorganization}",
         "organization, validateOrganizationTypeHasNotPersonObject, {type.organization.notemptyperson}"})
 public class TypeJson {
-    @NotEmpty(message="{type.notnull}")
-    private String type;
+    @NotNull(message = "{type.notnull}")
+    private CustomerType type;
     @Valid
     private PersonJson person;
     @Valid
@@ -20,11 +22,11 @@ public class TypeJson {
     /**
      * in Finnish: tyyppi, ihminen tai yritys/yhteisö
      */
-    public String getType() {
+    public CustomerType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(CustomerType type) {
         this.type = type;
     }
 
@@ -52,65 +54,53 @@ public class TypeJson {
 
     @JsonIgnore
     public boolean getValidatePersonTypeHasPersonObject() {
-        if (getType() != null) {
-            switch (getType()) {
-                case "Person": //TODO: Replace with enum
-                    if (getPerson() == null) {
-                        return false;
-                    }
-                case "Organization": //TODO: Replace with enum
-                    return true;
-            }
+        switch (getType()) {
+            case Person:
+                return getPerson() != null;
+            case Company:
+            case Association:
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     @JsonIgnore
     public boolean getValidatePersonTypeHasNotOrganizationObject() {
-        if (getType() != null) {
-            switch (getType()) {
-                case "Person": //TODO: Replace with enum
-                    if (getOrganization() != null) {
-                        return false;
-                    }
-                    break;
-                case "Organization": //TODO: Replace with enum
-                    return true;
-            }
+        switch (getType()) {
+            case Person:
+                return getOrganization() == null;
+            case Company:
+            case Association:
+                return true;
+            default:
+                return true;
         }
-        return true;
     }
 
     @JsonIgnore
     public boolean getValidateOrganizationTypeHasNotPersonObject() {
-        if (getType() != null) {
-            switch (getType()) {
-                case "Person": //TODO: Replace with enum
-                    return true;
-                case "Organization": //TODO: Replace with enum
-                    if (getPerson() != null) {
-                        return false;
-                    }
-                    break;
-            }
+        switch (getType()) {
+            case Person:
+                return true;
+            case Company:
+            case Association:
+                return getPerson() == null;
+            default:
+                return true;
         }
-        return true;
     }
 
     @JsonIgnore
     public boolean getValidateOrganizationTypeHasOrganizationObject() {
-        if (getType() != null) {
-            switch (getType()) {
-                case "Person": //TODO: Replace with enum
-                    return true;
-                case "Organization": //TODO: Replace with enum
-                    if (getOrganization() == null) {
-                        return false;
-                    }
-                    break;
-
-            }
+        switch (getType()) {
+            case Person:
+                return true;
+            case Company:
+            case Association:
+                return getOrganization() != null;
+            default:
+                return true;
         }
-        return true;
     }
 }

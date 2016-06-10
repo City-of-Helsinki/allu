@@ -19,6 +19,8 @@ import com.querydsl.sql.spatial.PostGISTemplates;
 import com.querydsl.sql.spring.SpringConnectionProvider;
 import com.querydsl.sql.spring.SpringExceptionTranslator;
 
+import fi.hel.allu.model.querydsl.StringToCustomerType;
+
 @Configuration
 @EnableTransactionManagement
 public class JdbcConfiguration {
@@ -40,6 +42,7 @@ public class JdbcConfiguration {
     SQLTemplates templates = PostGISTemplates.builder().printSchema().build();
     com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
     configuration.setExceptionTranslator(new SpringExceptionTranslator());
+    configuration.register(new StringToCustomerType());
     return configuration;
   }
 

@@ -1,8 +1,14 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationJson;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
@@ -14,10 +20,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-
-import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.*;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicationJson;
 
 public class FindApplicationServiceTest {
     @Mock
@@ -183,7 +194,7 @@ public class FindApplicationServiceTest {
     private ResponseEntity<Customer> createMockCustomerResponse() {
         Customer customer = new Customer();
         customer.setId(1);
-        customer.setType("Type");
+        customer.setType(CustomerType.Person);
         customer.setSapId("333");
         customer.setPersonId(222);
         return new ResponseEntity<>(customer, HttpStatus.OK);

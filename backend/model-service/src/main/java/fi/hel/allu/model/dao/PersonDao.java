@@ -1,7 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.vincit.allu.QPerson.person;
+import static fi.hel.allu.QPerson.person;
 
 import java.util.Optional;
 

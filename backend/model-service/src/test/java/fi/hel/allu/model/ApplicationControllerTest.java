@@ -19,11 +19,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
+import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.PersonDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Applicant;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.Person;
 import fi.hel.allu.model.domain.Project;
 
@@ -43,6 +46,9 @@ public class ApplicationControllerTest {
 
   @Autowired
   ApplicantDao applicantDao;
+
+  @Autowired
+  CustomerDao customerDao;
 
   @Before
   public void setup() throws Exception {
@@ -171,10 +177,11 @@ public class ApplicationControllerTest {
   // - Set some values for the application
   private Application prepareApplication(String name, String handler) throws Exception {
     Integer personId = addPerson();
+    Integer customerId = addCustomer(personId);
     Integer projectId = addProject(personId);
     Integer applicantId = addApplicant(personId);
     Application app = new Application();
-    app.setCustomerId(personId);
+    app.setCustomerId(customerId);
     app.setApplicantId(applicantId);
     app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.now());
@@ -182,6 +189,14 @@ public class ApplicationControllerTest {
     app.setName(name);
     app.setHandler(handler);
     return app;
+  }
+
+  private Integer addCustomer(Integer personId) throws Exception {
+    Customer cust = new Customer();
+    cust.setPersonId(personId);
+    cust.setType(CustomerType.Person);
+    Customer insertedCust = customerDao.insert(cust);
+    return insertedCust.getId();
   }
 
   private Integer addPerson() throws Exception {
@@ -205,6 +220,7 @@ public class ApplicationControllerTest {
 
   private Integer addApplicant(Integer personId) {
     Applicant applicant = new Applicant();
+    applicant.setType(CustomerType.Person);
     applicant.setPersonId(personId);
     Applicant insertedApplicant = applicantDao.insert(applicant);
     return insertedApplicant.getId();
