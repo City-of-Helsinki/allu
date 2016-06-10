@@ -8,7 +8,8 @@ export class PersonMapper {
     if (!backendPerson) {
       return undefined;
     }
-    let postalAddress = new PostalAddress(backendPerson.streetAddress, backendPerson.postalCode, backendPerson.city);
+    let postalAddress = new PostalAddress(
+      backendPerson.postalAddress.streetAddress, backendPerson.postalAddress.postalCode, backendPerson.postalAddress.city);
     return new Person(backendPerson.id, backendPerson.name, postalAddress, backendPerson.email, backendPerson.phone, backendPerson.ssn);
   }
 
@@ -17,9 +18,8 @@ export class PersonMapper {
     {
       id: person.id,
       name: person.name,
-      streetAddress: person.postalAddress.streetAddress,
-      postalCode: person.postalAddress.postalCode,
-      city: person.postalAddress.city,
+      postalAddress:
+        { streetAddress: person.postalAddress.streetAddress, postalCode: person.postalAddress.postalCode, city: person.postalAddress.city },
       email: person.email,
       phone: person.phone,
       ssn: person.ssn

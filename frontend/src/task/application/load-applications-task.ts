@@ -18,7 +18,7 @@ export class LoadApplicationsTask extends Task {
 
   protected createTask(runner: EventListener, eventService: EventService, event: Event): Promise<void> {
     let alEvent = <ApplicationsLoadEvent>event;
-    let loadPromise = this.applicationService.listApplications(alEvent.handler);
+    let loadPromise = this.applicationService.listApplications(alEvent.applicationLoadFilter);
     return loadPromise.then((applications: Array<Application>) => {
       let aaEvent = new ApplicationsAnnounceEvent(applications);
       eventService.send(runner, aaEvent);

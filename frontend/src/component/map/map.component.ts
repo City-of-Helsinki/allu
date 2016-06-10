@@ -43,11 +43,11 @@ export class MapComponent implements EventListener {
 
     public handle(event: Event): void {
       if (event instanceof ApplicationSelectionEvent) {
-        let area = event.area;
+        let asEvent = <ApplicationSelectionEvent>event;
         if (this.applicationArea) {
           this.mapService.map.removeLayer(this.applicationArea);
         }
-        this.applicationArea = new L.GeoJSON(area).addTo(this.mapService.map);
+        this.applicationArea = new L.GeoJSON(asEvent.application.location.geometry).addTo(this.mapService.map);
       }
     }
 

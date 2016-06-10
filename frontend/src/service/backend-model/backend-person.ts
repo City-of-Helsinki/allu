@@ -1,9 +1,8 @@
+import {BackendPostalAddress} from './backend-postal-address';
 export interface BackendPerson {
   id: number;
   name: string;
-  streetAddress: string;
-  postalCode: string;
-  city: string;
+  postalAddress: BackendPostalAddress;
   email: string;
   phone: string;
   ssn: string;

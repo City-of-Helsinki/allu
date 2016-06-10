@@ -8,7 +8,10 @@ export class OrganizationMapper {
     if (!backendOrganization) {
       return undefined;
     }
-    let postalAddress = new PostalAddress(backendOrganization.streetAddress, backendOrganization.postalCode, backendOrganization.city);
+    let postalAddress = new PostalAddress(
+      backendOrganization.postalAddress.streetAddress,
+      backendOrganization.postalAddress.postalCode,
+      backendOrganization.postalAddress.city);
     return new Organization(
       backendOrganization.id,
       backendOrganization.name,
@@ -24,9 +27,12 @@ export class OrganizationMapper {
       id: undefined,
       name: organization.name,
       businessId: organization.businessId,
-      streetAddress: organization.postalAddress.streetAddress,
-      postalCode: organization.postalAddress.postalCode,
-      city: organization.postalAddress.city,
+      postalAddress:
+        {
+          streetAddress: organization.postalAddress.streetAddress,
+          postalCode: organization.postalAddress.postalCode,
+          city: organization.postalAddress.city
+        },
       email: organization.email,
       phone: organization.phone
     } : undefined;

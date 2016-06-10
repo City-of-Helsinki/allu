@@ -1,8 +1,8 @@
 import {SelectionEvent} from './selection-event';
-import {LatLng} from '../../model/location/latlng';
+import {Application} from '../../model/application/application';
 
 export class ApplicationSelectionEvent extends SelectionEvent {
-  constructor(public area: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {
+  constructor(public application: Application) {
     super();
   }
 }
