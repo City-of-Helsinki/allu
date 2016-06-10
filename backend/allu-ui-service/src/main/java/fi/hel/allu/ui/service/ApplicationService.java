@@ -6,7 +6,6 @@ import fi.hel.allu.ui.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -88,9 +87,10 @@ public class ApplicationService {
             }
 
             if (applicationJson.getProject() != null && applicationJson.getProject().getId() != null && applicationJson.getProject().getId()
-                    > 0) {
+                > 0) {
                 restTemplate.put(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_UPDATE), createProjectModel(applicationJson.getProject()), applicationJson.getProject().getId().intValue());
+                    .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_UPDATE), createProjectModel(applicationJson.getProject()),
+                    applicationJson.getProject().getId().intValue());
             }
 
             if (applicationJson.getApplicant().getId() != null && applicationJson.getApplicant().getId() > 0) {
@@ -98,7 +98,7 @@ public class ApplicationService {
             }
 
             if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null && applicationJson.getLocation()
-                    .getId() > 0) {
+                .getId() > 0) {
                 restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
                     (applicationJson.getLocation()), applicationJson.getLocation().getId().intValue());
             }
@@ -272,6 +272,7 @@ public class ApplicationService {
         if (applicantJson.getOrganization() != null) {
             applicantModel.setOrganizationId(applicantJson.getOrganization().getId());
         }
+        applicantModel.setType(applicantJson.getType());
         return applicantModel;
     }
 
@@ -357,6 +358,7 @@ public class ApplicationService {
 
     private void mapApplicantToJson(ApplicantJson applicantJson, Applicant applicant) {
         applicantJson.setId(applicant.getId());
+        applicantJson.setType(applicant.getType());
     }
 
     private void mapOrganizationToJson(OrganizationJson organizationJson, Organization organization) {
