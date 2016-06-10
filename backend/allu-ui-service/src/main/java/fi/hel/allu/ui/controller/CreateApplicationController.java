@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -27,6 +24,13 @@ public class CreateApplicationController {
     @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
     public ResponseEntity<ApplicationListJson> create(@Valid @RequestBody ApplicationListJson applicationListJson) {
         return new ResponseEntity<>(applicationService.createApplication(applicationListJson), HttpStatus.OK);
+    }
+
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+    @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+    public ResponseEntity<ApplicationListJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationListJson
+            applicationListJson) {
+        return new ResponseEntity<>(applicationService.updateApplication(id, applicationListJson), HttpStatus.OK);
     }
 
 }
