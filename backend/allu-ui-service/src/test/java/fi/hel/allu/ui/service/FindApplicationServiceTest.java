@@ -69,15 +69,15 @@ public class FindApplicationServiceTest {
         assertNotNull(response.getCustomer());
         assertNotNull(response.getProject());
         assertNotNull(response.getApplicant());
-        assertEquals(1, response.getCustomer().getId());
-        assertEquals(555, response.getProject().getId());
-        assertEquals(222, response.getApplicant().getId());
+        assertEquals(1, response.getCustomer().getId().intValue());
+        assertEquals(555, response.getProject().getId().intValue());
+        assertEquals(222, response.getApplicant().getId().intValue());
         assertNull(response.getCustomer().getOrganization());
         assertNull(response.getApplicant().getOrganization());
         assertNotNull(response.getApplicant().getPerson());
         assertNotNull(response.getCustomer().getPerson());
-        assertEquals(222, response.getApplicant().getPerson().getId());
-        assertEquals(222, response.getCustomer().getPerson().getId());
+        assertEquals(222, response.getApplicant().getPerson().getId().intValue());
+        assertEquals(222, response.getCustomer().getPerson().getId().intValue());
     }
 
     @Test
@@ -111,21 +111,21 @@ public class FindApplicationServiceTest {
         assertNotNull(response.get(0));
         assertNotNull(response.get(0).getCustomer());
         assertNotNull(response.get(0).getProject());
-        assertEquals(1, response.get(0).getCustomer().getId());
-        assertEquals(555, response.get(0).getProject().getId());
+        assertEquals(1, response.get(0).getCustomer().getId().intValue());
+        assertEquals(555, response.get(0).getProject().getId().intValue());
         assertEquals("MockName", response.get(0).getName());
-        assertEquals(123, response.get(0).getId());
+        assertEquals(123, response.get(0).getId().intValue());
 
         assertNotNull(response.get(1));
         assertNotNull(response.get(1).getCustomer());
         assertNotNull(response.get(1).getProject());
-        assertEquals(1, response.get(1).getCustomer().getId());
-        assertEquals(555, response.get(1).getProject().getId());
+        assertEquals(1, response.get(1).getCustomer().getId().intValue());
+        assertEquals(555, response.get(1).getProject().getId().intValue());
         assertEquals("MockName2", response.get(1).getName());
-        assertEquals(1234, response.get(1).getId());
+        assertEquals(1234, response.get(1).getId().intValue());
         assertNotNull(response.get(1).getLocation());
         assertNotNull(response.get(1).getLocation().getGeometry());
-        assertEquals(777, response.get(1).getLocation().getId());
+        assertEquals(777, response.get(1).getLocation().getId().intValue());
     }
 
     private Application createMockApplicationResponse() {

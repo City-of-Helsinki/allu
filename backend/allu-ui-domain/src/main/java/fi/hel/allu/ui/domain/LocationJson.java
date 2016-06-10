@@ -12,18 +12,18 @@ import javax.validation.Valid;
  * inFinnish: Hakemuksen sijainti
  */
 public class LocationJson {
-    private int id;
+    private Integer id;
     @JsonSerialize(using = GeometrySerializerProxy.class)
     @JsonDeserialize(using = GeometryDeserializerProxy.class)
     private Geometry geometry;
     @Valid
     private PostalAddressJson postalAddress;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

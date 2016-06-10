@@ -8,7 +8,7 @@ import javax.validation.Valid;
  * in Finnish: Henkilön tiedot
  */
 public class PersonJson {
-    private int id;
+    private Integer id;
     @NotBlank(message="{person.name}")
     private String name;
     @Valid
@@ -20,11 +20,11 @@ public class PersonJson {
     /**
      * in Finnish: Henkilön tunniste
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class ApplicationJson {
 
-    private int id;
+    private Integer id;
     @Valid
     private ProjectJson project;
     private String handler;
@@ -47,11 +47,11 @@ public class ApplicationJson {
     /**
      * in Finnish: Hakemuksen tunniste
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

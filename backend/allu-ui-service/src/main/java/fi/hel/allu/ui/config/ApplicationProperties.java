@@ -27,6 +27,11 @@ public class ApplicationProperties {
     public static final String PATH_MODEL_APPLICATION_CREATE = "/applications";
 
     /**
+     * Model-service path to update an application
+     */
+    public static final String PATH_MODEL_APPLICATION_UPDATE = "/applications/{applicationId}";
+
+    /**
      * Model-service path to find application by identifier
      */
     public static final String PATH_MODEL_APPLICATION_FIND_BY_ID = "/applications/{applicationId}";
@@ -42,6 +47,11 @@ public class ApplicationProperties {
     public static final String PATH_MODEL_PERSON_CREATE = "/persons";
 
     /**
+     * Model-service path to update person
+     */
+    public static final String PATH_MODEL_PERSON_UPDATE = "/persons/{personId}";
+
+    /**
      * Model-service path to find person by identifier
      */
     public static final String PATH_MODEL_PERSON_FIND_BY_ID = "/persons/{personId}";
@@ -50,6 +60,11 @@ public class ApplicationProperties {
      * Model-service path to create a new project
      */
     public static final String PATH_MODEL_PROJECT_CREATE = "/projects";
+
+    /**
+     * Model-service path to update project
+     */
+    public static final String PATH_MODEL_PROJECT_UPDATE = "/projects/{projectId}";
 
     /**
      * Model-service path to find project by identifier
@@ -62,6 +77,11 @@ public class ApplicationProperties {
     public static final String PATH_MODEL_APPLICANT_CREATE = "/applicants";
 
     /**
+     * Model-service path to create a new applicant
+     */
+    public static final String PATH_MODEL_APPLICANT_UPDATE = "/applicants/{applicantId}";
+
+    /**
      * Model-service path to find applicant by identifier
      */
     public static final String PATH_MODEL_APPLICANT_FIND_BY_ID = "/applicants/{applicantId}";
@@ -70,6 +90,11 @@ public class ApplicationProperties {
      * Model-service path to create a new customer
      */
     public static final String PATH_MODEL_CUSTOMER_CREATE = "/customers";
+
+    /**
+     * Model-service path to update customer
+     */
+    public static final String PATH_MODEL_CUSTOMER_UPDATE = "/customers/{customerId}";
 
     /**
      * Model-service path to find customer by identifier
@@ -82,6 +107,11 @@ public class ApplicationProperties {
     public static final String PATH_MODEL_ORGANIZATION_CREATE = "/organizations";
 
     /**
+     * Model-service path to update organization
+     */
+    public static final String PATH_MODEL_ORGANIZATION_UPDATE = "/organizations/{organizationId}";
+
+    /**
      * Model-service path to find organization by identifier
      */
     public static final String PATH_MODEL_ORGANIZATION_FIND_BY_ID = "/organizations/{organizationId}";
@@ -90,6 +120,11 @@ public class ApplicationProperties {
      * Model-service path to create a new contact
      */
     public static final String PATH_MODEL_CONTACT_CREATE = "/contacts";
+
+    /**
+     * Model-service path to update contact
+     */
+    public static final String PATH_MODEL_CONTACT_UPDATE = "/contacts/{contactId}";
 
     /**
      * Model-service path to find contact by identifier
@@ -105,6 +140,11 @@ public class ApplicationProperties {
      * Model-service path to create a new location
      */
     public static final String PATH_MODEL_LOCATION_CREATE = "/locations";
+
+    /**
+     * Model-service path to update location
+     */
+    public static final String PATH_MODEL_LOCATION_UPDATE = "/locations/{locationId}";
 
     /**
      * Model-service path to find contact by identifier

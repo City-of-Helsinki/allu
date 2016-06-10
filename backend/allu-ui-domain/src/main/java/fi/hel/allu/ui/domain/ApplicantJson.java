@@ -2,17 +2,16 @@ package fi.hel.allu.ui.domain;
 
 public class ApplicantJson extends TypeJson {
 
-    private int id;
+    private Integer id;
 
     /**
      * in Finnish: Hakijan tunniste
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
-
 }

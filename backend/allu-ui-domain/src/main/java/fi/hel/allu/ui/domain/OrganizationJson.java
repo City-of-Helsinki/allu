@@ -8,7 +8,7 @@ import javax.validation.Valid;
  * in Finnish: Organisaation tiedot
  */
 public class OrganizationJson {
-    private int id;
+    private Integer id;
     @NotBlank(message="{organization.name}")
     private String name;
     @NotBlank(message="{organization.businessId}")
@@ -21,11 +21,11 @@ public class OrganizationJson {
     /**
      * in Finnish: Organisaation tunniste
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

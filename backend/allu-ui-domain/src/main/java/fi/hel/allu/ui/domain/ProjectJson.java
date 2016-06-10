@@ -4,7 +4,7 @@ package fi.hel.allu.ui.domain;
  * in Finnish: Hanke
  */
 public class ProjectJson {
-    private int id;
+    private Integer id;
     private String name;
     private String type;
     private String information;
@@ -12,11 +12,11 @@ public class ProjectJson {
     /**
      * in Finnish: Hankkeen tunniste
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

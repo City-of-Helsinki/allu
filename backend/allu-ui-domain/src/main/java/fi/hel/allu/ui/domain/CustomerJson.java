@@ -4,17 +4,17 @@ package fi.hel.allu.ui.domain;
  * in Finnish: Toimeksiantaja
  */
 public class CustomerJson extends TypeJson {
-    private int id;
+    private Integer id;
     private String sapId;
 
     /**
      * in Finnish: Toimeksiantajan tunniste
      */
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

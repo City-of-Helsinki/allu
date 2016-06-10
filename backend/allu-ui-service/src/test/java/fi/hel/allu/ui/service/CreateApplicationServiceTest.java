@@ -167,23 +167,23 @@ public class CreateApplicationServiceTest {
         assertNotNull(response);
         assertNotNull(response.getApplicationList());
         assertEquals(1, response.getApplicationList().size());
-        assertEquals(4321, response.getApplicationList().get(0).getId());
+        assertEquals(4321, response.getApplicationList().get(0).getId().intValue());
         assertNotNull(response.getApplicationList().get(0).getApplicant());
         assertNotNull(response.getApplicationList().get(0).getCustomer());
         assertNotNull(response.getApplicationList().get(0).getProject());
         assertNotNull(response.getApplicationList().get(0).getLocation());
-        assertEquals(555, response.getApplicationList().get(0).getApplicant().getId());
-        assertEquals(1234, response.getApplicationList().get(0).getProject().getId());
-        assertEquals(3, response.getApplicationList().get(0).getCustomer().getId());
+        assertEquals(555, response.getApplicationList().get(0).getApplicant().getId().intValue());
+        assertEquals(1234, response.getApplicationList().get(0).getProject().getId().intValue());
+        assertEquals(3, response.getApplicationList().get(0).getCustomer().getId().intValue());
         assertEquals("Kalle käsittelijä", response.getApplicationList().get(0).getHandler());
         assertNull(response.getApplicationList().get(0).getApplicant().getPerson());
         assertNotNull(response.getApplicationList().get(0).getApplicant().getOrganization());
-        assertEquals(2, response.getApplicationList().get(0).getApplicant().getOrganization().getId());
+        assertEquals(2, response.getApplicationList().get(0).getApplicant().getOrganization().getId().intValue());
         assertNull(response.getApplicationList().get(0).getCustomer().getOrganization());
         assertNotNull(response.getApplicationList().get(0).getCustomer().getPerson());
-        assertEquals(1, response.getApplicationList().get(0).getCustomer().getPerson().getId());
+        assertEquals(1, response.getApplicationList().get(0).getCustomer().getPerson().getId().intValue());
         assertNotNull(response.getApplicationList().get(0).getLocation().getGeometry());
-        assertEquals(777, response.getApplicationList().get(0).getLocation().getId());
+        assertEquals(777, response.getApplicationList().get(0).getLocation().getId().intValue());
     }
 
 
