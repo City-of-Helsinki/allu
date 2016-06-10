@@ -24,7 +24,7 @@
             <root level="INFO">
                 <appender-ref ref="STDOUT" />
             </root>
-            <logger name="model-service" level="DEBUG" />
+            <logger name="fi.hel.allu.model" level="DEBUG" />
         </else>
     </if>
 </configuration>

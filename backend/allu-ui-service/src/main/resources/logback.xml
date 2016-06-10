@@ -24,7 +24,7 @@
             <root level="INFO">
                 <appender-ref ref="STDOUT" />
             </root>
-            <logger name="allu-ui-service" level="DEBUG" />
+            <logger name="fi.hel.allu.ui" level="DEBUG" />
         </else>
     </if>
 </configuration>
