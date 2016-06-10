@@ -1,12 +1,10 @@
 package fi.hel.allu.ui.handler;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.client.ResponseErrorHandler;
 
 import java.io.IOException;
