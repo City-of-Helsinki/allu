@@ -28,9 +28,9 @@ public class CreateApplicationController {
 
     @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-    public ResponseEntity<ApplicationListJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationListJson
-            applicationListJson) {
-        return new ResponseEntity<>(applicationService.updateApplication(id, applicationListJson), HttpStatus.OK);
+    public ResponseEntity<ApplicationJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationJson
+            applicationJson) {
+        return new ResponseEntity<>(applicationService.updateApplication(id, applicationJson), HttpStatus.OK);
     }
 
 }

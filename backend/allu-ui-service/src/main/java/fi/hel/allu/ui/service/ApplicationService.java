@@ -54,8 +54,8 @@ public class ApplicationService {
                 applicationJson.getApplicant().setId(applicantModel.getId());
             }
 
-            if (applicationJson.getLocation() == null || applicationJson.getLocation().getId() == null || applicationJson.getLocation()
-                    .getId() == 0) {
+            if (applicationJson.getLocation() != null && (applicationJson.getLocation().getId() == null || applicationJson.getLocation()
+                    .getId() == 0)) {
                 Location location = restTemplate.postForObject(applicationProperties
                         .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(applicationJson.getLocation()),
                         Location.class);
@@ -74,39 +74,34 @@ public class ApplicationService {
     /**
      * Update the given application by calling backend service.
      *
-     * @param applicationList Transfer object that contains an applications that are going to be updated
-     * @return Transfer object that contains updated application
+     * @param applicationJson application that is going to be updated
+     * @return Updated application
      */
-    public ApplicationListJson updateApplication(int applicationId, ApplicationListJson applicationList) {
-        if (applicationList.getApplicationList().size() > 1) {
-            throw new IllegalArgumentException("Only one application at time can be updated.");
+    public ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
+        if (applicationJson.getCustomer().getId() != null && applicationJson.getCustomer().getId() > 0) {
+            updateCustomer(applicationJson.getCustomer());
         }
-        for (ApplicationJson applicationJson : applicationList.getApplicationList()) {
-            if (applicationJson.getCustomer().getId() != null && applicationJson.getCustomer().getId() > 0) {
-                updateCustomer(applicationJson.getCustomer());
-            }
 
-            if (applicationJson.getProject() != null && applicationJson.getProject().getId() != null && applicationJson.getProject().getId()
-                > 0) {
-                restTemplate.put(applicationProperties
+        if (applicationJson.getProject() != null && applicationJson.getProject().getId() != null && applicationJson.getProject().getId()
+            > 0) {
+            restTemplate.put(applicationProperties
                     .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_UPDATE), createProjectModel(applicationJson.getProject()),
-                    applicationJson.getProject().getId().intValue());
-            }
-
-            if (applicationJson.getApplicant().getId() != null && applicationJson.getApplicant().getId() > 0) {
-                updateApplicant(applicationJson.getApplicant());
-            }
-
-            if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null && applicationJson.getLocation()
-                .getId() > 0) {
-                restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
-                    (applicationJson.getLocation()), applicationJson.getLocation().getId().intValue());
-            }
-
-            restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), createApplicationModel
-                (applicationJson), applicationId);
+                applicationJson.getProject().getId().intValue());
         }
-        return applicationList;
+
+        if (applicationJson.getApplicant().getId() != null && applicationJson.getApplicant().getId() > 0) {
+            updateApplicant(applicationJson.getApplicant());
+        }
+
+        if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null && applicationJson.getLocation()
+            .getId() > 0) {
+            restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
+                (applicationJson.getLocation()), applicationJson.getLocation().getId().intValue());
+        }
+
+        restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), createApplicationModel
+            (applicationJson), applicationId);
+        return applicationJson;
     }
 
 
@@ -278,7 +273,7 @@ public class ApplicationService {
 
     private Project createProjectModel(ProjectJson projectJson) {
         Project projectDomain = new Project();
-        if (projectJson.getId() != null) {
+        if (projectJson != null && projectJson.getId() != null) {
             projectDomain.setId(projectJson.getId());
         }
         if (projectJson == null || projectJson.getName() == null) {
@@ -310,10 +305,10 @@ public class ApplicationService {
 
     private Location createLocationModel(LocationJson locationJson) {
         Location location = new Location();
-        if (locationJson.getId() != null) {
+        if (locationJson != null && locationJson.getId() != null) {
             location.setId(locationJson.getId());
         }
-        if (locationJson.getPostalAddress() != null) {
+        if (locationJson != null && locationJson.getPostalAddress() != null) {
             location.setStreetAddress(locationJson.getPostalAddress().getStreetAddress());
             location.setPostalCode(locationJson.getPostalAddress().getPostalCode());
             location.setCity(locationJson.getPostalAddress().getCity());
