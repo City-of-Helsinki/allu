@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
@@ -18,12 +19,19 @@ import java.util.List;
 public class ApplicationService {
     private static final Logger logger = LoggerFactory.getLogger(ApplicationService.class);
 
-    @Autowired
     private ApplicationProperties applicationProperties;
-
+    private RestTemplate restTemplate;
+    private LocationService locationService;
+    private PersonService personService;
 
     @Autowired
-    private RestTemplate restTemplate;
+    public void ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
+        locationService, PersonService personService) {
+        this.applicationProperties = applicationProperties;
+        this.restTemplate = restTemplate;
+        this.locationService = locationService;
+        this.personService = personService;
+    }
 
 
     /**
@@ -54,13 +62,7 @@ public class ApplicationService {
                 applicationJson.getApplicant().setId(applicantModel.getId());
             }
 
-            if (applicationJson.getLocation() != null && (applicationJson.getLocation().getId() == null || applicationJson.getLocation()
-                    .getId() == 0)) {
-                Location location = restTemplate.postForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(applicationJson.getLocation()),
-                        Location.class);
-                applicationJson.getLocation().setId(location.getId());
-            }
+            applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
 
             Application applicationModel = restTemplate.postForObject(applicationProperties
                     .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
@@ -93,11 +95,7 @@ public class ApplicationService {
             updateApplicant(applicationJson.getApplicant());
         }
 
-        if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null && applicationJson.getLocation()
-            .getId() > 0) {
-            restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
-                (applicationJson.getLocation()), applicationJson.getLocation().getId().intValue());
-        }
+        locationService.updateLocation(applicationJson.getLocation());
 
         restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), createApplicationModel
             (applicationJson), applicationId);
@@ -140,17 +138,9 @@ public class ApplicationService {
         applicationJson.setProject(findProjectById(applicationModel.getProjectId()));
         applicationJson.setApplicant(findApplicantById(applicationModel.getApplicantId()));
         if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
-            applicationJson.setLocation(findLocationById(applicationModel.getLocationId()));
+            applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
         }
         return applicationJson;
-    }
-
-    private PersonJson findPersonById(int personId) {
-        PersonJson personJson = new PersonJson();
-        ResponseEntity<Person> personResult = restTemplate.getForEntity(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_PERSON_FIND_BY_ID), Person.class, personId);
-        mapPersonToJson(personJson, personResult.getBody());
-        return personJson;
     }
 
     private ApplicantJson findApplicantById(int applicantId) {
@@ -159,7 +149,7 @@ public class ApplicationService {
                 .getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_FIND_BY_ID), Applicant.class, applicantId);
         mapApplicantToJson(applicantJson, applicantResult.getBody());
         if (applicantResult.getBody().getPersonId() != null) {
-            applicantJson.setPerson(findPersonById(applicantResult.getBody().getPersonId()));
+            applicantJson.setPerson(personService.findPersonById(applicantResult.getBody().getPersonId()));
         }
         if (applicantResult.getBody().getOrganizationId() != null) {
             applicantJson.setOrganization(findOrganizationById(applicantResult.getBody().getOrganizationId()));
@@ -184,7 +174,7 @@ public class ApplicationService {
             customerJson.setOrganization(findOrganizationById(customerResult.getBody().getOrganizationId()));
         }
         if (customerResult.getBody().getPersonId() != null) {
-            customerJson.setPerson(findPersonById(customerResult.getBody().getPersonId()));
+            customerJson.setPerson(personService.findPersonById(customerResult.getBody().getPersonId()));
         }
         return customerJson;
     }
@@ -196,14 +186,6 @@ public class ApplicationService {
                 .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);
         mapProjectToJson(projectJson, projectResult.getBody());
         return projectJson;
-    }
-
-    private LocationJson findLocationById(int locationId)  {
-        LocationJson locationJson = new LocationJson();
-        ResponseEntity<Location> locationResult = restTemplate.getForEntity(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_FIND_BY_ID), Location.class, locationId);
-        mapLocationToJson(locationJson, locationResult.getBody());
-        return locationJson;
     }
 
     private Customer createCustomerModel(CustomerJson customerJson) {
@@ -237,23 +219,6 @@ public class ApplicationService {
         organizationModel.setBusinessId(organizationJson.getBusinessId());
         organizationModel.setEmail(organizationJson.getEmail());
         return organizationModel;
-    }
-
-    private Person createPersonModel(PersonJson personJson) {
-        Person personModel = new Person();
-        if (personJson.getId() != null) {
-            personModel.setId(personJson.getId());
-        }
-        if (personJson.getPostalAddress() != null) {
-            personModel.setStreetAddress(personJson.getPostalAddress().getStreetAddress());
-            personModel.setCity(personJson.getPostalAddress().getCity());
-            personModel.setPostalCode(personJson.getPostalAddress().getPostalCode());
-        }
-        personModel.setPhone(personJson.getPhone());
-        personModel.setName(personJson.getName());
-        personModel.setSsn(personJson.getSsn());
-        personModel.setEmail(personJson.getEmail());
-        return personModel;
     }
 
     private Applicant createApplicantModel(ApplicantJson applicantJson) {
@@ -297,34 +262,10 @@ public class ApplicationService {
         applicationDomain.setHandler(applicationJson.getHandler());
         applicationDomain.setType(applicationJson.getType());
         applicationDomain.setStatus(applicationJson.getStatus());
-        if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() > 0) {
+        if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null) {
             applicationDomain.setLocationId(applicationJson.getLocation().getId());
         }
         return applicationDomain;
-    }
-
-    private Location createLocationModel(LocationJson locationJson) {
-        Location location = new Location();
-        if (locationJson != null && locationJson.getId() != null) {
-            location.setId(locationJson.getId());
-        }
-        if (locationJson != null && locationJson.getPostalAddress() != null) {
-            location.setStreetAddress(locationJson.getPostalAddress().getStreetAddress());
-            location.setPostalCode(locationJson.getPostalAddress().getPostalCode());
-            location.setCity(locationJson.getPostalAddress().getCity());
-        }
-        location.setGeometry(locationJson.getGeometry());
-        return location;
-    }
-
-    private void mapLocationToJson(LocationJson locationJson, Location location) {
-        locationJson.setId(location.getId());
-        PostalAddressJson postalAddressJson = new PostalAddressJson();
-        postalAddressJson.setCity(location.getCity());
-        postalAddressJson.setPostalCode(location.getPostalCode());
-        postalAddressJson.setStreetAddress(location.getStreetAddress());
-        locationJson.setPostalAddress(postalAddressJson);
-        locationJson.setGeometry(location.getGeometry());
     }
 
     private void mapProjectToJson(ProjectJson projectJson, Project projectDomain) {
@@ -332,18 +273,7 @@ public class ApplicationService {
         projectJson.setName(projectDomain.getName());
     }
 
-    private void mapPersonToJson(PersonJson personJson, Person personDomain) {
-        personJson.setId(personDomain.getId());
-        PostalAddressJson postalAddressJson = new PostalAddressJson();
-        postalAddressJson.setPostalCode(personDomain.getPostalCode());
-        postalAddressJson.setStreetAddress(personDomain.getStreetAddress());
-        postalAddressJson.setCity(personDomain.getCity());
-        personJson.setPostalAddress(postalAddressJson);
-        personJson.setSsn(personDomain.getSsn());
-        personJson.setPhone(personDomain.getPhone());
-        personJson.setName(personDomain.getName());
-        personJson.setEmail(personDomain.getEmail());
-    }
+
 
     private void mapCustomerToJson(CustomerJson customerJson, Customer customer) {
         customerJson.setId(customer.getId());
@@ -383,21 +313,21 @@ public class ApplicationService {
     }
 
     private Customer createNewCustomer(CustomerJson customerJson) {
-        if (customerJson.getPerson() != null && (customerJson.getPerson().getId() == null || customerJson.getPerson().getId() == 0)) {
-            Person personModel = restTemplate.postForObject(applicationProperties
-                            .getUrl(ApplicationProperties.PATH_MODEL_PERSON_CREATE), createPersonModel(customerJson.getPerson()),
-                    Person.class);
-            mapPersonToJson(customerJson.getPerson(), personModel);
-        }
 
-        if (customerJson.getOrganization() != null && (customerJson.getOrganization().getId() == null || customerJson.getOrganization()
-                .getId() == 0)) {
-            Organization organizationModel = restTemplate.postForObject(applicationProperties
+        switch (customerJson.getType()) {
+            case Person:
+                customerJson.setPerson(personService.createPerson(customerJson.getPerson()));
+                break;
+            case Company:
+                if (customerJson.getOrganization() != null && (customerJson.getOrganization().getId() == null || customerJson.getOrganization()
+                    .getId() == 0)) {
+                    Organization organizationModel = restTemplate.postForObject(applicationProperties
                             .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(customerJson.getOrganization()),
-                    Organization.class);
-            mapOrganizationToJson(customerJson.getOrganization(), organizationModel);
+                        Organization.class);
+                    mapOrganizationToJson(customerJson.getOrganization(), organizationModel);
+                }
+                break;
         }
-
         Customer customerModel = restTemplate.postForObject(applicationProperties
                         .getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_CREATE), createCustomerModel(customerJson),
                 Customer.class);
@@ -406,9 +336,12 @@ public class ApplicationService {
     }
 
     private void updateCustomer(CustomerJson customerJson) {
-        if (customerJson.getPerson() != null && customerJson.getPerson().getId() != null && customerJson.getPerson().getId() > 0) {
-            restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_PERSON_UPDATE), createPersonModel(customerJson
-                .getPerson()), customerJson.getPerson().getId().intValue());
+        switch (customerJson.getType()) {
+            case Person:
+                personService.updatePerson(customerJson.getPerson());
+                break;
+            case Company:
+                break;
         }
 
         if (customerJson.getOrganization() != null && customerJson.getOrganization().getId() != null && customerJson.getOrganization()
@@ -423,11 +356,12 @@ public class ApplicationService {
     }
 
     private Applicant createNewApplicant(ApplicantJson applicantJson) {
-        if (applicantJson.getPerson() != null && (applicantJson.getPerson().getId() == null || applicantJson.getPerson().getId() == 0)) {
-            Person personModel = restTemplate.postForObject(applicationProperties
-                            .getUrl(ApplicationProperties.PATH_MODEL_PERSON_CREATE), createPersonModel(applicantJson.getPerson()),
-                    Person.class);
-            mapPersonToJson(applicantJson.getPerson(), personModel);
+        switch (applicantJson.getType()) {
+            case Person:
+                personService.createPerson(applicantJson.getPerson());
+                break;
+            case Company:
+                break;
         }
 
         if (applicantJson.getOrganization() != null && (applicantJson.getOrganization().getId() == null || applicantJson.getOrganization()
@@ -446,9 +380,12 @@ public class ApplicationService {
     }
 
     private void updateApplicant(ApplicantJson applicantJson) {
-        if (applicantJson.getPerson() != null && applicantJson.getPerson().getId() != null && applicantJson.getPerson().getId() > 0) {
-            restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_PERSON_UPDATE), createPersonModel(applicantJson
-                .getPerson()), applicantJson.getPerson().getId().intValue());
+        switch (applicantJson.getType()) {
+            case Person:
+                personService.updatePerson(applicantJson.getPerson());
+                break;
+            case Company:
+                break;
         }
 
         if (applicantJson.getOrganization() != null && applicantJson.getOrganization().getId() != null && applicantJson.getOrganization()
