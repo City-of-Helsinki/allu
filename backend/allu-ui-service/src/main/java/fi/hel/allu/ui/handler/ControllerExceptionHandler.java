@@ -12,14 +12,14 @@ import java.io.IOException;
 @ControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ExceptionHandler({ IllegalArgumentException.class })
-    public void handleBadRequests(RuntimeException e, HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-    }
+  @ExceptionHandler({IllegalArgumentException.class})
+  public void handleBadRequests(RuntimeException e, HttpServletResponse response) throws IOException {
+    response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+  }
 
-    @ExceptionHandler
-    public void handleNotFound(NoSuchEntityException e, HttpServletResponse response) throws IOException {
-        response.sendError(HttpStatus.NOT_FOUND.value(), e.getMessage());
-    }
+  @ExceptionHandler
+  public void handleNotFound(NoSuchEntityException e, HttpServletResponse response) throws IOException {
+    response.sendError(HttpStatus.NOT_FOUND.value(), e.getMessage());
+  }
 
 }

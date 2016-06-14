@@ -19,25 +19,25 @@ import java.util.List;
 @ControllerAdvice
 public class ValidationErrorHandler extends ResponseEntityExceptionHandler {
 
-    @Override
-    protected ResponseEntity<Object>
-    handleMethodArgumentNotValid(MethodArgumentNotValidException e,
-                                 HttpHeaders headers, HttpStatus status,
-                                 WebRequest request) {
-        BindingResult bindingResult = e.getBindingResult();
-        List<ErrorInfo> errorInfoList = new ArrayList<>();
+  @Override
+  protected ResponseEntity<Object>
+  handleMethodArgumentNotValid(MethodArgumentNotValidException e,
+                               HttpHeaders headers, HttpStatus status,
+                               WebRequest request) {
+    BindingResult bindingResult = e.getBindingResult();
+    List<ErrorInfo> errorInfoList = new ArrayList<>();
 
-        for (ObjectError error : bindingResult.getGlobalErrors()) {
-            ErrorInfo errorInfo = new ErrorInfo();
-            errorInfo.setErrorMessage(error.getDefaultMessage());
-            errorInfoList.add(errorInfo);
-        }
-        for (FieldError error : bindingResult.getFieldErrors()) {
-            ErrorInfo errorInfo = new ErrorInfo();
-            errorInfo.setErrorMessage(error.getDefaultMessage());
-            errorInfo.setAdditionalInfo(error.getField());
-            errorInfoList.add(errorInfo);
-        }
-        return handleExceptionInternal(e, errorInfoList, headers, HttpStatus.BAD_REQUEST, request);
+    for (ObjectError error : bindingResult.getGlobalErrors()) {
+      ErrorInfo errorInfo = new ErrorInfo();
+      errorInfo.setErrorMessage(error.getDefaultMessage());
+      errorInfoList.add(errorInfo);
     }
+    for (FieldError error : bindingResult.getFieldErrors()) {
+      ErrorInfo errorInfo = new ErrorInfo();
+      errorInfo.setErrorMessage(error.getDefaultMessage());
+      errorInfo.setAdditionalInfo(error.getField());
+      errorInfoList.add(errorInfo);
+    }
+    return handleExceptionInternal(e, errorInfoList, headers, HttpStatus.BAD_REQUEST, request);
+  }
 }

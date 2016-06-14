@@ -19,25 +19,25 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class CustomerServiceTest extends MockServices {
+  private static Validator validator;
   @Mock
   protected PersonService personService;
   @Mock
   protected OrganizationService organizationService;
   @InjectMocks
   protected CustomerService customerService;
-  private static Validator validator;
+
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
+  }
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
   }
 
   @Test
@@ -53,8 +53,8 @@ public class CustomerServiceTest extends MockServices {
     customerJson.setType(CustomerType.Company);
     customerJson.setOrganization(createOrganizationJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
-        validator.validate( customerJson );
-    assertEquals(0, constraintViolations.size() );
+        validator.validate(customerJson);
+    assertEquals(0, constraintViolations.size());
   }
 
   @Test
@@ -63,8 +63,8 @@ public class CustomerServiceTest extends MockServices {
     customerJson.setType(CustomerType.Company);
     customerJson.setOrganization(null);
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
-        validator.validate( customerJson );
-    assertEquals(1, constraintViolations.size() );
+        validator.validate(customerJson);
+    assertEquals(1, constraintViolations.size());
     assertEquals("organization is required, type is Organization", constraintViolations.iterator().next().getMessage());
   }
 
@@ -75,8 +75,8 @@ public class CustomerServiceTest extends MockServices {
     customerJson.setOrganization(createOrganizationJson(1));
     customerJson.setPerson(createPersonJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
-        validator.validate( customerJson );
-    assertEquals(1, constraintViolations.size() );
+        validator.validate(customerJson);
+    assertEquals(1, constraintViolations.size());
     assertEquals("person must be null, type is Organization", constraintViolations.iterator().next().getMessage());
   }
 
@@ -86,8 +86,8 @@ public class CustomerServiceTest extends MockServices {
     customerJson.setType(CustomerType.Person);
     customerJson.setPerson(createPersonJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
-        validator.validate( customerJson );
-    assertEquals(0, constraintViolations.size() );
+        validator.validate(customerJson);
+    assertEquals(0, constraintViolations.size());
   }
 
   @Test
@@ -95,8 +95,8 @@ public class CustomerServiceTest extends MockServices {
     CustomerJson customerJson = new CustomerJson();
     customerJson.setType(CustomerType.Person);
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
-        validator.validate( customerJson );
-    assertEquals(1, constraintViolations.size() );
+        validator.validate(customerJson);
+    assertEquals(1, constraintViolations.size());
     assertEquals("person is required, type is Person", constraintViolations.iterator().next().getMessage());
   }
 
@@ -107,8 +107,8 @@ public class CustomerServiceTest extends MockServices {
     customerJson.setPerson(createPersonJson(1));
     customerJson.setOrganization(createOrganizationJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
-        validator.validate( customerJson );
-    assertEquals(1, constraintViolations.size() );
+        validator.validate(customerJson);
+    assertEquals(1, constraintViolations.size());
     assertEquals("organization must be null, type is Person", constraintViolations.iterator().next().getMessage());
   }
 

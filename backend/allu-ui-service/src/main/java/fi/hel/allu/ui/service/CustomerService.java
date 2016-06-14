@@ -21,7 +21,8 @@ public class CustomerService {
 
 
   @Autowired
-  public CustomerService(ApplicationProperties applicationProperties, RestTemplate restTemplate, PersonService personService, OrganizationService organizationService) {
+  public CustomerService(ApplicationProperties applicationProperties, RestTemplate restTemplate, PersonService personService,
+                         OrganizationService organizationService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.personService = personService;

@@ -141,7 +141,8 @@ public abstract class MockServices {
     postalAddressJsonOrgnization.setPostalCode("002113, Json");
     organizationJson.setPostalAddress(postalAddressJsonOrgnization);
     organizationJson.setPhone("323423421, Json");
-    organizationJson.setName("Organisaatio 2, Json");;
+    organizationJson.setName("Organisaatio 2, Json");
+    ;
     organizationJson.setEmail("organization2 email, Json");
     return organizationJson;
   }
@@ -189,7 +190,6 @@ public abstract class MockServices {
     application.setApplicantId(103);
     return application;
   }
-
 
 
   public Person createMockPersonModel() {

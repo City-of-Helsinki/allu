@@ -10,17 +10,17 @@ import java.util.Collection;
  */
 public class AlluUser extends User {
 
-    private final String emailAddress;
+  private final String emailAddress;
 
-    public AlluUser(String username,
-                     String password,
-                     Collection<? extends GrantedAuthority> authorities,
-                     String emailAddress) {
-        super(username, password, authorities);
-        this.emailAddress = emailAddress;
-    }
+  public AlluUser(String username,
+                  String password,
+                  Collection<? extends GrantedAuthority> authorities,
+                  String emailAddress) {
+    super(username, password, authorities);
+    this.emailAddress = emailAddress;
+  }
 
-    public String getEmailAddress() {
-        return emailAddress;
-    }
+  public String getEmailAddress() {
+    return emailAddress;
+  }
 }

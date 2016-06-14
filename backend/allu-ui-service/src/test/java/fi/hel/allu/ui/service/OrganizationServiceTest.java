@@ -13,20 +13,12 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
-public class OrganizationServiceTest  extends MockServices {
+public class OrganizationServiceTest extends MockServices {
+  private static Validator validator;
   @InjectMocks
   protected OrganizationService organizationService;
-  private static Validator validator;
-
-  @Before
-  public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    initSaveMocks();
-  }
 
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -34,11 +26,17 @@ public class OrganizationServiceTest  extends MockServices {
     validator = factory.getValidator();
   }
 
+  @Before
+  public void setUp() {
+    MockitoAnnotations.initMocks(this);
+    initSaveMocks();
+  }
+
   @Test
   public void testValidationWithValidOrganization() {
     Set<ConstraintViolation<OrganizationJson>> constraintViolations =
-        validator.validate( createOrganizationJson(1) );
-    assertEquals(0, constraintViolations.size() );
+        validator.validate(createOrganizationJson(1));
+    assertEquals(0, constraintViolations.size());
   }
 
   @Test
@@ -46,8 +44,8 @@ public class OrganizationServiceTest  extends MockServices {
     OrganizationJson organizationJson = createOrganizationJson(1);
     organizationJson.setName(null);
     Set<ConstraintViolation<OrganizationJson>> constraintViolations =
-        validator.validate( organizationJson );
-    assertEquals(1, constraintViolations.size() );
+        validator.validate(organizationJson);
+    assertEquals(1, constraintViolations.size());
     assertEquals("Organization name is required", constraintViolations.iterator().next().getMessage());
   }
 
@@ -56,8 +54,8 @@ public class OrganizationServiceTest  extends MockServices {
     OrganizationJson organizationJson = createOrganizationJson(1);
     organizationJson.setBusinessId(null);
     Set<ConstraintViolation<OrganizationJson>> constraintViolations =
-        validator.validate( organizationJson );
-    assertEquals(1, constraintViolations.size() );
+        validator.validate(organizationJson);
+    assertEquals(1, constraintViolations.size());
     assertEquals("Organization business identifier is required", constraintViolations.iterator().next().getMessage());
   }
 

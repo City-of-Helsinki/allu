@@ -18,25 +18,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    @Autowired
-    TokenHandler tokenHandler;
+  @Autowired
+  TokenHandler tokenHandler;
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ResponseEntity<String> login() {
-        return new ResponseEntity<String>(tokenHandler.createTokenForUser(createMockUser()), HttpStatus.OK);
-    }
+  @RequestMapping(value = "/login", method = RequestMethod.POST)
+  public ResponseEntity<String> login() {
+    return new ResponseEntity<String>(tokenHandler.createTokenForUser(createMockUser()), HttpStatus.OK);
+  }
 
 
-    private AlluUser createMockUser() {
-        List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_CREATE_APPLICATION.toString()));
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_PROCESS_APPLICATION.toString()));
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_WORK_QUEUE.toString()));
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_DECISION.toString()));
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_SUPERVISE.toString()));
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_INVOICING.toString()));
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()));
-        roles.add(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()));
-        return new AlluUser("johndoe", "pwd", roles, "email");
-    }
+  private AlluUser createMockUser() {
+    List<GrantedAuthority> roles = new ArrayList<>();
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_CREATE_APPLICATION.toString()));
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_PROCESS_APPLICATION.toString()));
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_WORK_QUEUE.toString()));
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_DECISION.toString()));
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_SUPERVISE.toString()));
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_INVOICING.toString()));
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()));
+    roles.add(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()));
+    return new AlluUser("johndoe", "pwd", roles, "email");
+  }
 }

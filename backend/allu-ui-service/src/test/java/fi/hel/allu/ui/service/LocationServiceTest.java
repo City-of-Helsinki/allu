@@ -16,9 +16,15 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class LocationServiceTest extends MockServices {
+  private static Validator validator;
   @InjectMocks
   protected LocationService locationService;
-  private static Validator validator;
+
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
+  }
 
   @Before
   public void setUp() {
@@ -27,17 +33,11 @@ public class LocationServiceTest extends MockServices {
     initSearchMocks();
   }
 
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
-  }
-
   @Test
   public void testValidationWithValidLocation() {
     Set<ConstraintViolation<LocationJson>> constraintViolations =
-        validator.validate( createLocationJson(1) );
-    assertEquals(0, constraintViolations.size() );
+        validator.validate(createLocationJson(1));
+    assertEquals(0, constraintViolations.size());
   }
 
   @Test

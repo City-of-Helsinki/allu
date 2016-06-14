@@ -21,7 +21,8 @@ public class ApplicantService {
 
 
   @Autowired
-  public ApplicantService(ApplicationProperties applicationProperties, RestTemplate restTemplate, PersonService personService, OrganizationService organizationService) {
+  public ApplicantService(ApplicationProperties applicationProperties, RestTemplate restTemplate, PersonService personService,
+                          OrganizationService organizationService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.personService = personService;
