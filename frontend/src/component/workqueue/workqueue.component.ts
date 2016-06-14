@@ -57,7 +57,6 @@ export class WorkQueueComponent implements EventListener, OnInit, OnDestroy {
     if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent>event;
       this.applicationsQueue = aaEvent.applications.slice();
-      this.applicationsQueue.forEach((app) => app.location = JSON.parse(localStorage.getItem('application')));
     }
   }
 

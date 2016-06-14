@@ -156,7 +156,7 @@ module.exports = {
        * Additional resource loader
        */
       {
-        test: /.(png|woff(2)?|eot|ttf|svg)(\?[a-z0-9=\.]+)?$/,
+        test: /.(woff(2)?|eot|ttf)(\?[a-z0-9=\.]+)?$/,
         loader: 'url-loader?limit=100000'
       },
 

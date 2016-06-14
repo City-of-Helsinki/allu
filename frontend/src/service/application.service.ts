@@ -31,15 +31,19 @@ export class ApplicationService {
           () => console.log('Request Complete')
         )
       );
-    } else if (filter.handler) {
-      params.set('handler', filter.handler);
+    } else {
+      if (filter.handler) {
+        params.set('handler', filter.handler);
+      } else {
+        params.set('handler', 'TestHandler');
+      }
       return new Promise<Array<Application>>((resolve, reject) =>
         this.authHttp.get(searchUrl, { search: params }).subscribe(
           data => {
             console.log('ApplicationService.listApplications', data);
             let json = data.json();
-            if (json.applicationList) {
-              let applications: Array<Application> = data.json().applicationList.map((p) => ApplicationMapper.mapBackend(p));
+            if (json) {
+              let applications: Array<Application> = json.map((p) => ApplicationMapper.mapBackend(p));
               console.log('Listing applications', applications);
               resolve(applications);
             } else {
@@ -50,9 +54,6 @@ export class ApplicationService {
           () => console.log('Request Complete')
         )
       );
-    } else {
-      return new Promise<Array<Application>>(
-        (resolve, reject) => reject('Unexpected filter parameters for ApplicationService.listApplications ' + filter));
     }
   }
 
