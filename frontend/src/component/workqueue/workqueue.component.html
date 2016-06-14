@@ -47,173 +47,67 @@
       type="text" />
       <label for="endDate">Loppupäivämäärä</label>
     </div>
-
-
-  <md-content layout="row" layout-wrap layout-align="center start">
-    <md-card (click)="jobClick(job)" *ngFor="let job of applicationsQueue" style="margin-bottom: 10px;">
-      <md-card-title>{{job.title}}</md-card-title>
-      <md-card-subtitle>{{job.type}}</md-card-subtitle>
-      <md-card-content>
-        <p>{{job.name}}</p>
-        <p>{{job.time}}</p>
-      </md-card-content>
-    </md-card>
-  </md-content>
+    <div class="col s3">
+      <input type="checkbox" class="filled-in" id="own-applications"/>
+      <label for="own-applications">Näytä vain omat hakemuksesi</label>
+    </div>
+    <div class="col s3">
+      <div class="switch">
+        <label>
+          <input type="checkbox">
+          <span class="lever"></span>
+          Näytä kalenterissa
+        </label>
+      </div>
+    </div>
 </div>
 
 <div class="row">
+  <div class="col s12">
+    <a class="waves-effect waves-teal btn-flat"><i class="material-icons">check_box_outline_blank</i><i class="material-icons">arrow_drop_down</i></a>
+    <a class="waves-effect waves-teal btn-flat"><i class="material-icons">refresh</i></a>
+    <button (click)="console.log('asdf')" class="waves-effect waves-light btn">OMAKSI</button>
+    <button (click)="console.log('asdf')" class="waves-effect waves-light btn">SIIRRÄ</button>
+    <button (click)="console.log('asdf')" class="waves-effect waves-light btn">TALLENNA</button>
+    <button (click)="console.log('asdf')" class="waves-effect waves-light btn">LAUSUNTO</button>
+  </div>
   <div class=" col s12">
     <table class="striped responsive-table">
       <thead>
         <tr>
           <th></th>
-          <th>Käsittelijä</th>
+          <th>Käsittelijä<i class="material-icons">arrow_drop_down</i></th>
           <th>Nimi</th>
           <th>Hanke</th>
-          <th>Tyyppi</th>
-          <th>Tila</th>
+          <th>Tyyppi<i class="material-icons">arrow_drop_down</i></th>
+          <th>Tila<i class="material-icons">arrow_drop_down</i></th>
           <th>Hakija</th>
           <th>Katuosoite</th>
           <th>Kaupunginosa</th>
           <th>Saapunut</th>
-          <th>Aloitus</th>
+          <th>Aloitus<i class="material-icons">arrow_drop_down</i></th>
           <th>Lisätietoja</th>
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr *ngFor="let application of applicationsQueue">
           <td>
-            <input type="checkbox" class="filled-in" id="application-id" checked="checked" />
-            <label for="application-id"></label>
+            <input type="checkbox" class="filled-in" id="{{application.id}}" />
+            <label [attr.for]="application.id"></label>
           </td>
-          <td></td>
-          <td>Esimerkkitapahtuma</td>
+          <td>{{application.handler}}</td>
+          <td>{{application.name}}</td>
           <td>
-            KP1201258 <br>
-            <span>72022</span>
+            {{application.project.name}} <br>
+            <span>{{application.project.id}}</span>
           </td>
-          <td>Ulkoilmatapahtuma</td>
-          <td>Uusi hakemus</td>
+          <td>{{application.type}}</td>
+          <td>{{application.status}}</td>
           <td>
-            Esimerkkiyritys Oy <br>
+            {{application.customer.person.name}}<br>
             <span>Isaksson Harry</span>
           </td>
-          <td>Narinkkatori, D-lohko</td>
-          <td>Kamppi</td>
-          <td>18.05.2016</td>
-          <td>24.6.2016</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>
-            <input type="checkbox" class="filled-in" id="application-id-2" />
-            <label for="application-id-2"></label>
-          </td>
-          <td>Mari-Liis</td>
-          <td>SAPP</td>
-          <td>
-            KP1201258 <br>
-            <span>72022</span>
-          </td>
-          <td>Ulkoilmatapahtuma</td>
-          <td>Uusi hakemus</td>
-          <td>
-            Esimerkkiyritys Oy <br>
-            <span>Isaksson Harry</span>
-          </td>
-          <td>Narinkkatori, D-lohko</td>
-          <td>Kamppi</td>
-          <td>18.05.2016</td>
-          <td>24.6.2016</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>
-            <input type="checkbox" class="filled-in" id="application-id-3" />
-            <label for="application-id-3"></label>
-          </td>
-          <td>Minna</td>
-          <td>Tapahtuma 3</td>
-          <td>
-            KP1201258 <br>
-            <span>72022</span>
-          </td>
-          <td>Ulkoilmatapahtuma</td>
-          <td>Uusi hakemus</td>
-          <td>
-            Esimerkkiyritys Oy <br>
-            <span>Isaksson Harry</span>
-          </td>
-          <td>Narinkkatori, D-lohko</td>
-          <td>Kamppi</td>
-          <td>18.05.2016</td>
-          <td>24.6.2016</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>
-            <input type="checkbox" class="filled-in" id="application-id-4" />
-            <label for="application-id-4"></label>
-          </td>
-          <td>Minna</td>
-          <td>Mestarit laivalla</td>
-          <td>
-            KP1201258 <br>
-            <span>72022</span>
-          </td>
-          <td>Ulkoilmatapahtuma</td>
-          <td>Uusi hakemus</td>
-          <td>
-            Esimerkkiyritys Oy <br>
-            <span>Isaksson Harry</span>
-          </td>
-          <td>Narinkkatori, D-lohko</td>
-          <td>Kamppi</td>
-          <td>18.05.2016</td>
-          <td>24.6.2016</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>
-            <input type="checkbox" class="filled-in" id="application-id-5" />
-            <label for="application-id-5"></label>
-          </td>
-          <td>Kasper</td>
-          <td>Speden Spelit</td>
-          <td>
-            KP1201258 <br>
-            <span>72022</span>
-          </td>
-          <td>Ulkoilmatapahtuma</td>
-          <td>Uusi hakemus</td>
-          <td>
-            Esimerkkiyritys Oy <br>
-            <span>Isaksson Harry</span>
-          </td>
-          <td>Narinkkatori, D-lohko</td>
-          <td>Kamppi</td>
-          <td>18.05.2016</td>
-          <td>24.6.2016</td>
-          <td></td>
-        </tr>
-        <tr>
-          <td>
-            <input type="checkbox" class="filled-in" id="application-id-6" />
-            <label for="application-id-6"></label>
-          </td>
-          <td>Mari-Liis</td>
-          <td>Viskifestivaali</td>
-          <td>
-            KP1201258 <br>
-            <span>72022</span>
-          </td>
-          <td>Ulkoilmatapahtuma</td>
-          <td>Uusi hakemus</td>
-          <td>
-            Esimerkkiyritys Oy <br>
-            <span>Isaksson Harry</span>
-          </td>
-          <td>Narinkkatori, D-lohko</td>
+          <td>{{application.location.postalAddress.streetAddress}}</td>
           <td>Kamppi</td>
           <td>18.05.2016</td>
           <td>24.6.2016</td>

@@ -48,7 +48,7 @@ export class Application {
     return new Application(
       undefined,
       undefined,
-      undefined,
+      'TestHandler',
       customer,
       undefined,
       'outdoorEvent',
