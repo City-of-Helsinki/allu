@@ -23,34 +23,34 @@ import java.io.IOException;
 @Configuration
 public class RequestIdFilter {
 
-    public static final String REQUEST_ID_KEY = "requestId";
+  public static final String REQUEST_ID_KEY = "requestId";
 
-    @Bean
-    public FilterRegistrationBean requestIdFilterRegistrationBean() {
-        Filter logFilter = new RequestIdFilterBean();
-        FilterRegistrationBean regBean = new FilterRegistrationBean();
-        regBean.setFilter(logFilter);
-        // filtering all URLs
-        regBean.addUrlPatterns("/*");
-        // trying to filter everything here before any other filter
-        regBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return regBean;
+  @Bean
+  public FilterRegistrationBean requestIdFilterRegistrationBean() {
+    Filter logFilter = new RequestIdFilterBean();
+    FilterRegistrationBean regBean = new FilterRegistrationBean();
+    regBean.setFilter(logFilter);
+    // filtering all URLs
+    regBean.addUrlPatterns("/*");
+    // trying to filter everything here before any other filter
+    regBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    return regBean;
+  }
+
+  private class RequestIdFilterBean extends OncePerRequestFilter {
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response, FilterChain filterChain)
+        throws ServletException, IOException {
+      String requestId = RandomStringUtils.randomAlphanumeric(6);
+      MDC.put(REQUEST_ID_KEY, requestId);
+      try {
+        request.setAttribute(REQUEST_ID_KEY, requestId);
+        filterChain.doFilter(request, response);
+      } finally {
+        MDC.remove(REQUEST_ID_KEY);
+      }
     }
-
-    private class RequestIdFilterBean extends OncePerRequestFilter {
-
-        @Override
-        protected void doFilterInternal(HttpServletRequest request,
-                                        HttpServletResponse response, FilterChain filterChain)
-                throws ServletException, IOException {
-            String requestId = RandomStringUtils.randomAlphanumeric(6);
-            MDC.put(REQUEST_ID_KEY, requestId);
-            try {
-                request.setAttribute(REQUEST_ID_KEY, requestId);
-                filterChain.doFilter(request, response);
-            } finally {
-                MDC.remove(REQUEST_ID_KEY);
-            }
-        }
-    }
+  }
 }

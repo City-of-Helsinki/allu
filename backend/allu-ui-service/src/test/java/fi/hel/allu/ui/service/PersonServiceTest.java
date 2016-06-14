@@ -16,9 +16,15 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 public class PersonServiceTest extends MockServices {
+  private static Validator validator;
   @InjectMocks
   protected PersonService personService;
-  private static Validator validator;
+
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
+  }
 
   @Before
   public void setUp() {
@@ -27,17 +33,11 @@ public class PersonServiceTest extends MockServices {
     initSearchMocks();
   }
 
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
-  }
-
   @Test
   public void testValidationWithValidPerson() {
     Set<ConstraintViolation<PersonJson>> constraintViolations =
-        validator.validate( createPersonJson(1) );
-    assertEquals(0, constraintViolations.size() );
+        validator.validate(createPersonJson(1));
+    assertEquals(0, constraintViolations.size());
   }
 
   @Test
@@ -45,8 +45,8 @@ public class PersonServiceTest extends MockServices {
     PersonJson personJson = createPersonJson(1);
     personJson.setName(null);
     Set<ConstraintViolation<PersonJson>> constraintViolations =
-        validator.validate( personJson );
-    assertEquals(1, constraintViolations.size() );
+        validator.validate(personJson);
+    assertEquals(1, constraintViolations.size());
     assertEquals("Person name is required", constraintViolations.iterator().next().getMessage());
   }
 
@@ -65,7 +65,6 @@ public class PersonServiceTest extends MockServices {
     assertEquals("Mock person, Model", personJson.getName());
     assertEquals("Mock email, Model", personJson.getEmail());
   }
-
 
 
   @Test

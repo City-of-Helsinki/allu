@@ -12,34 +12,34 @@ import javax.validation.Valid;
  * inFinnish: Hakemuksen sijainti
  */
 public class LocationJson {
-    private Integer id;
-    @JsonSerialize(using = GeometrySerializerProxy.class)
-    @JsonDeserialize(using = GeometryDeserializerProxy.class)
-    private Geometry geometry;
-    @Valid
-    private PostalAddressJson postalAddress;
+  private Integer id;
+  @JsonSerialize(using = GeometrySerializerProxy.class)
+  @JsonDeserialize(using = GeometryDeserializerProxy.class)
+  private Geometry geometry;
+  @Valid
+  private PostalAddressJson postalAddress;
 
-    public Integer getId() {
-        return id;
-    }
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    public Geometry getGeometry() {
-        return geometry;
-    }
+  public Geometry getGeometry() {
+    return geometry;
+  }
 
-    public void setGeometry(Geometry geometry) {
-        this.geometry = geometry;
-    }
+  public void setGeometry(Geometry geometry) {
+    this.geometry = geometry;
+  }
 
-    public PostalAddressJson getPostalAddress() {
-        return postalAddress;
-    }
+  public PostalAddressJson getPostalAddress() {
+    return postalAddress;
+  }
 
-    public void setPostalAddress(PostalAddressJson postalAddress) {
-        this.postalAddress = postalAddress;
-    }
+  public void setPostalAddress(PostalAddressJson postalAddress) {
+    this.postalAddress = postalAddress;
+  }
 }

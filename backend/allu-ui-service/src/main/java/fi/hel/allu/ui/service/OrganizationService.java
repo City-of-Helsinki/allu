@@ -32,11 +32,11 @@ public class OrganizationService {
    * @return Created organization
    */
   public OrganizationJson createOrganization(OrganizationJson organizationJson) {
-      if (organizationJson != null && organizationJson.getId() == null) {
-        Organization organizationModel = restTemplate.postForObject(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(organizationJson),
-            Organization.class);
-        mapOrganizationToJson(organizationJson, organizationModel);
+    if (organizationJson != null && organizationJson.getId() == null) {
+      Organization organizationModel = restTemplate.postForObject(applicationProperties
+              .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(organizationJson),
+          Organization.class);
+      mapOrganizationToJson(organizationJson, organizationModel);
     }
     return organizationJson;
   }
@@ -66,7 +66,6 @@ public class OrganizationService {
     mapOrganizationToJson(organizationJson, organizationResult.getBody());
     return organizationJson;
   }
-
 
 
   private Organization createOrganizationModel(OrganizationJson organizationJson) {

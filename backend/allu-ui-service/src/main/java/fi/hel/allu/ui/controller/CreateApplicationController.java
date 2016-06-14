@@ -11,26 +11,25 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
 public class CreateApplicationController {
 
-    @Autowired
-    private ApplicationService applicationService;
+  @Autowired
+  private ApplicationService applicationService;
 
-    @RequestMapping(method = RequestMethod.POST)
-    @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
-    public ResponseEntity<ApplicationListJson> create(@Valid @RequestBody ApplicationListJson applicationListJson) {
-        return new ResponseEntity<>(applicationService.createApplication(applicationListJson), HttpStatus.OK);
-    }
+  @RequestMapping(method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
+  public ResponseEntity<ApplicationListJson> create(@Valid @RequestBody ApplicationListJson applicationListJson) {
+    return new ResponseEntity<>(applicationService.createApplication(applicationListJson), HttpStatus.OK);
+  }
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-    @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-    public ResponseEntity<ApplicationJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationJson
-            applicationJson) {
-        return new ResponseEntity<>(applicationService.updateApplication(id, applicationJson), HttpStatus.OK);
-    }
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationJson
+      applicationJson) {
+    return new ResponseEntity<>(applicationService.updateApplication(id, applicationJson), HttpStatus.OK);
+  }
 
 }

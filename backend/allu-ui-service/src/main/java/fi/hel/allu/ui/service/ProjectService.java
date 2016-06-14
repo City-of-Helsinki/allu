@@ -61,7 +61,7 @@ public class ProjectService {
    * @param projectId Project identifier that is used to find details
    * @return Project details or empty project object
    */
-  public ProjectJson findProjectById(int projectId)  {
+  public ProjectJson findProjectById(int projectId) {
     ProjectJson projectJson = new ProjectJson();
     ResponseEntity<Project> projectResult = restTemplate.getForEntity(applicationProperties
         .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);

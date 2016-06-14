@@ -1,6 +1,5 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.ui.domain.PersonJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -14,14 +13,18 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ProjectServiceTest extends MockServices {
+  private static Validator validator;
   @InjectMocks
   protected ProjectService projectService;
-  private static Validator validator;
+
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
+  }
 
   @Before
   public void setUp() {
@@ -30,17 +33,11 @@ public class ProjectServiceTest extends MockServices {
     initSearchMocks();
   }
 
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
-  }
-
   @Test
   public void testValidationWithValidProject() {
     Set<ConstraintViolation<ProjectJson>> constraintViolations =
-        validator.validate( createProjectJson(1) );
-    assertEquals(0, constraintViolations.size() );
+        validator.validate(createProjectJson(1));
+    assertEquals(0, constraintViolations.size());
   }
 
   @Test

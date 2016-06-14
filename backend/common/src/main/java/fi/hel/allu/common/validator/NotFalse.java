@@ -6,16 +6,17 @@ import java.lang.annotation.*;
 
 @Documented
 @Constraint(validatedBy = NotFalseValidator.class)
-@Target({ElementType.METHOD, ElementType.FIELD,ElementType.TYPE})
+@Target({ElementType.METHOD, ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NotFalse {
 
-    String message() default "NotFalse";
-    String[] rules();
+  String message() default "NotFalse";
 
-    Class<?>[] groups() default {};
+  String[] rules();
 
-    Class<? extends Payload>[] payload() default {};
+  Class<?>[] groups() default {};
+
+  Class<? extends Payload>[] payload() default {};
 
 }
 

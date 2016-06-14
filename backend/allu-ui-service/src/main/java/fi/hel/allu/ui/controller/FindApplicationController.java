@@ -14,20 +14,20 @@ import java.util.List;
 @RequestMapping("/applications")
 public class FindApplicationController {
 
-    @Autowired
-    private ApplicationService applicationService;
+  @Autowired
+  private ApplicationService applicationService;
 
-    @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-    @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-    public ResponseEntity<ApplicationJson> findByIdentifier(@PathVariable final String id) {
-        return new ResponseEntity<>(applicationService.findApplicationById(id), HttpStatus.OK);
-    }
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<ApplicationJson> findByIdentifier(@PathVariable final String id) {
+    return new ResponseEntity<>(applicationService.findApplicationById(id), HttpStatus.OK);
+  }
 
 
-    @RequestMapping(method = RequestMethod.GET)
-    @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-    public ResponseEntity<List<ApplicationJson>> findBy(@RequestParam(value = "handler") final String handlerId) {
-        return new ResponseEntity<>(applicationService.findApplicationByHandler(handlerId), HttpStatus.OK);
-    }
+  @RequestMapping(method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ApplicationJson>> findBy(@RequestParam(value = "handler") final String handlerId) {
+    return new ResponseEntity<>(applicationService.findApplicationByHandler(handlerId), HttpStatus.OK);
+  }
 }
 

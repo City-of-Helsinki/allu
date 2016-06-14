@@ -26,7 +26,6 @@ public class LocationService {
   }
 
 
-
   /**
    * Create a new location. If the given location object is null or id is null, empty location is created.
    *
@@ -69,7 +68,7 @@ public class LocationService {
    * @param locationId location identifier that is used to find details
    * @return Location details or empty location object
    */
-  public LocationJson findLocationById(int locationId)  {
+  public LocationJson findLocationById(int locationId) {
     LocationJson locationJson = new LocationJson();
     ResponseEntity<Location> locationResult = restTemplate.getForEntity(applicationProperties
         .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_FIND_BY_ID), Location.class, locationId);

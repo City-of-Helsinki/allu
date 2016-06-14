@@ -12,145 +12,145 @@ import java.util.List;
  */
 public class ApplicationJson {
 
-    private Integer id;
-    @Valid
-    private ProjectJson project;
-    private String handler;
-    @NotNull (message="{application.customer}")
-    @Valid
-    private CustomerJson customer;
-    private String status;
-    @NotBlank (message="{application.type}")
-    private String type;
-    @NotBlank (message="{application.name}")
-    private String name;
-    private ZonedDateTime creationTime;
-    @NotNull (message="{application.applicant}")
-    @Valid
-    private ApplicantJson applicant;
-    @Valid
-    private List<ContactJson> contactList;
-    @Valid
-    private LocationJson location;
+  private Integer id;
+  @Valid
+  private ProjectJson project;
+  private String handler;
+  @NotNull(message = "{application.customer}")
+  @Valid
+  private CustomerJson customer;
+  private String status;
+  @NotBlank(message = "{application.type}")
+  private String type;
+  @NotBlank(message = "{application.name}")
+  private String name;
+  private ZonedDateTime creationTime;
+  @NotNull(message = "{application.applicant}")
+  @Valid
+  private ApplicantJson applicant;
+  @Valid
+  private List<ContactJson> contactList;
+  @Valid
+  private LocationJson location;
 
-    /**
-     * in Finnish: Hakemuksen toimeksiantaja
-     */
-    public CustomerJson getCustomer() {
-        return customer;
-    }
+  /**
+   * in Finnish: Hakemuksen toimeksiantaja
+   */
+  public CustomerJson getCustomer() {
+    return customer;
+  }
 
-    public void setCustomer(CustomerJson customer) {
-        this.customer = customer;
-    }
+  public void setCustomer(CustomerJson customer) {
+    this.customer = customer;
+  }
 
-    /**
-     * in Finnish: Hakemuksen tunniste
-     */
-    public Integer getId() {
-        return id;
-    }
+  /**
+   * in Finnish: Hakemuksen tunniste
+   */
+  public Integer getId() {
+    return id;
+  }
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
-    /**
-     * in Finnish: Hanke, johon hakemus liittyy
-     */
-    public ProjectJson getProject() {
-        return project;
-    }
+  /**
+   * in Finnish: Hanke, johon hakemus liittyy
+   */
+  public ProjectJson getProject() {
+    return project;
+  }
 
-    public void setProject(ProjectJson project) {
-        this.project = project;
-    }
+  public void setProject(ProjectJson project) {
+    this.project = project;
+  }
 
-    /**
-     * in Finnish: Hakemuksen käsittelijä
-     */
-    public String getHandler() {
-        return handler;
-    }
+  /**
+   * in Finnish: Hakemuksen käsittelijä
+   */
+  public String getHandler() {
+    return handler;
+  }
 
-    public void setHandler(String handler) {
-        this.handler = handler;
-    }
+  public void setHandler(String handler) {
+    this.handler = handler;
+  }
 
-    /**
-     * in Finnish: Hakemuksen tila
-     */
-    public String getStatus() {
-        return status;
-    }
+  /**
+   * in Finnish: Hakemuksen tila
+   */
+  public String getStatus() {
+    return status;
+  }
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+  public void setStatus(String status) {
+    this.status = status;
+  }
 
-    /**
-     * in Finnish: Hakemuksen tyyppi
-     */
-    public String getType() {
-        return type;
-    }
+  /**
+   * in Finnish: Hakemuksen tyyppi
+   */
+  public String getType() {
+    return type;
+  }
 
-    public void setType(String type) {
-        this.type = type;
-    }
+  public void setType(String type) {
+    this.type = type;
+  }
 
-    /**
-     * in Finnish: Hakemuksen nimi
-     */
-    public String getName() {
-        return name;
-    }
+  /**
+   * in Finnish: Hakemuksen nimi
+   */
+  public String getName() {
+    return name;
+  }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+  public void setName(String name) {
+    this.name = name;
+  }
 
-    /**
-     * in Finnish: Hakemuksen luontiaika
-     */
-    public ZonedDateTime getCreationTime() {
-        return creationTime;
-    }
+  /**
+   * in Finnish: Hakemuksen luontiaika
+   */
+  public ZonedDateTime getCreationTime() {
+    return creationTime;
+  }
 
-    public void setCreationTime(ZonedDateTime creationTime) {
-        this.creationTime = creationTime;
-    }
+  public void setCreationTime(ZonedDateTime creationTime) {
+    this.creationTime = creationTime;
+  }
 
-    /**
-     * in Finnish: Hakemuksen hakija
-     */
-    public ApplicantJson getApplicant() {
-        return applicant;
-    }
+  /**
+   * in Finnish: Hakemuksen hakija
+   */
+  public ApplicantJson getApplicant() {
+    return applicant;
+  }
 
-    public void setApplicant(ApplicantJson applicant) {
-        this.applicant = applicant;
-    }
+  public void setApplicant(ApplicantJson applicant) {
+    this.applicant = applicant;
+  }
 
-    /**
-     * in Finnish: Hakemuksen yhteyshenkilöt
-     */
-    public List<ContactJson> getContactList() {
-        return contactList;
-    }
+  /**
+   * in Finnish: Hakemuksen yhteyshenkilöt
+   */
+  public List<ContactJson> getContactList() {
+    return contactList;
+  }
 
-    public void setContactList(List<ContactJson> contactList) {
-        this.contactList = contactList;
-    }
+  public void setContactList(List<ContactJson> contactList) {
+    this.contactList = contactList;
+  }
 
-    /**
-     * in Finnish: Hakemuksen sijainti
-     */
-    public LocationJson getLocation() {
-        return location;
-    }
+  /**
+   * in Finnish: Hakemuksen sijainti
+   */
+  public LocationJson getLocation() {
+    return location;
+  }
 
-    public void setLocation(LocationJson location) {
-        this.location = location;
-    }
+  public void setLocation(LocationJson location) {
+    this.location = location;
+  }
 }

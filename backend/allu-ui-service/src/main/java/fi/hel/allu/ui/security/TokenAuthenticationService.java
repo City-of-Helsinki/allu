@@ -12,34 +12,34 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 
 public class TokenAuthenticationService {
-    private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationService.class);
+  private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationService.class);
 
-    private static final String AUTH_HEADER_NAME = "Authorization";
+  private static final String AUTH_HEADER_NAME = "Authorization";
 
-    @Autowired
-    private TokenHandler tokenHandler;
+  @Autowired
+  private TokenHandler tokenHandler;
 
-    public Authentication getAuthentication(HttpServletRequest request) {
-        if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
-            logger.debug("OPTIONS is always allowed");
-            return new UserAuthentication(new User("options", "", Collections.<GrantedAuthority>emptySet()));
-        }
-        final String token = request.getHeader(AUTH_HEADER_NAME);
-        if (token != null && token.startsWith("Bearer ")) {
-            final User user = tokenHandler.parseUserFromToken(token.replaceFirst("^Bearer ", ""));
-            if (user != null) {
-                return new UserAuthentication(user);
-            }
-        }
-        return null;
+  public Authentication getAuthentication(HttpServletRequest request) {
+    if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
+      logger.debug("OPTIONS is always allowed");
+      return new UserAuthentication(new User("options", "", Collections.<GrantedAuthority>emptySet()));
     }
-
-    public boolean isEmptyAuthentication(HttpServletRequest request) {
-        final String token = request.getHeader(AUTH_HEADER_NAME);
-        if (token == null || token.isEmpty()) {
-            return true;
-        } else {
-            return false;
-        }
+    final String token = request.getHeader(AUTH_HEADER_NAME);
+    if (token != null && token.startsWith("Bearer ")) {
+      final User user = tokenHandler.parseUserFromToken(token.replaceFirst("^Bearer ", ""));
+      if (user != null) {
+        return new UserAuthentication(user);
+      }
     }
+    return null;
+  }
+
+  public boolean isEmptyAuthentication(HttpServletRequest request) {
+    final String token = request.getHeader(AUTH_HEADER_NAME);
+    if (token == null || token.isEmpty()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

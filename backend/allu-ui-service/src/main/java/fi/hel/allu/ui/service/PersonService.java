@@ -68,7 +68,6 @@ public class PersonService {
   }
 
 
-
   private Person createPersonModel(PersonJson personJson) {
     Person personModel = new Person();
     if (personJson.getId() != null) {

@@ -17,45 +17,45 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class StatelessAuthenticationFilter extends GenericFilterBean {
-    private final Logger logger = LoggerFactory.getLogger(StatelessAuthenticationFilter.class);
+  private final Logger logger = LoggerFactory.getLogger(StatelessAuthenticationFilter.class);
 
-    private final TokenAuthenticationService authenticationService;
+  private final TokenAuthenticationService authenticationService;
 
-    public StatelessAuthenticationFilter(TokenAuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+  public StatelessAuthenticationFilter(TokenAuthenticationService authenticationService) {
+    this.authenticationService = authenticationService;
+  }
+
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+      throws IOException, ServletException {
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+
+    Authentication authentication;
+
+    // If empty authentication (no JWT) is used and path is different that login, we're handling unauthorized case
+    if (authenticationService.isEmptyAuthentication(httpRequest) &&
+        !SecurityConfig.SECURITY_PATHS.LOGIN.toString().equals(httpRequest.getRequestURI())) {
+      setUnauthorizedResponse(httpRequest, response);
+      return;
     }
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
-            throws IOException, ServletException {
-        HttpServletRequest httpRequest = (HttpServletRequest) request;
-
-        Authentication authentication;
-
-        // If empty authentication (no JWT) is used and path is different that login, we're handling unauthorized case
-        if (authenticationService.isEmptyAuthentication(httpRequest) &&
-                !SecurityConfig.SECURITY_PATHS.LOGIN.toString().equals(httpRequest.getRequestURI())) {
-            setUnauthorizedResponse(httpRequest, response);
-            return;
-        }
-
-        try {
-            authentication = authenticationService.getAuthentication(httpRequest);
-        } catch (JwtException e) {
-            setUnauthorizedResponse(httpRequest, response);
-            return;
-        } catch (Exception e) {
-            // Let fail later
-            authentication = null;
-        }
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        filterChain.doFilter(request, response);
-        SecurityContextHolder.getContext().setAuthentication(null);
+    try {
+      authentication = authenticationService.getAuthentication(httpRequest);
+    } catch (JwtException e) {
+      setUnauthorizedResponse(httpRequest, response);
+      return;
+    } catch (Exception e) {
+      // Let fail later
+      authentication = null;
     }
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    filterChain.doFilter(request, response);
+    SecurityContextHolder.getContext().setAuthentication(null);
+  }
 
-    private void setUnauthorizedResponse(HttpServletRequest httpRequest, ServletResponse response) throws IOException {
-        logger.info("Unauthorized request to resource {}", httpRequest);
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-        httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-    }
+  private void setUnauthorizedResponse(HttpServletRequest httpRequest, ServletResponse response) throws IOException {
+    logger.info("Unauthorized request to resource {}", httpRequest);
+    HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+    httpServletResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+  }
 }

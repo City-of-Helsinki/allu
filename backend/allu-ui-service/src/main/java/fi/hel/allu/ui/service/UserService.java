@@ -14,25 +14,25 @@ import java.util.Map;
 
 @Service
 public class UserService implements UserDetailsService {
-    private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+  private static final Logger logger = LoggerFactory.getLogger(UserService.class);
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+  @Autowired
+  private ApplicationProperties applicationProperties;
 
-    private final Map<String, User> userMap = new HashMap<String, User>();
+  private final Map<String, User> userMap = new HashMap<String, User>();
 
-    @Override
-    public final User loadUserByUsername(String username) throws UsernameNotFoundException {
-        final User user = userMap.get(username);
-        if (user == null) {
-            throw new UsernameNotFoundException("user not found");
-        }
-        return user;
+  @Override
+  public final User loadUserByUsername(String username) throws UsernameNotFoundException {
+    final User user = userMap.get(username);
+    if (user == null) {
+      throw new UsernameNotFoundException("user not found");
     }
+    return user;
+  }
 
-    public void addUser(User user) {
-        if (user != null && !userMap.containsKey(user.getUsername())) {
-            userMap.put(user.getUsername(), user);
-        }
+  public void addUser(User user) {
+    if (user != null && !userMap.containsKey(user.getUsername())) {
+      userMap.put(user.getUsername(), user);
     }
+  }
 }

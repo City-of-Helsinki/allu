@@ -1,7 +1,6 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.CustomerJson;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,30 +14,28 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class ApplicantServiceTest extends MockServices {
+  private static Validator validator;
   @Mock
   protected PersonService personService;
   @Mock
   protected OrganizationService organizationService;
   @InjectMocks
   protected ApplicantService applicantService;
-  private static Validator validator;
+
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
+  }
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
-  }
-
-  @BeforeClass
-  public static void setUpBeforeClass() {
-    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-    validator = factory.getValidator();
   }
 
   @Test
