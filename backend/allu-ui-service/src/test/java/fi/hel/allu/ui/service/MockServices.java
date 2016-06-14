@@ -24,8 +24,7 @@ public abstract class MockServices {
   @Mock
   private RestTemplate restTemplate;
 
-  public void initMocks() {
-    //POST
+  public void initSaveMocks() {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Application.class)))
         .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
@@ -53,8 +52,9 @@ public abstract class MockServices {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Location.class)))
         .thenAnswer((Answer<Location>) invocation -> createMockLocationModel());
+  }
 
-    //GET
+  public void initSearchMocks() {
     Mockito.when(restTemplate.getForObject(Mockito.any(String.class), Mockito.eq(Application.class), Mockito.any
         (String.class)))
         .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
@@ -73,6 +73,9 @@ public abstract class MockServices {
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Organization.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Organization>>) invocation -> createMockOrganizationResponse());
+
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Application[].class), Mockito.any
         (String.class)))
@@ -119,46 +122,57 @@ public abstract class MockServices {
     return personJson;
   }
 
+  public CustomerJson createCustomerJson(Integer customerId, Integer typeId) {
+    CustomerJson customer = new CustomerJson();
+    customer.setId(customerId);
+    customer.setPerson(createPersonJson(typeId));
+    customer.setSapId("444-1, Json");
+    customer.setType(CustomerType.Person);
+    return customer;
+  }
+
+  public OrganizationJson createOrganizationJson(Integer id) {
+    OrganizationJson organizationJson = new OrganizationJson();
+    organizationJson.setId(id);
+    organizationJson.setBusinessId("444444, Json");
+    PostalAddressJson postalAddressJsonOrgnization = new PostalAddressJson();
+    postalAddressJsonOrgnization.setCity("Kaupunki2, Json");
+    postalAddressJsonOrgnization.setStreetAddress("Osoite 213, Json");
+    postalAddressJsonOrgnization.setPostalCode("002113, Json");
+    organizationJson.setPostalAddress(postalAddressJsonOrgnization);
+    organizationJson.setPhone("323423421, Json");
+    organizationJson.setName("Organisaatio 2, Json");;
+    organizationJson.setEmail("organization2 email, Json");
+    return organizationJson;
+  }
+
+  public ApplicantJson createApplicantJson(Integer id, Integer typeId) {
+    ApplicantJson applicantJson = new ApplicantJson();
+    applicantJson.setId(id);
+    applicantJson.setType(CustomerType.Company);
+    applicantJson.setOrganization(createOrganizationJson(typeId));
+    return applicantJson;
+  }
+
+  public ProjectJson createProjectJson(Integer id) {
+    ProjectJson project = new ProjectJson();
+    project.setId(id);
+    project.setName("Hanke1, Json");
+    return project;
+  }
+
   public ApplicationJson createMockApplicationJson(Integer id) {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setId(id);
-
     applicationJson.setName("Tapahtuma 1, Json");
     applicationJson.setType("Ulkoilmatapahtuma, Json");
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setStatus("Vireillä, Json");
     applicationJson.setHandler("Kalle käsittelijä, Json");
-
-
-    CustomerJson customer = new CustomerJson();
-    customer.setPerson(createPersonJson(null));
-    customer.setSapId("444-1, Json");
-    customer.setType(CustomerType.Person);
-
-    ProjectJson project = new ProjectJson();
-    project.setName("Hanke1, Json");
-    project.setType("Sähkötyö, Json");
-
-    OrganizationJson organizationJson2 = new OrganizationJson();
-    organizationJson2.setBusinessId("444444, Json");
-    PostalAddressJson postalAddressJsonOrgnization = new PostalAddressJson();
-    postalAddressJsonOrgnization.setCity("Kaupunki2, Json");
-    postalAddressJsonOrgnization.setStreetAddress("Osoite 213, Json");
-    postalAddressJsonOrgnization.setPostalCode("002113, Json");
-    organizationJson2.setPostalAddress(postalAddressJsonOrgnization);
-    organizationJson2.setPhone("323423421, Json");
-    organizationJson2.setName("Organisaatio 2, Json");;
-    organizationJson2.setEmail("organization2 email, Json");
-
-    ApplicantJson applicantJson = new ApplicantJson();
-    applicantJson.setType(CustomerType.Company);
-    applicantJson.setOrganization(organizationJson2);
-
-    applicationJson.setCustomer(customer);
-    applicationJson.setApplicant(applicantJson);
-    applicationJson.setProject(project);
+    applicationJson.setCustomer(createCustomerJson(null, null));
+    applicationJson.setApplicant(createApplicantJson(null, null));
     applicationJson.setLocation(createLocationJson(null));
-
+    applicationJson.setProject(createProjectJson(null));
     return applicationJson;
   }
 

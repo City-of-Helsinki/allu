@@ -26,13 +26,13 @@ public class ServiceResponseErrorHandler implements ResponseErrorHandler {
     @Override
     public void handleError(ClientHttpResponse clientHttpResponse) throws IOException {
         if (clientHttpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-            logger.debug("{} response. Throwing not such entity exception", HttpStatus.NOT_FOUND);
+            logger.error("{} response. Throwing not such entity exception", HttpStatus.NOT_FOUND);
             throw new NoSuchEntityException(clientHttpResponse.getStatusText());
         } else if(clientHttpResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
-            logger.debug("{} response. Throwing IllegalArgumentException", HttpStatus.BAD_REQUEST);
+            logger.error("{} response. Throwing IllegalArgumentException", HttpStatus.BAD_REQUEST);
             throw new IllegalArgumentException(clientHttpResponse.getStatusText());
         } else {
-            logger.debug("Not mapped error response. Throwing runtime exception. {} {}", clientHttpResponse.getStatusCode(),
+            logger.error("Not mapped error response. Throwing runtime exception. {} {}", clientHttpResponse.getStatusCode(),
                     clientHttpResponse.getStatusText());
             throw new RuntimeException("Internal Error");
         }

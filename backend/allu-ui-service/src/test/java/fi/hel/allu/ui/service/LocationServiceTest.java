@@ -2,22 +2,42 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.ui.domain.LocationJson;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.util.Set;
+
+import static org.junit.Assert.*;
 
 public class LocationServiceTest extends MockServices {
   @InjectMocks
   protected LocationService locationService;
+  private static Validator validator;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    initMocks();
+    initSaveMocks();
+    initSearchMocks();
+  }
+
+  @BeforeClass
+  public static void setUpBeforeClass() {
+    ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+    validator = factory.getValidator();
+  }
+
+  @Test
+  public void testValidationWithValidLocation() {
+    Set<ConstraintViolation<LocationJson>> constraintViolations =
+        validator.validate( createLocationJson(1) );
+    assertEquals(0, constraintViolations.size() );
   }
 
   @Test
@@ -78,4 +98,17 @@ public class LocationServiceTest extends MockServices {
     assertEquals(3879, locationJson.getGeometry().getSRID());
   }
 
+  @Test
+  public void testFindById() {
+    LocationJson locationJson = locationService.findLocationById(102);
+    assertNotNull(locationJson);
+    assertNotNull(locationJson.getId());
+    assertEquals(102, locationJson.getId().intValue());
+    assertNotNull(locationJson.getPostalAddress());
+    assertEquals("City1, Model", locationJson.getPostalAddress().getCity());
+    assertEquals("33333, Model", locationJson.getPostalAddress().getPostalCode());
+    assertEquals("Street 1, Model", locationJson.getPostalAddress().getStreetAddress());
+    assertNotNull(locationJson.getGeometry());
+    assertEquals(3879, locationJson.getGeometry().getSRID());
+  }
 }

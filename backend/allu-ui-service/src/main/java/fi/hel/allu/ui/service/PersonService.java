@@ -42,7 +42,7 @@ public class PersonService {
   }
 
   /**
-   * Update a new person. Person id is needed to update the given person.
+   * Update given person. Person id is needed to update the given person.
    *
    * @param personJson Person that is going to be updated
    */
@@ -56,7 +56,7 @@ public class PersonService {
   /**
    * Find given person details.
    *
-   * @param personId persin identifier that is used to find details
+   * @param personId Person identifier that is used to find details
    * @return Person details or empty person object
    */
   public PersonJson findPersonById(int personId) {
