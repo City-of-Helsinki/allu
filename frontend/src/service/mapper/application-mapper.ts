@@ -4,6 +4,7 @@ import {CustomerMapper} from './customer-mapper';
 import {ProjectMapper} from './project-mapper';
 import {ApplicantMapper} from './applicant-mapper';
 import {ContactMapper} from './contact-mapper';
+import {LocationMapper} from './location-mapper';
 
 export class ApplicationMapper {
 
@@ -19,7 +20,7 @@ export class ApplicationMapper {
       new Date(backendApplication.creationTime),
       ApplicantMapper.mapBackend(backendApplication.applicant),
       (backendApplication.contactList) ? backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact)) : undefined,
-      backendApplication.location
+      LocationMapper.mapBackend(backendApplication.location)
     );
   }
 
@@ -35,7 +36,7 @@ export class ApplicationMapper {
       creationTime: (application.creationTime) ? application.creationTime.toISOString() : undefined,
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
-      location: application.location
+      location: LocationMapper.mapFrontend(application.location)
     };
   }
 }

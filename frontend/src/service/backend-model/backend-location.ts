@@ -1,10 +1,7 @@
 import {BackendPostalAddress} from './backend-postal-address';
 
-export interface BackendOrganization {
+export interface BackendLocation {
   id: number;
-  name: string;
-  businessId: string;
+  geometry: GeoJSON.GeometryCollection;
   postalAddress: BackendPostalAddress;
-  email: string;
-  phone: string;
 }

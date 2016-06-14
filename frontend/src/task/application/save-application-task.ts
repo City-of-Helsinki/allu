@@ -11,6 +11,12 @@ import {ErrorEvent} from '../../event/error-event';
 import {ApplicationAddedAnnounceEvent} from '../../event/announce/application-added-announce-event';
 
 @Injectable()
+/*
+ * Task for saving new or updating existing applications.
+ * Events:
+ * - ApplicationAddedAnnounceEvent in case new application is created to backend
+ * - ApplicationsAnnounceEvent in case existing application was updated
+ */
 export class SaveApplicationTask extends Task {
 
   constructor(private applicationService: ApplicationService) {
@@ -19,11 +25,20 @@ export class SaveApplicationTask extends Task {
 
   protected createTask(runner: EventListener, eventService: EventService, event: Event): Promise<void> {
     let saEvent = <ApplicationSaveEvent>event;
-    let addPromise = this.applicationService.addApplication(saEvent.application);
+    let isNewApplication = (saEvent.application.id) ? false : true;
 
-    return addPromise.then((appl: Application) => {
-      let aaEvent = new ApplicationAddedAnnounceEvent(appl);
-      eventService.send(runner, aaEvent);
-    }).catch((err: any) => { console.log(err); eventService.send(runner, new ErrorEvent(saEvent)); });
+    if (isNewApplication) {
+      let addPromise = this.applicationService.addApplication(saEvent.application);
+      return addPromise.then((appl: Application) => {
+        let aaaEvent = new ApplicationAddedAnnounceEvent(appl);
+        eventService.send(runner, aaaEvent);
+      }).catch((err: any) => { console.log(err); eventService.send(runner, new ErrorEvent(saEvent)); });
+    } else {
+      let updatePromise = this.applicationService.updateApplication(saEvent.application);
+      return updatePromise.then((appl: Application) => {
+        let aaEvent = new ApplicationsAnnounceEvent([appl]);
+        eventService.send(runner, aaEvent);
+      }).catch((err: any) => { console.log(err); eventService.send(runner, new ErrorEvent(saEvent)); });
+    }
   }
 }

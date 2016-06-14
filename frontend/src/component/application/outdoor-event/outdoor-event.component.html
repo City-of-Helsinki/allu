@@ -37,11 +37,11 @@
             <label for="applicantCity">Toimipaikka</label>
           </div>
           <div class="input-field col m5">
-            <input id="applicantPhone" type="text" class="validate" [(ngModel)]="application.applicant.phone">
+            <input id="applicantPhone" type="text" class="validate" [(ngModel)]="application.applicant.person.phone">
             <label for="applicantPhone">Puhelin</label>
           </div>
           <div class="input-field col m7">
-            <input id="applicantEmail" type="text" class="validate" [(ngModel)]="application.applicant.email">
+            <input id="applicantEmail" type="text" class="validate" [(ngModel)]="application.applicant.person.email">
             <label for="applicantEmail">Sähköpostiosoite</label>
           </div>
         </div>
@@ -63,7 +63,7 @@
             <label for="contactSSN">Henkilötunnus</label>
           </div>
           <div class="input-field col m6">
-            <input id="contactStreetAddress" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.steetAddress" style="width: 100%">
+            <input id="contactStreetAddress" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.streetAddress" style="width: 100%">
             <label for="contactStreetAddress">Osoite</label>
           </div>
           <div class="input-field col m3">
@@ -102,7 +102,7 @@
             <label for="customerSSN">Henkilötunnus</label>
           </div>
           <div class="input-field col m6">
-            <input id="customerStreetAddress"  type="text" class="validate" [(ngModel)]="application.customer.person.postalAddress.steetAddress">
+            <input id="customerStreetAddress"  type="text" class="validate" [(ngModel)]="application.customer.person.postalAddress.streetAddress">
             <label for="customerStreetAddress">Osoite</label>
           </div>
           <div class="input-field col m3">
@@ -192,7 +192,7 @@
         </div>
         <div class="" style="flex: 25;">
           <button md-raised-button style="margin-left: 10px;" (click)="save(application)">TALLENNA</button>
-          <button md-raised-button [disabled]="!savedOk" style="margin-left: 10px;" [routerLink]="['/Location', {id: application.id}]">SIJAINTIIN</button>
+          <button md-raised-button [disabled]="!application.id" style="margin-left: 10px;" [routerLink]="['/Location', {id: application.id}]">SIJAINTIIN</button>
 
         </div>
 

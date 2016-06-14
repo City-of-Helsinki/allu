@@ -4,6 +4,7 @@ import {Contact} from './contact';
 import {Customer} from '../common/customer';
 import {Person} from '../common/person';
 import {PostalAddress} from '../common/postal-address';
+import {Location} from '../common/location';
 
 export class Application {
 
@@ -18,7 +19,7 @@ export class Application {
     public creationTime: Date,
     public applicant: Applicant,
     public contactList: Array<Contact>,
-    public location: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {}
+    public location: Location) {}
 
   public static emptyApplication(): Application {
     let customerPostalAddress = new PostalAddress(undefined, undefined, undefined);
@@ -32,5 +33,29 @@ export class Application {
     let contact = new Contact(undefined, contactPerson, undefined);
     return new
       Application(undefined, undefined, undefined, customer, undefined, undefined, undefined, undefined, applicant, [contact], undefined);
+  }
+
+  public static preFilledApplication(): Application {
+    let customerPostalAddress = new PostalAddress('Mikonkatu 15 A', '00100', 'Helsinki');
+    let customerPerson = new Person(undefined, 'asiakas ihminen', customerPostalAddress, 'asiakas@ihminen.fi', '0101234567', '010101-1234');
+    let customer = new Customer(undefined, 'Person', '123', customerPerson, undefined);
+    let applicantPostalAddress = new PostalAddress('Mikonkatu 15 B', '00200', 'Helsinki');
+    let applicantPerson = new Person(undefined, 'hakija ihminen', applicantPostalAddress, 'hakija@ihminen.fi', '0201234567', '020202-1234');
+    let applicant = new Applicant(undefined, 'Person', applicantPerson, undefined);
+    let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
+    let contactPerson = new Person(undefined, 'kontakti ihminen', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567', '030303-1234');
+    let contact = new Contact(undefined, contactPerson, undefined);
+    return new Application(
+      undefined,
+      undefined,
+      undefined,
+      customer,
+      undefined,
+      'outdoorEvent',
+      'Testihakemus ' + Date.now(),
+      undefined,
+      applicant,
+      [contact],
+      undefined);
   }
 }

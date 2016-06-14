@@ -10,11 +10,10 @@ import {EventListener} from '../../event/event-listener';
 import {EventService} from '../../event/event.service';
 import {Event} from '../../event/event';
 
-import {LatLng} from '../../model/location/latlng';
 import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {Application} from '../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
-import {TaskManagerService} from '../../service/task/task-manager.service';
+import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 
 
 @Component({
@@ -39,7 +38,7 @@ export class LocationSearchComponent implements EventListener, OnInit, OnDestroy
 
   ngOnInit() {
     this.eventService.subscribe(this);
-    this.eventService.send(this, new ApplicationsLoadEvent('Minna'));
+    this.eventService.send(this, new ApplicationsLoadEvent(new ApplicationLoadFilter()));
   }
 
   ngOnDestroy() {
@@ -55,7 +54,7 @@ export class LocationSearchComponent implements EventListener, OnInit, OnDestroy
     }
   }
 
-  jobClick(job: any) {
-    this.eventService.send(this, new ApplicationSelectionEvent(job.area));
+  jobClick(job: Application) {
+    this.eventService.send(this, new ApplicationSelectionEvent(job));
   }
 }

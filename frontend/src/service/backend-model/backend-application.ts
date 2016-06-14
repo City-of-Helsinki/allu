@@ -2,6 +2,7 @@ import {BackendCustomer} from './backend-customer';
 import {BackendProject} from './backend-project';
 import {BackendApplicant} from './backend-applicant';
 import {BackendContact} from './backend-contact';
+import {BackendLocation} from './backend-location';
 
 export interface BackendApplication {
   id: number;
@@ -14,5 +15,5 @@ export interface BackendApplication {
   creationTime: string;
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;
-  location: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
+  location: BackendLocation;
 }

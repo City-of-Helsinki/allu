@@ -18,7 +18,7 @@ export class CustomerMapper {
   public static mapFrontend(customer: Customer): BackendCustomer {
     return (customer) ?
     {
-      id: undefined,
+      id: customer.id,
       type: customer.type,
       sapId: customer.sapId,
       person: PersonMapper.mapFrontend(customer.person),

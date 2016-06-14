@@ -43,10 +43,10 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
 
 export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private application: Application;
-  private savedOk: boolean = false;
 
   constructor(private eventService: EventService) {
-    this.application = Application.emptyApplication();
+    // this.application = Application.emptyApplication();
+    this.application = Application.preFilledApplication();
   };
 
   ngOnInit(): any {
@@ -59,8 +59,9 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
 
   public handle(event: Event): void {
     if (event instanceof ApplicationAddedAnnounceEvent) {
-      console.log('Successfully added new application', event);
-      this.savedOk = true;
+      let aaaEvent = <ApplicationAddedAnnounceEvent>event;
+      console.log('Successfully added new application', aaaEvent.application);
+      this.application = aaaEvent.application;
     }
   }
 
