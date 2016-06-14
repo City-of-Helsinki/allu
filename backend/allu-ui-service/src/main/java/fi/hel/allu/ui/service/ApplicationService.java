@@ -1,9 +1,9 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ApplicationListJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,15 +22,19 @@ public class ApplicationService {
     private ApplicationProperties applicationProperties;
     private RestTemplate restTemplate;
     private LocationService locationService;
-    private PersonService personService;
+    private CustomerService customerService;
+    private ApplicantService applicantService;
+    private ProjectService projectService;
 
     @Autowired
     public void ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
-        locationService, PersonService personService) {
+        locationService, CustomerService customerService, ApplicantService applicantService, ProjectService projectService) {
         this.applicationProperties = applicationProperties;
         this.restTemplate = restTemplate;
         this.locationService = locationService;
-        this.personService = personService;
+        this.customerService = customerService;
+        this.applicantService = applicantService;
+        this.projectService = projectService;
     }
 
 
@@ -43,25 +47,9 @@ public class ApplicationService {
     public ApplicationListJson createApplication(ApplicationListJson applications) {
 
         for (ApplicationJson applicationJson : applications.getApplicationList()) {
-            if (applicationJson.getCustomer().getId() == null || applicationJson.getCustomer().getId() == 0) {
-                Customer customerModel = createNewCustomer(applicationJson.getCustomer());
-                applicationJson.getCustomer().setId(customerModel.getId());
-            }
-
-            if (applicationJson.getProject() == null || applicationJson.getProject().getId() == null || applicationJson.getProject().getId()
-                    == 0) {
-                Project projectModel = restTemplate.postForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_CREATE), createProjectModel(applicationJson.getProject()), Project.class);
-                ProjectJson projectJson = new ProjectJson();
-                mapProjectToJson(projectJson, projectModel);
-                applicationJson.setProject(projectJson);
-            }
-
-            if (applicationJson.getApplicant().getId() == null || applicationJson.getApplicant().getId() == 0) {
-                Applicant applicantModel = createNewApplicant(applicationJson.getApplicant());
-                applicationJson.getApplicant().setId(applicantModel.getId());
-            }
-
+            applicationJson.setCustomer(customerService.createCustomer(applicationJson.getCustomer()));
+            applicationJson.setProject(projectService.createProject(applicationJson.getProject()));
+            applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
             applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
 
             Application applicationModel = restTemplate.postForObject(applicationProperties
@@ -80,21 +68,9 @@ public class ApplicationService {
      * @return Updated application
      */
     public ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
-        if (applicationJson.getCustomer().getId() != null && applicationJson.getCustomer().getId() > 0) {
-            updateCustomer(applicationJson.getCustomer());
-        }
-
-        if (applicationJson.getProject() != null && applicationJson.getProject().getId() != null && applicationJson.getProject().getId()
-            > 0) {
-            restTemplate.put(applicationProperties
-                    .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_UPDATE), createProjectModel(applicationJson.getProject()),
-                applicationJson.getProject().getId().intValue());
-        }
-
-        if (applicationJson.getApplicant().getId() != null && applicationJson.getApplicant().getId() > 0) {
-            updateApplicant(applicationJson.getApplicant());
-        }
-
+        customerService.updateCustomer(applicationJson.getCustomer());
+        applicantService.updateApplicant(applicationJson.getApplicant());
+        projectService.updateProject(applicationJson.getProject());
         locationService.updateLocation(applicationJson.getLocation());
 
         restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), createApplicationModel
@@ -103,15 +79,15 @@ public class ApplicationService {
     }
 
 
-        /**
-         * Find given application details.
-         *
-         * @param applicationId application identifier that is used to find details
-         * @return Application details or empty application list in DTO
-         */
+    /**
+     * Find given application details.
+     *
+     * @param applicationId application identifier that is used to find details
+     * @return Application details or empty application list in DTO
+     */
     public ApplicationJson findApplicationById(String applicationId) {
-        Application applicationModel =  restTemplate.getForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
+        Application applicationModel = restTemplate.getForObject(applicationProperties
+            .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
         return getApplication(applicationModel);
     }
 
@@ -134,119 +110,13 @@ public class ApplicationService {
     private ApplicationJson getApplication(Application applicationModel) {
         ApplicationJson applicationJson = new ApplicationJson();
         mapApplicationToJson(applicationJson, applicationModel);
-        applicationJson.setCustomer(findCustomerById(applicationModel.getCustomerId()));
-        applicationJson.setProject(findProjectById(applicationModel.getProjectId()));
-        applicationJson.setApplicant(findApplicantById(applicationModel.getApplicantId()));
+        applicationJson.setCustomer(customerService.findCustomerById(applicationModel.getCustomerId()));
+        applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
+        applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
         if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
             applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
         }
         return applicationJson;
-    }
-
-    private ApplicantJson findApplicantById(int applicantId) {
-        ApplicantJson applicantJson = new ApplicantJson();
-        ResponseEntity<Applicant> applicantResult = restTemplate.getForEntity(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_FIND_BY_ID), Applicant.class, applicantId);
-        mapApplicantToJson(applicantJson, applicantResult.getBody());
-        if (applicantResult.getBody().getPersonId() != null) {
-            applicantJson.setPerson(personService.findPersonById(applicantResult.getBody().getPersonId()));
-        }
-        if (applicantResult.getBody().getOrganizationId() != null) {
-            applicantJson.setOrganization(findOrganizationById(applicantResult.getBody().getOrganizationId()));
-        }
-        return applicantJson;
-    }
-
-    private OrganizationJson findOrganizationById(int organizationId) {
-        OrganizationJson organizationJson = new OrganizationJson();
-        ResponseEntity<Organization> organizationResult = restTemplate.getForEntity(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_FIND_BY_ID), Organization.class, organizationId);
-        mapOrganizationToJson(organizationJson, organizationResult.getBody());
-        return organizationJson;
-    }
-
-    private CustomerJson findCustomerById(int customerId) {
-        CustomerJson customerJson = new CustomerJson();
-        ResponseEntity<Customer> customerResult = restTemplate.getForEntity(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_FIND_BY_ID), Customer.class, customerId);
-        mapCustomerToJson(customerJson, customerResult.getBody());
-        if (customerResult.getBody().getOrganizationId() != null) {
-            customerJson.setOrganization(findOrganizationById(customerResult.getBody().getOrganizationId()));
-        }
-        if (customerResult.getBody().getPersonId() != null) {
-            customerJson.setPerson(personService.findPersonById(customerResult.getBody().getPersonId()));
-        }
-        return customerJson;
-    }
-
-
-    private ProjectJson findProjectById(int projectId)  {
-        ProjectJson projectJson = new ProjectJson();
-        ResponseEntity<Project> projectResult = restTemplate.getForEntity(applicationProperties
-                .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);
-        mapProjectToJson(projectJson, projectResult.getBody());
-        return projectJson;
-    }
-
-    private Customer createCustomerModel(CustomerJson customerJson) {
-        Customer customerModel = new Customer();
-        if (customerJson.getId() != null) {
-            customerModel.setId(customerJson.getId());
-        }
-        customerModel.setSapId(customerJson.getSapId());
-        customerModel.setType(customerJson.getType());
-        if (customerJson.getOrganization() != null) {
-            customerModel.setOrganizationId(customerJson.getOrganization().getId());
-        }
-        if (customerJson.getPerson() != null) {
-            customerModel.setPersonId(customerJson.getPerson().getId());
-        }
-        return customerModel;
-    }
-
-    private Organization createOrganizationModel(OrganizationJson organizationJson) {
-        Organization organizationModel = new Organization();
-        if (organizationJson.getId() != null) {
-            organizationModel.setId(organizationJson.getId());
-        }
-        if (organizationJson.getPostalAddress() != null) {
-            organizationModel.setPostalCode(organizationJson.getPostalAddress().getPostalCode());
-            organizationModel.setStreetAddress(organizationJson.getPostalAddress().getStreetAddress());
-            organizationModel.setCity(organizationJson.getPostalAddress().getCity());
-        }
-        organizationModel.setPhone(organizationJson.getPhone());
-        organizationModel.setName(organizationJson.getName());
-        organizationModel.setBusinessId(organizationJson.getBusinessId());
-        organizationModel.setEmail(organizationJson.getEmail());
-        return organizationModel;
-    }
-
-    private Applicant createApplicantModel(ApplicantJson applicantJson) {
-        Applicant applicantModel = new Applicant();
-        if (applicantJson.getId() != null) {
-            applicantModel.setId(applicantJson.getId());
-        }
-        if (applicantJson.getPerson() != null) {
-            applicantModel.setPersonId(applicantJson.getPerson().getId());
-        }
-        if (applicantJson.getOrganization() != null) {
-            applicantModel.setOrganizationId(applicantJson.getOrganization().getId());
-        }
-        applicantModel.setType(applicantJson.getType());
-        return applicantModel;
-    }
-
-    private Project createProjectModel(ProjectJson projectJson) {
-        Project projectDomain = new Project();
-        if (projectJson != null && projectJson.getId() != null) {
-            projectDomain.setId(projectJson.getId());
-        }
-        if (projectJson == null || projectJson.getName() == null) {
-            projectDomain.setName("Mock Project");
-        } else {
-            projectDomain.setName(projectJson.getName());
-        }
-        return projectDomain;
     }
 
     private Application createApplicationModel(ApplicationJson applicationJson) {
@@ -268,41 +138,6 @@ public class ApplicationService {
         return applicationDomain;
     }
 
-    private void mapProjectToJson(ProjectJson projectJson, Project projectDomain) {
-        projectJson.setId(projectDomain.getId());
-        projectJson.setName(projectDomain.getName());
-    }
-
-
-
-    private void mapCustomerToJson(CustomerJson customerJson, Customer customer) {
-        customerJson.setId(customer.getId());
-        customerJson.setType(customer.getType());
-        customerJson.setSapId(customer.getSapId());
-    }
-
-    private void mapApplicantToJson(ApplicantJson applicantJson, Applicant applicant) {
-        applicantJson.setId(applicant.getId());
-        applicantJson.setType(applicant.getType());
-    }
-
-    private void mapOrganizationToJson(OrganizationJson organizationJson, Organization organization) {
-        organizationJson.setId(organization.getId());
-        PostalAddressJson postalAddressJson = new PostalAddressJson();
-        postalAddressJson.setStreetAddress(organization.getStreetAddress());
-        postalAddressJson.setPostalCode(organization.getPostalCode());
-        postalAddressJson.setCity(organization.getCity());
-        organizationJson.setPostalAddress(postalAddressJson);
-        organizationJson.setPhone(organization.getPhone());
-        organizationJson.setName(organization.getName());
-        organizationJson.setEmail(organization.getEmail());
-        organizationJson.setBusinessId(organization.getBusinessId());
-    }
-
-    private void mapContactToJson(ContactJson contactJson, Contact contact) {
-        contactJson.setId(contact.getId());
-    }
-
     private void mapApplicationToJson(ApplicationJson applicationJson, Application application) {
         applicationJson.setId(application.getId());
         applicationJson.setStatus(application.getStatus());
@@ -310,92 +145,6 @@ public class ApplicationService {
         applicationJson.setHandler(application.getHandler());
         applicationJson.setCreationTime(application.getCreationTime());
         applicationJson.setName(application.getName());
-    }
-
-    private Customer createNewCustomer(CustomerJson customerJson) {
-
-        switch (customerJson.getType()) {
-            case Person:
-                customerJson.setPerson(personService.createPerson(customerJson.getPerson()));
-                break;
-            case Company:
-                if (customerJson.getOrganization() != null && (customerJson.getOrganization().getId() == null || customerJson.getOrganization()
-                    .getId() == 0)) {
-                    Organization organizationModel = restTemplate.postForObject(applicationProperties
-                            .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(customerJson.getOrganization()),
-                        Organization.class);
-                    mapOrganizationToJson(customerJson.getOrganization(), organizationModel);
-                }
-                break;
-        }
-        Customer customerModel = restTemplate.postForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_CREATE), createCustomerModel(customerJson),
-                Customer.class);
-
-        return customerModel;
-    }
-
-    private void updateCustomer(CustomerJson customerJson) {
-        switch (customerJson.getType()) {
-            case Person:
-                personService.updatePerson(customerJson.getPerson());
-                break;
-            case Company:
-                break;
-        }
-
-        if (customerJson.getOrganization() != null && customerJson.getOrganization().getId() != null && customerJson.getOrganization()
-            .getId() > 0) {
-            restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_UPDATE), createOrganizationModel
-                (customerJson.getOrganization()), customerJson.getOrganization().getId().intValue());
-        }
-
-        restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_UPDATE), createCustomerModel
-            (customerJson), customerJson.getId().intValue());
-
-    }
-
-    private Applicant createNewApplicant(ApplicantJson applicantJson) {
-        switch (applicantJson.getType()) {
-            case Person:
-                personService.createPerson(applicantJson.getPerson());
-                break;
-            case Company:
-                break;
-        }
-
-        if (applicantJson.getOrganization() != null && (applicantJson.getOrganization().getId() == null || applicantJson.getOrganization()
-                .getId() == 0)) {
-            Organization organizationModel = restTemplate.postForObject(applicationProperties
-                            .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(applicantJson.getOrganization()),
-                    Organization.class);
-            mapOrganizationToJson(applicantJson.getOrganization(), organizationModel);
-        }
-
-        Applicant applicantModel = restTemplate.postForObject(applicationProperties
-                        .getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_CREATE), createApplicantModel(applicantJson),
-                Applicant.class);
-
-        return applicantModel;
-    }
-
-    private void updateApplicant(ApplicantJson applicantJson) {
-        switch (applicantJson.getType()) {
-            case Person:
-                personService.updatePerson(applicantJson.getPerson());
-                break;
-            case Company:
-                break;
-        }
-
-        if (applicantJson.getOrganization() != null && applicantJson.getOrganization().getId() != null && applicantJson.getOrganization()
-            .getId() > 0) {
-            restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_UPDATE), createOrganizationModel
-                (applicantJson.getOrganization()), applicantJson.getOrganization().getId().intValue());
-        }
-
-        restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_UPDATE), createApplicantModel(applicantJson),
-            applicantJson.getId().intValue());
     }
 }
 

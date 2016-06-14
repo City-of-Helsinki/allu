@@ -15,6 +15,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.*;
@@ -24,6 +25,12 @@ public class ApplicationServiceTest extends MockServices {
     protected LocationService locationService;
     @Mock
     protected PersonService personService;
+    @Mock
+    protected ProjectService projectService;
+    @Mock
+    protected CustomerService customerService;
+    @Mock
+    protected ApplicantService applicantService;
     @InjectMocks
     protected ApplicationService applicationService;
 
@@ -37,11 +44,30 @@ public class ApplicationServiceTest extends MockServices {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        initMocks();
+        initSaveMocks();
+        initSearchMocks();
         Mockito.when(locationService.createLocation(Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
             createLocationJson(102));
         Mockito.when(personService.createPerson(Mockito.anyObject())).thenAnswer((Answer<PersonJson>) invocation ->
             createPersonJson(200));
+        Mockito.when(projectService.createProject(Mockito.anyObject())).thenAnswer((Answer<ProjectJson>) invocation ->
+            createProjectJson(100));
+        Mockito.when(customerService.createCustomer(Mockito.anyObject())).thenAnswer((Answer<CustomerJson>) invocation ->
+            createCustomerJson(101, 200));
+        Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
+            createApplicantJson(103, 201));
+
+        Mockito.when(locationService.findLocationById(Mockito.anyInt())).thenAnswer((Answer<LocationJson>) invocation ->
+            createLocationJson(102));
+        Mockito.when(personService.findPersonById(Mockito.anyInt())).thenAnswer((Answer<PersonJson>) invocation ->
+            createPersonJson(200));
+        Mockito.when(projectService.findProjectById(Mockito.anyInt())).thenAnswer((Answer<ProjectJson>) invocation ->
+            createProjectJson(100));
+        Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer((Answer<CustomerJson>) invocation ->
+            createCustomerJson(101, 200));
+        Mockito.when(applicantService.findApplicantById(Mockito.anyInt())).thenAnswer((Answer<ApplicantJson>) invocation ->
+            createApplicantJson(103, 201));
+
     }
 
     @BeforeClass
@@ -67,50 +93,6 @@ public class ApplicationServiceTest extends MockServices {
         assertEquals(1, constraintViolations.size() );
         assertEquals("Application type is required", constraintViolations.iterator().next().getMessage());
     }
-
-    @Test
-    public void testCreateWithEmptyCustomerPersonName() {
-        applicationJsonList.getApplicationList().get(0).getCustomer().getPerson().setName("");
-        Set<ConstraintViolation<ApplicationJson>> constraintViolations =
-                validator.validate( applicationJsonList.getApplicationList().get(0) );
-        assertEquals(1, constraintViolations.size() );
-        assertEquals("Person name is required", constraintViolations.iterator().next().getMessage());
-    }
-
-    @Test
-    public void testCreateWithEmptyCustomerOrganizationAndPerson() {
-        applicationJsonList.getApplicationList().get(0).getCustomer().setOrganization(null);
-        applicationJsonList.getApplicationList().get(0).getCustomer().setPerson(null);
-        Set<ConstraintViolation<ApplicationJson>> constraintViolations =
-                validator.validate( applicationJsonList.getApplicationList().get(0) );
-        assertEquals(1, constraintViolations.size() );
-        assertEquals("person is required, type is Person", constraintViolations.iterator().next().getMessage());
-    }
-
-    @Test
-    public void testCreateWithNotEmptyCustomerOrganization() {
-        OrganizationJson organizationJson = new OrganizationJson();
-        organizationJson.setBusinessId("444444");
-        organizationJson.setName("Organisaatio 2");;
-        organizationJson.setEmail("organization2 email");
-        applicationJsonList.getApplicationList().get(0).getCustomer().setOrganization(organizationJson);
-
-        Set<ConstraintViolation<ApplicationJson>> constraintViolations =
-                validator.validate( applicationJsonList.getApplicationList().get(0) );
-        assertEquals(1, constraintViolations.size() );
-        assertEquals("organization must be null, type is Person", constraintViolations.iterator().next().getMessage());
-    }
-
-    @Test
-    public void testCreateWithEmptyApplicantOrganization() {
-        applicationJsonList.getApplicationList().get(0).getApplicant().setOrganization(null);
-
-        Set<ConstraintViolation<ApplicationJson>> constraintViolations =
-                validator.validate( applicationJsonList.getApplicationList().get(0) );
-        assertEquals(1, constraintViolations.size() );
-        assertEquals("organization is required, type is Organization", constraintViolations.iterator().next().getMessage());
-    }
-
 
     @Test
     public void testCreateWithValidApplication() {
@@ -139,5 +121,63 @@ public class ApplicationServiceTest extends MockServices {
     }
 
 
+    @Test
+    public void testUpdateApplication() {
+        ApplicationJson applicationJson = createMockApplicationJson(1);
+        applicationService.updateApplication(1, applicationJson);
+        assertNotNull(applicationJson);
+        assertEquals(1, applicationJson.getId().intValue());
+        assertEquals("Kalle käsittelijä, Json", applicationJson.getHandler());
+    }
 
+
+    @Test
+    public void testFindApplicationById() {
+        ApplicationJson response = applicationService.findApplicationById("123");
+
+        assertNotNull(response);
+        assertNotNull(response.getCustomer());
+        assertNotNull(response.getProject());
+        assertNotNull(response.getApplicant());
+        assertEquals(100, response.getProject().getId().intValue());
+        assertEquals(101, response.getCustomer().getId().intValue());
+        assertEquals(102, response.getLocation().getId().intValue());
+        assertEquals(103, response.getApplicant().getId().intValue());
+        assertNull(response.getCustomer().getOrganization());
+        assertNull(response.getApplicant().getPerson());
+        assertNotNull(response.getApplicant().getOrganization());
+        assertNotNull(response.getCustomer().getPerson());
+        assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
+        assertEquals(200, response.getCustomer().getPerson().getId().intValue());
+    }
+
+    @Test
+    public void testFindApplicationByHandler() {
+        List<ApplicationJson> response = applicationService.findApplicationByHandler("222");
+
+        assertNotNull(response);
+        assertEquals(2, response.size());
+
+        assertNotNull(response.get(0).getCustomer());
+        assertNotNull(response.get(0).getProject());
+        assertNotNull(response.get(0).getApplicant());
+        assertNotNull(response.get(0).getLocation());
+        assertEquals(100, response.get(0).getProject().getId().intValue());
+        assertEquals(101, response.get(0).getCustomer().getId().intValue());
+        assertEquals(102, response.get(0).getLocation().getId().intValue());
+        assertEquals(103, response.get(0).getApplicant().getId().intValue());
+        assertNull(response.get(0).getCustomer().getOrganization());
+        assertNull(response.get(0).getApplicant().getPerson());
+        assertNotNull(response.get(0).getApplicant().getOrganization());
+        assertNotNull(response.get(0).getCustomer().getPerson());
+        assertEquals(201, response.get(0).getApplicant().getOrganization().getId().intValue());
+        assertEquals(200, response.get(0).getCustomer().getPerson().getId().intValue());
+
+        assertNotNull(response.get(1));
+        assertNotNull(response.get(1).getCustomer());
+        assertNotNull(response.get(1).getProject());
+        assertNotNull(response.get(1).getApplicant());
+        assertNotNull(response.get(1).getLocation());
+        assertEquals("MockName2", response.get(1).getName());
+    }
 }
