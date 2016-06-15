@@ -1,17 +1,39 @@
 @import '../../assets/colors';
 
 :host {
-  max-width: 1450px;
-  width: 100%;
-  map {
-    float: left;
-    height: 100%;
-    position: absolute;
-    width: 100%;
+  .row {
+    margin-bottom: 0;
   }
 }
 
-workqueue {
-  float: left;
-  width: 20%;
+locationsearch {
+  bottom: 0;
+  height: 94vh;
+  left: 0;
+  position: absolute;
+  top: 50px;
+  width: 20vw;
+
+  .searchbox {
+    position: relative;
+  }
+
+  .searchinput {
+    position: absolute;
+  }
+
+  .searchresults {
+    bottom: 0;
+    overflow-y: scroll;
+    position: absolute;
+    top: 120px;
+  }
+}
+
+map {
+  bottom: 0;
+  left: 20vw;
+  position: absolute;
+  top: 50px;
+  width: 80vw;
 }

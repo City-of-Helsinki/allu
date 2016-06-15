@@ -46,15 +46,14 @@ export class LocationSearchComponent implements EventListener, OnInit, OnDestroy
   }
 
   public handle(event: Event): void {
-    console.log('Handle and incoming WorkqueueComponent event');
+    console.log('Handle and incoming LocationSearchComponent event');
     if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent>event;
       this.applicationsQueue = aaEvent.applications.slice();
-      this.applicationsQueue.forEach((app) => app.location = JSON.parse(localStorage.getItem('application')));
     }
   }
 
-  jobClick(job: Application) {
-    this.eventService.send(this, new ApplicationSelectionEvent(job));
+  jobClick(application: Application) {
+    this.eventService.send(this, new ApplicationSelectionEvent(application));
   }
 }
