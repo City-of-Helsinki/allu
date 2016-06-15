@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.DefaultMapper;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Project;
@@ -36,7 +37,8 @@ public class ProjectDao {
   @Transactional
   public Project update(int id, Project p) {
     p.setId(id);
-    long changed = queryFactory.update(project).populate(p).where(project.id.eq(id)).execute();
+    long changed = queryFactory.update(project).populate(p, DefaultMapper.WITH_NULL_BINDINGS).where(project.id.eq(id))
+        .execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }

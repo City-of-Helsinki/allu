@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.DefaultMapper;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Organization;
@@ -41,7 +42,8 @@ public class OrganizationDao {
   @Transactional
   public Organization update(int id, Organization organizationData) {
     organizationData.setId(id);
-    long changed = queryFactory.update(organization).populate(organizationData).where(organization.id.eq(id)).execute();
+    long changed = queryFactory.update(organization).populate(organizationData, DefaultMapper.WITH_NULL_BINDINGS)
+        .where(organization.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }

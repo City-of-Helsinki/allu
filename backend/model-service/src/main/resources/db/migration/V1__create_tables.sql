@@ -43,8 +43,13 @@ create table allu.project (
 
 create table allu.contact (
     id serial primary key,
-    person_id integer references allu.person(id),
-    organization_id integer references allu.organization(id));
+    organization_id integer not null references allu.organization(id),
+    name text not null,
+    street_address text,
+    postal_code text,
+    city text,
+    email text,
+    phone text );
 
 create table allu.applicant (
     id serial primary key,
@@ -70,3 +75,15 @@ create table allu.attachment (
    data bytea,
    type text,
    application_id integer references allu.application);
+
+create table allu.project_contact (
+    id serial primary key,
+    position integer,
+    project_id integer references allu.project(id),
+    contact_id integer references allu.contact(id) );
+
+create table allu.application_contact (
+    id serial primary key,
+    position integer,
+    application_id integer references allu.application(id),
+    contact_id integer references allu.contact(id) );

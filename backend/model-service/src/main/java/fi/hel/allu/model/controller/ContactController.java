@@ -26,6 +26,7 @@ public class ContactController {
   @Autowired
   private ContactDao contactDao;
 
+  // Contact item handling: find, insert, update
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Contact> find(@PathVariable int id) {
     Optional<Contact> contact = contactDao.findById(id);
@@ -34,11 +35,12 @@ public class ContactController {
     return new ResponseEntity<>(contactValue, HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<Contact>> findByOrganization(
-      @RequestParam(value = "organizationId") final int organizationId) {
-    List<Contact> contacts = contactDao.findByOrganization(organizationId);
-    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  @RequestMapping(method = RequestMethod.POST)
+  public ResponseEntity<Contact> insert(@Valid @RequestBody(required = true) Contact contact) {
+    if (contact.getId() != null) {
+      throw new IllegalArgumentException("Id must be null for insert");
+    }
+    return new ResponseEntity<>(contactDao.insert(contact), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
@@ -46,11 +48,38 @@ public class ContactController {
     return new ResponseEntity<>(contactDao.update(id, contact), HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Contact> insert(@Valid @RequestBody(required = true) Contact contact) {
-    if (contact.getId() != null) {
-      throw new IllegalArgumentException("Id must be null for insert");
-    }
-    return new ResponseEntity<>(contactDao.insert(contact), HttpStatus.OK);
+  // Find all contacts for an organization:
+  @RequestMapping(method = RequestMethod.GET, params = "organizationId")
+  public ResponseEntity<List<Contact>> findByOrganization(
+      @RequestParam(value = "organizationId") final int organizationId) {
+    List<Contact> contacts = contactDao.findByOrganization(organizationId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  }
+
+  // get/set application's contact list:
+  @RequestMapping(method = RequestMethod.GET, params = "applicationId")
+  public ResponseEntity<List<Contact>> findByApplication(
+      @RequestParam(value = "applicationId") final int applicationId) {
+    List<Contact> contacts = contactDao.findByApplication(applicationId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  }
+
+  @RequestMapping(method = RequestMethod.PUT, params = "applicationId")
+  public ResponseEntity<List<Contact>> setApplicationContacts(
+      @RequestParam(value = "applicationId") final int applicationId, @Valid @RequestBody List<Contact> contacts) {
+    return new ResponseEntity<>(contactDao.setApplicationContacts(applicationId, contacts), HttpStatus.OK);
+  }
+
+  // get/set project's contact list:
+  @RequestMapping(method = RequestMethod.GET, params = "projectId")
+  public ResponseEntity<List<Contact>> findByProject(@RequestParam(value = "projectId") final int projectId) {
+    List<Contact> contacts = contactDao.findByProject(projectId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  }
+
+  @RequestMapping(method = RequestMethod.PUT, params = "projectId")
+  public ResponseEntity<List<Contact>> setProjectContacts(@RequestParam(value = "projectId") final int projectId,
+      @Valid @RequestBody List<Contact> contacts) {
+    return new ResponseEntity<>(contactDao.setProjectContacts(projectId, contacts), HttpStatus.OK);
   }
 }
