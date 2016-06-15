@@ -1,14 +1,20 @@
-
-<div id="sidebar">
-  <h1>Työjonosi</h1>
-  <md-content layout="row" layout-wrap layout-align="center start">
-    <md-card (click)="jobClick(job)" *ngFor="let job of applicationsQueue" style="margin-bottom: 10px;">
-      <md-card-title>{{job.title}}</md-card-title>
-      <md-card-subtitle>{{job.type}}</md-card-subtitle>
-      <md-card-content>
-        <p>{{job.name}}</p>
-        <p>{{job.time}}</p>
-      </md-card-content>
-    </md-card>
-  </md-content>
+<div class="row searchbox">
+  <div class="col s12 searchinput">
+    <h1>OSOITEHAKU</h1>
+    <div class="input-field">
+      <input id="streetAddress"  type="text" [(ngModel)]="search">
+      <label for="streetAddress">Kirjoita osoite</label>
+    </div>
+  </div>
+  <div class="col s12 searchresults">
+    <md-content layout="row" layout-wrap layout-align="center start">
+      <md-card (click)="jobClick(application)" *ngFor="let application of applicationsQueue">
+        <md-card-content>
+          <p>{{application.name}}</p>
+          <md-card-subtitle>{{application.type}}</md-card-subtitle>
+          <p>{{application.time}}</p>
+        </md-card-content>
+      </md-card>
+    </md-content>
+  </div>
 </div>
