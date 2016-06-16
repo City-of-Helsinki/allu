@@ -2,14 +2,16 @@ package fi.hel.allu.ui.service;
 
 
 import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.InjectMocks;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -20,6 +22,7 @@ import java.util.Set;
 
 import static org.junit.Assert.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceTest extends MockServices {
   private static Validator validator;
   @Mock
@@ -32,13 +35,10 @@ public class ApplicationServiceTest extends MockServices {
   protected CustomerService customerService;
   @Mock
   protected ApplicantService applicantService;
-  @InjectMocks
-  protected ApplicationService applicationService;
-  private ApplicationListJson applicationJsonList;
+  @Autowired
+  protected ApplicationMapper applicationMapper;
 
-  public ApplicationServiceTest() {
-    applicationJsonList = createMockApplicationListJson();
-  }
+  private ApplicationService applicationService;
 
   @BeforeClass
   public static void setUpBeforeClass() {
@@ -48,7 +48,10 @@ public class ApplicationServiceTest extends MockServices {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
+    applicationMapper = new ApplicationMapper();
+    applicationService = new ApplicationService(props, restTemplate, locationService, customerService, applicantService, projectService,
+        applicationMapper);
+
     initSaveMocks();
     initSearchMocks();
     Mockito.when(locationService.createLocation(Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
@@ -77,9 +80,10 @@ public class ApplicationServiceTest extends MockServices {
 
   @Test
   public void testCreateWithNullApplicationName() {
-    applicationJsonList.getApplicationList().get(0).setName(null);
+    ApplicationJson applicationJson = createMockApplicationJson(null);
+    applicationJson.setName(null);
     Set<ConstraintViolation<ApplicationJson>> constraintViolations =
-        validator.validate(applicationJsonList.getApplicationList().get(0));
+        validator.validate(applicationJson);
     assertEquals(1, constraintViolations.size());
     assertEquals("Application name is required", constraintViolations.iterator().next().getMessage());
   }
@@ -87,37 +91,36 @@ public class ApplicationServiceTest extends MockServices {
 
   @Test
   public void testCreateWithEmptyApplicationType() {
-    applicationJsonList.getApplicationList().get(0).setType("");
+    ApplicationJson applicationJson = createMockApplicationJson(null);
+    applicationJson.setType(null);
     Set<ConstraintViolation<ApplicationJson>> constraintViolations =
-        validator.validate(applicationJsonList.getApplicationList().get(0));
+        validator.validate(applicationJson);
     assertEquals(1, constraintViolations.size());
     assertEquals("Application type is required", constraintViolations.iterator().next().getMessage());
   }
 
   @Test
   public void testCreateWithValidApplication() {
-    ApplicationListJson response = applicationService.createApplication(applicationJsonList);
+    ApplicationJson response = applicationService.createApplication(createMockApplicationJson(null));
 
     assertNotNull(response);
-    assertNotNull(response.getApplicationList());
-    assertEquals(1, response.getApplicationList().size());
-    assertEquals(1, response.getApplicationList().get(0).getId().intValue());
-    assertNotNull(response.getApplicationList().get(0).getApplicant());
-    assertNotNull(response.getApplicationList().get(0).getCustomer());
-    assertNotNull(response.getApplicationList().get(0).getProject());
-    assertNotNull(response.getApplicationList().get(0).getLocation());
-    assertEquals(100, response.getApplicationList().get(0).getProject().getId().intValue());
-    assertEquals(101, response.getApplicationList().get(0).getCustomer().getId().intValue());
-    assertEquals(102, response.getApplicationList().get(0).getLocation().getId().intValue());
-    assertEquals(103, response.getApplicationList().get(0).getApplicant().getId().intValue());
-    assertEquals("Kalle käsittelijä, Json", response.getApplicationList().get(0).getHandler());
-    assertNull(response.getApplicationList().get(0).getApplicant().getPerson());
-    assertNotNull(response.getApplicationList().get(0).getApplicant().getOrganization());
-    assertEquals(201, response.getApplicationList().get(0).getApplicant().getOrganization().getId().intValue());
-    assertNull(response.getApplicationList().get(0).getCustomer().getOrganization());
-    assertNotNull(response.getApplicationList().get(0).getCustomer().getPerson());
-    assertEquals(200, response.getApplicationList().get(0).getCustomer().getPerson().getId().intValue());
-    assertNotNull(response.getApplicationList().get(0).getLocation().getGeometry());
+    assertEquals(1, response.getId().intValue());
+    assertNotNull(response.getApplicant());
+    assertNotNull(response.getCustomer());
+    assertNotNull(response.getProject());
+    assertNotNull(response.getLocation());
+    assertEquals(100, response.getProject().getId().intValue());
+    assertEquals(101, response.getCustomer().getId().intValue());
+    assertEquals(102, response.getLocation().getId().intValue());
+    assertEquals(103, response.getApplicant().getId().intValue());
+    assertEquals("Mock handler, Model", response.getHandler());
+    assertNull(response.getApplicant().getPerson());
+    assertNotNull(response.getApplicant().getOrganization());
+    assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
+    assertNull(response.getCustomer().getOrganization());
+    assertNotNull(response.getCustomer().getPerson());
+    assertEquals(200, response.getCustomer().getPerson().getId().intValue());
+    assertNotNull(response.getLocation().getGeometry());
   }
 
 
@@ -139,6 +142,7 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getCustomer());
     assertNotNull(response.getProject());
     assertNotNull(response.getApplicant());
+    assertNotNull(response.getEvent());
     assertEquals(100, response.getProject().getId().intValue());
     assertEquals(101, response.getCustomer().getId().intValue());
     assertEquals(102, response.getLocation().getId().intValue());
@@ -149,6 +153,7 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getCustomer().getPerson());
     assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
     assertEquals(200, response.getCustomer().getPerson().getId().intValue());
+    assertEquals("outdoor event nature, Model", ((OutdoorEventJson)response.getEvent()).getNature());
   }
 
   @Test
@@ -162,6 +167,7 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.get(0).getProject());
     assertNotNull(response.get(0).getApplicant());
     assertNotNull(response.get(0).getLocation());
+    assertNotNull(response.get(0).getEvent());
     assertEquals(100, response.get(0).getProject().getId().intValue());
     assertEquals(101, response.get(0).getCustomer().getId().intValue());
     assertEquals(102, response.get(0).getLocation().getId().intValue());
@@ -172,7 +178,6 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.get(0).getCustomer().getPerson());
     assertEquals(201, response.get(0).getApplicant().getOrganization().getId().intValue());
     assertEquals(200, response.get(0).getCustomer().getPerson().getId().intValue());
-
     assertNotNull(response.get(1));
     assertNotNull(response.get(1).getCustomer());
     assertNotNull(response.get(1).getProject());

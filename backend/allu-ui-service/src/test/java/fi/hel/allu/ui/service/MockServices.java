@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.service;
 
 
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
@@ -13,16 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.geolatte.geom.builder.DSL.*;
 
 public abstract class MockServices {
   @Mock
-  private ApplicationProperties props;
+  protected ApplicationProperties props;
   @Mock
-  private RestTemplate restTemplate;
+  protected RestTemplate restTemplate;
 
   public void initSaveMocks() {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
@@ -52,6 +51,10 @@ public abstract class MockServices {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Location.class)))
         .thenAnswer((Answer<Location>) invocation -> createMockLocationModel());
+
+    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
+        Mockito.eq(OutdoorEvent.class)))
+        .thenAnswer((Answer<OutdoorEvent>) invocation -> createMockOutdoorEventModel());
   }
 
   public void initSearchMocks() {
@@ -77,6 +80,9 @@ public abstract class MockServices {
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse());
 
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(OutdoorEvent.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<OutdoorEvent>>) invocation -> createMockOutdoorEventResponse());
+
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Application[].class), Mockito.any
         (String.class)))
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
@@ -84,15 +90,6 @@ public abstract class MockServices {
 
     Mockito.when(props.getUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
 
-  }
-
-
-  public ApplicationListJson createMockApplicationListJson() {
-    ApplicationListJson applicationListJson = new ApplicationListJson();
-    List<ApplicationJson> applicationJsonList = new ArrayList<>();
-    applicationJsonList.add(createMockApplicationJson(null));
-    applicationListJson.setApplicationJsonList(applicationJsonList);
-    return applicationListJson;
   }
 
   public LocationJson createLocationJson(Integer id) {
@@ -162,11 +159,21 @@ public abstract class MockServices {
     return project;
   }
 
+  public OutdoorEventJson createOutdoorEventJson(Integer id) {
+    OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
+    outdoorEventJson.setDescription("Outdoor event description, Json");
+    outdoorEventJson.setAudience(1000);
+    outdoorEventJson.setStartTime(ZonedDateTime.now());
+    outdoorEventJson.setNature("Outdoor event nature, Json");
+    outdoorEventJson.setUrl("Outdoor event url, Json");
+    return outdoorEventJson;
+  }
+
   public ApplicationJson createMockApplicationJson(Integer id) {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setId(id);
     applicationJson.setName("Tapahtuma 1, Json");
-    applicationJson.setType("Ulkoilmatapahtuma, Json");
+    applicationJson.setType(ApplicationType.OutdoorEvent);
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setStatus("Vireillä, Json");
     applicationJson.setHandler("Kalle käsittelijä, Json");
@@ -174,6 +181,7 @@ public abstract class MockServices {
     applicationJson.setApplicant(createApplicantJson(null, null));
     applicationJson.setLocation(createLocationJson(null));
     applicationJson.setProject(createProjectJson(null));
+    applicationJson.setEvent(createOutdoorEventJson(null));
     return applicationJson;
   }
 
@@ -185,9 +193,10 @@ public abstract class MockServices {
     application.setCreationTime(ZonedDateTime.now());
     application.setCustomerId(101);
     application.setHandler("Mock handler, Model");
-    application.setType("Mock type, Model");
+    application.setType(ApplicationType.OutdoorEvent);
     application.setLocationId(102);
     application.setApplicantId(103);
+    application.setEvent(createMockOutdoorEventModel());
     return application;
   }
 
@@ -252,6 +261,17 @@ public abstract class MockServices {
     return location;
   }
 
+  public OutdoorEvent createMockOutdoorEventModel() {
+    OutdoorEvent outdoorEvent = new OutdoorEvent();
+    outdoorEvent.setUrl("url, Model");
+    outdoorEvent.setNature("outdoor event nature, Model");
+    outdoorEvent.setStartTime(ZonedDateTime.now());
+    outdoorEvent.setAudience(1050);
+    outdoorEvent.setDescription("Outdoor event description, Model");
+    outdoorEvent.setEndTime(ZonedDateTime.now());
+    return outdoorEvent;
+  }
+
   public ResponseEntity<Person> createMockPersonResponse() {
     return new ResponseEntity<>(createMockPersonModel(), HttpStatus.OK);
   }
@@ -276,13 +296,17 @@ public abstract class MockServices {
     return new ResponseEntity<>(createMockLocationModel(), HttpStatus.OK);
   }
 
+  public ResponseEntity<OutdoorEvent> createMockOutdoorEventResponse() {
+    return new ResponseEntity<>(createMockOutdoorEventModel(), HttpStatus.OK);
+  }
+
   private ResponseEntity<Application[]> createMockApplicationListResponse() {
     Application applicationModelArray[] = new Application[2];
     applicationModelArray[0] = createMockApplicationModel();
 
     Application applicationModel = new Application();
     applicationModel.setId(1234);
-    applicationModel.setType("MockType2");
+    applicationModel.setType(ApplicationType.OutdoorEvent);
     applicationModel.setHandler("MockHandler2");
     applicationModel.setStatus("MockStatus2");
     applicationModel.setProjectId(4321);
@@ -290,6 +314,7 @@ public abstract class MockServices {
     applicationModel.setCustomerId(3456);
     applicationModel.setApplicantId(655);
     applicationModel.setLocationId(345);
+    applicationModel.setEvent(createMockOutdoorEventModel());
     applicationModelArray[1] = applicationModel;
 
     return new ResponseEntity<>(applicationModelArray, HttpStatus.OK);

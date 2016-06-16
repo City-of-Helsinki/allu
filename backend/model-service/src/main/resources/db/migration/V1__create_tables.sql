@@ -60,26 +60,10 @@ create table allu.application (
     customer_id integer references allu.customer(id),
     applicant_id integer references allu.applicant(id),
     status text,   -- TODO: enum
-    type text,     -- TODO: enum
+    type text not null,
     creation_time timestamp with time zone,
-    location_id integer references allu.location(id));
-
-create table allu.free_event_application (
-    id serial primary key,
-    application_id integer references allu.application,
-    description text,
-    nature text,
-    start_time timestamp with time zone,
-    end_time timestamp with time zone,
-    pricing_argument text,
-    external_sale_or_advertising boolean,
-    eco_compass boolean,
-    grocery_sale_description text,
-    sale_description text,
-    construction_area numeric,
-    construction_description text,
-    construction_start_time timestamp with time zone,
-    construction_end_time timestamp with time zone);
+    location_id integer references allu.location(id),
+    event text not null);
 
 create table allu.attachment (
    id serial primary key,

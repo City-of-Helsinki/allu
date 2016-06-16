@@ -10,6 +10,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,15 +23,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
 import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.model.dao.ApplicantDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.PersonDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -185,9 +179,10 @@ public class ApplicationControllerTest {
     app.setApplicantId(applicantId);
     app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.now());
-    app.setType("FreeEvent");
+    app.setType(ApplicationType.OutdoorEvent);
     app.setName(name);
     app.setHandler(handler);
+    app.setEvent(addOutdoorEvent(personId));
     return app;
   }
 
@@ -224,6 +219,15 @@ public class ApplicationControllerTest {
     applicant.setPersonId(personId);
     Applicant insertedApplicant = applicantDao.insert(applicant);
     return insertedApplicant.getId();
+  }
+
+  public Event addOutdoorEvent(Integer id) {
+    OutdoorEvent event = new OutdoorEvent();
+    event.setDescription("desc");
+    event.setAudience(10);
+    event.setNature("nature");
+    //event.setType(ApplicationType.OutdoorEvent);
+    return event;
   }
 
 }
