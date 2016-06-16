@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.validator.ValidList;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.domain.Contact;
 
@@ -66,7 +67,7 @@ public class ContactController {
 
   @RequestMapping(method = RequestMethod.PUT, params = "applicationId")
   public ResponseEntity<List<Contact>> setApplicationContacts(
-      @RequestParam(value = "applicationId") final int applicationId, @Valid @RequestBody List<Contact> contacts) {
+      @RequestParam(value = "applicationId") final int applicationId, @Valid @RequestBody ValidList<Contact> contacts) {
     return new ResponseEntity<>(contactDao.setApplicationContacts(applicationId, contacts), HttpStatus.OK);
   }
 
@@ -79,7 +80,7 @@ public class ContactController {
 
   @RequestMapping(method = RequestMethod.PUT, params = "projectId")
   public ResponseEntity<List<Contact>> setProjectContacts(@RequestParam(value = "projectId") final int projectId,
-      @Valid @RequestBody List<Contact> contacts) {
+      @Valid @RequestBody ValidList<Contact> contacts) {
     return new ResponseEntity<>(contactDao.setProjectContacts(projectId, contacts), HttpStatus.OK);
   }
 }

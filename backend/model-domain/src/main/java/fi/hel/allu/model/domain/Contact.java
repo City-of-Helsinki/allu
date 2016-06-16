@@ -1,5 +1,7 @@
 package fi.hel.allu.model.domain;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 /**
  * in Finnish: Yhteyshenkilö
  */
@@ -7,6 +9,7 @@ public class Contact {
 
   private Integer id;
   private Integer organizationId;
+  @NotBlank
   private String name;
   private String streetAddress;
   private String postalCode;
