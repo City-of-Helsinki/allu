@@ -27,7 +27,13 @@ public class ContactController {
   @Autowired
   private ContactDao contactDao;
 
-  // Contact item handling: find, insert, update
+  /**
+   * Find contact item by id
+   *
+   * @param id
+   *          The id of the contact item
+   * @return The contents of requested contact item
+   */
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Contact> find(@PathVariable int id) {
     Optional<Contact> contact = contactDao.findById(id);
@@ -36,6 +42,13 @@ public class ContactController {
     return new ResponseEntity<>(contactValue, HttpStatus.OK);
   }
 
+  /**
+   * Insert contact item
+   *
+   * @param contact
+   *          The contents of the contact item
+   * @return The inserted contact item
+   */
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Contact> insert(@Valid @RequestBody(required = true) Contact contact) {
     if (contact.getId() != null) {
@@ -44,12 +57,27 @@ public class ContactController {
     return new ResponseEntity<>(contactDao.insert(contact), HttpStatus.OK);
   }
 
+  /**
+   * Update a contact item
+   *
+   * @param id
+   *          The ID of the contact item to update
+   * @param contact
+   *          The new contents of the contact item
+   * @return The contact item after insertion
+   */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Contact> update(@PathVariable int id, @Valid @RequestBody(required = true) Contact contact) {
     return new ResponseEntity<>(contactDao.update(id, contact), HttpStatus.OK);
   }
 
-  // Find all contacts for an organization:
+  /**
+   * Get all contacts for an organization
+   *
+   * @param organizationId
+   *          The ID of the organization
+   * @return All contact items for the given organization
+   */
   @RequestMapping(method = RequestMethod.GET, params = "organizationId")
   public ResponseEntity<List<Contact>> findByOrganization(
       @RequestParam(value = "organizationId") final int organizationId) {
@@ -57,7 +85,13 @@ public class ContactController {
     return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
 
-  // get/set application's contact list:
+  /**
+   * Get the contact list for an application
+   *
+   * @param applicationId
+   *          The application's ID
+   * @return List of the application's contacts in preference order
+   */
   @RequestMapping(method = RequestMethod.GET, params = "applicationId")
   public ResponseEntity<List<Contact>> findByApplication(
       @RequestParam(value = "applicationId") final int applicationId) {
@@ -65,19 +99,42 @@ public class ContactController {
     return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
 
+  /**
+   * Set application's contact list
+   *
+   * @param applicationId
+   *          The application's ID
+   * @param contacts
+   *          List of contacts in preference order
+   * @return The application's contact list after the insert/update
+   */
   @RequestMapping(method = RequestMethod.PUT, params = "applicationId")
   public ResponseEntity<List<Contact>> setApplicationContacts(
       @RequestParam(value = "applicationId") final int applicationId, @Valid @RequestBody ValidList<Contact> contacts) {
     return new ResponseEntity<>(contactDao.setApplicationContacts(applicationId, contacts), HttpStatus.OK);
   }
-
-  // get/set project's contact list:
+  /**
+   * Get project's contact list
+   *
+   * @param projectId
+   *          The project's ID
+   * @return List of contacts in preference order
+   */
   @RequestMapping(method = RequestMethod.GET, params = "projectId")
   public ResponseEntity<List<Contact>> findByProject(@RequestParam(value = "projectId") final int projectId) {
     List<Contact> contacts = contactDao.findByProject(projectId);
     return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
 
+  /**
+   * Set project's contact list
+   *
+   * @param projectId
+   *          The project's ID
+   * @param contacts
+   *          List of contacts in the preference order
+   * @return The project's contact list after the operation
+   */
   @RequestMapping(method = RequestMethod.PUT, params = "projectId")
   public ResponseEntity<List<Contact>> setProjectContacts(@RequestParam(value = "projectId") final int projectId,
       @Valid @RequestBody ValidList<Contact> contacts) {

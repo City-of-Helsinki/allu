@@ -19,6 +19,7 @@ import com.querydsl.sql.SQLBindings;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
+import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -66,20 +67,16 @@ public class ContactDao {
   public List<Contact> setProjectContacts(int projectId, List<Contact> contacts) {
     // remove old contact links, then add new ones.
     queryFactory.delete(projectContact).where(projectContact.projectId.eq(projectId)).execute();
-    int position = 0;
-    for (Contact contactItem : contacts) {
-      // Update/insert the contact first...
-      if (contactItem.getId() != null) {
-        contactItem = update(contactItem.getId(), contactItem);
-      } else {
-        contactItem = insert(contactItem);
-      }
-      // ... then create the link record
-      queryFactory.insert(projectContact)
-          .columns(projectContact.projectId, projectContact.contactId, projectContact.position)
-          .values(projectId, contactItem.getId(), position).execute();
-      position++;
+    // Update/insert the contacts first...
+    contacts.stream().forEach(c -> storeContact(c));
+    // ... then create the link records
+    SQLInsertClause insertClause = queryFactory.insert(projectContact);
+    int pos = 0;
+    for (Contact contact : contacts) {
+      insertClause.columns(projectContact.projectId, projectContact.contactId, projectContact.position)
+          .values(projectId, contact.getId(), pos++).addBatch();
     }
+    insertClause.execute();
     return findByProject(projectId);
   }
 
@@ -87,21 +84,25 @@ public class ContactDao {
   public List<Contact> setApplicationContacts(int applicationId, List<Contact> contacts) {
     // remove old contact links, then add new ones.
     queryFactory.delete(applicationContact).where(applicationContact.applicationId.eq(applicationId)).execute();
-    int position = 0;
-    for (Contact contactItem : contacts) {
-      // Update/insert the contact first...
-      if (contactItem.getId() != null) {
-        contactItem = update(contactItem.getId(), contactItem);
-      } else {
-        contactItem = insert(contactItem);
-      }
-      // ... then create the link record
-      queryFactory.insert(applicationContact)
-          .columns(applicationContact.applicationId, applicationContact.contactId, applicationContact.position)
-          .values(applicationId, contactItem.getId(), position).execute();
-      position++;
+    // Update/insert the contacts first...
+    contacts.stream().forEach(c -> storeContact(c));
+    // ... then create the link records
+    SQLInsertClause insertClause = queryFactory.insert(applicationContact);
+    int pos = 0;
+    for (Contact contact : contacts) {
+      insertClause.columns(applicationContact.applicationId, applicationContact.contactId, applicationContact.position)
+          .values(applicationId, contact.getId(), pos++).addBatch();
     }
+    insertClause.execute();
     return findByApplication(applicationId);
+  }
+
+  private void storeContact(Contact contactItem) {
+    if (contactItem.getId() != null) {
+      contactItem = update(contactItem.getId(), contactItem);
+    } else {
+      contactItem = insert(contactItem);
+    }
   }
 
   @Transactional
@@ -127,4 +128,5 @@ public class ContactDao {
     }
     return findById(id).get();
   }
+
 }

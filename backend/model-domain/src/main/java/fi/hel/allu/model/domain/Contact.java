@@ -40,7 +40,7 @@ public class Contact {
   }
 
   /**
-   * In Finnish: name
+   * In Finnish: nimi
    */
   public String getName() {
     return name;
