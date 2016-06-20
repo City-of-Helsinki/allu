@@ -1,10 +1,10 @@
 package fi.hel.allu.model.domain;
 
-import java.time.ZonedDateTime;
+import fi.hel.allu.common.types.ApplicationType;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
+import java.time.ZonedDateTime;
 /**
  * In Finnish: hakemus
  */
@@ -19,12 +19,14 @@ public class Application {
   @NotNull
   private Integer applicantId;
   private String status;
-  @NotBlank
-  private String type;
+  @NotNull
+  private ApplicationType type;
   @NotBlank
   private String name;
   private ZonedDateTime creationTime;
   private Integer locationId;
+  @NotNull
+  private Event event;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -95,11 +97,11 @@ public class Application {
   /**
    * in Finnish: Hakemuksen tyyppi
    */
-  public String getType() {
+  public ApplicationType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(ApplicationType type) {
     this.type = type;
   }
 
@@ -134,5 +136,16 @@ public class Application {
 
   public void setLocationId(Integer locationId) {
     this.locationId = locationId;
+  }
+
+  /**
+   * in Finnish: Tapahtuman tunniste
+   */
+  public Event getEvent() {
+    return event;
+  }
+
+  public void setEvent(Event event) {
+    this.event = event;
   }
 }

@@ -3,7 +3,7 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ApplicationListJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,40 +24,39 @@ public class ApplicationService {
   private CustomerService customerService;
   private ApplicantService applicantService;
   private ProjectService projectService;
+  private ApplicationMapper applicationMapper;
 
   @Autowired
-  public void ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
-      locationService, CustomerService customerService, ApplicantService applicantService, ProjectService projectService) {
+  ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
+      locationService, CustomerService customerService, ApplicantService applicantService, ProjectService projectService,
+                                 ApplicationMapper applicationMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
     this.customerService = customerService;
     this.applicantService = applicantService;
     this.projectService = projectService;
+    this.applicationMapper = applicationMapper;
   }
 
 
   /**
    * Create applications by calling backend service.
    *
-   * @param applications Transfer object that contains list of applications that are going to be created
+   * @param applicationJson Application that are going to be created
    * @return Transfer object that contains list of created applications and their identifiers
    */
-  public ApplicationListJson createApplication(ApplicationListJson applications) {
+  public ApplicationJson createApplication(ApplicationJson applicationJson) {
+    applicationJson.setCustomer(customerService.createCustomer(applicationJson.getCustomer()));
+    applicationJson.setProject(projectService.createProject(applicationJson.getProject()));
+    applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
+    applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
 
-    for (ApplicationJson applicationJson : applications.getApplicationList()) {
-      applicationJson.setCustomer(customerService.createCustomer(applicationJson.getCustomer()));
-      applicationJson.setProject(projectService.createProject(applicationJson.getProject()));
-      applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
-      applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
-
-      Application applicationModel = restTemplate.postForObject(applicationProperties
-              .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
-          createApplicationModel(applicationJson), Application.class);
-
-      applicationJson.setId(applicationModel.getId());
-    }
-    return applications;
+    Application applicationModel = restTemplate.postForObject(applicationProperties
+            .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
+        applicationMapper.createApplicationModel(applicationJson), Application.class);
+    applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
+    return applicationJson;
   }
 
   /**
@@ -73,8 +71,8 @@ public class ApplicationService {
     projectService.updateProject(applicationJson.getProject());
     locationService.updateLocation(applicationJson.getLocation());
 
-    restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), createApplicationModel
-        (applicationJson), applicationId);
+    restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), applicationMapper
+        .createApplicationModel(applicationJson), applicationId);
     return applicationJson;
   }
 
@@ -109,42 +107,15 @@ public class ApplicationService {
 
   private ApplicationJson getApplication(Application applicationModel) {
     ApplicationJson applicationJson = new ApplicationJson();
-    mapApplicationToJson(applicationJson, applicationModel);
+    applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
     applicationJson.setCustomer(customerService.findCustomerById(applicationModel.getCustomerId()));
     applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
+
     if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
     }
     return applicationJson;
-  }
-
-  private Application createApplicationModel(ApplicationJson applicationJson) {
-    Application applicationDomain = new fi.hel.allu.model.domain.Application();
-    if (applicationJson.getId() != null) {
-      applicationDomain.setId(applicationJson.getId());
-    }
-    applicationDomain.setName(applicationJson.getName());
-    applicationDomain.setProjectId(applicationJson.getProject().getId());
-    applicationDomain.setCreationTime(ZonedDateTime.now());
-    applicationDomain.setCustomerId(applicationJson.getCustomer().getId());
-    applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
-    applicationDomain.setHandler(applicationJson.getHandler());
-    applicationDomain.setType(applicationJson.getType());
-    applicationDomain.setStatus(applicationJson.getStatus());
-    if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null) {
-      applicationDomain.setLocationId(applicationJson.getLocation().getId());
-    }
-    return applicationDomain;
-  }
-
-  private void mapApplicationToJson(ApplicationJson applicationJson, Application application) {
-    applicationJson.setId(application.getId());
-    applicationJson.setStatus(application.getStatus());
-    applicationJson.setType(application.getType());
-    applicationJson.setHandler(application.getHandler());
-    applicationJson.setCreationTime(application.getCreationTime());
-    applicationJson.setName(application.getName());
   }
 }
 

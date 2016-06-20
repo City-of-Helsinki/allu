@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.domain;
 
+import fi.hel.allu.common.types.ApplicationType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -20,8 +21,8 @@ public class ApplicationJson {
   @Valid
   private CustomerJson customer;
   private String status;
-  @NotBlank(message = "{application.type}")
-  private String type;
+  @NotNull(message = "{application.type}")
+  private ApplicationType type;
   @NotBlank(message = "{application.name}")
   private String name;
   private ZonedDateTime creationTime;
@@ -32,6 +33,9 @@ public class ApplicationJson {
   private List<ContactJson> contactList;
   @Valid
   private LocationJson location;
+  @NotNull(message = "{application.event}")
+  @Valid
+  private EventJson event;
 
   /**
    * in Finnish: Hakemuksen toimeksiantaja
@@ -91,11 +95,11 @@ public class ApplicationJson {
   /**
    * in Finnish: Hakemuksen tyyppi
    */
-  public String getType() {
+  public ApplicationType getType() {
     return type;
   }
 
-  public void setType(String type) {
+  public void setType(ApplicationType type) {
     this.type = type;
   }
 
@@ -152,5 +156,16 @@ public class ApplicationJson {
 
   public void setLocation(LocationJson location) {
     this.location = location;
+  }
+
+  /**
+   * in Finnish: Tapahtuma
+   */
+  public EventJson getEvent() {
+    return event;
+  }
+
+  public void setEvent(EventJson event) {
+    this.event = event;
   }
 }

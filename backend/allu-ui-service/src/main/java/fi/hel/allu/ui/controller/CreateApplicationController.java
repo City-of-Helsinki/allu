@@ -2,7 +2,6 @@ package fi.hel.allu.ui.controller;
 
 
 import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ApplicationListJson;
 import fi.hel.allu.ui.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,8 +20,8 @@ public class CreateApplicationController {
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
-  public ResponseEntity<ApplicationListJson> create(@Valid @RequestBody ApplicationListJson applicationListJson) {
-    return new ResponseEntity<>(applicationService.createApplication(applicationListJson), HttpStatus.OK);
+  public ResponseEntity<ApplicationJson> create(@Valid @RequestBody ApplicationJson applicationJson) {
+    return new ResponseEntity<>(applicationService.createApplication(applicationJson), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)

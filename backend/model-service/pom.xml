@@ -172,6 +172,16 @@
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToCustomerType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
+                            <column>event</column>
+                            <type>fi.hel.allu.model.querydsl.StringToEvent</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>
