@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.validator.ValidList;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.domain.Contact;
 
@@ -26,6 +27,13 @@ public class ContactController {
   @Autowired
   private ContactDao contactDao;
 
+  /**
+   * Find contact item by id
+   *
+   * @param id
+   *          The id of the contact item
+   * @return The contents of requested contact item
+   */
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Contact> find(@PathVariable int id) {
     Optional<Contact> contact = contactDao.findById(id);
@@ -34,23 +42,102 @@ public class ContactController {
     return new ResponseEntity<>(contactValue, HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<Contact>> findByOrganization(
-      @RequestParam(value = "organizationId") final int organizationId) {
-    List<Contact> contacts = contactDao.findByOrganization(organizationId);
-    return new ResponseEntity<>(contacts, HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Contact> update(@PathVariable int id, @Valid @RequestBody(required = true) Contact contact) {
-    return new ResponseEntity<>(contactDao.update(id, contact), HttpStatus.OK);
-  }
-
+  /**
+   * Insert contact item
+   *
+   * @param contact
+   *          The contents of the contact item
+   * @return The inserted contact item
+   */
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Contact> insert(@Valid @RequestBody(required = true) Contact contact) {
     if (contact.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
     return new ResponseEntity<>(contactDao.insert(contact), HttpStatus.OK);
+  }
+
+  /**
+   * Update a contact item
+   *
+   * @param id
+   *          The ID of the contact item to update
+   * @param contact
+   *          The new contents of the contact item
+   * @return The contact item after insertion
+   */
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  public ResponseEntity<Contact> update(@PathVariable int id, @Valid @RequestBody(required = true) Contact contact) {
+    return new ResponseEntity<>(contactDao.update(id, contact), HttpStatus.OK);
+  }
+
+  /**
+   * Get all contacts for an organization
+   *
+   * @param organizationId
+   *          The ID of the organization
+   * @return All contact items for the given organization
+   */
+  @RequestMapping(method = RequestMethod.GET, params = "organizationId")
+  public ResponseEntity<List<Contact>> findByOrganization(
+      @RequestParam(value = "organizationId") final int organizationId) {
+    List<Contact> contacts = contactDao.findByOrganization(organizationId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  }
+
+  /**
+   * Get the contact list for an application
+   *
+   * @param applicationId
+   *          The application's ID
+   * @return List of the application's contacts in preference order
+   */
+  @RequestMapping(method = RequestMethod.GET, params = "applicationId")
+  public ResponseEntity<List<Contact>> findByApplication(
+      @RequestParam(value = "applicationId") final int applicationId) {
+    List<Contact> contacts = contactDao.findByApplication(applicationId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  }
+
+  /**
+   * Set application's contact list
+   *
+   * @param applicationId
+   *          The application's ID
+   * @param contacts
+   *          List of contacts in preference order
+   * @return The application's contact list after the insert/update
+   */
+  @RequestMapping(method = RequestMethod.PUT, params = "applicationId")
+  public ResponseEntity<List<Contact>> setApplicationContacts(
+      @RequestParam(value = "applicationId") final int applicationId, @Valid @RequestBody ValidList<Contact> contacts) {
+    return new ResponseEntity<>(contactDao.setApplicationContacts(applicationId, contacts), HttpStatus.OK);
+  }
+  /**
+   * Get project's contact list
+   *
+   * @param projectId
+   *          The project's ID
+   * @return List of contacts in preference order
+   */
+  @RequestMapping(method = RequestMethod.GET, params = "projectId")
+  public ResponseEntity<List<Contact>> findByProject(@RequestParam(value = "projectId") final int projectId) {
+    List<Contact> contacts = contactDao.findByProject(projectId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  }
+
+  /**
+   * Set project's contact list
+   *
+   * @param projectId
+   *          The project's ID
+   * @param contacts
+   *          List of contacts in the preference order
+   * @return The project's contact list after the operation
+   */
+  @RequestMapping(method = RequestMethod.PUT, params = "projectId")
+  public ResponseEntity<List<Contact>> setProjectContacts(@RequestParam(value = "projectId") final int projectId,
+      @Valid @RequestBody ValidList<Contact> contacts) {
+    return new ResponseEntity<>(contactDao.setProjectContacts(projectId, contacts), HttpStatus.OK);
   }
 }

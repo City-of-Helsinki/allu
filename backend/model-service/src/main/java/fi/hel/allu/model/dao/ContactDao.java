@@ -1,22 +1,34 @@
 package fi.hel.allu.model.dao;
 
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplicationContact.applicationContact;
 import static fi.hel.allu.QContact.contact;
+import static fi.hel.allu.QProjectContact.projectContact;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLBindings;
+import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.DefaultMapper;
+import com.querydsl.sql.dml.SQLInsertClause;
+import com.querydsl.sql.dml.SQLUpdateClause;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Contact;
 
 public class ContactDao {
+
+  private static final Logger logger = LoggerFactory.getLogger(ContactDao.class);
+
   @Autowired
   private SQLQueryFactory queryFactory;
 
@@ -33,6 +45,66 @@ public class ContactDao {
     return queryFactory.select(contactBean).from(contact).where(contact.organizationId.eq(organizationId)).fetch();
   }
 
+  @Transactional(readOnly = true)
+  public List<Contact> findByApplication(int applicationId) {
+    SQLQuery<Contact> query = queryFactory.select(contactBean).from(contact).innerJoin(applicationContact)
+        .on(contact.id.eq(applicationContact.contactId)).where(applicationContact.applicationId.eq(applicationId))
+        .orderBy(applicationContact.position.asc());
+    logger.debug(String.format("Executing query \"%s\"", query.getSQL().getSQL()));
+    return query.fetch();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Contact> findByProject(int projectId) {
+    SQLQuery<Contact> query = queryFactory.select(contactBean).from(contact).innerJoin(projectContact)
+        .on(contact.id.eq(projectContact.contactId)).where(projectContact.projectId.eq(projectId))
+        .orderBy(projectContact.position.asc());
+    logger.debug(String.format("Executing query \"%s\"", query.getSQL().getSQL()));
+    return query.fetch();
+  }
+
+  @Transactional
+  public List<Contact> setProjectContacts(int projectId, List<Contact> contacts) {
+    // remove old contact links, then add new ones.
+    queryFactory.delete(projectContact).where(projectContact.projectId.eq(projectId)).execute();
+    // Update/insert the contacts first...
+    contacts.stream().forEach(c -> storeContact(c));
+    // ... then create the link records
+    SQLInsertClause insertClause = queryFactory.insert(projectContact);
+    int pos = 0;
+    for (Contact contact : contacts) {
+      insertClause.columns(projectContact.projectId, projectContact.contactId, projectContact.position)
+          .values(projectId, contact.getId(), pos++).addBatch();
+    }
+    insertClause.execute();
+    return findByProject(projectId);
+  }
+
+  @Transactional
+  public List<Contact> setApplicationContacts(int applicationId, List<Contact> contacts) {
+    // remove old contact links, then add new ones.
+    queryFactory.delete(applicationContact).where(applicationContact.applicationId.eq(applicationId)).execute();
+    // Update/insert the contacts first...
+    contacts.stream().forEach(c -> storeContact(c));
+    // ... then create the link records
+    SQLInsertClause insertClause = queryFactory.insert(applicationContact);
+    int pos = 0;
+    for (Contact contact : contacts) {
+      insertClause.columns(applicationContact.applicationId, applicationContact.contactId, applicationContact.position)
+          .values(applicationId, contact.getId(), pos++).addBatch();
+    }
+    insertClause.execute();
+    return findByApplication(applicationId);
+  }
+
+  private void storeContact(Contact contactItem) {
+    if (contactItem.getId() != null) {
+      contactItem = update(contactItem.getId(), contactItem);
+    } else {
+      contactItem = insert(contactItem);
+    }
+  }
+
   @Transactional
   public Contact insert(Contact contactData) {
     Integer id = queryFactory.insert(contact).populate(contactData).executeWithKey(contact.id);
@@ -45,10 +117,16 @@ public class ContactDao {
   @Transactional
   public Contact update(int id, Contact contactData) {
     contactData.setId(id);
-    long changed = queryFactory.update(contact).populate(contactData).where(contact.id.eq(id)).execute();
+    SQLUpdateClause query = queryFactory.update(contact).populate(contactData, DefaultMapper.WITH_NULL_BINDINGS)
+        .where(contact.id.eq(id));
+    for (SQLBindings sql : query.getSQL()) {
+      logger.debug(sql.getSQL());
+    }
+    long changed = query.execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
     return findById(id).get();
   }
+
 }

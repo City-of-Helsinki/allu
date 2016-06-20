@@ -89,7 +89,8 @@ public class WebTestCommon {
   }
 
   private void deleteAllData() throws SQLException {
-    webTestSqlRunner.runSql(DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_APPLICANTS, DELETE_ALL_CUSTOMERS,
+    webTestSqlRunner.runSql(DELETE_ALL_APPLICATION_CONTACTS, DELETE_ALL_PROJECT_CONTACTS, DELETE_ALL_CONTACTS,
+        DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_APPLICANTS, DELETE_ALL_CUSTOMERS,
         DELETE_ALL_PERSONS,
         DELETE_ALL_LOCATIONS);
   }
@@ -107,4 +108,7 @@ public class WebTestCommon {
   private static final String DELETE_ALL_LOCATIONS = "delete from allu.location";
   private static final String DELETE_ALL_APPLICANTS = "delete from allu.applicant";
   private static final String DELETE_ALL_CUSTOMERS = "delete from allu.customer";
+  private static final String DELETE_ALL_CONTACTS = "delete from allu.contact";
+  private static final String DELETE_ALL_PROJECT_CONTACTS = "delete from allu.project_contact";
+  private static final String DELETE_ALL_APPLICATION_CONTACTS = "delete from allu.application_contact";
 }
