@@ -8,6 +8,7 @@ import {MapSearchComponent} from '../mapsearch/mapsearch.component';
 import {ApplicationComponent} from '../application/application.component';
 import {LocationComponent} from '../../component/location/location.component';
 import {WorkQueueComponent} from '../../component/workqueue/workqueue.component';
+import {SearchComponent} from '../../component/search/search.component';
 
 import {EventService} from '../../event/event.service';
 import {WorkqueueService} from '../../service/workqueue.service';
@@ -32,6 +33,7 @@ import {TaskManagerService} from '../../service/task/task-manager.service';
   { path: '/applications/...', as: 'Applications', component: ApplicationComponent },
   { path: '/workqueue', as: 'Workqueue', component: WorkQueueComponent },
   { path: '/location/:id', as: 'Location', component: LocationComponent },
+  { path: '/search', as: 'Search', component: SearchComponent },
   { path: '/login', as: 'Login', component: Login }
 ])
 export class AlluComponent {
