@@ -33,7 +33,12 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 export class SearchComponent implements EventListener, OnInit, OnDestroy {
   private results: Array<Application> = [];
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
-  private handlers: Array<string> = ['TestHandler', 'Toinen  Käsittelijä', 'Kolmas  Käsittelijä', 'Neljäs  Käsittelijä', 'Viides  Käsittelijä'];
+  private handlers: Array<string> = [
+    'TestHandler',
+    'Toinen  Käsittelijä',
+    'Kolmas  Käsittelijä',
+    'Neljäs  Käsittelijä',
+    'Viides  Käsittelijä'];
 
 
   constructor(private workqueueService: WorkqueueService, private eventService: EventService) {

@@ -35,7 +35,19 @@ export class Application {
     let contactPerson = new Person(undefined, undefined, contactPostalAddress, undefined, undefined, undefined);
     let contact = new Contact(undefined, contactPerson, undefined);
     return new
-      Application(undefined, undefined, undefined, customer, undefined, undefined, undefined, undefined, undefined, applicant, [contact], undefined);
+      Application(
+        undefined,
+        undefined,
+        undefined,
+        customer,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        undefined,
+        applicant,
+        [contact],
+        undefined);
   }
 
   public static preFilledApplication(): Application {
