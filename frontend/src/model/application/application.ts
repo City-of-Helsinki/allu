@@ -5,6 +5,8 @@ import {Customer} from '../common/customer';
 import {Person} from '../common/person';
 import {PostalAddress} from '../common/postal-address';
 import {Location} from '../common/location';
+import {ApplicationTypeData} from './type/application-type-data';
+import {OutdoorEvent} from './type/outdoor-event';
 
 export class Application {
 
@@ -16,6 +18,7 @@ export class Application {
     public status: string,
     public type: string,
     public name: string,
+    public event: ApplicationTypeData,
     public creationTime: Date,
     public applicant: Applicant,
     public contactList: Array<Contact>,
@@ -32,7 +35,7 @@ export class Application {
     let contactPerson = new Person(undefined, undefined, contactPostalAddress, undefined, undefined, undefined);
     let contact = new Contact(undefined, contactPerson, undefined);
     return new
-      Application(undefined, undefined, undefined, customer, undefined, undefined, undefined, undefined, applicant, [contact], undefined);
+      Application(undefined, undefined, undefined, customer, undefined, undefined, undefined, undefined, undefined, applicant, [contact], undefined);
   }
 
   public static preFilledApplication(): Application {
@@ -45,14 +48,23 @@ export class Application {
     let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
     let contactPerson = new Person(undefined, 'kontakti ihminen', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567', '030303-1234');
     let contact = new Contact(undefined, contactPerson, undefined);
+    let applicationTypeData = new OutdoorEvent('Nature',
+        'description',
+        'url',
+        'OutdoorEvent',
+        new Date(),
+        new Date('2016-12-18T10:24:06.565+03:00'),
+        100);
+
     return new Application(
       undefined,
       undefined,
       'TestHandler',
       customer,
       undefined,
-      'outdoorEvent',
+      'OutdoorEvent',
       'Testihakemus ' + Date.now(),
+      applicationTypeData,
       undefined,
       applicant,
       [contact],

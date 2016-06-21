@@ -12,6 +12,7 @@ export interface BackendApplication {
   status: string;
   type: string;
   name: string;
+  event: any;
   creationTime: string;
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;

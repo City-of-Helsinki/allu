@@ -5,6 +5,7 @@ import {ProjectMapper} from './project-mapper';
 import {ApplicantMapper} from './applicant-mapper';
 import {ContactMapper} from './contact-mapper';
 import {LocationMapper} from './location-mapper';
+import {ApplicationTypeDataMapper} from './application-type-data-mapper';
 
 export class ApplicationMapper {
 
@@ -17,6 +18,7 @@ export class ApplicationMapper {
       backendApplication.status,
       backendApplication.type,
       backendApplication.name,
+      ApplicationTypeDataMapper.mapBackend(backendApplication.event),
       new Date(backendApplication.creationTime),
       ApplicantMapper.mapBackend(backendApplication.applicant),
       (backendApplication.contactList) ? backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact)) : undefined,
@@ -33,6 +35,7 @@ export class ApplicationMapper {
       status: application.status,
       type: application.type,
       name: application.name,
+      event: ApplicationTypeDataMapper.mapFrontend(application.event),
       creationTime: (application.creationTime) ? application.creationTime.toISOString() : undefined,
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,

@@ -62,12 +62,12 @@ export class ApplicationService {
     return new Promise<Application>((resolve, reject) =>
       this.authHttp.post(
         ApplicationService.APPLICATIONS_URL,
-        JSON.stringify({ 'applicationList': [ApplicationMapper.mapFrontend(application)] }))
+        JSON.stringify(ApplicationMapper.mapFrontend(application)))
         .subscribe(
           data => { 
             console.log('ApplicationService.addApplication processing', data.json());
-            console.log('ApplicationService.addApplication map', data.json()[0]);
-            let appl = ApplicationMapper.mapBackend(data.json().applicationList[0]);
+            console.log('ApplicationService.addApplication map', data.json());
+            let appl = ApplicationMapper.mapBackend(data.json());
             console.log('Created application', appl);
             resolve(appl);
           },
