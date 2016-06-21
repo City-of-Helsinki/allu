@@ -1,10 +1,7 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {WorkqueueService} from '../../service/workqueue.service';
-import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-import { MdAnchor, MdButton } from '@angular2-material/button';
+import { MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
-import {MarkerComponent} from '../marker/marker.component';
-import {SELECT_DIRECTIVES} from 'ng2-select/ng2-select';
 import {MaterializeDirective} from 'angular2-materialize';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
@@ -12,11 +9,9 @@ import {EventListener} from '../../event/event-listener';
 import {EventService} from '../../event/event.service';
 import {Event} from '../../event/event';
 
-import {LatLng} from '../../model/location/latlng';
 import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {Application} from '../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
-import {TaskManagerService} from '../../service/task/task-manager.service';
 import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 
 
