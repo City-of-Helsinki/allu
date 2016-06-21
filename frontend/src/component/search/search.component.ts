@@ -67,13 +67,10 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
     }
   }
 
-  handlerFilter(value) {
+  handlerFilter(value: string) {
     let filter = new ApplicationLoadFilter();
     filter.handler = value;
     this.eventService.send(this, new ApplicationsLoadEvent(filter));
   }
 
-  jobClick(job: Application) {
-    this.eventService.send(this, new ApplicationSelectionEvent(job));
-  }
 }
