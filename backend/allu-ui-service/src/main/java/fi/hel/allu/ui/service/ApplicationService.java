@@ -1,9 +1,8 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.List;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.LocationQueryJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 @Service
 public class ApplicationService {
@@ -105,6 +108,27 @@ public class ApplicationService {
     return resultList;
   }
 
+  /**
+   * Find applications using given location query.
+   *
+   * @param query
+   *          the location query
+   * @return list of found applications with details
+   */
+  public List<ApplicationJson> findApplicationByLocation(LocationQueryJson query) {
+    List<ApplicationJson> resultList = new ArrayList<>();
+    LocationSearchCriteria lsc = new LocationSearchCriteria();
+    mapLocationQueryToSearchCriteria(query, lsc);
+    ResponseEntity<Application[]> applicationResult = restTemplate.postForEntity(
+        applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_LOCATION),
+        lsc,
+        Application[].class);
+    for (Application applicationModel : applicationResult.getBody()) {
+      resultList.add(getApplication(applicationModel));
+    }
+    return resultList;
+  }
+
   private ApplicationJson getApplication(Application applicationModel) {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
@@ -117,5 +141,10 @@ public class ApplicationService {
     }
     return applicationJson;
   }
+
+  private void mapLocationQueryToSearchCriteria(LocationQueryJson query, LocationSearchCriteria lsc) {
+    lsc.setIntersects(query.getIntesectingGeometry());
+  }
+
 }
 
