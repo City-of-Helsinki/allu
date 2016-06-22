@@ -191,7 +191,7 @@ public class ApplicationControllerTest {
     createLocationTestApplications();
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     lsc.setIntersects(bigArea);
-    ResultActions resultActions = wtc.perform(get("/applications/search"), lsc).andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
     Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(3, results.length);
   }

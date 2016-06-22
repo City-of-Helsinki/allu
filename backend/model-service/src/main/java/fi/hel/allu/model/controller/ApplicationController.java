@@ -46,7 +46,7 @@ public class ApplicationController {
     return new ResponseEntity<>(applications, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.GET)
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByLocation(@Valid @RequestBody LocationSearchCriteria lsc) {
     List<Application> applications = applicationDao.findIntersecting(lsc.getIntersects());
     return new ResponseEntity<>(applications, HttpStatus.OK);
