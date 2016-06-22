@@ -27,10 +27,14 @@ create table allu.customer (
 
 create table allu.location (
    id serial primary key,
-   geometry geometry(geometrycollection, 3879),
    street_address text,
    postal_code text,
    city text );
+
+create table allu.geometry (
+   id serial primary key,
+   geometry geometry(GEOMETRY, 3879),
+   location_id integer references allu.location(id) );
 
 create table allu.project (
     id serial primary key,

@@ -1,5 +1,8 @@
 package fi.hel.allu.model;
 
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,9 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.ZonedDateTime;
 import java.util.Calendar;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.model.dao.*;
-import fi.hel.allu.model.domain.*;
+import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryCollection;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +24,22 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.PersonDao;
+import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Event;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -43,6 +60,9 @@ public class ApplicationControllerTest {
 
   @Autowired
   CustomerDao customerDao;
+
+  @Autowired
+  LocationDao locationDao;
 
   @Before
   public void setup() throws Exception {
@@ -166,6 +186,15 @@ public class ApplicationControllerTest {
     wtc.perform(put("/applications/314159"), app).andExpect(status().isNotFound());
   }
 
+  @Test
+  public void testFindIntersecting() throws Exception {
+    createLocationTestApplications();
+    LocationSearchCriteria lsc = new LocationSearchCriteria();
+    lsc.setIntersects(bigArea);
+    ResultActions resultActions = wtc.perform(get("/applications/search"), lsc).andExpect(status().isOk());
+    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    assertEquals(3, results.length);
+  }
   // Create and prepare an application for insertion:
   // - Create dummy person and project to get valid ids
   // - Set some values for the application
@@ -228,6 +257,42 @@ public class ApplicationControllerTest {
     event.setNature("nature");
     //event.setType(ApplicationType.OutdoorEvent);
     return event;
+  }
+
+  private Integer addLocation(String streetAddress, Geometry geometry) {
+    Location location = new Location();
+    location.setGeometry(geometry);
+    location.setStreetAddress(streetAddress);
+    return locationDao.insert(location).getId();
+  }
+
+  private static Geometry bigArea = polygon(3879, ring(c(25490000, 6670000), c(25500000, 6670000), c(25500000, 6675000),
+      c(25490000, 6675000), c(25490000, 6670000)));
+
+  private static Geometry[] smallAreas = new Geometry[] {
+      // completely inside:
+      polygon(3879,
+          ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000))),
+      // partially inside:
+      polygon(3879,
+          ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
+      // completely outside:
+      polygon(3879,
+          ring(c(25480000, 6672000), c(25485000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
+      // completely inside again:
+      polygon(3879, ring(c(25495000, 6671000), c(25496000, 6671000), c(25495100, 6671500), c(25495000, 6671000)))
+  };
+
+  private void createLocationTestApplications() throws Exception {
+    // Create a test application for each of the small areas
+    for (int i = 0; i < smallAreas.length; ++i) {
+      GeometryCollection geometry = new GeometryCollection(new Geometry[] { smallAreas[i] });
+      String streetAddress = String.format("Small %d", i);
+      Integer locationId = addLocation(streetAddress, geometry);
+      Application app = prepareApplication(String.format("Small application %d", i), null);
+      app.setLocationId(locationId);
+      wtc.perform(post("/applications"), app).andExpect(status().isOk());
+    }
   }
 
 }

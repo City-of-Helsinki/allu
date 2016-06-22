@@ -2,15 +2,18 @@ package fi.hel.allu.model.dao;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QGeometry.geometry1;
 
 import java.util.List;
 import java.util.Optional;
 
+import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
@@ -38,6 +41,14 @@ public class ApplicationDao {
   @Transactional(readOnly = true)
   public List<Application> findByProject(int projectId) {
     return queryFactory.select(applicationBean).from(application).where(application.projectId.eq(projectId)).fetch();
+  }
+
+  @Transactional(readOnly = true)
+  public List<Application> findIntersecting(Geometry geometry) {
+    return queryFactory.select(applicationBean).from(application)
+        .where(application.locationId.in(
+            SQLExpressions.select(geometry1.locationId).from(geometry1).where(geometry1.geometry.intersects(geometry))))
+        .fetch();
   }
 
   @Transactional

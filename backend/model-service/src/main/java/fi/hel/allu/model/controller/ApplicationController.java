@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
 
 @RestController
 @RequestMapping("/applications")
@@ -42,6 +43,12 @@ public class ApplicationController {
   @RequestMapping(value = "/byproject/{projectId}", method = RequestMethod.GET)
   public ResponseEntity<List<Application>> findByProject(@PathVariable int projectId) {
     List<Application> applications = applicationDao.findByProject(projectId);
+    return new ResponseEntity<>(applications, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/search", method = RequestMethod.GET)
+  public ResponseEntity<List<Application>> findByLocation(@Valid @RequestBody LocationSearchCriteria lsc) {
+    List<Application> applications = applicationDao.findIntersecting(lsc.getIntersects());
     return new ResponseEntity<>(applications, HttpStatus.OK);
   }
 
