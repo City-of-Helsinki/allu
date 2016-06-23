@@ -1,11 +1,12 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
+
+import java.time.ZonedDateTime;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -13,9 +14,26 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.ZonedDateTime;
-
-import static org.geolatte.geom.builder.DSL.*;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.Organization;
+import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.CustomerJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.OrganizationJson;
+import fi.hel.allu.ui.domain.OutdoorEventJson;
+import fi.hel.allu.ui.domain.PersonJson;
+import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.ui.domain.ProjectJson;
 
 public abstract class MockServices {
   @Mock
@@ -85,6 +103,11 @@ public abstract class MockServices {
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Application[].class), Mockito.any
         (String.class)))
+        .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
+            createMockApplicationListResponse());
+
+    Mockito.when(restTemplate.postForEntity(Mockito.any(String.class), Mockito.anyObject(),
+        Mockito.eq(Application[].class)))
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
             createMockApplicationListResponse());
 

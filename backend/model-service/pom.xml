@@ -197,6 +197,11 @@
                         <artifactId>model-querydsl-support</artifactId>
                         <version>${project.parent.version}</version>
                     </dependency>
+                    <dependency>
+                        <groupId>fi.hel.allu</groupId>
+                        <artifactId>common</artifactId>
+                        <version>${project.parent.version}</version>
+                    </dependency>
                 </dependencies>
             </plugin>
             <plugin>

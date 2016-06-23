@@ -1,8 +1,21 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.ui.domain.*;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -13,14 +26,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.List;
-import java.util.Set;
-
-import static org.junit.Assert.*;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.CustomerJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.LocationQueryJson;
+import fi.hel.allu.ui.domain.OutdoorEventJson;
+import fi.hel.allu.ui.domain.PersonJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceTest extends MockServices {
@@ -159,6 +173,38 @@ public class ApplicationServiceTest extends MockServices {
   @Test
   public void testFindApplicationByHandler() {
     List<ApplicationJson> response = applicationService.findApplicationByHandler("222");
+
+    assertNotNull(response);
+    assertEquals(2, response.size());
+
+    assertNotNull(response.get(0).getCustomer());
+    assertNotNull(response.get(0).getProject());
+    assertNotNull(response.get(0).getApplicant());
+    assertNotNull(response.get(0).getLocation());
+    assertNotNull(response.get(0).getEvent());
+    assertEquals(100, response.get(0).getProject().getId().intValue());
+    assertEquals(101, response.get(0).getCustomer().getId().intValue());
+    assertEquals(102, response.get(0).getLocation().getId().intValue());
+    assertEquals(103, response.get(0).getApplicant().getId().intValue());
+    assertNull(response.get(0).getCustomer().getOrganization());
+    assertNull(response.get(0).getApplicant().getPerson());
+    assertNotNull(response.get(0).getApplicant().getOrganization());
+    assertNotNull(response.get(0).getCustomer().getPerson());
+    assertEquals(201, response.get(0).getApplicant().getOrganization().getId().intValue());
+    assertEquals(200, response.get(0).getCustomer().getPerson().getId().intValue());
+    assertNotNull(response.get(1));
+    assertNotNull(response.get(1).getCustomer());
+    assertNotNull(response.get(1).getProject());
+    assertNotNull(response.get(1).getApplicant());
+    assertNotNull(response.get(1).getLocation());
+    assertEquals("MockName2", response.get(1).getName());
+  }
+
+  @Test
+  public void testFindApplicationByLocation() {
+    LocationQueryJson query = new LocationQueryJson();
+    query.setIntesectingGeometry(polygon(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
+    List<ApplicationJson> response = applicationService.findApplicationByLocation(query);
 
     assertNotNull(response);
     assertEquals(2, response.size());

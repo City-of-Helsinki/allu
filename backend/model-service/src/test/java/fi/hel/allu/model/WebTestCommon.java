@@ -92,7 +92,7 @@ public class WebTestCommon {
     webTestSqlRunner.runSql(DELETE_ALL_APPLICATION_CONTACTS, DELETE_ALL_PROJECT_CONTACTS, DELETE_ALL_CONTACTS,
         DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_APPLICANTS, DELETE_ALL_CUSTOMERS,
         DELETE_ALL_PERSONS,
-        DELETE_ALL_LOCATIONS);
+        DELETE_ALL_GEOMETRIES, DELETE_ALL_LOCATIONS);
   }
 
   @SuppressWarnings("unchecked")
@@ -105,6 +105,7 @@ public class WebTestCommon {
   private static final String DELETE_ALL_APPLICATIONS = "delete from allu.application";
   private static final String DELETE_ALL_PERSONS = "delete from allu.person";
   private static final String DELETE_ALL_PROJECTS = "delete from allu.project";
+  private static final String DELETE_ALL_GEOMETRIES = "delete from allu.geometry";
   private static final String DELETE_ALL_LOCATIONS = "delete from allu.location";
   private static final String DELETE_ALL_APPLICANTS = "delete from allu.applicant";
   private static final String DELETE_ALL_CUSTOMERS = "delete from allu.customer";
