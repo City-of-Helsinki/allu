@@ -6,6 +6,31 @@
   // .md-input-underline {
   //   border-top: 1px solid rgba(2, 150, 136, 1);
   // }
+
+  md-card {
+    margin: 10px;
+    padding: 12px;
+  }
+
+  .input-field label {
+    top: .5rem;
+  }
+
+  input[type=text] {
+    height: 2rem;
+  }
+
+  .no-padding-right {
+    padding-right: 0;
+  }
+
+  .no-padding-left {
+    padding-left: 0;
+  }
+}
+
+md-card-title {
+  padding: 0 .75rem;
 }
 
 workqueue {

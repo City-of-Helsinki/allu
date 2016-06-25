@@ -2,13 +2,14 @@ import {ApplicationTypeData} from './application-type-data';
 
 export class OutdoorEvent extends ApplicationTypeData {
   constructor(
-    public nature: string,
+    public type: string,
     public description: string,
     public url: string,
-    public type: string,
-    public startTime: Date,
-    public endTime: Date,
-    public audience: number) {
+    public startDate: Date,
+    public endDate: Date,
+    public timeExceptions: string,
+    public attendees: number,
+    public entryFee: number) {
       super();
     }
 }
