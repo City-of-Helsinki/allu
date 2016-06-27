@@ -1,42 +1,27 @@
 import {Injectable} from '@angular/core';
-import {Map} from 'leaflet';
+import 'leaflet';
+
+import 'proj4leaflet';
 
 @Injectable()
 export class MapService {
-    map: Map;
-    baseMaps: any;
 
-    constructor() {
-        this.baseMaps = {
-          CartoDB: new L.TileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
-            attribution: `
-              &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>
-              &copy; <a href="http://cartodb.com/attributions">CartoDB</a>
-            `
-          }),
-            OpenStreetMap: new L.TileLayer('http://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
-              attribution: `
-                &copy;
-                <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>,
-                Tiles courtesy of
-                <a href="http://hot.openstreetmap.org/" target="_blank">Humanitarian OpenStreetMap Team</a>
+  private epsg3879: L.ICRS;
 
-              `
-            }),
-            Esri: new L.TileLayer('http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
-              attribution: `
-              Tiles &copy; Esri &mdash; Esri, DeLorme, NAVTEQ, TomTom, Intermap,
-              iPC, USGS, FAO, NPS, NRCAN, GeoBase, Kadaster NL, Ordnance Survey,
-              Esri Japan, METI, Esri China (Hong Kong), and the GIS User Community
-              `
-            })
-        };
-    }
+  constructor() {
+    this.epsg3879 = this.createCrsEPSG3879();
+  }
 
-    disableMouseEvent(tag: string) {
-        let html = L.DomUtil.get(tag);
+  public getEPSG3879(): L.ICRS {
+    return this.epsg3879;
+  }
 
-        L.DomEvent.disableClickPropagation(html);
-        L.DomEvent.on(html, 'mousewheel', L.DomEvent.stopPropagation);
-    };
+  private createCrsEPSG3879(): L.ICRS {
+    let crsName = 'EPSG:3879';
+    let bounds = [25440000, 6630000, 25571072, 6761072];
+    let projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
+    return new L.Proj.CRS.TMS(crsName, projDef, bounds, {
+      resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
+    });
+  }
 }

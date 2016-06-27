@@ -2,6 +2,9 @@
 - name: install Apache using Ubuntu repository
   apt: name=apache2 state=present
 
+- name: install Apache mod WSGI for serving MapProxy
+  apt: name=libapache2-mod-wsgi state=present
+
 - name: allow HTTP connections
   ufw: rule=allow port=80
 
@@ -25,6 +28,11 @@
 
 - name: enable module headers
   apache2_module: state=present name=headers
+  notify:
+    - restart apache2
+
+- name: enable module wsgi, which is used for serving MapProxy
+  apache2_module: state=present name=wsgi
   notify:
     - restart apache2
 

@@ -3,7 +3,6 @@ import {WorkqueueService} from '../../service/workqueue.service';
 import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
-import {MarkerComponent} from '../marker/marker.component';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
 import {EventListener} from '../../event/event-listener';
@@ -27,7 +26,6 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 })
 
 export class LocationSearchComponent implements EventListener, OnInit, OnDestroy {
-  marker: MarkerComponent;
 
   private applicationsQueue: Array<Application> = [];
 

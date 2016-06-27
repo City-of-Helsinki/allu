@@ -1,0 +1,69 @@
+- name: install MapProxy dependencies using Ubuntu repository
+  apt: name={{ item }} state=present
+  with_items:
+    - python-pip
+    - python-imaging
+    - python-yaml
+    - libproj9
+    - build-essential
+    - python-dev
+    - libjpeg-dev
+    - zlib1g-dev
+    - libfreetype6-dev
+
+# - name: install virtualenv for MapProxy using Ubuntu repository
+#  apt: name=virtualenv state=present
+
+- name: create mapproxy directory under allu home
+  file: path=/home/allu/mapproxy
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: create mapproxy configuration directory
+  file: path=/home/allu/mapproxy/configuration
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: create mapproxy python directory
+  file: path=/home/allu/mapproxy/python
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: create mapproxy logging directory
+  file: path=/home/allu/mapproxy/logs
+        state=directory
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: install Pillow under mapproxy virtualenv
+  pip: name=Pillow
+# virtualenv=/home/allu/mapproxy/virtualenv
+
+- name: install mapproxy under virtualenv
+  pip: name=MapProxy
+# virtualenv=/home/allu/mapproxy/virtualenv
+
+- name: add maproxy configuration
+  template: src=mapproxy.yaml dest=/home/allu/mapproxy/configuration/mapproxy.yaml
+            owner=allu
+            group=allu
+            mode="u=rwx,g=rx,o=rx"
+
+- name: add mapproxy python server configuration
+  copy: src=config.py dest=/home/allu/mapproxy/python/config.py
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: add mapproxy logging configuration
+  copy: src=log.ini dest=/home/allu/mapproxy/python/log.ini
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"

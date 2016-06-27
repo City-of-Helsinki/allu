@@ -1,14 +1,10 @@
 import {Component} from '@angular/core';
-import {FORM_DIRECTIVES} from '@angular/common';
 import {RouteParams} from '@angular/router-deprecated';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
-import {MdAnchor, MdButton} from '@angular2-material/button';
+import {MdButton} from '@angular2-material/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {MdToolbar} from '@angular2-material/toolbar';
-import {MdRadioButton} from '@angular2-material/radio';
-import {MdRadioDispatcher} from '@angular2-material/radio/radio_dispatcher';
-import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {MapComponent} from '../map/map.component';
 
@@ -23,9 +19,11 @@ import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 import {ErrorEvent} from '../../event/error-event';
 import {Location} from '../../model/common/location';
-import featureGroup = L.featureGroup;
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
 
+import 'proj4leaflet';
+import 'leaflet';
+import {MapService} from '../../service/map.service';
 
 enum HasChanges {
   NO,
@@ -57,13 +55,17 @@ export class LocationComponent implements EventListener {
   private enableSave: boolean = false;
   private hasChanges: HasChanges = HasChanges.NO;
 
-  constructor(private eventService: EventService, params: RouteParams) {
+  constructor(private eventService: EventService, private mapService: MapService, params: RouteParams) {
     this.id = Number(params.get('id'));
   };
 
   public handle(event: Event): void {
     if (event instanceof ShapeAnnounceEvent) {
       console.log('LocationComponent.handle ShapeAnnounceEvent', event.shape.features);
+      let singleCoordinate = event.shape.features[0].geometry.coordinates[0][0];
+      console.log('Geometry coordinate', singleCoordinate);
+      let myProj = this.mapService.getEPSG3879();
+      console.log('projected coordinate', myProj.projection.project(new L.LatLng(singleCoordinate[1], singleCoordinate[0])));
       let saEvent = <ShapeAnnounceEvent>event;
       this.features = saEvent.shape;
       this.hasChanges = HasChanges.YES;
