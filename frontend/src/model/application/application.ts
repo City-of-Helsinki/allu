@@ -79,7 +79,7 @@ export class Application {
     let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
     let contactPerson = new Person(undefined, 'kontakti ihminen', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567', '030303-1234');
     let contact = new Contact(undefined, contactPerson, undefined);
-    let billingDetail = new BillingDetail('Invoice', 'Finland', new PostalAddress('Laskutie', '00100', 'Helsinki'), 757575, 575757);
+    let billingDetail = new BillingDetail('Invoice', 'Finland', new PostalAddress('Laskutie', '00100', 'Helsinki'), '757575', '575757');
     let applicationTypeData = new OutdoorEvent(
       'Promootio',
       'Tapahtuman tavoitteena on saada ulkoilmatapahtumat tutuksi ihmisille.',
