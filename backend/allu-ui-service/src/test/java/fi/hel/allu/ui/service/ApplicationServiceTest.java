@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import fi.hel.allu.ui.domain.ApplicantJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.CustomerJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
@@ -51,6 +52,8 @@ public class ApplicationServiceTest extends MockServices {
   protected ApplicantService applicantService;
   @Autowired
   protected ApplicationMapper applicationMapper;
+  @Mock
+  protected ContactService contactService;
 
   private ApplicationService applicationService;
 
@@ -64,7 +67,7 @@ public class ApplicationServiceTest extends MockServices {
   public void setUp() {
     applicationMapper = new ApplicationMapper();
     applicationService = new ApplicationService(props, restTemplate, locationService, customerService, applicantService, projectService,
-        applicationMapper);
+        applicationMapper, contactService);
 
     initSaveMocks();
     initSearchMocks();
@@ -89,7 +92,8 @@ public class ApplicationServiceTest extends MockServices {
         createCustomerJson(101, 200));
     Mockito.when(applicantService.findApplicantById(Mockito.anyInt())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
-
+    Mockito.when(contactService.findContactsForApplication(Mockito.anyInt()))
+        .thenAnswer((Answer<List<ContactJson>>) invocation -> createContactList());
   }
 
   @Test

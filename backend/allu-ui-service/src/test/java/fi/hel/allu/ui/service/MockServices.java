@@ -6,6 +6,8 @@ import static org.geolatte.geom.builder.DSL.geometrycollection;
 import static org.geolatte.geom.builder.DSL.ring;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -27,6 +29,7 @@ import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicantJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.CustomerJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.domain.OrganizationJson;
@@ -192,6 +195,16 @@ public abstract class MockServices {
     return outdoorEventJson;
   }
 
+  public List<ContactJson> createContactList() {
+    List<ContactJson> result = new ArrayList<>();
+    for (int i = 0; i < 5; ++i) {
+      ContactJson contact = new ContactJson();
+      contact.setName(String.format("Contact Name %d", i));
+      contact.setId(i + 10);
+      result.add(contact);
+    }
+    return result;
+  }
   public ApplicationJson createMockApplicationJson(Integer id) {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setId(id);

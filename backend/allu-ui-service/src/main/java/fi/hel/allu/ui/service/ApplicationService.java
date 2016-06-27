@@ -14,6 +14,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 
@@ -28,11 +29,12 @@ public class ApplicationService {
   private ApplicantService applicantService;
   private ProjectService projectService;
   private ApplicationMapper applicationMapper;
+  private ContactService contactService;
 
   @Autowired
   ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
       locationService, CustomerService customerService, ApplicantService applicantService, ProjectService projectService,
-                                 ApplicationMapper applicationMapper) {
+      ApplicationMapper applicationMapper, ContactService contactService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -40,6 +42,7 @@ public class ApplicationService {
     this.applicantService = applicantService;
     this.projectService = projectService;
     this.applicationMapper = applicationMapper;
+    this.contactService = contactService;
   }
 
 
@@ -54,11 +57,12 @@ public class ApplicationService {
     applicationJson.setProject(projectService.createProject(applicationJson.getProject()));
     applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
     applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
-
+    List<ContactJson> contacts = applicationJson.getContactList();
     Application applicationModel = restTemplate.postForObject(applicationProperties
             .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
         applicationMapper.createApplicationModel(applicationJson), Application.class);
     applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
+    applicationJson.setContactList(contactService.setContactsForApplication(applicationJson.getId(), contacts));
     return applicationJson;
   }
 
@@ -73,9 +77,11 @@ public class ApplicationService {
     applicantService.updateApplicant(applicationJson.getApplicant());
     projectService.updateProject(applicationJson.getProject());
     locationService.updateLocation(applicationJson.getLocation());
-
+    List<ContactJson> contacts = contactService.setContactsForApplication(applicationId,
+        applicationJson.getContactList());
     restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), applicationMapper
         .createApplicationModel(applicationJson), applicationId);
+    applicationJson.setContactList(contacts);
     return applicationJson;
   }
 
@@ -135,6 +141,7 @@ public class ApplicationService {
     applicationJson.setCustomer(customerService.findCustomerById(applicationModel.getCustomerId()));
     applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
+    applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));
 
     if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
