@@ -19,5 +19,5 @@ declare namespace L {
     CRS: Proj.CRSStatic;
   }
 
-  export var Proj: ProjStatic;
+  /* tslint:disable */ export var Proj: ProjStatic;
 }

@@ -28,7 +28,11 @@ export class MapComponent implements EventListener {
   private map: Map;
   private mapLayers: any;
 
-  constructor(private mapService: MapService, private geocoder: GeocodingService, private workqueue: WorkqueueService, private eventService: EventService) {
+  constructor(
+    private mapService: MapService,
+    private geocoder: GeocodingService,
+    private workqueue: WorkqueueService,
+    private eventService: EventService) {
     this.eventService.subscribe(this);
     this.mapService = mapService;
     this.geocoder = geocoder;
