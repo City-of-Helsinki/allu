@@ -38,17 +38,17 @@ import {EventService} from '../../event/event.service';
 export class ApplicationComponent implements EventListener {
   public application: any;
   public workqueue: WorkqueueService;
-  public applications: any;
+  public applicationsTypeList: any;
 
   constructor(public router: Router, private eventService: EventService, workqueue: WorkqueueService) {
     this.workqueue = workqueue;
-    this.applications = [{
+    this.applicationsTypeList = [{
       name: 'Muu',
-      id: 'Type'
+      value: 'Type'
     },
     {
       name: 'Ulkoilmatapahtuma',
-      id: 'OutdoorEventComponent'
+      value: 'OutdoorEventComponent'
     }];
   };
 

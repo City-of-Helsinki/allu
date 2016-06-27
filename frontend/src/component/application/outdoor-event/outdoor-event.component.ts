@@ -43,10 +43,44 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
 
 export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private application: Application;
+  private events: Array<any>;
+  private applicantType: Array<string>;
+  private countries: Array<any>;
+  private billingTypes: Array<any>;
+  private noPriceReasons: Array<any>;
+
 
   constructor(private eventService: EventService) {
     // this.application = Application.emptyApplication();
     this.application = Application.preFilledApplication();
+    this.events = [
+      {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
+      {name: 'Muu', value: 'Other'}
+    ];
+    this.applicantType = ['Yritys', 'Organisaatio', 'Ihminen'];
+    this.countries = [
+      {name: 'Suomi', value: 'Finland'},
+      {name: 'Ruotsi', value: 'Sweden'},
+      {name: 'Venäjä', value: 'Russia'},
+      {name: 'Viro', value: 'Estonia'}
+    ];
+    this.billingTypes = [
+      {name: 'Käteinen', value: 'Cash'},
+      {name: 'Lasku', value: 'Invoice'},
+      {name: 'Suoravelotus', value: 'BankTransaction'}
+    ];
+    this.noPriceReasons = [
+      {name: 'Hyväntekeväisyys- tai kansalaisjärjestö tai oppilaistoksen tapahtuma', value: 'Charity'},
+      {name: 'Taide- tai kulttuuritapahtuma', value: 'ArtOrCulture'},
+      {name: 'Avoin ja maksuton urheilutapahtuma', value: 'NoFeeSporting'},
+      {name: 'Asukas- tai kaupunginosayhdistyksen tapahtuma', value: 'ResidentOrCity'},
+      {name: 'Aatteellinen, hengellinen tai yhteiskunnallinen tapahtuma', value: 'Spiritual'},
+      {name: 'Kaupunki isäntäjä tai järjestäjäkumppanina', value: 'City'},
+      {name: 'Tilataideteos', value: 'Art'},
+      {name: 'Nuorisojärjestön tapahtuma', value: 'Youth'},
+      {name: 'Yksityishenkilön järjestämä merkkipäiväjuhla tai vastaava', value: 'PrivateFunction'},
+      {name: 'Puolustus- tai poliisivoimien tapahtuma', value: 'DefenceOrPolice'}
+    ];
   };
 
   ngOnInit(): any {
@@ -65,6 +99,35 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     }
   }
 
+  eventTypeSelection(value: string) {
+    console.log('Tapahtuman tyypiksi on valittu: ', value);
+
+  }
+
+  applicantTypeSelection(value: string) {
+    console.log('Hakijan tyypiksi on valittu: ', value);
+    console.log(this.application);
+  }
+
+  applicantCountrySelection(value: string) {
+    console.log('Hakijan maaksi on valittu: ', value);
+  }
+
+  saveToRegistry(value: string) {
+    console.log('Hakijan maaksi on valittu: ', value);
+  }
+
+  newContact(value: string) {
+    console.log('Uudeksi yhteyshenkilöksi on valittu: ', value);
+  }
+
+  billingTypeSelection(value: string) {
+    console.log('Laskutustavaksi on valittu: ', value);
+  }
+
+  billingCountrySelection(value: string) {
+    console.log('Hakijan maaksi on valittu: ', value);
+  }
 
   save(application: any) {
     // Save application

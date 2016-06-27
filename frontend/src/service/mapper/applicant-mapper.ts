@@ -10,6 +10,7 @@ export class ApplicantMapper {
       new Applicant(
         backendApplicant.id,
         backendApplicant.type,
+        backendApplicant.representative,
         PersonMapper.mapBackend(backendApplicant.person),
         OrganizationMapper.mapBackend(backendApplicant.organization)) : undefined;
   }
@@ -18,6 +19,7 @@ export class ApplicantMapper {
     {
       id: applicant.id,
       type: applicant.type,
+      representative: applicant.representative,
       person: PersonMapper.mapFrontend(applicant.person),
       organization: OrganizationMapper.mapFrontend(applicant.organization)
     } : undefined;

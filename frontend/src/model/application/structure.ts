@@ -1,6 +1,7 @@
 export class Structure {
-  size: number;
-  description: string;
-  startDate: Date;
-  endDate: Date;
+ constructor(
+   public area: string,
+   public description: string,
+   public startDate: Date,
+   public endDate: Date) {}
 }

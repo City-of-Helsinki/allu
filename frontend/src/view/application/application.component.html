@@ -2,23 +2,22 @@
   <span>UUSI HAKEMUS</span>
 </md-toolbar>
 <div materialize class="row" style="background: whitesmoke; margin-bottom:0px;">
-  <div class="col m6" style="padding: 0 1.5rem">
+  <div class="col m6 no-padding-right">
     <md-card>
       <md-card-title>Hakemuksen tyyppi</md-card-title>
       <md-card-content>
         <md-input-container>
           <div class="row">
-            <div class="input-field col s12">
+            <div class="col s12">
               <select (change)="typeSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
                 <option value="" disabled selected>Valitse hakemuksen tyyppi</option>
-                <option *ngFor="let application of applications" [value]="application.id">{{application.name}}</option>
+                <option *ngFor="let applicationType of applicationsTypeList" [value]="applicationType.value">{{applicationType.name}}</option>
               </select>
-              <label>Hakemuksen tyyppi</label>
             </div>
           </div>
         </md-input-container>
       </md-card-content>
     </md-card>
   </div>
+  <router-outlet></router-outlet>
 </div>
-<router-outlet></router-outlet>
