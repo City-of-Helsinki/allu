@@ -1,6 +1,5 @@
 import {BackendContact} from '../backend-model/backend-contact';
 import {Contact} from '../../model/application/contact';
-import {PersonMapper} from './person-mapper';
 import {OrganizationMapper} from './organization-mapper';
 
 export class ContactMapper {

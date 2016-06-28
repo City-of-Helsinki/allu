@@ -29,10 +29,10 @@ export class Application {
 
   public static emptyApplication(): Application {
     let applicantPostalAddress = new PostalAddress(undefined, undefined, undefined);
-    let applicantPerson = new Person(undefined, undefined, applicantPostalAddress, undefined, undefined, undefined);
+    let applicantPerson = new Person(undefined, undefined, undefined, applicantPostalAddress, undefined, undefined);
     let applicant = new Applicant(undefined, 'Person', false, applicantPerson, undefined);
     let contactPostalAddress = new PostalAddress(undefined, undefined, undefined);
-    let contactPerson = new Person(undefined, undefined, contactPostalAddress, undefined, undefined, undefined);
+    let contactPerson = new Person(undefined, undefined, undefined, contactPostalAddress, undefined, undefined);
     let contact = new Contact(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
     let billingDetail = new BillingDetail(undefined, undefined, new PostalAddress(undefined, undefined, undefined), undefined, undefined);
     return new
@@ -54,11 +54,17 @@ export class Application {
 
   public static preFilledApplication(): Application {
     let applicantPostalAddress = new PostalAddress('Mikonkatu 15 B', '00200', 'Helsinki');
-    let applicantPerson = new Person(undefined, 'hakija ihminen', applicantPostalAddress, 'hakija@ihminen.fi', '0201234567', '020202-1234');
-    let applicantOrganization = new Organization(undefined, "Hakija Inc.", "123456-88", applicantPostalAddress, "hakijainc@hotmail.com", "112");
+    let applicantPerson = new Person(undefined, 'hakija ihminen', '020202-1234', applicantPostalAddress, 'hakija@ihminen.fi', '0201234567');
+    let applicantOrganization = new Organization(
+      undefined,
+      'Hakija Inc.',
+      '123456-88',
+      applicantPostalAddress,
+      'hakijainc@hotmail.com',
+      '112');
     let applicant = new Applicant(undefined, 'Company', true, undefined, applicantOrganization);
     let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
-    let contactPerson = new Person(undefined, 'kontakti ihminen', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567', '030303-1234');
+    let contactPerson = new Person(undefined, 'kontakti ihminen', '030303-1234', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567');
     let contact = new Contact(
       undefined,
       undefined,
