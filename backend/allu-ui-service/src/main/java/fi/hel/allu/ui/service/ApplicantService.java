@@ -1,8 +1,5 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
+
 @Service
 public class ApplicantService {
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(ApplicantService.class);
 
   private ApplicationProperties applicationProperties;
@@ -43,6 +45,7 @@ public class ApplicantService {
           applicantJson.setPerson(personService.createPerson(applicantJson.getPerson()));
           break;
         case Company:
+      case Association:
           applicantJson.setOrganization(organizationService.createOrganization(applicantJson.getOrganization()));
           break;
       }
@@ -66,6 +69,7 @@ public class ApplicantService {
           personService.updatePerson(applicantJson.getPerson());
           break;
         case Company:
+      case Association:
           organizationService.updateOrganization(applicantJson.getOrganization());
           break;
       }
@@ -85,6 +89,7 @@ public class ApplicantService {
         applicantJson.setPerson(personService.findPersonById(applicantResult.getBody().getPersonId()));
         break;
       case Company:
+    case Association:
         applicantJson.setOrganization(organizationService.findOrganizationById(applicantResult.getBody().getOrganizationId()));
         break;
     }

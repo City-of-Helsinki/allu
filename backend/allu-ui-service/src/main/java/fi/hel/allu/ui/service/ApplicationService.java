@@ -13,6 +13,7 @@ import org.springframework.web.client.RestTemplate;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
@@ -20,6 +21,7 @@ import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 @Service
 public class ApplicationService {
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(ApplicationService.class);
 
   private ApplicationProperties applicationProperties;
@@ -58,6 +60,7 @@ public class ApplicationService {
     applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
     applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
     List<ContactJson> contacts = applicationJson.getContactList();
+    setContactOrganization(contacts, applicationJson.getApplicant());
     Application applicationModel = restTemplate.postForObject(applicationProperties
             .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
         applicationMapper.createApplicationModel(applicationJson), Application.class);
@@ -151,6 +154,19 @@ public class ApplicationService {
 
   private void mapLocationQueryToSearchCriteria(LocationQueryJson query, LocationSearchCriteria lsc) {
     lsc.setIntersects(query.getIntesectingGeometry());
+  }
+
+  // If contacts don't have organization, assume they are new contacts for the
+  // new organization
+  private void setContactOrganization(List<ContactJson> contacts, ApplicantJson applicant) {
+    if (contacts == null || applicant.getOrganization() == null)
+      return;
+    Integer organizationId = applicant.getOrganization().getId();
+    for (ContactJson cj : contacts) {
+      if (cj.getOrganizationId() == null) {
+        cj.setOrganizationId(organizationId);
+      }
+    }
   }
 
 }
