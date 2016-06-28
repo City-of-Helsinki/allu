@@ -2,6 +2,7 @@ import {Applicant} from './applicant';
 import {Project} from './project';
 import {Contact} from './contact';
 import {Person} from '../common/person';
+import {Organization} from '../common/organization';
 import {PostalAddress} from '../common/postal-address';
 import {Location} from '../common/location';
 import {ApplicationTypeData} from './type/application-type-data';
@@ -54,7 +55,8 @@ export class Application {
   public static preFilledApplication(): Application {
     let applicantPostalAddress = new PostalAddress('Mikonkatu 15 B', '00200', 'Helsinki');
     let applicantPerson = new Person(undefined, 'hakija ihminen', applicantPostalAddress, 'hakija@ihminen.fi', '0201234567', '020202-1234');
-    let applicant = new Applicant(undefined, 'Person', true, applicantPerson, undefined);
+    let applicantOrganization = new Organization(undefined, "Hakija Inc.", "123456-88", applicantPostalAddress, "hakijainc@hotmail.com", "112");
+    let applicant = new Applicant(undefined, 'Company', true, undefined, applicantOrganization);
     let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
     let contactPerson = new Person(undefined, 'kontakti ihminen', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567', '030303-1234');
     let contact = new Contact(
