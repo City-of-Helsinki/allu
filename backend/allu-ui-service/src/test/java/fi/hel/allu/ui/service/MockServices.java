@@ -1,14 +1,11 @@
 package fi.hel.allu.ui.service;
 
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.geometrycollection;
-import static org.geolatte.geom.builder.DSL.ring;
-
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -16,27 +13,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.Organization;
-import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.CustomerJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.OrganizationJson;
-import fi.hel.allu.ui.domain.OutdoorEventJson;
-import fi.hel.allu.ui.domain.PersonJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
-import fi.hel.allu.ui.domain.ProjectJson;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.geolatte.geom.builder.DSL.*;
 
 public abstract class MockServices {
   @Mock
@@ -188,10 +170,23 @@ public abstract class MockServices {
   public OutdoorEventJson createOutdoorEventJson(Integer id) {
     OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
     outdoorEventJson.setDescription("Outdoor event description, Json");
-    outdoorEventJson.setAudience(1000);
+    outdoorEventJson.setAttendees(1000);
     outdoorEventJson.setStartTime(ZonedDateTime.now());
     outdoorEventJson.setNature("Outdoor event nature, Json");
     outdoorEventJson.setUrl("Outdoor event url, Json");
+    outdoorEventJson.setEcoCompass(true);
+    outdoorEventJson.setTimeExceptions("Mock exceptions");
+    outdoorEventJson.setSalesActivity(true);
+    outdoorEventJson.setStructureArea(100);
+    outdoorEventJson.setPricing("Mock pricing");
+    outdoorEventJson.setEntryFee(1233);
+    outdoorEventJson.setFoodProviders("Mock foodProviders");
+    outdoorEventJson.setStructureDescription("Structure description");
+    ZoneId zoneId = ZoneId.of("Europe/Helsinki");
+    ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
+    ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
+    outdoorEventJson.setStartTime(zonedDateTime);
+    outdoorEventJson.setEndTime(zonedDateTime2);
     return outdoorEventJson;
   }
 
@@ -302,9 +297,17 @@ public abstract class MockServices {
     outdoorEvent.setUrl("url, Model");
     outdoorEvent.setNature("outdoor event nature, Model");
     outdoorEvent.setStartTime(ZonedDateTime.now());
-    outdoorEvent.setAudience(1050);
+    outdoorEvent.setAttendees(1050);
     outdoorEvent.setDescription("Outdoor event description, Model");
     outdoorEvent.setEndTime(ZonedDateTime.now());
+    outdoorEvent.setEcoCompass(true);
+    outdoorEvent.setSalesActivity(true);
+    outdoorEvent.setEntryFee(1234);
+    ZoneId zoneId = ZoneId.of("Europe/Helsinki");
+    ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
+    ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
+    outdoorEvent.setStartTime(zonedDateTime);
+    outdoorEvent.setEndTime(zonedDateTime2);
     return outdoorEvent;
   }
 

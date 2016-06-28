@@ -1,16 +1,32 @@
 package fi.hel.allu.ui.domain;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 public class OutdoorEventJson extends EventJson {
+  @NotBlank(message = "{outdoorevent.nature}")
   private String nature;
+  @NotBlank(message = "{outdoorevent.description}")
   private String description;
   private String url;
-  @NotNull(message = "{event.starttime}")
+  @NotNull(message = "{outdoorevent.starttime}")
   private ZonedDateTime startTime;
+  @NotNull(message = "{outdoorevent.endtime}")
   private ZonedDateTime endTime;
-  private int audience;
+  private int attendees;
+  private int entryFee;
+  private boolean ecoCompass;
+  private boolean salesActivity;
+  private String pricing;
+  private String foodProviders;
+  private String marketingProviders;
+  private float structureArea;
+  private String structureDescription;
+  private ZonedDateTime structureStartTime;
+  private ZonedDateTime structureEndTime;
+  private String timeExceptions;
 
   /**
    * in Finnish: Tapahtuman luonne
@@ -70,11 +86,132 @@ public class OutdoorEventJson extends EventJson {
   /**
    * in Finnish: Tapahtuman arvioitu yleisömäärä
    */
-  public int getAudience() {
-    return audience;
+  public int getAttendees() {
+    return attendees;
   }
 
-  public void setAudience(int audience) {
-    this.audience = audience;
+  public void setAttendees(int attendees) {
+    this.attendees = attendees;
+  }
+
+  /**
+   * in Finnish: Osallistumismaksu
+   */
+  public int getEntryFee() {
+    return entryFee;
+  }
+
+  public void setEntryFee(int entryFee) {
+    this.entryFee = entryFee;
+  }
+
+  /**
+   * in Finnish: Hakijalla ekokompassi
+   */
+  public boolean isEcoCompass() {
+    return ecoCompass;
+  }
+
+  public void setEcoCompass(boolean ecoCompass) {
+    this.ecoCompass = ecoCompass;
+  }
+
+  /**
+   * in Finnish: Sisältääkö teemaan sisältymätöntä myynti- tai mainostoimintaa
+   */
+  public boolean isSalesActivity() {
+    return salesActivity;
+  }
+
+  public void setSalesActivity(boolean salesActivity) {
+    this.salesActivity = salesActivity;
+  }
+
+  /**
+   * in Finnish: Hinnoitteluperusteet
+   */
+  public String getPricing() {
+    return pricing;
+  }
+
+  public void setPricing(String pricing) {
+    this.pricing = pricing;
+  }
+
+  /**
+   * in Finnish: Tapahtuman elintarviketoimijat
+   */
+  public String getFoodProviders() {
+    return foodProviders;
+  }
+
+  public void setFoodProviders(String foodProviders) {
+    this.foodProviders = foodProviders;
+  }
+
+  /**
+   * in Finnish: Tapahtuman markkinointitoimijat
+   */
+  public String getMarketingProviders() {
+    return marketingProviders;
+  }
+
+  public void setMarketingProviders(String marketingProviders) {
+    this.marketingProviders = marketingProviders;
+  }
+
+  /**
+   * in Finnish: Rakenteiden kokonaisneliömäärä
+   */
+  public float getStructureArea() {
+    return structureArea;
+  }
+
+  public void setStructureArea(float structureArea) {
+    this.structureArea = structureArea;
+  }
+
+  /**
+   * in Finnish: Rakenteiden kuvaus
+   */
+  public String getStructureDescription() {
+    return structureDescription;
+  }
+
+  public void setStructureDescription(String structureDescription) {
+    this.structureDescription = structureDescription;
+  }
+
+  /**
+   * in Finnish: Rakenteiden rakennuspäivämäärä
+   */
+  public ZonedDateTime getStructureStartTime() {
+    return structureStartTime;
+  }
+
+  public void setStructureStartTime(ZonedDateTime structureStartTime) {
+    this.structureStartTime = structureStartTime;
+  }
+
+  /**
+   * in Finnish: Rakenteiden purkupäivämäärä
+   */
+  public ZonedDateTime getStructureEndTime() {
+    return structureEndTime;
+  }
+
+  public void setStructureEndTime(ZonedDateTime structureEndTime) {
+    this.structureEndTime = structureEndTime;
+  }
+
+  /**
+   * in Finnish: Tapahtuma-ajan poikkeukset
+   */
+  public String getTimeExceptions() {
+    return timeExceptions;
+  }
+
+  public void setTimeExceptions(String timeExceptions) {
+    this.timeExceptions = timeExceptions;
   }
 }

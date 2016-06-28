@@ -1,21 +1,8 @@
 package fi.hel.allu.ui.service;
 
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
+import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,16 +13,15 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.CustomerJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.domain.OutdoorEventJson;
-import fi.hel.allu.ui.domain.PersonJson;
-import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.util.List;
+import java.util.Set;
+
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceTest extends MockServices {
@@ -139,6 +125,8 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getCustomer().getPerson());
     assertEquals(200, response.getCustomer().getPerson().getId().intValue());
     assertNotNull(response.getLocation().getGeometry());
+    assertNotNull((OutdoorEventJson)response.getEvent());
+    assertEquals(1050, ((OutdoorEventJson) response.getEvent()).getAttendees());
   }
 
 
