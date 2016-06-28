@@ -1,13 +1,14 @@
 package fi.hel.allu.ui.mapper;
 
+import java.time.ZonedDateTime;
+
+import org.springframework.stereotype.Component;
+
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.OutdoorEventJson;
-import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
 
 @Component
 public class ApplicationMapper {
@@ -25,7 +26,9 @@ public class ApplicationMapper {
     applicationDomain.setName(applicationJson.getName());
     applicationDomain.setProjectId(applicationJson.getProject().getId());
     applicationDomain.setCreationTime(ZonedDateTime.now());
-    applicationDomain.setCustomerId(applicationJson.getCustomer().getId());
+    if (applicationJson.getCustomer() != null) {
+      applicationDomain.setCustomerId(applicationJson.getCustomer().getId());
+    }
     applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
     applicationDomain.setHandler(applicationJson.getHandler());
     applicationDomain.setType(applicationJson.getType());

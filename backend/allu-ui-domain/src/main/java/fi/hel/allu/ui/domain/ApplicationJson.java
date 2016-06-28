@@ -1,12 +1,14 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.common.types.ApplicationType;
-import org.hibernate.validator.constraints.NotBlank;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
-import java.util.List;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import fi.hel.allu.common.types.ApplicationType;
 
 /**
  * in Finnish: Hakemus
@@ -17,9 +19,9 @@ public class ApplicationJson {
   @Valid
   private ProjectJson project;
   private String handler;
-  @NotNull(message = "{application.customer}")
-  @Valid
-  private CustomerJson customer;
+  // @NotNull(message = "{application.customer}")
+  // @Valid
+  private CustomerJson customer; // TODO: Remove customer
   private String status;
   @NotNull(message = "{application.type}")
   private ApplicationType type;
