@@ -104,8 +104,6 @@ export class LocationComponent implements EventListener {
     }
     console.log('Geometry', this.features[0]);
     this.application.location.geometry = this.features;
-    // TODO: temporary bug hiding: backend doesn't return type for applicant
-    this.application.applicant.type = 'Person';
     let saveEvent = new ApplicationSaveEvent(this.application);
     this.hasChanges = HasChanges.PENDING;
     this.enableSave = false;
