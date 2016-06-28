@@ -10,7 +10,7 @@ export class PersonMapper {
     }
     let postalAddress = new PostalAddress(
       backendPerson.postalAddress.streetAddress, backendPerson.postalAddress.postalCode, backendPerson.postalAddress.city);
-    return new Person(backendPerson.id, backendPerson.name, postalAddress, backendPerson.email, backendPerson.phone, backendPerson.ssn);
+    return new Person(backendPerson.id, backendPerson.name, backendPerson.ssn, postalAddress, backendPerson.email, backendPerson.phone);
   }
 
   public static mapFrontend(person: Person): BackendPerson {
@@ -18,11 +18,11 @@ export class PersonMapper {
     {
       id: person.id,
       name: person.name,
+      ssn: person.ssn,
       postalAddress:
         { streetAddress: person.postalAddress.streetAddress, postalCode: person.postalAddress.postalCode, city: person.postalAddress.city },
       email: person.email,
-      phone: person.phone,
-      ssn: person.ssn
+      phone: person.phone
     } : undefined;
   }
 }

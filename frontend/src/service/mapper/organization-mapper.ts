@@ -24,7 +24,7 @@ export class OrganizationMapper {
   public static mapFrontend(organization: Organization): BackendOrganization {
     return (organization) ?
     {
-      id: undefined,
+      id: organization.id,
       name: organization.name,
       businessId: organization.businessId,
       postalAddress:

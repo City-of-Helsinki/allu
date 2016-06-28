@@ -6,14 +6,24 @@ export class ApplicationTypeDataMapper {
   public static mapBackend(backendEvent: any): ApplicationTypeData {
     if (backendEvent.type === 'OutdoorEvent') {
       return new OutdoorEvent(
-        backendEvent.type,
+        backendEvent.nature,
         backendEvent.description,
         backendEvent.url,
+        backendEvent.type,
         new Date(backendEvent.startTime),
         new Date(backendEvent.endTime),
         backendEvent.timeExceptions,
         backendEvent.attendees,
-        backendEvent.entryFee);
+        backendEvent.entryFee,
+        backendEvent.pricing,
+        backendEvent.salesActivity,
+        backendEvent.ecoCompass,
+        backendEvent.foodProviders,
+        backendEvent.marketingProviders,
+        backendEvent.structureArea,
+        backendEvent.structureDescription,
+        new Date(backendEvent.structureStartDate),
+        new Date(backendEvent.structureEndDate));
     } else {
       return undefined;
     }

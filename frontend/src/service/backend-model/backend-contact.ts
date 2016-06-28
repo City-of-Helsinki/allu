@@ -3,6 +3,11 @@ import {BackendPerson} from './backend-person';
 
 export interface BackendContact {
   id: number;
-  organization: BackendOrganization;
-  person: BackendPerson;
+  organizationId: number;
+  name: string;
+  streetAddress: string;
+  postalCode: string;
+  city: string;
+  email: string;
+  phone: string;
 }

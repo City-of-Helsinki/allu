@@ -57,7 +57,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
       {name: 'Muu', value: 'Other'}
     ];
-    this.applicantType = ['Yritys', 'Organisaatio', 'Ihminen'];
+    this.applicantType = ['Yritys', 'Yhdistys', 'Yksityishenkilö'];
     this.countries = [
       {name: 'Suomi', value: 'Finland'},
       {name: 'Ruotsi', value: 'Sweden'},

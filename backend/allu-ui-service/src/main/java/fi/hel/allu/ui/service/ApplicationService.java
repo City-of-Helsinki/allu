@@ -141,7 +141,10 @@ public class ApplicationService {
   private ApplicationJson getApplication(Application applicationModel) {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
-    applicationJson.setCustomer(customerService.findCustomerById(applicationModel.getCustomerId()));
+
+    if (applicationModel.getCustomerId() != null) {
+      applicationJson.setCustomer(customerService.findCustomerById(applicationModel.getCustomerId()));
+    }
     applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));

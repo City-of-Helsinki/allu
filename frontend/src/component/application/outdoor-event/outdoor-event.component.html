@@ -42,23 +42,23 @@
             <label for="businessID">Y-tunnus</label>
           </div>
           <div class="input-field col m6">
-            <input id="applicantAddress" type="text" class="validate" [(ngModel)]="application.applicant.person.postalAddress.streetAddress">
+            <input id="applicantAddress" type="text" class="validate" [(ngModel)]="application.applicant.organization.postalAddress.streetAddress">
             <label for="applicantAddress">Osoite</label>
           </div>
           <div class="input-field col m3">
-            <input id="applicantPostalCode" type="text" class="validate" [(ngModel)]="application.applicant.person.postalAddress.postalCode">
+            <input id="applicantPostalCode" type="text" class="validate" [(ngModel)]="application.applicant.organization.postalAddress.postalCode">
             <label for="applicantPostalCode">Postinumero</label>
           </div>
           <div class="input-field col m3">
-            <input id="applicantCity" type="text" class="validate" [(ngModel)]="application.applicant.person.postalAddress.city">
+            <input id="applicantCity" type="text" class="validate" [(ngModel)]="application.applicant.organization.postalAddress.city">
             <label for="applicantCity">Toimipaikka</label>
           </div>
           <div class="input-field col m4">
-            <input id="applicantPhone" type="text" class="validate" [(ngModel)]="application.applicant.person.phone">
+            <input id="applicantPhone" type="text" class="validate" [(ngModel)]="application.applicant.organization.phone">
             <label for="applicantPhone">Puhelin</label>
           </div>
           <div class="input-field col m8">
-            <input id="applicantEmail" type="text" class="validate" [(ngModel)]="application.applicant.person.email">
+            <input id="applicantEmail" type="text" class="validate" [(ngModel)]="application.applicant.organization.email">
             <label for="applicantEmail">Sähköpostiosoite</label>
           </div>
           <div class="col m7">
@@ -79,32 +79,28 @@
       <md-card-title>Yhteyshenkilö</md-card-title>
       <md-card-content>
         <div class="row">
-          <div class="input-field col m8">
-            <input id="contactName" type="text" class="validate" [(ngModel)]="application.contactList[0].person.name">
+          <div class="input-field col m12">
+            <input id="contactName" type="text" class="validate" [(ngModel)]="application.contactList[0].name">
             <label for="contactName">Yhteyshenkilön nimi</label>
           </div>
-          <div class="input-field col m4">
-            <input id="contactSSN" type="text" class="validate" [(ngModel)]="application.contactList[0].person.ssn">
-            <label for="contactSSN">Henkilötunnus</label>
-          </div>
           <div class="input-field col m6">
-            <input id="contactStreetAddress" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.streetAddress">
+            <input id="contactStreetAddress" type="text" class="validate" [(ngModel)]="application.contactList[0].streetAddress">
             <label for="contactStreetAddress">Osoite</label>
           </div>
           <div class="input-field col m3">
-            <input id="contactPostalCode" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.postalCode">
+            <input id="contactPostalCode" type="text" class="validate" [(ngModel)]="application.contactList[0].postalCode">
             <label for="contactPostalCode">Postinumero</label>
           </div>
           <div class="input-field col m3">
-            <input id="contactCity" type="text" class="validate" [(ngModel)]="application.contactList[0].person.postalAddress.city">
+            <input id="contactCity" type="text" class="validate" [(ngModel)]="application.contactList[0].city">
             <label for="contactCity">Toimipaikka</label>
           </div>
           <div class="input-field col m4">
-            <input id="contactPhone" type="text" class="validate" [(ngModel)]="application.contactList[0].person.phone">
+            <input id="contactPhone" type="text" class="validate" [(ngModel)]="application.contactList[0].phone">
             <label for="contactPhone">Puhelin</label>
           </div>
           <div class="input-field col m8">
-            <input id="contactEmail" type="text" class="validate" [(ngModel)]="application.contactList[0].person.email">
+            <input id="contactEmail" type="text" class="validate" [(ngModel)]="application.contactList[0].email">
             <label for="contactEmail">Sähköpostiosoite</label>
           </div>
           <div class="buttons col m12">
@@ -116,7 +112,8 @@
     </md-card>
   </div>
 
-  <div class="col m12">
+<!-- TODO: error handling for missing billing info
+ <div class="col m12">
     <md-card>
       <md-card-title>Laskutusosoite</md-card-title>
       <md-card-content>
@@ -160,7 +157,7 @@
         </div>
       </md-card-content>
     </md-card>
-  </div>
+  </div> -->
 
   <div class="col m12">
     <md-card>
@@ -173,8 +170,8 @@
               <label for="eventName">Tapahtuman nimi</label>
             </div>
             <div class="input-field col m12">
-              <input id="eventType" type="text" class="validate" [(ngModel)]="application.event.type">
-              <label for="eventType">Tapahtuman luonne</label>
+              <input id="eventNature" type="text" class="validate" [(ngModel)]="application.event.nature">
+              <label for="eventNature">Tapahtuman luonne</label>
             </div>
             <div class="input-field col m12">
               <textarea id="eventDescription" class="materialize-textarea" [(ngModel)]="application.event.description"></textarea>
@@ -187,20 +184,20 @@
           </div>
           <div class="col m6 no-padding">
             <div class="input-field col m12">
-              <input id="eventStartDate"
-              [(ngModel)]="application.event.startDate"
+              <input id="eventStartTime"
+              [(ngModel)]="application.event.startTime"
               materialize="pickadate"
               [materializeParams]="[{selectMonths: true, selectYears: 15}]"
               type="text" />
-              <label for="eventStartDate">Alkupäivämäärä</label>
+              <label for="eventStartTime">Alkupäivämäärä</label>
             </div>
             <div class="input-field col m12">
-              <input id="eventEndDate"
-              [(ngModel)]="application.event.endDate"
+              <input id="eventEndTime"
+              [(ngModel)]="application.event.endTime"
               materialize="pickadate"
               [materializeParams]="[{selectMonths: true, selectYears: 15}]"
               type="text" />
-              <label for="eventEndDate">Loppupäivämäärä</label>
+              <label for="eventEndTime">Loppupäivämäärä</label>
             </div>
             <div class="input-field col m12">
               <textarea id="eventTimeExceptions" class="materialize-textarea" [(ngModel)]="application.event.timeExceptions"></textarea>
@@ -226,18 +223,18 @@
       <md-card-content>
         <div class="row">
           <div class="col m6">
-            <select materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="application.pricing.noPrice">
+            <select materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="application.event.pricing">
               <option value="" disabled selected>Peruste korvauksettomuudelle</option>
               <option *ngFor="let reason of noPriceReasons" [value]="reason.value">{{reason.name}}</option>
             </select>
           </div>
           <div class="col m6 no-padding">
             <div class="col m12">
-              <input type="checkbox" class="filled-in" id="pricingSalesActivity" [(ngModel)]="application.pricing.salesActivity"/>
+              <input type="checkbox" class="filled-in" id="pricingSalesActivity" [(ngModel)]="application.event.salesActivity"/>
               <label for="pricingSalesActivity">Tapahtuma sisältää teemaan sisältymätöntä myynti- tai mainostoimintaa</label>
             </div>
             <div class="col m12">
-              <input type="checkbox" class="filled-in" id="pricingEcoCompass" [(ngModel)]="application.pricing.ecoCompass"/>
+              <input type="checkbox" class="filled-in" id="pricingEcoCompass" [(ngModel)]="application.event.ecoCompass"/>
               <label for="pricingEcoCompass">Hakijalla Ekokompassi-tapahtumapassi (liitä liitteeksi)</label>
             </div>
           </div>
@@ -253,21 +250,21 @@
         <div class="row">
           <div class="col m6 no-padding">
             <div class="col m12">
-              <input type="checkbox" class="filled-in" id="salesFood" [checked]="application.sales.foodProviders"/>
+              <input type="checkbox" class="filled-in" id="salesFood" [checked]="application.event.foodProviders"/>
               <label for="salesFood">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua</label>
             </div>
             <div class="input-field col m12">
-              <textarea id="salesFoodProviders" class="materialize-textarea" [(ngModel)]="application.sales.foodProviders"></textarea>
+              <textarea id="salesFoodProviders" class="materialize-textarea" [(ngModel)]="application.event.foodProviders"></textarea>
               <label for="salesFoodProviders">Elintarviketoimijat</label>
             </div>
           </div>
           <div class="col m6 no-padding">
             <div class="col m12">
-              <input type="checkbox" class="filled-in" id="salesMarketing" [checked]="application.sales.marketingProviders"/>
+              <input type="checkbox" class="filled-in" id="salesMarketing" [checked]="application.event.marketingProviders"/>
               <label for="salesMarketing">Tapahtuma sisältää myynti- tai mainostoimintaa</label>
             </div>
             <div class="input-field col m12">
-              <textarea id="salesMarketingDetails" class="materialize-textarea" [(ngModel)]="application.sales.marketingProviders"></textarea>
+              <textarea id="salesMarketingDetails" class="materialize-textarea" [(ngModel)]="application.event.marketingProviders"></textarea>
               <label for="salesMarketingDetails">Myynti- tai mainostoiminnan kuvaus</label>
             </div>
           </div>
@@ -283,36 +280,36 @@
         <div class="row">
           <div class="col m6 no-padding">
             <div class="col m6 height-fix-top">
-              <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="application.structure.area"/>
+              <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="application.event.structureArea"/>
               <label for="structureIncluded">Tapahtuma sisältää rakenteita</label>
             </div>
             <div class="input-field col m6">
-              <input id="structureArea" type="text" class="validate" [(ngModel)]="application.structure.area">
+              <input id="structureArea" type="number" class="validate" step="any" [(ngModel)]="application.event.structureArea">
               <label for="structureArea">Rakenteiden kokonaisneliömäärä</label>
             </div>
             <div class="input-field col m12">
-              <textarea id="textarea1" class="materialize-textarea" [(ngModel)]="application.structure.description"></textarea>
+              <textarea id="textarea1" class="materialize-textarea" [(ngModel)]="application.event.structureDescription"></textarea>
               <label for="textarea1">Rakenteiden kuvaus</label>
             </div>
 
           </div>
           <div class="col m6 no-padding">
             <div class="col m12 height-fix-top height-fix-bottom">
-              <input type="checkbox" class="filled-in" id="structureBuildDate" [checked]="application.structure.startDate || application.structure.endDate"/>
+              <input type="checkbox" class="filled-in" id="structureBuildDate" [checked]="application.event.structureStartTime || application.event.structureEndTime"/>
               <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
             </div>
             <div class="input-field col m12">
-              <label for="structureBuildStartDate">Rakennuspäivämäärä</label>
-              <input id="structureBuildStartDate"
-              [(ngModel)]="application.structure.startDate"
+              <label for="structureStartTime">Rakennuspäivämäärä</label>
+              <input id="structureStartTime"
+              [(ngModel)]="application.event.structureStartTime"
               materialize="pickadate"
               [materializeParams]="[{selectMonths: true, selectYears: 15}]"
               type="text" />
             </div>
             <div class="input-field col m12">
-              <label for="structureBuildEndDate">Purkupäivämäärä</label>
-              <input id="structureBuildEndDate"
-              [(ngModel)]="application.structure.endDate"
+              <label for="structureEndTime">Purkupäivämäärä</label>
+              <input id="structureEndTime"
+              [(ngModel)]="application.event.structureEndTime"
               materialize="pickadate"
               [materializeParams]="[{selectMonths: true, selectYears: 15}]"
               type="text" />
