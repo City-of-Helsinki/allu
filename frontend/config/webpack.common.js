@@ -88,6 +88,7 @@ module.exports = {
    */
   module: {
 
+    noParse: [/[\/\\]node_modules[\/\\]proj4[\/\\]dist[\/\\]proj4\.js$/],
     /*
      * An array of applied pre and post loaders.
      *

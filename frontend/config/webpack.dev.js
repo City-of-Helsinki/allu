@@ -139,10 +139,20 @@ module.exports = webpackMerge(commonConfig, {
       poll: 1000
     },
     proxy: {
+      /** Use backend from test environment */
       '/api/*': {
         target: 'http://185.26.48.184:9000',
         rewrite: function(req) {
           req.url = req.url.replace(/^\/api/, '');
+        },
+        secure: false,
+        changeOrigin: true
+      },
+      /** Use maps from test environment */
+      '/wms?*': {
+        target: 'http://185.26.49.172',
+        rewrite: function(req) {
+          req.url = req.url.replace(/^\/wms/, '/wms');
         },
         secure: false,
         changeOrigin: true

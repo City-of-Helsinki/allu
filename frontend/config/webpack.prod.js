@@ -137,7 +137,8 @@ module.exports = webpackMerge(commonConfig, {
     // NOTE: To debug prod builds uncomment //debug lines and comment //prod lines
     new UglifyJsPlugin({
       // beautify: true, //debug
-      // mangle: false, //debug
+      mangle: false, //debug
+      sourceMap: false, // added after proj4 was included in the project
       // dead_code: false, //debug
       // unused: false, //debug
       // deadCode: false, //debug
@@ -152,13 +153,17 @@ module.exports = webpackMerge(commonConfig, {
 
       beautify: false, //prod
 
-      mangle: {
-        screw_ie8 : true,
-        keep_fnames: true
-      }, //prod
+      // mangle: {
+      //   screw_ie8 : true,
+      //   keep_fnames: true
+      // }, //prod
 
       compress: {
-        screw_ie8: true
+        screw_ie8: true,
+        dead_code: false,     // added after proj4 was included in the project to stop uglifier to discard proj4
+        unused: false,        // added after proj4 was included in the project to stop uglifier to discard proj4
+        keep_fnames: true,    // added after proj4 was included in the project
+        drop_debugger: false  // added after proj4 was included in the project
       }, //prod
 
       comments: false //prod
