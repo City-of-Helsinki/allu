@@ -7,6 +7,7 @@ import static fi.hel.allu.QProjectContact.projectContact;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +69,7 @@ public class ContactDao {
     // remove old contact links, then add new ones.
     queryFactory.delete(projectContact).where(projectContact.projectId.eq(projectId)).execute();
     // Update/insert the contacts first...
-    contacts.stream().forEach(c -> storeContact(c));
+    contacts = contacts.stream().map(c -> storeContact(c)).collect(Collectors.toList());
     // ... then create the link records
     SQLInsertClause insertClause = queryFactory.insert(projectContact);
     int pos = 0;
@@ -85,7 +86,7 @@ public class ContactDao {
     // remove old contact links, then add new ones.
     queryFactory.delete(applicationContact).where(applicationContact.applicationId.eq(applicationId)).execute();
     // Update/insert the contacts first...
-    contacts.stream().forEach(c -> storeContact(c));
+    contacts = contacts.stream().map(c -> storeContact(c)).collect(Collectors.toList());
     // ... then create the link records
     SQLInsertClause insertClause = queryFactory.insert(applicationContact);
     int pos = 0;
@@ -97,11 +98,11 @@ public class ContactDao {
     return findByApplication(applicationId);
   }
 
-  private void storeContact(Contact contactItem) {
+  private Contact storeContact(Contact contactItem) {
     if (contactItem.getId() != null) {
-      contactItem = update(contactItem.getId(), contactItem);
+      return update(contactItem.getId(), contactItem);
     } else {
-      contactItem = insert(contactItem);
+      return insert(contactItem);
     }
   }
 

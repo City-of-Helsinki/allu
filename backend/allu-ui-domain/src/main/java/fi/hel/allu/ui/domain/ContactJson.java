@@ -1,7 +1,6 @@
 package fi.hel.allu.ui.domain;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * in Finnish: Yhteyshenkilö
@@ -9,9 +8,13 @@ import javax.validation.constraints.NotNull;
 public class ContactJson {
   private Integer id;
   private Integer organizationId;
-  @NotNull(message = "{contact.person.notnull}")
-  @Valid
-  private PersonJson person;
+  @NotBlank(message = "{contact.name.notblank}")
+  private String name;
+  private String streetAddress;
+  private String postalCode;
+  private String city;
+  private String email;
+  private String phone;
 
 
   /**
@@ -36,15 +39,70 @@ public class ContactJson {
     this.organizationId = organizationId;
   }
 
+  /**
+   * in Finnish: Yhteyshenkilön nimi
+   */
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
 
   /**
-   * in Finnish: YHteyshenkilön henkilötiedot
+   * in Finnish: Katuosoite
    */
-  public PersonJson getPerson() {
-    return person;
+  public String getStreetAddress() {
+    return streetAddress;
   }
 
-  public void setPerson(PersonJson person) {
-    this.person = person;
+  public void setStreetAddress(String streetAddress) {
+    this.streetAddress = streetAddress;
   }
+
+  /**
+   * in Finnish: Postinumer
+   */
+  public String getPostalCode() {
+    return postalCode;
+  }
+
+  public void setPostalCode(String postalCode) {
+    this.postalCode = postalCode;
+  }
+
+  /**
+   * in Finnish: Kaupunki
+   */
+  public String getCity() {
+    return city;
+  }
+
+  public void setCity(String city) {
+    this.city = city;
+  }
+
+  /**
+   * in Finnish: Sähköpostiosoite
+   */
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  /**
+   * in Finnish: Puhelinnumero
+   */
+  public String getPhone() {
+    return phone;
+  }
+
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
+
 }
