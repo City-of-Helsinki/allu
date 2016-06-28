@@ -72,8 +72,19 @@ public class ApplicationMapper {
         outdoorEventJson.setNature(outdoorEvent.getNature());
         outdoorEventJson.setStartTime(outdoorEvent.getStartTime());
         outdoorEventJson.setEndTime(outdoorEvent.getEndTime());
-        outdoorEventJson.setAudience(outdoorEvent.getAudience());
+        outdoorEventJson.setAttendees(outdoorEvent.getAttendees());
         outdoorEventJson.setDescription(outdoorEvent.getDescription());
+        outdoorEventJson.setTimeExceptions(outdoorEvent.getTimeExceptions());
+        outdoorEventJson.setEcoCompass(outdoorEvent.isEcoCompass());
+        outdoorEventJson.setStructureArea(outdoorEvent.getStructureArea());
+        outdoorEventJson.setStructureDescription(outdoorEvent.getStructureDescription());
+        outdoorEventJson.setStructureEndTime(outdoorEvent.getStructureEndTime());
+        outdoorEventJson.setStructureStartTime(outdoorEvent.getStructureStartTime());
+        outdoorEventJson.setEntryFee(outdoorEvent.getEntryFee());
+        outdoorEventJson.setFoodProviders(outdoorEvent.getFoodProviders());
+        outdoorEventJson.setMarketingProviders(outdoorEvent.getMarketingProviders());
+        outdoorEventJson.setPricing(outdoorEvent.getPricing());
+        outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
         applicationJson.setEvent(outdoorEventJson);
         break;
     }
@@ -92,9 +103,20 @@ public class ApplicationMapper {
         outdoorEvent.setDescription(outdoorEventJson.getDescription());
         outdoorEvent.setNature(outdoorEventJson.getNature());
         outdoorEvent.setUrl(outdoorEventJson.getUrl());
-        outdoorEvent.setAudience(outdoorEventJson.getAudience());
+        outdoorEvent.setAttendees(outdoorEventJson.getAttendees());
         outdoorEvent.setEndTime(outdoorEventJson.getEndTime());
         outdoorEvent.setStartTime(outdoorEventJson.getStartTime());
+        outdoorEvent.setSalesActivity(outdoorEventJson.isSalesActivity());
+        outdoorEvent.setMarketingProviders(outdoorEventJson.getMarketingProviders());
+        outdoorEvent.setPricing(outdoorEventJson.getPricing());
+        outdoorEvent.setFoodProviders(outdoorEventJson.getFoodProviders());
+        outdoorEvent.setEntryFee(outdoorEventJson.getEntryFee());
+        outdoorEvent.setEcoCompass(outdoorEventJson.isEcoCompass());
+        outdoorEvent.setStructureArea(outdoorEventJson.getStructureArea());
+        outdoorEvent.setStructureEndTime(outdoorEventJson.getStructureEndTime());
+        outdoorEvent.setStructureStartTime(outdoorEventJson.getStructureStartTime());
+        outdoorEvent.setStructureDescription(outdoorEventJson.getStructureDescription());
+        outdoorEvent.setTimeExceptions(outdoorEventJson.getTimeExceptions());
         return outdoorEvent;
     }
     return null;

@@ -253,9 +253,8 @@ public class ApplicationControllerTest {
   public Event addOutdoorEvent(Integer id) {
     OutdoorEvent event = new OutdoorEvent();
     event.setDescription("desc");
-    event.setAudience(10);
+    event.setAttendees(10);
     event.setNature("nature");
-    //event.setType(ApplicationType.OutdoorEvent);
     return event;
   }
 
