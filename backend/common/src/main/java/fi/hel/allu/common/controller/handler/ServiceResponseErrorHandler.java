@@ -1,4 +1,4 @@
-package fi.hel.allu.ui.handler;
+package fi.hel.allu.common.controller.handler;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import org.slf4j.Logger;
