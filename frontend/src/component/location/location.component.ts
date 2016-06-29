@@ -99,11 +99,12 @@ export class LocationComponent implements EventListener {
 
   save() {
     console.log('Saving location for application id: ', this.id);
+
     if (!this.application.location) {
       this.application.location = new Location(undefined, undefined, undefined);
     }
     console.log('Geometry', this.features[0]);
-    this.application.location.geometry = this.features;
+    this.application.location.geometry = this.mapService.featureCollectionToGeometryCollection(this.features);
     let saveEvent = new ApplicationSaveEvent(this.application);
     this.hasChanges = HasChanges.PENDING;
     this.enableSave = false;
