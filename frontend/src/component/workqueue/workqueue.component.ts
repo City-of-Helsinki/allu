@@ -28,6 +28,7 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 export class WorkQueueComponent implements EventListener, OnInit, OnDestroy {
   private applicationsQueue: Array<Application> = [];
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
+  private applicantName: string;
 
   constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
     this.applicationsQueue = [];
