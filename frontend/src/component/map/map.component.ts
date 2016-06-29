@@ -111,7 +111,17 @@ export class MapComponent implements EventListener {
   private createLayers(): any {
     return {
       kaupunkikartta: new L.TileLayer.WMS('/wms?',
-        {layers: 'helsinki_kaupunkikartta', format: 'image/png'})
+        {layers: 'helsinki_kaupunkikartta', format: 'image/png'}),
+      ortoilmakuva: new L.TileLayer.WMS('/wms?',
+        {layers: 'helsinki_ortoilmakuva', format: 'image/png'}),
+      kiinteistokartta: new L.TileLayer.WMS('/wms?',
+        {layers: 'helsinki_kiinteistokartta', format: 'image/png'})
+      ajantasaasemakaava: new L.TileLayer.WMS('/wms?',
+        {layers: 'helsinki_ajantasaasemakaava', format: 'image/png'}),
+      opaskartta: new L.TileLayer.WMS('/wms?',
+        {layers: 'helsinki_opaskartta', format: 'image/png'}),
+      kaupunginosajako: new L.TileLayer.WMS('/wms?',
+        {layers: 'helsinki_kaupunginosajako', format: 'image/png'})
       // working URL for accessing Helsinki maps directly (requires authentication)
       // testi: new L.TileLayer.WMS('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
       //   {layers: 'helsinki:Kaupunkikartta'}),
