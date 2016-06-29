@@ -115,7 +115,7 @@ export class MapComponent implements EventListener {
       ortoilmakuva: new L.TileLayer.WMS('/wms?',
         {layers: 'helsinki_ortoilmakuva', format: 'image/png'}),
       kiinteistokartta: new L.TileLayer.WMS('/wms?',
-        {layers: 'helsinki_kiinteistokartta', format: 'image/png'})
+        {layers: 'helsinki_kiinteistokartta', format: 'image/png'}),
       ajantasaasemakaava: new L.TileLayer.WMS('/wms?',
         {layers: 'helsinki_ajantasaasemakaava', format: 'image/png'}),
       opaskartta: new L.TileLayer.WMS('/wms?',
