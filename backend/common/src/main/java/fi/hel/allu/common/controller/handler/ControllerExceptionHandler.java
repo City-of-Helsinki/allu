@@ -1,12 +1,14 @@
-package fi.hel.allu.ui.handler;
+package fi.hel.allu.common.controller.handler;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 
 
 @ControllerAdvice

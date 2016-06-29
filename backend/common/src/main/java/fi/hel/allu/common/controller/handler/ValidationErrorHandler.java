@@ -1,7 +1,9 @@
-package fi.hel.allu.ui.handler;
+package fi.hel.allu.common.controller.handler;
 
 
-import fi.hel.allu.common.exception.ErrorInfo;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,8 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.ArrayList;
-import java.util.List;
+import fi.hel.allu.common.exception.ErrorInfo;
 
 @ControllerAdvice
 public class ValidationErrorHandler extends ResponseEntityExceptionHandler {

@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.config;
 
-import fi.hel.allu.ui.handler.ServiceResponseErrorHandler;
+import fi.hel.allu.common.controller.handler.ServiceResponseErrorHandler;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.security.PreAuthorizeEnforcerInterceptor;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
