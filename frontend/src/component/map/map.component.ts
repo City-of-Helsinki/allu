@@ -1,7 +1,7 @@
 import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
-import {Component, ViewChild} from '@angular/core';
+import {Component} from '@angular/core';
 import {MapService} from '../../service/map.service';
 import {GeocodingService} from '../../service/geocoding.service';
 
@@ -47,7 +47,8 @@ export class MapComponent implements EventListener {
       if (this.applicationArea) {
         this.map.removeLayer(this.applicationArea);
       }
-      this.applicationArea = new L.GeoJSON(asEvent.application.location.geometry).addTo(this.map);
+      let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
+      this.applicationArea = new L.GeoJSON(featureCollection).addTo(this.map);
     }
   }
 
@@ -55,10 +56,12 @@ export class MapComponent implements EventListener {
 
     this.map = new L.Map('map', {
       zoomControl: false,
-      center: new L.LatLng(60.175264, 24.940692),
-      zoom: 2,
-      minZoom: 0,
-      maxZoom: 12,
+      center: new L.LatLng(60.1708763, 24.9424988), // Helsinki railway station
+      zoom: 6,
+      minZoom: 3,
+      maxZoom: 13,
+      maxBounds:
+        new L.LatLngBounds(new L.LatLng(59.9084989595170114, 24.4555930248625906), new L.LatLng(60.4122137731072542, 25.2903558783246289)),
       layers: [this.mapLayers.kaupunkikartta],
       crs: this.mapService.getEPSG3879()
     });
