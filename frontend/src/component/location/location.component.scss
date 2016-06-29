@@ -9,13 +9,14 @@
   }
 
   .mapcontainer {
-    height: 500px;
+    height: 49vh;
+    position: relative;
   }
 
   map {
-    height: 80%;
+    height: 100%;
     position: absolute;
-    width: 97%;
+    width: 100%;
   }
 }
 

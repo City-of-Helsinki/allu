@@ -5,6 +5,7 @@ import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdButton} from '@angular2-material/button';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {MdToolbar} from '@angular2-material/toolbar';
+import {MaterializeDirective} from 'angular2-materialize';
 
 import {MapComponent} from '../map/map.component';
 
@@ -44,6 +45,7 @@ enum HasChanges {
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,
     MdButton,
+    MaterializeDirective,
     MapComponent
   ],
   providers: []
@@ -54,9 +56,15 @@ export class LocationComponent implements EventListener {
   private features: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
   private enableSave: boolean = false;
   private hasChanges: HasChanges = HasChanges.NO;
+  private rentingPlace: any;
+  private sections: any;
+  private area: number;
 
   constructor(private eventService: EventService, private mapService: MapService, params: RouteParams) {
     this.id = Number(params.get('id'));
+    this.rentingPlace = [{name: 'Paikka A', value: 'a'}, {name: 'Paikka B', value: 'b'}, {name: 'Paikka C', value: 'c'}];
+    this.sections = [{name: 'Lohko A', value: 'a'}, {name: 'Lohko B', value: 'b'}, {name: 'Lohko C', value: 'c'}];
+    this.area = undefined;
   };
 
   public handle(event: Event): void {
