@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"fi.hel.allu.model", "fi.hel.allu.common.controller.filter"})
+@ComponentScan(basePackages = {"fi.hel.allu.model", "fi.hel.allu.common.controller"})
 public class App {
   public static void main(String[] args) {
     SpringApplication.run(App.class, args);
