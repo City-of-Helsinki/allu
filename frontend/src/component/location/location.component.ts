@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {RouteParams} from '@angular/router-deprecated';
+import {RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdButton} from '@angular2-material/button';
@@ -41,6 +41,7 @@ enum HasChanges {
     require('./location.component.scss')
   ],
   directives: [
+    ROUTER_DIRECTIVES,
     MdToolbar,
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,

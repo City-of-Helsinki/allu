@@ -68,7 +68,7 @@
           </div>
           <div class="col m4 offset-m6">
             <button md-raised-button style="margin-left: 10px;" (click)="save()">TALLENNA</button>
-            <button md-raised-button style="margin-left: 10px;">YHTEENVETO</button>
+            <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Summary', {id: id}]">YHTEENVETO</button>
           </div>
         </div>
       </md-card-content>
