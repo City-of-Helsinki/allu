@@ -1,0 +1,8 @@
+cleanups:
+  remove_all_to_refresh_cache:
+    caches: [hki_kaupunkikartta_cache, hki_ortoilmakuva_cache, hki_kiinteistokartta_cache, hki_ajantasaasemakaava_cache, hki_opaskartta_cache, hki_kaupunginosajako_cache]
+    remove_before:
+    #  weeks: 1
+      days: 1
+    #  hours: 4
+    #  minutes: 15
