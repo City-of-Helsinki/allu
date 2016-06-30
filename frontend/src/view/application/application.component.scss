@@ -1,11 +1,12 @@
 @import '../../assets/colors';
 
 :host {
-  max-width: 1450px;
   width: 100%;
-  // .md-input-underline {
-  //   border-top: 1px solid rgba(2, 150, 136, 1);
-  // }
+
+  p {
+    font-size: 0.8rem;
+    margin-bottom: 0;
+  }
 
   md-card {
     margin: 10px;

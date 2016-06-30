@@ -1,28 +1,100 @@
-<md-toolbar>
-  <span>UUSI HAKEMUS</span>
+<md-toolbar class="row">
+  <span class="col m2">UUSI HAKEMUS</span>
+  <div class="col m10">
+    <div class="col m2 center-align">
+      <p>Perustiedot</p>
+    </div>
+    <div class="col m2 center-align">
+      <p>Sijainti</p>
+    </div>
+    <div class="col m2 center-align">
+      <p>Yhteenveto</p>
+    </div>
+    <div class="col m2 center-align">
+      <p>Käsittely</p>
+    </div>
+    <div class="col m2 center-align">
+      <p>Päätös</p>
+    </div>
+    <div class="col m2 center-align">
+      <p>Valvonta</p>
+    </div>
+    <div class="m12 progress">
+      <div class="determinate" style="width: 25%"></div>
+    </div>
+  </div>
 </md-toolbar>
-<div class="">
-  <md-card style="padding-right:100px;">
-    <md-card-title>Sijainti</md-card-title>
-    <md-card-content class="mapcontainer">
-      <map></map>
-    </md-card-content>
-  </md-card>
-
-</div>
-<div style="display:flex; flex-direction: column;">
-  <md-card style="padding-right:100px;">
-    <md-card-title>Tallennus</md-card-title>
-    <md-card-content style="display:flex; flex-direction: row;">
-      <div class="" style="flex: 75;">
-        <button md-raised-button style="margin-left: 10px;" (click)="console.log('Todo: go back to application');" >EDELLINEN</button>
-      </div>
-      <div class="" style="flex: 25;">
-        <button md-raised-button [disabled]="!enableSave" style="margin-left: 10px;" (click)="save()">TALLENNA</button>
-        <button md-raised-button style="margin-left: 10px;">YHTEENVETO</button>
-
-      </div>
-
-    </md-card-content>
-  </md-card>
+<div materialize class="row" style="background: whitesmoke; margin-bottom:0px;">
+  <div class="col m12">
+    <md-card>
+      <md-card-title>Sijainti</md-card-title>
+      <md-card-content>
+        <div class="row">
+          <div class="col m8">
+            <div class="input-field col m8">
+              <select (change)="rentingPlaceSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+                <option value="" disabled selected>Vuokrattava paikka</option>
+                <option *ngFor="let rent of rentingPlace" [value]="rent.value">{{rent.name}}</option>
+              </select>
+            </div>
+            <div class="input-field col m2">
+              <select (change)="sectionSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+                <option value="" disabled selected>Lohko(t)</option>
+                <option *ngFor="let section of sections" [value]="section.value">{{section.name}}</option>
+              </select>
+            </div>
+            <div class="input-field col m2">
+              <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="area">
+              <label for="area">Alueen pinta-ala</label>
+            </div>
+            <div class="input-field col m3">
+              <input id="address" type="text" class="" [(ngModel)]="address">
+              <label for="address">Osoite</label>
+            </div>
+            <div class="input-field col m9">
+              <input id="info" type="text" class="" [(ngModel)]="info">
+              <label for="info">Lisätietoja paikasta</label>
+            </div>
+          </div>
+          <div class="col m4">
+            <div class="input-field col m12">
+              <input id="startTime"
+              materialize="pickadate"
+              [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+              type="text" />
+              <label for="startTime">Alkupäivämäärä</label>
+            </div>
+            <div class="input-field col m12">
+              <input id="endTime"
+              materialize="pickadate"
+              [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+              type="text" />
+              <label for="endTime">Loppupäivämäärä</label>
+            </div>
+          </div>
+          <div class="col m12">
+            <div class="mapcontainer">
+              <map></map>
+            </div>
+          </div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div class="col m12">
+    <md-card>
+      <md-card-title>Tallennus</md-card-title>
+      <md-card-content>
+        <div class="row">
+          <div class="col m2">
+            <button md-raised-button [disabled]="true" (click)="console.log('Todo: go back to application');" >EDELLINEN</button>
+          </div>
+          <div class="col m4 offset-m6">
+            <button md-raised-button style="margin-left: 10px;" (click)="save()">TALLENNA</button>
+            <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Summary', {id: id}]">YHTEENVETO</button>
+          </div>
+        </div>
+      </md-card-content>
+    </md-card>
+  </div>
 </div>
