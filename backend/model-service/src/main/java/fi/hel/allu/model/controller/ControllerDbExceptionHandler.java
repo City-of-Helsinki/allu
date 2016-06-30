@@ -4,25 +4,21 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.querydsl.core.QueryException;
-
-import fi.hel.allu.common.exception.NoSuchEntityException;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-@ControllerAdvice
-public class ControllerExceptionHandler {
+import com.querydsl.core.QueryException;
 
-  @ExceptionHandler({ IllegalArgumentException.class, DataIntegrityViolationException.class, QueryException.class })
+/**
+ * Handler for database-originated exceptions
+ */
+@ControllerAdvice
+public class ControllerDbExceptionHandler {
+
+  @ExceptionHandler({ DataIntegrityViolationException.class, QueryException.class })
   void handleBadRequests(RuntimeException e, HttpServletResponse response) throws IOException {
     response.sendError(HttpStatus.BAD_REQUEST.value(), e.getMessage());
-  }
-
-  @ExceptionHandler
-  void handleNotFound(NoSuchEntityException e, HttpServletResponse response) throws IOException {
-    response.sendError(HttpStatus.NOT_FOUND.value(), e.getMessage());
   }
 }
