@@ -38,6 +38,9 @@ layers:
     sources: [hki_kaupunginosajako_cache]
 
 caches:
+####################################################################################
+# NOTE! Whenever you're adding new caches, remember to add cleanups to seed.yaml !!!
+####################################################################################
   hki_kaupunkikartta_cache:
     grids: [EPSG_3879]
     sources: [hki_wms_kaupunkikartta]

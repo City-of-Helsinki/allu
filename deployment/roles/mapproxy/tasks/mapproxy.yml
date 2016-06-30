@@ -42,13 +42,11 @@
         group=allu
         mode="u=rwx,g=rx,o=rx"
 
-- name: install Pillow under mapproxy virtualenv
+- name: install Pillow
   pip: name=Pillow
-# virtualenv=/home/allu/mapproxy/virtualenv
 
-- name: install mapproxy under virtualenv
+- name: install mapproxy
   pip: name=MapProxy
-# virtualenv=/home/allu/mapproxy/virtualenv
 
 - name: add maproxy configuration
   template: src=mapproxy.yaml dest=/home/allu/mapproxy/configuration/mapproxy.yaml
@@ -67,3 +65,14 @@
         owner=allu
         group=allu
         mode="u=rwx,g=rx,o=rx"
+
+- name: add mapproxy seeding / cleanup configuration
+  copy: src=seed.yaml dest=/home/allu/mapproxy/configuration/seed.yaml
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: configure cron tab for mapproxy seeding / cleanup
+  cron: name="MapProxy seeding / cleanup"
+        minute="30" hour="00"
+        job="/usr/local/bin/mapproxy-seed --seed-conf=/home/allu/mapproxy/configuration/seed.yaml --proxy-conf=/home/allu/mapproxy/configuration/mapproxy.yaml > /home/allu/mapproxy/logs/cleanup.log 2>&1"
