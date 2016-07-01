@@ -1,29 +1,51 @@
 package fi.hel.allu.model;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.dao.*;
-import fi.hel.allu.model.domain.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-
-import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.PersonDao;
+import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Event;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -85,15 +107,21 @@ public class ApplicationControllerTest {
     wtc.perform(get("/applications/123")).andExpect(status().isNotFound());
   }
 
+  // Helper to insert an application. Returns the result application.
+  private Application insertApplication(Application appIn) throws Exception {
+    ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
+    return wtc.parseObjectFromResult(resultActions, Application.class);
+  }
+
   @Test
   public void testFindExisting() throws Exception {
     // Setup: insert an application
     Application appIn = prepareApplication("Test Application", "Handler");
     appIn.setStatus(StatusType.HANDLING);
-    ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
-    Application appInResult = wtc.parseObjectFromResult(resultActions, Application.class);
+    Application appInResult = insertApplication(appIn);
     // Test: try to read the same application back
-    resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId()))).andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
+        .andExpect(status().isOk());
     Application appOut = wtc.parseObjectFromResult(resultActions, Application.class);
     assertEquals(appIn.getStatus(), appOut.getStatus());
   }
@@ -153,12 +181,10 @@ public class ApplicationControllerTest {
   @Test
   public void testUpdateExisting() throws Exception {
     // Setup: insert an application
-    Application appIn = prepareApplication("Test Application", "Handler");
-    ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
-    Application appInResult = wtc.parseObjectFromResult(resultActions, Application.class);
+    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
     // Test: try to update the application
     appInResult.setStatus(StatusType.HANDLING);
-    resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
+    ResultActions resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
     assertEquals(StatusType.HANDLING, updateResult.getStatus());
@@ -179,6 +205,117 @@ public class ApplicationControllerTest {
     Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(3, results.length);
   }
+
+  /**
+   * Test that reading an application's attachment list works
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testFindAttachments() throws Exception {
+    // Setup: insert an application
+    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
+    // Test: read the application's attachment list
+    ResultActions resultActions = wtc.perform(get(String.format("/applications/%d/attachments", appInResult.getId())))
+        .andExpect(status().isOk());
+    AttachmentInfo[] results = wtc.parseObjectFromResult(resultActions, AttachmentInfo[].class);
+    assertEquals(0, results.length);
+  }
+
+  // Helper for inserting attachment info into application
+  private AttachmentInfo insertAttachmentInfo(int applicationId, AttachmentInfo info) throws Exception {
+    ResultActions resultActions = wtc
+        .perform(post(String.format("/applications/%d/attachments", applicationId)), info)
+        .andExpect(status().isCreated());
+    return wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
+  }
+  /**
+   * Test that adding an attachment info works
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testAddAndGetAttachment() throws Exception {
+    // Setup: insert an application
+    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
+    // Test: add attachment info and make sure result is CREATED
+    AttachmentInfo info = newInfo();
+    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), info);
+    ResultActions resultActions = wtc
+        .perform(get(String.format("/applications/%d/attachments/%d", appInResult.getId(), stored.getId())))
+        .andExpect(status().isOk());
+    AttachmentInfo retrieved = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
+    assertEquals(info.getName(), retrieved.getName());
+    assertEquals(info.getName(), stored.getName());
+  }
+
+  /**
+   * Test that updating attachment works,
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testUpdateAttachment() throws Exception {
+    // Setup: insert an application and attachment info
+    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
+    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), newInfo());
+    // Test: Update the attachment info
+    String infoUri = String.format("/applications/%d/attachments/%d", appInResult.getId(), stored.getId());
+    AttachmentInfo updatedInfo = newInfo();
+    updatedInfo.setName("Muokattu hakemus");
+    updatedInfo.setSize(99210L);
+    ResultActions resultActions = wtc.perform(put(infoUri), updatedInfo).andExpect(status().isOk());
+    AttachmentInfo updateResult = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
+    assertEquals(updatedInfo.getName(), updateResult.getName());
+    assertEquals(updatedInfo.getSize(), updateResult.getSize());
+    // Verify that reading the same attachment info now gives the updated data
+    resultActions = wtc.perform(get(infoUri)).andExpect(status().isOk());
+    AttachmentInfo readInfo = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
+    assertEquals(updatedInfo.getName(), readInfo.getName());
+    assertEquals(updatedInfo.getSize(), readInfo.getSize());
+  }
+
+  /**
+   * Test that attachment can be deleted.
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testDeleteAttachment() throws Exception {
+    // Setup: insert an application and attachment info
+    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
+    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), newInfo());
+    // Test: delete the attachment and verify that it doesn't exist anymore
+    String infoUri = String.format("/applications/%d/attachments/%d", appInResult.getId(), stored.getId());
+    wtc.perform(delete(infoUri)).andExpect(status().isOk());
+    wtc.perform(get(infoUri)).andExpect(status().isNotFound());
+  }
+
+  /**
+   * Test that setting attachment data works
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testSetAndGetAttachmentData() throws Exception {
+    // Setup: insert an application and some attachment info for it
+    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
+    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), newInfo());
+    // Test: put some content
+    byte[] content = new byte[12345];
+    for(int i=0; i < content.length; ++i) {
+      content[i]= (byte)(i);
+    }
+    MockMultipartFile mockFile = new MockMultipartFile("data", content);
+    String uri = String.format("/applications/%d/attachments/%d/data", appInResult.getId(), stored.getId());
+    wtc.perform(fileUpload(uri).file(mockFile)).andExpect(status().isOk());
+    // Verify that the attachment's content can now be read and is the same as
+    // the stored one:
+    ResultActions resultActions = wtc.perform(get(uri)).andExpect(status().isOk());
+    byte[] readContent = resultActions.andReturn().getResponse().getContentAsByteArray();
+    Assert.assertArrayEquals(content, readContent);
+  }
+
   // Create and prepare an application for insertion:
   // - Create dummy person and project to get valid ids
   // - Set some values for the application
@@ -278,6 +415,16 @@ public class ApplicationControllerTest {
       app.setLocationId(locationId);
       wtc.perform(post("/applications"), app).andExpect(status().isOk());
     }
+  }
+
+  private AttachmentInfo newInfo() {
+    AttachmentInfo info = new AttachmentInfo();
+    info.setApplicationId(123);
+    info.setCreationTime(ZonedDateTime.now());
+    info.setId(313);
+    info.setName("Test attachment");
+    info.setType("application/pdf");
+    return info;
   }
 
 }
