@@ -25,6 +25,17 @@
     height: 2rem;
   }
 
+  .input-field {
+    textarea.materialize-textarea {
+      padding-top: 4px;
+      padding-bottom: 0px;
+    }
+    textarea.textarea {
+      padding-top: 4px;
+      padding-bottom: 42px;
+    }
+  }
+
   .country-select {
     margin-top: 15px;
   }
@@ -46,11 +57,16 @@
   }
 
   .height-fix-top {
-    margin-top: 1.5rem;
+    margin-top: 26px;
+    height: 3rem;
   }
 
   .height-fix-bottom {
-    margin-bottom: 1rem;
+    margin-bottom: 5px;
+  }
+
+  .select-fix {
+    margin-top: 30px;
   }
 
   .summary {
@@ -79,7 +95,7 @@
   .summary-checkbox {
     color: rgba(22, 150, 136, 1);
   }
-  
+
   .mapcontainer {
     height: 49vh;
     position: relative;
