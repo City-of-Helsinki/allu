@@ -1,14 +1,22 @@
 @import '../../../assets/colors';
 
 :host {
-  max-width: 1450px;
   width: 100%;
-  // .md-input-underline {
-  //   border-top: 1px solid rgba(2, 150, 136, 1);
-  // }
+
   md-card {
     margin: 10px;
     padding: 12px;
+  }
+
+  .input-field {
+    textarea.materialize-textarea {
+      padding-top: 4px;
+      padding-bottom: 0px;
+    }
+    textarea.textarea {
+      padding-top: 4px;
+      padding-bottom: 42px;
+    }
   }
 
   .input-field label {
@@ -36,15 +44,16 @@
   }
 
   .buttons {
-    margin: 40px 0 6px;
+    margin: 40px 0 11px;
   }
 
   .height-fix-top {
-    margin-top: 1.5rem;
+    margin-top: 26px;
+    height: 3rem;
   }
 
   .height-fix-bottom {
-    margin-bottom: 1rem;
+    margin-bottom: 5px;
   }
 }
 
