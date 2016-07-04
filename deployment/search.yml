@@ -18,7 +18,8 @@
           discovery.zen.ping.multicast.enabled: false}
       }
   vars:
-        es_heap_size: 1g
+        # Commented heap size out becouse we have limited resources in test environment
+        #es_heap_size: 1g
 
 # Commented data nodes out becouse we have only one server with limited resources in test environment
 #- hosts: elasticsearch_data_nodes
