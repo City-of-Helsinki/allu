@@ -5,6 +5,7 @@
     - 9000 # allu-ui-service
     - 9010 # model-service
     - 9020 # search-service
+    - 9200 # elasticsearch http
     - 9300 # elasticsearch tcp
 
 - name: allow developer connections to test environment
@@ -16,6 +17,7 @@
       - 9010 # model-service
       - 9020 # search-service
       - 9200 # elasticsearch http
+      - 9300 # elasticsearch tcp
 
 - name: allow developer connections to test environment from VPN
   ufw: rule=allow port={{ item }} src=83.102.45.242
@@ -26,3 +28,4 @@
       - 9010 # model-service
       - 9020 # search-service
       - 9200 # elasticsearch http
+      - 9300 # elasticsearch tcp
