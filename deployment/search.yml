@@ -13,7 +13,8 @@
           transport.tcp.port: 9300,
           node.data: false,
           node.master: true,
-          bootstrap.mlockall: true,
+          # Commented mlockall out becouse we don't set heap size
+          #bootstrap.mlockall: true,
           network.host: 0.0.0.0,
           discovery.zen.ping.multicast.enabled: false}
       }
