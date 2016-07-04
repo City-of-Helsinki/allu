@@ -7,6 +7,12 @@
 [backendservers]
 185.26.48.184
 
+[elasticsearch_master_nodes]
+185.26.48.184
+
+#[elasticsearch_data_nodes]
+#10.176.127.34
+
 [test:children]
 webservers
 dbservers
