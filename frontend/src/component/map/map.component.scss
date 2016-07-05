@@ -1,3 +1,13 @@
+@import '../../assets/colors';
+
+:host {
+  input.leaflet-control-layers-selector {
+    position: relative;
+    left: 0px;
+    opacity: 1;
+  }
+}
+
 .map {
   bottom: 0;
   position: absolute;
