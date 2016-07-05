@@ -9,14 +9,19 @@ import org.springframework.stereotype.Component;
 public class ApplicationProperties {
 
   private String modelServiceHost;
-
   private String modelServicePort;
+  private String searchServiceHost;
+  private String searchServicePort;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
-                               @Value("${model.service.port}") @NotEmpty String modelServicePort) {
+                               @Value("${model.service.port}") @NotEmpty String modelServicePort,
+                               @Value("${search.service.host}") @NotEmpty String searchServiceHost,
+                               @Value("${search.service.port}") @NotEmpty String searchServicePort) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
+    this.searchServiceHost = searchServiceHost;
+    this.searchServicePort = searchServicePort;
   }
 
   public static final String PATH_PREFIX = "http://";
@@ -161,6 +166,26 @@ public class ApplicationProperties {
    */
   public static final String PATH_MODEL_LOCATION_FIND_BY_ID = "/locations/{locationId}";
 
+  /**
+   * Search-service path to index a new application
+   */
+  public static final String PATH_SEARCH_APPLICATION_CREATE = "/applications";
+
+  /**
+   * Search-service path to update application index
+   */
+  public static final String PATH_SEARCH_APPLICATION_UPDATE = "/applications/{applicationId}";
+
+  /**
+   * Search-service path to find applications by querystring
+   */
+  public static final String PATH_SEARCH_APPLICATION_FIND_BY_QUERYSTRING = "/applications/search?queryString={queryString}";
+
+  /**
+   * Search-service path to find applications by fields
+   */
+  public static final String PATH_SEARCH_APPLICATION_FIND_BY_FIELDS = "/applications/search";
+
 
   /**
    * Create absolute url to model-service. Host and port values are read from the application.properties.
@@ -168,7 +193,17 @@ public class ApplicationProperties {
    * @param path resource path that is added to url after host and port values
    * @return absolute url to model-service resource
    */
-  public String getUrl(String path) {
+  public String getModelServiceUrl(String path) {
     return PATH_PREFIX + modelServiceHost + ":" + modelServicePort + path;
+  }
+
+  /**
+   * Create absolute url to search-service. Host and port values are read from the application.properties.
+   *
+   * @param path resource path that is added to url after host and port values
+   * @return absolute url to search-service resource
+   */
+  public String getSearchServiceUrl(String path) {
+    return PATH_PREFIX + searchServiceHost + ":" + searchServicePort + path;
   }
 }

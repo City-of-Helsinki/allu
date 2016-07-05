@@ -43,7 +43,7 @@ public class ContactService {
    */
   public List<ContactJson> findContactsForApplication(int applicationId) {
     ResponseEntity<Contact[]> locationResult = restTemplate.getForEntity(
-        applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_CONTACT_FIND_BY_APPLICATION), Contact[].class,
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_CONTACT_FIND_BY_APPLICATION), Contact[].class,
         applicationId);
     List<ContactJson> results = Arrays.stream(locationResult.getBody()).map(c -> mapContactToJson(c))
         .collect(Collectors.toList());
@@ -54,7 +54,7 @@ public class ContactService {
     List<Contact> modelData = new ArrayList<>();
     Optional.ofNullable(contacts).ifPresent(l -> l.forEach(c -> modelData.add(mapContactFromJson(c))));
     ResponseEntity<Contact[]> locationResult = restTemplate.exchange(
-        applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_CONTACT_FIND_BY_APPLICATION),
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_CONTACT_FIND_BY_APPLICATION),
         HttpMethod.PUT, new HttpEntity<>(modelData), Contact[].class, applicationId);
 
     List<ContactJson> results = Arrays.stream(locationResult.getBody()).map(c -> mapContactToJson(c))

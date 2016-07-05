@@ -45,7 +45,7 @@ public class LocationService {
 
   private void callModelService(LocationJson locationJson) {
     Location location = restTemplate.postForObject(applicationProperties
-            .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(locationJson),
+            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(locationJson),
         Location.class);
     mapLocationToJson(locationJson, location);
   }
@@ -57,7 +57,7 @@ public class LocationService {
    */
   public void updateLocation(LocationJson locationJson) {
     if (locationJson != null && locationJson.getId() != null && locationJson.getId() > 0) {
-      restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
+      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
           (locationJson), locationJson.getId().intValue());
     }
   }
@@ -71,7 +71,7 @@ public class LocationService {
   public LocationJson findLocationById(int locationId) {
     LocationJson locationJson = new LocationJson();
     ResponseEntity<Location> locationResult = restTemplate.getForEntity(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_LOCATION_FIND_BY_ID), Location.class, locationId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_FIND_BY_ID), Location.class, locationId);
     mapLocationToJson(locationJson, locationResult.getBody());
     return locationJson;
   }

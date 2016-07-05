@@ -31,6 +31,8 @@
         <module>model-service</module>
         <module>allu-ui-domain</module>
         <module>allu-ui-service</module>
+        <module>search-domain</module>
+        <module>search-service</module>
     </modules>
 
     <build>

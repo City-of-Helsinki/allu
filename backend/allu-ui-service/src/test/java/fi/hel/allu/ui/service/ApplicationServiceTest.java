@@ -40,6 +40,8 @@ public class ApplicationServiceTest extends MockServices {
   protected ApplicationMapper applicationMapper;
   @Mock
   protected ContactService contactService;
+  @Mock
+  protected SearchService searchService;
 
   private ApplicationService applicationService;
 
@@ -53,7 +55,7 @@ public class ApplicationServiceTest extends MockServices {
   public void setUp() {
     applicationMapper = new ApplicationMapper();
     applicationService = new ApplicationService(props, restTemplate, locationService, customerService, applicantService, projectService,
-        applicationMapper, contactService);
+        applicationMapper, contactService, searchService);
 
     initSaveMocks();
     initSearchMocks();

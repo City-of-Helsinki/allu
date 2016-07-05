@@ -4,6 +4,8 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.OutdoorEventES;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import org.mockito.Mock;
@@ -58,6 +60,10 @@ public abstract class MockServices {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(OutdoorEvent.class)))
         .thenAnswer((Answer<OutdoorEvent>) invocation -> createMockOutdoorEventModel());
+
+    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
+        Mockito.eq(ApplicationES.class)))
+        .thenAnswer((Answer<ApplicationES>) invocation -> createMockApplicationES());
   }
 
   public void initSearchMocks() {
@@ -96,7 +102,7 @@ public abstract class MockServices {
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
             createMockApplicationListResponse());
 
-    Mockito.when(props.getUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
+    Mockito.when(props.getModelServiceUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
 
   }
 
@@ -167,7 +173,7 @@ public abstract class MockServices {
     return project;
   }
 
-  public OutdoorEventJson createOutdoorEventJson(Integer id) {
+  public OutdoorEventJson createOutdoorEventJson() {
     OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
     outdoorEventJson.setDescription("Outdoor event description, Json");
     outdoorEventJson.setAttendees(1000);
@@ -212,7 +218,7 @@ public abstract class MockServices {
     applicationJson.setApplicant(createApplicantJson(null, null));
     applicationJson.setLocation(createLocationJson(null));
     applicationJson.setProject(createProjectJson(null));
-    applicationJson.setEvent(createOutdoorEventJson(null));
+    applicationJson.setEvent(createOutdoorEventJson());
     return applicationJson;
   }
 
@@ -227,6 +233,7 @@ public abstract class MockServices {
     application.setType(ApplicationType.OutdoorEvent);
     application.setLocationId(102);
     application.setApplicantId(103);
+    application.setStatus("Vireillä");
     application.setEvent(createMockOutdoorEventModel());
     return application;
   }
@@ -309,6 +316,43 @@ public abstract class MockServices {
     outdoorEvent.setStartTime(zonedDateTime);
     outdoorEvent.setEndTime(zonedDateTime2);
     return outdoorEvent;
+  }
+
+  public ApplicationES createMockApplicationES() {
+    ApplicationES applicationES = new ApplicationES();
+    ZoneId zoneId = ZoneId.of("Europe/Helsinki");
+    ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
+    applicationES.setCreationTime(zonedDateTime);
+    applicationES.setName("Mock name, ES");
+    applicationES.setStatus("Vireillä, ES");
+    applicationES.setHandler("Handler, ES");
+    applicationES.setId(1);
+    applicationES.setType(ApplicationType.OutdoorEvent);
+    applicationES.setApplicationTypeData(createApplicationTypeDataES());
+    return applicationES;
+  }
+
+  public OutdoorEventES createApplicationTypeDataES() {
+    OutdoorEventES outdoorEventJson = new OutdoorEventES();
+    outdoorEventJson.setDescription("Outdoor event description, ES");
+    outdoorEventJson.setAttendees(1000);
+    outdoorEventJson.setStartTime(ZonedDateTime.now());
+    outdoorEventJson.setNature("Outdoor event nature, ES");
+    outdoorEventJson.setUrl("Outdoor event url, ES");
+    outdoorEventJson.setEcoCompass("Ekokompassi, ES");
+    outdoorEventJson.setTimeExceptions("Mock exceptions, ES");
+    outdoorEventJson.setSalesActivity("Myyntiä, ES");
+    outdoorEventJson.setStructureArea(100);
+    outdoorEventJson.setPricing("Mock pricing, ES");
+    outdoorEventJson.setEntryFee(1233);
+    outdoorEventJson.setFoodProviders("Mock foodProviders, ES");
+    outdoorEventJson.setStructureDescription("Structure description, ES");
+    ZoneId zoneId = ZoneId.of("Europe/Helsinki");
+    ZonedDateTime zonedDateTime = ZonedDateTime.of(2016, 11, 30, 23, 45, 59, 1234, zoneId);
+    ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2016, 11, 30, 23, 45, 59, 1234, zoneId);
+    outdoorEventJson.setStartTime(zonedDateTime);
+    outdoorEventJson.setEndTime(zonedDateTime2);
+    return outdoorEventJson;
   }
 
   public ResponseEntity<Person> createMockPersonResponse() {

@@ -32,11 +32,12 @@ public class ApplicationService {
   private ProjectService projectService;
   private ApplicationMapper applicationMapper;
   private ContactService contactService;
+  private SearchService searchService;
 
   @Autowired
-  ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
+  public ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
       locationService, CustomerService customerService, ApplicantService applicantService, ProjectService projectService,
-      ApplicationMapper applicationMapper, ContactService contactService) {
+      ApplicationMapper applicationMapper, ContactService contactService, SearchService searchService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -45,6 +46,7 @@ public class ApplicationService {
     this.projectService = projectService;
     this.applicationMapper = applicationMapper;
     this.contactService = contactService;
+    this.searchService = searchService;
   }
 
 
@@ -62,10 +64,11 @@ public class ApplicationService {
     List<ContactJson> contacts = applicationJson.getContactList();
     setContactOrganization(contacts, applicationJson.getApplicant());
     Application applicationModel = restTemplate.postForObject(applicationProperties
-            .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
+            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
         applicationMapper.createApplicationModel(applicationJson), Application.class);
     applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
     applicationJson.setContactList(contactService.setContactsForApplication(applicationJson.getId(), contacts));
+    searchService.insertApplicationToES(applicationJson);
     return applicationJson;
   }
 
@@ -82,9 +85,10 @@ public class ApplicationService {
     locationService.updateLocation(applicationJson.getLocation());
     List<ContactJson> contacts = contactService.setContactsForApplication(applicationId,
         applicationJson.getContactList());
-    restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), applicationMapper
+    restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), applicationMapper
         .createApplicationModel(applicationJson), applicationId);
     applicationJson.setContactList(contacts);
+    searchService.updateApplication(applicationJson);
     return applicationJson;
   }
 
@@ -97,7 +101,7 @@ public class ApplicationService {
    */
   public ApplicationJson findApplicationById(String applicationId) {
     Application applicationModel = restTemplate.getForObject(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
     return getApplication(applicationModel);
   }
 
@@ -110,7 +114,7 @@ public class ApplicationService {
   public List<ApplicationJson> findApplicationByHandler(String handlerId) {
     List<ApplicationJson> resultList = new ArrayList<>();
     ResponseEntity<Application[]> applicationResult = restTemplate.getForEntity(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_HANDLER), Application[].class, handlerId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_HANDLER), Application[].class, handlerId);
     for (Application applicationModel : applicationResult.getBody()) {
       resultList.add(getApplication(applicationModel));
     }
@@ -129,7 +133,7 @@ public class ApplicationService {
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     mapLocationQueryToSearchCriteria(query, lsc);
     ResponseEntity<Application[]> applicationResult = restTemplate.postForEntity(
-        applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_LOCATION),
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_LOCATION),
         lsc,
         Application[].class);
     for (Application applicationModel : applicationResult.getBody()) {

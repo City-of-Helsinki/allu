@@ -50,7 +50,7 @@ public class ApplicantService {
           break;
       }
       Applicant applicantModel = restTemplate.postForObject(applicationProperties
-              .getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_CREATE), createApplicantModel(applicantJson),
+              .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICANT_CREATE), createApplicantModel(applicantJson),
           Applicant.class);
       mapApplicantToJson(applicantJson, applicantModel);
     }
@@ -73,7 +73,7 @@ public class ApplicantService {
           organizationService.updateOrganization(applicantJson.getOrganization());
           break;
       }
-      restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_UPDATE), createApplicantModel(applicantJson),
+      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICANT_UPDATE), createApplicantModel(applicantJson),
           applicantJson.getId().intValue());
     }
   }
@@ -81,7 +81,7 @@ public class ApplicantService {
   public ApplicantJson findApplicantById(int applicantId) {
     ApplicantJson applicantJson = new ApplicantJson();
     ResponseEntity<Applicant> applicantResult = restTemplate.getForEntity(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_APPLICANT_FIND_BY_ID), Applicant.class, applicantId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICANT_FIND_BY_ID), Applicant.class, applicantId);
     mapApplicantToJson(applicantJson, applicantResult.getBody());
 
     switch (applicantResult.getBody().getType()) {
