@@ -1,3 +1,5 @@
 model_service_host: localhost
 model_service_port: 9010
 
+saerch_service_host: localhost
+search_service_port: 9020
