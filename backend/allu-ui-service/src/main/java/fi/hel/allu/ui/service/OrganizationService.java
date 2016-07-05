@@ -34,7 +34,7 @@ public class OrganizationService {
   public OrganizationJson createOrganization(OrganizationJson organizationJson) {
     if (organizationJson != null && organizationJson.getId() == null) {
       Organization organizationModel = restTemplate.postForObject(applicationProperties
-              .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(organizationJson),
+              .getModelServiceUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_CREATE), createOrganizationModel(organizationJson),
           Organization.class);
       mapOrganizationToJson(organizationJson, organizationModel);
     }
@@ -48,7 +48,7 @@ public class OrganizationService {
    */
   public void updateOrganization(OrganizationJson organizationJson) {
     if (organizationJson != null && organizationJson.getId() != null && organizationJson.getId() > 0) {
-      restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_UPDATE), createOrganizationModel
+      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_UPDATE), createOrganizationModel
           (organizationJson), organizationJson.getId().intValue());
     }
   }
@@ -62,7 +62,7 @@ public class OrganizationService {
   public OrganizationJson findOrganizationById(int organizationId) {
     OrganizationJson organizationJson = new OrganizationJson();
     ResponseEntity<Organization> organizationResult = restTemplate.getForEntity(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_FIND_BY_ID), Organization.class, organizationId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_ORGANIZATION_FIND_BY_ID), Organization.class, organizationId);
     mapOrganizationToJson(organizationJson, organizationResult.getBody());
     return organizationJson;
   }

@@ -46,7 +46,7 @@ public class CustomerService {
           break;
       }
       Customer customerModel = restTemplate.postForObject(applicationProperties
-              .getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_CREATE), createCustomerModel(customerJson),
+              .getModelServiceUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_CREATE), createCustomerModel(customerJson),
           Customer.class);
       mapCustomerToJson(customerJson, customerModel);
     }
@@ -68,7 +68,7 @@ public class CustomerService {
           organizationService.updateOrganization(customerJson.getOrganization());
           break;
       }
-      restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_UPDATE), createCustomerModel
+      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_UPDATE), createCustomerModel
           (customerJson), customerJson.getId().intValue());
     }
   }
@@ -82,7 +82,7 @@ public class CustomerService {
   public CustomerJson findCustomerById(int customerId) {
     CustomerJson customerJson = new CustomerJson();
     ResponseEntity<Customer> customerResult = restTemplate.getForEntity(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_FIND_BY_ID), Customer.class, customerId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_CUSTOMER_FIND_BY_ID), Customer.class, customerId);
     mapCustomerToJson(customerJson, customerResult.getBody());
 
     switch (customerResult.getBody().getType()) {

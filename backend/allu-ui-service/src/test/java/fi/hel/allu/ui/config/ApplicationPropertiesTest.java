@@ -7,8 +7,8 @@ public class ApplicationPropertiesTest {
 
   @Test
   public void testCreateValidUrl() throws Exception {
-    ApplicationProperties props = new ApplicationProperties("localhost", "9090");
-    String result = props.getUrl("/test/joo");
+    ApplicationProperties props = new ApplicationProperties("localhost", "9090", "localhost", "9090");
+    String result = props.getModelServiceUrl("/test/joo");
     Assert.assertEquals("http://localhost:9090/test/joo", result);
   }
 }

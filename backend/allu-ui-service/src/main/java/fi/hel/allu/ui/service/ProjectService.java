@@ -36,7 +36,7 @@ public class ProjectService {
         projectJson = new ProjectJson();
       }
       Project projectModel = restTemplate.postForObject(applicationProperties
-              .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_CREATE), createProjectModel(projectJson),
+              .getModelServiceUrl(ApplicationProperties.PATH_MODEL_PROJECT_CREATE), createProjectModel(projectJson),
           Project.class);
       mapProjectToJson(projectJson, projectModel);
     }
@@ -50,7 +50,7 @@ public class ProjectService {
    */
   public void updateProject(ProjectJson projectJson) {
     if (projectJson != null && projectJson.getId() != null && projectJson.getId() > 0) {
-      restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_PROJECT_UPDATE), createProjectModel(projectJson),
+      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_PROJECT_UPDATE), createProjectModel(projectJson),
           projectJson.getId().intValue());
     }
   }
@@ -64,7 +64,7 @@ public class ProjectService {
   public ProjectJson findProjectById(int projectId) {
     ProjectJson projectJson = new ProjectJson();
     ResponseEntity<Project> projectResult = restTemplate.getForEntity(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);
     mapProjectToJson(projectJson, projectResult.getBody());
     return projectJson;
   }

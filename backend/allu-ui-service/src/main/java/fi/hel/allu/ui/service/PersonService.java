@@ -34,7 +34,7 @@ public class PersonService {
   public PersonJson createPerson(PersonJson personJson) {
     if (personJson != null && (personJson.getId() == null || personJson.getId() == 0)) {
       Person personModel = restTemplate.postForObject(applicationProperties
-              .getUrl(ApplicationProperties.PATH_MODEL_PERSON_CREATE), createPersonModel(personJson),
+              .getModelServiceUrl(ApplicationProperties.PATH_MODEL_PERSON_CREATE), createPersonModel(personJson),
           Person.class);
       mapPersonToJson(personJson, personModel);
     }
@@ -48,7 +48,7 @@ public class PersonService {
    */
   public void updatePerson(PersonJson personJson) {
     if (personJson != null && personJson.getId() != null && personJson.getId() > 0) {
-      restTemplate.put(applicationProperties.getUrl(ApplicationProperties.PATH_MODEL_PERSON_UPDATE), createPersonModel(personJson),
+      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_PERSON_UPDATE), createPersonModel(personJson),
           personJson.getId().intValue());
     }
   }
@@ -62,7 +62,7 @@ public class PersonService {
   public PersonJson findPersonById(int personId) {
     PersonJson personJson = new PersonJson();
     ResponseEntity<Person> personResult = restTemplate.getForEntity(applicationProperties
-        .getUrl(ApplicationProperties.PATH_MODEL_PERSON_FIND_BY_ID), Person.class, personId);
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_PERSON_FIND_BY_ID), Person.class, personId);
     mapPersonToJson(personJson, personResult.getBody());
     return personJson;
   }
