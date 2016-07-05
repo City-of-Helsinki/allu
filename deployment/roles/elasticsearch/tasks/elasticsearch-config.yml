@@ -37,6 +37,11 @@
 
 - set_fact: data_dirs={{ es_data_dirs | append_to_list('/'+instance_suffix) }}
 
+- name: Delete data directory to clean indexes
+  file: dest={{ item }} state=absent
+  with_items:
+      - "{{data_dirs}}"
+
 - name: Create Data Directories
   file: path={{ item }} state=directory owner={{ es_user }} group={{ es_group }}
   with_items:
