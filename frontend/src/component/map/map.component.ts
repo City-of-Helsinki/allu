@@ -1,7 +1,7 @@
 import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
-import {Component} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {MapService} from '../../service/map.service';
 import {GeocodingService} from '../../service/geocoding.service';
 
@@ -23,7 +23,9 @@ import {Map} from 'leaflet';
   ]
 })
 export class MapComponent implements EventListener {
-
+  @Input() draw: boolean;
+  @Input() zoom: boolean;
+  @Input() selection: boolean;
   private applicationArea: L.LayerGroup<L.ILayer>;
   private map: Map;
   private mapLayers: any;
@@ -39,6 +41,9 @@ export class MapComponent implements EventListener {
     this.workqueue = workqueue;
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;
+    this.zoom = false;
+    this.draw = false;
+    this.selection = false;
   }
 
   public handle(event: Event): void {
@@ -49,14 +54,28 @@ export class MapComponent implements EventListener {
       }
       let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
       this.applicationArea = new L.GeoJSON(featureCollection).addTo(this.map);
+
+      if (this.selection && featureCollection.features) {
+        let bounds = new Array<L.LatLng> ();
+        for (let feature of featureCollection.features) {
+          for (let list of feature.geometry.coordinates) {
+            for (let coordinates of list) {
+              bounds.push(L.latLng(coordinates[1], coordinates[0]));
+            }
+          }
+        }
+
+        this.map.fitBounds(L.latLngBounds(bounds));
+      }
     }
+
   }
 
   ngOnInit() {
-
-    this.map = new L.Map('map', {
+    let mapOption = {
       zoomControl: false,
-      center: new L.LatLng(60.1708763, 24.9424988), // Helsinki railway station
+      center: undefined,
+      scrollWheelZoom: this.zoom,
       zoom: 6,
       minZoom: 3,
       maxZoom: 13,
@@ -64,7 +83,13 @@ export class MapComponent implements EventListener {
         new L.LatLngBounds(new L.LatLng(59.9084989595170114, 24.4555930248625906), new L.LatLng(60.4122137731072542, 25.2903558783246289)),
       layers: [this.mapLayers.kaupunkikartta],
       crs: this.mapService.getEPSG3879()
-    });
+    };
+
+    if (this.draw) {
+      mapOption.center = new L.LatLng(60.1708763, 24.9424988); // Helsinki railway station
+    }
+
+    this.map = new L.Map('map', mapOption);
     L.control.zoom({position: 'topright'}).addTo(this.map);
 
     let drawnItems = new L.GeoJSON();
@@ -84,7 +109,9 @@ export class MapComponent implements EventListener {
         featureGroup: drawnItems
       }
     });
-    this.map.addControl(drawControl);
+    if (this.draw) {
+      this.map.addControl(drawControl);
+    }
     let that = this;
     this.map.on('draw:created', function (e: any) {
       let type = e.layerType,
@@ -93,8 +120,6 @@ export class MapComponent implements EventListener {
       drawnItems.addLayer(layer);
       that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
     });
-
-    // Add zoom controls
 
     L.control.layers(this.mapLayers).addTo(this.map);
     L.control.scale().addTo(this.map);
