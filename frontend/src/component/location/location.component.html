@@ -31,6 +31,14 @@
       <md-card-content>
         <div class="row">
           <div class="col m8">
+            <div class="input-field col m3">
+              <input id="address" type="text" class="" [(ngModel)]="address">
+              <label for="address">Osoite</label>
+            </div>
+            <div class="input-field col m9">
+              <input id="info" type="text" class="" [(ngModel)]="info">
+              <label for="info">Lisätietoja paikasta</label>
+            </div>
             <div class="input-field col m8">
               <select (change)="rentingPlaceSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
                 <option value="" disabled selected>Vuokrattava paikka</option>
@@ -46,14 +54,6 @@
             <div class="input-field col m2">
               <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="area">
               <label for="area">Alueen pinta-ala</label>
-            </div>
-            <div class="input-field col m3">
-              <input id="address" type="text" class="" [(ngModel)]="address">
-              <label for="address">Osoite</label>
-            </div>
-            <div class="input-field col m9">
-              <input id="info" type="text" class="" [(ngModel)]="info">
-              <label for="info">Lisätietoja paikasta</label>
             </div>
           </div>
           <div class="col m4">

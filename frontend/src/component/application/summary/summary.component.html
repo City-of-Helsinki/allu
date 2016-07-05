@@ -296,14 +296,22 @@
         <md-card-content>
           <div class="row">
             <div class="col m8">
-              <div class="input-field col m8" [class.summary]="rentingPlace">
+              <div class="input-field col m3">
+                <input id="address" type="text" class="" disabled="true" [(ngModel)]="address">
+                <label for="address">Osoite</label>
+              </div>
+              <div class="input-field col m9">
+                <input id="info" type="text" class="" disabled="true" [(ngModel)]="info">
+                <label for="info">Lisätietoja paikasta</label>
+              </div>
+              <div class="input-field col m8 select-fix" [class.summary]="rentingPlace">
                 <input type="text" [disabled]="true" [(ngModel)]="rentingPlace">
                 <!-- <select (change)="rentingPlaceSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
                   <option value="" disabled selected>Vuokrattava paikka</option>
                   <option *ngFor="let rent of rentingPlace" [value]="rent.value">{{rent.name}}</option>
                 </select> -->
               </div>
-              <div class="input-field col m2" [class.summary]="sections">
+              <div class="input-field col m2 select-fix" [class.summary]="sections">
                 <input type="text" [disabled]="true" [(ngModel)]="sections">
                 <!-- <select (change)="sectionSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
                   <option value="" disabled selected>Lohko(t)</option>
@@ -313,14 +321,6 @@
               <div class="input-field col m2">
                 <input id="area" type="number" class="validate" [class.summary]="area" disabled="true" [(ngModel)]="area">
                 <label for="area">Alueen pinta-ala</label>
-              </div>
-              <div class="input-field col m3">
-                <input id="address" type="text" class="" disabled="true" [(ngModel)]="address">
-                <label for="address">Osoite</label>
-              </div>
-              <div class="input-field col m9">
-                <input id="info" type="text" class="" disabled="true" [(ngModel)]="info">
-                <label for="info">Lisätietoja paikasta</label>
               </div>
             </div>
             <div class="col m2 offset-m2">
@@ -381,7 +381,7 @@
                 <label for="structureArea">Rakenteiden kokonaisneliömäärä</label>
               </div>
               <div class="input-field col m12">
-                <textarea id="structureDescription" class="materialize-textarea" [class.summary]="application.event.structureDescription" disabled="true" [(ngModel)]="application.event.structureDescription"></textarea>
+                <textarea id="structureDescription" class="materialize-textarea textarea" [class.summary]="application.event.structureDescription" disabled="true" [(ngModel)]="application.event.structureDescription"></textarea>
                 <label for="structureDescription">Rakenteiden kuvaus</label>
               </div>
 
