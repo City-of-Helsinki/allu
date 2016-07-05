@@ -1,2 +1,2 @@
 elasticsearch_host: localhost
-elasticsearch_port: 9200
+elasticsearch_port: 9300
