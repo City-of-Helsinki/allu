@@ -9,6 +9,7 @@ import fi.hel.allu.model.querydsl.StringToApplicationType;
 import fi.hel.allu.model.querydsl.StringToAttributeDataType;
 import fi.hel.allu.model.querydsl.StringToCustomerType;
 import fi.hel.allu.model.querydsl.StringToEvent;
+import fi.hel.allu.model.querydsl.StringToStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,6 +47,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToApplicationType());
     configuration.register(new StringToEvent());
     configuration.register(new StringToAttributeDataType());
+    configuration.register(new StringToStatusType());
     return configuration;
   }
 

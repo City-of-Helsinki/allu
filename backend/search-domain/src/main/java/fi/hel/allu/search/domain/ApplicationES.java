@@ -2,6 +2,7 @@ package fi.hel.allu.search.domain;
 
 
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.ZonedDateTime;
@@ -10,12 +11,13 @@ public class ApplicationES {
   @NotBlank
   private Integer id;
   private String handler;
-  private String status;
+  private StatusType status;
   private ApplicationType type;
   private String name;
   private ZonedDateTime creationTime;
   private ApplicationTypeDataES applicationTypeData;
   private ProjectES project;
+  private ZonedDateTime decisionTime;
 
   public Integer getId() {
     return id;
@@ -33,11 +35,11 @@ public class ApplicationES {
     this.handler = handler;
   }
 
-  public String getStatus() {
+  public StatusType getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(StatusType status) {
     this.status = status;
   }
 
@@ -79,5 +81,13 @@ public class ApplicationES {
 
   public void setProject(ProjectES project) {
     this.project = project;
+  }
+
+  public ZonedDateTime getDecisionTime() {
+    return decisionTime;
+  }
+
+  public void setDecisionTime(ZonedDateTime decisionTime) {
+    this.decisionTime = decisionTime;
   }
 }

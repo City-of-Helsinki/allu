@@ -73,7 +73,8 @@ create table allu.application (
     metadata_version integer not null,
     creation_time timestamp with time zone,
     location_id integer references allu.location(id),
-    event text not null);
+    event text not null,
+    decision_time timestamp with time zone);
 
 create table allu.attachment (
    id serial primary key,

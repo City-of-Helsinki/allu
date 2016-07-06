@@ -41,11 +41,11 @@ public class ApplicantService {
   public ApplicantJson createApplicant(ApplicantJson applicantJson) {
     if (applicantJson != null && applicantJson.getId() == null) {
       switch (applicantJson.getType()) {
-        case Person:
+        case PERSON:
           applicantJson.setPerson(personService.createPerson(applicantJson.getPerson()));
           break;
-        case Company:
-      case Association:
+        case COMPANY:
+        case ASSOCIATION:
           applicantJson.setOrganization(organizationService.createOrganization(applicantJson.getOrganization()));
           break;
       }
@@ -65,11 +65,11 @@ public class ApplicantService {
   public void updateApplicant(ApplicantJson applicantJson) {
     if (applicantJson != null && applicantJson.getId() != null && applicantJson.getId() > 0) {
       switch (applicantJson.getType()) {
-        case Person:
+        case PERSON:
           personService.updatePerson(applicantJson.getPerson());
           break;
-        case Company:
-      case Association:
+        case COMPANY:
+        case ASSOCIATION:
           organizationService.updateOrganization(applicantJson.getOrganization());
           break;
       }
@@ -85,11 +85,11 @@ public class ApplicantService {
     mapApplicantToJson(applicantJson, applicantResult.getBody());
 
     switch (applicantResult.getBody().getType()) {
-      case Person:
+      case PERSON:
         applicantJson.setPerson(personService.findPersonById(applicantResult.getBody().getPersonId()));
         break;
-      case Company:
-    case Association:
+      case COMPANY:
+      case ASSOCIATION:
         applicantJson.setOrganization(organizationService.findOrganizationById(applicantResult.getBody().getOrganizationId()));
         break;
     }

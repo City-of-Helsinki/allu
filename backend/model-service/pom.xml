@@ -158,7 +158,7 @@
                         </typeMapping>
                         <typeMapping>
                             <table>application</table>
-                            <column>start_time</column>
+                            <column>decision_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <!-- Map enumeration types -->
@@ -177,6 +177,11 @@
                             <table>application</table>
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
+                            <column>status</column>
+                            <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
                         </typeMapping>
                         <typeMapping>
                             <table>application</table>

@@ -38,10 +38,10 @@ public class CustomerService {
   public CustomerJson createCustomer(CustomerJson customerJson) {
     if (customerJson != null && customerJson.getId() == null) {
       switch (customerJson.getType()) {
-        case Person:
+        case PERSON:
           customerJson.setPerson(personService.createPerson(customerJson.getPerson()));
           break;
-        case Company:
+        case COMPANY:
           customerJson.setOrganization(organizationService.createOrganization(customerJson.getOrganization()));
           break;
       }
@@ -61,10 +61,10 @@ public class CustomerService {
   public void updateCustomer(CustomerJson customerJson) {
     if (customerJson != null && customerJson.getId() != null && customerJson.getId() > 0) {
       switch (customerJson.getType()) {
-        case Person:
+        case PERSON:
           personService.updatePerson(customerJson.getPerson());
           break;
-        case Company:
+        case COMPANY:
           organizationService.updateOrganization(customerJson.getOrganization());
           break;
       }
@@ -86,10 +86,10 @@ public class CustomerService {
     mapCustomerToJson(customerJson, customerResult.getBody());
 
     switch (customerResult.getBody().getType()) {
-      case Person:
+      case PERSON:
         customerJson.setPerson(personService.findPersonById(customerResult.getBody().getPersonId()));
         break;
-      case Company:
+      case COMPANY:
         customerJson.setOrganization(organizationService.findOrganizationById(customerResult.getBody().getOrganizationId()));
         break;
     }

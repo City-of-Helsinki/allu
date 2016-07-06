@@ -2,6 +2,7 @@ package fi.hel.allu.search;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.OutdoorEventES;
 import fi.hel.allu.search.domain.QueryParameter;
@@ -45,11 +46,11 @@ public class ApplicationSearchTest {
     }
 
     ApplicationES applicationES = new ApplicationES();
-    applicationES.setType(ApplicationType.OutdoorEvent);
+    applicationES.setType(ApplicationType.OUTDOOREVENT);
     applicationES.setId(1);
     applicationES.setHandler("Test");
     applicationES.setName("Ensimmäinen testi");
-    applicationES.setStatus("Vireillä");
+    applicationES.setStatus(StatusType.PENDING);
 
     OutdoorEventES outdoorEventES = new OutdoorEventES();
     outdoorEventES.setStartTime(ZonedDateTime.now());
@@ -144,11 +145,11 @@ public class ApplicationSearchTest {
 
   private ApplicationES createApplication(Integer id) {
     ApplicationES applicationES = new ApplicationES();
-    applicationES.setType(ApplicationType.OutdoorEvent);
+    applicationES.setType(ApplicationType.OUTDOOREVENT);
     applicationES.setId(id);
     applicationES.setHandler("Käsittelijä");
     applicationES.setName("Mock testi");
-    applicationES.setStatus("Vireillä");
+    applicationES.setStatus(StatusType.PENDING);
     ZonedDateTime dateTime = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
     applicationES.setCreationTime(dateTime);
 

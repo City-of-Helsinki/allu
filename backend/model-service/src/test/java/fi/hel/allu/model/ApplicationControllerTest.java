@@ -1,18 +1,10 @@
 package fi.hel.allu.model;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.Before;
@@ -24,22 +16,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.model.dao.ApplicantDao;
-import fi.hel.allu.model.dao.CustomerDao;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.dao.PersonDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.Event;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
+
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -105,7 +89,7 @@ public class ApplicationControllerTest {
   public void testFindExisting() throws Exception {
     // Setup: insert an application
     Application appIn = prepareApplication("Test Application", "Handler");
-    appIn.setStatus("Test Application status");
+    appIn.setStatus(StatusType.HANDLING);
     ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
     Application appInResult = wtc.parseObjectFromResult(resultActions, Application.class);
     // Test: try to read the same application back
@@ -173,11 +157,11 @@ public class ApplicationControllerTest {
     ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
     Application appInResult = wtc.parseObjectFromResult(resultActions, Application.class);
     // Test: try to update the application
-    appInResult.setStatus("draft");
+    appInResult.setStatus(StatusType.HANDLING);
     resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
-    assertEquals("draft", updateResult.getStatus());
+    assertEquals(StatusType.HANDLING, updateResult.getStatus());
   }
 
   @Test
@@ -208,8 +192,9 @@ public class ApplicationControllerTest {
     app.setApplicantId(applicantId);
     app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.now());
-    app.setType(ApplicationType.OutdoorEvent);
+    app.setType(ApplicationType.OUTDOOREVENT);
     app.setMetadataVersion(1);
+    app.setDecisionTime(ZonedDateTime.now());
     app.setName(name);
     app.setHandler(handler);
     app.setEvent(addOutdoorEvent(personId));
@@ -219,7 +204,7 @@ public class ApplicationControllerTest {
   private Integer addCustomer(Integer personId) throws Exception {
     Customer cust = new Customer();
     cust.setPersonId(personId);
-    cust.setType(CustomerType.Person);
+    cust.setType(CustomerType.PERSON);
     Customer insertedCust = customerDao.insert(cust);
     return insertedCust.getId();
   }
@@ -245,7 +230,7 @@ public class ApplicationControllerTest {
 
   private Integer addApplicant(Integer personId) {
     Applicant applicant = new Applicant();
-    applicant.setType(CustomerType.Person);
+    applicant.setType(CustomerType.PERSON);
     applicant.setPersonId(personId);
     Applicant insertedApplicant = applicantDao.insert(applicant);
     return insertedApplicant.getId();

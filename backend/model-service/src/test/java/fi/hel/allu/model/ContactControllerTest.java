@@ -1,13 +1,10 @@
 package fi.hel.allu.model;
 
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.OrganizationDao;
+import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,15 +14,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.OrganizationDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Organization;
-import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.model.domain.Project;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = App.class)
@@ -182,7 +175,7 @@ public class ContactControllerTest {
     }
 
     Application appl = new Application();
-    appl.setType(ApplicationType.OutdoorEvent);
+    appl.setType(ApplicationType.OUTDOOREVENT);
     appl.setMetadataVersion(1);
     appl.setName("Dummy apllication");
     OutdoorEvent evt = new OutdoorEvent();

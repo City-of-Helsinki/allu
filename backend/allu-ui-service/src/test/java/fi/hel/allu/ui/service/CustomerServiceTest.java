@@ -50,7 +50,7 @@ public class CustomerServiceTest extends MockServices {
   @Test
   public void testTypeOrganizationHasOrganization() {
     CustomerJson customerJson = new CustomerJson();
-    customerJson.setType(CustomerType.Company);
+    customerJson.setType(CustomerType.COMPANY);
     customerJson.setOrganization(createOrganizationJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
         validator.validate(customerJson);
@@ -60,7 +60,7 @@ public class CustomerServiceTest extends MockServices {
   @Test
   public void testTypeOrganizationHasNotOrganization() {
     CustomerJson customerJson = new CustomerJson();
-    customerJson.setType(CustomerType.Company);
+    customerJson.setType(CustomerType.COMPANY);
     customerJson.setOrganization(null);
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
         validator.validate(customerJson);
@@ -71,7 +71,7 @@ public class CustomerServiceTest extends MockServices {
   @Test
   public void testTypeOrganizationHasPerson() {
     CustomerJson customerJson = new CustomerJson();
-    customerJson.setType(CustomerType.Company);
+    customerJson.setType(CustomerType.COMPANY);
     customerJson.setOrganization(createOrganizationJson(1));
     customerJson.setPerson(createPersonJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
@@ -83,7 +83,7 @@ public class CustomerServiceTest extends MockServices {
   @Test
   public void testTypePersonHasPerson() {
     CustomerJson customerJson = new CustomerJson();
-    customerJson.setType(CustomerType.Person);
+    customerJson.setType(CustomerType.PERSON);
     customerJson.setPerson(createPersonJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
         validator.validate(customerJson);
@@ -93,7 +93,7 @@ public class CustomerServiceTest extends MockServices {
   @Test
   public void testTypePersonHasNotPerson() {
     CustomerJson customerJson = new CustomerJson();
-    customerJson.setType(CustomerType.Person);
+    customerJson.setType(CustomerType.PERSON);
     Set<ConstraintViolation<CustomerJson>> constraintViolations =
         validator.validate(customerJson);
     assertEquals(1, constraintViolations.size());
@@ -103,7 +103,7 @@ public class CustomerServiceTest extends MockServices {
   @Test
   public void testTypePersonHasOrganization() {
     CustomerJson customerJson = new CustomerJson();
-    customerJson.setType(CustomerType.Person);
+    customerJson.setType(CustomerType.PERSON);
     customerJson.setPerson(createPersonJson(1));
     customerJson.setOrganization(createOrganizationJson(1));
     Set<ConstraintViolation<CustomerJson>> constraintViolations =

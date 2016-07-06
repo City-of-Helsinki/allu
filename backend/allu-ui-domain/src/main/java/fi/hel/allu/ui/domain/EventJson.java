@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
     include = JsonTypeInfo.As.PROPERTY,
     property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = OutdoorEventJson.class, name = "OutdoorEvent")
+    @JsonSubTypes.Type(value = OutdoorEventJson.class, name = "OUTDOOREVENT")
 })
 public abstract class EventJson {
 
