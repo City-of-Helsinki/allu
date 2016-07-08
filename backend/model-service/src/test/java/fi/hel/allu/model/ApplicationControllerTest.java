@@ -209,6 +209,7 @@ public class ApplicationControllerTest {
     app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.now());
     app.setType(ApplicationType.OutdoorEvent);
+    app.setMetadataVersion(1);
     app.setName(name);
     app.setHandler(handler);
     app.setEvent(addOutdoorEvent(personId));

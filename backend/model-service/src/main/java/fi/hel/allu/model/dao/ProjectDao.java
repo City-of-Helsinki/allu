@@ -6,6 +6,7 @@ import static fi.hel.allu.QProject.project;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.types.QBean;
@@ -15,6 +16,7 @@ import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Project;
 
+@Repository
 public class ProjectDao {
 
   @Autowired

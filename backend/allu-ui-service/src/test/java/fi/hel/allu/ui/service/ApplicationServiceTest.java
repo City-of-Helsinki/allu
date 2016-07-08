@@ -42,6 +42,8 @@ public class ApplicationServiceTest extends MockServices {
   protected ContactService contactService;
   @Mock
   protected SearchService searchService;
+  @Mock
+  protected MetaService metaService;
 
   private ApplicationService applicationService;
 
@@ -55,7 +57,7 @@ public class ApplicationServiceTest extends MockServices {
   public void setUp() {
     applicationMapper = new ApplicationMapper();
     applicationService = new ApplicationService(props, restTemplate, locationService, customerService, applicantService, projectService,
-        applicationMapper, contactService, searchService);
+        applicationMapper, contactService, searchService, metaService);
 
     initSaveMocks();
     initSearchMocks();
@@ -82,6 +84,8 @@ public class ApplicationServiceTest extends MockServices {
         createApplicantJson(103, 201));
     Mockito.when(contactService.findContactsForApplication(Mockito.anyInt()))
         .thenAnswer((Answer<List<ContactJson>>) invocation -> createContactList());
+    Mockito.when(metaService.findMetadataForApplication(Mockito.any()))
+        .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
   }
 
   @Test

@@ -7,6 +7,8 @@ import {LoadApplicationsTask} from '../../task/application/load-applications-tas
 import {ApplicationSaveEvent} from '../../event/save/application-save-event';
 import {SaveApplicationTask} from '../../task/application/save-application-task';
 import {Task} from './task';
+import {MetaLoadEvent} from '../../event/load/meta-load-event';
+import {LoadMetaTask} from '../../task/application/load-meta-task';
 
 @Injectable()
 export class TaskManagerService implements EventListener {
@@ -27,6 +29,7 @@ export class TaskManagerService implements EventListener {
     let eventToTaskMap = new Map<string, { new (...args: any[]): Task; }>();
     eventToTaskMap.set(TaskManagerService.extractName(ApplicationSaveEvent.toString()), SaveApplicationTask);
     eventToTaskMap.set(TaskManagerService.extractName(ApplicationsLoadEvent.toString()), LoadApplicationsTask);
+    eventToTaskMap.set(TaskManagerService.extractName(MetaLoadEvent.toString()), LoadMetaTask);
     return eventToTaskMap;
   }
 

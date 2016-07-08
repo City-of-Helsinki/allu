@@ -4,11 +4,14 @@ import {URLSearchParams} from '@angular/http';
 import {Application} from '../model/application/application';
 import {ApplicationMapper} from './mapper/application-mapper';
 import {ApplicationLoadFilter} from '../event/load/application-load-filter';
+import {StructureMetaMapper} from './mapper/structure-meta-mapper';
+import {StructureMeta} from '../model/application/structure-meta';
 
 @Injectable()
 export class ApplicationService {
 
   static APPLICATIONS_URL = '/api/applications';
+  static METADATA_URL = '/api/meta';
 
   constructor(private authHttp: AuthHttp) {}
 
@@ -102,4 +105,19 @@ export class ApplicationService {
     );
   }
 
+  public loadApplicationMetadata(applicationType: string): Promise<StructureMeta> {
+    console.log('ApplicationService.loadApplicationMetadata', applicationType);
+    return new Promise<StructureMeta>((resolve, reject) =>
+      this.authHttp.get(ApplicationService.METADATA_URL + '/' + applicationType).subscribe(
+        data => {
+          console.log('ApplicationService.loadApplicationMetadata', data);
+          let structureMeta = StructureMetaMapper.mapBackend(data.json());
+          console.log('Loaded metadata', structureMeta);
+          resolve(structureMeta);
+        },
+        err => console.log('ApplicationService.loadApplicationMetadata', err),
+        () => console.log('Request Complete')
+      )
+    );
+  }
 }

@@ -1,15 +1,5 @@
 package fi.hel.allu.ui.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
@@ -18,6 +8,15 @@ import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ApplicationService {
@@ -33,11 +32,12 @@ public class ApplicationService {
   private ApplicationMapper applicationMapper;
   private ContactService contactService;
   private SearchService searchService;
+  private MetaService metaService;
 
   @Autowired
   public ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
       locationService, CustomerService customerService, ApplicantService applicantService, ProjectService projectService,
-      ApplicationMapper applicationMapper, ContactService contactService, SearchService searchService) {
+      ApplicationMapper applicationMapper, ContactService contactService, SearchService searchService, MetaService metaService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -47,6 +47,7 @@ public class ApplicationService {
     this.applicationMapper = applicationMapper;
     this.contactService = contactService;
     this.searchService = searchService;
+    this.metaService = metaService;
   }
 
 
@@ -61,6 +62,7 @@ public class ApplicationService {
     applicationJson.setProject(projectService.createProject(applicationJson.getProject()));
     applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
     applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
+    applicationJson.setMetadata(metaService.findMetadataForApplication(applicationJson.getType()));
     List<ContactJson> contacts = applicationJson.getContactList();
     setContactOrganization(contacts, applicationJson.getApplicant());
     Application applicationModel = restTemplate.postForObject(applicationProperties
@@ -152,6 +154,7 @@ public class ApplicationService {
     applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));
+    applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType()));
 
     if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));

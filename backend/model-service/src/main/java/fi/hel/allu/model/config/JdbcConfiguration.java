@@ -6,6 +6,7 @@ import com.querydsl.sql.spatial.PostGISTemplates;
 import com.querydsl.sql.spring.SpringConnectionProvider;
 import com.querydsl.sql.spring.SpringExceptionTranslator;
 import fi.hel.allu.model.querydsl.StringToApplicationType;
+import fi.hel.allu.model.querydsl.StringToAttributeDataType;
 import fi.hel.allu.model.querydsl.StringToCustomerType;
 import fi.hel.allu.model.querydsl.StringToEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToCustomerType());
     configuration.register(new StringToApplicationType());
     configuration.register(new StringToEvent());
+    configuration.register(new StringToAttributeDataType());
     return configuration;
   }
 

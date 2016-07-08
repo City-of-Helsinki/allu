@@ -183,6 +183,7 @@ public class ContactControllerTest {
 
     Application appl = new Application();
     appl.setType(ApplicationType.OutdoorEvent);
+    appl.setMetadataVersion(1);
     appl.setName("Dummy apllication");
     OutdoorEvent evt = new OutdoorEvent();
     evt.setDescription("Dummy outdoor event");
