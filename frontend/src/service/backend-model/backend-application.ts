@@ -3,6 +3,7 @@ import {BackendApplicant} from './backend-applicant';
 import {BackendContact} from './backend-contact';
 import {BackendLocation} from './backend-location';
 import {BackendBillingDetail} from './backend-billing-detail';
+import {BackendStructureMeta} from './backend-structure-meta';
 
 export interface BackendApplication {
   id: number;
@@ -13,6 +14,7 @@ export interface BackendApplication {
   name: string;
   billingDetail: BackendBillingDetail;
   event: any;
+  metadata: BackendStructureMeta;
   creationTime: string;
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;

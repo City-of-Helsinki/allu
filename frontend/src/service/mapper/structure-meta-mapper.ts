@@ -9,4 +9,12 @@ export class StructureMetaMapper {
       backendStructureMeta.version,
       AttributeMetaMapper.mapBackend(backendStructureMeta.attributes));
   }
+
+  public static mapFrontend(frontendStructureMeta: StructureMeta): BackendStructureMeta {
+    return {
+      applicationType: frontendStructureMeta.applicationType,
+      version: frontendStructureMeta.version,
+      attributes: [] // attributes are not mapped at the moment, because backend does not need them. To be done later, if needed
+    };
+  }
 }

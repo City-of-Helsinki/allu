@@ -142,9 +142,10 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     console.log('Hakijan maaksi on valittu: ', value);
   }
 
-  save(application: any) {
+  save(application: Application) {
     // Save application
     console.log('Saving application', application);
+    application.metadata = this.meta;
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
    }

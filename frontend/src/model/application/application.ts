@@ -8,6 +8,7 @@ import {Location} from '../common/location';
 import {ApplicationTypeData} from './type/application-type-data';
 import {OutdoorEvent} from './type/outdoor-event';
 import {BillingDetail} from './billing-detail';
+import {StructureMeta} from './structure-meta';
 
 
 export class Application {
@@ -21,6 +22,7 @@ export class Application {
     public name: string,
     public billingDetail: BillingDetail,
     public event: ApplicationTypeData,
+    public metadata: StructureMeta,
     public creationTime: Date,
     public applicant: Applicant,
     public contactList: Array<Contact>,
@@ -44,6 +46,7 @@ export class Application {
         undefined,
         undefined,
         billingDetail,
+        undefined,
         undefined,
         undefined,
         applicant,
@@ -103,6 +106,7 @@ export class Application {
       'Ulkoilmatapahtumat tutuksi!',
       billingDetail,
       applicationTypeData,
+      undefined,
       undefined,
       applicant,
       [contact],
