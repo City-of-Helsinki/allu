@@ -40,6 +40,7 @@ public class ApplicationMapper {
     applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
     applicationDomain.setHandler(applicationJson.getHandler());
     applicationDomain.setType(applicationJson.getType());
+    applicationDomain.setMetadataVersion(applicationJson.getMetadata().getVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
 
     if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null) {

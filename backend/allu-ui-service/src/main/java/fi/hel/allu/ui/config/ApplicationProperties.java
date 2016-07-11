@@ -206,4 +206,11 @@ public class ApplicationProperties {
   public String getSearchServiceUrl(String path) {
     return PATH_PREFIX + searchServiceHost + ":" + searchServicePort + path;
   }
+
+  /**
+   * @return  url to request metadata from model service.
+   */
+  public String getMetadataUrl() {
+    return PATH_PREFIX + modelServiceHost + ":" + modelServicePort + "/meta/{applicationType}";
+  }
 }

@@ -23,6 +23,8 @@ public class Application {
   private String status;
   @NotNull
   private ApplicationType type;
+  @NotNull
+  private Integer metadataVersion;
   @NotBlank
   private String name;
   private ZonedDateTime creationTime;
@@ -105,6 +107,19 @@ public class Application {
 
   public void setType(ApplicationType type) {
     this.type = type;
+  }
+
+  /**
+   * Returns the metadata version of the application.
+   *
+   * @return
+   */
+  public Integer getMetadataVersion() {
+    return metadataVersion;
+  }
+
+  public void setMetadataVersion(Integer metadataVersion) {
+    this.metadataVersion = metadataVersion;
   }
 
   /**

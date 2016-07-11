@@ -6,6 +6,7 @@ import static fi.hel.allu.QPerson.person;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
@@ -16,6 +17,7 @@ import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Person;
 
+@Repository
 public class PersonDao {
 
   @Autowired

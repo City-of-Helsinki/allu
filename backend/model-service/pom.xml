@@ -162,6 +162,7 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <!-- Map enumeration types -->
+                        <!-- NOTE that if you add new kind of typeMapping type, you have to configure it in JdbcConfiguration class! -->
                         <typeMapping>
                             <table>customer</table>
                             <column>type</column>
@@ -181,6 +182,16 @@
                             <table>application</table>
                             <column>event</column>
                             <type>fi.hel.allu.model.querydsl.StringToEvent</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>attribute_meta</table>
+                            <column>data_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToAttributeDataType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>attribute_meta</table>
+                            <column>list_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToAttributeDataType</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>

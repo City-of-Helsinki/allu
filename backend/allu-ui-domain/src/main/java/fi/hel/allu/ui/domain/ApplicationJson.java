@@ -25,6 +25,8 @@ public class ApplicationJson {
   private String status;
   @NotNull(message = "{application.type}")
   private ApplicationType type;
+  @NotNull(message = "{application.metadata}")
+  private StructureMetaJson metadata;
   @NotBlank(message = "{application.name}")
   private String name;
   private ZonedDateTime creationTime;
@@ -103,6 +105,17 @@ public class ApplicationJson {
 
   public void setType(ApplicationType type) {
     this.type = type;
+  }
+
+  /**
+   * @return  Metadata related to the application.
+   */
+  public StructureMetaJson getMetadata() {
+    return metadata;
+  }
+
+  public void setMetadata(StructureMetaJson metadata) {
+    this.metadata = metadata;
   }
 
   /**

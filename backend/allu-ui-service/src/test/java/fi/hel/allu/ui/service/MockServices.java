@@ -6,6 +6,9 @@ import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.OutdoorEventES;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
+import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import org.mockito.Mock;
@@ -18,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.geolatte.geom.builder.DSL.*;
@@ -96,6 +100,9 @@ public abstract class MockServices {
         (String.class)))
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
             createMockApplicationListResponse());
+
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class), Mockito.any(ApplicationType.class)))
+        .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
 
     Mockito.when(restTemplate.postForEntity(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Application[].class)))
@@ -196,6 +203,18 @@ public abstract class MockServices {
     return outdoorEventJson;
   }
 
+  public StructureMetaJson createMockStructureMetadataJson() {
+    AttributeMetaJson attributeMetaJson = new AttributeMetaJson();
+    attributeMetaJson.setName("test_attribute");
+    attributeMetaJson.setUiName("test ui name");
+    attributeMetaJson.setDataType(AttributeDataType.STRING);
+    StructureMetaJson structureMetaJson = new StructureMetaJson();
+    structureMetaJson.setVersion(1);
+    structureMetaJson.setApplicationType(ApplicationType.OutdoorEvent.toString());
+    structureMetaJson.setAttributes(Collections.singletonList(attributeMetaJson));
+    return structureMetaJson;
+  }
+
   public List<ContactJson> createContactList() {
     List<ContactJson> result = new ArrayList<>();
     for (int i = 0; i < 5; ++i) {
@@ -211,6 +230,7 @@ public abstract class MockServices {
     applicationJson.setId(id);
     applicationJson.setName("Tapahtuma 1, Json");
     applicationJson.setType(ApplicationType.OutdoorEvent);
+    applicationJson.setMetadata(createMockStructureMetadataJson());
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setStatus("Vireillä, Json");
     applicationJson.setHandler("Kalle käsittelijä, Json");
@@ -401,5 +421,15 @@ public abstract class MockServices {
     applicationModelArray[1] = applicationModel;
 
     return new ResponseEntity<>(applicationModelArray, HttpStatus.OK);
+  }
+
+  private ResponseEntity<StructureMeta> createMockStructureMetaResponse() {
+    AttributeMeta attributeMeta = new AttributeMeta();
+    attributeMeta.setName("test_attribute");
+    StructureMeta structureMeta = new StructureMeta();
+    structureMeta.setApplicationType("OutdoorEvent");
+    structureMeta.setVersion(1);
+    structureMeta.setAttributes(Collections.singletonList(attributeMeta));
+    return new ResponseEntity<StructureMeta>(structureMeta, HttpStatus.OK);
   }
 }

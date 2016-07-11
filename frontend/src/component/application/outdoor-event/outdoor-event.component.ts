@@ -18,6 +18,10 @@ import {Application} from '../../../model/application/application';
 import {EventService} from '../../../event/event.service';
 import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
 import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application-added-announce-event';
+import {StructureMeta} from '../../../model/application/structure-meta';
+import {MetaLoadEvent} from '../../../event/load/meta-load-event';
+import {MetaAnnounceEvent} from '../../../event/announce/meta-announce-event';
+import {LoadingComponent} from '../../loading/loading.component';
 
 
 @Component({
@@ -36,7 +40,8 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
     MdToolbar,
     MdButton,
     MdRadioButton,
-    MdCheckbox
+    MdCheckbox,
+    LoadingComponent
   ],
   providers: [MdRadioDispatcher]
 })
@@ -49,10 +54,12 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private billingTypes: Array<any>;
   private noPriceReasons: Array<any>;
 
+  private meta: StructureMeta;
 
   constructor(private eventService: EventService) {
     // this.application = Application.emptyApplication();
     this.application = Application.preFilledApplication();
+
     this.events = [
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
       {name: 'Muu', value: 'Other'}
@@ -85,6 +92,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
 
   ngOnInit(): any {
     this.eventService.subscribe(this);
+    this.eventService.send(this, new MetaLoadEvent('OutdoorEvent'));
   }
 
   ngOnDestroy(): any {
@@ -96,8 +104,13 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       let aaaEvent = <ApplicationAddedAnnounceEvent>event;
       console.log('Successfully added new application', aaaEvent.application);
       this.application = aaaEvent.application;
+    } else if (event instanceof MetaAnnounceEvent) {
+      console.log('Loaded metadata', event);
+      let maEvent = <MetaAnnounceEvent>event;
+      this.meta = maEvent.structureMeta;
     }
   }
+
 
   eventTypeSelection(value: string) {
     console.log('Tapahtuman tyypiksi on valittu: ', value);

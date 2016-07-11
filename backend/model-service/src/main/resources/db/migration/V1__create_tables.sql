@@ -70,6 +70,7 @@ create table allu.application (
     applicant_id integer references allu.applicant(id),
     status text,   -- TODO: enum
     type text not null,
+    metadata_version integer not null,
     creation_time timestamp with time zone,
     location_id integer references allu.location(id),
     event text not null);
@@ -91,3 +92,18 @@ create table allu.application_contact (
     position integer,
     application_id integer references allu.application(id),
     contact_id integer references allu.contact(id) );
+
+create table allu.structure_meta (
+    id serial primary key,
+    application_type text not null,
+    version integer not null); -- TOOD: application_type + version = unique
+
+create table allu.attribute_meta (
+    id serial primary key,
+    structure integer references allu.structure_meta(id),
+    name text not null, -- TODO: structure + name = unique
+    ui_name text not null,
+    data_type text not null,
+    list_type text,
+    structure_attribute integer references allu.structure_meta(id),
+    validation_rule text);

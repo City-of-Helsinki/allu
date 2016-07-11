@@ -53,9 +53,6 @@ export class ApplicationComponent implements EventListener {
   };
 
   public handle(event: Event): void {
-    if (event instanceof ApplicationsAnnounceEvent) {
-      alert('Application stored!');
-    }
   };
 
   typeSelection(value) {
