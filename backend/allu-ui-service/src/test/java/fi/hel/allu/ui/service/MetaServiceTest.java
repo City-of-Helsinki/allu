@@ -32,4 +32,12 @@ public class MetaServiceTest extends MockServices {
     assertEquals(1, structureMetaJson.getAttributes().size());
     assertEquals("test_attribute", structureMetaJson.getAttributes().get(0).getName());
   }
+
+  @Test
+  public void testReadMetadataWithVersion() {
+    StructureMetaJson structureMetaJson = metaService.findMetadataForApplication(ApplicationType.OUTDOOREVENT, 1);
+    assertEquals(1, structureMetaJson.getVersion());
+    assertEquals(1, structureMetaJson.getAttributes().size());
+    assertEquals("test_attribute", structureMetaJson.getAttributes().get(0).getName());
+  }
 }

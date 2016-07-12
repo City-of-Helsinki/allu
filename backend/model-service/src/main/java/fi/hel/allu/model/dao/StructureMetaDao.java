@@ -4,13 +4,11 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,7 +55,30 @@ public class StructureMetaDao {
     StructureMeta sMeta = sQuery.fetchOne();
     if (sMeta != null) {
       sMeta.setAttributes(resolveAttributes(sMeta));
-      return Optional.ofNullable(sMeta);
+    }
+    return Optional.ofNullable(sMeta);
+  }
+
+  /**
+   * Returns the metadata related to given application type with given version.
+   *
+   * @param   applicationType   Application type whose metadata is requested.
+   * @return  the latest metadata related to given application type.
+   */
+  @Transactional
+  public Optional<StructureMeta> findByApplicationType(
+      String applicationType,
+      int version) {
+    logger.debug("applicationType: {}", applicationType);
+    SQLQuery<StructureMeta> sQuery = queryFactory
+        .select(structureMetaBean)
+        .from(structureMeta)
+        .where((structureMeta.applicationType.eq(applicationType)).and(structureMeta.version.eq(version)));
+
+    logger.debug(String.format("Executing query \"%s\"", sQuery.getSQL().getSQL()));
+    StructureMeta sMeta = sQuery.fetchOne();
+    if (sMeta != null) {
+      sMeta.setAttributes(resolveAttributes(sMeta));
     }
     return Optional.ofNullable(sMeta);
   }

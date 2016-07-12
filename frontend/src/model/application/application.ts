@@ -7,7 +7,6 @@ import {PostalAddress} from '../common/postal-address';
 import {Location} from '../common/location';
 import {ApplicationTypeData} from './type/application-type-data';
 import {OutdoorEvent} from './type/outdoor-event';
-import {BillingDetail} from './billing-detail';
 import {StructureMeta} from './structure-meta';
 
 
@@ -20,14 +19,12 @@ export class Application {
     public status: string,
     public type: string,
     public name: string,
-    public billingDetail: BillingDetail,
     public event: ApplicationTypeData,
     public metadata: StructureMeta,
     public creationTime: Date,
     public applicant: Applicant,
     public contactList: Array<Contact>,
-    public location: Location,
-    public comments: string) {}
+    public location: Location) {}
 
   public static emptyApplication(): Application {
     let applicantPostalAddress = new PostalAddress(undefined, undefined, undefined);
@@ -36,7 +33,6 @@ export class Application {
     let contactPostalAddress = new PostalAddress(undefined, undefined, undefined);
     let contactPerson = new Person(undefined, undefined, undefined, contactPostalAddress, undefined, undefined);
     let contact = new Contact(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
-    let billingDetail = new BillingDetail(undefined, undefined, new PostalAddress(undefined, undefined, undefined), undefined, undefined);
     return new
       Application(
         undefined,
@@ -45,13 +41,11 @@ export class Application {
         undefined,
         undefined,
         undefined,
-        billingDetail,
         undefined,
         undefined,
         undefined,
         applicant,
         [contact],
-        undefined,
         undefined);
   }
 
@@ -77,7 +71,6 @@ export class Application {
       'Helsinki',
       'kontakti@ihminen.fi',
       '0301234567');
-    let billingDetail = new BillingDetail('Invoice', 'Finland', new PostalAddress('Laskutie', '00100', 'Helsinki'), '757575', '575757');
     let applicationTypeData = new OutdoorEvent(
       'Promootio',
       'Tapahtuman tavoitteena on saada ulkoilmatapahtumat tutuksi ihmisille.',
@@ -104,13 +97,11 @@ export class Application {
       undefined,
       'OUTDOOREVENT',
       'Ulkoilmatapahtumat tutuksi!',
-      billingDetail,
       applicationTypeData,
       undefined,
       undefined,
       applicant,
       [contact],
-      undefined,
-      'Hanke vaatii sijoitusluvan ennen päätöstä.');
+      undefined);
   }
 }

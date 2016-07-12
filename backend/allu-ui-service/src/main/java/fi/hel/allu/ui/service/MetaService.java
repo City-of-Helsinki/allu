@@ -40,6 +40,19 @@ public class MetaService {
     return mapStructureMeta(structureMetaResult.getBody());
   }
 
+  /**
+   * Retrieves the metadata for given application type and version.
+   *
+   * @param   applicationType   Type of the metadata to be retrieved.
+   * @param   version           Version of metadata to be retrieved.
+   * @return  the metadata for given application type.
+   */
+  public StructureMetaJson findMetadataForApplication(ApplicationType applicationType, int version) {
+    ResponseEntity<StructureMeta> structureMetaResult = restTemplate.getForEntity(
+        applicationProperties.getMetadataUrl(), StructureMeta.class, applicationType);
+    return mapStructureMeta(structureMetaResult.getBody());
+  }
+
   private StructureMetaJson mapStructureMeta(StructureMeta structureMeta) {
     StructureMetaJson structureMetaJson = new StructureMetaJson();
     structureMetaJson.setApplicationType(structureMeta.getApplicationType());

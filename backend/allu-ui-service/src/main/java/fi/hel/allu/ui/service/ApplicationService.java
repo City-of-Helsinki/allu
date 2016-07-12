@@ -184,7 +184,7 @@ public class ApplicationService {
     applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));
-    applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType()));
+    applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType(), applicationModel.getMetadataVersion()));
 
     if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
