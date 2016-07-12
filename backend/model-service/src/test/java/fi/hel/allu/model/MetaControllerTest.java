@@ -48,6 +48,17 @@ public class MetaControllerTest {
   public void testLoadOutdoorEventMeta() throws Exception {
     ResultActions resultActions = wtc.perform(get("/meta/OUTDOOREVENT")).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
+    assertOutdoorEventAttributes(sMetaInResult);
+  }
+
+  @Test
+  public void testLoadOutdoorEventMetaWithVersion() throws Exception {
+    ResultActions resultActions = wtc.perform(get("/meta/OUTDOOREVENT/1")).andExpect(status().isOk());
+    StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
+    assertOutdoorEventAttributes(sMetaInResult);
+  }
+
+  private void assertOutdoorEventAttributes(StructureMeta sMetaInResult) {
     assertEquals("OUTDOOREVENT", sMetaInResult.getApplicationType());
     System.out.println(sMetaInResult);
 
