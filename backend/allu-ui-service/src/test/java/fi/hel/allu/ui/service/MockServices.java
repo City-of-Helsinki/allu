@@ -241,6 +241,7 @@ public abstract class MockServices {
     applicationJson.setLocation(createLocationJson(null));
     applicationJson.setProject(createProjectJson(null));
     applicationJson.setEvent(createOutdoorEventJson());
+    applicationJson.setMetadata(createMockStructureMetadataJson());
     return applicationJson;
   }
 
@@ -258,6 +259,7 @@ public abstract class MockServices {
     application.setApplicantId(103);
     application.setStatus(StatusType.PENDING);
     application.setEvent(createMockOutdoorEventModel());
+    application.setMetadataVersion(1);
     return application;
   }
 
@@ -423,6 +425,7 @@ public abstract class MockServices {
     applicationModel.setApplicantId(655);
     applicationModel.setLocationId(345);
     applicationModel.setEvent(createMockOutdoorEventModel());
+    applicationModel.setMetadataVersion(1);
     applicationModelArray[1] = applicationModel;
 
     return new ResponseEntity<>(applicationModelArray, HttpStatus.OK);

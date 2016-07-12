@@ -84,7 +84,10 @@ public class ApplicationServiceTest extends MockServices {
         createApplicantJson(103, 201));
     Mockito.when(contactService.findContactsForApplication(Mockito.anyInt()))
         .thenAnswer((Answer<List<ContactJson>>) invocation -> createContactList());
+
     Mockito.when(metaService.findMetadataForApplication(Mockito.any()))
+        .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
+    Mockito.when(metaService.findMetadataForApplication(Mockito.any(), Mockito.anyInt()))
         .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
   }
 
