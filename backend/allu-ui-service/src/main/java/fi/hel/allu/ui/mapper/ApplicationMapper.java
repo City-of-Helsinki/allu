@@ -42,7 +42,7 @@ public class ApplicationMapper {
     applicationDomain.setType(applicationJson.getType());
     applicationDomain.setMetadataVersion(applicationJson.getMetadata().getVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
-
+    applicationDomain.setDecisionTime(applicationJson.getDecisionTime());
     if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null) {
       applicationDomain.setLocationId(applicationJson.getLocation().getId());
     }
@@ -65,6 +65,7 @@ public class ApplicationMapper {
     applicationES.setHandler(applicationJson.getHandler());
     applicationES.setType(applicationJson.getType());
     applicationES.setStatus(applicationJson.getStatus());
+    applicationES.setDecisionTime(applicationJson.getDecisionTime());
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
     if (applicationJson.getProject() != null) {
       applicationES.setProject(createProjectES(applicationJson));
@@ -84,6 +85,7 @@ public class ApplicationMapper {
     applicationJson.setHandler(application.getHandler());
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setName(application.getName());
+    applicationJson.setDecisionTime(application.getDecisionTime());
     if (application.getEvent() != null) {
       mapEventToJson(applicationJson, application);
     }
@@ -101,6 +103,7 @@ public class ApplicationMapper {
     applicationJson.setHandler(applicationES.getHandler());
     applicationJson.setCreationTime(applicationES.getCreationTime());
     applicationJson.setName(applicationES.getName());
+    applicationJson.setDecisionTime(applicationES.getDecisionTime());
     mapEventESToJson(applicationJson, applicationES);
     mapProjectEStoJson(applicationJson, applicationES);
     return applicationJson;
@@ -114,7 +117,7 @@ public class ApplicationMapper {
    */
   public void mapEventToJson(ApplicationJson applicationJson, Application application) {
     switch (applicationJson.getType()) {
-      case OutdoorEvent:
+      case OUTDOOREVENT:
         OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
         OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
         outdoorEventJson.setUrl(outdoorEvent.getUrl());
@@ -146,7 +149,7 @@ public class ApplicationMapper {
    */
   public void mapEventESToJson(ApplicationJson applicationJson, ApplicationES applicationES) {
     switch (applicationJson.getType()) {
-      case OutdoorEvent:
+      case OUTDOOREVENT:
         OutdoorEventES outdoorEventES = (OutdoorEventES) applicationES.getApplicationTypeData();
         OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
         outdoorEventJson.setUrl(outdoorEventES.getUrl());
@@ -182,7 +185,7 @@ public class ApplicationMapper {
    */
   public Event createEventModel(ApplicationJson applicationJson) {
     switch (applicationJson.getType()) {
-      case OutdoorEvent:
+      case OUTDOOREVENT:
         OutdoorEventJson outdoorEventJson = (OutdoorEventJson) applicationJson.getEvent();
         OutdoorEvent outdoorEvent = new OutdoorEvent();
         outdoorEvent.setDescription(outdoorEventJson.getDescription());
@@ -214,7 +217,7 @@ public class ApplicationMapper {
    */
   public ApplicationTypeDataES createApplicationTypeDataES(ApplicationJson applicationJson) {
     switch (applicationJson.getType()) {
-      case OutdoorEvent:
+      case OUTDOOREVENT:
         OutdoorEventJson outdoorEventJson = (OutdoorEventJson) applicationJson.getEvent();
 
         OutdoorEventES outdoorEvent = new OutdoorEventES();

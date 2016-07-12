@@ -1,7 +1,7 @@
 ------------------------
 -- OutdoorEvent metadata
 ------------------------
-INSERT INTO allu.structure_meta (application_type, version) VALUES ('OutdoorEvent', 1);
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('OUTDOOREVENT', 1);
 
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'nature', 'Tapahtuman luonne', 'STRING', null, null, null);

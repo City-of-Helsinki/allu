@@ -5,5 +5,5 @@ package fi.hel.allu.common.types;
  * types of customers.
  */
 public enum CustomerType {
-  Person, Company, Association
+  PERSON, COMPANY, ASSOCIATION
 }

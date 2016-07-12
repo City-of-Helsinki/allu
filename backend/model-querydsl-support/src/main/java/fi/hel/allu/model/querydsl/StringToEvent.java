@@ -1,9 +1,7 @@
 package fi.hel.allu.model.querydsl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.querydsl.sql.types.AbstractType;
 import fi.hel.allu.model.domain.Event;
@@ -14,9 +12,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-
-import static fi.hel.allu.common.types.ApplicationType.OutdoorEvent;
-import static fi.hel.allu.common.types.ApplicationType.valueOf;
 
 public class StringToEvent extends AbstractType<Event> {
 

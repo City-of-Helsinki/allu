@@ -4,6 +4,7 @@ import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
 
+import fi.hel.allu.common.types.StatusType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import fi.hel.allu.common.types.ApplicationType;
@@ -20,7 +21,7 @@ public class Application {
   private Integer customerId; // TODO:Remove?
   @NotNull
   private Integer applicantId;
-  private String status;
+  private StatusType status;
   @NotNull
   private ApplicationType type;
   @NotNull
@@ -31,6 +32,7 @@ public class Application {
   private Integer locationId;
   @NotNull
   private Event event;
+  private ZonedDateTime decisionTime;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -90,11 +92,11 @@ public class Application {
   /**
    * in Finnish: Hakemuksen tila
    */
-  public String getStatus() {
+  public StatusType getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(StatusType status) {
     this.status = status;
   }
 
@@ -164,5 +166,16 @@ public class Application {
 
   public void setEvent(Event event) {
     this.event = event;
+  }
+
+  /**
+   * in Finnish: Päätöksen aikaleima
+   */
+  public ZonedDateTime getDecisionTime() {
+    return decisionTime;
+  }
+
+  public void setDecisionTime(ZonedDateTime decisionTime) {
+    this.decisionTime = decisionTime;
   }
 }

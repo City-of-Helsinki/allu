@@ -4,7 +4,7 @@ import {ApplicationTypeData} from '../../model/application/type/application-type
 export class ApplicationTypeDataMapper {
 
   public static mapBackend(backendEvent: any): ApplicationTypeData {
-    if (backendEvent.type === 'OutdoorEvent') {
+    if (backendEvent.type === 'OUTDOOREVENT') {
       return new OutdoorEvent(
         backendEvent.nature,
         backendEvent.description,

@@ -92,7 +92,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
 
   ngOnInit(): any {
     this.eventService.subscribe(this);
-    this.eventService.send(this, new MetaLoadEvent('OutdoorEvent'));
+    this.eventService.send(this, new MetaLoadEvent('OUTDOOREVENT'));
   }
 
   ngOnDestroy(): any {

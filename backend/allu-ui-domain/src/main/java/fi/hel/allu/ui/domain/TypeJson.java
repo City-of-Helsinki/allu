@@ -55,10 +55,10 @@ public class TypeJson {
   @JsonIgnore
   public boolean getValidatePersonTypeHasPersonObject() {
     switch (getType()) {
-      case Person:
+      case PERSON:
         return getPerson() != null;
-      case Company:
-      case Association:
+      case COMPANY:
+      case ASSOCIATION:
         return true;
       default:
         return true;
@@ -68,10 +68,10 @@ public class TypeJson {
   @JsonIgnore
   public boolean getValidatePersonTypeHasNotOrganizationObject() {
     switch (getType()) {
-      case Person:
+      case PERSON:
         return getOrganization() == null;
-      case Company:
-      case Association:
+      case COMPANY:
+      case ASSOCIATION:
         return true;
       default:
         return true;
@@ -81,10 +81,10 @@ public class TypeJson {
   @JsonIgnore
   public boolean getValidateOrganizationTypeHasNotPersonObject() {
     switch (getType()) {
-      case Person:
+      case PERSON:
         return true;
-      case Company:
-      case Association:
+      case COMPANY:
+      case ASSOCIATION:
         return getPerson() == null;
       default:
         return true;
@@ -94,10 +94,10 @@ public class TypeJson {
   @JsonIgnore
   public boolean getValidateOrganizationTypeHasOrganizationObject() {
     switch (getType()) {
-      case Person:
+      case PERSON:
         return true;
-      case Company:
-      case Association:
+      case COMPANY:
+      case ASSOCIATION:
         return getOrganization() != null;
       default:
         return true;

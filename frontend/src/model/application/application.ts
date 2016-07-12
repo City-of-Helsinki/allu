@@ -65,7 +65,7 @@ export class Application {
       applicantPostalAddress,
       'hakijainc@hotmail.com',
       '112');
-    let applicant = new Applicant(undefined, 'Company', true, undefined, applicantOrganization);
+    let applicant = new Applicant(undefined, 'COMPANY', true, undefined, applicantOrganization);
     let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
     let contactPerson = new Person(undefined, 'kontakti ihminen', '030303-1234', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567');
     let contact = new Contact(
@@ -82,7 +82,7 @@ export class Application {
       'Promootio',
       'Tapahtuman tavoitteena on saada ulkoilmatapahtumat tutuksi ihmisille.',
       'url',
-      'OutdoorEvent',
+      'OUTDOOREVENT',
       new Date(),
       new Date('2016-12-18T10:24:06.565+03:00'),
       'Tapahtuma-ajalla ei ole poikkeuksia',
@@ -102,7 +102,7 @@ export class Application {
       undefined,
       'TestHandler',
       undefined,
-      'OutdoorEvent',
+      'OUTDOOREVENT',
       'Ulkoilmatapahtumat tutuksi!',
       billingDetail,
       applicationTypeData,

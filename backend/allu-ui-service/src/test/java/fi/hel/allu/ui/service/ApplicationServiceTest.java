@@ -131,7 +131,8 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getCustomer().getPerson());
     assertEquals(200, response.getCustomer().getPerson().getId().intValue());
     assertNotNull(response.getLocation().getGeometry());
-    assertNotNull((OutdoorEventJson)response.getEvent());
+    assertNotNull(response.getEvent());
+    assertNotNull(response.getDecisionTime());
     assertEquals(1050, ((OutdoorEventJson) response.getEvent()).getAttendees());
   }
 

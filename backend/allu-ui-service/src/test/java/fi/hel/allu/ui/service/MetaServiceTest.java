@@ -27,7 +27,7 @@ public class MetaServiceTest extends MockServices {
 
   @Test
   public void testReadMetadata() {
-    StructureMetaJson structureMetaJson = metaService.findMetadataForApplication(ApplicationType.OutdoorEvent);
+    StructureMetaJson structureMetaJson = metaService.findMetadataForApplication(ApplicationType.OUTDOOREVENT);
     assertEquals(1, structureMetaJson.getVersion());
     assertEquals(1, structureMetaJson.getAttributes().size());
     assertEquals("test_attribute", structureMetaJson.getAttributes().get(0).getName());

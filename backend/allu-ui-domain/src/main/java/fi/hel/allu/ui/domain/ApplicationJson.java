@@ -1,14 +1,13 @@
 package fi.hel.allu.ui.domain;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
-import fi.hel.allu.common.types.ApplicationType;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * in Finnish: Hakemus
@@ -22,7 +21,7 @@ public class ApplicationJson {
   // @NotNull(message = "{application.customer}")
   // @Valid
   private CustomerJson customer; // TODO: Remove customer
-  private String status;
+  private StatusType status;
   @NotNull(message = "{application.type}")
   private ApplicationType type;
   @NotNull(message = "{application.metadata}")
@@ -40,6 +39,7 @@ public class ApplicationJson {
   @NotNull(message = "{application.event}")
   @Valid
   private EventJson event;
+  private ZonedDateTime decisionTime;
 
   /**
    * in Finnish: Hakemuksen toimeksiantaja
@@ -88,11 +88,11 @@ public class ApplicationJson {
   /**
    * in Finnish: Hakemuksen tila
    */
-  public String getStatus() {
+  public StatusType getStatus() {
     return status;
   }
 
-  public void setStatus(String status) {
+  public void setStatus(StatusType status) {
     this.status = status;
   }
 
@@ -182,5 +182,17 @@ public class ApplicationJson {
 
   public void setEvent(EventJson event) {
     this.event = event;
+  }
+
+  /**
+   *
+   * in Finnish: Päätöksen aikaleima
+   */
+  public ZonedDateTime getDecisionTime() {
+    return decisionTime;
+  }
+
+  public void setDecisionTime(ZonedDateTime decisionTime) {
+    this.decisionTime = decisionTime;
   }
 }

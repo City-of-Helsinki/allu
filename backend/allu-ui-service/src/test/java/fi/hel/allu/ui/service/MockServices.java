@@ -3,6 +3,7 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.OutdoorEventES;
@@ -145,7 +146,7 @@ public abstract class MockServices {
     customer.setId(customerId);
     customer.setPerson(createPersonJson(typeId));
     customer.setSapId("444-1, Json");
-    customer.setType(CustomerType.Person);
+    customer.setType(CustomerType.PERSON);
     return customer;
   }
 
@@ -168,7 +169,7 @@ public abstract class MockServices {
   public ApplicantJson createApplicantJson(Integer id, Integer typeId) {
     ApplicantJson applicantJson = new ApplicantJson();
     applicantJson.setId(id);
-    applicantJson.setType(CustomerType.Company);
+    applicantJson.setType(CustomerType.COMPANY);
     applicantJson.setOrganization(createOrganizationJson(typeId));
     return applicantJson;
   }
@@ -210,7 +211,7 @@ public abstract class MockServices {
     attributeMetaJson.setDataType(AttributeDataType.STRING);
     StructureMetaJson structureMetaJson = new StructureMetaJson();
     structureMetaJson.setVersion(1);
-    structureMetaJson.setApplicationType(ApplicationType.OutdoorEvent.toString());
+    structureMetaJson.setApplicationType(ApplicationType.OUTDOOREVENT.toString());
     structureMetaJson.setAttributes(Collections.singletonList(attributeMetaJson));
     return structureMetaJson;
   }
@@ -229,10 +230,11 @@ public abstract class MockServices {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setId(id);
     applicationJson.setName("Tapahtuma 1, Json");
-    applicationJson.setType(ApplicationType.OutdoorEvent);
+    applicationJson.setType(ApplicationType.OUTDOOREVENT);
     applicationJson.setMetadata(createMockStructureMetadataJson());
     applicationJson.setCreationTime(ZonedDateTime.now());
-    applicationJson.setStatus("Vireillä, Json");
+    applicationJson.setDecisionTime(ZonedDateTime.now());
+    applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setHandler("Kalle käsittelijä, Json");
     applicationJson.setCustomer(createCustomerJson(null, null));
     applicationJson.setApplicant(createApplicantJson(null, null));
@@ -248,12 +250,13 @@ public abstract class MockServices {
     application.setName("Mock name, Model");
     application.setProjectId(100);
     application.setCreationTime(ZonedDateTime.now());
+    application.setDecisionTime(ZonedDateTime.now());
     application.setCustomerId(101);
     application.setHandler("Mock handler, Model");
-    application.setType(ApplicationType.OutdoorEvent);
+    application.setType(ApplicationType.OUTDOOREVENT);
     application.setLocationId(102);
     application.setApplicantId(103);
-    application.setStatus("Vireillä");
+    application.setStatus(StatusType.PENDING);
     application.setEvent(createMockOutdoorEventModel());
     return application;
   }
@@ -290,7 +293,7 @@ public abstract class MockServices {
     customer.setId(101);
     customer.setPersonId(200);
     customer.setSapId("444-1, Model");
-    customer.setType(CustomerType.Person);
+    customer.setType(CustomerType.PERSON);
     return customer;
   }
 
@@ -304,7 +307,7 @@ public abstract class MockServices {
   public Applicant createMockApplicantModel() {
     Applicant applicant = new Applicant();
     applicant.setId(103);
-    applicant.setType(CustomerType.Company);
+    applicant.setType(CustomerType.COMPANY);
     applicant.setOrganizationId(201);
     return applicant;
   }
@@ -343,11 +346,13 @@ public abstract class MockServices {
     ZoneId zoneId = ZoneId.of("Europe/Helsinki");
     ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
     applicationES.setCreationTime(zonedDateTime);
+    ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2016, 10, 30, 23, 45, 59, 1234, zoneId);
+    applicationES.setDecisionTime(zonedDateTime2);
     applicationES.setName("Mock name, ES");
-    applicationES.setStatus("Vireillä, ES");
+    applicationES.setStatus(StatusType.PENDING);
     applicationES.setHandler("Handler, ES");
     applicationES.setId(1);
-    applicationES.setType(ApplicationType.OutdoorEvent);
+    applicationES.setType(ApplicationType.OUTDOOREVENT);
     applicationES.setApplicationTypeData(createApplicationTypeDataES());
     return applicationES;
   }
@@ -409,9 +414,9 @@ public abstract class MockServices {
 
     Application applicationModel = new Application();
     applicationModel.setId(1234);
-    applicationModel.setType(ApplicationType.OutdoorEvent);
+    applicationModel.setType(ApplicationType.OUTDOOREVENT);
     applicationModel.setHandler("MockHandler2");
-    applicationModel.setStatus("MockStatus2");
+    applicationModel.setStatus(StatusType.HANDLING);
     applicationModel.setProjectId(4321);
     applicationModel.setName("MockName2");
     applicationModel.setCustomerId(3456);

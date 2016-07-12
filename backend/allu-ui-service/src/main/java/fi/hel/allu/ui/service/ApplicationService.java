@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -142,6 +144,34 @@ public class ApplicationService {
       resultList.add(getApplication(applicationModel));
     }
     return resultList;
+  }
+
+  public void changeStatus(int applicationId, StatusType currentStatus) {
+    logger.debug("change status: application {}, current status {}, user {}", applicationId, currentStatus);
+    ApplicationJson applicationJson = findApplicationById(String.valueOf(applicationId));
+    logger.debug("found application {}, current status {}, handler {}", applicationJson.getId(), applicationJson.getStatus(),
+        applicationJson.getHandler());
+
+    if (currentStatus != applicationJson.getStatus()) {
+      throw new IllegalArgumentException("Given status and application status don't match");
+    }
+
+    switch (applicationJson.getStatus()) {
+      case PENDING:
+        applicationJson.setStatus(StatusType.HANDLING);
+        break;
+      case HANDLING:
+        applicationJson.setStatus(StatusType.DECISIONMAKING);
+        break;
+      case DECISIONMAKING:
+        applicationJson.setStatus(StatusType.DECISION);
+        applicationJson.setDecisionTime(ZonedDateTime.now());
+        break;
+      case DECISION:
+        applicationJson.setStatus(StatusType.SUPERVISION);
+        break;
+    }
+    updateApplication(applicationId, applicationJson);
   }
 
   private ApplicationJson getApplication(Application applicationModel) {
