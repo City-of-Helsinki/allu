@@ -32,9 +32,26 @@
         <md-input-container>
           <div class="row">
             <div class="col s12">
-              <select (change)="typeSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+              <select (change)="typeSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="type">
                 <option value="" disabled selected>Valitse hakemuksen tyyppi</option>
-                <option *ngFor="let applicationType of applicationsTypeList" [value]="applicationType.value">{{applicationType.name}}</option>
+                <option *ngFor="let applicationType of applications" [value]="applicationType.value">{{applicationType.name}}</option>
+              </select>
+            </div>
+          </div>
+        </md-input-container>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div class="col m6 no-padding-left" *ngIf="subtypes">
+    <md-card>
+      <md-card-title>Tapahtuman tyyppi</md-card-title>
+      <md-card-content>
+        <md-input-container>
+          <div class="row">
+            <div class="col m12">
+              <select (change)="eventSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="subtype">
+                <option value="" disabled selected>Valitse tapahtuman tyyppi</option>
+                <option *ngFor="let type of subtypes" [value]="type.value">{{type.name}}</option>
               </select>
             </div>
           </div>

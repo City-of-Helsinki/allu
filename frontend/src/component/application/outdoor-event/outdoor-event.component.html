@@ -1,21 +1,4 @@
 <loading [isLoading]="!meta">
-  <div class="col m6 no-padding-left">
-    <md-card>
-      <md-card-title>Tapahtuman tyyppi</md-card-title>
-      <md-card-content>
-        <md-input-container>
-          <div class="row">
-            <div class="col m12">
-              <select materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="application.type">
-                <option value="" disabled selected>Valitse tapahtuman tyyppi</option>
-                <option *ngFor="let event of events" [value]="event.value">{{event.name}}</option>
-              </select>
-            </div>
-          </div>
-        </md-input-container>
-      </md-card-content>
-    </md-card>
-  </div>
   <div materialize class="row" style="background: whitesmoke; padding-top:10px;">
     <div class="col m6 no-padding-right">
       <md-card>
