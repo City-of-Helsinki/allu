@@ -1,0 +1,74 @@
+@import '../../../assets/colors';
+
+:host {
+  width: 100%;
+
+  md-card {
+    margin: 10px;
+    padding: 12px;
+  }
+
+  .input-field {
+    textarea.materialize-textarea {
+      padding-top: 4px;
+      padding-bottom: 0px;
+    }
+    textarea.textarea {
+      padding-top: 4px;
+      padding-bottom: 42px;
+    }
+  }
+
+  .input-field label {
+    top: .5rem;
+  }
+
+  input[type=text] {
+    height: 2rem;
+  }
+
+  .country-select {
+    margin-top: 15px;
+  }
+
+  .no-padding {
+    padding: 0;
+  }
+
+  .no-padding-right {
+    padding-right: 0;
+  }
+
+  .no-padding-left {
+    padding-left: 0;
+  }
+
+  .buttons {
+    margin: 40px 0 11px;
+  }
+
+  .height-fix-top {
+    margin-top: 26px;
+    height: 3rem;
+  }
+
+  .height-fix-bottom {
+    margin-bottom: 5px;
+  }
+}
+
+workqueue {
+  width: 100%;
+}
+
+.card-media {
+  background-color: #999999;
+}
+
+md-card-title {
+  padding: 0 .75rem;
+}
+
+[md-button] [md-icon] {
+  color: rgba(0, 0, 0, 0.8);
+}
