@@ -8,6 +8,7 @@ import {MdToolbar} from '@angular2-material/toolbar';
 import {MaterializeDirective} from 'angular2-materialize';
 
 import {MapComponent} from '../map/map.component';
+import {ProgressbarComponent} from '../../component/progressbar/progressbar.component';
 
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
@@ -47,7 +48,8 @@ enum HasChanges {
     MD_CARD_DIRECTIVES,
     MdButton,
     MaterializeDirective,
-    MapComponent
+    MapComponent,
+    ProgressbarComponent
   ],
   providers: []
 })
@@ -60,12 +62,17 @@ export class LocationComponent implements EventListener {
   private rentingPlace: any;
   private sections: any;
   private area: number;
+  private progressbarStep: number;
+  private progressbarType: string;
 
   constructor(private eventService: EventService, private mapService: MapService, params: RouteParams) {
     this.id = Number(params.get('id'));
     this.rentingPlace = [{name: 'Paikka A', value: 'a'}, {name: 'Paikka B', value: 'b'}, {name: 'Paikka C', value: 'c'}];
     this.sections = [{name: 'Lohko A', value: 'a'}, {name: 'Lohko B', value: 'b'}, {name: 'Lohko C', value: 'c'}];
     this.area = undefined;
+
+    this.progressbarStep = 2;
+    this.progressbarType = 'UUSI HAKEMUS';
   };
 
   public handle(event: Event): void {

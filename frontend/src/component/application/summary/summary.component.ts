@@ -17,6 +17,7 @@ import {ApplicationSelectionEvent} from '../../../event/selection/application-se
 
 import {MapService} from '../../../service/map.service';
 import {MapComponent} from '../../map/map.component';
+import {ProgressbarComponent} from '../../../component/progressbar/progressbar.component';
 
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
@@ -45,7 +46,8 @@ import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event
     MdButton,
     MdRadioButton,
     MdCheckbox,
-    MapComponent
+    MapComponent,
+    ProgressbarComponent
   ],
   providers: [MdRadioDispatcher]
 })
@@ -62,6 +64,9 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
   private rentingPlace: any;
   private sections: any;
   private area: number;
+
+  private progressbarStep: number;
+  private progressbarType: string;
 
 
 
@@ -102,6 +107,9 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
     this.rentingPlace = 'Narinkkatori';
     this.sections = 'D-lohko';
     this.area = 300;
+
+    this.progressbarStep = 3;
+    this.progressbarType = 'UUSI HAKEMUS';
   };
 
   ngOnInit(): any {

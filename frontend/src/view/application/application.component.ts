@@ -5,6 +5,8 @@ import {MdToolbar} from '@angular2-material/toolbar';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
 import {MaterializeDirective} from 'angular2-materialize';
 
+import {ProgressbarComponent} from '../../component/progressbar/progressbar.component';
+
 import {TypeComponent} from '../../component/application/type/type.component';
 import {OutdoorEventComponent} from '../../component/application/outdoor-event/outdoor-event.component';
 import {PromotionEventComponent} from '../../component/application/promotion-event/promotion-event.component';
@@ -23,6 +25,7 @@ import {EventService} from '../../event/event.service';
     require('./application.component.scss')
   ],
   directives: [
+    ProgressbarComponent,
     MaterializeDirective,
     ROUTER_DIRECTIVES,
     MdToolbar,
@@ -41,6 +44,8 @@ export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
   private types: string;
   private subtypes: any;
   private subtype: string;
+  private progressbarStep: number;
+  private progressbarType: string;
 
   constructor(public router: Router, private eventService: EventService) {
     this.applications = [
@@ -66,6 +71,9 @@ export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
     this.types = undefined;
     this.subtypes = undefined;
     this.subtype = undefined;
+
+    this.progressbarStep = 1;
+    this.progressbarType = 'UUSI HAKEMUS';
   };
 
   ngOnInit(): any {
