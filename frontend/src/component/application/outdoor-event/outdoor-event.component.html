@@ -172,7 +172,7 @@
             <div class="col m6 no-padding">
               <div class="input-field col m12">
                 <input id="eventName" type="text" class="validate" [(ngModel)]="application.name">
-                <label for="eventName">Tapahtuman nimi</label>
+                <label for="eventName">{{ meta?.getUiName('name') }}</label>
               </div>
               <div class="input-field col m12">
                 <input id="eventNature" type="text" class="validate" [(ngModel)]="application.event.nature">
@@ -206,7 +206,7 @@
               </div>
               <div class="input-field col m12">
                 <textarea id="eventTimeExceptions" class="materialize-textarea" [(ngModel)]="application.event.timeExceptions"></textarea>
-                <label for="eventTimeExceptions">Tapahtuma-ajan poikkeukset</label>
+                <label for="eventTimeExceptions">{{ meta?.getUiName('timeExceptions') }}</label>
               </div>
               <div class="input-field col m3">
                 <input id="eventAttendees" type="text" class="validate" [(ngModel)]="application.event.attendees">
@@ -236,11 +236,11 @@
             <div class="col m6 no-padding">
               <div class="col m12 height-fix-bottom">
                 <input type="checkbox" class="filled-in" id="pricingSalesActivity" [(ngModel)]="application.event.salesActivity"/>
-                <label for="pricingSalesActivity">Tapahtuma sisältää teemaan sisältymätöntä myynti- tai mainostoimintaa</label>
+                <label for="pricingSalesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</label>
               </div>
               <div class="col m12 height-fix-bottom">
                 <input type="checkbox" class="filled-in" id="pricingEcoCompass" [(ngModel)]="application.event.ecoCompass"/>
-                <label for="pricingEcoCompass">Hakijalla Ekokompassi-tapahtumapassi (liitä liitteeksi)</label>
+                <label for="pricingEcoCompass">{{ meta?.getUiName('ecoCompass') }}</label>
               </div>
             </div>
           </div>
@@ -256,22 +256,22 @@
             <div class="col m6 no-padding">
               <div class="col m12 height-fix-bottom">
                 <input type="checkbox" class="filled-in" id="salesMarketing" [checked]="application.event.marketingProviders"/>
-                <label for="salesMarketing">Tapahtuma sisältää myynti- tai mainostoimintaa</label>
+                <label for="salesMarketing">{{ meta?.getUiName('salesOrPromotion') }}</label>
               </div>
               <div class="input-field col m12">
                 <textarea id="salesMarketingDetails" class="materialize-textarea"
                           [(ngModel)]="application.event.marketingProviders"></textarea>
-                <label for="salesMarketingDetails">Myynti- tai mainostoiminnan kuvaus</label>
+                <label for="salesMarketingDetails">{{ meta?.getUiName('salesOrPromotionDescription') }}</label>
               </div>
             </div>
             <div class="col m6 no-padding">
               <div class="col m12 height-fix-bottom">
                 <input type="checkbox" class="filled-in" id="salesFood" [checked]="application.event.foodProviders"/>
-                <label for="salesFood">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua</label>
+                <label for="salesFood">{{ meta?.getUiName('foodSales') }}</label>
               </div>
               <div class="input-field col m12">
                 <textarea id="salesFoodProviders" class="materialize-textarea" [(ngModel)]="application.event.foodProviders"></textarea>
-                <label for="salesFoodProviders">Elintarviketoimijat</label>
+                <label for="salesFoodProviders">{{ meta?.getUiName('foodProviders') }}</label>
               </div>
             </div>
           </div>
@@ -291,12 +291,12 @@
               </div>
               <div class="input-field col m6">
                 <input id="structureArea" type="number" class="validate" step="any" [(ngModel)]="application.event.structureArea">
-                <label for="structureArea">Rakenteiden kokonaisneliömäärä</label>
+                <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
               </div>
               <div class="input-field col m12">
                 <textarea id="structureDescription" class="materialize-textarea textarea"
                           [(ngModel)]="application.event.structureDescription" style="paddin-top: 0;"></textarea>
-                <label for="structureDescription">Rakenteiden kuvaus</label>
+                <label for="structureDescription">{{ meta?.getUiName('structureDescription') }}</label>
               </div>
 
             </div>
@@ -307,7 +307,7 @@
                 <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
               </div>
               <div class="input-field col m12">
-                <label for="structureStartTime">Rakennuspäivämäärä</label>
+                <label for="structureStartTime">{{ meta?.getUiName('structureStartTime') }}</label>
                 <input id="structureStartTime"
                        [(ngModel)]="application.event.structureStartTime"
                        materialize="pickadate"
@@ -315,7 +315,7 @@
                        type="text"/>
               </div>
               <div class="input-field col m12">
-                <label for="structureEndTime">Purkupäivämäärä</label>
+                <label for="structureEndTime">{{ meta?.getUiName('structureEndTime') }}</label>
                 <input id="structureEndTime"
                        [(ngModel)]="application.event.structureEndTime"
                        materialize="pickadate"

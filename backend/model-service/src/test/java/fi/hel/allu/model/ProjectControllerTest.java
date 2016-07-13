@@ -21,7 +21,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import fi.hel.allu.model.domain.Project;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = App.class)
+@SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
 public class ProjectControllerTest {
 

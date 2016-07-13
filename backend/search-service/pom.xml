@@ -28,11 +28,16 @@
             <artifactId>elasticsearch</artifactId>
             <version>2.3.2</version>
         </dependency>
-        <!--  support for Java 8 Date & Time API types -->
         <dependency>
+            <!--  support for Java 8 Date & Time API types -->
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
             <version>2.7.5</version>
+        </dependency>
+        <dependency>
+            <!-- support for conditional processing of logback configuration file -->
+            <groupId>org.codehaus.janino</groupId>
+            <artifactId>janino</artifactId>
         </dependency>
     </dependencies>
 
