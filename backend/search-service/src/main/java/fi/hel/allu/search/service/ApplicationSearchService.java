@@ -165,6 +165,13 @@ public class ApplicationSearchService {
     return appList;
   }
 
+  /**
+   * Force index refresh. Use for testing only.
+   */
+  public void refreshIndex() {
+    client.admin().indices().prepareRefresh(APPLICATION_INDEX_NAME).execute().actionGet();
+  }
+
   private List<ApplicationES> iterateSearchResponse(SearchResponse response) throws IOException {
     List<ApplicationES> appList = new ArrayList<>();
     if (response != null) {

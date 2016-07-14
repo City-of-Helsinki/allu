@@ -1,5 +1,6 @@
 ---
 es_major_version: "2.x"
+# Whenever you change the version, make sure you also update the client library version of Search Service
 es_version: "2.3.4"
 es_version_lock: false
 es_use_repository: true

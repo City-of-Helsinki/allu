@@ -84,11 +84,7 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-     fail();
-    }
+    applicationSearchService.refreshIndex();
     List<ApplicationES> appList = applicationSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());

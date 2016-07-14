@@ -24,9 +24,10 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
+            <!-- The version of Elastic Search library should match the version of Elastic Search. See Elastic Search deployment -->
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
-            <version>2.3.2</version>
+            <version>2.3.4</version>
         </dependency>
         <dependency>
             <!--  support for Java 8 Date & Time API types -->
