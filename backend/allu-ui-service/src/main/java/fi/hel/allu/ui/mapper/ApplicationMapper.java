@@ -1,23 +1,22 @@
 package fi.hel.allu.ui.mapper;
 
-import java.time.ZonedDateTime;
-
-import fi.hel.allu.search.domain.ProjectES;
-import fi.hel.allu.ui.domain.ProjectJson;
-import org.springframework.stereotype.Component;
-
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationTypeDataES;
 import fi.hel.allu.search.domain.OutdoorEventES;
+import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.OutdoorEventJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import org.springframework.stereotype.Component;
+
+import java.time.ZonedDateTime;
 
 @Component
 public class ApplicationMapper {
-  private static final String SALES_ACTIVITY = "Myyntitoimintaa";
+  private static final String FOOD_SALES = "Elintarvikemyynti";
   private static final String ECO_COMPASS = "Ekokompassi";
 
 
@@ -136,7 +135,7 @@ public class ApplicationMapper {
         outdoorEventJson.setFoodProviders(outdoorEvent.getFoodProviders());
         outdoorEventJson.setMarketingProviders(outdoorEvent.getMarketingProviders());
         outdoorEventJson.setPricing(outdoorEvent.getPricing());
-        outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
+        outdoorEventJson.setFoodSales(outdoorEvent.isFoodSales());
         applicationJson.setEvent(outdoorEventJson);
         break;
     }
@@ -148,6 +147,7 @@ public class ApplicationMapper {
    * @param applicationES
    */
   public void mapEventESToJson(ApplicationJson applicationJson, ApplicationES applicationES) {
+    // TODO: Perttu 13.7.16.: mapping data from ElasticSearch to applications should not be necessary. Remove this functionality
     switch (applicationJson.getType()) {
       case OUTDOOREVENT:
         OutdoorEventES outdoorEventES = (OutdoorEventES) applicationES.getApplicationTypeData();
@@ -170,8 +170,8 @@ public class ApplicationMapper {
         outdoorEventJson.setFoodProviders(outdoorEventES.getFoodProviders());
         outdoorEventJson.setMarketingProviders(outdoorEventES.getMarketingProviders());
         outdoorEventJson.setPricing(outdoorEventES.getPricing());
-        if (outdoorEventES.getSalesActivity() != null && outdoorEventES.getSalesActivity().equals(SALES_ACTIVITY)) {
-          outdoorEventJson.setSalesActivity(true);
+        if (outdoorEventES.getFoodSales() != null && outdoorEventES.getFoodSales().equals(FOOD_SALES)) {
+          outdoorEventJson.setFoodSales(true);
         }
         applicationJson.setEvent(outdoorEventJson);
         break;
@@ -194,7 +194,7 @@ public class ApplicationMapper {
         outdoorEvent.setAttendees(outdoorEventJson.getAttendees());
         outdoorEvent.setEndTime(outdoorEventJson.getEndTime());
         outdoorEvent.setStartTime(outdoorEventJson.getStartTime());
-        outdoorEvent.setSalesActivity(outdoorEventJson.isSalesActivity());
+        outdoorEvent.setFoodSales(outdoorEventJson.isFoodSales());
         outdoorEvent.setMarketingProviders(outdoorEventJson.getMarketingProviders());
         outdoorEvent.setPricing(outdoorEventJson.getPricing());
         outdoorEvent.setFoodProviders(outdoorEventJson.getFoodProviders());
@@ -216,6 +216,7 @@ public class ApplicationMapper {
    * @return created ApplicationTypeDataES object
    */
   public ApplicationTypeDataES createApplicationTypeDataES(ApplicationJson applicationJson) {
+    // TODO: Perttu 13.7.16.: use generic JSON mapping instead of creating type specific mapping for every application type
     switch (applicationJson.getType()) {
       case OUTDOOREVENT:
         OutdoorEventJson outdoorEventJson = (OutdoorEventJson) applicationJson.getEvent();
@@ -234,8 +235,8 @@ public class ApplicationMapper {
         outdoorEvent.setStructureDescription(outdoorEventJson.getStructureDescription());
         outdoorEvent.setStructureStartTime(outdoorEventJson.getStructureStartTime());
         outdoorEvent.setStructureEndTime(outdoorEventJson.getStructureEndTime());
-        if (outdoorEventJson.isSalesActivity()) {
-          outdoorEvent.setSalesActivity(SALES_ACTIVITY);
+        if (outdoorEventJson.isFoodSales()) {
+          outdoorEvent.setFoodSales(FOOD_SALES);
         }
         if (outdoorEventJson.isEcoCompass()) {
           outdoorEvent.setEcoCompass(ECO_COMPASS);

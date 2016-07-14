@@ -84,6 +84,7 @@ export class Application {
       'DefenceOrPolice',
       true,
       false,
+      true,
       'Tapahtumassa saattaa olla elintarviketoimijoita',
       'Tapahtumassa ei luultavimmin ole markkinointitoimintaa',
       54,

@@ -18,8 +18,8 @@ public class OutdoorEvent extends Event {
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
-  private boolean salesActivity;
   private String pricing;
+  private boolean foodSales;
   private String foodProviders;
   private String marketingProviders;
   private float structureArea;
@@ -117,17 +117,6 @@ public class OutdoorEvent extends Event {
   }
 
   /**
-   * in Finnish: Sisältääkö teemaan sisältymätöntä myynti- tai mainostoimintaa
-   */
-  public boolean isSalesActivity() {
-    return salesActivity;
-  }
-
-  public void setSalesActivity(boolean salesActivity) {
-    this.salesActivity = salesActivity;
-  }
-
-  /**
    * in Finnish: Hinnoitteluperusteet
    */
   public String getPricing() {
@@ -136,6 +125,17 @@ public class OutdoorEvent extends Event {
 
   public void setPricing(String pricing) {
     this.pricing = pricing;
+  }
+
+  /**
+   * in Finnish: Tapahtuma sisältää elintarvikemyyntiä- tai tarjoilua
+   */
+  public boolean isFoodSales() {
+    return foodSales;
+  }
+
+  public void setFoodSales(boolean foodSales) {
+    this.foodSales = foodSales;
   }
 
   /**

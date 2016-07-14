@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
+// TODO: Perttu 13.7.16.: don't copy this approach for further types. Implement generic mapping instead of using type specifc classes!
 public class OutdoorEventES extends ApplicationTypeDataES {
   @NotBlank
   private String nature;
@@ -17,8 +18,8 @@ public class OutdoorEventES extends ApplicationTypeDataES {
   private int attendees;
   private int entryFee;
   private String ecoCompass;
-  private String salesActivity;
   private String pricing;
+  private String foodSales;
   private String foodProviders;
   private String marketingProviders;
   private float structureArea;
@@ -91,20 +92,20 @@ public class OutdoorEventES extends ApplicationTypeDataES {
     this.ecoCompass = ecoCompass;
   }
 
-  public String getSalesActivity() {
-    return salesActivity;
-  }
-
-  public void setSalesActivity(String salesActivity) {
-    this.salesActivity = salesActivity;
-  }
-
   public String getPricing() {
     return pricing;
   }
 
   public void setPricing(String pricing) {
     this.pricing = pricing;
+  }
+
+  public String getFoodSales() {
+    return foodSales;
+  }
+
+  public void setFoodSales(String foodSales) {
+    this.foodSales = foodSales;
   }
 
   public String getFoodProviders() {

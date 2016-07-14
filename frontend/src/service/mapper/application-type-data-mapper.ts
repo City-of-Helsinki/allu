@@ -18,12 +18,13 @@ export class ApplicationTypeDataMapper {
         backendEvent.pricing,
         backendEvent.salesActivity,
         backendEvent.ecoCompass,
+        backendEvent.foodSales,
         backendEvent.foodProviders,
         backendEvent.marketingProviders,
         backendEvent.structureArea,
         backendEvent.structureDescription,
-        new Date(backendEvent.structureStartDate),
-        new Date(backendEvent.structureEndDate));
+        new Date(backendEvent.structureStartTime),
+        new Date(backendEvent.structureEndTime));
     } else {
       return undefined;
     }

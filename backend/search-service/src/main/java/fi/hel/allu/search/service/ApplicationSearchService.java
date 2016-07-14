@@ -115,6 +115,7 @@ public class ApplicationSearchService {
     return applicationES;
   }
 
+  // TODO: Perttu 13.7.16.: it would be smarter to return list of application ids and avoid mapping ElasticSearch data back to Application data
   public List<ApplicationES> findByField(QueryParameters queryParameters) {
     List<ApplicationES> appList = null;
     try {
@@ -146,6 +147,7 @@ public class ApplicationSearchService {
     return appList;
   }
 
+  // TODO: Perttu 13.7.16.: it would be smarter to return list of application ids and avoid mapping ElasticSearch data back to Application data
   public List<ApplicationES> findFromAllFields(String queryString) {
     List<ApplicationES> appList = null;
     try {

@@ -22,6 +22,7 @@ import {StructureMeta} from '../../../model/application/structure-meta';
 import {MetaLoadEvent} from '../../../event/load/meta-load-event';
 import {MetaAnnounceEvent} from '../../../event/announce/meta-announce-event';
 import {LoadingComponent} from '../../loading/loading.component';
+import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
 
 
 @Component({
@@ -53,6 +54,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private countries: Array<any>;
   private billingTypes: Array<any>;
   private noPriceReasons: Array<any>;
+  private pickadateParams = PICKADATE_PARAMETERS;
 
   private meta: StructureMeta;
 

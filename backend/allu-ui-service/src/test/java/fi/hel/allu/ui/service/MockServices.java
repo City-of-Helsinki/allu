@@ -190,7 +190,7 @@ public abstract class MockServices {
     outdoorEventJson.setUrl("Outdoor event url, Json");
     outdoorEventJson.setEcoCompass(true);
     outdoorEventJson.setTimeExceptions("Mock exceptions");
-    outdoorEventJson.setSalesActivity(true);
+    outdoorEventJson.setFoodSales(true);
     outdoorEventJson.setStructureArea(100);
     outdoorEventJson.setPricing("Mock pricing");
     outdoorEventJson.setEntryFee(1233);
@@ -333,7 +333,7 @@ public abstract class MockServices {
     outdoorEvent.setDescription("Outdoor event description, Model");
     outdoorEvent.setEndTime(ZonedDateTime.now());
     outdoorEvent.setEcoCompass(true);
-    outdoorEvent.setSalesActivity(true);
+    outdoorEvent.setFoodSales(true);
     outdoorEvent.setEntryFee(1234);
     ZoneId zoneId = ZoneId.of("Europe/Helsinki");
     ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
@@ -368,7 +368,7 @@ public abstract class MockServices {
     outdoorEventJson.setUrl("Outdoor event url, ES");
     outdoorEventJson.setEcoCompass("Ekokompassi, ES");
     outdoorEventJson.setTimeExceptions("Mock exceptions, ES");
-    outdoorEventJson.setSalesActivity("Myyntiä, ES");
+    outdoorEventJson.setFoodSales("Elintarvikemyynti, ES");
     outdoorEventJson.setStructureArea(100);
     outdoorEventJson.setPricing("Mock pricing, ES");
     outdoorEventJson.setEntryFee(1233);
