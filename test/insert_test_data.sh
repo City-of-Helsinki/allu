@@ -9,6 +9,7 @@ function check_reply {
 }
 
 function insert_data() {
+  echo Inserting data from $1
   CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: application/json\" --header \"Authorization: Bearer $AUTH_KEY\" --data @$1 http://$TARGET_HOST/api/applications &> /dev/null"
   eval $CURRENT_REQUEST
   EXIT_CODE=$?
@@ -21,5 +22,7 @@ AUTH_KEY=$( $CURRENT_REQUEST )
 EXIT_CODE=$?
 check_reply
 
-insert_data "data/tervasaari.json"
 insert_data "data/hernesaari.json"
+insert_data "data/tervasaari.json"
+
+exit 0
