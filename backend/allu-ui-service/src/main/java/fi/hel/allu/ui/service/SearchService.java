@@ -1,10 +1,9 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +11,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 @Service
 public class SearchService {
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(SearchService.class);
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;

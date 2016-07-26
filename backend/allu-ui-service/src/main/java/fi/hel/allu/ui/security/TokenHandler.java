@@ -1,18 +1,24 @@
 package fi.hel.allu.ui.security;
 
-import com.google.common.collect.Sets;
-import fi.hel.allu.ui.service.UserService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.*;
-import java.util.stream.Collectors;
+import com.google.common.collect.Sets;
+
+import fi.hel.allu.ui.service.UserService;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 public class TokenHandler {
 
@@ -20,6 +26,7 @@ public class TokenHandler {
   public static final String ROLES = "alluRoles";
   private String secret;
   private int expirationHours;
+  @SuppressWarnings("unused")
   private UserService userService;
 
 
@@ -70,7 +77,7 @@ public class TokenHandler {
 
     Set<GrantedAuthority> roleSet = Sets.newHashSet();
 
-    Iterator roleIterator = roles.iterator();
+    Iterator<? extends GrantedAuthority> roleIterator = roles.iterator();
 
     while (roleIterator.hasNext()) {
       Map<String, String> roleMap = (Map<String, String>) roleIterator.next();

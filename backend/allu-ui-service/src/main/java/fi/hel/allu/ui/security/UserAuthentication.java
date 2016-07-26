@@ -1,12 +1,17 @@
 package fi.hel.allu.ui.security;
 
+import java.util.Collection;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import java.util.Collection;
-
 public class UserAuthentication implements Authentication {
+
+  /**
+   * Version UID for serialization
+   */
+  private static final long serialVersionUID = 1L;
 
   private final User user;
   private boolean authenticated = true;

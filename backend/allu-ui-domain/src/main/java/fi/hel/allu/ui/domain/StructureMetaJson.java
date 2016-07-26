@@ -1,7 +1,5 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.model.domain.meta.AttributeMeta;
-
 import java.util.List;
 
 /**
