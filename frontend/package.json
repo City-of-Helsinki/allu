@@ -75,7 +75,7 @@
     "leaflet": "0.7.7",
     "leaflet-draw": "0.3.0",
     "materialize-css": "0.97.6",
-    "node-sass": "3.6.0",
+    "node-sass": "3.8.0",
     "proj4leaflet": "0.7.2",
     "proj4": "2.0.0",
     "reflect-metadata": "0.1.2",
