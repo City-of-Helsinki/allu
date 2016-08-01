@@ -1,9 +1,18 @@
 package fi.hel.allu.model;
 
-import fi.hel.allu.model.dao.StructureMetaDao;
-import fi.hel.allu.model.domain.meta.AttributeDataType;
-import fi.hel.allu.model.domain.meta.AttributeMeta;
-import fi.hel.allu.model.domain.meta.StructureMeta;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,15 +22,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import fi.hel.allu.model.dao.StructureMetaDao;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
+import fi.hel.allu.model.domain.meta.StructureMeta;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -41,6 +45,7 @@ public class MetaControllerTest {
 
   @Test
   public void loadNonExistentMeta() throws Exception {
+    @SuppressWarnings("unused")
     ResultActions resultActions = wtc.perform(get("/meta/NonExistent")).andExpect(status().is4xxClientError());
   }
 
@@ -78,7 +83,8 @@ public class MetaControllerTest {
 
     Set<String> contactNames = contactStructureMeta.getAttributes().stream().map(am -> am.getName()).collect(Collectors.toSet());
     assertEquals(6, contactNames.size());
-    Set expectedNames = new HashSet(Arrays.asList(new String[] {"contactName", "address", "postalCode", "postOffice", "phoneNumber", "email"}));
+    Set<String> expectedNames = new HashSet<>(
+        Arrays.asList(new String[] { "contactName", "address", "postalCode", "postOffice", "phoneNumber", "email" }));
     assertTrue(contactNames.containsAll(expectedNames));
 
     assertTrue(contactStructureMeta.getAttributes().stream().allMatch(am -> am.getDataType().equals(AttributeDataType.STRING)));

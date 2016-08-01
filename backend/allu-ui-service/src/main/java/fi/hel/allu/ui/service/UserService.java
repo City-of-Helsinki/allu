@@ -1,23 +1,19 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.ui.config.ApplicationProperties;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 @Service
 public class UserService implements UserDetailsService {
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(UserService.class);
-
-  @Autowired
-  private ApplicationProperties applicationProperties;
 
   private final Map<String, User> userMap = new HashMap<String, User>();
 

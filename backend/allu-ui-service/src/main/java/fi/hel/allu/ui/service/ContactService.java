@@ -21,6 +21,7 @@ import fi.hel.allu.ui.domain.ContactJson;
 
 @Service
 public class ContactService {
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(ContactService.class);
 
   private ApplicationProperties applicationProperties;

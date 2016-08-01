@@ -1,9 +1,5 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +7,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.PostalAddressJson;
+
 @Service
 public class LocationService {
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(LocationService.class);
 
   private ApplicationProperties applicationProperties;
@@ -33,7 +35,6 @@ public class LocationService {
    * @return Created location
    */
   public LocationJson createLocation(LocationJson locationJson) {
-    Location location;
     if (locationJson != null && (locationJson.getId() == null || locationJson.getId() == 0)) {
       callModelService(locationJson);
     } else if (locationJson == null || locationJson.getId() == null || locationJson.getId() == 0) {

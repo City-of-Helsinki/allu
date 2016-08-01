@@ -1,8 +1,5 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ProjectJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,8 +7,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ProjectJson;
+
 @Service
 public class ProjectService {
+  @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
   private ApplicationProperties applicationProperties;

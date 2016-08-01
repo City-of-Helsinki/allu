@@ -1,7 +1,6 @@
 package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.model.domain.meta.AttributeDataType;
-import fi.hel.allu.model.domain.meta.StructureMeta;
 
 /**
  * JSON for describing metadata related to attributes of applications.

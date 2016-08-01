@@ -1,20 +1,27 @@
 package fi.hel.allu.ui.controller;
 
 
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
 import fi.hel.allu.ui.service.ApplicationService;
 import fi.hel.allu.ui.service.SearchService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -40,30 +47,30 @@ public class ApplicationController {
 
   @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity changeStatusToHandling(@PathVariable int id) {
+  public ResponseEntity<Void> changeStatusToHandling(@PathVariable int id) {
     applicationService.changeStatus(id, StatusType.PENDING);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity changeStatusToDecisionMaking(@PathVariable int id) {
+  public ResponseEntity<Void> changeStatusToDecisionMaking(@PathVariable int id) {
     applicationService.changeStatus(id, StatusType.HANDLING);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/status/decision", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-  public ResponseEntity changeStatusToDecision(@PathVariable int id) {
+  public ResponseEntity<Void> changeStatusToDecision(@PathVariable int id) {
     applicationService.changeStatus(id, StatusType.DECISIONMAKING);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/status/supervision", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity changeStatusToSupervision(@PathVariable int id) {
+  public ResponseEntity<Void> changeStatusToSupervision(@PathVariable int id) {
     applicationService.changeStatus(id, StatusType.DECISION);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
 
