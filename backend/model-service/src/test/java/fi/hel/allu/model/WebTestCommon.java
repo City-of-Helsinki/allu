@@ -89,10 +89,7 @@ public class WebTestCommon {
   }
 
   private void deleteAllData() throws SQLException {
-    webTestSqlRunner.runSql(DELETE_ALL_APPLICATION_CONTACTS, DELETE_ALL_PROJECT_CONTACTS, DELETE_ALL_CONTACTS,
-        DELETE_ALL_APPLICATIONS, DELETE_ALL_PROJECTS, DELETE_ALL_APPLICANTS, DELETE_ALL_CUSTOMERS,
-        DELETE_ALL_PERSONS,
-        DELETE_ALL_GEOMETRIES, DELETE_ALL_LOCATIONS);
+    webTestSqlRunner.runSql(DELETE_ALL_DATA);
   }
 
   @SuppressWarnings("unchecked")
@@ -102,14 +99,17 @@ public class WebTestCommon {
     return mockHttpOutputMessage.getBodyAsString();
   }
 
-  private static final String DELETE_ALL_APPLICATIONS = "delete from allu.application";
-  private static final String DELETE_ALL_PERSONS = "delete from allu.person";
-  private static final String DELETE_ALL_PROJECTS = "delete from allu.project";
-  private static final String DELETE_ALL_GEOMETRIES = "delete from allu.geometry";
-  private static final String DELETE_ALL_LOCATIONS = "delete from allu.location";
-  private static final String DELETE_ALL_APPLICANTS = "delete from allu.applicant";
-  private static final String DELETE_ALL_CUSTOMERS = "delete from allu.customer";
-  private static final String DELETE_ALL_CONTACTS = "delete from allu.contact";
-  private static final String DELETE_ALL_PROJECT_CONTACTS = "delete from allu.project_contact";
-  private static final String DELETE_ALL_APPLICATION_CONTACTS = "delete from allu.application_contact";
+  private static final String[] DELETE_ALL_DATA = new String[] {
+      "delete from allu.application_contact",
+      "delete from allu.project_contact",
+      "delete from allu.contact",
+      "delete from allu.attachment",
+      "delete from allu.application",
+      "delete from allu.project",
+      "delete from allu.applicant",
+      "delete from allu.customer",
+      "delete from allu.person",
+      "delete from allu.geometry",
+      "delete from allu.location",
+  };
 }
