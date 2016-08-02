@@ -80,6 +80,7 @@ create table allu.attachment (
    id serial primary key,
    application_id integer, -- TODO: references allu.application,
    name text,
+   description text,
    type text,
    size bigint,
    creation_time timestamp with time zone,

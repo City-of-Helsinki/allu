@@ -6,6 +6,7 @@ public class AttachmentInfo {
   private Integer id;
   private Integer applicationId;
   private String name;
+  private String description;
   private String type;
   private Long size;
   private ZonedDateTime creationTime;
@@ -29,12 +30,26 @@ public class AttachmentInfo {
     this.applicationId = applicationId;
   }
 
+  /**
+   * The attachment name (file name)
+   */
   public String getName() {
     return name;
   }
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  /**
+   * The attachment description
+   */
+  public String getDescription() {
+    return description;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   /**

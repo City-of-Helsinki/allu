@@ -72,12 +72,12 @@ public class AttachmentDaoTest {
     AttachmentInfo info = newInfo();
     info.setApplicationId(25);
     for (int i = 20; i < 22; ++i) {
-      info.setName(String.format("Attachment %d", i));
+      info.setName(String.format("Attachment_%d.txt", i));
       attachmentDao.insert(info);
     }
     // Now there should be attachments 10, 20, and 21 for application 25
     List<AttachmentInfo> results = attachmentDao.findByApplication(25);
-    String expectedNames[] = { "Attachment 10", "Attachment 20", "Attachment 21" };
+    String expectedNames[] = { "Attachment_10.txt", "Attachment_20.txt", "Attachment_21.txt" };
     Assert.assertEquals(expectedNames.length,
         results.stream().mapToInt(a -> Arrays.asList(expectedNames).contains(a.getName()) ? 1 : 0).sum());
   }
@@ -93,9 +93,9 @@ public class AttachmentDaoTest {
     // Setup: store a few attachments for various applications. Remember the
     // stored infos:
     List<AttachmentInfo> stored = storeInitialAttachments();
-    // Test: find each stored info and verify that its name matches.
+    // Test: find each stored info and verify that it matches the stored one.
     for (AttachmentInfo i : stored) {
-      Assert.assertEquals(i.getName(), attachmentDao.findById(i.getId()).orElse(dummy).getName());
+      assertEquals(i, attachmentDao.findById(i.getId()).orElse(dummy));
     }
   }
 
@@ -117,7 +117,7 @@ public class AttachmentDaoTest {
     // Make sure the others still exist
     stored.remove(0);
     for (AttachmentInfo i : stored) {
-      Assert.assertEquals(i.getName(), attachmentDao.findById(i.getId()).orElse(dummy).getName());
+      assertEquals(i, attachmentDao.findById(i.getId()).orElse(dummy));
     }
   }
 
@@ -136,7 +136,7 @@ public class AttachmentDaoTest {
     attachmentDao.update(stored.get(0).getId(), stored.get(0));
     // Make sure all items still exist:
     for (AttachmentInfo i : stored) {
-      Assert.assertEquals(i.getName(), attachmentDao.findById(i.getId()).orElse(dummy).getName());
+      assertEquals(i, attachmentDao.findById(i.getId()).orElse(dummy));
     }
   }
 
@@ -193,7 +193,8 @@ public class AttachmentDaoTest {
     List<AttachmentInfo> stored = new ArrayList<>();
     for (int i = 0; i < 20; ++i) {
       info.setApplicationId(15 + i);
-      info.setName(String.format("Attachment %d", i));
+      info.setName(String.format("Attachment_%d.txt", i));
+      info.setDescription(String.format("Attachment %d", i));
       stored.add(attachmentDao.insert(info));
     }
     return stored;
@@ -204,9 +205,20 @@ public class AttachmentDaoTest {
     info.setApplicationId(123);
     info.setCreationTime(ZonedDateTime.now());
     info.setId(313);
-    info.setName("Test attachment");
+    info.setName("Test_attachment.pdf");
     info.setType("application/pdf");
+    info.setDescription("Test attachment");
     return info;
+  }
+
+  private void assertEquals(AttachmentInfo expected, AttachmentInfo actual) {
+    Assert.assertEquals(expected.getId(), actual.getId());
+    Assert.assertEquals(expected.getApplicationId(), actual.getApplicationId());
+    Assert.assertEquals(expected.getName(), actual.getName());
+    Assert.assertEquals(expected.getDescription(), actual.getDescription());
+    Assert.assertEquals(expected.getType(), actual.getType());
+    Assert.assertEquals(expected.getSize(), actual.getSize());
+    Assert.assertEquals(expected.getCreationTime(), actual.getCreationTime());
   }
 
   private byte[] generateTestData(int size) {

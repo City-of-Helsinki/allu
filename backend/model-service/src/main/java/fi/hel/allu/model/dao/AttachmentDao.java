@@ -28,7 +28,7 @@ public class AttachmentDao {
   // Since the table contains non-info columns, we can't use table.all in QBean
   // definition. List info-related columns explicitly:
   private final Expression<?> InfoColumns[] = { attachment.id, attachment.applicationId, attachment.name,
-      attachment.type, attachment.size, attachment.creationTime };
+      attachment.description, attachment.type, attachment.size, attachment.creationTime };
 
   final QBean<AttachmentInfo> attachmentInfoBean = bean(AttachmentInfo.class, InfoColumns);
 
