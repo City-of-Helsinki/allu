@@ -1,6 +1,11 @@
 package fi.hel.allu.ui.mapper;
 
+import java.time.ZonedDateTime;
+
+import org.springframework.stereotype.Component;
+
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.search.domain.ApplicationES;
@@ -8,11 +13,9 @@ import fi.hel.allu.search.domain.ApplicationTypeDataES;
 import fi.hel.allu.search.domain.OutdoorEventES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.OutdoorEventJson;
 import fi.hel.allu.ui.domain.ProjectJson;
-import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
 
 @Component
 public class ApplicationMapper {
@@ -246,6 +249,21 @@ public class ApplicationMapper {
         return outdoorEvent;
     }
     return null;
+  }
+
+  /**
+   * Map a model-domain AttachmentInfo to ui-domain AttachmentInfoJson
+   *
+   * @param attachmentInfoJson
+   * @param attachmentInfo
+   */
+  public void mapAttachmentInfoToJson(AttachmentInfoJson attachmentInfoJson, AttachmentInfo attachmentInfo) {
+    attachmentInfoJson.setId(attachmentInfo.getId());
+    attachmentInfoJson.setName(attachmentInfo.getName());
+    attachmentInfoJson.setDescription(attachmentInfo.getDescription());
+    attachmentInfoJson.setType(attachmentInfo.getDescription());
+    attachmentInfoJson.setSize(attachmentInfo.getSize());
+    attachmentInfoJson.setCreationTime(attachmentInfo.getCreationTime());
   }
 
   private ProjectES createProjectES(ApplicationJson applicationJson) {

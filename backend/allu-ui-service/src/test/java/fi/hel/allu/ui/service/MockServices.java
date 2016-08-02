@@ -1,23 +1,9 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.OutdoorEventES;
-import fi.hel.allu.model.domain.meta.AttributeDataType;
-import fi.hel.allu.model.domain.meta.AttributeMeta;
-import fi.hel.allu.model.domain.meta.StructureMeta;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,7 +11,43 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.geolatte.geom.builder.DSL.*;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.Organization;
+import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
+import fi.hel.allu.model.domain.meta.StructureMeta;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.OutdoorEventES;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.AttributeMetaJson;
+import fi.hel.allu.ui.domain.ContactJson;
+import fi.hel.allu.ui.domain.CustomerJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.OrganizationJson;
+import fi.hel.allu.ui.domain.OutdoorEventJson;
+import fi.hel.allu.ui.domain.PersonJson;
+import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.domain.StructureMetaJson;
 
 public abstract class MockServices {
   @Mock
@@ -75,6 +97,11 @@ public abstract class MockServices {
     Mockito.when(restTemplate.getForObject(Mockito.any(String.class), Mockito.eq(Application.class), Mockito.any
         (String.class)))
         .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
+
+    Mockito
+        .when(
+            restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(AttachmentInfo[].class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<AttachmentInfo[]>>) invocation -> createMockAttachmentInfoListResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Person.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Person>>) invocation -> createMockPersonResponse());
@@ -431,6 +458,21 @@ public abstract class MockServices {
     return new ResponseEntity<>(applicationModelArray, HttpStatus.OK);
   }
 
+  private ResponseEntity<AttachmentInfo[]> createMockAttachmentInfoListResponse() {
+    AttachmentInfo attachmentInfoArray[] = new AttachmentInfo[3];
+    for (int i = 0; i < attachmentInfoArray.length; ++i) {
+      AttachmentInfo info = new AttachmentInfo();
+      info.setName(String.format("Attachment_%d.txt", i));
+      info.setId(123 + i);
+      info.setCreationTime(ZonedDateTime.now());
+      info.setDescription(String.format("Attachment %d", i));
+      info.setType("text/plain");
+      info.setSize(123L * i);
+      attachmentInfoArray[i] = info;
+    }
+    return new ResponseEntity<>(attachmentInfoArray, HttpStatus.OK);
+  }
+
   private ResponseEntity<StructureMeta> createMockStructureMetaResponse() {
     AttributeMeta attributeMeta = new AttributeMeta();
     attributeMeta.setName("test_attribute");
@@ -438,6 +480,6 @@ public abstract class MockServices {
     structureMeta.setApplicationType("OutdoorEvent");
     structureMeta.setVersion(1);
     structureMeta.setAttributes(Collections.singletonList(attributeMeta));
-    return new ResponseEntity<StructureMeta>(structureMeta, HttpStatus.OK);
+    return new ResponseEntity<>(structureMeta, HttpStatus.OK);
   }
 }
