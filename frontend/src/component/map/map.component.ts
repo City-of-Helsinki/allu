@@ -26,9 +26,11 @@ export class MapComponent implements EventListener {
   @Input() draw: boolean;
   @Input() zoom: boolean;
   @Input() selection: boolean;
+  @Input() edit: boolean;
   private applicationArea: L.LayerGroup<L.ILayer>;
   private map: Map;
   private mapLayers: any;
+  private drawnItems: any;
 
   constructor(
     private mapService: MapService,
@@ -52,20 +54,31 @@ export class MapComponent implements EventListener {
       if (this.applicationArea) {
         this.map.removeLayer(this.applicationArea);
       }
-      let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
-      this.applicationArea = new L.GeoJSON(featureCollection).addTo(this.map);
 
-      if (this.selection && featureCollection.features) {
-        let bounds = new Array<L.LatLng> ();
-        for (let feature of featureCollection.features) {
-          for (let list of feature.geometry.coordinates) {
-            for (let coordinates of list) {
-              bounds.push(L.latLng(coordinates[1], coordinates[0]));
+      if (this.drawnItems) {
+        this.drawnItems.clearLayers();
+      }
+
+      // Check to see if the application has a location
+      console.log('asEvent.application.location', asEvent.application.location);
+      if (asEvent.application.location) {
+        let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
+        this.applicationArea = new L.GeoJSON(featureCollection);
+        this.applicationArea.eachLayer((layer) => {
+          this.drawnItems.addLayer(layer);
+        });
+
+        if (this.selection && featureCollection.features) {
+          let bounds = new Array<L.LatLng> ();
+          for (let feature of featureCollection.features) {
+            for (let list of feature.geometry.coordinates) {
+              for (let coordinates of list) {
+                bounds.push(L.latLng(coordinates[1], coordinates[0]));
+              }
             }
           }
+          this.map.fitBounds(L.latLngBounds(bounds));
         }
-
-        this.map.fitBounds(L.latLngBounds(bounds));
       }
     }
 
@@ -92,8 +105,8 @@ export class MapComponent implements EventListener {
     this.map = new L.Map('map', mapOption);
     L.control.zoom({position: 'topright'}).addTo(this.map);
 
-    let drawnItems = new L.GeoJSON();
-    this.map.addLayer(drawnItems);
+    let drawnItems = new L.FeatureGroup();
+    drawnItems.addTo(this.map);
 
     let drawControl = new L.Control.Draw({
       position: 'topright',
@@ -121,6 +134,21 @@ export class MapComponent implements EventListener {
       that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
     });
 
+    this.map.on('draw:edited', function (e: any) {
+      let type = e.layerType,
+        layers = e.layers;
+      that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
+    });
+
+    this.map.on('draw:deleted', function (e: any) {
+      let type = e.layerType,
+        layers = e.layers;
+
+      drawnItems.removeLayer(layers);
+      that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
+    });
+
+    this.drawnItems = drawnItems;
     L.control.layers(this.mapLayers).addTo(this.map);
     L.control.scale().addTo(this.map);
   }

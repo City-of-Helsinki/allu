@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {Router, RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdButton} from '@angular2-material/button';
@@ -21,6 +21,7 @@ import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 import {ErrorEvent} from '../../event/error-event';
 import {Location} from '../../model/common/location';
+import {PostalAddress} from '../../model/common/postal-address';
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
 
 import 'proj4leaflet';
@@ -65,27 +66,35 @@ export class LocationComponent implements EventListener {
   private progressbarStep: number;
   private progressbarType: string;
 
-  constructor(private eventService: EventService, private mapService: MapService, params: RouteParams) {
+  constructor(private eventService: EventService, private mapService: MapService, private router: Router, params: RouteParams) {
+    // A location of a certain application must be editable. This means if there is an id associated with the route, it should go there.
+    // If there is no parameter id, this.id will be 0.
     this.id = Number(params.get('id'));
+    if (this.id) {
+      this.progressbarType = 'HAKEMUKSEN MUOKKAUS';
+    } else {
+      this.progressbarType = 'UUSI HAKEMUS';
+    }
+    this.progressbarStep = 1;
+
     this.rentingPlace = [{name: 'Paikka A', value: 'a'}, {name: 'Paikka B', value: 'b'}, {name: 'Paikka C', value: 'c'}];
     this.sections = [{name: 'Lohko A', value: 'a'}, {name: 'Lohko B', value: 'b'}, {name: 'Lohko C', value: 'c'}];
     this.area = undefined;
-
-    this.progressbarStep = 2;
-    this.progressbarType = 'UUSI HAKEMUS';
   };
 
   public handle(event: Event): void {
     if (event instanceof ShapeAnnounceEvent) {
-      console.log('LocationComponent.handle ShapeAnnounceEvent', event.shape.features);
-      let singleCoordinate = event.shape.features[0].geometry.coordinates[0][0];
-      console.log('Geometry coordinate', singleCoordinate);
-      let myProj = this.mapService.getEPSG3879();
-      console.log('projected coordinate', myProj.projection.project(new L.LatLng(singleCoordinate[1], singleCoordinate[0])));
-      let saEvent = <ShapeAnnounceEvent>event;
-      this.features = saEvent.shape;
-      this.hasChanges = HasChanges.YES;
-      this.enableSave = true;
+      if (event.shape.features.length) {
+        console.log('LocationComponent.handle ShapeAnnounceEvent', event.shape.features);
+        let singleCoordinate = event.shape.features[0].geometry.coordinates[0][0];
+        console.log('Geometry coordinate', singleCoordinate);
+        let myProj = this.mapService.getEPSG3879();
+        console.log('projected coordinate', myProj.projection.project(new L.LatLng(singleCoordinate[1], singleCoordinate[0])));
+        let saEvent = <ShapeAnnounceEvent>event;
+        this.features = saEvent.shape;
+        this.hasChanges = HasChanges.YES;
+        this.enableSave = true;
+      }
     } else if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent> event;
       // we're only interested about applications matching the application being edited
@@ -114,24 +123,38 @@ export class LocationComponent implements EventListener {
 
 
   save() {
-    console.log('Saving location for application id: ', this.id);
-
-    if (!this.application.location) {
-      this.application.location = new Location(undefined, undefined, undefined);
+    if (this.id) {
+      // If there is an application to save the location data to
+      console.log('Saving location for application id: ', this.id);
+      if (!this.application.location) {
+        this.application.location = new Location(this.id, undefined, undefined);
+      }
+      if (this.features) {
+        this.application.location.geometry = this.mapService.featureCollectionToGeometryCollection(this.features);
+        let saveEvent = new ApplicationSaveEvent(this.application);
+        this.hasChanges = HasChanges.PENDING;
+        this.enableSave = false;
+        this.eventService.send(this, saveEvent);
+      } else {
+        this.application.location = undefined;
+        let saveEvent = new ApplicationSaveEvent(this.application);
+        this.hasChanges = HasChanges.PENDING;
+        this.enableSave = false;
+        this.eventService.send(this, saveEvent);
+      }
+    } else {
+      localStorage.setItem('features', JSON.stringify(this.mapService.featureCollectionToGeometryCollection(this.features)));
     }
-    console.log('Geometry', this.features[0]);
-    this.application.location.geometry = this.mapService.featureCollectionToGeometryCollection(this.features);
-    let saveEvent = new ApplicationSaveEvent(this.application);
-    this.hasChanges = HasChanges.PENDING;
-    this.enableSave = false;
-    this.eventService.send(this, saveEvent);
+    this.router.navigate(['/Applications/Type']);
   }
 
   ngOnInit() {
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
-    filter.applicationId = this.id;
-    this.eventService.send(this, new ApplicationsLoadEvent(filter));
+    if (this.id) {
+      filter.applicationId = this.id;
+      this.eventService.send(this, new ApplicationsLoadEvent(filter));
+    }
   }
 
   ngOnDestroy() {

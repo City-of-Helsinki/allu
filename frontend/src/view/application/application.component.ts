@@ -72,7 +72,7 @@ export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
     this.subtypes = undefined;
     this.subtype = undefined;
 
-    this.progressbarStep = 1;
+    this.progressbarStep = 2;
     this.progressbarType = 'UUSI HAKEMUS';
   };
 
@@ -97,9 +97,6 @@ export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
   }
 
   public handle(event: Event): void {
-    if (event instanceof ApplicationsAnnounceEvent) {
-      alert('Application stored!');
-    }
   };
 
   typeSelection(value) {

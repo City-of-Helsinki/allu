@@ -49,7 +49,7 @@
           </div>
           <div class="col m12">
             <div class="mapcontainer">
-              <map [draw]="true"></map>
+              <map [draw]="true" [selection]="true"></map>
             </div>
           </div>
         </div>
@@ -62,11 +62,11 @@
       <md-card-content>
         <div class="row">
           <div class="col m2">
-            <button md-raised-button [disabled]="true" (click)="console.log('Todo: go back to application');" >EDELLINEN</button>
+            <button md-raised-button [routerLink]="['/FrontPage']">PERUUTA</button>
           </div>
           <div class="col m4 offset-m6">
-            <button md-raised-button style="margin-left: 10px;" (click)="save()">TALLENNA</button>
-            <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Summary', {id: id}]">YHTEENVETO</button>
+            <button md-raised-button style="margin-left: 10px;" *ngIf="!id" (click)="save()">PERUSTIEDOT</button>
+            <button md-raised-button style="margin-left: 10px;" *ngIf="id" [routerLink]="['/Summary', {id: id}]">YHTEENVETOON</button>
           </div>
         </div>
       </md-card-content>

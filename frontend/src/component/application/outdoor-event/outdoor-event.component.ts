@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
-import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -11,6 +11,8 @@ import {MdRadioDispatcher} from '@angular2-material/radio/radio_dispatcher';
 import {MdCheckbox} from '@angular2-material/checkbox';
 
 import {MaterializeDirective} from 'angular2-materialize';
+
+import {Location} from '../../../model/common/location';
 
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
@@ -58,7 +60,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
 
   private meta: StructureMeta;
 
-  constructor(private eventService: EventService) {
+  constructor(private eventService: EventService, private router: Router) {
     // this.application = Application.emptyApplication();
     this.application = Application.preFilledApplication();
 
@@ -106,6 +108,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       let aaaEvent = <ApplicationAddedAnnounceEvent>event;
       console.log('Successfully added new application', aaaEvent.application);
       this.application = aaaEvent.application;
+      this.router.navigate(['/Summary', {id: this.application.id}]);
     } else if (event instanceof MetaAnnounceEvent) {
       console.log('Loaded metadata', event);
       let maEvent = <MetaAnnounceEvent>event;
@@ -148,6 +151,13 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     // Save application
     console.log('Saving application', application);
     application.metadata = this.meta;
+    if (!application.location) {
+      application.location = new Location(undefined, undefined, undefined);
+    }
+    let features = JSON.parse(localStorage.getItem('features'));
+    if (features) {
+      application.location.geometry = features;
+    }
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
    }
