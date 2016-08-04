@@ -5,6 +5,8 @@ import static org.geolatte.geom.builder.DSL.polygon;
 import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -316,6 +318,25 @@ public class ApplicationControllerTest {
     Assert.assertArrayEquals(content, readContent);
   }
 
+  /**
+   * Test that location can be deleted from application
+   *
+   * @throws Exception
+   */
+  @Test
+  public void testDeleteApplicationLocation() throws Exception {
+    // Setup: create application with location
+    ResultActions ra = createLocationTestApplication(smallAreas[0], "Syrjäkuja 5", "Hämärähomma");
+    Application app = wtc.parseObjectFromResult(ra, Application.class);
+    assertNotNull(app.getLocationId());
+    // Test: delete the application's location and verify that it gets deleted.
+    Integer appId = app.getId();
+    wtc.perform(delete(String.format("/applications/%d/location", appId))).andExpect(status().isOk());
+    ra = wtc.perform(get(String.format("/applications/%d", appId))).andExpect(status().isOk());
+    app = wtc.parseObjectFromResult(ra, Application.class);
+    assertNull(app.getLocationId());
+  }
+
   // Create and prepare an application for insertion:
   // - Create dummy person and project to get valid ids
   // - Set some values for the application
@@ -405,15 +426,19 @@ public class ApplicationControllerTest {
       polygon(3879, ring(c(25495000, 6671000), c(25496000, 6671000), c(25495100, 6671500), c(25495000, 6671000)))
   };
 
+  private ResultActions createLocationTestApplication(Geometry geometry, String streetAddress, String applicationName)
+      throws Exception {
+    Integer locationId = addLocation(streetAddress, new GeometryCollection(new Geometry[] { geometry }));
+    Application app = prepareApplication(applicationName, null);
+    app.setLocationId(locationId);
+    return wtc.perform(post("/applications"), app).andExpect(status().isOk());
+  }
+
   private void createLocationTestApplications() throws Exception {
     // Create a test application for each of the small areas
     for (int i = 0; i < smallAreas.length; ++i) {
-      GeometryCollection geometry = new GeometryCollection(new Geometry[] { smallAreas[i] });
-      String streetAddress = String.format("Small %d", i);
-      Integer locationId = addLocation(streetAddress, geometry);
-      Application app = prepareApplication(String.format("Small application %d", i), null);
-      app.setLocationId(locationId);
-      wtc.perform(post("/applications"), app).andExpect(status().isOk());
+      createLocationTestApplication(smallAreas[i], String.format("Smallstreet %d", i),
+          String.format("Small application %d", i));
     }
   }
 
