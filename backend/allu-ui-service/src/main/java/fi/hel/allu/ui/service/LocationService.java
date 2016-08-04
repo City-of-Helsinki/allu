@@ -64,6 +64,17 @@ public class LocationService {
   }
 
   /**
+   * Delete location from the given application.
+   *
+   * @param applicationId
+   */
+  public void deleteApplicationLocation(int applicationId) {
+    restTemplate.delete(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_DELETE_LOCATION),
+        applicationId);
+  }
+
+  /**
    * Find given location details.
    *
    * @param locationId location identifier that is used to find details

@@ -52,6 +52,10 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_BY_LOCATION = "/applications/search";
 
   /**
+   * Model-service path to delete application's location
+   */
+  public static final String PATH_MODEL_APPLICATION_DELETE_LOCATION = "/applications/{applicationId}/location";
+  /**
    * Model-service path to create a new person
    */
   public static final String PATH_MODEL_PERSON_CREATE = "/persons";

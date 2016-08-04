@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QGeometry.geometry1;
 import static fi.hel.allu.QLocation.location;
 
@@ -59,9 +60,23 @@ public class LocationDao {
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
-    queryFactory.delete(geometry1).where(geometry1.locationId.eq(id));
+    queryFactory.delete(geometry1).where(geometry1.locationId.eq(id)).execute();
     setGeometry(id, locationData.getGeometry());
     return findById(id).get();
+  }
+
+  @Transactional
+  public void deleteByApplication(int applicationId) {
+    Integer locationId = queryFactory.select(application.locationId).from(application)
+        .where(application.id.eq(applicationId)).fetchOne();
+    if (locationId == null) {
+      throw new NoSuchEntityException("Can't find location for application", Integer.toString(applicationId));
+    } else {
+      queryFactory.update(application).setNull(application.locationId).where(application.id.eq(applicationId))
+          .execute();
+      queryFactory.delete(geometry1).where(geometry1.locationId.eq(locationId)).execute();
+      queryFactory.delete(location).where(location.id.eq(locationId)).execute();
+    }
   }
 
   private void setGeometry(int locationId, Geometry geometry) {

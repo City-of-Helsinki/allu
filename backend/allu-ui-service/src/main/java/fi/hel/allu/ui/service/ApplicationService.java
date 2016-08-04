@@ -1,14 +1,9 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +11,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ContactJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.LocationQueryJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 @Service
 public class ApplicationService {
@@ -86,7 +88,12 @@ public class ApplicationService {
     customerService.updateCustomer(applicationJson.getCustomer());
     applicantService.updateApplicant(applicationJson.getApplicant());
     projectService.updateProject(applicationJson.getProject());
-    locationService.updateLocation(applicationJson.getLocation());
+    LocationJson locationJson = applicationJson.getLocation();
+    if (locationJson != null) {
+      locationService.updateLocation(applicationJson.getLocation());
+    } else {
+      locationService.deleteApplicationLocation(applicationId);
+    }
     List<ContactJson> contacts = contactService.setContactsForApplication(applicationId,
         applicationJson.getContactList());
     restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), applicationMapper
