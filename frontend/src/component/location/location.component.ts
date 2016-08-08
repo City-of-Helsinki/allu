@@ -58,7 +58,6 @@ export class LocationComponent implements EventListener {
   private application: Application;
   private id: number;
   private features: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
-  private enableSave: boolean = false;
   private hasChanges: HasChanges = HasChanges.NO;
   private rentingPlace: any;
   private sections: any;
@@ -93,16 +92,19 @@ export class LocationComponent implements EventListener {
         let saEvent = <ShapeAnnounceEvent>event;
         this.features = saEvent.shape;
         this.hasChanges = HasChanges.YES;
-        this.enableSave = true;
+      } else {
+        // All shapes have been deleted
+        this.features = undefined;
+        this.hasChanges = HasChanges.YES;
       }
     } else if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent> event;
       // we're only interested about applications matching the application being edited
+      // TODO: Is this necessary any more?
       if (aaEvent.applications.length === 1 && aaEvent.applications[0].id === this.id) {
         this.application = aaEvent.applications[0];
         this.eventService.send(this, new ApplicationSelectionEvent(this.application));
         if (this.hasChanges === HasChanges.PENDING) {
-          this.enableSave = false;
           this.hasChanges = HasChanges.NO;
         }
       }
@@ -111,11 +113,7 @@ export class LocationComponent implements EventListener {
       if (eEvent.originalEvent instanceof ApplicationSaveEvent) {
         let asEvent = <ApplicationSaveEvent>eEvent.originalEvent;
         if (asEvent.application.id === this.application.id) {
-          if (this.hasChanges === HasChanges.PENDING) {
-            this.enableSave = true;
-          } else {
-            this.enableSave = false;
-          }
+          // TODO: Errorcontrol
         }
       }
     }
@@ -126,26 +124,33 @@ export class LocationComponent implements EventListener {
     if (this.id) {
       // If there is an application to save the location data to
       console.log('Saving location for application id: ', this.id);
-      if (!this.application.location) {
-        this.application.location = new Location(this.id, undefined, undefined);
-      }
-      if (this.features) {
-        this.application.location.geometry = this.mapService.featureCollectionToGeometryCollection(this.features);
+
+      if (this.hasChanges === HasChanges.YES) {
+        if (this.features) {
+          // For existing applications, which do not have a location
+          if (!this.application.location) {
+            this.application.location = new Location(undefined, undefined, new PostalAddress(undefined, undefined, undefined));
+          }
+          this.application.location.geometry = this.mapService.featureCollectionToGeometryCollection(this.features);
+        } else {
+          // Location is removed entirely
+          this.application.location = undefined;
+        }
+        console.log('this.application', this.application);
         let saveEvent = new ApplicationSaveEvent(this.application);
         this.hasChanges = HasChanges.PENDING;
-        this.enableSave = false;
-        this.eventService.send(this, saveEvent);
-      } else {
-        this.application.location = undefined;
-        let saveEvent = new ApplicationSaveEvent(this.application);
-        this.hasChanges = HasChanges.PENDING;
-        this.enableSave = false;
         this.eventService.send(this, saveEvent);
       }
+      this.router.navigate(['/Summary', {id: this.id}]);
     } else {
-      localStorage.setItem('features', JSON.stringify(this.mapService.featureCollectionToGeometryCollection(this.features)));
+      // No application to save location data to
+      if (this.hasChanges === HasChanges.YES && this.features) {
+        localStorage.setItem('features', JSON.stringify(this.mapService.featureCollectionToGeometryCollection(this.features)));
+      } else {
+        localStorage.removeItem('features');
+      }
+      this.router.navigate(['/Applications/Type']);
     }
-    this.router.navigate(['/Applications/Type']);
   }
 
   ngOnInit() {

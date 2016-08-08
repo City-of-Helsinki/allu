@@ -65,8 +65,7 @@
             <button md-raised-button [routerLink]="['/FrontPage']">PERUUTA</button>
           </div>
           <div class="col m4 offset-m6">
-            <button md-raised-button style="margin-left: 10px;" *ngIf="!id" (click)="save()">PERUSTIEDOT</button>
-            <button md-raised-button style="margin-left: 10px;" *ngIf="id" [routerLink]="['/Summary', {id: id}]">YHTEENVETOON</button>
+            <button md-raised-button style="margin-left: 10px;" (click)="save()">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
           </div>
         </div>
       </md-card-content>

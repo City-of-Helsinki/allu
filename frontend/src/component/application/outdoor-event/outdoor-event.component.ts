@@ -61,7 +61,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private meta: StructureMeta;
 
   constructor(private eventService: EventService, private router: Router) {
-    // this.application = Application.emptyApplication();
+    // this.application = Application.emptyApplication(); TODO:remove preFilledApplication
     this.application = Application.preFilledApplication();
 
     this.events = [
@@ -151,12 +151,13 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     // Save application
     console.log('Saving application', application);
     application.metadata = this.meta;
-    if (!application.location) {
-      application.location = new Location(undefined, undefined, undefined);
-    }
     let features = JSON.parse(localStorage.getItem('features'));
     if (features) {
+      if (!application.location) {
+        application.location = new Location(undefined, undefined, undefined);
+      }
       application.location.geometry = features;
+      localStorage.removeItem('features');
     }
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);

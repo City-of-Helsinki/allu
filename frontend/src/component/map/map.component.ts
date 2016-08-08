@@ -61,7 +61,7 @@ export class MapComponent implements EventListener {
 
       // Check to see if the application has a location
       console.log('asEvent.application.location', asEvent.application.location);
-      if (asEvent.application.location) {
+      if (asEvent.application.location && asEvent.application.location.geometry.geometries.length) {
         let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
         this.applicationArea = new L.GeoJSON(featureCollection);
         this.applicationArea.eachLayer((layer) => {
@@ -127,24 +127,16 @@ export class MapComponent implements EventListener {
     }
     let that = this;
     this.map.on('draw:created', function (e: any) {
-      let type = e.layerType,
-        layer = e.layer;
-
+      let layer = e.layer;
       drawnItems.addLayer(layer);
       that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
     });
 
     this.map.on('draw:edited', function (e: any) {
-      let type = e.layerType,
-        layers = e.layers;
       that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
     });
 
     this.map.on('draw:deleted', function (e: any) {
-      let type = e.layerType,
-        layers = e.layers;
-
-      drawnItems.removeLayer(layers);
       that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
     });
 
