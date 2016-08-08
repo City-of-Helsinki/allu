@@ -20,9 +20,6 @@ export enum ProgressMode {
   selector: 'progressbar',
   moduleId: module.id,
   template: require('./progressbar.component.html'),
-  styles: [
-    require('./progressbar.component.scss')
-  ],
   directives: [MdToolbar]
 })
 export class ProgressbarComponent implements OnInit {
@@ -35,13 +32,13 @@ export class ProgressbarComponent implements OnInit {
 
   ngOnInit() {
     switch (this.step) {
-      case 0:
+      case ProgressStep.LOCATION:
         this.width = 9;
         break;
-      case 1:
+      case ProgressStep.INFORMATION:
         this.width = 25;
         break;
-      case 2:
+      case ProgressStep.SUMMARY:
         this.width = 42;
         break;
       default:
@@ -50,10 +47,10 @@ export class ProgressbarComponent implements OnInit {
     }
 
     switch (this.mode) {
-      case 0:
+      case ProgressMode.NEW:
         this.text = 'UUSI HAKEMUS';
         break;
-      case 1:
+      case ProgressMode.EDIT:
         this.text = 'MUOKKAA HAKEMUSTA';
         break;
       default:

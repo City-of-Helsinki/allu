@@ -107,7 +107,7 @@
             {{application.applicant.organization.name}}<br>
             <span>Isaksson Harry</span>
           </td>
-          <td>{{application.location.postalAddress.streetAddress}}</td>
+          <td>{{application.location ? application.location.postalAddress.streetAddress : ''}}</td>
           <td>Kamppi</td>
           <td>18.05.2016</td>
           <td>24.6.2016</td>
