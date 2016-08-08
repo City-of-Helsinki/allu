@@ -17,7 +17,7 @@ import {ApplicationSelectionEvent} from '../../../event/selection/application-se
 
 import {MapService} from '../../../service/map.service';
 import {MapComponent} from '../../map/map.component';
-import {ProgressbarComponent} from '../../../component/progressbar/progressbar.component';
+import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../../component/progressbar/progressbar.component';
 
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
@@ -65,8 +65,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
   private sections: any;
   private area: number;
 
-  private progressbarStep: number;
-  private progressbarType: string;
+  private progressStep: number;
+  private progressMode: number;
 
 
 
@@ -108,8 +108,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
     this.sections = 'D-lohko';
     this.area = 300;
 
-    this.progressbarStep = 3;
-    this.progressbarType = 'UUSI HAKEMUS';
+    this.progressStep = ProgressStep.SUMMARY;
+    this.progressMode = ProgressMode.NEW;
   };
 
   ngOnInit(): any {

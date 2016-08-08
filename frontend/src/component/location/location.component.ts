@@ -8,7 +8,7 @@ import {MdToolbar} from '@angular2-material/toolbar';
 import {MaterializeDirective} from 'angular2-materialize';
 
 import {MapComponent} from '../map/map.component';
-import {ProgressbarComponent} from '../../component/progressbar/progressbar.component';
+import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../component/progressbar/progressbar.component';
 
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
@@ -33,6 +33,8 @@ enum HasChanges {
   PENDING,
   YES
 }
+
+
 
 @Component({
   selector: 'type',
@@ -62,19 +64,15 @@ export class LocationComponent implements EventListener {
   private rentingPlace: any;
   private sections: any;
   private area: number;
-  private progressbarStep: number;
-  private progressbarType: string;
+  private progressStep: number;
+  private progressMode: number;
 
   constructor(private eventService: EventService, private mapService: MapService, private router: Router, params: RouteParams) {
     // A location of a certain application must be editable. This means if there is an id associated with the route, it should go there.
     // If there is no parameter id, this.id will be 0.
     this.id = Number(params.get('id'));
-    if (this.id) {
-      this.progressbarType = 'HAKEMUKSEN MUOKKAUS';
-    } else {
-      this.progressbarType = 'UUSI HAKEMUS';
-    }
-    this.progressbarStep = 1;
+    this.progressMode = this.id ? ProgressMode.EDIT : ProgressMode.NEW;
+    this.progressStep = ProgressStep.LOCATION;
 
     this.rentingPlace = [{name: 'Paikka A', value: 'a'}, {name: 'Paikka B', value: 'b'}, {name: 'Paikka C', value: 'c'}];
     this.sections = [{name: 'Lohko A', value: 'a'}, {name: 'Lohko B', value: 'b'}, {name: 'Lohko C', value: 'c'}];
