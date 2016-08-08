@@ -53,13 +53,19 @@ public class LocationService {
 
   /**
    * Update the given location. Location is updated if the id is given.
+   * Otherwise, new location is created.
    *
-   * @param locationJson location that is going to be updated
+   * @param locationJson
+   *          location that is going to be updated
+   * @return locationJson result of the operation
    */
-  public void updateLocation(LocationJson locationJson) {
-    if (locationJson != null && locationJson.getId() != null && locationJson.getId() > 0) {
+  public LocationJson updateOrCreateLocation(LocationJson locationJson) {
+    if (locationJson.getId() != null && locationJson.getId() > 0) {
       restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
           (locationJson), locationJson.getId().intValue());
+      return locationJson;
+    } else {
+      return createLocation(locationJson);
     }
   }
 

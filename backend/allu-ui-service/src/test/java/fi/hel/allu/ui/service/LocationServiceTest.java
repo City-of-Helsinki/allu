@@ -1,19 +1,22 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.ui.domain.LocationJson;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.Set;
-
-import static org.junit.Assert.*;
+import fi.hel.allu.ui.domain.LocationJson;
 
 public class LocationServiceTest extends MockServices {
   private static Validator validator;
@@ -72,7 +75,7 @@ public class LocationServiceTest extends MockServices {
   @Test
   public void updateValidLocation() {
     LocationJson locationJson = createLocationJson(1);
-    locationService.updateLocation(locationJson);
+    locationJson = locationService.updateOrCreateLocation(locationJson);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(1, locationJson.getId().intValue());
@@ -87,13 +90,14 @@ public class LocationServiceTest extends MockServices {
   @Test
   public void updateLocationWithoutId() {
     LocationJson locationJson = createLocationJson(null);
-    locationService.updateLocation(locationJson);
+    locationJson = locationService.updateOrCreateLocation(locationJson);
     assertNotNull(locationJson);
-    assertNull(locationJson.getId());
+    assertNotNull(locationJson.getId());
+    assertEquals(102, locationJson.getId().intValue());
     assertNotNull(locationJson.getPostalAddress());
-    assertEquals("city, Json", locationJson.getPostalAddress().getCity());
-    assertEquals("33333, Json", locationJson.getPostalAddress().getPostalCode());
-    assertEquals("address, Json", locationJson.getPostalAddress().getStreetAddress());
+    assertEquals("City1, Model", locationJson.getPostalAddress().getCity());
+    assertEquals("33333, Model", locationJson.getPostalAddress().getPostalCode());
+    assertEquals("Street 1, Model", locationJson.getPostalAddress().getStreetAddress());
     assertNotNull(locationJson.getGeometry());
     assertEquals(3879, locationJson.getGeometry().getSRID());
   }

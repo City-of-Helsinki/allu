@@ -79,9 +79,10 @@ public class ApplicationService {
   }
 
   /**
-   * Update the given application by calling backend service.
+   * Update the given application by calling back-end service.
    *
-   * @param applicationJson application that is going to be updated
+   * @param applicationJson
+   *          application that is going to be updated
    * @return Updated application
    */
   public ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
@@ -90,7 +91,7 @@ public class ApplicationService {
     projectService.updateProject(applicationJson.getProject());
     LocationJson locationJson = applicationJson.getLocation();
     if (locationJson != null) {
-      locationService.updateLocation(applicationJson.getLocation());
+      applicationJson.setLocation(locationService.updateOrCreateLocation(locationJson));
     } else {
       locationService.deleteApplicationLocation(applicationId);
     }
