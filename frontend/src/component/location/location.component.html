@@ -1,29 +1,4 @@
-<md-toolbar class="row">
-  <span class="col m2">UUSI HAKEMUS</span>
-  <div class="col m10">
-    <div class="col m2 center-align">
-      <p>Perustiedot</p>
-    </div>
-    <div class="col m2 center-align">
-      <p>Sijainti</p>
-    </div>
-    <div class="col m2 center-align">
-      <p>Yhteenveto</p>
-    </div>
-    <div class="col m2 center-align">
-      <p>Käsittely</p>
-    </div>
-    <div class="col m2 center-align">
-      <p>Päätös</p>
-    </div>
-    <div class="col m2 center-align">
-      <p>Valvonta</p>
-    </div>
-    <div class="m12 progress">
-      <div class="determinate" style="width: 25%"></div>
-    </div>
-  </div>
-</md-toolbar>
+<progressbar [step]="progressStep" [mode]="progressMode"></progressbar>
 <div materialize class="row" style="background: whitesmoke; margin-bottom:0px;">
   <div class="col m12">
     <md-card>
@@ -74,7 +49,7 @@
           </div>
           <div class="col m12">
             <div class="mapcontainer">
-              <map [draw]="true"></map>
+              <map [draw]="true" [selection]="true"></map>
             </div>
           </div>
         </div>
@@ -87,11 +62,10 @@
       <md-card-content>
         <div class="row">
           <div class="col m2">
-            <button md-raised-button [disabled]="true" (click)="console.log('Todo: go back to application');" >EDELLINEN</button>
+            <button md-raised-button [routerLink]="['/FrontPage']">PERUUTA</button>
           </div>
           <div class="col m4 offset-m6">
-            <button md-raised-button style="margin-left: 10px;" (click)="save()">TALLENNA</button>
-            <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Summary', {id: id}]">YHTEENVETO</button>
+            <button md-raised-button style="margin-left: 10px;" (click)="save()">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
           </div>
         </div>
       </md-card-content>
