@@ -1,15 +1,22 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.ApplicationSearchService;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import java.util.List;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.service.ApplicationSearchService;
 
 @RestController
 @RequestMapping("/applications")
@@ -19,33 +26,34 @@ public class ApplicationController {
   private ApplicationSearchService applicationSearchService;
 
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity create(@RequestBody ApplicationES applicationES) {
+  public ResponseEntity<Void> create(@RequestBody ApplicationES applicationES) {
     applicationSearchService.insertApplication(applicationES);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity update(@PathVariable String id, @RequestBody(required = true) ApplicationES applicationES) {
+  public ResponseEntity<Void> update(@PathVariable String id,
+      @RequestBody(required = true) ApplicationES applicationES) {
     applicationSearchService.updateApplication(id, applicationES);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-  public ResponseEntity delete(@PathVariable String id) {
+  public ResponseEntity<Void> delete(@PathVariable String id) {
     applicationSearchService.deleteApplication(id);
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/index", method = RequestMethod.DELETE)
-  public ResponseEntity deleteIndex() {
+  public ResponseEntity<Void> deleteIndex() {
     applicationSearchService.deleteIndex();
-    return new ResponseEntity(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<ApplicationES> findById(@PathVariable String id) {
     ApplicationES applicationES = applicationSearchService.findById(id);
-    return new ResponseEntity(applicationES, HttpStatus.OK);
+    return new ResponseEntity<>(applicationES, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
