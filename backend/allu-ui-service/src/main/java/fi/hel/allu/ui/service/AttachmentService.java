@@ -1,15 +1,21 @@
 package fi.hel.allu.ui.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -33,11 +39,24 @@ public class AttachmentService {
     this.restTemplate = restTemplate;
   }
 
-  public AttachmentInfoJson addAttachment(AttachmentInfoJson attachmentInfoJson) {
-    AttachmentInfo response = restTemplate.postForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_CREATE),
-        toAttachmentInfo(attachmentInfoJson), AttachmentInfo.class);
-    return toAttachmentInfoJson(response);
+  public List<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
+      throws IOException, IllegalArgumentException {
+    if (infos.length != files.length) {
+      throw new IllegalArgumentException("argument length mismatch");
+    }
+    List<AttachmentInfoJson> result = new ArrayList<>();
+    for (int i = 0; i < infos.length; ++i) {
+      // Create the attachment info, receive attachment ID in response
+      AttachmentInfo toModel = toAttachmentInfo(infos[i]);
+      toModel.setApplicationId(id);
+      AttachmentInfo response = restTemplate.postForObject(
+          applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_CREATE), toModel,
+          AttachmentInfo.class);
+      // Set the data for the created attachment info.
+      setAttachmentData(response.getId(), files[i]);
+      result.add(toAttachmentInfoJson(response));
+    }
+    return result;
   }
 
   public AttachmentInfoJson updateAttachment(int id, AttachmentInfoJson attachmentInfoJson) {
@@ -68,11 +87,22 @@ public class AttachmentService {
    * @throws IOException
    * @throws RestClientException
    */
-  public void setAttachmentData(@PathVariable int attachmentId, MultipartFile data)
-      throws IOException {
-    restTemplate.postForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_SET_DATA), data.getBytes(),
-        String.class, attachmentId);
+  private void setAttachmentData(int attachmentId, MultipartFile data) throws IOException {
+    // Generate suitable multi-part request...
+    MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
+    requestParts.add("data", new ByteArrayResource(data.getBytes()) {
+      @Override // return some filename so that Spring handles this as file
+      public String getFilename() {
+        return "data";
+      }
+    });
+    HttpHeaders requestHeader = new HttpHeaders();
+    requestHeader.setContentType(MediaType.MULTIPART_FORM_DATA);
+    HttpEntity<?> requestEntity = new HttpEntity<>(requestParts, requestHeader);
+    // ...then execute the request
+    restTemplate.exchange(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_SET_DATA), HttpMethod.POST,
+        requestEntity, String.class, attachmentId);
   }
 
   /**
@@ -91,7 +121,6 @@ public class AttachmentService {
   // convert AttachmentInfoJson --> AttachmentInfo
   private AttachmentInfo toAttachmentInfo(AttachmentInfoJson attachmentInfoJson) {
     AttachmentInfo result = new AttachmentInfo();
-    result.setApplicationId(null);
     result.setId(attachmentInfoJson.getId());
     result.setName(attachmentInfoJson.getName());
     result.setDescription(attachmentInfoJson.getDescription());
@@ -110,4 +139,5 @@ public class AttachmentService {
     result.setSize(attachmentInfo.getSize());
     return result;
   }
+
 }

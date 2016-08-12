@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -115,17 +116,25 @@ public class ApplicationController {
 
   // Attachment API
   /**
-   * Add a new attachment to the system
+   * Add attachments to application
    *
-   * @param attachmentInfoJson
-   *          The attachment's info
-   * @return result info
+   * @param id
+   *          Application ID
+   * @param infos
+   *          Array of attachment's infos
+   * @param files
+   *          Matching files (files[0] for infos[0] etc.)
+   * @return Updated result infos
+   * @throws IOException
+   * @throws IllegalArgumentException
    */
-  @RequestMapping(value = "/attachments", method = RequestMethod.POST)
+  @RequestMapping(value = "/{id}/attachments", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<AttachmentInfoJson> addAttachmentInfo(
-      @Valid @RequestBody AttachmentInfoJson attachmentInfoJson) {
-    return new ResponseEntity<>(attachmentService.addAttachment(attachmentInfoJson), HttpStatus.CREATED);
+  public ResponseEntity<List<AttachmentInfoJson>> addAttachments(
+      @PathVariable int id,
+      @RequestPart("meta") @Valid AttachmentInfoJson[] infos, @RequestPart("file") MultipartFile[] files)
+      throws IllegalArgumentException, IOException {
+    return new ResponseEntity<>(attachmentService.addAttachments(id, infos, files), HttpStatus.CREATED);
   }
 
   /**
@@ -157,7 +166,7 @@ public class ApplicationController {
   }
 
   /**
-   * Delete attachment info
+   * Delete attachment
    *
    * @param id
    *          attachment ID
@@ -166,29 +175,8 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/attachments/{id}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Void> deleteAttachmentInfo(@PathVariable int id) {
+  public ResponseEntity<Void> deleteAttachment(@PathVariable int id) {
     attachmentService.deleteAttachment(id);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  /**
-   * Upload the attachment's data.
-   *
-   * @param attachmentId
-   *          Attachment ID
-   * @param data
-   *          Attachment data
-   * @return
-   * @throws IOException
-   */
-  @RequestMapping(value = "/attachments/{attachmentId}/data", method = RequestMethod.POST)
-  public ResponseEntity<Void> setAttachmentData(@PathVariable int attachmentId,
-      @RequestParam("data") MultipartFile data) throws IOException {
-    if (data.isEmpty()) {
-      // Empty attachments don't make sense, let's explicitly forbid them
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-    attachmentService.setAttachmentData(attachmentId, data);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

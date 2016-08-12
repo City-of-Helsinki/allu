@@ -2,12 +2,15 @@ package fi.hel.allu.ui.domain;
 
 import java.time.ZonedDateTime;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Attachment information
  */
 public class AttachmentInfoJson {
 
   private Integer id;
+  @NotNull(message = "{attachment.name}")
   private String name;
   private String description;
   private Long size;
@@ -47,7 +50,7 @@ public class AttachmentInfoJson {
   }
 
   /**
-   * Attachment size -- supplied by UI
+   * Attachment size -- supplied by model
    */
   public Long getSize() {
     return size;
@@ -58,7 +61,7 @@ public class AttachmentInfoJson {
   }
 
   /**
-   * Attachment creation time -- supplied by UI
+   * Attachment creation time -- supplied by model
    */
   public ZonedDateTime getCreationTime() {
     return creationTime;

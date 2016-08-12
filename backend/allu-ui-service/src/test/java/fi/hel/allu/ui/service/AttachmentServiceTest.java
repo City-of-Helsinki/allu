@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -40,14 +41,25 @@ public class AttachmentServiceTest extends MockServices {
   }
 
   @Test
-  public void testAddAttachment() {
+  public void testAddAttachment() throws IllegalArgumentException, IOException {
     Mockito
         .when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
             Mockito.eq(AttachmentInfo.class)))
         .thenAnswer((Answer<AttachmentInfo>) invocation -> createMockAttachmentInfo());
-    AttachmentInfoJson info = newAttachmentInfoJson();
-    AttachmentInfoJson result = attachmentService.addAttachment(info);
-    checkThatIsMockResult(result);
+    final int ITEMS = 5;
+    AttachmentInfoJson infos[] = new AttachmentInfoJson[ITEMS];
+    MultipartFile files[] = new MultipartFile[ITEMS];
+    for (int i = 0; i < ITEMS; ++i) {
+      infos[i] = newAttachmentInfoJson();
+      files[i] = new MockMultipartFile("dumdedoo.bin", generateMockData(4321));
+    }
+    List<AttachmentInfoJson> results = attachmentService.addAttachments(99, infos, files);
+    Mockito.verify(restTemplate, Mockito.times(ITEMS)).exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST),
+        Mockito.any(HttpEntity.class), Mockito.eq(String.class), Mockito.eq(12));
+    for (AttachmentInfoJson result : results) {
+      checkThatIsMockResult(result);
+    }
+    Assert.assertEquals(ITEMS, results.size());
   }
 
   @Test
@@ -73,14 +85,6 @@ public class AttachmentServiceTest extends MockServices {
   public void testDeleteAttactment() {
     attachmentService.deleteAttachment(1);
     Mockito.verify(restTemplate).delete(Mockito.anyString(), Mockito.anyInt());
-  }
-
-  @Test
-  public void testSetData() throws IOException {
-    MultipartFile file = new MockMultipartFile("dumdedoo.bin", generateMockData(4321));
-    attachmentService.setAttachmentData(123, file);
-    Mockito.verify(restTemplate).postForObject(Mockito.anyString(), Mockito.any(byte[].class), Mockito.eq(String.class),
-        Mockito.eq(123));
   }
 
   @Test
@@ -123,7 +127,7 @@ public class AttachmentServiceTest extends MockServices {
     attachmentInfo.setDescription("Mock attachment");
     attachmentInfo.setSize(9999L);
     attachmentInfo.setCreationTime(ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"));
-    attachmentInfo.setApplicationId(999);
+    attachmentInfo.setApplicationId(1234);
     return attachmentInfo;
   }
 
