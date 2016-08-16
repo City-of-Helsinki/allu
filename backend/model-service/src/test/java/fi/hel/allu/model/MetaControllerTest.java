@@ -1,18 +1,9 @@
 package fi.hel.allu.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import fi.hel.allu.model.dao.StructureMetaDao;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
+import fi.hel.allu.model.domain.meta.StructureMeta;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,10 +13,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import fi.hel.allu.model.dao.StructureMetaDao;
-import fi.hel.allu.model.domain.meta.AttributeDataType;
-import fi.hel.allu.model.domain.meta.AttributeMeta;
-import fi.hel.allu.model.domain.meta.StructureMeta;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -91,5 +87,19 @@ public class MetaControllerTest {
     assertTrue(contactStructureMeta.getAttributes().stream().allMatch(am -> am.getStructureAttribute() == null));
     assertTrue(contactStructureMeta.getAttributes().stream().allMatch(am -> am.getListType() == null));
     assertTrue(contactStructureMeta.getAttributes().stream().allMatch(am -> am.getStructureMeta() == null));
+
+
+    Optional<AttributeMeta> applicantOpt = sMetaInResult.getAttributes().stream().filter(am -> am.getName().equals("applicant")).findFirst();
+    AttributeMeta applicant = applicantOpt.orElseThrow(() -> new RuntimeException("Applicant not found"));
+    assertEquals("Hakija", applicant.getUiName());
+    assertNotNull(applicant.getStructureMeta());
+    StructureMeta applicantStructureMeta = applicant.getStructureMeta();
+
+    Set<String> applicantNames = applicantStructureMeta.getAttributes().stream().map(am -> am.getName()).collect(Collectors.toSet());
+    assertEquals(10, applicantNames.size());
+    expectedNames = new HashSet<>(
+        Arrays.asList(new String[] { "personName", "companyName", "organizationName", "businessId", "ssn", "address",
+            "postalCode", "postOffice", "phoneNumber", "email" }));
+    assertTrue(applicantNames.containsAll(expectedNames));
   }
 }
