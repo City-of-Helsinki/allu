@@ -17,6 +17,10 @@ import {Location} from '../../../model/common/location';
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
 import {Application} from '../../../model/application/application';
+import {Applicant} from '../../../model/application/applicant';
+import {Person} from '../../../model/common/person';
+import {Organization} from '../../../model/common/organization';
+import {PostalAddress} from '../../../model/common/postal-address';
 import {EventService} from '../../../event/event.service';
 import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
 import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application-added-announce-event';
@@ -52,7 +56,11 @@ import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
 export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private application: Application;
   private events: Array<any>;
-  private applicantType: Array<string>;
+  private applicantType: any;
+  private applicantText: any;
+  private applicant: any;
+  private applicantNameSelection: string;
+  private applicantIdSelection: string;
   private countries: Array<any>;
   private billingTypes: Array<any>;
   private noPriceReasons: Array<any>;
@@ -61,14 +69,74 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private meta: StructureMeta;
 
   constructor(private eventService: EventService, private router: Router) {
-    // this.application = Application.emptyApplication(); TODO:remove preFilledApplication
+    // TODO:remove preFilledApplication
+    // this.application = Application.emptyApplication();
     this.application = Application.preFilledApplication();
 
     this.events = [
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
       {name: 'Muu', value: 'Other'}
     ];
-    this.applicantType = ['Yritys', 'Yhdistys', 'Yksityishenkilö'];
+    this.applicantType = [
+      {name: 'Yritys', value: 'COMPANY', text: 'Yrityksen nimi'},
+      {name: 'Yhdistys', value: 'ASSOCIATION', text: 'Yhdistyksen nimi'},
+      {name: 'Yksityishenkilö', value: 'PERSON', text: 'Yksityishenkilön nimi'}
+    ];
+    this.applicantText = {
+      'DEFAULT': {
+        name: 'Hakijan nimi',
+        id: 'Y-tunnus'},
+      'COMPANY': {
+        name: 'Yrityksen nimi',
+        id: 'Y-tunnus'},
+      'ASSOCIATION': {
+        name: 'Yhdistyksen nimi',
+        id: 'Y-tunnus'},
+      'PERSON': {
+        name: 'Henkilön nimi',
+        id: 'Henkilötunnus'}
+    };
+
+    let def = 'DEFAULT';
+    this.applicantNameSelection = this.application.applicant.type
+      ? this.applicantText[this.application.applicant.type].name : this.applicantText[def].name;
+    this.applicantIdSelection = this.application.applicant.type
+      ? this.applicantText[this.application.applicant.type].id : this.applicantText[def].id;
+
+    this.applicant = {
+      id: this.application.applicant && this.application.applicant.id || undefined,
+      type: this.application.applicant && this.application.applicant.type || undefined,
+      representative: this.application.applicant && this.application.applicant.representative || undefined,
+      name: undefined,
+      businessIdOrSsn: undefined,
+      streetAddress: undefined,
+      postalCode: undefined,
+      city: undefined,
+      email: undefined,
+      phone: undefined
+    };
+
+    if (this.application.applicant) {
+      if (this.application.applicant.person) {
+        this.applicant.name = this.application.applicant.person.name;
+        this.applicant.businessIdOrSsn = this.application.applicant.person.ssn;
+        this.applicant.streetAddress = this.application.applicant.person.postalAddress.streetAddress;
+        this.applicant.postalCode = this.application.applicant.person.postalAddress.postalCode;
+        this.applicant.city = this.application.applicant.person.postalAddress.city;
+        this.applicant.email = this.application.applicant.person.email;
+        this.applicant.phone = this.application.applicant.person.phone;
+      }
+      if (this.application.applicant.organization) {
+        this.applicant.name = this.application.applicant.organization.name;
+        this.applicant.businessIdOrSsn = this.application.applicant.organization.businessId;
+        this.applicant.streetAddress = this.application.applicant.organization.postalAddress.streetAddress;
+        this.applicant.postalCode = this.application.applicant.organization.postalAddress.postalCode;
+        this.applicant.city = this.application.applicant.organization.postalAddress.city;
+        this.applicant.email = this.application.applicant.organization.email;
+        this.applicant.phone = this.application.applicant.organization.phone;
+      }
+    }
+
     this.countries = [
       {name: 'Suomi', value: 'Finland'},
       {name: 'Ruotsi', value: 'Sweden'},
@@ -113,6 +181,25 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       console.log('Loaded metadata', event);
       let maEvent = <MetaAnnounceEvent>event;
       this.meta = maEvent.structureMeta;
+      this.applicantText = {
+        'DEFAULT': {
+          name: 'Hakijan nimi',
+          id: this.meta.getUiName('applicant.businessId')},
+        'COMPANY': {
+          name: this.meta.getUiName('applicant.companyName'),
+          id: this.meta.getUiName('applicant.businessId')},
+        'ASSOCIATION': {
+          name: this.meta.getUiName('applicant.organizationName'),
+          id: this.meta.getUiName('applicant.businessId')},
+        'PERSON': {
+          name: this.meta.getUiName('applicant.personName'),
+          id: this.meta.getUiName('applicant.ssn')}
+      };
+      let def = 'DEFAULT';
+      this.applicantNameSelection = this.application.applicant.type
+        ? this.applicantText[this.application.applicant.type].name : this.applicantText[def].name;
+      this.applicantIdSelection = this.application.applicant.type
+        ? this.applicantText[this.application.applicant.type].id : this.applicantText[def].id;
     }
   }
 
@@ -123,8 +210,8 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   }
 
   applicantTypeSelection(value: string) {
-    console.log('Hakijan tyypiksi on valittu: ', value);
-    console.log(this.application);
+    this.applicantNameSelection = this.applicantText[value].name;
+    this.applicantIdSelection = this.applicantText[value].id;
   }
 
   applicantCountrySelection(value: string) {
@@ -148,6 +235,40 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   }
 
   save(application: Application) {
+    let postalAddress = new PostalAddress(this.applicant.streetAddress, this.applicant.postalCode, this.applicant.city);
+
+    if (this.applicant.type === 'PERSON') {
+      let person = new Person(
+        undefined,
+        this.applicant.name,
+        this.applicant.businessIdOrSsn,
+        postalAddress,
+        this.applicant.email,
+        this.applicant.phone);
+      this.application.applicant = new Applicant(
+        this.applicant.id,
+        this.applicant.type,
+        this.applicant.representative || false,
+        person,
+        undefined);
+    } else {
+      let organization = new Organization(
+        undefined,
+        this.applicant.name,
+        this.applicant.businessIdOrSsn,
+        postalAddress,
+        this.applicant.email,
+        this.applicant.phone);
+      this.application.applicant = new Applicant(
+        this.applicant.id,
+        this.applicant.type,
+        this.applicant.representative || false,
+        undefined,
+        organization);
+    }
+
+    // TODO: We are not checking the ID's of the person and organization objects.
+
     // Save application
     console.log('Saving application', application);
     application.metadata = this.meta;
