@@ -1,4 +1,46 @@
 ------------------------
+-- Common metadata
+------------------------
+-- Contact
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('Contact', 1);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'contactName', 'Yhteyshenkilön nimi', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'address', 'Osoite', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'postalCode', 'Postinumero', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'postOffice', 'Toimipaikka', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'phoneNumber', 'Puhelin', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'email', 'Sähköpostiosoite', 'STRING', null, null, null);
+
+-- Applicant
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('Applicant', 1);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'personName', 'Henkilön nimi', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'companyName', 'Yrityksen nimi', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'organizationName', 'Yhdistyksen nimi', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'businessId', 'Y-tunnus', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'ssn', 'Henkilötunnus', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'address', 'Osoite', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'postalCode', 'Postinumero', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'postOffice', 'Toimipaikka', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'phoneNumber', 'Puhelin', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'email', 'Sähköpostiosoite', 'STRING', null, null, null);
+
+
+------------------------
 -- OutdoorEvent metadata
 ------------------------
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('OUTDOOREVENT', 1);
@@ -39,22 +81,15 @@ INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type,
     VALUES (currval('allu.structure_meta_id_seq'), 'structureStartTime', 'Rakennuspäivämäärä', 'DATETIME', null, null, null);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'structureEndTime', 'Purkupäivämäärä', 'DATETIME', null, null, null);
-
-
--- Contacts structure definition (not that currval may refer to different value than above)
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'contact', 'Yhteyshenkilö', 'LIST', 'STRUCTURE', null, null);
-INSERT INTO allu.structure_meta (application_type, version) VALUES ('Contact', 1);
-UPDATE allu.attribute_meta set structure_attribute = currval('allu.structure_meta_id_seq') where id = currval('allu.attribute_meta_id_seq');
+-- Use common Contact definition
+UPDATE allu.attribute_meta
+    set structure_attribute = (select id from allu.structure_meta where application_type = 'Contact' and version = 1)
+    where id = currval('allu.attribute_meta_id_seq');
+-- Use common Applicant definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'contactName', 'Yhteyshenkilön nimi', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'address', 'Osoite', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'postalCode', 'Postinumero', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'postOffice', 'Toimipaikka', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'phoneNumber', 'Puhelin', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'email', 'Sähköpostiosoite', 'STRING', null, null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'applicant', 'Hakija', 'STRUCTURE', null, null, null);
+UPDATE allu.attribute_meta
+    set structure_attribute = (select id from allu.structure_meta where application_type = 'Applicant' and version = 1)
+    where id = currval('allu.attribute_meta_id_seq');
