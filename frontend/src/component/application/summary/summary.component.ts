@@ -57,6 +57,7 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
   private id: number;
   private events: Array<any>;
   private applicantType: any;
+  private applicantText: any;
   private countries: Array<any>;
   private billingTypes: Array<any>;
   private noPriceReasons: Array<any>;
@@ -79,7 +80,21 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
       {name: 'Muu', value: 'Other'}
     ];
-    this.applicantType = {'Company': 'Yritys', 'Organization': 'Yhdistys', 'Person': 'Yksityishenkilö'};
+    this.applicantType = {'COMPANY': 'Yritys', 'ASSOCIATION': 'Yhdistys', 'PERSON': 'Yksityishenkilö'};
+    this.applicantText = {
+      'DEFAULT': {
+        name: 'Hakijan nimi',
+        id: 'Y-tunnus'},
+      'COMPANY': {
+        name: 'Yrityksen nimi',
+        id: 'Y-tunnus'},
+      'ASSOCIATION': {
+        name: 'Yhdistyksen nimi',
+        id: 'Y-tunnus'},
+      'PERSON': {
+        name: 'Henkilön nimi',
+        id: 'Henkilötunnus'}
+    };
     this.countries = [
       {name: 'Suomi', value: 'Finland'},
       {name: 'Ruotsi', value: 'Sweden'},

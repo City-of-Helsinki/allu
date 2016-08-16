@@ -104,6 +104,7 @@ export class LocationComponent implements EventListener {
         this.eventService.send(this, new ApplicationSelectionEvent(this.application));
         if (this.hasChanges === HasChanges.PENDING) {
           this.hasChanges = HasChanges.NO;
+          this.router.navigate(['/Summary', {id: this.id}]);
         }
       }
     } else if (event instanceof ErrorEvent) {
@@ -139,7 +140,7 @@ export class LocationComponent implements EventListener {
         this.hasChanges = HasChanges.PENDING;
         this.eventService.send(this, saveEvent);
       }
-      this.router.navigate(['/Summary', {id: this.id}]);
+      // TODO: disable save button
     } else {
       // No application to save location data to
       if (this.hasChanges === HasChanges.YES && this.features) {

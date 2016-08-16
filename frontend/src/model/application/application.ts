@@ -27,21 +27,39 @@ export class Application {
     public location: Location) {}
 
   public static emptyApplication(): Application {
-    let applicantPostalAddress = new PostalAddress(undefined, undefined, undefined);
-    let applicantPerson = new Person(undefined, undefined, undefined, applicantPostalAddress, undefined, undefined);
-    let applicant = new Applicant(undefined, 'Person', false, applicantPerson, undefined);
+    let applicant = new Applicant(undefined, undefined, false, undefined, undefined);
     let contactPostalAddress = new PostalAddress(undefined, undefined, undefined);
     let contactPerson = new Person(undefined, undefined, undefined, contactPostalAddress, undefined, undefined);
     let contact = new Contact(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
+    let applicationTypeData = new OutdoorEvent(
+      undefined,
+      undefined,
+      undefined,
+      'OUTDOOREVENT',
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined,
+      undefined);
     return new
       Application(
         undefined,
         undefined,
         undefined,
         undefined,
+        'OUTDOOREVENT',
         undefined,
-        undefined,
-        undefined,
+        applicationTypeData,
         undefined,
         undefined,
         applicant,
@@ -60,6 +78,7 @@ export class Application {
       'hakijainc@hotmail.com',
       '112');
     let applicant = new Applicant(undefined, 'COMPANY', true, undefined, applicantOrganization);
+    // let applicant = new Applicant(undefined, 'PERSON', true, applicantPerson, undefined);
     let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
     let contactPerson = new Person(undefined, 'kontakti ihminen', '030303-1234', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567');
     let contact = new Contact(
