@@ -97,7 +97,6 @@ public class AttachmentServiceTest extends MockServices {
     attachmentInfoJson.setName("Test_1.doc");
     attachmentInfoJson.setDescription("Test attachment");
     attachmentInfoJson.setSize(123456L);
-    attachmentInfoJson.setType("application/ms-word");
     attachmentInfoJson.setCreationTime(ZonedDateTime.now());
     return attachmentInfoJson;
   }
@@ -107,7 +106,6 @@ public class AttachmentServiceTest extends MockServices {
     assertEquals("Mock attachment", result.getDescription());
     assertEquals("Mock.pdf", result.getName());
     assertEquals(12, result.getId().intValue());
-    assertEquals("application/pdf", result.getType());
   }
 
   private byte[] generateMockData(int size) {
@@ -124,7 +122,6 @@ public class AttachmentServiceTest extends MockServices {
     attachmentInfo.setName("Mock.pdf");
     attachmentInfo.setDescription("Mock attachment");
     attachmentInfo.setSize(9999L);
-    attachmentInfo.setType("application/pdf");
     attachmentInfo.setCreationTime(ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"));
     attachmentInfo.setApplicationId(999);
     return attachmentInfo;

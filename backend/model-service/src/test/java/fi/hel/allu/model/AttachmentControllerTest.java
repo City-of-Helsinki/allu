@@ -134,7 +134,6 @@ public class AttachmentControllerTest {
     info.setId(313);
     info.setName("Test_attachment.pdf");
     info.setDescription("A test attachment");
-    info.setType("application/pdf");
     return info;
   }
 
@@ -143,7 +142,6 @@ public class AttachmentControllerTest {
     Assert.assertEquals(expected.getApplicationId(), actual.getApplicationId());
     Assert.assertEquals(expected.getName(), actual.getName());
     Assert.assertEquals(expected.getDescription(), actual.getDescription());
-    Assert.assertEquals(expected.getType(), actual.getType());
     Assert.assertEquals(expected.getSize(), actual.getSize());
     Assert.assertEquals(expected.getCreationTime(), actual.getCreationTime());
   }

@@ -261,7 +261,6 @@ public class ApplicationMapper {
     attachmentInfoJson.setId(attachmentInfo.getId());
     attachmentInfoJson.setName(attachmentInfo.getName());
     attachmentInfoJson.setDescription(attachmentInfo.getDescription());
-    attachmentInfoJson.setType(attachmentInfo.getDescription());
     attachmentInfoJson.setSize(attachmentInfo.getSize());
     attachmentInfoJson.setCreationTime(attachmentInfo.getCreationTime());
   }

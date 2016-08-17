@@ -7,7 +7,6 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -116,11 +115,7 @@ public class AttachmentController {
   public ResponseEntity<byte[]> getAttachmentData(@PathVariable int attachmentId) {
     byte[] bytes = attachmentDao.getData(attachmentId)
         .orElseThrow(() -> new NoSuchEntityException("Attachment not found", Integer.toString(attachmentId)));
-    AttachmentInfo info = attachmentDao.findById(attachmentId)
-        .orElseThrow(() -> new NoSuchEntityException("Attachment not found", Integer.toString(attachmentId)));
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType(info.getType()));
-    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    return new ResponseEntity<>(bytes, HttpStatus.OK);
   }
 
 }

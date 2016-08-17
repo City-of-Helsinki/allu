@@ -10,7 +10,6 @@ public class AttachmentInfoJson {
   private Integer id;
   private String name;
   private String description;
-  private String type;
   private Long size;
   private ZonedDateTime creationTime;
 
@@ -45,17 +44,6 @@ public class AttachmentInfoJson {
 
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  /**
-   * Attachment type (MIME type, e.g. "application/pdf") -- supplied by UI
-   */
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
   }
 
   /**

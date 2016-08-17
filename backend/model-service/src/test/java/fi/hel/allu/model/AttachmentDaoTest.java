@@ -206,7 +206,6 @@ public class AttachmentDaoTest {
     info.setCreationTime(ZonedDateTime.now());
     info.setId(313);
     info.setName("Test_attachment.pdf");
-    info.setType("application/pdf");
     info.setDescription("Test attachment");
     return info;
   }
@@ -216,7 +215,6 @@ public class AttachmentDaoTest {
     Assert.assertEquals(expected.getApplicationId(), actual.getApplicationId());
     Assert.assertEquals(expected.getName(), actual.getName());
     Assert.assertEquals(expected.getDescription(), actual.getDescription());
-    Assert.assertEquals(expected.getType(), actual.getType());
     Assert.assertEquals(expected.getSize(), actual.getSize());
     Assert.assertEquals(expected.getCreationTime(), actual.getCreationTime());
   }

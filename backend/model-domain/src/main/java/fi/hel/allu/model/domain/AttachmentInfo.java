@@ -7,7 +7,6 @@ public class AttachmentInfo {
   private Integer applicationId;
   private String name;
   private String description;
-  private String type;
   private Long size;
   private ZonedDateTime creationTime;
 
@@ -50,17 +49,6 @@ public class AttachmentInfo {
 
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  /**
-   * @return the type
-   */
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
   }
 
   /**

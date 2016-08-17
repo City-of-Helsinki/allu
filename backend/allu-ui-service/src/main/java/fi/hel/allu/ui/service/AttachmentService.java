@@ -97,7 +97,6 @@ public class AttachmentService {
     result.setDescription(attachmentInfoJson.getDescription());
     result.setCreationTime(attachmentInfoJson.getCreationTime());
     result.setSize(attachmentInfoJson.getSize());
-    result.setType(attachmentInfoJson.getType());
     return result;
   }
 
@@ -109,7 +108,6 @@ public class AttachmentService {
     result.setDescription(attachmentInfo.getDescription());
     result.setCreationTime(attachmentInfo.getCreationTime());
     result.setSize(attachmentInfo.getSize());
-    result.setType(attachmentInfo.getType());
     return result;
   }
 }

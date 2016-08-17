@@ -466,7 +466,6 @@ public abstract class MockServices {
       info.setId(123 + i);
       info.setCreationTime(ZonedDateTime.now());
       info.setDescription(String.format("Attachment %d", i));
-      info.setType("text/plain");
       info.setSize(123L * i);
       attachmentInfoArray[i] = info;
     }
