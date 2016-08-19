@@ -1,13 +1,15 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
-import org.hibernate.validator.constraints.NotBlank;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
-import java.util.List;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
 
 /**
  * in Finnish: Hakemus
@@ -40,6 +42,8 @@ public class ApplicationJson {
   @Valid
   private EventJson event;
   private ZonedDateTime decisionTime;
+  @Valid
+  private List<AttachmentInfoJson> attachmentList;
 
   /**
    * in Finnish: Hakemuksen toimeksiantaja
@@ -194,5 +198,16 @@ public class ApplicationJson {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
+  }
+
+  /**
+   * in Finnish: Hakemuksen liitteet
+   */
+  public List<AttachmentInfoJson> getAttachmentList() {
+    return attachmentList;
+  }
+
+  public void setAttachmentList(List<AttachmentInfoJson> attachmentList) {
+    this.attachmentList = attachmentList;
   }
 }

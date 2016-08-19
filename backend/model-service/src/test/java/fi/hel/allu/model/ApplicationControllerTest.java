@@ -8,7 +8,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -19,13 +18,11 @@ import java.util.Calendar;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
@@ -224,100 +221,6 @@ public class ApplicationControllerTest {
     assertEquals(0, results.length);
   }
 
-  // Helper for inserting attachment info into application
-  private AttachmentInfo insertAttachmentInfo(int applicationId, AttachmentInfo info) throws Exception {
-    ResultActions resultActions = wtc
-        .perform(post(String.format("/applications/%d/attachments", applicationId)), info)
-        .andExpect(status().isCreated());
-    return wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
-  }
-  /**
-   * Test that adding an attachment info works
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testAddAndGetAttachment() throws Exception {
-    // Setup: insert an application
-    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
-    // Test: add attachment info and make sure result is CREATED
-    AttachmentInfo info = newInfo();
-    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), info);
-    ResultActions resultActions = wtc
-        .perform(get(String.format("/applications/%d/attachments/%d", appInResult.getId(), stored.getId())))
-        .andExpect(status().isOk());
-    AttachmentInfo retrieved = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
-    assertEquals(info.getName(), retrieved.getName());
-    assertEquals(info.getName(), stored.getName());
-  }
-
-  /**
-   * Test that updating attachment works,
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testUpdateAttachment() throws Exception {
-    // Setup: insert an application and attachment info
-    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
-    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), newInfo());
-    // Test: Update the attachment info
-    String infoUri = String.format("/applications/%d/attachments/%d", appInResult.getId(), stored.getId());
-    AttachmentInfo updatedInfo = newInfo();
-    updatedInfo.setName("Muokattu hakemus");
-    updatedInfo.setSize(99210L);
-    ResultActions resultActions = wtc.perform(put(infoUri), updatedInfo).andExpect(status().isOk());
-    AttachmentInfo updateResult = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
-    assertEquals(updatedInfo.getName(), updateResult.getName());
-    assertEquals(updatedInfo.getSize(), updateResult.getSize());
-    // Verify that reading the same attachment info now gives the updated data
-    resultActions = wtc.perform(get(infoUri)).andExpect(status().isOk());
-    AttachmentInfo readInfo = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
-    assertEquals(updatedInfo.getName(), readInfo.getName());
-    assertEquals(updatedInfo.getSize(), readInfo.getSize());
-  }
-
-  /**
-   * Test that attachment can be deleted.
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testDeleteAttachment() throws Exception {
-    // Setup: insert an application and attachment info
-    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
-    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), newInfo());
-    // Test: delete the attachment and verify that it doesn't exist anymore
-    String infoUri = String.format("/applications/%d/attachments/%d", appInResult.getId(), stored.getId());
-    wtc.perform(delete(infoUri)).andExpect(status().isOk());
-    wtc.perform(get(infoUri)).andExpect(status().isNotFound());
-  }
-
-  /**
-   * Test that setting attachment data works
-   *
-   * @throws Exception
-   */
-  @Test
-  public void testSetAndGetAttachmentData() throws Exception {
-    // Setup: insert an application and some attachment info for it
-    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
-    AttachmentInfo stored = insertAttachmentInfo(appInResult.getId(), newInfo());
-    // Test: put some content
-    byte[] content = new byte[12345];
-    for(int i=0; i < content.length; ++i) {
-      content[i]= (byte)(i);
-    }
-    MockMultipartFile mockFile = new MockMultipartFile("data", content);
-    String uri = String.format("/applications/%d/attachments/%d/data", appInResult.getId(), stored.getId());
-    wtc.perform(fileUpload(uri).file(mockFile)).andExpect(status().isOk());
-    // Verify that the attachment's content can now be read and is the same as
-    // the stored one:
-    ResultActions resultActions = wtc.perform(get(uri)).andExpect(status().isOk());
-    byte[] readContent = resultActions.andReturn().getResponse().getContentAsByteArray();
-    Assert.assertArrayEquals(content, readContent);
-  }
-
   /**
    * Test that location can be deleted from application
    *
@@ -338,7 +241,7 @@ public class ApplicationControllerTest {
   }
 
   // Create and prepare an application for insertion:
-  // - Create dummy person and project to get valid ids
+  // - Create dummy person and project to get valid IDs
   // - Set some values for the application
   private Application prepareApplication(String name, String handler) throws Exception {
     Integer personId = addPerson();
@@ -442,14 +345,5 @@ public class ApplicationControllerTest {
     }
   }
 
-  private AttachmentInfo newInfo() {
-    AttachmentInfo info = new AttachmentInfo();
-    info.setApplicationId(123);
-    info.setCreationTime(ZonedDateTime.now());
-    info.setId(313);
-    info.setName("Test attachment");
-    info.setType("application/pdf");
-    return info;
-  }
 
 }

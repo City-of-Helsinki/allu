@@ -1,15 +1,24 @@
-package fi.hel.allu.model.domain;
+package fi.hel.allu.ui.domain;
 
 import java.time.ZonedDateTime;
 
-public class AttachmentInfo {
+import javax.validation.constraints.NotNull;
+
+/**
+ * Attachment information
+ */
+public class AttachmentInfoJson {
+
   private Integer id;
-  private Integer applicationId;
+  @NotNull(message = "{attachment.name}")
   private String name;
   private String description;
   private Long size;
   private ZonedDateTime creationTime;
 
+  /**
+   * The attachment ID -- created by database
+   */
   public Integer getId() {
     return id;
   }
@@ -19,18 +28,7 @@ public class AttachmentInfo {
   }
 
   /**
-   * @return the attachmentId
-   */
-  public Integer getApplicationId() {
-    return applicationId;
-  }
-
-  public void setApplicationId(Integer applicationId) {
-    this.applicationId = applicationId;
-  }
-
-  /**
-   * The attachment name (file name)
+   * Attachment name (file name) -- supplied by UI
    */
   public String getName() {
     return name;
@@ -41,7 +39,7 @@ public class AttachmentInfo {
   }
 
   /**
-   * The attachment description
+   * Attachment description -- Supplied by UI
    */
   public String getDescription() {
     return description;
@@ -52,7 +50,7 @@ public class AttachmentInfo {
   }
 
   /**
-   * @return the size
+   * Attachment size -- supplied by model
    */
   public Long getSize() {
     return size;
@@ -63,7 +61,7 @@ public class AttachmentInfo {
   }
 
   /**
-   * @return the creationTime
+   * Attachment creation time -- supplied by model
    */
   public ZonedDateTime getCreationTime() {
     return creationTime;

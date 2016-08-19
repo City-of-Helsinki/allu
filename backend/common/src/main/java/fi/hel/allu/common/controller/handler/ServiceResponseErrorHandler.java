@@ -1,13 +1,14 @@
 package fi.hel.allu.common.controller.handler;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
+import java.io.IOException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.web.client.ResponseErrorHandler;
 
-import java.io.IOException;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 
 public class ServiceResponseErrorHandler implements ResponseErrorHandler {
   private static final Logger logger = LoggerFactory.getLogger(ServiceResponseErrorHandler.class);
@@ -15,7 +16,7 @@ public class ServiceResponseErrorHandler implements ResponseErrorHandler {
 
   @Override
   public boolean hasError(ClientHttpResponse clientHttpResponse) throws IOException {
-    if (clientHttpResponse.getStatusCode() != HttpStatus.OK) {
+    if (!clientHttpResponse.getStatusCode().is2xxSuccessful()) {
       logger.debug("Status code: {}", clientHttpResponse.getStatusCode());
       logger.debug("Status text: {}", clientHttpResponse.getStatusText());
       return true;

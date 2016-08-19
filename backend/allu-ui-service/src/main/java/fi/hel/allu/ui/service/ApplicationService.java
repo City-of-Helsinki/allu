@@ -13,10 +13,12 @@ import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicantJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
@@ -197,7 +199,22 @@ public class ApplicationService {
     if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
     }
+    applicationJson.setAttachmentList(findAttachmentsForApplication(applicationModel.getId()));
     return applicationJson;
+  }
+
+  private List<AttachmentInfoJson> findAttachmentsForApplication(Integer applicationId) {
+    List<AttachmentInfoJson> resultList = new ArrayList<>();
+    ResponseEntity<AttachmentInfo[]> attachmentResult = restTemplate.getForEntity(
+        applicationProperties
+            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION),
+        AttachmentInfo[].class, applicationId);
+    for (AttachmentInfo attachmentInfo : attachmentResult.getBody()) {
+      AttachmentInfoJson attachmentInfoJson = new AttachmentInfoJson();
+      applicationMapper.mapAttachmentInfoToJson(attachmentInfoJson, attachmentInfo);
+      resultList.add(attachmentInfoJson);
+    }
+    return resultList;
   }
 
   private void mapLocationQueryToSearchCriteria(LocationQueryJson query, LocationSearchCriteria lsc) {

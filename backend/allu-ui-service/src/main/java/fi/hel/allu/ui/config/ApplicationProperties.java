@@ -55,6 +55,12 @@ public class ApplicationProperties {
    * Model-service path to delete application's location
    */
   public static final String PATH_MODEL_APPLICATION_DELETE_LOCATION = "/applications/{applicationId}/location";
+
+  /**
+   * Model-service path to find attachments by application
+   */
+  public static final String PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION = "/applications/{applicationId}/attachments";
+
   /**
    * Model-service path to create a new person
    */
@@ -169,6 +175,36 @@ public class ApplicationProperties {
    * Model-service path to find contact by identifier
    */
   public static final String PATH_MODEL_LOCATION_FIND_BY_ID = "/locations/{locationId}";
+
+  /**
+   * Model-service path to create attachment
+   */
+  public static final String PATH_MODEL_ATTACHMENT_CREATE = "/attachments";
+
+  /**
+   * Model-service path to create attachment
+   */
+  public static final String PATH_MODEL_ATTACHMENT_UPDATE = "/attachments/{attachmentId}";
+
+  /**
+   * Model-service path to find attachment by ID
+   */
+  public static final String PATH_MODEL_ATTACHMENT_FIND_BY_ID = "/attachments/{attachmentId}";
+
+  /**
+   * Model-service path to delete attachment
+   */
+  public static final String PATH_MODEL_ATTACHMENT_DELETE = "/attachments/{attachmentId}";
+
+  /**
+   * Model-service path to set attachment data
+   */
+  public static final String PATH_MODEL_ATTACHMENT_SET_DATA = "/attachments/{attachmentId}/data";
+
+  /**
+   * Model-service path to get attachment data
+   */
+  public static final String PATH_MODEL_ATTACHMENT_GET_DATA = "/attachments/{attachmentId}/data";
 
   /**
    * Search-service path to index a new application
