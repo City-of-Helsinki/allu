@@ -42,7 +42,7 @@ public class AttachmentService {
   public List<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
       throws IOException, IllegalArgumentException {
     if (infos.length != files.length) {
-      throw new IllegalArgumentException("argument length mismatch");
+      throw new IllegalArgumentException("Argument length mismatch: Different amount of infos and files.");
     }
     List<AttachmentInfoJson> result = new ArrayList<>();
     for (int i = 0; i < infos.length; ++i) {
