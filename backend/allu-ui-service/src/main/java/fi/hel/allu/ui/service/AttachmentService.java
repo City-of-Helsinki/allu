@@ -46,15 +46,7 @@ public class AttachmentService {
     }
     List<AttachmentInfoJson> result = new ArrayList<>();
     for (int i = 0; i < infos.length; ++i) {
-      // Create the attachment info, receive attachment ID in response
-      AttachmentInfo toModel = toAttachmentInfo(infos[i]);
-      toModel.setApplicationId(id);
-      AttachmentInfo response = restTemplate.postForObject(
-          applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_CREATE), toModel,
-          AttachmentInfo.class);
-      // Set the data for the created attachment info.
-      setAttachmentData(response.getId(), files[i]);
-      result.add(toAttachmentInfoJson(response));
+      result.add(addAttachment(id, infos[i], files[i]));
     }
     return result;
   }
@@ -80,16 +72,25 @@ public class AttachmentService {
   }
 
   /**
-   * Set attachment's data
+   * Call model-service to add one attachment
    *
-   * @param attachmentId
+   * @param applicationId
+   *          the owning application's ID
+   * @param info
+   *          The attachment info
    * @param data
+   *          Attachment's data
    * @throws IOException
    * @throws RestClientException
    */
-  private void setAttachmentData(int attachmentId, MultipartFile data) throws IOException {
+  private AttachmentInfoJson addAttachment(int applicationId, AttachmentInfoJson info, MultipartFile data)
+      throws IOException {
+    // Create the attachment info for model-service:
+    AttachmentInfo toModel = toAttachmentInfo(info);
+    toModel.setApplicationId(applicationId);
     // Generate suitable multi-part request...
     MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
+    requestParts.add("info", toModel);
     requestParts.add("data", new ByteArrayResource(data.getBytes()) {
       @Override // return some filename so that Spring handles this as file
       public String getFilename() {
@@ -100,9 +101,10 @@ public class AttachmentService {
     requestHeader.setContentType(MediaType.MULTIPART_FORM_DATA);
     HttpEntity<?> requestEntity = new HttpEntity<>(requestParts, requestHeader);
     // ...then execute the request
-    restTemplate.exchange(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_SET_DATA), HttpMethod.POST,
-        requestEntity, String.class, attachmentId);
+    ResponseEntity<AttachmentInfo> response = restTemplate.exchange(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_CREATE), HttpMethod.POST,
+        requestEntity, AttachmentInfo.class);
+    return toAttachmentInfoJson(response.getBody());
   }
 
   /**

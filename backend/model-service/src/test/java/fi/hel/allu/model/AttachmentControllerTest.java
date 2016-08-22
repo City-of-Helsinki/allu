@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -21,6 +20,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fi.hel.allu.model.domain.AttachmentInfo;
 
 /**
@@ -34,15 +35,23 @@ public class AttachmentControllerTest {
   @Autowired
   WebTestCommon wtc;
 
+  @Autowired
+  ObjectMapper objectMapper;
+
   @Before
   public void setup() throws Exception {
     wtc.setup();
   }
 
   // Helper for inserting attachment info
-  private AttachmentInfo insertAttachmentInfo(AttachmentInfo info) throws Exception {
-    ResultActions resultActions = wtc.perform(post(String.format("/attachments")), info)
-        .andExpect(status().isCreated());
+  private AttachmentInfo insertAttachmentInfo(AttachmentInfo info, byte[] data) throws Exception {
+    String infoJson = objectMapper.writeValueAsString(info);
+    MockMultipartFile infoPart = new MockMultipartFile("info", "", "application/json", infoJson.getBytes());
+    if (data == null) {
+      data = new byte[100];
+    }
+    ResultActions resultActions = wtc.perform(fileUpload("/attachments").file(infoPart).file("data", data));
+    resultActions.andExpect(status().isCreated());
     return wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
   }
 
@@ -55,10 +64,10 @@ public class AttachmentControllerTest {
   public void testAddAndGetAttachment() throws Exception {
     // Test: add attachment info and make sure result is CREATED
     AttachmentInfo info = newInfo();
-    AttachmentInfo stored = insertAttachmentInfo(info);
+    AttachmentInfo stored = insertAttachmentInfo(info, null);
     ResultActions resultActions = wtc
-        .perform(get(String.format("/attachments/%d", stored.getId())))
-        .andExpect(status().isOk());
+        .perform(get(String.format("/attachments/%d", stored.getId())));
+    resultActions.andExpect(status().isOk());
     AttachmentInfo retrieved = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
     verifyEqual(stored, retrieved);
     assertEquals(info.getName(), stored.getName());
@@ -72,7 +81,7 @@ public class AttachmentControllerTest {
   @Test
   public void testUpdateAttachment() throws Exception {
     // Setup: insert an attachment info
-    AttachmentInfo stored = insertAttachmentInfo(newInfo());
+    AttachmentInfo stored = insertAttachmentInfo(newInfo(), null);
     // Test: Update the attachment info
     String infoUri = String.format("/attachments/%d", stored.getId());
     AttachmentInfo updatedInfo = newInfo();
@@ -96,7 +105,7 @@ public class AttachmentControllerTest {
   @Test
   public void testDeleteAttachment() throws Exception {
     // Setup: insert an attachment info
-    AttachmentInfo stored = insertAttachmentInfo(newInfo());
+    AttachmentInfo stored = insertAttachmentInfo(newInfo(), null);
     // Test: delete the attachment and verify that it doesn't exist anymore
     String infoUri = String.format("/attachments/%d", stored.getId());
     wtc.perform(delete(infoUri)).andExpect(status().isOk());
@@ -109,19 +118,16 @@ public class AttachmentControllerTest {
    * @throws Exception
    */
   @Test
-  public void testSetAndGetAttachmentData() throws Exception {
-    // Setup: insert an attachment info
-    AttachmentInfo stored = insertAttachmentInfo(newInfo());
-    // Test: put some content
+  public void testGetAttachmentData() throws Exception {
+    // Setup: insert an attachment with some content
     byte[] content = new byte[12345];
     for (int i = 0; i < content.length; ++i) {
       content[i] = (byte) (i);
     }
-    MockMultipartFile mockFile = new MockMultipartFile("data", content);
-    String uri = String.format("/attachments/%d/data", stored.getId());
-    wtc.perform(fileUpload(uri).file(mockFile)).andExpect(status().isOk());
+    AttachmentInfo stored = insertAttachmentInfo(newInfo(), content);
     // Verify that the attachment's content can now be read and is the same as
     // the stored one:
+    String uri = String.format("/attachments/%d/data", stored.getId());
     ResultActions resultActions = wtc.perform(get(uri)).andExpect(status().isOk());
     byte[] readContent = resultActions.andReturn().getResponse().getContentAsByteArray();
     Assert.assertArrayEquals(content, readContent);

@@ -17,7 +17,6 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.AttachmentDao;
 import fi.hel.allu.model.domain.AttachmentInfo;
 
@@ -54,8 +53,9 @@ public class AttachmentDaoTest {
   @Test
   public void testInsert() throws Exception {
     AttachmentInfo info = newInfo();
-    AttachmentInfo inserted = attachmentDao.insert(info);
-    Assert.assertEquals(inserted.getSize(), info.getSize());
+    byte[] data = generateTestData(3243);
+    AttachmentInfo inserted = attachmentDao.insert(info, data);
+    Assert.assertEquals(inserted.getSize().longValue(), data.length);
   }
 
   /**
@@ -73,7 +73,7 @@ public class AttachmentDaoTest {
     info.setApplicationId(25);
     for (int i = 20; i < 22; ++i) {
       info.setName(String.format("Attachment_%d.txt", i));
-      attachmentDao.insert(info);
+      attachmentDao.insert(info, generateTestData(5432));
     }
     // Now there should be attachments 10, 20, and 21 for application 25
     List<AttachmentInfo> results = attachmentDao.findByApplication(25);
@@ -141,25 +141,6 @@ public class AttachmentDaoTest {
   }
 
   /**
-   * Test that setting data works
-   *
-   */
-  @Test
-  public void testSetData() {
-    // Setup: create attachment info
-    AttachmentInfo info = newInfo();
-    AttachmentInfo stored = attachmentDao.insert(info);
-    Assert.assertEquals(info.getName(), stored.getName());
-    // Test: store some data.
-    byte[] testData = generateTestData(123456);
-    // Storing to an existing ID should be fine:
-    attachmentDao.setData(stored.getId(), testData);
-    // Storing to non-existing ID should fail:
-    exception.expect(NoSuchEntityException.class);
-    attachmentDao.setData(stored.getId() + 1, testData);
-  }
-
-  /**
    * Test that getting data works
    *
    */
@@ -167,23 +148,24 @@ public class AttachmentDaoTest {
   public void testGetData() {
     // Setup create attachment info and store data to it
     AttachmentInfo info = newInfo();
-    info = attachmentDao.insert(info);
     byte[] testData = generateTestData(543210);
     Assert.assertEquals(543210, testData.length);
+    info = attachmentDao.insert(info, testData);
     int goodId = info.getId();
-    attachmentDao.setData(goodId, testData);
-    // store another info without data:
-    info = attachmentDao.insert(info);
-    int emptyId = info.getId();
+    // store another info with different data:
+    byte[] otherData = generateTestData(10);
+    info = attachmentDao.insert(info, otherData);
+    int otherId = info.getId();
     // Test: stored data should be readable and equal to original
     Optional<byte[]> readData = attachmentDao.getData(goodId);
     Assert.assertTrue(readData.isPresent());
     Assert.assertArrayEquals(testData, readData.get());
-    // Test: reading data from empty info should return null
-    readData = attachmentDao.getData(emptyId);
-    Assert.assertFalse(readData.isPresent());
+    // Test: reading data from other info should return other data
+    readData = attachmentDao.getData(otherId);
+    Assert.assertTrue(readData.isPresent());
+    Assert.assertArrayEquals(otherData, readData.get());
     // Test: reading data from non-existent info should also return null:
-    readData = attachmentDao.getData(emptyId + goodId);
+    readData = attachmentDao.getData(otherId + goodId);
     Assert.assertFalse(readData.isPresent());
   }
 
@@ -195,7 +177,7 @@ public class AttachmentDaoTest {
       info.setApplicationId(15 + i);
       info.setName(String.format("Attachment_%d.txt", i));
       info.setDescription(String.format("Attachment %d", i));
-      stored.add(attachmentDao.insert(info));
+      stored.add(attachmentDao.insert(info, generateTestData(4321)));
     }
     return stored;
   }

@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QAttachment.attachment;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -63,10 +64,13 @@ public class AttachmentDao {
    * @return The inserted attachment
    */
   @Transactional
-  public AttachmentInfo insert(AttachmentInfo info) {
+  public AttachmentInfo insert(AttachmentInfo info, byte[] data) {
     info.setId(null); // Don't respect any ID given, let database assign the ID.
-
-    Integer id = queryFactory.insert(attachment).populate(info).executeWithKey(attachment.id);
+    info.setSize((long) data.length);
+    info.setCreationTime(ZonedDateTime.now());
+    Integer id = queryFactory.insert(attachment).populate(info)
+        .set(attachment.data, data) // Set data also
+        .executeWithKey(attachment.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
@@ -122,20 +126,4 @@ public class AttachmentDao {
     return Optional.ofNullable(data);
   }
 
-  /**
-   * Set attachment data
-   *
-   * @param id
-   *          The attachment ID
-   *
-   * @param data
-   *          The data for the attachment
-   */
-  @Transactional
-  public void setData(int id, byte[] data) {
-    long changed = queryFactory.update(attachment).set(attachment.data, data).where(attachment.id.eq(id)).execute();
-    if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
-    }
-  }
 }
