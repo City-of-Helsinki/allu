@@ -33,7 +33,8 @@ import {TaskManagerService} from '../../service/task/task-manager.service';
   { path: '/', as: 'FrontPage', component: MapSearchComponent },
   { path: '/applications/...', as: 'Applications', component: ApplicationComponent },
   { path: '/workqueue', as: 'Workqueue', component: WorkQueueComponent },
-  { path: '/location', as: 'Location', component: LocationComponent },
+  { path: '/location', as: 'NewLocation', component: LocationComponent },
+  { path: '/location/:id', as: 'Location', component: LocationComponent },
   { path: '/summary/:id', as: 'Summary', component: SummaryComponent },
   { path: '/search', as: 'Search', component: SearchComponent },
   { path: '/login', as: 'Login', component: Login }
