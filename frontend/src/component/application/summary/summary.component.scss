@@ -2,23 +2,11 @@
 @import '../../../assets/variables';
 
 :host {
-  // max-width: 1450px;
-  width: 100%;
-  // .md-input-underline {
-  //   border-top: 1px solid rgba(2, 150, 136, 1);
-  // }
-  p {
-    font-size: 0.8rem;
-    margin-bottom: 0;
-  }
+  background-color: $allu-background;
 
   md-card {
     margin: 10px;
     padding: 12px;
-  }
-
-  .input-field label {
-    top: .5rem;
   }
 
   input[type=text] {
@@ -27,12 +15,17 @@
 
   .input-field {
     textarea.materialize-textarea {
+      padding-bottom: 0;
       padding-top: 4px;
-      padding-bottom: 0px;
     }
+
     textarea.textarea {
-      padding-top: 4px;
       padding-bottom: 42px;
+      padding-top: 4px;
+    }
+
+    label {
+      top: .5rem;
     }
   }
 
@@ -54,11 +47,15 @@
 
   .buttons {
     margin: 40px 0 6px;
+
+    .button-height {
+      height: 13px;
+    }
   }
 
   .height-fix-top {
-    margin-top: 26px;
     height: 3rem;
+    margin-top: 26px;
   }
 
   .height-fix-bottom {
@@ -71,55 +68,32 @@
 
   .summary {
     input[type="text"] {
-      // color: rgb(22, 150, 136);
-      color: rgba(0, 0, 0, 0.87);
-      border-bottom: 2px solid rgba(22, 150, 136, 1);
+      border-bottom: 2px solid $allu-field-border-ok;
+      color: $allu-field-text-ok;
     }
 
     &.materialize-textarea {
-      color: rgba(0, 0, 0, 0.87);
-      border-bottom: 2px solid rgba(22, 150, 136, 1);
+      border-bottom: 2px solid $allu-field-border-ok;
+      color: $allu-field-text-ok;
     }
 
     input[type="checkbox"]:disabled:checked:after + label:after {
-      background-color: rgba(22, 150, 136, 1);
-      border-color: rgba(22, 150, 136, 1);
+      background-color: $allu-field-border-ok;
+      border-color: $allu-field-border-ok;
     }
 
     &.validate {
-      color: rgba(0, 0, 0, 0.87);
-      border-bottom: 2px solid rgba(22, 150, 136, 1);
+      border-bottom: 2px solid $allu-field-border-ok;
+      color: $allu-field-text-ok;
     }
   }
 
   .summary-checkbox {
-    color: rgba(22, 150, 136, 1);
+    color: $allu-field-border-ok;
   }
 
   .mapcontainer {
     height: 49vh;
     position: relative;
   }
-
-  map {
-    height: 100%;
-    position: absolute;
-    width: 100%;
-  }
-}
-
-workqueue {
-  width: 100%;
-}
-
-.card-media {
-  background-color: #999999;
-}
-
-md-card-title {
-  padding: 0 .75rem;
-}
-
-[md-button] [md-icon] {
-  color: rgba(0, 0, 0, 0.8);
 }

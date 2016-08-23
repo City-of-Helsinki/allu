@@ -1,5 +1,5 @@
 <progressbar [step]="progressStep" [mode]="progressMode"></progressbar>
-<div materialize class="row" style="background: whitesmoke; margin-bottom:0px;">
+<div materialize class="row location">
   <div class="col m12">
     <md-card>
       <md-card-title>Sijainti</md-card-title>
@@ -73,7 +73,7 @@
             <button md-raised-button [routerLink]="['/FrontPage']">PERUUTA</button>
           </div>
           <div class="col m4 offset-m6">
-            <button md-raised-button style="margin-left: 10px;" (click)="save()">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
+            <button md-raised-button (click)="save()">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
           </div>
         </div>
       </md-card-content>

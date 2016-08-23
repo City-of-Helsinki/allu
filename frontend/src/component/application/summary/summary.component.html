@@ -1,5 +1,5 @@
 <progressbar [step]="progressStep" [mode]="progressMode"></progressbar>
-<div materialize class="row" style="background: whitesmoke; margin-bottom:0px;">
+<div materialize class="row">
   <div class="col m6 no-padding-right">
     <md-card>
       <md-card-title>Hakemuksen tyyppi</md-card-title>
@@ -32,7 +32,7 @@
       </md-card-content>
     </md-card>
   </div>
-  <div materialize class="row" style="background: whitesmoke; padding-top:10px;">
+  <div materialize class="row">
     <div class="col m6 no-padding-right">
       <md-card>
         <md-card-title>Hakija</md-card-title>
@@ -123,7 +123,7 @@
               <label for="contactEmail">Sähköpostiosoite</label>
             </div>
             <div class="buttons col m12">
-              <p style="height: 28px;"> </p>
+              <p class="button-height"> </p>
             </div>
           </div>
         </md-card-content>
@@ -299,7 +299,7 @@
               </div>
             </div>
             <div class="col m2 offset-m2">
-              <button md-raised-button style="margin-left: 10px;" [routerLink]="['/Location', {id: id}]">MUOKKAA</button>
+              <button md-raised-button [routerLink]="['/Location', {id: id}]">MUOKKAA</button>
             </div>
             <div class="col m12">
               <div class="mapcontainer">
@@ -413,8 +413,8 @@
               <button md-raised-button [disabled]="true" (click)="console.log('Siirry muokkaamaan')">MUOKKAA</button>
             </div>
             <div class="col m4 offset-m6">
-              <button md-raised-button style="margin-left: 10px;" [routerLink]="['FrontPage']">ETUSIVULLE</button>
-              <button md-raised-button [disabled]="true" style="margin-left: 10px;">TYÖJONOON</button>
+              <button md-raised-button [routerLink]="['FrontPage']">ETUSIVULLE</button>
+              <button md-raised-button [disabled]="true">TYÖJONOON</button>
             </div>
           </div>
         </md-card-content>

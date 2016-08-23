@@ -1,12 +1,10 @@
 @import '../../assets/colors';
 
 :host {
-  width: 100%;
-
-  p {
-    font-size: 0.8rem;
-    margin-bottom: 0;
+  .location {
+    background-color: $allu-background;
   }
+
 
   md-card {
     margin: 10px;
@@ -16,21 +14,4 @@
     height: 49vh;
     position: relative;
   }
-
-  map {
-    height: 100%;
-    position: absolute;
-    width: 100%;
-  }
-}
-
-workqueue {
-  width: 100%;
-}
-
-.card-media {
-  background-color: #999999;
-}
-[md-button] [md-icon] {
-  color: rgba(0, 0, 0, 0.8);
 }

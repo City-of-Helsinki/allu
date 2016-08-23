@@ -20,6 +20,9 @@ export enum ProgressMode {
   selector: 'progressbar',
   moduleId: module.id,
   template: require('./progressbar.component.html'),
+  styles: [
+    require('./progressbar.component.scss')
+  ],
   directives: [MdToolbar]
 })
 export class ProgressbarComponent implements OnInit {

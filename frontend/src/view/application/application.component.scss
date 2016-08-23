@@ -1,11 +1,8 @@
 @import '../../assets/colors';
 
 :host {
-  width: 100%;
-
-  p {
-    font-size: 0.8rem;
-    margin-bottom: 0;
+  .application {
+    background-color: $allu-background;
   }
 
   md-card {
@@ -30,17 +27,10 @@
   }
 }
 
+.input-field label {
+  top: .5rem;
+}
+
 md-card-title {
   padding: 0 .75rem;
-}
-
-workqueue {
-  width: 100%;
-}
-
-.card-media {
-  background-color: #999999;
-}
-[md-button] [md-icon] {
-  color: rgba(0, 0, 0, 0.8);
 }
