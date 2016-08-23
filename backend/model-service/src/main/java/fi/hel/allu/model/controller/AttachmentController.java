@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -35,11 +35,18 @@ public class AttachmentController {
   // Attachment APIs
   /**
    * Create new attachment.
+   *
+   * @throws IOException
    */
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<AttachmentInfo> addAttachment(
-      @Valid @RequestBody(required = true) AttachmentInfo attachmentInfo) {
-    AttachmentInfo inserted = attachmentDao.insert(attachmentInfo);
+      @Valid @RequestPart("info") AttachmentInfo attachmentInfo, @RequestPart("data") MultipartFile data)
+      throws IOException {
+    if (data.isEmpty()) {
+      // Empty attachments don't make sense, let's explicitly forbid them
+      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+    AttachmentInfo inserted = attachmentDao.insert(attachmentInfo, data.getBytes());
     // build the redirection URI for the HTTP 201 response:
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(
@@ -84,24 +91,6 @@ public class AttachmentController {
   public ResponseEntity<?> deleteAttachmentInfo(@PathVariable int attachmentId) {
     attachmentDao.delete(attachmentId);
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  /**
-   * Upload the attachment's data.
-   */
-  @RequestMapping(value = "/{attachmentId}/data", method = RequestMethod.POST)
-  public ResponseEntity<String> addAttachmentData(@PathVariable int attachmentId,
-      @RequestParam("data") MultipartFile data) {
-    if (data.isEmpty()) {
-      // Empty attachments don't make sense, let's explicitly forbid them
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-    try {
-      attachmentDao.setData(attachmentId, data.getBytes());
-      return new ResponseEntity<>(HttpStatus.OK);
-    } catch (IOException e) {
-      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-    }
   }
 
   /**

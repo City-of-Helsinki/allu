@@ -42,10 +42,11 @@ public class AttachmentServiceTest extends MockServices {
 
   @Test
   public void testAddAttachment() throws IllegalArgumentException, IOException {
-    Mockito
-        .when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-            Mockito.eq(AttachmentInfo.class)))
-        .thenAnswer((Answer<AttachmentInfo>) invocation -> createMockAttachmentInfo());
+    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(HttpEntity.class),
+        Mockito.eq(AttachmentInfo.class))).thenAnswer(
+            (Answer<ResponseEntity<AttachmentInfo>>) invocation -> new ResponseEntity<>(createMockAttachmentInfo(),
+                HttpStatus.CREATED));
+
     final int ITEMS = 5;
     AttachmentInfoJson infos[] = new AttachmentInfoJson[ITEMS];
     MultipartFile files[] = new MultipartFile[ITEMS];
@@ -54,8 +55,6 @@ public class AttachmentServiceTest extends MockServices {
       files[i] = new MockMultipartFile("dumdedoo.bin", generateMockData(4321));
     }
     List<AttachmentInfoJson> results = attachmentService.addAttachments(99, infos, files);
-    Mockito.verify(restTemplate, Mockito.times(ITEMS)).exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST),
-        Mockito.any(HttpEntity.class), Mockito.eq(String.class), Mockito.eq(12));
     for (AttachmentInfoJson result : results) {
       checkThatIsMockResult(result);
     }
