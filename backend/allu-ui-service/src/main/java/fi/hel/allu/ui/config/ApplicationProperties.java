@@ -12,16 +12,28 @@ public class ApplicationProperties {
   private String modelServicePort;
   private String searchServiceHost;
   private String searchServicePort;
+  private String geocodeUrl;
+  private String streetSearchUrl;
+  private String wfsUsername;
+  private String wfsPassword;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
                                @Value("${model.service.port}") @NotEmpty String modelServicePort,
                                @Value("${search.service.host}") @NotEmpty String searchServiceHost,
-                               @Value("${search.service.port}") @NotEmpty String searchServicePort) {
+                               @Value("${search.service.port}") @NotEmpty String searchServicePort,
+                               @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
+                               @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
+                               @Value("${wfs.username}") @NotEmpty String wfsUsername,
+                               @Value("${wfs.password}") @NotEmpty String wfsPassword) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
     this.searchServicePort = searchServicePort;
+    this.geocodeUrl = geocodeUrl;
+    this.streetSearchUrl = streetSearchUrl;
+    this.wfsUsername = wfsUsername;
+    this.wfsPassword = wfsPassword;
   }
 
   public static final String PATH_PREFIX = "http://";
@@ -252,5 +264,35 @@ public class ApplicationProperties {
    */
   public String getMetadataUrl() {
     return PATH_PREFIX + modelServiceHost + ":" + modelServicePort + "/meta/{applicationType}";
+  }
+
+  /**
+   * Returns URL for geocoding a street address.
+   * @return  Request URL for geocoding a street address.
+   */
+  public String getStreetGeocodeUrl() {
+    return this.geocodeUrl;
+  }
+
+  public String getStreetSearchUrl() {
+    return this.streetSearchUrl;
+  }
+
+  /**
+   * Returns username for the WFS service.
+   *
+   * @return username for the WFS service.
+   */
+  public String getWfsUsername() {
+    return wfsUsername;
+  }
+
+  /**
+   * Returns password for the WFS service.
+   *
+   * @return password for the WFS service.
+   */
+  public String getWfsPassword() {
+    return wfsPassword;
   }
 }
