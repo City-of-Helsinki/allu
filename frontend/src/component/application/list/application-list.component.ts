@@ -1,31 +1,31 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {WorkqueueService} from '../../service/workqueue.service';
 import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 
-import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
-import {EventListener} from '../../event/event-listener';
-import {EventService} from '../../event/event.service';
-import {Event} from '../../event/event';
+import {WorkqueueService} from '../../../service/workqueue.service';
+import {ApplicationSelectionEvent} from '../../../event/selection/application-selection-event';
+import {EventListener} from '../../../event/event-listener';
+import {EventService} from '../../../event/event.service';
+import {Event} from '../../../event/event';
 
-import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
-import {Application} from '../../model/application/application';
-import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
-import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
+import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event';
+import {Application} from '../../../model/application/application';
+import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-announce-event';
+import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
 
 
 @Component({
-  selector: 'locationsearch',
+  selector: 'application-list',
   moduleId: module.id,
-  template: require('./locationsearch.component.html'),
+  template: require('./application-list.component.html'),
   styles: [
-    require('./locationsearch.component.scss')
+    require('./application-list.component.scss')
   ],
   directives: [MD_CARD_DIRECTIVES, MdButton]
 })
 
-export class LocationSearchComponent implements EventListener, OnInit, OnDestroy {
+export class ApplicationListComponent implements EventListener, OnInit, OnDestroy {
 
   private applicationsQueue: Array<Application> = [];
 

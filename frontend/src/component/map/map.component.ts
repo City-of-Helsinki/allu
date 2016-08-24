@@ -4,6 +4,7 @@ import 'proj4leaflet';
 import {Component, Input} from '@angular/core';
 import {MapService} from '../../service/map.service';
 import {GeocodingService} from '../../service/geocoding.service';
+import {GeolocationService} from '../../service/geolocation.service';
 
 import {EventListener} from '../../event/event-listener';
 import {Event} from '../../event/event';
@@ -13,6 +14,7 @@ import {ApplicationSelectionEvent} from '../../event/selection/application-selec
 import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 import {WorkqueueService} from '../../service/workqueue.service';
 import {Map} from 'leaflet';
+import {GeocoordinatesSelectionEvent} from '../../event/selection/geocoordinates-selection-event';
 
 @Component({
   selector: 'map',
@@ -35,11 +37,13 @@ export class MapComponent implements EventListener {
   constructor(
     private mapService: MapService,
     private geocoder: GeocodingService,
+    private geolocationService: GeolocationService,
     private workqueue: WorkqueueService,
     private eventService: EventService) {
     this.eventService.subscribe(this);
     this.mapService = mapService;
     this.geocoder = geocoder;
+    this.geolocationService = geolocationService;
     this.workqueue = workqueue;
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;
@@ -50,38 +54,49 @@ export class MapComponent implements EventListener {
 
   public handle(event: Event): void {
     if (event instanceof ApplicationSelectionEvent) {
-      let asEvent = <ApplicationSelectionEvent>event;
-      if (this.applicationArea) {
-        this.map.removeLayer(this.applicationArea);
-      }
+      this.handleApplicationSelectionEvent(<ApplicationSelectionEvent>event);
+    } else if (event instanceof GeocoordinatesSelectionEvent) {
+      this.handleGeocoordinatesSelectionEvent(<GeocoordinatesSelectionEvent>event);
+    }
+  }
 
-      if (this.drawnItems) {
-        this.drawnItems.clearLayers();
-      }
-
-      // Check to see if the application has a location
-      console.log('asEvent.application.location', asEvent.application.location);
-      if (asEvent.application.location && asEvent.application.location.geometry.geometries.length) {
-        let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
-        this.applicationArea = new L.GeoJSON(featureCollection);
-        this.applicationArea.eachLayer((layer) => {
-          this.drawnItems.addLayer(layer);
-        });
-
-        if (this.selection && featureCollection.features) {
-          let bounds = new Array<L.LatLng> ();
-          for (let feature of featureCollection.features) {
-            for (let list of feature.geometry.coordinates) {
-              for (let coordinates of list) {
-                bounds.push(L.latLng(coordinates[1], coordinates[0]));
-              }
-            }
-          }
-          this.map.fitBounds(L.latLngBounds(bounds));
-        }
-      }
+  handleApplicationSelectionEvent(event: ApplicationSelectionEvent): void {
+    let asEvent = <ApplicationSelectionEvent>event;
+    if (this.applicationArea) {
+      this.map.removeLayer(this.applicationArea);
     }
 
+    if (this.drawnItems) {
+      this.drawnItems.clearLayers();
+    }
+
+    // Check to see if the application has a location
+    console.log('asEvent.application.location', asEvent.application.location);
+    if (asEvent.application.location && asEvent.application.location.geometry.geometries.length) {
+      let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
+      this.applicationArea = new L.GeoJSON(featureCollection);
+      this.applicationArea.eachLayer((layer) => {
+        this.drawnItems.addLayer(layer);
+      });
+
+      if (this.selection && featureCollection.features) {
+        let bounds = new Array<L.LatLng> ();
+        for (let feature of featureCollection.features) {
+          for (let list of feature.geometry.coordinates) {
+            for (let coordinates of list) {
+              bounds.push(L.latLng(coordinates[1], coordinates[0]));
+            }
+          }
+        }
+        this.map.fitBounds(L.latLngBounds(bounds));
+      }
+    }
+  }
+
+  handleGeocoordinatesSelectionEvent(event: GeocoordinatesSelectionEvent) {
+    let coordinates = new L.LatLng(event.geocoordinates.latitude, event.geocoordinates.longitude);
+    const zoomLevel = 10;
+    this.map.setView(coordinates, zoomLevel, {animate: true});
   }
 
   ngOnInit() {

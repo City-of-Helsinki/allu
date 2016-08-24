@@ -4,9 +4,16 @@
   .row {
     margin-bottom: 0;
   }
+
+  .input-field {
+    label {
+      left: 0;
+      top: 1.3rem;
+    }
+  }
 }
 
-locationsearch {
+application-list {
   bottom: 0;
   // height: 90vh;
   left: 0;

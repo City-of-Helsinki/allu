@@ -10,6 +10,7 @@ import {EventService} from './event/event.service';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 import {TaskManagerService} from './service/task/task-manager.service';
 import {ApplicationService} from './service/application.service';
+import {GeolocationService} from './service/geolocation.service';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -21,6 +22,7 @@ bootstrap(AlluComponent, [
   ApplicationService,
   MapService,
   GeocodingService,
+  GeolocationService,
   provide(
     APP_BASE_HREF, { useValue: '/' }),
   provide(
