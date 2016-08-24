@@ -1,5 +1,7 @@
 package fi.hel.allu.model.domain;
 
+import java.time.ZonedDateTime;
+
 import org.geolatte.geom.Geometry;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -14,6 +16,9 @@ public class LocationSearchCriteria {
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry intersects;
 
+  private ZonedDateTime after;
+  private ZonedDateTime before;
+
   /**
    * If non-null, the search should find locations that intersect with this
    * geometry.
@@ -24,6 +29,30 @@ public class LocationSearchCriteria {
 
   public void setIntersects(Geometry intersects) {
     this.intersects = intersects;
+  }
+
+  /**
+   * If non-null, events must be active after this time (i.e., events that end
+   * before this are excluded)
+   */
+  public ZonedDateTime getAfter() {
+    return after;
+  }
+
+  public void setAfter(ZonedDateTime after) {
+    this.after = after;
+  }
+
+  /**
+   * If non-null, events must be active before this time (i.e, events that start
+   * after this time are excluded)
+   */
+  public ZonedDateTime getBefore() {
+    return before;
+  }
+
+  public void setBefore(ZonedDateTime before) {
+    this.before = before;
   }
 
 }

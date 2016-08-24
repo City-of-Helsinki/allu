@@ -219,6 +219,8 @@ public class ApplicationService {
 
   private void mapLocationQueryToSearchCriteria(LocationQueryJson query, LocationSearchCriteria lsc) {
     lsc.setIntersects(query.getIntersectingGeometry());
+    lsc.setAfter(query.getAfter());
+    lsc.setBefore(query.getBefore());
   }
 
   // If contacts don't have organization, assume they are new contacts for the

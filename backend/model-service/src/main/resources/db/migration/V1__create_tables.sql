@@ -73,6 +73,8 @@ create table allu.application (
     metadata_version integer not null,
     creation_time timestamp with time zone,
     location_id integer references allu.location(id),
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
     event text not null,
     decision_time timestamp with time zone);
 
