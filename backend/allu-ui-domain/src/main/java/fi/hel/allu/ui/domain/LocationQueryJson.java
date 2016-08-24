@@ -16,15 +16,15 @@ public class LocationQueryJson {
 
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
-  private Geometry intesectingGeometry;
+  private Geometry intersectingGeometry;
 
   /**
    * Get the geometry to use in intersection search.
    *
    * @return the intesectingGeometry
    */
-  public Geometry getIntesectingGeometry() {
-    return intesectingGeometry;
+  public Geometry getIntersectingGeometry() {
+    return intersectingGeometry;
   }
 
   /**
@@ -34,8 +34,8 @@ public class LocationQueryJson {
    * @param intesectingGeometry
    *          the intesectingGeometry to set
    */
-  public void setIntesectingGeometry(Geometry intesectingGeometry) {
-    this.intesectingGeometry = intesectingGeometry;
+  public void setIntersectingGeometry(Geometry intesectingGeometry) {
+    this.intersectingGeometry = intesectingGeometry;
   }
 
 }
