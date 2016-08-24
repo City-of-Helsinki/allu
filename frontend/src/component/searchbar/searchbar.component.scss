@@ -1,0 +1,15 @@
+@import '../../assets/colors';
+
+:host {
+  .input-field {
+    label {
+      left: 0;
+      top: 1.3rem;
+    }
+  }
+
+  p {
+    font-size: .8rem;
+    margin-bottom: 0;
+  }
+}

@@ -1,0 +1,12 @@
+@import '../../assets/colors';
+
+:host {
+  md-toolbar {
+    background-color: $allu-background;
+  }
+
+  p {
+    font-size: .8rem;
+    margin-bottom: 0;
+  }
+}

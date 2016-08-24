@@ -8,32 +8,17 @@
 
 locationsearch {
   bottom: 0;
-  height: 94vh;
+  // height: 90vh;
   left: 0;
   position: absolute;
-  top: 50px;
-  width: 20vw;
-
-  .searchbox {
-    position: relative;
-  }
-
-  .searchinput {
-    position: absolute;
-  }
-
-  .searchresults {
-    bottom: 0;
-    overflow-y: scroll;
-    position: absolute;
-    top: 120px;
-  }
+  top: 114px;
+  width: 18.2vw;
 }
 
 map {
   bottom: 0;
-  left: 20vw;
+  left: 18.2vw;
   position: absolute;
-  top: 50px;
-  width: 80vw;
+  top: 114px;
+  width: 81.8vw;
 }

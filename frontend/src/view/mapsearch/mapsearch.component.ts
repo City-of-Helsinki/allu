@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
+import {SearchbarComponent} from '../../component/searchbar/searchbar.component';
 
 import {MapComponent} from '../../component/map/map.component';
 import {LocationSearchComponent} from '../../component/locationsearch/locationsearch.component';
@@ -12,7 +13,7 @@ import {LocationSearchComponent} from '../../component/locationsearch/locationse
   styles: [
     require('./mapsearch.component.scss')
   ],
-  directives: [ToolbarComponent, MapComponent, LocationSearchComponent]
+  directives: [ToolbarComponent, MapComponent, SearchbarComponent, LocationSearchComponent]
 })
 
 export class MapSearchComponent {}

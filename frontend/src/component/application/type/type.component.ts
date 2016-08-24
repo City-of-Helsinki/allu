@@ -26,10 +26,7 @@ import {Person} from '../../../model/common/person';
   selector: 'type',
   viewProviders: [],
   moduleId: module.id,
-  template: require('./type.component.html'),
-  styles: [
-    require('./type.component.scss')
-  ],
+  template: '',
   directives: [
     ROUTER_DIRECTIVES,
     MD_INPUT_DIRECTIVES,

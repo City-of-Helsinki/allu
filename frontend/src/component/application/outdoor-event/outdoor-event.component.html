@@ -1,5 +1,5 @@
 <loading [isLoading]="!meta">
-  <div materialize class="row" style="background: whitesmoke; padding-top:10px;">
+  <div materialize class="row">
     <div class="col m6 no-padding-right">
       <md-card>
         <md-card-title>Hakija</md-card-title>
@@ -278,7 +278,7 @@
               </div>
               <div class="input-field col m12">
                 <textarea id="structureDescription" class="materialize-textarea textarea"
-                          [(ngModel)]="application.event.structureDescription" style="paddin-top: 0;"></textarea>
+                          [(ngModel)]="application.event.structureDescription"></textarea>
                 <label for="structureDescription">{{ meta?.getUiName('structureDescription') }}</label>
               </div>
 
@@ -334,7 +334,7 @@
               <button md-raised-button [disabled]="true" (click)="save(application)">LISÄÄ LIITE</button>
             </div>
             <div class="col m4 offset-m6">
-              <button md-raised-button style="margin-left: 10px;" (click)="save(application)">YHTEENVETOON</button>
+              <button md-raised-button (click)="save(application)">YHTEENVETOON</button>
             </div>
           </div>
         </md-card-content>
