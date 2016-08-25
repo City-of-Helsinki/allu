@@ -26,7 +26,7 @@ public class LocationQueryJson {
   /**
    * Get the geometry to use in intersection search.
    *
-   * @return the intesectingGeometry
+   * @return the intersectingGeometry
    */
   public Geometry getIntersectingGeometry() {
     return intersectingGeometry;
@@ -36,11 +36,11 @@ public class LocationQueryJson {
    * Get the geometry to use in the intersection search. Should be a simple
    * geometry, i.e. not a GeometryCollection.
    *
-   * @param intesectingGeometry
-   *          the intesectingGeometry to set
+   * @param intersectingGeometry
+   *          the intersectingGeometry to set
    */
-  public void setIntersectingGeometry(Geometry intesectingGeometry) {
-    this.intersectingGeometry = intesectingGeometry;
+  public void setIntersectingGeometry(Geometry intersectingGeometry) {
+    this.intersectingGeometry = intersectingGeometry;
   }
 
   /**
