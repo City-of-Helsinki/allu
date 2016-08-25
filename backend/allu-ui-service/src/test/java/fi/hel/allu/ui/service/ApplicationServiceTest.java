@@ -205,7 +205,7 @@ public class ApplicationServiceTest extends MockServices {
   @Test
   public void testFindApplicationByLocation() {
     LocationQueryJson query = new LocationQueryJson();
-    query.setIntesectingGeometry(polygon(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
+    query.setIntersectingGeometry(polygon(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
     List<ApplicationJson> response = applicationService.findApplicationByLocation(query);
 
     assertNotNull(response);

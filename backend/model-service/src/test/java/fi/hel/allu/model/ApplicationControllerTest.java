@@ -205,6 +205,19 @@ public class ApplicationControllerTest {
     assertEquals(3, results.length);
   }
 
+  @Test
+  public void testFindIntersectingWithTime() throws Exception {
+    createLocationTestApplications();
+    LocationSearchCriteria lsc = new LocationSearchCriteria();
+    lsc.setIntersects(bigArea);
+    lsc.setAfter(ZonedDateTime.parse("2016-11-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2016-11-03T08:00:00+02:00[Europe/Helsinki]"));
+    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
+    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    assertEquals(1, results.length);
+    assertEquals("Small application 1", results[0].getName());
+  }
+
   /**
    * Test that reading an application's attachment list works
    *
@@ -229,7 +242,7 @@ public class ApplicationControllerTest {
   @Test
   public void testDeleteApplicationLocation() throws Exception {
     // Setup: create application with location
-    ResultActions ra = createLocationTestApplication(smallAreas[0], "Syrjäkuja 5", "Hämärähomma");
+    ResultActions ra = createLocationTestApplication(testAppParams[0], "Syrjäkuja 5", "Hämärähomma");
     Application app = wtc.parseObjectFromResult(ra, Application.class);
     assertNotNull(app.getLocationId());
     // Test: delete the application's location and verify that it gets deleted.
@@ -243,7 +256,8 @@ public class ApplicationControllerTest {
   // Create and prepare an application for insertion:
   // - Create dummy person and project to get valid IDs
   // - Set some values for the application
-  private Application prepareApplication(String name, String handler) throws Exception {
+  private Application prepareApplication(String name, String handler)
+      throws Exception {
     Integer personId = addPerson();
     Integer customerId = addCustomer(personId);
     Integer projectId = addProject(personId);
@@ -315,32 +329,61 @@ public class ApplicationControllerTest {
   private static Geometry bigArea = polygon(3879, ring(c(25490000, 6670000), c(25500000, 6670000), c(25500000, 6675000),
       c(25490000, 6675000), c(25490000, 6670000)));
 
-  private static Geometry[] smallAreas = new Geometry[] {
-      // completely inside:
-      polygon(3879,
-          ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000))),
-      // partially inside:
-      polygon(3879,
-          ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
-      // completely outside:
-      polygon(3879,
-          ring(c(25480000, 6672000), c(25485000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
-      // completely inside again:
-      polygon(3879, ring(c(25495000, 6671000), c(25496000, 6671000), c(25495100, 6671500), c(25495000, 6671000)))
-  };
+  private static class TestAppParam {
+    public Geometry geometry;
+    public ZonedDateTime startTime;
+    public ZonedDateTime endTime;
 
-  private ResultActions createLocationTestApplication(Geometry geometry, String streetAddress, String applicationName)
+    public TestAppParam(Geometry geo, ZonedDateTime st, ZonedDateTime et) {
+      geometry = geo;
+      startTime = st;
+      endTime = et;
+    }
+  }
+
+  private static TestAppParam T(Geometry geo, ZonedDateTime st, ZonedDateTime et) {
+    return new TestAppParam(geo, st, et);
+  }
+
+  private static TestAppParam[] testAppParams = {
+      // completely inside, Dec. 2016:
+      T(polygon(3879,
+          ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000))),
+        ZonedDateTime.parse("2016-12-03T10:15:30+02:00[Europe/Helsinki]"),
+        ZonedDateTime.parse("2016-12-08T10:15:30+02:00[Europe/Helsinki]")
+        ),
+      // partially inside: Feb..Dec 2016
+      T(polygon(3879,
+          ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
+        ZonedDateTime.parse("2016-02-03T10:15:30+02:00[Europe/Helsinki]"),
+        ZonedDateTime.parse("2016-12-08T10:15:30+02:00[Europe/Helsinki]")
+        ),
+      // completely outside, Dec. 2016:
+      T(polygon(3879,
+          ring(c(25480000, 6672000), c(25485000, 6672000), c(25485000, 6670000), c(25480000, 6672000))),
+        ZonedDateTime.parse("2016-12-03T10:15:30+02:00[Europe/Helsinki]"),
+        ZonedDateTime.parse("2016-12-08T10:15:30+02:00[Europe/Helsinki]")
+        ),
+      // completely inside again, Mar 2017:
+      T(polygon(3879, ring(c(25495000, 6671000), c(25496000, 6671000), c(25495100, 6671500), c(25495000, 6671000))),
+          ZonedDateTime.parse("2017-03-03T10:15:30+02:00[Europe/Helsinki]"),
+          ZonedDateTime.parse("2017-03-08T10:15:30+02:00[Europe/Helsinki]")) };
+
+  private ResultActions createLocationTestApplication(TestAppParam tap, String streetAddress, String applicationName)
       throws Exception {
-    Integer locationId = addLocation(streetAddress, new GeometryCollection(new Geometry[] { geometry }));
+    Integer locationId = addLocation(streetAddress, new GeometryCollection(new Geometry[] { tap.geometry }));
     Application app = prepareApplication(applicationName, null);
     app.setLocationId(locationId);
+    OutdoorEvent evt = (OutdoorEvent) app.getEvent();
+    evt.setStartTime(tap.startTime);
+    evt.setEndTime(tap.endTime);
     return wtc.perform(post("/applications"), app).andExpect(status().isOk());
   }
 
   private void createLocationTestApplications() throws Exception {
     // Create a test application for each of the small areas
-    for (int i = 0; i < smallAreas.length; ++i) {
-      createLocationTestApplication(smallAreas[i], String.format("Smallstreet %d", i),
+    for (int i = 0; i < testAppParams.length; ++i) {
+      createLocationTestApplication(testAppParams[i], String.format("Smallstreet %d", i),
           String.format("Small application %d", i));
     }
   }

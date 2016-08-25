@@ -1,9 +1,10 @@
 package fi.hel.allu.model.domain;
 
-import org.hibernate.validator.constraints.NotBlank;
+import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
+
+import org.hibernate.validator.constraints.NotBlank;
 
 public class OutdoorEvent extends Event {
   @NotBlank
@@ -64,6 +65,7 @@ public class OutdoorEvent extends Event {
   /**
    * in Finnish: Tapahtuman alkuaika
    */
+  @Override
   public ZonedDateTime getStartTime() {
     return startTime;
   }
@@ -75,6 +77,7 @@ public class OutdoorEvent extends Event {
   /**
    * in Finnish: Tapahtuman päättymisaika
    */
+  @Override
   public ZonedDateTime getEndTime() {
     return endTime;
   }
