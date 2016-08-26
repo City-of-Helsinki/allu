@@ -159,12 +159,6 @@ export class LocationComponent implements EventListener {
     }
   }
 
-  private createOrGetLocation(): Location {
-    return this.application.location
-      ? this.application.location
-      : new Location(undefined, undefined, new PostalAddress(undefined, undefined, undefined));
-  }
-
   ngOnInit() {
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
@@ -177,5 +171,11 @@ export class LocationComponent implements EventListener {
 
   ngOnDestroy() {
     this.eventService.unsubscribe(this);
+  }
+
+  private createOrGetLocation(): Location {
+    return this.application.location
+      ? this.application.location
+      : new Location(undefined, undefined, new PostalAddress(undefined, undefined, undefined));
   }
 }
