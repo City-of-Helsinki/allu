@@ -9,6 +9,7 @@ import {MaterializeDirective} from 'angular2-materialize';
 
 import {MapComponent} from '../map/map.component';
 import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../component/progressbar/progressbar.component';
+import {ApplicationListComponent} from '../application/list/application-list.component';
 
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
@@ -23,6 +24,7 @@ import {ErrorEvent} from '../../event/error-event';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
+import {SearchbarComponent} from '../../component/searchbar/searchbar.component';
 
 import 'proj4leaflet';
 import 'leaflet';
@@ -52,7 +54,9 @@ enum HasChanges {
     MdButton,
     MaterializeDirective,
     MapComponent,
-    ProgressbarComponent
+    ProgressbarComponent,
+    ApplicationListComponent,
+    SearchbarComponent
   ],
   providers: []
 })
@@ -118,6 +122,11 @@ export class LocationComponent implements EventListener {
     }
   }
 
+  searchUpdated(streetAddress: string) {
+    this.application.location = this.createOrGetLocation();
+    this.application.location.postalAddress.streetAddress = streetAddress;
+  }
+
 
   save() {
     if (this.id) {
@@ -127,9 +136,7 @@ export class LocationComponent implements EventListener {
       if (this.hasChanges === HasChanges.YES) {
         if (this.features) {
           // For existing applications, which do not have a location
-          if (!this.application.location) {
-            this.application.location = new Location(undefined, undefined, new PostalAddress(undefined, undefined, undefined));
-          }
+          this.application.location = this.createOrGetLocation();
           this.application.location.geometry = this.mapService.featureCollectionToGeometryCollection(this.features);
         } else {
           // Location is removed entirely
@@ -152,6 +159,12 @@ export class LocationComponent implements EventListener {
     }
   }
 
+  private createOrGetLocation(): Location {
+    return this.application.location
+      ? this.application.location
+      : new Location(undefined, undefined, new PostalAddress(undefined, undefined, undefined));
+  }
+
   ngOnInit() {
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
@@ -159,6 +172,7 @@ export class LocationComponent implements EventListener {
       filter.applicationId = this.id;
       this.eventService.send(this, new ApplicationsLoadEvent(filter));
     }
+    this.application = Application.emptyApplication();
   }
 
   ngOnDestroy() {

@@ -6,18 +6,7 @@
       <md-card-content>
         <div class="row">
           <div class="col m8">
-            <div class="input-field col m6">
-              <input id="address" type="text" class="" [(ngModel)]="street">
-              <label for="address">Katu</label>
-            </div>
-            <div class="input-field col m3">
-              <input id="streetNumber" type="text" class="" [(ngModel)]="streetNumber">
-              <label for="streetNumber">Katunumero</label>
-            </div>
-            <div class="input-field col m3">
-              <input id="city" type="text" class="" [(ngModel)]="city">
-              <label for="city">Kaupunki</label>
-            </div>
+            <searchbar (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
             <div class="input-field col m12">
               <input id="info" type="text" class="" [(ngModel)]="info">
               <label for="info">Lisätietoja paikasta</label>

@@ -1,9 +1,11 @@
 import {Component} from '@angular/core';
+import {MdToolbar} from '@angular2-material/toolbar';
+
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
 import {SearchbarComponent} from '../../component/searchbar/searchbar.component';
 
 import {MapComponent} from '../../component/map/map.component';
-import {LocationSearchComponent} from '../../component/locationsearch/locationsearch.component';
+import {ApplicationListComponent} from '../../component/application/list/application-list.component';
 
 @Component({
   selector: 'mapsearch',
@@ -13,7 +15,13 @@ import {LocationSearchComponent} from '../../component/locationsearch/locationse
   styles: [
     require('./mapsearch.component.scss')
   ],
-  directives: [ToolbarComponent, MapComponent, SearchbarComponent, LocationSearchComponent]
+  directives: [
+    ToolbarComponent,
+    MdToolbar,
+    MapComponent,
+    SearchbarComponent,
+    ApplicationListComponent
+  ]
 })
 
 export class MapSearchComponent {}

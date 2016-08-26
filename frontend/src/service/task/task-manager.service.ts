@@ -9,6 +9,8 @@ import {SaveApplicationTask} from '../../task/application/save-application-task'
 import {Task} from './task';
 import {MetaLoadEvent} from '../../event/load/meta-load-event';
 import {LoadMetaTask} from '../../task/application/load-meta-task';
+import {GeocoordinatesLoadEvent} from '../../event/load/geocoordinates-load-event';
+import {LoadGeocoordinatesTask} from '../../task/geolocation/load-geocoordinates-task';
 
 @Injectable()
 export class TaskManagerService implements EventListener {
@@ -30,6 +32,7 @@ export class TaskManagerService implements EventListener {
     eventToTaskMap.set(TaskManagerService.extractName(ApplicationSaveEvent.toString()), SaveApplicationTask);
     eventToTaskMap.set(TaskManagerService.extractName(ApplicationsLoadEvent.toString()), LoadApplicationsTask);
     eventToTaskMap.set(TaskManagerService.extractName(MetaLoadEvent.toString()), LoadMetaTask);
+    eventToTaskMap.set(TaskManagerService.extractName(GeocoordinatesLoadEvent.toString()), LoadGeocoordinatesTask);
     return eventToTaskMap;
   }
 
