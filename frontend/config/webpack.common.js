@@ -118,8 +118,15 @@ module.exports = {
           helpers.root('node_modules/@angular2-material'),
           helpers.root('node_modules/@angular2'),
         ]
+      },
+      {
+        test: /\.ts$/,
+        loader: "tslint",
+        exclude: [
+          // skip external modules
+          helpers.root('node_modules')
+        ]
       }
-
     ],
 
     /*

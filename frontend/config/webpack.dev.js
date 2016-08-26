@@ -118,7 +118,7 @@ module.exports = webpackMerge(commonConfig, {
    */
   tslint: {
     emitErrors: false,
-    failOnHint: false,
+    failOnHint: true,
     resourcePath: 'src'
   },
 
