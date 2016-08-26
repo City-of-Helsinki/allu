@@ -3,56 +3,56 @@
   <h1>HAKU</h1>
 
   <div class="row">
-    <div class="input-field col s4">
-      <input placeholder="Hakemuksen nimi" id="applicationName"  type="text" [(ngModel)]="search">
+    <div class="input-field col m4 s6">
+      <input placeholder="Hakemuksen nimi" id="applicationName"  type="text" [(ngModel)]="query.name">
       <label>Hakemuksen nimi</label>
     </div>
-    <div class="input-field col s2">
+    <div class="input-field col m2 s6">
       <select [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Hakemuksen tyyppi</option>
         <option *ngFor="let option of items" [value]="option">{{option}}</option>
       </select>
       <label>Hakemuksen tyyppi</label>
     </div>
-    <div class="input-field col s2">
+    <div class="input-field col m2 s6">
       <select [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Hakemuksen tila</option>
         <option *ngFor="let option of items" [value]="option">{{option}}</option>
       </select>
       <label>Hakemuksen tila</label>
     </div>
-    <div class="input-field col s2">
+    <div class="input-field col m2 s6">
       <select [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Kaupunginosa</option>
         <option *ngFor="let option of items" [value]="option">{{option}}</option>
       </select>
       <label>Kaupunginosa</label>
     </div>
-    <div class="input-field col s2">
-      <select [(ngModel)]="handlerOption" (change)="handlerFilter($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+    <div class="input-field col m2 s6">
+      <select [(ngModel)]="query.handler" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Hakemuksen käsittelijä</option>
         <option *ngFor="let option of handlers" [value]="option">{{option}}</option>
       </select>
       <label>Hakemuksen käsittelijä</label>
     </div>
 
-    <div class="input-field col s4">
-      <input placeholder="Osoite" id="applicationName"  type="text" [(ngModel)]="search">
+    <div class="input-field col m4 s6">
+      <input placeholder="Osoite" id="applicationName"  type="text" [(ngModel)]="query.address">
       <label>Osoite</label>
     </div>
-    <div class="input-field col s2">
-      <input  id="applicationName"  type="text" [(ngModel)]="search">
+    <div class="input-field col m2 s6">
+      <input  id="applicantName"  type="text" [(ngModel)]="query.applicant">
       <label>Hakija</label>
     </div>
-    <div class="input-field col s2">
-      <input  id="applicationName"  type="text" [(ngModel)]="search">
+    <div class="input-field col m2 s6">
+      <input  id="contactName"  type="text" [(ngModel)]="query.contact">
       <label>Yhteyshenkilö</label>
     </div>
-    <div class="input-field col s2">
-      <input placeholder="Vapaa tekstihaku" id="applicationName"  type="text" [(ngModel)]="search">
+    <div class="input-field col m2 s6">
+      <input placeholder="Vapaa tekstihaku" id="applicationName"  type="text" [(ngModel)]="query.freeText">
       <label>Vapaa tekstihaku</label>
     </div>
-    <div class="input-field col s1">
+    <div class="input-field col m1 s6">
       <label for="startDate">Alkupvm</label>
       <input id="startDate"
       [(ngModel)]="startDate"
@@ -60,7 +60,7 @@
       [materializeParams]="[{selectMonths: true, selectYears: 15}]"
       type="text" />
     </div>
-    <div class="input-field col s1">
+    <div class="input-field col m1 s6">
       <input id="endDate"
       [(ngModel)]="endDate"
       materialize="pickadate"
@@ -68,8 +68,8 @@
       type="text" />
       <label for="endDate">Loppupvm</label>
     </div>
-    <div class="col s12">
-      <button (click)="console.log('asdf')" class="waves-effect waves-light btn">HAE</button>
+    <div class="col m12 s12">
+      <button (click)="search()" class="waves-effect waves-light btn">HAE</button>
     </div>
 </div>
 

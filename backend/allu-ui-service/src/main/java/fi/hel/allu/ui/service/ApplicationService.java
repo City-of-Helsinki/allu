@@ -1,9 +1,13 @@
 package fi.hel.allu.ui.service;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,18 +15,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class ApplicationService {
@@ -106,17 +102,34 @@ public class ApplicationService {
     return applicationJson;
   }
 
-
   /**
    * Find given application details.
    *
    * @param applicationId application identifier that is used to find details
    * @return Application details or empty application list in DTO
    */
+  // TODO: refactor... applicationId should be integer, no string!
   public ApplicationJson findApplicationById(String applicationId) {
     Application applicationModel = restTemplate.getForObject(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
     return getApplication(applicationModel);
+  }
+
+  /**
+   * Find given application details.
+   *
+   * @param   applicationIds    Application identifier that is used to find details
+   *
+   * @return  List of applications or empty application list
+   */
+  public List<ApplicationJson> findApplicationsById(List<Integer> applicationIds) {
+    ResponseEntity<Application[]> applicationResult = restTemplate.postForEntity(applicationProperties
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATIONS_FIND_BY_ID), applicationIds, Application[].class);
+    List<ApplicationJson> applications = new ArrayList<>();
+    for (Application applicationModel : applicationResult.getBody()) {
+      applications.add(getApplication(applicationModel));
+    }
+    return applications;
   }
 
   /**
@@ -155,6 +168,22 @@ public class ApplicationService {
     }
     return resultList;
   }
+
+  /**
+   * Find applications by given fields.
+   *
+   * @param queryParameters list of query parameters
+   * @return List of found application with details
+   */
+  public List<ApplicationJson> search(QueryParameters queryParameters) {
+    List<ApplicationJson> resultList = Collections.emptyList();
+    if (!queryParameters.getQueryParameters().isEmpty()) {
+      List<Integer> ids = searchService.search(queryParameters);
+      resultList = findApplicationsById(ids);
+    }
+    return resultList;
+  }
+
 
   public void changeStatus(int applicationId, StatusType currentStatus) {
     logger.debug("change status: application {}, current status {}, user {}", applicationId, currentStatus);

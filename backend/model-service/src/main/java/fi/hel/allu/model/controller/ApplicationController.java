@@ -1,19 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.AttachmentDao;
@@ -21,6 +7,14 @@ import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -43,10 +37,23 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Application> findById(@PathVariable int id) {
-    Optional<Application> application = applicationDao.findById(id);
-    Application applicationValue = application
-        .orElseThrow(() -> new NoSuchEntityException("Application not found", Integer.toString(id)));
-    return new ResponseEntity<>(applicationValue, HttpStatus.OK);
+    List<Application> applications = applicationDao.findByIds(Collections.singletonList(id));
+    if (applications.size() != 1) {
+      throw new NoSuchEntityException("Application not found", Integer.toString(id));
+    }
+    return new ResponseEntity<>(applications.get(0), HttpStatus.OK);
+  }
+
+  /**
+   * Find applications by application IDs
+   *
+   * @param   List of ids to be searched.
+   * @return  found applications
+   */
+  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  public ResponseEntity<List<Application>> findByIds(@RequestBody List<Integer> ids) {
+    List<Application> applications = applicationDao.findByIds(ids);
+    return new ResponseEntity<>(applications, HttpStatus.OK);
   }
 
   /**

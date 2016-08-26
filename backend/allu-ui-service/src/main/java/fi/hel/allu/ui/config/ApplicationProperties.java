@@ -54,6 +54,11 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_BY_ID = "/applications/{applicationId}";
 
   /**
+   * Model-service path to find possibly multiple applications by given identifiers.
+   */
+  public static final String PATH_MODEL_APPLICATIONS_FIND_BY_ID = "/applications/find";
+
+  /**
    * Model-service path to find application by handler
    */
   public static final String PATH_MODEL_APPLICATION_FIND_BY_HANDLER = "/applications//byhandler/{handlerId}";

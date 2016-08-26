@@ -1,9 +1,10 @@
 package fi.hel.allu.ui.service;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class SearchService {
@@ -26,7 +25,10 @@ public class SearchService {
   private ApplicationMapper applicationMapper;
 
   @Autowired
-  public SearchService(ApplicationProperties applicationProperties, RestTemplate restTemplate, ApplicationMapper applicationMapper) {
+  public SearchService(
+      ApplicationProperties applicationProperties,
+      RestTemplate restTemplate,
+      ApplicationMapper applicationMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
@@ -68,13 +70,13 @@ public class SearchService {
    * Find applications by given fields.
    *
    * @param queryParameters list of query parameters
-   * @return List of found application with details
+   * @return List of ids of found applications
    */
-  public List<ApplicationJson> search(QueryParameters queryParameters) {
+  public List<Integer> search(QueryParameters queryParameters) {
     ResponseEntity<ApplicationES[]> applicationResult = restTemplate.postForEntity(applicationProperties
        .getSearchServiceUrl(ApplicationProperties.PATH_SEARCH_APPLICATION_FIND_BY_FIELDS), queryParameters, ApplicationES[].class);
 
-    return Arrays.stream(applicationResult.getBody()).map(applicationES -> applicationMapper.mapApplicationESToJson(new ApplicationJson
-        (), applicationES)).collect(Collectors.toList());
+    List<Integer> ids = Arrays.stream(applicationResult.getBody()).map(ApplicationES::getId).collect(Collectors.toList());
+    return ids;
   }
 }
