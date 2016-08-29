@@ -17,6 +17,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -170,6 +171,12 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
     assertEquals(200, response.getCustomer().getPerson().getId().intValue());
     assertEquals("outdoor event nature, Model", ((OutdoorEventJson)response.getEvent()).getNature());
+  }
+
+  @Test
+  public void testFindApplicationsById() {
+    List<ApplicationJson> response = applicationService.findApplicationsById(Collections.singletonList(123));
+    assertEquals(2, response.size());
   }
 
   @Test

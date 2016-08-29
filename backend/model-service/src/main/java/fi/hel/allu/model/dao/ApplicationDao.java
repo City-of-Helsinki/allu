@@ -1,27 +1,25 @@
 package fi.hel.allu.model.dao;
 
-import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QGeometry.geometry1;
-
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Collections;
+import java.util.List;
+
+import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QGeometry.geometry1;
 
 @Repository
 public class ApplicationDao {
@@ -32,9 +30,9 @@ public class ApplicationDao {
   final QBean<Application> applicationBean = bean(Application.class, application.all());
 
   @Transactional(readOnly = true)
-  public Optional<Application> findById(int id) {
-    Application appl = queryFactory.select(applicationBean).from(application).where(application.id.eq(id)).fetchOne();
-    return Optional.ofNullable(appl);
+  public List<Application> findByIds(List<Integer> ids) {
+    List<Application> appl = queryFactory.select(applicationBean).from(application).where(application.id.in(ids)).fetch();
+    return appl;
   }
 
   @Transactional(readOnly = true)
@@ -70,7 +68,7 @@ public class ApplicationDao {
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
-    return findById(id).get();
+    return findByIds(Collections.singletonList(id)).get(0);
   }
 
   @Transactional
@@ -83,6 +81,6 @@ public class ApplicationDao {
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
-    return findById(id).get();
+    return findByIds(Collections.singletonList(id)).get(0);
   }
 }

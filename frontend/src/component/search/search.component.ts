@@ -1,5 +1,4 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {WorkqueueService} from '../../service/workqueue.service';
 import { MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 import {MaterializeDirective} from 'angular2-materialize';
@@ -13,6 +12,9 @@ import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {Application} from '../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
+import {SearchService} from '../../service/search.service';
+import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
+import {ApplicationSearchEvent} from '../../event/search/application-search-event';
 
 
 @Component({
@@ -34,16 +36,16 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
     'Kolmas  Käsittelijä',
     'Neljäs  Käsittelijä',
     'Viides  Käsittelijä'];
+  private query: ApplicationSearchQuery = new ApplicationSearchQuery();
 
 
-  constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
+  constructor(private eventService: EventService) {
     this.results = [];
 
   }
 
   ngOnInit() {
     this.eventService.subscribe(this);
-    this.eventService.send(this, new ApplicationsLoadEvent(new ApplicationLoadFilter()));
   }
 
   ngOnDestroy() {
@@ -55,17 +57,15 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
   }
 
   public handle(event: Event): void {
-    console.log('Handle and incoming SearchComponent event');
     if (event instanceof ApplicationsAnnounceEvent) {
+      console.log('SearchComponent apps', event);
       let aaEvent = <ApplicationsAnnounceEvent>event;
       this.results = aaEvent.applications.slice();
     }
   }
 
-  handlerFilter(value: string) {
-    let filter = new ApplicationLoadFilter();
-    filter.handler = value;
-    this.eventService.send(this, new ApplicationsLoadEvent(filter));
+  private search(): void {
+    console.log('Search clicked', this.query);
+    this.eventService.send(this, new ApplicationSearchEvent(this.query));
   }
-
 }

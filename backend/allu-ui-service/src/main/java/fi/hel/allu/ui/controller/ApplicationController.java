@@ -1,26 +1,6 @@
 package fi.hel.allu.ui.controller;
 
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.domain.ApplicationJson;
@@ -28,14 +8,22 @@ import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
 import fi.hel.allu.ui.service.ApplicationService;
 import fi.hel.allu.ui.service.AttachmentService;
-import fi.hel.allu.ui.service.SearchService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
-  @Autowired
-  private SearchService searchService;
-
   @Autowired
   private ApplicationService applicationService;
 
@@ -102,16 +90,10 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.findApplicationByLocation(query), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/search", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> searchAll(@RequestParam(value = "queryString") String queryString) {
-    return new ResponseEntity<>(searchService.searchAll(queryString), HttpStatus.OK);
-  }
-
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParameters queryParameters) {
-    return new ResponseEntity<>(searchService.search(queryParameters), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.search(queryParameters), HttpStatus.OK);
   }
 
   // Attachment API
@@ -168,9 +150,7 @@ public class ApplicationController {
   /**
    * Delete attachment
    *
-   * @param id
-   *          attachment ID
-   * @param attachmentInfoJson
+   * @param id  attachment ID
    * @return
    */
   @RequestMapping(value = "/attachments/{id}", method = RequestMethod.DELETE)

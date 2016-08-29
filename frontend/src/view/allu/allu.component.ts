@@ -16,6 +16,7 @@ import {WorkqueueService} from '../../service/workqueue.service';
 import {Login} from '../../component/login/login.component';
 import {LoginRouterOutlet} from '../../component/login/login-router-outlet.component';
 import {TaskManagerService} from '../../service/task/task-manager.service';
+import {SearchService} from '../../service/search.service';
 
 @Component({
   selector: 'allu',
