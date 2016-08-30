@@ -12,6 +12,7 @@ import {TaskManagerService} from './service/task/task-manager.service';
 import {ApplicationService} from './service/application.service';
 import {GeolocationService} from './service/geolocation.service';
 import {SearchService} from './service/search.service';
+import {MapHub} from './service/map-hub';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -24,6 +25,7 @@ bootstrap(AlluComponent, [
   MapService,
   SearchService,
   GeocodingService,
+  MapHub,
   GeolocationService,
   provide(
     APP_BASE_HREF, { useValue: '/' }),

@@ -4,7 +4,6 @@ import 'proj4leaflet';
 import {Component, Input} from '@angular/core';
 import {MapService} from '../../service/map.service';
 import {GeocodingService} from '../../service/geocoding.service';
-import {GeolocationService} from '../../service/geolocation.service';
 
 import {EventListener} from '../../event/event-listener';
 import {Event} from '../../event/event';
@@ -15,6 +14,11 @@ import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 import {WorkqueueService} from '../../service/workqueue.service';
 import {Map} from 'leaflet';
 import {GeocoordinatesSelectionEvent} from '../../event/selection/geocoordinates-selection-event';
+import {GeoCoordinatesAnnounceEvent} from '../../event/announce/geocoordinates-announce-event';
+import {GeocoordinatesLoadEvent} from '../../event/load/geocoordinates-load-event';
+import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
+import {MapHub} from '../../service/map-hub';
+import {Geocoordinates} from '../../model/common/geocoordinates';
 
 @Component({
   selector: 'map',
@@ -37,13 +41,12 @@ export class MapComponent implements EventListener {
   constructor(
     private mapService: MapService,
     private geocoder: GeocodingService,
-    private geolocationService: GeolocationService,
     private workqueue: WorkqueueService,
-    private eventService: EventService) {
+    private eventService: EventService,
+    private mapHub: MapHub) {
     this.eventService.subscribe(this);
     this.mapService = mapService;
     this.geocoder = geocoder;
-    this.geolocationService = geolocationService;
     this.workqueue = workqueue;
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;
@@ -55,8 +58,8 @@ export class MapComponent implements EventListener {
   public handle(event: Event): void {
     if (event instanceof ApplicationSelectionEvent) {
       this.handleApplicationSelectionEvent(<ApplicationSelectionEvent>event);
-    } else if (event instanceof GeocoordinatesSelectionEvent) {
-      this.handleGeocoordinatesSelectionEvent(<GeocoordinatesSelectionEvent>event);
+    } else if (event instanceof SearchbarUpdateEvent) {
+      this.eventService.send(this, new GeocoordinatesLoadEvent(event.searchbarFilter.search));
     }
   }
 
@@ -93,13 +96,20 @@ export class MapComponent implements EventListener {
     }
   }
 
-  handleGeocoordinatesSelectionEvent(event: GeocoordinatesSelectionEvent) {
-    let coordinates = new L.LatLng(event.geocoordinates.latitude, event.geocoordinates.longitude);
-    const zoomLevel = 10;
-    this.map.setView(coordinates, zoomLevel, {animate: true});
+  ngOnInit() {
+    this.initMap();
+    this.mapHub.coordinates().subscribe((coordinates) => this.panToCoordinates(coordinates));
   }
 
-  ngOnInit() {
+  ngOnDestroy() {
+    // TODO: See how to destroy map, so that it will be built again.
+    this.eventService.unsubscribe(this);
+    if (this.map) {
+      this.map.removeLayer(this.mapLayers.kaupunkikartta);
+    }
+  }
+
+  private initMap(): void {
     let mapOption = {
       zoomControl: false,
       center: undefined,
@@ -160,12 +170,9 @@ export class MapComponent implements EventListener {
     L.control.scale().addTo(this.map);
   }
 
-  ngOnDestroy() {
-    // TODO: See how to destroy map, so that it will be built again.
-    this.eventService.unsubscribe(this);
-    if (this.map) {
-      this.map.removeLayer(this.mapLayers.kaupunkikartta);
-    }
+  private panToCoordinates(coordinates: Geocoordinates) {
+    const zoomLevel = 10;
+    this.map.setView(new L.LatLng(coordinates.latitude, coordinates.longitude), zoomLevel, {animate: true});
   }
 
   private createLayers(): any {

@@ -1,8 +1,29 @@
+<div class="row">
 <div class="col s12 searchinput">
-  <div class="input-field">
-    <input id="streetAddress"  type="text" [(ngModel)]="search"
-           (keyup.enter)="searchLocation()"
-           (blur)="searchLocation()">
+  <div class="input-field col s8">
+    <input id="streetAddress" type="text"
+           (keyup.enter)="notifySearchUpdated()"
+           (blur)="notifySearchUpdated()"
+           [(ngModel)]="search">
     <label for="streetAddress">Kirjoita osoite</label>
+  </div>
+
+  <div class="input-field col s2">
+    <input id="startDate"
+           materialize="pickadate"
+           [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+           type="date"
+           [(ngModel)]="startDate"/>
+    <label for="startDate">Alkupäivämäärä</label>
+  </div>
+
+  <div class="input-field col s2">
+    <input id="endDate"
+           materialize="pickadate"
+           [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+           type="date"
+           [(ngModel)]="endDate"/>
+    <label for="endDate">Loppupäivämäärä</label>
+  </div>
   </div>
 </div>

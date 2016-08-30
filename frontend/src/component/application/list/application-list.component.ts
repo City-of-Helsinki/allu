@@ -13,6 +13,8 @@ import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event
 import {Application} from '../../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-announce-event';
 import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
+import {SearchbarUpdateEvent} from '../../../event/search/searchbar-updated-event';
+import {SearchbarFilter} from '../../../event/search/searchbar-filter';
 
 
 @Component({
@@ -28,6 +30,7 @@ import {ApplicationLoadFilter} from '../../../event/load/application-load-filter
 export class ApplicationListComponent implements EventListener, OnInit, OnDestroy {
 
   private applicationsQueue: Array<Application> = [];
+  private filter: SearchbarFilter;
 
   constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
     this.applicationsQueue = [];
@@ -48,6 +51,10 @@ export class ApplicationListComponent implements EventListener, OnInit, OnDestro
     if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent>event;
       this.applicationsQueue = aaEvent.applications.slice();
+    } else if (event instanceof SearchbarUpdateEvent) {
+      let searchUpdated = <SearchbarUpdateEvent>event;
+      this.filter = searchUpdated.searchbarFilter;
+      // TODO: send filtered application load event
     }
   }
 

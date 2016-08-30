@@ -29,6 +29,7 @@ import {SearchbarComponent} from '../../component/searchbar/searchbar.component'
 import 'proj4leaflet';
 import 'leaflet';
 import {MapService} from '../../service/map.service';
+import {SearchbarFilter} from '../../event/search/searchbar-filter';
 
 enum HasChanges {
   NO,
@@ -122,9 +123,9 @@ export class LocationComponent implements EventListener {
     }
   }
 
-  searchUpdated(streetAddress: string) {
+  searchUpdated(filter: SearchbarFilter) {
     this.application.location = this.createOrGetLocation();
-    this.application.location.postalAddress.streetAddress = streetAddress;
+    this.application.location.postalAddress.streetAddress = filter.search;
   }
 
 
