@@ -28,7 +28,7 @@ import {SearchbarComponent} from '../../component/searchbar/searchbar.component'
 
 import 'proj4leaflet';
 import 'leaflet';
-import {MapService} from '../../service/map.service';
+import {MapUtil} from '../../service/map.util.ts';
 import {SearchbarFilter} from '../../event/search/searchbar-filter';
 
 enum HasChanges {
@@ -72,7 +72,7 @@ export class LocationComponent implements EventListener {
   private progressStep: number;
   private progressMode: number;
 
-  constructor(private eventService: EventService, private mapService: MapService, private router: Router, params: RouteParams) {
+  constructor(private eventService: EventService, private mapService: MapUtil, private router: Router, params: RouteParams) {
     // A location of a certain application must be editable. This means if there is an id associated with the route, it should go there.
     // If there is no parameter id, this.id will be 0.
     this.id = Number(params.get('id'));

@@ -8,6 +8,8 @@ import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {SearchbarFilter} from '../../event/search/searchbar-filter';
 import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
 import {MapHub} from '../../service/map-hub';
+import {ApplicationHub} from '../../service/application-hub';
+import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 
 @Component({
   selector: 'searchbar',
@@ -22,38 +24,44 @@ import {MapHub} from '../../service/map-hub';
   ]
 })
 
-export class SearchbarComponent  {
+export class SearchbarComponent implements OnInit {
 
   @Output() searchUpdated = new EventEmitter();
   @Input() search: string;
+
+  private pickadateParams = PICKADATE_PARAMETERS;
   private _startDate: Date;
   private _endDate: Date;
 
-  constructor(private mapHub: MapHub) {}
+  constructor(private mapHub: MapHub, private applicationHub: ApplicationHub) {}
 
-  public handle(event: Event): void {
+  ngOnInit(): void {
+    this.notifySearchUpdated();
   }
 
   public notifySearchUpdated(): void {
-    let filter = new SearchbarFilter(this.search, this._startDate, this._endDate);
     this.mapHub.addSearch(this.search);
+    let filter = new SearchbarFilter(this.search, this._startDate, this._endDate);
+
+    this.mapHub.addSearch(this.search);
+    this.applicationHub.addSearchFilter(filter);
   }
 
-  set startDate(date: Date) {
-    this._startDate = date;
+  set startDate(date: string) {
+    this._startDate = TimeUtil.getDateFromUi(date);
     this.notifySearchUpdated();
   }
 
-  get startDate(): Date {
-    return this._startDate;
+  get startDate(): string {
+    return TimeUtil.getUiDateString(this._startDate);
   }
 
-  set endDate(date: Date) {
-    this._endDate = date;
+  set endDate(date: string) {
+    this._endDate = TimeUtil.getDateFromUi(date);
     this.notifySearchUpdated();
   }
 
-  get endDate(): Date {
-    return this._endDate;
+  get endDate(): string {
+    return TimeUtil.getUiDateString(this._endDate);
   }
 }

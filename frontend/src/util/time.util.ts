@@ -21,10 +21,10 @@ export const PICKADATE_PARAMETERS = [
  */
 export class TimeUtil {
   public static getUiDateString(time: Date): string {
-    return momentLib(time).format('DD.MM.YYYY').toString();
+    return time ? momentLib(time).format('DD.MM.YYYY').toString() : undefined;
   }
 
   public static getDateFromUi(dateString: string): Date {
-    return momentLib(dateString, 'DD.MM.YYYY').toDate();
+    return dateString ? momentLib(dateString, 'DD.MM.YYYY').toDate() : undefined;
   }
 }

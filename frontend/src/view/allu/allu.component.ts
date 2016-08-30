@@ -18,6 +18,7 @@ import {LoginRouterOutlet} from '../../component/login/login-router-outlet.compo
 import {TaskManagerService} from '../../service/task/task-manager.service';
 import {SearchService} from '../../service/search.service';
 import {GeolocationService} from '../../service/geolocation.service';
+import {ApplicationService} from '../../service/application.service';
 
 @Component({
   selector: 'allu',
@@ -46,5 +47,6 @@ export class AlluComponent {
     public router: Router,
     public eventService: EventService,
     public taskManager: TaskManagerService,
-    private geolocationService: GeolocationService) {}
+    private geolocationService: GeolocationService,
+    private applicationService: ApplicationService) {}
 }

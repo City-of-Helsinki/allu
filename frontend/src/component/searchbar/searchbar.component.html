@@ -11,8 +11,8 @@
   <div class="input-field col s2">
     <input id="startDate"
            materialize="pickadate"
-           [materializeParams]="[{selectMonths: true, selectYears: 15}]"
-           type="date"
+           [materializeParams]="pickadateParams"
+           type="text"
            [(ngModel)]="startDate"/>
     <label for="startDate">Alkupäivämäärä</label>
   </div>
@@ -20,8 +20,8 @@
   <div class="input-field col s2">
     <input id="endDate"
            materialize="pickadate"
-           [materializeParams]="[{selectMonths: true, selectYears: 15}]"
-           type="date"
+           [materializeParams]="pickadateParams"
+           type="text"
            [(ngModel)]="endDate"/>
     <label for="endDate">Loppupäivämäärä</label>
   </div>

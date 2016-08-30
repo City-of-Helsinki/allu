@@ -3,11 +3,11 @@ import {
   it
 } from '@angular/core/testing';
 
-import {MapService} from './map.service';
+import {MapUtil} from './map.util.ts';
 
 describe('MapService', () => {
   it('should project wgs84 to epsg:3879 correctly', () => {
-    let mapService = new MapService();
+    let mapService = new MapUtil();
     let x = 25496808.002263;
     let y = 6673112.200334;
     let longitude = 24.9424988;
@@ -18,7 +18,7 @@ describe('MapService', () => {
   });
 
   it('should project epsg:3879 to wgs84 correctly', () => {
-    let mapService = new MapService();
+    let mapService = new MapUtil();
     let x = 25496808.002263;
     let y = 6673112.200334;
     let longitude = 24.9424988;
@@ -29,7 +29,7 @@ describe('MapService', () => {
   });
 
   it('should map feature collections to geometry collections and vice versa', () => {
-    let mapService = new MapService();
+    let mapService = new MapUtil();
     let geoJSON = '' +
       '{"type":"GeometryCollection",' +
        '"crs": {"properties":{"name":"EPSG:3879"},"type":"name"},' +

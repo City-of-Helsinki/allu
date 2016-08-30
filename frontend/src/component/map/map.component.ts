@@ -2,7 +2,7 @@ import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
 import {Component, Input} from '@angular/core';
-import {MapService} from '../../service/map.service';
+import {MapUtil} from '../../service/map.util.ts';
 import {GeocodingService} from '../../service/geocoding.service';
 
 import {EventListener} from '../../event/event-listener';
@@ -19,6 +19,8 @@ import {GeocoordinatesLoadEvent} from '../../event/load/geocoordinates-load-even
 import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
 import {MapHub} from '../../service/map-hub';
 import {Geocoordinates} from '../../model/common/geocoordinates';
+import {ApplicationHub} from '../../service/application-hub';
+import {Application} from '../../model/application/application';
 
 @Component({
   selector: 'map',
@@ -39,11 +41,12 @@ export class MapComponent implements EventListener {
   private drawnItems: any;
 
   constructor(
-    private mapService: MapService,
+    private mapService: MapUtil,
     private geocoder: GeocodingService,
     private workqueue: WorkqueueService,
     private eventService: EventService,
-    private mapHub: MapHub) {
+    private mapHub: MapHub,
+    private applicationHub: ApplicationHub) {
     this.eventService.subscribe(this);
     this.mapService = mapService;
     this.geocoder = geocoder;
@@ -69,9 +72,7 @@ export class MapComponent implements EventListener {
       this.map.removeLayer(this.applicationArea);
     }
 
-    if (this.drawnItems) {
-      this.drawnItems.clearLayers();
-    }
+    this.clearDrawn();
 
     // Check to see if the application has a location
     console.log('asEvent.application.location', asEvent.application.location);
@@ -98,7 +99,10 @@ export class MapComponent implements EventListener {
 
   ngOnInit() {
     this.initMap();
+
     this.mapHub.coordinates().subscribe((coordinates) => this.panToCoordinates(coordinates));
+    this.applicationHub.addMapView(this.getCurrentMapView()); // to notify initial location
+    this.applicationHub.applications().subscribe(applications => this.drawApplications(applications));
   }
 
   ngOnDestroy() {
@@ -106,6 +110,30 @@ export class MapComponent implements EventListener {
     this.eventService.unsubscribe(this);
     if (this.map) {
       this.map.removeLayer(this.mapLayers.kaupunkikartta);
+    }
+  }
+
+  private drawApplications(applications: Array<Application>) {
+    this.clearDrawn();
+
+    applications
+      .filter(app => app.location !== undefined)
+      .forEach(app => this.drawGeometry(app.location.geometry));
+  }
+
+  private drawGeometry(geometryCollection: GeoJSON.GeometryCollection) {
+    if (geometryCollection.geometries.length) {
+      let featureCollection = this.mapService.geometryCollectionToFeatureCollection(geometryCollection);
+      this.applicationArea = new L.GeoJSON(featureCollection);
+      this.applicationArea.eachLayer((layer) => {
+        this.drawnItems.addLayer(layer);
+      });
+    }
+  }
+
+  private clearDrawn() {
+    if (this.drawnItems) {
+      this.drawnItems.clearLayers();
     }
   }
 
@@ -165,9 +193,18 @@ export class MapComponent implements EventListener {
       that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
     });
 
+    this.map.on('moveend', (e: any) => {
+      this.applicationHub.addMapView(this.getCurrentMapView());
+    });
+
     this.drawnItems = drawnItems;
     L.control.layers(this.mapLayers).addTo(this.map);
     L.control.scale().addTo(this.map);
+  }
+
+  private getCurrentMapView(): GeoJSON.GeometryObject {
+    let mapView = this.mapService.polygonFromBounds(this.map.getBounds()).toGeoJSON();
+    return this.mapService.featureToGeometry(mapView);
   }
 
   private panToCoordinates(coordinates: Geocoordinates) {

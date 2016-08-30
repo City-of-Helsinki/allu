@@ -7,7 +7,7 @@ import {Location} from './location.class';
 import {Geocoordinates} from '../model/common/geocoordinates';
 import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
 import {StreetAddress} from '../model/common/street-address';
-import {MapService} from './map.service';
+import {MapUtil} from './map.util.ts';
 import {MapHub} from './map-hub';
 import '../rxjs-extensions.ts';
 
@@ -17,7 +17,7 @@ export class GeolocationService {
   static ADDRESS_URL = '/api/address';
   static GEOCODE_URL = '/geocode/helsinki';
 
-  constructor(private authHttp: AuthHttp, private mapService: MapService, private mapHub: MapHub) {
+  constructor(private authHttp: AuthHttp, private mapService: MapUtil, private mapHub: MapHub) {
     mapHub.search().subscribe(search => {
       this.geocode(search).subscribe(coordinates => this.mapHub.addCoordinates(coordinates));
     });
