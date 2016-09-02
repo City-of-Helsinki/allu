@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col s12 searchresults">
     <md-content layout="row" layout-wrap layout-align="center start">
-      <md-card (click)="jobClick(application)" *ngFor="let application of applicationsQueue">
+      <md-card (click)="jobClick(application)" *ngFor="let application of applications | async">
         <md-card-content>
           <p>{{application.name}}</p>
           <md-card-subtitle>{{application.type}}</md-card-subtitle>

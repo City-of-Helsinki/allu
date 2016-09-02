@@ -5,7 +5,7 @@
       <md-card-title>Sijainti</md-card-title>
       <md-card-content>
         <div class="row">
-          <div class="col m8">
+          <div class="col m12">
             <searchbar (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
             <div class="input-field col m12">
               <input id="info" type="text" class="" [(ngModel)]="info">
@@ -26,22 +26,6 @@
             <div class="input-field col m2">
               <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="area">
               <label for="area">Alueen pinta-ala</label>
-            </div>
-          </div>
-          <div class="col m4">
-            <div class="input-field col m12">
-              <input id="startTime"
-              materialize="pickadate"
-              [materializeParams]="[{selectMonths: true, selectYears: 15}]"
-              type="text" />
-              <label for="startTime">Alkupäivämäärä</label>
-            </div>
-            <div class="input-field col m12">
-              <input id="endTime"
-              materialize="pickadate"
-              [materializeParams]="[{selectMonths: true, selectYears: 15}]"
-              type="text" />
-              <label for="endTime">Loppupäivämäärä</label>
             </div>
           </div>
           <div class="col m12">

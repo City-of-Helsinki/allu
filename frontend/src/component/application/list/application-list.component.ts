@@ -1,4 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
 import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
@@ -13,6 +14,9 @@ import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event
 import {Application} from '../../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-announce-event';
 import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
+import {SearchbarUpdateEvent} from '../../../event/search/searchbar-updated-event';
+import {SearchbarFilter} from '../../../event/search/searchbar-filter';
+import {ApplicationHub} from '../../../service/application-hub';
 
 
 @Component({
@@ -27,16 +31,13 @@ import {ApplicationLoadFilter} from '../../../event/load/application-load-filter
 
 export class ApplicationListComponent implements EventListener, OnInit, OnDestroy {
 
-  private applicationsQueue: Array<Application> = [];
+  private applications: Observable<Array<Application>>;
 
-  constructor(private workqueueService: WorkqueueService, private eventService: EventService) {
-    this.applicationsQueue = [];
-
+  constructor(private workqueueService: WorkqueueService, private eventService: EventService, private applicationHub: ApplicationHub) {
   }
 
   ngOnInit() {
-    this.eventService.subscribe(this);
-    this.eventService.send(this, new ApplicationsLoadEvent(new ApplicationLoadFilter()));
+    this.applications = this.applicationHub.applications();
   }
 
   ngOnDestroy() {
@@ -44,11 +45,6 @@ export class ApplicationListComponent implements EventListener, OnInit, OnDestro
   }
 
   public handle(event: Event): void {
-    console.log('Handle and incoming LocationSearchComponent event');
-    if (event instanceof ApplicationsAnnounceEvent) {
-      let aaEvent = <ApplicationsAnnounceEvent>event;
-      this.applicationsQueue = aaEvent.applications.slice();
-    }
   }
 
   jobClick(application: Application) {

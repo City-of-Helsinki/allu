@@ -17,6 +17,8 @@ import {Login} from '../../component/login/login.component';
 import {LoginRouterOutlet} from '../../component/login/login-router-outlet.component';
 import {TaskManagerService} from '../../service/task/task-manager.service';
 import {SearchService} from '../../service/search.service';
+import {GeolocationService} from '../../service/geolocation.service';
+import {ApplicationService} from '../../service/application.service';
 
 @Component({
   selector: 'allu',
@@ -41,5 +43,10 @@ import {SearchService} from '../../service/search.service';
   { path: '/login', as: 'Login', component: Login }
 ])
 export class AlluComponent {
-  constructor(public router: Router, public eventService: EventService, public taskManager: TaskManagerService) {}
+  constructor(
+    public router: Router,
+    public eventService: EventService,
+    public taskManager: TaskManagerService,
+    private geolocationService: GeolocationService,
+    private applicationService: ApplicationService) {}
 }

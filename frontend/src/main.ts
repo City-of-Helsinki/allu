@@ -4,7 +4,7 @@ import {bootstrap} from '@angular/platform-browser-dynamic';
 import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
 import {Http, HTTP_PROVIDERS} from '@angular/http';
 import {AlluComponent} from './view/allu/allu.component';
-import {MapService} from './service/map.service';
+import {MapUtil} from './service/map.util.ts';
 import {GeocodingService} from './service/geocoding.service';
 import {EventService} from './event/event.service';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
@@ -12,6 +12,8 @@ import {TaskManagerService} from './service/task/task-manager.service';
 import {ApplicationService} from './service/application.service';
 import {GeolocationService} from './service/geolocation.service';
 import {SearchService} from './service/search.service';
+import {MapHub} from './service/map-hub';
+import {ApplicationHub} from './service/application-hub';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -21,10 +23,12 @@ bootstrap(AlluComponent, [
   EventService,
   TaskManagerService,
   ApplicationService,
-  MapService,
+  MapUtil,
   SearchService,
   GeocodingService,
+  MapHub,
   GeolocationService,
+  ApplicationHub,
   provide(
     APP_BASE_HREF, { useValue: '/' }),
   provide(

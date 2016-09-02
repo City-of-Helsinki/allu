@@ -6,14 +6,21 @@ import {ApplicationMapper} from './mapper/application-mapper';
 import {ApplicationLoadFilter} from '../event/load/application-load-filter';
 import {StructureMetaMapper} from './mapper/structure-meta-mapper';
 import {StructureMeta} from '../model/application/structure-meta';
+import {ApplicationHub} from './application-hub';
+import {ApplicationSearch} from './application-hub';
+import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery';
+import {ApplicationLocationQueryMapper} from './mapper/application-location-query-mapper';
 
 @Injectable()
 export class ApplicationService {
 
   static APPLICATIONS_URL = '/api/applications';
+  static SEARCH_LOCATION = '/search_location';
   static METADATA_URL = '/api/meta';
 
-  constructor(private authHttp: AuthHttp) {}
+  constructor(private authHttp: AuthHttp, private applicationHub: ApplicationHub) {
+    applicationHub.applicationSearch().subscribe((search) => this.applicationSearch(search));
+  }
 
   public listApplications(filter: ApplicationLoadFilter): Promise<Array<Application>> {
     let searchUrl = ApplicationService.APPLICATIONS_URL;
@@ -119,5 +126,20 @@ export class ApplicationService {
         () => console.log('Request Complete')
       )
     );
+  }
+
+  private applicationSearch(search: ApplicationSearch) {
+    if (search instanceof ApplicationLocationQuery) {
+      console.log('ApplicationService.applicationSearch', search);
+      let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH_LOCATION;
+      this.authHttp.post(
+          searchUrl,
+          JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(search)))
+        .map(response => response.json())
+        .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+        .subscribe(applications => {
+          this.applicationHub.addApplications(applications);
+        }, err => console.log(err));
+    }
   }
 }

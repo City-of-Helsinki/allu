@@ -15,7 +15,7 @@ import {MaterializeDirective} from 'angular2-materialize';
 import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-announce-event';
 import {ApplicationSelectionEvent} from '../../../event/selection/application-selection-event';
 
-import {MapService} from '../../../service/map.service';
+import {MapUtil} from '../../../service/map.util.ts';
 import {MapComponent} from '../../map/map.component';
 import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../../component/progressbar/progressbar.component';
 

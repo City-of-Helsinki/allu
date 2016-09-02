@@ -1,13 +1,15 @@
 import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
-
-import {EventListener} from '../../event/event-listener';
-import {EventService} from '../../event/event.service';
-import {Event} from '../../event/event';
-import {GeocoordinatesLoadEvent} from '../../event/load/geocoordinates-load-event';
-import {GeoCoordinatesAnnounceEvent} from '../../event/announce/geocoordinates-announce-event';
-import {StringUtil} from '../../util/string.util';
-import {GeocoordinatesSelectionEvent} from '../../event/selection/geocoordinates-selection-event';
 import {MdToolbar} from '@angular2-material/toolbar';
+import {MaterializeDirective} from 'angular2-materialize';
+
+import {Event} from '../../event/event';
+import {StringUtil} from '../../util/string.util';
+import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
+import {SearchbarFilter} from '../../event/search/searchbar-filter';
+import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
+import {MapHub} from '../../service/map-hub';
+import {ApplicationHub} from '../../service/application-hub';
+import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 
 @Component({
   selector: 'searchbar',
@@ -16,37 +18,50 @@ import {MdToolbar} from '@angular2-material/toolbar';
   styles: [
     require('./searchbar.component.scss')
   ],
-  directives: [MdToolbar]
+  directives: [
+    MdToolbar,
+    MaterializeDirective
+  ]
 })
 
-export class SearchbarComponent implements EventListener, OnInit, OnDestroy {
-  @Input()
-  search: string;
+export class SearchbarComponent implements OnInit {
 
-  @Output()
-  searchUpdated = new EventEmitter();
+  @Output() searchUpdated = new EventEmitter();
+  @Input() search: string;
 
-  constructor(private eventService: EventService) {}
+  private pickadateParams = PICKADATE_PARAMETERS;
+  private _startDate: Date;
+  private _endDate: Date;
 
-  ngOnInit() {
-    this.eventService.subscribe(this);
+  constructor(private mapHub: MapHub, private applicationHub: ApplicationHub) {}
+
+  ngOnInit(): void {
+    this.notifySearchUpdated();
   }
 
-  ngOnDestroy() {
-    this.eventService.unsubscribe(this);
+  public notifySearchUpdated(): void {
+    this.mapHub.addSearch(this.search);
+    let filter = new SearchbarFilter(this.search, this._startDate, this._endDate);
+
+    this.mapHub.addSearch(this.search);
+    this.applicationHub.addSearchFilter(filter);
   }
 
-  public handle(event: Event): void {
-    console.log('Handle and incoming SearchbarComponent event', event);
-    if (event instanceof GeoCoordinatesAnnounceEvent) {
-      let gcaEvent = <GeoCoordinatesAnnounceEvent>event;
-      this.eventService.send(this, new GeocoordinatesSelectionEvent(gcaEvent.geocoordinates));
-    }
+  set startDate(date: string) {
+    this._startDate = TimeUtil.getDateFromUi(date);
+    this.notifySearchUpdated();
   }
 
-  searchLocation(): void {
-    console.log('searchLocation');
-    this.eventService.send(this, new GeocoordinatesLoadEvent(this.search));
-    this.searchUpdated.emit(this.search);
+  get startDate(): string {
+    return TimeUtil.getUiDateString(this._startDate);
+  }
+
+  set endDate(date: string) {
+    this._endDate = TimeUtil.getDateFromUi(date);
+    this.notifySearchUpdated();
+  }
+
+  get endDate(): string {
+    return TimeUtil.getUiDateString(this._endDate);
   }
 }

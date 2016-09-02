@@ -2,9 +2,10 @@ import {Injectable} from '@angular/core';
 import 'leaflet';
 
 import 'proj4leaflet';
+import LatLngBounds = L.LatLngBounds;
 
 @Injectable()
-export class MapService {
+export class MapUtil {
 
   private epsg3879: L.ICRS;
 
@@ -38,6 +39,26 @@ export class MapService {
     } else {
       return undefined;
     }
+  }
+
+  public featureToGeometry(feature: GeoJSON.Feature<GeoJSON.GeometryObject>) {
+    let geometry = this.createGeometry(feature);
+    geometry.crs = {
+      properties: {
+        name: 'EPSG:3879'
+      },
+      type: 'name'
+    };
+    return geometry;
+  }
+
+  public polygonFromBounds(bounds: LatLngBounds) {
+    let latLngs = [];
+    latLngs.push(bounds.getSouthWest());
+    latLngs.push(bounds.getSouthEast());
+    latLngs.push(bounds.getNorthEast());
+    latLngs.push(bounds.getNorthWest());
+    return L.polygon(latLngs);
   }
 
   constructor() {
@@ -75,6 +96,10 @@ export class MapService {
       geometry: this.mapEPSG3879Geometry(geometry),
       properties: undefined
     };
+  }
+
+  private createGeometry(feature: GeoJSON.Feature<GeoJSON.GeometryObject>): GeoJSON.GeometryObject {
+    return this.mapWgs84Geometry(feature.geometry);
   }
 
   private mapWgs84Geometry(geometry: any): any {

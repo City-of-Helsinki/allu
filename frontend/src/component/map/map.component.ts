@@ -2,9 +2,8 @@ import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
 import {Component, Input} from '@angular/core';
-import {MapService} from '../../service/map.service';
+import {MapUtil} from '../../service/map.util.ts';
 import {GeocodingService} from '../../service/geocoding.service';
-import {GeolocationService} from '../../service/geolocation.service';
 
 import {EventListener} from '../../event/event-listener';
 import {Event} from '../../event/event';
@@ -15,6 +14,13 @@ import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
 import {WorkqueueService} from '../../service/workqueue.service';
 import {Map} from 'leaflet';
 import {GeocoordinatesSelectionEvent} from '../../event/selection/geocoordinates-selection-event';
+import {GeoCoordinatesAnnounceEvent} from '../../event/announce/geocoordinates-announce-event';
+import {GeocoordinatesLoadEvent} from '../../event/load/geocoordinates-load-event';
+import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
+import {MapHub} from '../../service/map-hub';
+import {Geocoordinates} from '../../model/common/geocoordinates';
+import {ApplicationHub} from '../../service/application-hub';
+import {Application} from '../../model/application/application';
 
 @Component({
   selector: 'map',
@@ -35,15 +41,15 @@ export class MapComponent implements EventListener {
   private drawnItems: any;
 
   constructor(
-    private mapService: MapService,
+    private mapService: MapUtil,
     private geocoder: GeocodingService,
-    private geolocationService: GeolocationService,
     private workqueue: WorkqueueService,
-    private eventService: EventService) {
+    private eventService: EventService,
+    private mapHub: MapHub,
+    private applicationHub: ApplicationHub) {
     this.eventService.subscribe(this);
     this.mapService = mapService;
     this.geocoder = geocoder;
-    this.geolocationService = geolocationService;
     this.workqueue = workqueue;
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;
@@ -55,8 +61,8 @@ export class MapComponent implements EventListener {
   public handle(event: Event): void {
     if (event instanceof ApplicationSelectionEvent) {
       this.handleApplicationSelectionEvent(<ApplicationSelectionEvent>event);
-    } else if (event instanceof GeocoordinatesSelectionEvent) {
-      this.handleGeocoordinatesSelectionEvent(<GeocoordinatesSelectionEvent>event);
+    } else if (event instanceof SearchbarUpdateEvent) {
+      this.eventService.send(this, new GeocoordinatesLoadEvent(event.searchbarFilter.search));
     }
   }
 
@@ -66,9 +72,7 @@ export class MapComponent implements EventListener {
       this.map.removeLayer(this.applicationArea);
     }
 
-    if (this.drawnItems) {
-      this.drawnItems.clearLayers();
-    }
+    this.clearDrawn();
 
     // Check to see if the application has a location
     console.log('asEvent.application.location', asEvent.application.location);
@@ -93,13 +97,47 @@ export class MapComponent implements EventListener {
     }
   }
 
-  handleGeocoordinatesSelectionEvent(event: GeocoordinatesSelectionEvent) {
-    let coordinates = new L.LatLng(event.geocoordinates.latitude, event.geocoordinates.longitude);
-    const zoomLevel = 10;
-    this.map.setView(coordinates, zoomLevel, {animate: true});
+  ngOnInit() {
+    this.initMap();
+
+    this.mapHub.coordinates().subscribe((coordinates) => this.panToCoordinates(coordinates));
+    this.applicationHub.addMapView(this.getCurrentMapView()); // to notify initial location
+    this.applicationHub.applications().subscribe(applications => this.drawApplications(applications));
   }
 
-  ngOnInit() {
+  ngOnDestroy() {
+    // TODO: See how to destroy map, so that it will be built again.
+    this.eventService.unsubscribe(this);
+    if (this.map) {
+      this.map.removeLayer(this.mapLayers.kaupunkikartta);
+    }
+  }
+
+  private drawApplications(applications: Array<Application>) {
+    this.clearDrawn();
+
+    applications
+      .filter(app => app.location !== undefined)
+      .forEach(app => this.drawGeometry(app.location.geometry));
+  }
+
+  private drawGeometry(geometryCollection: GeoJSON.GeometryCollection) {
+    if (geometryCollection.geometries.length) {
+      let featureCollection = this.mapService.geometryCollectionToFeatureCollection(geometryCollection);
+      this.applicationArea = new L.GeoJSON(featureCollection);
+      this.applicationArea.eachLayer((layer) => {
+        this.drawnItems.addLayer(layer);
+      });
+    }
+  }
+
+  private clearDrawn() {
+    if (this.drawnItems) {
+      this.drawnItems.clearLayers();
+    }
+  }
+
+  private initMap(): void {
     let mapOption = {
       zoomControl: false,
       center: undefined,
@@ -155,17 +193,23 @@ export class MapComponent implements EventListener {
       that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
     });
 
+    this.map.on('moveend', (e: any) => {
+      this.applicationHub.addMapView(this.getCurrentMapView());
+    });
+
     this.drawnItems = drawnItems;
     L.control.layers(this.mapLayers).addTo(this.map);
     L.control.scale().addTo(this.map);
   }
 
-  ngOnDestroy() {
-    // TODO: See how to destroy map, so that it will be built again.
-    this.eventService.unsubscribe(this);
-    if (this.map) {
-      this.map.removeLayer(this.mapLayers.kaupunkikartta);
-    }
+  private getCurrentMapView(): GeoJSON.GeometryObject {
+    let mapView = this.mapService.polygonFromBounds(this.map.getBounds()).toGeoJSON();
+    return this.mapService.featureToGeometry(mapView);
+  }
+
+  private panToCoordinates(coordinates: Geocoordinates) {
+    const zoomLevel = 10;
+    this.map.setView(new L.LatLng(coordinates.latitude, coordinates.longitude), zoomLevel, {animate: true});
   }
 
   private createLayers(): any {
