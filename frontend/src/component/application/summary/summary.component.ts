@@ -27,6 +27,7 @@ import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
 import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application-added-announce-event';
 import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
 import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event';
+import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
 
 
 @Component({
@@ -47,7 +48,8 @@ import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event
     MdRadioButton,
     MdCheckbox,
     MapComponent,
-    ProgressbarComponent
+    ProgressbarComponent,
+    ApplicationAttachmentComponent
   ],
   providers: [MdRadioDispatcher]
 })

@@ -1,0 +1,12 @@
+@import '../../../assets/colors';
+
+:host {
+  .fixedInputButton {
+    input {
+      display: none;
+    }
+    button:focus {
+      background-color: rgba(0, 0, 0, 0.12);
+    }
+  }
+}

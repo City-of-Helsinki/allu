@@ -3,6 +3,7 @@ import {BackendApplicant} from './backend-applicant';
 import {BackendContact} from './backend-contact';
 import {BackendLocation} from './backend-location';
 import {BackendStructureMeta} from './backend-structure-meta';
+import {BackendAttachmentInfo} from './backend-attachment-info';
 
 export interface BackendApplication {
   id: number;
@@ -17,4 +18,5 @@ export interface BackendApplication {
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;
   location: BackendLocation;
+  attachmentList: Array<BackendAttachmentInfo>;
 }

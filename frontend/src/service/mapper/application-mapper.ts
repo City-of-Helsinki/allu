@@ -6,6 +6,7 @@ import {ContactMapper} from './contact-mapper';
 import {LocationMapper} from './location-mapper';
 import {ApplicationTypeDataMapper} from './application-type-data-mapper';
 import {StructureMetaMapper} from './structure-meta-mapper';
+import {AttachmentInfoMapper} from './attachment-info-mapper';
 
 export class ApplicationMapper {
 
@@ -22,7 +23,9 @@ export class ApplicationMapper {
       new Date(backendApplication.creationTime),
       ApplicantMapper.mapBackend(backendApplication.applicant),
       (backendApplication.contactList) ? backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact)) : undefined,
-      LocationMapper.mapBackend(backendApplication.location)
+      LocationMapper.mapBackend(backendApplication.location),
+      (backendApplication.attachmentList) ? backendApplication.attachmentList.map(
+            (attachment) => AttachmentInfoMapper.mapBackend(attachment)) : undefined
     );
   }
 
@@ -39,7 +42,8 @@ export class ApplicationMapper {
       creationTime: (application.creationTime) ? application.creationTime.toISOString() : undefined,
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
-      location: LocationMapper.mapFrontend(application.location)
+      location: LocationMapper.mapFrontend(application.location),
+      attachmentList: undefined // attachmentList not mapped, because it cannot be updated in the backend through application
     };
   }
 }

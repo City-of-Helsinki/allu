@@ -77,6 +77,7 @@ module.exports = {
       leafletdrawcss: 'leaflet-draw/dist/leaflet.draw.css',
       materializecss: 'materialize-css/dist/css/materialize.css',
       materialize: 'materialize-css/dist/js/materialize.js',
+      filesaver: 'file-saver/FileSaver.js'
     }
 
   },

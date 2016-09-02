@@ -15,6 +15,7 @@ import {SearchService} from './service/search.service';
 import {MapHub} from './service/map-hub';
 import {ApplicationHub} from './service/application-hub';
 import {UIStateHub} from './service/ui-state/ui-state-hub';
+import {AttachmentService} from './service/attachment-service';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -31,6 +32,7 @@ bootstrap(AlluComponent, [
   GeolocationService,
   ApplicationHub,
   UIStateHub,
+  AttachmentService,
   provide(
     APP_BASE_HREF, { useValue: '/' }),
   provide(
