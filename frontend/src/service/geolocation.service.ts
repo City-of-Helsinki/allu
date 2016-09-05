@@ -10,6 +10,8 @@ import {StreetAddress} from '../model/common/street-address';
 import {MapUtil} from './map.util.ts';
 import {MapHub} from './map-hub';
 import '../rxjs-extensions.ts';
+import {UIStateHub} from './ui-state/ui-state-hub';
+import {ErrorUtil} from './../util/error.util.ts';
 
 @Injectable()
 export class GeolocationService {
@@ -17,7 +19,11 @@ export class GeolocationService {
   static ADDRESS_URL = '/api/address';
   static GEOCODE_URL = '/geocode/helsinki';
 
-  constructor(private authHttp: AuthHttp, private mapService: MapUtil, private mapHub: MapHub) {
+  constructor(
+    private authHttp: AuthHttp,
+    private mapService: MapUtil,
+    private mapHub: MapHub,
+    private uiState: UIStateHub) {
     mapHub.search().subscribe(search => {
       this.geocode(search).subscribe(coordinates => this.mapHub.addCoordinates(coordinates));
     });
@@ -27,7 +33,8 @@ export class GeolocationService {
 
     return this.authHttp.get(searchUrl)
       .map(response => response.json())
-      .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService));
+      .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService))
+      .catch(err => this.uiState.addMessage(ErrorUtil.extractMessage(err)));
   }
 
   private searchUrl(address: string) {

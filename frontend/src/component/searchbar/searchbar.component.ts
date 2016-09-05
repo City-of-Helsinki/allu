@@ -10,6 +10,11 @@ import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
 import {MapHub} from '../../service/map-hub';
 import {ApplicationHub} from '../../service/application-hub';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
+import {UIStateHub} from '../../service/ui-state/ui-state-hub';
+import {UIState} from '../../service/ui-state/ui-state';
+
+// To use Materialize functionality
+declare var Materialize: any;
 
 @Component({
   selector: 'searchbar',
@@ -32,11 +37,14 @@ export class SearchbarComponent implements OnInit {
   private pickadateParams = PICKADATE_PARAMETERS;
   private _startDate: Date;
   private _endDate: Date;
+  private errorMessage: string;
 
-  constructor(private mapHub: MapHub, private applicationHub: ApplicationHub) {}
+  constructor(private mapHub: MapHub, private applicationHub: ApplicationHub, private uiState: UIStateHub) {}
 
   ngOnInit(): void {
     this.notifySearchUpdated();
+
+    this.uiState.uiState().subscribe((state) => this.uiStateUpdated(state));
   }
 
   public notifySearchUpdated(): void {
@@ -45,6 +53,13 @@ export class SearchbarComponent implements OnInit {
 
     this.mapHub.addSearch(this.search);
     this.applicationHub.addSearchFilter(filter);
+  }
+
+  private uiStateUpdated(state: UIState) {
+    if (!state.messages.isEmpty()) {
+      Materialize.toast('Osoitetta ei löytynyt', 4000);
+      this.uiState.clearMessages();
+    }
   }
 
   set startDate(date: string) {

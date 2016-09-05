@@ -74,7 +74,7 @@
     "jquery": "2.2.4",
     "leaflet": "0.7.7",
     "leaflet-draw": "0.3.0",
-    "materialize-css": "0.97.6",
+    "materialize-css": "0.97.7",
     "node-sass": "3.8.0",
     "proj4leaflet": "0.7.2",
     "proj4": "2.0.0",
@@ -83,7 +83,8 @@
     "sass-loader": "3.2.0",
     "systemjs": "0.19.25",
     "zone.js": "0.6.12",
-    "moment": "2.14.1"
+    "moment": "2.14.1",
+    "immutable": "3.8.1"
   },
   "devDependencies": {
     "angular2-hmr": "0.5.5",
