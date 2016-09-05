@@ -10,6 +10,8 @@ import {ApplicationHub} from './application-hub';
 import {ApplicationSearch} from './application-hub';
 import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery';
 import {ApplicationLocationQueryMapper} from './mapper/application-location-query-mapper';
+import {UIStateHub} from './ui-state/ui-state-hub';
+import {ErrorUtil} from '../util/error.util';
 
 @Injectable()
 export class ApplicationService {
@@ -18,7 +20,7 @@ export class ApplicationService {
   static SEARCH_LOCATION = '/search_location';
   static METADATA_URL = '/api/meta';
 
-  constructor(private authHttp: AuthHttp, private applicationHub: ApplicationHub) {
+  constructor(private authHttp: AuthHttp, private applicationHub: ApplicationHub, private uiState: UIStateHub) {
     applicationHub.applicationSearch().subscribe((search) => this.applicationSearch(search));
   }
 
@@ -137,9 +139,10 @@ export class ApplicationService {
           JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(search)))
         .map(response => response.json())
         .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-        .subscribe(applications => {
-          this.applicationHub.addApplications(applications);
-        }, err => console.log(err));
+        .subscribe(
+          applications => this.applicationHub.addApplications(applications),
+          err => this.uiState.addError(ErrorUtil.extractMessage(err))
+        );
     }
   }
 }

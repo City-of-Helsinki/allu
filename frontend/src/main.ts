@@ -14,6 +14,7 @@ import {GeolocationService} from './service/geolocation.service';
 import {SearchService} from './service/search.service';
 import {MapHub} from './service/map-hub';
 import {ApplicationHub} from './service/application-hub';
+import {UIStateHub} from './service/ui-state/ui-state-hub';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -29,6 +30,7 @@ bootstrap(AlluComponent, [
   MapHub,
   GeolocationService,
   ApplicationHub,
+  UIStateHub,
   provide(
     APP_BASE_HREF, { useValue: '/' }),
   provide(

@@ -2,6 +2,7 @@
 import 'rxjs/add/observable/of';
 import 'rxjs/add/observable/throw';
 import 'rxjs/add/observable/combineLatest';
+import 'rxjs/add/observable/empty';
 
 // Observable operators
 import 'rxjs/add/operator/catch';
