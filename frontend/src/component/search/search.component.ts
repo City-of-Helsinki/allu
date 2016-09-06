@@ -1,4 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Router} from '@angular/router-deprecated';
 import { MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 import {MaterializeDirective} from 'angular2-materialize';
@@ -39,7 +40,7 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
   private query: ApplicationSearchQuery = new ApplicationSearchQuery();
 
 
-  constructor(private eventService: EventService) {
+  constructor(private eventService: EventService, private router: Router) {
     this.results = [];
 
   }
@@ -52,8 +53,8 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
     this.eventService.unsubscribe(this);
   }
 
-  public selected(value: any): void {
-    console.log('Selected value is: ', value);
+  public goToSummary(application: Application): void {
+    this.router.navigate(['/Summary', {id: application.id}]);
   }
 
   public handle(event: Event): void {

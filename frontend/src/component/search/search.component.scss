@@ -13,3 +13,7 @@ h1 {
   margin: 0;
   padding: 0 16px;
 }
+
+tr.row-highlight:hover {
+  background-color: md-color($app-blue, 50);
+}

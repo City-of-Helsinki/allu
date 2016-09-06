@@ -99,10 +99,9 @@ export class MapComponent implements EventListener {
 
   ngOnInit() {
     this.initMap();
-
     this.mapHub.coordinates().subscribe((coordinates) => this.panToCoordinates(coordinates));
-    this.applicationHub.addMapView(this.getCurrentMapView()); // to notify initial location
     this.applicationHub.applications().subscribe(applications => this.drawApplications(applications));
+    this.applicationHub.addMapView(this.getCurrentMapView()); // to notify initial location
   }
 
   ngOnDestroy() {
@@ -140,7 +139,7 @@ export class MapComponent implements EventListener {
   private initMap(): void {
     let mapOption = {
       zoomControl: false,
-      center: undefined,
+      center: new L.LatLng(60.1708763, 24.9424988), // Helsinki railway station
       scrollWheelZoom: this.zoom,
       zoom: 6,
       minZoom: 3,
@@ -150,10 +149,6 @@ export class MapComponent implements EventListener {
       layers: [this.mapLayers.kaupunkikartta],
       crs: this.mapService.getEPSG3879()
     };
-
-    if (this.draw) {
-      mapOption.center = new L.LatLng(60.1708763, 24.9424988); // Helsinki railway station
-    }
 
     this.map = new L.Map('map', mapOption);
     L.control.zoom({position: 'topright'}).addTo(this.map);

@@ -74,10 +74,6 @@ md-toolbar {
   }
 }
 
-// .leaflet-clickable {
-//   cursor: crosshair;
-// }
-//
-// .leaflet-container {
-//   cursor: help;
-// }
+.clickable {
+  cursor: pointer;
+}
