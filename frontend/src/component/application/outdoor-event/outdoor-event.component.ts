@@ -29,6 +29,7 @@ import {MetaLoadEvent} from '../../../event/load/meta-load-event';
 import {MetaAnnounceEvent} from '../../../event/announce/meta-announce-event';
 import {LoadingComponent} from '../../loading/loading.component';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
+import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
 
 
 @Component({
@@ -63,6 +64,8 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private applicantIdSelection: string;
   private countries: Array<any>;
   private billingTypes: Array<any>;
+  private eventNatures: Array<any>;
+  private pricingTypes: Array<any>;
   private noPriceReasons: Array<any>;
   private pickadateParams = PICKADATE_PARAMETERS;
 
@@ -148,6 +151,13 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       {name: 'Lasku', value: 'Invoice'},
       {name: 'Suoravelotus', value: 'BankTransaction'}
     ];
+
+    this.eventNatures = [
+      {name: 'Avoin', value: 'Open'},
+      {name: 'Maksullinen', value: 'Paid'},
+      {name: 'Suljettu', value: 'Closed'}
+    ];
+
     this.noPriceReasons = [
       {name: 'Hyväntekeväisyys- tai kansalaisjärjestö tai oppilaistoksen tapahtuma', value: 'Charity'},
       {name: 'Taide- tai kulttuuritapahtuma', value: 'ArtOrCulture'},
@@ -203,6 +213,10 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     }
   }
 
+  showReasonForNoPrice() {
+    let event = <OutdoorEvent>this.application.event;
+    return event.nature === 'Open';
+  };
 
   eventTypeSelection(value: string) {
     console.log('Tapahtuman tyypiksi on valittu: ', value);
