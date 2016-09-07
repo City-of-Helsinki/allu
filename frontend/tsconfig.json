@@ -28,7 +28,8 @@
     "!./node_modules/**/*.ts",
     "src/custom-typings.d.ts",
     "typings/browser.d.ts",
-    "src/typings/leaflet-proj/index.d.ts"
+    "src/typings/leaflet-proj/index.d.ts",
+    "src/typings/file-saver/index.d.ts"
   ],
   "awesomeTypescriptLoaderOptions": {
     "resolveGlobs": true,

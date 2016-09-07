@@ -404,6 +404,8 @@
       </md-card>
     </div>
 
+    <application-attachment *ngIf="application" [readonly]="true" [existingAttachments]="application.attachmentList"></application-attachment>
+
     <div class="col m12">
       <md-card>
         <md-card-title>Tallennus ja toiminnot</md-card-title>

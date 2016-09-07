@@ -168,6 +168,7 @@ public class ApplicationController {
    * @return The attachment's data
    */
   @RequestMapping(value = "/attachments/{attachmentId}/data", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getAttachmentData(@PathVariable int attachmentId) {
     byte[] bytes = attachmentService.getAttachmentData(attachmentId);
     HttpHeaders httpHeaders = new HttpHeaders();

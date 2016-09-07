@@ -336,15 +336,13 @@
       </md-card>
     </div>
 -->
+    <application-attachment [existingAttachments]="application.attachmentList" (currentAttachments)="currentAttachments($event)"></application-attachment>
     <div class="col m12">
       <md-card>
-        <md-card-title>Liitteet ja tallennus</md-card-title>
+        <md-card-title>Tallennus</md-card-title>
         <md-card-content>
           <div class="row">
-            <div class="col m2">
-              <button md-raised-button [disabled]="true" (click)="save(application)">LISÄÄ LIITE</button>
-            </div>
-            <div class="col m4 offset-m6">
+            <div class="col m2 offset-m10">
               <button md-raised-button (click)="save(application)">YHTEENVETOON</button>
             </div>
           </div>

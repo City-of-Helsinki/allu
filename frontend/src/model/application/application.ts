@@ -8,6 +8,7 @@ import {Location} from '../common/location';
 import {ApplicationTypeData} from './type/application-type-data';
 import {OutdoorEvent} from './type/outdoor-event';
 import {StructureMeta} from './structure-meta';
+import {AttachmentInfo} from './attachment-info';
 
 
 export class Application {
@@ -24,7 +25,8 @@ export class Application {
     public creationTime: Date,
     public applicant: Applicant,
     public contactList: Array<Contact>,
-    public location: Location) {}
+    public location: Location,
+    public attachmentList: Array<AttachmentInfo>) {}
 
   public static emptyApplication(): Application {
     let applicant = new Applicant(undefined, undefined, false, undefined, undefined);
@@ -64,6 +66,7 @@ export class Application {
         undefined,
         applicant,
         [contact],
+        undefined,
         undefined);
   }
 
@@ -122,6 +125,7 @@ export class Application {
       undefined,
       applicant,
       [contact],
+      undefined,
       undefined);
   }
 }

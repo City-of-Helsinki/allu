@@ -30,6 +30,9 @@ import {MetaAnnounceEvent} from '../../../event/announce/meta-announce-event';
 import {LoadingComponent} from '../../loading/loading.component';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
+import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
+import {AttachmentService} from '../../../service/attachment-service';
+import {AttachmentInfo} from '../../../model/application/attachment-info';
 
 
 @Component({
@@ -49,7 +52,8 @@ import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
     MdButton,
     MdRadioButton,
     MdCheckbox,
-    LoadingComponent
+    LoadingComponent,
+    ApplicationAttachmentComponent
   ],
   providers: [MdRadioDispatcher]
 })
@@ -67,11 +71,12 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   private eventNatures: Array<any>;
   private pricingTypes: Array<any>;
   private noPriceReasons: Array<any>;
+  private attachments: AttachmentInfo[];
   private pickadateParams = PICKADATE_PARAMETERS;
 
   private meta: StructureMeta;
 
-  constructor(private eventService: EventService, private router: Router) {
+  constructor(private eventService: EventService, private router: Router, private attachmentService: AttachmentService) {
     // TODO:remove preFilledApplication
     // this.application = Application.emptyApplication();
     this.application = Application.preFilledApplication();
@@ -186,7 +191,19 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       let aaaEvent = <ApplicationAddedAnnounceEvent>event;
       console.log('Successfully added new application', aaaEvent.application);
       this.application = aaaEvent.application;
-      this.router.navigate(['/Summary', {id: this.application.id}]);
+
+      let self = this;
+      // TODO: use callback method to navigate to summary after attachment upload completes. This should be changed to use the
+      // "hub approach" i.e. observable.subscribe(router.navigate...)
+      if (this.attachments && this.attachments.length !== 0) {
+        this.attachmentService.uploadFiles(
+          aaaEvent.application.id, this.attachments, () => self.router.navigate(['/Summary', {id: this.application.id}]));
+      } else {
+        this.attachmentService.uploadFiles(
+          aaaEvent.application.id, this.attachments, () => { return undefined; });
+        self.router.navigate(['/Summary', {id: this.application.id}]);
+      }
+
     } else if (event instanceof MetaAnnounceEvent) {
       console.log('Loaded metadata', event);
       let maEvent = <MetaAnnounceEvent>event;
@@ -296,5 +313,9 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     }
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
+   }
+
+   private currentAttachments(attachments: AttachmentInfo[]): void {
+     this.attachments = attachments;
    }
 }
