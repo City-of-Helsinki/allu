@@ -35,10 +35,12 @@ export class MapComponent implements EventListener {
   @Input() zoom: boolean;
   @Input() selection: boolean;
   @Input() edit: boolean;
+  @Input() editedApplicationId: Number;
   private applicationArea: L.LayerGroup<L.ILayer>;
   private map: Map;
   private mapLayers: any;
-  private drawnItems: any;
+  private drawnItems: L.LayerGroup<L.ILayer>;
+  private editedItems: L.LayerGroup<L.ILayer>;
 
   constructor(
     private mapService: MapUtil,
@@ -117,15 +119,23 @@ export class MapComponent implements EventListener {
 
     applications
       .filter(app => app.location !== undefined)
-      .forEach(app => this.drawGeometry(app.location.geometry));
+      .forEach(app => this.drawApplication(app));
   }
 
-  private drawGeometry(geometryCollection: GeoJSON.GeometryCollection) {
+  private drawApplication(application: Application) {
+    if (application.id !== this.editedApplicationId) {
+      this.drawGeometry(application.location.geometry, this.drawnItems);
+    } else if (this.editedItems.getLayers().length === 0) { // Check that edited layer is not already added
+      this.drawGeometry(application.location.geometry, this.editedItems);
+    }
+  }
+
+  private drawGeometry(geometryCollection: GeoJSON.GeometryCollection, drawLayer: L.LayerGroup<L.ILayer>) {
     if (geometryCollection.geometries.length) {
       let featureCollection = this.mapService.geometryCollectionToFeatureCollection(geometryCollection);
       this.applicationArea = new L.GeoJSON(featureCollection);
       this.applicationArea.eachLayer((layer) => {
-        this.drawnItems.addLayer(layer);
+        drawLayer.addLayer(layer);
       });
     }
   }
@@ -137,6 +147,41 @@ export class MapComponent implements EventListener {
   }
 
   private initMap(): void {
+    this.map = this.createMap();
+
+    let drawnItems = new L.FeatureGroup();
+    let editedItems = new L.FeatureGroup();
+    drawnItems.addTo(this.map);
+    editedItems.addTo(this.map);
+
+    this.addMapControls(editedItems);
+
+    let that = this;
+    this.map.on('draw:created', function (e: any) {
+      let layer = e.layer;
+      editedItems.addLayer(layer);
+      that.eventService.send(that, new ShapeAnnounceEvent(editedItems.toGeoJSON()));
+    });
+
+    this.map.on('draw:edited', function (e: any) {
+      that.eventService.send(that, new ShapeAnnounceEvent(editedItems.toGeoJSON()));
+    });
+
+    this.map.on('draw:deleted', function (e: any) {
+      that.eventService.send(that, new ShapeAnnounceEvent(editedItems.toGeoJSON()));
+    });
+
+    this.map.on('moveend', (e: any) => {
+      this.applicationHub.addMapView(this.getCurrentMapView());
+    });
+
+    this.drawnItems = drawnItems;
+    this.editedItems = editedItems;
+    L.control.layers(this.mapLayers).addTo(this.map);
+    L.control.scale().addTo(this.map);
+  }
+
+  private createMap(): L.Map {
     let mapOption = {
       zoomControl: false,
       center: new L.LatLng(60.1708763, 24.9424988), // Helsinki railway station
@@ -150,12 +195,11 @@ export class MapComponent implements EventListener {
       crs: this.mapService.getEPSG3879()
     };
 
-    this.map = new L.Map('map', mapOption);
+    return new L.Map('map', mapOption);
+  }
+
+  private addMapControls(editedItems: L.FeatureGroup<L.ILayer>): void {
     L.control.zoom({position: 'topright'}).addTo(this.map);
-
-    let drawnItems = new L.FeatureGroup();
-    drawnItems.addTo(this.map);
-
     let drawControl = new L.Control.Draw({
       position: 'topright',
       draw: {
@@ -167,34 +211,13 @@ export class MapComponent implements EventListener {
         marker: false
       },
       edit: {
-        featureGroup: drawnItems
+        featureGroup: editedItems
       }
     });
+
     if (this.draw) {
       this.map.addControl(drawControl);
     }
-    let that = this;
-    this.map.on('draw:created', function (e: any) {
-      let layer = e.layer;
-      drawnItems.addLayer(layer);
-      that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
-    });
-
-    this.map.on('draw:edited', function (e: any) {
-      that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
-    });
-
-    this.map.on('draw:deleted', function (e: any) {
-      that.eventService.send(that, new ShapeAnnounceEvent(drawnItems.toGeoJSON()));
-    });
-
-    this.map.on('moveend', (e: any) => {
-      this.applicationHub.addMapView(this.getCurrentMapView());
-    });
-
-    this.drawnItems = drawnItems;
-    L.control.layers(this.mapLayers).addTo(this.map);
-    L.control.scale().addTo(this.map);
   }
 
   private getCurrentMapView(): GeoJSON.GeometryObject {
