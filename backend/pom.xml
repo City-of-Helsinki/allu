@@ -33,6 +33,7 @@
         <module>allu-ui-service</module>
         <module>search-domain</module>
         <module>search-service</module>
+        <module>pdf-service</module>
     </modules>
 
     <build>
