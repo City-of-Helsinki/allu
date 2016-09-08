@@ -1,0 +1,23 @@
+<div class="row" materialize>
+    <md-card *ngIf="application">
+        <md-card-title>
+            <div>Päätös</div>
+        </md-card-title>
+        <md-card-content>
+            <div class="row" *ngFor="let error of errors | async">{{error}}</div>
+            <div class="row">
+                <decision-modal status="REJECTED" header="Hylkää hakemus" confirmText="Hylkää"
+                                (statusChange)="decisionConfirmed($event)">Hylkää</decision-modal>
+            </div>
+            <div class="row">
+                <div>
+                    <button class="waves-effect waves-light btn modal-trigger" (click)="accept()">Hyväksy</button>
+                </div>
+            </div>
+            <div class="row">
+                <decision-modal status="RETURNED_TO_PREPARATION" header="Palauta hakemus" confirmText="Palauta"
+                                (statusChange)="decisionConfirmed($event)">Palauta</decision-modal>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>

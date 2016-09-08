@@ -1,0 +1,17 @@
+package fi.hel.allu.ui.domain;
+
+public class CommentJson {
+
+    private String comment;
+
+    /**
+     * in Finnish: Kommentti
+     */
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String comment) {
+        this.comment = comment;
+    }
+}

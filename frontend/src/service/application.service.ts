@@ -12,16 +12,30 @@ import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery
 import {ApplicationLocationQueryMapper} from './mapper/application-location-query-mapper';
 import {UIStateHub} from './ui-state/ui-state-hub';
 import {ErrorUtil} from '../util/error.util';
+import {ApplicationStatusChange} from '../model/application/application-status-change';
+import {ApplicationStatus} from '../model/application/application-status-change';
+import {error} from './ui-state/errors';
 
 @Injectable()
 export class ApplicationService {
-
   static APPLICATIONS_URL = '/api/applications';
   static SEARCH_LOCATION = '/search_location';
   static METADATA_URL = '/api/meta';
 
+  private statusToUrl = new Map<ApplicationStatus, string>();
+
   constructor(private authHttp: AuthHttp, private applicationHub: ApplicationHub, private uiState: UIStateHub) {
     applicationHub.applicationSearch().subscribe((search) => this.applicationSearch(search));
+    applicationHub.applicationStatusChange().subscribe((statusChange) => this.applicationStatusChange(statusChange));
+
+    this.statusToUrl.set(ApplicationStatus.CANCELLED, 'status/cancelled');
+    this.statusToUrl.set(ApplicationStatus.PENDING, 'status/pending');
+    this.statusToUrl.set(ApplicationStatus.HANDLING, 'status/handling');
+    this.statusToUrl.set(ApplicationStatus.DECISIONMAKING, 'status/decisionmaking');
+    this.statusToUrl.set(ApplicationStatus.DECISION, 'status/decision');
+    this.statusToUrl.set(ApplicationStatus.REJECTED, 'status/rejected');
+    this.statusToUrl.set(ApplicationStatus.RETURNED_TO_PREPARATION, 'status/toPreparation');
+    this.statusToUrl.set(ApplicationStatus.FINISHED, 'status/finished');
   }
 
   public listApplications(filter: ApplicationLoadFilter): Promise<Array<Application>> {
@@ -131,8 +145,8 @@ export class ApplicationService {
   }
 
   private applicationSearch(search: ApplicationSearch) {
+    console.log('ApplicationService.applicationSearch', search);
     if (search instanceof ApplicationLocationQuery) {
-      console.log('ApplicationService.applicationSearch', search);
       let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH_LOCATION;
       this.authHttp.post(
           searchUrl,
@@ -143,6 +157,23 @@ export class ApplicationService {
           applications => this.applicationHub.addApplications(applications),
           err => this.uiState.addError(ErrorUtil.extractMessage(err))
         );
+    } else if (!Number.isNaN(search)) {
+      this.authHttp.get(ApplicationService.APPLICATIONS_URL + '/' + search)
+        .map(response => response.json())
+        .map(app => [ApplicationMapper.mapBackend(app)])
+        .subscribe(
+          applications => this.applicationHub.addApplications(applications),
+          err => this.uiState.addError(ErrorUtil.extractMessage(err))
+        );
     }
+  }
+
+  private applicationStatusChange(statusChange: ApplicationStatusChange) {
+    let url = ApplicationService.APPLICATIONS_URL + '/' + statusChange.id + '/' + this.statusToUrl.get(statusChange.status);
+    this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
+      .subscribe(
+        response => this.uiState.addMessage('Application status changed to ' + ApplicationStatus[statusChange.status]),
+        err => this.uiState.addError(error.application.status.changeFailed)
+      );
   }
 }

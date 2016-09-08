@@ -46,4 +46,10 @@ export class ApplicationMapper {
       attachmentList: undefined // attachmentList not mapped, because it cannot be updated in the backend through application
     };
   }
+
+  public static mapComment(comment: string) {
+    return {
+      comment: comment
+    };
+  }
 }

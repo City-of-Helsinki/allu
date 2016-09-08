@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {UIState} from './ui-state.ts';
 import {List} from 'immutable';
 import '../../rxjs-extensions.ts';
+import {toast} from 'angular2-materialize';
 
 /**
  * Class for handling UIState changes and notify
@@ -68,6 +69,7 @@ export class UIStateHub {
         currentState.messages,
         List.of(error)
       ));
+    toast(error, 4000);
     return Observable.empty();
   }
 
@@ -90,5 +92,9 @@ export class UIStateHub {
         List(errors)
       ));
     return Observable.empty();
+  }
+
+  public clear(): void {
+    this.uiState$.next(new UIState(List([]), List([])));
   }
 }

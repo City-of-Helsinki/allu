@@ -44,6 +44,9 @@ export class ProgressbarComponent implements OnInit {
       case ProgressStep.SUMMARY:
         this.width = 42;
         break;
+      case ProgressStep.DECISION:
+        this.width = 75;
+        break;
       default:
         this.width = 0;
         break;

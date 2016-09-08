@@ -10,6 +10,7 @@ import {LocationComponent} from '../../component/location/location.component';
 import {WorkQueueComponent} from '../../component/workqueue/workqueue.component';
 import {SearchComponent} from '../../component/search/search.component';
 import {SummaryComponent} from '../../component/application/summary/summary.component';
+import {DecisionComponent} from '../../component/application/decision/decision.component';
 
 import {EventService} from '../../event/event.service';
 import {WorkqueueService} from '../../service/workqueue.service';
@@ -39,6 +40,7 @@ import {ApplicationService} from '../../service/application.service';
   { path: '/location', as: 'NewLocation', component: LocationComponent },
   { path: '/location/:id', as: 'Location', component: LocationComponent },
   { path: '/summary/:id', as: 'Summary', component: SummaryComponent },
+  { path: '/decision/:id', as: 'Decision', component: DecisionComponent },
   { path: '/search', as: 'Search', component: SearchComponent },
   { path: '/login', as: 'Login', component: Login }
 ])
