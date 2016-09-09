@@ -2,6 +2,9 @@ package fi.hel.allu.pdfcreator.controller;
 
 import java.io.IOException;
 
+import javax.xml.transform.TransformerException;
+
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -34,10 +37,12 @@ public class PdfController {
    *          the data to put in the PDF - a JSON object
    * @return The attachment's data
    * @throws IOException
+   * @throws TransformerException
+   * @throws JSONException
    */
   @RequestMapping(value = "/generate", method = RequestMethod.POST)
   public ResponseEntity<byte[]> generatePdf(@RequestParam String stylesheet, @RequestBody String contents)
-      throws IOException {
+      throws IOException, JSONException, TransformerException {
       HttpHeaders httpHeaders = new HttpHeaders();
       httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
       return new ResponseEntity<>(pdfService.generatePdf(contents, stylesheet), httpHeaders, HttpStatus.OK);
