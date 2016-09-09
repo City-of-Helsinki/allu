@@ -9,6 +9,7 @@ switch (process.env.NODE_ENV) {
     break;
   case 'dev':
   case 'development':
-  default:
     module.exports = require('./config/webpack.dev');
+  default:
+    module.exports = require('./config/webpack.local');
 }
