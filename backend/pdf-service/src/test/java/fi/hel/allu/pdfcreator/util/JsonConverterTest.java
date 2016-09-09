@@ -1,41 +1,40 @@
 package fi.hel.allu.pdfcreator.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.regex.Pattern;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.json.JSONException;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class JsonConverterTest {
 
   @Test
-  public void test() throws ParserConfigurationException, IOException, XPathExpressionException {
+  public void testJsonToXml()
+      throws ParserConfigurationException, IOException, XPathExpressionException, JSONException, TransformerException {
     // Simple test: convert short JSON to XML and check that the result parses
     // and has the proper structure.
 
     final String json = "{\"key1\":\"value1\", \"key2\":\"value2\", \"anArray\":[\"one\",\"two\",\"three\"]}";
-    final String stylesheetPath = "/a/b/c/d/e.xsl";
     final String baseDir = "/f/g/h/i/";
-    final String xml = JsonConverter.jsonToXml(json, stylesheetPath, baseDir);
+    final String xml = JsonConverter.jsonToXml(json, baseDir);
 
     // Now some tests to validate the XML contents..
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -72,21 +71,33 @@ public class JsonConverterTest {
     assertEquals("one", nodeList.item(0).getTextContent());
     assertEquals("two", nodeList.item(1).getTextContent());
     assertEquals("three", nodeList.item(2).getTextContent());
-
-    // Make sure there's exactly one stylesheet processing instruction and it
-    // contains styleSheetPath:
-    int numStylesheetTags = 0;
-    nodeList = doc.getChildNodes();
-    for (int i = 0; i < nodeList.getLength(); i++) {
-      Node node = nodeList.item(i);
-      if (node.getNodeType() == Node.PROCESSING_INSTRUCTION_NODE && node.getNodeName() == "xml-stylesheet") {
-        ProcessingInstruction pi = (ProcessingInstruction) node;
-        String regex = String.format("(.* )?href=['\"]%s['\"]", stylesheetPath);
-        assertTrue("style sheet doesn't match", Pattern.matches(regex, pi.getData()));
-        numStylesheetTags++;
-      }
-    }
-    assertEquals(1, numStylesheetTags);
   }
 
+  final static String testXml =
+      "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
+      "<catalog><cd><artist>Bob Dylan</artist><company>Columbia</company><country>USA</country>" +
+      "<price>10.9</price><title>Empire Burlesque</title><year>1985</year></cd>" +
+      "<cd><artist>Bonnie Tyler</artist><company>CBS Records</company><country>UK</country>" +
+      "<price>9.9</price><title>Hide your heart</title><year>1988</year></cd></catalog>";
+
+  final static String testXslt =
+      "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>" +
+      "<xsl:stylesheet xmlns:xsl=\"http://www.w3.org/1999/XSL/Transform\" version=\"1.0\">" +
+      "<xsl:output method=\"text\"/><xsl:template match=\"/\">" +
+          "<xsl:for-each select=\"catalog/cd\">A CD by <xsl:value-of select=\"artist\"/> "
+          +
+      "called <xsl:value-of select=\"title\"/> costs <xsl:value-of select=\"price\"/> EUR.\n" +
+      "</xsl:for-each></xsl:template></xsl:stylesheet>";
+
+  final static String expectedText =
+      "A CD by Bob Dylan called Empire Burlesque costs 10.9 EUR.\n"+
+      "A CD by Bonnie Tyler called Hide your heart costs 9.9 EUR.\n";
+
+  @Test
+  public void testStylesheet() throws TransformerException
+  {
+    InputStream stylesheetStream = new ByteArrayInputStream(testXslt.getBytes());
+    String text = JsonConverter.applyStylesheet(testXml, stylesheetStream);
+    assertEquals(expectedText, text);
+  }
 }

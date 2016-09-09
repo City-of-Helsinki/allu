@@ -7,10 +7,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.annotation.PostConstruct;
+import javax.xml.transform.TransformerException;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.Executor;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,16 +49,17 @@ public class PdfService {
     }
   }
 
-  public byte[] generatePdf(String dataJson, String stylesheet) throws IOException {
-    Path xmlPath = null;
+  public byte[] generatePdf(String dataJson, String stylesheet)
+      throws IOException, JSONException, TransformerException {
+    Path htmlPath = null;
     Path pdfPath = null;
     try {
-      xmlPath = writeXml(dataJson, stylesheet);
-      pdfPath = writePdf(xmlPath);
+      htmlPath = writeHtml(dataJson, stylesheet);
+      pdfPath = writePdf(htmlPath);
       return Files.readAllBytes(pdfPath);
     } finally {
-      if (xmlPath != null) {
-        Files.deleteIfExists(xmlPath);
+      if (htmlPath != null) {
+        Files.deleteIfExists(htmlPath);
       }
       if (pdfPath != null) {
         Files.deleteIfExists(pdfPath);
@@ -64,20 +67,20 @@ public class PdfService {
     }
   }
 
-  private Path writeXml(String dataJson, String stylesheet) throws IOException {
+  private Path writeHtml(String dataJson, String stylesheet) throws IOException, JSONException, TransformerException {
     // Check that stylesheet exists:
     Path xslPath = stylesheetDir.resolve(stylesheet + ".xsl");
     if (!Files.exists(xslPath)) {
       throw new NoSuchEntityException("Can't find XML file " + xslPath.toString());
     }
 
-    String xml = JsonConverter.jsonToXml(dataJson, xslPath.toString(), stylesheetDir.toString() + "/");
+    String xml = JsonConverter.jsonToXml(dataJson, stylesheetDir.toString() + "/");
+    String html = JsonConverter.applyStylesheet(xml, Files.newInputStream(xslPath));
 
-    // Write XML to temporary file
-    Path xmlPath = Files.createTempFile(tempDir, "pdfsource-", ".xml");
-
-    Files.write(xmlPath, xml.getBytes());
-    return xmlPath;
+    // Write HTML to temporary file
+    Path htmlPath = Files.createTempFile(tempDir, "pdfsource-", ".html");
+    Files.write(htmlPath, html.getBytes());
+    return htmlPath;
   }
 
   private Path writePdf(Path xmlPath) throws IOException {
