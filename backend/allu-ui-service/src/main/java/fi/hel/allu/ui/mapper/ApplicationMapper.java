@@ -1,26 +1,28 @@
 package fi.hel.allu.ui.mapper;
 
-import java.time.ZonedDateTime;
-
-import org.springframework.stereotype.Component;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.github.wnameless.json.flattener.JsonFlattener;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.ApplicationTypeDataES;
-import fi.hel.allu.search.domain.OutdoorEventES;
-import fi.hel.allu.search.domain.ProjectES;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.OutdoorEventJson;
-import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.search.domain.*;
+import fi.hel.allu.ui.domain.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ApplicationMapper {
-  private static final String FOOD_SALES = "Elintarvikemyynti";
-  private static final String ECO_COMPASS = "Ekokompassi";
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
 
 
   /**
@@ -69,6 +71,9 @@ public class ApplicationMapper {
     applicationES.setStatus(applicationJson.getStatus());
     applicationES.setDecisionTime(applicationJson.getDecisionTime());
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
+    applicationES.setLocation(createLocationES(applicationJson.getLocation()));
+    applicationES.setContacts(createContactES(applicationJson.getContactList()));
+    applicationES.setApplicant(createApplicantES(applicationJson.getApplicant()));
     if (applicationJson.getProject() != null) {
       applicationES.setProject(createProjectES(applicationJson));
     }
@@ -92,25 +97,6 @@ public class ApplicationMapper {
       mapEventToJson(applicationJson, application);
     }
   }
-
-  /**
-   * Transfer the information from the given search-domain object to given ui-domain object
-   * @param applicationJson
-   * @param applicationES
-   */
-  public ApplicationJson mapApplicationESToJson(ApplicationJson applicationJson, ApplicationES applicationES) {
-    applicationJson.setId(applicationES.getId());
-    applicationJson.setStatus(applicationES.getStatus());
-    applicationJson.setType(applicationES.getType());
-    applicationJson.setHandler(applicationES.getHandler());
-    applicationJson.setCreationTime(applicationES.getCreationTime());
-    applicationJson.setName(applicationES.getName());
-    applicationJson.setDecisionTime(applicationES.getDecisionTime());
-    mapEventESToJson(applicationJson, applicationES);
-    mapProjectEStoJson(applicationJson, applicationES);
-    return applicationJson;
-  }
-
 
   /**
    * Transfer the information from the given model-domain object to given ui-domain object
@@ -141,43 +127,6 @@ public class ApplicationMapper {
         outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
         outdoorEventJson.setHeavyStructure(outdoorEvent.isHeavyStructure());
         outdoorEventJson.setFoodSales(outdoorEvent.isFoodSales());
-        applicationJson.setEvent(outdoorEventJson);
-        break;
-    }
-  }
-
-  /**
-   * Transfer the information from the given search-domain object to given ui-domain object
-   * @param applicationJson
-   * @param applicationES
-   */
-  public void mapEventESToJson(ApplicationJson applicationJson, ApplicationES applicationES) {
-    // TODO: Perttu 13.7.16.: mapping data from ElasticSearch to applications should not be necessary. Remove this functionality
-    switch (applicationJson.getType()) {
-      case OUTDOOREVENT:
-        OutdoorEventES outdoorEventES = (OutdoorEventES) applicationES.getApplicationTypeData();
-        OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
-        outdoorEventJson.setUrl(outdoorEventES.getUrl());
-        outdoorEventJson.setNature(outdoorEventES.getNature());
-        outdoorEventJson.setStartTime(outdoorEventES.getStartTime());
-        outdoorEventJson.setEndTime(outdoorEventES.getEndTime());
-        outdoorEventJson.setAttendees(outdoorEventES.getAttendees());
-        outdoorEventJson.setDescription(outdoorEventES.getDescription());
-        outdoorEventJson.setTimeExceptions(outdoorEventES.getTimeExceptions());
-        if (outdoorEventES.getEcoCompass() != null && outdoorEventES.getEcoCompass().equals(ECO_COMPASS)) {
-          outdoorEventJson.setEcoCompass(true);
-        }
-        outdoorEventJson.setStructureArea(outdoorEventES.getStructureArea());
-        outdoorEventJson.setStructureDescription(outdoorEventES.getStructureDescription());
-        outdoorEventJson.setStructureEndTime(outdoorEventES.getStructureEndTime());
-        outdoorEventJson.setStructureStartTime(outdoorEventES.getStructureStartTime());
-        outdoorEventJson.setEntryFee(outdoorEventES.getEntryFee());
-        outdoorEventJson.setFoodProviders(outdoorEventES.getFoodProviders());
-        outdoorEventJson.setMarketingProviders(outdoorEventES.getMarketingProviders());
-        outdoorEventJson.setPricing(outdoorEventES.getPricing());
-        if (outdoorEventES.getFoodSales() != null && outdoorEventES.getFoodSales().equals(FOOD_SALES)) {
-          outdoorEventJson.setFoodSales(true);
-        }
         applicationJson.setEvent(outdoorEventJson);
         break;
     }
@@ -222,37 +171,27 @@ public class ApplicationMapper {
    * @param applicationJson Information that is mapped to search-domain object
    * @return created ApplicationTypeDataES object
    */
-  public ApplicationTypeDataES createApplicationTypeDataES(ApplicationJson applicationJson) {
-    // TODO: Perttu 13.7.16.: use generic JSON mapping instead of creating type specific mapping for every application type
-    switch (applicationJson.getType()) {
-      case OUTDOOREVENT:
-        OutdoorEventJson outdoorEventJson = (OutdoorEventJson) applicationJson.getEvent();
+  public List<ESFlatValue> createApplicationTypeDataES(ApplicationJson applicationJson) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
-        OutdoorEventES outdoorEvent = new OutdoorEventES();
-        outdoorEvent.setDescription(outdoorEventJson.getDescription());
-        outdoorEvent.setNature(outdoorEventJson.getNature());
-        outdoorEvent.setUrl(outdoorEventJson.getUrl());
-        outdoorEvent.setAttendees(outdoorEventJson.getAttendees());
-        outdoorEvent.setEndTime(outdoorEventJson.getEndTime());
-        outdoorEvent.setStartTime(outdoorEventJson.getStartTime());
-        outdoorEvent.setEndTime(outdoorEventJson.getEndTime());
-        outdoorEvent.setPricing(outdoorEventJson.getPricing());
-        outdoorEvent.setTimeExceptions(outdoorEventJson.getTimeExceptions());
-        outdoorEvent.setStructureArea(outdoorEventJson.getStructureArea());
-        outdoorEvent.setStructureDescription(outdoorEventJson.getStructureDescription());
-        outdoorEvent.setStructureStartTime(outdoorEventJson.getStructureStartTime());
-        outdoorEvent.setStructureEndTime(outdoorEventJson.getStructureEndTime());
-        if (outdoorEventJson.isFoodSales()) {
-          outdoorEvent.setFoodSales(FOOD_SALES);
-        }
-        if (outdoorEventJson.isEcoCompass()) {
-          outdoorEvent.setEcoCompass(ECO_COMPASS);
-        }
-        outdoorEvent.setMarketingProviders(outdoorEventJson.getMarketingProviders());
-        outdoorEvent.setFoodProviders(outdoorEventJson.getFoodProviders());
-        return outdoorEvent;
+    String json;
+    try {
+      json = objectMapper.writeValueAsString(applicationJson.getEvent());
+    } catch (JsonProcessingException e) {
+      logger.error("Unexpected error while mapping {} as JSON", applicationJson);
+      throw new RuntimeException(e);
     }
-    return null;
+
+    Map<String, Object> flattenedMap = new JsonFlattener(json).withSeparator('-').flattenAsMap();
+    Map<String, Object> flattenedMapNoNulls = flattenedMap.entrySet().stream()
+        .filter(e -> e.getValue() != null)
+        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    List<ESFlatValue> flatList = flattenedMapNoNulls.entrySet().stream()
+        .map(e -> ESFlatValue.mapValue(applicationJson.getType().name(), e.getKey(), e.getValue()))
+        .collect(Collectors.toList());
+    return flatList;
   }
 
   /**
@@ -276,6 +215,35 @@ public class ApplicationMapper {
     projectES.setInformation(applicationJson.getProject().getInformation());
     projectES.setType(applicationJson.getProject().getType());
     return projectES;
+  }
+
+  private LocationES createLocationES(LocationJson locationJson) {
+    if (locationJson != null && locationJson.getPostalAddress() != null) {
+      return new LocationES(
+          locationJson.getPostalAddress().getStreetAddress(),
+          locationJson.getPostalAddress().getPostalCode(),
+          locationJson.getPostalAddress().getCity());
+    } else {
+      return null;
+    }
+  }
+
+  private List<ContactES> createContactES(List<ContactJson> contacts) {
+    if (contacts != null) {
+      return contacts.stream()
+          .map(c -> new ContactES(c.getName()))
+          .collect(Collectors.toList());
+    } else {
+      return null;
+    }
+  }
+
+  private ApplicantES createApplicantES(ApplicantJson applicantJson) {
+    if (applicantJson != null) {
+      return new ApplicantES(applicantJson.getName());
+    } else {
+      return null;
+    }
   }
 
   private void mapProjectEStoJson(ApplicationJson applicationJson, ApplicationES applicationES) {

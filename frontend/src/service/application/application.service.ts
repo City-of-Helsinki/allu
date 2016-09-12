@@ -14,7 +14,7 @@ import {UIStateHub} from './../ui-state/ui-state-hub';
 import {ErrorUtil} from '../../util/error.util.ts';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status-change';
-import {error} from './../ui-state/errors';
+import {translations} from '../../util/translations';
 
 @Injectable()
 export class ApplicationService {
@@ -173,7 +173,7 @@ export class ApplicationService {
     this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
       .subscribe(
         response => this.uiState.addMessage('Application status changed to ' + ApplicationStatus[statusChange.status]),
-        err => this.uiState.addError(error.application.status.changeFailed)
+        err => this.uiState.addError(translations.application.error.statusChangeFailed)
       );
   }
 }

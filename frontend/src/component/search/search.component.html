@@ -1,28 +1,28 @@
 
 <div>
   <h1>HAKU</h1>
-
   <div class="row">
     <div class="input-field col m4 s6">
       <input placeholder="Hakemuksen nimi" id="applicationName"  type="text" [(ngModel)]="query.name">
       <label>Hakemuksen nimi</label>
     </div>
     <div class="input-field col m2 s6">
-      <select [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
+      <select disabled [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Hakemuksen tyyppi</option>
         <option *ngFor="let option of items" [value]="option">{{option}}</option>
       </select>
       <label>Hakemuksen tyyppi</label>
     </div>
     <div class="input-field col m2 s6">
-      <select [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
+      <!-- Disabled because status is not saved in the backend at the moment. Otherwise working solution -->
+      <select disabled [(ngModel)]="query.status" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Hakemuksen tila</option>
-        <option *ngFor="let option of items" [value]="option">{{option}}</option>
+        <option *ngFor="let option of getApplicationStatusStrings()" [value]="option">{{translations.application.status[option]}}</option>
       </select>
       <label>Hakemuksen tila</label>
     </div>
     <div class="input-field col m2 s6">
-      <select [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
+      <select disabled [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Kaupunginosa</option>
         <option *ngFor="let option of items" [value]="option">{{option}}</option>
       </select>
@@ -30,7 +30,7 @@
     </div>
     <div class="input-field col m2 s6">
       <select [(ngModel)]="query.handler" materialize="material_select" [materializeSelectOptions]="selectOptions">
-        <option value="" disabled selected>Hakemuksen käsittelijä</option>
+        <option value="" selected>Hakemuksen käsittelijä</option>
         <option *ngFor="let option of handlers" [value]="option">{{option}}</option>
       </select>
       <label>Hakemuksen käsittelijä</label>

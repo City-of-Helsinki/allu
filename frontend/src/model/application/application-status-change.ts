@@ -1,3 +1,5 @@
+import {translations} from '../../util/translations';
+
 export enum ApplicationStatus {
   PRE_RESERVED, // Alustava varaus
   CANCELLED, // Peruttu
@@ -10,20 +12,8 @@ export enum ApplicationStatus {
   FINISHED // Valmis
 }
 
-let statusNames = {
-  PRE_RESERVED: 'Alustava varaus',
-  CANCELLED: 'Peruttu',
-  PENDING: 'Vireillä',
-  HANDLING: 'Käsittelyssä',
-  DECISIONMAKING: 'Odottaa päätöstä',
-  DECISION: 'Päätetty',
-  REJECTED: 'Hylätty päätös',
-  RETURNED_TO_PREPARATION: 'Palautettu valmisteluun',
-  FINISHED: 'Valmis'
-};
-
 export function translateStatus(status: ApplicationStatus) {
-  return statusNames[ApplicationStatus[status]];
+  return translations.application.status[ApplicationStatus[status]];
 }
 
 export class ApplicationStatusChange {

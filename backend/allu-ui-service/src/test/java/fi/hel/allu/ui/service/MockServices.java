@@ -1,16 +1,17 @@
 package fi.hel.allu.ui.service;
 
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.geometrycollection;
-import static org.geolatte.geom.builder.DSL.ring;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
+import fi.hel.allu.model.domain.meta.StructureMeta;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ESFlatValue;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.*;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -18,36 +19,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.Organization;
-import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.model.domain.meta.AttributeDataType;
-import fi.hel.allu.model.domain.meta.AttributeMeta;
-import fi.hel.allu.model.domain.meta.StructureMeta;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.OutdoorEventES;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttributeMetaJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.CustomerJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.OrganizationJson;
-import fi.hel.allu.ui.domain.OutdoorEventJson;
-import fi.hel.allu.ui.domain.PersonJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
-import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.domain.StructureMetaJson;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import static org.geolatte.geom.builder.DSL.*;
 
 public abstract class MockServices {
   @Mock
@@ -386,27 +364,17 @@ public abstract class MockServices {
     return applicationES;
   }
 
-  public OutdoorEventES createApplicationTypeDataES() {
-    OutdoorEventES outdoorEventJson = new OutdoorEventES();
-    outdoorEventJson.setDescription("Outdoor event description, ES");
-    outdoorEventJson.setAttendees(1000);
-    outdoorEventJson.setStartTime(ZonedDateTime.now());
-    outdoorEventJson.setNature("Outdoor event nature, ES");
-    outdoorEventJson.setUrl("Outdoor event url, ES");
-    outdoorEventJson.setEcoCompass("Ekokompassi, ES");
-    outdoorEventJson.setTimeExceptions("Mock exceptions, ES");
-    outdoorEventJson.setFoodSales("Elintarvikemyynti, ES");
-    outdoorEventJson.setStructureArea(100);
-    outdoorEventJson.setPricing("Mock pricing, ES");
-    outdoorEventJson.setEntryFee(1233);
-    outdoorEventJson.setFoodProviders("Mock foodProviders, ES");
-    outdoorEventJson.setStructureDescription("Structure description, ES");
-    ZoneId zoneId = ZoneId.of("Europe/Helsinki");
-    ZonedDateTime zonedDateTime = ZonedDateTime.of(2016, 11, 30, 23, 45, 59, 1234, zoneId);
-    ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2016, 11, 30, 23, 45, 59, 1234, zoneId);
-    outdoorEventJson.setStartTime(zonedDateTime);
-    outdoorEventJson.setEndTime(zonedDateTime2);
-    return outdoorEventJson;
+  public List<ESFlatValue> createApplicationTypeDataES() {
+
+    List<ESFlatValue> esFlatValues = new ArrayList<>();
+    ZonedDateTime zonedDateTimeStart = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
+    ZonedDateTime zonedDateTimeEnd = ZonedDateTime.parse("2016-07-06T06:23:04.000Z");
+
+    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "startTime", zonedDateTimeStart.toString()));
+    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "endTime", zonedDateTimeEnd.toString()));
+    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "attendees", 1000L));
+    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "description", "Ulkoilmatapahtuman selitettä tässä."));
+    return esFlatValues;
   }
 
   public ResponseEntity<Person> createMockPersonResponse() {

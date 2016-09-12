@@ -4,19 +4,16 @@ import { MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 import {MaterializeDirective} from 'angular2-materialize';
 
-import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
 import {EventListener} from '../../event/event-listener';
 import {EventService} from '../../event/event.service';
 import {Event} from '../../event/event';
 
-import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {Application} from '../../model/application/application';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
-import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
-import {SearchService} from '../../service/search.service';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {ApplicationSearchEvent} from '../../event/search/application-search-event';
-
+import {translations} from '../../util/translations';
+import {ApplicationStatus} from '../../model/application/application-status-change';
 
 @Component({
   selector: 'search',
@@ -31,14 +28,11 @@ import {ApplicationSearchEvent} from '../../event/search/application-search-even
 export class SearchComponent implements EventListener, OnInit, OnDestroy {
   private results: Array<Application> = [];
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
+  // TODO: handlers should be fetched from some service later
   private handlers: Array<string> = [
-    'TestHandler',
-    'Toinen  Käsittelijä',
-    'Kolmas  Käsittelijä',
-    'Neljäs  Käsittelijä',
-    'Viides  Käsittelijä'];
+    'TestHandler'];
   private query: ApplicationSearchQuery = new ApplicationSearchQuery();
-
+  private translations = translations;
 
   constructor(private eventService: EventService, private router: Router) {
     this.results = [];
@@ -68,5 +62,15 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
   private search(): void {
     console.log('Search clicked', this.query);
     this.eventService.send(this, new ApplicationSearchEvent(this.query));
+  }
+
+  private getApplicationStatusStrings(): Array<string> {
+    let statusStrings: Array<string> = [];
+    for (let item in ApplicationStatus) {
+      if (isNaN(parseInt(item, 10))) {
+        statusStrings.push(item);
+      }
+    }
+    return statusStrings;
   }
 }

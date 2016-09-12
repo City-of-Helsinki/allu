@@ -58,12 +58,11 @@ public class SearchService {
    * @param queryString handler identifier that is used to find details
    * @return List of found application with details
    */
-  public List<ApplicationJson> searchAll(String queryString) {
+  public List<Integer> searchAll(String queryString) {
     ResponseEntity<ApplicationES[]> applicationResult = restTemplate.getForEntity(applicationProperties
         .getSearchServiceUrl(ApplicationProperties.PATH_SEARCH_APPLICATION_FIND_BY_QUERYSTRING), ApplicationES[].class, queryString);
-
-    return Arrays.stream(applicationResult.getBody()).map(applicationES -> applicationMapper.mapApplicationESToJson(new
-        ApplicationJson(), applicationES)).collect(Collectors.toList());
+    List<Integer> ids = Arrays.stream(applicationResult.getBody()).map(ApplicationES::getId).collect(Collectors.toList());
+    return ids;
   }
 
   /**
