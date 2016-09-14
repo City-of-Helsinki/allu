@@ -5,6 +5,7 @@
     - 9000 # allu-ui-service
     - 9010 # model-service
     - 9020 # search-service
+    - 9030 # pdf-service
     - 9200 # elasticsearch http
     - 9300 # elasticsearch tcp
 
@@ -16,6 +17,7 @@
       - 9000 # allu-ui-service
       - 9010 # model-service
       - 9020 # search-service
+      - 9030 # pdf-service
       - 9200 # elasticsearch http
       - 9300 # elasticsearch tcp
 
@@ -27,5 +29,6 @@
       - 9000 # allu-ui-service
       - 9010 # model-service
       - 9020 # search-service
+      - 9030 # pdf-service
       - 9200 # elasticsearch http
       - 9300 # elasticsearch tcp
