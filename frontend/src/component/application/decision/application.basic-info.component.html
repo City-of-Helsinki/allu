@@ -1,0 +1,42 @@
+<div class="row">
+    <md-card *ngIf="application">
+        <md-card-title>Hakemuksen perustiedot</md-card-title>
+        <md-card-content>
+            <div class="row">
+                <div class="col s6">
+                    <label>Hakemustyyppi</label>
+                    <div>{{application.type}}</div>
+                </div>
+                <div class="col s6">
+                    <label>Sijainti</label>
+                    <div [hidden]="!application">-</div>
+                    <div>{{application.location.postalAddress.streetAddress}}</div>
+                </div>
+                <div class="col s6">
+                    <label>Tapahtuman nimi</label>
+                    <div>{{application.name}}</div>
+                </div>
+                <div class="col s6">
+                    <label>Arvioitu aloitus</label>
+                    <div>{{application.event.startTime}}</div>
+                </div>
+                <div class="col s6">
+                    <label>Tapahtuman luonne</label>
+                    <div>{{application.name}}</div>
+                </div>
+                <div class="col s6">
+                    <label>Arvioitu päättyminen</label>
+                    <div>{{application.event.endTime}}</div>
+                </div>
+                <div class="col s6">
+                    <label>Hakemus saapunut</label>
+                    <div>{{application.creationTime}}</div>
+                </div>
+                <div class="col s6">
+                    <label>Käsittelijä</label>
+                    <div>{{application.handler}}</div>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>

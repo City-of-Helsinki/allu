@@ -185,31 +185,13 @@ public class ApplicationService {
   }
 
 
-  public void changeStatus(int applicationId, StatusType currentStatus) {
-    logger.debug("change status: application {}, current status {}, user {}", applicationId, currentStatus);
+  public void changeStatus(int applicationId, StatusType newStatus) {
+    logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     ApplicationJson applicationJson = findApplicationById(String.valueOf(applicationId));
     logger.debug("found application {}, current status {}, handler {}", applicationJson.getId(), applicationJson.getStatus(),
         applicationJson.getHandler());
 
-    if (currentStatus != applicationJson.getStatus()) {
-      throw new IllegalArgumentException("Given status and application status don't match");
-    }
-
-    switch (applicationJson.getStatus()) {
-      case PENDING:
-        applicationJson.setStatus(StatusType.HANDLING);
-        break;
-      case HANDLING:
-        applicationJson.setStatus(StatusType.DECISIONMAKING);
-        break;
-      case DECISIONMAKING:
-        applicationJson.setStatus(StatusType.DECISION);
-        applicationJson.setDecisionTime(ZonedDateTime.now());
-        break;
-      case DECISION:
-        applicationJson.setStatus(StatusType.SUPERVISION);
-        break;
-    }
+    applicationJson.setStatus(newStatus);
     updateApplication(applicationId, applicationJson);
   }
 

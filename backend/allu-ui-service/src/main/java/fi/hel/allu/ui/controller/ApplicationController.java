@@ -43,35 +43,6 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationService.updateApplication(id, applicationJson), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}/status/handling", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> changeStatusToHandling(@PathVariable int id) {
-    applicationService.changeStatus(id, StatusType.PENDING);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> changeStatusToDecisionMaking(@PathVariable int id) {
-    applicationService.changeStatus(id, StatusType.HANDLING);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{id}/status/decision", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-  public ResponseEntity<Void> changeStatusToDecision(@PathVariable int id) {
-    applicationService.changeStatus(id, StatusType.DECISIONMAKING);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{id}/status/supervision", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> changeStatusToSupervision(@PathVariable int id) {
-    applicationService.changeStatus(id, StatusType.DECISION);
-    return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<ApplicationJson> findByIdentifier(@PathVariable final String id) {
