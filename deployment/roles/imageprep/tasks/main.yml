@@ -1,4 +1,5 @@
 # TODO: add apt-get update to make sure everything is up-to-date
+- include: hosts.yml
 
 - include: firewall.yml
 
