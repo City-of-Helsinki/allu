@@ -6,5 +6,7 @@
   pre_tasks:
     - name: install python2 before other Ansible tasks, because Ansible modules depend on Python
       raw: apt-get -y install python-simplejson
+    - name: gather facts for later use
+      setup:
   roles:
     - imageprep
