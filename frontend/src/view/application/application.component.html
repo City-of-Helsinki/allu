@@ -24,7 +24,7 @@
         <md-input-container>
           <div class="row">
             <div class="col m12">
-              <select (change)="eventSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="subtype">
+              <select (change)="eventSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="subtypes" [(ngModel)]="subtype">
                 <option value="" disabled selected>Valitse tapahtuman tyyppi</option>
                 <option *ngFor="let type of subtypes" [value]="type.value">{{type.name}}</option>
               </select>
