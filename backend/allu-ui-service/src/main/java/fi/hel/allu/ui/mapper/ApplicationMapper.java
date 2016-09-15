@@ -138,6 +138,8 @@ public class ApplicationMapper {
         outdoorEventJson.setFoodProviders(outdoorEvent.getFoodProviders());
         outdoorEventJson.setMarketingProviders(outdoorEvent.getMarketingProviders());
         outdoorEventJson.setPricing(outdoorEvent.getPricing());
+        outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
+        outdoorEventJson.setHeavyStructure(outdoorEvent.isHeavyStructure());
         outdoorEventJson.setFoodSales(outdoorEvent.isFoodSales());
         applicationJson.setEvent(outdoorEventJson);
         break;
@@ -200,6 +202,8 @@ public class ApplicationMapper {
         outdoorEvent.setFoodSales(outdoorEventJson.isFoodSales());
         outdoorEvent.setMarketingProviders(outdoorEventJson.getMarketingProviders());
         outdoorEvent.setPricing(outdoorEventJson.getPricing());
+        outdoorEvent.setSalesActivity(outdoorEventJson.isSalesActivity());
+        outdoorEvent.setHeavyStructure(outdoorEventJson.isHeavyStructure());
         outdoorEvent.setFoodProviders(outdoorEventJson.getFoodProviders());
         outdoorEvent.setEntryFee(outdoorEventJson.getEntryFee());
         outdoorEvent.setEcoCompass(outdoorEventJson.isEcoCompass());

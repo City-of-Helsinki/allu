@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, Input} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
 import {Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
 
@@ -59,6 +59,8 @@ import {AttachmentInfo} from '../../../model/application/attachment-info';
 })
 
 export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
+  private _noPrice = false;
+
   private application: Application;
   private events: Array<any>;
   private applicantType: any;
@@ -230,11 +232,6 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     }
   }
 
-  showReasonForNoPrice() {
-    let event = <OutdoorEvent>this.application.event;
-    return event.nature === 'Open';
-  };
-
   eventTypeSelection(value: string) {
     console.log('Tapahtuman tyypiksi on valittu: ', value);
 
@@ -314,6 +311,21 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
    }
+
+  @Input()
+  set noPrice(noPrice: boolean) {
+    this._noPrice = noPrice;
+
+    if (!noPrice) {
+      let event = <OutdoorEvent>this.application.event;
+      event.salesActivity = false;
+      event.heavyStructure = false;
+    }
+  }
+
+  get noPrice() {
+    return this._noPrice;
+  }
 
    private currentAttachments(attachments: AttachmentInfo[]): void {
      this.attachments = attachments;

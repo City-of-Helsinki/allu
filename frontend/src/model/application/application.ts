@@ -33,26 +33,7 @@ export class Application {
     let contactPostalAddress = new PostalAddress(undefined, undefined, undefined);
     let contactPerson = new Person(undefined, undefined, undefined, contactPostalAddress, undefined, undefined);
     let contact = new Contact(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
-    let applicationTypeData = new OutdoorEvent(
-      undefined,
-      undefined,
-      undefined,
-      'OUTDOOREVENT',
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined,
-      undefined);
+    let applicationTypeData = new OutdoorEvent();
     return new
       Application(
         undefined,
@@ -103,8 +84,9 @@ export class Application {
       'Tapahtuma-ajalla ei ole poikkeuksia',
       100,
       0,
-      'DefenceOrPolice',
-      true,
+      undefined,
+      false,
+      false,
       false,
       true,
       'Tapahtumassa saattaa olla elintarviketoimijoita',
