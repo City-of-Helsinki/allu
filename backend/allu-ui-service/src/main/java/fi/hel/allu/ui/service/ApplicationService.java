@@ -1,13 +1,10 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +12,20 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.AttachmentInfoJson;
+import fi.hel.allu.ui.domain.ContactJson;
+import fi.hel.allu.ui.domain.DecisionJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.LocationQueryJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 @Service
 public class ApplicationService {
@@ -108,8 +115,7 @@ public class ApplicationService {
    * @param applicationId application identifier that is used to find details
    * @return Application details or empty application list in DTO
    */
-  // TODO: refactor... applicationId should be integer, no string!
-  public ApplicationJson findApplicationById(String applicationId) {
+  public ApplicationJson findApplicationById(int applicationId) {
     Application applicationModel = restTemplate.getForObject(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
     return getApplication(applicationModel);
@@ -187,12 +193,40 @@ public class ApplicationService {
 
   public void changeStatus(int applicationId, StatusType newStatus) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
-    ApplicationJson applicationJson = findApplicationById(String.valueOf(applicationId));
+    ApplicationJson applicationJson = findApplicationById(applicationId);
     logger.debug("found application {}, current status {}, handler {}", applicationJson.getId(), applicationJson.getStatus(),
         applicationJson.getHandler());
 
     applicationJson.setStatus(newStatus);
     updateApplication(applicationId, applicationJson);
+  }
+
+  /**
+   * Generate the decision PDF for given application and save it to model
+   * service
+   *
+   * @param applicationId
+   *          the application's ID
+   */
+  public void generateDecision(int applicationId) {
+    // TODO Implement -- currently nothing is saved and PDF is generated on
+    // request
+  }
+
+  /**
+   * Get the decision PDF for given application from the model service
+   *
+   * @param applicationId
+   *          the application's ID
+   * @return PDF data
+   */
+  public byte[] getDecision(int applicationId) {
+    // TODO: Move to generateDecision and implement here only query from model
+    ApplicationJson application = findApplicationById(applicationId);
+    DecisionJson decisionJson = new DecisionJson();
+    decisionJson.setApplication(application);
+    return restTemplate.postForObject(applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE),
+        decisionJson, byte[].class, "paatos");
   }
 
   private ApplicationJson getApplication(Application applicationModel) {
