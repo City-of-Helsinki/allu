@@ -17,6 +17,7 @@ export class ApplicationTypeDataMapper {
         backendEvent.entryFee,
         backendEvent.pricing,
         backendEvent.salesActivity,
+        backendEvent.heavyStructure,
         backendEvent.ecoCompass,
         backendEvent.foodSales,
         backendEvent.foodProviders,

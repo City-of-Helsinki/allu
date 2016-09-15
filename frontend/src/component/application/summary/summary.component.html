@@ -239,6 +239,55 @@
 
     <div class="col m12">
       <md-card>
+        <md-card-title>Rakenteet</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m6 no-padding">
+              <div class="col m6 height-fix-top">
+                <input type="checkbox" class="filled-in" id="structureIncluded" disabled="true" [checked]="application.event.structureArea"/>
+                <label for="structureIncluded" [class.summary-checkbox]="application.event.structureArea">Tapahtuma sisältää rakenteita</label>
+              </div>
+              <div class="input-field col m6">
+                <input id="structureArea" type="number" class="validate" step="any" [class.summary]="application.event.structureArea" [disabled]="true" [(ngModel)]="application.event.structureArea">
+                <label for="structureArea">Rakenteiden kokonaisneliömäärä</label>
+              </div>
+              <div class="input-field col m12">
+                <textarea id="structureDescription" class="materialize-textarea textarea" [class.summary]="application.event.structureDescription" disabled="true" [(ngModel)]="application.event.structureDescription"></textarea>
+                <label for="structureDescription">Rakenteiden kuvaus</label>
+              </div>
+
+            </div>
+            <div class="col m6 no-padding">
+              <div class="col m12 height-fix-top height-fix-bottom">
+                <input type="checkbox" class="filled-in" id="structureBuildDate" disabled="true" [checked]="application.event.structureStartTime || application.event.structureEndTime"/>
+                <label for="structureBuildDate" [class.summary-checkbox]="application.event.structureStartTime || application.event.structureEndTime">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
+              </div>
+              <div class="input-field col m12" [class.summary]="application.event.structureStartTime">
+                <label for="structureStartTime">Rakennuspäivämäärä</label>
+                <input id="structureStartTime"
+                       disabled="true"
+                       [(ngModel)]="application.event.structureStartTime"
+                       materialize="pickadate"
+                       [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+                       type="text" />
+              </div>
+              <div class="input-field col m12" [class.summary]="application.event.structureEndTime">
+                <label for="structureEndTime">Purkupäivämäärä</label>
+                <input id="structureEndTime"
+                       disabled="true"
+                       [(ngModel)]="application.event.structureEndTime"
+                       materialize="pickadate"
+                       [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+                       type="text" />
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <div class="col m12">
+      <md-card>
         <md-card-title>Hinnoitteluperusteet</md-card-title>
         <md-card-content>
           <div class="row">
@@ -334,55 +383,6 @@
               <div class="input-field col m12">
                 <textarea id="salesMarketingDetails" class="materialize-textarea" [class.summary]="application.event.marketingProviders" disabled="true" [(ngModel)]="application.event.marketingProviders"></textarea>
                 <label for="salesMarketingDetails">Myynti- tai mainostoiminnan kuvaus</label>
-              </div>
-            </div>
-          </div>
-        </md-card-content>
-      </md-card>
-    </div>
-
-    <div class="col m12">
-      <md-card>
-        <md-card-title>Rakenteet</md-card-title>
-        <md-card-content>
-          <div class="row">
-            <div class="col m6 no-padding">
-              <div class="col m6 height-fix-top">
-                <input type="checkbox" class="filled-in" id="structureIncluded" disabled="true" [checked]="application.event.structureArea"/>
-                <label for="structureIncluded" [class.summary-checkbox]="application.event.structureArea">Tapahtuma sisältää rakenteita</label>
-              </div>
-              <div class="input-field col m6">
-                <input id="structureArea" type="number" class="validate" step="any" [class.summary]="application.event.structureArea" [disabled]="true" [(ngModel)]="application.event.structureArea">
-                <label for="structureArea">Rakenteiden kokonaisneliömäärä</label>
-              </div>
-              <div class="input-field col m12">
-                <textarea id="structureDescription" class="materialize-textarea textarea" [class.summary]="application.event.structureDescription" disabled="true" [(ngModel)]="application.event.structureDescription"></textarea>
-                <label for="structureDescription">Rakenteiden kuvaus</label>
-              </div>
-
-            </div>
-            <div class="col m6 no-padding">
-              <div class="col m12 height-fix-top height-fix-bottom">
-                <input type="checkbox" class="filled-in" id="structureBuildDate" disabled="true" [checked]="application.event.structureStartTime || application.event.structureEndTime"/>
-                <label for="structureBuildDate" [class.summary-checkbox]="application.event.structureStartTime || application.event.structureEndTime">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
-              </div>
-              <div class="input-field col m12" [class.summary]="application.event.structureStartTime">
-                <label for="structureStartTime">Rakennuspäivämäärä</label>
-                <input id="structureStartTime"
-                disabled="true"
-                [(ngModel)]="application.event.structureStartTime"
-                materialize="pickadate"
-                [materializeParams]="[{selectMonths: true, selectYears: 15}]"
-                type="text" />
-              </div>
-              <div class="input-field col m12" [class.summary]="application.event.structureEndTime">
-                <label for="structureEndTime">Purkupäivämäärä</label>
-                <input id="structureEndTime"
-                disabled="true"
-                [(ngModel)]="application.event.structureEndTime"
-                materialize="pickadate"
-                [materializeParams]="[{selectMonths: true, selectYears: 15}]"
-                type="text" />
               </div>
             </div>
           </div>

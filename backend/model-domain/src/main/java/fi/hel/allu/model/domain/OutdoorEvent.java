@@ -20,6 +20,8 @@ public class OutdoorEvent extends Event {
   private int entryFee;
   private boolean ecoCompass;
   private String pricing;
+  private boolean salesActivity;
+  private boolean heavyStructure;
   private boolean foodSales;
   private String foodProviders;
   private String marketingProviders;
@@ -128,6 +130,28 @@ public class OutdoorEvent extends Event {
 
   public void setPricing(String pricing) {
     this.pricing = pricing;
+  }
+
+  /**
+   * in Finnish: Sisältää myynti tai markkinointitoimintaa
+   */
+  public boolean isSalesActivity() {
+    return salesActivity;
+  }
+
+  public void setSalesActivity(boolean salesActivity) {
+    this.salesActivity = salesActivity;
+  }
+
+  /**
+   * in Finnish: Sisältää raskaita rakenteita
+   */
+  public boolean isHeavyStructure() {
+    return heavyStructure;
+  }
+
+  public void setHeavyStructure(boolean heavyStructure) {
+    this.heavyStructure = heavyStructure;
   }
 
   /**
