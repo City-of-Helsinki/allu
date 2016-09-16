@@ -101,12 +101,10 @@ export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
 
   typeSelection(value) {
     this.subtype = undefined;
-    this.subtypes = undefined;
-    for (let application of this.applications) {
-      if (value === application.value) {
-        this.subtypes = application.subtypes;
-      }
-    }
+    this.subtypes = this.applications
+      .filter(application => value === application.value)
+      .map(application => application.subtypes)
+      .shift();
   };
 
   eventSelection(value) {
