@@ -12,6 +12,8 @@ public class ApplicationProperties {
   private String modelServicePort;
   private String searchServiceHost;
   private String searchServicePort;
+  private String pdfServiceHost;
+  private String pdfServicePort;
   private String geocodeUrl;
   private String streetSearchUrl;
   private String wfsUsername;
@@ -22,6 +24,8 @@ public class ApplicationProperties {
                                @Value("${model.service.port}") @NotEmpty String modelServicePort,
                                @Value("${search.service.host}") @NotEmpty String searchServiceHost,
                                @Value("${search.service.port}") @NotEmpty String searchServicePort,
+                               @Value("${pdf.service.host}") @NotEmpty String pdfServiceHost,
+                               @Value("${pdf.service.port}") @NotEmpty String pdfServicePort,
                                @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
                                @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
                                @Value("${wfs.username}") @NotEmpty String wfsUsername,
@@ -30,6 +34,8 @@ public class ApplicationProperties {
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
     this.searchServicePort = searchServicePort;
+    this.pdfServiceHost = pdfServiceHost;
+    this.pdfServicePort = pdfServicePort;
     this.geocodeUrl = geocodeUrl;
     this.streetSearchUrl = streetSearchUrl;
     this.wfsUsername = wfsUsername;
@@ -245,9 +251,16 @@ public class ApplicationProperties {
 
 
   /**
-   * Create absolute url to model-service. Host and port values are read from the application.properties.
+   * PDF-service path to generate pdf
+   */
+  public static final String PATH_PDF_GENERATE = "/generate?stylesheet={stylesheet}";
+
+  /**
+   * Create absolute url to model-service. Host and port values are read from
+   * the application.properties.
    *
-   * @param path resource path that is added to url after host and port values
+   * @param path
+   *          resource path that is added to url after host and port values
    * @return absolute url to model-service resource
    */
   public String getModelServiceUrl(String path) {
@@ -265,7 +278,19 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return  url to request metadata from model service.
+   * Create absolute url to pdf-service. Host and port values are read from the
+   * application.properties.
+   *
+   * @param path
+   *          resource path that is added to url after host and port values
+   * @return absolute url to pdf-service resource
+   */
+  public String getPdfServiceUrl(String path) {
+    return PATH_PREFIX + pdfServiceHost + ":" + pdfServicePort + path;
+  }
+
+  /**
+   * @return url to request metadata from model service.
    */
   public String getMetadataUrl() {
     return PATH_PREFIX + modelServiceHost + ":" + modelServicePort + "/meta/{applicationType}";
