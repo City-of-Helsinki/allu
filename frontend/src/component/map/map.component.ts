@@ -206,7 +206,9 @@ export class MapComponent implements EventListener {
         polygon: {
           shapeOptions: {
             color: '#BA1200'
-          }
+          },
+          allowIntersection: false,
+          showArea: true
         },
         marker: false
       },
