@@ -8,7 +8,7 @@ import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {SearchbarFilter} from '../../event/search/searchbar-filter';
 import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
 import {MapHub} from '../../service/map-hub';
-import {ApplicationHub} from '../../service/application-hub';
+import {ApplicationHub} from '../../service/application/application-hub';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {UIState} from '../../service/ui-state/ui-state';
@@ -31,7 +31,7 @@ declare var Materialize: any;
 
 export class SearchbarComponent implements OnInit {
 
-  @Output() searchUpdated = new EventEmitter();
+  @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
   @Input() search: string;
 
   private pickadateParams = PICKADATE_PARAMETERS;
@@ -52,6 +52,7 @@ export class SearchbarComponent implements OnInit {
     let filter = new SearchbarFilter(this.search, this._startDate, this._endDate);
 
     this.mapHub.addSearch(this.search);
+    this.searchUpdated.emit(filter);
     this.applicationHub.addSearchFilter(filter);
   }
 

@@ -18,6 +18,7 @@ import {Application} from '../../../model/application/application';
 import {EventService} from '../../../event/event.service';
 import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
 import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application-added-announce-event';
+import {LocationState} from '../../../service/application/location-state';
 
 
 @Component({
@@ -49,10 +50,9 @@ export class PromotionEventComponent implements EventListener, OnInit, OnDestroy
   private billingTypes: Array<any>;
   private noPriceReasons: Array<any>;
 
-
-  constructor(private eventService: EventService) {
-    // this.application = Application.emptyApplication();
-    this.application = Application.preFilledApplication();
+  constructor(private eventService: EventService, locationState: LocationState) {
+    this.application = Application.prefilledApplication();
+    this.application.location = locationState.location;
   };
 
   ngOnInit(): any {

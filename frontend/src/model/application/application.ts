@@ -13,47 +13,42 @@ import {AttachmentInfo} from './attachment-info';
 
 export class Application {
 
+  constructor()
   constructor(
-    public id: number,
-    public project: Project,
-    public handler: string,
-    public status: string,
-    public type: string,
-    public name: string,
-    public event: ApplicationTypeData,
-    public metadata: StructureMeta,
-    public creationTime: Date,
-    public applicant: Applicant,
-    public contactList: Array<Contact>,
-    public location: Location,
-    public attachmentList: Array<AttachmentInfo>) {}
+    id: number,
+    project: Project,
+    handler: string,
+    status: string,
+    type: string,
+    name: string,
+    event: ApplicationTypeData,
+    metadata: StructureMeta,
+    creationTime: Date,
+    applicant: Applicant,
+    contactList: Array<Contact>,
+    location: Location,
+    attachmentList: Array<AttachmentInfo>)
+  constructor(
+    public id?: number,
+    public project?: Project,
+    public handler?: string,
+    public status?: string,
+    public type?: string,
+    public name?: string,
+    public event?: ApplicationTypeData,
+    public metadata?: StructureMeta,
+    public creationTime?: Date,
+    public applicant?: Applicant,
+    public contactList?: Array<Contact>,
+    public location?: Location,
+    public attachmentList?: Array<AttachmentInfo>) {
 
-  public static emptyApplication(): Application {
-    let applicant = new Applicant(undefined, undefined, false, undefined, undefined);
-    let contactPostalAddress = new PostalAddress(undefined, undefined, undefined);
-    let contactPerson = new Person(undefined, undefined, undefined, contactPostalAddress, undefined, undefined);
-    let contact = new Contact(undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined);
-    let applicationTypeData = new OutdoorEvent();
-    return new
-      Application(
-        undefined,
-        undefined,
-        undefined,
-        undefined,
-        'OUTDOOREVENT',
-        undefined,
-        applicationTypeData,
-        undefined,
-        undefined,
-        applicant,
-        [contact],
-        undefined,
-        undefined);
+    this.location = location || new Location();
+    this.applicant = applicant || new Applicant();
   }
 
-  public static preFilledApplication(): Application {
+  public static prefilledApplication(): Application {
     let applicantPostalAddress = new PostalAddress('Mikonkatu 15 B', '00200', 'Helsinki');
-    let applicantPerson = new Person(undefined, 'hakija ihminen', '020202-1234', applicantPostalAddress, 'hakija@ihminen.fi', '0201234567');
     let applicantOrganization = new Organization(
       undefined,
       'Hakija Inc.',
@@ -62,9 +57,7 @@ export class Application {
       'hakijainc@hotmail.com',
       '112');
     let applicant = new Applicant(undefined, 'COMPANY', true, undefined, applicantOrganization);
-    // let applicant = new Applicant(undefined, 'PERSON', true, applicantPerson, undefined);
-    let contactPostalAddress = new PostalAddress('Mikonkatu 15 C', '00300', 'Helsinki');
-    let contactPerson = new Person(undefined, 'kontakti ihminen', '030303-1234', contactPostalAddress, 'kontakti@ihminen.fi', '0301234567');
+
     let contact = new Contact(
       undefined,
       undefined,
@@ -95,19 +88,14 @@ export class Application {
       'Paikalle rakennetaan linna',
       undefined,
       new Date());
-    return new Application(
-      undefined,
-      undefined,
-      'TestHandler',
-      undefined,
-      'OUTDOOREVENT',
-      'Ulkoilmatapahtumat tutuksi!',
-      applicationTypeData,
-      undefined,
-      undefined,
-      applicant,
-      [contact],
-      undefined,
-      undefined);
+
+    let app = new Application();
+    app.handler = 'TestHandler';
+    app.type = 'OUTDOOREVENT';
+    app.name = 'Ulkoilmatapahtumat tutuksi!';
+    app.event = applicationTypeData;
+    app.contactList = [contact];
+    app.applicant = applicant;
+    return app;
   }
 }

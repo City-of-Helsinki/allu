@@ -3,7 +3,7 @@ import {Task} from '../../service/task/task';
 import {EventService} from '../../event/event.service';
 import {EventListener} from '../../event/event-listener';
 import {Event} from '../../event/event';
-import {ApplicationService} from '../../service/application.service';
+import {ApplicationService} from '../../service/application/application.service.ts';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
 import {Application} from '../../model/application/application';

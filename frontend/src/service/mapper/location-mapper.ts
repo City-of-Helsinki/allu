@@ -7,14 +7,16 @@ export class LocationMapper {
       new Location(
         backendLocation.id,
         backendLocation.geometry,
-        backendLocation.postalAddress) : undefined;
+        backendLocation.postalAddress,
+        backendLocation.info) : undefined;
   }
   public static mapFrontend(location: Location): BackendLocation {
     return (location) ?
     {
       id: location.id,
       geometry: location.geometry,
-      postalAddress: location.postalAddress
+      postalAddress: location.postalAddress,
+      info: location.info
     } : undefined;
   }
 }

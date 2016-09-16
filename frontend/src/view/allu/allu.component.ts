@@ -19,7 +19,7 @@ import {LoginRouterOutlet} from '../../component/login/login-router-outlet.compo
 import {TaskManagerService} from '../../service/task/task-manager.service';
 import {SearchService} from '../../service/search.service';
 import {GeolocationService} from '../../service/geolocation.service';
-import {ApplicationService} from '../../service/application.service';
+import {ApplicationService} from '../../service/application/application.service.ts';
 
 @Component({
   selector: 'allu',

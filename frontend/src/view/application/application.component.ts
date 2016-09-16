@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ROUTER_DIRECTIVES, RouteConfig, Router} from '@angular/router-deprecated';
 
 import {MdToolbar} from '@angular2-material/toolbar';
@@ -13,8 +13,6 @@ import {PromotionEventComponent} from '../../component/application/promotion-eve
 
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
-import {EventListener} from '../../event/event-listener';
-import {EventService} from '../../event/event.service';
 
 @Component({
   selector: 'application',
@@ -39,7 +37,7 @@ import {EventService} from '../../event/event.service';
   { path: '/promotion-event', as: 'PromotionEventComponent', component: PromotionEventComponent }
 ])
 
-export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
+export class ApplicationComponent implements OnInit {
   public applications: any;
   private types: string;
   private subtypes: any;
@@ -47,7 +45,7 @@ export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
   private progressStep: number;
   private progressMode: number;
 
-  constructor(public router: Router, private eventService: EventService) {
+  constructor(public router: Router) {
     this.applications = [
       {
         name: 'Katutyö',
@@ -77,26 +75,17 @@ export class ApplicationComponent implements EventListener, OnInit, OnDestroy {
   };
 
   ngOnInit(): any {
-    this.eventService.subscribe(this);
-    if (this.router.currentInstruction.component.routeName !== 'Type') {
-      for (let application of this.applications) {
-        for (let subtype of application.subtypes) {
-          if (subtype.value === this.router.currentInstruction.component.routeName) {
-            this.types = application.value;
-            this.subtypes = application.subtypes;
-            this.subtype = this.router.currentInstruction.component.routeName;
-          }
-        }
-      }
+    let routeName = this.router.currentInstruction.component.routeName;
 
+    if (routeName !== 'Type') {
+      this.applications
+        .filter(application => application.subtypes.some(subtype => subtype.value === routeName))
+        .foreach(application => {
+          this.types = application.value;
+          this.subtypes = application.subtypes;
+          this.subtype = routeName;
+        });
     }
-  };
-
-  ngOnDestroy(): any {
-    this.eventService.unsubscribe(this);
-  }
-
-  public handle(event: Event): void {
   };
 
   typeSelection(value) {

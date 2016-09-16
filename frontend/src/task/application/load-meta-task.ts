@@ -3,7 +3,7 @@ import {Task} from '../../service/task/task';
 import {EventService} from '../../event/event.service';
 import {EventListener} from '../../event/event-listener';
 import {Event} from '../../event/event';
-import {ApplicationService} from '../../service/application.service';
+import {ApplicationService} from '../../service/application/application.service.ts';
 import {ErrorEvent} from '../../event/error-event';
 import {MetaLoadEvent} from '../../event/load/meta-load-event';
 import {StructureMeta} from '../../model/application/structure-meta';

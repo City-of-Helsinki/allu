@@ -1,5 +1,5 @@
 <progressbar [step]="progressStep" [mode]="progressMode"></progressbar>
-<div materialize class="row">
+<div materialize class="row" *ngIf="application">
   <div class="col m6 no-padding-right">
     <md-card>
       <md-card-title>Hakemuksen tyyppi</md-card-title>

@@ -8,7 +8,7 @@
           <div class="col m12">
             <searchbar (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
             <div class="input-field col m12">
-              <input id="info" type="text" class="" [(ngModel)]="info">
+              <input id="info" type="text" class="" [(ngModel)]="locationState.location.info">
               <label for="info">Lisätietoja paikasta</label>
             </div>
             <div class="input-field col m8">
@@ -30,7 +30,7 @@
           </div>
           <div class="col m12">
             <div class="mapcontainer">
-              <map [draw]="true" [selection]="true" [editedApplicationId]="application.id"></map>
+              <map [draw]="true" [selection]="true" [editedApplicationId]="id"></map>
             </div>
           </div>
         </div>

@@ -33,6 +33,7 @@ import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
 import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
 import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
+import {LocationState} from '../../../service/application/location-state';
 
 
 @Component({
@@ -78,10 +79,13 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
 
   private meta: StructureMeta;
 
-  constructor(private eventService: EventService, private router: Router, private attachmentService: AttachmentService) {
+  constructor(private eventService: EventService, private router: Router, private attachmentService: AttachmentService,
+              private locationState: LocationState) {
     // TODO:remove preFilledApplication
-    // this.application = Application.emptyApplication();
-    this.application = Application.preFilledApplication();
+    this.application = Application.prefilledApplication();
+    this.application.location = locationState.location;
+
+    console.log('outdoor-event.application', this.application);
 
     this.events = [
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
@@ -232,34 +236,9 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     }
   }
 
-  eventTypeSelection(value: string) {
-    console.log('Tapahtuman tyypiksi on valittu: ', value);
-
-  }
-
   applicantTypeSelection(value: string) {
     this.applicantNameSelection = this.applicantText[value].name;
     this.applicantIdSelection = this.applicantText[value].id;
-  }
-
-  applicantCountrySelection(value: string) {
-    console.log('Hakijan maaksi on valittu: ', value);
-  }
-
-  saveToRegistry(value: string) {
-    console.log('Hakijan maaksi on valittu: ', value);
-  }
-
-  newContact(value: string) {
-    console.log('Uudeksi yhteyshenkilöksi on valittu: ', value);
-  }
-
-  billingTypeSelection(value: string) {
-    console.log('Laskutustavaksi on valittu: ', value);
-  }
-
-  billingCountrySelection(value: string) {
-    console.log('Hakijan maaksi on valittu: ', value);
   }
 
   save(application: Application) {
@@ -300,16 +279,9 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     // Save application
     console.log('Saving application', application);
     application.metadata = this.meta;
-    let features = JSON.parse(localStorage.getItem('features'));
-    if (features) {
-      if (!application.location) {
-        application.location = new Location(undefined, undefined, undefined);
-      }
-      application.location.geometry = features;
-      localStorage.removeItem('features');
-    }
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
+    this.locationState.clear();
    }
 
   @Input()
