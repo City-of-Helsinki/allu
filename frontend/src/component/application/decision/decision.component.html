@@ -1,10 +1,18 @@
 <progressbar [step]="progressStep" [mode]="progressMode"></progressbar>
-<div class="row">
+<div class="row content-main">
     <div class="col s4">
         <application-basic-info [application]="application"></application-basic-info>
         <decision-actions [application]="application"></decision-actions>
     </div>
-    <div class="col s8">
-        Main content
+    <div class="col s8 content-pdf" *ngIf="pdfLoaded">
+        <object data="{{pdfUrl}}" type="application/pdf" height="100%" width="100%">
+            <p>Päätöksen näyttäminen ei onnistu selaimellasi. Voit ladata sen <a href="{{pdfUrl}}">tästä</a></p>
+        </object>
+    </div>
+    <div class="col s8" *ngIf="!pdfLoaded">
+        <div class="progress">
+            <div class="indeterminate"></div>
+        </div>
+        <div class="center">Ladataan päätöstä</div>
     </div>
 </div>

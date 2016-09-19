@@ -17,6 +17,8 @@ import {ApplicationHub} from './service/application/application-hub';
 import {UIStateHub} from './service/ui-state/ui-state-hub';
 import {AttachmentService} from './service/attachment-service';
 import {LocationState} from './service/application/location-state';
+import {DecisionHub} from './service/decision/decision-hub';
+import {DecisionService} from './service/decision/decision.service';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -35,6 +37,8 @@ bootstrap(AlluComponent, [
   LocationState,
   UIStateHub,
   AttachmentService,
+  DecisionService,
+  DecisionHub,
   provide(
     APP_BASE_HREF, { useValue: '/' }),
   provide(
