@@ -4,7 +4,7 @@ import {RouteParams} from '@angular/router-deprecated';
 import {ProgressbarComponent, ProgressStep, ProgressMode} from '../../progressbar/progressbar.component';
 import {ApplicationBasicInfoComponent} from '../decision/application.basic-info.component';
 import {DecisionActionsComponent} from '../decision/decision-actions.component';
-import {ApplicationHub} from '../../../service/application-hub';
+import {ApplicationHub} from '../../../service/application/application-hub';
 import {Application} from '../../../model/application/application';
 
 @Component({

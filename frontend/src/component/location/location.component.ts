@@ -30,6 +30,7 @@ import 'proj4leaflet';
 import 'leaflet';
 import {MapUtil} from '../../service/map.util.ts';
 import {SearchbarFilter} from '../../event/search/searchbar-filter';
+import {LocationState} from '../../service/application/location-state';
 
 enum HasChanges {
   NO,
@@ -64,7 +65,6 @@ enum HasChanges {
 export class LocationComponent implements EventListener {
   private application: Application;
   private id: number;
-  private features: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>;
   private hasChanges: HasChanges = HasChanges.NO;
   private rentingPlace: any;
   private sections: any;
@@ -72,7 +72,12 @@ export class LocationComponent implements EventListener {
   private progressStep: number;
   private progressMode: number;
 
-  constructor(private eventService: EventService, private mapService: MapUtil, private router: Router, params: RouteParams) {
+  constructor(
+    private locationState: LocationState,
+    private eventService: EventService,
+    private mapService: MapUtil,
+    private router: Router,
+    params: RouteParams) {
     // A location of a certain application must be editable. This means if there is an id associated with the route, it should go there.
     // If there is no parameter id, this.id will be 0.
     this.id = Number(params.get('id'));
@@ -82,30 +87,40 @@ export class LocationComponent implements EventListener {
     this.rentingPlace = [{name: 'Paikka A', value: 'a'}, {name: 'Paikka B', value: 'b'}, {name: 'Paikka C', value: 'c'}];
     this.sections = [{name: 'Lohko A', value: 'a'}, {name: 'Lohko B', value: 'b'}, {name: 'Lohko C', value: 'c'}];
     this.area = undefined;
+    this.application = new Application();
+    this.locationState.location = new Location();
   };
+
+  ngOnInit() {
+    this.eventService.subscribe(this);
+    let filter = new ApplicationLoadFilter();
+    if (this.id) {
+      filter.applicationId = this.id;
+      this.eventService.send(this, new ApplicationsLoadEvent(filter));
+    }
+  }
+
+  ngOnDestroy() {
+    this.eventService.unsubscribe(this);
+  }
 
   public handle(event: Event): void {
     if (event instanceof ShapeAnnounceEvent) {
       if (event.shape.features.length) {
-        console.log('LocationComponent.handle ShapeAnnounceEvent', event.shape.features);
-        let singleCoordinate = event.shape.features[0].geometry.coordinates[0][0];
-        console.log('Geometry coordinate', singleCoordinate);
-        let myProj = this.mapService.getEPSG3879();
-        console.log('projected coordinate', myProj.projection.project(new L.LatLng(singleCoordinate[1], singleCoordinate[0])));
         let saEvent = <ShapeAnnounceEvent>event;
-        this.features = saEvent.shape;
-        this.hasChanges = HasChanges.YES;
+        this.locationState.location.geometry = this.mapService.featureCollectionToGeometryCollection(saEvent.shape);
       } else {
-        // All shapes have been deleted
-        this.features = undefined;
-        this.hasChanges = HasChanges.YES;
+        this.locationState.location.geometry = undefined;
       }
+      this.hasChanges = HasChanges.YES;
     } else if (event instanceof ApplicationsAnnounceEvent) {
       let aaEvent = <ApplicationsAnnounceEvent> event;
       // we're only interested about applications matching the application being edited
       // TODO: Is this necessary any more?
       if (aaEvent.applications.length === 1 && aaEvent.applications[0].id === this.id) {
         this.application = aaEvent.applications[0];
+        this.locationState.location = this.application.location || new Location();
+
         this.eventService.send(this, new ApplicationSelectionEvent(this.application));
         if (this.hasChanges === HasChanges.PENDING) {
           this.hasChanges = HasChanges.NO;
@@ -124,8 +139,9 @@ export class LocationComponent implements EventListener {
   }
 
   searchUpdated(filter: SearchbarFilter) {
-    this.application.location = this.createOrGetLocation();
-    this.application.location.postalAddress.streetAddress = filter.search;
+    this.locationState.location.postalAddress.streetAddress = filter.search;
+    this.locationState.startDate = filter.startDate;
+    this.locationState.endDate = filter.endDate;
   }
 
 
@@ -135,48 +151,14 @@ export class LocationComponent implements EventListener {
       console.log('Saving location for application id: ', this.id);
 
       if (this.hasChanges === HasChanges.YES) {
-        if (this.features) {
-          // For existing applications, which do not have a location
-          this.application.location = this.createOrGetLocation();
-          this.application.location.geometry = this.mapService.featureCollectionToGeometryCollection(this.features);
-        } else {
-          // Location is removed entirely
-          this.application.location = undefined;
-        }
-        console.log('this.application', this.application);
         let saveEvent = new ApplicationSaveEvent(this.application);
         this.hasChanges = HasChanges.PENDING;
+        this.application.location = this.locationState.location;
         this.eventService.send(this, saveEvent);
       }
       // TODO: disable save button
     } else {
-      // No application to save location data to
-      if (this.hasChanges === HasChanges.YES && this.features) {
-        localStorage.setItem('features', JSON.stringify(this.mapService.featureCollectionToGeometryCollection(this.features)));
-      } else {
-        localStorage.removeItem('features');
-      }
       this.router.navigate(['/Applications/Type']);
     }
-  }
-
-  ngOnInit() {
-    this.eventService.subscribe(this);
-    let filter = new ApplicationLoadFilter();
-    if (this.id) {
-      filter.applicationId = this.id;
-      this.eventService.send(this, new ApplicationsLoadEvent(filter));
-    }
-    this.application = Application.emptyApplication();
-  }
-
-  ngOnDestroy() {
-    this.eventService.unsubscribe(this);
-  }
-
-  private createOrGetLocation(): Location {
-    return this.application.location
-      ? this.application.location
-      : new Location(undefined, undefined, new PostalAddress(undefined, undefined, undefined));
   }
 }

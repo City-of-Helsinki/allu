@@ -75,9 +75,6 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
 
   constructor(private eventService: EventService, params: RouteParams) {
     this.id = Number(params.get('id'));
-
-    // this.application = Application.emptyApplication();
-    this.application = Application.preFilledApplication();
     this.events = [
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
       {name: 'Muu', value: 'Other'}

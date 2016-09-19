@@ -5,7 +5,7 @@ import '../../../rxjs-extensions.ts';
 import {MdButton} from '@angular2-material/button';
 
 import {Application} from '../../../model/application/application';
-import {ApplicationHub} from '../../../service/application-hub';
+import {ApplicationHub} from '../../../service/application/application-hub';
 import {ApplicationStatusChange, ApplicationStatus} from '../../../model/application/application-status-change';
 import {DecisionModalComponent} from './decision-modal.component';
 import {MaterializeDirective} from 'angular2-materialize';

@@ -2,12 +2,12 @@ import {Injectable, OnInit} from '@angular/core';
 
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable}     from 'rxjs/Observable';
-import '../rxjs-extensions.ts';
+import '../../rxjs-extensions.ts';
 
-import {Application} from '../model/application/application';
-import {SearchbarFilter} from '../event/search/searchbar-filter';
-import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery';
-import {ApplicationStatusChange} from '../model/application/application-status-change';
+import {Application} from '../../model/application/application';
+import {SearchbarFilter} from '../../event/search/searchbar-filter';
+import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
+import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {Subject} from 'rxjs/Subject';
 
 export type ApplicationSearch = ApplicationLocationQuery | number;

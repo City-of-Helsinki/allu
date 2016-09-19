@@ -19,7 +19,7 @@ import {GeocoordinatesLoadEvent} from '../../event/load/geocoordinates-load-even
 import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
 import {MapHub} from '../../service/map-hub';
 import {Geocoordinates} from '../../model/common/geocoordinates';
-import {ApplicationHub} from '../../service/application-hub';
+import {ApplicationHub} from '../../service/application/application-hub';
 import {Application} from '../../model/application/application';
 
 @Component({

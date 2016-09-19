@@ -9,13 +9,14 @@ import {GeocodingService} from './service/geocoding.service';
 import {EventService} from './event/event.service';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 import {TaskManagerService} from './service/task/task-manager.service';
-import {ApplicationService} from './service/application.service';
+import {ApplicationService} from './service/application/application.service.ts';
 import {GeolocationService} from './service/geolocation.service';
 import {SearchService} from './service/search.service';
 import {MapHub} from './service/map-hub';
-import {ApplicationHub} from './service/application-hub';
+import {ApplicationHub} from './service/application/application-hub';
 import {UIStateHub} from './service/ui-state/ui-state-hub';
 import {AttachmentService} from './service/attachment-service';
+import {LocationState} from './service/application/location-state';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
@@ -31,6 +32,7 @@ bootstrap(AlluComponent, [
   MapHub,
   GeolocationService,
   ApplicationHub,
+  LocationState,
   UIStateHub,
   AttachmentService,
   provide(

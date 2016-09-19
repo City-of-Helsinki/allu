@@ -4,4 +4,5 @@ export interface BackendLocation {
   id: number;
   geometry: GeoJSON.GeometryCollection;
   postalAddress: BackendPostalAddress;
+  info: string;
 }

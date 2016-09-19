@@ -16,7 +16,7 @@ import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-an
 import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
 import {SearchbarUpdateEvent} from '../../../event/search/searchbar-updated-event';
 import {SearchbarFilter} from '../../../event/search/searchbar-filter';
-import {ApplicationHub} from '../../../service/application-hub';
+import {ApplicationHub} from '../../../service/application/application-hub';
 
 
 @Component({
