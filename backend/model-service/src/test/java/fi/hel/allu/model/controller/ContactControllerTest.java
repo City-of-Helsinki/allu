@@ -1,10 +1,13 @@
-package fi.hel.allu.model;
+package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.OrganizationDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

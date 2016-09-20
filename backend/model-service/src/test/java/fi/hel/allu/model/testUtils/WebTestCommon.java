@@ -1,10 +1,9 @@
-package fi.hel.allu.model;
+package fi.hel.allu.model.testUtils;
 
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.sql.SQLException;
 import java.util.Arrays;
 
 import org.junit.Assert;
@@ -22,8 +21,15 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import fi.hel.allu.model.ModelApplication;;
+
+/**
+ * Common routines for testing Web components (i.e., controllers)
+ *
+ * @author kimmo
+ */
 @Component
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
@@ -50,14 +56,14 @@ public class WebTestCommon {
   }
 
   @Autowired
-  private WebTestSqlRunner webTestSqlRunner;
+  private TestCommon testCommon;
 
   /*
    * Setup: creates mockMvc
    */
   public void setup() throws Exception {
     mockMvc = webAppContextSetup(webApplicationContext).build();
-    deleteAllData();
+    testCommon.deleteAllData();
   }
 
   /*
@@ -88,10 +94,6 @@ public class WebTestCommon {
     return mapper.readValue(resultString, theClass);
   }
 
-  private void deleteAllData() throws SQLException {
-    webTestSqlRunner.runSql(DELETE_ALL_DATA);
-  }
-
   @SuppressWarnings("unchecked")
   private String json(Object o) throws IOException {
     MockHttpOutputMessage mockHttpOutputMessage = new MockHttpOutputMessage();
@@ -99,17 +101,4 @@ public class WebTestCommon {
     return mockHttpOutputMessage.getBodyAsString();
   }
 
-  private static final String[] DELETE_ALL_DATA = new String[] {
-      "delete from allu.application_contact",
-      "delete from allu.project_contact",
-      "delete from allu.contact",
-      "delete from allu.attachment",
-      "delete from allu.application",
-      "delete from allu.project",
-      "delete from allu.applicant",
-      "delete from allu.customer",
-      "delete from allu.person",
-      "delete from allu.geometry",
-      "delete from allu.location",
-  };
 }

@@ -1,4 +1,4 @@
-package fi.hel.allu.model;
+package fi.hel.allu.model.controller;
 
 import static org.geolatte.geom.builder.DSL.c;
 import static org.geolatte.geom.builder.DSL.geometrycollection;
@@ -20,7 +20,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
+import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
