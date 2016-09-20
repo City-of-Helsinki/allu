@@ -6,7 +6,13 @@ import fi.hel.allu.common.types.StatusType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
+/**
+ * ElasticSearch application mapping.
+ * <p>NOTE! Whenever you change this class, make sure that the ElasticSearch mapping (i.e. the data schema) is also changed accordingly,
+ * because otherwise for example date mappings may not work.
+ */
 public class ApplicationES {
   @NotBlank
   private Integer id;
@@ -15,9 +21,12 @@ public class ApplicationES {
   private ApplicationType type;
   private String name;
   private ZonedDateTime creationTime;
-  private ApplicationTypeDataES applicationTypeData;
+  private List<ESFlatValue> applicationTypeData;
   private ProjectES project;
   private ZonedDateTime decisionTime;
+  List<ContactES> contacts;
+  LocationES location;
+  ApplicantES applicant;
 
   public Integer getId() {
     return id;
@@ -67,11 +76,11 @@ public class ApplicationES {
     this.creationTime = creationTime;
   }
 
-  public ApplicationTypeDataES getApplicationTypeData() {
+  public List<ESFlatValue> getApplicationTypeData() {
     return applicationTypeData;
   }
 
-  public void setApplicationTypeData(ApplicationTypeDataES applicationTypeData) {
+  public void setApplicationTypeData(List<ESFlatValue> applicationTypeData) {
     this.applicationTypeData = applicationTypeData;
   }
 
@@ -89,5 +98,29 @@ public class ApplicationES {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
+  }
+
+  public List<ContactES> getContacts() {
+    return contacts;
+  }
+
+  public void setContacts(List<ContactES> contacts) {
+    this.contacts = contacts;
+  }
+
+  public LocationES getLocation() {
+    return location;
+  }
+
+  public void setLocation(LocationES location) {
+    this.location = location;
+  }
+
+  public ApplicantES getApplicant() {
+    return applicant;
+  }
+
+  public void setApplicant(ApplicantES applicantES) {
+    this.applicant = applicantES;
   }
 }

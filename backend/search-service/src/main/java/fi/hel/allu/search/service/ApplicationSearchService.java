@@ -2,9 +2,11 @@ package fi.hel.allu.search.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.SearchException;
+import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -28,29 +30,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_NAME;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_TYPE_NAME;
 import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Service
 public class ApplicationSearchService {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationSearchService.class);
-  public static final String APPLICATION_INDEX_NAME = "allu";
-  public static final String APPLICATION_TYPE_NAME = "application";
   public static final String FIND_ALL_FIELDS = "_all";
 
+  ElasticSearchMappingConfig elasticSearchMappingConfig;
   private Client client;
   private ObjectMapper objectMapper;
 
   @Autowired
-  public ApplicationSearchService(Client client, ObjectMapper objectMapper) {
+  public ApplicationSearchService(ElasticSearchMappingConfig elasticSearchMappingConfig, Client client, ObjectMapper objectMapper) {
+    this.elasticSearchMappingConfig = elasticSearchMappingConfig;
     this.client = client;
     this.objectMapper = objectMapper;
     objectMapper.registerModule(new JavaTimeModule());
+    objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
 
   public void insertApplication(ApplicationES applicationES) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(applicationES);
+      System.out.println(objectMapper.writeValueAsString(applicationES));
       IndexResponse response = client.prepareIndex(APPLICATION_INDEX_NAME, APPLICATION_TYPE_NAME, applicationES.getId().toString())
           .setSource(json).get();
       if (!response.isCreated()) {
@@ -97,6 +103,9 @@ public class ApplicationSearchService {
     DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_INDEX_NAME)).actionGet();
     if (response == null || !response.isAcknowledged()) {
       throw new SearchException("Unable to delete application index");
+    } else {
+      // make sure index with proper configuration exists for later use
+      elasticSearchMappingConfig.initializeIndex();
     }
   }
 

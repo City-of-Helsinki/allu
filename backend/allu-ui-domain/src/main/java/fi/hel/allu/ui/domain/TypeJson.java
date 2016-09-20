@@ -53,6 +53,20 @@ public class TypeJson {
   }
 
   @JsonIgnore
+  public String getName() {
+    switch (getType()) {
+      case PERSON:
+        return getPerson().getName();
+      case COMPANY:
+        return getOrganization().getName();
+      case ASSOCIATION:
+        return getOrganization().getName();
+      default:
+        throw new UnsupportedOperationException("Requested name of applicant, which is neither person nor organization");
+    }
+  }
+
+  @JsonIgnore
   public boolean getValidatePersonTypeHasPersonObject() {
     switch (getType()) {
       case PERSON:
