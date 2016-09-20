@@ -113,3 +113,11 @@ create table allu.attribute_meta (
     list_type text,
     structure_attribute integer references allu.structure_meta(id),
     validation_rule text);
+
+create table allu.decision (
+    id serial primary key,
+    application_id integer references allu.application(id),
+    creation_time timestamp with time zone,
+    data bytea,
+    decision_time timestamp with time zone,
+    status text );

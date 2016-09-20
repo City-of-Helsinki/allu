@@ -230,6 +230,16 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_ATTACHMENT_GET_DATA = "/attachments/{attachmentId}/data";
 
   /**
+   * Model-service path to store decision
+   */
+  public static final String PATH_MODEL_DECISION_STORE = "/applications/{id}/decision";
+
+  /**
+   * Model-service path to retrieve decision
+   */
+  public static final String PATH_MODEL_DECISION_GET = "/applications/{id}/decision";
+
+  /**
    * Search-service path to index a new application
    */
   public static final String PATH_SEARCH_APPLICATION_CREATE = "/applications";

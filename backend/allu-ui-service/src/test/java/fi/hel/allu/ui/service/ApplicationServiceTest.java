@@ -4,10 +4,12 @@ package fi.hel.allu.ui.service;
 import static org.geolatte.geom.builder.DSL.c;
 import static org.geolatte.geom.builder.DSL.polygon;
 import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +28,11 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.ui.domain.ApplicantJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ContactJson;
@@ -254,5 +260,44 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.get(1).getApplicant());
     assertNotNull(response.get(1).getLocation());
     assertEquals("MockName2", response.get(1).getName());
+  }
+
+  @Test
+  public void testGenerateDecision() throws IOException {
+    // Setup mocks
+    byte[] mockData = new byte[123];
+    Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.anyObject(), Mockito.eq(byte[].class),
+        Mockito.anyString())).thenReturn(mockData);
+    ResponseEntity<String> mockResponse = new ResponseEntity<>(HttpStatus.CREATED);
+    Mockito.when(restTemplate.exchange(Mockito.anyString(),
+        Mockito.eq(HttpMethod.POST), Mockito.any(), Mockito.eq(String.class), Mockito.anyInt())).thenReturn(mockResponse);
+
+    // Call the method under test
+    applicationService.generateDecision(123);
+
+    // Verify that some important REST calls were made:
+    // - Application data was read from model:
+    Mockito.verify(restTemplate).getForObject(Mockito.any(String.class), Mockito.eq(Application.class),
+        Mockito.any(String.class));
+    // - PDF creation was executed:
+    Mockito.verify(restTemplate).postForObject(Mockito.anyString(), Mockito.anyObject(), Mockito.eq(byte[].class),
+        Mockito.anyString());
+    // - Generated PDF was stored to model:
+    Mockito.verify(restTemplate).exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
+        Mockito.eq(String.class), Mockito.anyInt());
+  }
+
+  @Test
+  public void testGetDecision() {
+    byte[] mockData = new byte[123];
+    for (int i = 0; i < mockData.length; ++i) {
+      mockData[i] = (byte) i;
+    }
+    Mockito.when(restTemplate.getForObject(Mockito.anyString(), Mockito.eq(byte[].class), Mockito.anyInt()))
+        .thenReturn(mockData);
+
+    byte[] decision = applicationService.getDecision(911);
+
+    assertArrayEquals(mockData, decision);
   }
 }
