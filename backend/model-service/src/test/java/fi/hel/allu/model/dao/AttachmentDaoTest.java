@@ -1,4 +1,4 @@
-package fi.hel.allu.model;
+package fi.hel.allu.model.dao;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -17,8 +17,9 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.testUtils.TestCommon;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -29,7 +30,7 @@ public class AttachmentDaoTest {
   private AttachmentDao attachmentDao;
 
   @Autowired
-  WebTestCommon wtc;
+  TestCommon testCommon;
 
   private AttachmentInfo dummy;
 
@@ -38,7 +39,7 @@ public class AttachmentDaoTest {
 
   @Before
   public void setup() throws Exception {
-    wtc.setup();
+    testCommon.deleteAllData();
     // dummy will be used as a no-match info in some tests:
     dummy = newInfo();
     dummy.setName("NO MATCH");

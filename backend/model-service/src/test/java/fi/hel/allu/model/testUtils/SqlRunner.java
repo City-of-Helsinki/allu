@@ -1,4 +1,4 @@
-package fi.hel.allu.model;
+package fi.hel.allu.model.testUtils;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.querydsl.sql.SQLQueryFactory;
 
 @Component
-public class WebTestSqlRunner {
+public class SqlRunner {
 
   @Autowired
   private SQLQueryFactory queryFactory;

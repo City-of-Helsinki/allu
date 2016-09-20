@@ -1,9 +1,12 @@
-package fi.hel.allu.model;
+package fi.hel.allu.model.controller;
 
+import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.StructureMetaDao;
 import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
+import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

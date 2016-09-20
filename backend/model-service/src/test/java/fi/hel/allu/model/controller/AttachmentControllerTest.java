@@ -1,4 +1,4 @@
-package fi.hel.allu.model;
+package fi.hel.allu.model.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -22,7 +22,9 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
 /**
  * Test class for attachment controller APIs
