@@ -33,57 +33,39 @@ export class ApplicationHub {
   }
 
   /**
-   * Observable which contains results of application queries.
-   * List applications, fetching single application, etc.
+   * Used for notifying about application changes / listings
    */
   public applications = () => this.applications$.asObservable();
-
-  /**
-   * Adds given array of applications as next value in applications subject.
-   * Used by services which request data from backend.
-   */
   public addApplications = (applications: Array<Application>) => this.applications$.next(applications);
 
   /**
-   * Used to receive application changes (create & update)
+   * Used for notifying application changes (create & update)
    */
   public applicationChange = () => this.applicationChange$.asObservable();
-  /**
-   * Used to add application change events (create & update)
-   */
   public addApplicationChange = (application: Application) => this.applicationChange$.next(application);
 
   /**
-   * Used to receive application status changes
+   * Used for receiving application status changes
    */
   public applicationStatusChange = () => this.applicationStatusChange$.asObservable();
-  /**
-   * Used to add application status changes
-   */
   public addApplicationStatusChange = (statusChange: ApplicationStatusChange) => this.applicationStatusChange$.next(statusChange);
 
   /**
-   * Observable where all application searches are added (single, all, filtered).
+   * Used for searching applications (single, all, filtered).
    */
   public applicationSearch = () => this.applicationSearch$.asObservable();
-
-  /**
-   * Adds given search as next value in searchapplicationSearch subject.
-   * Used to search set of applications
-   */
   public addApplicationSearch = (search) => this.applicationSearch$.next(search);
 
   /**
-   * Adds given SearchBarFilter as next value in searchBar subject.
-   * Used to notify changes in searchBar
+   * Used to notify changes in address search bar
    */
   public addSearchFilter = (filter: SearchbarFilter) => this.searchBar$.next(filter);
 
   /**
-   * Adds given geometry object to mapView subject.
-   * Used to notify changes in maps view area.
+   * Used to notify changes in map's currently visible area
    */
   public addMapView = (geometry: GeoJSON.GeometryObject) => this.mapView$.next(geometry);
+
 
   private searchBar = () => this.searchBar$.asObservable();
   private mapView = () => this.mapView$.asObservable();

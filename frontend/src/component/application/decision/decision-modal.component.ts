@@ -5,7 +5,7 @@ import {ApplicationStatusChange, ApplicationStatus, translateStatus} from '../..
 @Component({
   selector: 'decision-modal',
   template: require('./decision-modal.component.html'),
-  styles: [],
+  styles: [require('./decision-modal.component.scss')],
   directives: [
     MaterializeDirective
   ]

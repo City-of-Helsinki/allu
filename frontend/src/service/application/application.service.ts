@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {AuthHttp} from '../../../node_modules/angular2-jwt/angular2-jwt';
+import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {URLSearchParams} from '@angular/http';
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';

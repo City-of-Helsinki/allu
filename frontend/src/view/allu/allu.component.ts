@@ -20,6 +20,7 @@ import {TaskManagerService} from '../../service/task/task-manager.service';
 import {SearchService} from '../../service/search.service';
 import {GeolocationService} from '../../service/geolocation.service';
 import {ApplicationService} from '../../service/application/application.service.ts';
+import {DecisionService} from '../../service/decision/decision.service';
 
 @Component({
   selector: 'allu',
@@ -50,5 +51,6 @@ export class AlluComponent {
     public eventService: EventService,
     public taskManager: TaskManagerService,
     private geolocationService: GeolocationService,
-    private applicationService: ApplicationService) {}
+    private applicationService: ApplicationService,
+    private decisionService: DecisionService) {}
 }

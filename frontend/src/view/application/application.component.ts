@@ -80,7 +80,7 @@ export class ApplicationComponent implements OnInit {
     if (routeName !== 'Type') {
       this.applications
         .filter(application => application.subtypes.some(subtype => subtype.value === routeName))
-        .foreach(application => {
+        .forEach(application => {
           this.types = application.value;
           this.subtypes = application.subtypes;
           this.subtype = routeName;
