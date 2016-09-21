@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import java.time.ZonedDateTime;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -8,8 +8,15 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import fi.hel.allu.common.types.StatusType;
@@ -42,6 +49,9 @@ public class ApplicationService {
   private ContactService contactService;
   private SearchService searchService;
   private MetaService metaService;
+
+  // Stylesheet name for decision PDF generation:
+  private static final String DECISION_STYLESHEET = "paatos";
 
   @Autowired
   public ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
@@ -207,10 +217,35 @@ public class ApplicationService {
    *
    * @param applicationId
    *          the application's ID
+   * @throws IOException
+   *           when model-service responds with error
    */
-  public void generateDecision(int applicationId) {
-    // TODO Implement -- currently nothing is saved and PDF is generated on
-    // request
+  public void generateDecision(int applicationId) throws IOException {
+    // Get the application's data and call pdf-service to create PDF:
+    ApplicationJson application = findApplicationById(applicationId);
+    DecisionJson decisionJson = new DecisionJson();
+    decisionJson.setApplication(application);
+    byte[] pdfData = restTemplate.postForObject(
+        applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE), decisionJson, byte[].class,
+        DECISION_STYLESHEET);
+    // Store the generated PDF to model:
+    MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
+    requestParts.add("file", new ByteArrayResource(pdfData) {
+      @Override // return some filename so that Spring handles this as file
+      public String getFilename() {
+        return "file.pdf";
+      }
+    });
+    HttpHeaders requestHeader = new HttpHeaders();
+    requestHeader.setContentType(MediaType.MULTIPART_FORM_DATA);
+    HttpEntity<?> requestEntity = new HttpEntity<>(requestParts, requestHeader);
+    // ...then execute the request
+    ResponseEntity<String> response = restTemplate.exchange(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_STORE), HttpMethod.POST,
+        requestEntity, String.class, applicationId);
+    if (!response.getStatusCode().is2xxSuccessful()) {
+      throw new IOException(response.getBody());
+    }
   }
 
   /**
@@ -221,12 +256,9 @@ public class ApplicationService {
    * @return PDF data
    */
   public byte[] getDecision(int applicationId) {
-    // TODO: Move to generateDecision and implement here only query from model
-    ApplicationJson application = findApplicationById(applicationId);
-    DecisionJson decisionJson = new DecisionJson();
-    decisionJson.setApplication(application);
-    return restTemplate.postForObject(applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE),
-        decisionJson, byte[].class, "paatos");
+    return restTemplate.getForObject(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_GET), byte[].class,
+        applicationId);
   }
 
   private ApplicationJson getApplication(Application applicationModel) {

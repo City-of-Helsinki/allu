@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.AttachmentInfoJson;
@@ -162,10 +161,11 @@ public class ApplicationController {
    * @param applicationId
    *          the application's Id
    * @return Response with Location header pointing to generated PDF
+   * @throws IOException
    */
   @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> generateDecision(@PathVariable int applicationId) {
+  public ResponseEntity<Void> generateDecision(@PathVariable int applicationId) throws IOException {
     applicationService.generateDecision(applicationId);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri());

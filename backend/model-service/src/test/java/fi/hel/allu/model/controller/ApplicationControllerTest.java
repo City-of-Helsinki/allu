@@ -1,12 +1,20 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.dao.*;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.testUtils.WebTestCommon;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.ZonedDateTime;
+import java.util.Collections;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
@@ -19,14 +27,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-import java.util.Collections;
-
-import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -37,19 +45,7 @@ public class ApplicationControllerTest {
   WebTestCommon wtc;
 
   @Autowired
-  ProjectDao projectDao;
-
-  @Autowired
-  PersonDao personDao;
-
-  @Autowired
-  ApplicantDao applicantDao;
-
-  @Autowired
-  CustomerDao customerDao;
-
-  @Autowired
-  LocationDao locationDao;
+  TestCommon testCommon;
 
   @Before
   public void setup() throws Exception {
@@ -58,27 +54,27 @@ public class ApplicationControllerTest {
 
   @Test
   public void testAddApplication() throws Exception {
-    Application app = prepareApplication("Test Application", "Handlaaja");
+    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
     wtc.perform(post("/applications"), app).andExpect(status().isOk());
   }
 
   @Test
   public void testAddApplicationWithId() throws Exception {
-    Application app = prepareApplication("Test Application", "Handlaaja");
+    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
     app.setId(123);
     wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
   }
 
   @Test
   public void testAddApplicationWithBadCustomer() throws Exception {
-    Application app = prepareApplication("Test Application", "Handlaaja");
+    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
     app.setCustomerId(app.getCustomerId() + 1);
     wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
   }
 
   @Test
   public void testAddApplicationWithBadProject() throws Exception {
-    Application app = prepareApplication("Test Application", "Handlaaja");
+    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
     app.setProjectId(app.getProjectId() + 1);
     wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
   }
@@ -102,7 +98,7 @@ public class ApplicationControllerTest {
   @Test
   public void testFindExisting() throws Exception {
     // Setup: insert an application
-    Application appIn = prepareApplication("Test Application", "Handler");
+    Application appIn = testCommon.dummyApplication("Test Application", "Handler");
     appIn.setStatus(StatusType.HANDLING);
     Application appInResult = insertApplication(appIn);
     // Test: try to read the same application back
@@ -122,7 +118,7 @@ public class ApplicationControllerTest {
     // Setup: insert some applications with handler "Henkka"
     final int NUM_HENKKA = 5;
     final int NUM_TIMPPA = 7;
-    Application app = prepareApplication("TestApplication", "Henkka");
+    Application app = testCommon.dummyApplication("TestApplication", "Henkka");
     for (int i = 0; i < NUM_HENKKA; ++i) {
       wtc.perform(post("/applications"), app).andExpect(status().isOk());
     }
@@ -146,12 +142,12 @@ public class ApplicationControllerTest {
     // Setup: add some applications for one project:
     final int NUM_FIRST = 5;
     final int NUM_SECOND = 7;
-    Application app1 = prepareApplication("TestAppOne", "Sinikka");
+    Application app1 = testCommon.dummyApplication("TestAppOne", "Sinikka");
     for (int i = 0; i < NUM_FIRST; ++i) {
       wtc.perform(post("/applications"), app1).andExpect(status().isOk());
     }
     // Now prepare another application -- will get another project ID:
-    Application app2 = prepareApplication("TestAppTwo", "Keijo");
+    Application app2 = testCommon.dummyApplication("TestAppTwo", "Keijo");
     assertNotEquals(app1.getProjectId(), app2.getProjectId());
     for (int i = 0; i < NUM_SECOND; ++i) {
       wtc.perform(post("/applications"), app2).andExpect(status().isOk());
@@ -172,7 +168,7 @@ public class ApplicationControllerTest {
   @Test
   public void testUpdateExisting() throws Exception {
     // Setup: insert an application
-    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
     // Test: try to update the application
     appInResult.setStatus(StatusType.HANDLING);
     ResultActions resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
@@ -183,7 +179,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void updateNonexistent() throws Exception {
-    Application app = prepareApplication("Test Application", "Hanskaaja");
+    Application app = testCommon.dummyApplication("Test Application", "Hanskaaja");
     wtc.perform(put("/applications/314159"), app).andExpect(status().isNotFound());
   }
 
@@ -218,7 +214,7 @@ public class ApplicationControllerTest {
   @Test
   public void testFindAttachments() throws Exception {
     // Setup: insert an application
-    Application appInResult = insertApplication(prepareApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
     // Test: read the application's attachment list
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d/attachments", appInResult.getId())))
         .andExpect(status().isOk());
@@ -245,78 +241,6 @@ public class ApplicationControllerTest {
     assertNull(app.getLocationId());
   }
 
-  // Create and prepare an application for insertion:
-  // - Create dummy person and project to get valid IDs
-  // - Set some values for the application
-  private Application prepareApplication(String name, String handler)
-      throws Exception {
-    Integer personId = addPerson();
-    Integer customerId = addCustomer(personId);
-    Integer projectId = addProject(personId);
-    Integer applicantId = addApplicant(personId);
-    Application app = new Application();
-    app.setCustomerId(customerId);
-    app.setApplicantId(applicantId);
-    app.setProjectId(projectId);
-    app.setCreationTime(ZonedDateTime.now());
-    app.setType(ApplicationType.OUTDOOREVENT);
-    app.setMetadataVersion(1);
-    app.setDecisionTime(ZonedDateTime.now());
-    app.setName(name);
-    app.setHandler(handler);
-    app.setEvent(addOutdoorEvent(personId));
-    return app;
-  }
-
-  private Integer addCustomer(Integer personId) throws Exception {
-    Customer cust = new Customer();
-    cust.setPersonId(personId);
-    cust.setType(CustomerType.PERSON);
-    Customer insertedCust = customerDao.insert(cust);
-    return insertedCust.getId();
-  }
-
-  private Integer addPerson() throws Exception {
-    Person person = new Person();
-    person.setName("Pentti");
-    person.setSsn("121212-xxxx");
-    person.setEmail("pena@dev.null");
-    Person insertedPerson = personDao.insert(person);
-    return insertedPerson.getId();
-  }
-
-  private Integer addProject(Integer personId) throws Exception {
-    Project project = new Project();
-    project.setName("Viemärityö");
-    project.setOwnerId(personId);
-    project.setContactId(personId);
-    project.setStartDate(Calendar.getInstance().getTime());
-    Project insertedProject = projectDao.insert(project);
-    return insertedProject.getId();
-  }
-
-  private Integer addApplicant(Integer personId) {
-    Applicant applicant = new Applicant();
-    applicant.setType(CustomerType.PERSON);
-    applicant.setPersonId(personId);
-    Applicant insertedApplicant = applicantDao.insert(applicant);
-    return insertedApplicant.getId();
-  }
-
-  public Event addOutdoorEvent(Integer id) {
-    OutdoorEvent event = new OutdoorEvent();
-    event.setDescription("desc");
-    event.setAttendees(10);
-    event.setNature("nature");
-    return event;
-  }
-
-  private Integer addLocation(String streetAddress, Geometry geometry) {
-    Location location = new Location();
-    location.setGeometry(geometry);
-    location.setStreetAddress(streetAddress);
-    return locationDao.insert(location).getId();
-  }
 
   private static Geometry bigArea = polygon(3879, ring(c(25490000, 6670000), c(25500000, 6670000), c(25500000, 6675000),
       c(25490000, 6675000), c(25490000, 6670000)));
@@ -363,8 +287,9 @@ public class ApplicationControllerTest {
 
   private ResultActions createLocationTestApplication(TestAppParam tap, String streetAddress, String applicationName)
       throws Exception {
-    Integer locationId = addLocation(streetAddress, new GeometryCollection(new Geometry[] { tap.geometry }));
-    Application app = prepareApplication(applicationName, null);
+    Integer locationId = testCommon.insertLocation(streetAddress,
+        new GeometryCollection(new Geometry[] { tap.geometry }));
+    Application app = testCommon.dummyApplication(applicationName, null);
     app.setLocationId(locationId);
     OutdoorEvent evt = (OutdoorEvent) app.getEvent();
     evt.setStartTime(tap.startTime);

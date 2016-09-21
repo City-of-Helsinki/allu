@@ -1,33 +1,53 @@
 package fi.hel.allu.model.controller;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+
+import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.dao.DecisionDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
-import java.util.Collections;
-import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
 
-  @Autowired
   private ApplicationDao applicationDao;
 
-  @Autowired
   private AttachmentDao attachmentDao;
 
-  @Autowired
   private LocationDao locationDao;
+
+  private DecisionDao decisionDao;
+
+  @Autowired
+  public ApplicationController(ApplicationDao applicationDao, AttachmentDao attachmentDao, LocationDao locationDao,
+      DecisionDao decisionDao) {
+    this.applicationDao = applicationDao;
+    this.attachmentDao = attachmentDao;
+    this.locationDao = locationDao;
+    this.decisionDao = decisionDao;
+  }
 
   /**
    * Find application by application ID
@@ -146,4 +166,37 @@ public class ApplicationController {
     return new ResponseEntity<>(attachmentDao.findByApplication(id), HttpStatus.OK);
   }
 
+  /**
+   * Store the decision PDF for application
+   *
+   * @param id
+   *          application ID
+   * @param file
+   *          decision PDF data
+   * @return
+   * @throws IOException
+   */
+  @RequestMapping(value = "/{id}/decision", method = RequestMethod.POST)
+  public ResponseEntity<Void> storeDecision(@PathVariable int id, @RequestParam("file") MultipartFile file)
+      throws IOException {
+    decisionDao.storeDecision(id, file.getBytes());
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri());
+    return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+  }
+
+  /**
+   * Get the decision PDF for application
+   *
+   * @param id
+   *          application ID
+   * @return Decision PDF data
+   *
+   */
+  @RequestMapping(value = "/{id}/decision", method = RequestMethod.GET)
+  public ResponseEntity<byte[]> getDecision(@PathVariable int id) {
+    byte[] bytes = decisionDao.getDecision(id)
+        .orElseThrow(() -> new NoSuchEntityException("Decision not found", Integer.toString(id)));
+    return new ResponseEntity<>(bytes, HttpStatus.OK);
+  }
 }
