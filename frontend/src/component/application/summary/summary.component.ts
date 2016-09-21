@@ -28,6 +28,8 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
 import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
 import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event';
 import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
+import {ApplicationHub} from '../../../service/application/application-hub';
+import {MapHub} from '../../../service/map-hub';
 
 
 @Component({
@@ -71,9 +73,7 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
   private progressStep: number;
   private progressMode: number;
 
-
-
-  constructor(private eventService: EventService, params: RouteParams) {
+  constructor(private eventService: EventService, private applicationHub: ApplicationHub, private mapHub: MapHub, params: RouteParams) {
     this.id = Number(params.get('id'));
     this.events = [
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
@@ -130,7 +130,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
     filter.applicationId = this.id;
-    this.eventService.send(this, new ApplicationsLoadEvent(filter));
+    this.applicationHub.applications().subscribe(applications => this.handleApplications(applications));
+    this.applicationHub.addApplicationSearch(this.id);
   }
 
   ngOnDestroy(): any {
@@ -138,45 +139,6 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
   }
 
   public handle(event: Event): void {
-    if (event instanceof ApplicationsAnnounceEvent) {
-      let aaEvent = <ApplicationsAnnounceEvent> event;
-      // we're only interested about applications matching the application being summarized
-
-      if (aaEvent.applications.length === 1 && aaEvent.applications[0].id === this.id) {
-        this.application = aaEvent.applications[0];
-        this.eventService.send(this, new ApplicationSelectionEvent(this.application));
-      }
-    }
-  }
-
-  eventTypeSelection(value: string) {
-    console.log('Tapahtuman tyypiksi on valittu: ', value);
-
-  }
-
-  applicantTypeSelection(value: string) {
-    console.log('Hakijan tyypiksi on valittu: ', value);
-    console.log(this.application);
-  }
-
-  applicantCountrySelection(value: string) {
-    console.log('Hakijan maaksi on valittu: ', value);
-  }
-
-  saveToRegistry(value: string) {
-    console.log('Hakijan maaksi on valittu: ', value);
-  }
-
-  newContact(value: string) {
-    console.log('Uudeksi yhteyshenkilöksi on valittu: ', value);
-  }
-
-  billingTypeSelection(value: string) {
-    console.log('Laskutustavaksi on valittu: ', value);
-  }
-
-  billingCountrySelection(value: string) {
-    console.log('Hakijan maaksi on valittu: ', value);
   }
 
   save(application: any) {
@@ -185,4 +147,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
    }
+
+  private handleApplications(applications: Array<Application>): void {
+    this.application = applications.find(app => app.id === this.id);
+  }
 }

@@ -23,7 +23,6 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 import {ErrorEvent} from '../../event/error-event';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
-import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
 import {SearchbarComponent} from '../../component/searchbar/searchbar.component';
 
 import 'proj4leaflet';
@@ -121,7 +120,6 @@ export class LocationComponent implements EventListener {
         this.application = aaEvent.applications[0];
         this.locationState.location = this.application.location || new Location();
 
-        this.eventService.send(this, new ApplicationSelectionEvent(this.application));
         if (this.hasChanges === HasChanges.PENDING) {
           this.hasChanges = HasChanges.NO;
           this.router.navigate(['/Summary', {id: this.id}]);
