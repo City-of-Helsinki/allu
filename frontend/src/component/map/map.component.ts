@@ -35,7 +35,9 @@ export class MapComponent implements EventListener {
   @Input() zoom: boolean;
   @Input() selection: boolean;
   @Input() edit: boolean;
-  @Input() editedApplicationId: Number;
+  @Input() applicationId: Number;
+  @Input() showOnlyApplicationArea: boolean = false;
+
   private applicationArea: L.LayerGroup<L.ILayer>;
   private map: Map;
   private mapLayers: any;
@@ -70,6 +72,10 @@ export class MapComponent implements EventListener {
 
   handleApplicationSelectionEvent(event: ApplicationSelectionEvent): void {
     let asEvent = <ApplicationSelectionEvent>event;
+    this.handleApplicationSelection(asEvent.application);
+  }
+
+  handleApplicationSelection(application: Application) {
     if (this.applicationArea) {
       this.map.removeLayer(this.applicationArea);
     }
@@ -77,9 +83,9 @@ export class MapComponent implements EventListener {
     this.clearDrawn();
 
     // Check to see if the application has a location
-    console.log('asEvent.application.location', asEvent.application.location);
-    if (asEvent.application.location && asEvent.application.location.geometry.geometries.length) {
-      let featureCollection = this.mapService.geometryCollectionToFeatureCollection(asEvent.application.location.geometry);
+    console.log('asEvent.application.location', application.location);
+    if (application.location && application.location.geometry.geometries.length) {
+      let featureCollection = this.mapService.geometryCollectionToFeatureCollection(application.location.geometry);
       this.applicationArea = new L.GeoJSON(featureCollection);
       this.applicationArea.eachLayer((layer) => {
         this.drawnItems.addLayer(layer);
@@ -104,6 +110,7 @@ export class MapComponent implements EventListener {
     this.mapHub.coordinates().subscribe((coordinates) => this.panToCoordinates(coordinates));
     this.applicationHub.applications().subscribe(applications => this.drawApplications(applications));
     this.applicationHub.addMapView(this.getCurrentMapView()); // to notify initial location
+    this.mapHub.applicationSelection().subscribe(app => this.handleApplicationSelection(app));
   }
 
   ngOnDestroy() {
@@ -117,16 +124,21 @@ export class MapComponent implements EventListener {
   private drawApplications(applications: Array<Application>) {
     this.clearDrawn();
 
+    let applicationShouldBeDrawn = (application: Application) =>
+      !this.showOnlyApplicationArea || (this.showOnlyApplicationArea && application.id === this.applicationId);
+
     applications
       .filter(app => app.location !== undefined)
+      .filter(app => applicationShouldBeDrawn(app))
       .forEach(app => this.drawApplication(app));
   }
 
   private drawApplication(application: Application) {
-    if (application.id !== this.editedApplicationId) {
-      this.drawGeometry(application.location.geometry, this.drawnItems);
-    } else if (this.editedItems.getLayers().length === 0) { // Check that edited layer is not already added
+    // Check that edited layer is not already added
+    if (application.id === this.applicationId && (this.draw || this.edit) && this.editedItems.getLayers().length === 0) {
       this.drawGeometry(application.location.geometry, this.editedItems);
+    } else {
+      this.drawGeometry(application.location.geometry, this.drawnItems);
     }
   }
 
@@ -172,7 +184,9 @@ export class MapComponent implements EventListener {
     });
 
     this.map.on('moveend', (e: any) => {
-      this.applicationHub.addMapView(this.getCurrentMapView());
+      if (!this.showOnlyApplicationArea) {
+        this.applicationHub.addMapView(this.getCurrentMapView());
+      }
     });
 
     this.drawnItems = drawnItems;
