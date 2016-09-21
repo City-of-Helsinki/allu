@@ -83,7 +83,6 @@ export class MapComponent implements EventListener {
     this.clearDrawn();
 
     // Check to see if the application has a location
-    console.log('asEvent.application.location', application.location);
     if (application.location && application.location.geometry.geometries.length) {
       let featureCollection = this.mapService.geometryCollectionToFeatureCollection(application.location.geometry);
       this.applicationArea = new L.GeoJSON(featureCollection);
