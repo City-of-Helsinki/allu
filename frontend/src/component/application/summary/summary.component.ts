@@ -30,6 +30,7 @@ import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event
 import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {MapHub} from '../../../service/map-hub';
+import {Subscription} from 'rxjs/Subscription';
 
 
 @Component({
@@ -72,6 +73,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
 
   private progressStep: number;
   private progressMode: number;
+
+  private applicationSubscription: Subscription;
 
   constructor(private eventService: EventService, private applicationHub: ApplicationHub, private mapHub: MapHub, params: RouteParams) {
     this.id = Number(params.get('id'));
@@ -130,12 +133,13 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
     filter.applicationId = this.id;
-    this.applicationHub.applications().subscribe(applications => this.handleApplications(applications));
+    this.applicationSubscription = this.applicationHub.applications().subscribe(applications => this.handleApplications(applications));
     this.applicationHub.addApplicationSearch(this.id);
   }
 
   ngOnDestroy(): any {
     this.eventService.unsubscribe(this);
+    this.applicationSubscription.unsubscribe();
   }
 
   public handle(event: Event): void {
@@ -150,5 +154,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
 
   private handleApplications(applications: Array<Application>): void {
     this.application = applications.find(app => app.id === this.id);
+    if (this.application !== undefined) {
+      this.mapHub.addApplicationSelection(this.application);
+    }
   }
 }

@@ -12,7 +12,9 @@ export class MapHub {
   private search$: Subject<string> = new Subject<string>();
   private applicationSelection$: Subject<Application> = new Subject();
 
-  constructor() {}
+  constructor() {
+    this.applicationSelection().subscribe(app => console.log('applicationSelection', app));
+  }
 
   /**
    * Used to notify new geocoordinates are available
@@ -40,7 +42,9 @@ export class MapHub {
   /**
    * Used to notify that new application (for centering and zooming) has been selected
    */
-  public applicationSelection = () => this.applicationSelection$.asObservable();
+  public applicationSelection = () => this.applicationSelection$.asObservable()
+    .debounceTime(300)
+    .distinctUntilChanged();
 
   /**
    * Used for selecting application
