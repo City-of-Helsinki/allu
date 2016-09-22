@@ -25,6 +25,14 @@ public class PdfService {
 
   private static final Logger logger = LoggerFactory.getLogger(PdfService.class);
 
+  // filename suffixes for header and footer
+  private static final String HEADER_SUFFIX = "-header";
+  private static final String FOOTER_SUFFIX = "-footer";
+
+  // wkhtmltopdf command line arguments to specify header and footer:
+  private static final String HEADER_ARG = "--header-html";
+  private static final String FOOTER_ARG = "--footer-html";
+
   private ApplicationProperties applicationProperties;
 
   private final Path tempDir;
@@ -40,15 +48,29 @@ public class PdfService {
 
   public byte[] generatePdf(String dataJson, String stylesheet)
       throws IOException, JSONException, TransformerException {
-    Path htmlPath = null;
+    Path contentPath = null;
+    Path headerPath = null;
+    Path footerPath = null;
     Path pdfPath = null;
     try {
-      htmlPath = writeHtml(dataJson, stylesheet);
-      pdfPath = writePdf(htmlPath);
+      contentPath = writeHtml(dataJson, stylesheet);
+      if (Files.exists(stylesheetDir.resolve(stylesheet + HEADER_SUFFIX + ".xsl"))) {
+        headerPath = writeHtml(dataJson, stylesheet + HEADER_SUFFIX);
+      }
+      if (Files.exists(stylesheetDir.resolve(stylesheet + FOOTER_SUFFIX + ".xsl"))) {
+        footerPath = writeHtml(dataJson, stylesheet + FOOTER_SUFFIX);
+      }
+      pdfPath = writePdf(contentPath, footerPath, headerPath);
       return Files.readAllBytes(pdfPath);
     } finally {
-      if (htmlPath != null) {
-        Files.deleteIfExists(htmlPath);
+      if (contentPath != null) {
+        Files.deleteIfExists(contentPath);
+      }
+      if (headerPath != null) {
+        Files.deleteIfExists(headerPath);
+      }
+      if (footerPath != null) {
+        Files.deleteIfExists(footerPath);
       }
       if (pdfPath != null) {
         Files.deleteIfExists(pdfPath);
@@ -72,10 +94,18 @@ public class PdfService {
     return htmlPath;
   }
 
-  private Path writePdf(Path xmlPath) throws IOException {
+  private Path writePdf(Path contentPath, Path headerPath, Path footerPath) throws IOException {
     Path pdfPath = Files.createTempFile(tempDir, "output-", ".pdf");
     final CommandLine cmdLine = new CommandLine(applicationProperties.getPdfGenerator());
-    cmdLine.addArgument(xmlPath.toString());
+    cmdLine.addArgument(contentPath.toString());
+    if (headerPath != null) {
+      cmdLine.addArgument(HEADER_ARG);
+      cmdLine.addArgument(headerPath.toString());
+    }
+    if (footerPath != null) {
+      cmdLine.addArgument(FOOTER_ARG);
+      cmdLine.addArgument(footerPath.toString());
+    }
     cmdLine.addArgument(pdfPath.toString());
     try {
       final Executor executioner = new DefaultExecutor();
