@@ -3,7 +3,6 @@ import 'leaflet-draw';
 import 'proj4leaflet';
 import {Component, Input} from '@angular/core';
 import {MapUtil} from '../../service/map.util.ts';
-import {GeocodingService} from '../../service/geocoding.service';
 
 import {EventListener} from '../../event/event-listener';
 import {Event} from '../../event/event';
@@ -46,14 +45,12 @@ export class MapComponent implements EventListener {
 
   constructor(
     private mapService: MapUtil,
-    private geocoder: GeocodingService,
     private workqueue: WorkqueueService,
     private eventService: EventService,
     private mapHub: MapHub,
     private applicationHub: ApplicationHub) {
     this.eventService.subscribe(this);
     this.mapService = mapService;
-    this.geocoder = geocoder;
     this.workqueue = workqueue;
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;

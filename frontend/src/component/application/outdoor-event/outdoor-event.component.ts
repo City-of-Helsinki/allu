@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, Input} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
-import {Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {Router, ROUTER_DIRECTIVES} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -214,7 +214,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       } else {
         this.attachmentService.uploadFiles(
           aaaEvent.application.id, this.attachments, () => { return undefined; });
-        self.router.navigate(['/Summary', {id: this.application.id}]);
+        self.router.navigate(['/summary', this.application.id]);
       }
 
     } else if (event instanceof MetaAnnounceEvent) {

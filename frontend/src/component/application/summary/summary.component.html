@@ -415,9 +415,9 @@
               <button md-raised-button [disabled]="true" (click)="console.log('Siirry muokkaamaan')">MUOKKAA</button>
             </div>
             <div class="col m4 offset-m6">
-              <button md-raised-button [routerLink]="['FrontPage']">ETUSIVULLE</button>
+              <button md-raised-button [routerLink]="['/']">ETUSIVULLE</button>
               <button md-raised-button [disabled]="true">TYÖJONOON</button>
-              <button md-raised-button [routerLink]="['Decision', {id: id}]">PÄÄTTÄMISEEN</button>
+              <button md-raised-button [routerLink]="['/decision', id]">PÄÄTTÄMISEEN</button>
             </div>
           </div>
         </md-card-content>

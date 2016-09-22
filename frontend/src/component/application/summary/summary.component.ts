@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
-import {RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -76,8 +76,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
 
   private applicationSubscription: Subscription;
 
-  constructor(private eventService: EventService, private applicationHub: ApplicationHub, private mapHub: MapHub, params: RouteParams) {
-    this.id = Number(params.get('id'));
+  constructor(private eventService: EventService, private applicationHub: ApplicationHub, private mapHub: MapHub,
+              private route: ActivatedRoute) {
     this.events = [
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
       {name: 'Muu', value: 'Other'}
@@ -130,6 +130,10 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
   };
 
   ngOnInit(): any {
+    this.route.params.subscribe(params => {
+      this.id = Number(params['id']);
+    });
+
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
     filter.applicationId = this.id;

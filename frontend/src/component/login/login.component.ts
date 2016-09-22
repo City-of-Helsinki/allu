@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Router, RouterLink } from '@angular/router-deprecated';
+import { Router, RouterLink } from '@angular/router';
 import { CORE_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { Http, Headers } from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
@@ -26,7 +26,7 @@ export class Login {
       .subscribe(
         response => {
           localStorage.setItem('jwt', response.text());
-          this.router.parent.navigateByUrl('/');
+          this.router.navigateByUrl('/');
         },
         error => {
           alert(error.text());

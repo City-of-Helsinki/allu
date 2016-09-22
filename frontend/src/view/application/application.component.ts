@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ROUTER_DIRECTIVES, RouteConfig, Router} from '@angular/router-deprecated';
+import {ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
 
 import {MdToolbar} from '@angular2-material/toolbar';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
@@ -7,9 +7,6 @@ import {MaterializeDirective} from 'angular2-materialize';
 
 import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../component/progressbar/progressbar.component';
 
-import {TypeComponent} from '../../component/application/type/type.component';
-import {OutdoorEventComponent} from '../../component/application/outdoor-event/outdoor-event.component';
-import {PromotionEventComponent} from '../../component/application/promotion-event/promotion-event.component';
 
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
@@ -30,13 +27,6 @@ import {Event} from '../../event/event';
     MD_CARD_DIRECTIVES
   ]
 })
-
-@RouteConfig([
-  { path: '/', as: 'Type', component: TypeComponent }, //  useAsDefault: true }, coming soon!
-  { path: '/outdoor-event', as: 'OutdoorEventComponent', component: OutdoorEventComponent },
-  { path: '/promotion-event', as: 'PromotionEventComponent', component: PromotionEventComponent }
-])
-
 export class ApplicationComponent implements OnInit {
   public applications: any;
   private types: string;
@@ -45,24 +35,24 @@ export class ApplicationComponent implements OnInit {
   private progressStep: number;
   private progressMode: number;
 
-  constructor(public router: Router) {
+  constructor(public router: Router, private route: ActivatedRoute) {
     this.applications = [
       {
         name: 'Katutyö',
         value: 'Street',
         subtypes: [
-          {name: 'Kaivuilmoitus', value: 'PromotionEventComponent'},
-          {name: 'Aluevuokraus', value: 'PromotionEventComponent'},
-          {name: 'Tilapäiset liikennejärjestelyt', value: 'PromotionEventComponent'}
+          {name: 'Kaivuilmoitus', value: 'promotion-event'},
+          {name: 'Aluevuokraus', value: 'promotion-event'},
+          {name: 'Tilapäiset liikennejärjestelyt', value: 'promotion-event'}
         ]
       },
       {
         name: 'Tapahtuma',
         value: 'Event',
         subtypes: [
-          {name: 'Promootio', value: 'PromotionEventComponent'},
-          {name: 'Ulkoilmatapahtuma', value: 'OutdoorEventComponent'},
-          {name: 'Vaalit', value: 'PromotionEventComponent'}
+          {name: 'Promootio', value: 'promotion-event'},
+          {name: 'Ulkoilmatapahtuma', value: 'outdoor-event'},
+          {name: 'Vaalit', value: 'promotion-event'}
         ]
       }];
 
@@ -75,8 +65,9 @@ export class ApplicationComponent implements OnInit {
   };
 
   ngOnInit(): any {
-    let routeName = this.router.currentInstruction.component.routeName;
+    console.log(this.route.url);
 
+    let routeName = 'Type';
     if (routeName !== 'Type') {
       this.applications
         .filter(application => application.subtypes.some(subtype => subtype.value === routeName))
@@ -97,6 +88,6 @@ export class ApplicationComponent implements OnInit {
   };
 
   eventSelection(value) {
-    this.router.navigate(['/Applications/' + value]);
+    this.router.navigate(['/applications/' + value]);
   };
 }

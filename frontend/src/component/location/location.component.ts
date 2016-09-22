@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router, RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {Router, ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdButton} from '@angular2-material/button';
@@ -76,10 +76,7 @@ export class LocationComponent implements EventListener {
     private eventService: EventService,
     private mapService: MapUtil,
     private router: Router,
-    params: RouteParams) {
-    // A location of a certain application must be editable. This means if there is an id associated with the route, it should go there.
-    // If there is no parameter id, this.id will be 0.
-    this.id = Number(params.get('id'));
+    private route: ActivatedRoute) {
     this.progressMode = this.id ? ProgressMode.EDIT : ProgressMode.NEW;
     this.progressStep = ProgressStep.LOCATION;
 
@@ -91,6 +88,10 @@ export class LocationComponent implements EventListener {
   };
 
   ngOnInit() {
+    this.route.params.subscribe(params => {
+      this.id = Number(params['id']);
+    });
+
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
     if (this.id) {
@@ -156,7 +157,7 @@ export class LocationComponent implements EventListener {
       }
       // TODO: disable save button
     } else {
-      this.router.navigate(['/Applications/Type']);
+      this.router.navigate(['/applications']);
     }
   }
 }

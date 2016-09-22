@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
-import {ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {ROUTER_DIRECTIVES} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';

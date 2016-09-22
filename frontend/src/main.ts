@@ -1,11 +1,9 @@
 import {provide, enableProdMode} from '@angular/core';
 import {APP_BASE_HREF} from '@angular/common';
 import {bootstrap} from '@angular/platform-browser-dynamic';
-import {ROUTER_PROVIDERS} from '@angular/router-deprecated';
 import {Http, HTTP_PROVIDERS} from '@angular/http';
 import {AlluComponent} from './view/allu/allu.component';
 import {MapUtil} from './service/map.util.ts';
-import {GeocodingService} from './service/geocoding.service';
 import {EventService} from './event/event.service';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 import {TaskManagerService} from './service/task/task-manager.service';
@@ -19,18 +17,19 @@ import {AttachmentService} from './service/attachment-service';
 import {LocationState} from './service/application/location-state';
 import {DecisionHub} from './service/decision/decision-hub';
 import {DecisionService} from './service/decision/decision.service';
+import {ALLU_ROUTER_PROVIDERS} from './view/allu/allu.routing';
+import {AuthGuard} from './component/login/auth-guard.service';
 
 if ('<%= ENV %>' === 'prod') { enableProdMode(); }
 
 bootstrap(AlluComponent, [
-  ROUTER_PROVIDERS,
   HTTP_PROVIDERS,
+  ALLU_ROUTER_PROVIDERS,
   EventService,
   TaskManagerService,
   ApplicationService,
   MapUtil,
   SearchService,
-  GeocodingService,
   MapHub,
   GeolocationService,
   ApplicationHub,
@@ -39,23 +38,21 @@ bootstrap(AlluComponent, [
   AttachmentService,
   DecisionService,
   DecisionHub,
-  provide(
-    APP_BASE_HREF, { useValue: '/' }),
-  provide(
-    AuthHttp, {
-      useFactory: (http) => {
-        return new AuthHttp(new AuthConfig({
-          headerName: 'Authorization',
-          headerPrefix: 'Bearer',
-          tokenName: 'jwt',
-          tokenGetter: (() => localStorage.getItem('jwt')),
-          globalHeaders: [{'Content-Type': 'application/json'}],
-          noJwtError: true,
-          noTokenScheme: false
-        }), http);
-      },
-      deps: [Http]
-    })
+  AuthGuard,
+  { provide: APP_BASE_HREF,  useValue: '/' },
+  { provide: AuthHttp, useFactory: (http) => {
+      return new AuthHttp(new AuthConfig({
+        headerName: 'Authorization',
+        headerPrefix: 'Bearer',
+        tokenName: 'jwt',
+        tokenGetter: (() => localStorage.getItem('jwt')),
+        globalHeaders: [{'Content-Type': 'application/json'}],
+        noJwtError: true,
+        noTokenScheme: false
+      }), http);
+    },
+    deps: [Http]
+  }
 ]);
 
 // In order to start the Service Worker located at "./sw.js"

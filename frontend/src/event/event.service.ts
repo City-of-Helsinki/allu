@@ -9,7 +9,7 @@ import {listeners} from 'cluster';
 export class EventService {
 
   private listeners: Array<EventListener> = [];
-  private eventQueue: Subject<Event> = new Subject();
+  private eventQueue: Subject<Event> = new Subject<Event>();
 
   constructor() {
     console.log('Event service created');

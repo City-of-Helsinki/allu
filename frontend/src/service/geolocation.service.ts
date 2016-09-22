@@ -34,7 +34,7 @@ export class GeolocationService {
     return this.authHttp.get(searchUrl)
       .map(response => response.json())
       .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService))
-      .catch(err => this.uiState.addMessage(ErrorUtil.extractMessage(err)));
+      .catch(err => <Observable<Geocoordinates>>this.uiState.addMessage(ErrorUtil.extractMessage(err)));
   }
 
   private searchUrl(address: string) {

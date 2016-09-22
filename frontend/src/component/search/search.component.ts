@@ -1,5 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {Router} from '@angular/router-deprecated';
+import {Router} from '@angular/router';
 import { MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 import {MaterializeDirective} from 'angular2-materialize';
@@ -50,7 +50,7 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
   }
 
   public goToSummary(application: Application): void {
-    this.router.navigate(['/Summary', {id: application.id}]);
+    this.router.navigate(['/summary', application.id]);
   }
 
   public handle(event: Event): void {
