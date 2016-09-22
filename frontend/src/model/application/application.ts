@@ -9,6 +9,7 @@ import {ApplicationTypeData} from './type/application-type-data';
 import {OutdoorEvent} from './type/outdoor-event';
 import {StructureMeta} from './structure-meta';
 import {AttachmentInfo} from './attachment-info';
+import {TimeUtil} from '../../util/time.util';
 
 
 export class Application {
@@ -97,5 +98,9 @@ export class Application {
     app.contactList = [contact];
     app.applicant = applicant;
     return app;
+  }
+
+  get uiApplicationCreationTime(): string {
+    return TimeUtil.getUiDateString(this.creationTime);
   }
 }

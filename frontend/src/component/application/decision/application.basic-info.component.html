@@ -9,7 +9,6 @@
                 </div>
                 <div class="col s6">
                     <label>Sijainti</label>
-                    <div [hidden]="!application">-</div>
                     <div>{{application.location.postalAddress.streetAddress}}</div>
                 </div>
                 <div class="col s6">
@@ -18,19 +17,19 @@
                 </div>
                 <div class="col s6">
                     <label>Arvioitu aloitus</label>
-                    <div>{{application.event.startTime}}</div>
+                    <div>{{application.event.uiStartTime}}</div>
                 </div>
                 <div class="col s6">
                     <label>Tapahtuman luonne</label>
-                    <div>{{application.name}}</div>
+                    <div>{{application.event.nature}}</div>
                 </div>
                 <div class="col s6">
                     <label>Arvioitu päättyminen</label>
-                    <div>{{application.event.endTime}}</div>
+                    <div>{{application.event.uiEndTime}}</div>
                 </div>
                 <div class="col s6">
                     <label>Hakemus saapunut</label>
-                    <div>{{application.creationTime}}</div>
+                    <div>{{application.uiApplicationCreationTime}}</div>
                 </div>
                 <div class="col s6">
                     <label>Käsittelijä</label>
