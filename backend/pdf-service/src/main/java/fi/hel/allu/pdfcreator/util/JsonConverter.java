@@ -15,7 +15,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.XML;
+import org.springframework.stereotype.Controller;
 
+@Controller
 public class JsonConverter {
 
   // XML file header + stylesheet reference:
@@ -37,7 +39,7 @@ public class JsonConverter {
    * @return
    * @throws JSONException
    */
-  public static String jsonToXml(String dataJson, String baseDir) throws JSONException {
+  public String jsonToXml(String dataJson, String baseDir) throws JSONException {
     // Read in the supplied JSON object:
     JSONObject jsonIn = new JSONObject(dataJson);
     // Generate the top-level object:
@@ -60,7 +62,7 @@ public class JsonConverter {
    * @throws IOException
    * @throws TransformerException
    */
-  public static String applyStylesheet(String xml, InputStream stylesheetStream)
+  public String applyStylesheet(String xml, InputStream stylesheetStream)
       throws TransformerException {
     TransformerFactory factory = TransformerFactory.newInstance();
     Source xslt = new StreamSource(stylesheetStream);

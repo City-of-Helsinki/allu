@@ -1,15 +1,12 @@
 package fi.hel.allu.pdfcreator.service;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.Executor;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.pdfcreator.config.ApplicationProperties;
+import fi.hel.allu.pdfcreator.util.Executioner;
+import fi.hel.allu.pdfcreator.util.FileSysAccessor;
 import fi.hel.allu.pdfcreator.util.JsonConverter;
 
 @Service
@@ -34,14 +33,21 @@ public class PdfService {
   private static final String FOOTER_ARG = "--footer-html";
 
   private ApplicationProperties applicationProperties;
+  private FileSysAccessor fileSysAccessor;
+  private Executioner executioner;
+  private JsonConverter jsonConverter;
 
   private final Path tempDir;
   private final Path stylesheetDir;
 
   @Autowired
-  public PdfService(ApplicationProperties applicationProperties) throws IOException {
+  public PdfService(ApplicationProperties applicationProperties, FileSysAccessor fileSysAccessor,
+      Executioner executioner, JsonConverter jsonConverter) throws IOException {
     logger.debug("PdfService starting");
     this.applicationProperties = applicationProperties;
+    this.fileSysAccessor = fileSysAccessor;
+    this.executioner = executioner;
+    this.jsonConverter = jsonConverter;
     tempDir = Paths.get(applicationProperties.getTempDir());
     stylesheetDir = Paths.get(applicationProperties.getStylesheetDir()).toAbsolutePath();
   }
@@ -52,50 +58,38 @@ public class PdfService {
     Path headerPath = null;
     Path footerPath = null;
     Path pdfPath = null;
+    String xml = jsonConverter.jsonToXml(dataJson, stylesheetDir.toString() + "/");
     try {
-      contentPath = writeHtml(dataJson, stylesheet);
-      if (Files.exists(stylesheetDir.resolve(stylesheet + HEADER_SUFFIX + ".xsl"))) {
-        headerPath = writeHtml(dataJson, stylesheet + HEADER_SUFFIX);
+      contentPath = writeHtml(xml, stylesheet);
+      if (contentPath == null) {
+        throw new NoSuchEntityException("Can't find the stylesheet '" + stylesheet + "'");
       }
-      if (Files.exists(stylesheetDir.resolve(stylesheet + FOOTER_SUFFIX + ".xsl"))) {
-        footerPath = writeHtml(dataJson, stylesheet + FOOTER_SUFFIX);
-      }
+      headerPath = writeHtml(xml, stylesheet + HEADER_SUFFIX);
+      footerPath = writeHtml(xml, stylesheet + FOOTER_SUFFIX);
       pdfPath = writePdf(contentPath, footerPath, headerPath);
-      return Files.readAllBytes(pdfPath);
+      return fileSysAccessor.readAllBytes(pdfPath);
     } finally {
-      if (contentPath != null) {
-        Files.deleteIfExists(contentPath);
-      }
-      if (headerPath != null) {
-        Files.deleteIfExists(headerPath);
-      }
-      if (footerPath != null) {
-        Files.deleteIfExists(footerPath);
-      }
-      if (pdfPath != null) {
-        Files.deleteIfExists(pdfPath);
-      }
+      fileSysAccessor.deleteIfExist(contentPath, headerPath, footerPath, pdfPath);
     }
   }
 
-  private Path writeHtml(String dataJson, String stylesheet) throws IOException, JSONException, TransformerException {
+  private Path writeHtml(String xml, String stylesheet) throws IOException, JSONException, TransformerException {
     // Check that stylesheet exists:
     Path xslPath = stylesheetDir.resolve(stylesheet + ".xsl");
-    if (!Files.exists(xslPath)) {
-      throw new NoSuchEntityException("Can't find XML file " + xslPath.toString());
+    if (!fileSysAccessor.exists(xslPath)) {
+      return null;
     }
 
-    String xml = JsonConverter.jsonToXml(dataJson, stylesheetDir.toString() + "/");
-    String html = JsonConverter.applyStylesheet(xml, Files.newInputStream(xslPath));
+    String html = jsonConverter.applyStylesheet(xml, fileSysAccessor.newInputStream(xslPath));
 
     // Write HTML to temporary file
-    Path htmlPath = Files.createTempFile(tempDir, "pdfsource-", ".html");
-    Files.write(htmlPath, html.getBytes());
+    Path htmlPath = fileSysAccessor.createTempFile(tempDir, "pdfsource-", ".html");
+    fileSysAccessor.write(htmlPath, html.getBytes());
     return htmlPath;
   }
 
   private Path writePdf(Path contentPath, Path headerPath, Path footerPath) throws IOException {
-    Path pdfPath = Files.createTempFile(tempDir, "output-", ".pdf");
+    Path pdfPath = fileSysAccessor.createTempFile(tempDir, "output-", ".pdf");
     final CommandLine cmdLine = new CommandLine(applicationProperties.getPdfGenerator());
     cmdLine.addArgument(contentPath.toString());
     if (headerPath != null) {
@@ -108,10 +102,9 @@ public class PdfService {
     }
     cmdLine.addArgument(pdfPath.toString());
     try {
-      final Executor executioner = new DefaultExecutor();
       executioner.execute(cmdLine);
     } catch (IOException e) {
-      Files.deleteIfExists(pdfPath);
+      fileSysAccessor.deleteIfExist(pdfPath);
       throw e;
     }
     return pdfPath;
