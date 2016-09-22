@@ -1,10 +1,8 @@
 package fi.hel.allu.model.domain;
 
-import java.time.ZonedDateTime;
-
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.validator.constraints.NotBlank;
+
+import java.time.ZonedDateTime;
 
 public class OutdoorEvent extends Event {
   @NotBlank
@@ -12,10 +10,8 @@ public class OutdoorEvent extends Event {
   @NotBlank
   private String description;
   private String url;
-  @NotNull
-  private ZonedDateTime startTime;
-  @NotNull
-  private ZonedDateTime endTime;
+  private ZonedDateTime eventStartTime;
+  private ZonedDateTime eventEndTime;
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
@@ -66,26 +62,28 @@ public class OutdoorEvent extends Event {
 
   /**
    * in Finnish: Tapahtuman alkuaika
+   * Note: event start time is the time event starts, but it's not necessarily the same time as reservation of land area starts. For example,
+   * event time for rock concert is: structure building time + event time (the concert itself) + structure disassembly time.
    */
-  @Override
-  public ZonedDateTime getStartTime() {
-    return startTime;
+  public ZonedDateTime getEventStartTime() {
+    return eventStartTime;
   }
 
-  public void setStartTime(ZonedDateTime startTime) {
-    this.startTime = startTime;
+  public void setEventStartTime(ZonedDateTime eventStartTime) {
+    this.eventStartTime = eventStartTime;
   }
 
   /**
    * in Finnish: Tapahtuman päättymisaika
+   * Note: event end time is the time event ends, but it's not necessarily the same time as reservation of land area ends. For example,
+   * event time for rock concert is: structure building time + event time (the concert itself) + structure disassembly time.
    */
-  @Override
-  public ZonedDateTime getEndTime() {
-    return endTime;
+  public ZonedDateTime getEventEndTime() {
+    return eventEndTime;
   }
 
-  public void setEndTime(ZonedDateTime endTime) {
-    this.endTime = endTime;
+  public void setEventEndTime(ZonedDateTime eventEndTime) {
+    this.eventEndTime = eventEndTime;
   }
 
   /**

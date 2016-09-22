@@ -15,6 +15,8 @@ export interface BackendApplication {
   event: any;
   metadata: BackendStructureMeta;
   creationTime: string;
+  startTime: string;
+  endTime: string;
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;
   location: BackendLocation;

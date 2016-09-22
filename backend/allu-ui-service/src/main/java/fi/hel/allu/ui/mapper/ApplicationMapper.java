@@ -38,6 +38,8 @@ public class ApplicationMapper {
     applicationDomain.setName(applicationJson.getName());
     applicationDomain.setProjectId(applicationJson.getProject().getId());
     applicationDomain.setCreationTime(ZonedDateTime.now());
+    applicationDomain.setStartTime(applicationJson.getStartTime());
+    applicationDomain.setEndTime(applicationJson.getEndTime());
     if (applicationJson.getCustomer() != null) {
       applicationDomain.setCustomerId(applicationJson.getCustomer().getId());
     }
@@ -66,6 +68,8 @@ public class ApplicationMapper {
     applicationES.setId(applicationJson.getId());
     applicationES.setName(applicationJson.getName());
     applicationES.setCreationTime(ZonedDateTime.now());
+    applicationES.setStartTime(applicationJson.getStartTime());
+    applicationES.setEndTime(applicationJson.getEndTime());
     applicationES.setHandler(applicationJson.getHandler());
     applicationES.setType(applicationJson.getType());
     applicationES.setStatus(applicationJson.getStatus());
@@ -91,6 +95,8 @@ public class ApplicationMapper {
     applicationJson.setType(application.getType());
     applicationJson.setHandler(application.getHandler());
     applicationJson.setCreationTime(application.getCreationTime());
+    applicationJson.setStartTime(application.getStartTime());
+    applicationJson.setEndTime(application.getEndTime());
     applicationJson.setName(application.getName());
     applicationJson.setDecisionTime(application.getDecisionTime());
     if (application.getEvent() != null) {
@@ -110,8 +116,8 @@ public class ApplicationMapper {
         OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
         outdoorEventJson.setUrl(outdoorEvent.getUrl());
         outdoorEventJson.setNature(outdoorEvent.getNature());
-        outdoorEventJson.setStartTime(outdoorEvent.getStartTime());
-        outdoorEventJson.setEndTime(outdoorEvent.getEndTime());
+        outdoorEventJson.setEventStartTime(outdoorEvent.getEventStartTime());
+        outdoorEventJson.setEventEndTime(outdoorEvent.getEventEndTime());
         outdoorEventJson.setAttendees(outdoorEvent.getAttendees());
         outdoorEventJson.setDescription(outdoorEvent.getDescription());
         outdoorEventJson.setTimeExceptions(outdoorEvent.getTimeExceptions());
@@ -146,8 +152,8 @@ public class ApplicationMapper {
         outdoorEvent.setNature(outdoorEventJson.getNature());
         outdoorEvent.setUrl(outdoorEventJson.getUrl());
         outdoorEvent.setAttendees(outdoorEventJson.getAttendees());
-        outdoorEvent.setEndTime(outdoorEventJson.getEndTime());
-        outdoorEvent.setStartTime(outdoorEventJson.getStartTime());
+        outdoorEvent.setEventEndTime(outdoorEventJson.getEventEndTime());
+        outdoorEvent.setEventStartTime(outdoorEventJson.getEventStartTime());
         outdoorEvent.setFoodSales(outdoorEventJson.isFoodSales());
         outdoorEvent.setMarketingProviders(outdoorEventJson.getMarketingProviders());
         outdoorEvent.setPricing(outdoorEventJson.getPricing());

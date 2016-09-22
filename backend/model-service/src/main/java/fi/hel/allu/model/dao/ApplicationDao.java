@@ -62,9 +62,7 @@ public class ApplicationDao {
   @Transactional
   public Application insert(Application appl) {
     Event event = appl.getEvent();
-    Integer id = queryFactory.insert(application).populate(appl)
-        .set(application.startTime, event.getStartTime()).set(application.endTime, event.getEndTime())
-        .executeWithKey(application.id);
+    Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
@@ -75,9 +73,7 @@ public class ApplicationDao {
   public Application update(int id, Application appl) {
     appl.setId(id);
     Event event = appl.getEvent();
-    long changed = queryFactory.update(application).populate(appl, DefaultMapper.WITH_NULL_BINDINGS)
-        .set(application.startTime, event.getStartTime()).set(application.endTime, event.getEndTime())
-        .where(application.id.eq(id)).execute();
+    long changed = queryFactory.update(application).populate(appl, DefaultMapper.WITH_NULL_BINDINGS).where(application.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }

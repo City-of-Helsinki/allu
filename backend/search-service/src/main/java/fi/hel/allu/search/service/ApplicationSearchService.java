@@ -139,6 +139,7 @@ public class ApplicationSearchService {
         if (param.getFieldName() != null && param.getFieldValue() != null) {
           qb.must(matchQuery(param.getFieldName(), param.getFieldValue()));
         } else if (param.getStartDateValue() != null && param.getEndDateValue() != null) {
+          System.out.println("Range query " + param.getFieldName() + ": " + param.getStartDateValue() + " - " + param.getEndDateValue());
           qb.must(QueryBuilders.rangeQuery(param.getFieldName()).from(param.getStartDateValue().toInstant().toEpochMilli()).to(
               param.getEndDateValue().toInstant().toEpochMilli()));
         }

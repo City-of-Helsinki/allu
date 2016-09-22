@@ -55,16 +55,16 @@
     <div class="input-field col m1 s6">
       <label for="startDate">Alkupvm</label>
       <input id="startDate"
-      [(ngModel)]="startDate"
+      [(ngModel)]="query.uiStartTime"
       materialize="pickadate"
-      [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+      [materializeParams]="pickadateParams"
       type="text" />
     </div>
     <div class="input-field col m1 s6">
       <input id="endDate"
-      [(ngModel)]="endDate"
+      [(ngModel)]="query.uiEndTime"
       materialize="pickadate"
-      [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+      [materializeParams]="pickadateParams"
       type="text" />
       <label for="endDate">Loppupvm</label>
     </div>

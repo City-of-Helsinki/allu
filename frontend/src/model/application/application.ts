@@ -25,6 +25,8 @@ export class Application {
     event: ApplicationTypeData,
     metadata: StructureMeta,
     creationTime: Date,
+    startTime: Date,
+    endTime: Date,
     applicant: Applicant,
     contactList: Array<Contact>,
     location: Location,
@@ -39,6 +41,8 @@ export class Application {
     public event?: ApplicationTypeData,
     public metadata?: StructureMeta,
     public creationTime?: Date,
+    public startTime?: Date,
+    public endTime?: Date,
     public applicant?: Applicant,
     public contactList?: Array<Contact>,
     public location?: Location,
@@ -97,6 +101,8 @@ export class Application {
     app.event = applicationTypeData;
     app.contactList = [contact];
     app.applicant = applicant;
+    app.startTime = new Date('2016-04-01T10:00:00');
+    app.endTime = new Date('2017-03-31T10:00:00');
     return app;
   }
 

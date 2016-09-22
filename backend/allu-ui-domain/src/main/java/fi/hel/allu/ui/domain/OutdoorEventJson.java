@@ -12,9 +12,9 @@ public class OutdoorEventJson extends EventJson {
   private String description;
   private String url;
   @NotNull(message = "{outdoorevent.starttime}")
-  private ZonedDateTime startTime;
+  private ZonedDateTime eventStartTime;
   @NotNull(message = "{outdoorevent.endtime}")
-  private ZonedDateTime endTime;
+  private ZonedDateTime eventEndTime;
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
@@ -66,23 +66,23 @@ public class OutdoorEventJson extends EventJson {
   /**
    * in Finnish: Tapahtuman alkuaika
    */
-  public ZonedDateTime getStartTime() {
-    return startTime;
+  public ZonedDateTime getEventStartTime() {
+    return eventStartTime;
   }
 
-  public void setStartTime(ZonedDateTime startTime) {
-    this.startTime = startTime;
+  public void setEventStartTime(ZonedDateTime eventStartTime) {
+    this.eventStartTime = eventStartTime;
   }
 
   /**
    * in Finnish: Tapahtuman päättymisaika
    */
-  public ZonedDateTime getEndTime() {
-    return endTime;
+  public ZonedDateTime getEventEndTime() {
+    return eventEndTime;
   }
 
-  public void setEndTime(ZonedDateTime endTime) {
-    this.endTime = endTime;
+  public void setEventEndTime(ZonedDateTime eventEndTime) {
+    this.eventEndTime = eventEndTime;
   }
 
   /**
