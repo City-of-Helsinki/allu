@@ -66,7 +66,7 @@ public class PdfService {
       }
       headerPath = writeHtml(xml, stylesheet + HEADER_SUFFIX);
       footerPath = writeHtml(xml, stylesheet + FOOTER_SUFFIX);
-      pdfPath = writePdf(contentPath, footerPath, headerPath);
+      pdfPath = writePdf(contentPath, headerPath, footerPath);
       return fileSysAccessor.readAllBytes(pdfPath);
     } finally {
       fileSysAccessor.deleteIfExist(contentPath, headerPath, footerPath, pdfPath);
