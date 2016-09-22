@@ -1,12 +1,10 @@
 package fi.hel.allu.pdfcreator.service;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.annotation.PostConstruct;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.exec.CommandLine;
@@ -38,15 +36,6 @@ public class PdfService {
     this.applicationProperties = applicationProperties;
     tempDir = Paths.get(applicationProperties.getTempDir());
     stylesheetDir = Paths.get(applicationProperties.getStylesheetDir()).toAbsolutePath();
-  }
-
-  @PostConstruct
-  private void setupTempDir() throws IOException {
-    if (!Files.exists(tempDir)) {
-      Files.createDirectories(tempDir);
-    } else {
-      cleanUpDirectory(tempDir);
-    }
   }
 
   public byte[] generatePdf(String dataJson, String stylesheet)
@@ -98,16 +87,4 @@ public class PdfService {
     return pdfPath;
   }
 
-  private void cleanUpDirectory(Path dir) throws IOException {
-    Files.list(dir).forEach((p) -> {
-      try {
-        if (Files.isDirectory(p)) {
-          cleanUpDirectory(p);
-        }
-        Files.delete(p);
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
-      }
-    });
-  }
 }
