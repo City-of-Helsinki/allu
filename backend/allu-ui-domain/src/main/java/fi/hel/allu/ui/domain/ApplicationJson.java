@@ -1,15 +1,13 @@
 package fi.hel.allu.ui.domain;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * in Finnish: Hakemus
@@ -31,6 +29,11 @@ public class ApplicationJson {
   @NotBlank(message = "{application.name}")
   private String name;
   private ZonedDateTime creationTime;
+  @NotNull(message = "{application.startTime}")
+  private ZonedDateTime startTime;
+  @NotNull(message = "{application.endTime}")
+  private ZonedDateTime endTime;
+
   @NotNull(message = "{application.applicant}")
   @Valid
   private ApplicantJson applicant;
@@ -142,6 +145,32 @@ public class ApplicationJson {
 
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
+  }
+
+  /**
+   * The starting time the application is active i.e. the starting time certain land area is reserved by the application.
+   *
+   * @return  starting time the application is active i.e. the starting time certain land area is reserved by the application.
+   */
+  public ZonedDateTime getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(ZonedDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  /**
+   * The ending time the application is active i.e. the time certain land area stops being reserved by the application.
+   *
+   * @return  ending time the application is active i.e. the time certain land area stops being reserved by the application.
+   */
+  public ZonedDateTime getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(ZonedDateTime endTime) {
+    this.endTime = endTime;
   }
 
   /**

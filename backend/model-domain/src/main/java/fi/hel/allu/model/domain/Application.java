@@ -1,13 +1,11 @@
 package fi.hel.allu.model.domain;
 
-import java.time.ZonedDateTime;
-
-import javax.validation.constraints.NotNull;
-
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import org.hibernate.validator.constraints.NotBlank;
 
-import fi.hel.allu.common.types.ApplicationType;
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 /**
  * In Finnish: hakemus
  */
@@ -29,6 +27,8 @@ public class Application {
   @NotBlank
   private String name;
   private ZonedDateTime creationTime;
+  private ZonedDateTime startTime;
+  private ZonedDateTime endTime;
   private Integer locationId;
   @NotNull
   private Event event;
@@ -133,6 +133,32 @@ public class Application {
 
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
+  }
+
+  /**
+   * The time reservation of a land area begins.
+   *
+   * @return  time reservation of a land area begins.
+   */
+  public ZonedDateTime getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(ZonedDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  /**
+   * The time reservation of a land area ends.
+   *
+   * @return  time reservation of a land area ends.
+   */
+  public ZonedDateTime getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(ZonedDateTime endTime) {
+    this.endTime = endTime;
   }
 
   /**

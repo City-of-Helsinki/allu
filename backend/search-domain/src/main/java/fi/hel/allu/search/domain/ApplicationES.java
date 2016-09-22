@@ -21,6 +21,8 @@ public class ApplicationES {
   private ApplicationType type;
   private String name;
   private ZonedDateTime creationTime;
+  private ZonedDateTime startTime;
+  private ZonedDateTime endTime;
   private List<ESFlatValue> applicationTypeData;
   private ProjectES project;
   private ZonedDateTime decisionTime;
@@ -74,6 +76,22 @@ public class ApplicationES {
 
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
+  }
+
+  public ZonedDateTime getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(ZonedDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  public ZonedDateTime getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(ZonedDateTime endTime) {
+    this.endTime = endTime;
   }
 
   public List<ESFlatValue> getApplicationTypeData() {

@@ -48,6 +48,12 @@ public class ElasticSearchMappingConfig {
               .startObject("creationTime")
                 .field("type", "date")
               .endObject()
+              .startObject("startTime")
+                .field("type", "date")
+              .endObject()
+              .startObject("endTime")
+                .field("type", "date")
+              .endObject()
             .endObject()
             .field("date_detection", "false")
           .endObject();

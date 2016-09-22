@@ -190,7 +190,7 @@ public abstract class MockServices {
     OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
     outdoorEventJson.setDescription("Outdoor event description, Json");
     outdoorEventJson.setAttendees(1000);
-    outdoorEventJson.setStartTime(ZonedDateTime.now());
+    outdoorEventJson.setEventStartTime(ZonedDateTime.now());
     outdoorEventJson.setNature("Outdoor event nature, Json");
     outdoorEventJson.setUrl("Outdoor event url, Json");
     outdoorEventJson.setEcoCompass(true);
@@ -204,8 +204,8 @@ public abstract class MockServices {
     ZoneId zoneId = ZoneId.of("Europe/Helsinki");
     ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
     ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
-    outdoorEventJson.setStartTime(zonedDateTime);
-    outdoorEventJson.setEndTime(zonedDateTime2);
+    outdoorEventJson.setEventStartTime(zonedDateTime);
+    outdoorEventJson.setEventEndTime(zonedDateTime2);
     return outdoorEventJson;
   }
 
@@ -238,6 +238,8 @@ public abstract class MockServices {
     applicationJson.setType(ApplicationType.OUTDOOREVENT);
     applicationJson.setMetadata(createMockStructureMetadataJson());
     applicationJson.setCreationTime(ZonedDateTime.now());
+    applicationJson.setStartTime(ZonedDateTime.now());
+    applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
     applicationJson.setDecisionTime(ZonedDateTime.now());
     applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setHandler("Kalle käsittelijä, Json");
@@ -333,18 +335,18 @@ public abstract class MockServices {
     OutdoorEvent outdoorEvent = new OutdoorEvent();
     outdoorEvent.setUrl("url, Model");
     outdoorEvent.setNature("outdoor event nature, Model");
-    outdoorEvent.setStartTime(ZonedDateTime.now());
+    outdoorEvent.setEventStartTime(ZonedDateTime.now());
     outdoorEvent.setAttendees(1050);
     outdoorEvent.setDescription("Outdoor event description, Model");
-    outdoorEvent.setEndTime(ZonedDateTime.now());
+    outdoorEvent.setEventEndTime(ZonedDateTime.now());
     outdoorEvent.setEcoCompass(true);
     outdoorEvent.setFoodSales(true);
     outdoorEvent.setEntryFee(1234);
     ZoneId zoneId = ZoneId.of("Europe/Helsinki");
     ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
     ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
-    outdoorEvent.setStartTime(zonedDateTime);
-    outdoorEvent.setEndTime(zonedDateTime2);
+    outdoorEvent.setEventStartTime(zonedDateTime);
+    outdoorEvent.setEventEndTime(zonedDateTime2);
     return outdoorEvent;
   }
 

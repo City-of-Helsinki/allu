@@ -173,7 +173,7 @@
                        materialize="pickadate"
                        [materializeParams]="pickadateParams"
                        type="text"/>
-                <label for="eventStartTime">{{ meta?.getUiName('startTime') }}</label>
+                <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}</label>
               </div>
               <div class="input-field col m12">
                 <input id="eventEndTime"
@@ -181,7 +181,7 @@
                        materialize="pickadate"
                        [materializeParams]="pickadateParams"
                        type="text"/>
-                <label for="eventEndTime">{{ meta?.getUiName('endTime') }}</label>
+                <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}</label>
               </div>
               <div class="input-field col m12">
                 <textarea id="eventTimeExceptions" class="materialize-textarea" [(ngModel)]="application.event.timeExceptions"></textarea>

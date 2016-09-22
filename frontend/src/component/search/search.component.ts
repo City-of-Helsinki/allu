@@ -14,6 +14,7 @@ import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery'
 import {ApplicationSearchEvent} from '../../event/search/application-search-event';
 import {translations} from '../../util/translations';
 import {ApplicationStatus} from '../../model/application/application-status-change';
+import {PICKADATE_PARAMETERS} from '../../util/time.util';
 
 @Component({
   selector: 'search',
@@ -33,6 +34,7 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
     'TestHandler'];
   private query: ApplicationSearchQuery = new ApplicationSearchQuery();
   private translations = translations;
+  private pickadateParams = PICKADATE_PARAMETERS;
 
   constructor(private eventService: EventService, private router: Router) {
     this.results = [];

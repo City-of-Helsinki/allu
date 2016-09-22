@@ -84,6 +84,13 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     // TODO:remove preFilledApplication
     this.application = Application.prefilledApplication();
     this.application.location = locationState.location;
+    // TODO: mismatch here. Date+time should be used in location too.
+    this.application.startTime = locationState.startDate;
+    this.application.endTime = TimeUtil.getEndOfDay(locationState.endDate);
+
+    let outdoorEvent = <OutdoorEvent>this.application.event;
+    outdoorEvent.eventStartTime = this.application.startTime;
+    outdoorEvent.eventEndTime = this.application.endTime;
 
     console.log('outdoor-event.application', this.application);
 
@@ -279,6 +286,8 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     // Save application
     console.log('Saving application', application);
     application.metadata = this.meta;
+    application.startTime = this.locationState.startDate;
+    application.endTime = this.locationState.endDate;
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
     this.locationState.clear();

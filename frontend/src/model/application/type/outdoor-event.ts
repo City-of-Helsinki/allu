@@ -7,8 +7,8 @@ export class OutdoorEvent extends ApplicationTypeData {
               description: string,
               url: string,
               type: string,
-              startTime: Date,
-              endTime: Date,
+              eventStartTime: Date,
+              eventEndTime: Date,
               timeExceptions: string,
               attendees: number,
               entryFee: number,
@@ -27,8 +27,8 @@ export class OutdoorEvent extends ApplicationTypeData {
               public description?: string,
               public url?: string,
               public type?: string,
-              public startTime?: Date,
-              public endTime?: Date,
+              public eventStartTime?: Date,
+              public eventEndTime?: Date,
               public timeExceptions?: string,
               public attendees?: number,
               public entryFee?: number,
@@ -51,19 +51,19 @@ export class OutdoorEvent extends ApplicationTypeData {
    */
 
   public get uiStartTime(): string {
-    return TimeUtil.getUiDateString(this.startTime);
+    return TimeUtil.getUiDateString(this.eventStartTime);
   }
 
   public set uiStartTime(dateString: string) {
-    this.startTime = TimeUtil.getDateFromUi(dateString);
+    this.eventStartTime = TimeUtil.getDateFromUi(dateString);
   }
 
   public get uiEndTime(): string {
-    return TimeUtil.getUiDateString(this.endTime);
+    return TimeUtil.getUiDateString(this.eventEndTime);
   }
 
   public set uiEndTime(dateString: string) {
-    this.endTime = TimeUtil.getDateFromUi(dateString);
+    this.eventEndTime = TimeUtil.getDateFromUi(dateString);
   }
 
   public get uiStructureStartTime(): string {
