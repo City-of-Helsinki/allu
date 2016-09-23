@@ -204,7 +204,7 @@
               <div class="input-field col m12" [class.summary]="application.event.startTime">
                 <input id="eventStartTime"
                 disabled="true"
-                [(ngModel)]="application.event.startTime"
+                [(ngModel)]="application.event.uiStartTime"
                 materialize="pickadate"
                 [materializeParams]="[{selectMonths: true, selectYears: 15}]"
                 type="text" />
@@ -213,7 +213,7 @@
               <div class="input-field col m12" [class.summary]="application.event.endTime">
                 <input id="eventEndTime"
                 disabled="true"
-                [(ngModel)]="application.event.endTime"
+                [(ngModel)]="application.event.uiEndTime"
                 materialize="pickadate"
                 [materializeParams]="[{selectMonths: true, selectYears: 15}]"
                 type="text" />

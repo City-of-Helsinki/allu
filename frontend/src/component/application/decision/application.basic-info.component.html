@@ -17,7 +17,7 @@
                 </div>
                 <div class="col s6">
                     <label>Arvioitu aloitus</label>
-                    <div>{{application.event.uiStartTime}}</div>
+                    <div>{{application.startTime | date:format }}</div>
                 </div>
                 <div class="col s6">
                     <label>Tapahtuman luonne</label>
@@ -25,7 +25,7 @@
                 </div>
                 <div class="col s6">
                     <label>Arvioitu päättyminen</label>
-                    <div>{{application.event.uiEndTime}}</div>
+                    <div>{{application.endTime | date:format }}</div>
                 </div>
                 <div class="col s6">
                     <label>Hakemus saapunut</label>
