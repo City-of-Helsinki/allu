@@ -17,6 +17,7 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.json.JSONException;
+import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,6 +27,13 @@ import org.xml.sax.SAXException;
 
 public class JsonConverterTest {
 
+  private JsonConverter jsonConverter;
+
+  @Before
+  public void setup() {
+    jsonConverter = new JsonConverter();
+  }
+
   @Test
   public void testJsonToXml()
       throws ParserConfigurationException, IOException, XPathExpressionException, JSONException, TransformerException {
@@ -34,7 +42,7 @@ public class JsonConverterTest {
 
     final String json = "{\"key1\":\"value1\", \"key2\":\"value2\", \"anArray\":[\"one\",\"two\",\"three\"]}";
     final String baseDir = "/f/g/h/i/";
-    final String xml = JsonConverter.jsonToXml(json, baseDir);
+    final String xml = jsonConverter.jsonToXml(json, baseDir);
 
     // Now some tests to validate the XML contents..
     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -97,7 +105,7 @@ public class JsonConverterTest {
   public void testStylesheet() throws TransformerException
   {
     InputStream stylesheetStream = new ByteArrayInputStream(testXslt.getBytes());
-    String text = JsonConverter.applyStylesheet(testXml, stylesheetStream);
+    String text = jsonConverter.applyStylesheet(testXml, stylesheetStream);
     assertEquals(expectedText, text);
   }
 }

@@ -1,17 +1,12 @@
 package fi.hel.allu.pdfcreator.service;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-import javax.annotation.PostConstruct;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.Executor;
 import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +15,8 @@ import org.springframework.stereotype.Service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.pdfcreator.config.ApplicationProperties;
+import fi.hel.allu.pdfcreator.util.Executioner;
+import fi.hel.allu.pdfcreator.util.FileSysAccessor;
 import fi.hel.allu.pdfcreator.util.JsonConverter;
 
 @Service
@@ -27,87 +24,90 @@ public class PdfService {
 
   private static final Logger logger = LoggerFactory.getLogger(PdfService.class);
 
+  // filename suffixes for header and footer
+  private static final String HEADER_SUFFIX = "-header";
+  private static final String FOOTER_SUFFIX = "-footer";
+
+  // wkhtmltopdf command line arguments to specify header and footer:
+  private static final String HEADER_ARG = "--header-html";
+  private static final String FOOTER_ARG = "--footer-html";
+
   private ApplicationProperties applicationProperties;
+  private FileSysAccessor fileSysAccessor;
+  private Executioner executioner;
+  private JsonConverter jsonConverter;
 
   private final Path tempDir;
   private final Path stylesheetDir;
 
   @Autowired
-  public PdfService(ApplicationProperties applicationProperties) throws IOException {
+  public PdfService(ApplicationProperties applicationProperties, FileSysAccessor fileSysAccessor,
+      Executioner executioner, JsonConverter jsonConverter) throws IOException {
     logger.debug("PdfService starting");
     this.applicationProperties = applicationProperties;
+    this.fileSysAccessor = fileSysAccessor;
+    this.executioner = executioner;
+    this.jsonConverter = jsonConverter;
     tempDir = Paths.get(applicationProperties.getTempDir());
     stylesheetDir = Paths.get(applicationProperties.getStylesheetDir()).toAbsolutePath();
   }
 
-  @PostConstruct
-  private void setupTempDir() throws IOException {
-    if (!Files.exists(tempDir)) {
-      Files.createDirectories(tempDir);
-    } else {
-      cleanUpDirectory(tempDir);
-    }
-  }
-
   public byte[] generatePdf(String dataJson, String stylesheet)
       throws IOException, JSONException, TransformerException {
-    Path htmlPath = null;
+    Path contentPath = null;
+    Path headerPath = null;
+    Path footerPath = null;
     Path pdfPath = null;
+    String xml = jsonConverter.jsonToXml(dataJson, stylesheetDir.toString() + "/");
     try {
-      htmlPath = writeHtml(dataJson, stylesheet);
-      pdfPath = writePdf(htmlPath);
-      return Files.readAllBytes(pdfPath);
+      contentPath = writeHtml(xml, stylesheet);
+      if (contentPath == null) {
+        throw new NoSuchEntityException("Can't find the stylesheet '" + stylesheet + "'");
+      }
+      headerPath = writeHtml(xml, stylesheet + HEADER_SUFFIX);
+      footerPath = writeHtml(xml, stylesheet + FOOTER_SUFFIX);
+      pdfPath = writePdf(contentPath, headerPath, footerPath);
+      return fileSysAccessor.readAllBytes(pdfPath);
     } finally {
-      if (htmlPath != null) {
-        Files.deleteIfExists(htmlPath);
-      }
-      if (pdfPath != null) {
-        Files.deleteIfExists(pdfPath);
-      }
+      fileSysAccessor.deleteIfExist(contentPath, headerPath, footerPath, pdfPath);
     }
   }
 
-  private Path writeHtml(String dataJson, String stylesheet) throws IOException, JSONException, TransformerException {
+  private Path writeHtml(String xml, String stylesheet) throws IOException, JSONException, TransformerException {
     // Check that stylesheet exists:
     Path xslPath = stylesheetDir.resolve(stylesheet + ".xsl");
-    if (!Files.exists(xslPath)) {
-      throw new NoSuchEntityException("Can't find XML file " + xslPath.toString());
+    if (!fileSysAccessor.exists(xslPath)) {
+      return null;
     }
 
-    String xml = JsonConverter.jsonToXml(dataJson, stylesheetDir.toString() + "/");
-    String html = JsonConverter.applyStylesheet(xml, Files.newInputStream(xslPath));
+    String html = jsonConverter.applyStylesheet(xml, fileSysAccessor.newInputStream(xslPath));
 
     // Write HTML to temporary file
-    Path htmlPath = Files.createTempFile(tempDir, "pdfsource-", ".html");
-    Files.write(htmlPath, html.getBytes());
+    Path htmlPath = fileSysAccessor.createTempFile(tempDir, "pdfsource-", ".html");
+    fileSysAccessor.write(htmlPath, html.getBytes());
     return htmlPath;
   }
 
-  private Path writePdf(Path xmlPath) throws IOException {
-    Path pdfPath = Files.createTempFile(tempDir, "output-", ".pdf");
+  private Path writePdf(Path contentPath, Path headerPath, Path footerPath) throws IOException {
+    Path pdfPath = fileSysAccessor.createTempFile(tempDir, "output-", ".pdf");
     final CommandLine cmdLine = new CommandLine(applicationProperties.getPdfGenerator());
-    cmdLine.addArgument(xmlPath.toString());
+    cmdLine.addArgument(contentPath.toString());
+    if (headerPath != null) {
+      cmdLine.addArgument(HEADER_ARG);
+      cmdLine.addArgument(headerPath.toString());
+    }
+    if (footerPath != null) {
+      cmdLine.addArgument(FOOTER_ARG);
+      cmdLine.addArgument(footerPath.toString());
+    }
     cmdLine.addArgument(pdfPath.toString());
     try {
-      final Executor executioner = new DefaultExecutor();
       executioner.execute(cmdLine);
     } catch (IOException e) {
-      Files.deleteIfExists(pdfPath);
+      fileSysAccessor.deleteIfExist(pdfPath);
       throw e;
     }
     return pdfPath;
   }
 
-  private void cleanUpDirectory(Path dir) throws IOException {
-    Files.list(dir).forEach((p) -> {
-      try {
-        if (Files.isDirectory(p)) {
-          cleanUpDirectory(p);
-        }
-        Files.delete(p);
-      } catch (IOException e) {
-        throw new UncheckedIOException(e);
-      }
-    });
-  }
 }
