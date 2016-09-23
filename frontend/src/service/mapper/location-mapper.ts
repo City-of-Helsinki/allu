@@ -1,5 +1,6 @@
 import {BackendLocation} from '../backend-model/backend-location';
 import {Location} from '../../model/common/location';
+import {PostalAddress} from '../../model/common/postal-address';
 
 export class LocationMapper {
   public static mapBackend(backendLocation: BackendLocation): Location {
@@ -7,7 +8,7 @@ export class LocationMapper {
       new Location(
         backendLocation.id,
         backendLocation.geometry,
-        backendLocation.postalAddress,
+        PostalAddress.fromBackend(backendLocation.postalAddress),
         backendLocation.info) : undefined;
   }
   public static mapFrontend(location: Location): BackendLocation {
@@ -15,7 +16,7 @@ export class LocationMapper {
     {
       id: location.id,
       geometry: location.geometry,
-      postalAddress: location.postalAddress,
+      postalAddress: location.postalAddress.toBackend(),
       info: location.info
     } : undefined;
   }

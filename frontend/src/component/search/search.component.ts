@@ -1,8 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Router} from '@angular/router';
-import { MdButton } from '@angular2-material/button';
-import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
-import {MaterializeDirective} from 'angular2-materialize';
 
 import {EventListener} from '../../event/event-listener';
 import {EventService} from '../../event/event.service';
@@ -21,8 +18,7 @@ import {PICKADATE_PARAMETERS} from '../../util/time.util';
   template: require('./search.component.html'),
   styles: [
     require('./search.component.scss')
-  ],
-  directives: [MD_CARD_DIRECTIVES, MaterializeDirective, MdButton]
+  ]
 })
 
 export class SearchComponent implements EventListener, OnInit, OnDestroy {

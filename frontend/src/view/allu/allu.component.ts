@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router, RouterOutlet} from '@angular/router';
+import {Router} from '@angular/router';
 import {ViewEncapsulation} from '@angular/core';
 
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
@@ -22,7 +22,7 @@ import {AuthGuard} from '../../component/login/auth-guard.service';
   styles: [
     require('../../assets/main.scss')
   ],
-  directives: [RouterOutlet, ToolbarComponent],
+  directives: [ToolbarComponent],
   providers: [EventService, TaskManagerService, WorkqueueService]
 })
 export class AlluComponent {

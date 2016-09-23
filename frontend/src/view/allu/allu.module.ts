@@ -5,6 +5,15 @@ import {Http, HttpModule, HTTP_PROVIDERS} from '@angular/http';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
+import {MdButtonModule} from '@angular2-material/button';
+import {MdCardModule} from '@angular2-material/card';
+import {MdCheckboxModule} from '@angular2-material/checkbox';
+import {MdCoreModule} from '@angular2-material/core';
+import {MdInputModule} from '@angular2-material/input';
+import {MdRadioModule} from '@angular2-material/radio';
+import {MdToolbarModule} from '@angular2-material/toolbar';
+import {MaterializeDirective} from 'angular2-materialize';
+
 import {MapUtil} from '../../service/map.util.ts';
 import {EventService} from '../../event/event.service';
 import {TaskManagerService} from '../../service/task/task-manager.service';
@@ -46,9 +55,23 @@ import {rootRouteConfig} from '../../view/allu/allu.routing';
     SummaryComponent,
     DecisionComponent,
     SearchComponent,
-    Login
+    Login,
+    MaterializeDirective
   ],
-  imports: [BrowserModule, HttpModule, FormsModule, RouterModule.forRoot(rootRouteConfig)],
+  imports: [
+    BrowserModule,
+    HttpModule,
+    FormsModule,
+    RouterModule.forRoot(rootRouteConfig),
+    // Material
+    MdButtonModule,
+    MdCardModule,
+    MdCheckboxModule,
+    MdCoreModule,
+    MdInputModule,
+    MdRadioModule,
+    MdToolbarModule
+  ],
   bootstrap: [AlluComponent],
   providers: [
     EventService,

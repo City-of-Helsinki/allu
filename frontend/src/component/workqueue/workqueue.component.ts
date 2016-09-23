@@ -1,8 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {WorkqueueService} from '../../service/workqueue.service';
-import { MdButton } from '@angular2-material/button';
-import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
-import {MaterializeDirective} from 'angular2-materialize';
 
 import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
 import {EventListener} from '../../event/event-listener';
@@ -20,8 +17,7 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
   template: require('./workqueue.component.html'),
   styles: [
     require('./workqueue.component.scss')
-  ],
-  directives: [MD_CARD_DIRECTIVES, MaterializeDirective, MdButton]
+  ]
 })
 
 export class WorkQueueComponent implements EventListener, OnInit, OnDestroy {

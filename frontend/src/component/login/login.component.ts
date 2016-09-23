@@ -1,13 +1,11 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { CORE_DIRECTIVES, FORM_DIRECTIVES } from '@angular/common';
 import { Http, Headers } from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {CustomerMapper} from '../../service/mapper/customer-mapper';
 
 @Component({
   selector: 'login',
-  directives: [RouterLink, CORE_DIRECTIVES, FORM_DIRECTIVES ],
   template: require('./login.component.html')
 })
 export class Login {

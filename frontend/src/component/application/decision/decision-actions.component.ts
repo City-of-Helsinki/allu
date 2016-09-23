@@ -2,21 +2,18 @@ import {Component, Input, ViewChildren, QueryList} from '@angular/core';
 
 import {Observable} from 'rxjs/Observable';
 import '../../../rxjs-extensions.ts';
-import {MdButton} from '@angular2-material/button';
 
 import {Application} from '../../../model/application/application';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {ApplicationStatusChange, ApplicationStatus} from '../../../model/application/application-status-change';
 import {DecisionModalComponent} from './decision-modal.component';
-import {MaterializeDirective} from 'angular2-materialize';
+
 
 @Component({
   selector: 'decision-actions',
   template: require('./decision-actions.component.html'),
   styles: [],
   directives: [
-    MdButton,
-    MaterializeDirective,
     DecisionModalComponent
   ]
 })

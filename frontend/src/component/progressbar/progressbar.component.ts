@@ -1,7 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 
-import {MdToolbar} from '@angular2-material/toolbar';
-
 export enum ProgressStep {
   LOCATION,
   INFORMATION,
@@ -21,8 +19,7 @@ export enum ProgressMode {
   template: require('./progressbar.component.html'),
   styles: [
     require('./progressbar.component.scss')
-  ],
-  directives: [MdToolbar]
+  ]
 })
 export class ProgressbarComponent implements OnInit {
   @Input() step: number;

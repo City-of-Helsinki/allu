@@ -1,12 +1,6 @@
 import {Component} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
-import {MdButton} from '@angular2-material/button';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import {MdToolbar} from '@angular2-material/toolbar';
-import {MaterializeDirective} from 'angular2-materialize';
-
 import {MapComponent} from '../map/map.component';
 import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../component/progressbar/progressbar.component';
 import {ApplicationListComponent} from '../application/list/application-list.component';
@@ -45,11 +39,6 @@ enum HasChanges {
     require('./location.component.scss')
   ],
   directives: [
-    MdToolbar,
-    MD_INPUT_DIRECTIVES,
-    MD_CARD_DIRECTIVES,
-    MdButton,
-    MaterializeDirective,
     MapComponent,
     ProgressbarComponent,
     ApplicationListComponent,

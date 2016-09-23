@@ -1,7 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import { MdAnchor, MdButton } from '@angular2-material/button';
-import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 
 import {WorkqueueService} from '../../../service/workqueue.service';
 import {ApplicationSelectionEvent} from '../../../event/selection/application-selection-event';
@@ -23,8 +21,7 @@ import {ApplicationHub} from '../../../service/application/application-hub';
   template: require('./application-list.component.html'),
   styles: [
     require('./application-list.component.scss')
-  ],
-  directives: [MD_CARD_DIRECTIVES, MdButton]
+  ]
 })
 
 export class ApplicationListComponent implements EventListener, OnInit, OnDestroy {
