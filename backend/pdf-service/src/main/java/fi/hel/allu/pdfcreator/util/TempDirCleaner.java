@@ -7,7 +7,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import fi.hel.allu.pdfcreator.config.ApplicationProperties;
@@ -17,7 +18,7 @@ import fi.hel.allu.pdfcreator.config.ApplicationProperties;
  * temporary directory at startup.
  */
 @Component
-public class TempDirCleaner implements CommandLineRunner {
+public class TempDirCleaner implements ApplicationListener<ApplicationReadyEvent> {
 
   private ApplicationProperties applicationProperties;
 
@@ -27,9 +28,13 @@ public class TempDirCleaner implements CommandLineRunner {
   }
 
   @Override
-  public void run(String... arg0) throws Exception {
+  public void onApplicationEvent(final ApplicationReadyEvent event) {
     Path tempDir = Paths.get(applicationProperties.getTempDir());
-    setupTempDir(tempDir);
+    try {
+      setupTempDir(tempDir);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 
   private void setupTempDir(Path tempDir) throws IOException {
