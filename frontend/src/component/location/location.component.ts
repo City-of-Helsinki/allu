@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router, ActivatedRoute, ROUTER_DIRECTIVES} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdButton} from '@angular2-material/button';
@@ -37,18 +37,14 @@ enum HasChanges {
   YES
 }
 
-
-
 @Component({
   selector: 'type',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./location.component.html'),
   styles: [
     require('./location.component.scss')
   ],
   directives: [
-    ROUTER_DIRECTIVES,
     MdToolbar,
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,

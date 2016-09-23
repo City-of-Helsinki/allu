@@ -17,7 +17,6 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 
 @Component({
   selector: 'workqueue',
-  moduleId: module.id,
   template: require('./workqueue.component.html'),
   styles: [
     require('./workqueue.component.scss')

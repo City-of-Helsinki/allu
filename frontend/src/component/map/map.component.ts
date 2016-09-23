@@ -23,7 +23,6 @@ import {Application} from '../../model/application/application';
 
 @Component({
   selector: 'map',
-  moduleId: module.id,
   template: require('./map.component.html'),
   styles: [
     require('./map.component.scss')

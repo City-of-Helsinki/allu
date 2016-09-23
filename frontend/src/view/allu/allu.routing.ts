@@ -13,7 +13,7 @@ import {PromotionEventComponent} from '../../component/application/promotion-eve
 import {TypeComponent} from '../../component/application/type/type.component';
 import {AuthGuard} from '../../component/login/auth-guard.service';
 
-const alluRoutes: RouterConfig = [
+export const rootRouteConfig: RouterConfig = [
   { path: '', component: MapSearchComponent, canActivate: [AuthGuard]},
   { path: 'applications', component: ApplicationComponent, canActivate: [AuthGuard], children: [
     { path: '', component: TypeComponent, canActivate: [AuthGuard] }, //  useAsDefault: true }, coming soon!
@@ -28,5 +28,3 @@ const alluRoutes: RouterConfig = [
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'login', component: Login }
 ];
-
-export const ALLU_ROUTER_PROVIDERS = [provideRouter(alluRoutes)];

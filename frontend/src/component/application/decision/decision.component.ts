@@ -12,7 +12,6 @@ import {Decision} from '../../../model/decision/Decision';
 
 @Component({
   selector: 'decision',
-  moduleId: module.id,
   template: require('./decision.component.html'),
   styles: [require('./decision.component.scss')],
   directives: [

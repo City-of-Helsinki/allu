@@ -4,7 +4,6 @@ import {NavbarComponent} from '../navbar/navbar.component';
 
 @Component({
   selector: 'toolbar',
-  moduleId: module.id,
   template: require('./toolbar.component.html'),
   styles: [
     require('./toolbar.component.scss')

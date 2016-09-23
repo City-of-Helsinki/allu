@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, Input} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
-import {Router, ROUTER_DIRECTIVES} from '@angular/router';
+import {Router} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -39,13 +39,11 @@ import {LocationState} from '../../../service/application/location-state';
 @Component({
   selector: 'outdoor-event',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./outdoor-event.component.html'),
   styles: [
     require('./outdoor-event.component.scss')
   ],
   directives: [
-    ROUTER_DIRECTIVES,
     MaterializeDirective,
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,

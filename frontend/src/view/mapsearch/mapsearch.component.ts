@@ -10,7 +10,6 @@ import {ApplicationListComponent} from '../../component/application/list/applica
 @Component({
   selector: 'mapsearch',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./mapsearch.component.html'),
   styles: [
     require('./mapsearch.component.scss')

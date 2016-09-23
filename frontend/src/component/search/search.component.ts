@@ -18,7 +18,6 @@ import {PICKADATE_PARAMETERS} from '../../util/time.util';
 
 @Component({
   selector: 'search',
-  moduleId: module.id,
   template: require('./search.component.html'),
   styles: [
     require('./search.component.scss')

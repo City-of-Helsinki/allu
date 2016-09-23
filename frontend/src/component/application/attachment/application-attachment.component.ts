@@ -9,7 +9,6 @@ import * as filesaverLib from 'filesaver';
 
 @Component({
   selector: 'application-attachment',
-  moduleId: module.id,
   template: require('./application-attachment.component.html'),
   styles: [
     require('./application-attachment.component.scss')

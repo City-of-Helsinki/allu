@@ -12,7 +12,6 @@ import {MaterializeDirective} from 'angular2-materialize';
 
 @Component({
   selector: 'decision-actions',
-  moduleId: module.id,
   template: require('./decision-actions.component.html'),
   styles: [],
   directives: [

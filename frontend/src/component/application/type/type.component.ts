@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
-import {ROUTER_DIRECTIVES} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -25,10 +24,8 @@ import {Person} from '../../../model/common/person';
 @Component({
   selector: 'type',
   viewProviders: [],
-  moduleId: module.id,
   template: '',
   directives: [
-    ROUTER_DIRECTIVES,
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,
     MdToolbar,

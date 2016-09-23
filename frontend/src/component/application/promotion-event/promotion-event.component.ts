@@ -1,6 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FORM_DIRECTIVES} from '@angular/common';
-import {ROUTER_DIRECTIVES} from '@angular/router';
 
 import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
 import {MdAnchor, MdButton} from '@angular2-material/button';
@@ -24,13 +23,11 @@ import {LocationState} from '../../../service/application/location-state';
 @Component({
   selector: 'promotion-event',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./promotion-event.component.html'),
   styles: [
     require('./promotion-event.component.scss')
   ],
   directives: [
-    ROUTER_DIRECTIVES,
     MaterializeDirective,
     MD_INPUT_DIRECTIVES,
     MD_CARD_DIRECTIVES,

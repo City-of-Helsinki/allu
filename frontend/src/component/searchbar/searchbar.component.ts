@@ -18,7 +18,6 @@ declare var Materialize: any;
 
 @Component({
   selector: 'searchbar',
-  moduleId: module.id,
   template: require('./searchbar.component.html'),
   styles: [
     require('./searchbar.component.scss')

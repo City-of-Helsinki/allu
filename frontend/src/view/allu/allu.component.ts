@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {ROUTER_DIRECTIVES, Router, RouterOutlet} from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
 import {ViewEncapsulation} from '@angular/core';
 
 import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
@@ -17,7 +17,6 @@ import {AuthGuard} from '../../component/login/auth-guard.service';
 @Component({
   selector: 'allu',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./allu.component.html'),
   encapsulation: ViewEncapsulation.None,
   styles: [

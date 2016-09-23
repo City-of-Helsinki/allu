@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 
 import {MdToolbar} from '@angular2-material/toolbar';
 import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
@@ -14,7 +14,6 @@ import {Event} from '../../event/event';
 @Component({
   selector: 'application',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./application.component.html'),
   styles: [
     require('./application.component.scss')
@@ -22,7 +21,6 @@ import {Event} from '../../event/event';
   directives: [
     ProgressbarComponent,
     MaterializeDirective,
-    ROUTER_DIRECTIVES,
     MdToolbar,
     MD_CARD_DIRECTIVES
   ]

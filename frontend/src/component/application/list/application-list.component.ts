@@ -1,6 +1,5 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {ROUTER_DIRECTIVES} from '@angular/router';
 import { MdAnchor, MdButton } from '@angular2-material/button';
 import { MD_CARD_DIRECTIVES } from '@angular2-material/card';
 
@@ -21,7 +20,6 @@ import {ApplicationHub} from '../../../service/application/application-hub';
 
 @Component({
   selector: 'application-list',
-  moduleId: module.id,
   template: require('./application-list.component.html'),
   styles: [
     require('./application-list.component.scss')

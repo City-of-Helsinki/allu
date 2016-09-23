@@ -7,7 +7,6 @@ import {UI_DATE_FORMAT} from '../../../util/time.util';
 
 @Component({
   selector: 'application-basic-info',
-  moduleId: module.id,
   template: require('./application.basic-info.component.html'),
   styles: [],
   directives: [

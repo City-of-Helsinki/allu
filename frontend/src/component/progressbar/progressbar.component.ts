@@ -18,7 +18,6 @@ export enum ProgressMode {
 
 @Component({
   selector: 'progressbar',
-  moduleId: module.id,
   template: require('./progressbar.component.html'),
   styles: [
     require('./progressbar.component.scss')
