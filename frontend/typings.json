@@ -38,6 +38,7 @@
     "vinyl-source-stream": "github:DefinitelyTyped/DefinitelyTyped/vinyl-source-stream/vinyl-source-stream.d.ts#ffceea9dd124d277c4597c7bd12930666ec074c5",
     "webpack": "github:DefinitelyTyped/DefinitelyTyped/webpack/webpack.d.ts#95c02169ba8fa58ac1092422efbd2e3174a206f4",
     "yargs": "github:DefinitelyTyped/DefinitelyTyped/yargs/yargs.d.ts#6a287502dab374e7d4cbf18ea1ac5dff7f74726a",
-    "zone.js": "github:DefinitelyTyped/DefinitelyTyped/zone.js/zone.js.d.ts#b923a5aaf013ac84c566f27ba6b5843211981c7a"
+    "zone.js": "github:DefinitelyTyped/DefinitelyTyped/zone.js/zone.js.d.ts#b923a5aaf013ac84c566f27ba6b5843211981c7a",
+    "hammerjs": "registry:dt/hammerjs#2.0.4+20160417130828"
   }
 }

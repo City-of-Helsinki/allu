@@ -1,15 +1,7 @@
 import {Component} from '@angular/core';
-import {Router, RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
+import {Router, ActivatedRoute} from '@angular/router';
 
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
-import {MdButton} from '@angular2-material/button';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import {MdToolbar} from '@angular2-material/toolbar';
-import {MaterializeDirective} from 'angular2-materialize';
-
-import {MapComponent} from '../map/map.component';
-import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../component/progressbar/progressbar.component';
-import {ApplicationListComponent} from '../application/list/application-list.component';
+import {ProgressStep, ProgressMode} from '../../component/progressbar/progressbar.component';
 
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
@@ -23,7 +15,6 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 import {ErrorEvent} from '../../event/error-event';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
-import {SearchbarComponent} from '../../component/searchbar/searchbar.component';
 
 import 'proj4leaflet';
 import 'leaflet';
@@ -37,29 +28,13 @@ enum HasChanges {
   YES
 }
 
-
-
 @Component({
   selector: 'type',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./location.component.html'),
   styles: [
     require('./location.component.scss')
-  ],
-  directives: [
-    ROUTER_DIRECTIVES,
-    MdToolbar,
-    MD_INPUT_DIRECTIVES,
-    MD_CARD_DIRECTIVES,
-    MdButton,
-    MaterializeDirective,
-    MapComponent,
-    ProgressbarComponent,
-    ApplicationListComponent,
-    SearchbarComponent
-  ],
-  providers: []
+  ]
 })
 export class LocationComponent implements EventListener {
   private application: Application;
@@ -76,10 +51,7 @@ export class LocationComponent implements EventListener {
     private eventService: EventService,
     private mapService: MapUtil,
     private router: Router,
-    params: RouteParams) {
-    // A location of a certain application must be editable. This means if there is an id associated with the route, it should go there.
-    // If there is no parameter id, this.id will be 0.
-    this.id = Number(params.get('id'));
+    private route: ActivatedRoute) {
     this.progressMode = this.id ? ProgressMode.EDIT : ProgressMode.NEW;
     this.progressStep = ProgressStep.LOCATION;
 
@@ -91,6 +63,10 @@ export class LocationComponent implements EventListener {
   };
 
   ngOnInit() {
+    this.route.params.subscribe(params => {
+      this.id = Number(params['id']);
+    });
+
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
     if (this.id) {
@@ -156,7 +132,7 @@ export class LocationComponent implements EventListener {
       }
       // TODO: disable save button
     } else {
-      this.router.navigate(['/Applications/Type']);
+      this.router.navigate(['/applications']);
     }
   }
 }

@@ -1,7 +1,4 @@
 import {Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange} from '@angular/core';
-
-import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
-import {FileSelectDirective} from './file-select.directive';
 import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
 
@@ -9,14 +6,11 @@ import * as filesaverLib from 'filesaver';
 
 @Component({
   selector: 'application-attachment',
-  moduleId: module.id,
   template: require('./application-attachment.component.html'),
   styles: [
     require('./application-attachment.component.scss')
-  ],
-  directives: [FILE_UPLOAD_DIRECTIVES, FileSelectDirective]
+  ]
 })
-
 export class ApplicationAttachmentComponent implements OnChanges {
 
   @Input() readonly: boolean = false;

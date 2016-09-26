@@ -1,23 +1,11 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {FORM_DIRECTIVES} from '@angular/common';
-import {RouteParams, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
-import {MdAnchor, MdButton} from '@angular2-material/button';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import {MdToolbar} from '@angular2-material/toolbar';
-import {MdRadioButton} from '@angular2-material/radio';
-import {MdRadioDispatcher} from '@angular2-material/radio/radio_dispatcher';
-import {MdCheckbox} from '@angular2-material/checkbox';
-
-import {MaterializeDirective} from 'angular2-materialize';
+import {ActivatedRoute} from '@angular/router';
 
 import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-announce-event';
 import {ApplicationSelectionEvent} from '../../../event/selection/application-selection-event';
 
 import {MapUtil} from '../../../service/map.util.ts';
-import {MapComponent} from '../../map/map.component';
-import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../../component/progressbar/progressbar.component';
+import {ProgressStep, ProgressMode} from '../../../component/progressbar/progressbar.component';
 
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
@@ -27,34 +15,17 @@ import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
 import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application-added-announce-event';
 import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
 import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event';
-import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {MapHub} from '../../../service/map-hub';
 import {Subscription} from 'rxjs/Subscription';
 
-
 @Component({
   selector: 'summary',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./summary.component.html'),
   styles: [
     require('./summary.component.scss')
-  ],
-  directives: [
-    ROUTER_DIRECTIVES,
-    MaterializeDirective,
-    MD_INPUT_DIRECTIVES,
-    MD_CARD_DIRECTIVES,
-    MdToolbar,
-    MdButton,
-    MdRadioButton,
-    MdCheckbox,
-    MapComponent,
-    ProgressbarComponent,
-    ApplicationAttachmentComponent
-  ],
-  providers: [MdRadioDispatcher]
+  ]
 })
 
 export class SummaryComponent implements EventListener, OnInit, OnDestroy {
@@ -76,8 +47,8 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
 
   private applicationSubscription: Subscription;
 
-  constructor(private eventService: EventService, private applicationHub: ApplicationHub, private mapHub: MapHub, params: RouteParams) {
-    this.id = Number(params.get('id'));
+  constructor(private eventService: EventService, private applicationHub: ApplicationHub, private mapHub: MapHub,
+              private route: ActivatedRoute) {
     this.events = [
       {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
       {name: 'Muu', value: 'Other'}
@@ -130,6 +101,10 @@ export class SummaryComponent implements EventListener, OnInit, OnDestroy {
   };
 
   ngOnInit(): any {
+    this.route.params.subscribe(params => {
+      this.id = Number(params['id']);
+    });
+
     this.eventService.subscribe(this);
     let filter = new ApplicationLoadFilter();
     filter.applicationId = this.id;

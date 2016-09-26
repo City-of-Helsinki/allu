@@ -1,6 +1,4 @@
 import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
-import {MdToolbar} from '@angular2-material/toolbar';
-import {MaterializeDirective} from 'angular2-materialize';
 
 import {Event} from '../../event/event';
 import {StringUtil} from '../../util/string.util';
@@ -18,14 +16,9 @@ declare var Materialize: any;
 
 @Component({
   selector: 'searchbar',
-  moduleId: module.id,
   template: require('./searchbar.component.html'),
   styles: [
     require('./searchbar.component.scss')
-  ],
-  directives: [
-    MdToolbar,
-    MaterializeDirective
   ]
 })
 

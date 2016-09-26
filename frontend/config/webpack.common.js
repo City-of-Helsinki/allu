@@ -127,7 +127,7 @@ module.exports = {
           // skip external modules
           helpers.root('node_modules')
         ]
-      }
+      },
     ],
 
     /*

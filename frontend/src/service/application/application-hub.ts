@@ -14,13 +14,13 @@ export type ApplicationSearch = ApplicationLocationQuery | number;
 
 @Injectable()
 export class ApplicationHub {
-  private applications$: BehaviorSubject<Array<Application>> = new BehaviorSubject([]);
-  private applicationChange$: Subject<Application> = new Subject();
-  private applicationStatusChange$: Subject<ApplicationStatusChange> = new Subject();
-  private applicationSearch$: Subject<ApplicationSearch> = new Subject();
+  private applications$ = new BehaviorSubject<Array<Application>>([]);
+  private applicationChange$ = new Subject<Application>();
+  private applicationStatusChange$ = new Subject<ApplicationStatusChange>();
+  private applicationSearch$ = new Subject<ApplicationSearch>();
 
-  private searchBar$: Subject<SearchbarFilter> = new Subject();
-  private mapView$: Subject<GeoJSON.GeometryObject> = new Subject();
+  private searchBar$ = new Subject<SearchbarFilter>();
+  private mapView$ = new Subject<GeoJSON.GeometryObject>();
 
   constructor() {
     // Waits until searchBar and mapView observables produce value and combines them (latest)

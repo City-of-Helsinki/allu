@@ -1,19 +1,7 @@
 import {Component, OnDestroy, OnInit, Input} from '@angular/core';
-import {FORM_DIRECTIVES} from '@angular/common';
-import {Router, ROUTER_DIRECTIVES} from '@angular/router-deprecated';
-
-import {MD_INPUT_DIRECTIVES} from '@angular2-material/input';
-import {MdAnchor, MdButton} from '@angular2-material/button';
-import {MD_CARD_DIRECTIVES} from '@angular2-material/card';
-import {MdToolbar} from '@angular2-material/toolbar';
-import {MdRadioButton} from '@angular2-material/radio';
-import {MdRadioDispatcher} from '@angular2-material/radio/radio_dispatcher';
-import {MdCheckbox} from '@angular2-material/checkbox';
-
-import {MaterializeDirective} from 'angular2-materialize';
+import {Router} from '@angular/router';
 
 import {Location} from '../../../model/common/location';
-
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
 import {Application} from '../../../model/application/application';
@@ -27,36 +15,19 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
 import {StructureMeta} from '../../../model/application/structure-meta';
 import {MetaLoadEvent} from '../../../event/load/meta-load-event';
 import {MetaAnnounceEvent} from '../../../event/announce/meta-announce-event';
-import {LoadingComponent} from '../../loading/loading.component';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
-import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
 import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
 import {LocationState} from '../../../service/application/location-state';
 
-
 @Component({
   selector: 'outdoor-event',
   viewProviders: [],
-  moduleId: module.id,
   template: require('./outdoor-event.component.html'),
   styles: [
     require('./outdoor-event.component.scss')
-  ],
-  directives: [
-    ROUTER_DIRECTIVES,
-    MaterializeDirective,
-    MD_INPUT_DIRECTIVES,
-    MD_CARD_DIRECTIVES,
-    MdToolbar,
-    MdButton,
-    MdRadioButton,
-    MdCheckbox,
-    LoadingComponent,
-    ApplicationAttachmentComponent
-  ],
-  providers: [MdRadioDispatcher]
+  ]
 })
 
 export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
@@ -210,11 +181,11 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       // "hub approach" i.e. observable.subscribe(router.navigate...)
       if (this.attachments && this.attachments.length !== 0) {
         this.attachmentService.uploadFiles(
-          aaaEvent.application.id, this.attachments, () => self.router.navigate(['/Summary', {id: this.application.id}]));
+          aaaEvent.application.id, this.attachments, () => self.router.navigate(['/summary', {id: this.application.id}]));
       } else {
         this.attachmentService.uploadFiles(
           aaaEvent.application.id, this.attachments, () => { return undefined; });
-        self.router.navigate(['/Summary', {id: this.application.id}]);
+        self.router.navigate(['/summary', this.application.id]);
       }
 
     } else if (event instanceof MetaAnnounceEvent) {

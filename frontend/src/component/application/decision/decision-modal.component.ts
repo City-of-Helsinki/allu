@@ -1,14 +1,10 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {MaterializeDirective} from 'angular2-materialize';
 import {ApplicationStatusChange, ApplicationStatus, translateStatus} from '../../../model/application/application-status-change';
 
 @Component({
   selector: 'decision-modal',
   template: require('./decision-modal.component.html'),
-  styles: [require('./decision-modal.component.scss')],
-  directives: [
-    MaterializeDirective
-  ]
+  styles: [require('./decision-modal.component.scss')]
 })
 export class DecisionModalComponent {
   @Input() status: string;

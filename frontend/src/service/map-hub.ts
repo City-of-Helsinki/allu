@@ -8,9 +8,9 @@ import {Application} from '../model/application/application';
 
 @Injectable()
 export class MapHub {
-  private coordinates$: Subject<Geocoordinates> = new Subject<Geocoordinates>();
-  private search$: Subject<string> = new Subject<string>();
-  private applicationSelection$: Subject<Application> = new Subject();
+  private coordinates$ = new Subject<Geocoordinates>();
+  private search$ = new Subject<string>();
+  private applicationSelection$ = new Subject<Application>();
 
   constructor() {
     this.applicationSelection().subscribe(app => console.log('applicationSelection', app));
