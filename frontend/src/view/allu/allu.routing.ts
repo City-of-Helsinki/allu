@@ -14,7 +14,8 @@ import {TypeComponent} from '../../component/application/type/type.component';
 import {AuthGuard} from '../../component/login/auth-guard.service';
 
 export const rootRoutes: Routes = [
-  { path: '', component: MapSearchComponent, canActivate: [AuthGuard]},
+  { path: '', redirectTo: 'home', pathMatch: 'full' },
+  { path: 'home', component: MapSearchComponent, canActivate: [AuthGuard]},
   { path: 'applications', component: ApplicationComponent, canActivate: [AuthGuard], children: [
     { path: '', component: TypeComponent, canActivate: [AuthGuard] }, //  useAsDefault: true }, coming soon!
     { path: 'outdoor-event', component: OutdoorEventComponent, canActivate: [AuthGuard] },

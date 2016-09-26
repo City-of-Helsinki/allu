@@ -181,7 +181,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       // "hub approach" i.e. observable.subscribe(router.navigate...)
       if (this.attachments && this.attachments.length !== 0) {
         this.attachmentService.uploadFiles(
-          aaaEvent.application.id, this.attachments, () => self.router.navigate(['/Summary', {id: this.application.id}]));
+          aaaEvent.application.id, this.attachments, () => self.router.navigate(['/summary', {id: this.application.id}]));
       } else {
         this.attachmentService.uploadFiles(
           aaaEvent.application.id, this.attachments, () => { return undefined; });
