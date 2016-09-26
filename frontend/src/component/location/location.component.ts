@@ -1,9 +1,7 @@
 import {Component} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 
-import {MapComponent} from '../map/map.component';
-import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../component/progressbar/progressbar.component';
-import {ApplicationListComponent} from '../application/list/application-list.component';
+import {ProgressStep, ProgressMode} from '../../component/progressbar/progressbar.component';
 
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
@@ -17,7 +15,6 @@ import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 import {ErrorEvent} from '../../event/error-event';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
-import {SearchbarComponent} from '../../component/searchbar/searchbar.component';
 
 import 'proj4leaflet';
 import 'leaflet';
@@ -37,14 +34,7 @@ enum HasChanges {
   template: require('./location.component.html'),
   styles: [
     require('./location.component.scss')
-  ],
-  directives: [
-    MapComponent,
-    ProgressbarComponent,
-    ApplicationListComponent,
-    SearchbarComponent
-  ],
-  providers: []
+  ]
 })
 export class LocationComponent implements EventListener {
   private application: Application;

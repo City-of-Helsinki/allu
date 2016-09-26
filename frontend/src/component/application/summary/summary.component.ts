@@ -5,8 +5,7 @@ import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-an
 import {ApplicationSelectionEvent} from '../../../event/selection/application-selection-event';
 
 import {MapUtil} from '../../../service/map.util.ts';
-import {MapComponent} from '../../map/map.component';
-import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../../component/progressbar/progressbar.component';
+import {ProgressStep, ProgressMode} from '../../../component/progressbar/progressbar.component';
 
 import {Event} from '../../../event/event';
 import {EventListener} from '../../../event/event-listener';
@@ -16,11 +15,9 @@ import {ApplicationSaveEvent} from '../../../event/save/application-save-event';
 import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application-added-announce-event';
 import {ApplicationLoadFilter} from '../../../event/load/application-load-filter';
 import {ApplicationsLoadEvent} from '../../../event/load/applications-load-event';
-import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {MapHub} from '../../../service/map-hub';
 import {Subscription} from 'rxjs/Subscription';
-
 
 @Component({
   selector: 'summary',
@@ -28,11 +25,6 @@ import {Subscription} from 'rxjs/Subscription';
   template: require('./summary.component.html'),
   styles: [
     require('./summary.component.scss')
-  ],
-  directives: [
-    MapComponent,
-    ProgressbarComponent,
-    ApplicationAttachmentComponent
   ]
 })
 

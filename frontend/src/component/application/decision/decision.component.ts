@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {DomSanitizationService, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
+import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 
-import {ProgressbarComponent, ProgressStep, ProgressMode} from '../../progressbar/progressbar.component';
-import {ApplicationBasicInfoComponent} from '../decision/application.basic-info.component';
-import {DecisionActionsComponent} from '../decision/decision-actions.component';
+import {ProgressStep, ProgressMode} from '../../progressbar/progressbar.component';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {Application} from '../../../model/application/application';
 import {DecisionHub} from '../../../service/decision/decision-hub';
@@ -13,12 +11,7 @@ import {Decision} from '../../../model/decision/Decision';
 @Component({
   selector: 'decision',
   template: require('./decision.component.html'),
-  styles: [require('./decision.component.scss')],
-  directives: [
-    ProgressbarComponent,
-    ApplicationBasicInfoComponent,
-    DecisionActionsComponent
-  ]
+  styles: [require('./decision.component.scss')]
 })
 export class DecisionComponent implements OnInit {
   private progressStep: number;
@@ -30,7 +23,7 @@ export class DecisionComponent implements OnInit {
   private pdfLoaded: boolean;
 
   constructor(
-    private sanitization: DomSanitizationService,
+    private sanitizer: DomSanitizer,
     private applicationHub: ApplicationHub,
     private decisionHub: DecisionHub,
     private route: ActivatedRoute) {
@@ -57,8 +50,8 @@ export class DecisionComponent implements OnInit {
   private handleDecisions(decisions: Array<Decision>): void {
     let decision = decisions.find(d => d.applicationId === this.id);
     let url = URL.createObjectURL(decision.pdf);
-    this.pdfUrl = this.sanitization.bypassSecurityTrustResourceUrl(url);
-    this.pdfDownloadUrl = this.sanitization.bypassSecurityTrustUrl(url);
+    this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+    this.pdfDownloadUrl = this.sanitizer.bypassSecurityTrustUrl(url);
     this.pdfLoaded = true;
   }
 }

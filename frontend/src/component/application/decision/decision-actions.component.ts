@@ -1,21 +1,15 @@
 import {Component, Input, ViewChildren, QueryList} from '@angular/core';
-
 import {Observable} from 'rxjs/Observable';
 import '../../../rxjs-extensions.ts';
 
 import {Application} from '../../../model/application/application';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {ApplicationStatusChange, ApplicationStatus} from '../../../model/application/application-status-change';
-import {DecisionModalComponent} from './decision-modal.component';
-
 
 @Component({
   selector: 'decision-actions',
   template: require('./decision-actions.component.html'),
-  styles: [],
-  directives: [
-    DecisionModalComponent
-  ]
+  styles: []
 })
 export class DecisionActionsComponent {
   @Input() application: Application;

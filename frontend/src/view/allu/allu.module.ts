@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {APP_BASE_HREF} from '@angular/common';
-import {Http, HttpModule, HTTP_PROVIDERS} from '@angular/http';
+import {Http, HttpModule} from '@angular/http';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
@@ -13,7 +13,7 @@ import {MdInputModule} from '@angular2-material/input';
 import {MdRadioModule} from '@angular2-material/radio';
 import {MdToolbarModule} from '@angular2-material/toolbar';
 import {MaterializeDirective} from 'angular2-materialize';
-
+import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
 import {MapUtil} from '../../service/map.util.ts';
 import {EventService} from '../../event/event.service';
 import {TaskManagerService} from '../../service/task/task-manager.service';
@@ -40,13 +40,29 @@ import {SummaryComponent} from '../../component/application/summary/summary.comp
 import {DecisionComponent} from '../../component/application/decision/decision.component';
 import {SearchComponent} from '../../component/search/search.component';
 import {Login} from '../../component/login/login.component';
-import {rootRouteConfig} from '../../view/allu/allu.routing';
+import {rootRoutes} from '../../view/allu/allu.routing';
+import {FileSelectDirective} from '../../component/application/attachment/file-select.directive';
+import {DecisionModalComponent} from '../../component/application/decision/decision-modal.component';
+import {ProgressbarComponent} from '../../component/progressbar/progressbar.component';
+import {ApplicationBasicInfoComponent} from '../../component/application/decision/application.basic-info.component';
+import {DecisionActionsComponent} from '../../component/application/decision/decision-actions.component';
+import {MapComponent} from '../../component/map/map.component';
+import {ApplicationListComponent} from '../../component/application/list/application-list.component';
+import {ToolbarComponent} from '../../component/toolbar/toolbar.component';
+import {NavbarComponent} from '../../component/navbar/navbar.component';
+import {ApplicationAttachmentComponent} from '../../component/application/attachment/application-attachment.component';
+import {LoadingComponent} from '../../component/loading/loading.component';
+import {SearchbarComponent} from '../../component/searchbar/searchbar.component';
 
 @NgModule({
   declarations: [
     AlluComponent,
+    ProgressbarComponent,
+    ToolbarComponent,
+    NavbarComponent,
     MapSearchComponent,
     ApplicationComponent,
+    ApplicationListComponent,
     TypeComponent,
     OutdoorEventComponent,
     PromotionEventComponent,
@@ -55,19 +71,28 @@ import {rootRouteConfig} from '../../view/allu/allu.routing';
     SummaryComponent,
     DecisionComponent,
     SearchComponent,
+    SearchbarComponent,
+    MapComponent,
     Login,
-    MaterializeDirective
+    MaterializeDirective,
+    FILE_UPLOAD_DIRECTIVES,
+    FileSelectDirective,
+    DecisionModalComponent,
+    DecisionActionsComponent,
+    ApplicationBasicInfoComponent,
+    LoadingComponent,
+    ApplicationAttachmentComponent
   ],
   imports: [
     BrowserModule,
     HttpModule,
     FormsModule,
-    RouterModule.forRoot(rootRouteConfig),
+    RouterModule.forRoot(rootRoutes),
     // Material
+    MdCoreModule.forRoot(),
     MdButtonModule,
     MdCardModule,
     MdCheckboxModule,
-    MdCoreModule,
     MdInputModule,
     MdRadioModule,
     MdToolbarModule

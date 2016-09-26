@@ -15,14 +15,11 @@ import {ApplicationAddedAnnounceEvent} from '../../../event/announce/application
 import {StructureMeta} from '../../../model/application/structure-meta';
 import {MetaLoadEvent} from '../../../event/load/meta-load-event';
 import {MetaAnnounceEvent} from '../../../event/announce/meta-announce-event';
-import {LoadingComponent} from '../../loading/loading.component';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
-import {ApplicationAttachmentComponent} from '../attachment/application-attachment.component';
 import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
 import {LocationState} from '../../../service/application/location-state';
-
 
 @Component({
   selector: 'outdoor-event',
@@ -30,10 +27,6 @@ import {LocationState} from '../../../service/application/location-state';
   template: require('./outdoor-event.component.html'),
   styles: [
     require('./outdoor-event.component.scss')
-  ],
-  directives: [
-    LoadingComponent,
-    ApplicationAttachmentComponent
   ]
 })
 

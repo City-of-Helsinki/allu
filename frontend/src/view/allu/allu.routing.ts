@@ -1,4 +1,4 @@
-import { RouterConfig, provideRouter } from '@angular/router';
+import {Routes} from '@angular/router';
 
 import {MapSearchComponent} from '../mapsearch/mapsearch.component';
 import {ApplicationComponent} from '../application/application.component';
@@ -13,7 +13,7 @@ import {PromotionEventComponent} from '../../component/application/promotion-eve
 import {TypeComponent} from '../../component/application/type/type.component';
 import {AuthGuard} from '../../component/login/auth-guard.service';
 
-export const rootRouteConfig: RouterConfig = [
+export const rootRoutes: Routes = [
   { path: '', component: MapSearchComponent, canActivate: [AuthGuard]},
   { path: 'applications', component: ApplicationComponent, canActivate: [AuthGuard], children: [
     { path: '', component: TypeComponent, canActivate: [AuthGuard] }, //  useAsDefault: true }, coming soon!

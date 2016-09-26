@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 
-import {ProgressStep, ProgressMode, ProgressbarComponent} from '../../component/progressbar/progressbar.component';
+import {ProgressStep, ProgressMode} from '../../component/progressbar/progressbar.component';
 import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
 import {Event} from '../../event/event';
 
@@ -11,9 +11,6 @@ import {Event} from '../../event/event';
   template: require('./application.component.html'),
   styles: [
     require('./application.component.scss')
-  ],
-  directives: [
-    ProgressbarComponent
   ]
 })
 export class ApplicationComponent implements OnInit {
