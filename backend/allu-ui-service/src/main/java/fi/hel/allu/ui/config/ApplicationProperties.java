@@ -130,21 +130,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICANT_FIND_BY_ID = "/applicants/{applicantId}";
 
   /**
-   * Model-service path to create a new customer
-   */
-  public static final String PATH_MODEL_CUSTOMER_CREATE = "/customers";
-
-  /**
-   * Model-service path to update customer
-   */
-  public static final String PATH_MODEL_CUSTOMER_UPDATE = "/customers/{customerId}";
-
-  /**
-   * Model-service path to find customer by identifier
-   */
-  public static final String PATH_MODEL_CUSTOMER_FIND_BY_ID = "/customers/{customerId}";
-
-  /**
    * Model-service path to create a new organization
    */
   public static final String PATH_MODEL_ORGANIZATION_CREATE = "/organizations";

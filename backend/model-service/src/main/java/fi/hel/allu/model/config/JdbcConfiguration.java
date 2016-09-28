@@ -7,7 +7,7 @@ import com.querydsl.sql.spring.SpringConnectionProvider;
 import com.querydsl.sql.spring.SpringExceptionTranslator;
 import fi.hel.allu.model.querydsl.StringToApplicationType;
 import fi.hel.allu.model.querydsl.StringToAttributeDataType;
-import fi.hel.allu.model.querydsl.StringToCustomerType;
+import fi.hel.allu.model.querydsl.StringToApplicantType;
 import fi.hel.allu.model.querydsl.StringToEvent;
 import fi.hel.allu.model.querydsl.StringToStatusType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class JdbcConfiguration {
     SQLTemplates templates = PostGISTemplates.builder().printSchema().build();
     com.querydsl.sql.Configuration configuration = new com.querydsl.sql.Configuration(templates);
     configuration.setExceptionTranslator(new SpringExceptionTranslator());
-    configuration.register(new StringToCustomerType());
+    configuration.register(new StringToApplicantType());
     configuration.register(new StringToApplicationType());
     configuration.register(new StringToEvent());
     configuration.register(new StringToAttributeDataType());

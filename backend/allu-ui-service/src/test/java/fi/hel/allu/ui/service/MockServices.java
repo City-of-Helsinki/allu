@@ -1,23 +1,9 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.domain.meta.AttributeDataType;
-import fi.hel.allu.model.domain.meta.AttributeMeta;
-import fi.hel.allu.model.domain.meta.StructureMeta;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.stubbing.Answer;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -25,7 +11,41 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.geolatte.geom.builder.DSL.*;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
+
+import fi.hel.allu.common.types.ApplicantType;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.Organization;
+import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.Person;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
+import fi.hel.allu.model.domain.meta.StructureMeta;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ESFlatValue;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.AttributeMetaJson;
+import fi.hel.allu.ui.domain.ContactJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.OrganizationJson;
+import fi.hel.allu.ui.domain.OutdoorEventJson;
+import fi.hel.allu.ui.domain.PersonJson;
+import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.domain.StructureMetaJson;
 
 public abstract class MockServices {
   @Mock
@@ -45,10 +65,6 @@ public abstract class MockServices {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Organization.class)))
         .thenAnswer((Answer<Organization>) invocation -> createMockOrganizationModel());
-
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Customer.class)))
-        .thenAnswer((Answer<Customer>) invocation -> createMockCustomerModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Project.class)))
@@ -83,9 +99,6 @@ public abstract class MockServices {
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Person.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Person>>) invocation -> createMockPersonResponse());
-
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Customer.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Customer>>) invocation -> createMockCustomerResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Project.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> createMockProjectResponse());
@@ -146,15 +159,6 @@ public abstract class MockServices {
     return personJson;
   }
 
-  public CustomerJson createCustomerJson(Integer customerId, Integer typeId) {
-    CustomerJson customer = new CustomerJson();
-    customer.setId(customerId);
-    customer.setPerson(createPersonJson(typeId));
-    customer.setSapId("444-1, Json");
-    customer.setType(CustomerType.PERSON);
-    return customer;
-  }
-
   public OrganizationJson createOrganizationJson(Integer id) {
     OrganizationJson organizationJson = new OrganizationJson();
     organizationJson.setId(id);
@@ -174,7 +178,7 @@ public abstract class MockServices {
   public ApplicantJson createApplicantJson(Integer id, Integer typeId) {
     ApplicantJson applicantJson = new ApplicantJson();
     applicantJson.setId(id);
-    applicantJson.setType(CustomerType.COMPANY);
+    applicantJson.setType(ApplicantType.COMPANY);
     applicantJson.setOrganization(createOrganizationJson(typeId));
     return applicantJson;
   }
@@ -243,7 +247,6 @@ public abstract class MockServices {
     applicationJson.setDecisionTime(ZonedDateTime.now());
     applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setHandler("Kalle käsittelijä, Json");
-    applicationJson.setCustomer(createCustomerJson(null, null));
     applicationJson.setApplicant(createApplicantJson(null, null));
     applicationJson.setLocation(createLocationJson(null));
     applicationJson.setProject(createProjectJson(null));
@@ -259,7 +262,6 @@ public abstract class MockServices {
     application.setProjectId(100);
     application.setCreationTime(ZonedDateTime.now());
     application.setDecisionTime(ZonedDateTime.now());
-    application.setCustomerId(101);
     application.setHandler("Mock handler, Model");
     application.setType(ApplicationType.OUTDOOREVENT);
     application.setLocationId(102);
@@ -297,15 +299,6 @@ public abstract class MockServices {
     return organization;
   }
 
-  public Customer createMockCustomerModel() {
-    Customer customer = new Customer();
-    customer.setId(101);
-    customer.setPersonId(200);
-    customer.setSapId("444-1, Model");
-    customer.setType(CustomerType.PERSON);
-    return customer;
-  }
-
   public Project createMockProjectModel() {
     Project project = new Project();
     project.setId(100);
@@ -316,7 +309,7 @@ public abstract class MockServices {
   public Applicant createMockApplicantModel() {
     Applicant applicant = new Applicant();
     applicant.setId(103);
-    applicant.setType(CustomerType.COMPANY);
+    applicant.setType(ApplicantType.COMPANY);
     applicant.setOrganizationId(201);
     return applicant;
   }
@@ -387,10 +380,6 @@ public abstract class MockServices {
     return new ResponseEntity<>(createMockProjectModel(), HttpStatus.OK);
   }
 
-  public ResponseEntity<Customer> createMockCustomerResponse() {
-    return new ResponseEntity<>(createMockCustomerModel(), HttpStatus.OK);
-  }
-
   public ResponseEntity<Applicant> createMockApplicantResponse() {
     return new ResponseEntity<>(createMockApplicantModel(), HttpStatus.OK);
   }
@@ -418,7 +407,6 @@ public abstract class MockServices {
     applicationModel.setStatus(StatusType.HANDLING);
     applicationModel.setProjectId(4321);
     applicationModel.setName("MockName2");
-    applicationModel.setCustomerId(3456);
     applicationModel.setApplicantId(655);
     applicationModel.setLocationId(345);
     applicationModel.setEvent(createMockOutdoorEventModel());

@@ -1,9 +1,24 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.ui.domain.*;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -17,17 +32,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.*;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ContactJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.LocationQueryJson;
+import fi.hel.allu.ui.domain.OutdoorEventJson;
+import fi.hel.allu.ui.domain.PersonJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.domain.StructureMetaJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceTest extends MockServices {
@@ -38,8 +53,6 @@ public class ApplicationServiceTest extends MockServices {
   protected PersonService personService;
   @Mock
   protected ProjectService projectService;
-  @Mock
-  protected CustomerService customerService;
   @Mock
   protected ApplicantService applicantService;
   @Autowired
@@ -62,7 +75,7 @@ public class ApplicationServiceTest extends MockServices {
   @Before
   public void setUp() {
     applicationMapper = new ApplicationMapper();
-    applicationService = new ApplicationService(props, restTemplate, locationService, customerService, applicantService, projectService,
+    applicationService = new ApplicationService(props, restTemplate, locationService, applicantService, projectService,
         applicationMapper, contactService, searchService, metaService);
 
     initSaveMocks();
@@ -73,8 +86,6 @@ public class ApplicationServiceTest extends MockServices {
         createPersonJson(200));
     Mockito.when(projectService.createProject(Mockito.anyObject())).thenAnswer((Answer<ProjectJson>) invocation ->
         createProjectJson(100));
-    Mockito.when(customerService.createCustomer(Mockito.anyObject())).thenAnswer((Answer<CustomerJson>) invocation ->
-        createCustomerJson(101, 200));
     Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
 
@@ -84,8 +95,6 @@ public class ApplicationServiceTest extends MockServices {
         createPersonJson(200));
     Mockito.when(projectService.findProjectById(Mockito.anyInt())).thenAnswer((Answer<ProjectJson>) invocation ->
         createProjectJson(100));
-    Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer((Answer<CustomerJson>) invocation ->
-        createCustomerJson(101, 200));
     Mockito.when(applicantService.findApplicantById(Mockito.anyInt())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
     Mockito.when(contactService.findContactsForApplication(Mockito.anyInt()))
@@ -125,20 +134,15 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response);
     assertEquals(1, response.getId().intValue());
     assertNotNull(response.getApplicant());
-    assertNotNull(response.getCustomer());
     assertNotNull(response.getProject());
     assertNotNull(response.getLocation());
     assertEquals(100, response.getProject().getId().intValue());
-    assertEquals(101, response.getCustomer().getId().intValue());
     assertEquals(102, response.getLocation().getId().intValue());
     assertEquals(103, response.getApplicant().getId().intValue());
     assertEquals("Mock handler, Model", response.getHandler());
     assertNull(response.getApplicant().getPerson());
     assertNotNull(response.getApplicant().getOrganization());
     assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
-    assertNull(response.getCustomer().getOrganization());
-    assertNotNull(response.getCustomer().getPerson());
-    assertEquals(200, response.getCustomer().getPerson().getId().intValue());
     assertNotNull(response.getLocation().getGeometry());
     assertNotNull(response.getEvent());
     assertNotNull(response.getDecisionTime());
@@ -161,20 +165,15 @@ public class ApplicationServiceTest extends MockServices {
     ApplicationJson response = applicationService.findApplicationById(123);
 
     assertNotNull(response);
-    assertNotNull(response.getCustomer());
     assertNotNull(response.getProject());
     assertNotNull(response.getApplicant());
     assertNotNull(response.getEvent());
     assertEquals(100, response.getProject().getId().intValue());
-    assertEquals(101, response.getCustomer().getId().intValue());
     assertEquals(102, response.getLocation().getId().intValue());
     assertEquals(103, response.getApplicant().getId().intValue());
-    assertNull(response.getCustomer().getOrganization());
     assertNull(response.getApplicant().getPerson());
     assertNotNull(response.getApplicant().getOrganization());
-    assertNotNull(response.getCustomer().getPerson());
     assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
-    assertEquals(200, response.getCustomer().getPerson().getId().intValue());
     assertEquals("outdoor event nature, Model", ((OutdoorEventJson)response.getEvent()).getNature());
   }
 
@@ -191,23 +190,17 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response);
     assertEquals(2, response.size());
 
-    assertNotNull(response.get(0).getCustomer());
     assertNotNull(response.get(0).getProject());
     assertNotNull(response.get(0).getApplicant());
     assertNotNull(response.get(0).getLocation());
     assertNotNull(response.get(0).getEvent());
     assertEquals(100, response.get(0).getProject().getId().intValue());
-    assertEquals(101, response.get(0).getCustomer().getId().intValue());
     assertEquals(102, response.get(0).getLocation().getId().intValue());
     assertEquals(103, response.get(0).getApplicant().getId().intValue());
-    assertNull(response.get(0).getCustomer().getOrganization());
     assertNull(response.get(0).getApplicant().getPerson());
     assertNotNull(response.get(0).getApplicant().getOrganization());
-    assertNotNull(response.get(0).getCustomer().getPerson());
     assertEquals(201, response.get(0).getApplicant().getOrganization().getId().intValue());
-    assertEquals(200, response.get(0).getCustomer().getPerson().getId().intValue());
     assertNotNull(response.get(1));
-    assertNotNull(response.get(1).getCustomer());
     assertNotNull(response.get(1).getProject());
     assertNotNull(response.get(1).getApplicant());
     assertNotNull(response.get(1).getLocation());
@@ -223,23 +216,17 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response);
     assertEquals(2, response.size());
 
-    assertNotNull(response.get(0).getCustomer());
     assertNotNull(response.get(0).getProject());
     assertNotNull(response.get(0).getApplicant());
     assertNotNull(response.get(0).getLocation());
     assertNotNull(response.get(0).getEvent());
     assertEquals(100, response.get(0).getProject().getId().intValue());
-    assertEquals(101, response.get(0).getCustomer().getId().intValue());
     assertEquals(102, response.get(0).getLocation().getId().intValue());
     assertEquals(103, response.get(0).getApplicant().getId().intValue());
-    assertNull(response.get(0).getCustomer().getOrganization());
     assertNull(response.get(0).getApplicant().getPerson());
     assertNotNull(response.get(0).getApplicant().getOrganization());
-    assertNotNull(response.get(0).getCustomer().getPerson());
     assertEquals(201, response.get(0).getApplicant().getOrganization().getId().intValue());
-    assertEquals(200, response.get(0).getCustomer().getPerson().getId().intValue());
     assertNotNull(response.get(1));
-    assertNotNull(response.get(1).getCustomer());
     assertNotNull(response.get(1).getProject());
     assertNotNull(response.get(1).getApplicant());
     assertNotNull(response.get(1).getLocation());

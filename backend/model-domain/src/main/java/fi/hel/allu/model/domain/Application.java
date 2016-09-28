@@ -1,11 +1,13 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
-import org.hibernate.validator.constraints.NotBlank;
+import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
-import java.time.ZonedDateTime;
+
+import org.hibernate.validator.constraints.NotBlank;
+
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
 /**
  * In Finnish: hakemus
  */
@@ -15,8 +17,6 @@ public class Application {
   @NotNull
   private Integer projectId;
   private String handler;
-  // @NotNull
-  private Integer customerId; // TODO:Remove?
   @NotNull
   private Integer applicantId;
   private StatusType status;
@@ -76,17 +76,6 @@ public class Application {
 
   public void setHandler(String handler) {
     this.handler = handler;
-  }
-
-  /**
-   * in Finnish: Hakemukseen liittyvän toimeksiantajan tunniste
-   */
-  public Integer getCustomerId() {
-    return customerId;
-  }
-
-  public void setCustomerId(Integer customerId) {
-    this.customerId = customerId;
   }
 
   /**
