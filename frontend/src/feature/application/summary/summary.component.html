@@ -1,0 +1,424 @@
+<progressbar [step]="progressStep" [mode]="progressMode"></progressbar>
+<div materialize class="row" *ngIf="application">
+  <div class="col m6 no-padding-right">
+    <md-card>
+      <md-card-title>Hakemuksen tyyppi</md-card-title>
+      <md-card-content>
+          <div class="row">
+            <div class="col m12" [class.summary]="application.type">
+              <input type="text" [disabled]="true" [(ngModel)]="application.type">
+            </div>
+          </div>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div class="col m6 no-padding-left">
+    <md-card>
+      <md-card-title>Tapahtuman tyyppi</md-card-title>
+      <md-card-content>
+          <div class="row">
+            <div class="col m12" [class.summary]="application.type">
+              <input type="text" [disabled]="true" [(ngModel)]="application.type">
+              <!-- <select materialize="material_select" [materializeSelectOptions]="selectOptions" [disabled]="true" class="" [(ngModel)]="application.type">
+                <option value="" disabled selected>Valitse tapahtuman tyyppi</option>
+                <option *ngFor="let event of events" [value]="event.value">{{event.name}}</option>
+              </select> -->
+            </div>
+          </div>
+      </md-card-content>
+    </md-card>
+  </div>
+  <div materialize class="row">
+    <div class="col m6 no-padding-right">
+      <md-card>
+        <md-card-title>Hakija</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="input-field col m6" [class.summary]="applicantType[application.applicant.type]">
+              <input type="text" [disabled]="true" [(ngModel)]="applicantType[application.applicant.type]">
+              <!-- <select (change)="applicantTypeSelection($event.target.value)" materialize="material_select" [disabled]="true" class="" [materializeSelectOptions]="selectOptions">
+                <option value="" disabled selected>Valitse hakijan tyyppi</option>
+                <option *ngFor="let type of applicantType" [value]="type">{{type}}</option>
+              </select> -->
+            </div>
+            <div class="input-field col m6" [class.summary]="countries[0].name">
+              <input type="text" [disabled]="true" [(ngModel)]="countries[0].name">
+              <!-- <select (change)="applicantCountrySelection($event.target.value)" materialize="material_select" [disabled]="true" class="" [materializeSelectOptions]="selectOptions">
+                <option value="" disabled selected>Maa</option>
+                <option *ngFor="let country of countries" [value]="country.value">{{country.name}}</option>
+              </select> -->
+            </div>
+            <div class="input-field col m8">
+              <input id="companyName" type="text" class="validate" [class.summary]="application.applicant.person ? application.applicant.person.name : application.applicant.organization.name" [disabled]="true" [(ngModel)]="application.applicant.person ? application.applicant.person.name : application.applicant.organization.name">
+              <label for="companyName">{{applicantText[application.applicant.type].name}}</label>
+            </div>
+            <div class="input-field col m4">
+              <input id="businessID" type="text" class="validate" [class.summary]="application.applicant.person ? application.applicant.person.ssn : application.applicant.organization.businessId" [disabled]="true" [(ngModel)]="application.applicant.person ? application.applicant.person.ssn : application.applicant.organization.businessId">
+              <label for="businessID">{{applicantText[application.applicant.type].id}}</label>
+            </div>
+            <div class="input-field col m6">
+              <input id="applicantAddress" type="text" class="validate" [class.summary]="application.applicant.person ? application.applicant.person.postalAddress.streetAddress : application.applicant.organization.postalAddress.streetAddress" [disabled]="true" [(ngModel)]="application.applicant.person ? application.applicant.person.postalAddress.streetAddress : application.applicant.organization.postalAddress.streetAddress">
+              <label for="applicantAddress">Osoite</label>
+            </div>
+            <div class="input-field col m3">
+              <input id="applicantPostalCode" type="text" class="validate" [class.summary]="application.applicant.person ? application.applicant.person.postalAddress.postalCode : application.applicant.organization.postalAddress.postalCode" [disabled]="true" [(ngModel)]="application.applicant.person ? application.applicant.person.postalAddress.postalCode : application.applicant.organization.postalAddress.postalCode">
+              <label for="applicantPostalCode">Postinumero</label>
+            </div>
+            <div class="input-field col m3">
+              <input id="applicantCity" type="text" class="validate" [class.summary]="application.applicant.person ? application.applicant.person.postalAddress.city : application.applicant.organization.postalAddress.city" [disabled]="true" [(ngModel)]="application.applicant.person ? application.applicant.person.postalAddress.city : application.applicant.organization.postalAddress.city">
+              <label for="applicantCity">Toimipaikka</label>
+            </div>
+            <div class="input-field col m4">
+              <input id="applicantPhone" type="text" class="validate" [class.summary]="application.applicant.person ? application.applicant.person.phone : application.applicant.organization.phone" [disabled]="true" [(ngModel)]="application.applicant.person ? application.applicant.person.phone : application.applicant.organization.phone">
+              <label for="applicantPhone">Puhelin</label>
+            </div>
+            <div class="input-field col m8">
+              <input id="applicantEmail" type="text" class="validate" [class.summary]="application.applicant.person ? application.applicant.person.email : application.applicant.organization.email" [disabled]="true" [(ngModel)]="application.applicant.person ? application.applicant.person.email : application.applicant.organization.email">
+              <label for="applicantEmail">Sähköpostiosoite</label>
+            </div>
+            <div class="col m7">
+              <input type="checkbox" class="filled-in" disabled="true" id="copyToBilling"/>
+              <label for="copyToBilling">Kopioi tiedot laskutusosoitteeksi</label>
+            </div>
+            <div class="col m5">
+              <input type="checkbox" class="filled-in" id="representative" disabled="true" [checked]="application.applicant.representative"/>
+              <label for="representative" [class.summary-checkbox]="application.applicant.representative">Asiaa hoitaa asiamies</label>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <div class="col m6 no-padding-left">
+      <md-card>
+        <md-card-title>Yhteyshenkilö</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="input-field col m12">
+              <input id="contactName" type="text" class="validate" [class.summary]="application.contactList[0].name" [disabled]="true" [(ngModel)]="application.contactList[0].name">
+              <label for="contactName">Yhteyshenkilön nimi</label>
+            </div>
+            <div class="input-field col m6">
+              <input id="contactStreetAddress" type="text" class="validate" [class.summary]="application.contactList[0].streetAddress" [disabled]="true" [(ngModel)]="application.contactList[0].streetAddress">
+              <label for="contactStreetAddress">Osoite</label>
+            </div>
+            <div class="input-field col m3">
+              <input id="contactPostalCode" type="text" class="validate" [class.summary]="application.contactList[0].postalCode" [disabled]="true" [(ngModel)]="application.contactList[0].postalCode">
+              <label for="contactPostalCode">Postinumero</label>
+            </div>
+            <div class="input-field col m3">
+              <input id="contactCity" type="text" class="validate" [class.summary]="application.contactList[0].city" [disabled]="true" [(ngModel)]="application.contactList[0].city">
+              <label for="contactCity">Toimipaikka</label>
+            </div>
+            <div class="input-field col m4">
+              <input id="contactPhone" type="text" class="validate" [class.summary]="application.contactList[0].phone" [disabled]="true" [(ngModel)]="application.contactList[0].phone">
+              <label for="contactPhone">Puhelin</label>
+            </div>
+            <div class="input-field col m8">
+              <input id="contactEmail" type="text" class="validate" [class.summary]="application.contactList[0].email" [disabled]="true" [(ngModel)]="application.contactList[0].email">
+              <label for="contactEmail">Sähköpostiosoite</label>
+            </div>
+            <div class="buttons col m12">
+              <p class="button-height"> </p>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+  <!-- TODO: error handling for missing billing info
+   <div class="col m12">
+      <md-card>
+        <md-card-title>Laskutusosoite</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m6 no-padding">
+              <div class="col m6 country-select">
+                <select materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="application.billingDetail.type">
+                  <option value="" disabled selected>Valitse laskutustapa</option>
+                  <option *ngFor="let type of billingTypes" [value]="type.value">{{type.name}}</option>
+                </select>
+              </div>
+              <div class="col m6 country-select">
+                <select materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="application.billingDetail.country">
+                  <option value="" disabled selected>Maa</option>
+                  <option *ngFor="let country of countries" [value]="country.value">{{country.name}}</option>
+                </select>
+              </div>
+              <div class="input-field col m6">
+                <input id="billingAddress" type="text" class="validate" [disabled]="true" [(ngModel)]="application.billingDetail.postalAddress.streetAddress">
+                <label for="billingAddress">Osoite</label>
+              </div>
+              <div class="input-field col m3">
+                <input id="billingPostalCode" type="text" class="validate" [disabled]="true" [(ngModel)]="application.billingDetail.postalAddress.postalCode">
+                <label for="billingPostalCode">Postinumero</label>
+              </div>
+              <div class="input-field col m3">
+                <input id="billingCity" type="text" class="validate" [disabled]="true" [(ngModel)]="application.billingDetail.postalAddress.city">
+                <label for="billingCity">Toimipaikka</label>
+              </div>
+            </div>
+            <div class="col m6">
+              <div class="input-field col m6 offset-m3">
+                <input id="billingWorkNumber" type="text" class="validate" [disabled]="true" [(ngModel)]="application.billingDetail.workNumber">
+                <label for="billingWorkNumber">Työnumero</label>
+              </div>
+              <div class="input-field col m6 offset-m3">
+                <input id="billingReference" type="text" class="validate" [disabled]="true" [(ngModel)]="application.billingDetail.reference">
+                <label for="billingReference">Laskutusviite</label>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div> -->
+
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Tapahtuman tiedot</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m6 no-padding">
+              <div class="input-field col m12">
+                <input id="eventName" type="text" class="validate" [class.summary]="application.name" [disabled]="true" [(ngModel)]="application.name">
+                <label for="eventName">Tapahtuman nimi</label>
+              </div>
+              <div class="input-field col m12">
+                <input id="eventNature" type="text" class="validate" [class.summary]="application.event.nature" [disabled]="true" [(ngModel)]="application.event.nature">
+                <label for="eventNature">Tapahtuman luonne</label>
+              </div>
+              <div class="input-field col m12">
+                <textarea id="eventDescription" class="materialize-textarea" [class.summary]="application.event.description" [disabled]="true" [(ngModel)]="application.event.description"></textarea>
+                <label for="eventDescription">Tapahtuman kuvaus</label>
+              </div>
+              <div class="input-field col m12">
+                <input id="eventUrl" type="text" class="validate" [class.summary]="application.event.url" [disabled]="true" [(ngModel)]="application.event.url">
+                <label for="eventUrl">Tapahtuman www-sivu</label>
+              </div>
+            </div>
+            <div class="col m6 no-padding">
+              <div class="input-field col m12" [class.summary]="application.event.startTime">
+                <input id="eventStartTime"
+                disabled="true"
+                [(ngModel)]="application.event.uiStartTime"
+                materialize="pickadate"
+                [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+                type="text" />
+                <label for="eventStartTime">Alkupäivämäärä</label>
+              </div>
+              <div class="input-field col m12" [class.summary]="application.event.endTime">
+                <input id="eventEndTime"
+                disabled="true"
+                [(ngModel)]="application.event.uiEndTime"
+                materialize="pickadate"
+                [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+                type="text" />
+                <label for="eventEndTime">Loppupäivämäärä</label>
+              </div>
+              <div class="input-field col m12">
+                <textarea id="eventTimeExceptions" class="materialize-textarea" [class.summary]="application.event.timeExceptions" [disabled]="true" [(ngModel)]="application.event.timeExceptions"></textarea>
+                <label for="eventTimeExceptions">Tapahtuma-ajan poikkeukset</label>
+              </div>
+              <div class="input-field col m3">
+                <input id="eventAttendees" type="text" class="validate" [class.summary]="application.event.attendees" [disabled]="true" [(ngModel)]="application.event.attendees">
+                <label for="eventAttendees">Yleisömäärä</label>
+              </div>
+              <div class="input-field col m9">
+                <input id="eventEntryFee" type="text" class="validate" [class.summary]="application.event.entryFee" [disabled]="true" [(ngModel)]="application.event.entryFee">
+                <label for="eventEntryFee">Osallistumismaksu, jos urheilutapahtuma</label>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Rakenteet</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m6 no-padding">
+              <div class="col m6 height-fix-top">
+                <input type="checkbox" class="filled-in" id="structureIncluded" disabled="true" [checked]="application.event.structureArea"/>
+                <label for="structureIncluded" [class.summary-checkbox]="application.event.structureArea">Tapahtuma sisältää rakenteita</label>
+              </div>
+              <div class="input-field col m6">
+                <input id="structureArea" type="number" class="validate" step="any" [class.summary]="application.event.structureArea" [disabled]="true" [(ngModel)]="application.event.structureArea">
+                <label for="structureArea">Rakenteiden kokonaisneliömäärä</label>
+              </div>
+              <div class="input-field col m12">
+                <textarea id="structureDescription" class="materialize-textarea textarea" [class.summary]="application.event.structureDescription" disabled="true" [(ngModel)]="application.event.structureDescription"></textarea>
+                <label for="structureDescription">Rakenteiden kuvaus</label>
+              </div>
+
+            </div>
+            <div class="col m6 no-padding">
+              <div class="col m12 height-fix-top height-fix-bottom">
+                <input type="checkbox" class="filled-in" id="structureBuildDate" disabled="true" [checked]="application.event.structureStartTime || application.event.structureEndTime"/>
+                <label for="structureBuildDate" [class.summary-checkbox]="application.event.structureStartTime || application.event.structureEndTime">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
+              </div>
+              <div class="input-field col m12" [class.summary]="application.event.structureStartTime">
+                <label for="structureStartTime">Rakennuspäivämäärä</label>
+                <input id="structureStartTime"
+                       disabled="true"
+                       [(ngModel)]="application.event.structureStartTime"
+                       materialize="pickadate"
+                       [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+                       type="text" />
+              </div>
+              <div class="input-field col m12" [class.summary]="application.event.structureEndTime">
+                <label for="structureEndTime">Purkupäivämäärä</label>
+                <input id="structureEndTime"
+                       disabled="true"
+                       [(ngModel)]="application.event.structureEndTime"
+                       materialize="pickadate"
+                       [materializeParams]="[{selectMonths: true, selectYears: 15}]"
+                       type="text" />
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Hinnoitteluperusteet</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m6" [class.summary]="application.event.pricing">
+              <input type="text" [disabled]="true" [(ngModel)]="application.event.pricing">
+              <!-- <select materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="application.event.pricing">
+                <option value="" disabled selected>Peruste korvauksettomuudelle</option>
+                <option *ngFor="let reason of noPriceReasons" [value]="reason.value">{{reason.name}}</option>
+              </select> -->
+            </div>
+            <div class="col m6 no-padding">
+              <div class="col m12">
+
+                <input type="checkbox" class="filled-in" id="pricingSalesActivity" [disabled]="true" [(ngModel)]="application.event.salesActivity"/>
+                <label for="pricingSalesActivity" [class.summary-checkbox]="application.event.salesActivity">Tapahtuma sisältää teemaan sisältymätöntä myynti- tai mainostoimintaa</label>
+              </div>
+              <div class="col m12">
+                <input type="checkbox" class="filled-in" id="pricingEcoCompass" [disabled]="true" [(ngModel)]="application.event.ecoCompass"/>
+                <label for="pricingEcoCompass" [class.summary-checkbox]="application.event.ecoCompass">Hakijalla Ekokompassi-tapahtumapassi (liitä liitteeksi)</label>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Sijainti</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m8">
+              <div class="input-field col m3">
+                <input id="address" type="text" class="" disabled="true" [(ngModel)]="address">
+                <label for="address">Osoite</label>
+              </div>
+              <div class="input-field col m9">
+                <input id="info" type="text" class="" disabled="true" [(ngModel)]="info">
+                <label for="info">Lisätietoja paikasta</label>
+              </div>
+              <div class="input-field col m8 select-fix" [class.summary]="rentingPlace">
+                <input type="text" [disabled]="true" [(ngModel)]="rentingPlace">
+                <!-- <select (change)="rentingPlaceSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+                  <option value="" disabled selected>Vuokrattava paikka</option>
+                  <option *ngFor="let rent of rentingPlace" [value]="rent.value">{{rent.name}}</option>
+                </select> -->
+              </div>
+              <div class="input-field col m2 select-fix" [class.summary]="sections">
+                <input type="text" [disabled]="true" [(ngModel)]="sections">
+                <!-- <select (change)="sectionSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+                  <option value="" disabled selected>Lohko(t)</option>
+                  <option *ngFor="let section of sections" [value]="section.value">{{section.name}}</option>
+                </select> -->
+              </div>
+              <div class="input-field col m2">
+                <input id="area" type="number" class="validate" [class.summary]="area" disabled="true" [(ngModel)]="area">
+                <label for="area">Alueen pinta-ala</label>
+              </div>
+            </div>
+            <div class="col m2 offset-m2">
+              <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/Location', {id: id}]">MUOKKAA</button>
+            </div>
+            <div class="col m12">
+              <div class="mapcontainer">
+                <map [selection]="true" [applicationId]="id" [showOnlyApplicationArea]="true"></map>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Myyntitoiminta</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m6 no-padding">
+              <div class="col m12">
+                <input type="checkbox" class="filled-in" id="salesFood" disabled="true" [checked]="application.event.foodProviders"/>
+                <label for="salesFood" [class.summary-checkbox]="application.event.foodProviders">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua</label>
+              </div>
+              <div class="input-field col m12">
+                <textarea id="salesFoodProviders" class="materialize-textarea" [class.summary]="application.event.foodProviders" disabled="true" [(ngModel)]="application.event.foodProviders"></textarea>
+                <label for="salesFoodProviders">Elintarviketoimijat</label>
+              </div>
+            </div>
+            <div class="col m6 no-padding">
+              <div class="col m12">
+                <input type="checkbox" class="filled-in" id="salesMarketing" disabled="true" [checked]="application.event.marketingProviders"/>
+                <label for="salesMarketing" [class.summary-checkbox]="application.event.marketingProviders">Tapahtuma sisältää myynti- tai mainostoimintaa</label>
+              </div>
+              <div class="input-field col m12">
+                <textarea id="salesMarketingDetails" class="materialize-textarea" [class.summary]="application.event.marketingProviders" disabled="true" [(ngModel)]="application.event.marketingProviders"></textarea>
+                <label for="salesMarketingDetails">Myynti- tai mainostoiminnan kuvaus</label>
+              </div>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Sisäiset kommentit</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="input-field col m12">
+              <textarea id="comments" class="materialize-textarea" [class.summary]="application.comments" disabled="true" [(ngModel)]="application.comments"></textarea>
+              <label for="comments">Kirjoita kommentti</label>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+    <application-attachment *ngIf="application" [readonly]="true" [existingAttachments]="application.attachmentList"></application-attachment>
+
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Tallennus ja toiminnot</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m2">
+              <button md-raised-button class="waves-effect waves-light btn" [disabled]="true" (click)="console.log('Siirry muokkaamaan')">MUOKKAA</button>
+            </div>
+            <div class="col m4 offset-m6">
+              <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
+              <button md-raised-button class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
+              <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/decision', id]">PÄÄTTÄMISEEN</button>
+            </div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
+
+  </div>
+</div>
