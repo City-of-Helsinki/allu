@@ -73,49 +73,87 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
      <section>
        <h1>Vuokra-aika</h1>
-         <p>
-           [Tapahtuman alkupäivämäärä]-[Tapahtuman loppupäivämäärä]
-         </p>
-         <p>
-           Tapahtumapäiviä [päivien lukumäärä].
-         </p>
-         <p>
-           [Tapahtuma-ajan poikkeukset]
-         </p>
-     </section>
 
-     <section>
-       <h1>Vuokra-aika</h1>
+       <xsl:choose>
+       <xsl:when test="not(data/buildStartDate)">
+       <!-- Ei erillistä purkua ja rakentamista -->
          <p>
-           Kokonaisvuokra-aika [Rakentamisen alkupäivämäärä]-[Purkamisen loppupäivämäärä],
-           josta tapahtumapäiviä [Tapahtuman alkupäivämäärä]-[Tapahtuman loppupäivämäärä],
-           rakentamispäiviä [Rakentamisen alkupäivämäärä]- [Tapahtuman alkupäivämäärä-1]
-           sekä purkupäiviä [Tapahtuman loppupäivämäärä+1]-[Purkamisen loppupäivämäärä].
+           <!-- [Tapahtuman alkupäivämäärä]-[Tapahtuman loppupäivämäärä] -->
+           <xsl:value-of select="data/reservationStartDate" /> &#x2013;
+           <xsl:value-of select="data/reservationEndDate" />
          </p>
          <p>
-           Tapahtumapäiviä [tapahtumapäivien lukumäärä] ja rakentamis- ja purkupäiviä [rakentamis- ja purkupäivien lukumäärä].
+           Tapahtumapäiviä
+           <xsl:value-of select="data/numReservationDays" />.<!-- [päivien lukumäärä]. -->
+         </p>
+       </xsl:when>
+       <xsl:otherwise>
+       <!--  Purku ja rakentaminen huomioitu -->
+         <p>
+           Kokonaisvuokra-aika
+           <!-- [Rakentamisen alkupäivämäärä]-[Purkamisen loppupäivämäärä], --> 
+           <xsl:value-of select="data/reservationStartDate" /> &#x2013;
+           <xsl:value-of select="data/reservationEndDate" />,
+           josta tapahtumapäiviä
+           <!-- [Tapahtuman alkupäivämäärä]-[Tapahtuman loppupäivämäärä], -->
+           <xsl:value-of select="data/eventStartDate" /> &#x2013;
+           <xsl:value-of select="data/eventEndDate" />,
+           rakentamispäiviä
+           <!--  [Rakentamisen alkupäivämäärä]- [Tapahtuman alkupäivämäärä-1] -->
+           <xsl:value-of select="data/buildStartDate" /> &#x2013;
+           <xsl:value-of select="data/buildEndDate" />
+           sekä purkupäiviä
+           <!-- [Tapahtuman loppupäivämäärä+1]-[Purkamisen loppupäivämäärä]. -->
+           <xsl:value-of select="data/teardownStartDate" /> &#x2013;
+           <xsl:value-of select="data/teardownEndDate" />.
          </p>
          <p>
-           [Tapahtuma-ajan poikkeukset]
+           Tapahtumapäiviä
+           <!-- [tapahtumapäivien lukumäärä] -->
+           <xsl:value-of select="data/numEventDays" />
+           ja rakentamis- ja purkupäiviä
+           <!-- [rakentamis- ja purkupäivien lukumäärä]. -->
+           <xsl:value-of select="data/numBuildAndTeardownDays" />
          </p>
+       </xsl:otherwise>
+       </xsl:choose>
+
+         <p>
+           <!-- [Tapahtuma-ajan poikkeukset] -->
+           <xsl:value-of select="data/application/event/timeExceptions"/>
+         </p>
+
      </section>
 
       <section>
         <h1>Vuokrauksen tarkoitus</h1>
         <p>
-          [Tapahtuman nimi]
+          <!-- [Tapahtuman nimi] -->
+          <xsl:value-of select="data/application/name"/>
         </p>
         <p>
           [Tapahtuman tyyppi] (avoin, maksullinen, suljettu, promootio)
         </p>
         <p>
-          [Tapahtuman kuvaus]
+          <!-- [Tapahtuman kuvaus] -->
+          <xsl:value-of select="data/application/event/description"/>
+          <xsl:if test="data/application/event/url != ''">, <xsl:element name="a">
+                <xsl:attribute name="href">
+                  <xsl:value-of select="data/application/event/url"/>
+                </xsl:attribute>
+                <xsl:value-of select="data/application/event/url"/>
+              </xsl:element>
+          </xsl:if>
         </p>
         <p>
-          Tapahtuma sisältää rakenteita [rakenteiden kokonaisneliömäärä].
+          Tapahtuma sisältää rakenteita
+          <!-- [rakenteiden kokonaisneliömäärä]. -->
+          <xsl:value-of select="data/application/event/structureArea"/>
+          m<sup>2</sup>.
         </p>
         <p>
-          [Rakenteiden kuvaus]
+          <!-- [Rakenteiden kuvaus] -->
+          <xsl:value-of select="data/application/event/structureDescription"/>
         </p>
       </section>
 

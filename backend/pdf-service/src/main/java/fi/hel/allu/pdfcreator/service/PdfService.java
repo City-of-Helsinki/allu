@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.exec.CommandLine;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +52,7 @@ public class PdfService {
   }
 
   public byte[] generatePdf(String dataJson, String stylesheet)
-      throws IOException, JSONException, TransformerException {
+      throws IOException, TransformerException {
     Path contentPath = null;
     Path headerPath = null;
     Path footerPath = null;
@@ -73,7 +72,7 @@ public class PdfService {
     }
   }
 
-  private Path writeHtml(String xml, String stylesheet) throws IOException, JSONException, TransformerException {
+  private Path writeHtml(String xml, String stylesheet) throws IOException, TransformerException {
     // Check that stylesheet exists:
     Path xslPath = stylesheetDir.resolve(stylesheet + ".xsl");
     if (!fileSysAccessor.exists(xslPath)) {

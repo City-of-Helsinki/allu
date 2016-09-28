@@ -16,7 +16,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -36,7 +35,7 @@ public class JsonConverterTest {
 
   @Test
   public void testJsonToXml()
-      throws ParserConfigurationException, IOException, XPathExpressionException, JSONException, TransformerException {
+      throws ParserConfigurationException, IOException, XPathExpressionException, TransformerException {
     // Simple test: convert short JSON to XML and check that the result parses
     // and has the proper structure.
 

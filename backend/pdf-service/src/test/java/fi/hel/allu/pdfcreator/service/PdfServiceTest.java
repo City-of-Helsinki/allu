@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 
 import javax.xml.transform.TransformerException;
 
-import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -54,7 +53,7 @@ public class PdfServiceTest {
   }
 
   @Test
-  public void testBareContent() throws JSONException, IOException, TransformerException {
+  public void testBareContent() throws IOException, TransformerException {
     // Test creating a pdf from stylesheet without header or footer:
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
       Path arg = invocation.getArgumentAt(0, Path.class);
@@ -68,7 +67,7 @@ public class PdfServiceTest {
   }
 
   @Test(expected = NoSuchEntityException.class)
-  public void testInvalidStylesheet() throws JSONException, IOException, TransformerException {
+  public void testInvalidStylesheet() throws IOException, TransformerException {
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).thenReturn(false);
 
     pdfService.generatePdf(DUMMY_JSON, "stylesheet");
@@ -77,7 +76,7 @@ public class PdfServiceTest {
   }
 
   @Test
-  public void testWithHeader() throws JSONException, IOException, TransformerException {
+  public void testWithHeader() throws IOException, TransformerException {
     // Test creating a pdf from stylesheet that also has header:
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
       Path arg = invocation.getArgumentAt(0, Path.class);
@@ -92,7 +91,7 @@ public class PdfServiceTest {
   }
 
   @Test
-  public void testWithFooter() throws JSONException, IOException, TransformerException {
+  public void testWithFooter() throws IOException, TransformerException {
     // Test creating a pdf from stylesheet that also has a footer:
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
       Path arg = invocation.getArgumentAt(0, Path.class);
@@ -107,7 +106,7 @@ public class PdfServiceTest {
   }
 
   @Test
-  public void testWithHeaderAndFooter() throws JSONException, IOException, TransformerException {
+  public void testWithHeaderAndFooter() throws IOException, TransformerException {
     // Test creating a pdf from stylesheet that has both header and footer:
     Mockito.when(fileSysAccessor.exists(Mockito.any(Path.class))).then(invocation -> {
       Path arg = invocation.getArgumentAt(0, Path.class);

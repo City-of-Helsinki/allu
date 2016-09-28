@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -12,16 +14,19 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.XML;
 import org.springframework.stereotype.Controller;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.fasterxml.jackson.dataformat.xml.ser.ToXmlGenerator.Feature;
 
 @Controller
 public class JsonConverter {
 
-  // XML file header + stylesheet reference:
-  private static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>";
   // Magic key for the stylesheet to find it's base directory:
   private static final String XML_BASEDIR_KEY = "basedir";
   // The name of the root element in generated XML:
@@ -37,17 +42,25 @@ public class JsonConverter {
    * @param dataJson
    * @param baseDir
    * @return
-   * @throws JSONException
+   * @throws IOException
+   * @throws JsonMappingException
+   * @throws JsonParseException
    */
-  public String jsonToXml(String dataJson, String baseDir) throws JSONException {
+  public String jsonToXml(String dataJson, String baseDir)
+      throws JsonParseException, JsonMappingException, IOException {
     // Read in the supplied JSON object:
-    JSONObject jsonIn = new JSONObject(dataJson);
+    ObjectMapper mapper = new ObjectMapper();
+    Map<String, Object> userData = mapper.readValue(dataJson, new TypeReference<Map<String, Object>>() {
+    });
     // Generate the top-level object:
-    JSONObject jsonOut = new JSONObject();
+    Map<String, Object> jsonOut = new HashMap<>();
     jsonOut.put(XML_BASEDIR_KEY, baseDir);
-    jsonOut.put(XML_DATA_ELEMENT, jsonIn);
+    jsonOut.put(XML_DATA_ELEMENT, userData);
     // Convert to XML:
-    String xml = XML_HEADER + XML.toString(jsonOut, XML_ROOT_ELEMENT);
+    XmlMapper xmlMapper = new XmlMapper();
+    xmlMapper.enable(Feature.WRITE_XML_1_1).enable(SerializationFeature.INDENT_OUTPUT);
+    String xml = xmlMapper.writer().withRootName(XML_ROOT_ELEMENT)
+        .writeValueAsString(jsonOut);
     return xml;
   }
 
