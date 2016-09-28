@@ -143,23 +143,28 @@ public class DecisionJson {
     reservationEndDate = checkedFormat(reservationEnd, formatter);
 
     if (application.getType() == ApplicationType.OUTDOOREVENT) {
+      OutdoorEventJson outdoorEvent = (OutdoorEventJson) application.getEvent();
+      if (outdoorEvent == null) {
+        return; // broken application, don't try to continue
+      }
+      LocalDate eventStart = checkedDate(outdoorEvent.getEventStartTime());
+      LocalDate eventEnd = checkedDate(outdoorEvent.getEventEndTime());
+      if (eventStart == null || eventEnd == null) {
+        return; // again, broken application
+      }
       LocalDate buildStart = null;
       LocalDate buildEnd = null;
       LocalDate tearDownStart = null;
       LocalDate tearDownEnd = null;
-      OutdoorEventJson outdoorEvent = (OutdoorEventJson) application.getEvent();
       // In outdoor events, the application's start time can actually mean start
-      // time for build.
-      // The actual event's start time is then in eventStartTime
-      LocalDate eventStart = checkedDate(outdoorEvent.getEventStartTime());
-      if (eventStart != null && eventStart.isAfter(reservationStart)) {
+      // time for build. The actual event's start time is in eventStartTime.
+      if (eventStart.isAfter(reservationStart)) {
         buildStart = reservationStart;
         buildEnd = eventStart.minusDays(1);
         numBuildAndTeardownDays = (int) buildStart.until(eventStart, ChronoUnit.DAYS);
       }
       // Similar logic applies to teardown end time
-      LocalDate eventEnd = checkedDate(outdoorEvent.getEventEndTime());
-      if (eventEnd != null && eventEnd.isBefore(reservationEnd)) {
+      if (eventEnd.isBefore(reservationEnd)) {
         tearDownEnd = reservationEnd;
         tearDownStart = eventEnd.plusDays(1);
         numBuildAndTeardownDays += (int) eventEnd.until(tearDownEnd, ChronoUnit.DAYS);
@@ -171,10 +176,8 @@ public class DecisionJson {
       teardownStartDate = checkedFormat(tearDownStart, formatter);
       teardownEndDate = checkedFormat(tearDownEnd, formatter);
 
-      // How many days for the event? (either eventStart or eventEnd can be
-      // null)
-      numEventDays = (int) ((eventStart != null) ? eventStart : reservationStart)
-          .until((eventEnd != null) ? eventEnd : reservationEnd, ChronoUnit.DAYS) + 1;
+      // How many days for the event?
+      numEventDays = (int) eventStart.until(eventEnd, ChronoUnit.DAYS) + 1;
     }
   }
 
