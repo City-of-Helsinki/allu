@@ -7,6 +7,7 @@ import {BackendAttachmentInfo} from './backend-attachment-info';
 
 export interface BackendApplication {
   id: number;
+  applicationId: string;
   project: BackendProject;
   handler: string;
   status: string;

@@ -1,27 +1,16 @@
 package fi.hel.allu.model.testUtils;
 
-import java.sql.SQLException;
-import java.time.ZonedDateTime;
-import java.util.Calendar;
-
+import fi.hel.allu.common.types.ApplicantType;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.hel.allu.common.types.ApplicantType;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.model.dao.ApplicantDao;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.dao.PersonDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Event;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
+import java.sql.SQLException;
+import java.time.ZonedDateTime;
+import java.util.Calendar;
 
 /**
  * Helper class for routines shared between all tests
@@ -65,6 +54,7 @@ public class TestCommon {
     Integer projectId = insertProject(personId);
     Integer applicantId = insertPersonApplicant(personId);
     Application app = new Application();
+    app.setApplicationId("TP1600001");
     app.setApplicantId(applicantId);
     app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.now());

@@ -14,6 +14,7 @@ import fi.hel.allu.common.types.StatusType;
 public class Application {
 
   private Integer id;
+  private String applicationId;
   @NotNull
   private Integer projectId;
   private String handler;
@@ -36,6 +37,7 @@ public class Application {
 
   /**
    * in Finnish: Hakemuksen tunniste
+   * <p>This is the database id.
    */
   public Integer getId() {
     return id;
@@ -43,6 +45,20 @@ public class Application {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  /**
+   * The application id used to distinguish different applications by HKR people. The format is XXYYZZZZZ where XX is abbreviation of the
+   * application type name, YY is year and ZZZZZ is application type specific number.
+   *
+   * @return The application id.
+   */
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(String applicationId) {
+    this.applicationId = applicationId;
   }
 
   /**

@@ -1,15 +1,13 @@
 package fi.hel.allu.ui.domain;
 
-import java.time.ZonedDateTime;
-import java.util.List;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
+import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * in Finnish: Hakemus
@@ -17,6 +15,7 @@ import fi.hel.allu.common.types.StatusType;
 public class ApplicationJson {
 
   private Integer id;
+  private String applicationId;
   @Valid
   private ProjectJson project;
   private String handler;
@@ -48,7 +47,8 @@ public class ApplicationJson {
   private List<AttachmentInfoJson> attachmentList;
 
   /**
-   * in Finnish: Hakemuksen tunniste
+  /**
+   * in Finnish: Hakemuksen tunniste tietokannassa
    */
   public Integer getId() {
     return id;
@@ -56,6 +56,19 @@ public class ApplicationJson {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  /**
+   * In Finnish: Hakemuksen tunniste ihmisille
+   * <p>The human readable application id. The format is XXYYZZZZZ where XX is application type abbreviation, YY is year and ZZZZZ is
+   * serial number for the given year. For example TP1600001.
+   */
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(String applicationId) {
+    this.applicationId = applicationId;
   }
 
   /**

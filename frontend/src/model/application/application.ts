@@ -17,6 +17,7 @@ export class Application {
   constructor()
   constructor(
     id: number,
+    applicationId: string,
     project: Project,
     handler: string,
     status: string,
@@ -33,6 +34,7 @@ export class Application {
     attachmentList: Array<AttachmentInfo>)
   constructor(
     public id?: number,
+    public applicationId?: string,
     public project?: Project,
     public handler?: string,
     public status?: string,

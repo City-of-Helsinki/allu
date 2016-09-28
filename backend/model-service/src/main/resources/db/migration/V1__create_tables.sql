@@ -56,6 +56,7 @@ create table allu.applicant (
 
 create table allu.application (
     id serial primary key,
+    application_id text not null,
     project_id integer references allu.project(id),
     name text,
     handler text,
@@ -113,3 +114,12 @@ create table allu.decision (
     data bytea,
     decision_time timestamp with time zone,
     status text );
+
+create SEQUENCE allu.KP_application_type_sequence START 1600001;
+create SEQUENCE allu.AL_application_type_sequence START 1600001;
+create SEQUENCE allu.LJ_application_type_sequence START 1600001;
+create SEQUENCE allu.JS_application_type_sequence START 1600001;
+create SEQUENCE allu.SL_application_type_sequence START 1600001;
+create SEQUENCE allu.TP_application_type_sequence START 1600001;
+create SEQUENCE allu.VL_application_type_sequence START 1600001;
+create SEQUENCE allu.MP_application_type_sequence START 1600001;

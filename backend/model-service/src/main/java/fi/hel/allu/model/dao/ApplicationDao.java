@@ -7,6 +7,7 @@ import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
@@ -24,8 +25,14 @@ import static fi.hel.allu.QGeometry.geometry1;
 @Repository
 public class ApplicationDao {
 
-  @Autowired
   private SQLQueryFactory queryFactory;
+  private ApplicationSequenceDao applicationSequenceDao;
+
+  @Autowired
+  public ApplicationDao(SQLQueryFactory queryFactory, ApplicationSequenceDao applicationSequenceDao) {
+    this.queryFactory = queryFactory;
+    this.applicationSequenceDao = applicationSequenceDao;
+  }
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
 
@@ -61,7 +68,7 @@ public class ApplicationDao {
 
   @Transactional
   public Application insert(Application appl) {
-    Event event = appl.getEvent();
+    appl.setApplicationId(createApplicationId(appl.getType()));
     Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
@@ -78,5 +85,10 @@ public class ApplicationDao {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
     return findByIds(Collections.singletonList(id)).get(0);
+  }
+
+  String createApplicationId(ApplicationType applicationType) {
+    long seqValue = applicationSequenceDao.getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));
+    return ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType).name() + seqValue;
   }
 }
