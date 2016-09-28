@@ -18,7 +18,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <div class="body">
       <h1>YLEISEN ALUEEN VUOKRAUSPÄÄTÖS</h1>
       <p>
-        [Tunnus]
+        <!-- [Tunnus] -->
+        <xsl:value-of select="data/decisionId" />
       </p>
 
       <section>
@@ -64,10 +65,16 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <section>
         <h1>Kohde</h1>
         <p>
-          [Vuokrattava paikka, Lohko], [Osoite], [Lisätietoja paikasta]
+          [Vuokrattava paikka, Lohko],
+          <!-- [Osoite], -->
+          <xsl:value-of select="data/application/location/postalAddress/streetAddress" />,
+          <xsl:value-of select="data/application/location/postalAddress/postalCode" />
+          <xsl:value-of select="data/application/location/postalAddress/city"/>,
+          [Lisätietoja paikasta]
         </p>
         <p>
-      	   [Alueen pinta-ala]
+      	   <!-- [Alueen pinta-ala] -->
+           <xsl:value-of select="data/applicationArea"/ > m<sup>2</sup>
         </p>
      </section>
 
@@ -75,7 +82,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
        <h1>Vuokra-aika</h1>
 
        <xsl:choose>
-       <xsl:when test="not(data/buildStartDate)">
+       <xsl:when test="not(data/eventStartDate)">
        <!-- Ei erillistä purkua ja rakentamista -->
          <p>
            <!-- [Tapahtuman alkupäivämäärä]-[Tapahtuman loppupäivämäärä] -->
@@ -132,7 +139,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <xsl:value-of select="data/application/name"/>
         </p>
         <p>
-          [Tapahtuman tyyppi] (avoin, maksullinen, suljettu, promootio)
+          <!-- [Tapahtuman tyyppi] (avoin, maksullinen, suljettu, promootio) -->
+          <xsl:value-of select="data/application/event/nature" />
         </p>
         <p>
           <!-- [Tapahtuman kuvaus] -->
