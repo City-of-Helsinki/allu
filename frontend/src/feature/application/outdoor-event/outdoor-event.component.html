@@ -257,7 +257,8 @@
           <div class="row">
             <div class="col m6">
               <div class="col m12">
-                <select materialize="material_select" [materializeSelectOptions]="selectOptions" [(ngModel)]="application.event.nature">
+                <select materialize="material_select" [materializeSelectOptions]="selectOptions"
+                        [(ngModel)]="application.event.nature" (change)="eventNatureChange($event.target.value)">
                   <option value="" disabled selected>{{ meta?.getUiName('nature') }}</option>
                   <option *ngFor="let nature of eventNatures" [value]="nature.value">{{nature.name}}</option>
                 </select>

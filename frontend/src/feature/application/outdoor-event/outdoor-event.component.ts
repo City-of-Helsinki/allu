@@ -219,6 +219,12 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     this.applicantIdSelection = this.applicantText[value].id;
   }
 
+  eventNatureChange(nature: string) {
+    if ('Open' !== nature) {
+      this.noPrice = false;
+    }
+  }
+
   save(application: Application) {
     let postalAddress = new PostalAddress(this.applicant.streetAddress, this.applicant.postalCode, this.applicant.city);
 
