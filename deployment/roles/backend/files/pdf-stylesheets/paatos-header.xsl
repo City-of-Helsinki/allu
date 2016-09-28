@@ -34,7 +34,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <img src="HKR_Fin_RGB_png_50734.png"/>
         </div>
         <div class="half-right inline">
-          <h1>Vuokrapäätös</h1>
+          <h1>Vuokrauspäätös</h1>
           <p><span id="pdfkit_page_current" />/<span id="pdfkit_page_count" /></p>
         </div>
       </div>
