@@ -62,7 +62,6 @@ button:hover {
 }
 
 
-
 .on-map {
   position: absolute;
   z-index: 100;
@@ -77,6 +76,12 @@ button:hover {
 md-toolbar {
   &.row {
     margin-bottom: 0;
+  }
+}
+
+.row  {
+  .loose {
+    margin: 10px 0px;
   }
 }
 
