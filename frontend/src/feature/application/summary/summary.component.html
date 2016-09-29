@@ -1,6 +1,6 @@
 <progressbar [step]="progressStep" [mode]="progressMode"></progressbar>
 <div materialize class="row" *ngIf="application">
-  <div class="col m6 no-padding-right">
+  <div class="col m6 loose">
     <md-card>
       <md-card-title>Hakemuksen tyyppi</md-card-title>
       <md-card-content>
@@ -12,7 +12,7 @@
       </md-card-content>
     </md-card>
   </div>
-  <div class="col m6 no-padding-left">
+  <div class="col m6 loose">
     <md-card>
       <md-card-title>Tapahtuman tyyppi</md-card-title>
       <md-card-content>
@@ -29,7 +29,7 @@
     </md-card>
   </div>
   <div materialize class="row">
-    <div class="col m6 no-padding-right">
+    <div class="col m6 loose">
       <md-card>
         <md-card-title>Hakija</md-card-title>
         <md-card-content>
@@ -89,7 +89,7 @@
       </md-card>
     </div>
 
-    <div class="col m6 no-padding-left">
+    <div class="col m6 loose">
       <md-card>
         <md-card-title>Yhteyshenkilö</md-card-title>
         <md-card-content>
@@ -173,7 +173,7 @@
       </md-card>
     </div> -->
 
-    <div class="col m12">
+    <div class="col m12 loose">
       <md-card>
         <md-card-title>Tapahtuman tiedot</md-card-title>
         <md-card-content>
@@ -233,7 +233,7 @@
       </md-card>
     </div>
 
-    <div class="col m12">
+    <div class="col m12 loose">
       <md-card>
         <md-card-title>Rakenteet</md-card-title>
         <md-card-content>
@@ -282,7 +282,7 @@
       </md-card>
     </div>
 
-    <div class="col m12">
+    <div class="col m12 loose">
       <md-card>
         <md-card-title>Hinnoitteluperusteet</md-card-title>
         <md-card-content>
@@ -310,7 +310,7 @@
       </md-card>
     </div>
 
-    <div class="col m12">
+    <div class="col m12 loose">
       <md-card>
         <md-card-title>Sijainti</md-card-title>
         <md-card-content>
@@ -356,7 +356,7 @@
       </md-card>
     </div>
 
-    <div class="col m12">
+    <div class="col m12 loose">
       <md-card>
         <md-card-title>Myyntitoiminta</md-card-title>
         <md-card-content>
@@ -386,7 +386,7 @@
       </md-card>
     </div>
 
-    <div class="col m12">
+    <div class="col m12 loose">
       <md-card>
         <md-card-title>Sisäiset kommentit</md-card-title>
         <md-card-content>
@@ -402,7 +402,7 @@
 
     <application-attachment *ngIf="application" [readonly]="true" [existingAttachments]="application.attachmentList"></application-attachment>
 
-    <div class="col m12">
+    <div class="col m12 loose">
       <md-card>
         <md-card-title>Tallennus ja toiminnot</md-card-title>
         <md-card-content>
