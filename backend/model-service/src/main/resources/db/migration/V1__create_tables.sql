@@ -18,13 +18,6 @@ create table allu.organization (
     email text,
     phone text );
 
-create table allu.customer (
-    id serial primary key,
-    type text not null,
-    sap_id text,
-    person_id integer references allu.person(id),
-    organization_id integer references allu.organization(id));
-
 create table allu.location (
    id serial primary key,
    street_address text,
@@ -66,7 +59,6 @@ create table allu.application (
     project_id integer references allu.project(id),
     name text,
     handler text,
-    customer_id integer references allu.customer(id),
     applicant_id integer references allu.applicant(id),
     status text,   -- TODO: enum
     type text not null,

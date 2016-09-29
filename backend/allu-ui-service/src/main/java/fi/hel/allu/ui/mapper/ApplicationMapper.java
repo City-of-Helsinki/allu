@@ -1,24 +1,37 @@
 package fi.hel.allu.ui.mapper;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
+
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.search.domain.*;
-import fi.hel.allu.ui.domain.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import fi.hel.allu.search.domain.ApplicantES;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ContactES;
+import fi.hel.allu.search.domain.ESFlatValue;
+import fi.hel.allu.search.domain.LocationES;
+import fi.hel.allu.search.domain.ProjectES;
+import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.AttachmentInfoJson;
+import fi.hel.allu.ui.domain.ContactJson;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.OutdoorEventJson;
+import fi.hel.allu.ui.domain.ProjectJson;
 
 @Component
 public class ApplicationMapper {
@@ -40,9 +53,6 @@ public class ApplicationMapper {
     applicationDomain.setCreationTime(ZonedDateTime.now());
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
-    if (applicationJson.getCustomer() != null) {
-      applicationDomain.setCustomerId(applicationJson.getCustomer().getId());
-    }
     applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
     applicationDomain.setHandler(applicationJson.getHandler());
     applicationDomain.setType(applicationJson.getType());

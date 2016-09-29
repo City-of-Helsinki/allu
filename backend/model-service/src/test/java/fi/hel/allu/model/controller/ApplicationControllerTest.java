@@ -1,12 +1,21 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.model.testUtils.TestCommon;
-import fi.hel.allu.model.testUtils.WebTestCommon;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.Before;
@@ -18,13 +27,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
-import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -52,13 +61,6 @@ public class ApplicationControllerTest {
   public void testAddApplicationWithId() throws Exception {
     Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
     app.setId(123);
-    wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
-  }
-
-  @Test
-  public void testAddApplicationWithBadCustomer() throws Exception {
-    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
-    app.setCustomerId(app.getCustomerId() + 1);
     wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
   }
 

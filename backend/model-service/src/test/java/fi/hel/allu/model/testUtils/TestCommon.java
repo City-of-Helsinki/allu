@@ -8,17 +8,15 @@ import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PersonDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Applicant;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.OutdoorEvent;
@@ -40,8 +38,6 @@ public class TestCommon {
   @Autowired
   private ApplicationDao applicationDao;
   @Autowired
-  private CustomerDao customerDao;
-  @Autowired
   private LocationDao locationDao;
   @Autowired
   private PersonDao personDao;
@@ -55,8 +51,8 @@ public class TestCommon {
   /**
    * Create a dummy application for insertion into database.
    *
-   * Creates dummy project, person, customer, and applicant in DB and prepares
-   * an Application that uses them.
+   * Creates dummy project, person, and applicant in DB and prepares an
+   * Application that uses them.
    *
    * @param name
    *          application name
@@ -66,11 +62,9 @@ public class TestCommon {
    */
   public Application dummyApplication(String name, String handler) {
     Integer personId = insertPerson();
-    Integer customerId = insertPersonCustomer(personId);
     Integer projectId = insertProject(personId);
     Integer applicantId = insertPersonApplicant(personId);
     Application app = new Application();
-    app.setCustomerId(customerId);
     app.setApplicantId(applicantId);
     app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.now());
@@ -147,25 +141,10 @@ public class TestCommon {
    */
   public Integer insertPersonApplicant(Integer personId) {
     Applicant applicant = new Applicant();
-    applicant.setType(CustomerType.PERSON);
+    applicant.setType(ApplicantType.PERSON);
     applicant.setPersonId(personId);
     Applicant insertedApplicant = applicantDao.insert(applicant);
     return insertedApplicant.getId();
-  }
-
-  /**
-   * Insert a person-type customer into database
-   *
-   * @param personId
-   *          the customer's person ID
-   * @return customer ID
-   */
-  public Integer insertPersonCustomer(Integer personId) {
-    Customer cust = new Customer();
-    cust.setPersonId(personId);
-    cust.setType(CustomerType.PERSON);
-    Customer insertedCust = customerDao.insert(cust);
-    return insertedCust.getId();
   }
 
   /**
@@ -195,7 +174,6 @@ public class TestCommon {
       "delete from allu.application",
       "delete from allu.project",
       "delete from allu.applicant",
-      "delete from allu.customer",
       "delete from allu.person",
       "delete from allu.geometry",
       "delete from allu.location",

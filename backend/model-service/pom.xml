@@ -188,14 +188,9 @@
                         <!-- Map enumeration types -->
                         <!-- NOTE that if you add new kind of typeMapping type, you have to configure it in JdbcConfiguration class! -->
                         <typeMapping>
-                            <table>customer</table>
-                            <column>type</column>
-                            <type>fi.hel.allu.model.querydsl.StringToCustomerType</type>
-                        </typeMapping>
-                        <typeMapping>
                             <table>applicant</table>
                             <column>type</column>
-                            <type>fi.hel.allu.model.querydsl.StringToCustomerType</type>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicantType</type>
                         </typeMapping>
                         <typeMapping>
                             <table>application</table>

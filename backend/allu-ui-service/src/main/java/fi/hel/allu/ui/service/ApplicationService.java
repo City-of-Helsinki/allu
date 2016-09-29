@@ -42,7 +42,6 @@ public class ApplicationService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private LocationService locationService;
-  private CustomerService customerService;
   private ApplicantService applicantService;
   private ProjectService projectService;
   private ApplicationMapper applicationMapper;
@@ -55,12 +54,11 @@ public class ApplicationService {
 
   @Autowired
   public ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
-      locationService, CustomerService customerService, ApplicantService applicantService, ProjectService projectService,
+  locationService, ApplicantService applicantService, ProjectService projectService,
       ApplicationMapper applicationMapper, ContactService contactService, SearchService searchService, MetaService metaService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
-    this.customerService = customerService;
     this.applicantService = applicantService;
     this.projectService = projectService;
     this.applicationMapper = applicationMapper;
@@ -77,7 +75,6 @@ public class ApplicationService {
    * @return Transfer object that contains list of created applications and their identifiers
    */
   public ApplicationJson createApplication(ApplicationJson applicationJson) {
-    applicationJson.setCustomer(customerService.createCustomer(applicationJson.getCustomer()));
     applicationJson.setProject(projectService.createProject(applicationJson.getProject()));
     applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
     applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
@@ -101,7 +98,6 @@ public class ApplicationService {
    * @return Updated application
    */
   public ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
-    customerService.updateCustomer(applicationJson.getCustomer());
     applicantService.updateApplicant(applicationJson.getApplicant());
     projectService.updateProject(applicationJson.getProject());
     LocationJson locationJson = applicationJson.getLocation();
@@ -265,9 +261,6 @@ public class ApplicationService {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
 
-    if (applicationModel.getCustomerId() != null) {
-      applicationJson.setCustomer(customerService.findCustomerById(applicationModel.getCustomerId()));
-    }
     applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));

@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.validator.NotFalse;
 
 import javax.validation.Valid;
@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
     "organization, validateOrganizationTypeHasNotPersonObject, {type.organization.notemptyperson}"})
 public class TypeJson {
   @NotNull(message = "{type.notnull}")
-  private CustomerType type;
+  private ApplicantType type;
   @Valid
   private PersonJson person;
   @Valid
@@ -22,11 +22,11 @@ public class TypeJson {
   /**
    * in Finnish: tyyppi, ihminen tai yritys/yhteisö
    */
-  public CustomerType getType() {
+  public ApplicantType getType() {
     return type;
   }
 
-  public void setType(CustomerType type) {
+  public void setType(ApplicantType type) {
     this.type = type;
   }
 
