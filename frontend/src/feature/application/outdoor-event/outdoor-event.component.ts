@@ -148,12 +148,12 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     ];
 
     this.noPriceReasons = [
-      {name: 'Hyväntekeväisyys- tai kansalaisjärjestö tai oppilaistoksen tapahtuma', value: 'Charity'},
+      {name: 'Hyväntekeväisyys- tai kansalaisjärjestö tai oppilaitoksen tapahtuma', value: 'Charity'},
       {name: 'Taide- tai kulttuuritapahtuma', value: 'ArtOrCulture'},
       {name: 'Avoin ja maksuton urheilutapahtuma', value: 'NoFeeSporting'},
       {name: 'Asukas- tai kaupunginosayhdistyksen tapahtuma', value: 'ResidentOrCity'},
       {name: 'Aatteellinen, hengellinen tai yhteiskunnallinen tapahtuma', value: 'Spiritual'},
-      {name: 'Kaupunki isäntäjä tai järjestäjäkumppanina', value: 'City'},
+      {name: 'Kaupunki isäntänä tai järjestäjäkumppanina', value: 'City'},
       {name: 'Tilataideteos', value: 'Art'},
       {name: 'Nuorisojärjestön tapahtuma', value: 'Youth'},
       {name: 'Yksityishenkilön järjestämä merkkipäiväjuhla tai vastaava', value: 'PrivateFunction'},
@@ -217,6 +217,12 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   applicantTypeSelection(value: string) {
     this.applicantNameSelection = this.applicantText[value].name;
     this.applicantIdSelection = this.applicantText[value].id;
+  }
+
+  eventNatureChange(nature: string) {
+    if ('Open' !== nature) {
+      this.noPrice = false;
+    }
   }
 
   save(application: Application) {
