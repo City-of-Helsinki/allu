@@ -15,14 +15,14 @@ function curl_failed() {
   return 1;
 }
 
-# Run given command three times
-function try_thrice() {
-  for n in 1 2 3 ; do
+# Run given command a few times
+function try_repeat() {
+  for n in 1 2 3 4 5 6 7 8; do
     eval "$*"
     if curl_failed $?; then
-      if [ $n -lt 3 ] ; then
-         echo Sleeping 10 seconds before retry..
-         sleep 10
+      if [ $n -lt 8 ] ; then
+         echo Sleeping 15 seconds before retry..
+         sleep 15
       fi
     else
       return 0
@@ -42,12 +42,20 @@ function insert_data() {
   eval $CURRENT_REQUEST
 }
 
+function search_and_ignore() {
+  echo Sending a search request..
+  CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: application/json\" --header \"Authorization: Bearer $AUTH_KEY\" --data '{\"queryParameters\":[{\"fieldName\":\"handler\",\"fieldValue\":\"TestHandler\"}]}' http://$TARGET_HOST/api/applications/search &> /dev/null"
+  eval $CURRENT_REQUEST
+}
+
 if [ "$1" = "" ] ; then
   fail Usage: $0 fronted_host
 fi
 
 TARGET_HOST=$1
 
-try_thrice login
-try_thrice insert_data "data/hernesaari.json"
-try_thrice insert_data "data/tervasaari.json"
+try_repeat login
+# Make sure search service is up:
+try_repeat search_and_ignore
+try_repeat insert_data "data/hernesaari.json"
+try_repeat insert_data "data/tervasaari.json"
