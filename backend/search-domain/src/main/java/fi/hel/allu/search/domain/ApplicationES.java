@@ -16,6 +16,7 @@ import java.util.List;
 public class ApplicationES {
   @NotBlank
   private Integer id;
+  private String applicationId;
   private String handler;
   private StatusType status;
   private ApplicationType type;
@@ -36,6 +37,14 @@ public class ApplicationES {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  public String getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(String applicationId) {
+    this.applicationId = applicationId;
   }
 
   public String getHandler() {

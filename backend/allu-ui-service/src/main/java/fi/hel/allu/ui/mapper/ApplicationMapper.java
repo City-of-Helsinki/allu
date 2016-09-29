@@ -48,6 +48,7 @@ public class ApplicationMapper {
     if (applicationJson.getId() != null) {
       applicationDomain.setId(applicationJson.getId());
     }
+    applicationDomain.setApplicationId(applicationJson.getApplicationId());
     applicationDomain.setName(applicationJson.getName());
     applicationDomain.setProjectId(applicationJson.getProject().getId());
     applicationDomain.setCreationTime(ZonedDateTime.now());
@@ -76,6 +77,7 @@ public class ApplicationMapper {
   public ApplicationES createApplicationESModel(ApplicationJson applicationJson) {
     ApplicationES applicationES = new ApplicationES();
     applicationES.setId(applicationJson.getId());
+    applicationES.setApplicationId(applicationJson.getApplicationId());
     applicationES.setName(applicationJson.getName());
     applicationES.setCreationTime(ZonedDateTime.now());
     applicationES.setStartTime(applicationJson.getStartTime());
@@ -101,6 +103,7 @@ public class ApplicationMapper {
    */
   public void mapApplicationToJson(ApplicationJson applicationJson, Application application) {
     applicationJson.setId(application.getId());
+    applicationJson.setApplicationId(application.getApplicationId());
     applicationJson.setStatus(application.getStatus());
     applicationJson.setType(application.getType());
     applicationJson.setHandler(application.getHandler());

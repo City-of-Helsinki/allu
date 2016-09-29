@@ -13,6 +13,7 @@ export class ApplicationMapper {
   public static mapBackend(backendApplication: BackendApplication): Application {
     return new Application(
       backendApplication.id,
+      backendApplication.applicationId,
       ProjectMapper.mapBackend(backendApplication.project),
       backendApplication.handler,
       backendApplication.status,
@@ -34,6 +35,7 @@ export class ApplicationMapper {
   public static mapFrontend(application: Application): BackendApplication {
     return {
       id: application.id,
+      applicationId: application.applicationId,
       project: ProjectMapper.mapFrontend(application.project),
       handler: application.handler,
       status: application.status,
