@@ -64,7 +64,7 @@ INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type,
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'pricing', 'Osallistumismaksu, jos urheilutapahtuma', 'MONEY', null, null, null);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'salesOrPromotionThemeless', 'Tapahtuma sisältää teemaan sisältymätöntä myynti- tai mainostoimintaa (+50 %)', 'BOOLEAN', null, null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'salesOrPromotionThemeless', 'Tapahtuma sisältää kaupallista toimintaa (+50%)', 'BOOLEAN', null, null, null);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'heavyStructure', 'Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (+50 %)', 'BOOLEAN', null, null, null);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
