@@ -1,7 +1,7 @@
 
 import {TimeUtil} from '../../util/time.util';
 export class ApplicationSearchQuery {
-  public name: string;
+  public applicationId: string;
   public type: string;
   public status: string;
   public handler: string;

@@ -1,21 +1,12 @@
 package fi.hel.allu.model.controller;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.time.ZonedDateTime;
-import java.util.Collections;
-
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.Before;
@@ -27,13 +18,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.model.testUtils.TestCommon;
-import fi.hel.allu.model.testUtils.WebTestCommon;
+import java.time.ZonedDateTime;
+import java.util.Collections;
+
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -91,18 +82,17 @@ public class ApplicationControllerTest {
   public void testFindExisting() throws Exception {
     // Setup: insert an application
     Application appIn = testCommon.dummyApplication("Test Application", "Handler");
-    appIn.setStatus(StatusType.HANDLING);
     Application appInResult = insertApplication(appIn);
     // Test: try to read the same application back
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
         .andExpect(status().isOk());
     Application appOut = wtc.parseObjectFromResult(resultActions, Application.class);
-    assertEquals(appIn.getStatus(), appOut.getStatus());
+    assertEquals(StatusType.PENDING, appOut.getStatus());
     // Test reading the application back with the interface supporting multiple ids
     resultActions = wtc.perform(post("/applications/find"), Collections.singletonList(appInResult.getId()))
         .andExpect(status().isOk());
     Application[] appsOut = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(appIn.getStatus(), appsOut[0].getStatus());
+    assertEquals(StatusType.PENDING, appsOut[0].getStatus());
   }
 
   @Test

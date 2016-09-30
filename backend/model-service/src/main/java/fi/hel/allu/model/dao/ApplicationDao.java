@@ -8,6 +8,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
@@ -69,6 +70,7 @@ public class ApplicationDao {
   @Transactional
   public Application insert(Application appl) {
     appl.setApplicationId(createApplicationId(appl.getType()));
+    appl.setStatus(StatusType.PENDING);
     Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
