@@ -4,11 +4,12 @@ import {Observable}     from 'rxjs/Observable';
 import {Geocoordinates} from '../model/common/geocoordinates';
 import '../rxjs-extensions.ts';
 import {Application} from '../model/application/application';
+import {Option} from '../util/option';
 
 
 @Injectable()
 export class MapHub {
-  private coordinates$ = new Subject<Geocoordinates>();
+  private coordinates$ = new Subject<Option<Geocoordinates>>();
   private search$ = new Subject<string>();
   private applicationSelection$ = new Subject<Application>();
 
@@ -24,7 +25,7 @@ export class MapHub {
   /**
    * Used for adding notification about new coordinates
    */
-  public addCoordinates = (coordinates: Geocoordinates) => this.coordinates$.next(coordinates);
+  public addCoordinates = (coordinates: Option<Geocoordinates>) => this.coordinates$.next(coordinates);
 
   /**
    * Used to notify about new address search terms

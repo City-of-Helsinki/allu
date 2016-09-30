@@ -3,6 +3,8 @@ import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {DecisionHub} from './decision-hub';
 import {UIStateHub} from '../ui-state/ui-state-hub';
 import {Decision} from '../../model/decision/Decision';
+import {ErrorInfo} from './../ui-state/error-info';
+import {ErrorType} from '../ui-state/error-type';
 
 @Injectable()
 export class DecisionService {
@@ -23,7 +25,7 @@ export class DecisionService {
         console.log('Generate decision pdf succeeded');
         this.fetch(applicationId);
       },
-      error => this.uiState.addError('Generate decision pdf failed')
+      error => this.uiState.addError(new ErrorInfo(ErrorType.PDF_GENERATION_FAILED))
     );
   }
 

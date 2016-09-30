@@ -20,6 +20,7 @@ import {MapHub} from '../../service/map-hub';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {Application} from '../../model/application/application';
+import {Option} from '../../util/option';
 
 @Component({
   selector: 'map',
@@ -102,7 +103,10 @@ export class MapComponent implements EventListener {
 
   ngOnInit() {
     this.initMap();
-    this.mapHub.coordinates().subscribe((coordinates) => this.panToCoordinates(coordinates));
+    this.mapHub.coordinates()
+      .subscribe((optCoords) =>
+        optCoords.map(coordinates => this.panToCoordinates(coordinates)));
+
     this.applicationHub.applications().subscribe(applications => this.drawApplications(applications));
     this.applicationHub.addMapView(this.getCurrentMapView()); // to notify initial location
     this.mapHub.applicationSelection().subscribe(app => this.handleApplicationSelection(app));
