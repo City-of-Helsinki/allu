@@ -18,7 +18,7 @@ export const PICKADATE_PARAMETERS = [
 
 export const MIN_DATE: Date = new Date(0);
 export const MAX_DATE: Date = new Date('2099-12-31T23:59:59');
-export const UI_DATE_FORMAT: string = 'dd-MM-yy';
+export const UI_DATE_FORMAT: string = 'dd.MM. yy';
 
 /**
  * Helpers for time related UI functionality.

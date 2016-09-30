@@ -3,21 +3,20 @@
   <h1>HAKU</h1>
   <div class="row">
     <div class="input-field col m4 s6">
-      <input placeholder="Hakemuksen nimi" id="applicationName"  type="text" [(ngModel)]="query.name">
-      <label>Hakemuksen nimi</label>
+      <input id="applicationId"  type="text" [(ngModel)]="query.applicationId">
+      <label>Hakemuksen tunnus</label>
     </div>
     <div class="input-field col m2 s6">
-      <select disabled [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
-        <option value="" disabled selected>Hakemuksen tyyppi</option>
-        <option *ngFor="let option of items" [value]="option">{{option}}</option>
+      <select [(ngModel)]="query.type" materialize="material_select" [materializeSelectOptions]="selectOptions">
+        <option value="" selected>Hakemuksen tyyppi</option>
+        <option *ngFor="let option of applicationTypeStrings" [value]="option">{{ translations.application.type[option] }}</option>
       </select>
       <label>Hakemuksen tyyppi</label>
     </div>
     <div class="input-field col m2 s6">
-      <!-- Disabled because status is not saved in the backend at the moment. Otherwise working solution -->
-      <select disabled [(ngModel)]="query.status" materialize="material_select" [materializeSelectOptions]="selectOptions">
+      <select [(ngModel)]="query.status" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" disabled selected>Hakemuksen tila</option>
-        <option *ngFor="let option of getApplicationStatusStrings()" [value]="option">{{translations.application.status[option]}}</option>
+        <option *ngFor="let option of applicationStatusStrings" [value]="option">{{ translations.application.status[option] }}</option>
       </select>
       <label>Hakemuksen tila</label>
     </div>
@@ -37,7 +36,7 @@
     </div>
 
     <div class="input-field col m4 s6">
-      <input placeholder="Osoite" id="applicationName"  type="text" [(ngModel)]="query.address">
+      <input id="applicationName"  type="text" [(ngModel)]="query.address">
       <label>Osoite</label>
     </div>
     <div class="input-field col m2 s6">
@@ -100,16 +99,16 @@
             {{application.project.name}} <br>
             <span>{{application.project.id}}</span>
           </td>
-          <td>{{application.type}}</td>
-          <td>{{application.status}}</td>
+          <td>{{ translations.application.type[application.type] }}</td>
+          <td>{{ translations.application.status[application.status] }}</td>
           <td>
             {{application.applicant.organization.name}}<br>
             <span>Isaksson Harry</span>
           </td>
           <td>{{application.location.postalAddress.streetAddress}}</td>
-          <td>Kamppi</td>
-          <td>18.05.2016</td>
-          <td>24.6.2016</td>
+          <td>ei tuettuna</td>
+          <td>{{ application.creationTime | date:format }}</td>
+          <td>{{ application.startTime | date:format }}</td>
           <td></td>
         </tr>
       </tbody>

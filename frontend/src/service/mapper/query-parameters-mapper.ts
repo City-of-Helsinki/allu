@@ -18,12 +18,12 @@ export class QueryParametersMapper {
     QueryParametersMapper.mapParameter(queryParameters, 'applicant.name', QueryParametersMapper.removeExtraWhitespace(query.applicant));
     QueryParametersMapper.mapParameter(queryParameters, 'contacts.name', QueryParametersMapper.removeExtraWhitespace(query.contact));
     QueryParametersMapper.mapParameter(queryParameters, 'handler', QueryParametersMapper.removeExtraWhitespace(query.handler));
-    QueryParametersMapper.mapParameter(queryParameters, 'name', QueryParametersMapper.removeExtraWhitespace(query.name));
+    QueryParametersMapper.mapParameter(queryParameters, 'applicationId', QueryParametersMapper.removeExtraWhitespace(query.applicationId));
     QueryParametersMapper.mapParameter(queryParameters, 'status', QueryParametersMapper.removeExtraWhitespace(query.status));
     QueryParametersMapper.mapParameter(queryParameters, 'type', QueryParametersMapper.removeExtraWhitespace(query.type));
     QueryParametersMapper.mapParameter(queryParameters, '_all', query.freeText);
-    QueryParametersMapper.mapDateParameter(queryParameters, 'startTime', MIN_DATE, query.startTime);
-    QueryParametersMapper.mapDateParameter(queryParameters, 'endTime', query.endTime, MAX_DATE);
+    QueryParametersMapper.mapDateParameter(queryParameters, 'startTime', MIN_DATE, query.endTime);
+    QueryParametersMapper.mapDateParameter(queryParameters, 'endTime', query.startTime, MAX_DATE);
     return queryParameters;
   }
 

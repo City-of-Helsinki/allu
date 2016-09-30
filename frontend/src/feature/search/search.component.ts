@@ -11,7 +11,9 @@ import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery'
 import {ApplicationSearchEvent} from '../../event/search/application-search-event';
 import {translations} from '../../util/translations';
 import {ApplicationStatus} from '../../model/application/application-status-change';
-import {PICKADATE_PARAMETERS} from '../../util/time.util';
+import {PICKADATE_PARAMETERS, UI_DATE_FORMAT} from '../../util/time.util';
+import {EnumUtil} from '../../util/enum.util';
+import {ApplicationType} from '../../model/application/type/application-type';
 
 @Component({
   selector: 'search',
@@ -30,6 +32,9 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
   private query: ApplicationSearchQuery = new ApplicationSearchQuery();
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
+  private format = UI_DATE_FORMAT;
+  private applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
+  private applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
 
   constructor(private eventService: EventService, private router: Router) {
     this.results = [];
@@ -59,15 +64,5 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
   private search(): void {
     console.log('Search clicked', this.query);
     this.eventService.send(this, new ApplicationSearchEvent(this.query));
-  }
-
-  private getApplicationStatusStrings(): Array<string> {
-    let statusStrings: Array<string> = [];
-    for (let item in ApplicationStatus) {
-      if (isNaN(parseInt(item, 10))) {
-        statusStrings.push(item);
-      }
-    }
-    return statusStrings;
   }
 }

@@ -13,6 +13,9 @@ export const translations = {
       REJECTED: 'Hylätty päätös',
       RETURNED_TO_PREPARATION: 'Palautettu valmisteluun',
       FINISHED: 'Valmis'
+    },
+    type: {
+      OUTDOOREVENT: 'Ulkoilmatapahtuma'
     }
   }
 };
