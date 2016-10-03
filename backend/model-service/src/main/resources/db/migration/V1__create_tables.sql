@@ -124,3 +124,24 @@ create SEQUENCE allu.SL_application_type_sequence START 1600001;
 create SEQUENCE allu.TP_application_type_sequence START 1600001;
 create SEQUENCE allu.VL_application_type_sequence START 1600001;
 create SEQUENCE allu.MP_application_type_sequence START 1600001;
+
+create table allu.user (
+    id serial primary key,
+    user_name text NOT NULL UNIQUE,
+    real_name text NOT NULL,
+    email_address text NOT NULL,
+    title text NOT NULL,
+    is_active boolean );
+
+create table allu.user_role (
+    id serial primary key,
+    user_id integer references allu.user(id),
+    role text );
+
+create table allu.user_application_type (
+    id serial primary key,
+    user_id integer references allu.user(id),
+    application_type text );
+
+insert into allu.user values (1, 'admin', 'admin user', 'no@mail.fi', 'administrator', true);
+insert into allu.user_role values (1, 1, 'ROLE_ADMIN');

@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.security;
 
 import com.google.common.collect.Sets;
+import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.ui.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -25,18 +26,16 @@ public class TokenHandlerTest {
 
   @Before
   public void setUp() {
-    userService = new UserService();
-    tokenHandler = new TokenHandler(secret, 12, userService);
+    tokenHandler = new TokenHandler(secret, 12);
     List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()));
     user = new AlluUser("johndoe", "pwd", roles, "email");
-    userService.addUser(user);
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateTokenWithoutPrinciple() {
-    Set<GrantedAuthority> roles = Sets.newHashSet(new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()));
+    Set<GrantedAuthority> roles = Sets.newHashSet(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
     AlluUser userNullId = new AlluUser(null, "pwd", roles, "email");
     tokenHandler.createTokenForUser(userNullId);
   }
@@ -60,14 +59,14 @@ public class TokenHandlerTest {
     assertEquals("johndoe", alluUser.getPassword());
     assertEquals(2, alluUser.getAuthorities().size());
     Set<GrantedAuthority> roles = Sets.newHashSet(
-        new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()),
-        new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()));
+        new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()),
+        new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
     assertThat(roles, containsInAnyOrder(alluUser.getAuthorities().toArray()));
   }
 
   @Test(expected = ExpiredJwtException.class)
   public void testExpiredToken() {
-    tokenHandler = new TokenHandler(secret, -1, userService);
+    tokenHandler = new TokenHandler(secret, -1);
     String token = tokenHandler.createTokenForUser(user);
     tokenHandler.parseUserFromToken(token);
 

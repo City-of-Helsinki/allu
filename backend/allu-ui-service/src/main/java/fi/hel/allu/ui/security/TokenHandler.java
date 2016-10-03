@@ -1,24 +1,17 @@
 package fi.hel.allu.ui.security;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.Sets;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
-import com.google.common.collect.Sets;
-
-import fi.hel.allu.ui.service.UserService;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TokenHandler {
 
@@ -26,14 +19,11 @@ public class TokenHandler {
   public static final String ROLES = "alluRoles";
   private String secret;
   private int expirationHours;
-  @SuppressWarnings("unused")
-  private UserService userService;
 
 
-  public TokenHandler(String secret, int expirationHours, UserService userService) {
+  public TokenHandler(String secret, int expirationHours) {
     this.secret = secret;
     this.expirationHours = expirationHours;
-    this.userService = userService;
   }
 
   /**

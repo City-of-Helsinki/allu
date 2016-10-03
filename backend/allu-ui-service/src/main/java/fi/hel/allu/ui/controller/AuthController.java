@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.ui.security.AlluUser;
-import fi.hel.allu.ui.security.Roles;
+import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.ui.security.TokenHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,14 +29,14 @@ public class AuthController {
 
   private AlluUser createMockUser() {
     List<GrantedAuthority> roles = new ArrayList<>();
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_CREATE_APPLICATION.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_PROCESS_APPLICATION.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_WORK_QUEUE.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_DECISION.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_SUPERVISE.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_INVOICING.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_VIEW.toString()));
-    roles.add(new SimpleGrantedAuthority(Roles.ROLE_ADMIN.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_CREATE_APPLICATION.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_PROCESS_APPLICATION.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_WORK_QUEUE.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_DECISION.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_SUPERVISE.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_INVOICING.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()));
     return new AlluUser("johndoe", "pwd", roles, "email");
   }
 }
