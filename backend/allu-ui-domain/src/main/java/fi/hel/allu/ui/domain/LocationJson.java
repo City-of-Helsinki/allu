@@ -1,12 +1,14 @@
 package fi.hel.allu.ui.domain;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import fi.hel.allu.model.domain.serialization.GeometryDeserializerProxy;
-import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
+import javax.validation.Valid;
+
 import org.geolatte.geom.Geometry;
 
-import javax.validation.Valid;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import fi.hel.allu.model.domain.serialization.GeometryDeserializerProxy;
+import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
 
 /**
  * inFinnish: Hakemuksen sijainti
@@ -16,6 +18,7 @@ public class LocationJson {
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
+  private Double area;
   @Valid
   private PostalAddressJson postalAddress;
 
@@ -33,6 +36,17 @@ public class LocationJson {
 
   public void setGeometry(Geometry geometry) {
     this.geometry = geometry;
+  }
+
+  /**
+   * @return the area in sq. meters
+   */
+  public Double getArea() {
+    return area;
+  }
+
+  public void setArea(Double area) {
+    this.area = area;
   }
 
   public PostalAddressJson getPostalAddress() {

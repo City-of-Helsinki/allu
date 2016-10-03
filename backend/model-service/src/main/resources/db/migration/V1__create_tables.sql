@@ -22,7 +22,8 @@ create table allu.location (
    id serial primary key,
    street_address text,
    postal_code text,
-   city text );
+   city text,
+   area double precision );
 
 create table allu.geometry (
    id serial primary key,
