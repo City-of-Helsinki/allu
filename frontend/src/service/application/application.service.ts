@@ -15,6 +15,8 @@ import {ErrorUtil} from '../../util/error.util.ts';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status-change';
 import {translations} from '../../util/translations';
+import {ErrorInfo} from './../ui-state/error-info';
+import {ErrorType} from '../ui-state/error-type';
 
 @Injectable()
 export class ApplicationService {
@@ -155,7 +157,7 @@ export class ApplicationService {
         .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
         .subscribe(
           applications => this.applicationHub.addApplications(applications),
-          err => this.uiState.addError(ErrorUtil.extractMessage(err))
+          err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, ErrorUtil.extractMessage(err)))
         );
     } else if (!Number.isNaN(search)) {
       this.authHttp.get(ApplicationService.APPLICATIONS_URL + '/' + search)
@@ -173,7 +175,7 @@ export class ApplicationService {
     this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
       .subscribe(
         response => this.uiState.addMessage('Application status changed to ' + ApplicationStatus[statusChange.status]),
-        err => this.uiState.addError(translations.application.error.statusChangeFailed)
+        err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_STATUS_CHANGE_FAILED))
       );
   }
 }

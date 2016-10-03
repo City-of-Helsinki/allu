@@ -1,7 +1,8 @@
 export const translations = {
   application: {
     error: {
-      statusChangeFailed: 'Päätöksen tallentaminen epäonnistui'
+      statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
+      searchFailed: 'Hakemuksen hakeminen epäonnistui'
     },
     status: {
       PRE_RESERVED: 'Alustava varaus',
@@ -16,6 +17,16 @@ export const translations = {
     },
     type: {
       OUTDOOREVENT: 'Ulkoilmatapahtuma'
+    }
+  },
+  geolocation: {
+    error: {
+      searchFailed: 'Osoitteen haku epäonnistui'
+    }
+  },
+  decision: {
+    error: {
+      generatePdf: 'Pdf:n muodostaminen epäonnistui'
     }
   }
 };

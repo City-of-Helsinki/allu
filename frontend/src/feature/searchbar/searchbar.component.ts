@@ -10,6 +10,7 @@ import {ApplicationHub} from '../../service/application/application-hub';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {UIState} from '../../service/ui-state/ui-state';
+import {Geocoordinates} from '../../model/common/geocoordinates';
 
 // To use Materialize functionality
 declare var Materialize: any;
@@ -30,14 +31,16 @@ export class SearchbarComponent implements OnInit {
   private pickadateParams = PICKADATE_PARAMETERS;
   private _startDate: Date;
   private _endDate: Date;
-  private errorMessage: string;
+  private notFound: boolean;
 
-  constructor(private mapHub: MapHub, private applicationHub: ApplicationHub, private uiState: UIStateHub) {}
+  constructor(private mapHub: MapHub, private applicationHub: ApplicationHub) {}
 
   ngOnInit(): void {
     this.notifySearchUpdated();
 
-    this.uiState.uiState().subscribe((state) => this.uiStateUpdated(state));
+    this.mapHub.coordinates()
+      .filter(coords => !coords.isDefined())
+      .forEach(coords => Materialize.toast('Osoitetta ei löytynyt', 4000));
   }
 
   public notifySearchUpdated(): void {
@@ -47,13 +50,6 @@ export class SearchbarComponent implements OnInit {
     this.mapHub.addSearch(this.search);
     this.searchUpdated.emit(filter);
     this.applicationHub.addSearchFilter(filter);
-  }
-
-  private uiStateUpdated(state: UIState) {
-    if (!state.messages.isEmpty()) {
-      Materialize.toast('Osoitetta ei löytynyt', 4000);
-      this.uiState.clearMessages();
-    }
   }
 
   set startDate(date: string) {

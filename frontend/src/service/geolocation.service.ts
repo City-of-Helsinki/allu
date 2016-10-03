@@ -12,6 +12,13 @@ import {MapHub} from './map-hub';
 import '../rxjs-extensions.ts';
 import {UIStateHub} from './ui-state/ui-state-hub';
 import {ErrorUtil} from './../util/error.util.ts';
+import {HttpError} from '../util/error.util';
+import {HTTP_NOT_FOUND} from '../util/http-status-codes';
+import {ErrorInfo} from './ui-state/error-info';
+import {ErrorType} from './ui-state/error-type';
+import {None} from '../util/option';
+import {Option} from '../util/option';
+import {Some} from '../util/option';
 
 @Injectable()
 export class GeolocationService {
@@ -25,16 +32,21 @@ export class GeolocationService {
     private mapHub: MapHub,
     private uiState: UIStateHub) {
     mapHub.search().subscribe(search => {
-      this.geocode(search).subscribe(coordinates => this.mapHub.addCoordinates(coordinates));
+      this.geocode(search).subscribe(
+        coordinates => this.mapHub.addCoordinates(coordinates),
+        err => this.uiState.addError(err)
+      );
     });
   }
-  geocode(address: string): Observable<Geocoordinates> {
+
+  geocode(address: string): Observable<Option<Geocoordinates>> {
     let searchUrl = this.searchUrl(address);
 
     return this.authHttp.get(searchUrl)
       .map(response => response.json())
       .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService))
-      .catch(err => <Observable<Geocoordinates>>this.uiState.addMessage(ErrorUtil.extractMessage(err)));
+      .map(coordinates => Some(coordinates))
+      .catch(err => this.handleError(err));
   }
 
   private searchUrl(address: string) {
@@ -42,5 +54,12 @@ export class GeolocationService {
     return GeolocationService.ADDRESS_URL + GeolocationService.GEOCODE_URL
       + '/' + streetAddress.streetName
       + '/' + streetAddress.streetNumber;
+  }
+
+  private handleError(errorResponse: any): Observable<Option<Geocoordinates>> {
+    let httpError = ErrorUtil.extractHttpError(errorResponse);
+    return httpError.status === HTTP_NOT_FOUND
+      ? Observable.of(None())
+      : Observable.throw(new ErrorInfo(ErrorType.GEOLOCATION_SEARCH_FAILED, httpError.message));
   }
 }

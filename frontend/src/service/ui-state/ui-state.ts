@@ -1,8 +1,10 @@
-import {List} from 'immutable';
+import {ErrorInfo} from './error-info';
 /**
- * State of UI containing notification messages and current errors
+ * State of UI containing notification message and current error
  * which can be shown in UI
  */
 export class UIState {
-  constructor(public messages: List<string>, public errors: List<string>) {}
+  constructor()
+  constructor(message: string, error: ErrorInfo)
+  constructor(public message?: string, public error?: ErrorInfo) {}
 }

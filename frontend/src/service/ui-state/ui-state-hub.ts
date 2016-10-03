@@ -5,6 +5,8 @@ import {UIState} from './ui-state.ts';
 import {List} from 'immutable';
 import '../../rxjs-extensions.ts';
 import {toast} from 'angular2-materialize';
+import {ErrorInfo} from './error-info';
+import {message} from './error-type';
 
 /**
  * Class for handling UIState changes and notify
@@ -15,7 +17,7 @@ import {toast} from 'angular2-materialize';
 @Injectable()
 export class UIStateHub {
 
-  private uiState$: BehaviorSubject<UIState> = new BehaviorSubject(new UIState(List([]), List([])));
+  private uiState$: BehaviorSubject<UIState> = new BehaviorSubject(new UIState());
 
   constructor() {}
 
@@ -25,76 +27,41 @@ export class UIStateHub {
   public uiState = () => this.uiState$.asObservable();
 
   /**
-   * For adding a single notification message
+   * For adding a notification message
    */
   public addMessage(message: string) {
     let currentState: UIState = this.uiState$.getValue();
-    this.uiState$.next(
-      new UIState(
-        List.of(message),
-        currentState.errors
-      ));
+    this.uiState$.next(new UIState(message, currentState.error));
     return Observable.empty();
   }
 
   /**
-   * For clearing current notification messages
+   * For clearing current notification message
    */
-  public clearMessages(): void {
+  public clearMessage(): void {
     let currentState: UIState = this.uiState$.getValue();
-    this.uiState$.next(new UIState(List([]), currentState.errors));
+    this.uiState$.next(new UIState(undefined, currentState.error));
   }
 
   /**
-   * For setting multiple notification messages
+   * For adding an error message
    */
-  public setMessages(messages: Array<string>) {
+  public addError(error: ErrorInfo) {
     let currentState: UIState = this.uiState$.getValue();
-    this.uiState$.next(
-      new UIState(
-        List(messages),
-        currentState.errors
-      ));
+    this.uiState$.next(new UIState(currentState.message, error));
+    toast(message(error.type), 4000);
     return Observable.empty();
   }
 
   /**
-   * For adding a single error message
+   * For clearing current error message
    */
-  public addError(error: string) {
-    console.log('Error:', error);
+  public clearError(): void {
     let currentState: UIState = this.uiState$.getValue();
-    this.uiState$.next(
-      new UIState(
-        currentState.messages,
-        List.of(error)
-      ));
-    toast(error, 4000);
-    return Observable.empty();
-  }
-
-  /**
-   * For clearing current error messages
-   */
-  public clearErrors(): void {
-    let currentState: UIState = this.uiState$.getValue();
-    this.uiState$.next(new UIState(currentState.messages, List([])));
-  }
-
-  /**
-   * For setting multiple error messages
-   */
-  public setErrors(errors: Array<string>) {
-    let currentState: UIState = this.uiState$.getValue();
-    this.uiState$.next(
-      new UIState(
-        currentState.messages,
-        List(errors)
-      ));
-    return Observable.empty();
+    this.uiState$.next(new UIState(currentState.message, undefined));
   }
 
   public clear(): void {
-    this.uiState$.next(new UIState(List([]), List([])));
+    this.uiState$.next(new UIState());
   }
 }
