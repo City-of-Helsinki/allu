@@ -8,7 +8,6 @@ import {ApplicationComponent} from '../application/application.component.ts';
 import {TypeComponent} from '../application/type/type.component';
 import {OutdoorEventComponent} from '../application/outdoor-event/outdoor-event.component';
 import {PromotionEventComponent} from '../application/promotion-event/promotion-event.component';
-import {SummaryComponent} from '../application/summary/summary.component';
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
 import {ApplicationAttachmentComponent} from '../application/attachment/application-attachment.component';
 import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
@@ -19,13 +18,15 @@ import {LoadingComponent} from '../loading/loading.component';
 import {MapModule} from '../map/map.module';
 import {LocationState} from '../../service/application/location-state';
 import {ProgressBarModule} from '../progressbar/progressbar.module';
+import {applicationRoutes} from './application.routing';
+import {ApplicationResolve} from './application-resolve';
 
 
 @NgModule({
   imports: [
     AlluCommonModule,
     MdCardModule,
-    RouterModule,
+    RouterModule.forChild(applicationRoutes),
     FormsModule,
     MapModule,
     MdToolbarModule,
@@ -36,14 +37,14 @@ import {ProgressBarModule} from '../progressbar/progressbar.module';
     TypeComponent,
     OutdoorEventComponent,
     PromotionEventComponent,
-    SummaryComponent,
     ApplicationAttachmentComponent,
     FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,
     LoadingComponent
   ],
   providers: [
-    AttachmentService
+    AttachmentService,
+    ApplicationResolve
   ]
 })
 export class ApplicationModule {}
