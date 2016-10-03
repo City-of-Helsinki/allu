@@ -5,11 +5,16 @@ import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QGeometry.geometry1;
 import static fi.hel.allu.QLocation.location;
 
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Vector;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +29,8 @@ import fi.hel.allu.model.domain.Location;
 
 @Repository
 public class LocationDao {
+  private static final Logger logger = LoggerFactory.getLogger(LocationDao.class);
+
   @Autowired
   private SQLQueryFactory queryFactory;
 
@@ -82,7 +89,7 @@ public class LocationDao {
   private void setGeometry(int locationId, Geometry geometry) {
     if (geometry != null) {
       if (geometry instanceof GeometryCollection) {
-        GeometryCollection gc = (GeometryCollection) geometry;
+        GeometryCollection gc = removeOverlaps((GeometryCollection) geometry);
         gc.forEach(geo -> queryFactory.insert(geometry1).columns(geometry1.locationId, geometry1.geometry)
             .values(locationId, geo).execute());
       } else {
@@ -90,5 +97,31 @@ public class LocationDao {
             .execute();
       }
     }
+  }
+
+  private GeometryCollection removeOverlaps(GeometryCollection coll) {
+    logger.debug("Removing overlaps from {}", coll.asText());
+    LinkedList<Geometry> geomIn = new LinkedList<>();
+    coll.forEach(geom -> geomIn.add(geom));
+    Vector<Geometry> geomOut = new Vector<>();
+    while (geomIn.size() > 0) {
+      // Pop the first element
+      Geometry candidate = geomIn.removeFirst();
+      // Iterate through all the rest and remove all overlapping ones:
+      Iterator<Geometry> iter = geomIn.iterator();
+      while (iter.hasNext()) {
+        Geometry otherOne = iter.next();
+        if (candidate.intersects(otherOne)) {
+          logger.debug("Combining overlapping geometries {} and {}", candidate.asText(), otherOne.asText());
+          candidate = candidate.union(otherOne);
+          logger.debug("Result of combination is {}", candidate);
+          iter.remove();
+        }
+      }
+      geomOut.addElement(candidate);
+    }
+    GeometryCollection collOut = new GeometryCollection(geomOut.toArray(new Geometry[geomOut.size()]));
+    logger.debug("Resulting geometries: {}", collOut.asText());
+    return collOut;
   }
 }
