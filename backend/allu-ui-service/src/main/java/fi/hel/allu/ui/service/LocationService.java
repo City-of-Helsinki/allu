@@ -106,6 +106,7 @@ public class LocationService {
       location.setCity(locationJson.getPostalAddress().getCity());
     }
     location.setGeometry(locationJson.getGeometry());
+    location.setArea(locationJson.getArea());
     return location;
   }
 
@@ -117,5 +118,6 @@ public class LocationService {
     postalAddressJson.setStreetAddress(location.getStreetAddress());
     locationJson.setPostalAddress(postalAddressJson);
     locationJson.setGeometry(location.getGeometry());
+    locationJson.setArea(location.getArea());
   }
 }

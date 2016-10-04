@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
@@ -87,6 +88,7 @@ public class LocationDao {
   }
 
   private void setGeometry(int locationId, Geometry geometry) {
+    double area = 0.0;
     if (geometry != null) {
       if (geometry instanceof GeometryCollection) {
         GeometryCollection gc = removeOverlaps((GeometryCollection) geometry);
@@ -96,7 +98,19 @@ public class LocationDao {
         queryFactory.insert(geometry1).columns(geometry1.locationId, geometry1.geometry).values(locationId, geometry)
             .execute();
       }
+      area = getArea(locationId);
     }
+    // store geometry's area to the location
+    queryFactory.update(location).set(location.area, area).where(location.id.eq(locationId)).execute();
+  }
+
+  private double getArea(int locationId) {
+    SQLQuery<Double> query = queryFactory.select(geometry1.geometry.asPolygon().area().sum()).from(geometry1)
+        .where(geometry1.locationId.eq(locationId));
+    logger.debug("Executing query {}", query.getSQL().getSQL());
+    Optional<Double> area = Optional.of(query.fetchOne());
+    logger.debug("Area for location ID {} is {} m2", locationId, area.orElse(0.0));
+    return area.orElse(0.0);
   }
 
   private GeometryCollection removeOverlaps(GeometryCollection coll) {

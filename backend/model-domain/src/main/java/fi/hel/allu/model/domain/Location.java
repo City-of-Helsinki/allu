@@ -13,10 +13,16 @@ public class Location {
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
+  private Double area;
   private String streetAddress;
   private String postalCode;
   private String city;
 
+  /**
+   * Get location's database ID
+   *
+   * @return the ID
+   */
   public Integer getId() {
     return id;
   }
@@ -25,6 +31,11 @@ public class Location {
     this.id = id;
   }
 
+  /**
+   * Get the geometry for the location
+   *
+   * @return the geometry
+   */
   public Geometry getGeometry() {
     return geometry;
   }
@@ -33,6 +44,24 @@ public class Location {
     this.geometry = geometry;
   }
 
+  /**
+   * Get the area in square meters
+   *
+   * @return the area
+   */
+  public Double getArea() {
+    return area;
+  }
+
+  public void setArea(Double area) {
+    this.area = area;
+  }
+
+  /**
+   * Get location's street address, e.g. "Mannerheimintie 3"
+   *
+   * @return street address
+   */
   public String getStreetAddress() {
     return streetAddress;
   }
@@ -41,6 +70,11 @@ public class Location {
     this.streetAddress = streetAddress;
   }
 
+  /**
+   * Get the location's postal (zip) code.
+   *
+   * @return the postal code.
+   */
   public String getPostalCode() {
     return postalCode;
   }
@@ -49,6 +83,11 @@ public class Location {
     this.postalCode = postalCode;
   }
 
+  /**
+   * Get the city for the location.
+   *
+   * @return city name.
+   */
   public String getCity() {
     return city;
   }
