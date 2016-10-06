@@ -3,7 +3,6 @@ package fi.hel.allu.ui.config;
 import fi.hel.allu.ui.security.StatelessAuthenticationFilter;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
 import fi.hel.allu.ui.security.TokenHandler;
-import fi.hel.allu.ui.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +12,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
@@ -58,7 +57,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    auth.userDetailsService(userService()).passwordEncoder(new BCryptPasswordEncoder());
+    UserDetailsService uds = (String username) ->
+    { throw new UnsupportedOperationException("UserDetailsService.loadUserByUsername not expected to be called ever"); };
+    auth.userDetailsService(uds);
   }
 
   @Bean
@@ -68,13 +69,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
-  public UserService userService() {
-    return new UserService();
-  }
-
-  @Bean
   public TokenHandler tokenHandler() {
-    return new TokenHandler(secret, Integer.parseInt(expirationHours), userService());
+    return new TokenHandler(secret, Integer.parseInt(expirationHours));
   }
 
   @Bean

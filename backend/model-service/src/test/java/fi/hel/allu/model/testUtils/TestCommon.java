@@ -2,6 +2,7 @@ package fi.hel.allu.model.testUtils;
 
 import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 import org.geolatte.geom.Geometry;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Calendar;
 
 /**
@@ -32,6 +34,8 @@ public class TestCommon {
   private PersonDao personDao;
   @Autowired
   private ProjectDao projectDao;
+  @Autowired
+  private UserDao userDao;
 
   public void deleteAllData() throws SQLException {
     sqlRunner.runSql(DELETE_ALL_DATA);
@@ -62,6 +66,7 @@ public class TestCommon {
     app.setMetadataVersion(1);
     app.setDecisionTime(ZonedDateTime.now());
     app.setName(name);
+    // TODO: replace handler string with reference to actual User object / id
     app.setHandler(handler);
     app.setEvent(dummyOutdoorEvent());
     return app;
@@ -155,6 +160,18 @@ public class TestCommon {
     return insertedProject.getId();
   }
 
+  public User insertUser() {
+    User user = new User();
+    user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
+    user.setIsActive(true);
+    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    user.setEmailAddress("email");
+    user.setRealName("realname");
+    user.setTitle("title");
+    user.setUserName("username");
+    return userDao.insert(user);
+  }
+
   private static final String[] DELETE_ALL_DATA = new String[] {
       "delete from allu.decision",
       "delete from allu.application_contact",
@@ -167,5 +184,8 @@ public class TestCommon {
       "delete from allu.person",
       "delete from allu.geometry",
       "delete from allu.location",
+      "delete from allu.user_application_type",
+      "delete from allu.user_role",
+      "delete from allu.user",
    };
 }

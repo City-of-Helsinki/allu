@@ -259,7 +259,7 @@ public class ApplicationProperties {
    * @return absolute url to model-service resource
    */
   public String getModelServiceUrl(String path) {
-    return PATH_PREFIX + modelServiceHost + ":" + modelServicePort + path;
+    return modelServiceBaseUrl() + path;
   }
 
   /**
@@ -288,7 +288,32 @@ public class ApplicationProperties {
    * @return url to request metadata from model service.
    */
   public String getMetadataUrl() {
-    return PATH_PREFIX + modelServiceHost + ":" + modelServicePort + "/meta/{applicationType}";
+    return getModelServiceUrl("/meta/{applicationType}");
+  }
+
+  /**
+   * @return url to create users to model service.
+   */
+  public String getUserCreateUrl() {
+    return getModelServiceUrl("/users");
+  }
+
+  /**
+   * @return url to update users to model service.
+   */
+  public String getUserUpdateUrl() {
+    return getUserCreateUrl();
+  }
+
+  public String getUserListingUrl() {
+    return getUserCreateUrl();
+  }
+
+  /**
+   * @return url to fetch given user from model service.
+   */
+  public String getUserByUserNameUrl() {
+    return getModelServiceUrl("/users/userName/{userName}");
   }
 
   /**
@@ -319,5 +344,12 @@ public class ApplicationProperties {
    */
   public String getWfsPassword() {
     return wfsPassword;
+  }
+
+  /**
+   * @return  the base URL for model service.
+   */
+  private String modelServiceBaseUrl() {
+    return PATH_PREFIX + modelServiceHost + ":" + modelServicePort;
   }
 }
