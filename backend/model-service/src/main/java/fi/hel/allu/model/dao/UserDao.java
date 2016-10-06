@@ -86,17 +86,14 @@ public class UserDao {
     SQLQuery<String> roleQuery =
         queryFactory.select(userRole.role).from(userRole).where(userRole.userId.eq(userId));
     List<String> roles = roleQuery.fetch();
-    List<RoleType> roleTypes = roles.stream().map(r -> RoleType.valueOf(r)).collect(Collectors.toList());
-    return roleTypes;
+    return roles.stream().map(r -> RoleType.valueOf(r)).collect(Collectors.toList());
   }
 
   private List<ApplicationType> getApplicationTypes(Integer userId) {
     SQLQuery<String> appTypeQuery =
         queryFactory.select(userApplicationType.applicationType).from(userApplicationType).where(userApplicationType.userId.eq(userId));
     List<String> userApplicationTypes = appTypeQuery.fetch();
-    List<ApplicationType> applicationTypes =
-        userApplicationTypes.stream().map(a -> ApplicationType.valueOf(a)).collect(Collectors.toList());
-    return applicationTypes;
+    return userApplicationTypes.stream().map(a -> ApplicationType.valueOf(a)).collect(Collectors.toList());
   }
 
   private void insertRoles(int id, User userData) {
