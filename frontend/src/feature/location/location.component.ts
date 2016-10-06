@@ -98,7 +98,7 @@ export class LocationComponent implements EventListener {
 
         if (this.hasChanges === HasChanges.PENDING) {
           this.hasChanges = HasChanges.NO;
-          this.router.navigate(['/Summary', {id: this.id}]);
+          this.router.navigate(['/applications', this.id, 'summary']);
         }
       }
     } else if (event instanceof ErrorEvent) {
@@ -117,7 +117,6 @@ export class LocationComponent implements EventListener {
     this.locationState.startDate = filter.startDate;
     this.locationState.endDate = filter.endDate;
   }
-
 
   save() {
     if (this.id) {

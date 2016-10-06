@@ -1,5 +1,5 @@
-import {Component, OnDestroy, OnInit, Input} from '@angular/core';
-import {Router} from '@angular/router';
+import {Component, OnDestroy, OnInit, Input, AfterViewInit} from '@angular/core';
+import {Router, ActivatedRoute} from '@angular/router';
 
 import {Location} from '../../../model/common/location';
 import {Event} from '../../../event/event';
@@ -20,6 +20,19 @@ import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
 import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
 import {LocationState} from '../../../service/application/location-state';
+import {outdoorEventConfig} from './outdoor-event-config';
+import {DEFAULT_APPLICANT} from './outdoor-event-config';
+import {applicantNameSelection} from './outdoor-event-config';
+import {applicantIdSelection} from './outdoor-event-config';
+import {ApplicationHub} from '../../../service/application/application-hub';
+import {UrlUtil} from '../../../util/url.util';
+import {Subscription} from 'rxjs/Subscription';
+import {MapHub} from '../../../service/map-hub';
+import {ApplicationStatus} from '../../../model/application/application-status-change';
+import {ApplicationsAnnounceEvent} from '../../../event/announce/applications-announce-event';
+import {ApplicationSelectionEvent} from '../../../event/selection/application-selection-event';
+
+declare var Materialize: any;
 
 @Component({
   selector: 'outdoor-event',
@@ -29,11 +42,10 @@ import {LocationState} from '../../../service/application/location-state';
     require('./outdoor-event.component.scss')
   ]
 })
-
-export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
-  private _noPrice = false;
-
+export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy, AfterViewInit {
   private application: Application;
+  private isSummary: boolean;
+  private _noPrice = false;
   private events: Array<any>;
   private applicantType: any;
   private applicantText: any;
@@ -50,124 +62,52 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
 
   private meta: StructureMeta;
 
-  constructor(private eventService: EventService, private router: Router, private attachmentService: AttachmentService,
+  constructor(private eventService: EventService,
+              private router: Router,
+              private route: ActivatedRoute,
+              private attachmentService: AttachmentService,
               private locationState: LocationState) {
-    // TODO:remove preFilledApplication
-    this.application = Application.prefilledApplication();
-    this.application.location = locationState.location;
-    // TODO: mismatch here. Date+time should be used in location too.
-    this.application.startTime = locationState.startDate;
-    this.application.endTime = TimeUtil.getEndOfDay(locationState.endDate);
-
-    let outdoorEvent = <OutdoorEvent>this.application.event;
-    outdoorEvent.eventStartTime = this.application.startTime;
-    outdoorEvent.eventEndTime = this.application.endTime;
-
-    console.log('outdoor-event.application', this.application);
-
-    this.events = [
-      {name: 'Ulkoilmatapahtuma', value: 'OutdoorEvent'},
-      {name: 'Muu', value: 'Other'}
-    ];
-    this.applicantType = [
-      {name: 'Yritys', value: 'COMPANY', text: 'Yrityksen nimi'},
-      {name: 'Yhdistys', value: 'ASSOCIATION', text: 'Yhdistyksen nimi'},
-      {name: 'Yksityishenkilö', value: 'PERSON', text: 'Yksityishenkilön nimi'}
-    ];
-    this.applicantText = {
-      'DEFAULT': {
-        name: 'Hakijan nimi',
-        id: 'Y-tunnus'},
-      'COMPANY': {
-        name: 'Yrityksen nimi',
-        id: 'Y-tunnus'},
-      'ASSOCIATION': {
-        name: 'Yhdistyksen nimi',
-        id: 'Y-tunnus'},
-      'PERSON': {
-        name: 'Henkilön nimi',
-        id: 'Henkilötunnus'}
-    };
-
-    let def = 'DEFAULT';
-    this.applicantNameSelection = this.application.applicant.type
-      ? this.applicantText[this.application.applicant.type].name : this.applicantText[def].name;
-    this.applicantIdSelection = this.application.applicant.type
-      ? this.applicantText[this.application.applicant.type].id : this.applicantText[def].id;
-
-    this.applicant = {
-      id: this.application.applicant && this.application.applicant.id || undefined,
-      type: this.application.applicant && this.application.applicant.type || undefined,
-      representative: this.application.applicant && this.application.applicant.representative || undefined,
-      name: undefined,
-      businessIdOrSsn: undefined,
-      streetAddress: undefined,
-      postalCode: undefined,
-      city: undefined,
-      email: undefined,
-      phone: undefined
-    };
-
-    if (this.application.applicant) {
-      if (this.application.applicant.person) {
-        this.applicant.name = this.application.applicant.person.name;
-        this.applicant.businessIdOrSsn = this.application.applicant.person.ssn;
-        this.applicant.streetAddress = this.application.applicant.person.postalAddress.streetAddress;
-        this.applicant.postalCode = this.application.applicant.person.postalAddress.postalCode;
-        this.applicant.city = this.application.applicant.person.postalAddress.city;
-        this.applicant.email = this.application.applicant.person.email;
-        this.applicant.phone = this.application.applicant.person.phone;
-      }
-      if (this.application.applicant.organization) {
-        this.applicant.name = this.application.applicant.organization.name;
-        this.applicant.businessIdOrSsn = this.application.applicant.organization.businessId;
-        this.applicant.streetAddress = this.application.applicant.organization.postalAddress.streetAddress;
-        this.applicant.postalCode = this.application.applicant.organization.postalAddress.postalCode;
-        this.applicant.city = this.application.applicant.organization.postalAddress.city;
-        this.applicant.email = this.application.applicant.organization.email;
-        this.applicant.phone = this.application.applicant.organization.phone;
-      }
-    }
-
-    this.countries = [
-      {name: 'Suomi', value: 'Finland'},
-      {name: 'Ruotsi', value: 'Sweden'},
-      {name: 'Venäjä', value: 'Russia'},
-      {name: 'Viro', value: 'Estonia'}
-    ];
-    this.billingTypes = [
-      {name: 'Käteinen', value: 'Cash'},
-      {name: 'Lasku', value: 'Invoice'},
-      {name: 'Suoravelotus', value: 'BankTransaction'}
-    ];
-
-    this.eventNatures = [
-      {name: 'Avoin', value: 'Open'},
-      {name: 'Maksullinen', value: 'Paid'},
-      {name: 'Suljettu', value: 'Closed'}
-    ];
-
-    this.noPriceReasons = [
-      {name: 'Hyväntekeväisyys- tai kansalaisjärjestö tai oppilaitoksen tapahtuma', value: 'Charity'},
-      {name: 'Taide- tai kulttuuritapahtuma', value: 'ArtOrCulture'},
-      {name: 'Avoin ja maksuton urheilutapahtuma', value: 'NoFeeSporting'},
-      {name: 'Asukas- tai kaupunginosayhdistyksen tapahtuma', value: 'ResidentOrCity'},
-      {name: 'Aatteellinen, hengellinen tai yhteiskunnallinen tapahtuma', value: 'Spiritual'},
-      {name: 'Kaupunki isäntänä tai järjestäjäkumppanina', value: 'City'},
-      {name: 'Tilataideteos', value: 'Art'},
-      {name: 'Nuorisojärjestön tapahtuma', value: 'Youth'},
-      {name: 'Yksityishenkilön järjestämä merkkipäiväjuhla tai vastaava', value: 'PrivateFunction'},
-      {name: 'Puolustus- tai poliisivoimien tapahtuma', value: 'DefenceOrPolice'}
-    ];
+    this.events = outdoorEventConfig.events;
+    this.applicantType = outdoorEventConfig.applicantType;
+    this.applicantText = outdoorEventConfig.applicantText;
+    this.countries = outdoorEventConfig.countries;
+    this.billingTypes = outdoorEventConfig.billingTypes;
+    this.eventNatures = outdoorEventConfig.eventNatures;
+    this.noPriceReasons = outdoorEventConfig.noPriceReasons;
   };
 
   ngOnInit(): any {
-    this.eventService.subscribe(this);
-    this.eventService.send(this, new MetaLoadEvent('OUTDOOREVENT'));
+    this.route.parent.data.subscribe((data: {application: Application}) => {
+      this.application = data.application;
+      this.application.location = this.application.location || this.locationState.location;
+
+      // TODO: mismatch here. Date+time should be used in location too.
+      this.application.startTime = this.locationState.startDate;
+      this.application.endTime = TimeUtil.getEndOfDay(this.locationState.endDate);
+
+      let outdoorEvent = <OutdoorEvent>this.application.event;
+      outdoorEvent.eventStartTime = this.application.startTime;
+      outdoorEvent.eventEndTime = this.application.endTime;
+
+      this.applicantNameSelection = applicantNameSelection(this.application.applicant.type);
+      this.applicantIdSelection = applicantIdSelection(this.application.applicant.type);
+
+      this.eventService.subscribe(this);
+      this.eventService.send(this, new MetaLoadEvent('OUTDOOREVENT'));
+
+      UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
+        this.isSummary = summary;
+      });
+    });
   }
 
   ngOnDestroy(): any {
     this.eventService.unsubscribe(this);
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => Materialize.updateTextFields(), 10);
+    this.eventService.send(this, new ApplicationSelectionEvent(this.application));
   }
 
   public handle(event: Event): void {
@@ -181,16 +121,21 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
       // "hub approach" i.e. observable.subscribe(router.navigate...)
       if (this.attachments && this.attachments.length !== 0) {
         this.attachmentService.uploadFiles(
-          aaaEvent.application.id, this.attachments, () => self.router.navigate(['/summary', {id: this.application.id}]));
+          aaaEvent.application.id, this.attachments,
+          () => self.router.navigate(['applications', this.application.id, 'summary']));
       } else {
         this.attachmentService.uploadFiles(
           aaaEvent.application.id, this.attachments, () => { return undefined; });
-        self.router.navigate(['/summary', this.application.id]);
+        self.router.navigate(['applications', this.application.id, 'summary']);
       }
-
+    } else if (event instanceof ApplicationsAnnounceEvent) {
+      let aaaEvent = <ApplicationsAnnounceEvent>event;
+      console.log('Successfully added new application', aaaEvent.applications[0]);
+      this.router.navigate(['applications', this.application.id, 'summary']);
     } else if (event instanceof MetaAnnounceEvent) {
       console.log('Loaded metadata', event);
       let maEvent = <MetaAnnounceEvent>event;
+      this.application.metadata = maEvent.structureMeta;
       this.meta = maEvent.structureMeta;
       this.applicantText = {
         'DEFAULT': {
@@ -206,11 +151,8 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
           name: this.meta.getUiName('applicant.personName'),
           id: this.meta.getUiName('applicant.ssn')}
       };
-      let def = 'DEFAULT';
-      this.applicantNameSelection = this.application.applicant.type
-        ? this.applicantText[this.application.applicant.type].name : this.applicantText[def].name;
-      this.applicantIdSelection = this.application.applicant.type
-        ? this.applicantText[this.application.applicant.type].id : this.applicantText[def].id;
+      this.applicantNameSelection = applicantNameSelection(this.application.applicant.type);
+      this.applicantIdSelection = applicantIdSelection(this.application.applicant.type);
     }
   }
 
@@ -226,45 +168,9 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
   }
 
   save(application: Application) {
-    let postalAddress = new PostalAddress(this.applicant.streetAddress, this.applicant.postalCode, this.applicant.city);
-
-    if (this.applicant.type === 'PERSON') {
-      let person = new Person(
-        undefined,
-        this.applicant.name,
-        this.applicant.businessIdOrSsn,
-        postalAddress,
-        this.applicant.email,
-        this.applicant.phone);
-      this.application.applicant = new Applicant(
-        this.applicant.id,
-        this.applicant.type,
-        this.applicant.representative || false,
-        person,
-        undefined);
-    } else {
-      let organization = new Organization(
-        undefined,
-        this.applicant.name,
-        this.applicant.businessIdOrSsn,
-        postalAddress,
-        this.applicant.email,
-        this.applicant.phone);
-      this.application.applicant = new Applicant(
-        this.applicant.id,
-        this.applicant.type,
-        this.applicant.representative || false,
-        undefined,
-        organization);
-    }
-
-    // TODO: We are not checking the ID's of the person and organization objects.
-
     // Save application
     console.log('Saving application', application);
     application.metadata = this.meta;
-    application.startTime = this.locationState.startDate;
-    application.endTime = this.locationState.endDate;
     let saveEvent = new ApplicationSaveEvent(application);
     this.eventService.send(this, saveEvent);
     this.locationState.clear();
@@ -285,7 +191,7 @@ export class OutdoorEventComponent implements EventListener, OnInit, OnDestroy {
     return this._noPrice;
   }
 
-   private currentAttachments(attachments: AttachmentInfo[]): void {
-     this.attachments = attachments;
-   }
+  private currentAttachments(attachments: AttachmentInfo[]): void {
+    this.attachments = attachments;
+  }
 }

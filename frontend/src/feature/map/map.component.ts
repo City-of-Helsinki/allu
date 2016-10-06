@@ -60,6 +60,7 @@ export class MapComponent implements EventListener {
   }
 
   public handle(event: Event): void {
+    console.log('map.component.event', event);
     if (event instanceof ApplicationSelectionEvent) {
       this.handleApplicationSelectionEvent(<ApplicationSelectionEvent>event);
     } else if (event instanceof SearchbarUpdateEvent) {
@@ -73,6 +74,7 @@ export class MapComponent implements EventListener {
   }
 
   handleApplicationSelection(application: Application) {
+    console.log('handleApplicationSelection', application);
     if (this.applicationArea) {
       this.map.removeLayer(this.applicationArea);
     }
@@ -134,8 +136,10 @@ export class MapComponent implements EventListener {
 
   private drawApplication(application: Application) {
     // Check that edited layer is not already added
-    if (application.id === this.applicationId && (this.draw || this.edit) && this.editedItems.getLayers().length === 0) {
-      this.drawGeometry(application.location.geometry, this.editedItems);
+    if (application.id === this.applicationId && (this.draw || this.edit)) {
+      if (this.editedItems.getLayers().length === 0) {
+        this.drawGeometry(application.location.geometry, this.editedItems);
+      }
     } else {
       this.drawGeometry(application.location.geometry, this.drawnItems);
     }

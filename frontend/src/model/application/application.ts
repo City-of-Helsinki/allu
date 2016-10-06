@@ -49,8 +49,6 @@ export class Application {
     public contactList?: Array<Contact>,
     public location?: Location,
     public attachmentList?: Array<AttachmentInfo>) {
-
-    this.location = location || new Location();
     this.applicant = applicant || new Applicant();
   }
 

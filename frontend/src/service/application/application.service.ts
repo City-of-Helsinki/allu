@@ -118,7 +118,7 @@ export class ApplicationService {
           data => {
             console.log('ApplicationService.updateApplication processing', data.json());
             let appl = ApplicationMapper.mapBackend(data.json());
-            console.log('Created application', appl);
+            console.log('Updated application', appl);
             resolve(appl);
           },
           err => {

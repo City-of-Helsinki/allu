@@ -50,7 +50,7 @@ export class SearchComponent implements EventListener, OnInit, OnDestroy {
   }
 
   public goToSummary(application: Application): void {
-    this.router.navigate(['/summary', application.id]);
+    this.router.navigate(['applications', application.id, 'summary']);
   }
 
   public handle(event: Event): void {
