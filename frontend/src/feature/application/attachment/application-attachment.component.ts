@@ -1,5 +1,4 @@
 import {Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange} from '@angular/core';
-import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
 
 import * as filesaverLib from 'filesaver';
@@ -20,7 +19,7 @@ export class ApplicationAttachmentComponent implements OnChanges {
   private attachments: AttachmentInfo[] = [];
   private attachmentsInitialized = false;
 
-  constructor(private attachmentService: AttachmentService) {}
+  constructor() {}
 
 
   ngOnChanges(changes: {[key: string]: SimpleChange}): any {

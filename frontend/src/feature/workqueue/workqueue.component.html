@@ -90,7 +90,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let application of applicationsQueue">
+        <tr *ngFor="let application of applicationsQueue | async">
           <td>
             <input type="checkbox" class="filled-in" id="{{application.id}}" />
             <label [attr.for]="application.id"></label>

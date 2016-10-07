@@ -91,7 +91,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let application of results" class="clickable row-highlight"
+        <tr *ngFor="let application of applications | async" class="clickable row-highlight"
           (click)="goToSummary(application)">
           <td>{{application.handler}}</td>
           <td>{{application.name}}</td>

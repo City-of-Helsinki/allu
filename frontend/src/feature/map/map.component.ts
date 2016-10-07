@@ -1,24 +1,12 @@
+import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
-import {Component, Input} from '@angular/core';
+
 import {MapUtil} from '../../service/map.util.ts';
-
-import {EventListener} from '../../event/event-listener';
-import {Event} from '../../event/event';
-import {EventService} from '../../event/event.service';
-
-import {ApplicationSelectionEvent} from '../../event/selection/application-selection-event';
-import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
-import {WorkqueueService} from '../../service/workqueue.service';
 import {Map} from 'leaflet';
-import {GeocoordinatesSelectionEvent} from '../../event/selection/geocoordinates-selection-event';
-import {GeoCoordinatesAnnounceEvent} from '../../event/announce/geocoordinates-announce-event';
-import {GeocoordinatesLoadEvent} from '../../event/load/geocoordinates-load-event';
-import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
 import {MapHub} from '../../service/map-hub';
 import {Geocoordinates} from '../../model/common/geocoordinates';
-import {ApplicationHub} from '../../service/application/application-hub';
 import {Application} from '../../model/application/application';
 import {Option} from '../../util/option';
 
@@ -29,7 +17,7 @@ import {Option} from '../../util/option';
     require('./map.component.scss')
   ]
 })
-export class MapComponent implements EventListener {
+export class MapComponent implements OnInit, OnDestroy {
   @Input() draw: boolean;
   @Input() zoom: boolean;
   @Input() selection: boolean;
@@ -45,13 +33,7 @@ export class MapComponent implements EventListener {
 
   constructor(
     private mapService: MapUtil,
-    private workqueue: WorkqueueService,
-    private eventService: EventService,
-    private mapHub: MapHub,
-    private applicationHub: ApplicationHub) {
-    this.eventService.subscribe(this);
-    this.mapService = mapService;
-    this.workqueue = workqueue;
+    private mapHub: MapHub) {
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;
     this.zoom = false;
@@ -59,22 +41,24 @@ export class MapComponent implements EventListener {
     this.selection = false;
   }
 
-  public handle(event: Event): void {
-    console.log('map.component.event', event);
-    if (event instanceof ApplicationSelectionEvent) {
-      this.handleApplicationSelectionEvent(<ApplicationSelectionEvent>event);
-    } else if (event instanceof SearchbarUpdateEvent) {
-      this.eventService.send(this, new GeocoordinatesLoadEvent(event.searchbarFilter.search));
+  ngOnInit() {
+    this.initMap();
+    this.mapHub.coordinates()
+      .subscribe((optCoords) =>
+        optCoords.map(coordinates => this.panToCoordinates(coordinates)));
+
+    this.mapHub.applications().subscribe(applications => this.drawApplications(applications));
+    this.mapHub.addMapView(this.getCurrentMapView()); // to notify initial location
+    this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app));
+  }
+
+  ngOnDestroy() {
+    if (this.map) {
+      this.map.removeLayer(this.mapLayers.kaupunkikartta);
     }
   }
 
-  handleApplicationSelectionEvent(event: ApplicationSelectionEvent): void {
-    let asEvent = <ApplicationSelectionEvent>event;
-    this.handleApplicationSelection(asEvent.application);
-  }
-
-  handleApplicationSelection(application: Application) {
-    console.log('handleApplicationSelection', application);
+  applicationSelected(application: Application) {
     if (this.applicationArea) {
       this.map.removeLayer(this.applicationArea);
     }
@@ -100,25 +84,6 @@ export class MapComponent implements EventListener {
         }
         this.map.fitBounds(L.latLngBounds(bounds));
       }
-    }
-  }
-
-  ngOnInit() {
-    this.initMap();
-    this.mapHub.coordinates()
-      .subscribe((optCoords) =>
-        optCoords.map(coordinates => this.panToCoordinates(coordinates)));
-
-    this.applicationHub.applications().subscribe(applications => this.drawApplications(applications));
-    this.applicationHub.addMapView(this.getCurrentMapView()); // to notify initial location
-    this.mapHub.applicationSelection().subscribe(app => this.handleApplicationSelection(app));
-  }
-
-  ngOnDestroy() {
-    // TODO: See how to destroy map, so that it will be built again.
-    this.eventService.unsubscribe(this);
-    if (this.map) {
-      this.map.removeLayer(this.mapLayers.kaupunkikartta);
     }
   }
 
@@ -171,24 +136,24 @@ export class MapComponent implements EventListener {
 
     this.addMapControls(editedItems);
 
-    let that = this;
+    let self = this;
     this.map.on('draw:created', function (e: any) {
       let layer = e.layer;
       editedItems.addLayer(layer);
-      that.eventService.send(that, new ShapeAnnounceEvent(editedItems.toGeoJSON()));
+      self.mapHub.addShape(editedItems.toGeoJSON());
     });
 
     this.map.on('draw:edited', function (e: any) {
-      that.eventService.send(that, new ShapeAnnounceEvent(editedItems.toGeoJSON()));
+      self.mapHub.addShape(editedItems.toGeoJSON());
     });
 
     this.map.on('draw:deleted', function (e: any) {
-      that.eventService.send(that, new ShapeAnnounceEvent(editedItems.toGeoJSON()));
+      self.mapHub.addShape(editedItems.toGeoJSON());
     });
 
     this.map.on('moveend', (e: any) => {
-      if (!this.showOnlyApplicationArea) {
-        this.applicationHub.addMapView(this.getCurrentMapView());
+      if (!self.showOnlyApplicationArea) {
+        self.mapHub.addMapView(this.getCurrentMapView());
       }
     });
 
@@ -270,6 +235,5 @@ export class MapComponent implements EventListener {
       // testi: new L.TileLayer('http://10.176.127.67:8080/tms/1.0.0/helsinki_kaupunkikartta/EPSG_3879/{z}/{x}/{y}.png',
       //   { tms: true }),
     };
-
   }
 }

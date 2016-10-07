@@ -1,21 +1,25 @@
 import {Injectable, OnInit} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
-import {Decision} from '../../model/decision/Decision';
 import '../../rxjs-extensions.ts';
+
+import {Decision} from '../../model/decision/Decision';
+import {DecisionService} from './decision.service';
 
 @Injectable()
 export class DecisionHub {
-  private decisions$: Subject<Array<Decision>> = new Subject<Array<Decision>>();
-  private generate$: Subject<number> = new Subject<number>();
-  private fetch$: Subject<number> = new Subject<number>();
+  constructor(private decisionService: DecisionService) {
+  }
 
-  public decisions = () => this.decisions$.asObservable();
-  public addDecisions = (decisions: Array<Decision>) => this.decisions$.next(decisions);
+  /**
+   * Asks decision service to generate decision pdf for given application.
+   * Returns observable which contains generated pdf eventually
+   */
+  public generate = (applicationId: number) => this.decisionService.generate(applicationId);
 
-  public generateRequest = () => this.generate$.asObservable();
-  public generate = (applicationId) => this.generate$.next(applicationId);
-
-  public fetchRequest = () => this.fetch$.asObservable();
-  public fetch = (applicationId) => this.fetch$.next(applicationId);
+  /**
+   * Asks decision service to fetch decision pdf for given application.
+   * Returns observable which contains pdf eventually
+   */
+  public fetch = (applicationId: number) => this.decisionService.fetch(applicationId);
 }

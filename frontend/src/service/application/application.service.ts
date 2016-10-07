@@ -1,9 +1,10 @@
 import {Injectable} from '@angular/core';
-import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {URLSearchParams} from '@angular/http';
+import {AuthHttp} from 'angular2-jwt/angular2-jwt';
+import {Observable} from 'rxjs/Observable';
+
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
-import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
 import {StructureMetaMapper} from './../mapper/structure-meta-mapper';
 import {StructureMeta} from '../../model/application/structure-meta';
 import {ApplicationHub} from './application-hub';
@@ -17,19 +18,19 @@ import {ApplicationStatus} from '../../model/application/application-status-chan
 import {translations} from '../../util/translations';
 import {ErrorInfo} from './../ui-state/error-info';
 import {ErrorType} from '../ui-state/error-type';
+import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
+import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
 
 @Injectable()
 export class ApplicationService {
   static APPLICATIONS_URL = '/api/applications';
+  static SEARCH = '/search';
   static SEARCH_LOCATION = '/search_location';
   static METADATA_URL = '/api/meta';
 
   private statusToUrl = new Map<ApplicationStatus, string>();
 
-  constructor(private authHttp: AuthHttp, private applicationHub: ApplicationHub, private uiState: UIStateHub) {
-    applicationHub.applicationSearch().subscribe((search) => this.applicationSearch(search));
-    applicationHub.applicationStatusChange().subscribe((statusChange) => this.applicationStatusChange(statusChange));
-
+  constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {
     this.statusToUrl.set(ApplicationStatus.CANCELLED, 'status/cancelled');
     this.statusToUrl.set(ApplicationStatus.PENDING, 'status/pending');
     this.statusToUrl.set(ApplicationStatus.HANDLING, 'status/handling');
@@ -40,142 +41,74 @@ export class ApplicationService {
     this.statusToUrl.set(ApplicationStatus.FINISHED, 'status/finished');
   }
 
-  public listApplications(filter: ApplicationLoadFilter): Promise<Array<Application>> {
-    let searchUrl = ApplicationService.APPLICATIONS_URL;
+  public getApplication(id: number): Observable<Application> {
+    return this.authHttp.get(ApplicationService.APPLICATIONS_URL + '/' + id)
+      .map(response => response.json())
+      .map(app => ApplicationMapper.mapBackend(app))
+      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
+  }
+
+  public getApplications(): Observable<Array<Application>> {
+    // TODO: Is there ever need to load all applications?
     let params = new URLSearchParams();
+    params.set('handler', 'TestHandler');
 
-    console.log('ApplicationService.listApplications', filter);
-    if (filter.applicationId) {
-      searchUrl = searchUrl + '/' + filter.applicationId;
-      return new Promise<Array<Application>>((resolve, reject) =>
-        this.authHttp.get(searchUrl, { search: params }).subscribe(
-          data => {
-            console.log('ApplicationService.listApplications', data);
-            let applications: Array<Application> = [ ApplicationMapper.mapBackend(data.json()) ];
-            console.log('Listing applications', applications);
-            resolve(applications);
-          },
-          err => console.log('ApplicationService.listApplications', err),
-          () => console.log('Request Complete')
-        )
-      );
+    return this.authHttp.get(ApplicationService.APPLICATIONS_URL, { search: params })
+      .map(response => response.json())
+      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
+  }
+
+  public getApplicationsByLocation(query: ApplicationLocationQuery): Observable<Array<Application>> {
+    let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH_LOCATION;
+
+    return this.authHttp.post(
+      searchUrl,
+      JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query)))
+      .map(response => response.json())
+      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, ErrorUtil.extractMessage(err))));
+  }
+
+  public searchApplications(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
+    let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH;
+
+    return this.authHttp.post(
+      searchUrl,
+      JSON.stringify(QueryParametersMapper.mapFrontend(searchQuery)))
+      .map(response => response.json())
+      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, ErrorUtil.extractMessage(err))));
+  }
+
+  public saveApplication(application: Application): Observable<Application> {
+    if (application.id) {
+      let url = ApplicationService.APPLICATIONS_URL + '/' + application.id;
+
+      return this.authHttp.put(url,
+        JSON.stringify(ApplicationMapper.mapFrontend(application)))
+        .map(response => ApplicationMapper.mapBackend(response.json()))
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, ErrorUtil.extractMessage(err))));
     } else {
-      if (filter.handler) {
-        params.set('handler', filter.handler);
-      } else {
-        params.set('handler', 'TestHandler');
-      }
-      return new Promise<Array<Application>>((resolve, reject) =>
-        this.authHttp.get(searchUrl, { search: params }).subscribe(
-          data => {
-            console.log('ApplicationService.listApplications', data);
-            let json = data.json();
-            if (json) {
-              let applications: Array<Application> = json.map((p) => ApplicationMapper.mapBackend(p));
-              console.log('Listing applications', applications);
-              resolve(applications);
-            } else {
-              resolve([]);
-            }
-          },
-          err => console.log('ApplicationService.listApplications', err),
-          () => console.log('Request Complete')
-        )
-      );
+      return this.authHttp.post(ApplicationService.APPLICATIONS_URL,
+        JSON.stringify(ApplicationMapper.mapFrontend(application)))
+        .map(response => ApplicationMapper.mapBackend(response.json()))
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, ErrorUtil.extractMessage(err))));
     }
   }
 
-  public addApplication(application: Application): Promise<Application> {
-    console.log('ApplicationService.addApplication', application);
-    return new Promise<Application>((resolve, reject) =>
-      this.authHttp.post(
-        ApplicationService.APPLICATIONS_URL,
-        JSON.stringify(ApplicationMapper.mapFrontend(application)))
-        .subscribe(
-          data => { 
-            console.log('ApplicationService.addApplication processing', data.json());
-            console.log('ApplicationService.addApplication map', data.json());
-            let appl = ApplicationMapper.mapBackend(data.json());
-            console.log('Created application', appl);
-            resolve(appl);
-          },
-          err => {
-            console.log('ApplicationService.addApplication error', err);
-            reject(err);
-          },
-          () => console.log('Request Complete')
-        )
-    );
+  public loadMetadata(applicationType: string): Observable<StructureMeta> {
+    return this.authHttp.get(ApplicationService.METADATA_URL + '/' + applicationType)
+      .map(response => StructureMetaMapper.mapBackend(response.json()))
+      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
   }
 
-  public updateApplication(application: Application): Promise<Application> {
-    console.log('ApplicationService.updateApplication', application);
-    return new Promise<Application>((resolve, reject) =>
-      this.authHttp.put(
-        ApplicationService.APPLICATIONS_URL + '/' + application.id,
-        JSON.stringify(ApplicationMapper.mapFrontend(application)))
-        .subscribe(
-          data => {
-            console.log('ApplicationService.updateApplication processing', data.json());
-            let appl = ApplicationMapper.mapBackend(data.json());
-            console.log('Updated application', appl);
-            resolve(appl);
-          },
-          err => {
-            console.log('ApplicationService.updateApplication error', err);
-            reject(err);
-          },
-          () => console.log('Request Complete')
-        )
-    );
-  }
-
-  public loadApplicationMetadata(applicationType: string): Promise<StructureMeta> {
-    console.log('ApplicationService.loadApplicationMetadata', applicationType);
-    return new Promise<StructureMeta>((resolve, reject) =>
-      this.authHttp.get(ApplicationService.METADATA_URL + '/' + applicationType).subscribe(
-        data => {
-          console.log('ApplicationService.loadApplicationMetadata', data);
-          let structureMeta = StructureMetaMapper.mapBackend(data.json());
-          console.log('Loaded metadata', structureMeta);
-          resolve(structureMeta);
-        },
-        err => console.log('ApplicationService.loadApplicationMetadata', err),
-        () => console.log('Request Complete')
-      )
-    );
-  }
-
-  private applicationSearch(search: ApplicationSearch) {
-    console.log('ApplicationService.applicationSearch', search);
-    if (search instanceof ApplicationLocationQuery) {
-      let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH_LOCATION;
-      this.authHttp.post(
-          searchUrl,
-          JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(search)))
-        .map(response => response.json())
-        .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-        .subscribe(
-          applications => this.applicationHub.addApplications(applications),
-          err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, ErrorUtil.extractMessage(err)))
-        );
-    } else if (!Number.isNaN(search)) {
-      this.authHttp.get(ApplicationService.APPLICATIONS_URL + '/' + search)
-        .map(response => response.json())
-        .map(app => [ApplicationMapper.mapBackend(app)])
-        .subscribe(
-          applications => this.applicationHub.addApplications(applications),
-          err => this.uiState.addError(ErrorUtil.extractMessage(err))
-        );
-    }
-  }
-
-  private applicationStatusChange(statusChange: ApplicationStatusChange) {
+  public applicationStatusChange(statusChange: ApplicationStatusChange): Observable<Application> {
+    console.log('applicationStatusChange', statusChange);
     let url = ApplicationService.APPLICATIONS_URL + '/' + statusChange.id + '/' + this.statusToUrl.get(statusChange.status);
-    this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
-      .subscribe(
-        response => this.uiState.addMessage('Application status changed to ' + ApplicationStatus[statusChange.status]),
-        err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_STATUS_CHANGE_FAILED))
-      );
+    console.log('url', url);
+    return this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
+      .do(response => console.log('response', response))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_STATUS_CHANGE_FAILED)));
   }
 }

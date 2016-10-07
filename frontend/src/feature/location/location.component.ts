@@ -1,32 +1,17 @@
 import {Component} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-
-import {ProgressStep, ProgressMode} from '../../feature/progressbar/progressbar.component';
-
-import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
-import {Event} from '../../event/event';
-import {EventListener} from '../../event/event-listener';
-import {Application} from '../../model/application/application';
-import {EventService} from '../../event/event.service';
-import {ApplicationSaveEvent} from '../../event/save/application-save-event';
-import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
-import {ShapeAnnounceEvent} from '../../event/announce/shape-announce-event';
-import {ApplicationLoadFilter} from '../../event/load/application-load-filter';
-import {ErrorEvent} from '../../event/error-event';
-import {Location} from '../../model/common/location';
-import {PostalAddress} from '../../model/common/postal-address';
-
 import 'proj4leaflet';
 import 'leaflet';
-import {MapUtil} from '../../service/map.util.ts';
-import {SearchbarFilter} from '../../event/search/searchbar-filter';
-import {LocationState} from '../../service/application/location-state';
 
-enum HasChanges {
-  NO,
-  PENDING,
-  YES
-}
+import {ProgressStep, ProgressMode} from '../../feature/progressbar/progressbar.component';
+import {Application} from '../../model/application/application';
+import {Location} from '../../model/common/location';
+import {PostalAddress} from '../../model/common/postal-address';
+import {MapUtil} from '../../service/map.util.ts';
+import {SearchbarFilter} from '../../service/searchbar-filter';
+import {LocationState} from '../../service/application/location-state';
+import {ApplicationHub} from '../../service/application/application-hub';
+import {MapHub} from '../../service/map-hub';
 
 @Component({
   selector: 'type',
@@ -36,10 +21,8 @@ enum HasChanges {
     require('./location.component.scss')
   ]
 })
-export class LocationComponent implements EventListener {
+export class LocationComponent {
   private application: Application;
-  private id: number;
-  private hasChanges: HasChanges = HasChanges.NO;
   private rentingPlace: any;
   private sections: any;
   private area: number;
@@ -48,13 +31,11 @@ export class LocationComponent implements EventListener {
 
   constructor(
     private locationState: LocationState,
-    private eventService: EventService,
     private mapService: MapUtil,
     private router: Router,
-    private route: ActivatedRoute) {
-    this.progressMode = this.id ? ProgressMode.EDIT : ProgressMode.NEW;
-    this.progressStep = ProgressStep.LOCATION;
-
+    private route: ActivatedRoute,
+    private applicationHub: ApplicationHub,
+    private mapHub: MapHub) {
     this.rentingPlace = [{name: 'Paikka A', value: 'a'}, {name: 'Paikka B', value: 'b'}, {name: 'Paikka C', value: 'c'}];
     this.sections = [{name: 'Lohko A', value: 'a'}, {name: 'Lohko B', value: 'b'}, {name: 'Lohko C', value: 'c'}];
     this.area = undefined;
@@ -64,52 +45,23 @@ export class LocationComponent implements EventListener {
 
   ngOnInit() {
     this.route.params.subscribe(params => {
-      this.id = Number(params['id']);
+      let id = Number(params['id']);
+
+      if (id) {
+        this.applicationHub.getApplication(id).subscribe(application => {
+          this.application = application;
+          this.locationState.location = application.location || new Location();
+        });
+      }
+
+      this.progressMode = id ? ProgressMode.EDIT : ProgressMode.NEW;
+      this.progressStep = ProgressStep.LOCATION;
     });
 
-    this.eventService.subscribe(this);
-    let filter = new ApplicationLoadFilter();
-    if (this.id) {
-      filter.applicationId = this.id;
-      this.eventService.send(this, new ApplicationsLoadEvent(filter));
-    }
+    this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
   }
 
   ngOnDestroy() {
-    this.eventService.unsubscribe(this);
-  }
-
-  public handle(event: Event): void {
-    if (event instanceof ShapeAnnounceEvent) {
-      if (event.shape.features.length) {
-        let saEvent = <ShapeAnnounceEvent>event;
-        this.locationState.location.geometry = this.mapService.featureCollectionToGeometryCollection(saEvent.shape);
-      } else {
-        this.locationState.location.geometry = undefined;
-      }
-      this.hasChanges = HasChanges.YES;
-    } else if (event instanceof ApplicationsAnnounceEvent) {
-      let aaEvent = <ApplicationsAnnounceEvent> event;
-      // we're only interested about applications matching the application being edited
-      // TODO: Is this necessary any more?
-      if (aaEvent.applications.length === 1 && aaEvent.applications[0].id === this.id) {
-        this.application = aaEvent.applications[0];
-        this.locationState.location = this.application.location || new Location();
-
-        if (this.hasChanges === HasChanges.PENDING) {
-          this.hasChanges = HasChanges.NO;
-          this.router.navigate(['/applications', this.id, 'summary']);
-        }
-      }
-    } else if (event instanceof ErrorEvent) {
-      let eEvent = <ErrorEvent>event;
-      if (eEvent.originalEvent instanceof ApplicationSaveEvent) {
-        let asEvent = <ApplicationSaveEvent>eEvent.originalEvent;
-        if (asEvent.application.id === this.application.id) {
-          // TODO: Errorcontrol
-        }
-      }
-    }
   }
 
   searchUpdated(filter: SearchbarFilter) {
@@ -119,19 +71,23 @@ export class LocationComponent implements EventListener {
   }
 
   save() {
-    if (this.id) {
+    if (this.application.id) {
       // If there is an application to save the location data to
-      console.log('Saving location for application id: ', this.id);
-
-      if (this.hasChanges === HasChanges.YES) {
-        let saveEvent = new ApplicationSaveEvent(this.application);
-        this.hasChanges = HasChanges.PENDING;
-        this.application.location = this.locationState.location;
-        this.eventService.send(this, saveEvent);
-      }
-      // TODO: disable save button
+      console.log('Saving location for application id: ', this.application.id);
+      this.application.location = this.locationState.location;
+      this.applicationHub.save(this.application).subscribe(application => {
+        this.router.navigate(['/applications', application.id, 'summary']);
+      });
     } else {
       this.router.navigate(['/applications']);
+    }
+  }
+
+  private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {
+    if (shape.features.length) {
+      this.locationState.location.geometry = this.mapService.featureCollectionToGeometryCollection(shape);
+    } else {
+      this.locationState.location.geometry = undefined;
     }
   }
 }

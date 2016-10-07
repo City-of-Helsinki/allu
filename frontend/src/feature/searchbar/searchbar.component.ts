@@ -1,12 +1,8 @@
 import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
 
-import {Event} from '../../event/event';
 import {StringUtil} from '../../util/string.util';
-import {ApplicationsLoadEvent} from '../../event/load/applications-load-event';
-import {SearchbarFilter} from '../../event/search/searchbar-filter';
-import {SearchbarUpdateEvent} from '../../event/search/searchbar-updated-event';
+import {SearchbarFilter} from '../../service/searchbar-filter';
 import {MapHub} from '../../service/map-hub';
-import {ApplicationHub} from '../../service/application/application-hub';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {UIState} from '../../service/ui-state/ui-state';
@@ -22,18 +18,17 @@ declare var Materialize: any;
     require('./searchbar.component.scss')
   ]
 })
-
 export class SearchbarComponent implements OnInit {
 
+  @Input() addressSearch: string;
   @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
-  @Input() search: string;
 
   private pickadateParams = PICKADATE_PARAMETERS;
   private _startDate: Date;
   private _endDate: Date;
   private notFound: boolean;
 
-  constructor(private mapHub: MapHub, private applicationHub: ApplicationHub) {}
+  constructor(private mapHub: MapHub) {}
 
   ngOnInit(): void {
     this.notifySearchUpdated();
@@ -44,12 +39,14 @@ export class SearchbarComponent implements OnInit {
   }
 
   public notifySearchUpdated(): void {
-    this.mapHub.addSearch(this.search);
-    let filter = new SearchbarFilter(this.search, this._startDate, this._endDate);
-
-    this.mapHub.addSearch(this.search);
+    let filter = new SearchbarFilter(this.addressSearch, this._startDate, this._endDate);
     this.searchUpdated.emit(filter);
-    this.applicationHub.addSearchFilter(filter);
+    this.mapHub.addSearchFilter(filter);
+  }
+
+  public searchAddress(term: string) {
+    this.mapHub.addSearch(term);
+    this.notifySearchUpdated();
   }
 
   set startDate(date: string) {

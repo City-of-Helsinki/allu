@@ -395,7 +395,7 @@
         <div class="row">
           <div *ngIf="!isSummary">
             <div class="col m2 offset-m10">
-              <button md-raised-button class="waves-effect waves-light btn" (click)="save(application)">YHTEENVETOON</button>
+              <button md-raised-button class="waves-effect waves-light btn" (click)="save(application)" [disabled]="submitted">YHTEENVETOON</button>
             </div>
           </div>
 

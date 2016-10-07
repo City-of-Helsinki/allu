@@ -1,10 +1,16 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
-import {Observable}     from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
 import {Geocoordinates} from '../model/common/geocoordinates';
 import '../rxjs-extensions.ts';
+
 import {Application} from '../model/application/application';
 import {Option} from '../util/option';
+import {ApplicationService} from './application/application.service';
+import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery';
+import {SearchbarFilter} from './searchbar-filter';
+import {GeolocationService} from './geolocation.service';
+import {UIStateHub} from './ui-state/ui-state-hub';
 
 
 @Injectable()
@@ -12,9 +18,30 @@ export class MapHub {
   private coordinates$ = new Subject<Option<Geocoordinates>>();
   private search$ = new Subject<string>();
   private applicationSelection$ = new Subject<Application>();
+  private applications$ = new Subject<Array<Application>>();
+  private searchBar$ = new Subject<SearchbarFilter>();
+  private mapView$ = new Subject<GeoJSON.GeometryObject>();
+  private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
 
-  constructor() {
-    this.applicationSelection().subscribe(app => console.log('applicationSelection', app));
+  constructor(private applicationService: ApplicationService,
+              private geolocationService: GeolocationService,
+              private uiState: UIStateHub) {
+    // Waits until searchBar and mapView observables produce value and combines them (latest)
+    // as a query which is added to applicationSearch subject
+    Observable.combineLatest(
+      this.searchBar$.asObservable(),
+      this.mapView$.asObservable(),
+      this.toApplicationLocationQuery)
+      .subscribe(query => this.applicationService.getApplicationsByLocation(query)
+        .subscribe(applications => this.applications$.next(applications)));
+
+    // When search changes fetches new coordinates and adds them to coordinates observable
+    this.search()
+      .switchMap(term => this.geolocationService.geocode(term))
+      .subscribe(
+        coordinates => this.coordinates$.next(coordinates),
+        err => this.uiState.addError(err)
+      );
   }
 
   /**
@@ -23,17 +50,9 @@ export class MapHub {
   public coordinates = () => this.coordinates$.asObservable();
 
   /**
-   * Used for adding notification about new coordinates
+   * Used for notifying about visible applications in map
    */
-  public addCoordinates = (coordinates: Option<Geocoordinates>) => this.coordinates$.next(coordinates);
-
-  /**
-   * Used to notify about new address search terms
-   */
-  public search = () => this.search$.asObservable()
-    .filter(search => !!search)
-    .debounceTime(300)
-    .distinctUntilChanged();
+  public applications = () => this.applications$.asObservable();
 
   /**
    * Used for adding new search terms
@@ -43,12 +62,37 @@ export class MapHub {
   /**
    * Used to notify that new application (for centering and zooming) has been selected
    */
-  public applicationSelection = () => this.applicationSelection$.asObservable()
+  public selectApplication = (application: Application) => this.applicationSelection$.next(application);
+  public applicationSelection = () => this.applicationSelection$.asObservable();
+
+  /**
+   * Used to notify changes in address search bar
+   */
+  public addSearchFilter = (filter: SearchbarFilter) => this.searchBar$.next(filter);
+
+  /**
+   * Used to notify changes in map's currently visible area
+   */
+  public addMapView = (geometry: GeoJSON.GeometryObject) => this.mapView$.next(geometry);
+
+  /**
+   * Used to notify that new shape has been added to map
+   */
+  public addShape = (shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) => this.shape$.next(shape);
+  public shape = () => this.shape$.asObservable();
+
+  /**
+   * Used to notify about new address search terms
+   */
+  private search = () => this.search$.asObservable()
+    .filter(search => !!search)
     .debounceTime(300)
     .distinctUntilChanged();
 
-  /**
-   * Used for selecting application
-   */
-  public addApplicationSelection = (application: Application) => this.applicationSelection$.next(application);
+  private toApplicationLocationQuery(searchBar: SearchbarFilter, mapView: GeoJSON.GeometryObject) {
+    return new ApplicationLocationQuery(
+      searchBar.startDate,
+      searchBar.endDate,
+      mapView);
+  }
 }

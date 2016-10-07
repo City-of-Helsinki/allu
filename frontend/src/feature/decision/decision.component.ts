@@ -36,19 +36,14 @@ export class DecisionComponent implements OnInit {
       this.id = Number(params['id']);
     });
 
-    this.applicationHub.applications().subscribe(applications => this.handleApplications(applications));
-    this.applicationHub.addApplicationSearch(this.id);
+    this.applicationHub.getApplication(this.id).subscribe(application => {
+      this.application = application;
+    });
 
-    this.decisionHub.decisions().subscribe(decisions => this.handleDecisions(decisions));
-    this.decisionHub.generate(this.id);
+    this.decisionHub.generate(this.id).subscribe(decision => this.providePdf(decision));
   }
 
-  private handleApplications(applications: Array<Application>): void {
-    this.application = applications.find(app => app.id === this.id);
-  }
-
-  private handleDecisions(decisions: Array<Decision>): void {
-    let decision = decisions.find(d => d.applicationId === this.id);
+  private providePdf(decision: Decision): void {
     let url = URL.createObjectURL(decision.pdf);
     this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     this.pdfDownloadUrl = this.sanitizer.bypassSecurityTrustUrl(url);

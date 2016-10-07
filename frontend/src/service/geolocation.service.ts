@@ -29,17 +29,9 @@ export class GeolocationService {
   constructor(
     private authHttp: AuthHttp,
     private mapService: MapUtil,
-    private mapHub: MapHub,
-    private uiState: UIStateHub) {
-    mapHub.search().subscribe(search => {
-      this.geocode(search).subscribe(
-        coordinates => this.mapHub.addCoordinates(coordinates),
-        err => this.uiState.addError(err)
-      );
-    });
-  }
+    private uiState: UIStateHub) {}
 
-  geocode(address: string): Observable<Option<Geocoordinates>> {
+  public geocode(address: string): Observable<Option<Geocoordinates>> {
     let searchUrl = this.searchUrl(address);
 
     return this.authHttp.get(searchUrl)
