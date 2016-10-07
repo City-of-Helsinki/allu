@@ -6,10 +6,13 @@ import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QUser;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.domain.User;
+import fi.hel.allu.model.postgres.ExceptionResolver;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,14 +63,21 @@ public class UserDao {
 
   @Transactional
   public User insert(User userData) {
-    Integer id = queryFactory.insert(user).populate(userData).executeWithKey(user.id);
-    if (id == null) {
-      throw new QueryException("Failed to insert record");
-    }
-    insertRoles(id, userData);
-    insertApplicationTypes(id, userData);
+    try {
+      Integer id = queryFactory.insert(user).populate(userData).executeWithKey(user.id);
+      if (id == null) {
+        throw new QueryException("Failed to insert record");
+      }
+      insertRoles(id, userData);
+      insertApplicationTypes(id, userData);
 
-    return findById(id).get();
+      return findById(id).get();
+    } catch (DataIntegrityViolationException e) {
+      if (ExceptionResolver.isUniqueConstraintViolation(e)) {
+        throw new NonUniqueException("Inserting user failed.");
+      }
+      throw e;
+    }
   }
 
   @Transactional

@@ -16,5 +16,6 @@ export const rootRoutes: Routes = [
   { path: 'location/:id', component: LocationComponent, canActivate: [AuthGuard] },
   { path: 'decision/:id', component: DecisionComponent, canActivate: [AuthGuard] },
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
-  { path: 'login', component: Login }
+  { path: 'login', component: Login },
+  { path: 'logout', component: Login }
 ];

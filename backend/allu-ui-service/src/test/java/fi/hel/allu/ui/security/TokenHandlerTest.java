@@ -30,13 +30,13 @@ public class TokenHandlerTest {
     List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
     roles.add(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
     roles.add(new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()));
-    user = new AlluUser("johndoe", "pwd", roles, "email");
+    user = new AlluUser("johndoe", roles, "email");
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateTokenWithoutPrinciple() {
     Set<GrantedAuthority> roles = Sets.newHashSet(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
-    AlluUser userNullId = new AlluUser(null, "pwd", roles, "email");
+    AlluUser userNullId = new AlluUser(null, roles, "email");
     tokenHandler.createTokenForUser(userNullId);
   }
 
@@ -56,7 +56,7 @@ public class TokenHandlerTest {
     assertNotNull("User must not be null", alluUser);
     assertEquals("email", alluUser.getEmailAddress());
     assertEquals("johndoe", alluUser.getUsername());
-    assertEquals("johndoe", alluUser.getPassword());
+    assertEquals("", alluUser.getPassword());
     assertEquals(2, alluUser.getAuthorities().size());
     Set<GrantedAuthority> roles = Sets.newHashSet(
         new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()),
@@ -69,6 +69,5 @@ public class TokenHandlerTest {
     tokenHandler = new TokenHandler(secret, -1);
     String token = tokenHandler.createTokenForUser(user);
     tokenHandler.parseUserFromToken(token);
-
   }
 }

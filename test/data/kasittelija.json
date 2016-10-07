@@ -1,0 +1,1 @@
+{"userName":"kasittelija","realName":"Käsittelijä Käyttäjä","emailAddress":"kasittelija@helsinki.fi","title":"Käsittelijä","allowedApplicationTypes":["OUTDOOREVENT"],"assignedRoles":["ROLE_VIEW", "ROLE_CREATE_APPLICATION", "ROLE_PROCESS_APPLICATION", "ROLE_WORK_QUEUE"],"active":true}

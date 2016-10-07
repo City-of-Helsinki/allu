@@ -32,8 +32,14 @@ function try_repeat() {
 }
 
 function login() {
-  CURRENT_REQUEST="curl -f --silent -X POST http://$TARGET_HOST/api/auth/login"
-  AUTH_KEY=$( $CURRENT_REQUEST )
+  CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: application/json\" --data '{\"userName\": \"$1\"}' http://$TARGET_HOST/api/auth/login"
+  AUTH_KEY=$( eval $CURRENT_REQUEST )
+}
+
+function create_user() {
+  echo Creating user from $1
+  CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: application/json\" --header \"Authorization: Bearer $AUTH_KEY\" --data @$1 http://$TARGET_HOST/api/users &> /dev/null"
+  eval $CURRENT_REQUEST
 }
 
 function insert_data() {
@@ -54,7 +60,10 @@ fi
 
 TARGET_HOST=$1
 
-try_repeat login
+try_repeat login admin
+try_repeat create_user data/kasittelija.json
+try_repeat create_user data/paattaja.json
+try_repeat login kasittelija
 # Make sure search service is up:
 try_repeat search_and_ignore
 try_repeat insert_data "data/hernesaari.json"

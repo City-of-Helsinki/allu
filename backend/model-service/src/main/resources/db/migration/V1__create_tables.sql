@@ -143,5 +143,5 @@ create table allu.user_application_type (
     user_id integer references allu.user(id),
     application_type text );
 
-insert into allu.user values (1, 'admin', 'admin user', 'no@mail.fi', 'administrator', true);
-insert into allu.user_role values (1, 1, 'ROLE_ADMIN');
+insert into allu.user values (DEFAULT, 'admin', 'admin user', 'no@mail.fi', 'administrator', true);
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_ADMIN');

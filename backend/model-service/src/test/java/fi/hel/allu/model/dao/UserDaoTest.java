@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.ModelApplication;
@@ -33,15 +34,7 @@ public class UserDaoTest {
 
   @Test
   public void testInsertSelect() {
-    User user = new User();
-    user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
-    user.setIsActive(true);
-    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
-    user.setEmailAddress("email");
-    user.setRealName("realname");
-    user.setTitle("title");
-    user.setUserName("username");
-
+    User user = createDummyUser();
     User insertedUser = userDao.insert(user);
 
     Assert.assertTrue(insertedUser.isActive());
@@ -53,16 +46,16 @@ public class UserDaoTest {
     Assert.assertTrue(insertedUser.getAllowedApplicationTypes().contains(ApplicationType.OUTDOOREVENT));
   }
 
+  @Test(expected = NonUniqueException.class)
+  public void testInsertDuplicateUserName() {
+    User user = createDummyUser();
+    userDao.insert(user);
+    userDao.insert(user);
+  }
+
   @Test
   public void testUpdate() {
-    User user = new User();
-    user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
-    user.setIsActive(true);
-    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
-    user.setEmailAddress("email");
-    user.setRealName("realname");
-    user.setTitle("title");
-    user.setUserName("username");
+    User user = createDummyUser();
 
     User insertedUser = userDao.insert(user);
     insertedUser.setEmailAddress("updatedemail");
@@ -76,5 +69,17 @@ public class UserDaoTest {
     Assert.assertTrue(updatedUser.getAssignedRoles().contains(RoleType.ROLE_VIEW));
     Assert.assertEquals(1, updatedUser.getAllowedApplicationTypes().size());
     Assert.assertTrue(updatedUser.getAllowedApplicationTypes().contains(ApplicationType.OUTDOOREVENT));
+  }
+
+  private User createDummyUser() {
+    User user = new User();
+    user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
+    user.setIsActive(true);
+    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    user.setEmailAddress("email");
+    user.setRealName("realname");
+    user.setTitle("title");
+    user.setUserName("username");
+    return user;
   }
 }
