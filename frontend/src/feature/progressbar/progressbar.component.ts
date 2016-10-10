@@ -1,4 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
+import {Application} from '../../model/application/application';
 
 export enum ProgressStep {
   LOCATION,
@@ -9,23 +10,19 @@ export enum ProgressStep {
   MONITORING
 }
 
-export enum ProgressMode {
-  NEW,
-  EDIT
-}
-
 @Component({
   selector: 'progressbar',
   template: require('./progressbar.component.html'),
   styles: [
     require('./progressbar.component.scss')
-  ]
+  ],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProgressbarComponent implements OnInit {
+export class ProgressbarComponent implements OnInit, OnChanges {
   @Input() step: number;
-  @Input() mode: number;
-  private width: number;
-  private text: string;
+  @Input() application: Application;
+  width: number;
+  text: string;
 
   constructor() {}
 
@@ -47,18 +44,13 @@ export class ProgressbarComponent implements OnInit {
         this.width = 0;
         break;
     }
+  }
 
-    switch (this.mode) {
-      case ProgressMode.NEW:
-        this.text = 'UUSI HAKEMUS';
-        break;
-      case ProgressMode.EDIT:
-        this.text = 'MUOKKAA HAKEMUSTA';
-        break;
-      default:
-        this.text = 'EI ASETETTU';
-        break;
+  ngOnChanges(changes: SimpleChanges): void {
+    this.text = this.hasId(this.application) ? this.application.applicationId : 'UUSI HAKEMUS';
+  }
 
-    }
+  private hasId(application: Application): boolean {
+    return !!application && !!application.id;
   }
 }

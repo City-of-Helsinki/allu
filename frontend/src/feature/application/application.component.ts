@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute, UrlSegment} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
-import {ProgressStep, ProgressMode} from '../progressbar/progressbar.component.ts';
+import {ProgressStep} from '../progressbar/progressbar.component.ts';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {applicationTypes} from './application-types';
 import {UrlUtil} from '../../util/url.util';
@@ -18,20 +18,19 @@ import {ApplicationType} from '../../model/application/type/application-type';
   ]
 })
 export class ApplicationComponent implements OnInit {
+  application: Application;
   private applicationTypes: any;
   private type: any;
   private subtypes: any;
   private subtype: any;
   private typeChangeDisabled = false;
   private progressStep: number;
-  private progressMode: number;
 
   constructor(public router: Router, private route: ActivatedRoute) {
     this.applicationTypes = applicationTypes;
     this.subtypes = undefined;
     this.subtype = undefined;
     this.progressStep = ProgressStep.INFORMATION;
-    this.progressMode = ProgressMode.NEW;
   };
 
   ngOnInit(): any {
@@ -39,6 +38,7 @@ export class ApplicationComponent implements OnInit {
       .map((data: {application: Application}) => data.application)
       .filter(application => application.id !== undefined)
       .subscribe(application => {
+        this.application = application;
         let type = applicationTypes.find(appType =>
           appType.subtypes.some(subtype => ApplicationType[subtype.type] === application.type));
 
@@ -46,7 +46,6 @@ export class ApplicationComponent implements OnInit {
         this.subtypes = type.subtypes;
         this.subtype = type.subtypes.find(subtype => ApplicationType[subtype.type] === application.type).value;
         this.typeChangeDisabled = true;
-        this.progressMode = ProgressMode.EDIT;
         this.eventSelection(this.subtype);
       });
   };

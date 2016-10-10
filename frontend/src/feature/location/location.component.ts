@@ -3,7 +3,7 @@ import {Router, ActivatedRoute} from '@angular/router';
 import 'proj4leaflet';
 import 'leaflet';
 
-import {ProgressStep, ProgressMode} from '../../feature/progressbar/progressbar.component';
+import {ProgressStep} from '../../feature/progressbar/progressbar.component';
 import {Application} from '../../model/application/application';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
@@ -27,7 +27,6 @@ export class LocationComponent {
   private sections: any;
   private area: number;
   private progressStep: number;
-  private progressMode: number;
 
   constructor(
     private locationState: LocationState,
@@ -54,7 +53,6 @@ export class LocationComponent {
         });
       }
 
-      this.progressMode = id ? ProgressMode.EDIT : ProgressMode.NEW;
       this.progressStep = ProgressStep.LOCATION;
     });
 

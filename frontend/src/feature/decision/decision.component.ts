@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 
-import {ProgressStep, ProgressMode} from '../../feature/progressbar/progressbar.component';
+import {ProgressStep} from '../../feature/progressbar/progressbar.component';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {Application} from '../../model/application/application';
 import {DecisionHub} from '../../service/decision/decision-hub';
@@ -14,10 +14,9 @@ import {Decision} from '../../model/decision/Decision';
   styles: [require('./decision.component.scss')]
 })
 export class DecisionComponent implements OnInit {
+  application: Application;
   private progressStep: number;
-  private progressMode: number;
   private id: number;
-  private application: Application;
   private pdfUrl: SafeResourceUrl;
   private pdfDownloadUrl: SafeUrl;
   private pdfLoaded: boolean;
@@ -28,7 +27,6 @@ export class DecisionComponent implements OnInit {
     private decisionHub: DecisionHub,
     private route: ActivatedRoute) {
     this.progressStep = ProgressStep.DECISION;
-    this.progressMode = ProgressMode.EDIT;
   }
 
   ngOnInit(): void {
