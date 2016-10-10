@@ -17,7 +17,8 @@ export const translations = {
       FINISHED: 'Valmis'
     },
     type: {
-      OUTDOOREVENT: 'Ulkoilmatapahtuma'
+      OUTDOOREVENT: 'Ulkoilmatapahtuma',
+      PROMOTION: 'Promootio'
     }
   },
   geolocation: {

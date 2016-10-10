@@ -1,4 +1,4 @@
 export enum ApplicationType {
   OUTDOOREVENT, // Ulkoilmatapahtuma,
-  PROMOTIONEVENT // Promootio
+  PROMOTION // Promootio
 }
