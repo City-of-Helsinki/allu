@@ -67,6 +67,7 @@
     "@angular2-material/radio": "2.0.0-alpha.8-2",
     "@angular2-material/toolbar": "2.0.0-alpha.8-2",
     "@angular2-material/sidenav": "2.0.0-alpha.8-2",
+    "@angular2-material/progress-bar": "2.0.0-alpha.8-2",
     "ng2-file-upload": "1.0.3",
     "file-saver": "1.3.2",
     "ng2-select": "1.0.3",

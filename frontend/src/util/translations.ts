@@ -2,7 +2,8 @@ export const translations = {
   application: {
     error: {
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
-      searchFailed: 'Hakemuksen hakeminen epäonnistui'
+      searchFailed: 'Hakemuksen hakeminen epäonnistui',
+      saveFailed: 'Hakemuksen tallentaminen epäonnistui'
     },
     status: {
       PRE_RESERVED: 'Alustava varaus',

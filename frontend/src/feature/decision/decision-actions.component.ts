@@ -1,6 +1,4 @@
-import {Component, Input, ViewChildren, QueryList} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
-import '../../rxjs-extensions.ts';
+import {Component, Input} from '@angular/core';
 
 import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
@@ -18,10 +16,17 @@ export class DecisionActionsComponent {
 
   public decisionConfirmed(confirm: ApplicationStatusChange) {
     confirm.id = this.application.id;
-    this.applicationHub.addApplicationStatusChange(confirm);
+    this.applicationHub.changeStatus(confirm).subscribe(application => this.statusChanged(application));
   }
 
   public accept() {
-    this.applicationHub.addApplicationStatusChange(ApplicationStatusChange.of(this.application.id, ApplicationStatus.DECISION));
+    console.log('accept', this.application.id);
+    this.applicationHub.changeStatus(ApplicationStatusChange.of(this.application.id, ApplicationStatus.DECISION))
+      .subscribe(application => this.statusChanged(application));
+  }
+
+  private statusChanged(application: Application): void {
+    console.log('Status changed to', application.status);
+    this.application = application;
   }
 }

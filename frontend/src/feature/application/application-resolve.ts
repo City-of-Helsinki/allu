@@ -14,12 +14,7 @@ export class ApplicationResolve implements Resolve<Application> {
     let id = Number(route.firstChild.params['id']);
 
     if (id) {
-      this.applicationHub.addApplicationSearch(id);
-
-      return this.applicationHub.applications()
-        .filter(applications => applications.some(app => app.id === id))
-        .map(applications => applications.find(app => app.id === id))
-        .first();
+      return this.applicationHub.getApplication(id);
     } else {
       return Observable.of(Application.prefilledApplication());
     }

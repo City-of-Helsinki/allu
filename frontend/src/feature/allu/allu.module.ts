@@ -16,8 +16,6 @@ import {MdToolbarModule} from '@angular2-material/toolbar';
 import {ApplicationModule} from '../application/application.module';
 
 import {MapUtil} from '../../service/map.util.ts';
-import {EventService} from '../../event/event.service';
-import {TaskManagerService} from '../../service/task/task-manager.service';
 import {ApplicationService} from '../../service/application/application.service.ts';
 import {GeolocationService} from '../../service/geolocation.service';
 import {MapHub} from '../../service/map-hub';
@@ -70,8 +68,6 @@ import {LoginModule} from '../login/login.module';
   ],
   bootstrap: [AlluComponent],
   providers: [
-    EventService,
-    TaskManagerService,
     ApplicationService,
     GeolocationService,
     ApplicationHub,

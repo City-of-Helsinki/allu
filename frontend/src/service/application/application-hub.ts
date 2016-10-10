@@ -1,80 +1,50 @@
 import {Injectable, OnInit} from '@angular/core';
-
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable}     from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
-import {SearchbarFilter} from '../../event/search/searchbar-filter';
+import {SearchbarFilter} from '../searchbar-filter';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {Subject} from 'rxjs/Subject';
+import {ApplicationService} from './application.service';
+import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 
 export type ApplicationSearch = ApplicationLocationQuery | number;
 
 @Injectable()
 export class ApplicationHub {
-  private applications$ = new BehaviorSubject<Array<Application>>([]);
-  private applicationChange$ = new Subject<Application>();
-  private applicationStatusChange$ = new Subject<ApplicationStatusChange>();
-  private applicationSearch$ = new Subject<ApplicationSearch>();
-
-  private searchBar$ = new Subject<SearchbarFilter>();
-  private mapView$ = new Subject<GeoJSON.GeometryObject>();
-
-  constructor() {
-    // Waits until searchBar and mapView observables produce value and combines them (latest)
-    // as a query which is added to applicationSearch subject
-    Observable.combineLatest(
-      this.searchBar(),
-      this.mapView(),
-      this.toApplicationLocationQuery)
-      .subscribe(query => this.addApplicationSearch(query));
-  }
+  constructor(private applicationService: ApplicationService) {}
 
   /**
-   * Used for notifying about application changes / listings
+   * Fetches single application
    */
-  public applications = () => this.applications$.asObservable();
-  public addApplications = (applications: Array<Application>) => this.applications$.next(applications);
+  public getApplication = (id: number) => this.applicationService.getApplication(id);
 
   /**
-   * Used for notifying application changes (create & update)
+   * Lists applications
    */
-  public applicationChange = () => this.applicationChange$.asObservable();
-  public addApplicationChange = (application: Application) => this.applicationChange$.next(application);
+  public getApplications = () => this.applicationService.getApplications();
 
   /**
-   * Used for receiving application status changes
+   * Fetches applications based on given search query
    */
-  public applicationStatusChange = () => this.applicationStatusChange$.asObservable();
-  public addApplicationStatusChange = (statusChange: ApplicationStatusChange) => this.applicationStatusChange$.next(statusChange);
+  public searchApplications = (searchQuery: ApplicationSearchQuery) => this.applicationService.searchApplications(searchQuery);
 
   /**
-   * Used for searching applications (single, all, filtered).
+   * Loads metadata for given application type
    */
-  public applicationSearch = () => this.applicationSearch$.asObservable();
-  public addApplicationSearch = (search) => this.applicationSearch$.next(search);
+  public loadMetaData = (applicationType: string) => this.applicationService.loadMetadata(applicationType);
 
   /**
-   * Used to notify changes in address search bar
+   * Saves given application (new / update) and returns saved application
    */
-  public addSearchFilter = (filter: SearchbarFilter) => this.searchBar$.next(filter);
+  public save = (application: Application) => this.applicationService.saveApplication(application);
 
   /**
-   * Used to notify changes in map's currently visible area
+   * Changes applications status according to statusChange.
+   * Returns updated application.
    */
-  public addMapView = (geometry: GeoJSON.GeometryObject) => this.mapView$.next(geometry);
-
-
-  private searchBar = () => this.searchBar$.asObservable();
-  private mapView = () => this.mapView$.asObservable();
-
-
-  private toApplicationLocationQuery(searchBar: SearchbarFilter, mapView: GeoJSON.GeometryObject) {
-    return new ApplicationLocationQuery(
-      searchBar.startDate,
-      searchBar.endDate,
-      mapView);
-  }
+  public changeStatus = (statusChange: ApplicationStatusChange) => this.applicationService.applicationStatusChange(statusChange);
 }

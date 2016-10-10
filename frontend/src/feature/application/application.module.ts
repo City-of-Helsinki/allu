@@ -3,6 +3,8 @@ import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {MdCardModule} from '@angular2-material/card';
 import {AlluCommonModule} from '../common/allu-common.module';
+import {MdToolbarModule} from '@angular2-material/toolbar';
+import {MdProgressBarModule} from '@angular2-material/progress-bar';
 
 import {ApplicationComponent} from '../application/application.component.ts';
 import {TypeComponent} from '../application/type/type.component';
@@ -11,15 +13,16 @@ import {PromotionEventComponent} from '../application/promotion-event/promotion-
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
 import {ApplicationAttachmentComponent} from '../application/attachment/application-attachment.component';
 import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
-import {MdToolbarModule} from '@angular2-material/toolbar';
 
-import {AttachmentService} from '../../service/attachment-service';
+
 import {LoadingComponent} from '../loading/loading.component';
 import {MapModule} from '../map/map.module';
 import {LocationState} from '../../service/application/location-state';
 import {ProgressBarModule} from '../progressbar/progressbar.module';
 import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
+import {ApplicationAttachmentHub} from './attachment/application-attachment-hub';
+import {AttachmentService} from '../../service/attachment-service';
 
 
 @NgModule({
@@ -30,6 +33,7 @@ import {ApplicationResolve} from './application-resolve';
     FormsModule,
     MapModule,
     MdToolbarModule,
+    MdProgressBarModule,
     ProgressBarModule
   ],
   declarations: [
@@ -43,8 +47,9 @@ import {ApplicationResolve} from './application-resolve';
     LoadingComponent
   ],
   providers: [
-    AttachmentService,
-    ApplicationResolve
+    ApplicationAttachmentHub,
+    ApplicationResolve,
+    AttachmentService
   ]
 })
 export class ApplicationModule {}

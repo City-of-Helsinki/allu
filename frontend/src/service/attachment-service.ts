@@ -1,4 +1,6 @@
 import {Injectable} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 import {FileUploader} from 'ng2-file-upload';
 import {AttachmentInfo} from '../model/application/attachment-info';
 
@@ -9,18 +11,24 @@ export class AttachmentService {
 
   constructor() {}
 
-  // TODO: the callback function should be removed when AttachmentService is changed to use the "hub approach"!
-  public uploadFiles(applicationId: number, attachments: AttachmentInfo[], callback: () => any) {
+  public uploadFiles(applicationId: number, attachments: AttachmentInfo[]): Observable<number> {
+    let uploadSubject = new Subject<number>();
+
     if (attachments && attachments.length !== 0) {
       let url = AttachmentService.uploadUrl.replace('appId', String(applicationId));
       let uploader = new ExtendedFileUploader({
         url: url,
         authToken: 'Bearer ' + localStorage.getItem('jwt')});
       let files = attachments.filter(a => !a.id).map(a => this.mapDescription(a.file, a.description));
-      uploader.onCompleteAll = callback;
+      uploader.onProgressAll = (progress) => uploadSubject.next(progress);
+      uploader.onCompleteAll = () => uploadSubject.complete();
       uploader.addToQueue(files);
       uploader.uploadAll();
+    } else {
+      uploadSubject.complete();
     }
+
+    return uploadSubject.asObservable();
   }
 
   private mapDescription(file: any, description: string): any {

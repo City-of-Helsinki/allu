@@ -3,8 +3,6 @@ import {Router, ActivatedRoute, UrlSegment} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
 import {ProgressStep, ProgressMode} from '../progressbar/progressbar.component.ts';
-import {ApplicationsAnnounceEvent} from '../../event/announce/applications-announce-event';
-import {Event} from '../../event/event';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {applicationTypes} from './application-types';
 import {UrlUtil} from '../../util/url.util';
