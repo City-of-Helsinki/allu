@@ -3,6 +3,7 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.ui.mapper.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,49 +38,25 @@ public class UserService {
   public UserJson findUserByUserName(String userName) {
     ResponseEntity<User> userResults = restTemplate.getForEntity(
         applicationProperties.getUserByUserNameUrl(), User.class, userName);
-    return mapUser(userResults.getBody());
+    return UserMapper.mapToUserJson(userResults.getBody());
   }
 
   public UserJson addUser(UserJson userJson) {
     if (userJson.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
-    User user = mapUserJson(userJson);
+    User user = UserMapper.mapToModelUser(userJson);
     ResponseEntity<User> userResults = restTemplate.postForEntity(
         applicationProperties.getUserCreateUrl(), user, User.class);
-    return mapUser(userResults.getBody());
+    return UserMapper.mapToUserJson(userResults.getBody());
   }
 
   public void updateUser(UserJson userJson) {
-    User user = mapUserJson(userJson);
+    User user = UserMapper.mapToModelUser(userJson);
     restTemplate.put(applicationProperties.getUserUpdateUrl(), user);
   }
 
   private List<UserJson> mapUsers(User[] users) {
-    return Arrays.stream(users).map(u -> mapUser(u)).collect(Collectors.toList());
-  }
-
-  public UserJson mapUser(User user) {
-    return new UserJson(
-        user.getId(),
-        user.getUserName(),
-        user.getRealName(),
-        user.getEmailAddress(),
-        user.getTitle(),
-        user.isActive(),
-        user.getAllowedApplicationTypes(),
-        user.getAssignedRoles());
-  }
-
-  public User mapUserJson(UserJson userJson) {
-    return new User(
-        userJson.getId(),
-        userJson.getUserName(),
-        userJson.getRealName(),
-        userJson.getEmailAddress(),
-        userJson.getTitle(),
-        userJson.isActive(),
-        userJson.getAllowedApplicationTypes(),
-        userJson.getAssignedRoles());
+    return Arrays.stream(users).map(u -> UserMapper.mapToUserJson(u)).collect(Collectors.toList());
   }
 }

@@ -58,7 +58,7 @@ public class TokenHandler {
     final Claims claims = Jwts.parser().setSigningKey(secret)
         .parseClaimsJws(token).getBody();
 
-    return new AlluUser(claims.getSubject(), claims.getSubject(), getRoles(claims), claims.get(EMAIL)
+    return new AlluUser(claims.getSubject(), getRoles(claims), claims.get(EMAIL)
         .toString());
   }
 
