@@ -17,7 +17,7 @@ public class ApplicationES {
   @NotBlank
   private Integer id;
   private String applicationId;
-  private String handler;
+  private Integer handler;
   private StatusType status;
   private ApplicationType type;
   private String name;
@@ -47,11 +47,11 @@ public class ApplicationES {
     this.applicationId = applicationId;
   }
 
-  public String getHandler() {
+  public Integer getHandler() {
     return handler;
   }
 
-  public void setHandler(String handler) {
+  public void setHandler(Integer handler) {
     this.handler = handler;
   }
 

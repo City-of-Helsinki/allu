@@ -39,5 +39,6 @@ export class SearchComponent {
 
   private search(): void {
     this.applications = this.applicationHub.searchApplications(this.query);
+    this.applications.subscribe(app => console.log(app));
   }
 }

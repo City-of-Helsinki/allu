@@ -10,6 +10,7 @@ import {OutdoorEvent} from './type/outdoor-event';
 import {StructureMeta} from './structure-meta';
 import {AttachmentInfo} from './attachment-info';
 import {TimeUtil} from '../../util/time.util';
+import {User} from '../common/user';
 
 
 export class Application {
@@ -19,7 +20,7 @@ export class Application {
     id: number,
     applicationId: string,
     project: Project,
-    handler: string,
+    handler: User,
     status: string,
     type: string,
     name: string,
@@ -36,7 +37,7 @@ export class Application {
     public id?: number,
     public applicationId?: string,
     public project?: Project,
-    public handler?: string,
+    public handler?: User,
     public status?: string,
     public type?: string,
     public name?: string,
@@ -95,7 +96,7 @@ export class Application {
       new Date());
 
     let app = new Application();
-    app.handler = 'TestHandler';
+    app.handler = undefined;
     app.type = 'OUTDOOREVENT';
     app.name = 'Ulkoilmatapahtumat tutuksi!';
     app.event = applicationTypeData;

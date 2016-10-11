@@ -44,11 +44,6 @@ public class ApplicationDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Application> findByHandler(String handler) {
-    return queryFactory.select(applicationBean).from(application).where(application.handler.eq(handler)).fetch();
-  }
-
-  @Transactional(readOnly = true)
   public List<Application> findByProject(int projectId) {
     return queryFactory.select(applicationBean).from(application).where(application.projectId.eq(projectId)).fetch();
   }

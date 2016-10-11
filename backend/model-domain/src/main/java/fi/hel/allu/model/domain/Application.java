@@ -1,13 +1,11 @@
 package fi.hel.allu.model.domain;
 
-import java.time.ZonedDateTime;
-
-import javax.validation.constraints.NotNull;
-
-import org.hibernate.validator.constraints.NotBlank;
-
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
+import org.hibernate.validator.constraints.NotBlank;
+
+import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 /**
  * In Finnish: hakemus
  */
@@ -17,7 +15,7 @@ public class Application {
   private String applicationId;
   @NotNull
   private Integer projectId;
-  private String handler;
+  private Integer handler;
   @NotNull
   private Integer applicantId;
   private StatusType status;
@@ -85,12 +83,14 @@ public class Application {
 
   /**
    * in Finnish: Hakemuksen käsittelijä
+   *
+   * @return id of the handler or <code>null</code> if no handler is linked to the application.
    */
-  public String getHandler() {
+  public Integer getHandler() {
     return handler;
   }
 
-  public void setHandler(String handler) {
+  public void setHandler(Integer handler) {
     this.handler = handler;
   }
 

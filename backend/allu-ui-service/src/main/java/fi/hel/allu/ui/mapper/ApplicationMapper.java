@@ -1,37 +1,24 @@
 package fi.hel.allu.ui.mapper;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
-
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.search.domain.ApplicantES;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.ContactES;
-import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.search.domain.LocationES;
-import fi.hel.allu.search.domain.ProjectES;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.OutdoorEventJson;
-import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.search.domain.*;
+import fi.hel.allu.ui.domain.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 public class ApplicationMapper {
@@ -55,7 +42,7 @@ public class ApplicationMapper {
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
     applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
-    applicationDomain.setHandler(applicationJson.getHandler());
+    applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
     applicationDomain.setMetadataVersion(applicationJson.getMetadata().getVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
@@ -82,7 +69,7 @@ public class ApplicationMapper {
     applicationES.setCreationTime(ZonedDateTime.now());
     applicationES.setStartTime(applicationJson.getStartTime());
     applicationES.setEndTime(applicationJson.getEndTime());
-    applicationES.setHandler(applicationJson.getHandler());
+    applicationES.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationES.setType(applicationJson.getType());
     applicationES.setStatus(applicationJson.getStatus());
     applicationES.setDecisionTime(applicationJson.getDecisionTime());
@@ -106,7 +93,6 @@ public class ApplicationMapper {
     applicationJson.setApplicationId(application.getApplicationId());
     applicationJson.setStatus(application.getStatus());
     applicationJson.setType(application.getType());
-    applicationJson.setHandler(application.getHandler());
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setStartTime(application.getStartTime());
     applicationJson.setEndTime(application.getEndTime());

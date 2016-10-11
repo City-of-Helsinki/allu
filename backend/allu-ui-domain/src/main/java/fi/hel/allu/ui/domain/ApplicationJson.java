@@ -18,7 +18,7 @@ public class ApplicationJson {
   private String applicationId;
   @Valid
   private ProjectJson project;
-  private String handler;
+  private UserJson handler;
   private StatusType status;
   @NotNull(message = "{application.type}")
   private ApplicationType type;
@@ -85,11 +85,11 @@ public class ApplicationJson {
   /**
    * in Finnish: Hakemuksen käsittelijä
    */
-  public String getHandler() {
+  public UserJson getHandler() {
     return handler;
   }
 
-  public void setHandler(String handler) {
+  public void setHandler(UserJson handler) {
     this.handler = handler;
   }
 

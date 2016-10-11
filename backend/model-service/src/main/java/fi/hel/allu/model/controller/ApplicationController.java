@@ -77,18 +77,6 @@ public class ApplicationController {
   }
 
   /**
-   * Find all applications for a handler
-   *
-   * @param handler
-   * @return list of applications
-   */
-  @RequestMapping(value = "/byhandler/{handler}", method = RequestMethod.GET)
-  public ResponseEntity<List<Application>> findByHandler(@PathVariable String handler) {
-    List<Application> applications = applicationDao.findByHandler(handler);
-    return new ResponseEntity<>(applications, HttpStatus.OK);
-  }
-
-  /**
    * Find all applications for a project
    *
    * @param projectId

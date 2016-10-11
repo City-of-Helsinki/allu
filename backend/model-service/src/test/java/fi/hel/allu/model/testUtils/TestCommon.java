@@ -57,6 +57,7 @@ public class TestCommon {
     Integer personId = insertPerson();
     Integer projectId = insertProject(personId);
     Integer applicantId = insertPersonApplicant(personId);
+    User user = insertUser(handler);
     Application app = new Application();
     app.setApplicationId("TP1600001");
     app.setApplicantId(applicantId);
@@ -67,7 +68,7 @@ public class TestCommon {
     app.setDecisionTime(ZonedDateTime.now());
     app.setName(name);
     // TODO: replace handler string with reference to actual User object / id
-    app.setHandler(handler);
+    app.setHandler(user.getId());
     app.setEvent(dummyOutdoorEvent());
     return app;
   }
@@ -160,7 +161,7 @@ public class TestCommon {
     return insertedProject.getId();
   }
 
-  public User insertUser() {
+  public User insertUser(String userName) {
     User user = new User();
     user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
     user.setIsActive(true);
@@ -168,7 +169,7 @@ public class TestCommon {
     user.setEmailAddress("email");
     user.setRealName("realname");
     user.setTitle("title");
-    user.setUserName("username");
+    user.setUserName(userName);
     return userDao.insert(user);
   }
 

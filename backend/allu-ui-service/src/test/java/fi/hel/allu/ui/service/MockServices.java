@@ -1,16 +1,19 @@
 package fi.hel.allu.ui.service;
 
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.geometrycollection;
-import static org.geolatte.geom.builder.DSL.ring;
-
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
+import fi.hel.allu.common.types.ApplicantType;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
+import fi.hel.allu.model.domain.meta.StructureMeta;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ESFlatValue;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.mapper.UserMapper;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -18,34 +21,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.common.types.ApplicantType;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.Organization;
-import fi.hel.allu.model.domain.OutdoorEvent;
-import fi.hel.allu.model.domain.Person;
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.model.domain.meta.AttributeDataType;
-import fi.hel.allu.model.domain.meta.AttributeMeta;
-import fi.hel.allu.model.domain.meta.StructureMeta;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttributeMetaJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.OrganizationJson;
-import fi.hel.allu.ui.domain.OutdoorEventJson;
-import fi.hel.allu.ui.domain.PersonJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
-import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.domain.StructureMetaJson;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import static org.geolatte.geom.builder.DSL.*;
 
 public abstract class MockServices {
   @Mock
@@ -91,6 +74,9 @@ public abstract class MockServices {
     Mockito.when(restTemplate.getForObject(Mockito.any(String.class), Mockito.eq(Application.class), Mockito.any
         (String.class)))
         .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
+
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(User.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<User>>) invocation -> createMockUserResponse());
 
     Mockito
         .when(
@@ -246,7 +232,7 @@ public abstract class MockServices {
     applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
     applicationJson.setDecisionTime(ZonedDateTime.now());
     applicationJson.setStatus(StatusType.PENDING);
-    applicationJson.setHandler("Kalle käsittelijä, Json");
+    applicationJson.setHandler(UserMapper.mapToUserJson(createMockUser()));
     applicationJson.setApplicant(createApplicantJson(null, null));
     applicationJson.setLocation(createLocationJson(null));
     applicationJson.setProject(createProjectJson(null));
@@ -262,7 +248,7 @@ public abstract class MockServices {
     application.setProjectId(100);
     application.setCreationTime(ZonedDateTime.now());
     application.setDecisionTime(ZonedDateTime.now());
-    application.setHandler("Mock handler, Model");
+    application.setHandler(createMockUser().getId());
     application.setType(ApplicationType.OUTDOOREVENT);
     application.setLocationId(102);
     application.setApplicantId(103);
@@ -352,7 +338,7 @@ public abstract class MockServices {
     applicationES.setDecisionTime(zonedDateTime2);
     applicationES.setName("Mock name, ES");
     applicationES.setStatus(StatusType.PENDING);
-    applicationES.setHandler("Handler, ES");
+    applicationES.setHandler(createMockUser().getId());
     applicationES.setId(1);
     applicationES.setType(ApplicationType.OUTDOOREVENT);
     applicationES.setApplicationTypeData(createApplicationTypeDataES());
@@ -396,6 +382,23 @@ public abstract class MockServices {
     return new ResponseEntity<>(createMockOutdoorEventModel(), HttpStatus.OK);
   }
 
+  public User createMockUser() {
+    User user = new User();
+    user.setId(1);
+    user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
+    user.setIsActive(true);
+    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    user.setEmailAddress("email");
+    user.setRealName("realname");
+    user.setTitle("title");
+    user.setUserName("username");
+    return user;
+  }
+
+  public ResponseEntity<User> createMockUserResponse() {
+    return new ResponseEntity<User>(createMockUser(), HttpStatus.OK);
+  }
+
   private ResponseEntity<Application[]> createMockApplicationListResponse() {
     Application applicationModelArray[] = new Application[2];
     applicationModelArray[0] = createMockApplicationModel();
@@ -403,7 +406,7 @@ public abstract class MockServices {
     Application applicationModel = new Application();
     applicationModel.setId(1234);
     applicationModel.setType(ApplicationType.OUTDOOREVENT);
-    applicationModel.setHandler("MockHandler2");
+    applicationModel.setHandler(createMockUser().getId());
     applicationModel.setStatus(StatusType.HANDLING);
     applicationModel.setProjectId(4321);
     applicationModel.setName("MockName2");
