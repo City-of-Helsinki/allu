@@ -1,0 +1,67 @@
+<div class="search-bar">
+    <h1>TYÖJONO</h1>
+    <form [formGroup]="queryForm">
+        <div class="row">
+            <div class="input-field col s2">
+                <select formControlName="type" materialize="material_select">
+                    <option value="" selected>Hakemuksen tyyppi</option>
+                    <option *ngFor="let type of applicationTypes" [value]="type" (change)="search($event)">{{translations.application.type[type]}}</option>
+                </select>
+                <label>Hakemuksen tyyppi</label>
+            </div>
+            <div class="input-field col s2">
+                <select formControlName="handler" materialize="material_select">
+                    <option value="" selected>Hakemuksen käsittelijä</option>
+                    <option *ngFor="let handler of handlers" [value]="handler">{{handler}}</option>
+                </select>
+                <label>Hakemuksen käsittelijä</label>
+            </div>
+            <div class="input-field col s2">
+                <select formControlName="status" materialize="material_select">
+                    <option value="" selected>Hakemuksen tila</option>
+                    <option *ngFor="let status of applicationStatuses" [value]="status">{{translations.application.status[status]}}</option>
+                </select>
+                <label>Hakemuksen tila</label>
+            </div>
+            <div class="input-field col s2">
+                <select formControlName="district" materialize="material_select" [materializeSelectOptions]="selectOptions">
+                    <option value="" selected>Kaupunginosa</option>
+                    <option *ngFor="let district of items" [value]="district">{{district}}</option>
+                </select>
+                <label>Kaupunginosa</label>
+            </div>
+            <div class="input-field col s2">
+                <label for="startDate">Alkupäivämäärä</label>
+                <input id="startDate"
+                       formControlName="startTime"
+                       materialize="pickadate"
+                       [materializeParams]="pickadateParams"
+                       type="text" />
+            </div>
+            <div class="input-field col s2">
+                <input id="endDate"
+                       formControlName="endTime"
+                       materialize="pickadate"
+                       [materializeParams]="pickadateParams"
+                       type="text" />
+                <label for="endDate">Loppupäivämäärä</label>
+            </div>
+            <div class="col s2">
+                <input type="checkbox" class="filled-in" id="own-applications"/>
+                <label for="own-applications">Näytä vain omat hakemuksesi</label>
+            </div>
+            <div class="col s2">
+                <div class="switch">
+                    <label>
+                        <input type="checkbox">
+                        <span class="lever"></span>
+                        Näytä kalenterissa
+                    </label>
+                </div>
+            </div>
+            <div class="col s2 offset-s6">
+                <button (click)="console.log('asdf')" class="waves-effect waves-light btn">TALLENNA</button>
+            </div>
+        </div>
+    </form>
+</div>

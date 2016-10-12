@@ -4,7 +4,6 @@ import {MAX_DATE, MIN_DATE} from '../../util/time.util';
 
 export class QueryParametersMapper {
   public static mapFrontend(query: ApplicationSearchQuery): BackendQueryParameters {
-    console.log('mapping application search query', query);
     return (query) ?
     {
       queryParameters: QueryParametersMapper.mapParameters(query)
