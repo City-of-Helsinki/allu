@@ -4,6 +4,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
+import fi.hel.allu.common.types.ApplicationType;
 
 public class OutdoorEventJson extends EventJson {
   @NotBlank(message = "{outdoorevent.nature}")
@@ -30,6 +31,10 @@ public class OutdoorEventJson extends EventJson {
   private ZonedDateTime structureEndTime;
   private String timeExceptions;
 
+  @Override
+  public ApplicationType getType() {
+    return ApplicationType.OUTDOOREVENT;
+  }
   /**
    * in Finnish: Tapahtuman luonne
    */
@@ -240,4 +245,5 @@ public class OutdoorEventJson extends EventJson {
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
   }
+
 }
