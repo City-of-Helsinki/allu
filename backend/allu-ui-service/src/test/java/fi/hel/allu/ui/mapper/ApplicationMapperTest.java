@@ -35,9 +35,7 @@ public class ApplicationMapperTest {
     ApplicationES applicationES = applicationMapper.createApplicationESModel(applicationJson);
     List<ESFlatValue> applicationTypeData = applicationES.getApplicationTypeData();
     Map<String, ESFlatValue> valueMap = applicationTypeData.stream().collect(Collectors.toMap(ESFlatValue::getFieldName, esFlatValue -> esFlatValue));
-    // due to magical JSON serialization feature (the EventJson class contains @JsonTypeInfo), there's type property in the serialized JSON.
-    // This is the reason why we expect size to be one greater than the number of fields in the serialized test event
-    Assert.assertEquals(2, valueMap.size());
+    Assert.assertEquals(1, valueMap.size());
     Assert.assertEquals(testValue, valueMap.get("OUTDOOREVENT-testValue").getStrValue());
   }
 
@@ -50,6 +48,12 @@ public class ApplicationMapperTest {
 
     public void setTestValue(String testValue) {
       this.testValue = testValue;
+    }
+
+    @Override
+    public ApplicationType getType() {
+      // TODO Auto-generated method stub
+      return null;
     }
   }
 }

@@ -3,6 +3,7 @@ package fi.hel.allu.model.domain;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.ZonedDateTime;
+import fi.hel.allu.common.types.ApplicationType;
 
 public class OutdoorEvent extends Event {
   @NotBlank
@@ -26,6 +27,11 @@ public class OutdoorEvent extends Event {
   private ZonedDateTime structureStartTime;
   private ZonedDateTime structureEndTime;
   private String timeExceptions;
+
+  @Override
+  public ApplicationType getType() {
+    return ApplicationType.OUTDOOREVENT;
+  }
 
   /**
    * in Finnish: Tapahtuman luonne
