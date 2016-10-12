@@ -316,6 +316,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/users/userName/{userName}");
   }
 
+  public String getUserByIdUrl() {
+    return getModelServiceUrl("/users/{id}");
+  }
+
   /**
    * Returns URL for geocoding a street address.
    * @return  Request URL for geocoding a street address.

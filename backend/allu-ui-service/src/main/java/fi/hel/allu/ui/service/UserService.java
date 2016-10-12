@@ -41,6 +41,12 @@ public class UserService {
     return UserMapper.mapToUserJson(userResults.getBody());
   }
 
+  public UserJson findUserById(int id) {
+    ResponseEntity<User> userResults = restTemplate.getForEntity(
+        applicationProperties.getUserByIdUrl(), User.class, id);
+    return UserMapper.mapToUserJson(userResults.getBody());
+  }
+
   public UserJson addUser(UserJson userJson) {
     if (userJson.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");

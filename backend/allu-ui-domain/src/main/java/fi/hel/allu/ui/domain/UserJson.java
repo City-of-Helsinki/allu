@@ -2,6 +2,7 @@ package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
+import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,10 +12,15 @@ import java.util.List;
  */
 public class UserJson {
   private Integer id;
+  @NotBlank(message = "{user.userName}")
   private String userName;
+  @NotBlank(message = "{user.realName}")
   private String realName;
+  @NotBlank(message = "{user.emailAddress}")
   private String emailAddress;
+  @NotBlank(message = "{user.title}")
   private String title;
+  @NotBlank(message = "{user.isActive}")
   private boolean isActive;
   private List<ApplicationType> allowedApplicationTypes = new ArrayList<>();
   private List<RoleType> assignedRoles = new ArrayList<>();

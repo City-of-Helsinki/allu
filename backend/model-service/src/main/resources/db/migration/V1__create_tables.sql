@@ -55,12 +55,30 @@ create table allu.applicant (
     person_id integer references allu.person(id),
     organization_id integer references allu.organization(id));
 
+create table allu.user (
+  id serial primary key,
+  user_name text NOT NULL UNIQUE,
+  real_name text NOT NULL,
+  email_address text NOT NULL,
+  title text NOT NULL,
+  is_active boolean NOT NULL);
+
+create table allu.user_role (
+  id serial primary key,
+  user_id integer references allu.user(id),
+  role text );
+
+create table allu.user_application_type (
+  id serial primary key,
+  user_id integer references allu.user(id),
+  application_type text );
+
 create table allu.application (
     id serial primary key,
     application_id text not null,
     project_id integer references allu.project(id),
     name text,
-    handler text,
+    handler integer references allu.user,
     applicant_id integer references allu.applicant(id),
     status text,   -- TODO: enum
     type text not null,
@@ -125,23 +143,16 @@ create SEQUENCE allu.TP_application_type_sequence START 1600001;
 create SEQUENCE allu.VL_application_type_sequence START 1600001;
 create SEQUENCE allu.MP_application_type_sequence START 1600001;
 
-create table allu.user (
-    id serial primary key,
-    user_name text NOT NULL UNIQUE,
-    real_name text NOT NULL,
-    email_address text NOT NULL,
-    title text NOT NULL,
-    is_active boolean );
-
-create table allu.user_role (
-    id serial primary key,
-    user_id integer references allu.user(id),
-    role text );
-
-create table allu.user_application_type (
-    id serial primary key,
-    user_id integer references allu.user(id),
-    application_type text );
-
-insert into allu.user values (DEFAULT, 'admin', 'admin user', 'no@mail.fi', 'administrator', true);
+insert into allu.user values (DEFAULT, 'admin', 'admin user', 'admin@no-mail.fi', 'administrator', true);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_ADMIN');
+
+insert into allu.user values (DEFAULT, 'allutest', 'all rights user', 'allutest@no-mail.fi', 'Kaikkivaltias', true);
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_CREATE_APPLICATION');
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_PROCESS_APPLICATION');
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_WORK_QUEUE');
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_DECISION');
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_SUPERVISE');
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_INVOICING');
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_VIEW');
+insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_ADMIN');
+insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'OUTDOOREVENT');

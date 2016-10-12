@@ -5,6 +5,7 @@ import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.EventJson;
+import fi.hel.allu.ui.domain.UserJson;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,10 +24,13 @@ public class ApplicationMapperTest {
     TestEventJson eventJson = new TestEventJson();
     final String testValue = "foobar";
     eventJson.setTestValue(testValue);
+    UserJson userJson = new UserJson();
+    userJson.setId(1);
 
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setType(ApplicationType.OUTDOOREVENT);
     applicationJson.setEvent(eventJson);
+    applicationJson.setHandler(userJson);
 
     ApplicationES applicationES = applicationMapper.createApplicationESModel(applicationJson);
     List<ESFlatValue> applicationTypeData = applicationES.getApplicationTypeData();

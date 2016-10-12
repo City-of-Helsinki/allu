@@ -93,7 +93,7 @@
       <tbody>
         <tr *ngFor="let application of applications | async" class="clickable row-highlight"
           (click)="goToSummary(application)">
-          <td>{{application.handler}}</td>
+          <td>{{application.handler?.realName}}</td>
           <td>{{application.name}}</td>
           <td>
             {{application.project.name}} <br>

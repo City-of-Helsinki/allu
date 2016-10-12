@@ -47,7 +47,7 @@ public class UserControllerTest {
 
   @Test
   public void testLoadUserById() throws Exception {
-    User user = testCommon.insertUser();
+    User user = testCommon.insertUser("testUser");
     ResultActions resultActions = wtc.perform(get("/users/" + user.getId())).andExpect(status().isOk());
     User parsedUser = wtc.parseObjectFromResult(resultActions, User.class);
     Assert.assertEquals(user.getUserName(), parsedUser.getUserName());
@@ -55,7 +55,7 @@ public class UserControllerTest {
 
   @Test
   public void testLoadUserByUserName() throws Exception {
-    User user = testCommon.insertUser();
+    User user = testCommon.insertUser("testUser");
     ResultActions resultActions = wtc.perform(get("/users/userName/" + user.getUserName())).andExpect(status().isOk());
     User parsedUser = wtc.parseObjectFromResult(resultActions, User.class);
     Assert.assertEquals(user.getUserName(), parsedUser.getUserName());
@@ -63,7 +63,7 @@ public class UserControllerTest {
 
   @Test
   public void testLoadAllUsers() throws Exception {
-    User user = testCommon.insertUser();
+    User user = testCommon.insertUser("testUser");
     ResultActions resultActions = wtc.perform(get("/users")).andExpect(status().isOk());
     List<User> parsedUsers = wtc.parseObjectFromResult(resultActions, List.class);
     Assert.assertEquals(1, parsedUsers.size());
@@ -71,7 +71,7 @@ public class UserControllerTest {
 
   @Test
   public void testAddUser() throws Exception {
-    User user = testCommon.insertUser();
+    User user = testCommon.insertUser("testUser");
     user.setId(null);
     user.setUserName("differentToBeUnique");
     ResultActions resultActions = wtc.perform(post("/users"), user).andExpect(status().isOk());
@@ -81,7 +81,7 @@ public class UserControllerTest {
 
   @Test
   public void testUpdateUser() throws Exception {
-    User user = testCommon.insertUser();
+    User user = testCommon.insertUser("testUser");
     user.setEmailAddress("updated@email");
     wtc.perform(put("/users"), user).andExpect(status().isOk());
   }

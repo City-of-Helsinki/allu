@@ -1,24 +1,9 @@
 package fi.hel.allu.ui.service;
 
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -32,17 +17,17 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.domain.OutdoorEventJson;
-import fi.hel.allu.ui.domain.PersonJson;
-import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.domain.StructureMetaJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceTest extends MockServices {
@@ -63,6 +48,8 @@ public class ApplicationServiceTest extends MockServices {
   protected SearchService searchService;
   @Mock
   protected MetaService metaService;
+  @Mock
+  protected UserService userService;
 
   private ApplicationService applicationService;
 
@@ -76,7 +63,7 @@ public class ApplicationServiceTest extends MockServices {
   public void setUp() {
     applicationMapper = new ApplicationMapper();
     applicationService = new ApplicationService(props, restTemplate, locationService, applicantService, projectService,
-        applicationMapper, contactService, searchService, metaService);
+        applicationMapper, contactService, searchService, metaService, userService);
 
     initSaveMocks();
     initSearchMocks();
@@ -139,7 +126,7 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals(100, response.getProject().getId().intValue());
     assertEquals(102, response.getLocation().getId().intValue());
     assertEquals(103, response.getApplicant().getId().intValue());
-    assertEquals("Mock handler, Model", response.getHandler());
+    assertEquals(createMockUser().getId(), response.getHandler().getId());
     assertNull(response.getApplicant().getPerson());
     assertNotNull(response.getApplicant().getOrganization());
     assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
@@ -156,7 +143,7 @@ public class ApplicationServiceTest extends MockServices {
     applicationService.updateApplication(1, applicationJson);
     assertNotNull(applicationJson);
     assertEquals(1, applicationJson.getId().intValue());
-    assertEquals("Kalle käsittelijä, Json", applicationJson.getHandler());
+    assertEquals(createMockUser().getId(), applicationJson.getHandler().getId());
   }
 
 
@@ -181,30 +168,6 @@ public class ApplicationServiceTest extends MockServices {
   public void testFindApplicationsById() {
     List<ApplicationJson> response = applicationService.findApplicationsById(Collections.singletonList(123));
     assertEquals(2, response.size());
-  }
-
-  @Test
-  public void testFindApplicationByHandler() {
-    List<ApplicationJson> response = applicationService.findApplicationByHandler("222");
-
-    assertNotNull(response);
-    assertEquals(2, response.size());
-
-    assertNotNull(response.get(0).getProject());
-    assertNotNull(response.get(0).getApplicant());
-    assertNotNull(response.get(0).getLocation());
-    assertNotNull(response.get(0).getEvent());
-    assertEquals(100, response.get(0).getProject().getId().intValue());
-    assertEquals(102, response.get(0).getLocation().getId().intValue());
-    assertEquals(103, response.get(0).getApplicant().getId().intValue());
-    assertNull(response.get(0).getApplicant().getPerson());
-    assertNotNull(response.get(0).getApplicant().getOrganization());
-    assertEquals(201, response.get(0).getApplicant().getOrganization().getId().intValue());
-    assertNotNull(response.get(1));
-    assertNotNull(response.get(1).getProject());
-    assertNotNull(response.get(1).getApplicant());
-    assertNotNull(response.get(1).getLocation());
-    assertEquals("MockName2", response.get(1).getName());
   }
 
   @Test

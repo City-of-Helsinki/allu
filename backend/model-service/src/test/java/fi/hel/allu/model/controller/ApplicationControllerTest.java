@@ -96,30 +96,6 @@ public class ApplicationControllerTest {
   }
 
   @Test
-  public void testFindApplicationByHandler() throws Exception {
-    // Setup: insert some applications with handler "Henkka"
-    final int NUM_HENKKA = 5;
-    final int NUM_TIMPPA = 7;
-    Application app = testCommon.dummyApplication("TestApplication", "Henkka");
-    for (int i = 0; i < NUM_HENKKA; ++i) {
-      wtc.perform(post("/applications"), app).andExpect(status().isOk());
-    }
-    // Now insert some with handler "Timppa"
-    app.setHandler("Timppa");
-    for (int i = 0; i < NUM_TIMPPA; ++i) {
-      wtc.perform(post("/applications"), app).andExpect(status().isOk());
-    }
-    // Now get all Henkka's applications:
-    ResultActions resultActions = wtc.perform(get("/applications/byhandler/Henkka")).andExpect(status().isOk());
-    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(NUM_HENKKA, results.length);
-    // Try also with nonexistent handler:
-    resultActions = wtc.perform(get("/applications/byhandler/Jimi")).andExpect(status().isOk());
-    results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(0, results.length);
-  }
-
-  @Test
   public void testFindApplicationByProject() throws Exception {
     // Setup: add some applications for one project:
     final int NUM_FIRST = 5;
@@ -212,7 +188,7 @@ public class ApplicationControllerTest {
   @Test
   public void testDeleteApplicationLocation() throws Exception {
     // Setup: create application with location
-    ResultActions ra = createLocationTestApplication(testAppParams[0], "Syrjäkuja 5", "Hämärähomma");
+    ResultActions ra = createLocationTestApplication(testAppParams[0], "Syrjäkuja 5", "Hämärähomma", 1);
     Application app = wtc.parseObjectFromResult(ra, Application.class);
     assertNotNull(app.getLocationId());
     // Test: delete the application's location and verify that it gets deleted.
@@ -267,11 +243,11 @@ public class ApplicationControllerTest {
           ZonedDateTime.parse("2017-03-03T10:15:30+02:00[Europe/Helsinki]"),
           ZonedDateTime.parse("2017-03-08T10:15:30+02:00[Europe/Helsinki]")) };
 
-  private ResultActions createLocationTestApplication(TestAppParam tap, String streetAddress, String applicationName)
+  private ResultActions createLocationTestApplication(TestAppParam tap, String streetAddress, String applicationName, int count)
       throws Exception {
     Integer locationId = testCommon.insertLocation(streetAddress,
         new GeometryCollection(new Geometry[] { tap.geometry }));
-    Application app = testCommon.dummyApplication(applicationName, null);
+    Application app = testCommon.dummyApplication(applicationName, "locationUserName" + count);
     app.setLocationId(locationId);
     app.setStartTime(tap.startTime);
     app.setEndTime(tap.endTime);
@@ -281,8 +257,11 @@ public class ApplicationControllerTest {
   private void createLocationTestApplications() throws Exception {
     // Create a test application for each of the small areas
     for (int i = 0; i < testAppParams.length; ++i) {
-      createLocationTestApplication(testAppParams[i], String.format("Smallstreet %d", i),
-          String.format("Small application %d", i));
+      createLocationTestApplication(
+          testAppParams[i],
+          String.format("Smallstreet %d", i),
+          String.format("Small application %d", i),
+          i);
     }
   }
 

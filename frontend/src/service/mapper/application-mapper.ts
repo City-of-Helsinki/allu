@@ -7,6 +7,7 @@ import {LocationMapper} from './location-mapper';
 import {ApplicationTypeDataMapper} from './application-type-data-mapper';
 import {StructureMetaMapper} from './structure-meta-mapper';
 import {AttachmentInfoMapper} from './attachment-info-mapper';
+import {UserMapper} from './user-mapper';
 
 export class ApplicationMapper {
 
@@ -15,7 +16,7 @@ export class ApplicationMapper {
       backendApplication.id,
       backendApplication.applicationId,
       ProjectMapper.mapBackend(backendApplication.project),
-      backendApplication.handler,
+      UserMapper.mapBackend(backendApplication.handler),
       backendApplication.status,
       backendApplication.type,
       backendApplication.name,
@@ -37,7 +38,7 @@ export class ApplicationMapper {
       id: application.id,
       applicationId: application.applicationId,
       project: ProjectMapper.mapFrontend(application.project),
-      handler: application.handler,
+      handler: UserMapper.mapFrontend(application.handler),
       status: application.status,
       type: application.type,
       name: application.name,

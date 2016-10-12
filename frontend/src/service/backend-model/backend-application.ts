@@ -4,12 +4,13 @@ import {BackendContact} from './backend-contact';
 import {BackendLocation} from './backend-location';
 import {BackendStructureMeta} from './backend-structure-meta';
 import {BackendAttachmentInfo} from './backend-attachment-info';
+import {BackendUser} from './backend-user';
 
 export interface BackendApplication {
   id: number;
   applicationId: string;
   project: BackendProject;
-  handler: string;
+  handler: BackendUser;
   status: string;
   type: string;
   name: string;

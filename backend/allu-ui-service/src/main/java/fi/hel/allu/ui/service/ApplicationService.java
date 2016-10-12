@@ -1,38 +1,27 @@
 package fi.hel.allu.ui.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.client.RestTemplate;
-
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.DecisionJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
+import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.*;
+import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Service
 public class ApplicationService {
@@ -48,14 +37,23 @@ public class ApplicationService {
   private ContactService contactService;
   private SearchService searchService;
   private MetaService metaService;
+  private UserService userService;
 
   // Stylesheet name for decision PDF generation:
   private static final String DECISION_STYLESHEET = "paatos";
 
   @Autowired
-  public ApplicationService(ApplicationProperties applicationProperties, RestTemplate restTemplate, LocationService
-  locationService, ApplicantService applicantService, ProjectService projectService,
-      ApplicationMapper applicationMapper, ContactService contactService, SearchService searchService, MetaService metaService) {
+  public ApplicationService(
+      ApplicationProperties applicationProperties,
+      RestTemplate restTemplate,
+      LocationService locationService,
+      ApplicantService applicantService,
+      ProjectService projectService,
+      ApplicationMapper applicationMapper,
+      ContactService contactService,
+      SearchService searchService,
+      MetaService metaService,
+      UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -65,6 +63,7 @@ public class ApplicationService {
     this.contactService = contactService;
     this.searchService = searchService;
     this.metaService = metaService;
+    this.userService = userService;
   }
 
 
@@ -265,6 +264,7 @@ public class ApplicationService {
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));
     applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType(), applicationModel.getMetadataVersion()));
+    applicationJson.setHandler(applicationModel.getHandler() != null ? userService.findUserById(applicationModel.getHandler()) : null);
 
     if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));

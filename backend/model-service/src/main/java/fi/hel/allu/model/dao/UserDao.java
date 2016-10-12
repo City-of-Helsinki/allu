@@ -74,7 +74,7 @@ public class UserDao {
       return findById(id).get();
     } catch (DataIntegrityViolationException e) {
       if (ExceptionResolver.isUniqueConstraintViolation(e)) {
-        throw new NonUniqueException("Inserting user failed.");
+        throw new NonUniqueException("Inserting user failed. Perhaps given user name collided with another: " + userData.getUserName());
       }
       throw e;
     }
