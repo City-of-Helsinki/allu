@@ -4,6 +4,7 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -21,12 +22,15 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -161,7 +165,7 @@ public class ApplicationServiceTest extends MockServices {
     assertNull(response.getApplicant().getPerson());
     assertNotNull(response.getApplicant().getOrganization());
     assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
-    assertEquals("outdoor event nature, Model", ((OutdoorEventJson)response.getEvent()).getNature());
+    assertEquals(createMockOutdoorEventModel().getNature(), ((OutdoorEventJson) response.getEvent()).getNature());
   }
 
   @Test

@@ -2,9 +2,11 @@ package fi.hel.allu.model.testUtils;
 
 import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
+
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -82,7 +84,7 @@ public class TestCommon {
     OutdoorEvent event = new OutdoorEvent();
     event.setDescription("desc");
     event.setAttendees(10);
-    event.setNature("nature");
+    event.setNature(OutdoorEventNature.PUBLIC_FREE);
     return event;
   }
 

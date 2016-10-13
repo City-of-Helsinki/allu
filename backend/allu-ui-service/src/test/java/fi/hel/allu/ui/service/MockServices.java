@@ -1,10 +1,7 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.common.types.ApplicantType;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.RoleType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
@@ -14,6 +11,7 @@ import fi.hel.allu.search.domain.ESFlatValue;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.UserMapper;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -28,7 +26,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
 
 public abstract class MockServices {
   @Mock
@@ -181,7 +181,7 @@ public abstract class MockServices {
     outdoorEventJson.setDescription("Outdoor event description, Json");
     outdoorEventJson.setAttendees(1000);
     outdoorEventJson.setEventStartTime(ZonedDateTime.now());
-    outdoorEventJson.setNature("Outdoor event nature, Json");
+    outdoorEventJson.setNature(OutdoorEventNature.CLOSED);
     outdoorEventJson.setUrl("Outdoor event url, Json");
     outdoorEventJson.setEcoCompass(true);
     outdoorEventJson.setTimeExceptions("Mock exceptions");
@@ -313,7 +313,7 @@ public abstract class MockServices {
   public OutdoorEvent createMockOutdoorEventModel() {
     OutdoorEvent outdoorEvent = new OutdoorEvent();
     outdoorEvent.setUrl("url, Model");
-    outdoorEvent.setNature("outdoor event nature, Model");
+    outdoorEvent.setNature(OutdoorEventNature.PUBLIC_NONFREE);
     outdoorEvent.setEventStartTime(ZonedDateTime.now());
     outdoorEvent.setAttendees(1050);
     outdoorEvent.setDescription("Outdoor event description, Model");
@@ -396,7 +396,7 @@ public abstract class MockServices {
   }
 
   public ResponseEntity<User> createMockUserResponse() {
-    return new ResponseEntity<User>(createMockUser(), HttpStatus.OK);
+    return new ResponseEntity<>(createMockUser(), HttpStatus.OK);
   }
 
   private ResponseEntity<Application[]> createMockApplicationListResponse() {
