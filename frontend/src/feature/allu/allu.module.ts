@@ -37,6 +37,8 @@ import {DecisionModule} from '../decision/decision.module';
 import {SearchModule} from '../search/search.module';
 import {ToolbarModule} from '../toolbar/toolbar.module';
 import {LoginModule} from '../login/login.module';
+import {UserHub} from '../../service/user/user-hub';
+import {UserService} from '../../service/user/user-service';
 
 
 @NgModule({
@@ -69,8 +71,10 @@ import {LoginModule} from '../login/login.module';
   bootstrap: [AlluComponent],
   providers: [
     ApplicationService,
+    UserService,
     GeolocationService,
     ApplicationHub,
+    UserHub,
     MapHub,
     UIStateHub,
     AuthGuard,

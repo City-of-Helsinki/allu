@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
@@ -10,6 +10,8 @@ import {PICKADATE_PARAMETERS, UI_DATE_FORMAT} from '../../util/time.util';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {ApplicationHub} from '../../service/application/application-hub';
+import {UserHub} from '../../service/user/user-hub';
+import {User} from '../../model/common/user';
 
 @Component({
   selector: 'search',
@@ -18,11 +20,11 @@ import {ApplicationHub} from '../../service/application/application-hub';
     require('./search.component.scss')
   ]
 })
-export class SearchComponent {
+export class SearchComponent implements OnInit {
   private applications: Observable<Array<Application>>;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
   // TODO: handlers should be fetched from some service later
-  private handlers: Array<string> = ['TestHandler'];
+  private handlers: Observable<Array<User>>;
   private query: ApplicationSearchQuery = new ApplicationSearchQuery();
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
@@ -30,7 +32,11 @@ export class SearchComponent {
   private applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
 
-  constructor(private applicationHub: ApplicationHub, private router: Router) {
+  constructor(private applicationHub: ApplicationHub, private userHub: UserHub, private router: Router) {
+  }
+
+  ngOnInit(): void {
+    this.handlers = this.userHub.getActiveUsers();
   }
 
   public goToSummary(application: Application): void {
@@ -39,6 +45,5 @@ export class SearchComponent {
 
   private search(): void {
     this.applications = this.applicationHub.searchApplications(this.query);
-    this.applications.subscribe(app => console.log(app));
   }
 }

@@ -48,17 +48,6 @@ export class ApplicationService {
       .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
   }
 
-  public getApplications(): Observable<Array<Application>> {
-    // TODO: Is there ever need to load all applications?
-    let params = new URLSearchParams();
-    params.set('handler', 'TestHandler');
-
-    return this.authHttp.get(ApplicationService.APPLICATIONS_URL, { search: params })
-      .map(response => response.json())
-      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
-  }
-
   public getApplicationsByLocation(query: ApplicationLocationQuery): Observable<Array<Application>> {
     let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH_LOCATION;
 

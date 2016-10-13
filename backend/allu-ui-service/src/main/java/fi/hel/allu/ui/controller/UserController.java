@@ -30,6 +30,12 @@ public class UserController {
     return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/active", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<UserJson>> getActiveUsers() {
+    return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/userName/{userName}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<UserJson> findByUserName(@PathVariable String userName) {

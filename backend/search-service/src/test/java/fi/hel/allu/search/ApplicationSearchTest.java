@@ -65,7 +65,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = new ApplicationES();
     applicationES.setType(ApplicationType.OUTDOOREVENT);
     applicationES.setId(1);
-    applicationES.setHandler(1);
+    applicationES.setHandler(createUser());
     applicationES.setName("Ensimmäinen testi");
     applicationES.setStatus(StatusType.PENDING);
     applicationES.setApplicationTypeData(createApplicationTypeData());
@@ -184,7 +184,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = new ApplicationES();
     applicationES.setType(ApplicationType.OUTDOOREVENT);
     applicationES.setId(id);
-    applicationES.setHandler(1);
+    applicationES.setHandler(createUser());
     applicationES.setName("Mock testi");
     applicationES.setStatus(StatusType.PENDING);
     ZonedDateTime dateTime = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
@@ -212,5 +212,9 @@ public class ApplicationSearchTest {
     contacts.add(new ContactES("kontakti ihminen"));
     contacts.add(new ContactES("toinen contact"));
     return contacts;
+  }
+
+  private UserES createUser() {
+    return new UserES("user name", "real name");
   }
 }

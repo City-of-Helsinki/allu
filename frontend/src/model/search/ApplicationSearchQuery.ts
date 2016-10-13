@@ -1,7 +1,7 @@
-
 import {TimeUtil} from '../../util/time.util';
 import {Sort} from '../common/sort';
 import {ApplicationSearchQueryForm} from './ApplicationSearchQueryForm';
+
 export class ApplicationSearchQuery {
   public applicationId: string;
   public type: string;

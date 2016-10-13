@@ -35,6 +35,11 @@ public class UserService {
     return mapUsers(userResults.getBody());
   }
 
+  public List<UserJson> findAllActiveUsers() {
+    List<UserJson> allUsers = findAllUsers();
+    return allUsers.stream().filter(u -> u.isActive()).collect(Collectors.toList());
+  }
+
   public UserJson findUserByUserName(String userName) {
     ResponseEntity<User> userResults = restTemplate.getForEntity(
         applicationProperties.getUserByUserNameUrl(), User.class, userName);
