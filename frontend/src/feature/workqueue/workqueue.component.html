@@ -1,61 +1,25 @@
 <div>
-  <workqueue-filter (onQueryChange)="queryChanged($event)"></workqueue-filter>
+  <workqueue-filter [selectedTab]="tab" (onQueryChange)="queryChanged($event)"></workqueue-filter>
 
   <div class="row">
     <div class="col s12">
-      <button (click)="console.log('asdf')" class="waves-effect waves-light btn">OMAKSI</button>
-      <button (click)="console.log('asdf')" class="waves-effect waves-light btn">SIIRRÄ</button>
+      <button class="waves-effect waves-light btn">OMAKSI</button>
+      <button class="waves-effect waves-light btn">SIIRRÄ</button>
     </div>
   </div>
 
-  <div class="row">
-    <div class=" col s12">
-      <table class="striped responsive-table">
-        <thead>
-        <tr>
-          <th>
-            <input type="checkbox" class="filled-in" [ngModel]="allSelected" (click)="toggleAll()" id="all_none_checkbox" name="all_none_checkbox"/>
-            <label for="all_none_checkbox"></label>
-          </th>
-          <th class="clickable" (click)="sortBy('handler')">Käsittelijä <i class="material-icons icon-middle">{{iconForField('handler')}}</i></th>
-          <th class="clickable" (click)="sortBy('project')">Hanke <i class="material-icons icon-middle">{{iconForField('project')}}</i></th>
-          <th class="clickable" (click)="sortBy('applicationId')">Tunnus <i class="material-icons icon-middle">{{iconForField('applicationId')}}</i></th>
-          <th class="clickable" (click)="sortBy('type')">Tyyppi <i class="material-icons icon-middle">{{iconForField('type')}}</i></th>
-          <th class="clickable" (click)="sortBy('status')">Tila <i class="material-icons icon-middle">{{iconForField('status')}}</i></th>
-          <th class="clickable" (click)="sortBy('applicant')">Hakija <i class="material-icons icon-middle">{{iconForField('applicant')}}</i></th>
-          <th class="clickable" (click)="sortBy('streetAddress')">Katuosoite <i class="material-icons icon-middle">{{iconForField('streetAddress')}}</i></th>
-          <th class="clickable" (click)="sortBy('district')">Kaupunginosa <i class="material-icons icon-middle">{{iconForField('district')}}</i></th>
-          <th class="clickable" (click)="sortBy('creationTime')">Saapunut <i class="material-icons icon-middle">{{iconForField('creationTime')}}</i></th>
-          <th class="clickable" (click)="sortBy('startTime')">Aloitus <i class="material-icons icon-middle">{{iconForField('startTime')}}</i></th>
-          <th>Lisätietoja</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let row of applicationRows">
-          <td>
-            <input type="checkbox" class="filled-in" [ngModel]="row.selected" id="{{row.application.id}}" />
-            <label [attr.for]="row.application.id"></label>
-          </td>
-          <td>{{row.application.handler.realName}}</td>
-          <td>
-            {{row.application.project.name}} <br>
-            <span>{{row.application.project.id}}</span>
-          </td>
-          <td>{{row.application.applicationId}}</td>
-          <td>{{row.application.type}}</td>
-          <td>{{row.application.status}}</td>
-          <td>
-            {{row.application.applicant.details.name}}<br>
-            <span>Isaksson Harry</span>
-          </td>
-          <td>{{row.application.location?.postalAddress?.streetAddress}}</td>
-          <td>Kamppi</td>
-          <td>{{row.application.uiApplicationCreationTime}}</td>
-          <td>{{row.application.event.uiStartTime}}</td>
-          <td></td>
-        </tr>
-        </tbody>
-      </table>
+  <md-tab-group (selectChange)="tabSelected($event)">
+    <div *ngFor="let tab of tabs">
+      <md-tab>
+        <template md-tab-label>{{tab}}</template>
+        <template md-tab-content>
+          <workqueue-content
+              [applications]="applications"
+              (onSortChange)="sortChanged($event)"
+              (onSelectChange)="selectionChanged($event)">
+          </workqueue-content>
+        </template>
+      </md-tab>
     </div>
-  </div>
+  </md-tab-group>
 </div>

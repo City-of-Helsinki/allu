@@ -1,6 +1,7 @@
 import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {MdTabChangeEvent} from '@angular2-material/tabs';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
@@ -11,7 +12,6 @@ import {EnumUtil} from '../../util/enum.util';
 import {ApplicationStatus} from '../../model/application/application-status-change';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {Sort} from '../../model/common/sort';
-import {Direction} from '../../model/common/sort';
 
 @Component({
   selector: 'workqueue',
@@ -21,10 +21,12 @@ import {Direction} from '../../model/common/sort';
   ]
 })
 export class WorkQueueComponent implements OnInit, OnDestroy {
-  applicationRows: Array<ApplicationRow>;
-  allSelected = false;
-  sort = new Sort(undefined, undefined);
+  applications: Observable<Array<Application>>;
+  tabs = ['Omat', 'Yhteiset'];
+  tab = 'Omat';
+  private selectedApplicationIds = new Array<number>();
   private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
+  private sort: Sort;
   private translations = translations;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
   private handlers: Array<string> = ['TestHandler'];
@@ -35,57 +37,29 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.applicationQuery.asObservable()
+    this.applications = this.applicationQuery.asObservable()
       .debounceTime(300)
       .distinctUntilChanged()
-      .switchMap(query => this.applicationHub.searchApplications(query))
-      .map(applications => this.toApplicationRows(applications))
-      .subscribe(applicationRows => {
-        this.applicationRows = applicationRows;
-      });
+      .switchMap(query => this.applicationHub.searchApplications(query));
   }
 
-  ngOnDestroy() {
-  }
+  ngOnDestroy() {}
 
   queryChanged(query: ApplicationSearchQuery) {
     this.applicationQuery.next(query.withSort(this.sort));
   }
 
-  toggleAll() {
-    this.allSelected = !this.allSelected;
-    this.applicationRows.forEach(row => row.selected = this.allSelected);
-  }
-
-  sortBy(field: string): void {
-    let unsorted = this.sort.field !== field || this.sort.direction === undefined;
-
-    if (unsorted) {
-      this.sort = new Sort(field, Direction.DESC);
-    } else if (this.sort.direction === Direction.DESC) {
-      this.sort = new Sort(this.sort.field, Direction.ASC);
-    } else {
-      this.sort = new Sort(field, undefined);
-    }
+  sortChanged(sort: Sort) {
+    // use old query parameters and new sort
+    this.sort = sort;
     this.queryChanged(this.applicationQuery.getValue());
   }
 
-  iconForField(field: string): string {
-    return field === this.sort.field ? this.sort.icon() : '';
+  selectionChanged(applicationIds: Array<number>) {
+    this.selectedApplicationIds = applicationIds;
   }
 
-  private toApplicationRows(applications: Array<Application>): Array<ApplicationRow> {
-    return applications
-      .map(application => {
-        return {
-          selected: false,
-          application: application
-        };
-      });
+  tabSelected(event: MdTabChangeEvent) {
+    this.tab = this.tabs[event.index];
   }
-}
-
-interface ApplicationRow {
-  selected: boolean;
-  application: Application;
 }
