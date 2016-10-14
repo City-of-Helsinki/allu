@@ -1,5 +1,5 @@
-import {Component, OnInit, Output, EventEmitter} from '@angular/core';
-import {FormGroup, FormBuilder} from '@angular/forms';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {translations} from '../../../util/translations';
 import {EnumUtil} from '../../../util/enum.util';
@@ -8,6 +8,10 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import '../../../rxjs-extensions.ts';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {ApplicationSearchQueryForm} from '../../../model/search/ApplicationSearchQueryForm';
+
+
+const TAB_OWN = 'Omat';
+const HANDLER_FIELD = 'handler';
 
 @Component({
   selector: 'workqueue-filter',
@@ -20,6 +24,7 @@ export class WorkQueueFilterComponent implements OnInit {
   queryForm: FormGroup;
   @Output() onQueryChange = new EventEmitter<ApplicationSearchQuery>();
   pickadateParams = PICKADATE_PARAMETERS;
+
   private translations = translations;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
   private handlers: Array<string> = ['TestHandler'];
@@ -39,8 +44,18 @@ export class WorkQueueFilterComponent implements OnInit {
 
   ngOnInit(): void {
     this.queryForm.valueChanges
-      .debounceTime(300)
       .distinctUntilChanged()
       .subscribe(query => this.onQueryChange.emit(ApplicationSearchQuery.from(query)));
+  }
+
+  @Input() set selectedTab(tab: string) {
+    let control = this.queryForm.get(HANDLER_FIELD);
+
+    if (TAB_OWN === tab) {
+      control.setValue('TestHandler'); // TODO: Set as logged in user
+    } else {
+      // TODO: Add shared handling (applications per role)
+      control.setValue(undefined);
+    }
   }
 }

@@ -1,0 +1,90 @@
+import {Component, OnInit, OnDestroy, Input, Output, EventEmitter} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Subscription} from 'rxjs/Subscription';
+import '../../../rxjs-extensions.ts';
+
+import {Application} from '../../../model/application/application';
+import {Sort, Direction} from '../../../model/common/sort';
+
+@Component({
+  selector: 'workqueue-content',
+  template: require('./workqueue-content.component.html'),
+  styles: [require('./workqueue-content.component.scss')]
+})
+export class WorkQueueContentComponent implements OnInit, OnDestroy {
+  @Input() applications: Observable<Array<Application>>;
+  @Output() onSortChange = new EventEmitter<Sort>();
+  @Output() onSelectChange = new EventEmitter<Array<number>>();
+  applicationRows: Array<ApplicationRow>;
+  allSelected = false;
+  sort = new Sort(undefined, undefined);
+
+  private applicationSubscription: Subscription;
+
+  ngOnInit(): void {
+    this.applicationSubscription = this.applications
+      .map(applications => this.toApplicationRows(applications))
+      .subscribe(applicationRows => {
+        this.applicationRows = applicationRows;
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.applicationSubscription.unsubscribe();
+  }
+
+  checkAll() {
+    let selection = !this.allSelected;
+    this.applicationRows.forEach(row => row.selected = selection);
+    this.notifySelection();
+  }
+
+  checkSingle(row: ApplicationRow) {
+    row.selected = !row.selected;
+    this.notifySelection();
+  }
+
+  sortBy(field: string): void {
+    let unsorted = this.sort.field !== field || this.sort.direction === undefined;
+
+    if (unsorted) {
+      this.sort = new Sort(field, Direction.DESC);
+    } else if (this.sort.direction === Direction.DESC) {
+      this.sort = new Sort(this.sort.field, Direction.ASC);
+    } else {
+      this.sort = new Sort(field, undefined);
+    }
+
+    this.onSortChange.emit(this.sort);
+  }
+
+  iconForField(field: string): string {
+    return field === this.sort.field ? this.sort.icon() : '';
+  }
+
+  private toApplicationRows(applications: Array<Application>): Array<ApplicationRow> {
+    return applications
+      .map(application => {
+        return {
+          selected: false,
+          application: application
+        };
+      });
+  }
+
+  private notifySelection() {
+    this.allSelected = this.applicationRows.every(row => row.selected);
+
+    this.onSelectChange.emit(
+      this.applicationRows
+        .filter(row => row.selected)
+        .map(row => row.application.id)
+    );
+  }
+}
+
+interface ApplicationRow {
+  selected: boolean;
+  application: Application;
+}
