@@ -1,5 +1,7 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
+import {Observable} from 'rxjs/Observable';
+
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {translations} from '../../../util/translations';
 import {EnumUtil} from '../../../util/enum.util';
@@ -8,6 +10,9 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import '../../../rxjs-extensions.ts';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {ApplicationSearchQueryForm} from '../../../model/search/ApplicationSearchQueryForm';
+import {UserHub} from '../../../service/user/user-hub';
+import {User} from '../../../model/common/user';
+import {CurrentUser} from '../../../service/user/current-user';
 
 
 const TAB_OWN = 'Omat';
@@ -27,11 +32,11 @@ export class WorkQueueFilterComponent implements OnInit {
 
   private translations = translations;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
-  private handlers: Array<string> = ['TestHandler'];
+  private handlers: Observable<Array<User>>;
   private applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypes = EnumUtil.enumValues(ApplicationType);
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: FormBuilder, private userHub: UserHub) {
     this.queryForm = fb.group({
       type: undefined,
       handler: undefined,
@@ -46,15 +51,16 @@ export class WorkQueueFilterComponent implements OnInit {
     this.queryForm.valueChanges
       .distinctUntilChanged()
       .subscribe(query => this.onQueryChange.emit(ApplicationSearchQuery.from(query)));
+
+    this.handlers = this.userHub.getActiveUsers();
   }
 
   @Input() set selectedTab(tab: string) {
     let control = this.queryForm.get(HANDLER_FIELD);
 
     if (TAB_OWN === tab) {
-      control.setValue('TestHandler'); // TODO: Set as logged in user
+      CurrentUser.userName().do(userName => control.setValue(userName));
     } else {
-      // TODO: Add shared handling (applications per role)
       control.setValue(undefined);
     }
   }

@@ -2,6 +2,7 @@ export interface Option<A> {
   isDefined(): boolean;
   value(): A;
   map<B>(fn: (a: A) => B): Option<B>;
+  do(fn: (a: A) => any): void;
 }
 
 export function Some<T>(val: T) {
@@ -29,6 +30,12 @@ export class SomeOpt<T> implements Option<T> {
     let result = fn(this.val);
     return result === undefined ? new NoneOpt() : new SomeOpt(result);
   }
+
+  do(fn: (a: T) => any): void {
+    if (this.val) {
+      fn(this.val);
+    }
+  }
 }
 
 export class NoneOpt implements Option<never> {
@@ -45,4 +52,6 @@ export class NoneOpt implements Option<never> {
   map(fn: (a: any) => any): NoneOpt {
     return new NoneOpt();
   }
+
+  do(fn: (a: any) => any): void {}
 }
