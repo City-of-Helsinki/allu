@@ -23,11 +23,6 @@ export class ApplicationHub {
   public getApplication = (id: number) => this.applicationService.getApplication(id);
 
   /**
-   * Lists applications
-   */
-  public getApplications = () => this.applicationService.getApplications();
-
-  /**
    * Fetches applications based on given search query
    */
   public searchApplications = (searchQuery: ApplicationSearchQuery) => this.applicationService.searchApplications(searchQuery);

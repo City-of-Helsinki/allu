@@ -15,7 +15,7 @@
     </div>
     <div class="input-field col m2 s6">
       <select [(ngModel)]="query.status" materialize="material_select" [materializeSelectOptions]="selectOptions">
-        <option value="" disabled selected>Hakemuksen tila</option>
+        <option value="" selected>Hakemuksen tila</option>
         <option *ngFor="let option of applicationStatusStrings" [value]="option">{{ translations.application.status[option] }}</option>
       </select>
       <label>Hakemuksen tila</label>
@@ -30,7 +30,7 @@
     <div class="input-field col m2 s6">
       <select [(ngModel)]="query.handler" materialize="material_select" [materializeSelectOptions]="selectOptions">
         <option value="" selected>Hakemuksen käsittelijä</option>
-        <option *ngFor="let option of handlers" [value]="option">{{option}}</option>
+        <option *ngFor="let option of handlers | async" [value]="option.userName">{{option.realName}}</option>
       </select>
       <label>Hakemuksen käsittelijä</label>
     </div>

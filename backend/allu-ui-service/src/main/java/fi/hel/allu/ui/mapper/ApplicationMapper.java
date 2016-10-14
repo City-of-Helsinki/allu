@@ -69,7 +69,9 @@ public class ApplicationMapper {
     applicationES.setCreationTime(ZonedDateTime.now());
     applicationES.setStartTime(applicationJson.getStartTime());
     applicationES.setEndTime(applicationJson.getEndTime());
-    applicationES.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
+    applicationES.setHandler(
+        applicationJson.getHandler() != null ?
+            new UserES(applicationJson.getHandler().getUserName(), applicationJson.getHandler().getRealName()) : null);
     applicationES.setType(applicationJson.getType());
     applicationES.setStatus(applicationJson.getStatus());
     applicationES.setDecisionTime(applicationJson.getDecisionTime());
