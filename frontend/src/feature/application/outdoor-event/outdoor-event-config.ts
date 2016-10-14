@@ -36,10 +36,16 @@ const billingTypes = [
   {name: 'Lasku', value: 'Invoice'}
 ];
 
+export enum EventNature {
+  PUBLIC_FREE,
+  PUBLIC_NONFREE,
+  CLOSED
+}
+
 const eventNatures = [
-  {name: 'Avoin', value: 'Open'},
-  {name: 'Maksullinen', value: 'Paid'},
-  {name: 'Suljettu', value: 'Closed'}
+  {name: 'Avoin', value: EventNature[EventNature.PUBLIC_FREE]},
+  {name: 'Maksullinen', value: EventNature[EventNature.PUBLIC_NONFREE]},
+  {name: 'Suljettu', value: EventNature[EventNature.CLOSED]}
 ];
 
 const noPriceReasons = [

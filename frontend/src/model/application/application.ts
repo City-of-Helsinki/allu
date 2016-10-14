@@ -11,6 +11,7 @@ import {StructureMeta} from './structure-meta';
 import {AttachmentInfo} from './attachment-info';
 import {TimeUtil} from '../../util/time.util';
 import {User} from '../common/user';
+import {outdoorEventConfig, EventNature} from '../../feature/application/outdoor-event/outdoor-event-config';
 
 
 export class Application {
@@ -74,7 +75,7 @@ export class Application {
       'kontakti@ihminen.fi',
       '0301234567');
     let applicationTypeData = new OutdoorEvent(
-      'Promootio',
+      EventNature[EventNature.PUBLIC_FREE],
       'Tapahtuman tavoitteena on saada ulkoilmatapahtumat tutuksi ihmisille.',
       'url',
       'OUTDOOREVENT',
@@ -104,6 +105,7 @@ export class Application {
     app.applicant = applicant;
     app.startTime = new Date('2016-04-01T10:00:00');
     app.endTime = new Date('2017-03-31T10:00:00');
+
     return app;
   }
 
