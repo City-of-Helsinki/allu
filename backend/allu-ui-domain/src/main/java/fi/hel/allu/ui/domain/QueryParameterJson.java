@@ -1,42 +1,24 @@
-package fi.hel.allu.search.domain;
+package fi.hel.allu.ui.domain;
 
 import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
- * Class for defining a single search query parameter. It's worth noticing that due to JSON serialization constraints, this class has
- * not been split up into specialized classes such as <code>QueryParameter</code> and <code>QueryMultiParameter</code>.
+ * Search parameter mapping for UI. Any of the search fields may be left empty. If all of them are empty, the query parameter is ignored.
  */
-public class QueryParameter {
+public class QueryParameterJson {
+
   private String fieldName;
   private String fieldValue;
   private List<String> fieldMultiValue;
   private ZonedDateTime startDateValue;
   private ZonedDateTime endDateValue;
 
-  public QueryParameter() {
-  }
-
-  public QueryParameter(String fieldName, String fieldValue) {
-    this.fieldName = fieldName;
-    this.fieldValue = fieldValue;
-  }
-
-  public QueryParameter(String fieldName, List<String> fieldMultiValue) {
-    this.fieldName = fieldName;
-    this.fieldMultiValue = fieldMultiValue;
-  }
-
-  public QueryParameter(String fieldName, ZonedDateTime startDateValue, ZonedDateTime endDateValue) {
-    this.fieldName = fieldName;
-    this.startDateValue = startDateValue;
-    this.endDateValue = endDateValue;
-  }
-
   /**
-   * Returns the name of the search field. This is the field name ElasticSearch is also using.
+   * Returns the name of the search field. This is the field name ElasticSearch is also using. If magical field name "_all" is used, the
+   * query is done against all fields.
    *
-   * @return
+   * @return  the name of the search field. This is the field name ElasticSearch is also using.
    */
   public String getFieldName() {
     return fieldName;

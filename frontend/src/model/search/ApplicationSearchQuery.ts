@@ -4,9 +4,9 @@ import {ApplicationSearchQueryForm} from './ApplicationSearchQueryForm';
 
 export class ApplicationSearchQuery {
   public applicationId: string;
-  public type: string;
-  public status: string;
-  public handler: string;
+  public type: Array<string>;
+  public status: Array<string>;
+  public handler: Array<string>;
   public address: string;
   public applicant: string;
   public contact: string;
@@ -34,9 +34,9 @@ export class ApplicationSearchQuery {
   public static from(queryForm: ApplicationSearchQueryForm) {
     let query = new ApplicationSearchQuery();
     query.applicationId = queryForm.applicationId;
-    query.type = queryForm.type;
-    query.status = queryForm.status;
-    query.handler = queryForm.handler;
+    query.type = queryForm.type ? [queryForm.type] : undefined;
+    query.status = queryForm.status ? [queryForm.status] : undefined;
+    query.handler = queryForm.handler ? [queryForm.handler] : undefined;
     query.address = queryForm.address;
     query.applicant = queryForm.applicant;
     query.contact = queryForm.contact;

@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_NAME;
@@ -30,6 +31,9 @@ import static org.junit.Assert.*;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppTestConfig.class)
 public class ApplicationSearchTest {
+
+  private static final String USERNAME = "someusername";
+
   @Autowired
   private Client client;
   private ApplicationSearchService applicationSearchService;
@@ -78,13 +82,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insertApplication(applicationES);
 
-    QueryParameters params = new QueryParameters();
-    QueryParameter parameter = new QueryParameter();
-    parameter.setFieldName("name");
-    parameter.setFieldValue("testi");
-    List<QueryParameter> parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
+    QueryParameters params = createQueryParameters("name", "testi");
     applicationSearchService.refreshIndex();
     List<ApplicationES> appList = applicationSearchService.findByField(params);
     assertNotNull(appList);
@@ -97,10 +95,38 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insertApplication(applicationES);
 
+    QueryParameters params = createQueryParameters("contacts.name", "kontakti");
+    applicationSearchService.refreshIndex();
+    List<ApplicationES> appList = applicationSearchService.findByField(params);
+    assertNotNull(appList);
+    assertEquals(1, appList.size());
+    applicationSearchService.deleteApplication("1");
+  }
+
+  @Test
+  public void testFindByMultipleHandlers() {
+    ApplicationES applicationES = createApplication(1);
+    applicationSearchService.insertApplication(applicationES);
+
     QueryParameters params = new QueryParameters();
-    QueryParameter parameter = new QueryParameter();
-    parameter.setFieldName("contacts.name");
-    parameter.setFieldValue("kontakti");
+    QueryParameter parameter = new QueryParameter("handler.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
+    List<QueryParameter> parameterList = new ArrayList<>();
+    parameterList.add(parameter);
+    params.setQueryParameters(parameterList);
+    applicationSearchService.refreshIndex();
+    List<ApplicationES> appList = applicationSearchService.findByField(params);
+    assertNotNull(appList);
+    assertEquals(1, appList.size());
+    applicationSearchService.deleteApplication("1");
+  }
+
+  @Test
+  public void testFindByMultipleStatuses() {
+    ApplicationES applicationES = createApplication(1);
+    applicationSearchService.insertApplication(applicationES);
+
+    QueryParameters params = new QueryParameters();
+    QueryParameter parameter = new QueryParameter("status", Arrays.asList(StatusType.PENDING.name(), StatusType.CANCELLED.name()));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
@@ -117,12 +143,9 @@ public class ApplicationSearchTest {
     applicationSearchService.insertApplication(applicationES);
 
     QueryParameters params = new QueryParameters();
-    QueryParameter parameter = new QueryParameter();
     ZonedDateTime testStartTime = ZonedDateTime.parse("2016-07-05T06:10:10.000Z");
     ZonedDateTime testEndTime = ZonedDateTime.parse(  "2016-07-06T05:10:10.000Z");
-    parameter.setFieldName("creationTime");
-    parameter.setStartDateValue(testStartTime);
-    parameter.setEndDateValue(testEndTime);
+    QueryParameter parameter = new QueryParameter("creationTime", testStartTime, testEndTime);
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
@@ -133,9 +156,7 @@ public class ApplicationSearchTest {
 
     testStartTime = ZonedDateTime.parse("2016-07-03T06:10:10.000Z");
     testEndTime = ZonedDateTime.parse(  "2016-07-04T05:10:10.000Z");
-    parameter.setFieldName("creationTime");
-    parameter.setStartDateValue(testStartTime);
-    parameter.setEndDateValue(testEndTime);
+    parameter = new QueryParameter("creationTime", testStartTime, testEndTime);
     parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
@@ -215,6 +236,15 @@ public class ApplicationSearchTest {
   }
 
   private UserES createUser() {
-    return new UserES("user name", "real name");
+    return new UserES(USERNAME, "real name");
+  }
+
+  private QueryParameters createQueryParameters(String fieldName, String queryParameter) {
+    QueryParameters params = new QueryParameters();
+    QueryParameter parameter = new QueryParameter(fieldName, queryParameter);
+    List<QueryParameter> parameterList = new ArrayList<>();
+    parameterList.add(parameter);
+    params.setQueryParameters(parameterList);
+    return params;
   }
 }
