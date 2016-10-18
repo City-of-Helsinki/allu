@@ -50,6 +50,8 @@ export class LocationComponent {
         this.applicationHub.getApplication(id).subscribe(application => {
           this.application = application;
           this.locationState.location = application.location || new Location();
+          this.locationState.startDate = application.startTime;
+          this.locationState.endDate = application.endTime;
         });
       }
 
@@ -73,6 +75,8 @@ export class LocationComponent {
       // If there is an application to save the location data to
       console.log('Saving location for application id: ', this.application.id);
       this.application.location = this.locationState.location;
+      this.application.startTime = this.locationState.startDate;
+      this.application.endTime = this.locationState.endDate;
       this.applicationHub.save(this.application).subscribe(application => {
         this.router.navigate(['/applications', application.id, 'summary']);
       });

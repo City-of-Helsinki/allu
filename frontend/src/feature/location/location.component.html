@@ -6,7 +6,9 @@
       <md-card-content>
         <div class="row">
           <div class="col m12">
-            <searchbar (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
+            <searchbar [addressSearch]="locationState.location.postalAddress.streetAddress"
+                       [startDate]="locationState.startDate" [endDate]="locationState.endDate"
+                       (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
             <div class="input-field col m12">
               <input id="info" type="text" class="" [(ngModel)]="locationState.location.info">
               <label for="info">Lisätietoja paikasta</label>
@@ -30,7 +32,7 @@
           </div>
           <div class="col m12">
             <div class="mapcontainer">
-              <map [draw]="true" [edit]="true" [selection]="true" [applicationId]="id"></map>
+              <map [draw]="true" [edit]="true" [selection]="true" [applicationId]="application.id"></map>
             </div>
           </div>
         </div>
