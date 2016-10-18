@@ -4,10 +4,10 @@ import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+import fi.hel.allu.ui.mapper.QueryParameterMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,10 +186,10 @@ public class ApplicationService {
    * @param queryParameters list of query parameters
    * @return List of found application with details
    */
-  public List<ApplicationJson> search(QueryParameters queryParameters) {
+  public List<ApplicationJson> search(QueryParametersJson queryParameters) {
     List<ApplicationJson> resultList = Collections.emptyList();
     if (!queryParameters.getQueryParameters().isEmpty()) {
-      List<Integer> ids = searchService.search(queryParameters);
+      List<Integer> ids = searchService.search(QueryParameterMapper.mapToQueryParameters(queryParameters));
       resultList = findApplicationsById(ids);
     }
     return resultList;

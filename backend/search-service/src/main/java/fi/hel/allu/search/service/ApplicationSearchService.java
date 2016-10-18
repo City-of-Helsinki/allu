@@ -17,8 +17,7 @@ import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.query.*;
 import org.elasticsearch.search.SearchHit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +31,6 @@ import java.util.concurrent.ExecutionException;
 
 import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_NAME;
 import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_TYPE_NAME;
-import static org.elasticsearch.index.query.QueryBuilders.boolQuery;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Service
 public class ApplicationSearchService {
@@ -133,16 +130,14 @@ public class ApplicationSearchService {
         throw new SearchException("Missing query parameters");
       }
 
-      BoolQueryBuilder qb = boolQuery();
+      BoolQueryBuilder qb = QueryBuilders.boolQuery();
 
       for (QueryParameter param : queryParameters.getQueryParameters()) {
-        if (param.getFieldName() != null && param.getFieldValue() != null) {
-          qb.must(matchQuery(param.getFieldName(), param.getFieldValue()));
-        } else if (param.getStartDateValue() != null && param.getEndDateValue() != null) {
-          qb.must(QueryBuilders.rangeQuery(param.getFieldName()).from(param.getStartDateValue().toInstant().toEpochMilli()).to(
-              param.getEndDateValue().toInstant().toEpochMilli()));
-        }
+        qb.must(createQueryBuilder(param));
       }
+
+      logger.debug("Searching with the following query:\n {}", qb.toString());
+
       SearchResponse response = client.prepareSearch(APPLICATION_INDEX_NAME)
           .setTypes(APPLICATION_TYPE_NAME)
           .setQuery(qb)
@@ -191,5 +186,22 @@ public class ApplicationSearchService {
       }
     }
     return appList;
+  }
+
+  private QueryBuilder createQueryBuilder(QueryParameter queryParameter) {
+    if (queryParameter.getFieldValue() != null) {
+      return QueryBuilders.matchQuery(queryParameter.getFieldName(), queryParameter.getFieldValue());
+    } else if (queryParameter.getStartDateValue() != null && queryParameter.getEndDateValue() != null) {
+      return QueryBuilders.rangeQuery(queryParameter.getFieldName()).from(queryParameter.getStartDateValue().toInstant().toEpochMilli()).to(
+          queryParameter.getEndDateValue().toInstant().toEpochMilli());
+    } else if (queryParameter.getFieldMultiValue() != null) {
+      BoolQueryBuilder qb = QueryBuilders.boolQuery();
+      for (String searchTerm : queryParameter.getFieldMultiValue()) {
+        qb = qb.should(QueryBuilders.matchQuery(queryParameter.getFieldName(), searchTerm));
+      }
+      return qb;
+    } else {
+      throw new UnsupportedOperationException("Unknown query value type: " + queryParameter.getFieldValue().getClass().toString());
+    }
   }
 }

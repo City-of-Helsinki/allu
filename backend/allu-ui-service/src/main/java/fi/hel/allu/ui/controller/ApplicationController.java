@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import fi.hel.allu.ui.domain.QueryParametersJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -71,7 +72,7 @@ public class ApplicationController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParameters queryParameters) {
+  public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
     return new ResponseEntity<>(applicationService.search(queryParameters), HttpStatus.OK);
   }
 

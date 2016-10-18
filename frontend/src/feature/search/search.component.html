@@ -1,78 +1,80 @@
-
 <div>
   <h1>HAKU</h1>
+  <form [formGroup]="queryForm">
+    <div class="row">
+      <div class="input-field col m4 s6">
+        <input id="applicationId" type="text" formControlName="applicationId">
+        <label>Hakemuksen tunnus</label>
+      </div>
+      <div class="input-field col m2 s6">
+        <select formControlName="type" materialize="material_select">
+          <option value="" selected>Hakemuksen tyyppi</option>
+          <option *ngFor="let option of applicationTypeStrings" [value]="option">{{ translations.application.type[option] }}</option>
+        </select>
+        <label>Hakemuksen tyyppi</label>
+      </div>
+      <div class="input-field col m2 s6">
+        <select formControlName="status" materialize="material_select">
+          <option value="" selected>Hakemuksen tila</option>
+          <option *ngFor="let option of applicationStatusStrings" [value]="option">{{ translations.application.status[option] }}</option>
+        </select>
+        <label>Hakemuksen tila</label>
+      </div>
+      <div class="input-field col m2 s6">
+        <!-- select disabled formControlName="district" materialize="material_select" -->
+        <select disabled materialize="material_select">
+          <option value="" disabled selected>Kaupunginosa</option>
+          <option *ngFor="let option of items" [value]="option">{{option}}</option>
+        </select>
+        <label>Kaupunginosa</label>
+      </div>
+      <div class="input-field col m2 s6">
+        <select formControlName="handler" materialize="material_select">
+          <option value="" selected>Hakemuksen käsittelijä</option>
+          <option *ngFor="let option of handlers | async" [value]="[option.userName]">{{option.realName}}</option>
+        </select>
+        <label>Hakemuksen käsittelijä</label>
+      </div>
+
+      <div class="input-field col m4 s6">
+        <input id="address" type="text" formControlName="address">
+        <label>Osoite</label>
+      </div>
+      <div class="input-field col m2 s6">
+        <input id="applicantName" type="text" formControlName="applicant">
+        <label>Hakija</label>
+      </div>
+      <div class="input-field col m2 s6">
+        <input id="contactName" type="text" formControlName="contact">
+        <label>Yhteyshenkilö</label>
+      </div>
+      <div class="input-field col m2 s6">
+        <input placeholder="Vapaa tekstihaku" id="freeText" type="text" formControlName="freeText">
+        <label>Vapaa tekstihaku</label>
+      </div>
+      <div class="input-field col m1 s6">
+        <label for="startDate">Alkupvm</label>
+        <input id="startDate"
+               formControlName="startTime"
+               materialize="pickadate"
+               [materializeParams]="pickadateParams"
+               type="text"/>
+      </div>
+      <div class="input-field col m1 s6">
+        <input id="endDate"
+               formControlName="endTime"
+               materialize="pickadate"
+               [materializeParams]="pickadateParams"
+               type="text"/>
+        <label for="endDate">Loppupvm</label>
+      </div>
+      <div class="col m12 s12">
+        <button (click)="search()" class="waves-effect waves-light btn">HAE</button>
+      </div>
+    </div>
+  </form>
+
   <div class="row">
-    <div class="input-field col m4 s6">
-      <input id="applicationId"  type="text" [(ngModel)]="query.applicationId">
-      <label>Hakemuksen tunnus</label>
-    </div>
-    <div class="input-field col m2 s6">
-      <select [(ngModel)]="query.type" materialize="material_select" [materializeSelectOptions]="selectOptions">
-        <option value="" selected>Hakemuksen tyyppi</option>
-        <option *ngFor="let option of applicationTypeStrings" [value]="option">{{ translations.application.type[option] }}</option>
-      </select>
-      <label>Hakemuksen tyyppi</label>
-    </div>
-    <div class="input-field col m2 s6">
-      <select [(ngModel)]="query.status" materialize="material_select" [materializeSelectOptions]="selectOptions">
-        <option value="" selected>Hakemuksen tila</option>
-        <option *ngFor="let option of applicationStatusStrings" [value]="option">{{ translations.application.status[option] }}</option>
-      </select>
-      <label>Hakemuksen tila</label>
-    </div>
-    <div class="input-field col m2 s6">
-      <select disabled [(ngModel)]="selectedOption" materialize="material_select" [materializeSelectOptions]="selectOptions">
-        <option value="" disabled selected>Kaupunginosa</option>
-        <option *ngFor="let option of items" [value]="option">{{option}}</option>
-      </select>
-      <label>Kaupunginosa</label>
-    </div>
-    <div class="input-field col m2 s6">
-      <select [(ngModel)]="query.handler" materialize="material_select" [materializeSelectOptions]="selectOptions">
-        <option value="" selected>Hakemuksen käsittelijä</option>
-        <option *ngFor="let option of handlers | async" [value]="option.userName">{{option.realName}}</option>
-      </select>
-      <label>Hakemuksen käsittelijä</label>
-    </div>
-
-    <div class="input-field col m4 s6">
-      <input id="address"  type="text" [(ngModel)]="query.address">
-      <label>Osoite</label>
-    </div>
-    <div class="input-field col m2 s6">
-      <input  id="applicantName"  type="text" [(ngModel)]="query.applicant">
-      <label>Hakija</label>
-    </div>
-    <div class="input-field col m2 s6">
-      <input  id="contactName"  type="text" [(ngModel)]="query.contact">
-      <label>Yhteyshenkilö</label>
-    </div>
-    <div class="input-field col m2 s6">
-      <input placeholder="Vapaa tekstihaku" id="freeText"  type="text" [(ngModel)]="query.freeText">
-      <label>Vapaa tekstihaku</label>
-    </div>
-    <div class="input-field col m1 s6">
-      <label for="startDate">Alkupvm</label>
-      <input id="startDate"
-      [(ngModel)]="query.uiStartTime"
-      materialize="pickadate"
-      [materializeParams]="pickadateParams"
-      type="text" />
-    </div>
-    <div class="input-field col m1 s6">
-      <input id="endDate"
-      [(ngModel)]="query.uiEndTime"
-      materialize="pickadate"
-      [materializeParams]="pickadateParams"
-      type="text" />
-      <label for="endDate">Loppupvm</label>
-    </div>
-    <div class="col m12 s12">
-      <button (click)="search()" class="waves-effect waves-light btn">HAE</button>
-    </div>
-</div>
-
-<div class="row">
   <div class=" col s12">
     <table class="striped responsive-table">
       <thead>
