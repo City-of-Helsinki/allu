@@ -190,7 +190,9 @@ public class ApplicationSearchService {
 
   private QueryBuilder createQueryBuilder(QueryParameter queryParameter) {
     if (queryParameter.getFieldValue() != null) {
-      return QueryBuilders.matchQuery(queryParameter.getFieldName(), queryParameter.getFieldValue());
+      return QueryBuilders.matchQuery(
+          queryParameter.getFieldName(), queryParameter.getFieldValue())
+          .operator(MatchQueryBuilder.Operator.AND);
     } else if (queryParameter.getStartDateValue() != null && queryParameter.getEndDateValue() != null) {
       return QueryBuilders.rangeQuery(queryParameter.getFieldName()).from(queryParameter.getStartDateValue().toInstant().toEpochMilli()).to(
           queryParameter.getEndDateValue().toInstant().toEpochMilli());
