@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
+import {Component, Input, OnInit, OnDestroy, Output, EventEmitter, AfterViewInit} from '@angular/core';
 
 import {StringUtil} from '../../util/string.util';
 import {SearchbarFilter} from '../../service/searchbar-filter';
@@ -18,14 +18,14 @@ declare var Materialize: any;
     require('./searchbar.component.scss')
   ]
 })
-export class SearchbarComponent implements OnInit {
+export class SearchbarComponent implements OnInit, AfterViewInit {
 
   @Input() addressSearch: string;
+  @Input() startDate: Date;
+  @Input() endDate: Date;
   @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
 
   private pickadateParams = PICKADATE_PARAMETERS;
-  private _startDate: Date;
-  private _endDate: Date;
   private notFound: boolean;
 
   constructor(private mapHub: MapHub) {}
@@ -38,8 +38,12 @@ export class SearchbarComponent implements OnInit {
       .forEach(coords => Materialize.toast('Osoitetta ei löytynyt', 4000));
   }
 
+  ngAfterViewInit(): void {
+    setTimeout(() => Materialize.updateTextFields(), 10);
+  }
+
   public notifySearchUpdated(): void {
-    let filter = new SearchbarFilter(this.addressSearch, this._startDate, this._endDate);
+    let filter = new SearchbarFilter(this.addressSearch, this.startDate, this.endDate);
     this.searchUpdated.emit(filter);
     this.mapHub.addSearchFilter(filter);
   }
@@ -49,21 +53,21 @@ export class SearchbarComponent implements OnInit {
     this.notifySearchUpdated();
   }
 
-  set startDate(date: string) {
-    this._startDate = TimeUtil.getDateFromUi(date);
+  set uiStartDate(date: string) {
+    this.startDate = TimeUtil.getDateFromUi(date);
     this.notifySearchUpdated();
   }
 
-  get startDate(): string {
-    return TimeUtil.getUiDateString(this._startDate);
+  get uiStartDate(): string {
+    return TimeUtil.getUiDateString(this.startDate);
   }
 
-  set endDate(date: string) {
-    this._endDate = TimeUtil.getDateFromUi(date);
+  set uiEndDate(date: string) {
+    this.endDate = TimeUtil.getDateFromUi(date);
     this.notifySearchUpdated();
   }
 
-  get endDate(): string {
-    return TimeUtil.getUiDateString(this._endDate);
+  get uiEndDate(): string {
+    return TimeUtil.getUiDateString(this.endDate);
   }
 }
