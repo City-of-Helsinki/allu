@@ -1,15 +1,14 @@
 package fi.hel.allu.model.dao;
 
-import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QGeometry.geometry1;
-import static fi.hel.allu.QLocation.location;
+import com.querydsl.core.QueryException;
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQuery;
+import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.DefaultMapper;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Vector;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SquareSection;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
@@ -19,14 +18,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.QueryException;
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLQuery;
-import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.DefaultMapper;
+import java.util.*;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.domain.Location;
+import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QGeometry.geometry1;
+import static fi.hel.allu.QLocation.location;
+import static fi.hel.allu.QSquareSection.squareSection;
 
 @Repository
 public class LocationDao {
@@ -36,6 +34,7 @@ public class LocationDao {
   private SQLQueryFactory queryFactory;
 
   final QBean<Location> locationBean = bean(Location.class, location.all());
+  final QBean<SquareSection> squareSectionBean = bean(SquareSection.class, squareSection.all());
 
   @Transactional(readOnly = true)
   public Optional<Location> findById(int id) {
@@ -85,6 +84,11 @@ public class LocationDao {
       queryFactory.delete(geometry1).where(geometry1.locationId.eq(locationId)).execute();
       queryFactory.delete(location).where(location.id.eq(locationId)).execute();
     }
+  }
+
+  @Transactional(readOnly = true)
+  public List<SquareSection> getSquareSectionList() {
+    return queryFactory.select(squareSectionBean).from(squareSection).where(squareSection.isActive.eq(true)).fetch();
   }
 
   private void setGeometry(int locationId, Geometry geometry) {

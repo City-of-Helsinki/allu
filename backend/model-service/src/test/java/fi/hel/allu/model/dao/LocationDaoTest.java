@@ -1,12 +1,11 @@
 package fi.hel.allu.model.dao;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.geometrycollection;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import com.querydsl.sql.SQLQueryFactory;
+
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SquareSection;
+import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
@@ -18,14 +17,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.testUtils.TestCommon;
+import java.util.List;
+
+import static fi.hel.allu.QSquareSection.squareSection;
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
+@Transactional
 public class LocationDaoTest {
 
   @Autowired
@@ -33,6 +38,9 @@ public class LocationDaoTest {
 
   @Autowired
   TestCommon testCommon;
+
+  @Autowired
+  private SQLQueryFactory queryFactory;
 
   @Before
   public void setUp() throws Exception {
@@ -109,4 +117,33 @@ public class LocationDaoTest {
     assertTrue(diff < 0.0001);
   }
 
+  @Test
+  public void testSquareSectionId() {
+    // Setup: add square-section with known ID
+    final int SQUARE_SECTION_ID = 9876;
+    long insertCount = queryFactory.insert(squareSection).set(squareSection.id, SQUARE_SECTION_ID)
+        .set(squareSection.square, "Narinkka")
+        .set(squareSection.section, "lohko A").execute();
+    assertEquals(1, insertCount);
+    // Test: add location with squareSectionId
+    Location locIn = new Location();
+    locIn.setSquareSectionId(SQUARE_SECTION_ID);
+    Location locOut = locationDao.insert(locIn);
+    assertEquals(SQUARE_SECTION_ID, locOut.getSquareSectionId().intValue());
+  }
+
+  @Test
+  public void testGetSquareSectionList() {
+    // Setup: add two active rows and one passive
+    long insertCount = queryFactory.insert(squareSection).set(squareSection.square, "Kauppatori")
+        .set(squareSection.section, "lohko A").set(squareSection.isActive, true).addBatch()
+        .set(squareSection.square, "Senaatintori").set(squareSection.isActive, true).addBatch()
+        .set(squareSection.square, "Kauppatori").set(squareSection.section, "lohko Q")
+        .set(squareSection.isActive, false).addBatch().execute();
+    assertEquals(3, insertCount);
+    // Test: get list, should only one 2 items, and only one at Kauppatori
+    List<SquareSection> queryResult = locationDao.getSquareSectionList();
+    assertEquals(2, queryResult.size());
+    assertEquals(1, queryResult.stream().filter(sqs -> sqs.getSquare().equals("Kauppatori")).count());
+  }
 }

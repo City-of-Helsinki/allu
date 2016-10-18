@@ -1,5 +1,12 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SquareSection;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.ui.domain.SquareSectionJson;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,10 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class LocationService {
@@ -94,6 +100,17 @@ public class LocationService {
     return locationJson;
   }
 
+  /**
+   * Retrieve the list of defined square-section-locations
+   * @return list of SquareSection locations
+   */
+  public List<SquareSectionJson> getSquareSectionList() {
+    ResponseEntity<SquareSection[]> queryResult = restTemplate.getForEntity(applicationProperties
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_GET_SQUARE_SECTION), SquareSection[].class);
+    List<SquareSectionJson> resultList = Arrays.stream(queryResult.getBody()).map(ss -> mapToSquareSectionJson(ss))
+        .collect(Collectors.toList());
+    return resultList;
+  }
 
   private Location createLocationModel(LocationJson locationJson) {
     Location location = new Location();
@@ -107,6 +124,7 @@ public class LocationService {
     }
     location.setGeometry(locationJson.getGeometry());
     location.setArea(locationJson.getArea());
+    location.setSquareSectionId(locationJson.getSquareSectionId());
     return location;
   }
 
@@ -119,5 +137,14 @@ public class LocationService {
     locationJson.setPostalAddress(postalAddressJson);
     locationJson.setGeometry(location.getGeometry());
     locationJson.setArea(location.getArea());
+    locationJson.setSquareSectionId(location.getSquareSectionId());
+  }
+
+  private SquareSectionJson mapToSquareSectionJson(SquareSection squareSection) {
+    SquareSectionJson squareSectionJson = new SquareSectionJson();
+    squareSectionJson.setId(squareSection.getId());
+    squareSectionJson.setSquare(squareSection.getSquare());
+    squareSectionJson.setSection(squareSection.getSection());
+    return squareSectionJson;
   }
 }

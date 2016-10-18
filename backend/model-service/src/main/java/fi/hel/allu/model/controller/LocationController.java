@@ -1,21 +1,19 @@
 package fi.hel.allu.model.controller;
 
-import java.util.Optional;
-
-import javax.validation.Valid;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.SquareSection;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.domain.Location;
+import javax.validation.Valid;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/locations")
@@ -29,12 +27,12 @@ public class LocationController {
     Optional<Location> location = locationDao.findById(id);
     Location locationValue = location
         .orElseThrow(() -> new NoSuchEntityException("Location not found", Integer.toString(id)));
-    return new ResponseEntity<Location>(locationValue, HttpStatus.OK);
+    return new ResponseEntity<>(locationValue, HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Location> update(@PathVariable int id, @Valid @RequestBody(required = true) Location location) {
-    return new ResponseEntity<Location>(locationDao.update(id, location), HttpStatus.OK);
+    return new ResponseEntity<>(locationDao.update(id, location), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.POST)
@@ -42,6 +40,11 @@ public class LocationController {
     if (location.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
-    return new ResponseEntity<Location>(locationDao.insert(location), HttpStatus.OK);
+    return new ResponseEntity<>(locationDao.insert(location), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/square-section", method = RequestMethod.GET)
+  public ResponseEntity<List<SquareSection>> getSquareSectionList() {
+    return new ResponseEntity<>(locationDao.getSquareSectionList(), HttpStatus.OK);
   }
 }

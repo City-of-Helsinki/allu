@@ -18,12 +18,21 @@ create table allu.organization (
     email text,
     phone text );
 
+create table allu.square_section (
+    id serial primary key,
+    square text,
+    section text,
+    is_active boolean );
+
+comment on table allu.square_section is 'Predefined Square+Section type locations';
+
 create table allu.location (
    id serial primary key,
    street_address text,
    postal_code text,
    city text,
-   area double precision );
+   area double precision,
+   square_section_id integer references allu.square_section(id) );
 
 create table allu.geometry (
    id serial primary key,
