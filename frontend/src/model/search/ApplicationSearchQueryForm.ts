@@ -1,8 +1,8 @@
 export interface ApplicationSearchQueryForm {
   applicationId?: string;
-  type?: string;
-  status?: string;
-  handler?: string;
+  type?: Array<string>;
+  status?: Array<string>;
+  handler?: Array<string>;
   address?: string;
   district?: string;
   applicant?: string;

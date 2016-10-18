@@ -14,6 +14,7 @@ import {UserHub} from '../../../service/user/user-hub';
 import {User} from '../../../model/common/user';
 import {CurrentUser} from '../../../service/user/current-user';
 
+declare var Materialize: any;
 
 const TAB_OWN = 'Omat';
 const HANDLER_FIELD = 'handler';
@@ -59,9 +60,9 @@ export class WorkQueueFilterComponent implements OnInit {
     let control = this.queryForm.get(HANDLER_FIELD);
 
     if (TAB_OWN === tab) {
-      CurrentUser.userName().do(userName => control.setValue(userName));
+      CurrentUser.userName().do(userName => control.setValue([userName]));
     } else {
-      control.setValue(undefined);
+      control.setValue([]);
     }
   }
 }

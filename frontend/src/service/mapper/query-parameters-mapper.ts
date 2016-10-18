@@ -16,7 +16,6 @@ export class QueryParametersMapper {
       queryParameters, 'location.streetAddress', QueryParametersMapper.removeExtraWhitespace(query.address));
     QueryParametersMapper.mapParameter(queryParameters, 'applicant.name', QueryParametersMapper.removeExtraWhitespace(query.applicant));
     QueryParametersMapper.mapParameter(queryParameters, 'contacts.name', QueryParametersMapper.removeExtraWhitespace(query.contact));
-    console.log('MAPPING', query);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'handler.userName', query.handler);
     QueryParametersMapper.mapParameter(queryParameters, 'applicationId', QueryParametersMapper.removeExtraWhitespace(query.applicationId));
     QueryParametersMapper.mapArrayParameter(queryParameters, 'status', query.status);
