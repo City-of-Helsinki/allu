@@ -32,6 +32,7 @@ export class SearchComponent implements OnInit {
   private format = UI_DATE_FORMAT;
   private applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
+  private selections = [];
 
   constructor(private applicationHub: ApplicationHub, private userHub: UserHub, private router: Router, fb: FormBuilder) {
     this.queryForm = fb.group({

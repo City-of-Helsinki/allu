@@ -7,30 +7,30 @@
         <label>Hakemuksen tunnus</label>
       </div>
       <div class="input-field col m2 s6">
-        <select formControlName="type" materialize="material_select">
-          <option value="" selected>Hakemuksen tyyppi</option>
+        <select formControlName="type" materialize="material_select" multiple>
+          <option value="" selected disabled>Hakemuksen tyyppi</option>
           <option *ngFor="let option of applicationTypeStrings" [value]="option">{{ translations.application.type[option] }}</option>
         </select>
         <label>Hakemuksen tyyppi</label>
       </div>
       <div class="input-field col m2 s6">
-        <select formControlName="status" materialize="material_select">
-          <option value="" selected>Hakemuksen tila</option>
+        <select formControlName="status" materialize="material_select" multiple>
+          <option value="" selected disabled>Hakemuksen tila</option>
           <option *ngFor="let option of applicationStatusStrings" [value]="option">{{ translations.application.status[option] }}</option>
         </select>
         <label>Hakemuksen tila</label>
       </div>
       <div class="input-field col m2 s6">
         <!-- select disabled formControlName="district" materialize="material_select" -->
-        <select disabled materialize="material_select">
+        <select disabled materialize="material_select" multiple>
           <option value="" disabled selected>Kaupunginosa</option>
           <option *ngFor="let option of items" [value]="option">{{option}}</option>
         </select>
         <label>Kaupunginosa</label>
       </div>
       <div class="input-field col m2 s6">
-        <select formControlName="handler" materialize="material_select">
-          <option value="" selected>Hakemuksen käsittelijä</option>
+        <select formControlName="handler" materialize="material_select" multiple>
+          <option value="" selected disabled>Hakemuksen käsittelijä</option>
           <option *ngFor="let option of handlers | async" [value]="[option.userName]">{{option.realName}}</option>
         </select>
         <label>Hakemuksen käsittelijä</label>

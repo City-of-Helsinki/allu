@@ -3,29 +3,29 @@
     <form [formGroup]="queryForm">
         <div class="row">
             <div class="input-field col s2">
-                <select formControlName="type" materialize="material_select">
-                    <option value="" selected>Hakemuksen tyyppi</option>
-                    <option *ngFor="let type of applicationTypes" [value]="type" (change)="search($event)">{{translations.application.type[type]}}</option>
+                <select formControlName="type" materialize="material_select" multiple>
+                    <option value="" selected disabled>Hakemuksen tyyppi</option>
+                    <option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</option>
                 </select>
                 <label>Hakemuksen tyyppi</label>
             </div>
             <div class="input-field col s2">
-                <select formControlName="handler" materialize="material_select">
-                    <option value="" selected>Hakemuksen käsittelijä</option>
+                <select formControlName="handler" materialize="material_select" multiple>
+                    <option value="" selected disabled>Hakemuksen käsittelijä</option>
                     <option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</option>
                 </select>
                 <label>Hakemuksen käsittelijä</label>
             </div>
             <div class="input-field col s2">
-                <select formControlName="status" materialize="material_select">
-                    <option value="" selected>Hakemuksen tila</option>
+                <select formControlName="status" materialize="material_select" multiple>
+                    <option value="" selected disabled>Hakemuksen tila</option>
                     <option *ngFor="let status of applicationStatuses" [value]="status">{{translations.application.status[status]}}</option>
                 </select>
                 <label>Hakemuksen tila</label>
             </div>
             <div class="input-field col s2">
-                <select formControlName="district" materialize="material_select" [materializeSelectOptions]="selectOptions">
-                    <option value="" selected>Kaupunginosa</option>
+                <select formControlName="district" materialize="material_select">
+                    <option value="" selected disabled>Kaupunginosa</option>
                     <option *ngFor="let district of items" [value]="district">{{district}}</option>
                 </select>
                 <label>Kaupunginosa</label>
