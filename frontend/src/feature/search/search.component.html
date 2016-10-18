@@ -31,7 +31,7 @@
       <div class="input-field col m2 s6">
         <select formControlName="handler" materialize="material_select" multiple>
           <option value="" selected disabled>Hakemuksen käsittelijä</option>
-          <option *ngFor="let option of handlers | async" [value]="[option.userName]">{{option.realName}}</option>
+          <option *ngFor="let option of handlers | async" [value]="option.userName">{{option.realName}}</option>
         </select>
         <label>Hakemuksen käsittelijä</label>
       </div>
