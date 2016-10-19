@@ -1,13 +1,10 @@
 package fi.hel.allu.model.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.fileUpload;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.time.ZonedDateTime;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,12 +16,13 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.ZonedDateTime;
 
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.testUtils.WebTestCommon;
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
  * Test class for attachment controller APIs
@@ -32,6 +30,7 @@ import fi.hel.allu.model.testUtils.WebTestCommon;
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
+@Transactional
 public class AttachmentControllerTest {
 
   @Autowired

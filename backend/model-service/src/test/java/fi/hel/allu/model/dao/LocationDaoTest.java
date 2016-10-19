@@ -122,7 +122,7 @@ public class LocationDaoTest {
     // Setup: add square-section with known ID
     final int SQUARE_SECTION_ID = 9876;
     long insertCount = queryFactory.insert(squareSection).set(squareSection.id, SQUARE_SECTION_ID)
-        .set(squareSection.square, "Narinkka")
+        .set(squareSection.square, "Narinkka").set(squareSection.isActive, true)
         .set(squareSection.section, "lohko A").execute();
     assertEquals(1, insertCount);
     // Test: add location with squareSectionId
