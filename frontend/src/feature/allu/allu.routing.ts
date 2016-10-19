@@ -7,11 +7,13 @@ import {DecisionComponent} from '../../feature/decision/decision.component';
 import {SearchComponent} from '../../feature/search/search.component';
 import {Login} from '../../feature/login/login.component';
 import {AuthGuard} from '../../feature/login/auth-guard.service';
+import {HandlerModalComponent} from '../workqueue/handlerModal/handler-modal.component';
 
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: MapSearchComponent, canActivate: [AuthGuard]},
   { path: 'workqueue', component: WorkQueueComponent, canActivate: [AuthGuard] },
+  { path: 'workqueue/handler', component: HandlerModalComponent, canActivate: [AuthGuard] },
   { path: 'location', component: LocationComponent, canActivate: [AuthGuard] },
   { path: 'location/:id', component: LocationComponent, canActivate: [AuthGuard] },
   { path: 'decision/:id', component: DecisionComponent, canActivate: [AuthGuard] },

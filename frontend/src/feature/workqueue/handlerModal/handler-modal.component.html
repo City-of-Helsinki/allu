@@ -1,0 +1,16 @@
+<div class="modal-content">
+    <h3>Siirrä käsittelijälle</h3>
+
+    <div class="input-field col s2">
+        <select [(ngModel)]="selectedHandler" materialize="material_select">
+            <option value="" selected disabled>Hakemuksen käsittelijä</option>
+            <option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</option>
+        </select>
+        <label>Hakemuksen käsittelijä</label>
+    </div>
+
+    <button class="waves-effect waves-light btn" (click)="cancel()">Peruuta</button>
+    <button class="waves-effect waves-light btn"
+            [disabled]="!selectedHandler"
+            (click)="confirm()">Hyväksy</button>
+</div>

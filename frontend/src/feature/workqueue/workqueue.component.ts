@@ -1,7 +1,8 @@
-import {Component, OnInit, OnDestroy, Input} from '@angular/core';
+import {Component, OnInit, OnDestroy, Input, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {MdTabChangeEvent} from '@angular/material/tabs';
+import {MdDialog, MdDialogRef, MdDialogConfig} from '@angular/material';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
@@ -12,6 +13,7 @@ import {EnumUtil} from '../../util/enum.util';
 import {ApplicationStatus} from '../../model/application/application-status-change';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {Sort} from '../../model/common/sort';
+import {HandlerModalComponent} from './handlerModal/handler-modal.component';
 
 @Component({
   selector: 'workqueue',
@@ -24,6 +26,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   applications: Observable<Array<Application>>;
   tabs = ['Omat', 'Yhteiset'];
   tab = 'Omat';
+  dialogRef: MdDialogRef<HandlerModalComponent>;
   private selectedApplicationIds = new Array<number>();
   private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
   private sort: Sort;
@@ -33,8 +36,9 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypes = EnumUtil.enumValues(ApplicationType);
 
-  constructor(private applicationHub: ApplicationHub) {
-  }
+  constructor(private applicationHub: ApplicationHub,
+              private dialog: MdDialog,
+              private viewContainerRef: ViewContainerRef) { }
 
   ngOnInit() {
     this.applications = this.applicationQuery.asObservable()
@@ -61,5 +65,26 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   tabSelected(event: MdTabChangeEvent) {
     this.tab = this.tabs[event.index];
+  }
+
+  moveSelectedToSelf() {
+    // TODO: actual backend call for the handler update
+    console.log('Moving following applications to self', this.selectedApplicationIds);
+  }
+
+  openHandlerModal() {
+    let config = new MdDialogConfig();
+    config.viewContainerRef = this.viewContainerRef;
+
+    this.dialogRef = this.dialog.open(HandlerModalComponent, config);
+
+    this.dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // TODO: actual backend call for the handler update
+        console.log('Moving following applications to target user', this.selectedApplicationIds, result);
+      }
+
+      this.dialogRef = undefined;
+    });
   }
 }
