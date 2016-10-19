@@ -115,6 +115,9 @@ public abstract class MockServices {
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
             createMockApplicationListResponse());
 
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(SquareSection[].class)))
+        .then(invocation -> createMockSquareSectionList());
+
     Mockito.when(props.getModelServiceUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
 
   }
@@ -128,6 +131,7 @@ public abstract class MockServices {
     postalAddressJsonLocation.setCity("city, Json");
     locationJson.setPostalAddress(postalAddressJsonLocation);
     locationJson.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
+    locationJson.setSquareSectionId(12345);
     return locationJson;
   }
 
@@ -306,6 +310,7 @@ public abstract class MockServices {
     location.setCity("City1, Model");
     location.setPostalCode("33333, Model");
     location.setStreetAddress("Street 1, Model");
+    location.setSquareSectionId(23456);
     location.setId(102);
     location.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
     return location;
@@ -444,4 +449,17 @@ public abstract class MockServices {
     structureMeta.setAttributes(Collections.singletonList(attributeMeta));
     return new ResponseEntity<>(structureMeta, HttpStatus.OK);
   }
+
+  private ResponseEntity<SquareSection[]> createMockSquareSectionList() {
+    SquareSection[] squareSections = new SquareSection[2];
+    for (int i = 0; i < squareSections.length; ++i) {
+      SquareSection squareSection = new SquareSection();
+      squareSection.setId(911 + i);
+      squareSection.setSquare("Square " + i);
+      squareSection.setSection("Section " + i);
+      squareSections[i] = squareSection;
+    }
+    return new ResponseEntity<>(squareSections, HttpStatus.OK);
+  }
+
 }

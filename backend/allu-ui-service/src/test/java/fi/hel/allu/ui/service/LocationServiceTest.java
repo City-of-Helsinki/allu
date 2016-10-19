@@ -1,14 +1,7 @@
 package fi.hel.allu.ui.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
-import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
+import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.ui.domain.SquareSectionJson;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -16,7 +9,16 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import fi.hel.allu.ui.domain.LocationJson;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
+
+import java.util.List;
+import java.util.Set;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class LocationServiceTest extends MockServices {
   private static Validator validator;
@@ -114,5 +116,12 @@ public class LocationServiceTest extends MockServices {
     assertEquals("Street 1, Model", locationJson.getPostalAddress().getStreetAddress());
     assertNotNull(locationJson.getGeometry());
     assertEquals(3879, locationJson.getGeometry().getSRID());
+  }
+
+  @Test
+  public void testGetSquareSectionList() {
+    List<SquareSectionJson> squareSectionList = locationService.getSquareSectionList();
+    assertEquals(2, squareSectionList.size());
+    assertEquals("Square 0", squareSectionList.get(0).getSquare());
   }
 }

@@ -1,12 +1,12 @@
 package fi.hel.allu.model.domain;
 
-import org.geolatte.geom.Geometry;
-
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.hel.allu.model.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
+
+import org.geolatte.geom.Geometry;
 
 public class Location {
   private Integer id;
@@ -17,6 +17,7 @@ public class Location {
   private String streetAddress;
   private String postalCode;
   private String city;
+  private Integer squareSectionId;
 
   /**
    * Get location's database ID
@@ -94,6 +95,19 @@ public class Location {
 
   public void setCity(String city) {
     this.city = city;
+  }
+
+  /**
+   * Get the location's square-section address ID.
+   *
+   * @return the squareSectionId
+   */
+  public Integer getSquareSectionId() {
+    return squareSectionId;
+  }
+
+  public void setSquareSectionId(Integer squareSectionId) {
+    this.squareSectionId = squareSectionId;
   }
 
 }
