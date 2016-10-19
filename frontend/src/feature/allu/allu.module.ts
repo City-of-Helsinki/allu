@@ -5,13 +5,7 @@ import {Http, HttpModule} from '@angular/http';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdButtonModule} from '@angular2-material/button';
-import {MdCardModule} from '@angular2-material/card';
-import {MdCheckboxModule} from '@angular2-material/checkbox';
-import {MdCoreModule} from '@angular2-material/core';
-import {MdInputModule} from '@angular2-material/input';
-import {MdRadioModule} from '@angular2-material/radio';
-import {MdToolbarModule} from '@angular2-material/toolbar';
+import {MaterialModule} from '@angular/material';
 
 import {ApplicationModule} from '../application/application.module';
 
@@ -48,13 +42,7 @@ import {UserService} from '../../service/user/user-service';
     FormsModule,
     RouterModule.forRoot(rootRoutes),
     // Material
-    MdCoreModule.forRoot(),
-    MdButtonModule.forRoot(),
-    MdCardModule.forRoot(),
-    MdCheckboxModule.forRoot(),
-    MdInputModule.forRoot(),
-    MdRadioModule.forRoot(),
-    MdToolbarModule.forRoot(),
+    MaterialModule.forRoot(),
     // App modules
     ApplicationModule,
     LoginModule,

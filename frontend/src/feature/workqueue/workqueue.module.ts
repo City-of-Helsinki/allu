@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule, FormsModule} from '@angular/forms';
-import {MdTabsModule} from '@angular2-material/tabs';
+import {MdTabsModule} from '@angular/material';
 
 import {WorkQueueComponent} from './workqueue.component';
 import {AlluCommonModule} from '../common/allu-common.module';

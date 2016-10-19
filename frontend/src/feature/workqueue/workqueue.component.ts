@@ -1,7 +1,7 @@
 import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {MdTabChangeEvent} from '@angular2-material/tabs';
+import {MdTabChangeEvent} from '@angular/material/tabs';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';

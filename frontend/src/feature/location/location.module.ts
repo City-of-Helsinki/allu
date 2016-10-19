@@ -1,7 +1,7 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdCardModule} from '@angular2-material/card';
+import {MdCardModule} from '@angular/material';
 import {LocationComponent} from './location.component';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {SearchBarModule} from '../searchbar/searchbar.module';

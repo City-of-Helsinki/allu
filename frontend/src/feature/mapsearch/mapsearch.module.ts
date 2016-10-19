@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {MdToolbarModule} from '@angular2-material/toolbar';
-import {MdCardModule} from '@angular2-material/card';
+import {MdToolbarModule, MdCardModule} from '@angular/material';
 import {MapModule} from '../map/map.module';
 import {MapSearchComponent} from './mapsearch.component';
 import {SearchBarModule} from '../searchbar/searchbar.module';
