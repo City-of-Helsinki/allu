@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.Before;
@@ -17,11 +18,14 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -29,6 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
+@Transactional
 public class ApplicationControllerTest {
 
   @Autowired

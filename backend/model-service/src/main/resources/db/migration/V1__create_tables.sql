@@ -20,9 +20,10 @@ create table allu.organization (
 
 create table allu.square_section (
     id serial primary key,
-    square text,
+    square text not null,
     section text,
-    is_active boolean );
+    is_active boolean not null,
+    unique (square, section) );
 
 comment on table allu.square_section is 'Predefined Square+Section type locations';
 
@@ -165,3 +166,30 @@ insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('all
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_VIEW');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_ADMIN');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'OUTDOOREVENT');
+
+insert into allu.square_section (square, section, is_active) values
+  ('Narinkka','A',true),
+  ('Narinkka','B',true),
+  ('Narinkka','C',true),
+  ('Narinkka','D',true),
+  ('Mauno Koiviston aukio', 'E', true),
+  ('Rautatientori', 'A', true),
+  ('Rautatientori', 'B', true),
+  ('Rautatientori', 'C', true),
+  ('Rautatientori', 'D', true),
+  ('Rautatientori', 'E', true),
+  ('Rautatientori', 'F', true),
+  ('Kansalaistori', 'A', true),
+  ('Kansalaistori', 'B', true),
+  ('Kansalaistori', 'C', true),
+  ('Kaisaniemen puisto', 'A', true),
+  ('Kaisaniemen puisto', 'B', true),
+  ('Kaisaniemen puisto', 'C', true),
+  ('Kaisaniemen puisto', 'D', true),
+  ('Töölönlahdenpuisto', 'A', true),
+  ('Töölönlahdenpuisto', 'B', true),
+  ('Töölönlahdenpuisto', 'C', true),
+  ('Töölönlahdenpuisto', 'D', true),
+  ('Kaivopuisto', NULL, true),
+  ('Senaatintori', NULL, true),
+  ('Säiliö 468', NULL, true);

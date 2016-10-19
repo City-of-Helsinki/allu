@@ -1,14 +1,8 @@
 package fi.hel.allu.model.controller;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.geometrycollection;
-import static org.geolatte.geom.builder.DSL.ring;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.testUtils.WebTestCommon;
 
 import org.geolatte.geom.Geometry;
 import org.junit.Before;
@@ -19,14 +13,22 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.testUtils.WebTestCommon;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
+@Transactional
 public class LocationControllerTest {
 
   @Autowired

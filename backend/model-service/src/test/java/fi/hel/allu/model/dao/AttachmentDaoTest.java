@@ -1,10 +1,8 @@
 package fi.hel.allu.model.dao;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,14 +14,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
-import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.testUtils.TestCommon;
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
+@Transactional
 public class AttachmentDaoTest {
 
   @Autowired
