@@ -14,7 +14,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class SearchService {
@@ -53,29 +52,15 @@ public class SearchService {
   }
 
   /**
-   * Find applications by given query string.
-   *
-   * @param queryString handler identifier that is used to find details
-   * @return List of found application with details
-   */
-  public List<Integer> searchAll(String queryString) {
-    ResponseEntity<ApplicationES[]> applicationResult = restTemplate.getForEntity(applicationProperties
-        .getSearchServiceUrl(ApplicationProperties.PATH_SEARCH_APPLICATION_FIND_BY_QUERYSTRING), ApplicationES[].class, queryString);
-    List<Integer> ids = Arrays.stream(applicationResult.getBody()).map(ApplicationES::getId).collect(Collectors.toList());
-    return ids;
-  }
-
-  /**
    * Find applications by given fields.
    *
    * @param queryParameters list of query parameters
    * @return List of ids of found applications
    */
   public List<Integer> search(QueryParameters queryParameters) {
-    ResponseEntity<ApplicationES[]> applicationResult = restTemplate.postForEntity(applicationProperties
-       .getSearchServiceUrl(ApplicationProperties.PATH_SEARCH_APPLICATION_FIND_BY_FIELDS), queryParameters, ApplicationES[].class);
+    ResponseEntity<Integer[]> applicationResult = restTemplate.postForEntity(applicationProperties
+       .getSearchServiceUrl(ApplicationProperties.PATH_SEARCH_APPLICATION_FIND_BY_FIELDS), queryParameters, Integer[].class);
 
-    List<Integer> ids = Arrays.stream(applicationResult.getBody()).map(ApplicationES::getId).collect(Collectors.toList());
-    return ids;
+    return Arrays.asList(applicationResult.getBody());
   }
 }

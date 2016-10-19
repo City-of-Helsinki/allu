@@ -6,9 +6,7 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.search.domain.UserES;
+import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.UserMapper;
@@ -343,11 +341,11 @@ public abstract class MockServices {
     ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2016, 10, 30, 23, 45, 59, 1234, zoneId);
     applicationES.setDecisionTime(zonedDateTime2);
     applicationES.setName("Mock name, ES");
-    applicationES.setStatus(StatusType.PENDING);
+    applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     User user = createMockUser();
     applicationES.setHandler(new UserES(user.getUserName(), user.getRealName()));
     applicationES.setId(1);
-    applicationES.setType(ApplicationType.OUTDOOREVENT);
+    applicationES.setType(new ApplicationTypeES(ApplicationType.OUTDOOREVENT));
     applicationES.setApplicationTypeData(createApplicationTypeDataES());
     return applicationES;
   }

@@ -1,8 +1,6 @@
 package fi.hel.allu.search.domain;
 
 
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.ZonedDateTime;
@@ -18,8 +16,8 @@ public class ApplicationES {
   private Integer id;
   private String applicationId;
   private UserES handler;
-  private StatusType status;
-  private ApplicationType type;
+  private StatusTypeES status;
+  private ApplicationTypeES type;
   private String name;
   private ZonedDateTime creationTime;
   private ZonedDateTime startTime;
@@ -55,19 +53,19 @@ public class ApplicationES {
     this.handler = handler;
   }
 
-  public StatusType getStatus() {
+  public StatusTypeES getStatus() {
     return status;
   }
 
-  public void setStatus(StatusType status) {
+  public void setStatus(StatusTypeES status) {
     this.status = status;
   }
 
-  public ApplicationType getType() {
+  public ApplicationTypeES getType() {
     return type;
   }
 
-  public void setType(ApplicationType type) {
+  public void setType(ApplicationTypeES type) {
     this.type = type;
   }
 
