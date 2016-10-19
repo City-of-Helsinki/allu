@@ -265,7 +265,7 @@
                 <option *ngFor="let nature of eventNatures" [value]="nature.value">{{nature.name}}</option>
               </select>
             </div>
-            <div class="col m12 height-fix-bottom" *ngIf="application.event.nature === 'Open'">
+            <div class="col m12 height-fix-bottom" *ngIf="application.event.nature === 'PUBLIC_FREE'">
               <input type="checkbox" class="filled-in" id="noPrice" [(ngModel)]="noPrice" [disabled]="isSummary"/>
               <label for="noPrice">Korvauksetta</label>
             </div>
