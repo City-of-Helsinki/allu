@@ -5,6 +5,7 @@ import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 
@@ -138,6 +139,30 @@ public class ApplicationControllerTest {
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
     assertEquals(StatusType.HANDLING, updateResult.getStatus());
+  }
+
+  @Test
+  public void testUpdateHandler() throws Exception {
+    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
+    User changedUser = testCommon.insertUser("changed");
+    appInResult.setHandler(changedUser.getId());
+    wtc.perform(put(String.format("/applications/handler/%d", appInResult.getHandler())), Collections.singletonList(appInResult.getId()))
+        .andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
+        .andExpect(status().isOk());
+    Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
+    assertEquals(changedUser.getId(), updateResult.getHandler());
+  }
+
+  @Test
+  public void testRemoveHandler() throws Exception {
+    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
+    wtc.perform(put(String.format("/applications/handler/remove")), Collections.singletonList(appInResult.getId()))
+        .andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
+        .andExpect(status().isOk());
+    Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
+    assertNull(updateResult.getHandler());
   }
 
   @Test

@@ -2,6 +2,7 @@ package fi.hel.allu.ui.service;
 
 
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 
@@ -150,6 +151,22 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals(createMockUser().getId(), applicationJson.getHandler().getId());
   }
 
+  @Test
+  public void testUpdateApplicationHandler() {
+    ApplicationJson applicationJson = createMockApplicationJson(1);
+    applicationService.updateApplicationHandler(2, Collections.singletonList(applicationJson.getId()));
+    Mockito.verify(restTemplate, Mockito.times(1)).put(null, Collections.singletonList(applicationJson.getId()), 2);
+  }
+
+  @Test
+  public void testRemoveApplicationHandler() {
+    ApplicationJson applicationJson = createMockApplicationJson(1);
+    ApplicationProperties ap = Mockito.mock(ApplicationProperties.class);
+    Mockito.when(ap.getApplicationHandlerRemoveUrl()).thenReturn("asdf");
+    applicationService.setApplicationProperties(ap);
+    applicationService.removeApplicationHandler(Collections.singletonList(applicationJson.getId()));
+    Mockito.verify(restTemplate, Mockito.times(1)).put("asdf", Collections.singletonList(applicationJson.getId()));
+  }
 
   @Test
   public void testFindApplicationById() {

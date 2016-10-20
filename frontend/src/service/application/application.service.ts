@@ -100,4 +100,16 @@ export class ApplicationService {
       .do(response => console.log('response', response))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_STATUS_CHANGE_FAILED)));
   }
+
+  public applicationHandlerChange(handler: number, applicationIds: Array<number>): Observable<any> {
+    let url = ApplicationService.APPLICATIONS_URL + '/handler/' + handler;
+    return this.authHttp.put(url, JSON.stringify(applicationIds))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_HANDLER_CHANGE_FAILED)));
+  }
+
+  public applicationHandlerRemove(applicationIds: Array<number>): Observable<any> {
+    let url = ApplicationService.APPLICATIONS_URL + '/handler/remove';
+    return this.authHttp.put(url, JSON.stringify(applicationIds))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_HANDLER_CHANGE_FAILED)));
+  }
 }

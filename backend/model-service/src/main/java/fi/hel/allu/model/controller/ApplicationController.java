@@ -115,6 +115,29 @@ public class ApplicationController {
   }
 
   /**
+   * Updates handler of given applications.
+   *
+   * @param   handlerId     New handler set to the applications.
+   * @param   applications  Applications whose handler is updated.
+   */
+  @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateHandler(@PathVariable int handlerId, @RequestBody List<Integer> applications) {
+    applicationDao.updateHandler(handlerId, applications);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+
+  /**
+   * Removes handler of given applications.
+   *
+   * @param   applications  Applications whose handler is removed.
+   */
+  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
+  public ResponseEntity<Void> removeHandler(@RequestBody List<Integer> applications) {
+    applicationDao.removeHandler(applications);
+    return new ResponseEntity<Void>(HttpStatus.OK);
+  }
+
+  /**
    * Create new application
    *
    * @param application

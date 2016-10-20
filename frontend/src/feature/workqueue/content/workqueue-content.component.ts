@@ -6,6 +6,7 @@ import '../../../rxjs-extensions.ts';
 
 import {Application} from '../../../model/application/application';
 import {Sort, Direction} from '../../../model/common/sort';
+import {User} from '../../../model/common/user';
 
 @Component({
   selector: 'workqueue-content',

@@ -1,6 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
-import {Observable} from 'rxjs/Observable';
 
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {translations} from '../../../util/translations';
@@ -10,7 +9,6 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import '../../../rxjs-extensions.ts';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {ApplicationSearchQueryForm} from '../../../model/search/ApplicationSearchQueryForm';
-import {UserHub} from '../../../service/user/user-hub';
 import {User} from '../../../model/common/user';
 import {CurrentUser} from '../../../service/user/current-user';
 
@@ -28,16 +26,16 @@ const HANDLER_FIELD = 'handler';
 })
 export class WorkQueueFilterComponent implements OnInit {
   queryForm: FormGroup;
+  @Input() handlers: Array<User>;
   @Output() onQueryChange = new EventEmitter<ApplicationSearchQuery>();
   pickadateParams = PICKADATE_PARAMETERS;
 
   private translations = translations;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
-  private handlers: Observable<Array<User>>;
   private applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypes = EnumUtil.enumValues(ApplicationType);
 
-  constructor(fb: FormBuilder, private userHub: UserHub) {
+  constructor(fb: FormBuilder) {
     this.queryForm = fb.group({
       type: undefined,
       handler: undefined,
@@ -52,8 +50,6 @@ export class WorkQueueFilterComponent implements OnInit {
     this.queryForm.valueChanges
       .distinctUntilChanged()
       .subscribe(query => this.onQueryChange.emit(ApplicationSearchQuery.from(query)));
-
-    this.handlers = this.userHub.getActiveUsers();
   }
 
   @Input() set selectedTab(tab: string) {

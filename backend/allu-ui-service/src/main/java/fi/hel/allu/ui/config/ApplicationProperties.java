@@ -240,11 +240,6 @@ public class ApplicationProperties {
   public static final String PATH_SEARCH_APPLICATION_UPDATE = "/applications/{applicationId}";
 
   /**
-   * Search-service path to find applications by querystring
-   */
-  public static final String PATH_SEARCH_APPLICATION_FIND_BY_QUERYSTRING = "/applications/search?queryString={queryString}";
-
-  /**
    * Search-service path to find applications by fields
    */
   public static final String PATH_SEARCH_APPLICATION_FIND_BY_FIELDS = "/applications/search";
@@ -294,6 +289,20 @@ public class ApplicationProperties {
    */
   public String getMetadataUrl() {
     return getModelServiceUrl("/meta/{applicationType}");
+  }
+
+  /**
+   * @return url to update handler of applications.
+   */
+  public String getApplicationHandlerUpdateUrl() {
+    return getModelServiceUrl("/applications/handler/{handlerId}");
+  }
+
+  /**
+   * @return url to remove handler of applications.
+   */
+  public String getApplicationHandlerRemoveUrl() {
+    return getModelServiceUrl("/applications/handler/remove");
   }
 
   /**
