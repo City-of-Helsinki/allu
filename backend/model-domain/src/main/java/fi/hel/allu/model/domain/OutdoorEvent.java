@@ -31,6 +31,7 @@ public class OutdoorEvent extends Event {
   private ZonedDateTime structureStartTime;
   private ZonedDateTime structureEndTime;
   private String timeExceptions;
+  private ApplicationPricing calculatedPricing;
 
   @Override
   public ApplicationType getType() {
@@ -249,4 +250,18 @@ public class OutdoorEvent extends Event {
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
   }
+
+  /**
+   * Get the calculated pricing for the event.
+   *
+   * @return the calculatedPricing
+   */
+  public ApplicationPricing getCalculatedPricing() {
+    return calculatedPricing;
+  }
+
+  public void setCalculatedPricing(ApplicationPricing calculatedPricing) {
+    this.calculatedPricing = calculatedPricing;
+  }
+
 }
