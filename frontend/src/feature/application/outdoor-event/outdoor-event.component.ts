@@ -86,6 +86,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
 
       this.applicantNameSelection = applicantNameSelection(this.application.applicant.type);
       this.applicantIdSelection = applicantIdSelection(this.application.applicant.type);
+      this.noPrice = !!(<OutdoorEvent>this.application.event).noPriceReason;
 
       this.applicationHub.loadMetaData('OUTDOOREVENT').subscribe(meta => this.metadataLoaded(meta));
 
@@ -133,6 +134,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
       let event = <OutdoorEvent>this.application.event;
       event.salesActivity = false;
       event.heavyStructure = false;
+      event.noPriceReason = undefined;
     }
   }
 

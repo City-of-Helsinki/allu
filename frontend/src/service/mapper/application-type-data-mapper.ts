@@ -15,7 +15,7 @@ export class ApplicationTypeDataMapper {
         backendEvent.timeExceptions,
         backendEvent.attendees,
         backendEvent.entryFee,
-        backendEvent.pricing,
+        backendEvent.noPriceReason,
         backendEvent.salesActivity,
         backendEvent.heavyStructure,
         backendEvent.ecoCompass,
