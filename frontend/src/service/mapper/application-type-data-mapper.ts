@@ -1,5 +1,6 @@
 import {OutdoorEvent} from '../../model/application/type/outdoor-event';
 import {ApplicationTypeData} from '../../model/application/type/application-type-data';
+import {TimeUtil} from '../../util/time.util';
 
 export class ApplicationTypeDataMapper {
 
@@ -10,8 +11,8 @@ export class ApplicationTypeDataMapper {
         backendEvent.description,
         backendEvent.url,
         backendEvent.type,
-        new Date(backendEvent.eventStartTime),
-        new Date(backendEvent.eventEndTime),
+        TimeUtil.dateFromBackend(backendEvent.eventStartTime),
+        TimeUtil.dateFromBackend(backendEvent.eventEndTime),
         backendEvent.timeExceptions,
         backendEvent.attendees,
         backendEvent.entryFee,
@@ -24,8 +25,8 @@ export class ApplicationTypeDataMapper {
         backendEvent.marketingProviders,
         backendEvent.structureArea,
         backendEvent.structureDescription,
-        new Date(backendEvent.structureStartTime),
-        new Date(backendEvent.structureEndTime));
+        TimeUtil.dateFromBackend(backendEvent.structureStartTime),
+        TimeUtil.dateFromBackend(backendEvent.structureEndTime));
     } else {
       return undefined;
     }

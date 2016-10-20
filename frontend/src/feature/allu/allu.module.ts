@@ -11,7 +11,7 @@ import {ApplicationModule} from '../application/application.module';
 
 import {MapUtil} from '../../service/map.util.ts';
 import {ApplicationService} from '../../service/application/application.service.ts';
-import {GeolocationService} from '../../service/geolocation.service';
+import {LocationService} from '../../service/location.service';
 import {MapHub} from '../../service/map-hub';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
@@ -60,7 +60,7 @@ import {UserService} from '../../service/user/user-service';
   providers: [
     ApplicationService,
     UserService,
-    GeolocationService,
+    LocationService,
     ApplicationHub,
     UserHub,
     MapHub,

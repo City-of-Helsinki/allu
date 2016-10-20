@@ -94,7 +94,7 @@ export class Application {
       54,
       'Paikalle rakennetaan linna',
       undefined,
-      new Date());
+      undefined);
 
     let app = new Application();
     app.handler = undefined;
@@ -111,5 +111,11 @@ export class Application {
 
   get uiApplicationCreationTime(): string {
     return TimeUtil.getUiDateString(this.creationTime);
+  }
+
+  public hasGeometry(): boolean {
+    return !!this.location
+      && !!this.location.geometry
+      && this.location.geometry.geometries.length > 0;
   }
 }

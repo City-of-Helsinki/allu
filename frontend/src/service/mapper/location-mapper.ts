@@ -8,7 +8,9 @@ export class LocationMapper {
       new Location(
         backendLocation.id,
         backendLocation.geometry,
+        backendLocation.area,
         PostalAddress.fromBackend(backendLocation.postalAddress),
+        backendLocation.squareSectionId,
         backendLocation.info) : undefined;
   }
   public static mapFrontend(location: Location): BackendLocation {
@@ -16,7 +18,9 @@ export class LocationMapper {
     {
       id: location.id,
       geometry: location.geometry,
+      area: location.area,
       postalAddress: location.postalAddress.toBackend(),
+      squareSectionId: location.squareSectionId,
       info: location.info
     } : undefined;
   }

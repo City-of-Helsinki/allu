@@ -3,6 +3,8 @@ export interface Option<A> {
   value(): A;
   map<B>(fn: (a: A) => B): Option<B>;
   do(fn: (a: A) => any): void;
+  filter(predicate: (a: A) => boolean): Option<A>;
+  orElse<B>(val: B): B;
 }
 
 export function Some<T>(val: T) {
@@ -36,6 +38,14 @@ export class SomeOpt<T> implements Option<T> {
       fn(this.val);
     }
   }
+
+  filter(predicate: (a: T) => boolean): Option<T> {
+    return predicate(this.val) ? Some(this.val) : None();
+  }
+
+  orElse(val: T): T {
+    return this.val;
+  }
 }
 
 export class NoneOpt implements Option<never> {
@@ -54,4 +64,13 @@ export class NoneOpt implements Option<never> {
   }
 
   do(fn: (a: any) => any): void {}
+
+
+  filter(predicate: (a: never) => boolean): Option<never> {
+    return None();
+  }
+
+  orElse(val: any): any {
+    return val;
+  }
 }
