@@ -2,7 +2,9 @@ package fi.hel.allu.common.controller.handler;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.NonUniqueException;
+import fi.hel.allu.common.exception.NotImplementedException;
 import fi.hel.allu.common.exception.SearchException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 
 
@@ -33,6 +36,12 @@ public class ControllerExceptionHandler {
   public void handleNonUnique(NonUniqueException e, HttpServletResponse response) throws IOException {
     logger.error(e.getMessage(), e);
     response.sendError(HttpStatus.CONFLICT.value(), e.getMessage());
+  }
+
+  @ExceptionHandler
+  public void handleNotImplemented(NotImplementedException e, HttpServletResponse response) throws IOException {
+    logger.error(e.getMessage(), e);
+    response.sendError(HttpStatus.NOT_IMPLEMENTED.value(), e.getMessage());
   }
 
   @ExceptionHandler
