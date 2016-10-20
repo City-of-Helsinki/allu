@@ -190,7 +190,7 @@ public abstract class MockServices {
     outdoorEventJson.setTimeExceptions("Mock exceptions");
     outdoorEventJson.setFoodSales(true);
     outdoorEventJson.setStructureArea(100);
-    outdoorEventJson.setPricing("Mock pricing");
+    outdoorEventJson.setNoPriceReason("Mock pricing");
     outdoorEventJson.setEntryFee(1233);
     outdoorEventJson.setFoodProviders("Mock foodProviders");
     outdoorEventJson.setStructureDescription("Structure description");

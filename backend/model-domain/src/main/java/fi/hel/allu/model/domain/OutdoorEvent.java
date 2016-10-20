@@ -20,7 +20,7 @@ public class OutdoorEvent extends Event {
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
-  private String pricing;
+  private String noPriceReason;
   private boolean salesActivity;
   private boolean heavyStructure;
   private boolean foodSales;
@@ -132,12 +132,12 @@ public class OutdoorEvent extends Event {
   /**
    * in Finnish: Hinnoitteluperusteet
    */
-  public String getPricing() {
-    return pricing;
+  public String getNoPriceReason() {
+    return noPriceReason;
   }
 
-  public void setPricing(String pricing) {
-    this.pricing = pricing;
+  public void setNoPriceReason(String noPriceReason) {
+    this.noPriceReason = noPriceReason;
   }
 
   /**

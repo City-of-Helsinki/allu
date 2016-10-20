@@ -195,7 +195,7 @@
             </div>
             <div class="input-field col m9">
               <input id="eventEntryFee" type="number" class="validate" [(ngModel)]="application.event.entryFee" [disabled]="isSummary">
-              <label for="eventEntryFee">{{ meta?.getUiName('pricing') }}</label>
+              <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
             </div>
           </div>
         </div>
@@ -271,7 +271,7 @@
             </div>
             <div class="col m12" *ngIf="noPrice">
               <select materialize="material_select" [materializeSelectOptions]="noPriceReasons"
-                      [(ngModel)]="application.event.pricing" [disabled]="isSummary">
+                      [(ngModel)]="application.event.noPriceReason" [disabled]="isSummary">
                 <option value="" disabled selected>Peruste korvauksettomuudelle</option>
                 <option *ngFor="let reason of noPriceReasons" [value]="reason.value">{{reason.name}}</option>
               </select>

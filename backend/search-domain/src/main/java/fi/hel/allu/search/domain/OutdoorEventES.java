@@ -18,7 +18,7 @@ public class OutdoorEventES extends ApplicationTypeDataES {
   private int attendees;
   private int entryFee;
   private String ecoCompass;
-  private String pricing;
+  private String noPriceReason;
   private String foodSales;
   private String foodProviders;
   private String marketingProviders;
@@ -92,12 +92,12 @@ public class OutdoorEventES extends ApplicationTypeDataES {
     this.ecoCompass = ecoCompass;
   }
 
-  public String getPricing() {
-    return pricing;
+  public String getNoPriceReason() {
+    return noPriceReason;
   }
 
-  public void setPricing(String pricing) {
-    this.pricing = pricing;
+  public void setNoPriceReason(String noPriceReason) {
+    this.noPriceReason = noPriceReason;
   }
 
   public String getFoodSales() {

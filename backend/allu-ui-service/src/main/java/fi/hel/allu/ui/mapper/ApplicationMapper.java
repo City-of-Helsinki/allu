@@ -130,7 +130,7 @@ public class ApplicationMapper {
         outdoorEventJson.setEntryFee(outdoorEvent.getEntryFee());
         outdoorEventJson.setFoodProviders(outdoorEvent.getFoodProviders());
         outdoorEventJson.setMarketingProviders(outdoorEvent.getMarketingProviders());
-        outdoorEventJson.setPricing(outdoorEvent.getPricing());
+        outdoorEventJson.setNoPriceReason(outdoorEvent.getNoPriceReason());
         outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
         outdoorEventJson.setHeavyStructure(outdoorEvent.isHeavyStructure());
         outdoorEventJson.setFoodSales(outdoorEvent.isFoodSales());
@@ -157,7 +157,7 @@ public class ApplicationMapper {
         outdoorEvent.setEventStartTime(outdoorEventJson.getEventStartTime());
         outdoorEvent.setFoodSales(outdoorEventJson.isFoodSales());
         outdoorEvent.setMarketingProviders(outdoorEventJson.getMarketingProviders());
-        outdoorEvent.setPricing(outdoorEventJson.getPricing());
+        outdoorEvent.setNoPriceReason(outdoorEventJson.getNoPriceReason());
         outdoorEvent.setSalesActivity(outdoorEventJson.isSalesActivity());
         outdoorEvent.setHeavyStructure(outdoorEventJson.isHeavyStructure());
         outdoorEvent.setFoodProviders(outdoorEventJson.getFoodProviders());
