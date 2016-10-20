@@ -1,5 +1,6 @@
 export interface BackendQueryParameters {
   queryParameters: Array<BackendQueryParameter>;
+  sort: BackendQuerySort;
 }
 
 export interface BackendQueryParameter {
@@ -8,4 +9,9 @@ export interface BackendQueryParameter {
   fieldMultiValue: Array<string>;
   startDateValue: string;
   endDateValue: string;
+}
+
+export interface BackendQuerySort {
+  field: string;
+  direction: string;
 }

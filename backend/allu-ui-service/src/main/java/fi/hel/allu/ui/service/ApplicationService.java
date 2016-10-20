@@ -19,9 +19,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ApplicationService {
@@ -191,10 +189,10 @@ public class ApplicationService {
     if (!queryParameters.getQueryParameters().isEmpty()) {
       List<Integer> ids = searchService.search(QueryParameterMapper.mapToQueryParameters(queryParameters));
       resultList = findApplicationsById(ids);
+      orderByIdList(ids, resultList);
     }
     return resultList;
   }
-
 
   public void changeStatus(int applicationId, StatusType newStatus) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
@@ -306,5 +304,19 @@ public class ApplicationService {
     }
   }
 
+  /**
+   * Orders given application list by the order of id list.
+   *
+   * @param ids               Order of applications.
+   * @param applicationList   Applications to be ordered.
+   */
+  private void orderByIdList(List<Integer> ids, List<ApplicationJson> applicationList) {
+    // use the application order returned by search service
+    Map<Integer, Integer> idToOrder = new HashMap<>();
+    for (int i = 0; i < ids.size(); ++i) {
+      idToOrder.put(ids.get(i), i);
+    }
+    Collections.sort(applicationList, Comparator.comparing(application -> idToOrder.get(application.getId())));
+  }
 }
 

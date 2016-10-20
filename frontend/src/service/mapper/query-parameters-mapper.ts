@@ -1,12 +1,27 @@
-import {BackendQueryParameters, BackendQueryParameter} from '../backend-model/backend-query-parameters';
+import {BackendQueryParameters, BackendQueryParameter, BackendQuerySort} from '../backend-model/backend-query-parameters';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {MAX_DATE, MIN_DATE} from '../../util/time.util';
+import {Direction} from '../../model/common/sort';
+
+const enumFields = [
+  'status',
+  'type'
+];
 
 export class QueryParametersMapper {
   public static mapFrontend(query: ApplicationSearchQuery): BackendQueryParameters {
     return (query) ?
     {
-      queryParameters: QueryParametersMapper.mapParameters(query)
+      queryParameters: QueryParametersMapper.mapParameters(query),
+      sort: QueryParametersMapper.mapSort(query)
+    } : undefined;
+  }
+
+  private static mapSort(query: ApplicationSearchQuery): BackendQuerySort {
+    return (query.sort && query.sort.field && query.sort.direction) ?
+    {
+      field: QueryParametersMapper.getBackendSortField(query.sort.field),
+      direction: Direction[query.sort.direction]
     } : undefined;
   }
 
@@ -39,8 +54,11 @@ export class QueryParametersMapper {
     queryParameters: Array<BackendQueryParameter>,
     parameterName: string,
     parameterValue: Array<string>): void {
-    if (parameterValue && parameterValue.length !== 0) {
-      queryParameters.push(QueryParametersMapper.createArrayParameter(parameterName, parameterValue));
+    if (parameterValue) {
+      let filteredParameterValue = parameterValue.filter(value => !!value);
+      if (filteredParameterValue.length !== 0) {
+        queryParameters.push(QueryParametersMapper.createArrayParameter(parameterName, filteredParameterValue));
+      }
     }
   }
 
@@ -56,7 +74,7 @@ export class QueryParametersMapper {
 
   private static createArrayParameter(parameterName: string, parameterValue: Array<string>) {
     return {
-      fieldName: parameterName,
+      fieldName: QueryParametersMapper.getBackendValueField(parameterName),
       fieldValue: undefined,
       fieldMultiValue: parameterValue,
       startDateValue: undefined,
@@ -66,7 +84,7 @@ export class QueryParametersMapper {
 
   private static createParameter(parameterName: string, parameterValue: string) {
     return {
-      fieldName: parameterName,
+      fieldName: QueryParametersMapper.getBackendValueField(parameterName),
       fieldValue: parameterValue,
       fieldMultiValue: undefined,
       startDateValue: undefined,
@@ -76,12 +94,28 @@ export class QueryParametersMapper {
 
   private static createDateParameter(parameterName: string, startDate: Date, endDate: Date): any {
     return {
-      fieldName: parameterName,
+      fieldName: QueryParametersMapper.getBackendValueField(parameterName),
       fieldValue: undefined,
       fieldMultiValue: undefined,
       startDateValue: startDate.toISOString(),
       endDateValue: endDate.toISOString()
     };
+  }
+
+  private static getBackendSortField(field: string): string {
+    if (enumFields.indexOf(field) > -1) {
+      return field + '.ordinal';
+    } else {
+      return field;
+    }
+  }
+
+  private static getBackendValueField(field: string): string {
+    if (enumFields.indexOf(field) > -1) {
+      return field + '.value';
+    } else {
+      return field;
+    }
   }
 
   private static removeExtraWhitespace(str: string): string {

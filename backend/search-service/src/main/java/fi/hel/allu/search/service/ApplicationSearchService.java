@@ -4,21 +4,28 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.*;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.QueryParameter;
+import fi.hel.allu.search.domain.QueryParameters;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
-import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexResponse;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.index.query.*;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
+import org.elasticsearch.search.sort.SortBuilder;
+import org.elasticsearch.search.sort.SortBuilders;
+import org.elasticsearch.search.sort.SortOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +60,7 @@ public class ApplicationSearchService {
   public void insertApplication(ApplicationES applicationES) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(applicationES);
-      System.out.println(objectMapper.writeValueAsString(applicationES));
+      logger.debug(objectMapper.writeValueAsString(applicationES));
       IndexResponse response = client.prepareIndex(APPLICATION_INDEX_NAME, APPLICATION_TYPE_NAME, applicationES.getId().toString())
           .setSource(json).get();
       if (!response.isCreated()) {
@@ -106,24 +113,8 @@ public class ApplicationSearchService {
     }
   }
 
-  public ApplicationES findById(String id) {
-    ApplicationES applicationES = null;
-    GetResponse response = client.prepareGet(APPLICATION_INDEX_NAME, APPLICATION_TYPE_NAME, id).get();
-    if (response.isExists()) {
-      try {
-        applicationES = objectMapper.readValue(response.getSourceAsBytes(), ApplicationES.class);
-      } catch (IOException e) {
-        throw new SearchException(e);
-      }
-    } else {
-      throw new NoSuchEntityException("Application not found");
-    }
-    return applicationES;
-  }
-
-  // TODO: Perttu 13.7.16.: it would be smarter to return list of application ids and avoid mapping ElasticSearch data back to Application data
-  public List<ApplicationES> findByField(QueryParameters queryParameters) {
-    List<ApplicationES> appList = null;
+  public List<Integer> findByField(QueryParameters queryParameters) {
+    List<Integer> appList = null;
     try {
 
       if (queryParameters == null || queryParameters.getQueryParameters() == null) {
@@ -136,37 +127,51 @@ public class ApplicationSearchService {
         qb.must(createQueryBuilder(param));
       }
 
-      logger.debug("Searching with the following query:\n {}", qb.toString());
+      SearchRequestBuilder srBuilder = client.prepareSearch(APPLICATION_INDEX_NAME).setTypes(APPLICATION_TYPE_NAME).setQuery(qb);
 
-      SearchResponse response = client.prepareSearch(APPLICATION_INDEX_NAME)
-          .setTypes(APPLICATION_TYPE_NAME)
-          .setQuery(qb)
-          .execute()
-          .actionGet();
+      if (queryParameters.getSort() != null) {
+        SortBuilder sb = SortBuilders.fieldSort(queryParameters.getSort().field);
+        if (queryParameters.getSort().direction.equals(QueryParameters.Sort.Direction.ASC)) {
+          sb.order(SortOrder.ASC);
+        } else {
+          sb.order(SortOrder.DESC);
+        }
+        srBuilder.addSort(sb);
+      }
 
-      appList = iterateSearchResponse(response);
+      logger.debug("Searching with the following query:\n {}", srBuilder.toString());
+
+      SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
+
+      appList = iterateIntSearchResponse(response);
     } catch (IOException e) {
       throw new SearchException(e);
     }
     return appList;
   }
 
-  // TODO: Perttu 13.7.16.: it would be smarter to return list of application ids and avoid mapping ElasticSearch data back to Application data
-  public List<ApplicationES> findFromAllFields(String queryString) {
-    List<ApplicationES> appList = null;
-    try {
-
-      SearchResponse response = client.prepareSearch(APPLICATION_INDEX_NAME)
-          .setTypes(APPLICATION_TYPE_NAME)
-          .setQuery(QueryBuilders.wildcardQuery(FIND_ALL_FIELDS, queryString))
-          .execute()
-          .actionGet();
-
-      appList = iterateSearchResponse(response);
-    } catch (IOException e) {
-      throw new SearchException(e);
+  private List<Integer> iterateIntSearchResponse(SearchResponse response) throws IOException {
+    List<Integer> appList = new ArrayList<>();
+    if (response != null) {
+      for (SearchHit hit : response.getHits()) {
+        IntResponse applicationES = null;
+        applicationES = objectMapper.readValue(hit.getSourceAsString(), IntResponse.class);
+        appList.add(applicationES.getId());
+      }
     }
     return appList;
+  }
+
+  private static class IntResponse {
+    private Integer id;
+
+    public Integer getId() {
+      return id;
+    }
+
+    public void setId(Integer id) {
+      this.id = id;
+    }
   }
 
   /**

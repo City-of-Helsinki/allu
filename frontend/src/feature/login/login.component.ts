@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {Router, RouterLink, ActivatedRoute} from '@angular/router';
 import { Http, Headers } from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
-import {CustomerMapper} from '../../service/mapper/customer-mapper';
 import {UrlUtil} from '../../util/url.util';
 
 @Component({

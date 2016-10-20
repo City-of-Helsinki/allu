@@ -18,11 +18,20 @@ public class QueryParameterMapper {
 
   public static QueryParameters mapToQueryParameters(QueryParametersJson queryParametersJson) {
     QueryParameters queryParameters = new QueryParameters();
+
     queryParameters.setQueryParameters(
         queryParametersJson.getQueryParameters()
             .stream().map(p -> mapToQueryParameter(p))
             .filter(p -> p != null)
             .collect(Collectors.toList()));
+
+    if (queryParametersJson.getSort() != null) {
+      queryParameters.setSort(
+          new QueryParameters.Sort(
+              queryParametersJson.getSort().field,
+              QueryParameters.Sort.Direction.valueOf(queryParametersJson.getSort().direction.name())));
+    }
+
     return queryParameters;
   }
 
