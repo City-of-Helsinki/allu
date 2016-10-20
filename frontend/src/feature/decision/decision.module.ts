@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {FormsModule} from '@angular/forms';
-import {MdCardModule} from '@angular2-material/card';
+import {MdCardModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {DecisionComponent} from './decision.component';
 import {DecisionActionsComponent} from './decision-actions.component';

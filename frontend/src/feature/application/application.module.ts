@@ -1,10 +1,8 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdCardModule} from '@angular2-material/card';
+import {MdCardModule, MdToolbarModule, MdProgressBarModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
-import {MdToolbarModule} from '@angular2-material/toolbar';
-import {MdProgressBarModule} from '@angular2-material/progress-bar';
 
 import {ApplicationComponent} from '../application/application.component.ts';
 import {TypeComponent} from '../application/type/type.component';
@@ -13,7 +11,6 @@ import {PromotionEventComponent} from '../application/promotion-event/promotion-
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
 import {ApplicationAttachmentComponent} from '../application/attachment/application-attachment.component';
 import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
-
 
 import {LoadingComponent} from '../loading/loading.component';
 import {MapModule} from '../map/map.module';
@@ -28,12 +25,12 @@ import {AttachmentService} from '../../service/attachment-service';
 @NgModule({
   imports: [
     AlluCommonModule,
-    MdCardModule,
     RouterModule.forChild(applicationRoutes),
     FormsModule,
-    MapModule,
+    MdCardModule,
     MdToolbarModule,
     MdProgressBarModule,
+    MapModule,
     ProgressBarModule
   ],
   declarations: [

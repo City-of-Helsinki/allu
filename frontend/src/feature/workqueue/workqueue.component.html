@@ -3,14 +3,18 @@
 
   <div class="row">
     <div class="col s12">
-      <button class="waves-effect waves-light btn">OMAKSI</button>
-      <button class="waves-effect waves-light btn">SIIRRÄ</button>
+      <button class="waves-effect waves-light btn"
+              [disabled]="selectedApplicationIds.length === 0"
+              (click)="moveSelectedToSelf()">OMAKSI</button>
+
+      <button class="waves-effect waves-light btn"
+              [disabled]="selectedApplicationIds.length === 0"
+              (click)="openHandlerModal()">SIIRRÄ</button>
     </div>
   </div>
 
   <md-tab-group (selectChange)="tabSelected($event)">
-    <div *ngFor="let tab of tabs">
-      <md-tab>
+      <md-tab *ngFor="let tab of tabs">
         <template md-tab-label>{{tab}}</template>
         <template md-tab-content>
           <workqueue-content
@@ -20,6 +24,5 @@
           </workqueue-content>
         </template>
       </md-tab>
-    </div>
   </md-tab-group>
 </div>
