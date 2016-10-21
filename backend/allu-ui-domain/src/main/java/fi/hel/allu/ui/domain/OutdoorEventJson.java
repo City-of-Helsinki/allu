@@ -2,6 +2,7 @@ package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
+import fi.hel.allu.model.domain.ApplicationPricing;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -33,6 +34,7 @@ public class OutdoorEventJson extends EventJson {
   private ZonedDateTime structureStartTime;
   private ZonedDateTime structureEndTime;
   private String timeExceptions;
+  private ApplicationPricing calculatedPricing;
 
   @Override
   public ApplicationType getType() {
@@ -247,6 +249,19 @@ public class OutdoorEventJson extends EventJson {
 
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
+  }
+
+  /**
+   * Get the calculated pricing for the event.
+   *
+   * @return the calculatedPricing
+   */
+  public ApplicationPricing getCalculatedPricing() {
+    return calculatedPricing;
+  }
+
+  public void setCalculatedPricing(ApplicationPricing calculatedPricing) {
+    this.calculatedPricing = calculatedPricing;
   }
 
 }

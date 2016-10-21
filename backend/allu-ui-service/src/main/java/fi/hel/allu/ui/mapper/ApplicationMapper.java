@@ -5,12 +5,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
+
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.domain.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -134,6 +136,7 @@ public class ApplicationMapper {
         outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
         outdoorEventJson.setHeavyStructure(outdoorEvent.isHeavyStructure());
         outdoorEventJson.setFoodSales(outdoorEvent.isFoodSales());
+        outdoorEventJson.setCalculatedPricing(outdoorEvent.getCalculatedPricing());
         applicationJson.setEvent(outdoorEventJson);
         break;
     }
@@ -168,6 +171,7 @@ public class ApplicationMapper {
         outdoorEvent.setStructureStartTime(outdoorEventJson.getStructureStartTime());
         outdoorEvent.setStructureDescription(outdoorEventJson.getStructureDescription());
         outdoorEvent.setTimeExceptions(outdoorEventJson.getTimeExceptions());
+        outdoorEvent.setCalculatedPricing(outdoorEventJson.getCalculatedPricing());
         return outdoorEvent;
     }
     return null;
