@@ -11,7 +11,7 @@ public class Pricing {
 
   /**
    * Calculate full price for an outdoor event with given parameters
-   * 
+   *
    * @param pricingConfig
    * @param eventDays
    * @param buildDays
@@ -45,12 +45,12 @@ public class Pricing {
   }
 
   private long calculateStructureExtras(PricingConfiguration pricingConfig, double structureArea) {
-    long[] structureExtraCharges = pricingConfig.getStructureExtraCharges();
+    Long[] structureExtraCharges = pricingConfig.getStructureExtraCharges();
     if (structureExtraCharges == null) {
       return 0; // No extra charges for structures
     }
     long total = 0L;
-    double[] structureExtraChargeLimits = pricingConfig.getStructureExtraChargeLimits();
+    Double[] structureExtraChargeLimits = pricingConfig.getStructureExtraChargeLimits();
     assert structureExtraChargeLimits != null && structureExtraChargeLimits.length == structureExtraCharges.length;
     // BillableArea is per starting 10 sq. meters
     double billableStructures = Math.ceil(structureArea / 10.0) * 10.0;
@@ -70,12 +70,12 @@ public class Pricing {
   }
 
   private long calculateAreaExtras(PricingConfiguration pricingConfig, double area) {
-    long[] areaExtraCharges = pricingConfig.getAreaExtraCharges();
+    Long[] areaExtraCharges = pricingConfig.getAreaExtraCharges();
     if (areaExtraCharges == null) {
       return 0; // no extra tax for areas
     }
     long total = 0L;
-    double[] areaExtraChargeLimits = pricingConfig.getAreaExtraChargeLimits();
+    Double[] areaExtraChargeLimits = pricingConfig.getAreaExtraChargeLimits();
     assert areaExtraChargeLimits != null && areaExtraChargeLimits.length == areaExtraCharges.length;
     double billableArea = Math.ceil(area); // billing is per starting full sq.
                                            // m.

@@ -1,5 +1,7 @@
 package fi.hel.allu.model.pricing;
 
+import java.util.Arrays;
+
 public class PricingConfiguration {
 
 
@@ -7,10 +9,14 @@ public class PricingConfiguration {
   int buildDiscountPercent;
   int durationDiscountPercent;
   int durationDiscountLimit;
-  long[] structureExtraCharges;
-  double[] structureExtraChargeLimits;
-  long[] areaExtraCharges;
-  double[] areaExtraChargeLimits;
+  Long[] structureExtraCharges;
+  Double[] structureExtraChargeLimits;
+  Long[] areaExtraCharges;
+  Double[] areaExtraChargeLimits;
+
+  public PricingConfiguration() {
+    // for beans
+  }
 
   public PricingConfiguration(long baseCharge, int buildDiscountPercent, int durationDiscountPercent, int durationDiscountLimit,
       long[] structureExtraCharges, double[] structureExtraChargeLimits, long[] areaExtraCharges, double[] areaExtraChargeLimits) {
@@ -19,10 +25,15 @@ public class PricingConfiguration {
     this.buildDiscountPercent = buildDiscountPercent;
     this.durationDiscountPercent = durationDiscountPercent;
     this.durationDiscountLimit = durationDiscountLimit;
-    this.structureExtraCharges = structureExtraCharges;
-    this.structureExtraChargeLimits = structureExtraChargeLimits;
-    this.areaExtraCharges = areaExtraCharges;
-    this.areaExtraChargeLimits = areaExtraChargeLimits;
+    this.structureExtraCharges = structureExtraCharges != null
+        ? Arrays.stream(structureExtraCharges).boxed().toArray(Long[]::new) : null;
+    this.structureExtraChargeLimits = structureExtraChargeLimits != null
+        ? Arrays.stream(structureExtraChargeLimits).boxed().toArray(Double[]::new) : null;
+    this.areaExtraCharges = areaExtraCharges != null ? Arrays.stream(areaExtraCharges).boxed().toArray(Long[]::new)
+        : null;
+    this.areaExtraChargeLimits = areaExtraChargeLimits != null
+        ? Arrays.stream(areaExtraChargeLimits).boxed().toArray(Double[]::new)
+        : null;
   }
 
   /**
@@ -87,11 +98,11 @@ public class PricingConfiguration {
    *
    * @return the extra charge in 1/100 eurocents.
    */
-  public long[] getStructureExtraCharges() {
+  public Long[] getStructureExtraCharges() {
     return structureExtraCharges;
   }
 
-  public void setStructureExtraCharges(long[] structureExtraCharges) {
+  public void setStructureExtraCharges(Long[] structureExtraCharges) {
     this.structureExtraCharges = structureExtraCharges;
   }
 
@@ -102,18 +113,18 @@ public class PricingConfiguration {
    *
    * @return the structureExtraChargeLimits
    */
-  public double[] getStructureExtraChargeLimits() {
+  public Double[] getStructureExtraChargeLimits() {
     return structureExtraChargeLimits;
   }
 
-  public void setStructureExtraChargeLimits(double[] structureExtraChargeLimits) {
+  public void setStructureExtraChargeLimits(Double[] structureExtraChargeLimits) {
     this.structureExtraChargeLimits = structureExtraChargeLimits;
   }
 
   /**
    * @return the areaExtraCharges
    */
-  public long[] getAreaExtraCharges() {
+  public Long[] getAreaExtraCharges() {
     return areaExtraCharges;
   }
 
@@ -121,14 +132,14 @@ public class PricingConfiguration {
    * @param areaExtraCharges
    *          the areaExtraCharges to set
    */
-  public void setAreaExtraCharges(long[] areaExtraCharges) {
+  public void setAreaExtraCharges(Long[] areaExtraCharges) {
     this.areaExtraCharges = areaExtraCharges;
   }
 
   /**
    * @return the areaExtraChargeLimits
    */
-  public double[] getAreaExtraChargeLimits() {
+  public Double[] getAreaExtraChargeLimits() {
     return areaExtraChargeLimits;
   }
 
@@ -136,7 +147,7 @@ public class PricingConfiguration {
    * @param areaExtraChargeLimits
    *          the areaExtraChargeLimits to set
    */
-  public void setAreaExtraChargeLimits(double[] areaExtraChargeLimits) {
+  public void setAreaExtraChargeLimits(Double[] areaExtraChargeLimits) {
     this.areaExtraChargeLimits = areaExtraChargeLimits;
   }
 }

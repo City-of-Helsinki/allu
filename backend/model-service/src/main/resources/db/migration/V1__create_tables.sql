@@ -36,9 +36,9 @@ create table allu.outdoor_pricing (
     duration_discount_percent integer, -- discount percent after N days
     duration_discount_limit integer,   -- day limit after which duration discount is given
     structure_extra_charges bigint[],      -- possible extra charges for structures, per 10 sqm
-    structure_extra_charge_limits real[],  -- area limits for the structure extra charges
+    structure_extra_charge_limits double precision[],  -- area limits for the structure extra charges
     area_extra_charges bigint[],           -- possible extra charges for event area, per 1 sqm
-    area_extra_charge_limits real[]        -- area limits for the area extra charges
+    area_extra_charge_limits double precision[]        -- area limits for the area extra charges
     );
 
 create table allu.location (
