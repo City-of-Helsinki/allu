@@ -1,9 +1,13 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.pricing.PricingConfiguration;
+import fi.hel.allu.model.testUtils.TestCommon;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
+import static fi.hel.allu.QSquareSection.squareSection;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,23 +32,38 @@ public class PricingDaoTest {
   @Autowired
   private PricingDao pricingDao;
 
-  // Check that there's a pricing configuration for Narinkka
+  @Autowired
+  private TestCommon testCommon;
+
+  @Autowired
+  private SQLQueryFactory queryFactory;
+
+  private static final int TEST_ID = 1337;
+  private static final long TEST_BASE_CHARGE = 6660000L;
+
+  @Before
+  public void setUp() throws Exception {
+    testCommon.deleteAllData();
+    // Insert one squaresection and a pricing config for it:
+    queryFactory.insert(squareSection).set(squareSection.id, TEST_ID).set(squareSection.square, "Turbofolkstraße").set(squareSection.section, "Z").set(squareSection.isActive, true).execute();
+    queryFactory.insert(outdoorPricing).set(outdoorPricing.squareSectionId, TEST_ID)
+        .set(outdoorPricing.nature, "PUBLIC_FREE").set(outdoorPricing.baseCharge, TEST_BASE_CHARGE).execute();
+  }
+
+  // Check that the pricing configuration can be read:
   @Test
-  public void testWithSection() {
-    Optional<PricingConfiguration> opt_pc = pricingDao.findByLocationAndNature("Narinkka", "A",
+  public void testWithExistingSquareSection() {
+    Optional<PricingConfiguration> opt_pc = pricingDao.findBySquareSectionAndNature(TEST_ID,
         OutdoorEventNature.PUBLIC_FREE);
     assertTrue(opt_pc.isPresent());
     PricingConfiguration pc = opt_pc.get();
-    assertEquals(6000000, pc.getBaseCharge());
+    assertEquals(TEST_BASE_CHARGE, pc.getBaseCharge());
   }
 
   @Test
-  public void testWithoutSection() {
-    Optional<PricingConfiguration> opt_pc = pricingDao.findByLocationAndNature("Säiliö 468", null,
-        OutdoorEventNature.CLOSED);
-    assertTrue(opt_pc.isPresent());
-    PricingConfiguration pc = opt_pc.get();
-    assertEquals(2000000, pc.getBaseCharge());
+  public void testWithBadSquareSection() {
+    Optional<PricingConfiguration> opt_pc = pricingDao.findBySquareSectionAndNature(TEST_ID + 1, OutdoorEventNature.PUBLIC_FREE);
+    assertFalse(opt_pc.isPresent());
   }
 
 }

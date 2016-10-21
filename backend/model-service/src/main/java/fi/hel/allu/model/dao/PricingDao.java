@@ -1,6 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
@@ -15,7 +14,6 @@ import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
-import static fi.hel.allu.QSquareSection.squareSection;
 
 @Repository
 public class PricingDao {
@@ -25,18 +23,9 @@ public class PricingDao {
   final QBean<PricingConfiguration> pricingBean = bean(PricingConfiguration.class, outdoorPricing.all());
 
   @Transactional(readOnly = true)
-  public Optional<PricingConfiguration> findByLocationAndNature(String square, String section,
-      OutdoorEventNature nature) {
-    Predicate sectionMatch;
-    // Different equality for non-null and null:
-    if (section != null) {
-      sectionMatch = squareSection.section.eq(section);
-    } else {
-      sectionMatch = squareSection.section.isNull();
-    }
-    PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing).join(squareSection)
-        .on(outdoorPricing.squareSectionId.eq(squareSection.id))
-        .where(squareSection.square.eq(square).and(sectionMatch).and(outdoorPricing.nature.eq(nature.toString())))
+  public Optional<PricingConfiguration> findBySquareSectionAndNature(int squareSectionId, OutdoorEventNature nature) {
+    PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing)
+        .where(outdoorPricing.squareSectionId.eq(squareSectionId).and(outdoorPricing.nature.eq(nature.toString())))
         .fetchFirst();
     return Optional.ofNullable(pc);
   }
