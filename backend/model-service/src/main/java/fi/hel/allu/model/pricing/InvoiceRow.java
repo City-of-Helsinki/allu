@@ -1,15 +1,15 @@
 package fi.hel.allu.model.pricing;
 
 public class InvoiceRow {
-  private LineType lineType;
+  private RowType rowType;
   private long value;
 
-  public enum LineType {
+  public enum RowType {
     BASE_CHARGE, DAILY_CHARGE, TOTAL_CHARGE, STRUCTURE_CHARGE, AREA_CHARGE
   };
 
-  public InvoiceRow(LineType lineType, long value) {
-    this.lineType = lineType;
+  public InvoiceRow(RowType rowType, long value) {
+    this.rowType = rowType;
     this.value = value;
   }
 }

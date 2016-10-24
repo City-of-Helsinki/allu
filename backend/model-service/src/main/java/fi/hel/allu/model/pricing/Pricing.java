@@ -1,6 +1,6 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.model.pricing.InvoiceRow.LineType;
+import fi.hel.allu.model.pricing.InvoiceRow.RowType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +22,11 @@ public class Pricing {
   public long calculateFullPrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     long dailyCharge = pricingConfig.getBaseCharge();
-    addInvoiceRow(LineType.BASE_CHARGE, dailyCharge);
+    addInvoiceRow(RowType.BASE_CHARGE, dailyCharge);
 
     dailyCharge += calculateStructureExtras(pricingConfig, structureArea);
     dailyCharge += calculateAreaExtras(pricingConfig, area);
-    addInvoiceRow(LineType.DAILY_CHARGE, dailyCharge);
+    addInvoiceRow(RowType.DAILY_CHARGE, dailyCharge);
 
     long totalCharge;
     if (pricingConfig.getDurationDiscountLimit() != 0 && eventDays > pricingConfig.getDurationDiscountLimit()) {
@@ -40,7 +40,7 @@ public class Pricing {
     }
     totalCharge += (long) (0.5 + buildDays * dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
 
-    addInvoiceRow(LineType.TOTAL_CHARGE, totalCharge);
+    addInvoiceRow(RowType.TOTAL_CHARGE, totalCharge);
     return totalCharge;
   }
 
@@ -64,7 +64,7 @@ public class Pricing {
                                                                    // per 10 sqm
       total += (long) (0.5 + structureExtraCharges[i] * billingMultiplier);
     }
-    addInvoiceRow(LineType.STRUCTURE_CHARGE, total);
+    addInvoiceRow(RowType.STRUCTURE_CHARGE, total);
     return total;
   }
 
@@ -85,11 +85,11 @@ public class Pricing {
       }
       total += (long) (0.5 + areaExtraCharges[i] * (upperLimit - lowerLimit));
     }
-    addInvoiceRow(LineType.AREA_CHARGE, total);
+    addInvoiceRow(RowType.AREA_CHARGE, total);
     return total;
   }
 
-  private void addInvoiceRow(InvoiceRow.LineType lineType, long value) {
-    invoiceRows.add(new InvoiceRow(lineType, value));
+  private void addInvoiceRow(InvoiceRow.RowType rowType, long value) {
+    invoiceRows.add(new InvoiceRow(rowType, value));
   }
 }
