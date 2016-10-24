@@ -1,10 +1,13 @@
 package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.types.ApplicationType;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 public class ApplicationDaoTest {
   @Test
   public void testCreateApplicationIdString() {
