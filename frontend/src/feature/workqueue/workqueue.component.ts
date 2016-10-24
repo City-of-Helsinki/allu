@@ -14,6 +14,11 @@ import {ApplicationStatus} from '../../model/application/application-status-chan
 import {ApplicationType} from '../../model/application/type/application-type';
 import {Sort} from '../../model/common/sort';
 import {HandlerModalComponent} from './handlerModal/handler-modal.component';
+import {CurrentUser} from '../../service/user/current-user';
+import {User} from '../../model/common/user';
+import {UserHub} from '../../service/user/user-hub';
+import {UserService} from '../../service/user/user-service';
+import {DialogCloseValue, DialogCloseReason} from '../common/dialog-close-value';
 
 @Component({
   selector: 'workqueue',
@@ -32,19 +37,22 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private sort: Sort;
   private translations = translations;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
-  private handlers: Array<string> = ['TestHandler'];
   private applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypes = EnumUtil.enumValues(ApplicationType);
+  private handlers: Array<User>;
 
   constructor(private applicationHub: ApplicationHub,
               private dialog: MdDialog,
-              private viewContainerRef: ViewContainerRef) { }
+              private viewContainerRef: ViewContainerRef,
+              private userHub: UserHub) { }
 
   ngOnInit() {
     this.applications = this.applicationQuery.asObservable()
       .debounceTime(300)
       .distinctUntilChanged()
       .switchMap(query => this.applicationHub.searchApplications(query));
+
+    this.userHub.getActiveUsers().subscribe(users => this.handlers = users);
   }
 
   ngOnDestroy() {}
@@ -68,8 +76,9 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   moveSelectedToSelf() {
-    // TODO: actual backend call for the handler update
     console.log('Moving following applications to self', this.selectedApplicationIds);
+    let currentUserName = CurrentUser.userName().value();
+    this.changeHandler(currentUserName, this.selectedApplicationIds);
   }
 
   openHandlerModal() {
@@ -78,13 +87,30 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
     this.dialogRef = this.dialog.open(HandlerModalComponent, config);
 
-    this.dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        // TODO: actual backend call for the handler update
-        console.log('Moving following applications to target user', this.selectedApplicationIds, result);
+    this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
+      if (dialogCloseValue.reason === DialogCloseReason.OK) {
+        if (dialogCloseValue.result) {
+          this.changeHandler(dialogCloseValue.result.userName, this.selectedApplicationIds);
+        } else {
+          this.removeHandler(this.selectedApplicationIds);
+        }
       }
-
       this.dialogRef = undefined;
     });
+  }
+
+  private changeHandler(newHandler: string, ids: Array<number>): void {
+    let targetUser = this.handlers.find(handler => handler.userName === newHandler);
+    this.applicationHub.changeHandler(targetUser.id, ids).subscribe(
+      () => {},
+      () => {},
+      () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
+  }
+
+  private removeHandler(ids: Array<number>): void {
+    this.applicationHub.removeHandler(ids).subscribe(
+      () => {},
+      () => {},
+      () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
   }
 }

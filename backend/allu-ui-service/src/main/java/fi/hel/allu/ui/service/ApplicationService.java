@@ -65,6 +65,10 @@ public class ApplicationService {
   }
 
 
+  void setApplicationProperties(ApplicationProperties applicationProperties) {
+    this.applicationProperties = applicationProperties;
+  }
+
   /**
    * Create applications by calling backend service.
    *
@@ -110,6 +114,22 @@ public class ApplicationService {
     applicationJson.setContactList(contacts);
     searchService.updateApplication(applicationJson);
     return applicationJson;
+  }
+
+  public void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
+    // update applications in database
+    restTemplate.put(applicationProperties.getApplicationHandlerUpdateUrl(), applicationIds, updatedHandler);
+    // read updated applications to be able to update ElasticSearch
+    List<ApplicationJson> applications = findApplicationsById(applicationIds);
+    applications.forEach(a -> searchService.updateApplication(a));
+  }
+
+  public void removeApplicationHandler(List<Integer> applicationIds) {
+    // remove handler from applications in database
+    restTemplate.put(applicationProperties.getApplicationHandlerRemoveUrl(), applicationIds);
+    // read updated applications to be able to update ElasticSearch
+    List<ApplicationJson> applications = findApplicationsById(applicationIds);
+    applications.forEach(a -> searchService.updateApplication(a));
   }
 
   /**

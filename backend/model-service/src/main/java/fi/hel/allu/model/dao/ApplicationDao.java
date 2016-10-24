@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
@@ -71,6 +72,34 @@ public class ApplicationDao {
       throw new QueryException("Failed to insert record");
     }
     return findByIds(Collections.singletonList(id)).get(0);
+  }
+
+  /**
+   * Updates handler of given applications.
+   *
+   * @param   handler       New handler set to the applications.
+   * @param   applications  Applications whose handler is updated.
+   *
+   * @return  Number of updated applications.
+   */
+  @Transactional
+  public int updateHandler(int handler, List<Integer> applications) {
+    int updated = (int) queryFactory
+        .update(application)
+        .set(application.handler, handler)
+        .where(application.id.in(applications))
+        .execute();
+    return updated;
+  }
+
+  @Transactional
+  public int removeHandler(List<Integer> applications) {
+    int updated = (int) queryFactory
+        .update(application)
+        .set(application.handler, Expressions.nullExpression())
+        .where(application.id.in(applications))
+        .execute();
+    return updated;
   }
 
   @Transactional

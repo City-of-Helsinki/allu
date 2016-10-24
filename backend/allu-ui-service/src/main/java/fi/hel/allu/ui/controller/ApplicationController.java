@@ -1,34 +1,25 @@
 package fi.hel.allu.ui.controller;
 
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.AttachmentInfoJson;
+import fi.hel.allu.ui.domain.LocationQueryJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.ui.service.ApplicationService;
+import fi.hel.allu.ui.service.AttachmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.service.ApplicationService;
-import fi.hel.allu.ui.service.AttachmentService;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -50,6 +41,20 @@ public class ApplicationController {
   public ResponseEntity<ApplicationJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationJson
       applicationJson) {
     return new ResponseEntity<>(applicationService.updateApplication(id, applicationJson), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/handler/{id}", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> updateApplicationHandler(@PathVariable int id, @RequestBody(required = true) List<Integer> applicationsIds) {
+    applicationService.updateApplicationHandler(id, applicationsIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> removeApplicationHandler(@RequestBody(required = true) List<Integer> applicationsIds) {
+    applicationService.removeApplicationHandler(applicationsIds);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)

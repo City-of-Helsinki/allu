@@ -42,4 +42,16 @@ export class ApplicationHub {
    * Returns updated application.
    */
   public changeStatus = (statusChange: ApplicationStatusChange) => this.applicationService.applicationStatusChange(statusChange);
+
+  /**
+   * Changes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
+   */
+  public changeHandler =
+    (handler: number, applicationIds: Array<number>) => this.applicationService.applicationHandlerChange(handler, applicationIds);
+
+  /**
+   * Removes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
+   */
+  public removeHandler =
+    (applicationIds: Array<number>) => this.applicationService.applicationHandlerRemove(applicationIds);
 }

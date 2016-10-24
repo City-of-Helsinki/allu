@@ -4,6 +4,8 @@ import {Observable} from 'rxjs/Observable';
 
 import {User} from '../../../model/common/user';
 import {UserHub} from '../../../service/user/user-hub';
+import {CurrentUser} from '../../../service/user/current-user';
+import {DialogCloseReason, DialogCloseValue} from '../../common/dialog-close-value';
 
 @Component({
   selector: 'handler-modal',
@@ -13,20 +15,31 @@ import {UserHub} from '../../../service/user/user-hub';
   ]
 })
 export class HandlerModalComponent implements OnInit {
-  handlers: Observable<Array<User>>;
+  allUsers: Array<User>;
+  currentUserName: string;
   selectedHandler: User;
 
   constructor(public dialogRef: MdDialogRef<HandlerModalComponent>, private userHub: UserHub) { }
 
   ngOnInit(): void {
-    this.handlers = this.userHub.getActiveUsers();
+    CurrentUser.userName().do(userName => this.currentUserName = userName);
+    this.userHub.getActiveUsers().subscribe(users => this.allUsers = users);
   }
 
   confirm() {
-    this.dialogRef.close(this.selectedHandler);
+    this.selectedHandler = this.selectCurrentUser();
+    this.dialogRef.close(new DialogCloseValue(DialogCloseReason.OK, this.selectedHandler));
   }
 
   cancel() {
-    this.dialogRef.close();
+    this.dialogRef.close(new DialogCloseValue(DialogCloseReason.CANCEL, undefined));
+  }
+
+  private selectCurrentUser(): User {
+    if (this.allUsers) {
+      return this.allUsers.find(user => user.userName === this.currentUserName);
+    } else {
+      return undefined;
+    }
   }
 }

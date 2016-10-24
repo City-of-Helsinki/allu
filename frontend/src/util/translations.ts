@@ -2,6 +2,7 @@ export const translations = {
   application: {
     error: {
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
+      handlerChangeFailed: 'Hakemuksen käsittelijän vaihto epäonnistui',
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui'
     },
