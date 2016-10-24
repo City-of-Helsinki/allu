@@ -1,4 +1,5 @@
 import {Component} from '@angular/core';
+import {CurrentUser} from '../../../service/user/current-user';
 
 @Component({
   selector: 'navbar',
@@ -7,4 +8,8 @@ import {Component} from '@angular/core';
     require('./navbar.component.scss')
   ]
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+  hasRole(role: string): boolean {
+    return CurrentUser.hasRole(role);
+  }
+}

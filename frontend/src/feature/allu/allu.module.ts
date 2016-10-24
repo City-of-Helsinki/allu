@@ -33,6 +33,7 @@ import {ToolbarModule} from '../toolbar/toolbar.module';
 import {LoginModule} from '../login/login.module';
 import {UserHub} from '../../service/user/user-hub';
 import {UserService} from '../../service/user/user-service';
+import {AdminModule} from '../admin/admin.module';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import {UserService} from '../../service/user/user-service';
     LocationModule.forRoot(),
     WorkQueueModule,
     DecisionModule,
-    SearchModule
+    SearchModule,
+    AdminModule
   ],
   declarations: [
     AlluComponent

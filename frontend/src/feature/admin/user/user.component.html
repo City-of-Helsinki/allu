@@ -1,0 +1,48 @@
+<div class="row">
+    <div class="col m6">
+    <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
+        <h5>Käyttäjän {{userForm.value.userName}} tiedot</h5>
+        <div class="row">
+            <div class="col m12">
+                <div class="input-field col s12">
+                    <input id="realName" type="text" formControlName="realName" />
+                    <label for="realName">Nimi</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="emailAddress" type="text" formControlName="emailAddress" />
+                    <label for="emailAddress">Sähköpostiosoite</label>
+                </div>
+                <div class="input-field col s12">
+                    <input id="title" type="text" formControlName="title" />
+                    <label for="title">Tehtävänimike</label>
+                </div>
+                <div class="input-field col s12 checkbox-height">
+                    <input id="isActive" type="checkbox" formControlName="isActive" />
+                    <label for="isActive">Aktiivinen</label>
+                </div>
+                <div class="input-field col s12">
+                    <select formControlName="allowedApplicationTypes" materialize="material_select" multiple>
+                        <option value="" selected disabled>Sallitut hakemustyypit</option>
+                        <option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</option>
+                    </select>
+                    <label>Sallitut hakemustyypit</label>
+                </div>
+                <div class="input-field col s12">
+                    <select formControlName="assignedRoles" materialize="material_select" multiple>
+                        <option value="" selected disabled>Roolit</option>
+                        <option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole()">{{translations.user.role['ROLE_ADMIN']}}</option>
+                        <option *ngFor="let role of roles" [value]="role">{{translations.user.role[role]}}</option>
+                    </select>
+                    <label>Roolit</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col m12">
+                <button type="submit" [disabled]="!userForm.valid || submitted"
+                        md-raised-button class="waves-effect waves-light btn">Tallenna</button>
+            </div>
+        </div>
+    </form>
+    </div>
+</div>
