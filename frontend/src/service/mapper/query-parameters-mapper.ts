@@ -18,7 +18,7 @@ export class QueryParametersMapper {
   }
 
   private static mapSort(query: ApplicationSearchQuery): BackendQuerySort {
-    return (query.sort && query.sort.field && query.sort.direction) ?
+    return (query.sort && query.sort.field && query.sort.direction !== undefined) ?
     {
       field: QueryParametersMapper.getBackendSortField(query.sort.field),
       direction: Direction[query.sort.direction]
