@@ -1,6 +1,6 @@
 package fi.hel.allu.model.pricing;
 
-public class InvoiceLine {
+public class InvoiceRow {
   private LineType lineType;
   private long value;
 
@@ -8,7 +8,7 @@ public class InvoiceLine {
     BASE_CHARGE, DAILY_CHARGE, TOTAL_CHARGE, STRUCTURE_CHARGE, AREA_CHARGE
   };
 
-  public InvoiceLine(LineType lineType, long value) {
+  public InvoiceRow(LineType lineType, long value) {
     this.lineType = lineType;
     this.value = value;
   }

@@ -47,7 +47,9 @@ public class PricingDaoTest {
     // Insert one squaresection and a pricing config for it:
     queryFactory.insert(squareSection).set(squareSection.id, TEST_ID).set(squareSection.square, "Turbofolkstraße").set(squareSection.section, "Z").set(squareSection.isActive, true).execute();
     queryFactory.insert(outdoorPricing).set(outdoorPricing.squareSectionId, TEST_ID)
-        .set(outdoorPricing.nature, "PUBLIC_FREE").set(outdoorPricing.baseCharge, TEST_BASE_CHARGE).execute();
+        .set(outdoorPricing.nature, "PUBLIC_FREE").set(outdoorPricing.baseCharge, TEST_BASE_CHARGE)
+        .set(outdoorPricing.buildDiscountPercent, 0).set(outdoorPricing.durationDiscountPercent, 0)
+        .set(outdoorPricing.durationDiscountLimit, 0).execute();
   }
 
   // Check that the pricing configuration can be read:

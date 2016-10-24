@@ -34,6 +34,8 @@ public class PricingConfiguration {
     this.areaExtraChargeLimits = areaExtraChargeLimits != null
         ? Arrays.stream(areaExtraChargeLimits).boxed().toArray(Double[]::new)
         : null;
+    validateAreaExtraCharges();
+    validateStructureExtraCharges();
   }
 
   /**
@@ -104,6 +106,7 @@ public class PricingConfiguration {
 
   public void setStructureExtraCharges(Long[] structureExtraCharges) {
     this.structureExtraCharges = structureExtraCharges;
+    validateStructureExtraCharges();
   }
 
   /**
@@ -119,6 +122,7 @@ public class PricingConfiguration {
 
   public void setStructureExtraChargeLimits(Double[] structureExtraChargeLimits) {
     this.structureExtraChargeLimits = structureExtraChargeLimits;
+    validateStructureExtraCharges();
   }
 
   /**
@@ -134,6 +138,7 @@ public class PricingConfiguration {
    */
   public void setAreaExtraCharges(Long[] areaExtraCharges) {
     this.areaExtraCharges = areaExtraCharges;
+    validateAreaExtraCharges();
   }
 
   /**
@@ -149,5 +154,22 @@ public class PricingConfiguration {
    */
   public void setAreaExtraChargeLimits(Double[] areaExtraChargeLimits) {
     this.areaExtraChargeLimits = areaExtraChargeLimits;
+    validateAreaExtraCharges();
+  }
+
+  private void validateAreaExtraCharges() {
+    if (areaExtraCharges == null || areaExtraChargeLimits == null)
+      return;
+    if (areaExtraCharges.length != areaExtraChargeLimits.length) {
+      throw new IllegalStateException("Area extra charge limits length mismatch");
+    }
+  }
+
+  private void validateStructureExtraCharges() {
+    if (structureExtraCharges == null || structureExtraChargeLimits == null)
+      return;
+    if (structureExtraCharges.length != structureExtraChargeLimits.length) {
+      throw new IllegalStateException("Structure extra charge limits length mismatch");
+    }
   }
 }

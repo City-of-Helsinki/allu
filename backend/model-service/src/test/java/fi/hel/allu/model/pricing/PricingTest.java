@@ -1,12 +1,9 @@
 package fi.hel.allu.model.pricing;
 
-import static org.junit.Assert.assertEquals;
-
-import fi.hel.allu.model.pricing.Pricing;
-import fi.hel.allu.model.pricing.PricingConfiguration;
-
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class PricingTest {
 
@@ -48,6 +45,20 @@ public class PricingTest {
     // sqm area:
     long sum = bill.calculateFullPrice(bc, 25, 3, 455.0, 1000.0);
     assertEquals(99750000, sum); // The price should be 9975 EUR
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testAreaExtraChargeValidation() {
+    PricingConfiguration pricingConfiguration = new PricingConfiguration();
+    pricingConfiguration.setAreaExtraChargeLimits(new Double[] { Double.valueOf(1020.0), Double.valueOf(2204.2) });
+    pricingConfiguration.setAreaExtraCharges(new Long[] { Long.valueOf(1234L) });
+  }
+
+  @Test(expected = IllegalStateException.class)
+  public void testStructureExtraChargeValidation() {
+    PricingConfiguration pricingConfiguration = new PricingConfiguration();
+    pricingConfiguration.setStructureExtraChargeLimits(new Double[] { Double.valueOf(1020.0), Double.valueOf(2204.2) });
+    pricingConfiguration.setStructureExtraCharges(new Long[] { Long.valueOf(1234L) });
   }
 
 }

@@ -1,13 +1,13 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.model.pricing.InvoiceLine.LineType;
+import fi.hel.allu.model.pricing.InvoiceRow.LineType;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Pricing {
 
-  private List<InvoiceLine> invoiceLines = new ArrayList<>();
+  private List<InvoiceRow> invoiceRows = new ArrayList<>();
 
   /**
    * Calculate full price for an outdoor event with given parameters
@@ -22,11 +22,11 @@ public class Pricing {
   public long calculateFullPrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     long dailyCharge = pricingConfig.getBaseCharge();
-    addInvoiceLine(LineType.BASE_CHARGE, dailyCharge);
+    addInvoiceRow(LineType.BASE_CHARGE, dailyCharge);
 
     dailyCharge += calculateStructureExtras(pricingConfig, structureArea);
     dailyCharge += calculateAreaExtras(pricingConfig, area);
-    addInvoiceLine(LineType.DAILY_CHARGE, dailyCharge);
+    addInvoiceRow(LineType.DAILY_CHARGE, dailyCharge);
 
     long totalCharge;
     if (pricingConfig.getDurationDiscountLimit() != 0 && eventDays > pricingConfig.getDurationDiscountLimit()) {
@@ -40,7 +40,7 @@ public class Pricing {
     }
     totalCharge += (long) (0.5 + buildDays * dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
 
-    addInvoiceLine(LineType.TOTAL_CHARGE, totalCharge);
+    addInvoiceRow(LineType.TOTAL_CHARGE, totalCharge);
     return totalCharge;
   }
 
@@ -51,7 +51,6 @@ public class Pricing {
     }
     long total = 0L;
     Double[] structureExtraChargeLimits = pricingConfig.getStructureExtraChargeLimits();
-    assert structureExtraChargeLimits != null && structureExtraChargeLimits.length == structureExtraCharges.length;
     // BillableArea is per starting 10 sq. meters
     double billableStructures = Math.ceil(structureArea / 10.0) * 10.0;
     for (int i = 0; i < structureExtraChargeLimits.length && billableStructures > structureExtraChargeLimits[i]; ++i) {
@@ -65,7 +64,7 @@ public class Pricing {
                                                                    // per 10 sqm
       total += (long) (0.5 + structureExtraCharges[i] * billingMultiplier);
     }
-    addInvoiceLine(LineType.STRUCTURE_CHARGE, total);
+    addInvoiceRow(LineType.STRUCTURE_CHARGE, total);
     return total;
   }
 
@@ -76,9 +75,8 @@ public class Pricing {
     }
     long total = 0L;
     Double[] areaExtraChargeLimits = pricingConfig.getAreaExtraChargeLimits();
-    assert areaExtraChargeLimits != null && areaExtraChargeLimits.length == areaExtraCharges.length;
-    double billableArea = Math.ceil(area); // billing is per starting full sq.
-                                           // m.
+    // billing is per starting full square meter:
+    double billableArea = Math.ceil(area);
     for (int i = 0; i < areaExtraChargeLimits.length && billableArea > areaExtraChargeLimits[i]; ++i) {
       double lowerLimit = areaExtraChargeLimits[i];
       double upperLimit = billableArea;
@@ -87,11 +85,11 @@ public class Pricing {
       }
       total += (long) (0.5 + areaExtraCharges[i] * (upperLimit - lowerLimit));
     }
-    addInvoiceLine(LineType.AREA_CHARGE, total);
+    addInvoiceRow(LineType.AREA_CHARGE, total);
     return total;
   }
 
-  private void addInvoiceLine(InvoiceLine.LineType lineType, long value) {
-    invoiceLines.add(new InvoiceLine(lineType, value));
+  private void addInvoiceRow(InvoiceRow.LineType lineType, long value) {
+    invoiceRows.add(new InvoiceRow(lineType, value));
   }
 }
