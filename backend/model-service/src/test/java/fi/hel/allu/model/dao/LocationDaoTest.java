@@ -78,6 +78,18 @@ public class LocationDaoTest {
   }
 
   @Test
+  public void testAreaEmptyGeometry() {
+    Geometry geoIn = geometrycollection(3879, new Polygon2DToken[0]);
+    Location locIn = new Location();
+    locIn.setGeometry(geoIn);
+    Location locOut = locationDao.insert(locIn);
+    double area = locOut.getArea();
+    // Area should be close to 0 m^2:
+    double diff = Math.abs(area - 0.0);
+    assertTrue(diff < 0.0001);
+  }
+
+  @Test
   public void testCombineGeometries() {
     // three overlapping squares, 4 m^2 each.
     Geometry geoIn = geometrycollection(3879, Sq_0_0, Sq_1_1, Sq_2_2);
@@ -146,4 +158,5 @@ public class LocationDaoTest {
     assertEquals(2, queryResult.size());
     assertEquals(1, queryResult.stream().filter(sqs -> sqs.getSquare().equals("Kauppatori")).count());
   }
+
 }

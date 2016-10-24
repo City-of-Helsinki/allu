@@ -112,7 +112,7 @@ public class LocationDao {
     SQLQuery<Double> query = queryFactory.select(geometry1.geometry.asPolygon().area().sum()).from(geometry1)
         .where(geometry1.locationId.eq(locationId));
     logger.debug("Executing query {}", query.getSQL().getSQL());
-    Optional<Double> area = Optional.of(query.fetchOne());
+    Optional<Double> area = Optional.ofNullable(query.fetchOne());
     logger.debug("Area for location ID {} is {} m2", locationId, area.orElse(0.0));
     return area.orElse(0.0);
   }
