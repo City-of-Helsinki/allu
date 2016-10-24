@@ -66,7 +66,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.clearDrawn();
 
     // Check to see if the application has a location
-    if (application.location && application.location.geometry.geometries.length) {
+    if (application.hasGeometry()) {
       let featureCollection = this.mapService.geometryCollectionToFeatureCollection(application.location.geometry);
       this.applicationArea = new L.GeoJSON(featureCollection);
       this.applicationArea.eachLayer((layer) => {
@@ -110,10 +110,10 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  private drawGeometry(geometryCollection: GeoJSON.GeometryCollection, drawLayer: L.LayerGroup<L.ILayer>) {
+  private drawGeometry(geometryCollection: GeoJSON.GeometryCollection, drawLayer: L.LayerGroup<L.ILayer>, style?: Object) {
     if (geometryCollection.geometries.length) {
       let featureCollection = this.mapService.geometryCollectionToFeatureCollection(geometryCollection);
-      this.applicationArea = new L.GeoJSON(featureCollection);
+      this.applicationArea = new L.GeoJSON(featureCollection, style);
       this.applicationArea.eachLayer((layer) => {
         drawLayer.addLayer(layer);
       });

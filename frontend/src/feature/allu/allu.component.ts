@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {ViewEncapsulation} from '@angular/core';
 import {Login} from '../../feature/login/login.component';
 import {SearchService} from '../../service/search.service';
-import {GeolocationService} from '../../service/geolocation.service';
+import {LocationService} from '../../service/location.service';
 import {ApplicationService} from '../../service/application/application.service.ts';
 import {DecisionService} from '../../service/decision/decision.service';
 import {AuthGuard} from '../../feature/login/auth-guard.service';
@@ -20,7 +20,7 @@ import {AuthGuard} from '../../feature/login/auth-guard.service';
 export class AlluComponent {
   constructor(
     public router: Router,
-    private geolocationService: GeolocationService,
+    private locationService: LocationService,
     private applicationService: ApplicationService,
     private decisionService: DecisionService) {}
 }

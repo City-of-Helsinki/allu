@@ -32,6 +32,10 @@ export class TimeUtil {
     return dateString ? momentLib(dateString, 'DD.MM.YYYY').toDate() : undefined;
   }
 
+  public static dateFromBackend(dateString: string): Date {
+    return dateString ? momentLib(dateString).toDate() : undefined;
+  }
+
   /**
    * Returns end of given day i.e. any date 1.1.2001 would be converted to 1.1.2001 23:59.
    *

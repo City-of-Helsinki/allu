@@ -14,19 +14,20 @@
               <label for="info">Lisätietoja paikasta</label>
             </div>
             <div class="input-field col m8">
-              <select (change)="rentingPlaceSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+              <select [(ngModel)]="selectedSquare" materialize="material_select">
                 <option value="" disabled selected>Vuokrattava paikka</option>
-                <option *ngFor="let rent of rentingPlace" [value]="rent.value">{{rent.name}}</option>
+                <option *ngFor="let square of squares" [value]="square">{{square}}</option>
               </select>
             </div>
             <div class="input-field col m2">
-              <select (change)="sectionSelection($event.target.value)" materialize="material_select" [materializeSelectOptions]="selectOptions">
+              <select [(ngModel)]="selectedSquareSection" [disabled]="noSections()"
+                      materialize="material_select" [materializeSelectOptions]="sections">
                 <option value="" disabled selected>Lohko(t)</option>
-                <option *ngFor="let section of sections" [value]="section.value">{{section.name}}</option>
+                <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
               </select>
             </div>
             <div class="input-field col m2">
-              <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="area">
+              <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="locationState.location.uiArea">
               <label for="area">Alueen pinta-ala</label>
             </div>
           </div>

@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 import {Geocoordinates} from '../model/common/geocoordinates';
 import '../rxjs-extensions.ts';
@@ -9,8 +10,10 @@ import {Option} from '../util/option';
 import {ApplicationService} from './application/application.service';
 import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery';
 import {SearchbarFilter} from './searchbar-filter';
-import {GeolocationService} from './geolocation.service';
+import {LocationService} from './location.service';
 import {UIStateHub} from './ui-state/ui-state-hub';
+import {SquareSection} from '../model/common/square-section';
+import {Some} from '../util/option';
 
 
 @Injectable()
@@ -22,9 +25,10 @@ export class MapHub {
   private searchBar$ = new Subject<SearchbarFilter>();
   private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
+  private squareSections$ = new BehaviorSubject<Array<SquareSection>>([]);
 
   constructor(private applicationService: ApplicationService,
-              private geolocationService: GeolocationService,
+              private locationService: LocationService,
               private uiState: UIStateHub) {
     // Waits until searchBar and mapView observables produce value and combines them (latest)
     // as a query which is added to applicationSearch subject
@@ -37,11 +41,14 @@ export class MapHub {
 
     // When search changes fetches new coordinates and adds them to coordinates observable
     this.search()
-      .switchMap(term => this.geolocationService.geocode(term))
+      .switchMap(term => this.locationService.geocode(term))
       .subscribe(
         coordinates => this.coordinates$.next(coordinates),
         err => this.uiState.addError(err)
       );
+
+    this.locationService.getSquaresAndSections()
+      .subscribe(squaresAndSections => this.squareSections$.next(squaresAndSections));
   }
 
   /**
@@ -80,6 +87,17 @@ export class MapHub {
    */
   public addShape = (shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) => this.shape$.next(shape);
   public shape = () => this.shape$.asObservable();
+
+  /**
+   * Used for fetching all available squares / sections
+   */
+  public squaresAndSections = () => this.squareSections$.asObservable();
+
+  /**
+   * Used for fetching single square / section
+   */
+  public squareAndSection = (id: number) => this.squaresAndSections()
+    .map(entries => Some(entries.find(ss => ss.id === id)));
 
   /**
    * Used to notify about new address search terms

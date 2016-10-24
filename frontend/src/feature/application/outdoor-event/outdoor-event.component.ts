@@ -23,6 +23,7 @@ import {MapHub} from '../../../service/map-hub';
 import {ApplicationStatus} from '../../../model/application/application-status-change';
 import {ApplicationAttachmentHub} from '../attachment/application-attachment-hub';
 import {EventNature} from './outdoor-event-config';
+import {SquareSection} from '../../../model/common/square-section';
 
 declare var Materialize: any;
 
@@ -35,7 +36,8 @@ declare var Materialize: any;
   ]
 })
 export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
-  private application: Application;
+  application: Application;
+  squareSection: SquareSection;
   private isSummary: boolean;
   private _noPrice = false;
   private events: Array<any>;
@@ -92,6 +94,10 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
 
       UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
         this.isSummary = summary;
+      });
+
+      this.mapHub.squareAndSection(this.application.location.squareSectionId).subscribe(ssOpt => {
+          this.squareSection = ssOpt.orElse(new SquareSection());
       });
     });
   }

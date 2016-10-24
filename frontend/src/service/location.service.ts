@@ -19,12 +19,15 @@ import {ErrorType} from './ui-state/error-type';
 import {None} from '../util/option';
 import {Option} from '../util/option';
 import {Some} from '../util/option';
+import {SquareSectionMapper} from './mapper/square-section-mapper';
+import {SquareSection} from '../model/common/square-section';
 
 @Injectable()
-export class GeolocationService {
+export class LocationService {
 
   static ADDRESS_URL = '/api/address';
   static GEOCODE_URL = '/geocode/helsinki';
+  static SQUARE_SECTION_URL = '/api/locations/square-section';
 
   constructor(
     private authHttp: AuthHttp,
@@ -32,23 +35,30 @@ export class GeolocationService {
     private uiState: UIStateHub) {}
 
   public geocode(address: string): Observable<Option<Geocoordinates>> {
-    let searchUrl = this.searchUrl(address);
+    let searchUrl = this.geocodeUrl(address);
 
     return this.authHttp.get(searchUrl)
       .map(response => response.json())
       .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService))
       .map(coordinates => Some(coordinates))
-      .catch(err => this.handleError(err));
+      .catch(err => this.handleGeocodeError(err));
   }
 
-  private searchUrl(address: string) {
+  public getSquaresAndSections(): Observable<Array<SquareSection>> {
+    return this.authHttp.get(LocationService.SQUARE_SECTION_URL)
+      .map(response => response.json())
+      .map(json => json.map(ss => SquareSectionMapper.mapBackend(ss)))
+      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
+  }
+
+  private geocodeUrl(address: string) {
     let streetAddress = StreetAddress.fromAddressString(address);
-    return GeolocationService.ADDRESS_URL + GeolocationService.GEOCODE_URL
+    return LocationService.ADDRESS_URL + LocationService.GEOCODE_URL
       + '/' + streetAddress.streetName
       + '/' + streetAddress.streetNumber;
   }
 
-  private handleError(errorResponse: any): Observable<Option<Geocoordinates>> {
+  private handleGeocodeError(errorResponse: any): Observable<Option<Geocoordinates>> {
     let httpError = ErrorUtil.extractHttpError(errorResponse);
     return httpError.status === HTTP_NOT_FOUND
       ? Observable.of(None())
