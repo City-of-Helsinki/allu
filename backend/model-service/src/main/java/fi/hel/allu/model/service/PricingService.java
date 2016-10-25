@@ -5,6 +5,7 @@ import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationPricing;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.pricing.Pricing;
@@ -37,32 +38,46 @@ public class PricingService {
   }
 
   /**
-   * Calculate the event price for the application
+   * Calculate and store the event price for the application
    *
    * @param application
-   *          The application for which the pricing is calculated
-   * @return price in cents
+   *          The application for which the pricing is calculated. New pricing
+   *          is stored in the application.
    */
   @Transactional(readOnly = true)
-  public int calculatePrice(Application application) {
+  public void calculatePrice(Application application) {
     OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
     if (outdoorEvent != null) {
-      return calculatePrice(application, outdoorEvent);
+      ApplicationPricing calculatedPricing = new ApplicationPricing();
+      calculatedPricing.setPrice(calculatePrice(application, outdoorEvent));
+      outdoorEvent.setCalculatedPricing(calculatedPricing);
+    } else {
+      throw new NotImplementedException("Pricing calculation not implemented for this application type.");
     }
-    throw new NotImplementedException("Pricing calculation not implemented for this application type.");
   }
 
   // Pricing calculation for OutdoorEvent applications
   private int calculatePrice(Application application, OutdoorEvent outdoorEvent) {
-    Optional<Location> location = LocationDao.findById(application.getLocationId());
+    Integer locationId = application.getLocationId();
+    if (locationId == null) {
+      return 0; // No location -> no price.
+    }
+    Optional<Location> location = LocationDao.findById(locationId.intValue());
     if (location.isPresent() == false) {
       throw new NoSuchEntityException("Location (ID=" + application.getLocationId() + " doesn't exist");
     }
 
-    int squareSectionId = location.get().getSquareSectionId();
+    Integer squareSectionId = location.get().getSquareSectionId();
+    if (squareSectionId == null) {
+      return 0; // No square/section defined -> no price (TODO: infer proper
+                // zone id)
+    }
     OutdoorEventNature nature = outdoorEvent.getNature();
+    if (nature == null) {
+      return 0; // No nature defined -> no price
+    }
     Optional<PricingConfiguration> pricingConfiguration =
-        pricingDao.findBySquareSectionAndNature(squareSectionId, nature);
+        pricingDao.findBySquareSectionAndNature(squareSectionId.intValue(), nature);
     if (pricingConfiguration.isPresent() == false) {
       throw new NoSuchEntityException("No pricing configuration for (" + squareSectionId + nature + ")");
     }
@@ -81,6 +96,8 @@ public class PricingService {
 
   // Calculate amount of days between two timestamps, ignoring the hours.
   private int daysBetween(ZonedDateTime startTime, ZonedDateTime endTime) {
+    if (startTime == null || endTime == null)
+      return 0;
     return (int) startTime.truncatedTo(ChronoUnit.DAYS).until(endTime.truncatedTo(ChronoUnit.DAYS),
         ChronoUnit.DAYS);
   }
