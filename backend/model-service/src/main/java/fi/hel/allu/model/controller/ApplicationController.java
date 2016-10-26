@@ -1,24 +1,5 @@
 package fi.hel.allu.model.controller;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.AttachmentDao;
@@ -27,6 +8,21 @@ import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.service.PricingService;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import javax.validation.Valid;
+
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -40,13 +36,16 @@ public class ApplicationController {
 
   private DecisionDao decisionDao;
 
+  private PricingService pricingService;
+
   @Autowired
   public ApplicationController(ApplicationDao applicationDao, AttachmentDao attachmentDao, LocationDao locationDao,
-      DecisionDao decisionDao) {
+      DecisionDao decisionDao, PricingService pricingService) {
     this.applicationDao = applicationDao;
     this.attachmentDao = attachmentDao;
     this.locationDao = locationDao;
     this.decisionDao = decisionDao;
+    this.pricingService = pricingService;
   }
 
   /**
@@ -111,6 +110,7 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Application> update(@PathVariable int id,
       @Valid @RequestBody(required = true) Application application) {
+    pricingService.calculatePrice(application);
     return new ResponseEntity<>(applicationDao.update(id, application), HttpStatus.OK);
   }
 
@@ -123,7 +123,7 @@ public class ApplicationController {
   @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
   public ResponseEntity<Void> updateHandler(@PathVariable int handlerId, @RequestBody List<Integer> applications) {
     applicationDao.updateHandler(handlerId, applications);
-    return new ResponseEntity<Void>(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**
@@ -134,7 +134,7 @@ public class ApplicationController {
   @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
   public ResponseEntity<Void> removeHandler(@RequestBody List<Integer> applications) {
     applicationDao.removeHandler(applications);
-    return new ResponseEntity<Void>(HttpStatus.OK);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**
@@ -149,6 +149,7 @@ public class ApplicationController {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
+    pricingService.calculatePrice(application);
     return new ResponseEntity<>(applicationDao.insert(application), HttpStatus.OK);
   }
 
