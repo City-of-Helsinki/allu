@@ -7,6 +7,7 @@ import '../../../rxjs-extensions.ts';
 import {Application} from '../../../model/application/application';
 import {Sort, Direction} from '../../../model/common/sort';
 import {User} from '../../../model/common/user';
+import {translations} from '../../../util/translations';
 
 @Component({
   selector: 'workqueue-content',
@@ -20,6 +21,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   applicationRows: Array<ApplicationRow>;
   allSelected = false;
   sort = new Sort(undefined, undefined);
+  translations = translations;
 
   private applicationSubscription: Subscription;
 
@@ -27,6 +29,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.applicationSubscription = this.applications
       .map(applications => this.toApplicationRows(applications))
       .subscribe(applicationRows => {
+        this.allSelected = false;
         this.applicationRows = applicationRows;
       });
   }

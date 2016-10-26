@@ -8,14 +8,14 @@ export const translations = {
     },
     status: {
       PRE_RESERVED: 'Alustava varaus',
-      CANCELLED: 'Peruttu',
       PENDING: 'Vireillä',
       HANDLING: 'Käsittelyssä',
+      RETURNED_TO_PREPARATION: 'Palautettu käsittelyyn',
       DECISIONMAKING: 'Odottaa päätöstä',
       DECISION: 'Päätetty',
       REJECTED: 'Hylätty päätös',
-      RETURNED_TO_PREPARATION: 'Palautettu valmisteluun',
-      FINISHED: 'Valmis'
+      FINISHED: 'Valmis',
+      CANCELLED: 'Peruttu'
     },
     type: {
       OUTDOOREVENT: 'Ulkoilmatapahtuma',

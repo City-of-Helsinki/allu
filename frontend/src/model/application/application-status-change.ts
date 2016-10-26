@@ -1,15 +1,15 @@
 import {translations} from '../../util/translations';
 
 export enum ApplicationStatus {
-  PRE_RESERVED, // Alustava varaus
-  CANCELLED, // Peruttu
-  PENDING, // Vireillä
-  HANDLING, // Käsittelyssä
-  DECISIONMAKING, // Odottaa päätöstä
-  DECISION, // Päätetty
-  REJECTED, // Hylätty päätös
-  RETURNED_TO_PREPARATION, // Palautettu valmisteluun
-  FINISHED // Valmis
+  PRE_RESERVED,
+  PENDING,
+  HANDLING,
+  RETURNED_TO_PREPARATION,
+  DECISIONMAKING,
+  DECISION,
+  REJECTED,
+  FINISHED,
+  CANCELLED
 }
 
 export function translateStatus(status: ApplicationStatus) {
