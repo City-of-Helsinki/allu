@@ -8,7 +8,18 @@ export class CurrentUser {
   }
 
   static roles(): Option<Array<string>> {
-    return this.decode().map(token => token['alluRoles']);
+    return this.decode().map(token => token['alluRoles'])
+      .map(roles => roles.map(role => role['authority']));
+  }
+
+  static hasRole(role: string): boolean {
+    return CurrentUser.roles()
+      .map(roles => roles.indexOf(role) >= 0)
+      .orElse(false);
+  }
+
+  static isAdmin(): boolean {
+    return CurrentUser.hasRole('ROLE_ADMIN');
   }
 
   private static decode(): Option<Object> {

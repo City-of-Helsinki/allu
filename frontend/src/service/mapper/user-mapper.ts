@@ -11,7 +11,7 @@ export class UserMapper {
         backendUser.realName,
         backendUser.emailAddress,
         backendUser.title,
-        backendUser.isActive,
+        backendUser.active,
         backendUser.allowedApplicationTypes,
         backendUser.assignedRoles
         ) : undefined;
@@ -25,7 +25,7 @@ export class UserMapper {
       realName: user.realName,
       emailAddress: user.emailAddress,
       title: user.title,
-      isActive: user.isActive,
+      active: user.isActive,
       allowedApplicationTypes: user.allowedApplicationTypes,
       assignedRoles: user.assignedRoles
     } : undefined;

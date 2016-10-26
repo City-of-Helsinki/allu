@@ -4,7 +4,7 @@ export interface BackendUser {
   realName: string;
   emailAddress: string;
   title: string;
-  isActive: boolean;
+  active: boolean;
   allowedApplicationTypes: Array<string>;
   assignedRoles: Array<string>;
 }

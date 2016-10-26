@@ -9,6 +9,7 @@ import {Login} from '../../feature/login/login.component';
 import {AuthGuard} from '../../feature/login/auth-guard.service';
 import {HandlerModalComponent} from '../workqueue/handlerModal/handler-modal.component';
 
+
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: MapSearchComponent, canActivate: [AuthGuard]},
