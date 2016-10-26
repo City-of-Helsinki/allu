@@ -1,4 +1,5 @@
 import {Component, OnInit, OnDestroy, Input, Output, EventEmitter} from '@angular/core';
+import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Subscription} from 'rxjs/Subscription';
@@ -22,6 +23,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   allSelected = false;
   sort = new Sort(undefined, undefined);
   translations = translations;
+
+  constructor(private router: Router) {}
 
   private applicationSubscription: Subscription;
 
@@ -65,6 +68,13 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   iconForField(field: string): string {
     return field === this.sort.field ? this.sort.icon() : '';
+  }
+
+  goToSummary(col: number, application: Application): void {
+    // undefined and 0 should not trigger navigation
+    if (col) {
+      this.router.navigate(['applications', application.id, 'summary']);
+    }
   }
 
   private toApplicationRows(applications: Array<Application>): Array<ApplicationRow> {

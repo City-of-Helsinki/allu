@@ -15,14 +15,14 @@
             </div>
             <div class="input-field col m8">
               <select [(ngModel)]="selectedSquare" materialize="material_select">
-                <option value="" disabled selected>Vuokrattava paikka</option>
+                <option value="">Ei tapahtuma-aluetta</option>
                 <option *ngFor="let square of squares" [value]="square">{{square}}</option>
               </select>
             </div>
             <div class="input-field col m2">
               <select [(ngModel)]="selectedSquareSection" [disabled]="noSections()"
                       materialize="material_select" [materializeSelectOptions]="sections">
-                <option value="" disabled selected>Lohko(t)</option>
+                <option value="">Ei lohkoa</option>
                 <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
               </select>
             </div>

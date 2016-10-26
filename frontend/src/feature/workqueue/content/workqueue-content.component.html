@@ -21,28 +21,28 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let row of applicationRows">
+            <tr *ngFor="let row of applicationRows" class="row-highlight" (click)="goToSummary($event.target.cellIndex, row.application)">
                 <td>
                     <input type="checkbox" class="filled-in" [ngModel]="row.selected" (change)="checkSingle(row)" id="{{row.application.id}}" />
                     <label [attr.for]="row.application.id"></label>
                 </td>
-                <td>{{row.application.handler?.realName}}</td>
-                <td>
+                <td class="clickable">{{row.application.handler?.realName}}</td>
+                <td class="clickable">
                     {{row.application.project.name}} <br>
                     <span>{{row.application.project.id}}</span>
                 </td>
-                <td>{{row.application.applicationId}}</td>
-                <td>{{translations.application.type[row.application.type]}}</td>
-                <td>{{translations.application.status[row.application.status]}}</td>
-                <td>
+                <td class="clickable">{{row.application.applicationId}}</td>
+                <td class="clickable">{{translations.application.type[row.application.type]}}</td>
+                <td class="clickable">{{translations.application.status[row.application.status]}}</td>
+                <td class="clickable">
                     {{row.application.applicant.details.name}}<br>
                     <span>Isaksson Harry</span>
                 </td>
-                <td>{{row.application.location?.postalAddress?.streetAddress}}</td>
-                <td>Kamppi</td>
-                <td>{{row.application.uiApplicationCreationTime}}</td>
-                <td>{{row.application.event.uiStartTime}}</td>
-                <td></td>
+                <td class="clickable">{{row.application.location?.postalAddress?.streetAddress}}</td>
+                <td class="clickable">Kamppi</td>
+                <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>
+                <td class="clickable">{{row.application.event.uiStartTime}}</td>
+                <td class="clickable"></td>
             </tr>
             </tbody>
         </table>

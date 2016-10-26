@@ -61,6 +61,9 @@ button:hover {
   background-color: md-color($app-blue, 400);
 }
 
+tr.row-highlight:hover {
+  background-color: md-color($app-blue, 50) !important;
+}
 
 .on-map {
   position: absolute;
