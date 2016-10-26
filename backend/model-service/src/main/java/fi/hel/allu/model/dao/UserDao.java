@@ -94,14 +94,21 @@ public class UserDao {
 
   @Transactional
   public void update(User userData) throws NoSuchEntityException {
-    long changed = queryFactory.update(user).populate(userData).execute();
-    if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update user", Integer.toString(userData.getId()));
+    try {
+      long changed = queryFactory.update(user).populate(userData).where(user.id.eq(userData.getId())).execute();
+      if (changed == 0) {
+        throw new NoSuchEntityException("Failed to update user", Integer.toString(userData.getId()));
+      }
+      queryFactory.delete(userRole).where(userRole.userId.eq(userData.getId())).execute();
+      queryFactory.delete(userApplicationType).where(userApplicationType.userId.eq(userData.getId())).execute();
+      insertRoles(userData.getId(), userData);
+      insertApplicationTypes(userData.getId(), userData);
+    } catch (DataIntegrityViolationException e) {
+      if (ExceptionResolver.isUniqueConstraintViolation(e)) {
+        throw new NonUniqueException("Updating user failed. Perhaps given user name collided with another: " + userData.getUserName());
+      }
+      throw e;
     }
-    queryFactory.delete(userRole).where(userRole.userId.eq(userData.getId())).execute();
-    queryFactory.delete(userApplicationType).where(userApplicationType.userId.eq(userData.getId())).execute();
-    insertRoles(userData.getId(), userData);
-    insertApplicationTypes(userData.getId(), userData);
   }
 
   private void insertRoles(int id, User userData) {
