@@ -57,6 +57,8 @@ export class LocationComponent {
           this.locationState.startDate = application.startTime;
           this.locationState.endDate = application.endTime;
 
+          this.mapHub.selectApplication(application);
+
           this.selectedSquare = Some(this.squaresWithSections.filter(ss => ss.id === application.location.squareSectionId))
             .filter(ss => ss.length > 0)
             .map(ss => ss[0].square)

@@ -73,6 +73,12 @@ button:hover {
   width: 35px;
 }
 
+.select-wrapper {
+  .dropdown-content {
+    z-index: 9999;
+  }
+}
+
 md-toolbar {
   &.row {
     margin-bottom: 0;
