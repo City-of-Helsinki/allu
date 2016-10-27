@@ -30,7 +30,6 @@ export class ApplicationComponent implements OnInit {
     this.applicationTypes = applicationTypes;
     this.subtypes = undefined;
     this.subtype = undefined;
-    this.progressStep = ProgressStep.INFORMATION;
   };
 
   ngOnInit(): any {
@@ -47,6 +46,10 @@ export class ApplicationComponent implements OnInit {
         this.subtype = type.subtypes.find(subtype => ApplicationType[subtype.type] === application.type).value;
         this.typeChangeDisabled = true;
         this.eventSelection(this.subtype);
+
+        UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
+          this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
+        });
       });
   };
 

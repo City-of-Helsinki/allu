@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {UIState} from './ui-state.ts';
 import {List} from 'immutable';
@@ -18,8 +19,14 @@ import {message} from './error-type';
 export class UIStateHub {
 
   private uiState$: BehaviorSubject<UIState> = new BehaviorSubject(new UIState());
+  private displayedMessage$: Subject<string> = new Subject<string>();
 
-  constructor() {}
+  constructor() {
+    this.displayedMessage$.asObservable()
+      .debounceTime(50)
+      .distinctUntilChanged()
+      .subscribe(message => toast(message, 4000));
+  }
 
   /**
    * Observable which conveys latest state of UI.
@@ -49,7 +56,7 @@ export class UIStateHub {
   public addError(error: ErrorInfo) {
     let currentState: UIState = this.uiState$.getValue();
     this.uiState$.next(new UIState(currentState.message, error));
-    toast(message(error.type), 4000);
+    this.displayedMessage$.next(message(error.type));
     return Observable.empty();
   }
 
