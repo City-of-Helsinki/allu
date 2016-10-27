@@ -2,7 +2,16 @@
 
 :host {
   md-toolbar {
-    background-color: $allu-background;
+    background-color: $allu-secondary-nav;
+    color: $allu-text-white;
+  }
+
+  .progress {
+    background-color: #9b9b9b;
+    
+    .determinate {
+      background-color: #1de9b6;
+    }
   }
 
   p {

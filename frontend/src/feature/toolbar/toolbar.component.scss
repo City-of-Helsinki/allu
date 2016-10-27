@@ -1,27 +1,19 @@
 @import '../../assets/colors';
 
 :host {
-  // background-color: md-color($app-blue, 500);
-  background-color: md-color($demo, 50);
-  color: $app-text-color-light;
-  display: block;
+  background-color: $allu-primary-nav;
+  color: $allu-text-white;
+  display: flex;
   height: 50px;
   padding: 0 16px;
+  -webkit-align-items: center;
+  -ms-flex-align: center;
+  align-items: center;
 }
 
 h1 {
-  display: inline;
   font-size: 20px;
   font-weight: normal;
   letter-spacing: .1px;
-  line-height: 48px;
   margin: 0;
-}
-
-more {
-  background: url('./assets/svg/more.svg');
-  float: right;
-  height: 24px;
-  margin-top: 12px;
-  width: 24px;
 }
