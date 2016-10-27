@@ -1,0 +1,37 @@
+<div class="col m6 loose">
+    <md-card>
+        <md-card-title>Yhteyshenkilö</md-card-title>
+        <md-card-content>
+            <div class="row">
+                <div class="input-field col m12">
+                    <input id="contactName" type="text" class="validate" [(ngModel)]="contactList[0].name" [disabled]="readonly">
+                    <label for="contactName">{{ meta?.getUiName('contact.contactName') }}</label>
+                </div>
+                <div class="input-field col m6">
+                    <input id="contactStreetAddress" type="text" class="validate" [(ngModel)]="contactList[0].streetAddress" [disabled]="readonly">
+                    <label for="contactStreetAddress">{{ meta?.getUiName('contact.address') }}</label>
+                </div>
+                <div class="input-field col m3">
+                    <input id="contactPostalCode" type="text" class="validate" [(ngModel)]="contactList[0].postalCode" [disabled]="readonly">
+                    <label for="contactPostalCode">{{ meta?.getUiName('contact.postalCode') }}</label>
+                </div>
+                <div class="input-field col m3">
+                    <input id="contactCity" type="text" class="validate" [(ngModel)]="contactList[0].city" [disabled]="readonly">
+                    <label for="contactCity">{{ meta?.getUiName('contact.postOffice') }}</label>
+                </div>
+                <div class="input-field col m4">
+                    <input id="contactPhone" type="text" class="validate" [(ngModel)]="contactList[0].phone" [disabled]="readonly">
+                    <label for="contactPhone">{{ meta?.getUiName('contact.phoneNumber') }}</label>
+                </div>
+                <div class="input-field col m8">
+                    <input id="contactEmail" type="text" class="validate" [(ngModel)]="contactList[0].email" [disabled]="readonly">
+                    <label for="contactEmail">{{ meta?.getUiName('contact.email') }}</label>
+                </div>
+                <div *ngIf="!readonly" class="buttons col m12">
+                    <button md-raised-button class="waves-effect waves-light btn" (click)="saveToRegistry(contactList[0])">TALLENNA REKISTERIIN</button>
+                    <button md-raised-button class="waves-effect waves-light btn" (click)="newContact(contactList[0])">UUSI YHTEYSHENKILÖ</button>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>

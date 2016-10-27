@@ -1,6 +1,7 @@
 @import '../../../assets/colors';
 
-:host {
+// deep makes styles available for child components
+:host /deep/ {
   background-color: $allu-background;
   padding-top: 10px;
 

@@ -3,27 +3,18 @@ import {Router, ActivatedRoute} from '@angular/router';
 
 import {Location} from '../../../model/common/location';
 import {Application} from '../../../model/application/application';
-import {Applicant} from '../../../model/application/applicant';
-import {Person} from '../../../model/common/person';
-import {Organization} from '../../../model/common/organization';
-import {PostalAddress} from '../../../model/common/postal-address';
 import {StructureMeta} from '../../../model/application/structure-meta';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
 import {LocationState} from '../../../service/application/location-state';
 import {outdoorEventConfig} from './outdoor-event-config';
-import {DEFAULT_APPLICANT} from './outdoor-event-config';
-import {applicantNameSelection} from './outdoor-event-config';
-import {applicantIdSelection} from './outdoor-event-config';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {UrlUtil} from '../../../util/url.util';
 import {Subscription} from 'rxjs/Subscription';
 import {MapHub} from '../../../service/map-hub';
 import {ApplicationStatus} from '../../../model/application/application-status-change';
 import {ApplicationAttachmentHub} from '../attachment/application-attachment-hub';
-import {EventNature} from './outdoor-event-config';
-import {SquareSection} from '../../../model/common/square-section';
 
 declare var Materialize: any;
 
@@ -37,20 +28,8 @@ declare var Materialize: any;
 })
 export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   application: Application;
-  squareSection: SquareSection;
   private isSummary: boolean;
-  private _noPrice = false;
   private events: Array<any>;
-  private applicantType: any;
-  private applicantText: any;
-  private applicant: any;
-  private applicantNameSelection: string;
-  private applicantIdSelection: string;
-  private countries: Array<any>;
-  private billingTypes: Array<any>;
-  private eventNatures: Array<any>;
-  private pricingTypes: Array<any>;
-  private noPriceReasons: Array<any>;
   private attachments: AttachmentInfo[];
   private uploadProgress = 0;
   private submitted = false;
@@ -65,12 +44,6 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
               private mapHub: MapHub,
               private attachmentHub: ApplicationAttachmentHub) {
     this.events = outdoorEventConfig.events;
-    this.applicantType = outdoorEventConfig.applicantType;
-    this.applicantText = outdoorEventConfig.applicantText;
-    this.countries = outdoorEventConfig.countries;
-    this.billingTypes = outdoorEventConfig.billingTypes;
-    this.eventNatures = outdoorEventConfig.eventNatures;
-    this.noPriceReasons = outdoorEventConfig.noPriceReasons;
   };
 
   ngOnInit(): any {
@@ -86,18 +59,10 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
       outdoorEvent.eventStartTime = this.application.startTime;
       outdoorEvent.eventEndTime = this.application.endTime;
 
-      this.applicantNameSelection = applicantNameSelection(this.application.applicant.type);
-      this.applicantIdSelection = applicantIdSelection(this.application.applicant.type);
-      this.noPrice = !!(<OutdoorEvent>this.application.event).noPriceReason;
-
       this.applicationHub.loadMetaData('OUTDOOREVENT').subscribe(meta => this.metadataLoaded(meta));
 
       UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
         this.isSummary = summary;
-      });
-
-      this.mapHub.squareAndSection(this.application.location.squareSectionId).subscribe(ssOpt => {
-          this.squareSection = ssOpt.orElse(new SquareSection());
       });
     });
   }
@@ -110,15 +75,8 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHub.selectApplication(this.application);
   }
 
-  applicantTypeSelection(value: string) {
-    this.applicantNameSelection = this.applicantText[value].name;
-    this.applicantIdSelection = this.applicantText[value].id;
-  }
-
-  eventNatureChange(nature: string) {
-    if (EventNature.PUBLIC_FREE !== EventNature[nature]) {
-      this.noPrice = false;
-    }
+  currentAttachments(attachments: AttachmentInfo[]): void {
+    this.attachments = attachments;
   }
 
   save(application: Application) {
@@ -132,45 +90,9 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
     });
    }
 
-  @Input()
-  set noPrice(noPrice: boolean) {
-    this._noPrice = noPrice;
-
-    if (!noPrice) {
-      let event = <OutdoorEvent>this.application.event;
-      event.salesActivity = false;
-      event.heavyStructure = false;
-      event.noPriceReason = undefined;
-    }
-  }
-
-  get noPrice() {
-    return this._noPrice;
-  }
-
   private metadataLoaded(metadata: StructureMeta) {
     this.application.metadata = metadata;
     this.meta = metadata;
-    this.applicantText = {
-      'DEFAULT': {
-        name: 'Hakijan nimi',
-        id: this.meta.getUiName('applicant.businessId')},
-      'COMPANY': {
-        name: this.meta.getUiName('applicant.companyName'),
-        id: this.meta.getUiName('applicant.businessId')},
-      'ASSOCIATION': {
-        name: this.meta.getUiName('applicant.organizationName'),
-        id: this.meta.getUiName('applicant.businessId')},
-      'PERSON': {
-        name: this.meta.getUiName('applicant.personName'),
-        id: this.meta.getUiName('applicant.ssn')}
-    };
-    this.applicantNameSelection = applicantNameSelection(this.application.applicant.type);
-    this.applicantIdSelection = applicantIdSelection(this.application.applicant.type);
-  }
-
-  private currentAttachments(attachments: AttachmentInfo[]): void {
-    this.attachments = attachments;
   }
 
   private saveAttachments(application: Application) {

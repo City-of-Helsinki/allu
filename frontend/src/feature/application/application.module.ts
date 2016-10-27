@@ -20,6 +20,10 @@ import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
 import {ApplicationAttachmentHub} from './attachment/application-attachment-hub';
 import {AttachmentService} from '../../service/attachment-service';
+import {ApplicantComponent} from './applicant/applicant.component';
+import {ContactComponent} from './contact/contact.component';
+import {EventDetailsComponent} from './outdoor-event/details/event-details.component.ts';
+import {LocationDetailsComponent} from './location/location-details.component';
 
 
 @NgModule({
@@ -41,7 +45,11 @@ import {AttachmentService} from '../../service/attachment-service';
     ApplicationAttachmentComponent,
     FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,
-    LoadingComponent
+    LoadingComponent,
+    ApplicantComponent,
+    ContactComponent,
+    EventDetailsComponent,
+    LocationDetailsComponent
   ],
   providers: [
     ApplicationAttachmentHub,
