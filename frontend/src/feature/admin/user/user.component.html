@@ -1,9 +1,13 @@
 <div class="row">
     <div class="col m6">
     <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
-        <h5>Käyttäjän {{userForm.value.userName}} tiedot</h5>
+        <h5>Käyttäjän tiedot</h5>
         <div class="row">
             <div class="col m12">
+                <div class="input-field col s12">
+                    <input id="userName" type="text" formControlName="userName" />
+                    <label for="userName">Käyttäjänimi</label>
+                </div>
                 <div class="input-field col s12">
                     <input id="realName" type="text" formControlName="realName" />
                     <label for="realName">Nimi</label>

@@ -7,6 +7,7 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {adminRoutes} from './admin.routing';
 import {UserListComponent} from './user/user-list.component';
 import {UserComponent} from './user/user.component';
+import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import {UserComponent} from './user/user.component';
   ],
   declarations: [
     UserListComponent,
-    UserComponent
+    UserComponent,
+    CommaSeparatedPipe
   ],
   providers: []
 })
