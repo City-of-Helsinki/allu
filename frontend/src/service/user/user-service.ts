@@ -36,6 +36,20 @@ export class UserService {
   }
 
   public save(user: User): Observable<User> {
+    if (user.id) {
+      return this.update(user);
+    } else {
+      return this.create(user);
+    }
+  }
+
+  public create(user: User): Observable<User> {
+    return this.authHttp.post(UserService.USERS_URL, JSON.stringify(UserMapper.mapFrontend(user)))
+      .map(response => UserMapper.mapBackend(response.json()))
+      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
+  }
+
+  public update(user: User): Observable<User> {
     return this.authHttp.put(UserService.USERS_URL, JSON.stringify(UserMapper.mapFrontend(user)))
       .map(response => UserMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));

@@ -1,4 +1,7 @@
 <div class="row">
+    <div class="col s12 loose">
+        <button class="waves-effect waves-light btn" (click)="newUser()">Lisää uusi käyttäjä</button>
+    </div>
     <div class=" col s12">
         <table class="striped responsive-table">
             <thead>
@@ -17,10 +20,14 @@
                 <td>{{user.realName}}</td>
                 <td>{{user.emailAddress}}</td>
                 <td>
-                    <span *ngFor="let role of user.assignedRoles">{{role}}</span>
+                    <span *ngFor="let role of user.assignedRoles; let last=last">
+                        {{translations.user.role[role] | commaSeparated: last}}
+                    </span>
                 </td>
                 <td>
-                    <span *ngFor="let applicationType of user.allowedApplicationTypes">{{applicationType}}</span>
+                    <span *ngFor="let applicationType of user.allowedApplicationTypes; let last=last">
+                        {{translations.application.type[applicationType] | commaSeparated: last}}
+                    </span>
                 </td>
             </tr>
             </tbody>

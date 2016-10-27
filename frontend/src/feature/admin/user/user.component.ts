@@ -1,11 +1,12 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
 
 import {User} from '../../../model/common/user';
 import {UserHub} from '../../../service/user/user-hub';
 import {translations} from '../../../util/translations';
 import {CurrentUser} from '../../../service/user/current-user';
+import {Some} from '../../../util/option';
 
 declare var Materialize: any;
 
@@ -31,11 +32,11 @@ export class UserComponent implements OnInit, AfterViewInit {
     'ROLE_VIEW'
   ];
 
-  constructor(private route: ActivatedRoute, private userHub: UserHub, private fb: FormBuilder) {
+  constructor(private route: ActivatedRoute, private userHub: UserHub, private fb: FormBuilder, private router: Router) {
     this.userForm = fb.group({
       id: undefined,
-      userName: [''],
-      realName: [''],
+      userName: ['', Validators.required],
+      realName: ['', Validators.required],
       emailAddress: [''],
       title: [''],
       isActive: [true],
@@ -46,9 +47,10 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.route.params.subscribe(params => {
-      let userName = params['userName'];
-      this.userHub.getUser(userName).subscribe(user => {
-        this.userForm.setValue(user);
+      Some(params['userName']).do(userName => {
+        this.userHub.getUser(userName).subscribe(user => {
+          this.userForm.setValue(user);
+        });
       });
     });
   }
@@ -59,9 +61,11 @@ export class UserComponent implements OnInit, AfterViewInit {
 
   save(user: UserForm): void {
     this.submitted = true;
+    console.log('user.id', user.id);
     this.userHub.saveUser(user).subscribe(savedUser => {
       this.submitted = false;
       this.userForm.setValue(savedUser);
+      this.router.navigate(['/admin/user-list']);
     });
   }
 

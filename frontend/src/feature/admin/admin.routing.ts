@@ -6,5 +6,6 @@ import {UserComponent} from './user/user.component';
 export const adminRoutes: Routes = [
   { path: 'admin', redirectTo: 'admin/user-list', pathMatch: 'full' },
   { path: 'admin/user-list', component: UserListComponent },
+  { path: 'admin/user', component: UserComponent },
   { path: 'admin/user/:userName', component: UserComponent }
 ];
