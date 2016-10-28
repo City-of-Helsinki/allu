@@ -1,4 +1,5 @@
 import {Component, Input, OnInit, OnDestroy, Output, EventEmitter, AfterViewInit} from '@angular/core';
+import {Subscription} from 'rxjs/Subscription';
 
 import {StringUtil} from '../../util/string.util';
 import {SearchbarFilter} from '../../service/searchbar-filter';
@@ -18,13 +19,14 @@ declare var Materialize: any;
     require('./searchbar.component.scss')
   ]
 })
-export class SearchbarComponent implements OnInit, AfterViewInit {
+export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
   @Input() addressSearch: string;
   @Input() startDate: Date;
   @Input() endDate: Date;
   @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
 
+  private coordinateSubscription: Subscription;
   private pickadateParams = PICKADATE_PARAMETERS;
   private notFound: boolean;
 
@@ -33,13 +35,17 @@ export class SearchbarComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.notifySearchUpdated();
 
-    this.mapHub.coordinates()
+    this. coordinateSubscription = this.mapHub.coordinates()
       .filter(coords => !coords.isDefined())
-      .forEach(coords => Materialize.toast('Osoitetta ei löytynyt', 4000));
+      .subscribe(coords => Materialize.toast('Osoitetta ei löytynyt', 4000));
   }
 
   ngAfterViewInit(): void {
     setTimeout(() => Materialize.updateTextFields(), 10);
+  }
+
+  ngOnDestroy(): void {
+    this.coordinateSubscription.unsubscribe();
   }
 
   public notifySearchUpdated(): void {
