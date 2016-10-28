@@ -209,7 +209,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <section class="half-right">
           <h1>Vuokra</h1>
           <p>
-            [Hinta]<!-- alv 24 % tai alv 0 %, riippuen asiakkaasta > --> + alv 24 %<!-- < -->
+            <xsl:call-template name="output_price">
+              <xsl:with-param name="price" select="data/application/event/calculatedPricing/price" />
+            </xsl:call-template>
+            <!-- [Hinta] --><!-- alv 24 % tai alv 0 %, riippuen asiakkaasta > --> + alv 24 %<!-- < -->
           </p>
           <p>
             <!-- Käytetään, jos tapahtuma korvauksetta ja sille valittu peruste. Perusteen pidempi muoto erillisessä taulukossa. -->
@@ -315,5 +318,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     </div>
   </body>
 </html>
+</xsl:template>
+<xsl:decimal-format name="finnish" decimal-separator=',' grouping-separator=' ' />
+<xsl:template name="output_price">
+  <xsl:param name="price"/>
+  <xsl:value-of select="format-number($price div 100, '### ##0,00', 'finnish')"/> EUR
 </xsl:template>
 </xsl:stylesheet>
