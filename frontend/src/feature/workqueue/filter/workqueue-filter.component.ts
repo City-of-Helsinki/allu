@@ -57,6 +57,8 @@ export class WorkQueueFilterComponent implements OnInit {
 
     if (TAB_OWN === tab) {
       CurrentUser.userName().do(userName => control.setValue([userName]));
+      // initiate search with the set username filter
+      this.onQueryChange.emit(ApplicationSearchQuery.from(this.queryForm.value));
     } else {
       control.setValue([]);
     }

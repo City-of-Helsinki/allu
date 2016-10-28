@@ -33,7 +33,7 @@ public class UserController {
   @RequestMapping(value = "/active", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<UserJson>> getActiveUsers() {
-    return new ResponseEntity<>(userService.findAllUsers(), HttpStatus.OK);
+    return new ResponseEntity<>(userService.findAllActiveUsers(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/userName/{userName}", method = RequestMethod.GET)

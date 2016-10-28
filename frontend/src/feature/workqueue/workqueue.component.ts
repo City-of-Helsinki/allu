@@ -19,6 +19,7 @@ import {User} from '../../model/common/user';
 import {UserHub} from '../../service/user/user-hub';
 import {UserService} from '../../service/user/user-service';
 import {DialogCloseValue, DialogCloseReason} from '../common/dialog-close-value';
+import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 
 @Component({
   selector: 'workqueue',
@@ -28,9 +29,13 @@ import {DialogCloseValue, DialogCloseReason} from '../common/dialog-close-value'
   ]
 })
 export class WorkQueueComponent implements OnInit, OnDestroy {
+
+  static OWN_TAB = 'Omat';
+  static COMMON_TAB = 'Yhteiset';
+
   applications: Observable<Array<Application>>;
-  tabs = ['Omat', 'Yhteiset'];
-  tab = 'Omat';
+  tabs = [WorkQueueComponent.OWN_TAB, WorkQueueComponent.COMMON_TAB];
+  tab = WorkQueueComponent.OWN_TAB;
   dialogRef: MdDialogRef<HandlerModalComponent>;
   private selectedApplicationIds = new Array<number>();
   private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
@@ -42,15 +47,16 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private handlers: Array<User>;
 
   constructor(private applicationHub: ApplicationHub,
+              private workqueueHub: WorkQueueHub,
               private dialog: MdDialog,
               private viewContainerRef: ViewContainerRef,
               private userHub: UserHub) { }
 
   ngOnInit() {
     this.applications = this.applicationQuery.asObservable()
-      .debounceTime(300)
+      .debounceTime(500)
       .distinctUntilChanged()
-      .switchMap(query => this.applicationHub.searchApplications(query));
+      .switchMap(query => this.getApplicationsSearch(query));
 
     this.userHub.getActiveUsers().subscribe(users => this.handlers = users);
   }
@@ -97,6 +103,14 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       }
       this.dialogRef = undefined;
     });
+  }
+
+  private getApplicationsSearch(query: ApplicationSearchQuery): Observable<Array<Application>> {
+    if (this.tab === WorkQueueComponent.COMMON_TAB) {
+      return this.workqueueHub.searchApplicationsSharedByGroup(query);
+    } else {
+      return this.applicationHub.searchApplications(query);
+    }
   }
 
   private changeHandler(newHandler: string, ids: Array<number>): void {

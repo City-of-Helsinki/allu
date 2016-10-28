@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -7,7 +8,7 @@ import java.util.List;
  */
 public class QueryParametersJson {
 
-  private List<QueryParameterJson> queryParameters;
+  private List<QueryParameterJson> queryParameters = Collections.emptyList();
   private Sort sort;
 
   public List<QueryParameterJson> getQueryParameters() {

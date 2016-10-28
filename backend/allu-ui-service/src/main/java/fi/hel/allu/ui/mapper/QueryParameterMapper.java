@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.util.stream.Collectors;
 
 /**
- * Query parameter JSON mapping to search service model.
+ * Query parameter JSON mapping to search service model. Maps also <code>AlluUser</code> as query parameters to constrain certain searches.
  */
 public class QueryParameterMapper {
 

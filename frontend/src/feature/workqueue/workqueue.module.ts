@@ -7,6 +7,8 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {WorkQueueFilterComponent} from './filter/workqueue-filter.component';
 import {WorkQueueContentComponent} from './content/workqueue-content.component';
 import {HandlerModalComponent} from './handlerModal/handler-modal.component';
+import {WorkQueueService} from './workqueue-search/workqueue.service';
+import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 
 @NgModule({
   imports: [
@@ -21,6 +23,10 @@ import {HandlerModalComponent} from './handlerModal/handler-modal.component';
     WorkQueueFilterComponent,
     WorkQueueContentComponent,
     HandlerModalComponent
+  ],
+  providers: [
+    WorkQueueHub,
+    WorkQueueService
   ]
 })
 export class WorkQueueModule {}
