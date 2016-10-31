@@ -29,6 +29,7 @@ public class DecisionJson {
   private String teardownEndDate;
   private int numEventDays;
   private int numBuildAndTeardownDays;
+  private String decisionId;
 
   /**
    * @return the application

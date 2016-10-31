@@ -1,6 +1,7 @@
 $logo-width: 50%
 $h1-font-size: 14px
 $p-font-size: 14px
+$p-small-font-size: 11px
 $h1-footer-font-size: 11px
 $p-footer-font-size: 11px
 
@@ -29,57 +30,61 @@ hr
   margin-bottom: 5px
 
 .header
-  padding-top: 20px
-  div
-    width: 100%
+  margin-left: 20px
+  margin-right: 20px
+  margin-top: 30px
+  padding: 10px 0px
+  float: left
+  width: 95%
 
   .half-left
-    width: 50%
+    width: 49%
+    margin-right: 2%
     float: left
 
   .half-right
-    width: 50%
+    width: 49%
     float: right
 
   .inline
-    margin-top: 10px
     h1
-      font-size: $h1-font-size
       display: inline
       float: left
-    p
+      margin: 0px
+    .page
+      margin: 0px
       display: inline
       float: right
-      font-size: $p-font-size
       font-style: normal
-      line-height: 2px
-
-  .date
-    p
-      margin-top: 25px
-
-  p
-    font-size: $p-font-size
-    font-style: normal
-    line-height: 2px
-
-.top
-  border-left: white
-  border-bottom: white
-  border-right: white
-  margin-bottom: 0px
+    .id
+      float: left
+      width: 65%
+      p
+        margin: 0px
+      span
+        font-size: $p-small-font-size
 
 .body
-  margin-top: 20px
-  section
-    .half-left
-      width: 50%
-      float: left
-    .half-right
-      width: 50%
-      float: right
-    .shift, p
-      margin-left: 95px
+  margin-left: 20px
+  margin-right: 20px
+  div
+    width: 100%
+  h1
+    margin-bottom: 0px
+  p
+    margin-top: 0px
+  hr
+    border-style: none
+    margin-bottom: 0px
+  .half-left
+    width: 49%
+    margin-right: 2%
+    float: left
+  .half-right
+    width: 49%
+    float: right
+  .text-flow
+    margin-bottom: 0px
 
 .footer
   padding-bottom: 30px
@@ -88,9 +93,9 @@ hr
     width: 15%
     display: block
     float: left
-    margin: 0 19px
+    margin: 0 18px
     &.postal
-      width: 23%
+      width: 24%
     &.visit
       width: 11%
     &.contact

@@ -27,30 +27,29 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       ]]>
     </script>
   </head>
-  <body style='height:40mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
+  <body style='height:30mm;margin:0;padding:0;' onLoad='getPdfInfo()'>
     <div class="header">
-      <div>
-        <div class="half-left">
-          <img src="HKR_Fin_RGB_png_50734.png"/>
-        </div>
-        <div class="half-right inline">
-          <h1>Vuokrauspäätös</h1>
-          <p><span id="pdfkit_page_current" />/<span id="pdfkit_page_count" /></p>
-        </div>
+      <div class="half-left">
+        <img src="HKR_Fin_RGB_png_50734.png" />
       </div>
-
-      <div>
-        <div class="half-left">
-          <p>Palveluosasto</p>
-          <p>Alueidenkäyttö</p>
-          <p>Alueidenkäyttöpäällikkö</p>
-        </div>
-        <div class="half-right date">
-          <p>[Päivämäärä]</p>
+      <div class="half-right inline">
+        <h1>Yleisen alueen vuokrauspäätös</h1>
+        <p class="page">
+          <span id="pdfkit_page_current" />/<span id="pdfkit_page_count" />
+        </p>
+        <div class="id">
+          <span>Päätöspäivämäärä:</span>
+          <p style="float: right">
+            [päätöspvm]
+          </p>
+          <span>Tunnus:</span>
+          <p style="float: right">
+            <!-- [tunnus]  -->
+            <xsl:value-of select="data/decisionId" />
+          </p>
         </div>
       </div>
     </div>
-    <hr class="top" />
   </body>
 </html>
 </xsl:template>

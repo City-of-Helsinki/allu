@@ -23,50 +23,57 @@ hr {
   margin-bottom: 5px; }
 
 .header {
-  padding-top: 20px; }
-  .header div {
-    width: 100%; }
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 30px;
+  padding: 10px 0px;
+  float: left;
+  width: 95%; }
   .header .half-left {
-    width: 50%;
+    width: 49%;
+    margin-right: 2%;
     float: left; }
   .header .half-right {
-    width: 50%;
+    width: 49%;
     float: right; }
-  .header .inline {
-    margin-top: 10px; }
-    .header .inline h1 {
-      font-size: 14px;
-      display: inline;
-      float: left; }
-    .header .inline p {
-      display: inline;
-      float: right;
-      font-size: 14px;
-      font-style: normal;
-      line-height: 2px; }
-  .header .date p {
-    margin-top: 25px; }
-  .header p {
-    font-size: 14px;
-    font-style: normal;
-    line-height: 2px; }
-
-.top {
-  border-left: white;
-  border-bottom: white;
-  border-right: white;
-  margin-bottom: 0px; }
+  .header .inline h1 {
+    display: inline;
+    float: left;
+    margin: 0px; }
+  .header .inline .page {
+    margin: 0px;
+    display: inline;
+    float: right;
+    font-style: normal; }
+  .header .inline .id {
+    float: left;
+    width: 65%; }
+    .header .inline .id p {
+      margin: 0px; }
+    .header .inline .id span {
+      font-size: 11px; }
 
 .body {
-  margin-top: 20px; }
-  .body section .half-left {
-    width: 50%;
+  margin-left: 20px;
+  margin-right: 20px; }
+  .body div {
+    width: 100%; }
+  .body h1 {
+    margin-bottom: 0px; }
+  .body p {
+    margin-top: 0px; }
+  .body hr {
+    border-style: none;
+    margin-bottom: 0px; }
+  .body .half-left {
+    width: 49%;
+    margin-right: 2%;
     float: left; }
-  .body section .half-right {
-    width: 50%;
+  .body .half-right {
+    width: 49%;
     float: right; }
-  .body section .shift, .body section p {
-    margin-left: 95px; }
+  .body .text-flow {
+    margin-bottom: 0px; }
 
 .footer {
   padding-bottom: 30px;
@@ -75,9 +82,9 @@ hr {
     width: 15%;
     display: block;
     float: left;
-    margin: 0 19px; }
+    margin: 0 18px; }
     .footer div.postal {
-      width: 23%; }
+      width: 24%; }
     .footer div.visit {
       width: 11%; }
     .footer div.contact {
@@ -102,5 +109,3 @@ hr {
   border-right: white;
   border-bottom: white;
   padding-bottom: 20px; }
-
-/*# sourceMappingURL=style.css.map */

@@ -1,21 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet version="1.0"
-xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-<xsl:output method="html" encoding="utf-8" indent="yes"/>
-<xsl:template match="/root">
-<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;</xsl:text>
+<!DOCTYPE html>
 <html lang='fi-FI'>
   <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-    <xsl:element name="base">
-      <xsl:attribute name="href">
-        <xsl:value-of select="basedir"/>
-      </xsl:attribute>
-    </xsl:element>  
-    <link rel="stylesheet" href="style.css" />
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <link rel="stylesheet" href="style.css">
   </head>
   <body>
-    <hr />
+    <hr>
     <div class="footer">
       <div class="postal">
         <h1>Postiosoite</h1>
@@ -70,8 +60,6 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         </p>
       </div>
     </div>
-    <hr class="bottom" />
+    <hr class="bottom">
   </body>
 </html>
-</xsl:template>
-</xsl:stylesheet>
