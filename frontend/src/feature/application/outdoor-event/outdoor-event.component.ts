@@ -1,5 +1,6 @@
 import {Component, OnDestroy, OnInit, Input, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
+import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
 
 import {Location} from '../../../model/common/location';
 import {Application} from '../../../model/application/application';
@@ -15,6 +16,9 @@ import {Subscription} from 'rxjs/Subscription';
 import {MapHub} from '../../../service/map-hub';
 import {ApplicationStatus} from '../../../model/application/application-status-change';
 import {ApplicationAttachmentHub} from '../attachment/application-attachment-hub';
+import {ApplicantForm} from '../applicant/applicant.form';
+import {OutdoorEventDetailsForm} from './details/outdoor-event-details.form';
+import {OutdoorEventForm} from './outdoor-event.form';
 
 declare var Materialize: any;
 
@@ -28,17 +32,18 @@ declare var Materialize: any;
 })
 export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   application: Application;
+  applicationForm: FormGroup;
   private isSummary: boolean;
   private events: Array<any>;
   private attachments: AttachmentInfo[];
   private uploadProgress = 0;
   private submitted = false;
-  private pickadateParams = PICKADATE_PARAMETERS;
 
   private meta: StructureMeta;
 
   constructor(private router: Router,
               private route: ActivatedRoute,
+              private fb: FormBuilder,
               private locationState: LocationState,
               private applicationHub: ApplicationHub,
               private mapHub: MapHub,
@@ -52,18 +57,21 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
       this.application.location = this.application.location || this.locationState.location;
 
       // TODO: mismatch here. Date+time should be used in location too.
-      this.application.startTime = this.locationState.startDate || this.application.startTime;
-      this.application.endTime = TimeUtil.getEndOfDay(this.locationState.endDate);
+      let defaultDate = new Date();
+      this.application.startTime = this.locationState.startDate || this.application.startTime || defaultDate;
+      this.application.endTime = TimeUtil.getEndOfDay(this.locationState.endDate || this.application.endTime || defaultDate);
 
       let outdoorEvent = <OutdoorEvent>this.application.event;
-      outdoorEvent.eventStartTime = this.application.startTime;
-      outdoorEvent.eventEndTime = this.application.endTime;
+      outdoorEvent.eventStartTime = outdoorEvent.eventStartTime || this.application.startTime;
+      outdoorEvent.eventEndTime = outdoorEvent.eventEndTime || this.application.endTime;
 
       this.applicationHub.loadMetaData('OUTDOOREVENT').subscribe(meta => this.metadataLoaded(meta));
 
       UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
         this.isSummary = summary;
       });
+
+      this.applicationForm = this.fb.group({});
     });
   }
 
@@ -79,16 +87,19 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
     this.attachments = attachments;
   }
 
-  save(application: Application) {
-    // Save application
-    console.log('Saving application', application);
+  onSubmit(form: OutdoorEventForm) {
+    let application = this.application;
     application.metadata = this.meta;
+    application.applicant = ApplicantForm.toApplicant(form.applicant);
+    application.event = OutdoorEventDetailsForm.toOutdoorEvent(form.event);
+    application.contactList = form.contacts;
+
     this.applicationHub.save(application).subscribe(app => {
       console.log('application saved');
       this.locationState.clear();
       this.saveAttachments(app);
     });
-   }
+  }
 
   private metadataLoaded(metadata: StructureMeta) {
     this.application.metadata = metadata;

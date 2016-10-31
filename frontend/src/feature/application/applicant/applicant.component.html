@@ -1,64 +1,70 @@
-<div class="col m6 loose">
-    <md-card>
-        <md-card-title>Hakija</md-card-title>
-        <md-card-content>
-            <div class="row">
-                <div class="input-field col m6">
-                    <select *ngIf="!readonly" [(ngModel)]="applicant.type"
-                            (change)="applicantTypeSelection($event.target.value)"
-                            materialize="material_select" [materializeSelectOptions]="selectOptions">
-                        <option value="" disabled selected>Valitse hakijan tyyppi</option>
-                        <option *ngFor="let type of applicantType" [value]="type.value">{{type.name}}</option>
-                    </select>
-                    <input *ngIf="readonly" type="text" [disabled]="true" [(ngModel)]="applicant.type">
+<form [formGroup]="applicantForm">
+    <div class="col m6 loose">
+        <md-card>
+            <md-card-title>Hakija</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="input-field col m6">
+                        <select *ngIf="!readonly" formControlName="type"
+                                (change)="applicantTypeSelection($event.target.value)"
+                                materialize="material_select">
+                            <option value="" disabled selected>Valitse hakijan tyyppi</option>
+                            <option *ngFor="let type of applicantType" [value]="type.value">{{type.name}}</option>
+                        </select>
+                        <field-error [form]="applicantForm" field="type" hasError="required">{{translations.applicant.field.typeMissing}}</field-error>
+                        <input *ngIf="readonly" type="text" [readonly]="true" formControlName="type">
+                    </div>
+                    <div class="col m6 country-select">
+                        <input type="text" [readonly]="readonly" formControlName="country">
+                    </div>
+                    <div class="input-field col m8">
+                        <input id="applicantName" type="text" formControlName="name" [readonly]="readonly">
+                        <label for="applicantName">{{applicantNameSelection}}</label>
+                        <field-error [form]="applicantForm" field="name" hasError="required">{{translations.applicant.field.nameMissing}}</field-error>
+                        <field-error [form]="applicantForm" field="name" hasError="minlength">{{translations.applicant.field.nameShort}}</field-error>
+                    </div>
+                    <div class="input-field col m4">
+                        <input id="businessID" type="text" formControlName="identifier" [readonly]="readonly">
+                        <label for="businessID">{{applicantIdSelection}}</label>
+                        <field-error [form]="applicantForm" field="identifier" hasError="required">{{translations.applicant.field.identifierMissing}}</field-error>
+                        <field-error [form]="applicantForm" field="identifier" hasError="minlength">{{translations.applicant.field.identifierShort}}</field-error>
+                    </div>
+                    <div formGroupName="postalAddress">
+                        <div class="input-field col m6">
+                            <input id="applicantAddress" type="text"
+                                   formControlName="streetAddress" [readonly]="readonly">
+                            <label for="applicantAddress">{{ meta?.getUiName('applicant.address') }}</label>
+                        </div>
+                        <div class="input-field col m3">
+                            <input id="applicantPostalCode" type="text"
+                                   formControlName="postalCode" [readonly]="readonly">
+                            <label for="applicantPostalCode">{{ meta?.getUiName('applicant.postalCode') }}</label>
+                        </div>
+                        <div class="input-field col m3">
+                            <input id="applicantCity" type="text" formControlName="city" [readonly]="readonly">
+                            <label for="applicantCity">{{ meta?.getUiName('applicant.postOffice') }}</label>
+                        </div>
+                    </div>
+                    <div class="input-field col m4">
+                        <input id="applicantPhone" type="text" formControlName="phone" [readonly]="readonly">
+                        <label for="applicantPhone">{{ meta?.getUiName('applicant.phoneNumber') }}</label>
+                        <field-error [form]="applicantForm" field="email" hasError="required">{{translations.applicant.field.phoneShort}}</field-error>
+                    </div>
+                    <div class="input-field col m8">
+                        <input id="applicantEmail" type="text" formControlName="email" [readonly]="readonly">
+                        <label for="applicantEmail">{{ meta?.getUiName('applicant.email') }}</label>
+                        <field-error [form]="applicantForm" field="email" hasError="pattern">{{translations.applicant.field.identifierMissing}}</field-error>
+                    </div>
+                    <div class="col m7 height-fix-bottom">
+                        <input type="checkbox" class="filled-in" id="copyToBilling" [readonly]="readonly"/>
+                        <label for="copyToBilling">Kopioi tiedot laskutusosoitteeksi</label>
+                    </div>
+                    <div class="col m5 height-fix-bottom">
+                        <input type="checkbox" class="filled-in" formControlName="representative" id="representative" [readonly]="readonly"/>
+                        <label for="representative">Asiaa hoitaa asiamies</label>
+                    </div>
                 </div>
-                <div class="col m6 country-select">
-                    <select *ngIf="!readonly" [(ngModel)]="country"
-                            materialize="material_select" [materializeSelectOptions]="selectOptions">
-                        <option value="" disabled selected>Maa</option>
-                        <option *ngFor="let country of countries" [value]="country">{{country.name}}</option>
-                    </select>
-                    <input *ngIf="readonly" type="text" [disabled]="true" value="Suomi">
-                </div>
-                <div class="input-field col m8">
-                    <input id="applicantName" type="text" class="validate" [(ngModel)]="applicant.details.name" [disabled]="readonly">
-                    <label for="applicantName">{{applicantNameSelection}}</label>
-                </div>
-                <div class="input-field col m4">
-                    <input id="businessID" type="text" class="validate" [(ngModel)]="applicant.details.identifier" [disabled]="readonly">
-                    <label for="businessID">{{applicantIdSelection}}</label>
-                </div>
-                <div class="input-field col m6">
-                    <input id="applicantAddress" type="text" class="validate"
-                           [(ngModel)]="applicant.details.postalAddress.streetAddress" [disabled]="readonly">
-                    <label for="applicantAddress">{{ meta?.getUiName('applicant.address') }}</label>
-                </div>
-                <div class="input-field col m3">
-                    <input id="applicantPostalCode" type="text" class="validate"
-                           [(ngModel)]="applicant.details.postalAddress.postalCode" [disabled]="readonly">
-                    <label for="applicantPostalCode">{{ meta?.getUiName('applicant.postalCode') }}</label>
-                </div>
-                <div class="input-field col m3">
-                    <input id="applicantCity" type="text" class="validate" [(ngModel)]="applicant.details.postalAddress.city" [disabled]="readonly">
-                    <label for="applicantCity">{{ meta?.getUiName('applicant.postOffice') }}</label>
-                </div>
-                <div class="input-field col m4">
-                    <input id="applicantPhone" type="text" class="validate" [(ngModel)]="applicant.details.phone" [disabled]="readonly">
-                    <label for="applicantPhone">{{ meta?.getUiName('applicant.phoneNumber') }}</label>
-                </div>
-                <div class="input-field col m8">
-                    <input id="applicantEmail" type="text" class="validate" [(ngModel)]="applicant.details.email" [disabled]="readonly">
-                    <label for="applicantEmail">{{ meta?.getUiName('applicant.email') }}</label>
-                </div>
-                <div class="col m7 height-fix-bottom">
-                    <input type="checkbox" class="filled-in" id="copyToBilling" [disabled]="readonly"/>
-                    <label for="copyToBilling">Kopioi tiedot laskutusosoitteeksi</label>
-                </div>
-                <div class="col m5 height-fix-bottom">
-                    <input type="checkbox" class="filled-in" [(ngModel)]="applicant.representative" id="representative" [disabled]="readonly"/>
-                    <label for="representative">Asiaa hoitaa asiamies</label>
-                </div>
-            </div>
-        </md-card-content>
-    </md-card>
-</div>
+            </md-card-content>
+        </md-card>
+    </div>
+</form>

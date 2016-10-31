@@ -12,7 +12,6 @@
     }
 
     textarea.textarea {
-      padding-bottom: 42px;
       padding-top: 4px;
     }
 
@@ -62,12 +61,11 @@
     border-color: $allu-field-border-ok;
   }
 
-  .validate {
-    border-bottom: 2px solid $allu-field-border-ok;
-    color: $allu-field-text-ok;
-  }
-
   .summary-checkbox {
     color: $allu-field-border-ok;
+  }
+
+  .no-border {
+    border-left: none;
   }
 }

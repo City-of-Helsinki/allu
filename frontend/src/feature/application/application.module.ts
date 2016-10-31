@@ -1,5 +1,5 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {MdCardModule, MdToolbarModule, MdProgressBarModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -24,6 +24,7 @@ import {ApplicantComponent} from './applicant/applicant.component';
 import {ContactComponent} from './contact/contact.component';
 import {EventDetailsComponent} from './outdoor-event/details/event-details.component.ts';
 import {LocationDetailsComponent} from './location/location-details.component';
+import {FieldErrorComponent} from '../common/field-error.component';
 
 
 @NgModule({
@@ -31,6 +32,7 @@ import {LocationDetailsComponent} from './location/location-details.component';
     AlluCommonModule,
     RouterModule.forChild(applicationRoutes),
     FormsModule,
+    ReactiveFormsModule,
     MdCardModule,
     MdToolbarModule,
     MdProgressBarModule,
@@ -49,7 +51,8 @@ import {LocationDetailsComponent} from './location/location-details.component';
     ApplicantComponent,
     ContactComponent,
     EventDetailsComponent,
-    LocationDetailsComponent
+    LocationDetailsComponent,
+    FieldErrorComponent
   ],
   providers: [
     ApplicationAttachmentHub,

@@ -1,36 +1,38 @@
 <div materialize class="row">
+  <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
+    <applicant [applicationForm]="applicationForm" [readonly]="isSummary"></applicant>
 
-  <applicant [applicant]="application.applicant" [readonly]="isSummary"></applicant>
+    <contact [applicationForm]="applicationForm" [readonly]="isSummary"></contact>
 
-  <contact [contactList]="application.contactList" [readonly]="isSummary"></contact>
+    <event-details [applicationForm]="applicationForm" [location]="application.location" [readonly]="isSummary"></event-details>
 
-  <event-details [event]="application.event" [location]="application.location" [readonly]="isSummary"></event-details>
+    <application-attachment [existingAttachments]="application.attachmentList" [readonly]="isSummary" (currentAttachments)="currentAttachments($event)"></application-attachment>
 
-  <application-attachment [existingAttachments]="application.attachmentList" [readonly]="isSummary" (currentAttachments)="currentAttachments($event)"></application-attachment>
+    <div class="col m12 loose">
+      <md-card>
+        <md-card-title>Tallennus</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div *ngIf="!isSummary">
+              <div class="col m2 offset-m10">
+                <button type="submit" md-raised-button class="waves-effect waves-light btn"
+                        [disabled]="submitted || !applicationForm.valid">YHTEENVETOON</button>
+              </div>
+            </div>
 
-  <div class="col m12 loose">
-    <md-card>
-      <md-card-title>Tallennus</md-card-title>
-      <md-card-content>
-        <div class="row">
-          <div *ngIf="!isSummary">
-            <div class="col m2 offset-m10">
-              <button md-raised-button class="waves-effect waves-light btn" (click)="save(application)" [disabled]="submitted">YHTEENVETOON</button>
+            <div *ngIf="isSummary">
+              <div class="col m2">
+                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/applications', application.id]">MUOKKAA</button>
+              </div>
+              <div class="col m4 offset-m6">
+                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
+                <button md-raised-button class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
+                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/decision', application.id]">PÄÄTTÄMISEEN</button>
+              </div>
             </div>
           </div>
-
-          <div *ngIf="isSummary">
-            <div class="col m2">
-              <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/applications', application.id]">MUOKKAA</button>
-            </div>
-            <div class="col m4 offset-m6">
-              <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
-              <button md-raised-button class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
-              <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/decision', application.id]">PÄÄTTÄMISEEN</button>
-            </div>
-          </div>
-        </div>
-      </md-card-content>
-    </md-card>
-  </div>
+        </md-card-content>
+      </md-card>
+    </div>
+  </form>
 </div>

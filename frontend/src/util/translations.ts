@@ -20,6 +20,39 @@ export const translations = {
     type: {
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
       PROMOTION: 'Promootio'
+    },
+    field: {
+      nameMissing: 'Tapahtuman nimi puuttuu',
+      nameShort: 'Tapahtuman nimi on liian lyhyt'
+    },
+    outdoorEvent: {
+      field: {
+        natureMissing: 'Tapahtuman luonne puuttuu',
+        descriptionMissing: 'Tapahtuman kuvaus puuttuu',
+        typeMissing: 'Tapahtuman tyyppi puuttuu',
+        eventStartTimeMissing: 'Tapahtuman alkuaika puuttuu',
+        eventEndTimeMissing: 'Tapahtuman loppuaika puuttuu',
+        startBeforeEnd: 'Tapahtuman loppupäivä ei voi olla ennen alkupäivää'
+      }
+    }
+  },
+  applicant: {
+    field: {
+      typeMissing: 'Hakijan tyyppi puuttuu',
+      nameMissing: 'Hakijan nimi puuttuu',
+      nameShort: 'Hakijan nimi on liian lyhyt',
+      identifierMissing: 'Hakijan tunniste puuttuu',
+      identifierShort: 'Hakijan tunniste on liian lyhyt',
+      emailInvalid: 'Virheellinen sähköpostiosoite',
+      phoneShort: 'Puhelinnumero on liian lyhyt'
+    }
+  },
+  contact: {
+    field: {
+      nameMissing: 'Yhteyshenkilön nimi puuttuu',
+      nameShort: 'Yhteyshenkilön nimi on liian lyhyt',
+      emailInvalid: 'Virheellinen sähköpostiosoite',
+      phoneShort: 'Puhelinnumero on liian lyhyt'
     }
   },
   geolocation: {

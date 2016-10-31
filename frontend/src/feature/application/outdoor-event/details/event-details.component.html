@@ -1,186 +1,219 @@
-<div class="col m12 loose">
-    <md-card>
-        <md-card-title>Tapahtuman tiedot</md-card-title>
-        <md-card-content>
-            <div class="row">
-                <div class="col m6">
-                    <div class="input-field col m12">
-                        <!-- TODO: fix eventName to be reflected back to application model -->
-                        <input id="eventName" type="text" class="validate" [class.summary]="eventName" [(ngModel)]="eventName" [disabled]="readonly">
-                        <label for="eventName">{{ meta?.getUiName('name') }}</label>
+<form [formGroup]="eventForm">
+    <div class="col m12 loose">
+        <md-card>
+            <md-card-title>Tapahtuman tiedot</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m6">
+                        <div class="input-field col m12">
+                            <input id="eventName" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
+                            <label for="eventName">{{ meta?.getUiName('name') }}</label>
+                            <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
+                            <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
+                        </div>
+                        <div class="input-field col m12">
+                            <textarea id="eventDescription" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
+                            <label for="eventDescription">{{ meta?.getUiName('description') }}</label>
+                            <field-error [form]="eventForm" field="description" hasError="required">
+                                {{translations.application.outdoorEvent.field.descriptionMissing}}
+                            </field-error>
+                        </div>
+                        <div class="input-field col m12">
+                            <input id="eventUrl" type="text" formControlName="url" [readonly]="readonly">
+                            <label for="eventUrl">{{ meta?.getUiName('url') }}</label>
+                        </div>
                     </div>
-                    <div class="input-field col m12">
-                        <textarea id="eventDescription" class="materialize-textarea" [(ngModel)]="event.description" [disabled]="readonly"></textarea>
-                        <label for="eventDescription">{{ meta?.getUiName('description') }}</label>
-                    </div>
-                    <div class="input-field col m12">
-                        <input id="eventUrl" type="text" class="validate" [(ngModel)]="event.url" [disabled]="readonly">
-                        <label for="eventUrl">{{ meta?.getUiName('url') }}</label>
+                    <div class="col m6 no-padding">
+                        <div formGroupName="eventTimes">
+                            <div class="input-field col m12">
+                                <input id="eventStartTime"
+                                       formControlName="startTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text" [readonly]="readonly"/>
+                                <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}</label>
+                                <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
+                                    {{translations.application.outdoorEvent.field.eventStartTimeMissing}}
+                                </field-error>
+                            </div>
+                            <div class="input-field col m12">
+                                <input id="eventEndTime"
+                                       formControlName="endTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text" [readonly]="readonly"/>
+                                <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}</label>
+                                <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
+                                    {{translations.application.outdoorEvent.field.eventEndTimeMissing}}
+                                </field-error>
+                            </div>
+                            <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
+                                {{translations.application.outdoorEvent.field.startBeforeEnd}}
+                            </field-error>
+                        </div>
+                        <div class="input-field col m12">
+                            <textarea id="eventTimeExceptions" class="materialize-textarea" formControlName="timeExceptions" [readonly]="readonly"></textarea>
+                            <label for="eventTimeExceptions">{{ meta?.getUiName('timeExceptions') }}</label>
+                        </div>
+                        <div class="input-field col m3">
+                            <input id="eventAttendees" type="number"  formControlName="attendees" [readonly]="readonly">
+                            <label for="eventAttendees">{{ meta?.getUiName('attendees') }}</label>
+                        </div>
+                        <div class="input-field col m9">
+                            <input id="eventEntryFee" type="number"  formControlName="entryFee" [readonly]="readonly">
+                            <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
+                        </div>
                     </div>
                 </div>
-                <div class="col m6 no-padding">
-                    <div class="input-field col m12">
-                        <input id="eventStartTime"
-                               [(ngModel)]="event.uiStartTime"
-                               materialize="pickadate"
-                               [materializeParams]="pickadateParams"
-                               type="text" [disabled]="readonly"/>
-                        <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}</label>
-                    </div>
-                    <div class="input-field col m12">
-                        <input id="eventEndTime"
-                               [(ngModel)]="event.uiEndTime"
-                               materialize="pickadate"
-                               [materializeParams]="pickadateParams"
-                               type="text" [disabled]="readonly"/>
-                        <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}</label>
-                    </div>
-                    <div class="input-field col m12">
-                        <textarea id="eventTimeExceptions" class="materialize-textarea" [(ngModel)]="event.timeExceptions" [disabled]="readonly"></textarea>
-                        <label for="eventTimeExceptions">{{ meta?.getUiName('timeExceptions') }}</label>
-                    </div>
-                    <div class="input-field col m3">
-                        <input id="eventAttendees" type="number" class="validate" [(ngModel)]="event.attendees" [disabled]="readonly">
-                        <label for="eventAttendees">{{ meta?.getUiName('attendees') }}</label>
-                    </div>
-                    <div class="input-field col m9">
-                        <input id="eventEntryFee" type="number" class="validate" [(ngModel)]="event.entryFee" [disabled]="readonly">
-                        <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
-                    </div>
-                </div>
-            </div>
-        </md-card-content>
-    </md-card>
-</div>
+            </md-card-content>
+        </md-card>
+    </div>
 
-<div class="col m12 loose">
-    <md-card>
-        <md-card-title>Rakenteet</md-card-title>
-        <md-card-content>
-            <div class="row">
-                <div class="col m6 no-padding">
-                    <div class="col m6 height-fix-top">
-                        <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="event.structureArea" [disabled]="readonly"/>
-                        <label for="structureIncluded">Tapahtuma sisältää rakenteita</label>
-                    </div>
-                    <div class="input-field col m6">
-                        <input id="structureArea" type="number" class="validate" step="any" [(ngModel)]="event.structureArea" [disabled]="readonly">
-                        <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
-                    </div>
-                    <div class="input-field col m12">
+    <div class="col m12 loose">
+        <md-card>
+            <md-card-title>Rakenteet</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m6 no-padding">
+                        <div class="col m6 height-fix-top">
+                            <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="eventForm.value.structureArea" [readonly]="readonly"/>
+                            <label for="structureIncluded">Tapahtuma sisältää rakenteita</label>
+                        </div>
+                        <div class="input-field col m6">
+                            <input id="structureArea" type="number"  step="any" formControlName="structureArea" [readonly]="readonly">
+                            <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
+                        </div>
+                        <div class="input-field col m12">
                 <textarea id="structureDescription" class="materialize-textarea textarea"
-                          [(ngModel)]="event.structureDescription" [disabled]="readonly"></textarea>
-                        <label for="structureDescription">{{ meta?.getUiName('structureDescription') }}</label>
-                    </div>
+                          formControlName="structureDescription" [readonly]="readonly"></textarea>
+                            <label for="structureDescription">{{ meta?.getUiName('structureDescription') }}</label>
+                        </div>
 
-                </div>
-                <div class="col m6 no-padding">
-                    <div class="col m12 height-fix-top height-fix-bottom">
-                        <input type="checkbox" class="filled-in" id="structureBuildDate"
-                               [checked]="event.structureStartTime || event.structureEndTime" [disabled]="readonly"/>
-                        <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
                     </div>
-                    <div class="input-field col m12">
-                        <label for="structureStartTime">{{ meta?.getUiName('structureStartTime') }}</label>
-                        <input id="structureStartTime"
-                               [(ngModel)]="event.uiStructureStartTime"
-                               materialize="pickadate"
-                               [materializeParams]="pickadateParams"
-                               type="text" [disabled]="readonly"/>
-                    </div>
-                    <div class="input-field col m12">
-                        <label for="structureEndTime">{{ meta?.getUiName('structureEndTime') }}</label>
-                        <input id="structureEndTime"
-                               [(ngModel)]="event.uiStructureEndTime"
-                               materialize="pickadate"
-                               [materializeParams]="pickadateParams"
-                               type="text" [disabled]="readonly"/>
-                    </div>
-                </div>
-            </div>
-        </md-card-content>
-    </md-card>
-</div>
+                    <div class="col m6 no-padding">
+                        <div class="col m12 height-fix-top height-fix-bottom">
+                            <input type="checkbox" class="filled-in" id="structureBuildDate"
+                                   [checked]="eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime" [readonly]="readonly"/>
+                            <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
+                        </div>
 
-<div class="col m12 loose">
-    <md-card>
-        <md-card-title>Hinnoitteluperusteet</md-card-title>
-        <md-card-content>
-            <div class="row">
-                <div class="col m6">
+                        <div formGroupName="structureTimes">
+                            <div class="input-field col m12">
+                                <input id="structureStartTime"
+                                       formControlName="startTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text" [readonly]="readonly"/>
+                                <label for="structureStartTime">{{ meta?.getUiName('structureStartTime') }}</label>
+                                <field-error [form]="eventForm.get('structureTimes')" field="startTime" hasError="required">
+                                    {{translations.application.outdoorEvent.field.structureStartTimeMissing}}
+                                </field-error>
+                            </div>
+                            <div class="input-field col m12">
+                                <input id="structureEndTime"
+                                       formControlName="endTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text" [readonly]="readonly"/>
+                                <label for="structureEndTime">{{ meta?.getUiName('structureEndTime') }}</label>
+                                <field-error [form]="eventForm.get('structureTimes')" field="endTime" hasError="required">
+                                    {{translations.application.outdoorEvent.field.structureEndTimeMissing}}
+                                </field-error>
+                            </div>
+                            <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
+                                {{translations.application.outdoorEvent.field.startBeforeEnd}}
+                            </field-error>
+                        </div>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+
+    <div class="col m12 loose">
+        <md-card>
+            <md-card-title>Hinnoitteluperusteet</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m6">
+                        <div class="col m12">
+                            <select materialize="material_select"
+                                    formControlName="nature" (change)="eventNatureChange($event.target.value)">
+                                <option value="" disabled selected>{{ meta?.getUiName('nature') }}</option>
+                                <option *ngFor="let nature of eventNatures" [value]="nature.value">{{nature.name}}</option>
+                                <field-error [form]="eventForm" field="nature" hasError="required">
+                                    {{translations.application.outdoorEvent.field.natureMissing}}
+                                </field-error>
+                            </select>
+                        </div>
+                        <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.nature === 'PUBLIC_FREE'">
+                            <input type="checkbox" class="filled-in" id="noPrice" formControlName="noPrice"
+                                   (change)="noPriceChange($event.target.value)" [readonly]="readonly"/>
+                            <label for="noPrice">Korvauksetta</label>
+                        </div>
+                        <div class="col m12" *ngIf="eventForm.value.noPrice">
+                            <select materialize="material_select" [materializeSelectOptions]="noPriceReasons"
+                                    formControlName="noPriceReason">
+                                <option value="" disabled selected>{{ meta?.getUiName('noPriceReason') }}</option>
+                                <option *ngFor="let reason of noPriceReasons" [value]="reason.value">{{reason.name}}</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col m6 no-padding">
+                        <div class="col m12 height-fix-bottom">
+                            <input type="checkbox" class="filled-in" id="pricingEcoCompass" formControlName="ecoCompass" [readonly]="readonly"/>
+                            <label for="pricingEcoCompass">{{ meta?.getUiName('ecoCompass') }}</label>
+                        </div>
+                        <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
+                            <input type="checkbox" class="filled-in" id="pricingSalesActivity" formControlName="salesActivity" [readonly]="readonly"/>
+                            <label for="pricingSalesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</label>
+                        </div>
+                        <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
+                            <input type="checkbox" class="filled-in" id="includesHeavyStructure" formControlName="heavyStructure" [readonly]="readonly"/>
+                            <label for="includesHeavyStructure">{{ meta?.getUiName('heavyStructure') }}</label>
+                        </div>
+                    </div>
                     <div class="col m12">
-                        <select materialize="material_select" [materializeSelectOptions]="selectOptions"
-                                [(ngModel)]="event.nature" (change)="eventNatureChange($event.target.value)" [disabled]="readonly">
-                            <option value="" disabled selected>{{ meta?.getUiName('nature') }}</option>
-                            <option *ngFor="let nature of eventNatures" [value]="nature.value">{{nature.name}}</option>
-                        </select>
-                    </div>
-                    <div class="col m12 height-fix-bottom" *ngIf="event.nature === 'PUBLIC_FREE'">
-                        <input type="checkbox" class="filled-in" id="noPrice" [(ngModel)]="noPrice" [disabled]="readonly"/>
-                        <label for="noPrice">Korvauksetta</label>
-                    </div>
-                    <div class="col m12" *ngIf="noPrice">
-                        <select materialize="material_select" [materializeSelectOptions]="noPriceReasons"
-                                [(ngModel)]="event.noPriceReason" [disabled]="readonly">
-                            <option value="" disabled selected>{{ meta?.getUiName('noPriceReason') }}</option>
-                            <option *ngFor="let reason of noPriceReasons" [value]="reason.value">{{reason.name}}</option>
-                        </select>
+                        <div class="col m12">
+                            <label for="price">Hinta</label>
+                            <div id="price">-</div>
+                        </div>
                     </div>
                 </div>
-                <div class="col m6 no-padding">
-                    <div class="col m12 height-fix-bottom">
-                        <input type="checkbox" class="filled-in" id="pricingEcoCompass" [(ngModel)]="event.ecoCompass" [disabled]="readonly"/>
-                        <label for="pricingEcoCompass">{{ meta?.getUiName('ecoCompass') }}</label>
-                    </div>
-                    <div class="col m12 height-fix-bottom" *ngIf="noPrice">
-                        <input type="checkbox" class="filled-in" id="pricingSalesActivity" [(ngModel)]="event.salesActivity" [disabled]="readonly"/>
-                        <label for="pricingSalesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</label>
-                    </div>
-                    <div class="col m12 height-fix-bottom" *ngIf="noPrice">
-                        <input type="checkbox" class="filled-in" id="includesHeavyStructure" [(ngModel)]="event.heavyStructure" [disabled]="readonly"/>
-                        <label for="includesHeavyStructure">{{ meta?.getUiName('heavyStructure') }}</label>
-                    </div>
-                </div>
-                <div class="col m12">
-                    <div class="col m12">
-                        <label for="price">Hinta</label>
-                        <div id="price">-</div>
-                    </div>
-                </div>
-            </div>
-        </md-card-content>
-    </md-card>
-</div>
+            </md-card-content>
+        </md-card>
+    </div>
 
-<location-details *ngIf="readonly" [applicationId]="applicationId" [location]="location" [readonly]="readonly"></location-details>
+    <location-details *ngIf="readonly" [applicationId]="applicationId" [location]="location" [readonly]="readonly"></location-details>
 
-<div class="col m12 loose">
-    <md-card>
-        <md-card-title>Myyntitoiminta</md-card-title>
-        <md-card-content>
-            <div class="row">
-                <div class="col m6 no-padding">
-                    <div class="col m12 height-fix-bottom">
-                        <input type="checkbox" class="filled-in" id="salesMarketing" [checked]="event.marketingProviders" [disabled]="readonly"/>
-                        <label for="salesMarketing">Tapahtuma sisältää myynti- tai mainostoimintaa</label>
+    <div class="col m12 loose">
+        <md-card>
+            <md-card-title>Myyntitoiminta</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m6 no-padding">
+                        <div class="col m12 height-fix-bottom">
+                            <input type="checkbox" class="filled-in" id="salesMarketing" [checked]="eventForm.value.marketingProviders" [readonly]="readonly"/>
+                            <label for="salesMarketing">Tapahtuma sisältää myynti- tai mainostoimintaa</label>
+                        </div>
+                        <div class="input-field col m12">
+                            <textarea id="salesMarketingDetails" class="materialize-textarea"
+                                      formControlName="marketingProviders" [readonly]="readonly"></textarea>
+                            <label for="salesMarketingDetails">{{ meta?.getUiName('salesOrPromotionDescription') }}</label>
+                        </div>
                     </div>
-                    <div class="input-field col m12">
-                <textarea id="salesMarketingDetails" class="materialize-textarea"
-                          [(ngModel)]="event.marketingProviders" [disabled]="readonly"></textarea>
-                        <label for="salesMarketingDetails">{{ meta?.getUiName('salesOrPromotionDescription') }}</label>
+                    <div class="col m6 no-padding">
+                        <div class="col m12 height-fix-bottom">
+                            <input type="checkbox" class="filled-in" id="salesFood" formControlName="foodSales" [readonly]="readonly"/>
+                            <label for="salesFood">{{ meta?.getUiName('foodSales') }}</label>
+                        </div>
+                        <div class="input-field col m12">
+                            <textarea id="salesFoodProviders" class="materialize-textarea" formControlName="foodProviders" [readonly]="readonly"></textarea>
+                            <label for="salesFoodProviders">{{ meta?.getUiName('foodProviders') }}</label>
+                        </div>
                     </div>
                 </div>
-                <div class="col m6 no-padding">
-                    <div class="col m12 height-fix-bottom">
-                        <input type="checkbox" class="filled-in" id="salesFood" [checked]="event.foodSales" [disabled]="readonly"/>
-                        <label for="salesFood">{{ meta?.getUiName('foodSales') }}</label>
-                    </div>
-                    <div class="input-field col m12">
-                        <textarea id="salesFoodProviders" class="materialize-textarea" [(ngModel)]="event.foodProviders" [disabled]="readonly"></textarea>
-                        <label for="salesFoodProviders">{{ meta?.getUiName('foodProviders') }}</label>
-                    </div>
-                </div>
-            </div>
-        </md-card-content>
-    </md-card>
-</div>
+            </md-card-content>
+        </md-card>
+    </div>
+</form>

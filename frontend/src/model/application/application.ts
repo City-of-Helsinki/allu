@@ -79,8 +79,8 @@ export class Application {
       'Tapahtuman tavoitteena on saada ulkoilmatapahtumat tutuksi ihmisille.',
       'url',
       'OUTDOOREVENT',
-      new Date(),
-      new Date('2016-12-18T10:24:06.565+03:00'),
+      undefined,
+      undefined,
       'Tapahtuma-ajalla ei ole poikkeuksia',
       100,
       0,
@@ -103,8 +103,8 @@ export class Application {
     app.event = applicationTypeData;
     app.contactList = [contact];
     app.applicant = applicant;
-    app.startTime = new Date('2016-04-01T10:00:00');
-    app.endTime = new Date('2017-03-31T10:00:00');
+    app.startTime = undefined;
+    app.endTime = undefined;
 
     return app;
   }
