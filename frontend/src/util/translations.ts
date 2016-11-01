@@ -36,7 +36,6 @@ export const translations = {
     role: {
       ROLE_CREATE_APPLICATION: 'Hakemuksen luominen',
       ROLE_PROCESS_APPLICATION: 'Hakemuksen käsittely',
-      ROLE_WORK_QUEUE: 'Työjono',
       ROLE_DECISION: 'Päätöksen teko',
       ROLE_SUPERVISE: 'Valvonta',
       ROLE_INVOICING: 'Laskutus',

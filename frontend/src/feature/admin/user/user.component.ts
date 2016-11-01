@@ -25,7 +25,6 @@ export class UserComponent implements OnInit, AfterViewInit {
   roles = [
     'ROLE_CREATE_APPLICATION',
     'ROLE_PROCESS_APPLICATION',
-    'ROLE_WORK_QUEUE',
     'ROLE_DECISION',
     'ROLE_SUPERVISE',
     'ROLE_INVOICING',
