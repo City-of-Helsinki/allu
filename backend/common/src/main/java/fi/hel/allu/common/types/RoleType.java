@@ -10,10 +10,6 @@ public enum RoleType {
    */
   ROLE_PROCESS_APPLICATION,
   /**
-   * Allowed to view work queues and make and edit work queue filters.
-   */
-  ROLE_WORK_QUEUE,
-  /**
    * Allowed to make decisions.
    */
   ROLE_DECISION,
