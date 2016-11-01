@@ -8,17 +8,14 @@ import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.*;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -36,9 +33,6 @@ public class ApplicationService {
   private SearchService searchService;
   private MetaService metaService;
   private UserService userService;
-
-  // Stylesheet name for decision PDF generation:
-  private static final String DECISION_STYLESHEET = "paatos";
 
   @Autowired
   public ApplicationService(
@@ -224,55 +218,6 @@ public class ApplicationService {
     updateApplication(applicationId, applicationJson);
   }
 
-  /**
-   * Generate the decision PDF for given application and save it to model
-   * service
-   *
-   * @param applicationId
-   *          the application's ID
-   * @throws IOException
-   *           when model-service responds with error
-   */
-  public void generateDecision(int applicationId) throws IOException {
-    // Get the application's data and call pdf-service to create PDF:
-    ApplicationJson application = findApplicationById(applicationId);
-    DecisionJson decisionJson = new DecisionJson();
-    decisionJson.setApplication(application);
-    byte[] pdfData = restTemplate.postForObject(
-        applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE), decisionJson, byte[].class,
-        DECISION_STYLESHEET);
-    // Store the generated PDF to model:
-    MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
-    requestParts.add("file", new ByteArrayResource(pdfData) {
-      @Override // return some filename so that Spring handles this as file
-      public String getFilename() {
-        return "file.pdf";
-      }
-    });
-    HttpHeaders requestHeader = new HttpHeaders();
-    requestHeader.setContentType(MediaType.MULTIPART_FORM_DATA);
-    HttpEntity<?> requestEntity = new HttpEntity<>(requestParts, requestHeader);
-    // ...then execute the request
-    ResponseEntity<String> response = restTemplate.exchange(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_STORE), HttpMethod.POST,
-        requestEntity, String.class, applicationId);
-    if (!response.getStatusCode().is2xxSuccessful()) {
-      throw new IOException(response.getBody());
-    }
-  }
-
-  /**
-   * Get the decision PDF for given application from the model service
-   *
-   * @param applicationId
-   *          the application's ID
-   * @return PDF data
-   */
-  public byte[] getDecision(int applicationId) {
-    return restTemplate.getForObject(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_DECISION_GET), byte[].class,
-        applicationId);
-  }
 
   private ApplicationJson getApplication(Application applicationModel) {
     ApplicationJson applicationJson = new ApplicationJson();

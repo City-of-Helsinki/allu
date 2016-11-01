@@ -40,7 +40,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <div class="id">
           <span>Päätöspäivämäärä:</span>
           <p style="float: right">
-            [päätöspvm]
+            <!--  [päätöspvm] -->
+            <xsl:value-of select="data/decisionDate" />
           </p>
           <span>Tunnus:</span>
           <p style="float: right">
