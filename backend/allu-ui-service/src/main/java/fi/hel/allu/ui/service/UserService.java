@@ -4,10 +4,12 @@ import fi.hel.allu.model.domain.User;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.UserJson;
 import fi.hel.allu.ui.mapper.UserMapper;
+import fi.hel.allu.ui.security.AlluUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,6 +29,10 @@ public class UserService {
   public UserService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+  }
+
+  public AlluUser getCurrentUser() {
+    return (AlluUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
   }
 
   public List<UserJson> findAllUsers() {

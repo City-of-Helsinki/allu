@@ -14,6 +14,15 @@ public class QueryParameterJson {
   private ZonedDateTime startDateValue;
   private ZonedDateTime endDateValue;
 
+  public QueryParameterJson() {
+    // JSON deserialization
+  }
+
+  public QueryParameterJson(String fieldName, List<String> fieldMultiValue) {
+    this.fieldName = fieldName;
+    this.fieldMultiValue = fieldMultiValue;
+  }
+
   /**
    * Returns the name of the search field. This is the field name ElasticSearch is also using. If magical field name "_all" is used, the
    * query is done against all fields.
