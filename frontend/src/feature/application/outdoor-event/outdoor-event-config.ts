@@ -24,13 +24,6 @@ const applicantText = {
     id: 'Henkilötunnus'}
 };
 
-const countries = [
-  {name: 'Suomi', value: 'Finland'},
-  {name: 'Ruotsi', value: 'Sweden'},
-  {name: 'Venäjä', value: 'Russia'},
-  {name: 'Viro', value: 'Estonia'}
-];
-
 const billingTypes = [
   {name: 'Käteinen', value: 'Cash'},
   {name: 'Lasku', value: 'Invoice'}
@@ -67,7 +60,6 @@ export const outdoorEventConfig = {
   events: events,
   applicantType: applicantType,
   applicantText: applicantText,
-  countries: countries,
   billingTypes: billingTypes,
   eventNatures: eventNatures,
   noPriceReasons: noPriceReasons

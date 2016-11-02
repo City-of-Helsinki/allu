@@ -5,7 +5,8 @@ import {MaterializeDirective} from 'angular2-materialize';
 
 @NgModule({
   imports: [
-    MdToolbarModule
+    MdToolbarModule,
+    CommonModule
   ],
   declarations: [
     MaterializeDirective

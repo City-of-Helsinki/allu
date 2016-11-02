@@ -45,4 +45,24 @@ export class TimeUtil {
   public static getEndOfDay(date: Date): Date {
     return momentLib(date).endOf('day').toDate();
   }
+
+  /**
+   * Returns whether first argument is before second
+   *
+   * @param first date as string
+   * @param second date as string
+   * @returns {boolean} true when first date is before second or given strings are undefined, otherwise false.
+   */
+  public static isBefore(first: string, second: string): boolean {
+    if (!!first && !!second) {
+      return TimeUtil.toMoment(first).isBefore(TimeUtil.toMoment(second));
+    } else {
+      return true;
+    }
+
+  }
+
+  private static toMoment(dateString: string): any {
+    return dateString ? momentLib(dateString, 'DD.MM.YYYY') : undefined;
+  }
 }

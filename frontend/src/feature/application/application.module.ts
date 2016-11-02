@@ -1,5 +1,5 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {MdCardModule, MdToolbarModule, MdProgressBarModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -20,6 +20,11 @@ import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
 import {ApplicationAttachmentHub} from './attachment/application-attachment-hub';
 import {AttachmentService} from '../../service/attachment-service';
+import {ApplicantComponent} from './applicant/applicant.component';
+import {ContactComponent} from './contact/contact.component';
+import {EventDetailsComponent} from './outdoor-event/details/event-details.component.ts';
+import {LocationDetailsComponent} from './location/location-details.component';
+import {FieldErrorComponent} from '../common/field-error.component';
 
 
 @NgModule({
@@ -27,6 +32,7 @@ import {AttachmentService} from '../../service/attachment-service';
     AlluCommonModule,
     RouterModule.forChild(applicationRoutes),
     FormsModule,
+    ReactiveFormsModule,
     MdCardModule,
     MdToolbarModule,
     MdProgressBarModule,
@@ -41,7 +47,12 @@ import {AttachmentService} from '../../service/attachment-service';
     ApplicationAttachmentComponent,
     FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,
-    LoadingComponent
+    LoadingComponent,
+    ApplicantComponent,
+    ContactComponent,
+    EventDetailsComponent,
+    LocationDetailsComponent,
+    FieldErrorComponent
   ],
   providers: [
     ApplicationAttachmentHub,
