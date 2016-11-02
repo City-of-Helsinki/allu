@@ -79,7 +79,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 10);
+    setTimeout(() => Materialize.updateTextFields(), 50);
     this.mapHub.selectApplication(this.application);
   }
 

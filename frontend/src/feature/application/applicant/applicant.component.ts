@@ -40,7 +40,6 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 10);
   }
 
   applicantTypeSelection(value: string) {

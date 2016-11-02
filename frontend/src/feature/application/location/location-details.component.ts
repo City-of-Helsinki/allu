@@ -32,7 +32,6 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 10);
   }
 
   private metadataLoaded(metadata: StructureMeta) {

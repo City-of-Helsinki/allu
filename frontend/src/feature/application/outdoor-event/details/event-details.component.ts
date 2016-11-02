@@ -56,7 +56,6 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 10);
   }
 
   eventNatureChange(nature: string): void {
