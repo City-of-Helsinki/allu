@@ -1,0 +1,12 @@
+export enum NoPriceReason {
+  CHARITY,
+  ART_OR_CULTURE,
+  NO_FEE_SPORTING,
+  RESIDENT_OR_CITY,
+  SPIRITUAL,
+  CITY,
+  ART,
+  YOUTH,
+  PRIVATE,
+  DEFENCE_OR_POLICE
+}

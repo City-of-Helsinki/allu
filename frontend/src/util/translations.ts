@@ -26,17 +26,60 @@ export const translations = {
       nameShort: 'Tapahtuman nimi on liian lyhyt'
     },
     outdoorEvent: {
+      billingType: {
+        CASH: 'Käteinen',
+        INVOICE: 'Lasku'
+      },
+      nature: {
+        PUBLIC_FREE: 'Avoin',
+        PUBLIC_NONFREE: 'Maksullinen',
+        CLOSED: 'Suljettu'
+      },
+      noPriceReason: {
+        CHARITY: 'Hyväntekeväisyys- tai kansalaisjärjestö tai oppilaitoksen tapahtuma',
+        ART_OR_CULTURE: 'Taide- tai kulttuuritapahtuma',
+        NO_FEE_SPORTING: 'Avoin ja maksuton urheilutapahtuma',
+        RESIDENT_OR_CITY: 'Asukas- tai kaupunginosayhdistyksen tapahtuma',
+        SPIRITUAL: 'Aatteellinen, hengellinen tai yhteiskunnallinen tapahtuma',
+        CITY: 'Kaupunki isäntänä tai järjestäjäkumppanina',
+        ART: 'Tilataideteos',
+        YOUTH: 'Nuorisojärjestön tapahtuma',
+        PRIVATE: 'Yksityishenkilön järjestämä merkkipäiväjuhla tai vastaava',
+        DEFENCE_OR_POLICE: 'Puolustus- tai poliisivoimien tapahtuma'
+      },
       field: {
         natureMissing: 'Tapahtuman luonne puuttuu',
         descriptionMissing: 'Tapahtuman kuvaus puuttuu',
         typeMissing: 'Tapahtuman tyyppi puuttuu',
         eventStartTimeMissing: 'Tapahtuman alkuaika puuttuu',
         eventEndTimeMissing: 'Tapahtuman loppuaika puuttuu',
-        startBeforeEnd: 'Tapahtuman loppupäivä ei voi olla ennen alkupäivää'
+        startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää'
       }
     }
   },
   applicant: {
+    type: {
+      COMPANY: {
+        name: 'Yritys',
+        nameLabel: 'Yrityksen nimi',
+        id: 'Y-tunnus'
+      },
+      ASSOCIATION: {
+        name: 'Yhdistys',
+        nameLabel: 'Yhdistyksen nimi',
+        id: 'Y-tunnus'
+      },
+      PERSON: {
+        name: 'Yksityishenkilö',
+        nameLabel: 'Henkilön nimi',
+        id: 'Henkilötunnus'
+      },
+      DEFAULT: {
+        name: 'Hakija',
+        nameLabel: 'Hakijan nimi',
+        id: 'Y-tunnus'
+      }
+    },
     field: {
       typeMissing: 'Hakijan tyyppi puuttuu',
       nameMissing: 'Hakijan nimi puuttuu',

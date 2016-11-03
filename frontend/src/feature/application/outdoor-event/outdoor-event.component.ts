@@ -9,7 +9,6 @@ import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {OutdoorEvent} from '../../../model/application/type/outdoor-event';
 import {AttachmentInfo} from '../../../model/application/attachment-info';
 import {LocationState} from '../../../service/application/location-state';
-import {outdoorEventConfig} from './outdoor-event-config';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {UrlUtil} from '../../../util/url.util';
 import {Subscription} from 'rxjs/Subscription';
@@ -19,6 +18,8 @@ import {ApplicationAttachmentHub} from '../attachment/application-attachment-hub
 import {ApplicantForm} from '../applicant/applicant.form';
 import {OutdoorEventDetailsForm} from './details/outdoor-event-details.form';
 import {OutdoorEventForm} from './outdoor-event.form';
+import {EnumUtil} from '../../../util/enum.util';
+import {ApplicationType} from '../../../model/application/type/application-type';
 
 declare var Materialize: any;
 
@@ -34,7 +35,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   application: Application;
   applicationForm: FormGroup;
   private isSummary: boolean;
-  private events: Array<any>;
+  private events = EnumUtil.enumValues(ApplicationType);
   private attachments: AttachmentInfo[];
   private uploadProgress = 0;
   private submitted = false;
@@ -48,7 +49,6 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
               private applicationHub: ApplicationHub,
               private mapHub: MapHub,
               private attachmentHub: ApplicationAttachmentHub) {
-    this.events = outdoorEventConfig.events;
   };
 
   ngOnInit(): any {

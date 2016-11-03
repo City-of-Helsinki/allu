@@ -107,10 +107,6 @@ md-toolbar {
   border-left: 5px solid #42A948; /* green */
 }
 
-.ng-invalid:not(.ng-pristine):not(form)  {
-  border-left: 5px solid #a94442; /* red */
-}
-
 i.icon-middle {
   vertical-align: middle;
 }
@@ -126,4 +122,14 @@ input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
+}
+
+form {
+  .form-group {
+    margin-bottom: 0px;
+
+    .ng-invalid:not(.ng-pristine) {
+      border-left: 5px solid #a94442; /* red */
+    }
+  }
 }

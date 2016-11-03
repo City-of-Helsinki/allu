@@ -1,22 +1,24 @@
 import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
+import moment = require('moment/moment');
 
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicationTypeData} from '../../../../model/application/type/application-type-data';
 import {Location} from '../../../../model/common/location';
 import {Application} from '../../../../model/application/application';
-import {outdoorEventConfig} from '../outdoor-event-config';
 import {OutdoorEvent} from '../../../../model/application/type/outdoor-event';
-import {EventNature} from '../outdoor-event-config';
 import {OutdoorEventDetailsForm} from './outdoor-event-details.form';
 import {translations} from '../../../../util/translations';
-import moment = require('moment/moment');
 import {TimeUtil} from '../../../../util/time.util';
 import {Some} from '../../../../util/option';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
+import {EnumUtil} from '../../../../util/enum.util';
+import {BillingType} from '../../../../model/application/outdoor-event/billing-type';
+import {EventNature} from '../../../../model/application/outdoor-event/event-nature';
+import {NoPriceReason} from '../../../../model/application/outdoor-event/no-price-reason';
 
 @Component({
   selector: 'event-details',
@@ -32,17 +34,13 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   eventForm: FormGroup;
   applicationId: number;
   meta: StructureMeta;
-  billingTypes: Array<any>;
-  eventNatures: Array<any>;
-  noPriceReasons: Array<any>;
+  billingTypes = EnumUtil.enumValues(BillingType);
+  eventNatures = EnumUtil.enumValues(EventNature);
+  noPriceReasons = EnumUtil.enumValues(NoPriceReason);
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;
 
   constructor(private applicationHub: ApplicationHub, private route: ActivatedRoute, private fb: FormBuilder) {
-    this.billingTypes = outdoorEventConfig.billingTypes;
-    this.eventNatures = outdoorEventConfig.eventNatures;
-    this.noPriceReasons = outdoorEventConfig.noPriceReasons;
-
     applicationHub.metaData().subscribe(meta => this.metadataLoaded(meta));
   }
 

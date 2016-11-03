@@ -11,7 +11,7 @@ import {StructureMeta} from './structure-meta';
 import {AttachmentInfo} from './attachment-info';
 import {TimeUtil} from '../../util/time.util';
 import {User} from '../common/user';
-import {outdoorEventConfig, EventNature} from '../../feature/application/outdoor-event/outdoor-event-config';
+import {EventNature} from './outdoor-event/event-nature';
 
 
 export class Application {
