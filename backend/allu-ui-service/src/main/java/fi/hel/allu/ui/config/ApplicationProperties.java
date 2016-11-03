@@ -185,9 +185,9 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_LOCATION_FIND_BY_ID = "/locations/{locationId}";
 
   /**
-   * Model-service path to get all Square-Section locations
+   * Model-service path to get all FixedLocation locations
    */
-  public static final String PATH_MODEL_LOCATION_GET_SQUARE_SECTION = "/locations/square-section";
+  public static final String PATH_MODEL_LOCATION_GET_FIXED_LOCATION = "/locations/fixed-location";
 
   /**
    * Model-service path to create attachment

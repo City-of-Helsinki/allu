@@ -67,9 +67,9 @@ public class PricingService {
       throw new NoSuchEntityException("Location (ID=" + application.getLocationId() + " doesn't exist");
     }
 
-    Integer squareSectionId = location.get().getSquareSectionId();
-    if (squareSectionId == null) {
-      return 0; // No square/section defined -> no price (TODO: infer proper
+    Integer fixedLocationId = location.get().getFixedLocationId();
+    if (fixedLocationId == null) {
+      return 0; // No area/section defined -> no price (TODO: infer proper
                 // zone id)
     }
     OutdoorEventNature nature = outdoorEvent.getNature();
@@ -77,9 +77,9 @@ public class PricingService {
       return 0; // No nature defined -> no price
     }
     Optional<PricingConfiguration> pricingConfiguration =
-        pricingDao.findBySquareSectionAndNature(squareSectionId.intValue(), nature);
+        pricingDao.findByFixedLocationAndNature(fixedLocationId.intValue(), nature);
     if (pricingConfiguration.isPresent() == false) {
-      throw new NoSuchEntityException("No pricing configuration for (" + squareSectionId + nature + ")");
+      throw new NoSuchEntityException("No pricing configuration for (" + fixedLocationId + nature + ")");
     }
 
     Pricing pricing = new Pricing();

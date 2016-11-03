@@ -18,18 +18,18 @@ create table allu.organization (
     email text,
     phone text );
 
-create table allu.square_section (
+create table allu.fixed_location (
     id serial primary key,
-    square text not null,
+    area text not null,
     section text,
     is_active boolean not null,
-    unique (square, section) );
+    unique (area, section) );
 
-comment on table allu.square_section is 'Predefined Square+Section type locations';
+comment on table allu.fixed_location is 'Predefined Area+Section type location';
 
 create table allu.outdoor_pricing (
     id serial primary key,
-    square_section_id integer not null references allu.square_section(id),
+    fixed_location_id integer not null references allu.fixed_location(id),
     nature text not null,              -- event's nature
     base_charge bigint not null,                -- base charge per day, in 1/100 eurocents
     build_discount_percent integer not null,    -- discount percent for build days
@@ -47,7 +47,7 @@ create table allu.location (
    postal_code text,
    city text,
    area double precision,
-   square_section_id integer references allu.square_section(id) );
+   fixed_location_id integer references allu.fixed_location(id) );
 
 create table allu.geometry (
    id serial primary key,
@@ -182,152 +182,152 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 
 -- Insert pricing data (from http://www.hel.fi/static/hkr/luvat/maksut_tapahtumat.pdf):
 
-insert into allu.square_section values (DEFAULT, 'Narinkka','A',true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka','A',true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Narinkka','B',true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka','B',true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Narinkka','C',true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka','C',true);
 insert into allu.outdoor_pricing  values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section (square, section, is_active) values ('Narinkka','D',true);
+insert into allu.fixed_location (area, section, is_active) values ('Narinkka','D',true);
 insert into allu.outdoor_pricing  values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 12000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 18000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Mauno Koiviston aukio', 'E', true);
+insert into allu.fixed_location values (DEFAULT, 'Mauno Koiviston aukio', 'E', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Rautatientori', 'A', true);
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'A', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Rautatientori', 'B', true);
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'B', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Rautatientori', 'C', true);
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'C', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Rautatientori', 'D', true);
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'D', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Rautatientori', 'E', true);
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'E', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 3000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 9000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 3000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 9000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Rautatientori', 'F', true);
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'F', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 3000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 9000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 3000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 6000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 9000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kansalaistori', 'A', true);
+insert into allu.fixed_location values (DEFAULT, 'Kansalaistori', 'A', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kansalaistori', 'B', true);
+insert into allu.fixed_location values (DEFAULT, 'Kansalaistori', 'B', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 7000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 14000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 21000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 7000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 14000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 21000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kansalaistori', 'C', true);
+insert into allu.fixed_location values (DEFAULT, 'Kansalaistori', 'C', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 4000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 8000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 12000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 4000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 8000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 12000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kaisaniemen puisto', 'A', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemen puisto', 'A', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kaisaniemen puisto', 'B', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemen puisto', 'B', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kaisaniemen puisto', 'C', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemen puisto', 'C', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kaisaniemen puisto', 'D', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemen puisto', 'D', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 5000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 10000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 15000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Töölönlahdenpuisto', 'A', true);
+insert into allu.fixed_location values (DEFAULT, 'Töölönlahdenpuisto', 'A', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 20000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 40000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 60000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 20000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 40000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 60000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Töölönlahdenpuisto', 'B', true);
+insert into allu.fixed_location values (DEFAULT, 'Töölönlahdenpuisto', 'B', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 15000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 30000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 45000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 15000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 30000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 45000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Töölönlahdenpuisto', 'C', true);
+insert into allu.fixed_location values (DEFAULT, 'Töölönlahdenpuisto', 'C', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 15000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 30000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 45000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 15000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 30000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 45000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Töölönlahdenpuisto', 'D', true);
+insert into allu.fixed_location values (DEFAULT, 'Töölönlahdenpuisto', 'D', true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 25000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 50000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 75000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 25000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 50000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 75000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Kaivopuisto', NULL, true);
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', NULL, true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 20000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 40000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 60000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 20000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 40000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 60000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Senaatintori', NULL, true);
+insert into allu.fixed_location values (DEFAULT, 'Senaatintori', NULL, true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 30000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 60000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 90000000, 0, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 30000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 60000000, 50, 50, 14, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 90000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.square_section values (DEFAULT, 'Säiliö 468', NULL, true);
+insert into allu.fixed_location values (DEFAULT, 'Säiliö 468', NULL, true);
 insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_FREE', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'PUBLIC_NONFREE', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.square_section', 'id')), 'CLOSED', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL);

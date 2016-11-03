@@ -1,11 +1,11 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.SquareSection;
 import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.domain.PostalAddressJson;
-import fi.hel.allu.ui.domain.SquareSectionJson;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,13 +101,13 @@ public class LocationService {
   }
 
   /**
-   * Retrieve the list of defined square-section-locations
-   * @return list of SquareSection locations
+   * Retrieve the list of defined fixed-locations
+   * @return list of FixedLocation locations
    */
-  public List<SquareSectionJson> getSquareSectionList() {
-    ResponseEntity<SquareSection[]> queryResult = restTemplate.getForEntity(applicationProperties
-        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_GET_SQUARE_SECTION), SquareSection[].class);
-    List<SquareSectionJson> resultList = Arrays.stream(queryResult.getBody()).map(ss -> mapToSquareSectionJson(ss))
+  public List<FixedLocationJson> getFixedLocationList() {
+    ResponseEntity<FixedLocation[]> queryResult = restTemplate.getForEntity(applicationProperties
+        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_GET_FIXED_LOCATION), FixedLocation[].class);
+    List<FixedLocationJson> resultList = Arrays.stream(queryResult.getBody()).map(ss -> mapToFixedLocationJson(ss))
         .collect(Collectors.toList());
     return resultList;
   }
@@ -124,7 +124,7 @@ public class LocationService {
     }
     location.setGeometry(locationJson.getGeometry());
     location.setArea(locationJson.getArea());
-    location.setSquareSectionId(locationJson.getSquareSectionId());
+    location.setFixedLocationId(locationJson.getFixedLocationId());
     return location;
   }
 
@@ -137,14 +137,14 @@ public class LocationService {
     locationJson.setPostalAddress(postalAddressJson);
     locationJson.setGeometry(location.getGeometry());
     locationJson.setArea(location.getArea());
-    locationJson.setSquareSectionId(location.getSquareSectionId());
+    locationJson.setFixedLocationId(location.getFixedLocationId());
   }
 
-  private SquareSectionJson mapToSquareSectionJson(SquareSection squareSection) {
-    SquareSectionJson squareSectionJson = new SquareSectionJson();
-    squareSectionJson.setId(squareSection.getId());
-    squareSectionJson.setSquare(squareSection.getSquare());
-    squareSectionJson.setSection(squareSection.getSection());
-    return squareSectionJson;
+  private FixedLocationJson mapToFixedLocationJson(FixedLocation fixedLocation) {
+    FixedLocationJson fixedLocationJson = new FixedLocationJson();
+    fixedLocationJson.setId(fixedLocation.getId());
+    fixedLocationJson.setArea(fixedLocation.getArea());
+    fixedLocationJson.setSection(fixedLocation.getSection());
+    return fixedLocationJson;
   }
 }

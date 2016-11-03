@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
-import static fi.hel.allu.QSquareSection.squareSection;
+import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -44,9 +44,9 @@ public class PricingDaoTest {
   @Before
   public void setUp() throws Exception {
     testCommon.deleteAllData();
-    // Insert one squaresection and a pricing config for it:
-    queryFactory.insert(squareSection).set(squareSection.id, TEST_ID).set(squareSection.square, "Turbofolkstraße").set(squareSection.section, "Z").set(squareSection.isActive, true).execute();
-    queryFactory.insert(outdoorPricing).set(outdoorPricing.squareSectionId, TEST_ID)
+    // Insert one fixedlocation and a pricing config for it:
+    queryFactory.insert(fixedLocation).set(fixedLocation.id, TEST_ID).set(fixedLocation.area, "Turbofolkstraße").set(fixedLocation.section, "Z").set(fixedLocation.isActive, true).execute();
+    queryFactory.insert(outdoorPricing).set(outdoorPricing.fixedLocationId, TEST_ID)
         .set(outdoorPricing.nature, "PUBLIC_FREE").set(outdoorPricing.baseCharge, TEST_BASE_CHARGE)
         .set(outdoorPricing.buildDiscountPercent, 0).set(outdoorPricing.durationDiscountPercent, 0)
         .set(outdoorPricing.durationDiscountLimit, 0).execute();
@@ -54,8 +54,8 @@ public class PricingDaoTest {
 
   // Check that the pricing configuration can be read:
   @Test
-  public void testWithExistingSquareSection() {
-    Optional<PricingConfiguration> opt_pc = pricingDao.findBySquareSectionAndNature(TEST_ID,
+  public void testWithExistingFixedLocation() {
+    Optional<PricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID,
         OutdoorEventNature.PUBLIC_FREE);
     assertTrue(opt_pc.isPresent());
     PricingConfiguration pc = opt_pc.get();
@@ -63,8 +63,8 @@ public class PricingDaoTest {
   }
 
   @Test
-  public void testWithBadSquareSection() {
-    Optional<PricingConfiguration> opt_pc = pricingDao.findBySquareSectionAndNature(TEST_ID + 1, OutdoorEventNature.PUBLIC_FREE);
+  public void testWithBadFixedLocation() {
+    Optional<PricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID + 1, OutdoorEventNature.PUBLIC_FREE);
     assertFalse(opt_pc.isPresent());
   }
 

@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.ui.domain.SquareSectionJson;
+import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.service.LocationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,9 +24,9 @@ public class LocationController {
     this.locationService = locationService;
   }
 
-  @RequestMapping(value = "/square-section", method = RequestMethod.GET)
+  @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<SquareSectionJson>> getSquareSectionList() {
-    return new ResponseEntity<List<SquareSectionJson>>(locationService.getSquareSectionList(), HttpStatus.OK);
+  public ResponseEntity<List<FixedLocationJson>> getFixedLocationList() {
+    return new ResponseEntity<List<FixedLocationJson>>(locationService.getFixedLocationList(), HttpStatus.OK);
   }
 }

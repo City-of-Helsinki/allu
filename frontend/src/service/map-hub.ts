@@ -12,7 +12,7 @@ import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery
 import {SearchbarFilter} from './searchbar-filter';
 import {LocationService} from './location.service';
 import {UIStateHub} from './ui-state/ui-state-hub';
-import {SquareSection} from '../model/common/square-section';
+import {FixedLocation} from '../model/common/fixed-location';
 import {Some} from '../util/option';
 
 
@@ -25,7 +25,7 @@ export class MapHub {
   private searchBar$ = new Subject<SearchbarFilter>();
   private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
-  private squareSections$ = new BehaviorSubject<Array<SquareSection>>([]);
+  private fixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);
 
   constructor(private applicationService: ApplicationService,
               private locationService: LocationService,
@@ -47,8 +47,8 @@ export class MapHub {
         err => this.uiState.addError(err)
       );
 
-    this.locationService.getSquaresAndSections()
-      .subscribe(squaresAndSections => this.squareSections$.next(squaresAndSections));
+    this.locationService.getFixedLocations()
+      .subscribe(fixedLocations => this.fixedLocations$.next(fixedLocations));
   }
 
   /**
@@ -89,14 +89,14 @@ export class MapHub {
   public shape = () => this.shape$.asObservable();
 
   /**
-   * Used for fetching all available squares / sections
+   * Used for fetching all available areas / sections
    */
-  public squaresAndSections = () => this.squareSections$.asObservable();
+  public fixedLocations = () => this.fixedLocations$.asObservable();
 
   /**
-   * Used for fetching single square / section
+   * Used for fetching single area / section
    */
-  public squareAndSection = (id: number) => this.squaresAndSections()
+  public fixedLocation = (id: number) => this.fixedLocations()
     .map(entries => Some(entries.find(ss => ss.id === id)));
 
   /**

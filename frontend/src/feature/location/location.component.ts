@@ -14,7 +14,7 @@ import {SearchbarFilter} from '../../service/searchbar-filter';
 import {LocationState} from '../../service/application/location-state';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {MapHub} from '../../service/map-hub';
-import {SquareSection} from '../../model/common/square-section';
+import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
 
 @Component({
@@ -26,12 +26,12 @@ import {Some} from '../../util/option';
   ]
 })
 export class LocationComponent {
-  squares = new Array<string>();
-  sections = new Array<SquareSection>();
+  areas = new Array<string>();
+  sections = new Array<FixedLocation>();
   application: Application;
   progressStep: number;
 
-  private squaresWithSections = new Array<SquareSection>();
+  private fixedLocations = new Array<FixedLocation>();
 
   constructor(
     private locationState: LocationState,
@@ -45,7 +45,7 @@ export class LocationComponent {
   };
 
   ngOnInit() {
-    this.initSquaresAndSections();
+    this.initFixedLocations();
 
     this.route.params.subscribe(params => {
       let id = Number(params['id']);
@@ -59,12 +59,12 @@ export class LocationComponent {
 
           this.mapHub.selectApplication(application);
 
-          this.selectedSquare = Some(this.squaresWithSections.filter(ss => ss.id === application.location.squareSectionId))
+          this.selectedArea = Some(this.fixedLocations.filter(ss => ss.id === application.location.fixedLocationId))
             .filter(ss => ss.length > 0)
-            .map(ss => ss[0].square)
+            .map(ss => ss[0].area)
             .orElse(undefined);
 
-          this.selectedSquareSection = application.location.squareSectionId;
+          this.selectedFixedLocation = application.location.fixedLocationId;
         });
       }
 
@@ -98,14 +98,14 @@ export class LocationComponent {
     }
   }
 
-  set selectedSquare(square: string) {
-    this.sections = this.squaresWithSections.filter(ss => ss.square === square);
+  set selectedArea(area: string) {
+    this.sections = this.fixedLocations.filter(fl => fl.area === area);
   }
 
-  get selectedSquare(): string {
+  get selectedArea(): string {
     return Some(this.sections)
       .filter(sections => sections.length > 0)
-      .map(sections => sections[0].square)
+      .map(sections => sections[0].area)
       .orElse(undefined);
   }
 
@@ -113,12 +113,12 @@ export class LocationComponent {
     return this.sections.every(section => !section.section);
   }
 
-  set selectedSquareSection(id: number) {
-    this.locationState.location.squareSectionId = id;
+  set selectedFixedLocation(id: number) {
+    this.locationState.location.fixedLocationId = id;
   }
 
-  get selectedSquareSection(): number {
-    return this.locationState.location.squareSectionId;
+  get selectedFixedLocation(): number {
+    return this.locationState.location.fixedLocationId;
   }
 
 
@@ -130,11 +130,11 @@ export class LocationComponent {
     }
   }
 
-  private initSquaresAndSections(): void {
-    this.mapHub.squaresAndSections()
-      .subscribe(ss => {
-        this.squares = ss.map(entry => entry.square).filter((v, i, a) => a.indexOf(v) === i); // unique square names
-        this.squaresWithSections = ss;
+  private initFixedLocations(): void {
+    this.mapHub.fixedLocations()
+      .subscribe(fl => {
+        this.areas = fl.map(entry => entry.area).filter((v, i, a) => a.indexOf(v) === i); // unique area names
+        this.fixedLocations = fl;
       });
   }
 }

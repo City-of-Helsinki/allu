@@ -3,8 +3,8 @@ package fi.hel.allu.model.dao;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.SquareSection;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.geolatte.geom.Geometry;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static fi.hel.allu.QSquareSection.squareSection;
+import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -130,33 +130,33 @@ public class LocationDaoTest {
   }
 
   @Test
-  public void testSquareSectionId() {
-    // Setup: add square-section with known ID
-    final int SQUARE_SECTION_ID = 9876;
-    long insertCount = queryFactory.insert(squareSection).set(squareSection.id, SQUARE_SECTION_ID)
-        .set(squareSection.square, "Narinkka").set(squareSection.isActive, true)
-        .set(squareSection.section, "lohko A").execute();
+  public void testFixedLocationId() {
+    // Setup: add fixed location with known ID
+    final int FIXED_LOCATION_ID = 9876;
+    long insertCount = queryFactory.insert(fixedLocation).set(fixedLocation.id, FIXED_LOCATION_ID)
+        .set(fixedLocation.area, "Narinkka").set(fixedLocation.isActive, true)
+        .set(fixedLocation.section, "lohko A").execute();
     assertEquals(1, insertCount);
-    // Test: add location with squareSectionId
+    // Test: add location with fixedLocationId
     Location locIn = new Location();
-    locIn.setSquareSectionId(SQUARE_SECTION_ID);
+    locIn.setFixedLocationId(FIXED_LOCATION_ID);
     Location locOut = locationDao.insert(locIn);
-    assertEquals(SQUARE_SECTION_ID, locOut.getSquareSectionId().intValue());
+    assertEquals(FIXED_LOCATION_ID, locOut.getFixedLocationId().intValue());
   }
 
   @Test
-  public void testGetSquareSectionList() {
+  public void testGetFixedLocationList() {
     // Setup: add two active rows and one passive
-    long insertCount = queryFactory.insert(squareSection).set(squareSection.square, "Kauppatori")
-        .set(squareSection.section, "lohko A").set(squareSection.isActive, true).addBatch()
-        .set(squareSection.square, "Senaatintori").set(squareSection.isActive, true).addBatch()
-        .set(squareSection.square, "Kauppatori").set(squareSection.section, "lohko Q")
-        .set(squareSection.isActive, false).addBatch().execute();
+    long insertCount = queryFactory.insert(fixedLocation).set(fixedLocation.area, "Kauppatori")
+        .set(fixedLocation.section, "lohko A").set(fixedLocation.isActive, true).addBatch()
+        .set(fixedLocation.area, "Senaatintori").set(fixedLocation.isActive, true).addBatch()
+        .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko Q")
+        .set(fixedLocation.isActive, false).addBatch().execute();
     assertEquals(3, insertCount);
     // Test: get list, should only one 2 items, and only one at Kauppatori
-    List<SquareSection> queryResult = locationDao.getSquareSectionList();
+    List<FixedLocation> queryResult = locationDao.getFixedLocationList();
     assertEquals(2, queryResult.size());
-    assertEquals(1, queryResult.stream().filter(sqs -> sqs.getSquare().equals("Kauppatori")).count());
+    assertEquals(1, queryResult.stream().filter(sqs -> sqs.getArea().equals("Kauppatori")).count());
   }
 
 }

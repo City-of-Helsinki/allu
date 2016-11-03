@@ -17,7 +17,7 @@ public class Location {
   private String streetAddress;
   private String postalCode;
   private String city;
-  private Integer squareSectionId;
+  private Integer fixedLocationId;
 
   /**
    * Get location's database ID
@@ -98,16 +98,16 @@ public class Location {
   }
 
   /**
-   * Get the location's square-section address ID.
+   * Get the location's fixed-location address ID.
    *
-   * @return the squareSectionId
+   * @return the fixedLocationId
    */
-  public Integer getSquareSectionId() {
-    return squareSectionId;
+  public Integer getFixedLocationId() {
+    return fixedLocationId;
   }
 
-  public void setSquareSectionId(Integer squareSectionId) {
-    this.squareSectionId = squareSectionId;
+  public void setFixedLocationId(Integer fixedLocationId) {
+    this.fixedLocationId = fixedLocationId;
   }
 
 }
