@@ -154,12 +154,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <!-- [Tapahtuman luonne] -->
             <xsl:value-of select="data/eventNature"/>
           </p>
-          <xsl:if test="data/astructureArea != ''">
+          <xsl:if test="data/structureArea != ''">
             <!-- Käytetään, jos tapahtuma sisältää rakenteita. -->
             <p>
               Tapahtuma sisältää
               <!-- [rakenteiden kokonaisneliömäärä] -->
-              <xsl:value-of select="data/structureArea" /> m<sum>2</sum>
+              <xsl:value-of select="data/structureArea" /> m<sup>2</sup>
               rakenteita.
             </p>
             <p>
