@@ -4,11 +4,12 @@ import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
 
 import {Applicant} from '../../../model/application/applicant';
 import {StructureMeta} from '../../../model/application/structure-meta';
-import {outdoorEventConfig, applicantIdSelection, applicantNameSelection} from '../outdoor-event/outdoor-event-config';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {ApplicantForm} from './applicant.form';
 import {Application} from '../../../model/application/application';
 import {translations} from '../../../util/translations';
+import {EnumUtil} from '../../../util/enum.util';
+import {ApplicantType} from '../../../model/application/applicant/applicant-type';
 
 @Component({
   selector: 'applicant',
@@ -20,12 +21,9 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
   @Input() applicationForm: FormGroup;
   @Input() readonly: boolean;
 
+  applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
   meta: StructureMeta;
-  applicantType: any;
-  applicantText: any;
-  applicantNameSelection: string;
-  applicantIdSelection: string;
   translations = translations;
 
   constructor(private applicationHub: ApplicationHub, private fb: FormBuilder, private route: ActivatedRoute) {
@@ -33,18 +31,10 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.applicantType = outdoorEventConfig.applicantType;
-    this.applicantText = outdoorEventConfig.applicantText;
-
     this.initForm();
   }
 
   ngAfterViewInit(): void {
-  }
-
-  applicantTypeSelection(value: string) {
-    this.applicantNameSelection = this.applicantText[value].name;
-    this.applicantIdSelection = this.applicantText[value].id;
   }
 
   private initForm() {
@@ -77,19 +67,5 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
 
   private metadataLoaded(metadata: StructureMeta) {
     this.meta = metadata;
-    this.applicantText = {
-      'DEFAULT': {
-        name: 'Hakijan nimi',
-        id: this.meta.getUiName('applicant.businessId')},
-      'COMPANY': {
-        name: this.meta.getUiName('applicant.companyName'),
-        id: this.meta.getUiName('applicant.businessId')},
-      'ASSOCIATION': {
-        name: this.meta.getUiName('applicant.organizationName'),
-        id: this.meta.getUiName('applicant.businessId')},
-      'PERSON': {
-        name: this.meta.getUiName('applicant.personName'),
-        id: this.meta.getUiName('applicant.ssn')}
-    };
   }
 }
