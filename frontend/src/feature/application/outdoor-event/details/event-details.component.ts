@@ -8,7 +8,7 @@ import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicationTypeData} from '../../../../model/application/type/application-type-data';
 import {Location} from '../../../../model/common/location';
 import {Application} from '../../../../model/application/application';
-import {OutdoorEvent} from '../../../../model/application/type/outdoor-event';
+import {OutdoorEvent} from '../../../../model/application/outdoor-event/outdoor-event';
 import {OutdoorEventDetailsForm} from './outdoor-event-details.form';
 import {translations} from '../../../../util/translations';
 import {TimeUtil} from '../../../../util/time.util';
@@ -16,9 +16,9 @@ import {Some} from '../../../../util/option';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {EnumUtil} from '../../../../util/enum.util';
-import {BillingType} from '../../../../model/application/outdoor-event/billing-type';
+import {BillingType} from '../../../../model/application/billing-type';
 import {EventNature} from '../../../../model/application/outdoor-event/event-nature';
-import {NoPriceReason} from '../../../../model/application/outdoor-event/no-price-reason';
+import {NoPriceReason} from '../../../../model/application/no-price-reason';
 
 @Component({
   selector: 'event-details',
@@ -26,7 +26,6 @@ import {NoPriceReason} from '../../../../model/application/outdoor-event/no-pric
   styles: []
 })
 export class EventDetailsComponent implements OnInit, AfterViewInit {
-  @Input() eventName: string;
   @Input() applicationForm: FormGroup;
   @Input() location: Location;
   @Input() readonly: boolean;

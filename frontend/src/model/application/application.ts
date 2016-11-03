@@ -6,7 +6,7 @@ import {Organization} from '../common/organization';
 import {PostalAddress} from '../common/postal-address';
 import {Location} from '../common/location';
 import {ApplicationTypeData} from './type/application-type-data';
-import {OutdoorEvent} from './type/outdoor-event';
+import {OutdoorEvent} from './outdoor-event/outdoor-event';
 import {StructureMeta} from './structure-meta';
 import {AttachmentInfo} from './attachment-info';
 import {TimeUtil} from '../../util/time.util';
@@ -109,8 +109,27 @@ export class Application {
     return app;
   }
 
+  /*
+   * Getters and setters for supporting pickadate editing in UI.
+   */
   get uiApplicationCreationTime(): string {
     return TimeUtil.getUiDateString(this.creationTime);
+  }
+
+  public get uiStartTime(): string {
+    return TimeUtil.getUiDateString(this.startTime);
+  }
+
+  public set uiStartTime(dateString: string) {
+    this.startTime = TimeUtil.getDateFromUi(dateString);
+  }
+
+  public get uiEndTime(): string {
+    return TimeUtil.getUiDateString(this.endTime);
+  }
+
+  public set uiEndTime(dateString: string) {
+    this.endTime = TimeUtil.getDateFromUi(dateString);
   }
 
   public hasGeometry(): boolean {

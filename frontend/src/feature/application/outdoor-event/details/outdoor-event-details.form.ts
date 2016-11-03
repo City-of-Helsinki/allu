@@ -1,4 +1,5 @@
-import {OutdoorEvent} from '../../../../model/application/type/outdoor-event';
+import {OutdoorEvent} from '../../../../model/application/outdoor-event/outdoor-event';
+import {TimePeriod} from '../../time-period';
 
 export class OutdoorEventDetailsForm {
   constructor(public name?: string,
@@ -73,10 +74,4 @@ export class OutdoorEventDetailsForm {
     event.uiStructureEndTime = form.structureTimes.endTime;
     return event;
   }
-}
-
-export class TimePeriod {
-  constructor()
-  constructor(startTime: string, endTime: string)
-  constructor(public startTime?: string, public endTime?: string) {}
 }

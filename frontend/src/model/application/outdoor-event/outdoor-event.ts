@@ -1,5 +1,5 @@
-import {ApplicationTypeData} from './application-type-data';
-import {TimeUtil} from '../../../util/time.util';
+import {ApplicationTypeData} from './../type/application-type-data';
+import {TimeUtil} from '../../../util/time.util.ts';
 
 export class OutdoorEvent extends ApplicationTypeData {
   constructor()
