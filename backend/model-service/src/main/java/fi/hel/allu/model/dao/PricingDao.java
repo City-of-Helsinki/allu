@@ -23,9 +23,9 @@ public class PricingDao {
   final QBean<PricingConfiguration> pricingBean = bean(PricingConfiguration.class, outdoorPricing.all());
 
   @Transactional(readOnly = true)
-  public Optional<PricingConfiguration> findBySquareSectionAndNature(int squareSectionId, OutdoorEventNature nature) {
+  public Optional<PricingConfiguration> findByFixedLocationAndNature(int fixedLocationId, OutdoorEventNature nature) {
     PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing)
-        .where(outdoorPricing.squareSectionId.eq(squareSectionId).and(outdoorPricing.nature.eq(nature.toString())))
+        .where(outdoorPricing.fixedLocationId.eq(fixedLocationId).and(outdoorPricing.nature.eq(nature.toString())))
         .fetchFirst();
     return Optional.ofNullable(pc);
   }

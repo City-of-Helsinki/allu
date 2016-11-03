@@ -19,15 +19,15 @@ import {ErrorType} from './ui-state/error-type';
 import {None} from '../util/option';
 import {Option} from '../util/option';
 import {Some} from '../util/option';
-import {SquareSectionMapper} from './mapper/square-section-mapper';
-import {SquareSection} from '../model/common/square-section';
+import {FixedLocationMapper} from './mapper/fixed-location-mapper';
+import {FixedLocation} from '../model/common/fixed-location';
 
 @Injectable()
 export class LocationService {
 
   static ADDRESS_URL = '/api/address';
   static GEOCODE_URL = '/geocode/helsinki';
-  static SQUARE_SECTION_URL = '/api/locations/square-section';
+  static FIXED_LOCATION_URL = '/api/locations/fixed-location';
 
   constructor(
     private authHttp: AuthHttp,
@@ -44,10 +44,10 @@ export class LocationService {
       .catch(err => this.handleGeocodeError(err));
   }
 
-  public getSquaresAndSections(): Observable<Array<SquareSection>> {
-    return this.authHttp.get(LocationService.SQUARE_SECTION_URL)
+  public getFixedLocations(): Observable<Array<FixedLocation>> {
+    return this.authHttp.get(LocationService.FIXED_LOCATION_URL)
       .map(response => response.json())
-      .map(json => json.map(ss => SquareSectionMapper.mapBackend(ss)))
+      .map(json => json.map(ss => FixedLocationMapper.mapBackend(ss)))
       .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
   }
 

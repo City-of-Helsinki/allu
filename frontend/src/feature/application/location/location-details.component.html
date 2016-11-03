@@ -13,10 +13,10 @@
                         <label for="info">Lisätietoja paikasta</label>
                     </div>
                     <div class="input-field col m8 select-fix" [class.summary]="rentingPlace">
-                        <input type="text" [ngModel]="squareSection.square" [disabled]="readonly">
+                        <input type="text" [ngModel]="fixedLocation.area" [disabled]="readonly">
                     </div>
                     <div class="input-field col m2 select-fix" [class.summary]="sections">
-                        <input type="text" [ngModel]="squareSection.section" [disabled]="readonly">
+                        <input type="text" [ngModel]="fixedLocation.section" [disabled]="readonly">
                     </div>
                     <div class="input-field col m2">
                         <input id="area" type="number" class="validate" [ngModel]="location.uiArea" [disabled]="readonly">

@@ -4,7 +4,7 @@ import {StructureMeta} from '../../../model/application/structure-meta';
 import {outdoorEventConfig} from '../outdoor-event/outdoor-event-config';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {MapHub} from '../../../service/map-hub';
-import {SquareSection} from '../../../model/common/square-section';
+import {FixedLocation} from '../../../model/common/fixed-location';
 import {Location} from '../../../model/common/location';
 
 @Component({
@@ -19,15 +19,15 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
   @Input() readonly: boolean;
 
   meta: StructureMeta;
-  squareSection: SquareSection;
+  fixedLocation: FixedLocation;
 
   constructor(private applicationHub: ApplicationHub, private mapHub: MapHub) {
     applicationHub.metaData().subscribe(meta => this.metadataLoaded(meta));
   }
 
   ngOnInit(): void {
-    this.mapHub.squareAndSection(this.location.squareSectionId).subscribe(ssOpt => {
-      this.squareSection = ssOpt.orElse(new SquareSection());
+    this.mapHub.fixedLocation(this.location.fixedLocationId).subscribe(flOpt => {
+      this.fixedLocation = flOpt.orElse(new FixedLocation());
     });
   }
 

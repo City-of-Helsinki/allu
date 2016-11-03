@@ -21,7 +21,7 @@ public class LocationJson {
   private Double area;
   @Valid
   private PostalAddressJson postalAddress;
-  private Integer squareSectionId;
+  private Integer fixedLocationId;
 
   public Integer getId() {
     return id;
@@ -59,15 +59,15 @@ public class LocationJson {
   }
 
   /**
-   * Get the location's square-section address ID.
+   * Get the location's area-section address ID.
    *
-   * @return the squareSectionId
+   * @return the fixedLocationId
    */
-  public Integer getSquareSectionId() {
-    return squareSectionId;
+  public Integer getFixedLocationId() {
+    return fixedLocationId;
   }
 
-  public void setSquareSectionId(Integer squareSectionId) {
-    this.squareSectionId = squareSectionId;
+  public void setFixedLocationId(Integer fixedLocationId) {
+    this.fixedLocationId = fixedLocationId;
   }
 }

@@ -4,15 +4,15 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 
-public class SquareSectionJson {
+public class FixedLocationJson {
   @NotNull
   Integer id;
   @NotBlank
-  String square;
+  String area;
   String section;
 
   /**
-   * Get the database id for the SquareSectionJson
+   * Get the database id for the FixedLocationJson
    *
    * @return the id
    */
@@ -25,16 +25,16 @@ public class SquareSectionJson {
   }
 
   /**
-   * Get the square name, e.g. "Rautatientori"
+   * Get the area name, e.g. "Rautatientori"
    *
-   * @return the square
+   * @return the area
    */
-  public String getSquare() {
-    return square;
+  public String getArea() {
+    return area;
   }
 
-  public void setSquare(String square) {
-    this.square = square;
+  public void setArea(String area) {
+    this.area = area;
   }
 
   /**

@@ -3,7 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.SquareSection;
+import fi.hel.allu.model.domain.FixedLocation;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,8 +43,8 @@ public class LocationController {
     return new ResponseEntity<>(locationDao.insert(location), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/square-section", method = RequestMethod.GET)
-  public ResponseEntity<List<SquareSection>> getSquareSectionList() {
-    return new ResponseEntity<>(locationDao.getSquareSectionList(), HttpStatus.OK);
+  @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
+  public ResponseEntity<List<FixedLocation>> getFixedLocationList() {
+    return new ResponseEntity<>(locationDao.getFixedLocationList(), HttpStatus.OK);
   }
 }

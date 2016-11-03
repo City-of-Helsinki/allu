@@ -7,8 +7,8 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.SquareSection;
 
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
@@ -24,7 +24,7 @@ import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QGeometry.geometry1;
 import static fi.hel.allu.QLocation.location;
-import static fi.hel.allu.QSquareSection.squareSection;
+import static fi.hel.allu.QFixedLocation.fixedLocation;
 
 @Repository
 public class LocationDao {
@@ -34,7 +34,7 @@ public class LocationDao {
   private SQLQueryFactory queryFactory;
 
   final QBean<Location> locationBean = bean(Location.class, location.all());
-  final QBean<SquareSection> squareSectionBean = bean(SquareSection.class, squareSection.all());
+  final QBean<FixedLocation> fixedLocationBean = bean(FixedLocation.class, fixedLocation.all());
 
   @Transactional(readOnly = true)
   public Optional<Location> findById(int id) {
@@ -87,8 +87,8 @@ public class LocationDao {
   }
 
   @Transactional(readOnly = true)
-  public List<SquareSection> getSquareSectionList() {
-    return queryFactory.select(squareSectionBean).from(squareSection).where(squareSection.isActive.eq(true)).fetch();
+  public List<FixedLocation> getFixedLocationList() {
+    return queryFactory.select(fixedLocationBean).from(fixedLocation).where(fixedLocation.isActive.eq(true)).fetch();
   }
 
   private void setGeometry(int locationId, Geometry geometry) {

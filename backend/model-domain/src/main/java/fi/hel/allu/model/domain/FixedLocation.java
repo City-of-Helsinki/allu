@@ -1,12 +1,12 @@
 package fi.hel.allu.model.domain;
 
-public class SquareSection {
+public class FixedLocation {
   private Integer id;
-  private String square;
+  private String area;
   private String section;
 
   /**
-   * Get the database id for the SquareSection
+   * Get the database id for the FixedLocation
    *
    * @return the id
    */
@@ -19,16 +19,16 @@ public class SquareSection {
   }
 
   /**
-   * Get the square name, e.g. "Rautatientori"
+   * Get the area name, e.g. "Rautatientori"
    *
-   * @return the square
+   * @return the area
    */
-  public String getSquare() {
-    return square;
+  public String getArea() {
+    return area;
   }
 
-  public void setSquare(String square) {
-    this.square = square;
+  public void setArea(String area) {
+    this.area = area;
   }
 
   /**

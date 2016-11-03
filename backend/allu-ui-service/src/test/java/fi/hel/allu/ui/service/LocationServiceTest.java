@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.SquareSectionJson;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -119,9 +119,9 @@ public class LocationServiceTest extends MockServices {
   }
 
   @Test
-  public void testGetSquareSectionList() {
-    List<SquareSectionJson> squareSectionList = locationService.getSquareSectionList();
-    assertEquals(2, squareSectionList.size());
-    assertEquals("Square 0", squareSectionList.get(0).getSquare());
+  public void testGetFixedLocationList() {
+    List<FixedLocationJson> fixedLocationList = locationService.getFixedLocationList();
+    assertEquals(2, fixedLocationList.size());
+    assertEquals("FixedLocation 0", fixedLocationList.get(0).getArea());
   }
 }
