@@ -26,6 +26,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -109,7 +110,9 @@ public class DecisionService {
     decisionJson.setApplicantAddressLines(applicantAddressLines(application));
     decisionJson.setApplicantContactLines(applicantContactLines(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
-    decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocation().getArea())));
+    if (application.getLocation() != null) {
+      decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocation().getArea())));
+    }
     OutdoorEventJson oe = (OutdoorEventJson) application.getEvent();
     if (oe != null) {
       decisionJson.setBuildStartDate(formatDateWithDelta(oe.getStructureStartTime(), 0));
@@ -159,8 +162,9 @@ public class DecisionService {
   }
 
   private String formatDateWithDelta(ZonedDateTime zonedDateTime, int deltaDays) {
-    if (zonedDateTime == null)
+    if (zonedDateTime == null) {
       return null;
+    }
     return zonedDateTime.plusDays(deltaDays).withZoneSameInstant(zoneId)
         .format(dateTimeFormatter);
   }
@@ -169,13 +173,23 @@ public class DecisionService {
     // return lines in format {"[Applicant name], [SSID]", "[address, Postal
     // code + city]",
     // "[email, phone]"}
-    if (applicationJson.getApplicant().getType() == ApplicantType.PERSON) {
-      PersonJson p = applicationJson.getApplicant().getPerson();
+    ApplicantJson applicant = applicationJson.getApplicant();
+    if (applicant == null) {
+      return Collections.emptyList();
+    }
+    if (applicant.getType() == ApplicantType.PERSON) {
+      PersonJson p = applicant.getPerson();
+      if (p == null) {
+        return Collections.emptyList();
+      }
       return Arrays.asList(String.format("%s, %s", p.getName(), p.getSsn()),
           postalAddress(p.getPostalAddress()),
           String.format("%s, %s", p.getEmail(), p.getPhone()));
     } else {
-      OrganizationJson o = applicationJson.getApplicant().getOrganization();
+      OrganizationJson o = applicant.getOrganization();
+      if (o == null) {
+        return Collections.emptyList();
+      }
       return Arrays.asList(String.format("%s, %s", o.getName(), o.getBusinessId()),
           postalAddress(o.getPostalAddress()),
           String.format("%s, %s", o.getEmail(), o.getPhone()));
@@ -184,15 +198,22 @@ public class DecisionService {
 
   private List<String> applicantContactLines(ApplicationJson application) {
     // returns {"[Yhteyshenkilön nimi]", "[Sähköpostiosoite, puhelin]"}
+    if (application.getContactList() == null) {
+      return Collections.emptyList();
+    }
     return application.getContactList().stream()
         .flatMap(c -> Stream.of(c.getName(), String.format("%s, %s", c.getEmail(), c.getPhone())))
         .collect(Collectors.toList());
   }
 
   private String siteAddressLine(ApplicationJson application) {
-    int ssId = Optional.fromNullable(application.getLocation().getSquareSectionId()).or(0);
+    LocationJson location = application.getLocation();
+    if (location == null) {
+      return "";
+    }
+    int ssId = Optional.fromNullable(application.getLocation().getFixedLocationId()).or(0);
     if (ssId != 0) {
-      // TODO: cache all square/section IDs on startup and lookup from there
+      // TODO: cache all Fixed location IDs on startup and lookup from there
       return String.format("TODO: lohko %d", ssId);
     } else {
       return application.getLocation().getPostalAddress().getStreetAddress();
