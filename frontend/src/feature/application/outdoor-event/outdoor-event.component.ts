@@ -52,27 +52,25 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   ngOnInit(): any {
-    this.route.parent.data.subscribe((data: {application: Application}) => {
-      this.application = data.application;
-      this.application.location = this.application.location || this.locationState.location;
+    this.route.parent.data
+      .map((data: {application: Application}) => data.application)
+      .subscribe(application => {
+        this.application = application;
+        this.application.location = this.application.location || this.locationState.location;
 
-      // TODO: mismatch here. Date+time should be used in location too.
-      let defaultDate = new Date();
-      this.application.startTime = this.locationState.startDate || this.application.startTime || defaultDate;
-      this.application.endTime = TimeUtil.getEndOfDay(this.locationState.endDate || this.application.endTime || defaultDate);
+        // TODO: mismatch here. Date+time should be used in location too.
+        let defaultDate = new Date();
+        this.application.startTime = this.locationState.startDate || this.application.startTime || defaultDate;
+        this.application.endTime = TimeUtil.getEndOfDay(this.locationState.endDate || this.application.endTime || defaultDate);
 
-      let outdoorEvent = <OutdoorEvent>this.application.event;
-      outdoorEvent.eventStartTime = outdoorEvent.eventStartTime || this.application.startTime;
-      outdoorEvent.eventEndTime = outdoorEvent.eventEndTime || this.application.endTime;
+        this.applicationHub.loadMetaData('OUTDOOREVENT').subscribe(meta => this.metadataLoaded(meta));
 
-      this.applicationHub.loadMetaData('OUTDOOREVENT').subscribe(meta => this.metadataLoaded(meta));
+        UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
+          this.isSummary = summary;
+        });
 
-      UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-        this.isSummary = summary;
+        this.applicationForm = this.fb.group({});
       });
-
-      this.applicationForm = this.fb.group({});
-    });
   }
 
   ngOnDestroy(): any {
@@ -90,6 +88,9 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   onSubmit(form: OutdoorEventForm) {
     let application = this.application;
     application.metadata = this.meta;
+
+    application.name = form.event.name;
+    application.type = 'OUTDOOREVENT';
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.event = OutdoorEventDetailsForm.toOutdoorEvent(form.event);
     application.contactList = form.contacts;

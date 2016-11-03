@@ -49,10 +49,18 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initForm();
 
-    this.route.parent.data.subscribe((data: {application: Application}) => {
-      this.applicationId = data.application.id;
-      this.eventForm.patchValue(OutdoorEventDetailsForm.fromOutdoorEvent(data.application.name, <OutdoorEvent>data.application.event));
-    });
+    this.route.parent.data
+      .map((data: {application: Application}) => data.application)
+      .subscribe(application => {
+        this.applicationId = application.id;
+
+        let outdoorEvent = <OutdoorEvent>application.event || new OutdoorEvent();
+        outdoorEvent.eventStartTime = outdoorEvent.eventStartTime || application.startTime;
+        outdoorEvent.eventEndTime = outdoorEvent.eventEndTime || application.endTime;
+        outdoorEvent.type = 'OUTDOOREVENT';
+
+        this.eventForm.patchValue(OutdoorEventDetailsForm.fromOutdoorEvent(application.name, outdoorEvent));
+      });
   }
 
   ngAfterViewInit(): void {

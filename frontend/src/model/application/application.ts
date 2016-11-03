@@ -51,7 +51,7 @@ export class Application {
     public contactList?: Array<Contact>,
     public location?: Location,
     public attachmentList?: Array<AttachmentInfo>) {
-    this.applicant = applicant || new Applicant();
+    this.contactList = contactList || [new Contact()];
   }
 
   public static prefilledApplication(): Application {

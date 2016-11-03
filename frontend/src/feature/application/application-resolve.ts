@@ -16,7 +16,7 @@ export class ApplicationResolve implements Resolve<Application> {
     if (id) {
       return this.applicationHub.getApplication(id);
     } else {
-      return Observable.of(Application.prefilledApplication());
+      return Observable.of(new Application());
     }
   }
 }

@@ -107,7 +107,7 @@ md-toolbar {
   border-left: 5px solid #42A948; /* green */
 }
 
-.ng-invalid:not(form)  {
+.ng-invalid:not(.ng-pristine):not(form)  {
   border-left: 5px solid #a94442; /* red */
 }
 
