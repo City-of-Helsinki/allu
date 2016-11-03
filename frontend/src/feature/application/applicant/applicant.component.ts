@@ -67,14 +67,12 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
 
     this.applicationForm.addControl('applicant', this.applicantForm);
 
-    this.route.parent.data.subscribe((data: {application: Application}) => {
-      let applicant = data.application.applicant;
-
-      this.applicantNameSelection = applicantNameSelection(applicant.type);
-      this.applicantIdSelection = applicantIdSelection(applicant.type);
-
-      this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant));
-    });
+    this.route.parent.data
+      .map((data: {application: Application}) => data.application.applicant)
+      .filter(applicant => !!applicant)
+      .subscribe(applicant => {
+        this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant));
+      });
   }
 
   private metadataLoaded(metadata: StructureMeta) {
