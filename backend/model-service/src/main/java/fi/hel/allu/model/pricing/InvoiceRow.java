@@ -5,7 +5,7 @@ public class InvoiceRow {
   private long value;
 
   public enum RowType {
-    BASE_CHARGE, DAILY_CHARGE, TOTAL_CHARGE, STRUCTURE_CHARGE, AREA_CHARGE
+    BASE_CHARGE, DAILY_CHARGE, TOTAL_CHARGE, STRUCTURE_CHARGE, AREA_CHARGE, FREE_EVENT, HEAVY_STRUCTURE, SALES_ACTIVITY, ECO_COMPASS
   };
 
   public InvoiceRow(RowType rowType, long value) {

@@ -9,6 +9,12 @@ public class Pricing {
 
   private List<InvoiceRow> invoiceRows = new ArrayList<>();
 
+  // Privately store the price in 1/100 of cents, convert to cents on
+  // extraction:
+  private long fullPrice = 0;
+  // What percentage of the full price must be paid after discounts?
+  private int paymentPercentage = 100;
+
   /**
    * Calculate full price for an outdoor event with given parameters
    *
@@ -17,9 +23,8 @@ public class Pricing {
    * @param buildDays
    * @param structureArea
    * @param area
-   * @return
    */
-  public long calculateFullPrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
+  public void calculateFullPrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     long dailyCharge = pricingConfig.getBaseCharge();
     addInvoiceRow(RowType.BASE_CHARGE, dailyCharge);
@@ -41,7 +46,14 @@ public class Pricing {
     totalCharge += (long) (0.5 + buildDays * dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
 
     addInvoiceRow(RowType.TOTAL_CHARGE, totalCharge);
-    return totalCharge;
+    fullPrice = totalCharge;
+  }
+
+  /**
+   * Get the calculated price in cents.
+   */
+  public int getPrice() {
+    return (int) ((fullPrice + 50) / 100 * paymentPercentage / 100);
   }
 
   private long calculateStructureExtras(PricingConfiguration pricingConfig, double structureArea) {
@@ -91,5 +103,25 @@ public class Pricing {
 
   private void addInvoiceRow(InvoiceRow.RowType rowType, long value) {
     invoiceRows.add(new InvoiceRow(rowType, value));
+  }
+
+  public void applyDiscounts(boolean ecoCompass, String noPriceReason, boolean heavyStructure, boolean salesActivity) {
+    paymentPercentage = 100;
+    if (noPriceReason != null) {
+      addInvoiceRow(RowType.FREE_EVENT, 0);
+      paymentPercentage = 0;
+      if (heavyStructure) {
+        addInvoiceRow(RowType.HEAVY_STRUCTURE, 0);
+        paymentPercentage += 50;
+      }
+      if (salesActivity) {
+        addInvoiceRow(RowType.SALES_ACTIVITY, 0);
+        paymentPercentage += 50;
+      }
+    }
+    if (ecoCompass) {
+      addInvoiceRow(RowType.ECO_COMPASS, 0);
+      paymentPercentage = paymentPercentage * 7 / 10;
+    }
   }
 }
