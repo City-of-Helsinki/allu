@@ -7,6 +7,8 @@ import fi.hel.allu.ui.domain.LocationQueryJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.ApplicationService;
 import fi.hel.allu.ui.service.AttachmentService;
+import fi.hel.allu.ui.service.DecisionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -18,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -29,6 +32,9 @@ public class ApplicationController {
 
   @Autowired
   private AttachmentService attachmentService;
+
+  @Autowired
+  private DecisionService decisionService;
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
@@ -172,7 +178,8 @@ public class ApplicationController {
   @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> generateDecision(@PathVariable int applicationId) throws IOException {
-    applicationService.generateDecision(applicationId);
+    ApplicationJson applicationJson = applicationService.findApplicationById(applicationId);
+    decisionService.generateDecision(applicationId, applicationJson);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri());
     return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
@@ -188,7 +195,7 @@ public class ApplicationController {
   @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getDecision(@PathVariable int applicationId) {
-    byte[] bytes = applicationService.getDecision(applicationId);
+    byte[] bytes = decisionService.getDecision(applicationId);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);

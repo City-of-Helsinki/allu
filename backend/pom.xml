@@ -30,6 +30,7 @@
         <module>model-querydsl-support</module>
         <module>model-service</module>
         <module>allu-ui-domain</module>
+        <module>pdf-domain</module>
         <module>allu-ui-service</module>
         <module>search-domain</module>
         <module>search-service</module>
