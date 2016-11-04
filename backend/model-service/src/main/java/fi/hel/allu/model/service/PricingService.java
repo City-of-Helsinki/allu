@@ -88,10 +88,14 @@ public class PricingService {
     buildDays += daysBetween(outdoorEvent.getEventEndTime(), application.getEndTime());
     double structureArea = outdoorEvent.getStructureArea();
     double area = location.get().getArea();
-    // TODO: pass in all the discount-related fields
-    long hundrethsOfCents = pricing.calculateFullPrice(pricingConfiguration.get(), eventDays, buildDays, structureArea,
+    // Calculate full price...
+    pricing.calculateFullPrice(pricingConfiguration.get(), eventDays, buildDays, structureArea,
         area);
-    return (int) ((hundrethsOfCents + 50) / 100);
+    // ... apply discounts...
+    pricing.applyDiscounts(outdoorEvent.isEcoCompass(), outdoorEvent.getNoPriceReason(),
+        outdoorEvent.isHeavyStructure(), outdoorEvent.isSalesActivity());
+    // ... and get the final price
+    return pricing.getPrice();
   }
 
   // Calculate amount of days between two timestamps, ignoring the hours.

@@ -17,8 +17,23 @@ public class PricingTest {
     PricingConfiguration bc = new PricingConfiguration(6000000L, 50, 50, 14, null, null, null, null);
     Pricing bill = new Pricing();
     // Calculate a bill for 5-day event with two build days and some structures + area:
-    long sum = bill.calculateFullPrice(bc, 5, 2, 30.5, 300);
-    assertEquals(36000000L, sum); // The price should be 3600 EUR
+    bill.calculateFullPrice(bc, 5, 2, 30.5, 300);
+    assertEquals(360000, bill.getPrice()); // The price should be 3600 EUR
+    // Verify that EcoCompass gives 30% discount
+    bill.applyDiscounts(true, null, false, false);
+    assertEquals(252000, bill.getPrice());
+    // Verify that 100% discount works:
+    bill.applyDiscounts(false, "SportsEvent", false, false);
+    assertEquals(0, bill.getPrice());
+    // Verify that sports event with heavy structures gets only 50% discount:
+    bill.applyDiscounts(false, "SportsEvent", true, false);
+    assertEquals(180000, bill.getPrice());
+    // Verify that commercial activities also gives 50%:
+    bill.applyDiscounts(false, "SportsEvent", false, true);
+    assertEquals(180000, bill.getPrice());
+    // Commercial activities and heavy structures --> no discount:
+    bill.applyDiscounts(false, "SportsEvent", true, true);
+    assertEquals(360000, bill.getPrice());
   }
 
   @Test
@@ -30,8 +45,8 @@ public class PricingTest {
     // Calculate price for 20-day event with four build days and a 5000 sq.m.
     // area (i.e., 14 days with base price, 6 days with discount price and 4
     // days with build price)
-    long sum = bill.calculateFullPrice(bc, 20, 4, 20, 5000.0);
-    assertEquals(356250000L, sum); // The price should be 35625 EUR
+    bill.calculateFullPrice(bc, 20, 4, 20, 5000.0);
+    assertEquals(3562500L, bill.getPrice()); // The price should be 35625 EUR
   }
 
   @Test
@@ -43,8 +58,8 @@ public class PricingTest {
     Pricing bill = new Pricing();
     // Price for 25-day event with three build days, 455 sqm structures and 1000
     // sqm area:
-    long sum = bill.calculateFullPrice(bc, 25, 3, 455.0, 1000.0);
-    assertEquals(99750000, sum); // The price should be 9975 EUR
+    bill.calculateFullPrice(bc, 25, 3, 455.0, 1000.0);
+    assertEquals(997500, bill.getPrice()); // The price should be 9975 EUR
   }
 
   @Test(expected = IllegalStateException.class)
