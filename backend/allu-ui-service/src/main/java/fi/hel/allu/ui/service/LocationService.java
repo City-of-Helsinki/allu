@@ -6,7 +6,6 @@ import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.domain.PostalAddressJson;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,9 +104,9 @@ public class LocationService {
    * @return list of FixedLocation locations
    */
   public List<FixedLocationJson> getFixedLocationList() {
-    ResponseEntity<FixedLocation[]> queryResult = restTemplate.getForEntity(applicationProperties
-        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_GET_FIXED_LOCATION), FixedLocation[].class);
-    List<FixedLocationJson> resultList = Arrays.stream(queryResult.getBody()).map(ss -> mapToFixedLocationJson(ss))
+    ResponseEntity<FixedLocation[]> queryResult =
+        restTemplate.getForEntity(applicationProperties.getFixedLocationUrl(), FixedLocation[].class);
+    List<FixedLocationJson> resultList = Arrays.stream(queryResult.getBody()).map(fl -> mapToFixedLocationJson(fl))
         .collect(Collectors.toList());
     return resultList;
   }
@@ -145,6 +144,8 @@ public class LocationService {
     fixedLocationJson.setId(fixedLocation.getId());
     fixedLocationJson.setArea(fixedLocation.getArea());
     fixedLocationJson.setSection(fixedLocation.getSection());
+    fixedLocationJson.setApplicationType(fixedLocation.getApplicationType());
+
     return fixedLocationJson;
   }
 }

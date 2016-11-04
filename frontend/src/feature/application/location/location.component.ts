@@ -139,8 +139,12 @@ export class LocationComponent {
   private initFixedLocations(): void {
     this.mapHub.fixedLocations()
       .subscribe(fl => {
-        this.areas = fl.map(entry => entry.area).filter((v, i, a) => a.indexOf(v) === i); // unique area names
-        this.fixedLocations = fl;
+        // TODO: only OUTDOOREVENTs are accepted as FixedLocations. To be changed when support for other application types is implemented
+        this.areas = fl
+          .filter(f => f.applicationType === ApplicationType.OUTDOOREVENT)
+          .map(entry => entry.area)
+          .filter((v, i, a) => a.indexOf(v) === i); // unique area names
+        this.fixedLocations = fl.filter(f => f.applicationType === ApplicationType.OUTDOOREVENT);
       });
   }
 }

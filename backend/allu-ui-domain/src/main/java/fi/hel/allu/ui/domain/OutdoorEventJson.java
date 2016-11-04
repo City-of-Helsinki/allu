@@ -1,13 +1,12 @@
 package fi.hel.allu.ui.domain;
 
+import fi.hel.allu.common.types.ApplicationCategory;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.domain.ApplicationPricing;
-
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
-
 import java.time.ZonedDateTime;
 
 public class OutdoorEventJson extends EventJson {
@@ -15,6 +14,8 @@ public class OutdoorEventJson extends EventJson {
   private OutdoorEventNature nature;
   @NotBlank(message = "{outdoorevent.description}")
   private String description;
+  @NotNull
+  private ApplicationType type;
   private String url;
   @NotNull(message = "{outdoorevent.starttime}")
   private ZonedDateTime eventStartTime;
@@ -37,9 +38,10 @@ public class OutdoorEventJson extends EventJson {
   private ApplicationPricing calculatedPricing;
 
   @Override
-  public ApplicationType getType() {
-    return ApplicationType.OUTDOOREVENT;
+  public ApplicationCategory getApplicationCategory() {
+    return ApplicationCategory.EVENT;
   }
+
   /**
    * in Finnish: Tapahtuman luonne
    */
@@ -60,6 +62,19 @@ public class OutdoorEventJson extends EventJson {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  /**
+   * The type of the application.
+   *
+   * @return  type of the application.
+   */
+  public ApplicationType getType() {
+    return type;
+  }
+
+  public void setType(ApplicationType type) {
+    this.type = type;
   }
 
   /**

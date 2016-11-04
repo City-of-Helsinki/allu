@@ -1,13 +1,12 @@
 package fi.hel.allu.model.domain;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+
+import static org.junit.Assert.assertEquals;
 
 public class EventTest {
 

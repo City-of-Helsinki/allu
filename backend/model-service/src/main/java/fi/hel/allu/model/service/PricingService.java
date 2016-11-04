@@ -1,6 +1,7 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
@@ -10,8 +11,6 @@ import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.pricing.Pricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
-
-import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,13 +45,14 @@ public class PricingService {
    */
   @Transactional(readOnly = true)
   public void calculatePrice(Application application) {
-    OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
-    if (outdoorEvent != null) {
-      ApplicationPricing calculatedPricing = new ApplicationPricing();
-      calculatedPricing.setPrice(calculatePrice(application, outdoorEvent));
-      outdoorEvent.setCalculatedPricing(calculatedPricing);
-    } else {
-      throw new NotImplementedException("Pricing calculation not implemented for this application type.");
+    // TODO: most likely if should be replaced by switch-case construct. Refactor when more application types are supported
+    if (ApplicationType.OUTDOOREVENT.equals(application.getType())) {
+      OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
+      if (outdoorEvent != null) {
+        ApplicationPricing calculatedPricing = new ApplicationPricing();
+        calculatedPricing.setPrice(calculatePrice(application, outdoorEvent));
+        outdoorEvent.setCalculatedPricing(calculatedPricing);
+      }
     }
   }
 

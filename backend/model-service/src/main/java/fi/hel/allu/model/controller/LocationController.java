@@ -2,16 +2,14 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.FixedLocation;
-
+import fi.hel.allu.model.domain.Location;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
 import java.util.List;
 import java.util.Optional;
 

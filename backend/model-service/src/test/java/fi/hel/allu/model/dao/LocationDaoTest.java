@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
@@ -134,8 +135,11 @@ public class LocationDaoTest {
     // Setup: add fixed location with known ID
     final int FIXED_LOCATION_ID = 9876;
     long insertCount = queryFactory.insert(fixedLocation).set(fixedLocation.id, FIXED_LOCATION_ID)
-        .set(fixedLocation.area, "Narinkka").set(fixedLocation.isActive, true)
-        .set(fixedLocation.section, "lohko A").execute();
+        .set(fixedLocation.area, "Narinkka")
+        .set(fixedLocation.section, "lohko A")
+        .set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT)
+        .set(fixedLocation.isActive, true)
+        .execute();
     assertEquals(1, insertCount);
     // Test: add location with fixedLocationId
     Location locIn = new Location();
@@ -146,17 +150,19 @@ public class LocationDaoTest {
 
   @Test
   public void testGetFixedLocationList() {
-    // Setup: add two active rows and one passive
-    long insertCount = queryFactory.insert(fixedLocation).set(fixedLocation.area, "Kauppatori")
-        .set(fixedLocation.section, "lohko A").set(fixedLocation.isActive, true).addBatch()
-        .set(fixedLocation.area, "Senaatintori").set(fixedLocation.isActive, true).addBatch()
-        .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko Q")
-        .set(fixedLocation.isActive, false).addBatch().execute();
-    assertEquals(3, insertCount);
+    // Setup: add three active rows and one passive
+    long insertCount =
+        queryFactory.insert(fixedLocation)
+            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko A").set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
+            .set(fixedLocation.area, "Senaatintori").set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
+            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko Q").set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT).set(fixedLocation.isActive, false).addBatch()
+            .set(fixedLocation.area, "Kaivopuisto").set(fixedLocation.applicationType, ApplicationType.SEASON_SALE).set(fixedLocation.isActive, true).addBatch()
+            .execute();
+    assertEquals(4, insertCount);
     // Test: get list, should only one 2 items, and only one at Kauppatori
     List<FixedLocation> queryResult = locationDao.getFixedLocationList();
-    assertEquals(2, queryResult.size());
-    assertEquals(1, queryResult.stream().filter(sqs -> sqs.getArea().equals("Kauppatori")).count());
+    assertEquals(3, queryResult.size());
+    assertEquals(1, queryResult.stream().filter(fl -> fl.getArea().equals("Kauppatori")).count());
   }
 
 }

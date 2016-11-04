@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.types.ApplicationCategory;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 
@@ -14,6 +15,8 @@ public class OutdoorEvent extends Event {
   private OutdoorEventNature nature;
   @NotBlank
   private String description;
+  @NotNull
+  private ApplicationType type;
   private String url;
   private ZonedDateTime eventStartTime;
   private ZonedDateTime eventEndTime;
@@ -34,8 +37,8 @@ public class OutdoorEvent extends Event {
   private ApplicationPricing calculatedPricing;
 
   @Override
-  public ApplicationType getType() {
-    return ApplicationType.OUTDOOREVENT;
+  public ApplicationCategory getApplicationCategory() {
+    return ApplicationCategory.EVENT;
   }
 
   /**
@@ -58,6 +61,14 @@ public class OutdoorEvent extends Event {
 
   public void setDescription(String description) {
     this.description = description;
+  }
+
+  public ApplicationType getType() {
+    return type;
+  }
+
+  public void setType(ApplicationType type) {
+    this.type = type;
   }
 
   /**

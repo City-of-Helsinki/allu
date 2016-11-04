@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.domain;
 
+import fi.hel.allu.common.types.ApplicationType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -10,6 +11,8 @@ public class FixedLocationJson {
   @NotBlank
   String area;
   String section;
+  @NotNull
+  ApplicationType applicationType;
 
   /**
    * Get the database id for the FixedLocationJson
@@ -48,5 +51,18 @@ public class FixedLocationJson {
 
   public void setSection(String section) {
     this.section = section;
+  }
+
+  /**
+   * Get the application type this location is used for.
+   *
+   * @return  the application type this location is used for.
+   */
+  public ApplicationType getApplicationType() {
+    return applicationType;
+  }
+
+  public void setApplicationType(ApplicationType applicationType) {
+    this.applicationType = applicationType;
   }
 }

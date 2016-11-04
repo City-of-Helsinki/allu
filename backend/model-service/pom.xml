@@ -208,6 +208,11 @@
                             <type>fi.hel.allu.model.querydsl.StringToEvent</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>fixed_location</table>
+                            <column>application_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>attribute_meta</table>
                             <column>data_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToAttributeDataType</type>

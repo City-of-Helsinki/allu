@@ -1,5 +1,6 @@
 import {OutdoorEvent} from '../../../../../model/application/outdoor-event/outdoor-event';
 import {TimePeriod} from '../../time-period';
+import {ApplicationCategoryType} from '../../../type/application-category';
 
 export class OutdoorEventDetailsForm {
   constructor(public name?: string,
@@ -56,6 +57,7 @@ export class OutdoorEventDetailsForm {
     event.description = form.description;
     event.url = form.url;
     event.type = form.type;
+    event.applicationCategory = ApplicationCategoryType[ApplicationCategoryType.EVENT];
     event.uiStartTime = form.eventTimes.startTime;
     event.uiEndTime = form.eventTimes.endTime;
     event.timeExceptions = form.timeExceptions;
