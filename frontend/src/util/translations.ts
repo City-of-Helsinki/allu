@@ -17,9 +17,33 @@ export const translations = {
       FINISHED: 'Valmis',
       CANCELLED: 'Peruttu'
     },
+    category: {
+      STREET: 'Katutyö',
+      EVENT: 'Tapahtuma',
+      SHORT_TERM_RENTAL: 'Lyhytaikainen maanvuokraus'
+    },
     type: {
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
-      PROMOTION: 'Promootio'
+      PROMOTION: 'Promootio',
+      ELECTION: 'Vaalit',
+      DIG_NOTICE: 'Kaivuuilmoitus',
+      AREA_RENTAL: 'Aluevuokraus',
+      TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Tilapäiset liikennejärjestelyt',
+      BRIDGE_BANNER: 'Banderollit silloissa',
+      BENJI: 'Benji-hyppylaite',
+      PROMOTION_OR_SALES: 'Esittely- tai myyntitila liikkeen edustalla',
+      URBAN_FARMING: 'Kaupunkiviljelypaikka',
+      MAIN_STREET_SALES: 'Keskuskadun myyntipaikka',
+      SUMMER_THEATER: 'Kesäteatterit',
+      DOG_TRAINING_FIELD: 'Koirakoulutuskentät',
+      DOG_TRAINING_EVENT: 'Koirakoulutustapahtuma',
+      CARGO_CONTAINER: 'Kontti',
+      SMALL_ART_AND_CULTURE: 'Pienimuotoinen taide- ja kulttuuritoiminta',
+      SEASON_SALE: 'Sesonkimyynti',
+      CIRCUS: 'Sirkus/tivolivierailu',
+      ART: 'Taideteos',
+      STORAGE_AREA: 'Varastoalue',
+      OTHER_SHORT_TERM_RENTAL: 'Muu lyhytaikainen maanvuokraus'
     },
     field: {
       nameMissing: 'Tapahtuman nimi puuttuu',
@@ -53,6 +77,14 @@ export const translations = {
         typeMissing: 'Tapahtuman tyyppi puuttuu',
         eventStartTimeMissing: 'Tapahtuman alkuaika puuttuu',
         eventEndTimeMissing: 'Tapahtuman loppuaika puuttuu',
+        startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää'
+      }
+    },
+    shortTermRental: {
+      field: {
+        descriptionMissing: 'Vuokrauksen kuvaus puuttuu',
+        rentalStartTimeMissing: 'Vuokrauksen alkuaika puuttuu',
+        rentalEndTimeMissing: 'Vuokrauksen loppuaika puuttuu',
         startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää'
       }
     }

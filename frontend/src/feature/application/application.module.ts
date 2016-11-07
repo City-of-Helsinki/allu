@@ -25,6 +25,7 @@ import {ContactComponent} from './contact/contact.component';
 import {EventDetailsComponent} from './outdoor-event/details/event-details.component.ts';
 import {LocationDetailsComponent} from './location/location-details.component';
 import {FieldErrorComponent} from '../common/field-error.component';
+import {ShortTermRentalComponent} from './short-term-rental/short-term-rental.component.ts';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import {FieldErrorComponent} from '../common/field-error.component';
     TypeComponent,
     OutdoorEventComponent,
     PromotionEventComponent,
+    ShortTermRentalComponent,
     ApplicationAttachmentComponent,
     FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,

@@ -4,10 +4,11 @@ import {Observable} from 'rxjs/Observable';
 
 import {ProgressStep} from '../progressbar/progressbar.component.ts';
 import {ApplicationHub} from '../../service/application/application-hub';
-import {applicationTypes} from './application-types';
 import {UrlUtil} from '../../util/url.util';
 import {Application} from '../../model/application/application';
 import {ApplicationType} from '../../model/application/type/application-type';
+import {applicationCategories, ApplicationCategory, ApplicationCategoryType} from './application-category';
+import {translations} from '../../util/translations';
 
 @Component({
   selector: 'application',
@@ -19,18 +20,14 @@ import {ApplicationType} from '../../model/application/type/application-type';
 })
 export class ApplicationComponent implements OnInit {
   application: Application;
-  private applicationTypes: any;
-  private type: any;
-  private subtypes: any;
-  private subtype: any;
+  applicationCategories = applicationCategories;
+  category: ApplicationCategory;
+  typeNames = [];
+  translations = translations;
   private typeChangeDisabled = false;
   private progressStep: number;
 
-  constructor(public router: Router, private route: ActivatedRoute) {
-    this.applicationTypes = applicationTypes;
-    this.subtypes = undefined;
-    this.subtype = undefined;
-  };
+  constructor(public router: Router, private route: ActivatedRoute) {};
 
   ngOnInit(): any {
     this.route.data
@@ -38,14 +35,10 @@ export class ApplicationComponent implements OnInit {
       .filter(application => application.id !== undefined)
       .subscribe(application => {
         this.application = application;
-        let type = applicationTypes.find(appType =>
-          appType.subtypes.some(subtype => ApplicationType[subtype.type] === application.type));
-
-        this.type = type.value;
-        this.subtypes = type.subtypes;
-        this.subtype = type.subtypes.find(subtype => ApplicationType[subtype.type] === application.type).value;
+        this.category = this.applicationCategories.find(categories => categories.containsType(ApplicationType[application.type]));
+        this.typeNames = this.category.applicationTypeNames;
         this.typeChangeDisabled = true;
-        this.eventSelection(this.subtype);
+        this.eventSelection(application.type);
       });
 
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
@@ -53,12 +46,13 @@ export class ApplicationComponent implements OnInit {
     });
   };
 
-  typeSelection(value) {
-    this.subtype = undefined;
-    this.subtypes = applicationTypes.find(type => type.value === value).subtypes;
+  typeSelection(value: string) {
+    this.category = applicationCategories.find(c => c.categoryType === ApplicationCategoryType[value]);
+    this.typeNames = this.category.applicationTypeNames;
   };
 
   eventSelection(value) {
     this.router.navigate([value], {skipLocationChange: true, relativeTo: this.route});
   };
+
 }

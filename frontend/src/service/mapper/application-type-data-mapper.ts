@@ -1,11 +1,17 @@
-import {OutdoorEvent} from '../../model/application/type/outdoor-event';
+import {OutdoorEvent} from '../../model/application/outdoor-event/outdoor-event';
 import {ApplicationTypeData} from '../../model/application/type/application-type-data';
 import {TimeUtil} from '../../util/time.util';
+import {ApplicationType} from '../../model/application/type/application-type';
+import {ApplicationCategory} from '../../feature/application/application-category';
+import {shortTermRental} from '../../feature/application/application-category';
+import {ShortTermRental} from '../../model/application/short-term-rental/short-term-rental';
 
 export class ApplicationTypeDataMapper {
 
   public static mapBackend(backendEvent: any): ApplicationTypeData {
-    if (backendEvent.type === 'OUTDOOREVENT') {
+    let type: string = backendEvent.type;
+
+    if (type === ApplicationType[ApplicationType.OUTDOOREVENT]) {
       return new OutdoorEvent(
         backendEvent.nature,
         backendEvent.description,
@@ -27,6 +33,8 @@ export class ApplicationTypeDataMapper {
         backendEvent.structureDescription,
         TimeUtil.dateFromBackend(backendEvent.structureStartTime),
         TimeUtil.dateFromBackend(backendEvent.structureEndTime));
+    } else if (shortTermRental.containsType(ApplicationType[type])) {
+      return new ShortTermRental(backendEvent.description, backendEvent.commercial);
     } else {
       return undefined;
     }
