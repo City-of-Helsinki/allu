@@ -9,6 +9,7 @@ import {SearchBarModule} from '../../searchbar/searchbar.module';
 import {MapModule} from '../../map/map.module';
 import {ProgressBarModule} from '../../progressbar/progressbar.module';
 import {LocationState} from '../../../service/application/location-state';
+import {TypeModule} from '../type/type.module';
 
 @NgModule({
   imports: [
@@ -18,10 +19,14 @@ import {LocationState} from '../../../service/application/location-state';
     MdCardModule,
     SearchBarModule,
     MapModule,
-    ProgressBarModule
+    ProgressBarModule,
+    TypeModule
   ],
   declarations: [
     LocationComponent
+  ],
+  providers: [
+    LocationState
   ]
 })
 export class LocationModule {

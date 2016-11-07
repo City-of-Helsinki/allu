@@ -7,11 +7,12 @@ import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
 import {ProgressBarModule} from '../progressbar/progressbar.module';
+import {LocationModule} from './location/location.module';
+import {TypeModule} from './type/type.module';
 
 import {FileSelectDirective} from './info/attachment/file-select.directive';
 
 import {ApplicationComponent} from './info/application.component.ts';
-import {TypeComponent} from '../application/type/type.component';
 import {OutdoorEventComponent} from './info/outdoor-event/outdoor-event.component';
 import {PromotionEventComponent} from './info/promotion-event/promotion-event.component';
 import {ApplicationAttachmentComponent} from './info/attachment/application-attachment.component';
@@ -29,7 +30,6 @@ import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rent
 import {LocationState} from '../../service/application/location-state';
 import {AttachmentService} from '../../service/attachment-service';
 
-
 @NgModule({
   imports: [
     AlluCommonModule,
@@ -40,11 +40,12 @@ import {AttachmentService} from '../../service/attachment-service';
     MdToolbarModule,
     MdProgressBarModule,
     MapModule,
-    ProgressBarModule
+    ProgressBarModule,
+    LocationModule,
+    TypeModule
   ],
   declarations: [
     ApplicationComponent,
-    TypeComponent,
     OutdoorEventComponent,
     PromotionEventComponent,
     ShortTermRentalComponent,
