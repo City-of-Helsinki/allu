@@ -59,9 +59,9 @@ export class LocationComponent {
 
         this.mapHub.selectApplication(application);
 
-        this.selectedArea = Some(this.fixedLocations.filter(ss => ss.id === application.location.fixedLocationId))
-          .filter(ss => ss.length > 0)
-          .map(ss => ss[0].area)
+        this.selectedArea = Some(this.fixedLocations.filter(fLoc => fLoc.id === application.location.fixedLocationId))
+          .filter(fLocs => fLocs.length > 0)
+          .map(fLocs => fLocs[0].area)
           .orElse(undefined);
 
         this.selectedFixedLocation = application.location.fixedLocationId;

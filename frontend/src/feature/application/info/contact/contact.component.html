@@ -8,7 +8,7 @@
                         <div class="row form-group">
                             <div class="input-field col m12">
                                 <input id="contactName" type="text" formControlName="name" [readonly]="readonly">
-                                <label for="contactName">{{ meta?.getUiName('contact.contactName') }}</label>
+                                <label for="contactName">{{ meta?.getUiName('contact.contactName') }}*</label>
                                 <field-error [form]="contact" field="name" hasError="required">{{translations.contact.field.nameMissing}}</field-error>
                             </div>
                         </div>

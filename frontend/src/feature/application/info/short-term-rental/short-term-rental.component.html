@@ -13,13 +13,13 @@
                         <div class="col m6">
                             <div class="input-field col m12">
                                 <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
-                                <label for="name">Vuokrauksen nimi</label>
+                                <label for="name">Vuokrauksen nimi*</label>
                                 <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                                 <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
                             </div>
                             <div class="input-field col m12">
                                 <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
-                                <label for="description">Vuokrauksen kuvaus</label>
+                                <label for="description">Vuokrauksen kuvaus*</label>
                                 <field-error [form]="rentalForm" field="description" hasError="required">
                                     {{translations.application.shortTermRental.field.descriptionMissing}}
                                 </field-error>
@@ -39,7 +39,7 @@
                                            type="text"/>
 
                                     <input *ngIf="readonly" id="rentalStartTime" type="text" formControlName="startTime" readonly>
-                                    <label for="rentalStartTime">Alkupäivämäärä</label>
+                                    <label for="rentalStartTime">Alkupäivämäärä*</label>
                                     <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
                                         {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
                                     </field-error>
@@ -51,7 +51,7 @@
                                            [materializeParams]="pickadateParams"
                                            type="text"/>
                                     <input *ngIf="readonly" id="rentalEndTime" type="text" formControlName="endTime" readonly>
-                                    <label for="rentalEndTime">Loppupäivämäärä</label>
+                                    <label for="rentalEndTime">Loppupäivämäärä*</label>
                                     <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
                                         {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
                                     </field-error>
