@@ -1,0 +1,33 @@
+<div class="col m6 loose">
+    <md-card>
+        <md-card-title>Hakemuksen tyyppi</md-card-title>
+        <md-card-content>
+            <div class="row">
+                <div class="col s12">
+                    <select [ngModel]="category?.categoryTypeName" [disabled]="typeChangeDisabled"
+                            materialize="material_select" (change)="typeSelection($event.target.value)">
+                        <option value="" disabled selected>Valitse hakemuksen tyyppi</option>
+                        <option *ngFor="let category of applicationCategories" [value]="category.categoryTypeName">{{translations.application.category[category.categoryTypeName]}}</option>
+                    </select>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>
+<div class="col m6 loose" *ngIf="category">
+    <md-card>
+        <md-card-title>Tapahtuman tyyppi</md-card-title>
+        <md-card-content>
+            <div class="row">
+                <div class="col m12">
+                    <select [ngModel]="application?.type" [disabled]="typeChangeDisabled"
+                            materialize="material_select" [materializeSelectOptions]="typeNames"
+                            (change)="eventSelection($event.target.value)">
+                        <option value="" disabled selected>Valitse tapahtuman tyyppi</option>
+                        <option *ngFor="let appType of typeNames" [value]="appType">{{translations.application.type[appType]}}</option>
+                    </select>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>
