@@ -1,16 +1,14 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 
-import {Application} from '../../../model/application/application';
-import {LocationState} from '../../../service/application/location-state';
+import {Application} from '../../../../model/application/application';
+import {LocationState} from '../../../../service/application/location-state';
 
 
 @Component({
   selector: 'promotion-event',
   viewProviders: [],
   template: require('./promotion-event.component.html'),
-  styles: [
-    require('./promotion-event.component.scss')
-  ]
+  styles: []
 })
 
 export class PromotionEventComponent implements OnInit, OnDestroy {

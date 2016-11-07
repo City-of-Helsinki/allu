@@ -2,11 +2,11 @@ import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormControl, Validators, FormArray} from '@angular/forms';
 
-import {StructureMeta} from '../../../model/application/structure-meta';
-import {ApplicationHub} from '../../../service/application/application-hub';
-import {Contact} from '../../../model/application/contact';
-import {Application} from '../../../model/application/application';
-import {translations} from '../../../util/translations';
+import {StructureMeta} from '../../../../model/application/structure-meta';
+import {ApplicationHub} from '../../../../service/application/application-hub';
+import {Contact} from '../../../../model/application/contact';
+import {Application} from '../../../../model/application/application';
+import {translations} from '../../../../util/translations';
 
 @Component({
   selector: 'contact',

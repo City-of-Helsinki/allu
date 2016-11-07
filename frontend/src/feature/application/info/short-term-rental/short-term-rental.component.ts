@@ -1,26 +1,26 @@
 import {Component, OnDestroy, OnInit, Input, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
-
-import {Location} from '../../../model/common/location';
-import {Application} from '../../../model/application/application';
-import {StructureMeta} from '../../../model/application/structure-meta';
-import {TimeUtil, PICKADATE_PARAMETERS} from '../../../util/time.util';
-import {LocationState} from '../../../service/application/location-state';
-import {ApplicationHub} from '../../../service/application/application-hub';
-import {UrlUtil} from '../../../util/url.util';
 import {Subscription} from 'rxjs/Subscription';
-import {MapHub} from '../../../service/map-hub';
-import {ApplicationStatus} from '../../../model/application/application-status-change';
+
+import {Location} from '../../../../model/common/location';
+import {Application} from '../../../../model/application/application';
+import {StructureMeta} from '../../../../model/application/structure-meta';
+import {TimeUtil, PICKADATE_PARAMETERS} from '../../../../util/time.util';
+import {LocationState} from '../../../../service/application/location-state';
+import {ApplicationHub} from '../../../../service/application/application-hub';
+import {UrlUtil} from '../../../../util/url.util';
+import {MapHub} from '../../../../service/map-hub';
+import {ApplicationStatus} from '../../../../model/application/application-status-change';
 import {ApplicantForm} from '../applicant/applicant.form';
-import {EnumUtil} from '../../../util/enum.util';
-import {ApplicationType} from '../../../model/application/type/application-type';
+import {EnumUtil} from '../../../../util/enum.util';
+import {ApplicationType} from '../../../../model/application/type/application-type';
 import {ShortTermRentalForm} from './short-term-rental.form.ts';
-import {ComplexValidator} from '../../../util/complex-validator';
-import {translations} from '../../../util/translations';
-import {ShortTermRental} from '../../../model/application/short-term-rental/short-term-rental';
+import {ComplexValidator} from '../../../../util/complex-validator';
+import {translations} from '../../../../util/translations';
+import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ShortTermRentalDetailsForm} from './short-term-rental.form';
-import {MaterializeUtil} from '../../../util/materialize.util';
+import {MaterializeUtil} from '../../../../util/materialize.util';
 
 @Component({
   selector: 'short-term-rental',

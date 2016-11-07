@@ -1,8 +1,8 @@
 import {ApplicantForm} from '../applicant/applicant.form';
-import {Contact} from '../../../model/application/contact';
+import {Contact} from '../../../../model/application/contact';
 import {TimePeriod} from '../time-period';
-import {ShortTermRental} from '../../../model/application/short-term-rental/short-term-rental';
-import {Application} from '../../../model/application/application';
+import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
+import {Application} from '../../../../model/application/application';
 
 export interface ShortTermRentalForm {
   applicant: ApplicantForm;

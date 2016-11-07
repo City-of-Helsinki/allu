@@ -1,21 +1,19 @@
 import {Component} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-import 'proj4leaflet';
-import 'leaflet';
+import '../../../rxjs-extensions.ts';
 
-import '../../rxjs-extensions.ts';
-import {ProgressStep} from '../../feature/progressbar/progressbar.component';
-import {Application} from '../../model/application/application';
-import {Location} from '../../model/common/location';
-import {PostalAddress} from '../../model/common/postal-address';
-import {MapUtil} from '../../service/map.util.ts';
-import {SearchbarFilter} from '../../service/searchbar-filter';
-import {LocationState} from '../../service/application/location-state';
-import {ApplicationHub} from '../../service/application/application-hub';
-import {MapHub} from '../../service/map-hub';
-import {FixedLocation} from '../../model/common/fixed-location';
-import {Some} from '../../util/option';
+import {ProgressStep} from '../../../feature/progressbar/progressbar.component';
+import {Application} from '../../../model/application/application';
+import {Location} from '../../../model/common/location';
+import {PostalAddress} from '../../../model/common/postal-address';
+import {MapUtil} from '../../../service/map.util.ts';
+import {SearchbarFilter} from '../../../service/searchbar-filter';
+import {LocationState} from '../../../service/application/location-state';
+import {ApplicationHub} from '../../../service/application/application-hub';
+import {MapHub} from '../../../service/map-hub';
+import {FixedLocation} from '../../../model/common/fixed-location';
+import {Some} from '../../../util/option';
 
 @Component({
   selector: 'type',

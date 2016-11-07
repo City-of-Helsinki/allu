@@ -1,4 +1,4 @@
-import {OutdoorEvent} from '../../../../model/application/outdoor-event/outdoor-event';
+import {OutdoorEvent} from '../../../../../model/application/outdoor-event/outdoor-event';
 import {TimePeriod} from '../../time-period';
 
 export class OutdoorEventDetailsForm {

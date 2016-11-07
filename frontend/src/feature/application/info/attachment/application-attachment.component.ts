@@ -1,5 +1,5 @@
 import {Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange} from '@angular/core';
-import {AttachmentInfo} from '../../../model/application/attachment-info';
+import {AttachmentInfo} from '../../../../model/application/attachment-info';
 
 import * as filesaverLib from 'filesaver';
 

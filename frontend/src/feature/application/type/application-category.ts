@@ -1,4 +1,4 @@
-import {ApplicationType} from '../../model/application/type/application-type';
+import {ApplicationType} from '../../../model/application/type/application-type';
 
 export enum ApplicationCategoryType {
   STREET,

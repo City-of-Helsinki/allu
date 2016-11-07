@@ -2,14 +2,14 @@ import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
 
-import {Applicant} from '../../../model/application/applicant';
-import {StructureMeta} from '../../../model/application/structure-meta';
-import {ApplicationHub} from '../../../service/application/application-hub';
+import {Applicant} from '../../../../model/application/applicant';
+import {StructureMeta} from '../../../../model/application/structure-meta';
+import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicantForm} from './applicant.form';
-import {Application} from '../../../model/application/application';
-import {translations} from '../../../util/translations';
-import {EnumUtil} from '../../../util/enum.util';
-import {ApplicantType} from '../../../model/application/applicant/applicant-type';
+import {Application} from '../../../../model/application/application';
+import {translations} from '../../../../util/translations';
+import {EnumUtil} from '../../../../util/enum.util';
+import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
 
 @Component({
   selector: 'applicant',

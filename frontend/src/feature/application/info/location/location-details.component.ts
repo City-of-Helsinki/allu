@@ -1,10 +1,10 @@
 import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {StructureMeta} from '../../../model/application/structure-meta';
-import {ApplicationHub} from '../../../service/application/application-hub';
-import {MapHub} from '../../../service/map-hub';
-import {FixedLocation} from '../../../model/common/fixed-location';
-import {Location} from '../../../model/common/location';
+import {StructureMeta} from '../../../../model/application/structure-meta';
+import {ApplicationHub} from '../../../../service/application/application-hub';
+import {MapHub} from '../../../../service/map-hub';
+import {FixedLocation} from '../../../../model/common/fixed-location';
+import {Location} from '../../../../model/common/location';
 
 @Component({
   selector: 'location-details',

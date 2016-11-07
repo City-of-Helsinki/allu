@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 
 import {MapSearchComponent} from '../mapsearch/mapsearch.component';
 import {WorkQueueComponent} from '../../feature/workqueue/workqueue.component';
-import {LocationComponent} from '../../feature/location/location.component';
+import {LocationComponent} from '../application/location/location.component';
 import {DecisionComponent} from '../../feature/decision/decision.component';
 import {SearchComponent} from '../../feature/search/search.component';
 import {Login} from '../../feature/login/login.component';

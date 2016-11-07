@@ -25,7 +25,7 @@ import {NavbarComponent} from '../toolbar/navbar/navbar.component';
 import {rootRoutes} from './allu.routing';
 import {MapSearchModule} from '../mapsearch/mapsearch.module';
 import {WorkQueueModule} from '../workqueue/workqueue.module';
-import {LocationModule} from '../location/location.module';
+import {LocationModule} from '../application/location/location.module';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {DecisionModule} from '../decision/decision.module';
 import {SearchModule} from '../search/search.module';
