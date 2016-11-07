@@ -2,8 +2,8 @@ import {OutdoorEvent} from '../../model/application/outdoor-event/outdoor-event'
 import {ApplicationTypeData} from '../../model/application/type/application-type-data';
 import {TimeUtil} from '../../util/time.util';
 import {ApplicationType} from '../../model/application/type/application-type';
-import {ApplicationCategory} from '../../feature/application/application-category';
-import {shortTermRental} from '../../feature/application/application-category';
+import {ApplicationCategory} from '../../feature/application/type/application-category';
+import {shortTermRental} from '../../feature/application/type/application-category';
 import {ShortTermRental} from '../../model/application/short-term-rental/short-term-rental';
 
 export class ApplicationTypeDataMapper {

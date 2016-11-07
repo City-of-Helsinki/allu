@@ -1,8 +1,8 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
-import {ProgressStep} from '../progressbar/progressbar.component.ts';
-import {UrlUtil} from '../../util/url.util';
+import {ProgressStep} from '../../progressbar/progressbar.component.ts';
+import {UrlUtil} from '../../../util/url.util.ts';
 
 @Component({
   selector: 'application',

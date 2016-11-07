@@ -7,7 +7,7 @@ import {ApplicationHub} from '../../../service/application/application-hub';
 import {UrlUtil} from '../../../util/url.util';
 import {Application} from '../../../model/application/application';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {applicationCategories, ApplicationCategory, ApplicationCategoryType} from './../application-category';
+import {applicationCategories, ApplicationCategory, ApplicationCategoryType} from './application-category';
 import {translations} from '../../../util/translations';
 
 @Component({

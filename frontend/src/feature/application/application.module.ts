@@ -2,30 +2,32 @@ import {NgModule, ModuleWithProviders} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {MdCardModule, MdToolbarModule, MdProgressBarModule} from '@angular/material';
-import {AlluCommonModule} from '../common/allu-common.module';
-
-import {ApplicationComponent} from '../application/application.component.ts';
-import {TypeComponent} from '../application/type/type.component';
-import {OutdoorEventComponent} from '../application/outdoor-event/outdoor-event.component';
-import {PromotionEventComponent} from '../application/promotion-event/promotion-event.component';
-import {FileSelectDirective} from '../application/attachment/file-select.directive';
-import {ApplicationAttachmentComponent} from '../application/attachment/application-attachment.component';
 import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
 
-import {LoadingComponent} from '../loading/loading.component';
+import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
-import {LocationState} from '../../service/application/location-state';
 import {ProgressBarModule} from '../progressbar/progressbar.module';
+
+import {FileSelectDirective} from './info/attachment/file-select.directive';
+
+import {ApplicationComponent} from './info/application.component.ts';
+import {TypeComponent} from '../application/type/type.component';
+import {OutdoorEventComponent} from './info/outdoor-event/outdoor-event.component';
+import {PromotionEventComponent} from './info/promotion-event/promotion-event.component';
+import {ApplicationAttachmentComponent} from './info/attachment/application-attachment.component';
+import {LoadingComponent} from '../loading/loading.component';
 import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
-import {ApplicationAttachmentHub} from './attachment/application-attachment-hub';
-import {AttachmentService} from '../../service/attachment-service';
-import {ApplicantComponent} from './applicant/applicant.component';
-import {ContactComponent} from './contact/contact.component';
-import {EventDetailsComponent} from './outdoor-event/details/event-details.component.ts';
-import {LocationDetailsComponent} from './location/location-details.component';
+import {ApplicationAttachmentHub} from './info/attachment/application-attachment-hub';
+import {ApplicantComponent} from './info/applicant/applicant.component';
+import {ContactComponent} from './info/contact/contact.component';
+import {EventDetailsComponent} from './info/outdoor-event/details/event-details.component.ts';
+import {LocationDetailsComponent} from './info/location/location-details.component';
 import {FieldErrorComponent} from '../common/field-error.component';
-import {ShortTermRentalComponent} from './short-term-rental/short-term-rental.component.ts';
+import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
+
+import {LocationState} from '../../service/application/location-state';
+import {AttachmentService} from '../../service/attachment-service';
 
 
 @NgModule({

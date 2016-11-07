@@ -3,13 +3,13 @@ import {Routes, Resolve, ActivatedRouteSnapshot} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import '../../rxjs-extensions.ts';
 
-import {ApplicationComponent} from '../../feature/application/application.component.ts';
-import {OutdoorEventComponent} from '../../feature/application/outdoor-event/outdoor-event.component';
-import {PromotionEventComponent} from '../../feature/application/promotion-event/promotion-event.component';
+import {ApplicationComponent} from './info/application.component.ts';
+import {OutdoorEventComponent} from './info/outdoor-event/outdoor-event.component';
+import {PromotionEventComponent} from './info/promotion-event/promotion-event.component';
 import {TypeComponent} from '../../feature/application/type/type.component';
 import {AuthGuard} from '../../feature/login/auth-guard.service';
 import {ApplicationResolve} from './application-resolve';
-import {ShortTermRentalComponent} from './short-term-rental/short-term-rental.component.ts';
+import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
 
 const childRoutes: Routes = [
   { path: '', canActivate: [AuthGuard] },

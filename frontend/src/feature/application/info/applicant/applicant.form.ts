@@ -1,8 +1,8 @@
-import {Applicant} from '../../../model/application/applicant';
-import {ApplicantDetails} from '../../../model/common/applicant-details';
-import {Person} from '../../../model/common/person';
-import {Organization} from '../../../model/common/organization';
-import {PostalAddress} from '../../../model/common/postal-address';
+import {Applicant} from '../../../../model/application/applicant';
+import {ApplicantDetails} from '../../../../model/common/applicant-details';
+import {Person} from '../../../../model/common/person';
+import {Organization} from '../../../../model/common/organization';
+import {PostalAddress} from '../../../../model/common/postal-address';
 export class ApplicantForm {
 
   constructor(

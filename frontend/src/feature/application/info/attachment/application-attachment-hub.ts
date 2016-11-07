@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import '../../../rxjs-extensions.ts';
+import '../../../../rxjs-extensions.ts';
 
-import {AttachmentService} from '../../../service/attachment-service';
-import {AttachmentInfo} from '../../../model/application/attachment-info';
+import {AttachmentService} from '../../../../service/attachment-service';
+import {AttachmentInfo} from '../../../../model/application/attachment-info';
 
 @Injectable()
 export class ApplicationAttachmentHub {
