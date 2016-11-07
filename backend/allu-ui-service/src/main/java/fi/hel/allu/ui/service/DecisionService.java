@@ -40,17 +40,26 @@ public class DecisionService {
 
   // Stylesheet name for decision PDF generation:
   private static final String DECISION_STYLESHEET = "paatos";
+  private static final FixedLocationJson BAD_LOCATION;
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
+  private LocationService locationService;
   private final ZoneId zoneId;
   private final Locale locale;
   private final DateTimeFormatter dateTimeFormatter;
 
+  static {
+    BAD_LOCATION = new FixedLocationJson();
+    BAD_LOCATION.setArea("Tuntematon alue");
+  }
+
   @Autowired
-  public DecisionService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
+  public DecisionService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
+      LocationService locationService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.locationService = locationService;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
@@ -211,12 +220,22 @@ public class DecisionService {
     if (location == null) {
       return "";
     }
-    int ssId = Optional.fromNullable(application.getLocation().getFixedLocationId()).or(0);
-    if (ssId != 0) {
-      // TODO: cache all Fixed location IDs on startup and lookup from there
-      return String.format("TODO: lohko %d", ssId);
+    Optional<Integer> flId = Optional.fromNullable(location.getFixedLocationId());
+    if (flId.isPresent()) {
+      return fixedLocationAddress(flId.get());
     } else {
       return application.getLocation().getPostalAddress().getStreetAddress();
+    }
+  }
+
+  private String fixedLocationAddress(Integer flId) {
+    List<FixedLocationJson> fixedLocations = locationService.getFixedLocationList();
+    FixedLocationJson location = fixedLocations.stream().filter(fl -> fl.getId() == flId).findFirst()
+        .orElse(BAD_LOCATION);
+    if (location.getSection() == null) {
+      return String.format("%s", location.getArea());
+    } else {
+      return String.format("%s, lohko %s", location.getArea(), location.getSection());
     }
   }
 
