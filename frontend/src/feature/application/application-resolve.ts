@@ -5,18 +5,19 @@ import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
+import {LocationState} from '../../service/application/location-state';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
-  constructor(private applicationHub: ApplicationHub) {}
+  constructor(private applicationHub: ApplicationHub, private locationState: LocationState) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Application> {
-    let id = Number(route.firstChild.params['id']);
+    let id = Number(route.params['id']);
 
     if (id) {
       return this.applicationHub.getApplication(id);
     } else {
-      return Observable.of(new Application());
+      return Observable.of(Application.fromLocationState(this.locationState));
     }
   }
 }

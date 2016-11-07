@@ -2,7 +2,6 @@ import {Routes} from '@angular/router';
 
 import {MapSearchComponent} from '../mapsearch/mapsearch.component';
 import {WorkQueueComponent} from '../../feature/workqueue/workqueue.component';
-import {LocationComponent} from '../application/location/location.component';
 import {DecisionComponent} from '../../feature/decision/decision.component';
 import {SearchComponent} from '../../feature/search/search.component';
 import {Login} from '../../feature/login/login.component';
@@ -15,10 +14,9 @@ export const rootRoutes: Routes = [
   { path: 'home', component: MapSearchComponent, canActivate: [AuthGuard]},
   { path: 'workqueue', component: WorkQueueComponent, canActivate: [AuthGuard] },
   { path: 'workqueue/handler', component: HandlerModalComponent, canActivate: [AuthGuard] },
-  { path: 'location', component: LocationComponent, canActivate: [AuthGuard] },
-  { path: 'location/:id', component: LocationComponent, canActivate: [AuthGuard] },
   { path: 'decision/:id', component: DecisionComponent, canActivate: [AuthGuard] },
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'login', component: Login },
-  { path: 'logout', component: Login }
+  { path: 'logout', component: Login },
+  { path: '**', redirectTo: 'home' }
 ];

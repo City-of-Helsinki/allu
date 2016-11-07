@@ -14,6 +14,8 @@ import {ApplicationHub} from '../../../service/application/application-hub';
 import {MapHub} from '../../../service/map-hub';
 import {FixedLocation} from '../../../model/common/fixed-location';
 import {Some} from '../../../util/option';
+import {ApplicationType} from '../../../model/application/type/application-type';
+import {ApplicationCategoryType} from '../type/application-category';
 
 @Component({
   selector: 'type',
@@ -28,6 +30,7 @@ export class LocationComponent {
   sections = new Array<FixedLocation>();
   application: Application;
   progressStep: number;
+  typeSelected = false;
 
   private fixedLocations = new Array<FixedLocation>();
 
@@ -45,34 +48,39 @@ export class LocationComponent {
   ngOnInit() {
     this.initFixedLocations();
 
-    this.route.params.subscribe(params => {
-      let id = Number(params['id']);
+    this.route.data
+      .map((data: {application: Application}) => data.application)
+      .filter(application => application.id !== undefined)
+      .subscribe(application => {
+        this.application = application;
+        this.locationState.location = application.location || new Location();
+        this.locationState.startDate = application.startTime;
+        this.locationState.endDate = application.endTime;
 
-      if (id) {
-        this.applicationHub.getApplication(id).subscribe(application => {
-          this.application = application;
-          this.locationState.location = application.location || new Location();
-          this.locationState.startDate = application.startTime;
-          this.locationState.endDate = application.endTime;
+        this.mapHub.selectApplication(application);
 
-          this.mapHub.selectApplication(application);
+        this.selectedArea = Some(this.fixedLocations.filter(ss => ss.id === application.location.fixedLocationId))
+          .filter(ss => ss.length > 0)
+          .map(ss => ss[0].area)
+          .orElse(undefined);
 
-          this.selectedArea = Some(this.fixedLocations.filter(ss => ss.id === application.location.fixedLocationId))
-            .filter(ss => ss.length > 0)
-            .map(ss => ss[0].area)
-            .orElse(undefined);
+        this.selectedFixedLocation = application.location.fixedLocationId;
+      });
 
-          this.selectedFixedLocation = application.location.fixedLocationId;
-        });
-      }
-
-      this.progressStep = ProgressStep.LOCATION;
-    });
-
+    this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
   }
 
   ngOnDestroy() {
+  }
+
+  onApplicationCategoryChange(category: ApplicationCategoryType) {
+    this.locationState.category = category;
+  }
+
+  onApplicationTypeChange(type: ApplicationType) {
+    this.locationState.applicationType = type;
+    this.typeSelected = type !== undefined;
   }
 
   searchUpdated(filter: SearchbarFilter) {
@@ -92,7 +100,7 @@ export class LocationComponent {
         this.router.navigate(['/applications', application.id, 'summary']);
       });
     } else {
-      this.router.navigate(['/applications']);
+      this.router.navigate(['/applications/info']);
     }
   }
 

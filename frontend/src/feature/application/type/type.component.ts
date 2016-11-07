@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {Router, ActivatedRoute, UrlSegment} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
@@ -15,34 +15,38 @@ import {translations} from '../../../util/translations';
   template: require('./type.component.html')
 })
 export class TypeComponent implements OnInit {
-  application: Application;
+  @Input() typeChangeDisabled = false;
+  @Output() onCategoryChange = new EventEmitter<ApplicationCategoryType>();
+  @Output() onTypeChange = new EventEmitter<ApplicationType>();
+
   applicationCategories = applicationCategories;
   category: ApplicationCategory;
   typeNames = [];
+  applicationType: string;
   translations = translations;
-  private typeChangeDisabled = false;
 
-  constructor(public router: Router, private route: ActivatedRoute) {};
+  constructor(private route: ActivatedRoute) {};
 
   ngOnInit(): any {
     this.route.data
       .map((data: {application: Application}) => data.application)
-      .filter(application => application.id !== undefined)
       .subscribe(application => {
-        this.application = application;
         this.category = this.applicationCategories.find(categories => categories.containsType(ApplicationType[application.type]));
-        this.typeNames = this.category.applicationTypeNames;
-        this.typeChangeDisabled = true;
+        this.typeNames = this.category ? this.category.applicationTypeNames : [];
+        this.applicationType = application.type;
         this.eventSelection(application.type);
       });
   };
 
   typeSelection(value: string) {
-    this.category = applicationCategories.find(c => c.categoryType === ApplicationCategoryType[value]);
+    let categoryType = ApplicationCategoryType[value];
+    this.category = applicationCategories.find(c => c.categoryType === categoryType);
     this.typeNames = this.category.applicationTypeNames;
+    this.onCategoryChange.emit(categoryType);
   };
 
-  eventSelection(value) {
-    this.router.navigate([value], {skipLocationChange: true, relativeTo: this.route});
+  eventSelection(value: string) {
+    this.applicationType = value;
+    this.onTypeChange.emit(ApplicationType[value]);
   };
 }

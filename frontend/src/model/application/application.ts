@@ -12,6 +12,9 @@ import {AttachmentInfo} from './attachment-info';
 import {TimeUtil} from '../../util/time.util';
 import {User} from '../common/user';
 import {EventNature} from './outdoor-event/event-nature';
+import {LocationState} from '../../service/application/location-state';
+import {ApplicationType} from './type/application-type';
+import {Some} from '../../util/option';
 
 
 export class Application {
@@ -106,6 +109,20 @@ export class Application {
     app.startTime = undefined;
     app.endTime = undefined;
 
+    return app;
+  }
+
+  public static fromLocationState(locationState: LocationState): Application {
+    let app = new Application();
+
+    app.location = locationState.location;
+
+    // TODO: mismatch here. Date+time should be used in location too.
+    let defaultDate = new Date();
+    app.startTime = locationState.startDate || defaultDate;
+    app.endTime = TimeUtil.getEndOfDay(locationState.endDate || defaultDate);
+
+    app.type = Some(locationState.applicationType).map(type => ApplicationType[type]).orElse(undefined);
     return app;
   }
 

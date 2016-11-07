@@ -1,8 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {ProgressStep} from '../../progressbar/progressbar.component.ts';
 import {UrlUtil} from '../../../util/url.util.ts';
+import {ApplicationType} from '../../../model/application/type/application-type';
 
 @Component({
   selector: 'application',
@@ -15,11 +16,20 @@ import {UrlUtil} from '../../../util/url.util.ts';
 export class ApplicationComponent implements OnInit {
   progressStep: ProgressStep;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
       this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
     });
+  }
+
+  onTypeChange(type: ApplicationType) {
+    if (type === undefined) {
+      // No known type so navigate back to type selection
+      this.router.navigateByUrl('applications/location');
+    } else {
+      this.router.navigate([ApplicationType[type]], {skipLocationChange: true, relativeTo: this.route});
+    }
   }
 }
