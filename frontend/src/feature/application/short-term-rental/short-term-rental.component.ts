@@ -20,6 +20,7 @@ import {ComplexValidator} from '../../../util/complex-validator';
 import {translations} from '../../../util/translations';
 import {ShortTermRental} from '../../../model/application/short-term-rental/short-term-rental';
 import {ShortTermRentalDetailsForm} from './short-term-rental.form';
+import {MaterializeUtil} from '../../../util/materialize.util';
 
 @Component({
   selector: 'short-term-rental',
@@ -80,7 +81,7 @@ export class ShortTermRentalComponent implements OnInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 50);
+    MaterializeUtil.updateTextFields(50);
     this.mapHub.selectApplication(this.application);
   }
 

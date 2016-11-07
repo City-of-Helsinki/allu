@@ -20,8 +20,7 @@ import {OutdoorEventDetailsForm} from './details/outdoor-event-details.form';
 import {OutdoorEventForm} from './outdoor-event.form';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
-
-declare var Materialize: any;
+import {MaterializeUtil} from '../../../util/materialize.util';
 
 @Component({
   selector: 'outdoor-event',
@@ -76,7 +75,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 50);
+    MaterializeUtil.updateTextFields(50);
     this.mapHub.selectApplication(this.application);
   }
 

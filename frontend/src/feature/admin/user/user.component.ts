@@ -7,6 +7,7 @@ import {UserHub} from '../../../service/user/user-hub';
 import {translations} from '../../../util/translations';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Some} from '../../../util/option';
+import {MaterializeUtil} from '../../../util/materialize.util';
 
 declare var Materialize: any;
 
@@ -55,7 +56,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 50);
+    MaterializeUtil.updateTextFields(50);
   }
 
   save(user: UserForm): void {

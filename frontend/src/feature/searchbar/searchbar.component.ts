@@ -8,6 +8,7 @@ import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {UIState} from '../../service/ui-state/ui-state';
 import {Geocoordinates} from '../../model/common/geocoordinates';
+import {MaterializeUtil} from '../../util/materialize.util';
 
 // To use Materialize functionality
 declare var Materialize: any;
@@ -41,7 +42,7 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => Materialize.updateTextFields(), 10);
+    MaterializeUtil.updateTextFields(50);
   }
 
   ngOnDestroy(): void {
