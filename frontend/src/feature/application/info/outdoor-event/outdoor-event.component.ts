@@ -52,12 +52,6 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
       .map((data: {application: Application}) => data.application)
       .subscribe(application => {
         this.application = application;
-        this.application.location = this.application.location || this.locationState.location;
-
-        // TODO: mismatch here. Date+time should be used in location too.
-        let defaultDate = new Date();
-        this.application.startTime = this.locationState.startDate || this.application.startTime || defaultDate;
-        this.application.endTime = TimeUtil.getEndOfDay(this.locationState.endDate || this.application.endTime || defaultDate);
 
         this.applicationHub.loadMetaData('OUTDOOREVENT').subscribe(meta => this.metadataLoaded(meta));
 

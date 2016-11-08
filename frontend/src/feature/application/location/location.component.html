@@ -1,5 +1,9 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
-<div materialize class="row location">
+<div class="row location">
+  <application-type (onCategoryChange)="onApplicationCategoryChange($event)"
+                    (onTypeChange)="onApplicationTypeChange($event)"></application-type>
+</div>
+<div *ngIf="typeSelected" materialize class="row location">
   <div class="col m12">
     <md-card>
       <md-card-title>Sijainti</md-card-title>

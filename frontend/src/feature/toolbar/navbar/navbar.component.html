@@ -1,7 +1,7 @@
 <nav>
   <a class="navbar-tab" [routerLink]="['/home']" routerLinkActive="active">ETUSIVU</a>
   <a class="navbar-tab" [routerLink]="['/workqueue']" routerLinkActive="active">TYÖJONO</a>
-  <a class="navbar-tab" [routerLink]="['/location']" routerLinkActive="active">HAKEMUKSET</a>
+  <a class="navbar-tab" [routerLink]="['/applications']" routerLinkActive="active">HAKEMUKSET</a>
   <a class="navbar-tab" [routerLink]="['/search']" routerLinkActive="active">HAKU</a>
   <a class="navbar-tab" [routerLink]="['/admin']" routerLinkActive="active" *ngIf="hasRole('ROLE_ADMIN')">YLLÄPITO</a>
   <a class="navbar-tab" [routerLink]="['/logout']" routerLinkActive="active">KIRJAUDU ULOS</a>

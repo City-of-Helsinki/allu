@@ -20,7 +20,7 @@
         <md-card-content>
             <div class="row">
                 <div class="col m12">
-                    <select [ngModel]="application?.type" [disabled]="typeChangeDisabled"
+                    <select [ngModel]="applicationType" [disabled]="typeChangeDisabled"
                             materialize="material_select" [materializeSelectOptions]="typeNames"
                             (change)="eventSelection($event.target.value)">
                         <option value="" disabled selected>Valitse tapahtuman tyyppi</option>

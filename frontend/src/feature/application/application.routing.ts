@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import '../../rxjs-extensions.ts';
 
 import {ApplicationComponent} from './info/application.component.ts';
+import {LocationComponent} from '../application/location/location.component';
 import {OutdoorEventComponent} from './info/outdoor-event/outdoor-event.component';
 import {PromotionEventComponent} from './info/promotion-event/promotion-event.component';
 import {TypeComponent} from '../../feature/application/type/type.component';
@@ -40,31 +41,39 @@ const childRoutes: Routes = [
 ];
 
 export const applicationRoutes: Routes = [
-  {
-    path: 'applications',
-    component: ApplicationComponent,
-    canActivate: [AuthGuard],
-    resolve: {
-      application: ApplicationResolve
+  { path: 'applications', canActivate: [AuthGuard], children: [
+    { path: '', canActivate: [AuthGuard], redirectTo: 'location', pathMatch: 'full' },
+    {
+      path: 'location',
+      component: LocationComponent,
+      canActivate: [AuthGuard],
+      resolve: { application: ApplicationResolve } },
+    {
+      path: 'info',
+      component: ApplicationComponent,
+      canActivate: [AuthGuard],
+      resolve: { application: ApplicationResolve },
+      children: childRoutes
+    }
+  ]},
+  { path:  'applications/:id', canActivate: [AuthGuard], children: [
+    { path: 'location',
+      component: LocationComponent,
+      canActivate: [AuthGuard],
+      resolve: { application: ApplicationResolve }},
+    {
+      path: 'info',
+      component: ApplicationComponent,
+      canActivate: [AuthGuard],
+      resolve: { application: ApplicationResolve },
+      children: childRoutes
     },
-    children: childRoutes
-  },
-  {
-    path: 'applications/:id',
-    component: ApplicationComponent,
-    canActivate: [AuthGuard],
-    resolve: {
-      application: ApplicationResolve
-    },
-    children: childRoutes
-  },
-  {
-    path: 'applications/:id/summary',
-    component: ApplicationComponent,
-    canActivate: [AuthGuard],
-    resolve: {
-      application: ApplicationResolve
-    },
-    children: childRoutes
-  }
+    {
+      path: 'summary',
+      component: ApplicationComponent,
+      canActivate: [AuthGuard],
+      resolve: { application: ApplicationResolve },
+      children: childRoutes
+    }
+  ]}
 ];
