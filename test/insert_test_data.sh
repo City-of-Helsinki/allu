@@ -66,5 +66,6 @@ try_repeat create_user data/paattaja.json
 try_repeat login kasittelija
 # Make sure search service is up:
 try_repeat search_and_ignore
+try_repeat insert_data "data/porkkalankatu_10a_banderolli.json"
 try_repeat insert_data "data/hernesaari.json"
 try_repeat insert_data "data/tervasaari.json"

@@ -182,6 +182,7 @@ public abstract class MockServices {
   public OutdoorEventJson createOutdoorEventJson() {
     OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
     outdoorEventJson.setDescription("Outdoor event description, Json");
+    outdoorEventJson.setType(ApplicationType.OUTDOOREVENT);
     outdoorEventJson.setAttendees(1000);
     outdoorEventJson.setEventStartTime(ZonedDateTime.now());
     outdoorEventJson.setNature(OutdoorEventNature.CLOSED);

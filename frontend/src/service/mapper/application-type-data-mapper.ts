@@ -17,6 +17,7 @@ export class ApplicationTypeDataMapper {
         backendEvent.description,
         backendEvent.url,
         backendEvent.type,
+        backendEvent.applicationCategory,
         TimeUtil.dateFromBackend(backendEvent.eventStartTime),
         TimeUtil.dateFromBackend(backendEvent.eventEndTime),
         backendEvent.timeExceptions,

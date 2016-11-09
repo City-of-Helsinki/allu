@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.Event;
-import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.domain.*;
 
@@ -139,6 +136,27 @@ public class ApplicationMapper {
         outdoorEventJson.setCalculatedPricing(outdoorEvent.getCalculatedPricing());
         applicationJson.setEvent(outdoorEventJson);
         break;
+      // short term rentals
+      case BRIDGE_BANNER:
+      case PROMOTION_OR_SALES:
+      case URBAN_FARMING:
+      case KESKUSKATU_SALES:
+      case SUMMER_THEATER:
+      case DOG_TRAINING_EVENT:
+      case DOG_TRAINING_FIELD:
+      case CARGO_CONTAINER:
+      case SMALL_ART_AND_CULTURE:
+      case SEASON_SALE:
+      case CIRCUS:
+      case ART:
+      case STORAGE_AREA:
+      case OTHER_SHORT_TERM_RENTAL:
+        ShortTermRental shortTermRental = (ShortTermRental) application.getEvent();
+        ShortTermRentalJson shortTermRentalJson = new ShortTermRentalJson();
+        shortTermRentalJson.setType(shortTermRental.getType());
+        shortTermRentalJson.setDescription(shortTermRental.getDescription());
+        shortTermRental.setCommercial(shortTermRental.getCommercial());
+        break;
     }
   }
 
@@ -173,6 +191,27 @@ public class ApplicationMapper {
         outdoorEvent.setTimeExceptions(outdoorEventJson.getTimeExceptions());
         outdoorEvent.setCalculatedPricing(outdoorEventJson.getCalculatedPricing());
         return outdoorEvent;
+      // short term rentals
+      case BRIDGE_BANNER:
+      case PROMOTION_OR_SALES:
+      case URBAN_FARMING:
+      case KESKUSKATU_SALES:
+      case SUMMER_THEATER:
+      case DOG_TRAINING_EVENT:
+      case DOG_TRAINING_FIELD:
+      case CARGO_CONTAINER:
+      case SMALL_ART_AND_CULTURE:
+      case SEASON_SALE:
+      case CIRCUS:
+      case ART:
+      case STORAGE_AREA:
+      case OTHER_SHORT_TERM_RENTAL:
+        ShortTermRentalJson shortTermRentalJson = (ShortTermRentalJson) applicationJson.getEvent();
+        ShortTermRental shortTermRental = new ShortTermRental();
+        shortTermRental.setType(shortTermRentalJson.getType());
+        shortTermRental.setDescription(shortTermRentalJson.getDescription());
+        shortTermRental.setCommercial(shortTermRentalJson.getCommercial());
+        return shortTermRental;
     }
     return null;
   }

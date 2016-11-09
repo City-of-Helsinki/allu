@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.mapper;
 
+import fi.hel.allu.common.types.ApplicationCategory;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
@@ -51,7 +52,7 @@ public class ApplicationMapperTest {
     }
 
     @Override
-    public ApplicationType getType() {
+    public ApplicationCategory getApplicationCategory() {
       // TODO Auto-generated method stub
       return null;
     }

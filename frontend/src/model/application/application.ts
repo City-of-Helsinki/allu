@@ -82,6 +82,7 @@ export class Application {
       'Tapahtuman tavoitteena on saada ulkoilmatapahtumat tutuksi ihmisille.',
       'url',
       'OUTDOOREVENT',
+      'EVENT',
       undefined,
       undefined,
       'Tapahtuma-ajalla ei ole poikkeuksia',

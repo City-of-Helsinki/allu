@@ -5,11 +5,9 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
-
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
@@ -22,9 +20,9 @@ import java.util.*;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QGeometry.geometry1;
 import static fi.hel.allu.QLocation.location;
-import static fi.hel.allu.QFixedLocation.fixedLocation;
 
 @Repository
 public class LocationDao {
@@ -88,7 +86,11 @@ public class LocationDao {
 
   @Transactional(readOnly = true)
   public List<FixedLocation> getFixedLocationList() {
-    return queryFactory.select(fixedLocationBean).from(fixedLocation).where(fixedLocation.isActive.eq(true)).fetch();
+    return queryFactory
+        .select(fixedLocationBean)
+        .from(fixedLocation)
+        .where(fixedLocation.isActive.eq(true))
+        .fetch();
   }
 
   private void setGeometry(int locationId, Geometry geometry) {

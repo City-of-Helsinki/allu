@@ -44,7 +44,23 @@ public class ApplicationSequenceDao {
     /** In Finnish: tapahtumalupa */
     TP(ApplicationType.OUTDOOREVENT),
     /** In Finnish: lyhytaikainen maanvuokraus */
-    VL(),
+    VL(
+        ApplicationType.ART,
+        ApplicationType.BENJI,
+        ApplicationType.BRIDGE_BANNER,
+        ApplicationType.CARGO_CONTAINER,
+        ApplicationType.CIRCUS,
+        ApplicationType.DOG_TRAINING_EVENT,
+        ApplicationType.DOG_TRAINING_FIELD,
+        ApplicationType.KESKUSKATU_SALES,
+        ApplicationType.OTHER_SHORT_TERM_RENTAL,
+        ApplicationType.PROMOTION_OR_SALES,
+        ApplicationType.SEASON_SALE,
+        ApplicationType.SMALL_ART_AND_CULTURE,
+        ApplicationType.STORAGE_AREA,
+        ApplicationType.SUMMER_THEATER,
+        ApplicationType.URBAN_FARMING
+    ),
     /** In Finnish: muistiinpano */
     MP();
 

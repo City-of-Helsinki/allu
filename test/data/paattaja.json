@@ -1,1 +1,14 @@
-{"userName":"paattaja","realName":"Päättäjä Käyttäjä","emailAddress":"paattaja@helsinki.fi","title":"Päättäjä","allowedApplicationTypes":["OUTDOOREVENT"],"assignedRoles":["ROLE_VIEW", "ROLE_DECISION"],"active":true}
+{
+  "userName":"paattaja",
+  "realName":"Päättäjä Käyttäjä",
+  "emailAddress":"paattaja@helsinki.fi",
+  "title":"Päättäjä",
+  "allowedApplicationTypes":[
+    "OUTDOOREVENT"
+  ],
+  "assignedRoles":[
+    "ROLE_VIEW",
+    "ROLE_DECISION"
+  ],
+  "active":true
+}

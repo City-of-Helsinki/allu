@@ -1,9 +1,12 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.types.ApplicationType;
+
 public class FixedLocation {
   private Integer id;
   private String area;
   private String section;
+  private ApplicationType applicationType;
 
   /**
    * Get the database id for the FixedLocation
@@ -42,5 +45,18 @@ public class FixedLocation {
 
   public void setSection(String section) {
     this.section = section;
+  }
+
+  /**
+   * Get the application type this fixed location is valid for.
+   *
+   * @return  the application type this fixed location is valid for.
+   */
+  public ApplicationType getApplicationType() {
+    return applicationType;
+  }
+
+  public void setApplicationType(ApplicationType applicationType) {
+    this.applicationType = applicationType;
   }
 }

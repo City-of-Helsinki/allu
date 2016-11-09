@@ -2,7 +2,6 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.service.LocationService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

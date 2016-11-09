@@ -185,11 +185,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_LOCATION_FIND_BY_ID = "/locations/{locationId}";
 
   /**
-   * Model-service path to get all FixedLocation locations
-   */
-  public static final String PATH_MODEL_LOCATION_GET_FIXED_LOCATION = "/locations/fixed-location";
-
-  /**
    * Model-service path to create attachment
    */
   public static final String PATH_MODEL_ATTACHMENT_CREATE = "/attachments";
@@ -319,6 +314,9 @@ public class ApplicationProperties {
     return getUserCreateUrl();
   }
 
+  /**
+   * @return url to list users.
+   */
   public String getUserListingUrl() {
     return getUserCreateUrl();
   }
@@ -342,9 +340,20 @@ public class ApplicationProperties {
     return this.geocodeUrl;
   }
 
+  /**
+   * @return  url to search streets.
+   */
   public String getStreetSearchUrl() {
     return this.streetSearchUrl;
   }
+
+  /**
+   * @return url for fetching fixed locations (such as Narinkka) for given application type.
+   */
+  public String getFixedLocationUrl() {
+    return getModelServiceUrl("/locations/fixed-location");
+  }
+
 
   /**
    * Returns username for the WFS service.
