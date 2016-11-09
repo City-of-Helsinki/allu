@@ -32,13 +32,13 @@ export class DecisionComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe(params => {
       this.id = Number(params['id']);
-    });
 
-    this.applicationHub.getApplication(this.id).subscribe(application => {
-      this.application = application;
-    });
+      this.applicationHub.getApplication(this.id).subscribe(application => {
+        this.application = application;
+      });
 
-    this.decisionHub.generate(this.id).subscribe(decision => this.providePdf(decision));
+      this.decisionHub.generate(this.id).subscribe(decision => this.providePdf(decision));
+    });
   }
 
   private providePdf(decision: Decision): void {

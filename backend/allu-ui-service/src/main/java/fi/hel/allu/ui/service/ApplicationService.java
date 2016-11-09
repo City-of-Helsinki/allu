@@ -208,14 +208,14 @@ public class ApplicationService {
     return resultList;
   }
 
-  public void changeStatus(int applicationId, StatusType newStatus) {
+  public ApplicationJson changeStatus(int applicationId, StatusType newStatus) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     ApplicationJson applicationJson = findApplicationById(applicationId);
     logger.debug("found application {}, current status {}, handler {}", applicationJson.getId(), applicationJson.getStatus(),
         applicationJson.getHandler());
 
     applicationJson.setStatus(newStatus);
-    updateApplication(applicationId, applicationJson);
+    return updateApplication(applicationId, applicationJson);
   }
 
 
