@@ -1,9 +1,28 @@
-import {FormGroup} from '@angular/forms';
+import {FormGroup, FormControl, AbstractControl} from '@angular/forms';
 import {Some} from './option';
 import {TimeUtil} from './time.util';
 
+/**
+ * Implements more complex validations than angular2 provides out of the box
+ * Single field validators return validation function as is.
+ * Multi field validators return {validator: validationFn} objects.
+ */
 export class ComplexValidator {
-  constructor(public validator: (fg: FormGroup) => any) {}
+  constructor(public validator: (validated: AbstractControl) => ValidationResult) {}
+
+  static greaterThanOrEqual(value: number) {
+    let validationFn = (fc: AbstractControl) => {
+      // Need to use dirty here since input[type="number"] does not set touched unless arrows are clicked
+      if (fc.dirty) {
+        if (Number(fc.value) < value) {
+          return { greaterThanOrEqual: false };
+          }
+        }
+      return undefined;
+    };
+
+    return validationFn;
+  }
 
   static startBeforeEnd(startField: string, endField: string) {
     let validationFn = (fg: FormGroup) => {
@@ -15,11 +34,7 @@ export class ComplexValidator {
           let valid = !TimeUtil.isBefore(end, start);
 
           // undefined means valid field
-          return valid  ? undefined : {
-            startBeforeEnd: {
-              valid: false
-            }
-          };
+          return valid  ? undefined : { startBeforeEnd: false };
         }
       }
       return undefined;
@@ -34,4 +49,8 @@ export class ComplexValidator {
       .map(control => control.value)
       .orElse(undefined);
   }
+}
+
+interface ValidationResult {
+  [key: string]: boolean;
 }
