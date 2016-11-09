@@ -7,13 +7,13 @@
                     <div class="col m6">
                         <div class="input-field col m12">
                             <input id="eventName" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
-                            <label for="eventName">{{ meta?.getUiName('name') }}</label>
+                            <label for="eventName">{{ meta?.getUiName('name') }}*</label>
                             <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                             <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
                         </div>
                         <div class="input-field col m12">
                             <textarea id="eventDescription" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
-                            <label for="eventDescription">{{ meta?.getUiName('description') }}</label>
+                            <label for="eventDescription">{{ meta?.getUiName('description') }}*</label>
                             <field-error [form]="eventForm" field="description" hasError="required">
                                 {{translations.application.outdoorEvent.field.descriptionMissing}}
                             </field-error>
@@ -33,7 +33,7 @@
                                        type="text"/>
 
                                 <input *ngIf="readonly" id="eventStartTime" type="text" formControlName="startTime" readonly>
-                                <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}</label>
+                                <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}*</label>
                                 <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
                                     {{translations.application.outdoorEvent.field.eventStartTimeMissing}}
                                 </field-error>
@@ -45,14 +45,16 @@
                                        [materializeParams]="pickadateParams"
                                        type="text"/>
                                 <input *ngIf="readonly" id="eventEndTime" type="text" formControlName="endTime" readonly>
-                                <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}</label>
+                                <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}*</label>
                                 <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
                                     {{translations.application.outdoorEvent.field.eventEndTimeMissing}}
                                 </field-error>
                             </div>
-                            <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
-                                {{translations.application.outdoorEvent.field.startBeforeEnd}}
-                            </field-error>
+                            <div class="col m12">
+                                <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
+                                    {{translations.application.outdoorEvent.field.startBeforeEnd}}
+                                </field-error>
+                            </div>
                         </div>
                         <div class="input-field col m12">
                             <textarea id="eventTimeExceptions" class="materialize-textarea" formControlName="timeExceptions" [readonly]="readonly"></textarea>
@@ -146,7 +148,7 @@
                         <div class="input-field col m12">
                             <select *ngIf="!readonly" materialize="material_select"
                                     formControlName="nature" (change)="eventNatureChange($event.target.value)">
-                                <option value="" disabled selected>{{ meta?.getUiName('nature') }}</option>
+                                <option value="" disabled selected>{{ meta?.getUiName('nature') }}*</option>
                                 <option *ngFor="let nature of eventNatures" [value]="nature">{{translations.application.outdoorEvent.nature[nature]}}</option>
                             </select>
                             <field-error [form]="eventForm" field="nature" hasError="required">

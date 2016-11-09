@@ -3,7 +3,8 @@ import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'field-error',
-  template: '<small *ngIf="showError()"><ng-content></ng-content></small>'
+  template: '<small *ngIf="showError()"><ng-content></ng-content></small>',
+  styles: [require('./field-error.component.scss')]
 })
 export class FieldErrorComponent {
   @Input() form: FormGroup;
