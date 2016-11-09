@@ -61,12 +61,18 @@
                             <label for="eventTimeExceptions">{{ meta?.getUiName('timeExceptions') }}</label>
                         </div>
                         <div class="input-field col m3">
-                            <input id="eventAttendees" type="number"  formControlName="attendees" [readonly]="readonly">
+                            <input id="eventAttendees" type="number" step="1" min="0" formControlName="attendees" [readonly]="readonly">
                             <label for="eventAttendees">{{ meta?.getUiName('attendees') }}</label>
+                            <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
+                                {{translations.application.outdoorEvent.field.attendeesGreaterThanOrEqual}}
+                            </field-error>
                         </div>
-                        <div class="input-field col m9">
-                            <input id="eventEntryFee" type="number"  formControlName="entryFee" [readonly]="readonly">
+                        <div class="input-field col m4">
+                            <input id="eventEntryFee" type="number" step="any" min="0" formControlName="entryFee" [readonly]="readonly">
                             <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
+                            <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
+                                {{translations.application.outdoorEvent.field.eventEntryFeeThanOrEqual}}
+                            </field-error>
                         </div>
                     </div>
                 </div>
@@ -88,8 +94,11 @@
                             <div *ngIf="readonly">Tapahtuma sisältää rakenteita</div>
                         </div>
                         <div class="input-field col m6">
-                            <input id="structureArea" type="number" formControlName="structureArea" [readonly]="readonly">
+                            <input id="structureArea" type="number" formControlName="structureArea" step="any" min="0" [readonly]="readonly">
                             <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
+                            <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
+                                {{translations.application.outdoorEvent.field.structureAreaGreaterThanOrEqual}}
+                            </field-error>
                         </div>
                         <div class="input-field col m12">
                             <textarea id="structureDescription" class="materialize-textarea textarea"

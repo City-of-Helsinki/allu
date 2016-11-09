@@ -77,7 +77,10 @@ export const translations = {
         typeMissing: 'Tapahtuman tyyppi puuttuu',
         eventStartTimeMissing: 'Tapahtuman alkuaika puuttuu',
         eventEndTimeMissing: 'Tapahtuman loppuaika puuttuu',
-        startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää'
+        startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää',
+        attendeesGreaterThanOrEqual: 'Yleisömäärä ei voi olla negatiivinen',
+        eventEntryFeeThanOrEqual: 'Osallistumismaksu ei voi negatiivinen',
+        structureAreaGreaterThanOrEqual: 'Rakenteiden kokonaisneliömäärä ei voi olla negatiivinen'
       }
     },
     shortTermRental: {

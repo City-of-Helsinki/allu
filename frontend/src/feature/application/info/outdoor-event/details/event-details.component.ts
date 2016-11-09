@@ -96,8 +96,8 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
         endTime: ['', Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       timeExceptions: [''],
-      attendees: undefined,
-      entryFee: undefined,
+      attendees: [0, ComplexValidator.greaterThanOrEqual(0)],
+      entryFee: [0, ComplexValidator.greaterThanOrEqual(0)],
       noPrice: [false],
       noPriceReason: [''],
       salesActivity: [false],
@@ -106,7 +106,7 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
       foodSales: [false],
       foodProviders: [''],
       marketingProviders: [''],
-      structureArea: undefined,
+      structureArea: [0, ComplexValidator.greaterThanOrEqual(0)],
       structureDescription: [''],
       structureTimes: this.fb.group({
         startTime: [''],
