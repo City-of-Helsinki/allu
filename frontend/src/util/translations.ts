@@ -8,7 +8,7 @@ export const translations = {
     },
     status: {
       PRE_RESERVED: 'Alustava varaus',
-      PENDING: 'Vireillä',
+      PENDING: 'Hakemus saapunut',
       HANDLING: 'Käsittelyssä',
       RETURNED_TO_PREPARATION: 'Palautettu käsittelyyn',
       DECISIONMAKING: 'Odottaa päätöstä',
@@ -139,6 +139,11 @@ export const translations = {
     }
   },
   decision: {
+    type: {
+      DECISION: 'Hakemus päätetty',
+      RETURNED_TO_PREPARATION: 'Hakemus palautettu valmisteluun',
+      REJECTED: 'Hakemus hylätty'
+    },
     error: {
       generatePdf: 'Pdf:n muodostaminen epäonnistui'
     }

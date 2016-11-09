@@ -3,39 +3,43 @@
         <md-card-title>Hakemuksen perustiedot</md-card-title>
         <md-card-content>
             <div class="row">
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Hakemustyyppi</label>
-                    <div>{{application.type}}</div>
+                    <div>{{translations.application.type[application.type]}}</div>
                 </div>
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Sijainti</label>
+                    <div *ngIf="!application.location.postalAddress.streetAddress">-</div>
                     <div>{{application.location.postalAddress.streetAddress}}</div>
                 </div>
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Tapahtuman nimi</label>
                     <div>{{application.name}}</div>
                 </div>
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Arvioitu aloitus</label>
                     <div>{{application.startTime | date:format }}</div>
                 </div>
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Tapahtuman luonne</label>
                     <div>{{application.event.nature}}</div>
                 </div>
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Arvioitu päättyminen</label>
                     <div>{{application.endTime | date:format }}</div>
                 </div>
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Hakemus saapunut</label>
                     <div>{{application.uiApplicationCreationTime}}</div>
                 </div>
-                <div class="col s6">
+                <div class="col s6 info-field">
                     <label>Käsittelijä</label>
+                    <div *ngIf="!application.handler">-</div>
                     <div>{{application.handler?.realName}}</div>
                 </div>
             </div>
+
+            <decision-actions [application]="application"></decision-actions>
         </md-card-content>
     </md-card>
 </div>

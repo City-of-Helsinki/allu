@@ -3,6 +3,8 @@ import {Component, Input} from '@angular/core';
 import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationStatusChange, ApplicationStatus} from '../../model/application/application-status-change';
+import {MaterializeUtil} from '../../util/materialize.util';
+import {translations} from '../../util/translations';
 
 @Component({
   selector: 'decision-actions',
@@ -12,6 +14,8 @@ import {ApplicationStatusChange, ApplicationStatus} from '../../model/applicatio
 export class DecisionActionsComponent {
   @Input() application: Application;
 
+  private translations = translations;
+
   constructor(private applicationHub: ApplicationHub) {}
 
   public decisionConfirmed(confirm: ApplicationStatusChange) {
@@ -20,13 +24,12 @@ export class DecisionActionsComponent {
   }
 
   public accept() {
-    console.log('accept', this.application.id);
     this.applicationHub.changeStatus(ApplicationStatusChange.of(this.application.id, ApplicationStatus.DECISION))
       .subscribe(application => this.statusChanged(application));
   }
 
   private statusChanged(application: Application): void {
-    console.log('Status changed to', application.status);
     this.application = application;
+    MaterializeUtil.toast(translations.decision.type[application.status], 4000);
   }
 }

@@ -93,11 +93,9 @@ export class ApplicationService {
   }
 
   public applicationStatusChange(statusChange: ApplicationStatusChange): Observable<Application> {
-    console.log('applicationStatusChange', statusChange);
     let url = ApplicationService.APPLICATIONS_URL + '/' + statusChange.id + '/' + this.statusToUrl.get(statusChange.status);
-    console.log('url', url);
     return this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
-      .do(response => console.log('response', response))
+      .map(response => ApplicationMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_STATUS_CHANGE_FAILED)));
   }
 
