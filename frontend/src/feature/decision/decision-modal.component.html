@@ -1,4 +1,4 @@
-<div id="decision-modal-{{status}}" class="modal">
+<div id="decision-modal-{{status}}" class="modal" materialize="modal" [materializeParams]="[{dismissible: true}]" [materializeActions]="modalActions">
     <div class="modal-content">
         <h4>{{header}}</h4>
     </div>
@@ -16,9 +16,7 @@
 </div>
 
 <div>
-    <a materialize="leanModal"
-            [materializeParams]="[{dismissible: true}]"
-            class="waves-effect waves-light btn modal-trigger"
-            href="#decision-modal-{{status}}"><ng-content></ng-content>
+    <a class="waves-effect waves-light btn modal-trigger" href="#decision-modal-{{status}}" (click)="openModal()">
+        <ng-content></ng-content>
     </a>
 </div>
