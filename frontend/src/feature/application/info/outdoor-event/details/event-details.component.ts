@@ -55,7 +55,6 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
         outdoorEvent.eventStartTime = outdoorEvent.eventStartTime || application.startTime;
         outdoorEvent.eventEndTime = outdoorEvent.eventEndTime || application.endTime;
         outdoorEvent.type = 'OUTDOOREVENT';
-
         this.eventForm.patchValue(OutdoorEventDetailsForm.fromOutdoorEvent(application.name, outdoorEvent));
       });
   }

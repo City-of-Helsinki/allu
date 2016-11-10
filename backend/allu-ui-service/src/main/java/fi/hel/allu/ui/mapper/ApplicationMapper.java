@@ -114,6 +114,7 @@ public class ApplicationMapper {
       case OUTDOOREVENT:
         OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
         OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
+        outdoorEventJson.setType(outdoorEvent.getType());
         outdoorEventJson.setUrl(outdoorEvent.getUrl());
         outdoorEventJson.setNature(outdoorEvent.getNature());
         outdoorEventJson.setEventStartTime(outdoorEvent.getEventStartTime());
@@ -170,6 +171,7 @@ public class ApplicationMapper {
       case OUTDOOREVENT:
         OutdoorEventJson outdoorEventJson = (OutdoorEventJson) applicationJson.getEvent();
         OutdoorEvent outdoorEvent = new OutdoorEvent();
+        outdoorEvent.setType(applicationJson.getType());
         outdoorEvent.setDescription(outdoorEventJson.getDescription());
         outdoorEvent.setNature(outdoorEventJson.getNature());
         outdoorEvent.setUrl(outdoorEventJson.getUrl());

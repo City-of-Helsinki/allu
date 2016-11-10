@@ -16,6 +16,8 @@ import {FixedLocation} from '../../../model/common/fixed-location';
 import {Some} from '../../../util/option';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {ApplicationCategoryType} from '../type/application-category';
+import {None} from '../../../util/option';
+import {Option} from '../../../util/option';
 
 @Component({
   selector: 'type',
@@ -46,8 +48,6 @@ export class LocationComponent {
   };
 
   ngOnInit() {
-    this.initFixedLocations();
-
     this.route.data
       .map((data: {application: Application}) => data.application)
       .filter(application => application.id !== undefined)
@@ -56,6 +56,7 @@ export class LocationComponent {
         this.locationState.location = application.location || new Location();
         this.locationState.startDate = application.startTime;
         this.locationState.endDate = application.endTime;
+        this.loadFixedLocationsForType(ApplicationType[application.type]);
 
         this.mapHub.selectApplication(application);
 
@@ -81,6 +82,10 @@ export class LocationComponent {
   onApplicationTypeChange(type: ApplicationType) {
     this.locationState.applicationType = type;
     this.typeSelected = type !== undefined;
+
+    if (type !== undefined) {
+      this.loadFixedLocationsForType(type);
+    }
   }
 
   searchUpdated(filter: SearchbarFilter) {
@@ -106,13 +111,17 @@ export class LocationComponent {
 
   set selectedArea(area: string) {
     this.sections = this.fixedLocations.filter(fl => fl.area === area);
+    this.locationState.location.fixedLocationId = this.firstSection.map(fl => fl.id).orElse(undefined);
   }
 
   get selectedArea(): string {
+    return this.firstSection.map(section => section.area).orElse(undefined);
+  }
+
+  get firstSection(): Option<FixedLocation> {
     return Some(this.sections)
       .filter(sections => sections.length > 0)
-      .map(sections => sections[0].area)
-      .orElse(undefined);
+      .map(sections => sections[0]);
   }
 
   noSections(): boolean {
@@ -136,15 +145,16 @@ export class LocationComponent {
     }
   }
 
-  private initFixedLocations(): void {
+  private loadFixedLocationsForType(type: ApplicationType): void {
     this.mapHub.fixedLocations()
       .subscribe(fl => {
-        // TODO: only OUTDOOREVENTs are accepted as FixedLocations. To be changed when support for other application types is implemented
         this.areas = fl
-          .filter(f => f.applicationType === ApplicationType.OUTDOOREVENT)
+          .filter(f => f.applicationType === type)
           .map(entry => entry.area)
           .filter((v, i, a) => a.indexOf(v) === i); // unique area names
-        this.fixedLocations = fl.filter(f => f.applicationType === ApplicationType.OUTDOOREVENT);
+
+        this.fixedLocations = fl.filter(f => f.applicationType === type);
+        this.sections = [];
       });
   }
 }

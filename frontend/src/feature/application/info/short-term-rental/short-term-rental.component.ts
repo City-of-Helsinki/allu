@@ -57,16 +57,7 @@ export class ShortTermRentalComponent implements OnInit {
         this.application = application;
         this.application.type = this.route.routeConfig.path;
 
-        this.application.location = this.application.location || this.locationState.location;
-
-        // TODO: mismatch here. Date+time should be used in location too.
-        let defaultDate = new Date();
-        this.application.startTime = this.locationState.startDate || this.application.startTime || defaultDate;
-        this.application.endTime = TimeUtil.getEndOfDay(this.locationState.endDate || this.application.endTime || defaultDate);
-
-
-        // No metadata available yet
-        // this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
+        this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
 
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
           this.isSummary = summary;
@@ -88,14 +79,13 @@ export class ShortTermRentalComponent implements OnInit {
   onSubmit(form: ShortTermRentalForm) {
     let application = this.application;
     application.metadata = this.meta;
-
     application.name = form.details.name;
     application.location.area = form.details.area;
     application.uiStartTime = form.details.rentalTimes.startTime;
     application.uiEndTime = form.details.rentalTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
-    application.event = ShortTermRentalDetailsForm.to(form.details);
+    application.event = ShortTermRentalDetailsForm.to(form.details, this.route.routeConfig.path);
 
     this.applicationHub.save(application).subscribe(app => {
       console.log('application saved');
@@ -105,6 +95,8 @@ export class ShortTermRentalComponent implements OnInit {
   }
 
   private initForm() {
+    this.applicationForm = this.fb.group({});
+
     this.rentalForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', Validators.required],
@@ -115,7 +107,7 @@ export class ShortTermRentalComponent implements OnInit {
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
     });
 
-    this.applicationForm = this.fb.group(this.rentalForm);
+    this.applicationForm.addControl('details', this.rentalForm);
   }
 
   private metadataLoaded(metadata: StructureMeta) {

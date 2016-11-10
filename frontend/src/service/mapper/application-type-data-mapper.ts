@@ -35,7 +35,7 @@ export class ApplicationTypeDataMapper {
         TimeUtil.dateFromBackend(backendEvent.structureStartTime),
         TimeUtil.dateFromBackend(backendEvent.structureEndTime));
     } else if (shortTermRental.containsType(ApplicationType[type])) {
-      return new ShortTermRental(backendEvent.description, backendEvent.commercial);
+      return new ShortTermRental(type, backendEvent.description, backendEvent.commercial);
     } else {
       return undefined;
     }
