@@ -119,8 +119,8 @@ export const translations = {
       typeMissing: 'Hakijan tyyppi puuttuu',
       nameMissing: 'Hakijan nimi puuttuu',
       nameShort: 'Hakijan nimi on liian lyhyt',
-      identifierMissing: 'Hakijan tunniste puuttuu',
-      identifierShort: 'Hakijan tunniste on liian lyhyt',
+      registryKeyMissing: 'Hakijan tunniste puuttuu',
+      registryKeyShort: 'Hakijan tunniste on liian lyhyt',
       emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt'
     }

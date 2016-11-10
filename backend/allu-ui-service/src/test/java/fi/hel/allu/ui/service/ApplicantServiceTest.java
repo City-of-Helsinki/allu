@@ -5,7 +5,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import javax.validation.ConstraintViolation;
@@ -18,10 +17,6 @@ import static org.junit.Assert.*;
 
 public class ApplicantServiceTest extends MockServices {
   private static Validator validator;
-  @Mock
-  protected PersonService personService;
-  @Mock
-  protected OrganizationService organizationService;
   @InjectMocks
   protected ApplicantService applicantService;
 

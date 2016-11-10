@@ -1,14 +1,11 @@
 package fi.hel.allu.ui.service;
 
 import com.google.common.base.Optional;
-
-import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.domain.ApplicationPricing;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -186,23 +183,10 @@ public class DecisionService {
     if (applicant == null) {
       return Collections.emptyList();
     }
-    if (applicant.getType() == ApplicantType.PERSON) {
-      PersonJson p = applicant.getPerson();
-      if (p == null) {
-        return Collections.emptyList();
-      }
-      return Arrays.asList(String.format("%s, %s", p.getName(), p.getSsn()),
-          postalAddress(p.getPostalAddress()),
-          String.format("%s, %s", p.getEmail(), p.getPhone()));
-    } else {
-      OrganizationJson o = applicant.getOrganization();
-      if (o == null) {
-        return Collections.emptyList();
-      }
-      return Arrays.asList(String.format("%s, %s", o.getName(), o.getBusinessId()),
-          postalAddress(o.getPostalAddress()),
-          String.format("%s, %s", o.getEmail(), o.getPhone()));
-    }
+    return Arrays.asList(
+        String.format("%s, %s", applicant.getName(), applicant.getRegistryKey()),
+        postalAddress(applicant.getPostalAddress()),
+        String.format("%s, %s", applicant.getEmail(), applicant.getPhone()));
   }
 
   private List<String> applicantContactLines(ApplicationJson application) {

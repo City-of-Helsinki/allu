@@ -4,7 +4,6 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,25 +18,19 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
+import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationServiceTest extends MockServices {
   private static Validator validator;
   @Mock
   protected LocationService locationService;
-  @Mock
-  protected PersonService personService;
   @Mock
   protected ProjectService projectService;
   @Mock
@@ -71,8 +64,6 @@ public class ApplicationServiceTest extends MockServices {
     initSearchMocks();
     Mockito.when(locationService.createLocation(Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
-    Mockito.when(personService.createPerson(Mockito.anyObject())).thenAnswer((Answer<PersonJson>) invocation ->
-        createPersonJson(200));
     Mockito.when(projectService.createProject(Mockito.anyObject())).thenAnswer((Answer<ProjectJson>) invocation ->
         createProjectJson(100));
     Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
@@ -80,8 +71,6 @@ public class ApplicationServiceTest extends MockServices {
 
     Mockito.when(locationService.findLocationById(Mockito.anyInt())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
-    Mockito.when(personService.findPersonById(Mockito.anyInt())).thenAnswer((Answer<PersonJson>) invocation ->
-        createPersonJson(200));
     Mockito.when(projectService.findProjectById(Mockito.anyInt())).thenAnswer((Answer<ProjectJson>) invocation ->
         createProjectJson(100));
     Mockito.when(applicantService.findApplicantById(Mockito.anyInt())).thenAnswer((Answer<ApplicantJson>) invocation ->
@@ -127,11 +116,9 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getLocation());
     assertEquals(100, response.getProject().getId().intValue());
     assertEquals(102, response.getLocation().getId().intValue());
+    assertNotNull(response.getApplicant());
     assertEquals(103, response.getApplicant().getId().intValue());
     assertEquals(createMockUser().getId(), response.getHandler().getId());
-    assertNull(response.getApplicant().getPerson());
-    assertNotNull(response.getApplicant().getOrganization());
-    assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
     assertNotNull(response.getLocation().getGeometry());
     assertNotNull(response.getEvent());
     assertNotNull(response.getDecisionTime());
@@ -175,10 +162,8 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getEvent());
     assertEquals(100, response.getProject().getId().intValue());
     assertEquals(102, response.getLocation().getId().intValue());
+    assertNotNull(response.getApplicant());
     assertEquals(103, response.getApplicant().getId().intValue());
-    assertNull(response.getApplicant().getPerson());
-    assertNotNull(response.getApplicant().getOrganization());
-    assertEquals(201, response.getApplicant().getOrganization().getId().intValue());
     assertEquals(createMockOutdoorEventModel().getNature(), ((OutdoorEventJson) response.getEvent()).getNature());
   }
 
@@ -203,10 +188,8 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.get(0).getEvent());
     assertEquals(100, response.get(0).getProject().getId().intValue());
     assertEquals(102, response.get(0).getLocation().getId().intValue());
+    assertNotNull(response.get(0).getApplicant());
     assertEquals(103, response.get(0).getApplicant().getId().intValue());
-    assertNull(response.get(0).getApplicant().getPerson());
-    assertNotNull(response.get(0).getApplicant().getOrganization());
-    assertEquals(201, response.get(0).getApplicant().getOrganization().getId().intValue());
     assertNotNull(response.get(1));
     assertNotNull(response.get(1).getProject());
     assertNotNull(response.get(1).getApplicant());

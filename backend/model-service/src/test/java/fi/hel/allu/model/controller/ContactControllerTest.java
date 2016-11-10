@@ -1,13 +1,13 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.OrganizationDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.WebTestCommon;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,9 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -36,33 +34,35 @@ public class ContactControllerTest {
   private WebTestCommon wtc;
 
   @Autowired
-  private OrganizationDao organizationDao;
+  private ApplicantDao applicantDao;
   @Autowired
   private ApplicationDao applicationDao;
   @Autowired
   private ProjectDao projectDao;
 
-  private Integer orgId1;
-  private Integer orgId2;
+  private Integer applicantId1;
+  private Integer applicantId2;
 
   @Before
   public void setup() throws Exception {
     wtc.setup();
-    Organization org = new Organization();
-    org.setName("Test organization 1");
-    org.setBusinessId("12345676-89");
-    org = organizationDao.insert(org);
-    orgId1 = org.getId();
-    org = new Organization();
-    org.setName("Test organization 2");
-    org.setBusinessId("99999999-999");
-    org = organizationDao.insert(org);
-    orgId2 = org.getId();
+    Applicant applicant = new Applicant();
+    applicant.setType(ApplicantType.PERSON);
+    applicant.setName("Test person 1");
+    applicant.setRegistryKey("12345676-89");
+    applicant = applicantDao.insert(applicant);
+    applicantId1 = applicant.getId();
+    applicant = new Applicant();
+    applicant.setType(ApplicantType.PERSON);
+    applicant.setName("Test person 2");
+    applicant.setRegistryKey("99999999-999");
+    applicant = applicantDao.insert(applicant);
+    applicantId2 = applicant.getId();
   }
 
   private Contact createDummyContact() {
     Contact contact = new Contact();
-    contact.setOrganizationId(orgId1);
+    contact.setApplicantId(applicantId1);
     contact.setName("Pho Soup");
     contact.setEmail("phosoup@soppa.org");
     contact.setPhone("555-SOUP");
@@ -86,14 +86,14 @@ public class ContactControllerTest {
   @Test
   public void addContactWithBadOrganization() throws Exception {
     Contact contact = createDummyContact();
-    contact.setOrganizationId(orgId1 + 100);
+    contact.setApplicantId(applicantId1 + 100);
     wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
   }
 
   @Test
   public void addContactWithoutOrganization() throws Exception {
     Contact contact = createDummyContact();
-    contact.setOrganizationId(null);
+    contact.setApplicantId(null);
     wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
   }
 
@@ -143,28 +143,28 @@ public class ContactControllerTest {
   }
 
   @Test
-  public void findOrganizationContacts() throws Exception {
-    // Add a few contacts for organization 1
+  public void findApplicantContacts() throws Exception {
+    // Add a few contacts for applicant 1
     for (int i = 0; i < 10; ++i) {
       Contact contact = createDummyContact();
       contact.setName(String.format("Dummy contact %d", i));
       wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
     }
-    // Add a few contacts for organization 2
+    // Add a few contacts for applicant 2
     for (int i = 0; i < 4; ++i) {
       Contact contact = createDummyContact();
-      contact.setOrganizationId(orgId2);
+      contact.setApplicantId(applicantId2);
       contact.setName(String.format("Dummier contact %d", i));
       wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
     }
-    // Now get all contacts for organization 1 and make sure there's enough:
-    ResultActions resultActions = wtc.perform(get(String.format("/contacts?organizationId=%d", orgId1)))
+    // Now get all contacts for applicant 1 and make sure there's enough:
+    ResultActions resultActions = wtc.perform(get(String.format("/contacts?applicantId=%d", applicantId1)))
         .andExpect(status().isOk());
     Contact[] contacts = wtc.parseObjectFromResult(resultActions, Contact[].class);
     assertEquals(10, contacts.length);
 
-    // Try also with nonexistent organization:
-    resultActions = wtc.perform(get(String.format("/contacts?organizationId=%d", orgId1 + orgId2 + 123)))
+    // Try also with nonexistent applicant:
+    resultActions = wtc.perform(get(String.format("/contacts?applicantId=%d", applicantId1 + applicantId2 + 123)))
         .andExpect(status().isOk());
     contacts = wtc.parseObjectFromResult(resultActions, Contact[].class);
     assertEquals(0, contacts.length);

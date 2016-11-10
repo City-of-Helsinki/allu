@@ -1,17 +1,8 @@
-create table allu.person (
+create table allu.applicant (
     id serial primary key,
-    ssn char(11),
-    name text,
-    street_address text,
-    postal_code text,
-    city text,
-    email text,
-    phone text );
-
-create table allu.organization (
-    id serial primary key,
-    name text,
-    business_id text,
+    type text not null,
+    name text not null,
+    registry_key text,
     street_address text,
     postal_code text,
     city text,
@@ -66,19 +57,13 @@ create table allu.project (
 
 create table allu.contact (
     id serial primary key,
-    organization_id integer not null references allu.organization(id),
+    applicant_id integer not null references allu.applicant(id),
     name text not null,
     street_address text,
     postal_code text,
     city text,
     email text,
     phone text );
-
-create table allu.applicant (
-    id serial primary key,
-    type text not null,
-    person_id integer references allu.person(id),
-    organization_id integer references allu.organization(id));
 
 create table allu.user (
   id serial primary key,

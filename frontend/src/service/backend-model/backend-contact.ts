@@ -1,9 +1,7 @@
-import {BackendOrganization} from './backend-organization';
-import {BackendPerson} from './backend-person';
 
 export interface BackendContact {
   id: number;
-  organizationId: number;
+  applicantId: number;
   name: string;
   streetAddress: string;
   postalCode: string;

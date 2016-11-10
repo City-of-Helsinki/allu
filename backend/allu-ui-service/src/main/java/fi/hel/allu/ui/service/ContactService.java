@@ -66,7 +66,7 @@ public class ContactService {
   private Contact mapContactFromJson(ContactJson json) {
     Contact contact = new Contact();
     contact.setId(json.getId());
-    contact.setOrganizationId(json.getOrganizationId());
+    contact.setApplicantId(json.getApplicantId());
     contact.setName(json.getName());
     contact.setStreetAddress(json.getStreetAddress());
     contact.setPostalCode(json.getPostalCode());
@@ -79,7 +79,7 @@ public class ContactService {
   private ContactJson mapContactToJson(Contact c) {
     ContactJson json = new ContactJson();
     json.setId(c.getId());
-    json.setOrganizationId(c.getOrganizationId());
+    json.setApplicantId(c.getApplicantId());
     json.setName(c.getName());
     json.setStreetAddress(c.getStreetAddress());
     json.setPostalCode(c.getPostalCode());

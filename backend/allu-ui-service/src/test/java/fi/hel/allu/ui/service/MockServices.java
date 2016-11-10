@@ -41,12 +41,8 @@ public abstract class MockServices {
         .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Person.class)))
-        .thenAnswer((Answer<Person>) invocation -> createMockPersonModel());
-
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Organization.class)))
-        .thenAnswer((Answer<Organization>) invocation -> createMockOrganizationModel());
+        Mockito.eq(Applicant.class)))
+        .thenAnswer((Answer<Applicant>) invocation -> createMockPersonModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Project.class)))
@@ -82,17 +78,14 @@ public abstract class MockServices {
             restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(AttachmentInfo[].class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<AttachmentInfo[]>>) invocation -> createMockAttachmentInfoListResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Person.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Person>>) invocation -> createMockPersonResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockPersonResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Project.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> createMockProjectResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockApplicantResponse());
-
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Organization.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Organization>>) invocation -> createMockOrganizationResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse());
@@ -133,42 +126,12 @@ public abstract class MockServices {
     return locationJson;
   }
 
-  public PersonJson createPersonJson(Integer id) {
-    PersonJson personJson = new PersonJson();
-    personJson.setId(id);
-    PostalAddressJson postalAddressJson = new PostalAddressJson();
-    postalAddressJson.setCity("Person city, Json");
-    postalAddressJson.setPostalCode("postalcode, Json");
-    postalAddressJson.setStreetAddress("street address 2, Json");
-    personJson.setPostalAddress(postalAddressJson);
-    personJson.setSsn("343232, Json");
-    personJson.setPhone("43244323, Json");
-    personJson.setName("Mock person, Json");
-    personJson.setEmail("Mock email, Json");
-    return personJson;
-  }
-
-  public OrganizationJson createOrganizationJson(Integer id) {
-    OrganizationJson organizationJson = new OrganizationJson();
-    organizationJson.setId(id);
-    organizationJson.setBusinessId("444444, Json");
-    PostalAddressJson postalAddressJsonOrgnization = new PostalAddressJson();
-    postalAddressJsonOrgnization.setCity("Kaupunki2, Json");
-    postalAddressJsonOrgnization.setStreetAddress("Osoite 213, Json");
-    postalAddressJsonOrgnization.setPostalCode("002113, Json");
-    organizationJson.setPostalAddress(postalAddressJsonOrgnization);
-    organizationJson.setPhone("323423421, Json");
-    organizationJson.setName("Organisaatio 2, Json");
-    ;
-    organizationJson.setEmail("organization2 email, Json");
-    return organizationJson;
-  }
-
   public ApplicantJson createApplicantJson(Integer id, Integer typeId) {
     ApplicantJson applicantJson = new ApplicantJson();
     applicantJson.setId(id);
     applicantJson.setType(ApplicantType.COMPANY);
-    applicantJson.setOrganization(createOrganizationJson(typeId));
+    applicantJson.setName("noname");
+    applicantJson.setRegistryKey("444444");
     return applicantJson;
   }
 
@@ -263,30 +226,17 @@ public abstract class MockServices {
   }
 
 
-  public Person createMockPersonModel() {
-    Person person = new Person();
+  public Applicant createMockPersonModel() {
+    Applicant person = new Applicant();
     person.setCity("Person city, Model");
     person.setPostalCode("postalcode, Model");
     person.setStreetAddress("street address 2, Model");
-    person.setSsn("343232, Model");
+    person.setRegistryKey("343232, Model");
     person.setPhone("43244323, Model");
     person.setName("Mock person, Model");
     person.setId(200);
     person.setEmail("Mock email, Model");
     return person;
-  }
-
-  public Organization createMockOrganizationModel() {
-    Organization organization = new Organization();
-    organization.setBusinessId("3333333, Model");
-    organization.setCity("Kaupunki, Model");
-    organization.setStreetAddress("Osoite 21, Model");
-    organization.setPostalCode("00211, Model");
-    organization.setPhone("32342342, Model");
-    organization.setName("Organisaatio 1, Model");
-    organization.setId(201);
-    organization.setEmail("organization email, Model");
-    return organization;
   }
 
   public Project createMockProjectModel() {
@@ -299,8 +249,7 @@ public abstract class MockServices {
   public Applicant createMockApplicantModel() {
     Applicant applicant = new Applicant();
     applicant.setId(103);
-    applicant.setType(ApplicantType.COMPANY);
-    applicant.setOrganizationId(201);
+    applicant.setType(ApplicantType.PERSON);
     return applicant;
   }
 
@@ -364,7 +313,7 @@ public abstract class MockServices {
     return esFlatValues;
   }
 
-  public ResponseEntity<Person> createMockPersonResponse() {
+  public ResponseEntity<Applicant> createMockPersonResponse() {
     return new ResponseEntity<>(createMockPersonModel(), HttpStatus.OK);
   }
 
@@ -374,10 +323,6 @@ public abstract class MockServices {
 
   public ResponseEntity<Applicant> createMockApplicantResponse() {
     return new ResponseEntity<>(createMockApplicantModel(), HttpStatus.OK);
-  }
-
-  public ResponseEntity<Organization> createMockOrganizationResponse() {
-    return new ResponseEntity<>(createMockOrganizationModel(), HttpStatus.OK);
   }
 
   public ResponseEntity<Location> createMockLocationResponse() {

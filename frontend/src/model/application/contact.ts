@@ -2,7 +2,7 @@ export class Contact {
   constructor();
   constructor(
     id: number,
-    organizationId: number,
+    applicantId: number,
     name: string,
     streetAddress: string,
     postalCode: string,
@@ -12,7 +12,7 @@ export class Contact {
   );
   constructor(
     public id?: number,
-    public organizationId?: number,
+    public applicantId?: number,
     public name?: string,
     public streetAddress?: string,
     public postalCode?: string,

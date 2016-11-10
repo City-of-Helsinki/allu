@@ -329,24 +329,21 @@
   "applicant":{
     "type":"COMPANY",
     "person":null,
-    "organization":{
-      "id":null,
-      "name":"Tervaajat Oy",
-      "businessId":"1234567-1",
-      "postalAddress":{
-        "streetAddress":"Tervatie 1",
-        "postalCode":"00300",
-        "city":"Helsinki"
-      },
-      "email":"info@tervaajat.fi",
-      "phone":"09-1234567"
+    "id":null,
+    "name":"Tervaajat Oy",
+    "registryKey":"1234567-1",
+    "postalAddress":{
+      "streetAddress":"Tervatie 1",
+      "postalCode":"00300",
+      "city":"Helsinki"
     },
-    "id":null
+    "email":"info@tervaajat.fi",
+    "phone":"09-1234567"
   },
   "contactList":[
     {
       "id":null,
-      "organizationId":null,
+      "applicantId":null,
       "name":"Terva Miettinen",
       "streetAddress":"Tervatie 1",
       "postalCode":"00300",
