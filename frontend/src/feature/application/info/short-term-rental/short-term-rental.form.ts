@@ -3,6 +3,7 @@ import {Contact} from '../../../../model/application/contact';
 import {TimePeriod} from '../time-period';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {Application} from '../../../../model/application/application';
+import {ApplicationCategoryType} from '../../type/application-category';
 
 export interface ShortTermRentalForm {
   applicant: ApplicantForm;
@@ -11,13 +12,6 @@ export interface ShortTermRentalForm {
 }
 
 export class ShortTermRentalDetailsForm {
-  constructor()
-  constructor(
-    name: string,
-    description: string,
-    area: number,
-    rentalTimes: TimePeriod,
-    commercial: boolean)
   constructor(
     public name?: string,
     public description?: string,
@@ -35,7 +29,7 @@ export class ShortTermRentalDetailsForm {
     );
   }
 
-  static to(form: ShortTermRentalDetailsForm): ShortTermRental {
-    return new ShortTermRental(form.description, form.commercial);
+  static to(form: ShortTermRentalDetailsForm, eventType: string): ShortTermRental {
+    return new ShortTermRental(eventType, form.description, form.commercial);
   }
 }

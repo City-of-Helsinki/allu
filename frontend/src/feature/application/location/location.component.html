@@ -18,7 +18,7 @@
               <label for="info">Lisätietoja paikasta</label>
             </div>
             <div class="input-field col m8">
-              <select [(ngModel)]="selectedArea" materialize="material_select">
+              <select [(ngModel)]="selectedArea" materialize="material_select" [materializeSelectOptions]="areas">
                 <option value="">Ei tapahtuma-aluetta</option>
                 <option *ngFor="let area of areas" [value]="area">{{area}}</option>
               </select>

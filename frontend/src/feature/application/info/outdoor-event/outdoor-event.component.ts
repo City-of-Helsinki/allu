@@ -82,7 +82,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
     application.name = form.event.name;
     application.type = ApplicationType[ApplicationType.OUTDOOREVENT];
     application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.event = OutdoorEventDetailsForm.toOutdoorEvent(form.event);
+    application.event = OutdoorEventDetailsForm.toOutdoorEvent(form.event, ApplicationType.OUTDOOREVENT);
     application.contactList = form.contacts;
 
     this.applicationHub.save(application).subscribe(app => {

@@ -1,6 +1,7 @@
 import {OutdoorEvent} from '../../../../../model/application/outdoor-event/outdoor-event';
 import {TimePeriod} from '../../time-period';
 import {ApplicationCategoryType} from '../../../type/application-category';
+import {ApplicationType} from '../../../../../model/application/type/application-type';
 
 export class OutdoorEventDetailsForm {
   constructor(public name?: string,
@@ -51,12 +52,12 @@ export class OutdoorEventDetailsForm {
       new TimePeriod(event.uiStructureStartTime, event.uiStructureEndTime));
   }
 
-  static toOutdoorEvent(form: OutdoorEventDetailsForm): OutdoorEvent {
+  static toOutdoorEvent(form: OutdoorEventDetailsForm, type: ApplicationType): OutdoorEvent {
     let event = new OutdoorEvent();
     event.nature = form.nature;
     event.description = form.description;
     event.url = form.url;
-    event.type = form.type;
+    event.type = ApplicationType[type];
     event.applicationCategory = ApplicationCategoryType[ApplicationCategoryType.EVENT];
     event.uiStartTime = form.eventTimes.startTime;
     event.uiEndTime = form.eventTimes.endTime;
