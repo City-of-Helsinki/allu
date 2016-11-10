@@ -114,7 +114,7 @@ INSERT INTO allu.structure_meta (application_type, version) VALUES ('BRIDGE_BANN
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Kaupallinen', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -140,8 +140,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('BENJI', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -167,8 +165,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('PROMOTION_OR_SALES', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -194,8 +190,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('URBAN_FARMING', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -221,8 +215,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('KESKUSKATU_SALES', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -248,8 +240,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('SUMMER_THEATER', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -275,8 +265,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('DOG_TRAINING_FIELD', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -302,8 +290,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('DOG_TRAINING_EVENT', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -329,8 +315,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('CARGO_CONTAINER', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -356,8 +340,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('SMALL_ART_AND_CULTURE', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -383,8 +365,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('SEASON_SALE', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -410,8 +390,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('CIRCUS', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -437,8 +415,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('ART', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -464,8 +440,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('STORAGE_AREA', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (
@@ -491,8 +465,6 @@ VALUES (
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('OTHER_SHORT_TERM_RENTAL', 1);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'description', 'Vuokrauksen kuvaus', 'STRING', null, null, null);
-INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
-    VALUES (currval('allu.structure_meta_id_seq'), 'commercial', 'Sisältää kaupallista toimintaa', 'BOOLEAN', null, null, null);
 -- Use common Contact definition
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
 VALUES (

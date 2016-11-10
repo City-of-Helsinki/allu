@@ -34,9 +34,10 @@ export class ShortTermRentalComponent implements OnInit {
   application: Application;
   applicationForm: FormGroup;
   rentalForm: FormGroup;
+  submitPending = false;
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;
-  private isSummary: boolean;
+  isSummary: boolean;
 
   private meta: StructureMeta;
 
@@ -77,6 +78,7 @@ export class ShortTermRentalComponent implements OnInit {
   }
 
   onSubmit(form: ShortTermRentalForm) {
+    this.submitPending = true;
     let application = this.application;
     application.metadata = this.meta;
     application.name = form.details.name;
@@ -90,7 +92,10 @@ export class ShortTermRentalComponent implements OnInit {
     this.applicationHub.save(application).subscribe(app => {
       console.log('application saved');
       this.locationState.clear();
+      this.submitPending = false;
       this.router.navigate(['applications', app.id, 'summary']);
+    }, err => {
+      this.submitPending = false;
     });
   }
 
@@ -101,6 +106,7 @@ export class ShortTermRentalComponent implements OnInit {
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', Validators.required],
       area: undefined,
+      commercial: [false],
       rentalTimes: this.fb.group({
         startTime: ['', Validators.required],
         endTime: ['', Validators.required]

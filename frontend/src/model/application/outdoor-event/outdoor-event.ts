@@ -1,5 +1,6 @@
 import {ApplicationTypeData} from './../type/application-type-data';
 import {TimeUtil} from '../../../util/time.util.ts';
+import {CalculatedPricing} from './calculated-pricing';
 
 export class OutdoorEvent extends ApplicationTypeData {
   constructor()
@@ -20,6 +21,7 @@ export class OutdoorEvent extends ApplicationTypeData {
               foodSales: boolean,
               foodProviders: string,
               marketingProviders: string,
+              calculatedPricing: CalculatedPricing,
               structureArea: number,
               structureDescription: string,
               structureStartTime: Date,
@@ -41,11 +43,13 @@ export class OutdoorEvent extends ApplicationTypeData {
               public foodSales?: boolean,
               public foodProviders?: string,
               public marketingProviders?: string,
+              public calculatedPricing?: CalculatedPricing,
               public structureArea?: number,
               public structureDescription?: string,
               public structureStartTime?: Date,
               public structureEndTime?: Date) {
     super();
+    this.calculatedPricing = calculatedPricing || new CalculatedPricing();
   }
 
   /*

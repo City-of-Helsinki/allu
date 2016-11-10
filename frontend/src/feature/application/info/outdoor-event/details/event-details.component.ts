@@ -105,6 +105,11 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
       foodSales: [false],
       foodProviders: [''],
       marketingProviders: [''],
+      pricing: this.fb.group({
+        calculatedPrice: [0],
+        customPrice: [0, ComplexValidator.greaterThanOrEqual(0)],
+        reason: ['']
+      }),
       structureArea: [0, ComplexValidator.greaterThanOrEqual(0)],
       structureDescription: [''],
       structureTimes: this.fb.group({

@@ -34,7 +34,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   private isSummary: boolean;
   private attachments: AttachmentInfo[];
   private uploadProgress = 0;
-  private submitted = false;
+  private submitPending = false;
 
   private meta: StructureMeta;
 
@@ -76,6 +76,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onSubmit(form: OutdoorEventForm) {
+    this.submitPending = true;
     let application = this.application;
     application.metadata = this.meta;
 
@@ -98,13 +99,12 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private saveAttachments(application: Application) {
-    this.submitted = true;
     this.attachmentHub.upload(application.id, this.attachments)
       .subscribe(
         progress => { this.uploadProgress = progress; },
         error => {
           console.log('Error', error);
-          this.submitted = false;
+          this.submitPending = false;
         },
         () => this.router.navigate(['applications', application.id, 'summary'])
       );

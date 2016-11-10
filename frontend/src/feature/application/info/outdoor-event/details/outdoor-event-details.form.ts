@@ -2,6 +2,8 @@ import {OutdoorEvent} from '../../../../../model/application/outdoor-event/outdo
 import {TimePeriod} from '../../time-period';
 import {ApplicationCategoryType} from '../../../type/application-category';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
+import {ApplicationPricing} from '../../application-pricing';
+import {CalculatedPricing} from '../../../../../model/application/outdoor-event/calculated-pricing';
 
 export class OutdoorEventDetailsForm {
   constructor(public name?: string,
@@ -21,11 +23,13 @@ export class OutdoorEventDetailsForm {
               public foodSales?: boolean,
               public foodProviders?: string,
               public marketingProviders?: string,
+              public pricing?: ApplicationPricing,
               public structureArea?: number,
               public structureDescription?: string,
               public structureTimes?: TimePeriod) {
-    eventTimes = new TimePeriod();
-    structureTimes = new TimePeriod();
+    this.eventTimes = eventTimes || new TimePeriod();
+    this.structureTimes = structureTimes || new TimePeriod();
+    this.pricing = pricing || new ApplicationPricing();
   }
 
   static fromOutdoorEvent(name: string, event: OutdoorEvent): OutdoorEventDetailsForm {
@@ -47,6 +51,7 @@ export class OutdoorEventDetailsForm {
       event.foodSales,
       event.foodProviders,
       event.marketingProviders,
+      new ApplicationPricing(event.calculatedPricing.price),
       event.structureArea,
       event.structureDescription,
       new TimePeriod(event.uiStructureStartTime, event.uiStructureEndTime));
@@ -71,6 +76,7 @@ export class OutdoorEventDetailsForm {
     event.foodSales = form.foodSales;
     event.foodProviders = form.foodProviders;
     event.marketingProviders = form.marketingProviders;
+    event.calculatedPricing = new CalculatedPricing(form.pricing.calculatedPrice);
     event.structureArea = form.structureArea;
     event.structureDescription = form.structureDescription;
     event.uiStructureStartTime = form.structureTimes.startTime;

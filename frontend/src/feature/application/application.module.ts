@@ -29,6 +29,7 @@ import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rent
 
 import {LocationState} from '../../service/application/location-state';
 import {AttachmentService} from '../../service/attachment-service';
+import {ApplicationActionsComponent} from './info/application-actions.component';
 
 @NgModule({
   imports: [
@@ -50,6 +51,7 @@ import {AttachmentService} from '../../service/attachment-service';
     PromotionEventComponent,
     ShortTermRentalComponent,
     ApplicationAttachmentComponent,
+    ApplicationActionsComponent,
     FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,
     LoadingComponent,

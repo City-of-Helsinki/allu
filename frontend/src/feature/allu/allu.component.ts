@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, NavigationEnd} from '@angular/router';
 import {ViewEncapsulation} from '@angular/core';
 import {Login} from '../../feature/login/login.component';
 import {SearchService} from '../../service/search.service';
@@ -22,5 +22,13 @@ export class AlluComponent {
     public router: Router,
     private locationService: LocationService,
     private applicationService: ApplicationService,
-    private decisionService: DecisionService) {}
+    private decisionService: DecisionService) {
+
+    // Scroll to top of the page when route changes
+    this.router.events
+      .filter(event => (event instanceof NavigationEnd))
+      .subscribe(event => {
+        document.body.scrollTop = 0;
+      });
+  }
 }
