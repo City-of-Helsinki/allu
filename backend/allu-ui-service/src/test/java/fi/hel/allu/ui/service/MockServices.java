@@ -122,7 +122,7 @@ public abstract class MockServices {
     postalAddressJsonLocation.setCity("city, Json");
     locationJson.setPostalAddress(postalAddressJsonLocation);
     locationJson.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
-    locationJson.setFixedLocationId(12345);
+    locationJson.setFixedLocationIds(Arrays.asList(12345, 5432));
     return locationJson;
   }
 
@@ -258,7 +258,7 @@ public abstract class MockServices {
     location.setCity("City1, Model");
     location.setPostalCode("33333, Model");
     location.setStreetAddress("Street 1, Model");
-    location.setFixedLocationId(23456);
+    location.setFixedLocationIds(Arrays.asList(23456, 7656));
     location.setId(102);
     location.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
     return location;

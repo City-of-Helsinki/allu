@@ -1,11 +1,12 @@
 package fi.hel.allu.ui.service;
 
-import com.google.common.base.Optional;
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.domain.ApplicationPricing;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -204,23 +203,58 @@ public class DecisionService {
     if (location == null) {
       return "";
     }
-    Optional<Integer> flId = Optional.fromNullable(location.getFixedLocationId());
-    if (flId.isPresent()) {
-      return fixedLocationAddress(flId.get());
+    List<Integer> locationIds = location.getFixedLocationIds();
+    if (locationIds != null && !locationIds.isEmpty()) {
+      return fixedLocationAddressLine(locationIds);
     } else {
       return application.getLocation().getPostalAddress().getStreetAddress();
     }
   }
 
-  private String fixedLocationAddress(Integer flId) {
-    List<FixedLocationJson> fixedLocations = locationService.getFixedLocationList();
-    FixedLocationJson location = fixedLocations.stream().filter(fl -> fl.getId() == flId).findFirst()
-        .orElse(BAD_LOCATION);
-    if (location.getSection() == null) {
-      return String.format("%s", location.getArea());
-    } else {
-      return String.format("%s, lohko %s", location.getArea(), location.getSection());
+  private String fixedLocationAddressLine(List<Integer> locationIds) {
+    // Get all defined fixed outdoor event locations from locationService:
+    List<FixedLocationJson> allFixedLocations = locationService.getFixedLocationList().stream()
+        .filter(fl -> fl.getApplicationType() == ApplicationType.OUTDOOREVENT).collect(Collectors.toList());
+    // Create lookup map id -> fixed location:
+    Map<Integer, FixedLocationJson> flMap = allFixedLocations.stream()
+        .collect(Collectors.toMap(FixedLocationJson::getId, Function.identity()));
+    // Find all fixed locations that match locationIds and group them by area
+    // name:
+    Map<String, List<FixedLocationJson>> grouped = locationIds.stream().map(id -> flMap.get(id))
+        .collect(Collectors.groupingBy(FixedLocationJson::getArea));
+    if (grouped.isEmpty()) {
+      return BAD_LOCATION.getArea();
     }
+    // Now generate the line for each area:
+    StringBuilder addressLine = new StringBuilder();
+    for (Map.Entry<String, List<FixedLocationJson>> entry : grouped.entrySet()) {
+      if (addressLine.length() != 0) {
+        addressLine.append("; ");
+      }
+      addressLine.append(addressLineFor(entry.getValue()));
+    }
+    return addressLine.toString();
+  }
+
+  // Generate a line like "Rautatientori, lohkot A, C, D".
+  // all locations are from same area, there is always at least one location.
+  private CharSequence addressLineFor(List<FixedLocationJson> locations) {
+    // Start with area name (e.g., "Rautatientori"):
+    StringBuilder line = new StringBuilder(locations.get(0).getArea());
+    String firstSection = locations.get(0).getSection();
+    if (locations.size() == 1) {
+      // Only one section and could be nameless:
+      if (firstSection != null) {
+        line.append(", lohko " + firstSection);
+      }
+    } else {
+      // Many sections, so they all have names
+      line.append(", lohkot " + firstSection);
+      for (int i = 1; i < locations.size(); ++i) {
+        line.append(String.format(", %s", locations.get(i).getSection()));
+      }
+    }
+    return line;
   }
 
   private String postalAddress(PostalAddressJson a) {

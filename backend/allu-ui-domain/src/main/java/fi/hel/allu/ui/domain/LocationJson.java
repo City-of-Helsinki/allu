@@ -10,6 +10,8 @@ import org.geolatte.geom.Geometry;
 
 import javax.validation.Valid;
 
+import java.util.List;
+
 /**
  * inFinnish: Hakemuksen sijainti
  */
@@ -21,7 +23,7 @@ public class LocationJson {
   private Double area;
   @Valid
   private PostalAddressJson postalAddress;
-  private Integer fixedLocationId;
+  private List<Integer> fixedLocationIds;
 
   public Integer getId() {
     return id;
@@ -63,11 +65,11 @@ public class LocationJson {
    *
    * @return the fixedLocationId
    */
-  public Integer getFixedLocationId() {
-    return fixedLocationId;
+  public List<Integer> getFixedLocationIds() {
+    return fixedLocationIds;
   }
 
-  public void setFixedLocationId(Integer fixedLocationId) {
-    this.fixedLocationId = fixedLocationId;
+  public void setFixedLocationIds(List<Integer> fixedLocationIds) {
+    this.fixedLocationIds = fixedLocationIds;
   }
 }

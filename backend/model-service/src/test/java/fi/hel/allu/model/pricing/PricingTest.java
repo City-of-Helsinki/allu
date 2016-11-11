@@ -17,7 +17,7 @@ public class PricingTest {
     PricingConfiguration bc = new PricingConfiguration(6000000L, 50, 50, 14, null, null, null, null);
     Pricing bill = new Pricing();
     // Calculate a bill for 5-day event with two build days and some structures + area:
-    bill.calculateFullPrice(bc, 5, 2, 30.5, 300);
+    bill.accumulatePrice(bc, 5, 2, 30.5, 300);
     assertEquals(360000, bill.getPrice()); // The price should be 3600 EUR
     // Verify that EcoCompass gives 30% discount
     bill.applyDiscounts(true, null, false, false);
@@ -45,7 +45,7 @@ public class PricingTest {
     // Calculate price for 20-day event with four build days and a 5000 sq.m.
     // area (i.e., 14 days with base price, 6 days with discount price and 4
     // days with build price)
-    bill.calculateFullPrice(bc, 20, 4, 20, 5000.0);
+    bill.accumulatePrice(bc, 20, 4, 20, 5000.0);
     assertEquals(3562500L, bill.getPrice()); // The price should be 35625 EUR
   }
 
@@ -58,7 +58,7 @@ public class PricingTest {
     Pricing bill = new Pricing();
     // Price for 25-day event with three build days, 455 sqm structures and 1000
     // sqm area:
-    bill.calculateFullPrice(bc, 25, 3, 455.0, 1000.0);
+    bill.accumulatePrice(bc, 25, 3, 455.0, 1000.0);
     assertEquals(997500, bill.getPrice()); // The price should be 9975 EUR
   }
 

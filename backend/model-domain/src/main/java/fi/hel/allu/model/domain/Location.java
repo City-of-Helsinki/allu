@@ -8,6 +8,8 @@ import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
 
 import org.geolatte.geom.Geometry;
 
+import java.util.List;
+
 public class Location {
   private Integer id;
   @JsonSerialize(using = GeometrySerializerProxy.class)
@@ -17,7 +19,7 @@ public class Location {
   private String streetAddress;
   private String postalCode;
   private String city;
-  private Integer fixedLocationId;
+  private List<Integer> fixedLocationIds;
 
   /**
    * Get location's database ID
@@ -102,12 +104,12 @@ public class Location {
    *
    * @return the fixedLocationId
    */
-  public Integer getFixedLocationId() {
-    return fixedLocationId;
+  public List<Integer> getFixedLocationIds() {
+    return fixedLocationIds;
   }
 
-  public void setFixedLocationId(Integer fixedLocationId) {
-    this.fixedLocationId = fixedLocationId;
+  public void setFixedLocationIds(List<Integer> fixedLocationIds) {
+    this.fixedLocationIds = fixedLocationIds;
   }
 
 }
