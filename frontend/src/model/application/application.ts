@@ -13,6 +13,7 @@ import {EventNature} from './outdoor-event/event-nature';
 import {LocationState} from '../../service/application/location-state';
 import {ApplicationType} from './type/application-type';
 import {Some} from '../../util/option';
+import {CalculatedPricing} from './outdoor-event/calculated-pricing';
 
 
 export class Application {
@@ -87,6 +88,7 @@ export class Application {
       true,
       'Tapahtumassa saattaa olla elintarviketoimijoita',
       'Tapahtumassa ei luultavimmin ole markkinointitoimintaa',
+      new CalculatedPricing(),
       54,
       'Paikalle rakennetaan linna',
       undefined,

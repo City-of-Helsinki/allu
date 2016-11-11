@@ -130,12 +130,13 @@ form {
     margin-bottom: 0px;
 
     .input-field {
-      .ng-invalid:not(.ng-pristine) {
+      .ng-invalid.ng-dirty, .ng-invalid.ng-touched {
         border-bottom: 2px solid $allu-field-error;
         box-shadow: none;
       }
 
-      .ng-invalid:not(.ng-pristine) ~ label {
+      .ng-invalid.ng-dirty ~ label,
+      .ng-invalid.ng-touched ~label {
         color: $allu-field-error;
       }
     }

@@ -8,31 +8,10 @@
 
     <application-attachment [existingAttachments]="application.attachmentList" [readonly]="isSummary" (currentAttachments)="currentAttachments($event)"></application-attachment>
 
-    <div class="col m12 loose">
-      <md-card>
-        <md-card-title>Tallennus</md-card-title>
-        <md-card-content>
-          <div class="row">
-            <div *ngIf="!isSummary">
-              <div class="col m2 offset-m10">
-                <button type="submit" md-raised-button class="waves-effect waves-light btn"
-                        [disabled]="submitted || !applicationForm.valid">YHTEENVETOON</button>
-              </div>
-            </div>
-
-            <div *ngIf="isSummary">
-              <div class="col m2">
-                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/applications', application.id, 'info']">MUOKKAA</button>
-              </div>
-              <div class="col m4 offset-m6">
-                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
-                <button md-raised-button class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
-                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/decision', application.id]">PÄÄTTÄMISEEN</button>
-              </div>
-            </div>
-          </div>
-        </md-card-content>
-      </md-card>
-    </div>
+    <application-actions
+        [isSummary]="isSummary"
+        [applicationId]="application.id"
+        [formValid]="applicationForm.valid"
+        [submitPending]="submitPending"></application-actions>
   </form>
 </div>

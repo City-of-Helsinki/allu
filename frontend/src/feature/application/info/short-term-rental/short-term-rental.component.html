@@ -6,92 +6,96 @@
 
         <form [formGroup]="rentalForm">
             <div class="col m12 loose">
-            <md-card>
-                <md-card-title>Vuokrauksen tiedot</md-card-title>
-                <md-card-content>
-                    <div class="row form-group">
-                        <div class="col m6">
-                            <div class="input-field col m12">
-                                <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
-                                <label for="name">Vuokrauksen nimi*</label>
-                                <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
-                                <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
-                            </div>
-                            <div class="input-field col m12">
-                                <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
-                                <label for="description">Vuokrauksen kuvaus*</label>
-                                <field-error [form]="rentalForm" field="description" hasError="required">
-                                    {{translations.application.shortTermRental.field.descriptionMissing}}
-                                </field-error>
-                            </div>
-                        </div>
-                        <div class="input-field col m6">
-                            <input id="area" type="number" formControlName="area" [readonly]="readonly">
-                            <label for="area">Pinta-ala</label>
-                        </div>
-                        <div class="col m6 no-padding">
-                            <div formGroupName="rentalTimes">
+                <md-card>
+                    <md-card-title>Vuokrauksen tiedot</md-card-title>
+                    <md-card-content>
+                        <div class="row form-group">
+                            <div class="col m6">
                                 <div class="input-field col m12">
-                                    <input *ngIf="!readonly" id="rentalStartTime"
-                                           formControlName="startTime"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"
-                                           type="text"/>
+                                    <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
+                                    <label for="name">Vuokrauksen nimi*</label>
+                                    <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
+                                    <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
+                                </div>
+                                <div class="input-field col m12">
+                                    <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
+                                    <label for="description">Vuokrauksen kuvaus*</label>
+                                    <field-error [form]="rentalForm" field="description" hasError="required">
+                                        {{translations.application.shortTermRental.field.descriptionMissing}}
+                                    </field-error>
+                                </div>
+                            </div>
+                            <div class="input-field col m6">
+                                <input id="area" type="number" formControlName="area" [readonly]="readonly">
+                                <label for="area">Pinta-ala</label>
+                            </div>
+                            <div class="col m6 no-padding">
+                                <div formGroupName="rentalTimes">
+                                    <div class="input-field col m12">
+                                        <input *ngIf="!readonly" id="rentalStartTime"
+                                               formControlName="startTime"
+                                               materialize="pickadate"
+                                               [materializeParams]="pickadateParams"
+                                               type="text"/>
 
-                                    <input *ngIf="readonly" id="rentalStartTime" type="text" formControlName="startTime" readonly>
-                                    <label for="rentalStartTime">Alkupäivämäärä*</label>
-                                    <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
-                                        {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
+                                        <input *ngIf="readonly" id="rentalStartTime" type="text" formControlName="startTime" readonly>
+                                        <label for="rentalStartTime">Alkupäivämäärä*</label>
+                                        <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
+                                            {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
+                                        </field-error>
+                                    </div>
+                                    <div class="input-field col m12">
+                                        <input *ngIf="!readonly" id="rentalEndTime"
+                                               formControlName="endTime"
+                                               materialize="pickadate"
+                                               [materializeParams]="pickadateParams"
+                                               type="text"/>
+                                        <input *ngIf="readonly" id="rentalEndTime" type="text" formControlName="endTime" readonly>
+                                        <label for="rentalEndTime">Loppupäivämäärä*</label>
+                                        <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
+                                            {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
+                                        </field-error>
+                                    </div>
+                                    <field-error [form]="rentalForm" field="rentalTimes" hasError="startBeforeEnd">
+                                        {{translations.application.shortTermRental.field.startBeforeEnd}}
                                     </field-error>
                                 </div>
-                                <div class="input-field col m12">
-                                    <input *ngIf="!readonly" id="rentalEndTime"
-                                           formControlName="endTime"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"
-                                           type="text"/>
-                                    <input *ngIf="readonly" id="rentalEndTime" type="text" formControlName="endTime" readonly>
-                                    <label for="rentalEndTime">Loppupäivämäärä*</label>
-                                    <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
-                                        {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
-                                    </field-error>
-                                </div>
-                                <field-error [form]="rentalForm" field="rentalTimes" hasError="startBeforeEnd">
-                                    {{translations.application.shortTermRental.field.startBeforeEnd}}
-                                </field-error>
                             </div>
                         </div>
-                    </div>
-                </md-card-content>
-            </md-card>
-        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+
+            <div class="col m12 loose">
+                <md-card>
+                    <md-card-title>Hinnoitteluperusteet</md-card-title>
+                    <md-card-content>
+                        <div class="row form-group">
+                            <div *ngIf="application.type==='BRIDGE_BANNER'" class="col m6 no-padding">
+                                <div class="col m12 height-fix-bottom">
+                                    <div *ngIf="!readonly">
+                                        <input type="checkbox" class="filled-in" id="commercial" formControlName="commercial"/>
+                                        <label for="commercial">{{ meta?.getUiName('commercial') }}</label>
+                                    </div>
+                                    <div *ngIf="readonly && rentalForm.value.commercial">{{ meta?.getUiName('commercial') }}</div>
+                                </div>
+                            </div>
+                            <div class="col m12">
+                                <div class="col m12">
+                                    <label for="price">Hinta</label>
+                                    <div id="price">-</div>
+                                </div>
+                            </div>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
         </form>
 
-        <div class="col m12 loose">
-            <md-card>
-                <md-card-title>Tallennus</md-card-title>
-                <md-card-content>
-                    <div class="row">
-                        <div *ngIf="!isSummary">
-                            <div class="col m2 offset-m10">
-                                <button type="submit" md-raised-button class="waves-effect waves-light btn"
-                                        [disabled]="submitted || !applicationForm.valid">YHTEENVETOON</button>
-                            </div>
-                        </div>
-
-                        <div *ngIf="isSummary">
-                            <div class="col m2">
-                                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/applications', application.id, 'info']">MUOKKAA</button>
-                            </div>
-                            <div class="col m4 offset-m6">
-                                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
-                                <button md-raised-button class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
-                                <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/decision', application.id]">PÄÄTTÄMISEEN</button>
-                            </div>
-                        </div>
-                    </div>
-                </md-card-content>
-            </md-card>
-        </div>
+        <application-actions
+            [isSummary]="isSummary"
+            [applicationId]="application.id"
+            [formValid]="applicationForm.valid"
+            [submitPending]="submitPending"></application-actions>
     </form>
 </div>

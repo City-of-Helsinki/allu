@@ -216,9 +216,11 @@
                         </div>
                     </div>
                     <div class="col m12">
-                        <div class="col m12">
-                            <label for="price">Hinta</label>
-                            <div id="price">-</div>
+                        <div class="col m6">
+                            <div formGroupName="pricing">
+                                <input id="price" type="text" readonly formControlName="calculatedPrice">
+                                <label for="price">Hinta</label>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -24,11 +24,13 @@
               </select>
             </div>
             <div class="input-field col m2">
-              <select [(ngModel)]="selectedFixedLocation" [disabled]="noSections()"
-                      materialize="material_select" [materializeSelectOptions]="sections">
-                <option value="">Ei lohkoa</option>
-                <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
-              </select>
+              <div *ngIf="!noSections()">
+                <select [(ngModel)]="selectedFixedLocation"
+                        materialize="material_select" [materializeSelectOptions]="sections">
+                  <option value="">Ei lohkoa</option>
+                  <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
+                </select>
+              </div>
             </div>
             <div class="input-field col m2">
               <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="locationState.location.uiArea">
