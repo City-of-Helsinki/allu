@@ -31,10 +31,10 @@
                         <field-error [form]="applicantForm" field="name" hasError="minlength">{{translations.applicant.field.nameShort}}</field-error>
                     </div>
                     <div class="input-field col m4">
-                        <input id="businessID" type="text" formControlName="identifier" [readonly]="readonly">
+                        <input id="businessID" type="text" formControlName="registryKey" [readonly]="readonly">
                         <label for="businessID">{{translations.applicant.type[applicantForm.value.type || 'DEFAULT'].id}}*</label>
-                        <field-error [form]="applicantForm" field="identifier" hasError="required">{{translations.applicant.field.identifierMissing}}</field-error>
-                        <field-error [form]="applicantForm" field="identifier" hasError="minlength">{{translations.applicant.field.identifierShort}}</field-error>
+                        <field-error [form]="applicantForm" field="registryKey" hasError="required">{{translations.applicant.field.registryKeyMissing}}</field-error>
+                        <field-error [form]="applicantForm" field="registryKey" hasError="minlength">{{translations.applicant.field.registryKeyShort}}</field-error>
                     </div>
                 </div>
                 <div formGroupName="postalAddress" class="row form-group">

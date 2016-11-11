@@ -1,20 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplicationContact.applicationContact;
-import static fi.hel.allu.QContact.contact;
-import static fi.hel.allu.QProjectContact.projectContact;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLBindings;
@@ -23,9 +8,22 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Contact;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplicationContact.applicationContact;
+import static fi.hel.allu.QContact.contact;
+import static fi.hel.allu.QProjectContact.projectContact;
 
 @Repository
 public class ContactDao {
@@ -44,8 +42,8 @@ public class ContactDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Contact> findByOrganization(int organizationId) {
-    return queryFactory.select(contactBean).from(contact).where(contact.organizationId.eq(organizationId)).fetch();
+  public List<Contact> findByApplicant(int applicantId) {
+    return queryFactory.select(contactBean).from(contact).where(contact.applicantId.eq(applicantId)).fetch();
   }
 
   @Transactional(readOnly = true)

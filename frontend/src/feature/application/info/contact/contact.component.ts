@@ -57,7 +57,7 @@ export class ContactComponent implements OnInit, AfterViewInit {
   private createContact(contact: Contact): FormGroup {
     return this.fb.group({
       id: contact.id,
-      organizationId: contact.organizationId,
+      applicantId: contact.applicantId,
       name: [contact.name, [Validators.required, Validators.minLength(2)]],
       streetAddress: [contact.streetAddress],
       postalCode: [contact.postalCode],

@@ -2,7 +2,6 @@ import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
 
-import {Applicant} from '../../../../model/application/applicant';
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicantForm} from './applicant.form';
@@ -44,7 +43,7 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
       representative: [false],
       detailsId: undefined,
       name: ['', [Validators.required, Validators.minLength(2)]],
-      identifier: ['', [Validators.required, Validators.minLength(2)]],
+      registryKey: ['', [Validators.required, Validators.minLength(2)]],
       country: ['Suomi'],
       postalAddress: this.fb.group({
         streetAddress: [''],

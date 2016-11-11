@@ -7,7 +7,7 @@ import org.hibernate.validator.constraints.NotBlank;
  */
 public class ContactJson {
   private Integer id;
-  private Integer organizationId;
+  private Integer applicantId;
   @NotBlank(message = "{contact.name.notblank}")
   private String name;
   private String streetAddress;
@@ -29,14 +29,14 @@ public class ContactJson {
   }
 
   /**
-   * in Finnish: Yhteyshenkilön organisaation tunniste
+   * in Finnish: Yhteyshenkilön hakijan tunniste
    */
-  public Integer getOrganizationId() {
-    return organizationId;
+  public Integer getApplicantId() {
+    return applicantId;
   }
 
-  public void setOrganizationId(Integer organizationId) {
-    this.organizationId = organizationId;
+  public void setApplicantId(Integer applicantId) {
+    this.applicantId = applicantId;
   }
 
   /**

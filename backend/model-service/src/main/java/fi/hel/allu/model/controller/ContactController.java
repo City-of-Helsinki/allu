@@ -1,24 +1,17 @@
 package fi.hel.allu.model.controller;
 
-import java.util.List;
-import java.util.Optional;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.validator.ValidList;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.domain.Contact;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/contacts")
@@ -72,16 +65,16 @@ public class ContactController {
   }
 
   /**
-   * Get all contacts for an organization
+   * Get all contacts for an applicant
    *
-   * @param organizationId
-   *          The ID of the organization
-   * @return All contact items for the given organization
+   * @param applicantId
+   *          The ID of the applicant
+   * @return All contact items for the given applicant
    */
-  @RequestMapping(method = RequestMethod.GET, params = "organizationId")
-  public ResponseEntity<List<Contact>> findByOrganization(
-      @RequestParam(value = "organizationId") final int organizationId) {
-    List<Contact> contacts = contactDao.findByOrganization(organizationId);
+  @RequestMapping(method = RequestMethod.GET, params = "applicantId")
+  public ResponseEntity<List<Contact>> findByApplicant(
+      @RequestParam(value = "applicantId") final int applicantId) {
+    List<Contact> contacts = contactDao.findByApplicant(applicantId);
     return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
 

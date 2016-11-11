@@ -85,21 +85,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION = "/applications/{applicationId}/attachments";
 
   /**
-   * Model-service path to create a new person
-   */
-  public static final String PATH_MODEL_PERSON_CREATE = "/persons";
-
-  /**
-   * Model-service path to update person
-   */
-  public static final String PATH_MODEL_PERSON_UPDATE = "/persons/{personId}";
-
-  /**
-   * Model-service path to find person by identifier
-   */
-  public static final String PATH_MODEL_PERSON_FIND_BY_ID = "/persons/{personId}";
-
-  /**
    * Model-service path to create a new project
    */
   public static final String PATH_MODEL_PROJECT_CREATE = "/projects";
@@ -130,21 +115,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICANT_FIND_BY_ID = "/applicants/{applicantId}";
 
   /**
-   * Model-service path to create a new organization
-   */
-  public static final String PATH_MODEL_ORGANIZATION_CREATE = "/organizations";
-
-  /**
-   * Model-service path to update organization
-   */
-  public static final String PATH_MODEL_ORGANIZATION_UPDATE = "/organizations/{organizationId}";
-
-  /**
-   * Model-service path to find organization by identifier
-   */
-  public static final String PATH_MODEL_ORGANIZATION_FIND_BY_ID = "/organizations/{organizationId}";
-
-  /**
    * Model-service path to create a new contact
    */
   public static final String PATH_MODEL_CONTACT_CREATE = "/contacts";
@@ -160,9 +130,9 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_CONTACT_FIND_BY_ID = "/contacts/{contactId}";
 
   /**
-   * Model-service path to find contacts by organization identifier
+   * Model-service path to find contacts by applicant identifier
    */
-  public static final String PATH_MODEL_CONTACT_FIND_BY_ORGANIZATION = "/contacts?organizationId={organizationId}";
+  public static final String PATH_MODEL_CONTACT_FIND_BY_APPLICANT = "/contacts?applicantId={applicantId}";
 
   /**
    * Model-service path to find contacts by application identifier

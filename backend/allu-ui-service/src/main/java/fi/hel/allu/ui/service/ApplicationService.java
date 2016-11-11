@@ -75,7 +75,7 @@ public class ApplicationService {
     applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
     applicationJson.setMetadata(metaService.findMetadataForApplication(applicationJson.getType()));
     List<ContactJson> contacts = applicationJson.getContactList();
-    setContactOrganization(contacts, applicationJson.getApplicant());
+    setContactApplicant(contacts, applicationJson.getApplicant());
     Application applicationModel = restTemplate.postForObject(applicationProperties
             .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
         applicationMapper.createApplicationModel(applicationJson), Application.class);
@@ -256,15 +256,14 @@ public class ApplicationService {
     lsc.setBefore(query.getBefore());
   }
 
-  // If contacts don't have organization, assume they are new contacts for the
-  // new organization
-  private void setContactOrganization(List<ContactJson> contacts, ApplicantJson applicant) {
-    if (contacts == null || applicant.getOrganization() == null)
+  private void setContactApplicant(List<ContactJson> contacts, ApplicantJson applicant) {
+    if (contacts == null) {
       return;
-    Integer organizationId = applicant.getOrganization().getId();
+    }
+    Integer applicantId = applicant.getId();
     for (ContactJson cj : contacts) {
-      if (cj.getOrganizationId() == null) {
-        cj.setOrganizationId(organizationId);
+      if (cj.getApplicantId() == null) {
+        cj.setApplicantId(applicantId);
       }
     }
   }

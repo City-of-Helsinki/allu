@@ -1,13 +1,12 @@
 import {BackendContact} from '../backend-model/backend-contact';
 import {Contact} from '../../model/application/contact';
-import {OrganizationMapper} from './organization-mapper';
 
 export class ContactMapper {
 
   public static mapBackend(backendContact: BackendContact): Contact {
     return (backendContact) ? new Contact(
       backendContact.id,
-      backendContact.organizationId,
+      backendContact.applicantId,
       backendContact.name,
       backendContact.streetAddress,
       backendContact.postalCode,
@@ -20,7 +19,7 @@ export class ContactMapper {
     return (contact) ?
     {
       id: contact.id,
-      organizationId: contact.organizationId,
+      applicantId: contact.applicantId,
       name: contact.name,
       streetAddress: contact.streetAddress,
       postalCode: contact.postalCode,

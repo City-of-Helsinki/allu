@@ -1,7 +1,5 @@
 
-import {Person} from '../common/person';
-import {Organization} from '../common/organization';
-import {ApplicantDetails} from '../common/applicant-details';
+import {PostalAddress} from '../common/postal-address';
 
 export class Applicant {
 
@@ -10,22 +8,18 @@ export class Applicant {
     id: number,
     type: string,
     representative: boolean,
-    person: Person,
-    organization: Organization)
+    name: string,
+    registryKey: string,
+    postalAddress: PostalAddress,
+    email: string,
+    phone: string)
   constructor(
     public id?: number,
     public type?: string,
     public representative?: boolean,
-    public person?: Person,
-    public organization?: Organization) {}
-
-  get details(): ApplicantDetails {
-    if (this.person) {
-      return this.person;
-    } else if (this.organization) {
-      return this.organization;
-    } else {
-      throw new Error('No details for applicant');
-    }
-  }
+    public name?: string,
+    public registryKey?: string,
+    public postalAddress?: PostalAddress,
+    public email?: string,
+    public phone?: string) {}
 }

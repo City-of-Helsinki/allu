@@ -1,8 +1,6 @@
 import {Applicant} from './applicant';
 import {Project} from './project';
 import {Contact} from './contact';
-import {Person} from '../common/person';
-import {Organization} from '../common/organization';
 import {PostalAddress} from '../common/postal-address';
 import {Location} from '../common/location';
 import {ApplicationTypeData} from './type/application-type-data';
@@ -59,14 +57,8 @@ export class Application {
 
   public static prefilledApplication(): Application {
     let applicantPostalAddress = new PostalAddress('Mikonkatu 15 B', '00200', 'Helsinki');
-    let applicantOrganization = new Organization(
-      undefined,
-      'Hakija Inc.',
-      '123456-88',
-      applicantPostalAddress,
-      'hakijainc@hotmail.com',
-      '112');
-    let applicant = new Applicant(undefined, 'COMPANY', true, undefined, applicantOrganization);
+    let applicant = new Applicant(
+      undefined, 'COMPANY', true, 'Hakija Inc.', '123456-88', applicantPostalAddress, 'hakijainc@hotmail.com', '112');
 
     let contact = new Contact(
       undefined,

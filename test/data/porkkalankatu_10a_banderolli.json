@@ -39,24 +39,21 @@
   "applicant":{
     "type":"COMPANY",
     "person":null,
-    "organization":{
-      "id":null,
-      "name":"Hakija Inc.",
-      "businessId":"7654321-6",
-      "postalAddress":{
-        "streetAddress":"Hernarikatu 10",
-        "postalCode":"00430",
-        "city":"Vantaa"
-      },
-      "email":"hernari@hernerokka.fi",
-      "phone":"03-1234567"
+    "id":null,
+    "name":"Hakija Inc.",
+    "registryKey":"7654321-6",
+    "postalAddress":{
+      "streetAddress":"Hernarikatu 10",
+      "postalCode":"00430",
+      "city":"Vantaa"
     },
-    "id":null
+    "email":"hernari@hernerokka.fi",
+    "phone":"03-1234567"
   },
   "contactList":[
     {
       "id":null,
-      "organizationId":null,
+      "applicantId":null,
       "name":"Poika Porkkalan",
       "streetAddress":"Porkkalantie 1",
       "postalCode":"00110",

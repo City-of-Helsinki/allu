@@ -6,7 +6,6 @@ import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
-
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,13 +26,11 @@ public class TestCommon {
   @Autowired
   private SqlRunner sqlRunner;
   @Autowired
-  private ApplicantDao applicantDao;
-  @Autowired
   private ApplicationDao applicationDao;
   @Autowired
   private LocationDao locationDao;
   @Autowired
-  private PersonDao personDao;
+  private ApplicantDao applicantDao;
   @Autowired
   private ProjectDao projectDao;
   @Autowired
@@ -56,9 +53,8 @@ public class TestCommon {
    * @return prepared application
    */
   public Application dummyApplication(String name, String handler) {
-    Integer personId = insertPerson();
-    Integer projectId = insertProject(personId);
-    Integer applicantId = insertPersonApplicant(personId);
+    Integer applicantId = insertPerson();
+    Integer projectId = insertProject(applicantId);
     User user = insertUser(handler);
     Application app = new Application();
     app.setApplicationId("TP1600001");
@@ -122,27 +118,13 @@ public class TestCommon {
    * @return the person's ID
    */
   public Integer insertPerson() {
-    Person person = new Person();
-    person.setName("Pentti");
-    person.setSsn("121212-xxxx");
-    person.setEmail("pena@dev.null");
-    Person insertedPerson = personDao.insert(person);
+    Applicant personApplicant = new Applicant();
+    personApplicant.setName("Pentti");
+    personApplicant.setType(ApplicantType.PERSON);
+    personApplicant.setRegistryKey("121212-xxxx");
+    personApplicant.setEmail("pena@dev.null");
+    Applicant insertedPerson = applicantDao.insert(personApplicant);
     return insertedPerson.getId();
-  }
-
-  /**
-   * Insert a person-type applicant into database
-   *
-   * @param personId
-   *          the applicant's person ID
-   * @return applicant ID
-   */
-  public Integer insertPersonApplicant(Integer personId) {
-    Applicant applicant = new Applicant();
-    applicant.setType(ApplicantType.PERSON);
-    applicant.setPersonId(personId);
-    Applicant insertedApplicant = applicantDao.insert(applicant);
-    return insertedApplicant.getId();
   }
 
   /**
@@ -184,7 +166,6 @@ public class TestCommon {
       "delete from allu.application",
       "delete from allu.project",
       "delete from allu.applicant",
-      "delete from allu.person",
       "delete from allu.geometry",
       "delete from allu.location",
       "delete from allu.outdoor_pricing",
