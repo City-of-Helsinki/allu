@@ -21,6 +21,7 @@ public class LocationJson {
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
   private Double area;
+  private Double areaOverride;
   @Valid
   private PostalAddressJson postalAddress;
   private List<Integer> fixedLocationIds;
@@ -50,6 +51,17 @@ public class LocationJson {
 
   public void setArea(Double area) {
     this.area = area;
+  }
+
+  /**
+   * @return the area override in sq. meters or null, if override is not set
+   */
+  public Double getAreaOverride() {
+    return areaOverride;
+  }
+
+  public void setAreaOverride(Double areaOverride) {
+    this.areaOverride = areaOverride;
   }
 
   public PostalAddressJson getPostalAddress() {

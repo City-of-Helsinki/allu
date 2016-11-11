@@ -11,6 +11,7 @@ import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.pricing.Pricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,7 +90,7 @@ public class PricingService {
     int buildDays = daysBetween(application.getStartTime(), outdoorEvent.getEventStartTime());
     buildDays += daysBetween(outdoorEvent.getEventEndTime(), application.getEndTime());
     double structureArea = outdoorEvent.getStructureArea();
-    double area = location.get().getArea();
+    double area = Optional.ofNullable(location.get().getAreaOverride()).orElse(location.get().getArea());
 
     Pricing pricing = new Pricing();
     for(PricingConfiguration pricingConfig : pricingConfigs) {

@@ -124,6 +124,7 @@ public class LocationService {
     }
     location.setGeometry(locationJson.getGeometry());
     location.setArea(locationJson.getArea());
+    location.setAreaOverride(locationJson.getAreaOverride());
     location.setFixedLocationIds(locationJson.getFixedLocationIds());
     return location;
   }
@@ -137,6 +138,7 @@ public class LocationService {
     locationJson.setPostalAddress(postalAddressJson);
     locationJson.setGeometry(location.getGeometry());
     locationJson.setArea(location.getArea());
+    locationJson.setAreaOverride(location.getAreaOverride());
     locationJson.setFixedLocationIds(location.getFixedLocationIds());
   }
 

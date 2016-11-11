@@ -38,7 +38,8 @@ create table allu.location (
    street_address text,
    postal_code text,
    city text,
-   area double precision );
+   area double precision,
+   area_override double precision );
 
 create table allu.location_flids (
     id serial primary key,

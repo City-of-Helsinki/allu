@@ -81,6 +81,15 @@ public class LocationDaoTest {
   }
 
   @Test
+  public void testAreaOverride() {
+    final double AREA_OVERRIDE = 123.23;
+    Location locIn = new Location();
+    locIn.setAreaOverride(AREA_OVERRIDE);
+    Location locOut = locationDao.insert(locIn);
+    assertTrue(Math.abs(locOut.getAreaOverride() - AREA_OVERRIDE) < 0.0001);
+  }
+
+  @Test
   public void testAreaEmptyGeometry() {
     Geometry geoIn = geometrycollection(3879, new Polygon2DToken[0]);
     Location locIn = new Location();
