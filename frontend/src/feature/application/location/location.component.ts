@@ -33,6 +33,7 @@ export class LocationComponent {
   application: Application;
   progressStep: number;
   typeSelected = false;
+  selectedFixedLocations = [];
 
   private fixedLocations = new Array<FixedLocation>();
 
@@ -59,13 +60,6 @@ export class LocationComponent {
         this.loadFixedLocationsForType(ApplicationType[application.type]);
 
         this.mapHub.selectApplication(application);
-
-        this.selectedArea = Some(this.fixedLocations.filter(fLoc => fLoc.id === application.location.fixedLocationId))
-          .filter(fLocs => fLocs.length > 0)
-          .map(fLocs => fLocs[0].area)
-          .orElse(undefined);
-
-        this.selectedFixedLocation = application.location.fixedLocationId;
       });
 
     this.progressStep = ProgressStep.LOCATION;
@@ -95,6 +89,7 @@ export class LocationComponent {
   }
 
   save() {
+    this.locationState.location.fixedLocationIds = this.selectedFixedLocations;
     if (this.application.id) {
       // If there is an application to save the location data to
       console.log('Saving location for application id: ', this.application.id);
@@ -111,7 +106,11 @@ export class LocationComponent {
 
   set selectedArea(area: string) {
     this.sections = this.fixedLocations.filter(fl => fl.area === area);
-    this.locationState.location.fixedLocationId = this.firstSection.map(fl => fl.id).orElse(undefined);
+    // When only 1 section it is area's fixed location which should be selected
+    // Otherwise select none as they are sections
+    this.selectedFixedLocations = this.sections.length === 1
+      ? [this.sections[0].id]
+      : [];
   }
 
   get selectedArea(): string {
@@ -127,15 +126,6 @@ export class LocationComponent {
   noSections(): boolean {
     return this.sections.every(section => !section.section);
   }
-
-  set selectedFixedLocation(id: number) {
-    this.locationState.location.fixedLocationId = id;
-  }
-
-  get selectedFixedLocation(): number {
-    return this.locationState.location.fixedLocationId;
-  }
-
 
   private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {
     if (shape.features.length) {
@@ -155,6 +145,13 @@ export class LocationComponent {
 
         this.fixedLocations = fl.filter(f => f.applicationType === type);
         this.sections = [];
+
+        this.selectedArea = Some(this.fixedLocations.filter(fLoc => this.application.location.fixedLocationIds.indexOf(fLoc.id) >= 0))
+          .filter(fLocs => fLocs.length > 0)
+          .map(fLocs => fLocs[0].area)
+          .orElse(undefined);
+
+        this.selectedFixedLocations = this.application.location.fixedLocationIds;
       });
   }
 }

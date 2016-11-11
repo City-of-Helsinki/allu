@@ -96,8 +96,8 @@ export class MapHub {
   /**
    * Used for fetching single area / section
    */
-  public fixedLocation = (id: number) => this.fixedLocations()
-    .map(entries => Some(entries.find(ss => ss.id === id)));
+  public fixedLocationsBy = (ids: Array<number>) => this.fixedLocations()
+    .map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0));
 
   /**
    * Used to notify about new address search terms
