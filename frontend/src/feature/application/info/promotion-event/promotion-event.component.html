@@ -17,31 +17,31 @@
             </select>
           </div>
           <div class="input-field col m8">
-            <input id="companyName" type="text" class="validate" [(ngModel)]="application.applicant.companyName">
-            <label for="companyName">Yrityksen nimi</label>
+            <input id="name" type="text" class="validate" [(ngModel)]="application.applicant.name">
+            <label for="name">Yrityksen nimi</label>
           </div>
           <div class="input-field col m4">
-            <input id="businessID" type="text" class="validate" [(ngModel)]="application.applicant.businessID">
-            <label for="businessID">Y-tunnus</label>
+            <input id="registryKey" type="text" class="validate" [(ngModel)]="application.applicant.registryKey">
+            <label for="registryKey">Y-tunnus</label>
           </div>
           <div class="input-field col m6">
-            <input id="applicantAddress" type="text" class="validate" [(ngModel)]="application.applicant.organization.postalAddress.streetAddress">
+            <input id="applicantAddress" type="text" class="validate" [(ngModel)]="application.applicant.postalAddress.streetAddress">
             <label for="applicantAddress">Osoite</label>
           </div>
           <div class="input-field col m3">
-            <input id="applicantPostalCode" type="text" class="validate" [(ngModel)]="application.applicant.organization.postalAddress.postalCode">
+            <input id="applicantPostalCode" type="text" class="validate" [(ngModel)]="application.applicant.postalAddress.postalCode">
             <label for="applicantPostalCode">Postinumero</label>
           </div>
           <div class="input-field col m3">
-            <input id="applicantCity" type="text" class="validate" [(ngModel)]="application.applicant.organization.postalAddress.city">
+            <input id="applicantCity" type="text" class="validate" [(ngModel)]="application.applicant.postalAddress.city">
             <label for="applicantCity">Toimipaikka</label>
           </div>
           <div class="input-field col m4">
-            <input id="applicantPhone" type="text" class="validate" [(ngModel)]="application.applicant.organization.phone">
+            <input id="applicantPhone" type="text" class="validate" [(ngModel)]="application.applicant.phone">
             <label for="applicantPhone">Puhelin</label>
           </div>
           <div class="input-field col m8">
-            <input id="applicantEmail" type="text" class="validate" [(ngModel)]="application.applicant.organization.email">
+            <input id="applicantEmail" type="text" class="validate" [(ngModel)]="application.applicant.email">
             <label for="applicantEmail">Sähköpostiosoite</label>
           </div>
           <div class="col m7 height-fix-bottom">
