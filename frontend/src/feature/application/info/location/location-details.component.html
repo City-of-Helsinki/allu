@@ -13,12 +13,12 @@
                         <label for="info">Lisätietoja paikasta</label>
                     </div>
                     <div class="input-field col m8">
-                        <input id="fixedArea" type="text" [ngModel]="fixedLocation.area" [readonly]="readonly">
+                        <input id="fixedArea" type="text" [ngModel]="area" [readonly]="readonly">
                         <label for="fixedArea">Alue</label>
                     </div>
                     <div class="input-field col m2">
-                        <input id="section" type="text" [ngModel]="fixedLocation.section" [readonly]="readonly">
-                        <label for="section">Lohko</label>
+                        <input id="section" type="text" [ngModel]="sections" [readonly]="readonly">
+                        <label for="section">Lohko(t)</label>
                     </div>
                     <div class="input-field col m2">
                         <input id="area" type="text" [ngModel]="location.uiArea" [readonly]="readonly">

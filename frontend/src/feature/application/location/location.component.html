@@ -25,9 +25,9 @@
             </div>
             <div class="input-field col m2">
               <div *ngIf="!noSections()">
-                <select [(ngModel)]="selectedFixedLocation"
-                        materialize="material_select" [materializeSelectOptions]="sections">
-                  <option value="">Ei lohkoa</option>
+                <select [(ngModel)]="selectedFixedLocations" materialize="material_select"
+                        [materializeSelectOptions]="sections" multiple>
+                  <option value="" disabled>Ei lohkoa</option>
                   <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
                 </select>
               </div>

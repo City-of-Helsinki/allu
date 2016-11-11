@@ -5,6 +5,6 @@ export interface BackendLocation {
   geometry: GeoJSON.GeometryCollection;
   area: number;
   postalAddress: BackendPostalAddress;
-  fixedLocationId: number;
+  fixedLocationIds: Array<number>;
   info: string;
 }
