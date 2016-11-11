@@ -139,6 +139,7 @@ public class ApplicationMapper {
         break;
       // short term rentals
       case BRIDGE_BANNER:
+      case BENJI:
       case PROMOTION_OR_SALES:
       case URBAN_FARMING:
       case KESKUSKATU_SALES:
@@ -157,6 +158,7 @@ public class ApplicationMapper {
         shortTermRentalJson.setType(shortTermRental.getType());
         shortTermRentalJson.setDescription(shortTermRental.getDescription());
         shortTermRental.setCommercial(shortTermRental.getCommercial());
+        applicationJson.setEvent(shortTermRentalJson);
         break;
     }
   }
@@ -195,6 +197,7 @@ public class ApplicationMapper {
         return outdoorEvent;
       // short term rentals
       case BRIDGE_BANNER:
+      case BENJI:
       case PROMOTION_OR_SALES:
       case URBAN_FARMING:
       case KESKUSKATU_SALES:

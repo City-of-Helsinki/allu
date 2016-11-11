@@ -40,6 +40,21 @@ public class TestCommon {
     sqlRunner.runSql(DELETE_ALL_DATA);
   }
 
+  private Application dummyBasicApplication(String name, String handler) {
+    Integer personId = insertPerson();
+    Integer projectId = insertProject(personId);
+    User user = insertUser(handler);
+    Application app = new Application();
+    app.setApplicantId(personId);
+    app.setProjectId(projectId);
+    app.setCreationTime(ZonedDateTime.now());
+    app.setMetadataVersion(1);
+    app.setDecisionTime(ZonedDateTime.now());
+    app.setName(name);
+    app.setHandler(user.getId());
+    return app;
+  }
+
   /**
    * Create a dummy application for insertion into database.
    *
@@ -52,22 +67,19 @@ public class TestCommon {
    *          application handler's name
    * @return prepared application
    */
-  public Application dummyApplication(String name, String handler) {
-    Integer applicantId = insertPerson();
-    Integer projectId = insertProject(applicantId);
-    User user = insertUser(handler);
-    Application app = new Application();
-    app.setApplicationId("TP1600001");
-    app.setApplicantId(applicantId);
-    app.setProjectId(projectId);
-    app.setCreationTime(ZonedDateTime.now());
+  public Application dummyOutdoorApplication(String name, String handler) {
+    Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.OUTDOOREVENT);
-    app.setMetadataVersion(1);
-    app.setDecisionTime(ZonedDateTime.now());
-    app.setName(name);
-    // TODO: replace handler string with reference to actual User object / id
-    app.setHandler(user.getId());
+    app.setApplicationId("TP1600001");
     app.setEvent(dummyOutdoorEvent());
+    return app;
+  }
+
+  public Application dummyBridgeBannerApplication(String name, String handler) {
+    Application app = dummyBasicApplication(name, handler);
+    app.setType(ApplicationType.BRIDGE_BANNER);
+    app.setApplicationId("VL1600001");
+    app.setEvent(dummyBridgeBannerEvent());
     return app;
   }
 
@@ -84,6 +96,14 @@ public class TestCommon {
     return event;
   }
 
+  public Event dummyBridgeBannerEvent() {
+    ShortTermRental shortTermRental = new ShortTermRental();
+    shortTermRental.setDescription("desc");
+    shortTermRental.setType(ApplicationType.BRIDGE_BANNER);
+    shortTermRental.setCommercial(true);
+    return shortTermRental;
+  }
+
   /**
    * Create and insert a dummy application into database.
    *
@@ -94,7 +114,7 @@ public class TestCommon {
    * @return application's ID.
    */
   public Integer insertApplication(String name, String handler) {
-    Application appl = dummyApplication(name, handler);
+    Application appl = dummyOutdoorApplication(name, handler);
     return applicationDao.insert(appl).getId();
   }
 

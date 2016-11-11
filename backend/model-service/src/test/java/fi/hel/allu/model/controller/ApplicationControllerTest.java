@@ -50,20 +50,20 @@ public class ApplicationControllerTest {
 
   @Test
   public void testAddApplication() throws Exception {
-    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
+    Application app = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
     wtc.perform(post("/applications"), app).andExpect(status().isOk());
   }
 
   @Test
   public void testAddApplicationWithId() throws Exception {
-    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
+    Application app = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
     app.setId(123);
     wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
   }
 
   @Test
   public void testAddApplicationWithBadProject() throws Exception {
-    Application app = testCommon.dummyApplication("Test Application", "Handlaaja");
+    Application app = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
     app.setProjectId(app.getProjectId() + 1);
     wtc.perform(post("/applications"), app).andExpect(status().isBadRequest());
   }
@@ -85,9 +85,9 @@ public class ApplicationControllerTest {
   }
 
   @Test
-  public void testFindExisting() throws Exception {
+  public void testFindExistingOutdoor() throws Exception {
     // Setup: insert an application
-    Application appIn = testCommon.dummyApplication("Test Application", "Handler");
+    Application appIn = testCommon.dummyOutdoorApplication("Test Application", "Handler");
     Application appInResult = insertApplication(appIn);
     // Test: try to read the same application back
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
@@ -102,16 +102,29 @@ public class ApplicationControllerTest {
   }
 
   @Test
+  public void testFindExistingShortTimeRental() throws Exception {
+    // Setup: insert an application
+    Application appIn = testCommon.dummyBridgeBannerApplication("Test Application", "Handler");
+    Application appInResult = insertApplication(appIn);
+    // Test: try to read the same application back
+    ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
+        .andExpect(status().isOk());
+    Application appOut = wtc.parseObjectFromResult(resultActions, Application.class);
+    assertEquals(StatusType.PENDING, appOut.getStatus());
+    assertNotNull(appOut.getEvent());
+  }
+
+  @Test
   public void testFindApplicationByProject() throws Exception {
     // Setup: add some applications for one project:
     final int NUM_FIRST = 5;
     final int NUM_SECOND = 7;
-    Application app1 = testCommon.dummyApplication("TestAppOne", "Sinikka");
+    Application app1 = testCommon.dummyOutdoorApplication("TestAppOne", "Sinikka");
     for (int i = 0; i < NUM_FIRST; ++i) {
       wtc.perform(post("/applications"), app1).andExpect(status().isOk());
     }
     // Now prepare another application -- will get another project ID:
-    Application app2 = testCommon.dummyApplication("TestAppTwo", "Keijo");
+    Application app2 = testCommon.dummyOutdoorApplication("TestAppTwo", "Keijo");
     assertNotEquals(app1.getProjectId(), app2.getProjectId());
     for (int i = 0; i < NUM_SECOND; ++i) {
       wtc.perform(post("/applications"), app2).andExpect(status().isOk());
@@ -132,7 +145,7 @@ public class ApplicationControllerTest {
   @Test
   public void testUpdateExisting() throws Exception {
     // Setup: insert an application
-    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
     // Test: try to update the application
     appInResult.setStatus(StatusType.HANDLING);
     ResultActions resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
@@ -143,7 +156,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void testUpdateHandler() throws Exception {
-    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
     User changedUser = testCommon.insertUser("changed");
     appInResult.setHandler(changedUser.getId());
     wtc.perform(put(String.format("/applications/handler/%d", appInResult.getHandler())), Collections.singletonList(appInResult.getId()))
@@ -156,7 +169,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void testRemoveHandler() throws Exception {
-    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
     wtc.perform(put(String.format("/applications/handler/remove")), Collections.singletonList(appInResult.getId()))
         .andExpect(status().isOk());
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
@@ -167,7 +180,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void updateNonexistent() throws Exception {
-    Application app = testCommon.dummyApplication("Test Application", "Hanskaaja");
+    Application app = testCommon.dummyOutdoorApplication("Test Application", "Hanskaaja");
     wtc.perform(put("/applications/314159"), app).andExpect(status().isNotFound());
   }
 
@@ -202,7 +215,7 @@ public class ApplicationControllerTest {
   @Test
   public void testFindAttachments() throws Exception {
     // Setup: insert an application
-    Application appInResult = insertApplication(testCommon.dummyApplication("Test Application", "Handler"));
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
     // Test: read the application's attachment list
     ResultActions resultActions = wtc.perform(get(String.format("/applications/%d/attachments", appInResult.getId())))
         .andExpect(status().isOk());
@@ -277,7 +290,7 @@ public class ApplicationControllerTest {
       throws Exception {
     Integer locationId = testCommon.insertLocation(streetAddress,
         new GeometryCollection(new Geometry[] { tap.geometry }));
-    Application app = testCommon.dummyApplication(applicationName, "locationUserName" + count);
+    Application app = testCommon.dummyOutdoorApplication(applicationName, "locationUserName" + count);
     app.setLocationId(locationId);
     app.setStartTime(tap.startTime);
     app.setEndTime(tap.endTime);
