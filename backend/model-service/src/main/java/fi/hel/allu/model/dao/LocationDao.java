@@ -5,9 +5,11 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
+
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
@@ -23,6 +25,7 @@ import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QGeometry.geometry1;
 import static fi.hel.allu.QLocation.location;
+import static fi.hel.allu.QLocationFlids.locationFlids;
 
 @Repository
 public class LocationDao {
@@ -43,6 +46,9 @@ public class LocationDao {
       Geometry[] geoArray = geometries.toArray(new Geometry[geometries.size()]);
       GeometryCollection collection = new GeometryCollection(geoArray);
       cont.setGeometry(collection);
+      List<Integer> fixedLocationIds = queryFactory.select(locationFlids.fixedLocationId).from(locationFlids)
+          .where(locationFlids.locationId.eq(cont.getId())).fetch();
+      cont.setFixedLocationIds(fixedLocationIds);
     }
     return Optional.ofNullable(cont);
   }
@@ -54,6 +60,7 @@ public class LocationDao {
       throw new QueryException("Failed to insert record");
     }
     setGeometry(id, locationData.getGeometry());
+    setFixedLocationIds(id, locationData.getFixedLocationIds());
     return findById(id).get();
   }
 
@@ -67,6 +74,8 @@ public class LocationDao {
     }
     queryFactory.delete(geometry1).where(geometry1.locationId.eq(id)).execute();
     setGeometry(id, locationData.getGeometry());
+    queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(id)).execute();
+    setFixedLocationIds(id, locationData.getFixedLocationIds());
     return findById(id).get();
   }
 
@@ -80,6 +89,7 @@ public class LocationDao {
       queryFactory.update(application).setNull(application.locationId).where(application.id.eq(applicationId))
           .execute();
       queryFactory.delete(geometry1).where(geometry1.locationId.eq(locationId)).execute();
+      queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
       queryFactory.delete(location).where(location.id.eq(locationId)).execute();
     }
   }
@@ -108,6 +118,13 @@ public class LocationDao {
     }
     // store geometry's area to the location
     queryFactory.update(location).set(location.area, area).where(location.id.eq(locationId)).execute();
+  }
+
+  private void setFixedLocationIds(int locationId, List<Integer> fixedLocationIds) {
+    if (fixedLocationIds != null) {
+      fixedLocationIds.forEach(flid -> queryFactory.insert(locationFlids)
+        .columns(locationFlids.locationId, locationFlids.fixedLocationId).values(locationId, flid).execute());
+    }
   }
 
   private double getArea(int locationId) {

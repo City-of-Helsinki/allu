@@ -20,7 +20,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static org.geolatte.geom.builder.DSL.*;
@@ -133,19 +135,22 @@ public class LocationDaoTest {
   @Test
   public void testFixedLocationId() {
     // Setup: add fixed location with known ID
-    final int FIXED_LOCATION_ID = 9876;
-    long insertCount = queryFactory.insert(fixedLocation).set(fixedLocation.id, FIXED_LOCATION_ID)
-        .set(fixedLocation.area, "Narinkka")
-        .set(fixedLocation.section, "lohko A")
-        .set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT)
-        .set(fixedLocation.isActive, true)
-        .execute();
-    assertEquals(1, insertCount);
+    final List<Integer> fixedLocationIds = Arrays.asList(9876, 3325, 2344);
+    long insertCount = fixedLocationIds.stream()
+        .mapToLong(flId -> queryFactory.insert(fixedLocation)
+            .columns(fixedLocation.id, fixedLocation.area, fixedLocation.section, fixedLocation.applicationType,
+                fixedLocation.isActive)
+            .values(flId, "Narinkka " + flId, "lohko A", ApplicationType.OUTDOOREVENT, true).execute())
+        .sum();
+    assertEquals(fixedLocationIds.size(), insertCount);
     // Test: add location with fixedLocationId
     Location locIn = new Location();
-    locIn.setFixedLocationId(FIXED_LOCATION_ID);
+    locIn.setFixedLocationIds(fixedLocationIds);
     Location locOut = locationDao.insert(locIn);
-    assertEquals(FIXED_LOCATION_ID, locOut.getFixedLocationId().intValue());
+    // Check that all inserted IDs and none other are returned:
+    TreeSet<Integer> flIdsIn = new TreeSet<>(fixedLocationIds);
+    TreeSet<Integer> flIdsOut = new TreeSet<>(locOut.getFixedLocationIds());
+    assertEquals(flIdsIn, flIdsOut);
   }
 
   @Test

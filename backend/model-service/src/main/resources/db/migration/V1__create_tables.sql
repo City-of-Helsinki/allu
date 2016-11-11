@@ -38,8 +38,12 @@ create table allu.location (
    street_address text,
    postal_code text,
    city text,
-   area double precision,
-   fixed_location_id integer references allu.fixed_location(id) );
+   area double precision );
+
+create table allu.location_flids (
+    id serial primary key,
+    location_id integer references allu.location(id),
+    fixed_location_id integer references allu.fixed_location(id) );
 
 create table allu.geometry (
    id serial primary key,

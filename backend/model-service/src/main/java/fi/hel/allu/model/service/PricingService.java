@@ -17,7 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 /**
  *
@@ -66,37 +70,41 @@ public class PricingService {
     if (location.isPresent() == false) {
       throw new NoSuchEntityException("Location (ID=" + application.getLocationId() + " doesn't exist");
     }
-
-    Integer fixedLocationId = location.get().getFixedLocationId();
-    if (fixedLocationId == null) {
-      return 0; // No area/section defined -> no price (TODO: infer proper
-                // zone id)
-    }
     OutdoorEventNature nature = outdoorEvent.getNature();
     if (nature == null) {
       return 0; // No nature defined -> no price
     }
-    Optional<PricingConfiguration> pricingConfiguration =
-        pricingDao.findByFixedLocationAndNature(fixedLocationId.intValue(), nature);
-    if (pricingConfiguration.isPresent() == false) {
-      throw new NoSuchEntityException("No pricing configuration for (" + fixedLocationId + nature + ")");
-    }
 
-    Pricing pricing = new Pricing();
+    List<PricingConfiguration> pricingConfigs = Collections.emptyList();
+    List<Integer> fixedLocationIds = location.get().getFixedLocationIds();
+    if (fixedLocationIds != null && !fixedLocationIds.isEmpty()) {
+      pricingConfigs = fixedLocationIds.stream()
+        .map(flId -> pricingDao.findByFixedLocationAndNature(flId, nature))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
+    } // TODO: pricing configuration for non-fixed locations (Zones)
+
     int eventDays = daysBetween(outdoorEvent.getEventStartTime(), outdoorEvent.getEventEndTime());
     int buildDays = daysBetween(application.getStartTime(), outdoorEvent.getEventStartTime());
     buildDays += daysBetween(outdoorEvent.getEventEndTime(), application.getEndTime());
     double structureArea = outdoorEvent.getStructureArea();
     double area = location.get().getArea();
-    // Calculate full price...
-    pricing.calculateFullPrice(pricingConfiguration.get(), eventDays, buildDays, structureArea,
-        area);
+
+    Pricing pricing = new Pricing();
+    for(PricingConfiguration pricingConfig : pricingConfigs) {
+      // Calculate price per location...
+      pricing.accumulatePrice(pricingConfig, eventDays, buildDays, structureArea,
+          area);
+    }
+
     // ... apply discounts...
     pricing.applyDiscounts(outdoorEvent.isEcoCompass(), outdoorEvent.getNoPriceReason(),
         outdoorEvent.isHeavyStructure(), outdoorEvent.isSalesActivity());
     // ... and get the final price
     return pricing.getPrice();
   }
+
 
   // Calculate amount of days between two timestamps, ignoring the hours.
   private int daysBetween(ZonedDateTime startTime, ZonedDateTime endTime) {

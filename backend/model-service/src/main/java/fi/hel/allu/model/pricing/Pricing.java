@@ -16,7 +16,7 @@ public class Pricing {
   private int paymentPercentage = 100;
 
   /**
-   * Calculate full price for an outdoor event with given parameters
+   * Accumulate the price for an outdoor event with given parameters
    *
    * @param pricingConfig
    * @param eventDays
@@ -24,7 +24,7 @@ public class Pricing {
    * @param structureArea
    * @param area
    */
-  public void calculateFullPrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
+  public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     long dailyCharge = pricingConfig.getBaseCharge();
     addInvoiceRow(RowType.BASE_CHARGE, dailyCharge);
@@ -46,7 +46,7 @@ public class Pricing {
     totalCharge += (long) (0.5 + buildDays * dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
 
     addInvoiceRow(RowType.TOTAL_CHARGE, totalCharge);
-    fullPrice = totalCharge;
+    fullPrice += totalCharge;
   }
 
   /**

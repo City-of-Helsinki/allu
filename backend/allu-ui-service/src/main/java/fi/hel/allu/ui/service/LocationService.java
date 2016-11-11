@@ -6,6 +6,7 @@ import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.domain.PostalAddressJson;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +124,7 @@ public class LocationService {
     }
     location.setGeometry(locationJson.getGeometry());
     location.setArea(locationJson.getArea());
-    location.setFixedLocationId(locationJson.getFixedLocationId());
+    location.setFixedLocationIds(locationJson.getFixedLocationIds());
     return location;
   }
 
@@ -136,7 +137,7 @@ public class LocationService {
     locationJson.setPostalAddress(postalAddressJson);
     locationJson.setGeometry(location.getGeometry());
     locationJson.setArea(location.getArea());
-    locationJson.setFixedLocationId(location.getFixedLocationId());
+    locationJson.setFixedLocationIds(location.getFixedLocationIds());
   }
 
   private FixedLocationJson mapToFixedLocationJson(FixedLocation fixedLocation) {
