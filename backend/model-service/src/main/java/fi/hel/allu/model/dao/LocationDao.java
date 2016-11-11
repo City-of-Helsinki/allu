@@ -89,6 +89,7 @@ public class LocationDao {
       queryFactory.update(application).setNull(application.locationId).where(application.id.eq(applicationId))
           .execute();
       queryFactory.delete(geometry1).where(geometry1.locationId.eq(locationId)).execute();
+      queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
       queryFactory.delete(location).where(location.id.eq(locationId)).execute();
     }
   }
