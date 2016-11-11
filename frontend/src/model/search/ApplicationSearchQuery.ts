@@ -46,6 +46,12 @@ export class ApplicationSearchQuery {
     return query;
   }
 
+  public static forApplicationId(id: string): ApplicationSearchQuery {
+    let query = new ApplicationSearchQuery();
+    query.applicationId = id;
+    return query;
+  }
+
   public copy(): ApplicationSearchQuery {
     let query = new ApplicationSearchQuery();
     query.applicationId = this.applicationId;

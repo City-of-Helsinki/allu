@@ -34,6 +34,7 @@ import {LoginModule} from '../login/login.module';
 import {UserHub} from '../../service/user/user-hub';
 import {UserService} from '../../service/user/user-service';
 import {AdminModule} from '../admin/admin.module';
+import {ProjectModule} from '../project/project.module';
 
 
 @NgModule({
@@ -46,6 +47,7 @@ import {AdminModule} from '../admin/admin.module';
     MaterialModule.forRoot(),
     // App modules
     ApplicationModule,
+    ProjectModule,
     LoginModule,
     ToolbarModule,
     MapSearchModule,

@@ -4,6 +4,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ProgressStep} from '../../progressbar/progressbar.component.ts';
 import {UrlUtil} from '../../../util/url.util.ts';
 import {ApplicationType} from '../../../model/application/type/application-type';
+import {Application} from '../../../model/application/application';
 
 @Component({
   selector: 'application',
@@ -15,10 +16,15 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 })
 export class ApplicationComponent implements OnInit {
   progressStep: ProgressStep;
+  application: Application;
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
+    this.route.data
+      .map((data: {application: Application}) => data.application)
+      .subscribe(application => this.application = application);
+
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
       this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
     });
