@@ -16,6 +16,7 @@ public class Location {
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
   private Double area;
+  private Double areaOverride;
   private String streetAddress;
   private String postalCode;
   private String city;
@@ -58,6 +59,19 @@ public class Location {
 
   public void setArea(Double area) {
     this.area = area;
+  }
+
+  /**
+   * Get the area override in square meters if override is set
+   *
+   * @return the override or null
+   */
+  public Double getAreaOverride() {
+    return areaOverride;
+  }
+
+  public void setAreaOverride(Double areaOverride) {
+    this.areaOverride = areaOverride;
   }
 
   /**
