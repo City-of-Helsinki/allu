@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplicationContact.applicationContact;
 import static fi.hel.allu.QContact.contact;
-import static fi.hel.allu.QProjectContact.projectContact;
 
 @Repository
 public class ContactDao {
@@ -53,32 +52,6 @@ public class ContactDao {
         .orderBy(applicationContact.position.asc());
     logger.debug(String.format("Executing query \"%s\"", query.getSQL().getSQL()));
     return query.fetch();
-  }
-
-  @Transactional(readOnly = true)
-  public List<Contact> findByProject(int projectId) {
-    SQLQuery<Contact> query = queryFactory.select(contactBean).from(contact).innerJoin(projectContact)
-        .on(contact.id.eq(projectContact.contactId)).where(projectContact.projectId.eq(projectId))
-        .orderBy(projectContact.position.asc());
-    logger.debug(String.format("Executing query \"%s\"", query.getSQL().getSQL()));
-    return query.fetch();
-  }
-
-  @Transactional
-  public List<Contact> setProjectContacts(int projectId, List<Contact> contacts) {
-    // remove old contact links, then add new ones.
-    queryFactory.delete(projectContact).where(projectContact.projectId.eq(projectId)).execute();
-    // Update/insert the contacts first...
-    contacts = contacts.stream().map(c -> storeContact(c)).collect(Collectors.toList());
-    // ... then create the link records
-    SQLInsertClause insertClause = queryFactory.insert(projectContact);
-    int pos = 0;
-    for (Contact contact : contacts) {
-      insertClause.columns(projectContact.projectId, projectContact.contactId, projectContact.position)
-          .values(projectId, contact.getId(), pos++).addBatch();
-    }
-    insertClause.execute();
-    return findByProject(projectId);
   }
 
   @Transactional

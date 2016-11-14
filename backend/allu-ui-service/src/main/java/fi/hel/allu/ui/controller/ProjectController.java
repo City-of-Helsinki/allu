@@ -1,29 +1,39 @@
-package fi.hel.allu.model.controller;
+package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.model.service.ProjectService;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.ui.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * Controller for managing projects.
+ */
 @RestController
 @RequestMapping("/projects")
 public class ProjectController {
 
   @Autowired
-  private ApplicationDao applicationDao;
-  @Autowired
   private ProjectService projectService;
 
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
+    // TODO: implement when ES indexing is done
+    return null;
+  }
+
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-  public ResponseEntity<Project> find(@PathVariable int id) {
-    return new ResponseEntity<Project>(projectService.find(id), HttpStatus.OK);
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<ProjectJson> findById(@PathVariable int id) {
+    return new ResponseEntity<>(projectService.findById(id), HttpStatus.OK);
   }
 
   /**
@@ -33,19 +43,21 @@ public class ProjectController {
    * @return  List of children. Never <code>null</code>.
    */
   @RequestMapping(value = "/{id}/children", method = RequestMethod.GET)
-  public ResponseEntity<List<Project>> findChildren(@PathVariable int id) {
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ProjectJson>> findChildren(@PathVariable int id) {
     return new ResponseEntity<>(projectService.findProjectChildren(id), HttpStatus.OK);
   }
 
   /**
-   * Insert given project to database.
+   * Adds new project.
    *
    * @param   project Project to be inserted.
    * @return  Inserted project.
    */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Project> insert(@Valid @RequestBody(required = true) Project project) {
-    return new ResponseEntity<Project>(projectService.insert(project), HttpStatus.OK);
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
+  public ResponseEntity<ProjectJson> insert(@Valid @RequestBody(required = true) ProjectJson project) {
+    return new ResponseEntity<>(projectService.insert(project), HttpStatus.OK);
   }
 
   /**
@@ -55,19 +67,21 @@ public class ProjectController {
    * @return  Updated project.
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Project> update(@PathVariable int id, @Valid @RequestBody(required = true) Project project) {
-    return new ResponseEntity<Project>(projectService.update(id, project), HttpStatus.OK);
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ProjectJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ProjectJson project) {
+    return new ResponseEntity<>(projectService.update(id, project), HttpStatus.OK);
   }
 
   /**
    * Find all applications for a project
    *
    * @param   id
-   * @return  list of applications
+   * @return  list of applications. Never <code>null</code>.
    */
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.GET)
-  public ResponseEntity<List<Application>> findApplicationsByProject(@PathVariable int id) {
-    List<Application> applications = applicationDao.findByProject(id);
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ApplicationJson>> findApplicationsByProject(@PathVariable int id) {
+    List<ApplicationJson> applications = projectService.findApplicationsByProject(id);
     return new ResponseEntity<>(applications, HttpStatus.OK);
   }
 
@@ -75,11 +89,11 @@ public class ProjectController {
    * Updates applications of given project to the given set of applications.
    *
    * @param id              Id of the project.
-   * @param applicationIds  Application ids to be attached to the given project.
-   * @return Nothing.
+   * @param applicationIds  Application ids to be attached to the given project. Use empty list to clear all references to the given project.
    */
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
-  public ResponseEntity<Project> updateProjectApplications(
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ProjectJson> updateProjectApplications(
       @PathVariable int id, @Valid @RequestBody(required = true) List<Integer> applicationIds) {
     return new ResponseEntity<>(projectService.updateProjectApplications(id, applicationIds), HttpStatus.OK);
   }
@@ -89,10 +103,11 @@ public class ProjectController {
    *
    * @param id              Project whose parent should be updated.
    * @param parentProject   New parent project.
-   * @return  Updated project with new parent.
+   * @return Updated project.
    */
   @RequestMapping(value = "/{id}/parentProject", method = RequestMethod.PUT)
-  public ResponseEntity<Project> updateProjectParent(
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ProjectJson> updateProjectParent(
       @PathVariable int id, @Valid @RequestBody(required = true) Integer parentProject) {
     return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject), HttpStatus.OK);
   }

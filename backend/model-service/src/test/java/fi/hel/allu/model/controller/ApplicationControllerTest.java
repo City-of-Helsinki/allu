@@ -115,34 +115,6 @@ public class ApplicationControllerTest {
   }
 
   @Test
-  public void testFindApplicationByProject() throws Exception {
-    // Setup: add some applications for one project:
-    final int NUM_FIRST = 5;
-    final int NUM_SECOND = 7;
-    Application app1 = testCommon.dummyOutdoorApplication("TestAppOne", "Sinikka");
-    for (int i = 0; i < NUM_FIRST; ++i) {
-      wtc.perform(post("/applications"), app1).andExpect(status().isOk());
-    }
-    // Now prepare another application -- will get another project ID:
-    Application app2 = testCommon.dummyOutdoorApplication("TestAppTwo", "Keijo");
-    assertNotEquals(app1.getProjectId(), app2.getProjectId());
-    for (int i = 0; i < NUM_SECOND; ++i) {
-      wtc.perform(post("/applications"), app2).andExpect(status().isOk());
-    }
-    // Now get applications for the first project:
-    ResultActions resultActions = wtc.perform(get(String.format("/applications/byproject/%d", app1.getProjectId())))
-        .andExpect(status().isOk());
-    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(NUM_FIRST, results.length);
-    // Try also with nonexistent project id:
-    resultActions = wtc
-        .perform(get(String.format("/applications/byproject/%d", app1.getProjectId() + app2.getProjectId())))
-        .andExpect(status().isOk());
-    results = wtc.parseObjectFromResult(resultActions, Application[].class);
-    assertEquals(0, results.length);
-  }
-
-  @Test
   public void testUpdateExisting() throws Exception {
     // Setup: insert an application
     Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));

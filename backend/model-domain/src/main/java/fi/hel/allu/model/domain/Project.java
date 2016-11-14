@@ -1,6 +1,6 @@
 package fi.hel.allu.model.domain;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 /**
  * In Finnish: Hanke
@@ -8,15 +8,19 @@ import java.util.Date;
 public class Project {
 
   private Integer id;
-  private Integer ownerId;
-  private Integer contactId;
+  private Integer parentId;
   private String name;
-  private Date startDate;
-  private Date endDate;
+  private ZonedDateTime startTime;
+  private ZonedDateTime endTime;
+  private String ownerName;
+  private String contactName;
+  private String email;
+  private String phone;
+  private String customerReference;
   private String additionalInfo;
 
   /**
-   * In Finnish: Hankkeen tunnus
+   * Id of the project.
    */
   public Integer getId() {
     return id;
@@ -27,29 +31,18 @@ public class Project {
   }
 
   /**
-   * In Finnish: hankkeen omistaja
+   * Parent id of the project.
    */
-  public Integer getOwnerId() {
-    return ownerId;
+  public Integer getParentId() {
+    return parentId;
   }
 
-  public void setOwnerId(Integer ownerId) {
-    this.ownerId = ownerId;
+  public void setParentId(Integer parentId) {
+    this.parentId = parentId;
   }
 
   /**
-   * In Finnish: hankkeen yhteyshenkilä
-   */
-  public Integer getContactId() {
-    return contactId;
-  }
-
-  public void setContactId(Integer contactId) {
-    this.contactId = contactId;
-  }
-
-  /**
-   * In Finnish: Hankkeen nimi
+   * The name of the project.
    */
   public String getName() {
     return name;
@@ -60,29 +53,84 @@ public class Project {
   }
 
   /**
-   * In Finnish: alkupäivä
+   * Starting date of the project. This date is calculated from the applications which project consists of.
    */
-  public Date getStartDate() {
-    return startDate;
+  public ZonedDateTime getStartTime() {
+    return startTime;
   }
 
-  public void setStartDate(Date startDate) {
-    this.startDate = startDate;
+  public void setStartTime(ZonedDateTime startTime) {
+    this.startTime = startTime;
   }
 
   /**
-   * In Finnish: loppupäivä
+   * Ending date of the project. This date is calculated from the applications which project consists of.
    */
-  public Date getEndDate() {
-    return endDate;
+  public ZonedDateTime getEndTime() {
+    return endTime;
   }
 
-  public void setEndDate(Date endDate) {
-    this.endDate = endDate;
+  public void setEndTime(ZonedDateTime endTime) {
+    this.endTime = endTime;
   }
 
   /**
-   * In Finnish: lisätiedot
+   * Owner of the project. Usually the company that owns the project.
+   */
+  public String getOwnerName() {
+    return ownerName;
+  }
+
+  public void setOwnerName(String ownerName) {
+    this.ownerName = ownerName;
+  }
+
+  /**
+   * Contact for the project. Usually the name of the person who acts as the contact for the project.
+   */
+  public String getContactName() {
+    return contactName;
+  }
+
+  public void setContactName(String contactName) {
+    this.contactName = contactName;
+  }
+
+  /**
+   * The email address of the project (contact).
+   */
+  public String getEmail() {
+    return email;
+  }
+
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
+  /**
+   * The phone number of the project (contact).
+   */
+  public String getPhone() {
+    return phone;
+  }
+
+  public void setPhone(String phone) {
+    this.phone = phone;
+  }
+
+  /**
+   * Reference for the customer. May be a work number (työnumero) or some other customer specific reference.
+   */
+  public String getCustomerReference() {
+    return customerReference;
+  }
+
+  public void setCustomerReference(String customerReference) {
+    this.customerReference = customerReference;
+  }
+
+  /**
+   * Additional project information.
    */
   public String getAdditionalInfo() {
     return additionalInfo;
@@ -91,5 +139,4 @@ public class Project {
   public void setAdditionalInfo(String additionalInfo) {
     this.additionalInfo = additionalInfo;
   }
-
 }

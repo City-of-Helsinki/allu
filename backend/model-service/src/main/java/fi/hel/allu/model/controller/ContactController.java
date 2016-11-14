@@ -106,31 +106,4 @@ public class ContactController {
       @RequestParam(value = "applicationId") final int applicationId, @Valid @RequestBody ValidList<Contact> contacts) {
     return new ResponseEntity<>(contactDao.setApplicationContacts(applicationId, contacts), HttpStatus.OK);
   }
-  /**
-   * Get project's contact list
-   *
-   * @param projectId
-   *          The project's ID
-   * @return List of contacts in preference order
-   */
-  @RequestMapping(method = RequestMethod.GET, params = "projectId")
-  public ResponseEntity<List<Contact>> findByProject(@RequestParam(value = "projectId") final int projectId) {
-    List<Contact> contacts = contactDao.findByProject(projectId);
-    return new ResponseEntity<>(contacts, HttpStatus.OK);
-  }
-
-  /**
-   * Set project's contact list
-   *
-   * @param projectId
-   *          The project's ID
-   * @param contacts
-   *          List of contacts in the preference order
-   * @return The project's contact list after the operation
-   */
-  @RequestMapping(method = RequestMethod.PUT, params = "projectId")
-  public ResponseEntity<List<Contact>> setProjectContacts(@RequestParam(value = "projectId") final int projectId,
-      @Valid @RequestBody ValidList<Contact> contacts) {
-    return new ResponseEntity<>(contactDao.setProjectContacts(projectId, contacts), HttpStatus.OK);
-  }
 }

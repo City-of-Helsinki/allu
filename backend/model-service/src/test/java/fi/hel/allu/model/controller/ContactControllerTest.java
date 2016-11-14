@@ -5,8 +5,10 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.ProjectDao;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +39,6 @@ public class ContactControllerTest {
   private ApplicantDao applicantDao;
   @Autowired
   private ApplicationDao applicationDao;
-  @Autowired
-  private ProjectDao projectDao;
 
   private Integer applicantId1;
   private Integer applicantId2;
@@ -202,42 +202,6 @@ public class ContactControllerTest {
 
     // Then get the contacts via find API:
     resultActions = wtc.perform(get(String.format("/contacts?applicationId=%d", applId))).andExpect(status().isOk());
-    Contact[] found = wtc.parseObjectFromResult(resultActions, Contact[].class);
-
-    // Verify that find returned the same objects
-    assertEquals(found.length, contactsToInsert.length);
-    for (int i = 0; i < found.length; ++i) {
-      assertEquals(found[i].getName(), contactsToInsert[i].getName());
-    }
-  }
-
-  @Test
-  public void testProjectContacts() throws Exception {
-    // Add a few contacts
-    Contact[] contactsToInsert = new Contact[5];
-    for (int i = 0; i < contactsToInsert.length; ++i) {
-      Contact contact = createDummyContact();
-      contact.setName(String.format("Dummy contact %d", i));
-      ResultActions result = wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
-      contactsToInsert[i] = wtc.parseObjectFromResult(result, Contact.class);
-    }
-
-    Project proj = new Project();
-    proj.setName("Dummy apllication");
-    int projId = projectDao.insert(proj).getId();
-
-    ResultActions resultActions = wtc.perform(put(String.format("/contacts?projectId=%d", projId)), contactsToInsert)
-        .andExpect(status().isOk());
-    Contact[] inserted = wtc.parseObjectFromResult(resultActions, Contact[].class);
-
-    // Verify that insertion returns the same objects
-    assertEquals(inserted.length, contactsToInsert.length);
-    for (int i = 0; i < inserted.length; ++i) {
-      assertEquals(inserted[i].getName(), contactsToInsert[i].getName());
-    }
-
-    // Then get the contacts via find API:
-    resultActions = wtc.perform(get(String.format("/contacts?projectId=%d", projId))).andExpect(status().isOk());
     Contact[] found = wtc.parseObjectFromResult(resultActions, Contact[].class);
 
     // Verify that find returned the same objects

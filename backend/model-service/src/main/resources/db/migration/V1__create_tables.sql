@@ -52,13 +52,18 @@ create table allu.geometry (
    geometry geometry(GEOMETRY, 3879),
    location_id integer references allu.location(id) );
 
+-- TODO: reference to city districts (kaupunginosat) is missing. Add when support for districts is added elsewhere
 create table allu.project (
     id serial primary key,
-    owner_id integer,
-    contact_id integer,
+    parent_id integer references allu.project(id),
     name text,
-    start_date date,
-    end_date date,
+    start_time timestamp with time zone,
+    end_time timestamp with time zone,
+    owner_name text,
+    contact_name text,
+    email text,
+    phone text,
+    customer_reference text,
     additional_info text );
 
 create table allu.contact (
@@ -117,12 +122,6 @@ create table allu.attachment (
    size bigint,
    creation_time timestamp with time zone,
    data bytea );
-
-create table allu.project_contact (
-    id serial primary key,
-    position integer,
-    project_id integer references allu.project(id),
-    contact_id integer references allu.contact(id) );
 
 create table allu.application_contact (
     id serial primary key,

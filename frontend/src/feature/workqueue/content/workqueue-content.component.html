@@ -28,8 +28,8 @@
                 </td>
                 <td class="clickable">{{row.application.handler?.realName}}</td>
                 <td class="clickable">
-                    {{row.application.project.name}} <br>
-                    <span>{{row.application.project.id}}</span>
+                    {{row.application.project?.name}} <br>
+                    <span>{{row.application.project?.id}}</span>
                 </td>
                 <td class="clickable">{{row.application.applicationId}}</td>
                 <td class="clickable">{{translations.application.type[row.application.type]}}</td>

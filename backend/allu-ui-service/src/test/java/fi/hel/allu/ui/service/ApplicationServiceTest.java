@@ -64,14 +64,14 @@ public class ApplicationServiceTest extends MockServices {
     initSearchMocks();
     Mockito.when(locationService.createLocation(Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
-    Mockito.when(projectService.createProject(Mockito.anyObject())).thenAnswer((Answer<ProjectJson>) invocation ->
+    Mockito.when(projectService.insert(Mockito.anyObject())).thenAnswer((Answer<ProjectJson>) invocation ->
         createProjectJson(100));
     Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
 
     Mockito.when(locationService.findLocationById(Mockito.anyInt())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
-    Mockito.when(projectService.findProjectById(Mockito.anyInt())).thenAnswer((Answer<ProjectJson>) invocation ->
+    Mockito.when(projectService.findById(Mockito.anyInt())).thenAnswer((Answer<ProjectJson>) invocation ->
         createProjectJson(100));
     Mockito.when(applicantService.findApplicantById(Mockito.anyInt())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
@@ -114,7 +114,6 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getApplicant());
     assertNotNull(response.getProject());
     assertNotNull(response.getLocation());
-    assertEquals(100, response.getProject().getId().intValue());
     assertEquals(102, response.getLocation().getId().intValue());
     assertNotNull(response.getApplicant());
     assertEquals(103, response.getApplicant().getId().intValue());

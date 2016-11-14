@@ -102,6 +102,24 @@ public class ApplicationDao {
     return updated;
   }
 
+  /**
+   * Updates project of the given applications.
+   *
+   * @param   projectId     New project set to the applications. May be <code>null</code>.
+   * @param   applications  Applications whose project is updated.
+   *
+   * @return  Number of updated applications.
+   */
+  @Transactional
+  public int updateProject(Integer projectId, List<Integer> applications) {
+    int updated = (int) queryFactory
+        .update(application)
+        .set(application.projectId, projectId)
+        .where(application.id.in(applications))
+        .execute();
+    return updated;
+  }
+
   @Transactional
   public Application update(int id, Application appl) {
     appl.setId(id);

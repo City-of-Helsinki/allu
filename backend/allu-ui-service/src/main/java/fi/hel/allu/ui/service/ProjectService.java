@@ -1,15 +1,23 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Project;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ProjectJson;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -17,75 +25,153 @@ public class ProjectService {
   private static final Logger logger = LoggerFactory.getLogger(ProjectService.class);
 
   private ApplicationProperties applicationProperties;
-
   private RestTemplate restTemplate;
+  private ApplicationMapper applicationMapper;
 
   @Autowired
-  public ProjectService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
+  public ProjectService(ApplicationProperties applicationProperties, RestTemplate restTemplate, ApplicationMapper applicationMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.applicationMapper = applicationMapper;
+  }
+
+  /**
+   * Find project by id.
+   *
+   * @param   id  Id of the project.
+   * @return  Requested project.
+   */
+  public ProjectJson findById(int id) {
+    ResponseEntity<Project> responseEntity = restTemplate.getForEntity(applicationProperties.getProjectByIdUrl(), Project.class, id);
+    return mapProjectToJson(responseEntity.getBody());
+  }
+
+  /**
+   * Find project children.
+   *
+   * @param   id    Id of the project whose children will be returned.
+   * @return  List of children projects. Never <code>null</code>.
+   */
+  public List<ProjectJson> findProjectChildren(int id) {
+    ResponseEntity<Project[]> responseEntity = restTemplate.getForEntity(applicationProperties.getProjectChildrenUrl(), Project[].class, id);
+    return Arrays.stream(responseEntity.getBody()).map(p -> mapProjectToJson(p)).collect(Collectors.toList());
   }
 
   /**
    * Create a new project.
    *
-   * @param projectJson Project that is going to be created
+   * @param projectJson   Project that is going to be created
    * @return Created project
    */
-  public ProjectJson createProject(ProjectJson projectJson) {
-    if (projectJson == null || projectJson.getId() == null) {
-      if (projectJson == null) {
-        projectJson = new ProjectJson();
-      }
-      Project projectModel = restTemplate.postForObject(applicationProperties
-              .getModelServiceUrl(ApplicationProperties.PATH_MODEL_PROJECT_CREATE), createProjectModel(projectJson),
-          Project.class);
-      mapProjectToJson(projectJson, projectModel);
-    }
-    return projectJson;
+  public ProjectJson insert(ProjectJson projectJson) {
+    Project projectModel = restTemplate.postForObject(
+        applicationProperties.getProjectCreateUrl(),
+        createProjectModel(projectJson),
+        Project.class);
+    return mapProjectToJson(projectModel);
   }
 
+
   /**
-   * Update given project. Project id is needed to update the given project.
+   * Update given project.
    *
    * @param projectJson Project that is going to be updated
    */
-  public void updateProject(ProjectJson projectJson) {
-    if (projectJson != null && projectJson.getId() != null && projectJson.getId() > 0) {
-      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_PROJECT_UPDATE), createProjectModel(projectJson),
-          projectJson.getId().intValue());
-    }
+  public ProjectJson update(int projectId, ProjectJson projectJson) {
+    HttpEntity<Project> requestEntity = new HttpEntity<>(createProjectModel(projectJson));
+    ResponseEntity<Project> response = restTemplate.exchange(
+      applicationProperties.getProjectUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, projectId);
+    return mapProjectToJson(response.getBody());
   }
 
   /**
-   * Find given project details.
+   * Find applications of given project.
    *
-   * @param projectId Project identifier that is used to find details
-   * @return Project details or empty project object
+   * @param   id    Id of the project whose applications should be returned.
+   * @return  Applications of the given project. Never <code>null</code>.
    */
-  public ProjectJson findProjectById(int projectId) {
-    ProjectJson projectJson = new ProjectJson();
-    ResponseEntity<Project> projectResult = restTemplate.getForEntity(applicationProperties
-        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_PROJECT_FIND_BY_ID), Project.class, projectId);
-    mapProjectToJson(projectJson, projectResult.getBody());
-    return projectJson;
+  public List<ApplicationJson> findApplicationsByProject(int id) {
+    ApplicationJson applicationJson = new ApplicationJson();
+    ResponseEntity<Application[]> responseEntity =
+        restTemplate.getForEntity(applicationProperties.getApplicationsByProjectUrl(), Application[].class, id);
+    return Arrays.stream(responseEntity.getBody()).map(a -> applicationMapper.mapApplicationToJson(a)).collect(Collectors.toList());
+  }
+
+  /**
+   * Updates applications of given project to the given set of applications.
+   *
+   * @param id              Id of the project.
+   * @param applicationIds  Application ids to be attached to the given project. Use empty list to clear all references to the given project.
+   */
+  public ProjectJson updateProjectApplications(int id, List<Integer> applicationIds) {
+    // TODO: Käytiin Kimmon kanssa läpi ja merkkaan korjattavaksi tämän itselleni samalla, kun korjaan ElasticSearch-indeksoinnin.
+    // TODO: Tässä oli alla virheenä se, että ensimmäisen REST-kutsun piti hakea modelilta annetuilla hakemus-id:llä eikä annetun
+    // TODO: projektin hakemuksia. Tarkoitus on siis se, että annetut hakemus-id:t ovat saattaneet viitata aiemmin johonkin toiseen
+    // TODO: projektiin ja näiden tiedot pitää päivittää myös ElasticSearchiin.
+    ResponseEntity<Application[]> applicationResult = restTemplate.getForEntity(
+        applicationProperties.getApplicationsByProjectUrl(),
+        Application[].class,
+        id);
+    List<Application> updatedApplications = Arrays.asList(applicationResult.getBody());
+    List<Integer> updatedProjectIds = updatedApplications.stream()
+        .filter(a -> a.getProjectId() != null)
+        .map(Application::getProjectId)
+        .distinct()
+        .collect(Collectors.toList());
+    updatedProjectIds.add(id);
+
+    HttpEntity<List<Integer>> requestEntity = new HttpEntity<>(applicationIds);
+    ResponseEntity<Project> updatedProjectResult = restTemplate.exchange(
+        applicationProperties.getApplicationProjectUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, id);
+    return mapProjectToJson(updatedProjectResult.getBody());
+    // TODO: update updatedApplications in the ES (project id change)
+    // TODO: update updatedProjectIds in the ES
+  }
+
+
+  /**
+   * Update parent of the given project.
+   *
+   * @param id              Project whose parent should be updated.
+   * @param parentProject   New parent project.
+   * @return  Updated project.
+   */
+  public ProjectJson updateProjectParent(int id, Integer parentProject) {
+    HttpEntity<Integer> requestEntity = new HttpEntity<>(parentProject);
+    ResponseEntity<Project> updatedProjectResult = restTemplate.exchange(
+        applicationProperties.getProjectParentUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, id);
+    return mapProjectToJson(updatedProjectResult.getBody());
   }
 
   private Project createProjectModel(ProjectJson projectJson) {
     Project projectDomain = new Project();
-    if (projectJson.getId() != null) {
-      projectDomain.setId(projectJson.getId());
-    }
-    if (projectJson.getName() == null) {
-      projectDomain.setName("Mock Project");
-    } else {
-      projectDomain.setName(projectJson.getName());
-    }
+    projectDomain.setId(projectJson.getId());
+    projectDomain.setName(projectJson.getName());
+    projectDomain.setStartTime(projectJson.getStartTime());
+    projectDomain.setEndTime(projectJson.getEndTime());
+    projectDomain.setOwnerName(projectJson.getOwnerName());
+    projectDomain.setContactName(projectJson.getContactName());
+    projectDomain.setEmail(projectJson.getEmail());
+    projectDomain.setPhone(projectJson.getPhone());
+    projectDomain.setCustomerReference(projectJson.getCustomerReference());
+    projectDomain.setAdditionalInfo(projectJson.getAdditionalInfo());
+    projectDomain.setParentId(projectJson.getParentId());
     return projectDomain;
   }
 
-  private void mapProjectToJson(ProjectJson projectJson, Project projectDomain) {
+  private ProjectJson mapProjectToJson(Project projectDomain) {
+    ProjectJson projectJson = new ProjectJson();
     projectJson.setId(projectDomain.getId());
     projectJson.setName(projectDomain.getName());
+    projectJson.setStartTime(projectDomain.getStartTime());
+    projectJson.setEndTime(projectDomain.getEndTime());
+    projectJson.setOwnerName(projectDomain.getOwnerName());
+    projectJson.setContactName(projectDomain.getContactName());
+    projectJson.setEmail(projectDomain.getEmail());
+    projectJson.setPhone(projectDomain.getPhone());
+    projectJson.setCustomerReference(projectDomain.getCustomerReference());
+    projectJson.setAdditionalInfo(projectDomain.getAdditionalInfo());
+    projectJson.setParentId(projectDomain.getParentId());
+    return projectJson;
   }
 }
