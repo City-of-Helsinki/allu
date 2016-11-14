@@ -146,12 +146,19 @@ export class LocationComponent {
         this.fixedLocations = fl.filter(f => f.applicationType === type);
         this.sections = [];
 
-        this.selectedArea = Some(this.fixedLocations.filter(fLoc => this.application.location.fixedLocationIds.indexOf(fLoc.id) >= 0))
-          .filter(fLocs => fLocs.length > 0)
-          .map(fLocs => fLocs[0].area)
-          .orElse(undefined);
-
-        this.selectedFixedLocations = this.application.location.fixedLocationIds;
+        this.setSelections();
       });
+  }
+
+  private setSelections() {
+    this.selectedArea = Some(this.application.location)
+      .map(location => this.fixedLocations.filter(fLoc => location.fixedLocationIds.indexOf(fLoc.id) >= 0))
+      .filter(fLocs => fLocs.length > 0)
+      .map(fLocs => fLocs[0].area)
+      .orElse(undefined);
+
+    Some(this.application.location).do(location => {
+      this.selectedFixedLocations = location.fixedLocationIds;
+    });
   }
 }

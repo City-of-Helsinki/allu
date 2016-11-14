@@ -12,13 +12,13 @@
                         <div class="row form-group">
                             <div class="col m6">
                                 <div class="input-field col m12">
-                                    <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
+                                    <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="isSummary">
                                     <label for="name">Vuokrauksen nimi*</label>
                                     <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                                     <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
                                 </div>
                                 <div class="input-field col m12">
-                                    <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
+                                    <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="isSummary"></textarea>
                                     <label for="description">Vuokrauksen kuvaus*</label>
                                     <field-error [form]="rentalForm" field="description" hasError="required">
                                         {{translations.application.shortTermRental.field.descriptionMissing}}
@@ -26,31 +26,31 @@
                                 </div>
                             </div>
                             <div class="input-field col m6">
-                                <input id="area" type="number" formControlName="area" [readonly]="readonly">
+                                <input id="area" type="number" formControlName="area" [readonly]="isSummary">
                                 <label for="area">Pinta-ala</label>
                             </div>
                             <div class="col m6 no-padding">
                                 <div formGroupName="rentalTimes">
                                     <div class="input-field col m12">
-                                        <input *ngIf="!readonly" id="rentalStartTime"
+                                        <input *ngIf="!isSummary" id="rentalStartTime"
                                                formControlName="startTime"
                                                materialize="pickadate"
                                                [materializeParams]="pickadateParams"
                                                type="text"/>
 
-                                        <input *ngIf="readonly" id="rentalStartTime" type="text" formControlName="startTime" readonly>
+                                        <input *ngIf="isSummary" id="rentalStartTime" type="text" formControlName="startTime" readonly>
                                         <label for="rentalStartTime">Alkupäivämäärä*</label>
                                         <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
                                             {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
                                         </field-error>
                                     </div>
                                     <div class="input-field col m12">
-                                        <input *ngIf="!readonly" id="rentalEndTime"
+                                        <input *ngIf="!isSummary" id="rentalEndTime"
                                                formControlName="endTime"
                                                materialize="pickadate"
                                                [materializeParams]="pickadateParams"
                                                type="text"/>
-                                        <input *ngIf="readonly" id="rentalEndTime" type="text" formControlName="endTime" readonly>
+                                        <input *ngIf="isSummary" id="rentalEndTime" type="text" formControlName="endTime" readonly>
                                         <label for="rentalEndTime">Loppupäivämäärä*</label>
                                         <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
                                             {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
@@ -73,11 +73,11 @@
                         <div class="row form-group">
                             <div *ngIf="application.type==='BRIDGE_BANNER'" class="col m6 no-padding">
                                 <div class="col m12 height-fix-bottom">
-                                    <div *ngIf="!readonly">
+                                    <div *ngIf="!isSummary">
                                         <input type="checkbox" class="filled-in" id="commercial" formControlName="commercial"/>
                                         <label for="commercial">{{ meta?.getUiName('commercial') }}</label>
                                     </div>
-                                    <div *ngIf="readonly && rentalForm.value.commercial">{{ meta?.getUiName('commercial') }}</div>
+                                    <div *ngIf="isSummary && rentalForm.value.commercial">{{ meta?.getUiName('commercial') }}</div>
                                 </div>
                             </div>
                             <div class="col m12">
@@ -90,6 +90,9 @@
                     </md-card-content>
                 </md-card>
             </div>
+
+            <div>readonly {{readonly}}</div>
+            <location-details *ngIf="isSummary" [applicationId]="application.id" [location]="application.location" [readonly]="isSummary"></location-details>
         </form>
 
         <application-actions
