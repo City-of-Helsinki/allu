@@ -13,7 +13,6 @@ import '../rxjs-extensions.ts';
 import {UIStateHub} from './ui-state/ui-state-hub';
 import {HttpUtil} from './../util/http.util.ts';
 import {HttpResponse} from '../util/http.util.ts';
-import {HTTP_NOT_FOUND} from '../util/http-status-codes';
 import {ErrorInfo} from './ui-state/error-info';
 import {ErrorType} from './ui-state/error-type';
 import {None} from '../util/option';
