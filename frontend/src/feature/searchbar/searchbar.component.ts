@@ -1,5 +1,7 @@
 import {Component, Input, OnInit, OnDestroy, Output, EventEmitter, AfterViewInit} from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
 
 import {StringUtil} from '../../util/string.util';
 import {SearchbarFilter} from '../../service/searchbar-filter';
@@ -9,9 +11,7 @@ import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {UIState} from '../../service/ui-state/ui-state';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {MaterializeUtil} from '../../util/materialize.util';
-
-// To use Materialize functionality
-declare var Materialize: any;
+import {PostalAddress} from '../../model/common/postal-address';
 
 @Component({
   selector: 'searchbar',
@@ -27,6 +27,10 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() endDate: Date;
   @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
 
+  addressSearchSubject = new Subject<Array<PostalAddress>>();
+  addressSearchResults = this.addressSearchSubject.asObservable()
+    .map(addresses => addresses.map(address => { return { id: address.uiStreetAddress, name: address.uiStreetAddress}; }));
+
   private coordinateSubscription: Subscription;
   private pickadateParams = PICKADATE_PARAMETERS;
   private notFound: boolean;
@@ -36,7 +40,7 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit(): void {
     this.notifySearchUpdated();
 
-    this. coordinateSubscription = this.mapHub.coordinates()
+    this.coordinateSubscription = this.mapHub.coordinates()
       .filter(coords => !coords.isDefined())
       .subscribe(coords => Materialize.toast('Osoitetta ei löytynyt', 4000));
   }
@@ -58,6 +62,12 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
   public searchAddress(term: string) {
     this.mapHub.addSearch(term);
     this.notifySearchUpdated();
+  }
+
+  public onAddressSearchChange(searchTerm: string) {
+    this.mapHub.addressSearch(searchTerm)
+      .debounceTime(300)
+      .subscribe(addresses => this.addressSearchSubject.next(addresses));
   }
 
   set uiStartDate(date: string) {

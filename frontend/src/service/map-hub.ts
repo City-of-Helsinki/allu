@@ -99,6 +99,12 @@ export class MapHub {
   public fixedLocationsBy = (ids: Array<number>) => this.fixedLocations()
     .map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0));
 
+
+  /**
+   * Search addresses matching with partial search term
+   */
+  public addressSearch = (searchTerm: string) => this.locationService.search(searchTerm);
+
   /**
    * Used to notify about new address search terms
    */

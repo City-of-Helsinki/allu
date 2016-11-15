@@ -19,4 +19,8 @@ export class PostalAddress {
       city: this.city
     };
   }
+
+  get uiStreetAddress(): string {
+    return this.streetAddress ? this.streetAddress.replace(/\b0+/g, '') : undefined;
+  }
 }
