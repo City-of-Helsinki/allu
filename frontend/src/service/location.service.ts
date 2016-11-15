@@ -11,8 +11,8 @@ import {MapUtil} from './map.util.ts';
 import {MapHub} from './map-hub';
 import '../rxjs-extensions.ts';
 import {UIStateHub} from './ui-state/ui-state-hub';
-import {ErrorUtil} from './../util/error.util.ts';
-import {HttpError} from '../util/error.util';
+import {HttpUtil} from './../util/http.util.ts';
+import {HttpResponse} from '../util/http.util.ts';
 import {HTTP_NOT_FOUND} from '../util/http-status-codes';
 import {ErrorInfo} from './ui-state/error-info';
 import {ErrorType} from './ui-state/error-type';
@@ -21,6 +21,7 @@ import {Option} from '../util/option';
 import {Some} from '../util/option';
 import {FixedLocationMapper} from './mapper/fixed-location-mapper';
 import {FixedLocation} from '../model/common/fixed-location';
+import {HttpStatus} from '../util/http.util';
 
 @Injectable()
 export class LocationService {
@@ -48,7 +49,7 @@ export class LocationService {
     return this.authHttp.get(LocationService.FIXED_LOCATION_URL)
       .map(response => response.json())
       .map(json => json.map(ss => FixedLocationMapper.mapBackend(ss)))
-      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   private geocodeUrl(address: string) {
@@ -59,8 +60,8 @@ export class LocationService {
   }
 
   private handleGeocodeError(errorResponse: any): Observable<Option<Geocoordinates>> {
-    let httpError = ErrorUtil.extractHttpError(errorResponse);
-    return httpError.status === HTTP_NOT_FOUND
+    let httpError = HttpUtil.extractHttpResponse(errorResponse);
+    return httpError.status === HttpStatus.NOT_FOUND
       ? Observable.of(None())
       : Observable.throw(new ErrorInfo(ErrorType.GEOLOCATION_SEARCH_FAILED, httpError.message));
   }

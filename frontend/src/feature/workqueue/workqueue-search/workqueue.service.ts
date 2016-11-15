@@ -8,7 +8,7 @@ import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {UIStateHub} from '../../../service/ui-state/ui-state-hub';
 import {Application} from '../../../model/application/application';
 import {ErrorType} from '../../../service/ui-state/error-type';
-import {ErrorUtil} from '../../../util/error.util';
+import {HttpUtil} from '../../../util/http.util.ts';
 import {ErrorInfo} from '../../../service/ui-state/error-info';
 
 @Injectable()
@@ -23,6 +23,6 @@ export class WorkQueueService {
       JSON.stringify(QueryParametersMapper.mapFrontend(searchQuery)))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_WORKQUEUE_SEARCH_FAILED, ErrorUtil.extractMessage(err))));
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_WORKQUEUE_SEARCH_FAILED, HttpUtil.extractMessage(err))));
   }
 }
