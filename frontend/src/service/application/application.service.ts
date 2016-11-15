@@ -12,7 +12,7 @@ import {ApplicationSearch} from './application-hub';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {ApplicationLocationQueryMapper} from './../mapper/application-location-query-mapper';
 import {UIStateHub} from './../ui-state/ui-state-hub';
-import {ErrorUtil} from '../../util/error.util.ts';
+import {HttpUtil} from '../../util/http.util.ts';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status-change';
 import {translations} from '../../util/translations';
@@ -45,7 +45,7 @@ export class ApplicationService {
     return this.authHttp.get(ApplicationService.APPLICATIONS_URL + '/' + id)
       .map(response => response.json())
       .map(app => ApplicationMapper.mapBackend(app))
-      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   public getApplicationsByLocation(query: ApplicationLocationQuery): Observable<Array<Application>> {
@@ -56,7 +56,7 @@ export class ApplicationService {
       JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query)))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, ErrorUtil.extractMessage(err))));
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, HttpUtil.extractMessage(err))));
   }
 
   public searchApplications(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
@@ -67,7 +67,7 @@ export class ApplicationService {
       JSON.stringify(QueryParametersMapper.mapFrontend(searchQuery)))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, ErrorUtil.extractMessage(err))));
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, HttpUtil.extractMessage(err))));
   }
 
   public saveApplication(application: Application): Observable<Application> {
@@ -77,19 +77,19 @@ export class ApplicationService {
       return this.authHttp.put(url,
         JSON.stringify(ApplicationMapper.mapFrontend(application)))
         .map(response => ApplicationMapper.mapBackend(response.json()))
-        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, ErrorUtil.extractMessage(err))));
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, HttpUtil.extractMessage(err))));
     } else {
       return this.authHttp.post(ApplicationService.APPLICATIONS_URL,
         JSON.stringify(ApplicationMapper.mapFrontend(application)))
         .map(response => ApplicationMapper.mapBackend(response.json()))
-        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, ErrorUtil.extractMessage(err))));
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, HttpUtil.extractMessage(err))));
     }
   }
 
   public loadMetadata(applicationType: string): Observable<StructureMeta> {
     return this.authHttp.get(ApplicationService.METADATA_URL + '/' + applicationType)
       .map(response => StructureMetaMapper.mapBackend(response.json()))
-      .catch(err => this.uiState.addError(ErrorUtil.extractMessage(err)));
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   public applicationStatusChange(statusChange: ApplicationStatusChange): Observable<Application> {
