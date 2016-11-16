@@ -5,8 +5,6 @@ import {ApplicationType} from '../../../../../model/application/type/application
 import {ApplicationPricing} from '../../application-pricing';
 import {CalculatedPricing} from '../../../../../model/application/outdoor-event/calculated-pricing';
 
-const CENTS = 100;
-
 export class OutdoorEventDetailsForm {
   constructor(public name?: string,
               public nature?: string,
@@ -53,7 +51,7 @@ export class OutdoorEventDetailsForm {
       event.foodSales,
       event.foodProviders,
       event.marketingProviders,
-      new ApplicationPricing(event.calculatedPricing.price / CENTS),
+      new ApplicationPricing(event.calculatedPricing.euroPrice),
       event.structureArea,
       event.structureDescription,
       new TimePeriod(event.uiStructureStartTime, event.uiStructureEndTime));
@@ -78,7 +76,8 @@ export class OutdoorEventDetailsForm {
     event.foodSales = form.foodSales;
     event.foodProviders = form.foodProviders;
     event.marketingProviders = form.marketingProviders;
-    event.calculatedPricing = new CalculatedPricing(form.pricing.calculatedPrice * CENTS);
+    event.calculatedPricing = new CalculatedPricing();
+    event.calculatedPricing.euroPrice = form.pricing.calculatedPrice;
     event.structureArea = form.structureArea;
     event.structureDescription = form.structureDescription;
     event.uiStructureStartTime = form.structureTimes.startTime;
