@@ -1,0 +1,21 @@
+@import '../../../assets/colors';
+
+.autocompletion-dropdown-content {
+  background: $allu-background;
+  border: solid $allu-dropdown-border;
+  border-radius: 5px;
+  z-index: 9999;
+  position: absolute;
+  top: 50px;
+  left: 0px;
+  display: inline-block;
+
+
+  .autocompletion-dropdown-entry {
+    font-size: 16px;
+  }
+
+  .autocompletion-dropdown-entry:hover {
+    background-color: $allu-item-highlight;
+  }
+}

@@ -21,6 +21,7 @@ import {Some} from '../util/option';
 import {FixedLocationMapper} from './mapper/fixed-location-mapper';
 import {FixedLocation} from '../model/common/fixed-location';
 import {HttpStatus} from '../util/http.util';
+import {PostalAddress} from '../model/common/postal-address';
 
 @Injectable()
 export class LocationService {
@@ -28,6 +29,7 @@ export class LocationService {
   static ADDRESS_URL = '/api/address';
   static GEOCODE_URL = '/geocode/helsinki';
   static FIXED_LOCATION_URL = '/api/locations/fixed-location';
+  static SEARCH_URL = '/search';
 
   constructor(
     private authHttp: AuthHttp,
@@ -48,6 +50,14 @@ export class LocationService {
     return this.authHttp.get(LocationService.FIXED_LOCATION_URL)
       .map(response => response.json())
       .map(json => json.map(ss => FixedLocationMapper.mapBackend(ss)))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
+  public search(searchTerm: string): Observable<Array<PostalAddress>> {
+    let searchUrl = LocationService.ADDRESS_URL + LocationService.SEARCH_URL + '/' + searchTerm;
+    return this.authHttp.get(searchUrl)
+      .map(response => response.json())
+      .map(json => json.map(address => PostalAddress.fromBackend(address)))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 

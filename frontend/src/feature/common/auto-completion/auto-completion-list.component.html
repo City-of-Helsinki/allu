@@ -1,0 +1,4 @@
+<div *ngIf="sortedEntries.length > 0" class="autocompletion-dropdown-content">
+    <div *ngFor="let entry of sortedEntries" class="autocompletion-dropdown-entry clickable"
+         (click)="select(entry.id)">{{entry.name}}</div>
+</div>

@@ -1,0 +1,86 @@
+import {Directive, Input, Output, EventEmitter, HostListener, Renderer,
+  ViewContainerRef, OnInit, OnDestroy, ComponentRef, ComponentFactoryResolver
+} from '@angular/core';
+import {Subject} from 'rxjs/Subject';
+import {Observable} from 'rxjs/Observable';
+
+import {AutoCompletionListComponent} from './auto-completion-list.component.ts';
+import {Some} from '../../../util/option';
+import {AutoCompletionEntry} from './auto-completion-entry';
+
+@Directive({
+  selector: '[autocompletion]'
+})
+export class AutoCompletionDirective implements OnInit, OnDestroy {
+
+  // name needs to match selector to use it like [autocompletion]="searchFunction"
+  // input for dropdown values
+  @Input() autocompletion: Observable<Array<AutoCompletionEntry>>;
+  // Input for min length of search term which triggers search
+  @Input() minTermLength = 3;
+  // Event for notifying search changes
+  @Output() onSearchChange = new EventEmitter<string>();
+  // Event for notifying item was selected
+  @Output() onSelection = new EventEmitter<any>();
+
+  private searchTerm = new Subject<string>();
+  private listComponentRef: ComponentRef<AutoCompletionListComponent>;
+  private inputEl: HTMLInputElement;  // input tag
+  private dropdownEl: HTMLElement; // auto complete element
+  private clickListener: Function;
+
+  constructor(private resolver: ComponentFactoryResolver, private renderer: Renderer,
+              public  viewContainerRef: ViewContainerRef) {
+    this.inputEl = viewContainerRef.element.nativeElement;
+  }
+
+  ngOnInit(): void {
+    this.autocompletion
+      .filter(results => results.length > 0)
+      .subscribe(searchResults => this.showDropdown());
+
+    this.searchTerm
+      .filter(term => term && term.length >= this.minTermLength)
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .subscribe(term => this.onSearchChange.emit(term));
+
+    // disable default autcomplete from parent input
+    this.inputEl.autocomplete = 'off';
+    this.initDropdown();
+  }
+
+  ngOnDestroy(): void {
+    this.clickListener();
+  }
+
+  @HostListener('keyup', ['$event']) onKeyUp(event: any) {
+    this.searchTerm.next(event.target.value);
+  }
+
+  showDropdown() {
+      this.dropdownEl = this.listComponentRef.location.nativeElement;
+      this.dropdownEl.style.display = 'inline-block';
+  }
+
+  hideDropdown = (event?: any): void => {
+    Some(this.dropdownEl).do(el => el.style.display = 'none');
+  };
+
+  private initDropdown() {
+    let factory = this.resolver.resolveComponentFactory(AutoCompletionListComponent);
+    this.listComponentRef = this.viewContainerRef.createComponent(factory);
+
+    let component = this.listComponentRef.instance;
+    component.entries = this.autocompletion;
+    component.onSelection.subscribe(selection => {
+      this.inputEl.value = selection;
+      this.onSelection.emit(selection);
+    });
+
+    // when somewhere else clicked, hide this autocomplete
+    this.clickListener = this.renderer.listenGlobal('document', 'click', (event) => this.hideDropdown(event));
+
+    this.hideDropdown();
+  }
+}

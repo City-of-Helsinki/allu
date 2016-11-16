@@ -5,8 +5,9 @@
       <div class="input-field col s8">
         <input #streetAddress id="streetAddress" type="text"
                name="addressSearch" [(ngModel)]="addressSearch"
-               (keyup.enter)="searchAddress(streetAddress.value)"
-               (blur)="searchAddress(streetAddress.value)">
+               [autocompletion]="addressSearchResults"
+               (onSearchChange)="onAddressSearchChange($event)"
+               (onSelection)="searchAddress($event)">
         <label for="streetAddress">Kirjoita osoite</label>
       </div>
 
