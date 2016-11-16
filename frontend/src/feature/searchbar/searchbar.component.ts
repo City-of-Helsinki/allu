@@ -42,7 +42,7 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.coordinateSubscription = this.mapHub.coordinates()
       .filter(coords => !coords.isDefined())
-      .subscribe(coords => Materialize.toast('Osoitetta ei löytynyt', 4000));
+      .subscribe(coords => MaterializeUtil.toast('Osoitetta ei löytynyt', 4000));
   }
 
   ngAfterViewInit(): void {
