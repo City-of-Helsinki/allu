@@ -1,6 +1,13 @@
 package fi.hel.allu.ui.domain;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.model.domain.serialization.GeometryDeserializerProxy;
+import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
+
+import org.geolatte.geom.Geometry;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
@@ -13,6 +20,9 @@ public class FixedLocationJson {
   String section;
   @NotNull
   ApplicationType applicationType;
+  @JsonSerialize(using = GeometrySerializerProxy.class)
+  @JsonDeserialize(using = GeometryDeserializerProxy.class)
+  private Geometry geometry;
 
   /**
    * Get the database id for the FixedLocationJson
@@ -65,4 +75,18 @@ public class FixedLocationJson {
   public void setApplicationType(ApplicationType applicationType) {
     this.applicationType = applicationType;
   }
+
+  /**
+   * Get the geometry for this fixed location.
+   *
+   * @return the geometry
+   */
+  public Geometry getGeometry() {
+    return geometry;
+  }
+
+  public void setGeometry(Geometry geometry) {
+    this.geometry = geometry;
+  }
+
 }
