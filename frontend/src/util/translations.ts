@@ -92,6 +92,14 @@ export const translations = {
       }
     }
   },
+  project: {
+    field: {
+      nameMissing: 'Hankkeen nimi puuttuu',
+      ownerNameMissing: 'Hankkeen omistaja puuttu',
+      contactNameMissing: 'Hankkeen yhteyshenkilö puuttuu',
+      customerReferenceMissing: 'Asiakkaan viite/työnumero puuttuu'
+    }
+  },
   applicant: {
     type: {
       COMPANY: {
@@ -157,6 +165,11 @@ export const translations = {
       ROLE_INVOICING: 'Laskutus',
       ROLE_VIEW: 'Katselu',
       ROLE_ADMIN: 'Ylläpito'
+    }
+  },
+  common: {
+    field: {
+      emailInvalid: 'Virheellinen sähköpostiosoite'
     }
   }
 };

@@ -24,7 +24,6 @@ import {ApplicantComponent} from './info/applicant/applicant.component';
 import {ContactComponent} from './info/contact/contact.component';
 import {EventDetailsComponent} from './info/outdoor-event/details/event-details.component.ts';
 import {LocationDetailsComponent} from './info/location/location-details.component';
-import {FieldErrorComponent} from '../common/field-error.component';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
 
 import {LocationState} from '../../service/application/location-state';
@@ -58,8 +57,7 @@ import {ApplicationActionsComponent} from './info/application-actions.component'
     ApplicantComponent,
     ContactComponent,
     EventDetailsComponent,
-    LocationDetailsComponent,
-    FieldErrorComponent
+    LocationDetailsComponent
   ],
   providers: [
     ApplicationAttachmentHub,

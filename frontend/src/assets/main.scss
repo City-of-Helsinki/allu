@@ -124,21 +124,19 @@ input:-webkit-autofill:active {
   transition: background-color 5000s ease-in-out 0s;
 }
 
-form {
-  .form-group {
-    padding: 5px 0px;
-    margin-bottom: 0px;
+.form-group {
+  padding: 5px 0px;
+  margin-bottom: 0px;
 
-    .input-field {
-      .ng-invalid.ng-dirty, .ng-invalid.ng-touched {
-        border-bottom: 2px solid $allu-field-error;
-        box-shadow: none;
-      }
+  .input-field {
+    .ng-invalid.ng-dirty, .ng-invalid.ng-touched {
+      border-bottom: 2px solid $allu-field-error;
+      box-shadow: none;
+    }
 
-      .ng-invalid.ng-dirty ~ label,
-      .ng-invalid.ng-touched ~label {
-        color: $allu-field-error;
-      }
+    .ng-invalid.ng-dirty ~ label,
+    .ng-invalid.ng-touched ~label {
+      color: $allu-field-error;
     }
   }
 }

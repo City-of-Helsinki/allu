@@ -4,6 +4,7 @@ import {MdToolbarModule} from '@angular/material';
 import {MaterializeDirective} from 'angular2-materialize';
 import {AutoCompletionDirective} from './auto-completion/auto-completion.directive.ts';
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component.ts';
+import {FieldErrorComponent} from './field-error.component';
 
 @NgModule({
   imports: [
@@ -13,14 +14,16 @@ import {AutoCompletionListComponent} from './auto-completion/auto-completion-lis
   declarations: [
     MaterializeDirective,
     AutoCompletionDirective,
-    AutoCompletionListComponent
+    AutoCompletionListComponent,
+    FieldErrorComponent
   ],
   exports: [
     CommonModule,
     MdToolbarModule,
     MaterializeDirective,
     AutoCompletionDirective,
-    AutoCompletionListComponent
+    AutoCompletionListComponent,
+    FieldErrorComponent
   ],
   entryComponents: [
     AutoCompletionListComponent
