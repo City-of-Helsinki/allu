@@ -84,6 +84,7 @@ public class AddressService {
         String.class,
         partialStreetName);
 
+    logger.debug("For street search {}, WFS service returned {}", partialStreetName, wfsXmlEntity.getBody());
     WfsFeatureCollection wfsFeatureCollection = unmarshalWfs(wfsXmlEntity.getBody());
     List<PostalAddressJson> addresses = new ArrayList<>();
     if (wfsFeatureCollection.featureMember != null && wfsFeatureCollection.featureMember.size() > 0) {
