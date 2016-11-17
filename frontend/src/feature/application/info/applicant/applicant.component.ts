@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
+import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
 
@@ -16,9 +16,11 @@ import {ApplicantType} from '../../../../model/application/applicant/applicant-t
   template: require('./applicant.component.html'),
   styles: []
 })
-export class ApplicantComponent implements OnInit, AfterViewInit {
+export class ApplicantComponent implements OnInit, OnDestroy {
   @Input() applicationForm: FormGroup;
   @Input() readonly: boolean;
+  @Input() headerText = 'Hakija';
+  @Input() formName = 'applicant';
 
   applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
@@ -33,7 +35,8 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
     this.initForm();
   }
 
-  ngAfterViewInit(): void {
+  ngOnDestroy(): void {
+    this.applicationForm.removeControl(this.formName);
   }
 
   private initForm() {
@@ -54,7 +57,7 @@ export class ApplicantComponent implements OnInit, AfterViewInit {
       phone: ['', Validators.minLength(2)]
     });
 
-    this.applicationForm.addControl('applicant', this.applicantForm);
+    this.applicationForm.addControl(this.formName, this.applicantForm);
 
     this.route.parent.data
       .map((data: {application: Application}) => data.application.applicant)

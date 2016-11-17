@@ -10,6 +10,7 @@ import {ApplicationStatusChange} from '../../model/application/application-statu
 import {ApplicationService} from './application.service';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {StructureMeta} from '../../model/application/structure-meta';
+import {DefaultText} from '../../model/application/cable-report/default-text';
 
 export type ApplicationSearch = ApplicationLocationQuery | number;
 
@@ -60,4 +61,8 @@ export class ApplicationHub {
    */
   public removeHandler =
     (applicationIds: Array<number>) => this.applicationService.applicationHandlerRemove(applicationIds);
+
+  public loadDefaultTexts = () => this.applicationService.loadDefaultTexts();
+
+  public saveDefaultText = (text: DefaultText) => this.applicationService.saveDefaultText(text);
 }

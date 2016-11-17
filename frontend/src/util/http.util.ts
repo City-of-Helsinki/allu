@@ -60,10 +60,12 @@ export class HttpResponse {
 
 export class HttpUtil {
   static extractMessage(responseObject: any) {
-    console.log('extractMessage', responseObject);
-    let response = responseObject.json();
-    console.log('response', response);
-    return (response.message) ? response.message : response.status + ' : ' + response.error;
+    if (responseObject.body && responseObject.body !== '') {
+      let response = responseObject.json();
+      return (response.message) ? response.message : response.status + ' : ' + response.error;
+    } else {
+      return responseObject.status + ' : ' + responseObject.statusText;
+    }
   };
 
   static extractHttpResponse(responseObject: any): HttpResponse {

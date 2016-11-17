@@ -18,6 +18,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {ApplicationCategoryType} from '../type/application-category';
 import {None} from '../../../util/option';
 import {Option} from '../../../util/option';
+import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 
 @Component({
   selector: 'type',
@@ -57,6 +58,7 @@ export class LocationComponent {
         this.locationState.location = application.location || new Location();
         this.locationState.startDate = application.startTime;
         this.locationState.endDate = application.endTime;
+        this.locationState.specifiers = application.specifiers.map(s => ApplicationSpecifier[s]);
         this.loadFixedLocationsForType(ApplicationType[application.type]);
 
         this.mapHub.selectApplication(application);
@@ -82,6 +84,10 @@ export class LocationComponent {
     }
   }
 
+  onApplicationSpecifierChange(specifiers: Array<ApplicationSpecifier>) {
+    this.locationState.specifiers = specifiers;
+  }
+
   searchUpdated(filter: SearchbarFilter) {
     this.locationState.location.postalAddress.streetAddress = filter.search;
     this.locationState.startDate = filter.startDate;
@@ -96,6 +102,7 @@ export class LocationComponent {
       this.application.location = this.locationState.location;
       this.application.startTime = this.locationState.startDate;
       this.application.endTime = this.locationState.endDate;
+      this.application.specifiers = this.locationState.specifiers.map(s => ApplicationSpecifier[s]);
       this.applicationHub.save(this.application).subscribe(application => {
         this.router.navigate(['/applications', application.id, 'summary']);
       });

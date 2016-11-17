@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
+import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormControl, Validators, FormArray} from '@angular/forms';
 
@@ -14,9 +14,13 @@ import {translations} from '../../../../util/translations';
   template: require('./contact.component.html'),
   styles: []
 })
-export class ContactComponent implements OnInit, AfterViewInit {
+export class ContactComponent implements OnInit, OnDestroy {
   @Input() applicationForm: FormGroup;
   @Input() readonly: boolean;
+  @Input() headerText = 'Yhteyshenkilö';
+  @Input() formName = 'contacts';
+  @Input() addNew = false;
+  @Input() saveToRegistry = false;
 
   contactsForm: FormGroup;
   contacts: FormArray;
@@ -32,14 +36,15 @@ export class ContactComponent implements OnInit, AfterViewInit {
     this.contactsForm = this.fb.group({
       contacts: this.contacts
     });
-    this.applicationForm.addControl('contacts', this.contacts);
+    this.applicationForm.addControl(this.formName, this.contacts);
 
     this.route.parent.data.subscribe((data: {application: Application}) => {
       data.application.contactList.forEach(contact => this.addContact(contact));
     });
   }
 
-  ngAfterViewInit(): void {
+  ngOnDestroy(): void {
+    this.applicationForm.removeControl(this.formName);
   }
 
   private metadataLoaded(metadata: StructureMeta) {

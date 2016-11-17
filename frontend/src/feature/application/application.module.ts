@@ -29,6 +29,9 @@ import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rent
 import {LocationState} from '../../service/application/location-state';
 import {AttachmentService} from '../../service/attachment-service';
 import {ApplicationActionsComponent} from './info/application-actions.component';
+import {CableReportComponent} from './info/cable-report/cable-report.component';
+import {CableInfoComponent} from './info/cable-report/cable-info.component.ts';
+import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
 
 @NgModule({
   imports: [
@@ -49,6 +52,8 @@ import {ApplicationActionsComponent} from './info/application-actions.component'
     OutdoorEventComponent,
     PromotionEventComponent,
     ShortTermRentalComponent,
+    CableReportComponent,
+    CableInfoComponent,
     ApplicationAttachmentComponent,
     ApplicationActionsComponent,
     FILE_UPLOAD_DIRECTIVES,
@@ -57,12 +62,16 @@ import {ApplicationActionsComponent} from './info/application-actions.component'
     ApplicantComponent,
     ContactComponent,
     EventDetailsComponent,
-    LocationDetailsComponent
+    LocationDetailsComponent,
+    DefaultTextModalComponent
   ],
   providers: [
     ApplicationAttachmentHub,
     ApplicationResolve,
     AttachmentService
+  ],
+  entryComponents: [
+    DefaultTextModalComponent
   ]
 })
 export class ApplicationModule {}

@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule, FormsModule} from '@angular/forms';
-import {MdTabsModule, MdDialogModule} from '@angular/material';
 
 import {WorkQueueComponent} from './workqueue.component';
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -14,9 +13,7 @@ import {WorkQueueHub} from './workqueue-search/workqueue-hub';
   imports: [
     ReactiveFormsModule,
     FormsModule,
-    AlluCommonModule,
-    MdTabsModule,
-    MdDialogModule
+    AlluCommonModule
   ],
   declarations: [
     WorkQueueComponent,

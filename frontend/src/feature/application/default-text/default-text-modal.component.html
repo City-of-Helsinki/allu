@@ -1,0 +1,19 @@
+<div class="modal-content">
+    <h3>Oletustekstit: {{translations.application.cableReport.cableInfo.type[typeName]}}</h3>
+    <form [formGroup]="defaultTextform">
+        <div formArrayName="defaultTexts">
+            <div class="row" *ngFor="let defaultText of defaultTextform.controls.defaultTexts.controls; let index=index">
+                <div [formGroupName]="index" class="col m12">
+                    <input type="text" formControlName="text">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col m12">
+                    <button type="button" class="waves-effect waves-light btn" (click)="addText()">Lisää uusi</button>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="waves-effect waves-light btn" (click)="confirm()">Tallenna</button>
+        <button type="button" class="waves-effect waves-light btn" (click)="cancel()">Peruuta</button>
+    </form>
+</div>

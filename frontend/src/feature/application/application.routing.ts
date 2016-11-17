@@ -11,6 +11,8 @@ import {TypeComponent} from '../../feature/application/type/type.component';
 import {AuthGuard} from '../../feature/login/auth-guard.service';
 import {ApplicationResolve} from './application-resolve';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
+import {CableReportComponent} from './info/cable-report/cable-report.component';
+import {applicationCategories} from './type/application-category';
 
 const childRoutes: Routes = [
   // Street work
@@ -36,7 +38,21 @@ const childRoutes: Routes = [
   { path: 'CIRCUS', component: ShortTermRentalComponent, canActivate: [AuthGuard] },
   { path: 'ART', component: ShortTermRentalComponent, canActivate: [AuthGuard] },
   { path: 'STORAGE_AREA', component: ShortTermRentalComponent, canActivate: [AuthGuard] },
-  { path: 'OTHER_SHORT_TERM_RENTAL', component: ShortTermRentalComponent, canActivate: [AuthGuard] }
+  { path: 'OTHER_SHORT_TERM_RENTAL', component: ShortTermRentalComponent, canActivate: [AuthGuard] },
+  // Cable reports
+  { path: 'CITY_STREET_AND_GREEN', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'WATER_AND_SEWAGE', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'HKL', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'ELECTRIC_CABLE', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'DISTRICT_HEATING', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'DISTRICT_COOLING', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'TELECOMMUNICATION', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'GAS', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'AD_PILLARS_AND_STOPS', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'PROPERTY_MERGER', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'SOIL_INVESTIGATION', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'JOINT_MUNICIPAL_INFRASTRUCTURE', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'OTHER_CABLE_REPORT', component: CableReportComponent, canActivate: [AuthGuard]}
 ];
 
 export const applicationRoutes: Routes = [

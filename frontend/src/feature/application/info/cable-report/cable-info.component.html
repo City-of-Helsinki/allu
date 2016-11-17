@@ -1,0 +1,45 @@
+<div class="col m12 loose">
+    <md-card>
+        <md-card-title>Johtotiedot</md-card-title>
+        <md-card-content>
+            <div class="row form-group">
+                <div class="input-field col m4">
+                    <select *ngIf="!readonly" [(ngModel)]="selectedCableInfoTypes" materialize="material_select" multiple>
+                        <option value="" disabled selected>Valitse tyyppi*</option>
+                        <option *ngFor="let type of cableInfoTypes" value="{{type}}">{{translations.application.cableReport.cableInfo.type[type]}}</option>
+                    </select>
+                </div>
+                <div [formGroup]="cableInfoForm">
+                    <div class="input-field col m2">
+                        <input id="mapExtractCount" type="number" formControlName="mapExtractCount" [readonly]="readonly">
+                        <label for="mapExtractCount">{{ meta?.getUiName('mapExtractCount') }}</label>
+                    </div>
+                    <div formArrayName="cableInfoEntries" class="row form-group">
+                        <div class="col m8" *ngFor="let infoEntry of cableInfoForm.controls.cableInfoEntries.controls; let index=index">
+                            <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
+                                <div class="form-group-label">{{translations.application.cableReport.cableInfo.type[infoEntry.value.cableInfoType]}}</div>
+
+                                <div class="input-field col m4">
+                                    <select *ngIf="!readonly" materialize="material_select" (change)="addDefaultText(index, $event.target.value)">
+                                        <option value="" disabled selected>Vakiotekstit</option>
+                                        <option *ngFor="let defaultText of defaultTextsFor(infoEntry.value.cableInfoType)">{{defaultText.text}}</option>
+                                    </select>
+                                </div>
+                                <div class="col m2">
+                                    <button type="button" md-raised-button class="waves-effect waves-light btn"
+                                            (click)="editDefaultTexts(infoEntry.value.cableInfoType)">MUOKKAA</button>
+                                </div>
+
+                                <div class="input-field col m12">
+                                    <textarea id="additionalInfo" class="materialize-textarea textarea"
+                                              formControlName="additionalInfo" [readonly]="readonly"></textarea>
+                                    <label for="additionalInfo">Lisätietoja</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</div>

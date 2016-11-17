@@ -13,6 +13,7 @@ export interface BackendApplication {
   handler: BackendUser;
   status: string;
   type: string;
+  specifiers: Array<string>;
   name: string;
   event: any;
   metadata: BackendStructureMeta;

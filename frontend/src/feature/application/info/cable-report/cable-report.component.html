@@ -1,0 +1,70 @@
+<div materialize class="row">
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
+        <applicant [applicationForm]="applicationForm" [readonly]="isSummary"
+                   headerText="Kaivajayritys/Toimija" formName="company"></applicant>
+
+        <contact [applicationForm]="applicationForm" [readonly]="isSummary"
+                 headerText="Johtoselvityksen tilaaja" formName="orderer"
+                 [saveToRegistry]="true"></contact>
+
+        <div class="col m12 loose">
+            <md-card>
+                <md-card-title>Johtoselvityksen tiedot</md-card-title>
+                <md-card-content>
+                    <div class="row form-group">
+                        <div class="col m6">
+                            <div class="input-field col m12">
+                                <div *ngIf="!readonly">
+                                    <input type="checkbox" class="filled-in" id="cableSurveyRequired" formControlName="cableSurveyRequired"/>
+                                    <label for="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</label>
+                                </div>
+                                <div *ngIf="readonly && applicationForm.value.cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</div>
+                            </div>
+                        </div>
+                        <div class="col m6 no-padding">
+                            <div formGroupName="reportTimes">
+                                <div class="input-field col m12">
+                                    <input *ngIf="!readonly" id="reportStartTime"
+                                           formControlName="startTime"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"
+                                           type="text"/>
+
+                                    <input *ngIf="readonly" id="reportStartTime" type="text" formControlName="startTime" readonly>
+                                    <label for="reportStartTime">{{ meta?.getUiName('reportStartTime') }}*</label>
+                                </div>
+                                <div class="input-field col m12">
+                                    <input *ngIf="!readonly" id="reportEndTime"
+                                           formControlName="endTime"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"
+                                           type="text"/>
+                                    <input *ngIf="readonly" id="reportEndTime" type="text" formControlName="endTime" readonly>
+                                    <label for="reportEndTime">{{ meta?.getUiName('reportEndTime') }}*</label>
+                                </div>
+                                <div class="col m12">
+                                    <field-error [form]="cableReportForm" field="reportTimes" hasError="startBeforeEnd">
+                                        {{translations.application.cableReport.field.startBeforeEnd}}
+                                    </field-error>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+
+        <div *ngIf="applicationForm.value.cableSurveyRequired">
+            <applicant [applicationForm]="applicationForm" [readonly]="isSummary" headerText="Omistaja" formName="owner"></applicant>
+            <contact [applicationForm]="applicationForm" [readonly]="isSummary" headerText="Yhteyshenkilö" formName="contact"></contact>
+        </div>
+
+        <cable-info [parentForm]="applicationForm" [readonly]="readonly"></cable-info>
+
+        <application-actions
+            [isSummary]="isSummary"
+            [applicationId]="application.id"
+            [formValid]="applicationForm.valid"
+            [submitPending]="submitPending"></application-actions>
+    </form>
+</div>
