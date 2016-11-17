@@ -41,4 +41,13 @@ public class PostalAddressJson {
   public void setCity(String city) {
     this.city = city;
   }
+
+  @Override
+  public String toString() {
+    return "PostalAddressJson{" +
+        "streetAddress='" + streetAddress + '\'' +
+        ", postalCode='" + postalCode + '\'' +
+        ", city='" + city + '\'' +
+        '}';
+  }
 }

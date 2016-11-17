@@ -91,6 +91,7 @@ public class AddressService {
       addresses =
           wfsFeatureCollection.featureMember.stream().map(fm -> mapFeatureMemberToAddress(fm)).collect(Collectors.toList());
     }
+    logger.debug("For street search {}, the following addresses were found {}", addresses);
     return addresses;
   }
 
