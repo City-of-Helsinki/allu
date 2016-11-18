@@ -2,10 +2,12 @@ package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -45,6 +47,9 @@ public class ApplicationJson {
   private ZonedDateTime decisionTime;
   @Valid
   private List<AttachmentInfoJson> attachmentList;
+  private Integer calculatedPrice;
+  private Integer priceOverride;
+  private String priceOverrideReason;
 
   /**
   /**
@@ -239,5 +244,44 @@ public class ApplicationJson {
 
   public void setAttachmentList(List<AttachmentInfoJson> attachmentList) {
     this.attachmentList = attachmentList;
+  }
+
+  /**
+   * Get the calculated price
+   *
+   * @return calculated price in cents
+   */
+  public Integer getCalculatedPrice() {
+    return calculatedPrice;
+  }
+
+  public void setCalculatedPrice(Integer calculatedPrice) {
+    this.calculatedPrice = calculatedPrice;
+  }
+
+  /**
+   * Get the manually overridden price
+   *
+   * @return overridden price in cents
+   */
+  public Integer getPriceOverride() {
+    return priceOverride;
+  }
+
+  public void setPriceOverride(Integer priceOverride) {
+    this.priceOverride = priceOverride;
+  }
+
+  /**
+   * Get the explanation text for manual price override
+   *
+   * @return price override reason
+   */
+  public String getPriceOverrideReason() {
+    return priceOverrideReason;
+  }
+
+  public void setPriceOverrideReason(String priceOverrideReason) {
+    this.priceOverrideReason = priceOverrideReason;
   }
 }
