@@ -212,8 +212,8 @@ insert into allu.fixed_location values (DEFAULT, 'Kivikon kenttä', NULL, 'DOG_T
 insert into allu.fixed_location values (DEFAULT, 'Koneen kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Kontulan kelkkapuisto', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Malminkartanon sirkuskenttä', NULL, 'DOG_TRAINING_FIELD', true);
-insert into allu.fixed_location values (DEFAULT, 'Nuottapolun pään kenttä', NULL, 'DOG_TRAINING_FIELD', true);
-insert into allu.fixed_location values (DEFAULT, 'Pajalahdenkenttä', NULL, 'DOG_TRAINING_FIELD', true);
+insert into allu.fixed_location values (DEFAULT, 'Munkkipuiston kenttä', NULL, 'DOG_TRAINING_FIELD', true);
+insert into allu.fixed_location values (DEFAULT, 'Pajalahden kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Pyhtään puiston kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Sahaajankadun kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Skatan kenttä', NULL, 'DOG_TRAINING_FIELD', true);
