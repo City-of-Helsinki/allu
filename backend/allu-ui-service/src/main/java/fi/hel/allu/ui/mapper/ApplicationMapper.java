@@ -36,7 +36,9 @@ public class ApplicationMapper {
     }
     applicationDomain.setApplicationId(applicationJson.getApplicationId());
     applicationDomain.setName(applicationJson.getName());
-    applicationDomain.setProjectId(applicationJson.getProject().getId());
+    if (applicationJson.getProject() != null) {
+      applicationDomain.setProjectId(applicationJson.getProject().getId());
+    }
     applicationDomain.setCreationTime(ZonedDateTime.now());
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
