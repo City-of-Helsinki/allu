@@ -52,6 +52,9 @@ public class ApplicationMapper {
     if (applicationJson.getEvent() != null) {
       applicationDomain.setEvent(createEventModel(applicationJson));
     }
+    applicationDomain.setCalculatedPrice(applicationJson.getCalculatedPrice());
+    applicationDomain.setPriceOverride(applicationJson.getPriceOverride());
+    applicationDomain.setPriceOverrideReason(applicationJson.getPriceOverrideReason());
     return applicationDomain;
   }
 
@@ -102,6 +105,9 @@ public class ApplicationMapper {
     if (application.getEvent() != null) {
       mapEventToJson(applicationJson, application);
     }
+    applicationJson.setCalculatedPrice(application.getCalculatedPrice());
+    applicationJson.setPriceOverride(application.getPriceOverride());
+    applicationJson.setPriceOverrideReason(application.getPriceOverrideReason());
   }
 
   /**
@@ -134,7 +140,6 @@ public class ApplicationMapper {
         outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
         outdoorEventJson.setHeavyStructure(outdoorEvent.isHeavyStructure());
         outdoorEventJson.setFoodSales(outdoorEvent.isFoodSales());
-        outdoorEventJson.setCalculatedPricing(outdoorEvent.getCalculatedPricing());
         applicationJson.setEvent(outdoorEventJson);
         break;
       // short term rentals
@@ -193,7 +198,6 @@ public class ApplicationMapper {
         outdoorEvent.setStructureStartTime(outdoorEventJson.getStructureStartTime());
         outdoorEvent.setStructureDescription(outdoorEventJson.getStructureDescription());
         outdoorEvent.setTimeExceptions(outdoorEventJson.getTimeExceptions());
-        outdoorEvent.setCalculatedPricing(outdoorEventJson.getCalculatedPricing());
         return outdoorEvent;
       // short term rentals
       case BRIDGE_BANNER:

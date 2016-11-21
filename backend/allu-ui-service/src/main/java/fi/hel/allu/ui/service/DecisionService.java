@@ -2,7 +2,6 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
-import fi.hel.allu.model.domain.ApplicationPricing;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
@@ -136,12 +135,6 @@ public class DecisionService {
       decisionJson.setSportsWithHeavyStructures(oe.isHeavyStructure());
       decisionJson.setHasEkokompassi(oe.isEcoCompass());
       decisionJson.setEventNature(eventNature(oe.getNature()));
-      ApplicationPricing pricing = oe.getCalculatedPricing();
-      if (pricing != null) {
-        NumberFormat decimalFormat = NumberFormat.getCurrencyInstance(locale);
-        decisionJson.setTotalRent(decimalFormat.format(pricing.getPrice() / 100.0));
-        decisionJson.setSeparateBill(pricing.getPrice() > 0);
-      }
       decisionJson.setPriceReason(oe.getNoPriceReason());
     }
     UserJson handler = application.getHandler();
@@ -164,6 +157,14 @@ public class DecisionService {
     decisionJson.setDeciderTitle("[päättäjän työnimike]");
     decisionJson.setDeciderName("[päättäjän nimi]");
     decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
+    Integer priceInCents = (application.getPriceOverride() != null) ? application.getPriceOverride()
+        : application.getCalculatedPrice();
+    if (priceInCents != null) {
+      NumberFormat decimalFormat = NumberFormat.getCurrencyInstance(locale);
+      decisionJson.setTotalRent(decimalFormat.format(priceInCents / 100.0));
+      decisionJson.setSeparateBill(priceInCents > 0);
+    }
+
   }
 
   private String formatDateWithDelta(ZonedDateTime zonedDateTime, int deltaDays) {

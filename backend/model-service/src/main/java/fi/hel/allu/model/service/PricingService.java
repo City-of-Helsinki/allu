@@ -1,12 +1,10 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationPricing;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.pricing.Pricing;
@@ -50,14 +48,72 @@ public class PricingService {
    */
   @Transactional(readOnly = true)
   public void calculatePrice(Application application) {
-    // TODO: most likely if should be replaced by switch-case construct. Refactor when more application types are supported
-    if (ApplicationType.OUTDOOREVENT.equals(application.getType())) {
-      OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
-      if (outdoorEvent != null) {
-        ApplicationPricing calculatedPricing = new ApplicationPricing();
-        calculatedPricing.setPrice(calculatePrice(application, outdoorEvent));
-        outdoorEvent.setCalculatedPricing(calculatedPricing);
-      }
+    switch (application.getType()) {
+    case OUTDOOREVENT:
+      calculateOutdoorEventPrice(application);
+      break;
+    case ART:
+      // Free event
+      break;
+    case SMALL_ART_AND_CULTURE:
+      // Free event
+      break;
+    case BENJI:
+      // Unknown price
+      break;
+    case BRIDGE_BANNER:
+      // Noncommercial organizer: 150 EUR/week
+      // Commercial organizer: 750 EUR/week
+      break;
+    case CARGO_CONTAINER:
+      // Unknown price
+      break;
+    case CIRCUS:
+      // 200 EUR/day
+      break;
+    case DOG_TRAINING_EVENT:
+      // Associations: 50 EUR/event
+      // Companies: 100 EUR/event
+      break;
+    case DOG_TRAINING_FIELD:
+      // Associations: 100 EUR/year
+      // Companies: 200 EUR/year
+      break;
+    case KESKUSKATU_SALES:
+      // 1..14 days: 50 EUR/day/starting 10 sqm
+      // 50% discount from 15. day onwards
+      break;
+    case OTHER_SHORT_TERM_RENTAL:
+      // Unknown price
+      break;
+    case PROMOTION_OR_SALES:
+      // 0.8 x 3.0 sqm: free of charge
+      // bigger: 150 EUR/year
+      break;
+    case SEASON_SALE:
+      // 1..14 days: 50 EUR/day/starting 10 sqm
+      // 50% discount from 15. day onwards
+      break;
+    case STORAGE_AREA:
+      // Unknown price
+      break;
+    case SUMMER_THEATER:
+      // 120 EUR/month
+      break;
+    case URBAN_FARMING:
+      // 2 EUR/sqm/term
+      break;
+    default:
+      break;
+    }
+  }
+
+  // Calculate price for outdoor event
+  private void calculateOutdoorEventPrice(Application application) {
+    OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
+    if (outdoorEvent != null) {
+      int priceInCents = calculatePrice(application, outdoorEvent);
+      application.setCalculatedPrice(priceInCents);
     }
   }
 

@@ -104,7 +104,10 @@ create table allu.application (
     start_time timestamp with time zone,
     end_time timestamp with time zone,
     event text not null,
-    decision_time timestamp with time zone);
+    decision_time timestamp with time zone,
+    calculated_price integer,
+    price_override integer,
+    prive_override_reason text );
 
 create table allu.attachment (
    id serial primary key,
@@ -126,6 +129,15 @@ create table allu.application_contact (
     position integer,
     application_id integer references allu.application(id),
     contact_id integer references allu.contact(id) );
+
+create table allu.application_billing_line (
+    id serial primary key,
+    application_id integer references allu.application(id),
+    line_number integer,
+    unit_price integer,
+    amount integer,
+    total_price integer,
+    info_text text );
 
 create table allu.structure_meta (
     id serial primary key,

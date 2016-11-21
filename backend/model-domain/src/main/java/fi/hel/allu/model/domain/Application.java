@@ -2,9 +2,11 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 /**
  * In Finnish: hakemus
@@ -32,6 +34,9 @@ public class Application {
   @NotNull
   private Event event;
   private ZonedDateTime decisionTime;
+  private Integer calculatedPrice;
+  private Integer priceOverride;
+  private String priceOverrideReason;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -208,5 +213,44 @@ public class Application {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
+  }
+
+  /**
+   * Get the calculated price
+   *
+   * @return calculated price in cents
+   */
+  public Integer getCalculatedPrice() {
+    return calculatedPrice;
+  }
+
+  public void setCalculatedPrice(Integer calculatedPrice) {
+    this.calculatedPrice = calculatedPrice;
+  }
+
+  /**
+   * Get the manually overridden price
+   *
+   * @return overridden price in cents
+   */
+  public Integer getPriceOverride() {
+    return priceOverride;
+  }
+
+  public void setPriceOverride(Integer priceOverride) {
+    this.priceOverride = priceOverride;
+  }
+
+  /**
+   * Get the explanation text for manual price override
+   *
+   * @return price override reason
+   */
+  public String getPriceOverrideReason() {
+    return priceOverrideReason;
+  }
+
+  public void setPriceOverrideReason(String priceOverrideReason) {
+    this.priceOverrideReason = priceOverrideReason;
   }
 }

@@ -85,7 +85,7 @@ public class PricingServiceTest {
     int locationId = locationDao.insert(location).getId();
     application.setLocationId(locationId);
     pricingService.calculatePrice(application);
-    assertEquals(220500, event.getCalculatedPricing().getPrice());
+    assertEquals(220500, application.getCalculatedPrice().intValue());
   }
 
 }
