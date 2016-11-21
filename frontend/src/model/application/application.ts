@@ -15,6 +15,7 @@ import {ApplicationType} from './type/application-type';
 import {Some} from '../../util/option';
 import {CalculatedPricing} from './outdoor-event/calculated-pricing';
 
+const CENTS = 100;
 
 export class Application {
 
@@ -35,6 +36,9 @@ export class Application {
     applicant: Applicant,
     contactList: Array<Contact>,
     location: Location,
+    calculatedPrice: number,
+    priceOverride: number,
+    priceOverrideReason: string,
     attachmentList: Array<AttachmentInfo>)
   constructor(
     public id?: number,
@@ -52,6 +56,9 @@ export class Application {
     public applicant?: Applicant,
     public contactList?: Array<Contact>,
     public location?: Location,
+    public calculatedPrice?: number,
+    public priceOverride?: number,
+    public priceOverrideReason?: string,
     public attachmentList?: Array<AttachmentInfo>) {
     this.contactList = contactList || [new Contact()];
   }
@@ -88,7 +95,6 @@ export class Application {
       true,
       'Tapahtumassa saattaa olla elintarviketoimijoita',
       'Tapahtumassa ei luultavimmin ole markkinointitoimintaa',
-      new CalculatedPricing(),
       54,
       'Paikalle rakennetaan linna',
       undefined,
@@ -148,5 +154,29 @@ export class Application {
     return !!this.location
       && !!this.location.geometry
       && this.location.geometry.geometries.length > 0;
+  }
+
+  get calculatedPriceEuro(): number {
+    return this.toEuros(this.calculatedPrice);
+  }
+
+  set calculatedPriceEuro(priceInEuros: number) {
+    this.calculatedPrice = this.toCents(priceInEuros);
+  }
+
+  get priceOverrideEuro(): number {
+    return this.toEuros(this.priceOverride);
+  }
+
+  set priceOverrideEuro(overrideInEuros: number) {
+    this.priceOverride = this.toCents(overrideInEuros);
+  }
+
+  private toEuros(priceInCents: number): number {
+    return priceInCents !== undefined ? priceInCents / CENTS : undefined;
+  }
+
+  private toCents(priceInEuros: number): number {
+    return priceInEuros !== undefined ? priceInEuros * CENTS : undefined;
   }
 }

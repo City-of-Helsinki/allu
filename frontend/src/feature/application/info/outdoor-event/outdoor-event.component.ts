@@ -21,6 +21,7 @@ import {OutdoorEventForm} from './outdoor-event.form';
 import {EnumUtil} from '../../../../util/enum.util';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {MaterializeUtil} from '../../../../util/materialize.util';
+import {ComplexValidator} from '../../../../util/complex-validator';
 
 @Component({
   selector: 'outdoor-event',
@@ -81,6 +82,9 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
     application.metadata = this.meta;
 
     application.name = form.event.name;
+    application.calculatedPriceEuro = form.event.calculatedPrice;
+    application.priceOverrideEuro = form.event.priceOverride;
+    application.priceOverrideReason = form.event.priceOverrideReason;
     application.type = ApplicationType[ApplicationType.OUTDOOREVENT];
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.event = OutdoorEventDetailsForm.toOutdoorEvent(form.event, ApplicationType.OUTDOOREVENT);

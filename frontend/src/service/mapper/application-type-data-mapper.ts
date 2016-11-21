@@ -30,7 +30,6 @@ export class ApplicationTypeDataMapper {
         backendEvent.foodSales,
         backendEvent.foodProviders,
         backendEvent.marketingProviders,
-        backendEvent.calculatedPricing,
         backendEvent.structureArea,
         backendEvent.structureDescription,
         TimeUtil.dateFromBackend(backendEvent.structureStartTime),

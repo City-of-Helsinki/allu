@@ -55,7 +55,7 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
         outdoorEvent.eventStartTime = outdoorEvent.eventStartTime || application.startTime;
         outdoorEvent.eventEndTime = outdoorEvent.eventEndTime || application.endTime;
         outdoorEvent.type = 'OUTDOOREVENT';
-        this.eventForm.patchValue(OutdoorEventDetailsForm.fromOutdoorEvent(application.name, outdoorEvent));
+        this.eventForm.patchValue(OutdoorEventDetailsForm.fromOutdoorEvent(application, outdoorEvent));
       });
   }
 
@@ -105,11 +105,9 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
       foodSales: [false],
       foodProviders: [''],
       marketingProviders: [''],
-      pricing: this.fb.group({
-        calculatedPrice: [0],
-        customPrice: [0, ComplexValidator.greaterThanOrEqual(0)],
-        reason: ['']
-      }),
+      calculatedPrice: [0, ComplexValidator.greaterThanOrEqual(0)],
+      priceOverride: [0, ComplexValidator.greaterThanOrEqual(0)],
+      priceOverrideReason: [''],
       structureArea: [0, ComplexValidator.greaterThanOrEqual(0)],
       structureDescription: [''],
       structureTimes: this.fb.group({
