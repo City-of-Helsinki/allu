@@ -105,7 +105,7 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
       foodSales: [false],
       foodProviders: [''],
       marketingProviders: [''],
-      calculatedPrice: [0, ComplexValidator.greaterThanOrEqual(0)],
+      calculatedPrice: [0],
       priceOverride: [0, ComplexValidator.greaterThanOrEqual(0)],
       priceOverrideReason: [''],
       structureArea: [0, ComplexValidator.greaterThanOrEqual(0)],
