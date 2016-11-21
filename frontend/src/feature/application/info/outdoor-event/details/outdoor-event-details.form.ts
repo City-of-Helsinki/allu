@@ -4,6 +4,7 @@ import {ApplicationCategoryType} from '../../../type/application-category';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
 import {ApplicationPricing} from '../../application-pricing';
 import {CalculatedPricing} from '../../../../../model/application/outdoor-event/calculated-pricing';
+import {Application} from '../../../../../model/application/application';
 
 export class OutdoorEventDetailsForm {
   constructor(public name?: string,
@@ -23,18 +24,19 @@ export class OutdoorEventDetailsForm {
               public foodSales?: boolean,
               public foodProviders?: string,
               public marketingProviders?: string,
-              public pricing?: ApplicationPricing,
               public structureArea?: number,
               public structureDescription?: string,
-              public structureTimes?: TimePeriod) {
+              public structureTimes?: TimePeriod,
+              public calculatedPrice?: number,
+              public priceOverride?: number,
+              public priceOverrideReason?: string) {
     this.eventTimes = eventTimes || new TimePeriod();
     this.structureTimes = structureTimes || new TimePeriod();
-    this.pricing = pricing || new ApplicationPricing();
   }
 
-  static fromOutdoorEvent(name: string, event: OutdoorEvent): OutdoorEventDetailsForm {
+  static fromOutdoorEvent(application: Application, event: OutdoorEvent): OutdoorEventDetailsForm {
     return new OutdoorEventDetailsForm(
-      name,
+      application.name,
       event.nature,
       event.description,
       event.url,
@@ -51,10 +53,12 @@ export class OutdoorEventDetailsForm {
       event.foodSales,
       event.foodProviders,
       event.marketingProviders,
-      new ApplicationPricing(event.calculatedPricing.euroPrice),
       event.structureArea,
       event.structureDescription,
-      new TimePeriod(event.uiStructureStartTime, event.uiStructureEndTime));
+      new TimePeriod(event.uiStructureStartTime, event.uiStructureEndTime),
+      application.calculatedPriceEuro,
+      application.priceOverrideEuro,
+      application.priceOverrideReason);
   }
 
   static toOutdoorEvent(form: OutdoorEventDetailsForm, type: ApplicationType): OutdoorEvent {
@@ -76,8 +80,6 @@ export class OutdoorEventDetailsForm {
     event.foodSales = form.foodSales;
     event.foodProviders = form.foodProviders;
     event.marketingProviders = form.marketingProviders;
-    event.calculatedPricing = new CalculatedPricing();
-    event.calculatedPricing.euroPrice = form.pricing.calculatedPrice;
     event.structureArea = form.structureArea;
     event.structureDescription = form.structureDescription;
     event.uiStructureStartTime = form.structureTimes.startTime;

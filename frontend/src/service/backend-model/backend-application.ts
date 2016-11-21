@@ -22,5 +22,8 @@ export interface BackendApplication {
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;
   location: BackendLocation;
+  calculatedPrice: number;
+  priceOverride: number;
+  priceOverrideReason: string;
   attachmentList: Array<BackendAttachmentInfo>;
 }

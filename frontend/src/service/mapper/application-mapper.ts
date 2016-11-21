@@ -28,6 +28,9 @@ export class ApplicationMapper {
       ApplicantMapper.mapBackend(backendApplication.applicant),
       (backendApplication.contactList) ? backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact)) : undefined,
       LocationMapper.mapBackend(backendApplication.location),
+      backendApplication.calculatedPrice,
+      backendApplication.priceOverride,
+      backendApplication.priceOverrideReason,
       (backendApplication.attachmentList) ? backendApplication.attachmentList.map(
             (attachment) => AttachmentInfoMapper.mapBackend(attachment)) : undefined
     );
@@ -50,6 +53,9 @@ export class ApplicationMapper {
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
       location: LocationMapper.mapFrontend(application.location),
+      calculatedPrice: application.calculatedPrice,
+      priceOverride: application.priceOverride,
+      priceOverrideReason: application.priceOverrideReason,
       attachmentList: undefined // attachmentList not mapped, because it cannot be updated in the backend through application
     };
   }
