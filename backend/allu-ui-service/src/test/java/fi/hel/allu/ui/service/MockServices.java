@@ -14,6 +14,8 @@ import fi.hel.allu.ui.mapper.UserMapper;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
@@ -48,6 +50,8 @@ public abstract class MockServices {
         Mockito.eq(Project.class)))
         .thenAnswer((Answer<Project>) invocation -> createMockProjectModel());
 
+    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(HttpEntity.class), Mockito.eq(Project.class), Mockito.anyInt()))
+      .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> new ResponseEntity<>(createMockProjectModel(), HttpStatus.CREATED));
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Applicant.class)))
         .thenAnswer((Answer<Applicant>) invocation -> createMockApplicantModel());

@@ -9,9 +9,8 @@ import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.pricing.Pricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
@@ -27,7 +26,7 @@ import java.util.stream.Collectors;
  * The service class for price calculations
  *
  */
-@Component
+@Service
 public class PricingService {
 
   private PricingDao pricingDao;

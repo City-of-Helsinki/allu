@@ -66,24 +66,12 @@ public class ApplicationController {
   /**
    * Find applications by application IDs
    *
-   * @param   List of ids to be searched.
+   * @param   ids to be searched.
    * @return  found applications
    */
   @RequestMapping(value = "/find", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByIds(@RequestBody List<Integer> ids) {
     List<Application> applications = applicationDao.findByIds(ids);
-    return new ResponseEntity<>(applications, HttpStatus.OK);
-  }
-
-  /**
-   * Find all applications for a project
-   *
-   * @param projectId
-   * @return list of applications
-   */
-  @RequestMapping(value = "/byproject/{projectId}", method = RequestMethod.GET)
-  public ResponseEntity<List<Application>> findByProject(@PathVariable int projectId) {
-    List<Application> applications = applicationDao.findByProject(projectId);
     return new ResponseEntity<>(applications, HttpStatus.OK);
   }
 
@@ -136,6 +124,8 @@ public class ApplicationController {
     applicationDao.removeHandler(applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+
 
   /**
    * Create new application

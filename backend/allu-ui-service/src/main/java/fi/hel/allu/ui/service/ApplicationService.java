@@ -70,7 +70,6 @@ public class ApplicationService {
    * @return Transfer object that contains list of created applications and their identifiers
    */
   public ApplicationJson createApplication(ApplicationJson applicationJson) {
-    applicationJson.setProject(projectService.createProject(applicationJson.getProject()));
     applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
     applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
     applicationJson.setMetadata(metaService.findMetadataForApplication(applicationJson.getType()));
@@ -94,7 +93,6 @@ public class ApplicationService {
    */
   public ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicantService.updateApplicant(applicationJson.getApplicant());
-    projectService.updateProject(applicationJson.getProject());
     LocationJson locationJson = applicationJson.getLocation();
     if (locationJson != null) {
       applicationJson.setLocation(locationService.updateOrCreateLocation(locationJson));
@@ -223,7 +221,9 @@ public class ApplicationService {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
 
-    applicationJson.setProject(projectService.findProjectById(applicationModel.getProjectId()));
+    if (applicationModel.getProjectId() != null) {
+      applicationJson.setProject(projectService.findById(applicationModel.getProjectId()));
+    }
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));
     applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType(), applicationModel.getMetadataVersion()));

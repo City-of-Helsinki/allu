@@ -3,7 +3,6 @@ package fi.hel.allu.search.domain;
 public class ProjectES {
   private Integer id;
   private String name;
-  private String type;
   private String information;
 
   public Integer getId() {
@@ -20,14 +19,6 @@ public class ProjectES {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
   }
 
   public String getInformation() {

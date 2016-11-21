@@ -172,6 +172,16 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>project</table>
+                            <column>start_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>project</table>
+                            <column>end_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>attachment</table>
                             <column>creation_time</column>
                             <type>java.time.ZonedDateTime</type>

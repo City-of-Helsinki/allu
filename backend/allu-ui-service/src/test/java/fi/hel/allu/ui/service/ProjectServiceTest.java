@@ -42,7 +42,7 @@ public class ProjectServiceTest extends MockServices {
 
   @Test
   public void createValidProject() {
-    ProjectJson projectJson = projectService.createProject(createProjectJson(null));
+    ProjectJson projectJson = projectService.insert(createProjectJson(null));
     assertNotNull(projectJson);
     assertNotNull(projectJson.getId());
     assertEquals(100, projectJson.getId().intValue());
@@ -51,17 +51,17 @@ public class ProjectServiceTest extends MockServices {
 
   @Test
   public void createProjectWithId() {
-    ProjectJson projectJson = projectService.createProject(createProjectJson(1));
+    ProjectJson projectJson = projectService.insert(createProjectJson(1));
     assertNotNull(projectJson);
     assertNotNull(projectJson.getId());
-    assertEquals(1, projectJson.getId().intValue());
-    assertEquals("Hanke1, Json", projectJson.getName());
+    assertEquals(100, projectJson.getId().intValue());
+    assertEquals("Hanke1, Model", projectJson.getName());
   }
 
   @Test
   public void updateValidProject() {
     ProjectJson projectJson = createProjectJson(1);
-    projectService.updateProject(projectJson);
+    projectService.update(projectJson.getId(), projectJson);
     assertNotNull(projectJson);
     assertNotNull(projectJson.getId());
     assertEquals(1, projectJson.getId().intValue());
@@ -69,17 +69,8 @@ public class ProjectServiceTest extends MockServices {
   }
 
   @Test
-  public void updateProjectWithoutId() {
-    ProjectJson projectJson = createProjectJson(null);
-    projectService.updateProject(projectJson);
-    assertNotNull(projectJson);
-    assertNull(projectJson.getId());
-    assertEquals("Hanke1, Json", projectJson.getName());
-  }
-
-  @Test
   public void testFindById() {
-    ProjectJson projectJson = projectService.findProjectById(100);
+    ProjectJson projectJson = projectService.findById(100);
     assertNotNull(projectJson);
     assertNotNull(projectJson.getId());
     assertEquals(100, projectJson.getId().intValue());

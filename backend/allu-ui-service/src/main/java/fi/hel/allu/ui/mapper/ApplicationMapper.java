@@ -110,6 +110,12 @@ public class ApplicationMapper {
     applicationJson.setPriceOverrideReason(application.getPriceOverrideReason());
   }
 
+  public ApplicationJson mapApplicationToJson(Application application) {
+    ApplicationJson applicationJson = new ApplicationJson();
+    mapApplicationToJson(applicationJson, application);
+    return applicationJson;
+  }
+
   /**
    * Transfer the information from the given model-domain object to given ui-domain object
    * @param applicationJson
@@ -268,11 +274,11 @@ public class ApplicationMapper {
   }
 
   private ProjectES createProjectES(ApplicationJson applicationJson) {
+    // TODO: add support for all project fields
     ProjectES projectES = new ProjectES();
     projectES.setId(applicationJson.getProject().getId());
     projectES.setName(applicationJson.getProject().getName());
-    projectES.setInformation(applicationJson.getProject().getInformation());
-    projectES.setType(applicationJson.getProject().getType());
+    projectES.setInformation(applicationJson.getProject().getAdditionalInfo());
     return projectES;
   }
 
@@ -302,17 +308,6 @@ public class ApplicationMapper {
       return new ApplicantES(applicantJson.getName());
     } else {
       return null;
-    }
-  }
-
-  private void mapProjectEStoJson(ApplicationJson applicationJson, ApplicationES applicationES) {
-    if (applicationES.getProject() != null) {
-      ProjectJson projectJson = new ProjectJson();
-      projectJson.setId(applicationES.getProject().getId());
-      projectJson.setType(applicationES.getProject().getType());
-      projectJson.setInformation(applicationES.getProject().getInformation());
-      projectJson.setName(applicationES.getProject().getName());
-      applicationJson.setProject(projectJson);
     }
   }
 }

@@ -98,8 +98,8 @@
           <td>{{application.handler?.realName}}</td>
           <td>{{application.name}}</td>
           <td>
-            {{application.project.name}} <br>
-            <span>{{application.project.id}}</span>
+            {{application.project?.name}} <br>
+            <span>{{application.project?.id}}</span>
           </td>
           <td>{{ translations.application.type[application.type] }}</td>
           <td>{{ translations.application.status[application.status] }}</td>

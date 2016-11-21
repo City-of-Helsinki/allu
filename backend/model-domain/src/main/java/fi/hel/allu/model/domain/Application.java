@@ -15,7 +15,6 @@ public class Application {
 
   private Integer id;
   private String applicationId;
-  @NotNull
   private Integer projectId;
   private Integer handler;
   @NotNull

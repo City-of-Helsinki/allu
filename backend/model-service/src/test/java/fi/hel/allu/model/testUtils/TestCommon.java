@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Calendar;
 
 /**
  * Helper class for routines shared between all tests
@@ -42,7 +41,7 @@ public class TestCommon {
 
   private Application dummyBasicApplication(String name, String handler) {
     Integer personId = insertPerson();
-    Integer projectId = insertProject(personId);
+    Integer projectId = insertProject();
     User user = insertUser(handler);
     Application app = new Application();
     app.setApplicantId(personId);
@@ -150,17 +149,15 @@ public class TestCommon {
   /**
    * Insert a dummy project into database.
    *
-   * @param personId
-   *          Owner's and contacts's ID.
    * @return Inserted project's ID
    * @throws Exception
    */
-  public Integer insertProject(Integer personId) {
+  public Integer insertProject() {
     Project project = new Project();
     project.setName("Viemärityö");
-    project.setOwnerId(personId);
-    project.setContactId(personId);
-    project.setStartDate(Calendar.getInstance().getTime());
+    project.setOwnerName("hankkeen omistaja");
+    project.setContactName("hankkeen kontakti");
+    project.setStartTime(ZonedDateTime.now());
     Project insertedProject = projectDao.insert(project);
     return insertedProject.getId();
   }
@@ -180,7 +177,6 @@ public class TestCommon {
   private static final String[] DELETE_ALL_DATA = new String[] {
       "delete from allu.decision",
       "delete from allu.application_contact",
-      "delete from allu.project_contact",
       "delete from allu.contact",
       "delete from allu.attachment",
       "delete from allu.application",

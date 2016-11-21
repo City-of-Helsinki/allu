@@ -85,21 +85,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION = "/applications/{applicationId}/attachments";
 
   /**
-   * Model-service path to create a new project
-   */
-  public static final String PATH_MODEL_PROJECT_CREATE = "/projects";
-
-  /**
-   * Model-service path to update project
-   */
-  public static final String PATH_MODEL_PROJECT_UPDATE = "/projects/{projectId}";
-
-  /**
-   * Model-service path to find project by identifier
-   */
-  public static final String PATH_MODEL_PROJECT_FIND_BY_ID = "/projects/{projectId}";
-
-  /**
    * Model-service path to create a new applicant
    */
   public static final String PATH_MODEL_APPLICANT_CREATE = "/applicants";
@@ -257,6 +242,20 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return  url to request applications by their project.
+   */
+  public String getApplicationsByProjectUrl() {
+    return getModelServiceUrl("/projects/{id}/applications");
+  }
+
+  /**
+   * @return  url to request update to applications of given project.
+   */
+  public String getApplicationProjectUpdateUrl() {
+    return getModelServiceUrl("/projects/{id}/applications");
+  }
+
+  /**
    * @return url to update handler of applications.
    */
   public String getApplicationHandlerUpdateUrl() {
@@ -281,14 +280,14 @@ public class ApplicationProperties {
    * @return url to update users to model service.
    */
   public String getUserUpdateUrl() {
-    return getUserCreateUrl();
+    return getModelServiceUrl("/users");
   }
 
   /**
    * @return url to list users.
    */
   public String getUserListingUrl() {
-    return getUserCreateUrl();
+    return getModelServiceUrl("/users");
   }
 
   /**
@@ -324,6 +323,40 @@ public class ApplicationProperties {
     return getModelServiceUrl("/locations/fixed-location");
   }
 
+  /**
+   * @return url for fetching project by its id.
+   */
+  public String getProjectByIdUrl() {
+    return getModelServiceUrl("/projects/{id}");
+  }
+
+  /**
+   * @return url for fetching project children.
+   */
+  public String getProjectChildrenUrl() {
+    return getModelServiceUrl("/projects/{id}/children");
+  }
+
+  /**
+   * @return  url for creating a new project.
+   */
+  public String getProjectCreateUrl() {
+    return getModelServiceUrl("/projects");
+  }
+
+  /**
+   * @return  url for updating existing project.
+   */
+  public String getProjectUpdateUrl() {
+    return getModelServiceUrl("/projects/{id}");
+  }
+
+  /**
+   * @return  url for updating parent of existing project.
+   */
+  public String getProjectParentUpdateUrl() {
+    return getModelServiceUrl("/projects/{id}/parentProject");
+  }
 
   /**
    * Returns username for the WFS service.
