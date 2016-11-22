@@ -105,7 +105,7 @@ export class LocationComponent {
   }
 
   set selectedArea(area: string) {
-    this.sections = this.fixedLocations.filter(fl => fl.area === area);
+    this.sections = this.fixedLocations.filter(fl => fl.area === area).sort(FixedLocation.sortBySection);
     // When only 1 section it is area's fixed location which should be selected
     // Otherwise select none as they are sections
     this.selectedFixedLocations = this.sections.length === 1

@@ -13,7 +13,6 @@ import {ApplicationResolve} from './application-resolve';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
 
 const childRoutes: Routes = [
-  { path: '', canActivate: [AuthGuard] },
   // Street work
   { path: 'DIG_NOTICE', component: PromotionEventComponent, canActivate: [AuthGuard] },
   { path: 'AREA_RENTAL', component: PromotionEventComponent, canActivate: [AuthGuard] },

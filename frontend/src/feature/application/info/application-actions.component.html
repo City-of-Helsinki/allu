@@ -12,12 +12,12 @@
 
                 <div *ngIf="isSummary">
                     <div class="col m2">
-                        <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/applications', applicationId, 'info']">MUOKKAA</button>
+                        <button type="button" md-raised-button class="waves-effect waves-light btn" [routerLink]="['/applications', applicationId, 'info']">MUOKKAA</button>
                     </div>
                     <div class="col m4 offset-m6">
-                        <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
-                        <button md-raised-button class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
-                        <button md-raised-button class="waves-effect waves-light btn" [routerLink]="['/decision', applicationId]">PÄÄTTÄMISEEN</button>
+                        <button type="button" md-raised-button class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
+                        <button type="button" md-raised-button class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
+                        <button type="button" md-raised-button class="waves-effect waves-light btn" [routerLink]="['/decision', applicationId]">PÄÄTTÄMISEEN</button>
                     </div>
                 </div>
             </div>
