@@ -176,7 +176,7 @@ public class ApplicationController {
    * @throws IOException
    */
   @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<Void> generateDecision(@PathVariable int applicationId) throws IOException {
     ApplicationJson applicationJson = applicationService.findApplicationById(applicationId);
     decisionService.generateDecision(applicationId, applicationJson);
