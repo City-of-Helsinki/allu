@@ -7,34 +7,65 @@ import '../../rxjs-extensions.ts';
 import {Project} from '../../model/project/project';
 import {HttpResponse} from '../../util/http.util';
 import {HttpStatus} from '../../util/http.util';
+import {ProjectMapper} from '../mapper/project-mapper';
+import {UIStateHub} from '../ui-state/ui-state-hub';
+import {HttpUtil} from '../../util/http.util';
+import {ErrorInfo} from '../ui-state/error-info';
+import {ErrorType} from '../ui-state/error-type';
+import {ApplicationMapper} from '../mapper/application-mapper';
+import {Application} from '../../model/application/application';
 
 @Injectable()
 export class ProjectService {
+
+  static PROJECT_URL = '/api/projects';
+  static SEARCH = '/search';
+
+  constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {}
 
   public searchProjects(search: any): Observable<Array<Project>> {
     return Observable.of([]);
   }
 
   public getProject(id: number): Observable<Project> {
-    let project = new Project();
-    project.id = id;
-    return Observable.of(project);
+    return this.authHttp.get(ProjectService.PROJECT_URL + '/' + id)
+      .map(response => response.json())
+      .map(project => ProjectMapper.mapBackend(project))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   public save(project: Project): Observable<Project> {
     if (project.id) {
-      console.log('Update project', project);
+      let url = ProjectService.PROJECT_URL + '/' + project.id;
+
+      return this.authHttp.put(url,
+        JSON.stringify(ProjectMapper.mapFrontend(project)))
+        .map(response => ProjectMapper.mapBackend(response.json()))
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SAVE_FAILED, HttpUtil.extractMessage(err))));
     } else {
-      console.log('Create project', project);
+      return this.authHttp.post(ProjectService.PROJECT_URL,
+        JSON.stringify(ProjectMapper.mapFrontend(project)))
+        .map(response => ProjectMapper.mapBackend(response.json()))
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SAVE_FAILED, HttpUtil.extractMessage(err))));
     }
-    return Observable.of(project);
   }
 
   public remove(id: number): Observable<HttpResponse> {
     return Observable.of(new HttpResponse(HttpStatus.OK, 'Project removed ' + id));
   }
 
-  public projectApplications(id: number, applicationIds: Array<number>): Observable<HttpResponse> {
-    return Observable.of(new HttpResponse(HttpStatus.OK, 'Applications added'));
+  public updateProjectApplications(id: number, applicationIds: Array<number>): Observable<HttpResponse> {
+    let url = ProjectService.PROJECT_URL + '/' + id + '/applications';
+    return this.authHttp.put(url, JSON.stringify(applicationIds))
+      .map(response => new HttpResponse(HttpStatus.OK, 'Applications added to project ' + id))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SAVE_FAILED, HttpUtil.extractMessage(err))));
+  }
+
+  public getProjectApplications(id: number): Observable<Array<Application>> {
+    let url = ProjectService.PROJECT_URL + '/' + id + '/applications';
+    return this.authHttp.get(url)
+      .map(response => response.json())
+      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 }

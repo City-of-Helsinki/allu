@@ -74,7 +74,7 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
     let component = this.listComponentRef.instance;
     component.entries = this.autocompletion;
     component.onSelection.subscribe(selection => {
-      this.inputEl.value = selection;
+      this.inputEl.value = selection.name;
       this.onSelection.emit(selection);
     });
 

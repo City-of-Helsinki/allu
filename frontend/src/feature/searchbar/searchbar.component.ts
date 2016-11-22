@@ -59,8 +59,8 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHub.addSearchFilter(filter);
   }
 
-  public searchAddress(term: string) {
-    this.mapHub.addSearch(term);
+  public searchAddress(term: {id: any, name: string}) {
+    this.mapHub.addSearch(term.name);
     this.notifySearchUpdated();
   }
 

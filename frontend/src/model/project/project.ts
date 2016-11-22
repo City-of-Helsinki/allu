@@ -11,7 +11,7 @@ export class Project {
     phone: string,
     customerReference: string,
     additionalInfo: string,
-    childProjects: Array<Project>)
+    parentId: number)
   constructor(
     public id?: number,
     public name?: string,
@@ -23,5 +23,5 @@ export class Project {
     public phone?: string,
     public customerReference?: string,
     public additionalInfo?: string,
-    public childProjects?: Array<Project>) {}
+    public parentId?: number) {}
 }

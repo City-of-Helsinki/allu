@@ -10,6 +10,8 @@ import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {ProjectForm} from './project.form';
 import {ProjectHub} from '../../service/project/project-hub';
+import {MaterializeUtil} from '../../util/materialize.util';
+import {Some} from '../../util/option';
 
 
 @Component({
@@ -29,6 +31,20 @@ export class ProjectComponent {
               private fb: FormBuilder) {
     this.initForm();
 
+    this.route.params.subscribe((params: {id: number}) => {
+      Some(params.id).do(id => {
+        this.projectHub.getProject(id).subscribe(project => {
+          this.projectInfoForm.patchValue(project);
+
+          this.projectHub.getProjectApplications(id).subscribe(apps => {
+            this.applications = apps;
+          });
+
+          MaterializeUtil.updateTextFields(50);
+        });
+      });
+    });
+
     this.matchingApplications = this.applicationSearch.asObservable()
       .debounceTime(300)
       .distinctUntilChanged()
@@ -37,6 +53,7 @@ export class ProjectComponent {
   }
 
   add(application: Application) {
+    console.log('add', application);
     this.applications.push(application);
   }
 
@@ -47,16 +64,17 @@ export class ProjectComponent {
   onSubmit(form: ProjectForm) {
     let project = ProjectForm.toProject(form);
     this.projectHub.save(project)
-      .switchMap(p => this.projectHub.projectApplications(p.id, this.applications.map(app => app.id)))
+      .switchMap(p => this.projectHub.updateProjectApplications(p.id, this.applications.map(app => app.id)))
       .subscribe(status => console.log('status', status));
   }
 
-  set identifierSearch(identifier: string) {
+  public onIdentifierSearchChange(identifier: string) {
     this.applicationSearch.next(identifier);
   }
 
   private initForm() {
     this.projectInfoForm = this.fb.group({
+      id: [undefined],
       name: ['', Validators.required],
       ownerName: ['', Validators.required],
       contactName: ['', Validators.required],

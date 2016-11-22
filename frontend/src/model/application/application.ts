@@ -1,5 +1,4 @@
 import {Applicant} from './applicant';
-import {Project} from './project';
 import {Contact} from './contact';
 import {PostalAddress} from '../common/postal-address';
 import {Location} from '../common/location';
@@ -14,6 +13,7 @@ import {LocationState} from '../../service/application/location-state';
 import {ApplicationType} from './type/application-type';
 import {Some} from '../../util/option';
 import {CalculatedPricing} from './outdoor-event/calculated-pricing';
+import {Project} from '../project/project';
 
 const CENTS = 100;
 
