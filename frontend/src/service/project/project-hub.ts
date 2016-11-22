@@ -5,6 +5,7 @@ import '../../rxjs-extensions.ts';
 
 import {Project} from '../../model/project/project';
 import {ProjectService} from './project.service';
+import {ProjectSearchQuery} from '../../model/project/project-search-query';
 
 @Injectable()
 export class ProjectHub {
@@ -17,9 +18,9 @@ export class ProjectHub {
   public getProject = (id: number) => this.projectService.getProject(id);
 
   /**
-   * Search projects with given search query TODO: Define query
+   * Search projects with given search query
    */
-  public searchProjects = (search: any) => this.projectService.searchProjects(search);
+  public searchProjects = (search: ProjectSearchQuery) => this.projectService.searchProjects(search);
 
   /**
    * Saves given project (create / update)

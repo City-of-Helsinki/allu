@@ -20,7 +20,7 @@ export class WorkQueueService {
   public searchApplicationsSharedByGroup(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
     return this.authHttp.post(
       WorkQueueService.WORK_QUEUE_URL,
-      JSON.stringify(QueryParametersMapper.mapFrontend(searchQuery)))
+      JSON.stringify(QueryParametersMapper.mapApplicationQueryFrontend(searchQuery)))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_WORKQUEUE_SEARCH_FAILED, HttpUtil.extractMessage(err))));

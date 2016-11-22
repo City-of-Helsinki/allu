@@ -2,6 +2,9 @@ import {BackendQueryParameters, BackendQueryParameter, BackendQuerySort} from '.
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {MAX_DATE, MIN_DATE} from '../../util/time.util';
 import {Direction} from '../../model/common/sort';
+import {ProjectSearchQuery} from '../../model/project/project-search-query';
+import {Some} from '../../util/option';
+import {SearchQuery} from '../../model/common/search-query';
 
 const enumFields = [
   'status',
@@ -9,15 +12,24 @@ const enumFields = [
 ];
 
 export class QueryParametersMapper {
-  public static mapFrontend(query: ApplicationSearchQuery): BackendQueryParameters {
+  public static mapApplicationQueryFrontend(query: ApplicationSearchQuery): BackendQueryParameters {
     return (query) ?
     {
-      queryParameters: QueryParametersMapper.mapParameters(query),
+      queryParameters: QueryParametersMapper.mapApplicationParameters(query),
       sort: QueryParametersMapper.mapSort(query)
     } : undefined;
   }
 
-  private static mapSort(query: ApplicationSearchQuery): BackendQuerySort {
+  public static mapProjectQueryFrontend(query: ProjectSearchQuery): BackendQueryParameters {
+    return Some(query).map(q => {
+      return {
+        queryParameters: QueryParametersMapper.mapProjectParameters(query),
+        sort: QueryParametersMapper.mapSort(query)
+      };
+    }).orElse(undefined);
+  }
+
+  private static mapSort(query: SearchQuery): BackendQuerySort {
     return (query.sort && query.sort.field && query.sort.direction !== undefined) ?
     {
       field: QueryParametersMapper.getBackendSortField(query.sort.field),
@@ -25,7 +37,7 @@ export class QueryParametersMapper {
     } : undefined;
   }
 
-  private static mapParameters(query: ApplicationSearchQuery): Array<BackendQueryParameter> {
+  private static mapApplicationParameters(query: ApplicationSearchQuery): Array<BackendQueryParameter> {
     let queryParameters: Array<BackendQueryParameter> = [];
     QueryParametersMapper.mapParameter(
       queryParameters, 'location.streetAddress', QueryParametersMapper.removeExtraWhitespace(query.address));
@@ -38,6 +50,19 @@ export class QueryParametersMapper {
     QueryParametersMapper.mapParameter(queryParameters, '_all', query.freeText);
     QueryParametersMapper.mapDateParameter(queryParameters, 'startTime', MIN_DATE, query.endTime);
     QueryParametersMapper.mapDateParameter(queryParameters, 'endTime', query.startTime, MAX_DATE);
+    return queryParameters;
+  }
+
+  private static mapProjectParameters(query: ProjectSearchQuery): Array<BackendQueryParameter> {
+    let queryParameters: Array<BackendQueryParameter> = [];
+    Some(query.id).do(id => QueryParametersMapper.mapParameter(queryParameters, 'id', id.toString()));
+    QueryParametersMapper.mapDateParameter(queryParameters, 'startTime', MIN_DATE, query.endTime);
+    QueryParametersMapper.mapDateParameter(queryParameters, 'endTime', query.startTime, MAX_DATE);
+    QueryParametersMapper.mapParameter(queryParameters, 'ownerName', QueryParametersMapper.removeExtraWhitespace(query.ownerName));
+    QueryParametersMapper.mapParameter(queryParameters, 'status', QueryParametersMapper.removeExtraWhitespace(query.status));
+    Some(query.creator).do(creator => QueryParametersMapper.mapParameter(queryParameters, 'creator', creator.toString()));
+    // TODO: Map when supported
+    // QueryParametersMapper.mapParameter(queryParameters, 'district', QueryParametersMapper.removeExtraWhitespace(query.district));
     return queryParameters;
   }
 

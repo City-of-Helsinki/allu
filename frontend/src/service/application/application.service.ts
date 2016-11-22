@@ -64,7 +64,7 @@ export class ApplicationService {
 
     return this.authHttp.post(
       searchUrl,
-      JSON.stringify(QueryParametersMapper.mapFrontend(searchQuery)))
+      JSON.stringify(QueryParametersMapper.mapApplicationQueryFrontend(searchQuery)))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SEARCH_FAILED, HttpUtil.extractMessage(err))));

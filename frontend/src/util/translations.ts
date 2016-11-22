@@ -101,7 +101,8 @@ export const translations = {
       customerReferenceMissing: 'Asiakkaan viite/työnumero puuttuu'
     },
     error: {
-      saveFailed: 'Projektin tallentaminen epäonnistui'
+      saveFailed: 'Projektin tallentaminen epäonnistui',
+      searchFailed: 'Projektien hakeminen epäonnistui'
     }
   },
   applicant: {

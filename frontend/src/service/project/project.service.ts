@@ -14,6 +14,8 @@ import {ErrorInfo} from '../ui-state/error-info';
 import {ErrorType} from '../ui-state/error-type';
 import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
+import {ProjectSearchQuery} from '../../model/project/project-search-query';
+import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
 
 @Injectable()
 export class ProjectService {
@@ -23,8 +25,15 @@ export class ProjectService {
 
   constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {}
 
-  public searchProjects(search: any): Observable<Array<Project>> {
-    return Observable.of([]);
+  public searchProjects(searchQuery: ProjectSearchQuery): Observable<Array<Project>> {
+    let searchUrl = ProjectService.PROJECT_URL + ProjectService.SEARCH;
+
+    return this.authHttp.post(
+      searchUrl,
+      JSON.stringify(QueryParametersMapper.mapProjectQueryFrontend(searchQuery)))
+      .map(response => response.json())
+      .map(json => json.map(project => ProjectMapper.mapBackend(project)))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SEARCH_FAILED, HttpUtil.extractMessage(err))));
   }
 
   public getProject(id: number): Observable<Project> {
