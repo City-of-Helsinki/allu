@@ -18,16 +18,16 @@
           <input id="fileDescription" [disabled]='readonly' type="text" [(ngModel)]="item.description">
         </div>
         <div class="col m1">
-          <button md-raised-button class="waves-effect waves-light btn" [disabled]='readonly' (click)="removeAttachment(i)">POISTA</button>
+          <button type="button" md-raised-button class="waves-effect waves-light btn" [disabled]='readonly' (click)="removeAttachment(i)">POISTA</button>
         </div>
         <div class="col m1">
-          <button md-raised-button class="waves-effect waves-light btn" [disabled]="!item.id" (click)="download(i)">LATAA</button>
+          <button type="button" md-raised-button class="waves-effect waves-light btn" [disabled]="!item.id" (click)="download(i)">LATAA</button>
         </div>
       </div>
       <div class="row">
         <div class="col m1 offset-m10">
           <div class="fixedInputButton">
-            <button md-raised-button class="waves-effect waves-light btn" [disabled]='readonly' (click)="realFileInput.click()">VALITSE</button>
+            <button type="button" md-raised-button class="waves-effect waves-light btn" [disabled]='readonly' (click)="realFileInput.click()">VALITSE</button>
             <input #realFileInput type="file" file-select (attachmentsSelected)="attachmentsSelected($event)" multiple />
           </div>
         </div>

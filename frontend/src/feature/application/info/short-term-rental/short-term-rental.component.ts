@@ -78,6 +78,7 @@ export class ShortTermRentalComponent implements OnInit {
   }
 
   onSubmit(form: ShortTermRentalForm) {
+    console.log('onSubmit', form);
     this.submitPending = true;
     let application = this.application;
     application.metadata = this.meta;
