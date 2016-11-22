@@ -58,17 +58,11 @@
             <md-card-content>
                 <div class="row form-group">
                     <div class="input-field col m3">
-                        <input type="text" id="identifier" [readonly]="readonly" [(ngModel)]="identifierSearch">
+                        <input type="text" id="identifier" [readonly]="readonly"
+                               [autocompletion]="matchingApplications"
+                               (onSearchChange)="onIdentifierSearchChange($event)"
+                               (onSelection)="add($event)">
                         <label for="identifier">Hae tunnuksella</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m6">
-                        <ul>
-                            <li *ngFor="let app of matchingApplications | async">
-                                <div (click)="add(app)" class="clickable">{{app.name}}<i class="material-icons">add</i></div>
-                            </li>
-                        </ul>
                     </div>
                 </div>
                 <div class="row">
@@ -92,8 +86,8 @@
                                     <td (click)="remove(application.id)"><i class="material-icons">remove</i></td>
                                     <td>{{application.handler?.realName}}</td>
                                     <td>
-                                        {{application.project.name}} <br>
-                                        <span>{{application.project.id}}</span>
+                                        {{application.name}} <br>
+                                        <span>{{application.id}}</span>
                                     </td>
                                     <td>{{ translations.application.type[application.type] }}</td>
                                     <td>{{ translations.application.status[application.status] }}</td>

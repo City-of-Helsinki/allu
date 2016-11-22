@@ -2,7 +2,7 @@ import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {AutoCompletionEntry} from './auto-completion-entry';
 
-export type SelectIdentifier = number | string;
+export type SelectIdentifier = any;
 
 @Component({
   selector: 'auto-completion-list',

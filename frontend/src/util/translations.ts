@@ -99,6 +99,9 @@ export const translations = {
       ownerNameMissing: 'Hankkeen omistaja puuttu',
       contactNameMissing: 'Hankkeen yhteyshenkilö puuttuu',
       customerReferenceMissing: 'Asiakkaan viite/työnumero puuttuu'
+    },
+    error: {
+      saveFailed: 'Projektin tallentaminen epäonnistui'
     }
   },
   applicant: {
