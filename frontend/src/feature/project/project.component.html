@@ -60,6 +60,7 @@
                     <div class="input-field col m3">
                         <input type="text" id="identifier" [readonly]="readonly"
                                [autocompletion]="matchingApplications"
+                               nameField="applicationId"
                                (onSearchChange)="onIdentifierSearchChange($event)"
                                (onSelection)="add($event)">
                         <label for="identifier">Hae tunnuksella</label>
