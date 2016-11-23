@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.service;
 
 
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
@@ -32,15 +33,11 @@ public class ApplicationServiceTest extends MockServices {
   @Mock
   protected LocationService locationService;
   @Mock
-  protected ProjectService projectService;
-  @Mock
   protected ApplicantService applicantService;
   @Autowired
   protected ApplicationMapper applicationMapper;
   @Mock
   protected ContactService contactService;
-  @Mock
-  protected SearchService searchService;
   @Mock
   protected MetaService metaService;
   @Mock
@@ -57,22 +54,18 @@ public class ApplicationServiceTest extends MockServices {
   @Before
   public void setUp() {
     applicationMapper = new ApplicationMapper();
-    applicationService = new ApplicationService(props, restTemplate, locationService, applicantService, projectService,
-        applicationMapper, contactService, searchService, metaService, userService);
+    applicationService = new ApplicationService(
+        props, restTemplate, locationService, applicantService, applicationMapper, contactService, metaService);
 
     initSaveMocks();
     initSearchMocks();
     Mockito.when(locationService.createLocation(Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
-    Mockito.when(projectService.insert(Mockito.anyObject())).thenAnswer((Answer<ProjectJson>) invocation ->
-        createProjectJson(100));
     Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
 
     Mockito.when(locationService.findLocationById(Mockito.anyInt())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
-    Mockito.when(projectService.findById(Mockito.anyInt())).thenAnswer((Answer<ProjectJson>) invocation ->
-        createProjectJson(100));
     Mockito.when(applicantService.findApplicantById(Mockito.anyInt())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
     Mockito.when(contactService.findContactsForApplication(Mockito.anyInt()))
@@ -153,22 +146,21 @@ public class ApplicationServiceTest extends MockServices {
 
   @Test
   public void testFindApplicationById() {
-    ApplicationJson response = applicationService.findApplicationById(123);
+    Application response = applicationService.findApplicationById(123);
 
     assertNotNull(response);
-    assertNotNull(response.getProject());
-    assertNotNull(response.getApplicant());
+    assertNotNull(response.getProjectId());
+    assertNotNull(response.getApplicantId());
     assertNotNull(response.getEvent());
-    assertEquals(100, response.getProject().getId().intValue());
-    assertEquals(102, response.getLocation().getId().intValue());
-    assertNotNull(response.getApplicant());
-    assertEquals(103, response.getApplicant().getId().intValue());
-    assertEquals(createMockOutdoorEventModel().getNature(), ((OutdoorEventJson) response.getEvent()).getNature());
+    assertEquals(100, (long) response.getProjectId());
+    assertEquals(102, (long) response.getLocationId());
+    assertNotNull(response.getApplicantId());
+    assertEquals(103, (long) response.getApplicantId());
   }
 
   @Test
   public void testFindApplicationsById() {
-    List<ApplicationJson> response = applicationService.findApplicationsById(Collections.singletonList(123));
+    List<Application> response = applicationService.findApplicationsById(Collections.singletonList(123));
     assertEquals(2, response.size());
   }
 
@@ -176,23 +168,23 @@ public class ApplicationServiceTest extends MockServices {
   public void testFindApplicationByLocation() {
     LocationQueryJson query = new LocationQueryJson();
     query.setIntersectingGeometry(polygon(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
-    List<ApplicationJson> response = applicationService.findApplicationByLocation(query);
+    List<Application> response = applicationService.findApplicationByLocation(query);
 
     assertNotNull(response);
     assertEquals(2, response.size());
 
-    assertNotNull(response.get(0).getProject());
-    assertNotNull(response.get(0).getApplicant());
-    assertNotNull(response.get(0).getLocation());
+    assertNotNull(response.get(0).getProjectId());
+    assertNotNull(response.get(0).getApplicantId());
+    assertNotNull(response.get(0).getLocationId());
     assertNotNull(response.get(0).getEvent());
-    assertEquals(100, response.get(0).getProject().getId().intValue());
-    assertEquals(102, response.get(0).getLocation().getId().intValue());
-    assertNotNull(response.get(0).getApplicant());
-    assertEquals(103, response.get(0).getApplicant().getId().intValue());
+    assertEquals(100, (long) response.get(0).getProjectId());
+    assertEquals(102, (long) response.get(0).getLocationId());
+    assertNotNull(response.get(0).getApplicantId());
+    assertEquals(103, (long) response.get(0).getApplicantId());
     assertNotNull(response.get(1));
-    assertNotNull(response.get(1).getProject());
-    assertNotNull(response.get(1).getApplicant());
-    assertNotNull(response.get(1).getLocation());
+    assertNotNull(response.get(1).getProjectId());
+    assertNotNull(response.get(1).getApplicantId());
+    assertNotNull(response.get(1).getLocationId());
     assertEquals("MockName2", response.get(1).getName());
   }
 

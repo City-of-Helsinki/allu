@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +23,8 @@ public class ProjectController {
 
   @Autowired
   private ProjectService projectService;
+  @Autowired
+  private ApplicationServiceComposer applicationServiceComposer;
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
@@ -80,7 +83,7 @@ public class ProjectController {
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationJson>> findApplicationsByProject(@PathVariable int id) {
-    List<ApplicationJson> applications = projectService.findApplicationsByProject(id);
+    List<ApplicationJson> applications = applicationServiceComposer.findApplicationsByProject(id);
     return new ResponseEntity<>(applications, HttpStatus.OK);
   }
 

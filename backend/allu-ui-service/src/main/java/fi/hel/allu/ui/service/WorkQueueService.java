@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 public class WorkQueueService {
 
   private static final Map<RoleType, List<String>> roleTypeToAllowedStatus;
-  private ApplicationService applicationService;
+  private ApplicationServiceComposer applicationServiceComposer;
   private UserService userService;
 
   static {
@@ -38,8 +38,8 @@ public class WorkQueueService {
   }
 
   @Autowired
-  public WorkQueueService(ApplicationService applicationService, UserService userService) {
-    this.applicationService = applicationService;
+  public WorkQueueService(ApplicationServiceComposer applicationServiceComposer, UserService userService) {
+    this.applicationServiceComposer = applicationServiceComposer;
     this.userService = userService;
   }
 
@@ -77,7 +77,7 @@ public class WorkQueueService {
             otherParameters,
             Arrays.asList(applicationTypeParameter, statusParameter)));
 
-    return applicationService.search(queryParametersJson);
+    return applicationServiceComposer.search(queryParametersJson);
   }
 
   private Map<Boolean, List<QueryParameterJson>> partitionByField(List<QueryParameterJson> queryParameters, String fieldName) {
