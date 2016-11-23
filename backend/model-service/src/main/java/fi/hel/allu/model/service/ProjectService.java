@@ -82,6 +82,17 @@ public class ProjectService {
   }
 
   /**
+   * Finds applications by project.
+   *
+   * @param   id    Id of the project whose applications are fetched.
+   * @return  List of applications under given project. Never <code>null</code>.
+   */
+  public List<Application> findApplicationsByProject(int id) {
+    return applicationDao.findByProject(id);
+  }
+
+
+  /**
    * Update applications of a given project. This method also updates the projects, which were previously linked to the given applications.
    *
    * @param id              Project whose applications will be updated.

@@ -75,8 +75,7 @@ public class ProjectController {
    */
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.GET)
   public ResponseEntity<List<Application>> findApplicationsByProject(@PathVariable int id) {
-    List<Application> applications = applicationDao.findByProject(id);
-    return new ResponseEntity<>(applications, HttpStatus.OK);
+    return new ResponseEntity<>(projectService.findApplicationsByProject(id), HttpStatus.OK);
   }
 
   /**

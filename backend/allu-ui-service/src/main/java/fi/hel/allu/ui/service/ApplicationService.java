@@ -133,7 +133,7 @@ public class ApplicationService {
   public ApplicationJson findApplicationById(int applicationId) {
     Application applicationModel = restTemplate.getForObject(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_ID), Application.class, applicationId);
-    return getApplication(applicationModel);
+    return getFullyPopulatedApplication(applicationModel);
   }
 
   /**
@@ -148,7 +148,7 @@ public class ApplicationService {
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATIONS_FIND_BY_ID), applicationIds, Application[].class);
     List<ApplicationJson> applications = new ArrayList<>();
     for (Application applicationModel : applicationResult.getBody()) {
-      applications.add(getApplication(applicationModel));
+      applications.add(getFullyPopulatedApplication(applicationModel));
     }
     return applications;
   }
@@ -164,7 +164,7 @@ public class ApplicationService {
     ResponseEntity<Application[]> applicationResult = restTemplate.getForEntity(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_HANDLER), Application[].class, handlerId);
     for (Application applicationModel : applicationResult.getBody()) {
-      resultList.add(getApplication(applicationModel));
+      resultList.add(getFullyPopulatedApplication(applicationModel));
     }
     return resultList;
   }
@@ -185,7 +185,7 @@ public class ApplicationService {
         lsc,
         Application[].class);
     for (Application applicationModel : applicationResult.getBody()) {
-      resultList.add(getApplication(applicationModel));
+      resultList.add(getFullyPopulatedApplication(applicationModel));
     }
     return resultList;
   }
@@ -216,8 +216,13 @@ public class ApplicationService {
     return updateApplication(applicationId, applicationJson);
   }
 
-
-  private ApplicationJson getApplication(Application applicationModel) {
+  /**
+   * Returns fully populated application json i.e. having all related data structures like applicant and project populated.
+   *
+   * @param   applicationModel  Application to be mapped to fully populated application json.
+   * @return  fully populated application json.
+   */
+  public ApplicationJson getFullyPopulatedApplication(Application applicationModel) {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
 

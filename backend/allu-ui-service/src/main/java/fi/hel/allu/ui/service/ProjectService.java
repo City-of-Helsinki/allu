@@ -28,12 +28,18 @@ public class ProjectService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private ApplicationMapper applicationMapper;
+  private ApplicationService applicationService;
 
   @Autowired
-  public ProjectService(ApplicationProperties applicationProperties, RestTemplate restTemplate, ApplicationMapper applicationMapper) {
+  public ProjectService(
+      ApplicationProperties applicationProperties,
+      RestTemplate restTemplate,
+      ApplicationMapper applicationMapper,
+      ApplicationService applicationService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
+    this.applicationService = applicationService;
   }
 
   /**
@@ -108,7 +114,7 @@ public class ProjectService {
     ApplicationJson applicationJson = new ApplicationJson();
     ResponseEntity<Application[]> responseEntity =
         restTemplate.getForEntity(applicationProperties.getApplicationsByProjectUrl(), Application[].class, id);
-    return Arrays.stream(responseEntity.getBody()).map(a -> applicationMapper.mapApplicationToJson(a)).collect(Collectors.toList());
+    return Arrays.stream(responseEntity.getBody()).map(a -> applicationService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
   }
 
   /**
