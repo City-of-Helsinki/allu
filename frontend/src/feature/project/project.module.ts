@@ -9,6 +9,8 @@ import {projectRoutes} from './project.routing';
 import {ProjectHub} from '../../service/project/project-hub';
 import {ProjectService} from '../../service/project/project.service';
 import {ProjectSearchComponent} from './search/project-search.component';
+import {ProjectSummaryComponent} from './summary/project-summary.component';
+import {MapModule} from '../map/map.module';
 
 @NgModule({
   imports: [
@@ -16,11 +18,13 @@ import {ProjectSearchComponent} from './search/project-search.component';
     RouterModule.forChild(projectRoutes),
     FormsModule,
     ReactiveFormsModule,
-    MdCardModule
+    MdCardModule,
+    MapModule
   ],
   declarations: [
     ProjectComponent,
-    ProjectSearchComponent
+    ProjectSearchComponent,
+    ProjectSummaryComponent
   ],
   providers: [
     ProjectHub,

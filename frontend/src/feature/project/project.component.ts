@@ -65,7 +65,7 @@ export class ProjectComponent {
     let project = ProjectForm.toProject(form);
     this.projectHub.save(project)
       .switchMap(p => this.projectHub.updateProjectApplications(p.id, this.applications.map(app => app.id)))
-      .subscribe(status => console.log('status', status));
+      .subscribe(p => this.router.navigate(['/projects', p.id, 'summary']));
   }
 
   public onIdentifierSearchChange(identifier: string) {

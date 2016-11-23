@@ -1,16 +1,5 @@
 import {translations} from '../../util/translations';
-
-export enum ApplicationStatus {
-  PRE_RESERVED,
-  PENDING,
-  HANDLING,
-  RETURNED_TO_PREPARATION,
-  DECISIONMAKING,
-  DECISION,
-  REJECTED,
-  FINISHED,
-  CANCELLED
-}
+import {ApplicationStatus} from './application-status';
 
 export function translateStatus(status: ApplicationStatus) {
   return translations.application.status[ApplicationStatus[status]];

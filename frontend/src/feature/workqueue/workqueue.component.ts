@@ -10,7 +10,7 @@ import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {translations} from '../../util/translations';
 import {EnumUtil} from '../../util/enum.util';
-import {ApplicationStatus} from '../../model/application/application-status-change';
+import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {Sort} from '../../model/common/sort';
 import {HandlerModalComponent} from './handlerModal/handler-modal.component';

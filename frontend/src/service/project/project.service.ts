@@ -22,6 +22,8 @@ export class ProjectService {
 
   static PROJECT_URL = '/api/projects';
   static SEARCH = '/search';
+  static CHILDREN = 'children';
+  static PARENTS = 'parents';
 
   constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {}
 
@@ -63,10 +65,10 @@ export class ProjectService {
     return Observable.of(new HttpResponse(HttpStatus.OK, 'Project removed ' + id));
   }
 
-  public updateProjectApplications(id: number, applicationIds: Array<number>): Observable<HttpResponse> {
+  public updateProjectApplications(id: number, applicationIds: Array<number>): Observable<Project> {
     let url = ProjectService.PROJECT_URL + '/' + id + '/applications';
     return this.authHttp.put(url, JSON.stringify(applicationIds))
-      .map(response => new HttpResponse(HttpStatus.OK, 'Applications added to project ' + id))
+      .map(response => ProjectMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SAVE_FAILED, HttpUtil.extractMessage(err))));
   }
 
@@ -76,5 +78,22 @@ export class ProjectService {
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
+  public getChildProjects(id: number): Observable<Array<Project>> {
+    let url = [ProjectService.PROJECT_URL, id, ProjectService.CHILDREN].join('/');
+    return this.getProjects(url);
+  }
+
+  public getParentProjects(id: number): Observable<Array<Project>> {
+    let url = [ProjectService.PROJECT_URL, id, ProjectService.PARENTS].join('/');
+    return this.getProjects(url);
+  }
+
+  private getProjects(url: string): Observable<Array<Project>> {
+    return this.authHttp.get(url)
+      .map(response => response.json())
+      .map(json => json.map(project => ProjectMapper.mapBackend(project)))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SEARCH_FAILED, HttpUtil.extractMessage(err))));
   }
 }

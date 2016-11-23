@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 import {Router, NavigationEnd} from '@angular/router';
 import {ViewEncapsulation} from '@angular/core';
 import {Login} from '../../feature/login/login.component';
-import {SearchService} from '../../service/search.service';
 import {LocationService} from '../../service/location.service';
 import {ApplicationService} from '../../service/application/application.service.ts';
 import {DecisionService} from '../../service/decision/decision.service';

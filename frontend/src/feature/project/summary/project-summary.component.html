@@ -1,12 +1,155 @@
-<div>
-    <h2>HANKE</h2>
+<div class="row search-bar">
+    <h1>
+        <span>HANKE {{project.name}} - </span>
+        <span *ngIf="isActive">AKTIIVINEN</span>
+        <span *ngIf="!isActive">INAKTIIVINEN</span>
+    </h1>
 </div>
-<!-- BASIC INFO -->
-
-<!-- APPLICATIONS -->
-
-<!-- LINKED PROJECTS -->
-
-<!-- HISTORY -->
-
-<!-- INTERNAL COMMENTS -->
+<div class="row">
+    <div class="col m6">
+        <md-card>
+            <md-card-title>Hankkeen perustiedot</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m6 info-field-group">
+                        <div>
+                            <label class="info-label">Arvioitu aloitus</label>
+                            <div class="info-field">{{project.startTime | date:dateFormat}}</div>
+                        </div>
+                        <div>
+                            <label class="info-label">Arvioitu päättyminen</label>
+                            <div class="info-field">{{project.endTime | date:dateFormat}}</div>
+                        </div>
+                        <div>
+                            <label class="info-label">Asiakkaan tyonro/viite</label>
+                            <div class="info-field">{{project.customerReference}}</div>
+                        </div>
+                    </div>
+                    <div class="col m6 info-field-group">
+                        <div>
+                            <label class="info-label">Hankkeen omistaja ja yhteyshenkilö</label>
+                            <div class="info-field">{{project.ownerName}}, {{project.contactName}}</div>
+                        </div>
+                        <div>
+                            <label class="info-label">Puhelinnumero</label>
+                            <div class="info-field">{{project.phone}}</div>
+                        </div>
+                        <div>
+                            <label class="info-label">Sähköpostiosoite</label>
+                            <div class="info-field"><a href="mailto:{{project.email}}">{{project.email}}</a></div>
+                        </div>
+                    </div>
+                    <div class="col m12 info-field-group">
+                        <div>
+                            <label class="info-label">Kaupunginosa(t)</label>
+                            <div class="info-field">-</div>
+                        </div>
+                    </div>
+                    <div class="col m12 info-field-group">
+                        <div>
+                            <label class="info-label">Lisätietoja</label>
+                            <div class="info-field">{{project.additionalInfo}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col m12">
+                        <button type="button" md-raised-button class="waves-effect waves-light btn"
+                                [routerLink]="['/projects', project.id]">MUOKKAA</button>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+    <div class="col m6">
+        <div class="mapcontainer">
+            <map [zoom]="true">Loading map</map>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col m3">
+        <md-card>
+            <md-card-title>Hakemukset</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m12 info-field-group">
+                        <label class="info-label">Aktiivisia</label>
+                        <div *ngIf="activeApplications.length === 0">Ei aktiivisia hakemuksia</div>
+                        <div *ngFor="let application of activeApplications">
+                            <div class="col m6 info-field-group">
+                                <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
+                            </div>
+                            <div class="col m6 info-field-group">{{translations.application.status[application.status]}}</div>
+                        </div>
+                    </div>
+                    <div class="col m12 info-field-group">
+                        <label class="info-label">Päätökset</label>
+                        <div *ngIf="decidedApplications.length === 0">Ei päätettyjä hakemuksia</div>
+                        <div *ngFor="let application of decidedApplications">
+                            <div class="col m6 info-field-group">
+                                <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
+                            </div>
+                            <div class="col m6 info-field-group">{{translations.application.status[application.status]}}</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col m6">
+                        <button type="button" md-raised-button class="waves-effect waves-light btn"
+                                routerLink="/applications" [queryParams]="{relatedProject: project.id}">UUSI HAKEMUS</button>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+    <div class="col m3">
+        <md-card>
+            <md-card-title>Liittyvät hankkeet</md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m12 info-field-group">
+                        <div *ngIf="parentProjects.length === 0 && childProjects.length === 0">Hankkeeseen ei liity muita hankkeita</div>
+                        <div *ngFor="let project of parentProjects">
+                            <div class="col m12">
+                                <a [routerLink]="['/projects', project.id, 'summary']">Hanke {{project.id}}</a>
+                            </div>
+                        </div>
+                        <div *ngFor="let project of childProjects">
+                            <div class="col m12">
+                                <a [routerLink]="['/projects', project.id, 'summary']">Hanke {{project.id}}</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col m6" >
+                        <button type="button" disabled md-raised-button class="waves-effect waves-light btn">LIITÄ HANKE</button>
+                    </div>
+                    <div class="col m6">
+                        <button type="button" md-raised-button class="waves-effect waves-light btn"
+                                routerLink="/projects" [queryParams]="{relatedProject: project.id}">UUSI HANKE</button>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+    <div class="col m6">
+        <md-card>
+            <md-card-title>Historia</md-card-title>
+            <md-card-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
+            </md-card-content>
+        </md-card>
+    </div>
+</div>
+<div class="row">
+    <div class="col m12">
+        <md-card>
+            <md-card-title>Sisäiset kommentit</md-card-title>
+            <md-card-content>
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
+            </md-card-content>
+        </md-card>
+    </div>
+</div>

@@ -13,7 +13,7 @@ import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MapHub} from '../../../../service/map-hub';
-import {ApplicationStatus} from '../../../../model/application/application-status-change';
+import {ApplicationStatus} from '../../../../model/application/application-status';
 import {ApplicationAttachmentHub} from '../attachment/application-attachment-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {OutdoorEventDetailsForm} from './details/outdoor-event-details.form';

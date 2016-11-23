@@ -42,4 +42,14 @@ export class ProjectHub {
    * Fetches projects applications
    */
   public getProjectApplications = (id: number) => this.projectService.getProjectApplications(id);
+
+  /**
+   * Fetches childprojects of given project
+   */
+  public getChildProjects = (id: number) => this.projectService.getChildProjects(id);
+
+  /**
+   * Fetches all parents (and grandparents and ...) of given project
+   */
+  public getParentProjects = (id: number) => this.projectService.getParentProjects(id);
 }
