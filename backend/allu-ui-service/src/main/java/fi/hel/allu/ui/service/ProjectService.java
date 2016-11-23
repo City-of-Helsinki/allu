@@ -110,11 +110,11 @@ public class ProjectService {
    * @param   id    Id of the project whose applications should be returned.
    * @return  Applications of the given project. Never <code>null</code>.
    */
-  public List<ApplicationJson> findApplicationsByProject(int id) {
+  public List<Application> findApplicationsByProject(int id) {
     ApplicationJson applicationJson = new ApplicationJson();
     ResponseEntity<Application[]> responseEntity =
         restTemplate.getForEntity(applicationProperties.getApplicationsByProjectUrl(), Application[].class, id);
-    return Arrays.stream(responseEntity.getBody()).map(a -> applicationService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
+    return Arrays.asList(responseEntity.getBody());
   }
 
   /**

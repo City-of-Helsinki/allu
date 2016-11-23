@@ -99,6 +99,7 @@ public class ApplicationController {
   public ResponseEntity<Application> update(@PathVariable int id,
       @Valid @RequestBody(required = true) Application application) {
     pricingService.calculatePrice(application);
+    // TODO: 1) siirrä ApplicationServiceen ja 2) lisää kutsu ProjectServiceen
     return new ResponseEntity<>(applicationDao.update(id, application), HttpStatus.OK);
   }
 

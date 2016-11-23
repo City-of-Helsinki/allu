@@ -5,10 +5,9 @@ import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
-import fi.hel.allu.ui.service.ApplicationService;
+import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.AttachmentService;
 import fi.hel.allu.ui.service.DecisionService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-
 import java.io.IOException;
 import java.util.List;
 
@@ -28,7 +26,7 @@ import java.util.List;
 @RequestMapping("/applications")
 public class ApplicationController {
   @Autowired
-  private ApplicationService applicationService;
+  private ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
   private AttachmentService attachmentService;
@@ -39,52 +37,46 @@ public class ApplicationController {
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
   public ResponseEntity<ApplicationJson> create(@Valid @RequestBody ApplicationJson applicationJson) {
-    return new ResponseEntity<>(applicationService.createApplication(applicationJson), HttpStatus.OK);
+    return new ResponseEntity<>(applicationServiceComposer.createApplication(applicationJson), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ApplicationJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationJson
       applicationJson) {
-    return new ResponseEntity<>(applicationService.updateApplication(id, applicationJson), HttpStatus.OK);
+    return new ResponseEntity<>(applicationServiceComposer.updateApplication(id, applicationJson), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/handler/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> updateApplicationHandler(@PathVariable int id, @RequestBody(required = true) List<Integer> applicationsIds) {
-    applicationService.updateApplicationHandler(id, applicationsIds);
+    applicationServiceComposer.updateApplicationHandler(id, applicationsIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> removeApplicationHandler(@RequestBody(required = true) List<Integer> applicationsIds) {
-    applicationService.removeApplicationHandler(applicationsIds);
+    applicationServiceComposer.removeApplicationHandler(applicationsIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<ApplicationJson> findByIdentifier(@PathVariable int id) {
-    return new ResponseEntity<>(applicationService.findApplicationById(id), HttpStatus.OK);
-  }
-
-  @RequestMapping(method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> findBy(@RequestParam(value = "handler") final String handlerId) {
-    return new ResponseEntity<>(applicationService.findApplicationByHandler(handlerId), HttpStatus.OK);
+    return new ResponseEntity<>(applicationServiceComposer.findApplicationById(id), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search_location", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationJson>> findByLocation(@RequestBody final LocationQueryJson query) {
-    return new ResponseEntity<>(applicationService.findApplicationByLocation(query), HttpStatus.OK);
+    return new ResponseEntity<>(applicationServiceComposer.findApplicationByLocation(query), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
-    return new ResponseEntity<>(applicationService.search(queryParameters), HttpStatus.OK);
+    return new ResponseEntity<>(applicationServiceComposer.search(queryParameters), HttpStatus.OK);
   }
 
   // Attachment API
@@ -178,7 +170,7 @@ public class ApplicationController {
   @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_DECISION')")
   public ResponseEntity<Void> generateDecision(@PathVariable int applicationId) throws IOException {
-    ApplicationJson applicationJson = applicationService.findApplicationById(applicationId);
+    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
     decisionService.generateDecision(applicationId, applicationJson);
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri());

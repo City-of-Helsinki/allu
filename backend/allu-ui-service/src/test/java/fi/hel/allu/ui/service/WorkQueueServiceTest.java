@@ -22,7 +22,7 @@ public class WorkQueueServiceTest {
   private static final String TEST_USER = "testuser";
   private UserJson userJson =
       new UserJson(1, TEST_USER, "foo bar", "foo@bar.fi", "titteli", true, Collections.emptyList(), Collections.emptyList());
-  private ApplicationService applicationService;
+  private ApplicationServiceComposer applicationServiceComposer;
   private UserService userService;
   private WorkQueueService workQueueService;
 
@@ -31,9 +31,9 @@ public class WorkQueueServiceTest {
 
   @Before
   public void init() {
-    applicationService = Mockito.mock(ApplicationService.class);
+    applicationServiceComposer = Mockito.mock(ApplicationServiceComposer.class);
     userService = Mockito.mock(UserService.class);
-    workQueueService = new WorkQueueService(applicationService, userService);
+    workQueueService = new WorkQueueService(applicationServiceComposer, userService);
 
     AlluUser alluUser = new AlluUser(TEST_USER, Collections.emptyList(), "foo@bar.fi");
     Mockito.when(userService.getCurrentUser()).thenReturn(alluUser);
@@ -41,7 +41,7 @@ public class WorkQueueServiceTest {
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
     userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
-    Mockito.when(applicationService.search(Mockito.any())).thenReturn(emptyList);
+    Mockito.when(applicationServiceComposer.search(Mockito.any())).thenReturn(emptyList);
   }
 
   @Test
@@ -50,11 +50,11 @@ public class WorkQueueServiceTest {
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
     userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
-    Mockito.when(applicationService.search(Mockito.any())).thenReturn(emptyList);
+    Mockito.when(applicationServiceComposer.search(Mockito.any())).thenReturn(emptyList);
 
     List<ApplicationJson> result = workQueueService.searchSharedByGroup(new QueryParametersJson());
 
-    Mockito.verify(applicationService).search(queryParametersArgumentCaptor.capture());
+    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture());
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);
@@ -86,7 +86,7 @@ public class WorkQueueServiceTest {
     queryParametersJson.setQueryParameters(new ArrayList(Arrays.asList(dummyParameter, typeParameter)));
     List<ApplicationJson> result = workQueueService.searchSharedByGroup(queryParametersJson);
 
-    Mockito.verify(applicationService).search(queryParametersArgumentCaptor.capture());
+    Mockito.verify(applicationServiceComposer).search(queryParametersArgumentCaptor.capture());
     QueryParametersJson searchQuery = queryParametersArgumentCaptor.getValue();
 
     Assert.assertEquals(emptyList, result);
