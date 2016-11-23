@@ -27,6 +27,14 @@ public class ProjectService {
   @Autowired
   private ApplicationDao applicationDao;
 
+  /**
+   * TODO: REMOVE THIS FUNCTION AS SOON AS PROPER PROJECT SEARCH IS IMPLEMENTED
+   */
+  public List<Project> findAllProjects() {
+    return projectDao.findAllProjects();
+  }
+
+
   @Transactional(readOnly = true)
   public Project find(int id) {
     Optional<Project> project = projectDao.findById(id);
