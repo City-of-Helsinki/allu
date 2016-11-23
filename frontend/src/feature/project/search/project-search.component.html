@@ -1,0 +1,90 @@
+<div>
+    <div class=" search-bar">
+        <h1>HAKU</h1>
+        <form [formGroup]="queryForm">
+            <div class="row">
+                <div class="input-field col m3">
+                    <input id="ownerName" type="text" formControlName="ownerName">
+                    <label for="ownerName">Hankkeen omistaja</label>
+                </div>
+                <div class="input-field col m2">
+                    <input id="projectId" type="text" formControlName="id">
+                    <label for="projectId">Hankkeen tunnus</label>
+                </div>
+                <div class="input-field col m2">
+                    <select id="status" formControlName="status" materialize="material_select">
+                        <option value="" selected disabled>Tila</option>
+                        <option>Aktiivinen</option>
+                        <option>Inaktiivinen</option>
+                    </select>
+                    <label for="status">Hakemuksen käsittelijä</label>
+                </div>
+                <div class="input-field col m2">
+                    <select id="district" formControlName="district" materialize="material_select">
+                        <option value="" selected disabled>Kaupunginosa</option>
+                    </select>
+                    <label for="district">Kaupunginosa</label>
+                </div>
+                <div class="input-field col m1">
+                    <label for="startDate">Alkupvm</label>
+                    <input id="startDate"
+                           formControlName="startTime"
+                           materialize="pickadate"
+                           [materializeParams]="pickadateParams"
+                           type="text"/>
+                </div>
+                <div class="input-field col m1">
+                    <input id="endDate"
+                           formControlName="endTime"
+                           materialize="pickadate"
+                           [materializeParams]="pickadateParams"
+                           type="text"/>
+                    <label for="endDate">Loppupvm</label>
+                </div>
+                <div class="input-field col m3">
+                    <input id="creator" type="text" formControlName="creator">
+                    <label for="creator">Hankkeen lisääjä</label>
+                </div>
+                <div class="col m12 s12">
+                    <button (click)="search()" class="waves-effect waves-light btn">HAE</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="row">
+        <div class="col s12">
+            <div class="col s2 push-s10">
+                <button type="button" class="waves-effect waves-light btn" [routerLink]="['/projects']">UUSI HANKE</button>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class=" col s12">
+            <table class="striped responsive-table header">
+                <thead>
+                <tr>
+                    <th>Lisääjä</th>
+                    <th>Tunnus</th>
+                    <th>Omistaja</th>
+                    <th>Tila</th>
+                    <th>Kaupunginosa</th>
+                    <th>Alku</th>
+                    <th>Loppu</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of projects | async" class="clickable row-highlight"
+                    (click)="goToSummary(project)">
+                    <td>-</td>
+                    <td>{{project.id}}</td>
+                    <td>{{project.ownerName}}</td>
+                    <td>ei tuettuna</td>
+                    <td>ei tuettuna</td>
+                    <td>{{project.startTime | date:format}}</td>
+                    <td>{{project.endTime | date:format}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

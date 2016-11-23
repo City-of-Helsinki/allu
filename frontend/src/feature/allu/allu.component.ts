@@ -14,7 +14,8 @@ import {AuthGuard} from '../../feature/login/auth-guard.service';
   template: require('./allu.component.html'),
   encapsulation: ViewEncapsulation.None,
   styles: [
-    require('../../assets/main.scss')
+    require('../../assets/main.scss'),
+    require('../../assets/search.scss')
   ]
 })
 export class AlluComponent {

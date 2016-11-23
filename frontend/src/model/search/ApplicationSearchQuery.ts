@@ -1,8 +1,9 @@
 import {TimeUtil} from '../../util/time.util';
 import {Sort} from '../common/sort';
 import {ApplicationSearchQueryForm} from './ApplicationSearchQueryForm';
+import {SearchQuery} from '../common/search-query';
 
-export class ApplicationSearchQuery {
+export class ApplicationSearchQuery implements SearchQuery {
   public applicationId: string;
   public type: Array<string>;
   public status: Array<string>;

@@ -8,6 +8,7 @@ import {ProjectComponent} from './project.component';
 import {projectRoutes} from './project.routing';
 import {ProjectHub} from '../../service/project/project-hub';
 import {ProjectService} from '../../service/project/project.service';
+import {ProjectSearchComponent} from './search/project-search.component';
 
 @NgModule({
   imports: [
@@ -18,7 +19,8 @@ import {ProjectService} from '../../service/project/project.service';
     MdCardModule
   ],
   declarations: [
-    ProjectComponent
+    ProjectComponent,
+    ProjectSearchComponent
   ],
   providers: [
     ProjectHub,

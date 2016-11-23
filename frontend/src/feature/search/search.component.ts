@@ -16,10 +16,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'search',
-  template: require('./search.component.html'),
-  styles: [
-    require('./search.component.scss')
-  ]
+  template: require('./search.component.html')
 })
 export class SearchComponent implements OnInit {
   private queryForm: FormGroup;

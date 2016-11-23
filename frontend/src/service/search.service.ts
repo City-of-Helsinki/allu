@@ -17,7 +17,7 @@ export class SearchService {
     return new Promise<Array<Application>>((resolve, reject) =>
         this.authHttp.post(
           SearchService.APPLICATIONS_SEARCH_URL,
-          JSON.stringify(QueryParametersMapper.mapFrontend(query))).subscribe(
+          JSON.stringify(QueryParametersMapper.mapApplicationQueryFrontend(query))).subscribe(
         data => {
           console.log('SearchService.searchApplication post response', data);
           let json = data.json();
