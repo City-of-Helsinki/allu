@@ -15,9 +15,16 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
 
   // name needs to match selector to use it like [autocompletion]="searchFunction"
   // input for dropdown values
-  @Input() autocompletion: Observable<Array<AutoCompletionEntry>>;
+  @Input() autocompletion: Observable<Array<any>>;
   // Input for min length of search term which triggers search
   @Input() minTermLength = 3;
+  // Name of the field which is used as id
+  @Input() idField: string = 'id';
+  // Name of the field which is shown in the dropdown
+  @Input() nameField: string = 'name';
+  // Sort function to override default sorting (by name field)
+  @Input() sortBy: (a, b) => number;
+
   // Event for notifying search changes
   @Output() onSearchChange = new EventEmitter<string>();
   // Event for notifying item was selected
@@ -73,8 +80,12 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
 
     let component = this.listComponentRef.instance;
     component.entries = this.autocompletion;
+    component.idField = this.idField;
+    component.nameField = this.nameField;
+    component.sortBy = this.sortBy;
+
     component.onSelection.subscribe(selection => {
-      this.inputEl.value = selection.name;
+      this.inputEl.value = selection[this.nameField];
       this.onSelection.emit(selection);
     });
 
