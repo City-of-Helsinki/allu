@@ -27,6 +27,14 @@ public class ProjectController {
   }
 
   /**
+   * TODO: REMOVE THIS FUNCTION AS SOON AS PROPER PROJECT SEARCH IS IMPLEMENTED
+   */
+  @RequestMapping(value = "/all", method = RequestMethod.GET)
+  public List<Project> findAllProjects() {
+    return projectService.findAllProjects();
+  }
+
+  /**
    * Returns the children of the given project.
    *
    * @param   id  Project whose children should be fetched.

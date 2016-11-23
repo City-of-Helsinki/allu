@@ -25,9 +25,8 @@ public class ProjectController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
-    // TODO: implement when ES indexing is done
-    return null;
+  public ResponseEntity<List<ProjectJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
+    return new ResponseEntity<>(projectService.search(queryParameters), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)

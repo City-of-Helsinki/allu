@@ -48,6 +48,12 @@ function insert_data() {
   eval $CURRENT_REQUEST
 }
 
+function insert_project_data() {
+  echo Inserting data from $1
+  CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: application/json\" --header \"Authorization: Bearer $AUTH_KEY\" --data @$1 http://$TARGET_HOST/api/projects &> /dev/null"
+  eval $CURRENT_REQUEST
+}
+
 function search_and_ignore() {
   echo Sending a search request..
   CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: application/json\" --header \"Authorization: Bearer $AUTH_KEY\" --data '{\"queryParameters\":[{\"fieldName\":\"handler\",\"fieldValue\":\"TestHandler\"}]}' http://$TARGET_HOST/api/applications/search &> /dev/null"
@@ -66,6 +72,7 @@ try_repeat create_user data/paattaja.json
 try_repeat login kasittelija
 # Make sure search service is up:
 try_repeat search_and_ignore
+try_repeat insert_project_data "data/dummy_project.json"
 try_repeat insert_data "data/porkkalankatu_10a_banderolli.json"
 try_repeat insert_data "data/hernesaari.json"
 try_repeat insert_data "data/tervasaari.json"
