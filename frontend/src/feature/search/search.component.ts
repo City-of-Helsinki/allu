@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {translations} from '../../util/translations';
-import {ApplicationStatus} from '../../model/application/application-status-change';
+import {ApplicationStatus} from '../../model/application/application-status';
 import {PICKADATE_PARAMETERS, UI_DATE_FORMAT} from '../../util/time.util';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';

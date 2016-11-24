@@ -4,7 +4,7 @@ import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {translations} from '../../../util/translations';
 import {EnumUtil} from '../../../util/enum.util';
-import {ApplicationStatus} from '../../../model/application/application-status-change';
+import {ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import '../../../rxjs-extensions.ts';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';

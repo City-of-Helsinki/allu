@@ -2,7 +2,6 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SearchComponent} from './search.component';
 import {AlluCommonModule} from '../common/allu-common.module';
-import {SearchService} from '../../service/search.service';
 
 @NgModule({
   imports: [
@@ -13,8 +12,6 @@ import {SearchService} from '../../service/search.service';
   declarations: [
     SearchComponent
   ],
-  providers: [
-    SearchService
-  ]
+  providers: []
 })
 export class SearchModule {}

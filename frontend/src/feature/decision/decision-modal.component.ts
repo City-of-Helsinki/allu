@@ -1,5 +1,6 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {ApplicationStatusChange, ApplicationStatus, translateStatus} from '../../model/application/application-status-change';
+import {ApplicationStatusChange, translateStatus} from '../../model/application/application-status-change';
+import {ApplicationStatus} from '../../model/application/application-status';
 import {MaterializeAction} from 'angular2-materialize';
 
 @Component({

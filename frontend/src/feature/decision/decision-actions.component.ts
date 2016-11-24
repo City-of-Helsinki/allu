@@ -2,7 +2,8 @@ import {Component, Input} from '@angular/core';
 
 import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
-import {ApplicationStatusChange, ApplicationStatus} from '../../model/application/application-status-change';
+import {ApplicationStatusChange} from '../../model/application/application-status-change';
+import {ApplicationStatus} from '../../model/application/application-status';
 import {MaterializeUtil} from '../../util/materialize.util';
 import {translations} from '../../util/translations';
 

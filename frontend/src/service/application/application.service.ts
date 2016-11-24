@@ -14,7 +14,7 @@ import {ApplicationLocationQueryMapper} from './../mapper/application-location-q
 import {UIStateHub} from './../ui-state/ui-state-hub';
 import {HttpUtil} from '../../util/http.util.ts';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
-import {ApplicationStatus} from '../../model/application/application-status-change';
+import {ApplicationStatus} from '../../model/application/application-status';
 import {translations} from '../../util/translations';
 import {ErrorInfo} from './../ui-state/error-info';
 import {ErrorType} from '../ui-state/error-type';

@@ -39,8 +39,7 @@ export class ProjectSearchComponent implements OnInit {
   }
 
   public goToSummary(project: Project): void {
-    // TODO: go to actual summary when page implemented
-    this.router.navigate(['projects', project.id]);
+    this.router.navigate(['projects', project.id, 'summary']);
   }
 
   private search(): void {
