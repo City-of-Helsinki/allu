@@ -100,10 +100,11 @@ public class ProjectService {
    */
   @Transactional
   public Project updateProjectApplications(int id, List<Integer> applicationIds) {
-    List<Application> existingRelatedApplications = applicationDao.findByIds(applicationIds);
-    List<Integer> existingRelatedApplicationIds = existingRelatedApplications.stream().map(a -> a.getId()).collect(Collectors.toList());
-    if (!existingRelatedApplicationIds.isEmpty()) {
-      applicationDao.updateProject(null, existingRelatedApplicationIds);
+    List<Application> existingRelatedApplications = applicationDao.findByProject(id);
+    List<Integer> relatedApplicationsNotUpdated = existingRelatedApplications.stream().map(a -> a.getId())
+        .filter(relatedId -> !applicationIds.contains(relatedId)).collect(Collectors.toList());
+    if (!relatedApplicationsNotUpdated.isEmpty()) {
+      applicationDao.updateProject(null, relatedApplicationsNotUpdated);
     }
     applicationDao.updateProject(id, applicationIds);
 
