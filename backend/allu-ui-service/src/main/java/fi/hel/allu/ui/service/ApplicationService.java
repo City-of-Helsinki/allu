@@ -90,20 +90,25 @@ public class ApplicationService {
   /**
    * Create applications by calling backend service.
    *
-   * @param applicationJson Application that are going to be created
-   * @return Transfer object that contains list of created applications and their identifiers
+   * @param newApplication  Application to be added to backend.
+   * @return Application with possibly updated information from backend.
    */
-  ApplicationJson createApplication(ApplicationJson applicationJson) {
-    applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
-    applicationJson.setLocation(locationService.createLocation(applicationJson.getLocation()));
-    applicationJson.setMetadata(metaService.findMetadataForApplication(applicationJson.getType()));
-    List<ContactJson> contacts = applicationJson.getContactList();
-    setContactApplicant(contacts, applicationJson.getApplicant());
-    Application applicationModel = restTemplate.postForObject(applicationProperties
-            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
-        applicationMapper.createApplicationModel(applicationJson), Application.class);
-    applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
+  ApplicationJson createApplication(ApplicationJson newApplication) {
+    newApplication.setApplicant(applicantService.createApplicant(newApplication.getApplicant()));
+    newApplication.setLocation(locationService.createLocation(newApplication.getLocation()));
+    newApplication.setMetadata(metaService.findMetadataForApplication(newApplication.getType()));
+    List<ContactJson> contacts = newApplication.getContactList();
+    setContactApplicant(contacts, newApplication.getApplicant());
+    Application applicationModel = restTemplate.postForObject(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
+        applicationMapper.createApplicationModel(newApplication),
+        Application.class);
+
+    ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
     applicationJson.setContactList(contactService.setContactsForApplication(applicationJson.getId(), contacts));
+    applicationJson.setApplicant(newApplication.getApplicant());
+    applicationJson.setLocation(newApplication.getLocation());
+    applicationJson.setMetadata(newApplication.getMetadata());
     return applicationJson;
   }
 

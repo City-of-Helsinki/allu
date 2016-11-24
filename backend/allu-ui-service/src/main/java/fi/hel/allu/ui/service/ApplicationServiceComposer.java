@@ -29,28 +29,43 @@ public class ApplicationServiceComposer {
 
   private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceComposer.class);
 
-  @Autowired
   private RestTemplate restTemplate;
-  @Autowired
   private ApplicationProperties applicationProperties;
-  @Autowired
   private ApplicationMapper applicationMapper;
-  @Autowired
   private ApplicationService applicationService;
-  @Autowired
   private ProjectService projectService;
-  @Autowired
   private ApplicantService applicantService;
-  @Autowired
   private ContactService contactService;
-  @Autowired
   private MetaService metaService;
-  @Autowired
   private UserService userService;
-  @Autowired
   private LocationService locationService;
-  @Autowired
   private SearchService searchService;
+
+  @Autowired
+  public ApplicationServiceComposer(
+      ApplicationProperties applicationProperties,
+      RestTemplate restTemplate,
+      ApplicationMapper applicationMapper,
+      ApplicationService applicationService,
+      ProjectService projectService,
+      ApplicantService applicantService,
+      ContactService contactService,
+      MetaService metaService,
+      UserService userService,
+      LocationService locationService,
+      SearchService searchService) {
+    this.applicationProperties = applicationProperties;
+    this.restTemplate = restTemplate;
+    this.applicationMapper = applicationMapper;
+    this.applicationService = applicationService;
+    this.projectService = projectService;
+    this.applicantService = applicantService;
+    this.contactService = contactService;
+    this.metaService = metaService;
+    this.userService = userService;
+    this.locationService = locationService;
+    this.searchService = searchService;
+  }
 
   /**
    * Find given application details.
@@ -157,8 +172,7 @@ public class ApplicationServiceComposer {
    * @return  fully populated application json.
    */
   public ApplicationJson getFullyPopulatedApplication(Application applicationModel) {
-    ApplicationJson applicationJson = new ApplicationJson();
-    applicationMapper.mapApplicationToJson(applicationJson, applicationModel);
+    ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
 
     if (applicationModel.getProjectId() != null) {
       applicationJson.setProject(projectService.findById(applicationModel.getProjectId()));
@@ -193,9 +207,9 @@ public class ApplicationServiceComposer {
   private List<AttachmentInfoJson> findAttachmentsForApplication(Integer applicationId) {
     List<AttachmentInfoJson> resultList = new ArrayList<>();
     ResponseEntity<AttachmentInfo[]> attachmentResult = restTemplate.getForEntity(
-        applicationProperties
-            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION),
-        AttachmentInfo[].class, applicationId);
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION),
+        AttachmentInfo[].class,
+        applicationId);
     for (AttachmentInfo attachmentInfo : attachmentResult.getBody()) {
       AttachmentInfoJson attachmentInfoJson = new AttachmentInfoJson();
       applicationMapper.mapAttachmentInfoToJson(attachmentInfoJson, attachmentInfo);

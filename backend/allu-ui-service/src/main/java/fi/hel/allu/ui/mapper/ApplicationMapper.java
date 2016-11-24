@@ -90,11 +90,13 @@ public class ApplicationMapper {
   }
 
   /**
-   * Transfer the information from the given model-domain object to given ui-domain object
-   * @param applicationJson
+   * Transfer the information from the given model-domain object to given ui-domain object. Does not handle references to other objects like
+   * applicant.
+   *
    * @param application
    */
-  public void mapApplicationToJson(ApplicationJson applicationJson, Application application) {
+  public ApplicationJson mapApplicationToJson(Application application) {
+    ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setId(application.getId());
     applicationJson.setApplicationId(application.getApplicationId());
     applicationJson.setStatus(application.getStatus());
@@ -110,11 +112,7 @@ public class ApplicationMapper {
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setPriceOverride(application.getPriceOverride());
     applicationJson.setPriceOverrideReason(application.getPriceOverrideReason());
-  }
 
-  public ApplicationJson mapApplicationToJson(Application application) {
-    ApplicationJson applicationJson = new ApplicationJson();
-    mapApplicationToJson(applicationJson, application);
     return applicationJson;
   }
 
