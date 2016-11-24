@@ -28,6 +28,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -154,12 +155,22 @@ public class ProjectControllerTest {
     Application addedApplication = addApplicationToDatabase(newApplication);
     Project project = createDummyProject();
     project = addProjectGetResult(project);
+    // add application to the project
     ResultActions resultActions = wtc.perform(
         put("/projects/" + project.getId() + "/applications"),
         Collections.singletonList(addedApplication.getId())).andExpect(status().isOk());
     Project updatedProject = wtc.parseObjectFromResult(resultActions, Project.class);
     assertEquals(startTime, updatedProject.getStartTime().withZoneSameInstant(zoneId));
     assertEquals(endTime, updatedProject.getEndTime().withZoneSameInstant(zoneId));
+    // remove application from the project
+    resultActions = wtc.perform(
+        put("/projects/" + project.getId() + "/applications"),
+        Collections.emptyList()).andExpect(status().isOk());
+    updatedProject = wtc.parseObjectFromResult(resultActions, Project.class);
+    Application applicationIdDb = getApplication(addedApplication.getId());
+    assertNull(applicationIdDb.getProjectId());
+    assertEquals(null, updatedProject.getStartTime());
+    assertEquals(null, updatedProject.getEndTime());
   }
 
   @Test
@@ -246,6 +257,11 @@ public class ProjectControllerTest {
   private Project getProject(int projectId) throws Exception {
     ResultActions resultActions = wtc.perform(get("/projects/" + projectId)).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Project.class);
+  }
+
+  private Application getApplication(int applicationId) throws Exception {
+    ResultActions resultActions = wtc.perform(get("/applications/" + applicationId)).andExpect(status().isOk());
+    return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
   private Project addProjectGetResult(Project project) throws Exception {
