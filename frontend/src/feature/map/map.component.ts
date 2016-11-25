@@ -1,14 +1,16 @@
-import {Component, Input, OnInit, OnDestroy} from '@angular/core';
+import {Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
 import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
+import {Map} from 'leaflet';
 
 import {MapUtil} from '../../service/map.util.ts';
-import {Map} from 'leaflet';
 import {MapHub} from '../../service/map-hub';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {Application} from '../../model/application/application';
-import {Option} from '../../util/option';
+import {FixedLocation} from '../../model/common/fixed-location';
+import {Some} from '../../util/option';
+
 
 @Component({
   selector: 'map',
@@ -19,17 +21,20 @@ import {Option} from '../../util/option';
 })
 export class MapComponent implements OnInit, OnDestroy {
   @Input() draw: boolean;
+  @Input() edit: boolean;
   @Input() zoom: boolean;
   @Input() selection: boolean;
-  @Input() edit: boolean;
   @Input() applicationId: Number;
   @Input() showOnlyApplicationArea: boolean = false;
+
+  @Output() editedItemCountChanged = new EventEmitter<number>();
 
   private applicationArea: L.LayerGroup<L.ILayer>;
   private map: Map;
   private mapLayers: any;
-  private drawnItems: L.LayerGroup<L.ILayer>;
-  private editedItems: L.LayerGroup<L.ILayer>;
+  private drawControl: L.Control.Draw;
+  private drawnItems: L.FeatureGroup<L.ILayer>;
+  private editedItems: L.FeatureGroup<L.ILayer>;
 
   constructor(
     private mapService: MapUtil,
@@ -50,6 +55,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.mapHub.applications().subscribe(applications => this.drawApplications(applications));
     this.mapHub.addMapView(this.getCurrentMapView()); // to notify initial location
     this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app));
+    this.mapHub.selectedFixedLocations().subscribe(fxs => this.drawFixedLocations(fxs));
   }
 
   ngOnDestroy() {
@@ -87,6 +93,8 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
+
+
   private drawApplications(applications: Array<Application>) {
     this.clearDrawn();
 
@@ -100,14 +108,38 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private drawApplication(application: Application) {
-    // Check that edited layer is not already added
-    if (application.id === this.applicationId && (this.draw || this.edit)) {
-      if (this.editedItems.getLayers().length === 0) {
-        this.drawGeometry(application.location.geometry, this.editedItems);
-      }
+    let useEditLayer = application.id === this.applicationId && (this.draw || this.edit);
+
+    if (useEditLayer) {
+      this.drawEditedApplication(application);
     } else {
       this.drawGeometry(application.location.geometry, this.drawnItems);
     }
+  }
+
+  private drawEditedApplication(application: Application) {
+    // Check that edited layer is not already added
+    if (this.editedItems.getLayers().length === 0) {
+      this.drawGeometry(application.location.geometry, this.editedItems);
+      this.updateMapControls(application);
+    }
+  }
+
+  private updateMapControls(application: Application) {
+    if (application.hasFixedGeometry()) {
+      this.setDynamicControls(application.hasGeometry(), this.editedItems);
+    } else {
+      this.editedItemCountChanged.emit(application.geometryCount());
+    }
+  }
+
+  private drawFixedLocations(fixedLocations: Array<FixedLocation>) {
+    Some(this.editedItems).do(edited => edited.clearLayers());
+    fixedLocations.forEach(fx => this.drawGeometry(fx.geometry, this.editedItems));
+    this.mapHub.addShape(this.editedItems.toGeoJSON());
+
+    // Disable editing map with draw controls when we have fixed locations
+    this.setDynamicControls(fixedLocations.length === 0, this.editedItems);
   }
 
   private drawGeometry(geometryCollection: GeoJSON.GeometryCollection, drawLayer: L.LayerGroup<L.ILayer>, style?: Object) {
@@ -121,34 +153,32 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private clearDrawn() {
-    if (this.drawnItems) {
-      this.drawnItems.clearLayers();
-    }
+    Some(this.drawnItems).do(fxs => fxs.clearLayers());
   }
 
   private initMap(): void {
     this.map = this.createMap();
+    L.control.zoom({position: 'topright'}).addTo(this.map);
 
     let drawnItems = new L.FeatureGroup();
     let editedItems = new L.FeatureGroup();
     drawnItems.addTo(this.map);
     editedItems.addTo(this.map);
 
-    this.addMapControls(editedItems);
+    this.setDynamicControls(false, editedItems);
 
     let self = this;
     this.map.on('draw:created', function (e: any) {
-      let layer = e.layer;
-      editedItems.addLayer(layer);
-      self.mapHub.addShape(editedItems.toGeoJSON());
+      editedItems.addLayer(e.layer);
+      self.addShape(editedItems);
     });
 
     this.map.on('draw:edited', function (e: any) {
-      self.mapHub.addShape(editedItems.toGeoJSON());
+      self.addShape(editedItems);
     });
 
     this.map.on('draw:deleted', function (e: any) {
-      self.mapHub.addShape(editedItems.toGeoJSON());
+      self.addShape(editedItems);
     });
 
     this.map.on('moveend', (e: any) => {
@@ -161,6 +191,12 @@ export class MapComponent implements OnInit, OnDestroy {
     this.editedItems = editedItems;
     L.control.layers(this.mapLayers).addTo(this.map);
     L.control.scale().addTo(this.map);
+  }
+
+  private addShape(features: L.FeatureGroup<L.ILayer>) {
+    let shape = features.toGeoJSON();
+    this.mapHub.addShape(shape);
+    this.editedItemCountChanged.emit(shape.features.length);
   }
 
   private createMap(): L.Map {
@@ -180,27 +216,33 @@ export class MapComponent implements OnInit, OnDestroy {
     return new L.Map('map', mapOption);
   }
 
-  private addMapControls(editedItems: L.FeatureGroup<L.ILayer>): void {
-    L.control.zoom({position: 'topright'}).addTo(this.map);
+  private setDynamicControls(controlsEnabled: boolean, editedItems: L.FeatureGroup<L.ILayer>): void {
+    let draw = controlsEnabled ? {
+      polygon: {
+        shapeOptions: {
+          color: '#BA1200'
+        },
+        allowIntersection: false,
+        showArea: true
+      },
+      marker: false
+    } : false;
+
     let drawControl = new L.Control.Draw({
       position: 'topright',
-      draw: {
-        polygon: {
-          shapeOptions: {
-            color: '#BA1200'
-          },
-          allowIntersection: false,
-          showArea: true
-        },
-        marker: false
-      },
+      draw: draw,
       edit: {
-        featureGroup: editedItems
+        featureGroup: editedItems,
+        edit: controlsEnabled,
+        remove: controlsEnabled
       }
     });
 
     if (this.draw) {
+      // remove old control
+      Some(this.drawControl).do(control => this.map.removeControl(control));
       this.map.addControl(drawControl);
+      this.drawControl = drawControl;
     }
   }
 

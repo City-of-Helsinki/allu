@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import '../../../rxjs-extensions.ts';
@@ -28,13 +28,14 @@ import {ApplicationSpecifier} from '../../../model/application/type/application-
     require('./location.component.scss')
   ]
 })
-export class LocationComponent {
+export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   areas = new Array<string>();
   sections = new Array<FixedLocation>();
   application: Application;
   progressStep: number;
   typeSelected = false;
   selectedFixedLocations = [];
+  editedItemCount = 0;
 
   private fixedLocations = new Array<FixedLocation>();
 
@@ -60,8 +61,6 @@ export class LocationComponent {
         this.locationState.endDate = application.endTime;
         this.locationState.specifiers = application.specifiers.map(s => ApplicationSpecifier[s]);
         this.loadFixedLocationsForType(ApplicationType[application.type]);
-
-        this.mapHub.selectApplication(application);
       });
 
     this.progressStep = ProgressStep.LOCATION;
@@ -69,6 +68,10 @@ export class LocationComponent {
   }
 
   ngOnDestroy() {
+  }
+
+  ngAfterViewInit(): void {
+    this.mapHub.selectApplication(this.application);
   }
 
   onApplicationCategoryChange(category: ApplicationCategoryType) {
@@ -118,6 +121,7 @@ export class LocationComponent {
     this.selectedFixedLocations = this.sections.length === 1
       ? [this.sections[0].id]
       : [];
+    this.mapHub.selectFixedLocations(this.selectedFixedLocations);
   }
 
   get selectedArea(): string {
@@ -130,8 +134,21 @@ export class LocationComponent {
       .map(sections => sections[0]);
   }
 
+  set selectedFxs(fixedLocations: Array<number>) {
+    this.selectedFixedLocations = fixedLocations;
+    this.mapHub.selectFixedLocations(fixedLocations);
+  }
+
+  get selectedFxs(): Array<number> {
+    return this.selectedFixedLocations;
+  }
+
   noSections(): boolean {
     return this.sections.every(section => !section.section);
+  }
+
+  editedItemCountChanged(editedItemCount: number) {
+    this.editedItemCount = editedItemCount;
   }
 
   private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {

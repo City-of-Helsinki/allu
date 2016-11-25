@@ -155,9 +155,15 @@ export class Application {
   }
 
   public hasGeometry(): boolean {
-    return !!this.location
-      && !!this.location.geometry
-      && this.location.geometry.geometries.length > 0;
+    return this.geometryCount() > 0;
+  }
+
+  public geometryCount(): number {
+    return Some(this.location.geometry).map(g => g.geometries.length).orElse(0);
+  }
+
+  public hasFixedGeometry(): boolean {
+    return Some(this.location).map(loc => loc.fixedLocationIds.length > 0).orElse(false);
   }
 
   get calculatedPriceEuro(): number {

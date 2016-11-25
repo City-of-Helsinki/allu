@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
@@ -43,8 +44,7 @@ public class LocationDao {
     if (cont != null) {
       List<Geometry> geometries = queryFactory.select(geometry1.geometry).from(geometry1)
           .where(geometry1.locationId.eq(cont.getId())).fetch();
-      Geometry[] geoArray = geometries.toArray(new Geometry[geometries.size()]);
-      GeometryCollection collection = new GeometryCollection(geoArray);
+      GeometryCollection collection = toGeometryCollection(geometries);
       cont.setGeometry(collection);
       List<Integer> fixedLocationIds = queryFactory.select(locationFlids.fixedLocationId).from(locationFlids)
           .where(locationFlids.locationId.eq(cont.getId())).fetch();
@@ -96,11 +96,21 @@ public class LocationDao {
 
   @Transactional(readOnly = true)
   public List<FixedLocation> getFixedLocationList() {
-    return queryFactory
+    List<FixedLocation> fxs = queryFactory
         .select(fixedLocationBean)
         .from(fixedLocation)
         .where(fixedLocation.isActive.eq(true))
         .fetch();
+
+    return fxs.stream()
+            .map(fx -> {
+              GeometryCollection gc = Optional.ofNullable(fx.getGeometry())
+                .map(geometry -> toGeometryCollection(Arrays.asList(geometry)))
+                .orElse(GeometryCollection.createEmpty());
+
+              fx.setGeometry(gc);
+              return fx;
+            }).collect(Collectors.toList());
   }
 
   private void setGeometry(int locationId, Geometry geometry) {
@@ -118,6 +128,11 @@ public class LocationDao {
     }
     // store geometry's area to the location
     queryFactory.update(location).set(location.area, area).where(location.id.eq(locationId)).execute();
+  }
+
+  private GeometryCollection toGeometryCollection(List<Geometry> geometries) {
+    Geometry[] geoArray = geometries.toArray(new Geometry[geometries.size()]);
+    return new GeometryCollection(geoArray);
   }
 
   private void setFixedLocationIds(int locationId, List<Integer> fixedLocationIds) {

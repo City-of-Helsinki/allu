@@ -26,6 +26,7 @@ export class MapHub {
   private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
   private fixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);
+  private selectedFixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);
 
   constructor(private applicationService: ApplicationService,
               private locationService: LocationService,
@@ -99,6 +100,16 @@ export class MapHub {
   public fixedLocationsBy = (ids: Array<number>) => this.fixedLocations()
     .map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0));
 
+  /**
+   * Adds fixed locations with given ids as selected
+   */
+  public selectFixedLocations = (ids: Array<number>) => this.fixedLocationsBy(ids)
+    .subscribe(fxs => this.selectedFixedLocations$.next(fxs));
+
+  /**
+   * Observable to provide selected fixed locations
+   */
+  public selectedFixedLocations = () => this.selectedFixedLocations$.asObservable();
 
   /**
    * Search addresses matching with partial search term

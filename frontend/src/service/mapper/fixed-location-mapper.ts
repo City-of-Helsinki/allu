@@ -9,7 +9,8 @@ export class FixedLocationMapper {
       backendFixedLocation.id,
       backendFixedLocation.area,
       backendFixedLocation.section,
-      ApplicationType[backendFixedLocation.applicationType]
+      ApplicationType[backendFixedLocation.applicationType],
+      backendFixedLocation.geometry
     )
       : undefined;
   }
@@ -20,7 +21,8 @@ export class FixedLocationMapper {
       id: fixedLocation.id,
       area: fixedLocation.area,
       section: fixedLocation.section,
-      applicationType: ApplicationType[fixedLocation.applicationType]
+      applicationType: ApplicationType[fixedLocation.applicationType],
+      geometry: fixedLocation.geometry
     } : undefined;
   }
 }
