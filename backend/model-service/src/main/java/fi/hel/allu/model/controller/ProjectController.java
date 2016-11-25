@@ -37,8 +37,8 @@ public class ProjectController {
   /**
    * Returns the children of the given project.
    *
-   * @param   id  Project whose children should be fetched.
-   * @return  List of children. Never <code>null</code>.
+   * @param id Project whose children should be fetched.
+   * @return List of children. Never <code>null</code>.
    */
   @RequestMapping(value = "/{id}/children", method = RequestMethod.GET)
   public ResponseEntity<List<Project>> findChildren(@PathVariable int id) {
@@ -48,8 +48,8 @@ public class ProjectController {
   /**
    * Insert given project to database.
    *
-   * @param   project Project to be inserted.
-   * @return  Inserted project.
+   * @param project Project to be inserted.
+   * @return Inserted project.
    */
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Project> insert(@Valid @RequestBody(required = true) Project project) {
@@ -59,8 +59,8 @@ public class ProjectController {
   /**
    * Update given project to database.
    *
-   * @param   project Project to be updated.
-   * @return  Updated project.
+   * @param project Project to be updated.
+   * @return Updated project.
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Project> update(@PathVariable int id, @Valid @RequestBody(required = true) Project project) {
@@ -70,8 +70,8 @@ public class ProjectController {
   /**
    * Find all applications for a project
    *
-   * @param   id
-   * @return  list of applications
+   * @param id
+   * @return list of applications
    */
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.GET)
   public ResponseEntity<List<Application>> findApplicationsByProject(@PathVariable int id) {
@@ -81,8 +81,8 @@ public class ProjectController {
   /**
    * Updates applications of given project to the given set of applications.
    *
-   * @param id              Id of the project.
-   * @param applicationIds  Application ids to be attached to the given project.
+   * @param id             Id of the project.
+   * @param applicationIds Application ids to be attached to the given project.
    * @return Nothing.
    */
   @RequestMapping(value = "/{id}/applications", method = RequestMethod.PUT)
@@ -94,13 +94,26 @@ public class ProjectController {
   /**
    * Update parent of the given project.
    *
-   * @param id              Project whose parent should be updated.
-   * @param parentProject   New parent project.
-   * @return  Updated project with new parent.
+   * @param id            Project whose parent should be updated.
+   * @param parentProject New parent project.
+   * @return Updated project with new parent.
    */
   @RequestMapping(value = "/{id}/parentProject", method = RequestMethod.PUT)
   public ResponseEntity<Project> updateProjectParent(
       @PathVariable int id, @Valid @RequestBody(required = true) Integer parentProject) {
     return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject), HttpStatus.OK);
+  }
+
+
+  /**
+   * Updates the information of given projects by going through the project / application hierarchy to find the up-to-date values. Updates
+   * also all projects related to the given projects.
+   *
+   * @param projectIds List of projects to be updated.
+   * @return Projects that have been updated. May contain more projects than in the list provided as a parameter.
+   */
+  @RequestMapping(value = "/update", method = RequestMethod.PUT)
+  public ResponseEntity<List<Project>> updateProjectInformation(@Valid @RequestBody(required = true) List<Integer> projectIds) {
+    return new ResponseEntity<>(projectService.updateProjectInformation(projectIds), HttpStatus.OK);
   }
 }

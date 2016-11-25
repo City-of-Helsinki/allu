@@ -4,10 +4,7 @@ import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
 import org.slf4j.Logger;
@@ -109,7 +106,12 @@ public class ApplicationServiceComposer {
    */
   public ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
     ApplicationJson updatedApplication = applicationService.updateApplication(applicationId, applicationJson);
-    searchService.updateApplication(applicationJson);
+    if (updatedApplication.getProject() != null) {
+      List<ProjectJson> updatedProjects =
+          projectService.updateProjectInformation(Collections.singletonList(updatedApplication.getProject().getId()));
+      // TODO: update related projects in ElasticSearch
+    }
+    searchService.updateApplication(updatedApplication);
     return updatedApplication;
   }
 

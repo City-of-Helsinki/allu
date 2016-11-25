@@ -144,4 +144,19 @@ public class ApplicationServiceComposerTest {
     Assert.assertEquals(idsInOrder.get(1), applicationJsons.get(1).getId());
     Assert.assertEquals(idsInOrder.get(2), applicationJsons.get(2).getId());
   }
+
+  @Test
+  public void testUpdateApplication() {
+    ApplicationJson applicationJson = new ApplicationJson();
+    ApplicationJson updatedApplicationJson = new ApplicationJson();
+    updatedApplicationJson.setProject(projectJson);
+    Mockito.when(projectJson.getId()).thenReturn(projectId);
+    Mockito.when(applicationService.updateApplication(applicationId, applicationJson)).thenReturn(updatedApplicationJson);
+    Mockito.when(projectService.updateProjectInformation(Collections.singletonList(projectId))).thenReturn(Collections.singletonList(projectJson));
+
+    Assert.assertEquals(updatedApplicationJson, applicationServiceComposer.updateApplication(applicationId, applicationJson));
+
+    Mockito.verify(projectService, Mockito.times(1)).updateProjectInformation(Collections.singletonList(projectId));
+    Mockito.verify(searchService, Mockito.times(1)).updateApplication(updatedApplicationJson);
+  }
 }
