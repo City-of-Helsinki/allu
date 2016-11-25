@@ -2,7 +2,7 @@
   <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
     <applicant [applicationForm]="applicationForm" [readonly]="isSummary"></applicant>
 
-    <contact [applicationForm]="applicationForm" [readonly]="isSummary"></contact>
+    <contact [applicationForm]="applicationForm" [readonly]="isSummary" [addNew]="true" [saveToRegistry]="true"></contact>
 
     <event-details [applicationForm]="applicationForm" [location]="application.location" [readonly]="isSummary"></event-details>
 

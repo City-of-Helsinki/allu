@@ -12,8 +12,8 @@ import {EventNature} from './outdoor-event/event-nature';
 import {LocationState} from '../../service/application/location-state';
 import {ApplicationType} from './type/application-type';
 import {Some} from '../../util/option';
-import {CalculatedPricing} from './outdoor-event/calculated-pricing';
 import {Project} from '../project/project';
+import {ApplicationSpecifier} from './type/application-specifier';
 
 const CENTS = 100;
 
@@ -27,6 +27,7 @@ export class Application {
     handler: User,
     status: string,
     type: string,
+    specifiers: Array<string>,
     name: string,
     event: ApplicationTypeData,
     metadata: StructureMeta,
@@ -47,6 +48,7 @@ export class Application {
     public handler?: User,
     public status?: string,
     public type?: string,
+    public specifiers?: Array<string>,
     public name?: string,
     public event?: ApplicationTypeData,
     public metadata?: StructureMeta,
@@ -61,6 +63,7 @@ export class Application {
     public priceOverrideReason?: string,
     public attachmentList?: Array<AttachmentInfo>) {
     this.contactList = contactList || [new Contact()];
+    this.specifiers = specifiers || [];
   }
 
   public static prefilledApplication(): Application {
@@ -124,6 +127,7 @@ export class Application {
     app.endTime = TimeUtil.getEndOfDay(locationState.endDate || defaultDate);
 
     app.type = Some(locationState.applicationType).map(type => ApplicationType[type]).orElse(undefined);
+    app.specifiers = locationState.specifiers.map(specifier => ApplicationSpecifier[specifier]);
     return app;
   }
 

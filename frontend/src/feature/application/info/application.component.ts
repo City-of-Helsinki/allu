@@ -23,14 +23,17 @@ export class ApplicationComponent implements OnInit {
   ngOnInit(): void {
     this.route.data
       .map((data: {application: Application}) => data.application)
-      .subscribe(application => this.application = application);
+      .subscribe(application => {
+        this.application = application;
+        this.verifyTypeExists(ApplicationType[application.type]);
+      });
 
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
       this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
     });
   }
 
-  onTypeChange(type: ApplicationType) {
+  verifyTypeExists(type: ApplicationType) {
     if (type === undefined) {
       // No known type so navigate back to type selection
       this.router.navigateByUrl('applications/location');

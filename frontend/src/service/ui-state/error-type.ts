@@ -8,7 +8,8 @@ export enum ErrorType {
   APPLICATION_HANDLER_CHANGE_FAILED,
   PDF_GENERATION_FAILED,
   PROJECT_SAVE_FAILED,
-  PROJECT_SEARCH_FAILED
+  PROJECT_SEARCH_FAILED,
+  DEFAULT_TEXT_SAVE_FAILED
 }
 
 /**
@@ -34,6 +35,7 @@ function createMappings(): Map<ErrorType, string> {
   map.set(ErrorType.PDF_GENERATION_FAILED, translations.decision.error.generatePdf);
   map.set(ErrorType.PROJECT_SAVE_FAILED, translations.project.error.saveFailed);
   map.set(ErrorType.PROJECT_SEARCH_FAILED, translations.project.error.searchFailed);
+  map.set(ErrorType.DEFAULT_TEXT_SAVE_FAILED, translations.defaultText.error.saveFailed);
 
   return map;
 }

@@ -20,6 +20,24 @@ import {ErrorInfo} from './../ui-state/error-info';
 import {ErrorType} from '../ui-state/error-type';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
+import {DefaultText} from '../../model/application/cable-report/default-text';
+import {CableInfoType} from '../../model/application/cable-report/cable-info-type';
+
+const defaultTexts = {
+  TELECOMMUNICATION: ['TELECOMMUNICATION1', 'TELECOMMUNICATION2', 'TELECOMMUNICATION3'],
+  ELECTRICITY: ['ELECTRICITY1', 'ELECTRICITY2', 'ELECTRICITY3'],
+  WATER_AND_SEWAGE: ['WATER_AND_SEWAGE1', 'WATER_AND_SEWAGE2'],
+  DISTRICT_HEATING_COOLING: ['DISTRICT_HEATING_COOLING1'],
+  GAS: ['GAS1', 'GAS2', 'GAS3'],
+  UNDERGROUND_STRUCTURE: ['UNDERGROUND_STRUCTURE1'],
+  TRAMWAY: ['TRAMWAY1'],
+  STREET_HEATING: ['STREET_HEATING1'],
+  SEWAGE_PIPE: ['SEWAGE_PIPE1'],
+  GEOTHERMAL_WELL: ['GEOTHERMAL_WELL1'],
+  GEOTECHNICAL_OBSERVATION_POST: ['GEOTECHNICAL_OBSERVATION_POST1'],
+  OTHER: ['OTHER1']
+};
+
 
 @Injectable()
 export class ApplicationService {
@@ -27,6 +45,7 @@ export class ApplicationService {
   static SEARCH = '/search';
   static SEARCH_LOCATION = '/search_location';
   static METADATA_URL = '/api/meta';
+  static DEFAULT_TEXTS_URL = '/api/default_texts';
 
   private statusToUrl = new Map<ApplicationStatus, string>();
 
@@ -110,4 +129,36 @@ export class ApplicationService {
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_HANDLER_CHANGE_FAILED)));
   }
+
+  public loadDefaultTexts(): Observable<Array<DefaultText>> {
+    let texts = Object.keys(defaultTexts)
+      .map(type => defaultTexts[type]
+        .map(text => new DefaultText(undefined, CableInfoType[type], text)));
+
+    return Observable.of([].concat.apply([], texts));
+
+    // TODO: enable when backend support is done
+    /*return this.authHttp.get(ApplicationService.DEFAULT_TEXTS_URL)
+      .map(response => response.json())
+      .map(texts => texts.map(text => DefaultText.mapBackend(text)))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));*/
+  }
+
+  public saveDefaultText(text: DefaultText): Observable<DefaultText> {
+    defaultTexts[CableInfoType[text.type]].push(text.text);
+    return Observable.of(text);
+
+    // TODO: enable when backend support is done
+    /*if (text.id) {
+      let url = ApplicationService.DEFAULT_TEXTS_URL + '/' + text.id;
+      return this.authHttp.put(url, JSON.stringify(DefaultText.mapFrontend(text)))
+        .map(response => DefaultText.mapBackend(response.json()))
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, HttpUtil.extractMessage(err))));
+    } else {
+      return this.authHttp.post(ApplicationService.DEFAULT_TEXTS_URL, JSON.stringify(DefaultText.mapFrontend(text)))
+        .map(response => DefaultText.mapBackend(response.json()))
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, HttpUtil.extractMessage(err))));
+    }*/
+  }
 }
+

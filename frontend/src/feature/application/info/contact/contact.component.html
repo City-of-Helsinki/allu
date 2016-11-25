@@ -3,7 +3,7 @@
         <div *ngFor="let contact of contactsForm.controls.contacts.controls; let index=index">
             <div [formGroupName]="index" class="no-border">
                 <md-card>
-                    <md-card-title>Yhteyshenkilö</md-card-title>
+                    <md-card-title>{{headerText}}</md-card-title>
                     <md-card-content>
                         <div class="row form-group">
                             <div class="input-field col m12">
@@ -40,8 +40,10 @@
                         </div>
                         <div *ngIf="!readonly" class="row form-group">
                             <div class="buttons col m12">
-                                <button md-raised-button class="waves-effect waves-light btn" (click)="saveToRegistry(contactList[0])">TALLENNA REKISTERIIN</button>
-                                <button md-raised-button class="waves-effect waves-light btn" (click)="newContact(contactList[0])">UUSI YHTEYSHENKILÖ</button>
+                                <button *ngIf="saveToRegistry" md-raised-button class="waves-effect waves-light btn"
+                                        (click)="saveToRegistry(contactList[0])">TALLENNA REKISTERIIN</button>
+                                <button *ngIf="addNew" md-raised-button
+                                        class="waves-effect waves-light btn" (click)="newContact(contactList[0])">UUSI YHTEYSHENKILÖ</button>
                             </div>
                         </div>
                     </md-card-content>

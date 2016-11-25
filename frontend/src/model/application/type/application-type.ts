@@ -1,7 +1,9 @@
 export enum ApplicationType {
+  // EVENTS
   OUTDOOREVENT, // Ulkoilmatapahtuma
   PROMOTION, // Promootio
   ELECTION, // Vaalit
+  // SHORT TERM RENTALS
   EXCAVATION_ANNOUNCEMENT, // Kaivuuilmoitus
   AREA_RENTAL, // ALuevuokraus
   TEMPORARY_TRAFFIC_ARRANGEMENTS, // Tilapäiset liikennejärjestelyt
@@ -19,5 +21,21 @@ export enum ApplicationType {
   CIRCUS, // Sirkus/tivolivierailu
   ART, // Taideteos
   STORAGE_AREA, // Varastoalue
-  OTHER_SHORT_TERM_RENTAL // Muu lyhytaikainen maanvuokraus
+  OTHER_SHORT_TERM_RENTAL, // Muu lyhytaikainen maanvuokraus
+  // CABLE REPORTS
+  CITY_STREET_AND_GREEN, // Kaupungin katu- ja vihertyöt
+  WATER_AND_SEWAGE, // HKR, HSY Vesijohto ja viemärityöt
+  HKL, // HKL:n työt
+  ELECTRIC_CABLE, // Sähkökaapelityöt
+  DISTRICT_HEATING, // Kaukolämpötyöt
+  DISTRICT_COOLING, // Kaukokylmätyöt
+  TELECOMMUNICATION, // Tiedonsiirron kaapelityöt
+  GAS, // Kaasujohdot
+  AD_PILLARS_AND_STOPS, // Ulkomainospilarit ja pysäkkikatokset
+  PROPERTY_MERGER, // Kiinteistö-/tonttiliitokset
+  SOIL_INVESTIGATION, // Maaperätutkimukset
+  JOINT_MUNICIPAL_INFRASTRUCTURE, // Yhteinen kunnallistekninen työmaa
+  ABSORBING_SEWAGE_SYSTEM, // Imujätejärjestelmä
+  UNDERGROUND_CONSTRUCTION, // Maanalainen rakentaminen
+  OTHER_CABLE_REPORT // Muut
 }

@@ -139,6 +139,10 @@ input:-webkit-autofill:active {
       color: $allu-field-error;
     }
   }
+
+  .form-group-label {
+    font-weight: bold;
+  }
 }
 
 md-card-content {

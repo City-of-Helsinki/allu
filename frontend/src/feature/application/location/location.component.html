@@ -1,7 +1,8 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
 <div class="row location">
   <application-type (onCategoryChange)="onApplicationCategoryChange($event)"
-                    (onTypeChange)="onApplicationTypeChange($event)"></application-type>
+                    (onTypeChange)="onApplicationTypeChange($event)"
+                    (onSpecifierChange)="onApplicationSpecifierChange($event)"></application-type>
 </div>
 <div *ngIf="typeSelected" materialize class="row location">
   <div class="col m12">
