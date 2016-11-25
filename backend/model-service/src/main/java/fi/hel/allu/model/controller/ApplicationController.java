@@ -98,7 +98,7 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Application> update(@PathVariable int id,
       @Valid @RequestBody(required = true) Application application) {
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     // TODO: 1) siirrä ApplicationServiceen ja 2) lisää kutsu ProjectServiceen
     return new ResponseEntity<>(applicationDao.update(id, application), HttpStatus.OK);
   }
@@ -140,7 +140,7 @@ public class ApplicationController {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     return new ResponseEntity<>(applicationDao.insert(application), HttpStatus.OK);
   }
 

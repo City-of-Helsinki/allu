@@ -12,6 +12,7 @@ import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.domain.ShortTermRental;
 import fi.hel.allu.model.pricing.Pricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,7 +37,7 @@ public class PricingService {
   private LocationDao locationDao;
   private ApplicantDao applicantDao;
 
-  private static Location EMPTY_LOCATION;
+  private static final Location EMPTY_LOCATION;
 
   // Various price constants for short term rental
   private static final int BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL = 75000;   // 750 EUR/week
@@ -74,10 +75,10 @@ public class PricingService {
    *          is stored in the application.
    */
   @Transactional(readOnly = true)
-  public void calculatePrice(Application application) {
+  public void updatePrice(Application application) {
     switch (application.getType()) {
     case OUTDOOREVENT:
-      calculateOutdoorEventPrice(application);
+      updateOutdoorEventPrice(application);
       break;
     case ART:
       // Free event
@@ -95,9 +96,9 @@ public class PricingService {
       // Non-commercial organizer: 150 EUR/week
       // Commercial organizer: 750 EUR/week
       if (isCommercial(application)) {
-        calculatePricePerUnit(application, ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL);
+        updatePricePerUnit(application, ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL);
       } else {
-        calculatePricePerUnit(application, ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
+        updatePricePerUnit(application, ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
       }
       break;
     case CARGO_CONTAINER:
@@ -105,7 +106,7 @@ public class PricingService {
       application.setCalculatedPrice(0);
       break;
     case CIRCUS:
-      calculatePricePerUnit(application, ChronoUnit.DAYS, CIRCUS_DAILY_PRICE);
+      updatePricePerUnit(application, ChronoUnit.DAYS, CIRCUS_DAILY_PRICE);
       break;
     case DOG_TRAINING_EVENT:
       // Associations: 50 EUR/event
@@ -120,15 +121,15 @@ public class PricingService {
       // Associations: 100 EUR/year
       // Companies: 200 EUR/year
       if (isCompany(application)) {
-        calculatePricePerUnit(application, ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_COMPANY);
+        updatePricePerUnit(application, ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_COMPANY);
       } else {
-        calculatePricePerUnit(application, ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
+        updatePricePerUnit(application, ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
       }
       break;
     case KESKUSKATU_SALES:
       // 1..14 days: 50 EUR/day/starting 10 sqm
       // 50% discount from 15. day onwards
-      calculatePriceByTimeAndArea(application, KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true);
+      updatePriceByTimeAndArea(application, KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true);
       break;
     case OTHER_SHORT_TERM_RENTAL:
       // Unknown price
@@ -139,7 +140,7 @@ public class PricingService {
       // bigger: 150 EUR/year
       ShortTermRental str = (ShortTermRental) application.getEvent();
       if (str != null && str.getLargeSalesArea() == true) {
-        calculatePricePerUnit(application, ChronoUnit.YEARS, PROMOTION_OR_SALES_LARGE_YEARLY);
+        updatePricePerUnit(application, ChronoUnit.YEARS, PROMOTION_OR_SALES_LARGE_YEARLY);
       } else {
         application.setCalculatedPrice(0);
       }
@@ -147,7 +148,7 @@ public class PricingService {
     case SEASON_SALE:
       // 1..14 days: 50 EUR/day/starting 10 sqm
       // 50% discount from 15. day onwards
-      calculatePriceByTimeAndArea(application, SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true);
+      updatePriceByTimeAndArea(application, SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true);
       break;
     case STORAGE_AREA:
       // Unknown price
@@ -155,17 +156,17 @@ public class PricingService {
       break;
     case SUMMER_THEATER:
       // 120 EUR/month
-      calculatePricePerUnit(application, ChronoUnit.MONTHS, SUMMER_THEATER_YEARLY_PRICE);
+      updatePricePerUnit(application, ChronoUnit.MONTHS, SUMMER_THEATER_YEARLY_PRICE);
       break;
     case URBAN_FARMING:
-      calculateUrbanFarmingPrice(application);
+      updateUrbanFarmingPrice(application);
       break;
     default:
       break;
     }
   }
 
-  private void calculatePriceByTimeAndArea(Application application, int priceInCents, ChronoUnit pricePeriod, int priceArea,
+  private void updatePriceByTimeAndArea(Application application, int priceInCents, ChronoUnit pricePeriod, int priceArea,
       boolean longTermDiscount) {
     int numTimeUnits = amountOfStartingUnits(application.getStartTime(), application.getEndTime(), pricePeriod);
 
@@ -201,7 +202,7 @@ public class PricingService {
     return (int) chronoUnit.between(startTime, endTime.plus(1, chronoUnit).minusSeconds(1));
   }
 
-  private void calculateUrbanFarmingPrice(Application application) {
+  private void updateUrbanFarmingPrice(Application application) {
     // 2 EUR/sqm/term
     int numTerms = 1;
     if (application.getEndTime() != null && application.getStartTime() != null) {
@@ -223,7 +224,7 @@ public class PricingService {
   // Calculate application's price using the application period
   // price is calculated as centsPerUnit * starting units and stored into
   // application
-  private void calculatePricePerUnit(Application application, ChronoUnit chronoUnit, int centsPerUnit) {
+  private void updatePricePerUnit(Application application, ChronoUnit chronoUnit, int centsPerUnit) {
     int units = amountOfStartingUnits(application.getStartTime(), application.getEndTime(), chronoUnit);
     application.setCalculatedPrice(centsPerUnit * units);
   }
@@ -238,7 +239,7 @@ public class PricingService {
   }
 
   // Calculate price for outdoor event
-  private void calculateOutdoorEventPrice(Application application) {
+  private void updateOutdoorEventPrice(Application application) {
     OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
     if (outdoorEvent != null) {
       int priceInCents = calculatePrice(application, outdoorEvent);

@@ -86,7 +86,7 @@ public class PricingServiceTest {
     location.setFixedLocationIds(fixedLocationIds);
     int locationId = locationDao.insert(location).getId();
     application.setLocationId(locationId);
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(220500, application.getCalculatedPrice().intValue());
   }
 
@@ -99,13 +99,13 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T23:00:00+02:00"));
     application.setEvent(event);
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     // Five weeks non-commercial -> 750 EUR
     assertEquals(75000, application.getCalculatedPrice().intValue());
     event.setCommercial(true);
     application.setStartTime(ZonedDateTime.parse("2016-11-14T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-11-28T05:59:59+02:00"));
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     // Two week commercial -> 1500 EUR
     assertEquals(150000, application.getCalculatedPrice().intValue());
   }
@@ -116,7 +116,7 @@ public class PricingServiceTest {
     application.setType(ApplicationType.CIRCUS);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     // Thirty-three days -> 6600 EUR
     assertEquals(660000, application.getCalculatedPrice().intValue());
   }
@@ -132,13 +132,13 @@ public class PricingServiceTest {
     applicant.setType(ApplicantType.ASSOCIATION);
     application.setApplicantId(applicantDao.insert(applicant).getId());
     // association -> 50 EUR /event
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(5000, application.getCalculatedPrice().intValue());
 
     applicant.setType(ApplicantType.COMPANY);
     application.setApplicantId(applicantDao.insert(applicant).getId());
     // Company -> 100 EUR /event
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(10000, application.getCalculatedPrice().intValue());
   }
 
@@ -153,13 +153,13 @@ public class PricingServiceTest {
     applicant.setType(ApplicantType.ASSOCIATION);
     application.setApplicantId(applicantDao.insert(applicant).getId());
     // association -> 100 EUR /year
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(30000, application.getCalculatedPrice().intValue());
 
     applicant.setType(ApplicantType.COMPANY);
     application.setApplicantId(applicantDao.insert(applicant).getId());
     // Company -> 200 EUR /year
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(60000, application.getCalculatedPrice().intValue());
   }
 
@@ -173,7 +173,7 @@ public class PricingServiceTest {
     location.setAreaOverride(135.5);
     application.setLocationId(locationDao.insert(location).getId());
     // 19 days, 135.5 sqm -> 14 * 14 * 50 + 5 * 14 * 25 = 11550 EUR
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(1155000, application.getCalculatedPrice().intValue());
   }
 
@@ -187,11 +187,11 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
     // Large area, price for three years = 150 EUR * 3 = 450 EUR
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(45000, application.getCalculatedPrice().intValue());
     // Small area is free
     event.setLargeSalesArea(false);
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(0, application.getCalculatedPrice().intValue());
   }
 
@@ -202,7 +202,7 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
     // Two months -> 240 EUR
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(24000, application.getCalculatedPrice().intValue());
   }
 
@@ -216,7 +216,7 @@ public class PricingServiceTest {
     location.setAreaOverride(222.2);
     application.setLocationId(locationDao.insert(location).getId());
     // Three terms, 222.2 sqm -> 223 * 2 * 3 = 1338 EUR
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(133800, application.getCalculatedPrice().intValue());
   }
 }
