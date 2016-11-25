@@ -96,7 +96,7 @@ public class ApplicationServiceComposer {
    */
   public ApplicationJson createApplication(ApplicationJson applicationJson) {
     ApplicationJson createdApplication = applicationService.createApplication(applicationJson);
-    searchService.insertApplicationToES(applicationJson);
+    searchService.insertApplicationToES(createdApplication);
     return createdApplication;
   }
 
