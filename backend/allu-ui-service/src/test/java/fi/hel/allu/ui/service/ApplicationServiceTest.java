@@ -105,12 +105,10 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response);
     assertEquals(1, response.getId().intValue());
     assertNotNull(response.getApplicant());
-    assertNotNull(response.getProject());
     assertNotNull(response.getLocation());
     assertEquals(102, response.getLocation().getId().intValue());
     assertNotNull(response.getApplicant());
     assertEquals(103, response.getApplicant().getId().intValue());
-    assertEquals(createMockUser().getId(), response.getHandler().getId());
     assertNotNull(response.getLocation().getGeometry());
     assertNotNull(response.getEvent());
     assertNotNull(response.getDecisionTime());
