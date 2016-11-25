@@ -50,7 +50,7 @@ module.exports = function(config) {
      * possible values: 'dots', 'progress'
      * available reporters: https://npmjs.org/browse/keyword/karma-reporter
      */
-    reporters: [ 'mocha', 'coverage' ],
+    reporters: [ 'mocha', 'coverage', 'dots', 'progress', 'junit'],
 
     // web server port
     port: 9876,
@@ -72,14 +72,19 @@ module.exports = function(config) {
      * available browser launchers: https://npmjs.org/browse/keyword/karma-launcher
      */
     browsers: [
-      'Chrome'
+      'PhantomJS'
     ],
 
     /*
      * Continuous Integration mode
      * if true, Karma captures browsers, runs the tests and exits
      */
-    singleRun: true
+    singleRun: true,
+
+    junitReporter: {
+      outputDir: './reports/karma/',
+      outputFile: 'test-results.xml'
+    }
   });
 
 };
