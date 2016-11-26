@@ -150,6 +150,9 @@ insert into allu.outdoor_pricing values
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL),
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL);
 
+insert into allu.fixed_location values (DEFAULT, 'Asema-aukio', 'A', 'OUTDOOREVENT', true);
+insert into allu.fixed_location values (DEFAULT, 'Asema-aukio', 'B', 'OUTDOOREVENT', true);
+
 -- Short term rental - banderols
 
 insert into allu.fixed_location values (DEFAULT, '1a Sörnäisten rantatie – Kaikukatu, Kaupunkiin päin ajettaessa', NULL,'BRIDGE_BANNER', true);
@@ -169,7 +172,7 @@ insert into allu.fixed_location values (DEFAULT, '14b Turunlinnantie – Kevyen 
 insert into allu.fixed_location values (DEFAULT, '15a Pitäjänmäentie – Ylityspolku, Länteen päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '17a Konalantie – Pitäjänmäenpolku, Konalaan päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '18a Rautatieläisenkatu – Junailijankuja, Itään/Mäkelänkadulle päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
-insert into allu.fixed_location values (DEFAULT, '18a Rautatieläisenkatu – Junailijankuja, Länteen/Pasilan asemalle päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
+insert into allu.fixed_location values (DEFAULT, '18b Rautatieläisenkatu – Junailijankuja, Länteen/Pasilan asemalle päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '19a Helsinginkatu – Wallininkatu, Kallioon päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '19b Helsinginkatu – Wallininkatu, Töölöön päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '30a Teollisuuskatu – Sturenkatu, Itään päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
