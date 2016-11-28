@@ -157,7 +157,7 @@ public class ProjectService {
    *
    * @param projectIds
    */
-  private void updateProjectInformation(List<Integer> projectIds) {
+  public List<Project> updateProjectInformation(List<Integer> projectIds) {
 
     List<Integer> rootParentIds = new ArrayList<>();
     HashSet<Integer> resolvedProjectIds = new HashSet<>();
@@ -171,7 +171,12 @@ public class ProjectService {
       resolvedProjectIds.addAll(parents);
     }
 
-    rootParentIds.forEach(pId -> calculateSummaryAndUpdate(pId));
+    HashSet<Project> updatedProjects = new HashSet<>();
+    rootParentIds.forEach(pId -> {
+      ProjectSummary ps = calculateSummaryAndUpdate(pId);
+      updatedProjects.addAll(ps.updatedProjects);
+    });
+    return new ArrayList<>(updatedProjects);
   }
 
   /**
@@ -219,6 +224,7 @@ public class ProjectService {
     project.setStartTime(summary.minStartTime);
     project.setEndTime(summary.maxEndTime);
     projectDao.update(project.getId(), project);
+    summary.updatedProjects.add(project);
 
     return summary;
   }
@@ -261,6 +267,8 @@ public class ProjectService {
     } else {
       ps.maxEndTime = summary2.maxEndTime;
     }
+    ps.updatedProjects.addAll(summary1.updatedProjects);
+    ps.updatedProjects.addAll(summary2.updatedProjects);
     // TODO: districts
     return ps;
   }
@@ -268,6 +276,7 @@ public class ProjectService {
   private static class ProjectSummary {
     ZonedDateTime minStartTime;
     ZonedDateTime maxEndTime;
+    List<Project> updatedProjects = new ArrayList<>();
     // TOOD: districts
   }
 }

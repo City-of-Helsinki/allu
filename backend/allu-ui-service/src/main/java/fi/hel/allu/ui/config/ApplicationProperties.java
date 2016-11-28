@@ -354,6 +354,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return  url for updating project information of given projects.
+   */
+  public String getProjectInformationUpdateUrl() {
+    return getModelServiceUrl("/projects/update");
+  }
+
+  /**
    * Returns username for the WFS service.
    *
    * @return username for the WFS service.

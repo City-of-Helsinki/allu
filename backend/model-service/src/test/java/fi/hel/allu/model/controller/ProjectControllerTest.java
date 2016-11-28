@@ -9,6 +9,7 @@ import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.model.domain.ShortTermRental;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,6 +24,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
@@ -145,6 +147,22 @@ public class ProjectControllerTest {
     assertEquals(1, children.size());
   }
 
+  @Test
+  public void testUpdateProjectInformation() throws Exception {
+    Project originalProject = createDummyProject();
+    Project addedProject = addProjectGetResult(originalProject);
+    Project parentProject = createDummyProject();
+    Project addedParent = addProjectGetResult(parentProject);
+    addedProject.setParentId(addedParent.getId());
+    Project updatedProject = updateProjectGetResult(addedProject);
+    ResultActions resultActions = wtc.perform(
+        put("/projects/update"), Collections.singletonList(updatedProject.getId())).andExpect(status().isOk());
+    Project[] updatedProjects = wtc.parseObjectFromResult(resultActions, Project[].class);
+    Assert.assertEquals(2, updatedProjects.length);
+    HashSet<Project> updatedProjectsSet = new HashSet<>(Arrays.asList(updatedProjects));
+    Assert.assertTrue(updatedProjectsSet.contains(addedProject));
+    Assert.assertTrue(updatedProjectsSet.contains(addedParent));
+  }
 
   @Test
   public void testUpdateProjectApplications() throws Exception {

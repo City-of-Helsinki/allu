@@ -163,6 +163,21 @@ public class ProjectService {
     return mapProjectToJson(updatedProjectResult.getBody());
   }
 
+
+  /**
+   * Updates the information of given projects by going through the project / application hierarchy to find the up-to-date values. Updates
+   * also all projects related to the given projects.
+   *
+   * @param projectIds List of projects to be updated.
+   * @return Projects that have been updated. May contain more projects than in the list provided as a parameter.
+   */
+  public List<ProjectJson> updateProjectInformation(List<Integer> projectIds) {
+    HttpEntity<List<Integer>> requestEntity = new HttpEntity<>(projectIds);
+    ResponseEntity<Project[]> updatedProjectResult = restTemplate.exchange(
+        applicationProperties.getProjectInformationUpdateUrl(), HttpMethod.PUT, requestEntity, Project[].class);
+    return Arrays.asList(updatedProjectResult.getBody()).stream().map(p -> mapProjectToJson(p)).collect(Collectors.toList());
+  }
+
   private Project createProjectModel(ProjectJson projectJson) {
     Project projectDomain = new Project();
     projectDomain.setId(projectJson.getId());
