@@ -112,7 +112,7 @@ create table allu.application (
     decision_time timestamp with time zone,
     calculated_price integer,
     price_override integer,
-    prive_override_reason text );
+    price_override_reason text );
 
 create table allu.attachment (
    id serial primary key,
