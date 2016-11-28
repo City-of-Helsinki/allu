@@ -46,6 +46,19 @@ public class ProjectController {
   }
 
   /**
+   * Returns the parents of the given project.
+   *
+   * @param id Project whose parents should be fetched.
+   * @return  List of parents. Never <code>null</code>. The requested project itself is the first item and most grand parent project
+   *          is the last item.
+   */
+  @RequestMapping(value = "/{id}/parents", method = RequestMethod.GET)
+  public ResponseEntity<List<Project>> findParents(@PathVariable int id) {
+    return new ResponseEntity<>(projectService.findProjectParents(id), HttpStatus.OK);
+  }
+
+
+  /**
    * Insert given project to database.
    *
    * @param project Project to be inserted.

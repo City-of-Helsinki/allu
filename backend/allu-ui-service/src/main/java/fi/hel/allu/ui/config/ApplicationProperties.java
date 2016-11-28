@@ -60,11 +60,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_BY_ID = "/applications/{applicationId}";
 
   /**
-   * Model-service path to find possibly multiple applications by given identifiers.
-   */
-  public static final String PATH_MODEL_APPLICATIONS_FIND_BY_ID = "/applications/find";
-
-  /**
    * Model-service path to find applications by location
    */
   public static final String PATH_MODEL_APPLICATION_FIND_BY_LOCATION = "/applications/search";
@@ -175,16 +170,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_DECISION_GET = "/applications/{id}/decision";
 
   /**
-   * Search-service path to index a new application
-   */
-  public static final String PATH_SEARCH_APPLICATION_CREATE = "/applications";
-
-  /**
-   * Search-service path to update application index
-   */
-  public static final String PATH_SEARCH_APPLICATION_UPDATE = "/applications/{applicationId}";
-
-  /**
    * Search-service path to find applications by fields
    */
   public static final String PATH_SEARCH_APPLICATION_FIND_BY_FIELDS = "/applications/search";
@@ -237,6 +222,41 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to send multiple application search index updates.
+   */
+  public String getApplicationsSearchUpdateUrl() {
+    return getSearchServiceUrl("/applications/update");
+  }
+
+  /**
+   * @return url to add application to search index.
+   */
+  public String getApplicationSearchCreateUrl() {
+    return getSearchServiceUrl("/applications");
+  }
+
+  /**
+   * @return url to send project search index updates.
+   */
+  public String getProjectSearchUpdateUrl() {
+    return getSearchServiceUrl("/projects/{applicationId}");
+  }
+
+  /**
+   * @return url to send multiple project search index updates.
+   */
+  public String getProjectsSearchUpdateUrl() {
+    return getSearchServiceUrl("/projects/update");
+  }
+
+  /**
+   * @return url to add project to search index.
+   */
+  public String getProjectSearchCreateUrl() {
+    return getSearchServiceUrl("/projects");
+  }
+
+  /**
    * @return  url to request applications by their project.
    */
   public String getApplicationsByProjectUrl() {
@@ -248,6 +268,13 @@ public class ApplicationProperties {
    */
   public String getApplicationProjectUpdateUrl() {
     return getModelServiceUrl("/projects/{id}/applications");
+  }
+
+  /**
+   * @return url to find possibly multiple applications by given identifiers.
+   */
+  public String getApplicationsByIdUrl() {
+    return getModelServiceUrl("/applications/find");
   }
 
   /**
@@ -330,6 +357,13 @@ public class ApplicationProperties {
    */
   public String getProjectChildrenUrl() {
     return getModelServiceUrl("/projects/{id}/children");
+  }
+
+  /**
+   * @return url for fetching project parents.
+   */
+  public String getProjectParentsUrl() {
+    return getModelServiceUrl("/projects/{id}/parents");
   }
 
   /**

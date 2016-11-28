@@ -87,7 +87,7 @@ public class ApplicationMapper {
     applicationES.setContacts(createContactES(applicationJson.getContactList()));
     applicationES.setApplicant(createApplicantES(applicationJson.getApplicant()));
     if (applicationJson.getProject() != null) {
-      applicationES.setProject(createProjectES(applicationJson));
+      applicationES.setProjectId(applicationJson.getProject().getId());
     }
     return applicationES;
   }
@@ -333,7 +333,7 @@ public class ApplicationMapper {
   /**
    * Map the given Contact object into ContactJson
    *
-   * @param Model-domain Contact object
+   * @param c Contact object
    * @return Ui-domain Contact representation of the parameter
    */
   public ContactJson createContactJson(Contact c) {
@@ -380,15 +380,6 @@ public class ApplicationMapper {
     ApplicantJson applicantJson = new ApplicantJson();
     mapApplicantToJson(applicantJson, applicant);
     return applicantJson;
-  }
-
-  private ProjectES createProjectES(ApplicationJson applicationJson) {
-    // TODO: add support for all project fields
-    ProjectES projectES = new ProjectES();
-    projectES.setId(applicationJson.getProject().getId());
-    projectES.setName(applicationJson.getProject().getName());
-    projectES.setInformation(applicationJson.getProject().getAdditionalInfo());
-    return projectES;
   }
 
   private LocationES createLocationES(LocationJson locationJson) {

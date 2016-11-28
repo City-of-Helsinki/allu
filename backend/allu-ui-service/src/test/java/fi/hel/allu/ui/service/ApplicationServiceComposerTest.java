@@ -1,9 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
@@ -14,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
@@ -35,23 +31,13 @@ public class ApplicationServiceComposerTest {
   private UserService userService;
   private LocationService locationService;
   private SearchService searchService;
+  private ApplicationJsonService applicationJsonService;
 
-  private int applicationId = 1;
-  private int applicantId = 12;
-  private int userId = 123;
-  private int locationId = 1234;
-  private int projectId = 12345;
+  private static final int applicationId = 1;
+  private static final int projectId = 12;
 
-  private Application application = Mockito.mock(Application.class);
   private ProjectJson projectJson = Mockito.mock(ProjectJson.class);
-  private ApplicantJson applicantJson = Mockito.mock(ApplicantJson.class);
-  private ContactJson contactJson = Mockito.mock(ContactJson.class);
-  private List<ContactJson> contactJsons = Collections.singletonList(contactJson);
-  private StructureMetaJson metaJson = Mockito.mock(StructureMetaJson.class);
-  private UserJson userJson = Mockito.mock(UserJson.class);
-  private LocationJson locationJson = Mockito.mock(LocationJson.class);
   private QueryParametersJson queryParametersJson = Mockito.mock(QueryParametersJson.class);
-  private QueryParameters queryParameters = Mockito.mock(QueryParameters.class);
 
   @Before
   public void init() {
@@ -66,6 +52,8 @@ public class ApplicationServiceComposerTest {
     locationService = Mockito.mock(LocationService.class);
     restTemplate = Mockito.mock(RestTemplate.class);
     searchService = Mockito.mock(SearchService.class);
+    applicationJsonService = Mockito.mock(ApplicationJsonService.class);
+
     applicationServiceComposer = new ApplicationServiceComposer(
         applicationProperties,
         restTemplate,
@@ -77,43 +65,9 @@ public class ApplicationServiceComposerTest {
         metaService,
         userService,
         locationService,
-        searchService
+        searchService,
+        applicationJsonService
     );
-
-    Mockito.when(application.getId()).thenReturn(applicationId);
-    Mockito.when(application.getApplicantId()).thenReturn(applicantId);
-    Mockito.when(application.getHandler()).thenReturn(userId);
-    Mockito.when(application.getLocationId()).thenReturn(locationId);
-    Mockito.when(application.getProjectId()).thenReturn(projectId);
-    Mockito.when(application.getType()).thenReturn(ApplicationType.SHORT_TERM_RENTAL);
-    Mockito.when(application.getKind()).thenReturn(ApplicationKind.ART);
-    Mockito.when(application.getMetadataVersion()).thenReturn(1);
-
-    Mockito.when(projectService.findById(projectId)).thenReturn(projectJson);
-    Mockito.when(applicantService.findApplicantById(applicantId)).thenReturn(applicantJson);
-    Mockito.when(contactService.findContactsForApplication(applicationId)).thenReturn(contactJsons);
-    Mockito.when(metaService.findMetadataForApplication(ApplicationType.SHORT_TERM_RENTAL, 1)).thenReturn(metaJson);
-    Mockito.when(userService.findUserById(userId)).thenReturn(userJson);
-    Mockito.when(locationService.findLocationById(locationId)).thenReturn(locationJson);
-    ResponseEntity<AttachmentInfo[]> responseEntity = Mockito.mock(ResponseEntity.class);
-    Mockito.when(responseEntity.getBody()).thenReturn(new AttachmentInfo[0]);
-    Mockito.when(restTemplate.getForEntity(
-        Matchers.eq(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION)),
-        Matchers.eq(AttachmentInfo[].class),
-        Matchers.anyInt())).thenReturn(responseEntity);
-  }
-
-  @Test
-  public void testGetFullyPopulatedApplication() {
-    Mockito.when(applicationMapper.mapApplicationToJson(application)).thenReturn(new ApplicationJson());
-    ApplicationJson applicationJson = applicationServiceComposer.getFullyPopulatedApplication(application);
-    Assert.assertEquals(projectJson, applicationJson.getProject());
-    Assert.assertEquals(applicantJson, applicationJson.getApplicant());
-    Assert.assertEquals(contactJsons, applicationJson.getContactList());
-    Assert.assertEquals(metaJson, applicationJson.getMetadata());
-    Assert.assertEquals(userJson, applicationJson.getHandler());
-    Assert.assertEquals(locationJson, applicationJson.getLocation());
-    Assert.assertEquals(0, applicationJson.getAttachmentList().size());
   }
 
   @Test
@@ -133,12 +87,12 @@ public class ApplicationServiceComposerTest {
     ApplicationJson applicationJson3 = new ApplicationJson();
     applicationJson3.setId(1);
 
-    Mockito.when(applicationMapper.mapApplicationToJson(applications.get(0))).thenReturn(applicationJson1);
-    Mockito.when(applicationMapper.mapApplicationToJson(applications.get(1))).thenReturn(applicationJson2);
-    Mockito.when(applicationMapper.mapApplicationToJson(applications.get(2))).thenReturn(applicationJson3);
-
-    Mockito.when(searchService.search(Matchers.any(QueryParameters.class))).thenReturn(idsInOrder);
+    Mockito.when(searchService.searchApplication(Matchers.any(QueryParameters.class))).thenReturn(idsInOrder);
     Mockito.when(applicationService.findApplicationsById(idsInOrder)).thenReturn(applications);
+
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applications.get(0))).thenReturn(applicationJson1);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applications.get(1))).thenReturn(applicationJson2);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(applications.get(2))).thenReturn(applicationJson3);
 
     Mockito.when(queryParametersJson.getQueryParameters()).thenReturn(Collections.singletonList(Mockito.mock(QueryParameterJson.class)));
     List<ApplicationJson> applicationJsons = applicationServiceComposer.search(queryParametersJson);
@@ -160,6 +114,6 @@ public class ApplicationServiceComposerTest {
     Assert.assertEquals(updatedApplicationJson, applicationServiceComposer.updateApplication(applicationId, applicationJson));
 
     Mockito.verify(projectService, Mockito.times(1)).updateProjectInformation(Collections.singletonList(projectId));
-    Mockito.verify(searchService, Mockito.times(1)).updateApplication(updatedApplicationJson);
+    Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
   }
 }
