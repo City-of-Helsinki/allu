@@ -168,7 +168,8 @@ public class ApplicationMapper {
         ShortTermRentalJson shortTermRentalJson = new ShortTermRentalJson();
         shortTermRentalJson.setType(shortTermRental.getType());
         shortTermRentalJson.setDescription(shortTermRental.getDescription());
-        shortTermRental.setCommercial(shortTermRental.getCommercial());
+        shortTermRentalJson.setCommercial(shortTermRental.getCommercial());
+        shortTermRentalJson.setLargeSalesArea(shortTermRental.getLargeSalesArea());
         applicationJson.setEvent(shortTermRentalJson);
         break;
     }
@@ -226,6 +227,7 @@ public class ApplicationMapper {
         shortTermRental.setType(shortTermRentalJson.getType());
         shortTermRental.setDescription(shortTermRentalJson.getDescription());
         shortTermRental.setCommercial(shortTermRentalJson.getCommercial());
+        shortTermRental.setLargeSalesArea(shortTermRentalJson.getLargeSalesArea());
         return shortTermRental;
     }
     return null;

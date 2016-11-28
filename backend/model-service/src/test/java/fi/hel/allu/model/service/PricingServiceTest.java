@@ -1,13 +1,12 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -39,6 +38,9 @@ public class PricingServiceTest {
 
   @Autowired
   private LocationDao locationDao;
+
+  @Autowired
+  private ApplicantDao applicantDao;
 
   @SuppressWarnings("serial")
   private static class Pair<A, B> extends AbstractMap.SimpleImmutableEntry<A, B> {
@@ -84,8 +86,137 @@ public class PricingServiceTest {
     location.setFixedLocationIds(fixedLocationIds);
     int locationId = locationDao.insert(location).getId();
     application.setLocationId(locationId);
-    pricingService.calculatePrice(application);
+    pricingService.updatePrice(application);
     assertEquals(220500, application.getCalculatedPrice().intValue());
   }
 
+  @Test
+  public void testBridgeBanderol() {
+    Application application = new Application();
+    application.setType(ApplicationType.BRIDGE_BANNER);
+    ShortTermRental event = new ShortTermRental();
+    event.setCommercial(false);
+    application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2016-12-10T23:00:00+02:00"));
+    application.setEvent(event);
+    pricingService.updatePrice(application);
+    // Five weeks non-commercial -> 750 EUR
+    assertEquals(75000, application.getCalculatedPrice().intValue());
+    event.setCommercial(true);
+    application.setStartTime(ZonedDateTime.parse("2016-11-14T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2016-11-28T05:59:59+02:00"));
+    pricingService.updatePrice(application);
+    // Two week commercial -> 1500 EUR
+    assertEquals(150000, application.getCalculatedPrice().intValue());
+  }
+
+  @Test
+  public void testCircus() {
+    Application application = new Application();
+    application.setType(ApplicationType.CIRCUS);
+    application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
+    pricingService.updatePrice(application);
+    // Thirty-three days -> 6600 EUR
+    assertEquals(660000, application.getCalculatedPrice().intValue());
+  }
+
+  @Test
+  public void testDogTrainingEvent() {
+    Application application = new Application();
+    application.setType(ApplicationType.DOG_TRAINING_EVENT);
+    application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
+    Applicant applicant = new Applicant();
+    applicant.setName("Hakija");
+    applicant.setType(ApplicantType.ASSOCIATION);
+    application.setApplicantId(applicantDao.insert(applicant).getId());
+    // association -> 50 EUR /event
+    pricingService.updatePrice(application);
+    assertEquals(5000, application.getCalculatedPrice().intValue());
+
+    applicant.setType(ApplicantType.COMPANY);
+    application.setApplicantId(applicantDao.insert(applicant).getId());
+    // Company -> 100 EUR /event
+    pricingService.updatePrice(application);
+    assertEquals(10000, application.getCalculatedPrice().intValue());
+  }
+
+  @Test
+  public void testDogTrainingField() {
+    Application application = new Application();
+    application.setType(ApplicationType.DOG_TRAINING_FIELD);
+    application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2018-12-10T05:59:59+02:00"));
+    Applicant applicant = new Applicant();
+    applicant.setName("Hakija");
+    applicant.setType(ApplicantType.ASSOCIATION);
+    application.setApplicantId(applicantDao.insert(applicant).getId());
+    // association -> 100 EUR /year
+    pricingService.updatePrice(application);
+    assertEquals(30000, application.getCalculatedPrice().intValue());
+
+    applicant.setType(ApplicantType.COMPANY);
+    application.setApplicantId(applicantDao.insert(applicant).getId());
+    // Company -> 200 EUR /year
+    pricingService.updatePrice(application);
+    assertEquals(60000, application.getCalculatedPrice().intValue());
+  }
+
+  @Test
+  public void testKeskuskatuSales() {
+    Application application = new Application();
+    application.setType(ApplicationType.KESKUSKATU_SALES);
+    application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2016-12-22T05:59:59+02:00"));
+    Location location = new Location();
+    location.setAreaOverride(135.5);
+    application.setLocationId(locationDao.insert(location).getId());
+    // 19 days, 135.5 sqm -> 14 * 14 * 50 + 5 * 14 * 25 = 11550 EUR
+    pricingService.updatePrice(application);
+    assertEquals(1155000, application.getCalculatedPrice().intValue());
+  }
+
+  @Test
+  public void testPromotionOrSales() {
+    Application application = new Application();
+    application.setType(ApplicationType.PROMOTION_OR_SALES);
+    ShortTermRental event = new ShortTermRental();
+    event.setLargeSalesArea(true);
+    application.setEvent(event);
+    application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
+    // Large area, price for three years = 150 EUR * 3 = 450 EUR
+    pricingService.updatePrice(application);
+    assertEquals(45000, application.getCalculatedPrice().intValue());
+    // Small area is free
+    event.setLargeSalesArea(false);
+    pricingService.updatePrice(application);
+    assertEquals(0, application.getCalculatedPrice().intValue());
+  }
+
+  @Test
+  public void testSummerTheatre() {
+    Application application = new Application();
+    application.setType(ApplicationType.SUMMER_THEATER);
+    application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
+    // Two months -> 240 EUR
+    pricingService.updatePrice(application);
+    assertEquals(24000, application.getCalculatedPrice().intValue());
+  }
+
+  @Test
+  public void testUrbanFarming() {
+    Application application = new Application();
+    application.setType(ApplicationType.URBAN_FARMING);
+    application.setStartTime(ZonedDateTime.parse("2017-05-15T08:30:00+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2019-09-10T23:59:59+02:00"));
+    Location location = new Location();
+    location.setAreaOverride(222.2);
+    application.setLocationId(locationDao.insert(location).getId());
+    // Three terms, 222.2 sqm -> 223 * 2 * 3 = 1338 EUR
+    pricingService.updatePrice(application);
+    assertEquals(133800, application.getCalculatedPrice().intValue());
+  }
 }
