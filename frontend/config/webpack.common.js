@@ -179,7 +179,7 @@ module.exports = {
         loader: 'style-loader!css-loader'
       },
 
-      { test: /\.(png|jpg)$/,
+      { test: /\.(png|jpg|svg)$/,
         loader: 'file-loader'
       },
 

@@ -18,19 +18,25 @@
               <input id="info" type="text" class="" [(ngModel)]="locationState.location.info">
               <label for="info">Lisätietoja paikasta</label>
             </div>
-            <div class="input-field col m8">
-              <select [(ngModel)]="selectedArea" materialize="material_select" [materializeSelectOptions]="areas">
+            <div *ngIf="editedItemCount > 0" class="input-field col m10">
+              Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+            </div>
+            <div *ngIf="editedItemCount === 0">
+              <div class="input-field col m8">
+              <select [(ngModel)]="selectedArea" materialize="material_select" [materializeSelectOptions]="areas"
+                  [disabled]="editedItemCount > 0">
                 <option value="">Ei tapahtuma-aluetta</option>
                 <option *ngFor="let area of areas" [value]="area">{{area}}</option>
               </select>
-            </div>
-            <div class="input-field col m2">
-              <div *ngIf="!noSections()">
-                <select [(ngModel)]="selectedFixedLocations" materialize="material_select"
-                        [materializeSelectOptions]="sections" multiple>
-                  <option value="" disabled>Ei lohkoa</option>
-                  <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
-                </select>
+              </div>
+              <div class="input-field col m2">
+                <div *ngIf="!noSections()">
+                  <select [(ngModel)]="selectedFxs" materialize="material_select"
+                          [materializeSelectOptions]="sections" multiple>
+                    <option value="" disabled>Ei lohkoa</option>
+                    <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
+                  </select>
+                </div>
               </div>
             </div>
             <div class="input-field col m2">
@@ -40,7 +46,8 @@
           </div>
           <div class="col m12">
             <div class="mapcontainer">
-              <map [draw]="true" [edit]="true" [selection]="true" [applicationId]="application.id"></map>
+              <map [draw]="true" [edit]="selectedFixedLocations.length === 0" [selection]="true"
+                   [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
             </div>
           </div>
         </div>
