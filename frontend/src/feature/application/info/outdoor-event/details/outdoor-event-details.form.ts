@@ -2,8 +2,6 @@ import {OutdoorEvent} from '../../../../../model/application/outdoor-event/outdo
 import {TimePeriod} from '../../time-period';
 import {ApplicationCategoryType} from '../../../type/application-category';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
-import {ApplicationPricing} from '../../application-pricing';
-import {CalculatedPricing} from '../../../../../model/application/outdoor-event/calculated-pricing';
 import {Application} from '../../../../../model/application/application';
 
 export class OutdoorEventDetailsForm {

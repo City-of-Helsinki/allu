@@ -17,7 +17,10 @@ export class ShortTermRentalDetailsForm {
     public description?: string,
     public area?: number,
     public rentalTimes?: TimePeriod,
-    public commercial?: boolean) {}
+    public commercial?: boolean,
+    public calculatedPrice?: number,
+    public priceOverride?: number,
+    public priceOverrideReason?: string) {}
 
   static from(application: Application, rental: ShortTermRental): ShortTermRentalDetailsForm {
     return new ShortTermRentalDetailsForm(
@@ -25,7 +28,10 @@ export class ShortTermRentalDetailsForm {
       rental.description,
       application.location.area,
       new TimePeriod(application.uiStartTime, application.uiEndTime),
-      rental.commercial
+      rental.commercial,
+      application.calculatedPriceEuro,
+      application.priceOverrideEuro,
+      application.priceOverrideReason
     );
   }
 
