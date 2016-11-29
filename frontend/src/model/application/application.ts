@@ -159,7 +159,9 @@ export class Application {
   }
 
   public geometryCount(): number {
-    return Some(this.location.geometry).map(g => g.geometries.length).orElse(0);
+    return Some(this.location)
+      .map(loc => loc.geometry)
+      .map(g => g.geometries.length).orElse(0);
   }
 
   public hasFixedGeometry(): boolean {
