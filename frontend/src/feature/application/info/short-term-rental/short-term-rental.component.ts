@@ -83,6 +83,9 @@ export class ShortTermRentalComponent implements OnInit {
     let application = this.application;
     application.metadata = this.meta;
     application.name = form.details.name;
+    application.calculatedPriceEuro = form.details.calculatedPrice;
+    application.priceOverrideEuro = form.details.priceOverride;
+    application.priceOverrideReason = form.details.priceOverrideReason;
     application.location.area = form.details.area;
     application.uiStartTime = form.details.rentalTimes.startTime;
     application.uiEndTime = form.details.rentalTimes.endTime;
@@ -108,6 +111,9 @@ export class ShortTermRentalComponent implements OnInit {
       description: ['', Validators.required],
       area: undefined,
       commercial: [false],
+      calculatedPrice: [0],
+      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
+      priceOverrideReason: [''],
       rentalTimes: this.fb.group({
         startTime: ['', Validators.required],
         endTime: ['', Validators.required]

@@ -81,9 +81,22 @@
                                 </div>
                             </div>
                             <div class="col m12">
-                                <div class="col m12">
-                                    <label for="price">Hinta</label>
-                                    <div id="price">-</div>
+                                <div class="col m3 input-field">
+                                    <input type="text" readonly id="calculatedPrice" formControlName="calculatedPrice">
+                                    <label for="calculatedPrice">Hinta</label>
+                                </div>
+                            </div>
+                            <div class="col m12">
+                                <div class="col m3 input-field">
+                                    <input type="number" id="priceOverride" formControlName="priceOverride" [readonly]="isSummary">
+                                    <label for="priceOverride">Käsittelijän asettama hinta</label>
+                                    <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
+                                        {{translations.application.outdoorEvent.field.priceOverrideGreaterThanOrEqual}}
+                                    </field-error>
+                                </div>
+                                <div class="col m3 input-field">
+                                    <input type="text" id="priceOverrideReason" formControlName="priceOverrideReason" [readonly]="isSummary">
+                                    <label for="priceOverrideReason">Peruste poikkeavaan hintaan</label>
                                 </div>
                             </div>
                         </div>
