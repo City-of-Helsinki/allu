@@ -1,15 +1,6 @@
 @import '../../../assets/colors';
 
 :host {
-  .location {
-    background-color: $allu-background;
-  }
-
-
-  md-card {
-    margin: 10px;
-  }
-
   .mapcontainer {
     height: 66vh;
     position: relative;

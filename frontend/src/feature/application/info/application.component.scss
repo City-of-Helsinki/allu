@@ -2,10 +2,6 @@
 
 // deep makes styles available for child components
 :host /deep/ {
-  .application {
-    background-color: $allu-background;
-  }
-
   .input-field label {
     top: .5rem;
   }
@@ -22,7 +18,6 @@
     padding-left: 0;
   }
 
-  background-color: $allu-background;
   padding-top: 10px;
 
   .input-field {
