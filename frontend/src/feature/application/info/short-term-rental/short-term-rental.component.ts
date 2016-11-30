@@ -111,6 +111,7 @@ export class ShortTermRentalComponent implements OnInit {
       description: ['', Validators.required],
       area: undefined,
       commercial: [false],
+      largeSalesArea: [false],
       calculatedPrice: [0],
       priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       priceOverrideReason: [''],
