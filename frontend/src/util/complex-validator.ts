@@ -15,7 +15,7 @@ export class ComplexValidator {
       // Need to use dirty here since input[type="number"] does not set touched unless arrows are clicked
       if (fc.dirty) {
         if (Number(fc.value) < value) {
-          return { greaterThanOrEqual: false };
+          return { greaterThanOrEqual: true };
           }
         }
       return undefined;
@@ -26,16 +26,14 @@ export class ComplexValidator {
 
   static startBeforeEnd(startField: string, endField: string) {
     let validationFn = (fg: FormGroup) => {
-      if (fg.touched) {
-        let start = this.fieldValue(fg, startField);
-        let end = this.fieldValue(fg, endField);
+      let start = this.fieldValue(fg, startField);
+      let end = this.fieldValue(fg, endField);
 
-        if (start && end) {
-          let valid = !TimeUtil.isBefore(end, start);
+      if (start && end) {
+        let valid = !TimeUtil.isBefore(end, start);
 
-          // undefined means valid field
-          return valid  ? undefined : { startBeforeEnd: false };
-        }
+        // undefined means valid field
+        return valid  ? undefined : { startBeforeEnd: true };
       }
       return undefined;
     };
