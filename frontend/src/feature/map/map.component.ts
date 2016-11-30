@@ -10,6 +10,7 @@ import {Geocoordinates} from '../../model/common/geocoordinates';
 import {Application} from '../../model/application/application';
 import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
+import {ApplicationHub} from '../../service/application/application-hub';
 
 
 @Component({
@@ -38,7 +39,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   constructor(
     private mapService: MapUtil,
-    private mapHub: MapHub) {
+    private mapHub: MapHub,
+    private applicationHub: ApplicationHub) {
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;
     this.zoom = false;
@@ -56,6 +58,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.mapHub.addMapView(this.getCurrentMapView()); // to notify initial location
     this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app));
     this.mapHub.selectedFixedLocations().subscribe(fxs => this.drawFixedLocations(fxs));
+    // Handle fetching and drawing edited application as separate case
+    Some(this.applicationId).do(id => this.applicationHub.getApplication(id).subscribe(app => this.drawEditedApplication(app)));
   }
 
   ngOnDestroy() {
@@ -94,7 +98,6 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
 
-
   private drawApplications(applications: Array<Application>) {
     this.clearDrawn();
 
@@ -104,30 +107,19 @@ export class MapComponent implements OnInit, OnDestroy {
     applications
       .filter(app => app.location !== undefined)
       .filter(app => applicationShouldBeDrawn(app))
-      .forEach(app => this.drawApplication(app));
-  }
-
-  private drawApplication(application: Application) {
-    let useEditLayer = application.id === this.applicationId && (this.draw || this.edit);
-
-    if (useEditLayer) {
-      this.drawEditedApplication(application);
-    } else {
-      this.drawGeometry(application.location.geometry, this.drawnItems);
-    }
+      .filter(app => app.id !== this.applicationId) // Only draw other than edited application
+      .forEach(app => this.drawGeometry(app.location.geometry, this.drawnItems));
   }
 
   private drawEditedApplication(application: Application) {
-    // Check that edited layer is not already added
-    if (this.editedItems.getLayers().length === 0) {
-      this.drawGeometry(application.location.geometry, this.editedItems);
-      this.updateMapControls(application);
-    }
+    this.drawGeometry(application.location.geometry, this.editedItems);
+    this.updateMapControls(application);
+    this.mapHub.addShape(this.editedItems.toGeoJSON());
   }
 
   private updateMapControls(application: Application) {
     if (application.hasFixedGeometry()) {
-      this.setDynamicControls(application.hasGeometry(), this.editedItems);
+      this.setDynamicControls(false, this.editedItems);
     } else {
       this.editedItemCountChanged.emit(application.geometryCount());
     }

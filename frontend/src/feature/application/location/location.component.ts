@@ -38,6 +38,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   editedItemCount = 0;
 
   private fixedLocations = new Array<FixedLocation>();
+  private geometry: GeoJSON.GeometryCollection;
 
   constructor(
     private locationState: LocationState,
@@ -57,6 +58,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(application => {
         this.application = application;
         this.locationState.location = application.location || new Location();
+        this.geometry = application.location.geometry;
         this.locationState.startDate = application.startTime;
         this.locationState.endDate = application.endTime;
         this.locationState.specifiers = application.specifiers.map(s => ApplicationSpecifier[s]);
@@ -99,9 +101,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   save() {
     this.locationState.location.fixedLocationIds = this.selectedFixedLocations;
+    this.locationState.location.geometry = this.geometry;
+
     if (this.application.id) {
       // If there is an application to save the location data to
-      console.log('Saving location for application id: ', this.application.id);
       this.application.location = this.locationState.location;
       this.application.startTime = this.locationState.startDate;
       this.application.endTime = this.locationState.endDate;
@@ -153,9 +156,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {
     if (shape.features.length) {
-      this.locationState.location.geometry = this.mapService.featureCollectionToGeometryCollection(shape);
+      this.geometry = this.mapService.featureCollectionToGeometryCollection(shape);
     } else {
-      this.locationState.location.geometry = undefined;
+      this.geometry = undefined;
     }
   }
 
