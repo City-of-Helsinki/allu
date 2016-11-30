@@ -37,13 +37,7 @@ export class ApplicationTypeStructure {
   }
 }
 
-export const excavationAnnouncement = new ApplicationTypeStructure(ApplicationType.EXCAVATION_ANNOUNCEMENT, []);
-
-export const areaRental = new ApplicationTypeStructure(ApplicationType.AREA_RENTAL, []);
-
-export const temporaryTrafficArrangements = new ApplicationTypeStructure(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, []);
-
-export const cableReport = new ApplicationTypeStructure(ApplicationType.CABLE_REPORT, [
+const commonApplicationKinds = [
   new ApplicationKindStructure(ApplicationKind.STREET_AND_GREEN, [
     ApplicationSpecifier.ASPHALT,
     ApplicationSpecifier.INDUCTION_LOOP,
@@ -107,9 +101,17 @@ export const cableReport = new ApplicationTypeStructure(ApplicationType.CABLE_RE
     ApplicationSpecifier.GAS_PIPE,
     ApplicationSpecifier.OTHER
   ])
-]);
+];
 
-export const placementPermit = new ApplicationTypeStructure(ApplicationType.PLACEMENT_PERMIT, []);
+export const excavationAnnouncement = new ApplicationTypeStructure(ApplicationType.EXCAVATION_ANNOUNCEMENT, commonApplicationKinds);
+
+export const areaRental = new ApplicationTypeStructure(ApplicationType.AREA_RENTAL, []);
+
+export const temporaryTrafficArrangements = new ApplicationTypeStructure(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, []);
+
+export const cableReport = new ApplicationTypeStructure(ApplicationType.CABLE_REPORT, commonApplicationKinds);
+
+export const placementPermit = new ApplicationTypeStructure(ApplicationType.PLACEMENT_PERMIT, commonApplicationKinds);
 
 export const event = new ApplicationTypeStructure(ApplicationType.EVENT, [
   new ApplicationKindStructure(ApplicationKind.PROMOTION),

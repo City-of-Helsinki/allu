@@ -24,12 +24,14 @@ import {ContactComponent} from './info/contact/contact.component';
 import {EventDetailsComponent} from './info/event/details/event-details.component.ts';
 import {LocationDetailsComponent} from './info/location/location-details.component';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
+import {ExcavationAnnouncementComponent} from './info/excavation-announcement/excavation-announcement.component';
 
 import {AttachmentService} from '../../service/attachment-service';
 import {ApplicationActionsComponent} from './info/application-actions.component';
 import {CableReportComponent} from './info/cable-report/cable-report.component';
 import {CableInfoComponent} from './info/cable-report/cable-info.component.ts';
 import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
+
 
 @NgModule({
   imports: [
@@ -52,6 +54,7 @@ import {DefaultTextModalComponent} from './default-text/default-text-modal.compo
     ShortTermRentalComponent,
     CableReportComponent,
     CableInfoComponent,
+    ExcavationAnnouncementComponent,
     ApplicationAttachmentComponent,
     ApplicationActionsComponent,
     FILE_UPLOAD_DIRECTIVES,

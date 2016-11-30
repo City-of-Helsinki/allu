@@ -69,6 +69,11 @@
     margin-bottom: 10px;
   }
 
+  input[type="text"]:disabled:not(.select-dropdown), textarea:disabled {
+    color: $allu-field-text-ok;
+    border-bottom: 2px dotted $allu-field-border-readonly;
+  }
+
   input[readonly]:not(.select-dropdown):not(.picker__input), textarea[readonly] {
     border-bottom: 2px dotted $allu-field-border-readonly;
   }

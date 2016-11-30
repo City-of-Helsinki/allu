@@ -7,11 +7,13 @@ import {AuthGuard} from '../../feature/login/auth-guard.service';
 import {ApplicationResolve} from './application-resolve';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
 import {CableReportComponent} from './info/cable-report/cable-report.component';
+import {ExcavationAnnouncementComponent} from './info/excavation-announcement/excavation-announcement.component';
 
 const childRoutes: Routes = [
   { path: 'EVENT', component: EventComponent, canActivate: [AuthGuard] },
   { path: 'SHORT_TERM_RENTAL', component: ShortTermRentalComponent, canActivate: [AuthGuard] },
-  { path: 'CABLE_REPORT', component: CableReportComponent, canActivate: [AuthGuard]}
+  { path: 'CABLE_REPORT', component: CableReportComponent, canActivate: [AuthGuard]},
+  { path: 'EXCAVATION_ANNOUNCEMENT', component: ExcavationAnnouncementComponent, canActivate: [AuthGuard]}
 ];
 
 export const applicationRoutes: Routes = [

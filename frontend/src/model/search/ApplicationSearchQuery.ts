@@ -55,6 +55,13 @@ export class ApplicationSearchQuery implements SearchQuery {
     return query;
   }
 
+  public static forIdAndTypes(id: string, types: Array<string>): ApplicationSearchQuery {
+    let query = new ApplicationSearchQuery();
+    query.applicationId = id;
+    query.type = types;
+    return query;
+  }
+
   public copy(): ApplicationSearchQuery {
     let query = new ApplicationSearchQuery();
     query.applicationId = this.applicationId;

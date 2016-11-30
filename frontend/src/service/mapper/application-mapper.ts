@@ -49,7 +49,7 @@ export class ApplicationMapper {
       status: application.status,
       type: application.type,
       kind: application.kind,
-      metadata: StructureMetaMapper.mapFrontend(application.metadata),
+      metadata: (application.metadata) ? StructureMetaMapper.mapFrontend(application.metadata) : undefined,
       name: application.name,
       creationTime: (application.creationTime) ? application.creationTime.toISOString() : undefined,
       startTime: application.startTime.toISOString(),

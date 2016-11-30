@@ -10,6 +10,7 @@ import {ApplicationExtension} from '../../model/application/type/application-ext
 import {Event} from '../../model/application/event/event';
 import {CableReport} from '../../model/application/cable-report/cable-report';
 import {ShortTermRental} from '../../model/application/short-term-rental/short-term-rental';
+import {ExcavationAnnouncement} from '../../model/application/excavation-announcement/excavation-announcement';
 
 @Injectable()
 export class LocationState {
@@ -64,6 +65,8 @@ export class LocationState {
         return new Event();
       case ApplicationType.SHORT_TERM_RENTAL:
         return new ShortTermRental();
+      case ApplicationType.EXCAVATION_ANNOUNCEMENT:
+        return new ExcavationAnnouncement();
       default:
         throw new Error('Extension for ' + ApplicationType[this.applicationType] + ' not implemented yet');
     }

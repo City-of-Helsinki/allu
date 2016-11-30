@@ -1,0 +1,79 @@
+import {TimePeriod} from '../time-period';
+import {ApplicantForm} from '../applicant/applicant.form';
+import {Contact} from '../../../../model/application/contact';
+import {Some} from '../../../../util/option';
+import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
+import {Application} from '../../../../model/application/application';
+
+export class ExcavationAnnouncementForm {
+  constructor(
+    public validityTimes?: TimePeriod,
+    public applicant?: ApplicantForm,
+    public contacts?: Array<Contact>,
+    public contractor?: ApplicantForm,
+    public responsiblePerson?: Array<Contact>,
+    public pksCard?: boolean,
+    public constructionWork?: boolean,
+    public maintenanceWork?: boolean,
+    public emergencyWork?: boolean,
+    public plotConnectivity?: boolean,
+    public propertyConnectivity?: boolean,
+    public winterTimeOperation?: string,
+    public summerTimeOperation?: string,
+    public workFinished?: string,
+    public unauthorizedWork?: TimePeriod,
+    public guaranteeEndTime?: string,
+    public cableReportId?: number,
+    public additionalInfo?: string,
+    public trafficArrangements?: string,
+    public specifiers?: Array<string>
+  ) {}
+
+  static to(form: ExcavationAnnouncementForm): ExcavationAnnouncement {
+    let ea = new ExcavationAnnouncement();
+    ea.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
+    ea.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
+    ea.pksCard = form.pksCard;
+    ea.constructionWork = form.constructionWork;
+    ea.maintenanceWork = form.maintenanceWork;
+    ea.emergencyWork = form.emergencyWork;
+    ea.plotConnectivity = form.plotConnectivity;
+    ea.propertyConnectivity = form.propertyConnectivity;
+    ea.uiWinterTimeOperation = form.winterTimeOperation;
+    ea.uiSummerTimeOperation = form.summerTimeOperation;
+    ea.uiWorkFinished = form.workFinished;
+    ea.uiUnauthorizedWorkStartTime = form.unauthorizedWork.startTime;
+    ea.uiUnauthorizedWorkEndTime = form.unauthorizedWork.endTime;
+    ea.uiGuaranteeEndTime = form.guaranteeEndTime;
+    ea.cableReportId = form.cableReportId;
+    ea.additionalInfo = form.additionalInfo;
+    ea.trafficArrangements = form.trafficArrangements;
+    ea.specifiers = form.specifiers;
+    return ea;
+  }
+
+  static from(application: Application, excavation: ExcavationAnnouncement) {
+    return new ExcavationAnnouncementForm(
+      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      undefined, // these are added by subcomponents (application and contact)
+      undefined,
+      undefined,
+      undefined,
+      excavation.pksCard,
+      excavation.constructionWork,
+      excavation.maintenanceWork,
+      excavation.emergencyWork,
+      excavation.plotConnectivity,
+      excavation.propertyConnectivity,
+      excavation.uiWinterTimeOperation,
+      excavation.uiSummerTimeOperation,
+      excavation.uiWorkFinished,
+      new TimePeriod(excavation.uiUnauthorizedWorkStartTime, excavation.uiUnauthorizedWorkEndTime),
+      excavation.uiGuaranteeEndTime,
+      excavation.cableReportId,
+      excavation.additionalInfo,
+      excavation.trafficArrangements,
+      excavation.specifiers
+    );
+  }
+}

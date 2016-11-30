@@ -32,7 +32,6 @@ export const translations = {
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
       PROMOTION: 'Promootio',
       ELECTION: 'Vaalit',
-      EXCAVATION_ANNOUNCEMENT: 'Kaivuuilmoitus',
       AREA_RENTAL: 'Aluevuokraus',
       TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Tilapäiset liikennejärjestelyt',
       BRIDGE_BANNER: 'Banderollit silloissa',
@@ -173,6 +172,14 @@ export const translations = {
       },
       field: {
         startBeforeEnd: 'Lopetuspäivä ei voi olla ennen aloituspäivää'
+      }
+    },
+    excavationAnnouncement: {
+      field: {
+        validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
+        validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
+        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta',
+        unauthorizedWorkStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
       }
     }
   },

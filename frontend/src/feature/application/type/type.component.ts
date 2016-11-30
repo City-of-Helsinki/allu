@@ -60,7 +60,8 @@ export class TypeComponent implements OnInit {
 
   showSpecifierSelection(): boolean {
     let applicationKindSelected = this.applicationKind !== undefined;
-    let show = (appType: ApplicationTypeStructure) => appType.typeName === 'CABLE_REPORT' && applicationKindSelected;
+    let show = (appType: ApplicationTypeStructure) => ['CABLE_REPORT', 'EXCAVATION_ANNOUNCEMENT'].indexOf(appType.typeName) >= 0
+      && applicationKindSelected;
     return Some(this.type).map(show).orElse(false);
   }
 
