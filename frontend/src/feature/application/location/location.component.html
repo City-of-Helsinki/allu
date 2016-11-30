@@ -10,10 +10,10 @@
       <md-card-title>Sijainti</md-card-title>
       <md-card-content>
         <div class="row">
+          <searchbar [addressSearch]="locationState.location.postalAddress.streetAddress"
+                     [startDate]="locationState.startDate" [endDate]="locationState.endDate"
+                     (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
           <div class="col m12">
-            <searchbar [addressSearch]="locationState.location.postalAddress.streetAddress"
-                       [startDate]="locationState.startDate" [endDate]="locationState.endDate"
-                       (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
             <div class="input-field col m12">
               <input id="info" type="text" class="" [(ngModel)]="locationState.location.info">
               <label for="info">Lisätietoja paikasta</label>

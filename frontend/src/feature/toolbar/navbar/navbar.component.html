@@ -1,11 +1,10 @@
 <nav>
-  <a class="navbar-tab" [routerLink]="['/home']" routerLinkActive="active">ETUSIVU</a>
-  <a class="navbar-tab" [routerLink]="['/workqueue']" routerLinkActive="active">TYÖJONO</a>
-  <a class="navbar-tab" [routerLink]="['/applications']" routerLinkActive="active">HAKEMUKSET</a>
-  <a class="navbar-tab" [routerLink]="['/projectSearch']" routerLinkActive="active">HANKKEET</a>
-  <a class="navbar-tab" [routerLink]="['/search']" routerLinkActive="active">HAKU</a>
-  <a class="navbar-tab" [routerLink]="['/admin']" routerLinkActive="active" *ngIf="hasRole('ROLE_ADMIN')">YLLÄPITO</a>
-  <a class="navbar-tab" [routerLink]="['/logout']" routerLinkActive="active">KIRJAUDU ULOS</a>
+  <a [routerLink]="['/home']" routerLinkActive="active">ETUSIVU</a>
+  <a [routerLink]="['/workqueue']" routerLinkActive="active">TYÖJONO</a>
+  <a [routerLink]="['/search']" routerLinkActive="active">HAKEMUKSET</a>
+  <a [routerLink]="['/projectSearch']" routerLinkActive="active">HANKKEET</a>
+  <a [routerLink]="['/admin']" routerLinkActive="active" *ngIf="hasRole('ROLE_ADMIN')">YLLÄPITO</a>
+  <a class="align-right" [routerLink]="['/logout']" routerLinkActive="active">KIRJAUDU ULOS</a>
 </nav>
 
 
