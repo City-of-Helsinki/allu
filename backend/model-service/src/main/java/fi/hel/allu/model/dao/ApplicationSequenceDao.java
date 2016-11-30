@@ -3,7 +3,9 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.common.types.ApplicationType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -38,7 +41,23 @@ public class ApplicationSequenceDao {
     /** In Finnish: tilapäinen liikennejärjestely */
     LJ(),
     /** In Finnish: johtoselvitys */
-    JS(),
+    JS(
+        ApplicationType.CITY_STREET_AND_GREEN,
+        ApplicationType.WATER_AND_SEWAGE,
+        ApplicationType.HKL,
+        ApplicationType.ELECTRIC_CABLE,
+        ApplicationType.DISTRICT_HEATING,
+        ApplicationType.DISTRICT_COOLING,
+        ApplicationType.TELECOMMUNICATION,
+        ApplicationType.GAS,
+        ApplicationType.AD_PILLARS_AND_STOPS,
+        ApplicationType.PROPERTY_MERGER,
+        ApplicationType.SOIL_INVESTIGATION,
+        ApplicationType.JOINT_MUNICIPAL_INFRASTRUCTURE,
+        ApplicationType.ABSORBING_SEWAGE_SYSTEM,
+        ApplicationType.UNDERGROUND_CONSTRUCTION,
+        ApplicationType.OTHER_CABLE_REPORT
+    ),
     /** In Finnish: sijoituslupa */
     SL(),
     /** In Finnish: tapahtumalupa */

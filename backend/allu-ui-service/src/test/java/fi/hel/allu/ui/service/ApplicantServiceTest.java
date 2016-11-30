@@ -1,23 +1,26 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class ApplicantServiceTest extends MockServices {
   private static Validator validator;
-  @InjectMocks
   protected ApplicantService applicantService;
 
   @BeforeClass
@@ -31,6 +34,7 @@ public class ApplicantServiceTest extends MockServices {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
+    applicantService = new ApplicantService(props, restTemplate, new ApplicationMapper());
   }
 
   @Test
