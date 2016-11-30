@@ -18,6 +18,7 @@ export class ShortTermRentalDetailsForm {
     public area?: number,
     public rentalTimes?: TimePeriod,
     public commercial?: boolean,
+    public largeSalesArea?: boolean,
     public calculatedPrice?: number,
     public priceOverride?: number,
     public priceOverrideReason?: string) {}
@@ -29,6 +30,7 @@ export class ShortTermRentalDetailsForm {
       application.location.area,
       new TimePeriod(application.uiStartTime, application.uiEndTime),
       rental.commercial,
+      rental.largeSalesArea,
       application.calculatedPriceEuro,
       application.priceOverrideEuro,
       application.priceOverrideReason
@@ -36,6 +38,6 @@ export class ShortTermRentalDetailsForm {
   }
 
   static to(form: ShortTermRentalDetailsForm, eventType: string): ShortTermRental {
-    return new ShortTermRental(eventType, form.description, form.commercial);
+    return new ShortTermRental(eventType, form.description, form.commercial, form.largeSalesArea);
   }
 }

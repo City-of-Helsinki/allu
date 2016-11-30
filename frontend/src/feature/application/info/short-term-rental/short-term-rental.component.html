@@ -80,6 +80,15 @@
                                     <div *ngIf="isSummary && rentalForm.value.commercial">{{ meta?.getUiName('commercial') }}</div>
                                 </div>
                             </div>
+                            <div *ngIf="application.type==='PROMOTION_OR_SALES'" class="col m6 no-padding">
+                                <div class="col m12 height-fix-bottom">
+                                    <div *ngIf="!isSummary">
+                                        <input type="checkbox" class="filled-in" id="largeSalesArea" formControlName="largeSalesArea"/>
+                                        <label for="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</label>
+                                    </div>
+                                    <div *ngIf="isSummary && rentalForm.value.largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</div>
+                                </div>
+                            </div>
                             <div class="col m12">
                                 <div class="col m3 input-field">
                                     <input type="text" readonly id="calculatedPrice" formControlName="calculatedPrice">
