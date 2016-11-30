@@ -15,8 +15,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
@@ -172,6 +174,34 @@ public class ApplicationMapper {
         shortTermRentalJson.setLargeSalesArea(shortTermRental.getLargeSalesArea());
         applicationJson.setEvent(shortTermRentalJson);
         break;
+      // cable reports
+      case CITY_STREET_AND_GREEN:
+      case WATER_AND_SEWAGE:
+      case HKL:
+      case ELECTRIC_CABLE:
+      case DISTRICT_HEATING:
+      case DISTRICT_COOLING:
+      case TELECOMMUNICATION:
+      case GAS:
+      case AD_PILLARS_AND_STOPS:
+      case PROPERTY_MERGER:
+      case SOIL_INVESTIGATION:
+      case JOINT_MUNICIPAL_INFRASTRUCTURE:
+      case ABSORBING_SEWAGE_SYSTEM:
+      case UNDERGROUND_CONSTRUCTION:
+      case OTHER_CABLE_REPORT:
+        CableReport cableReport = (CableReport) application.getEvent();
+        CableReportJson cableReportJson = new CableReportJson();
+        cableReportJson.setCableReportId(cableReport.getCableReportId());
+        cableReportJson.setWorkDescription(cableReport.getWorkDescription());
+        cableReportJson.setOwner(createApplicantJson(cableReport.getOwner()));
+        cableReportJson.setContact(createContactJson(cableReport.getContact()));
+        cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
+        List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
+          .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
+        cableReportJson.setInfoEntries(infoEntries);
+        applicationJson.setEvent(cableReportJson);
+      break;
     }
   }
 
@@ -229,6 +259,32 @@ public class ApplicationMapper {
         shortTermRental.setCommercial(shortTermRentalJson.getCommercial());
         shortTermRental.setLargeSalesArea(shortTermRentalJson.getLargeSalesArea());
         return shortTermRental;
+      case CITY_STREET_AND_GREEN:
+      case WATER_AND_SEWAGE:
+      case HKL:
+      case ELECTRIC_CABLE:
+      case DISTRICT_HEATING:
+      case DISTRICT_COOLING:
+      case TELECOMMUNICATION:
+      case GAS:
+      case AD_PILLARS_AND_STOPS:
+      case PROPERTY_MERGER:
+      case SOIL_INVESTIGATION:
+      case JOINT_MUNICIPAL_INFRASTRUCTURE:
+      case ABSORBING_SEWAGE_SYSTEM:
+      case UNDERGROUND_CONSTRUCTION:
+      case OTHER_CABLE_REPORT:
+        CableReportJson cableReportJson = (CableReportJson) applicationJson.getEvent();
+        CableReport cableReport = new CableReport();
+        cableReport.setCableReportId(cableReportJson.getCableReportId());
+        cableReport.setWorkDescription(cableReportJson.getWorkDescription());
+        cableReport.setOwner(createApplicantModel(cableReportJson.getOwner()));
+        cableReport.setContact(createContactModel(cableReportJson.getContact()));
+        cableReport.setMapExtractCount(cableReportJson.getMapExtractCount());
+        List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
+          .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
+        cableReport.setInfoEntries(infoEntries);
+        return cableReport;
     }
     return null;
   }
@@ -273,6 +329,91 @@ public class ApplicationMapper {
     attachmentInfoJson.setDescription(attachmentInfo.getDescription());
     attachmentInfoJson.setSize(attachmentInfo.getSize());
     attachmentInfoJson.setCreationTime(attachmentInfo.getCreationTime());
+  }
+
+  public void mapApplicantToJson(ApplicantJson applicantJson, Applicant applicant) {
+    applicantJson.setId(applicant.getId());
+    applicantJson.setType(applicant.getType());
+    applicantJson.setName(applicant.getName());
+    applicantJson.setRegistryKey(applicant.getRegistryKey());
+    applicantJson.setPhone(applicant.getPhone());
+    applicantJson.setEmail(applicant.getEmail());
+    PostalAddressJson postalAddressJson = null;
+    if (applicant.getStreetAddress() != null || applicant.getCity() != null || applicant.getPostalCode() != null) {
+      postalAddressJson = new PostalAddressJson();
+      postalAddressJson.setStreetAddress(applicant.getStreetAddress());
+      postalAddressJson.setCity(applicant.getCity());
+      postalAddressJson.setPostalCode(applicant.getPostalCode());
+    }
+    applicantJson.setPostalAddress(postalAddressJson);
+  }
+
+  public Applicant createApplicantModel(ApplicantJson applicantJson) {
+    Applicant applicantModel = new Applicant();
+    applicantModel.setId(applicantJson.getId());
+    applicantModel.setType(applicantJson.getType());
+    applicantModel.setName(applicantJson.getName());
+    applicantModel.setRegistryKey(applicantJson.getRegistryKey());
+    applicantModel.setPhone(applicantJson.getPhone());
+    applicantModel.setEmail(applicantJson.getEmail());
+    if (applicantJson.getPostalAddress() != null) {
+      applicantModel.setStreetAddress(applicantJson.getPostalAddress().getStreetAddress());
+      applicantModel.setCity(applicantJson.getPostalAddress().getCity());
+      applicantModel.setPostalCode(applicantJson.getPostalAddress().getPostalCode());
+    }
+    return applicantModel;
+  }
+
+  /**
+   * Map the given Contact object into ContactJson
+   *
+   * @param Model-domain Contact object
+   * @return Ui-domain Contact representation of the parameter
+   */
+  public ContactJson createContactJson(Contact c) {
+    ContactJson json = new ContactJson();
+    json.setId(c.getId());
+    json.setApplicantId(c.getApplicantId());
+    json.setName(c.getName());
+    json.setStreetAddress(c.getStreetAddress());
+    json.setPostalCode(c.getPostalCode());
+    json.setCity(c.getCity());
+    json.setEmail(c.getEmail());
+    json.setPhone(c.getPhone());
+    return json;
+  }
+
+  public Contact createContactModel(ContactJson json) {
+    Contact contact = new Contact();
+    contact.setId(json.getId());
+    contact.setApplicantId(json.getApplicantId());
+    contact.setName(json.getName());
+    contact.setStreetAddress(json.getStreetAddress());
+    contact.setPostalCode(json.getPostalCode());
+    contact.setCity(json.getCity());
+    contact.setEmail(json.getEmail());
+    contact.setPhone(json.getPhone());
+    return contact;
+  }
+
+  private CableInfoEntryJson createCableInfoEntryJson(CableInfoEntry cableInfoEntry) {
+    CableInfoEntryJson cableInfoEntryJson = new CableInfoEntryJson();
+    cableInfoEntryJson.setType(cableInfoEntry.getType());
+    cableInfoEntryJson.setAdditionalInfo(cableInfoEntry.getAdditionalInfo());
+    return cableInfoEntryJson;
+  }
+
+  private CableInfoEntry createCableInfoEntryModel(CableInfoEntryJson cableInfoEntryJson) {
+    CableInfoEntry cableInfoEntry = new CableInfoEntry();
+    cableInfoEntry.setType(cableInfoEntryJson.getType());
+    cableInfoEntry.setAdditionalInfo(cableInfoEntryJson.getAdditionalInfo());
+    return cableInfoEntry;
+  }
+
+  private ApplicantJson createApplicantJson(Applicant applicant) {
+    ApplicantJson applicantJson = new ApplicantJson();
+    mapApplicantToJson(applicantJson, applicant);
+    return applicantJson;
   }
 
   private ProjectES createProjectES(ApplicationJson applicationJson) {

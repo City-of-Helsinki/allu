@@ -1,16 +1,12 @@
 package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationCategory;
-import fi.hel.allu.common.types.ApplicationType;
-
-import javax.validation.constraints.NotNull;
 
 /**
  * JSON DAO covering all short term rental data requirements.
  */
 public class ShortTermRentalJson extends EventJson {
-  @NotNull(message = "{shorttermrental.type}")
-  private ApplicationType type;
+
   private String description;
   private Boolean commercial;
   private Boolean largeSalesArea;
@@ -18,14 +14,6 @@ public class ShortTermRentalJson extends EventJson {
   @Override
   public ApplicationCategory getApplicationCategory() {
     return ApplicationCategory.SHORT_TERM_RENTAL;
-  }
-
-  public ApplicationType getType() {
-    return type;
-  }
-
-  public void setType(ApplicationType type) {
-    this.type = type;
   }
 
   /**

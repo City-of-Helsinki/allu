@@ -1,7 +1,6 @@
 package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationCategory;
-import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -15,8 +14,6 @@ public class OutdoorEventJson extends EventJson {
   private OutdoorEventNature nature;
   @NotBlank(message = "{outdoorevent.description}")
   private String description;
-  @NotNull
-  private ApplicationType type;
   private String url;
   @NotNull(message = "{outdoorevent.starttime}")
   private ZonedDateTime eventStartTime;
@@ -62,19 +59,6 @@ public class OutdoorEventJson extends EventJson {
 
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  /**
-   * The type of the application.
-   *
-   * @return  type of the application.
-   */
-  public ApplicationType getType() {
-    return type;
-  }
-
-  public void setType(ApplicationType type) {
-    this.type = type;
   }
 
   /**
