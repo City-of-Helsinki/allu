@@ -1,26 +1,50 @@
-<form>
-    <div class="col s12">
-
-      <div class="input-field col s8">
-        <input #streetAddress id="streetAddress" type="text"
-               name="addressSearch" [(ngModel)]="addressSearch"
+<form [formGroup]="searchForm">
+  <div *ngIf="barType === 'SIMPLE'" class="col s12">
+      <div class="col s12 input-field search-box">
+        <i class="material-icons prefix clickable" (click)="showMore()">add</i>
+        <input id="address" type="text" value="{{addressSearch}}"
+               placeholder="Hae hankkeita osoitteella"
                [autocompletion]="addressSearchResults"
                (onSearchChange)="onAddressSearchChange($event)"
-               (onSelection)="searchAddress($event)">
-        <label for="streetAddress">Kirjoita osoite</label>
+               (onSelection)="searchAddress($event)"/>
       </div>
+  </div>
 
-      <div class="input-field col s2">
-        <input type="text" id="startDate"
-               name="startDate" [(ngModel)]="uiStartDate"
-               materialize="pickadate" [materializeParams]="pickadateParams"/>
-        <label for="startDate">Alkupäivämäärä</label>
-      </div>
-      <div class="input-field col s2">
-        <input type="text" id="endDate"
-               name="endDate" [(ngModel)]="uiEndDate"
-               materialize="pickadate" [materializeParams]="pickadateParams"/>
-        <label for="endDate">Loppupäivämäärä</label>
-      </div>
+  <div *ngIf="barType === 'BAR'" class="col s12">
+    <div class="input-field col s8">
+      <input id="address" type="text" value="{{addressSearch}}"
+             [autocompletion]="addressSearchResults"
+             (onSearchChange)="onAddressSearchChange($event)"
+             (onSelection)="searchAddress($event)"/>
+      <label for="address">Kirjoita osoite</label>
     </div>
+
+    <div class="input-field col s2">
+      <input type="text" id="startDate" formControlName="startDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
+      <label for="startDate">Alkupäivämäärä</label>
+    </div>
+    <div class="input-field col s2">
+      <input type="text" id="endDate" formControlName="endDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
+      <label for="endDate">Loppupäivämäärä</label>
+    </div>
+  </div>
+
+  <div *ngIf="barType === 'ADVANCED'">
+    <div class="input-field col s12">
+      <input id="address" type="text" value="{{addressSearch}}"
+             [autocompletion]="addressSearchResults"
+             (onSearchChange)="onAddressSearchChange($event)"
+             (onSelection)="searchAddress($event)"/>
+      <label for="address">Kirjoita osoite</label>
+    </div>
+
+    <div class="input-field col s4">
+      <input type="text" id="startDate" formControlName="startDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
+      <label for="startDate">Alkupäivämäärä</label>
+    </div>
+    <div class="input-field col s4">
+      <input type="text" id="endDate" formControlName="endDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
+      <label for="endDate">Loppupäivämäärä</label>
+    </div>
+  </div>
 </form>

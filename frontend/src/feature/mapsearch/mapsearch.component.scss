@@ -14,18 +14,23 @@
 }
 
 application-list {
-  bottom: 0;
-  // height: 90vh;
-  left: 0;
-  position: absolute;
-  top: 114px;
-  width: 18.2vw;
+  position: relative;
+  width: 100%;
 }
 
-map {
-  bottom: 0;
-  left: 18.2vw;
-  position: absolute;
-  top: 114px;
-  width: 81.8vw;
+.mapcontainer {
+  height: 100vh;
+  position: relative;
+
+  .map-overlay {
+    position: absolute;
+    top: 0;
+    left: 24px;
+    z-index: 314159;
+    width: 25vw;
+  }
+}
+
+md-sidenav {
+  width: 400px;
 }

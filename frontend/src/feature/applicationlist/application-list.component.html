@@ -2,9 +2,12 @@
   <div class="col s12 searchresults">
       <md-card (click)="jobClick(application)" *ngFor="let application of applications | async">
         <md-card-content>
-          <p>{{application.name}}</p>
-          <md-card-subtitle>{{application.type}}</md-card-subtitle>
-          <p>{{application.time}}</p>
+            <md-card-title>{{application.name}}</md-card-title>
+
+            <md-card-content>
+                <div class="info-field">{{['application.type', application.type] | translation}}</div>
+                <div class="info-field">{{application.uiStartTime}} - {{application.uiEndTime}}</div>
+            </md-card-content>
         </md-card-content>
       </md-card>
   </div>
