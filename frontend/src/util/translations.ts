@@ -1,3 +1,4 @@
+import {Some, Option} from './option';
 export const translations = {
   application: {
     error: {
@@ -284,4 +285,27 @@ export const translations = {
       emailInvalid: 'Virheellinen sähköpostiosoite'
     }
   }
+};
+
+const toKey = (path: string | Array<string>): Option<Array<string>> => {
+  return Some(path).map(p => {
+    let pathString = '';
+    if (Array.isArray(p)) {
+      pathString = p.join('.');
+    } else {
+      pathString = p;
+    }
+    return pathString.split('.');
+  });
+};
+
+/**
+ * Finds translation for given path
+ * @param path path to translation eg. application.status.HANDLED
+ * @returns translation if found with path, otherwise returns path
+ */
+export const findTranslation = (path: string | Array<string>): string => {
+  return toKey(path)
+    .map(pathParts => pathParts.reduce((acc, cur) => Some(acc[cur]).orElse(path) , translations))
+    .orElse('');
 };

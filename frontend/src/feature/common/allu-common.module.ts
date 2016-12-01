@@ -5,6 +5,7 @@ import {MaterializeDirective} from 'angular2-materialize';
 import {AutoCompletionDirective} from './auto-completion/auto-completion.directive.ts';
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component.ts';
 import {FieldErrorComponent} from './field-error.component';
+import {TranslationPipe} from '../../pipe/translation.pipe';
 
 @NgModule({
   imports: [
@@ -15,7 +16,8 @@ import {FieldErrorComponent} from './field-error.component';
     MaterializeDirective,
     AutoCompletionDirective,
     AutoCompletionListComponent,
-    FieldErrorComponent
+    FieldErrorComponent,
+    TranslationPipe
   ],
   exports: [
     CommonModule,
@@ -25,7 +27,8 @@ import {FieldErrorComponent} from './field-error.component';
     MaterializeDirective,
     AutoCompletionDirective,
     AutoCompletionListComponent,
-    FieldErrorComponent
+    FieldErrorComponent,
+    TranslationPipe
   ],
   entryComponents: [
     AutoCompletionListComponent
