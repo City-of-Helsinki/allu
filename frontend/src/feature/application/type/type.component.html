@@ -9,7 +9,8 @@
                             <select [ngModel]="category?.categoryTypeName" [disabled]="typeChangeDisabled"
                                     materialize="material_select" (change)="typeSelection($event.target.value)">
                                 <option value="" disabled selected>Hakemuksen tyyppi</option>
-                                <option *ngFor="let category of applicationCategories" [value]="category.categoryTypeName">{{translations.application.category[category.categoryTypeName]}}</option>
+                                <option *ngFor="let category of applicationCategories"
+                                        [value]="category.categoryTypeName">{{['application.category', category.categoryTypeName] | translation}}</option>
                             </select>
                         </div>
                         <div>
@@ -17,14 +18,14 @@
                                     materialize="material_select" [materializeSelectOptions]="typeNames"
                                     (change)="eventSelection($event.target.value)">
                                 <option value="" disabled selected>Hakemuksen laji</option>
-                                <option *ngFor="let appType of typeNames" [value]="appType">{{translations.application.type[appType]}}</option>
+                                <option *ngFor="let appType of typeNames" [value]="appType">{{['application.type', appType] | translation}}</option>
                             </select>
                         </div>
                         <div *ngIf="showSpecifierSelection()">
                             <select [(ngModel)]="specifiers" [disabled]="typeChangeDisabled" materialize="material_select"
                                     multiple [materializeSelectOptions]="specifierNames">
                                 <option value="" disabled selected>Työn tarkenne</option>
-                                <option *ngFor="let specifier of specifierNames" [value]="specifier">{{translations.application.specifier[specifier]}}</option>
+                                <option *ngFor="let specifier of specifierNames" [value]="specifier">{{['application.specifier', specifier] | translation}}</option>
                             </select>
                         </div>
                     </div>
