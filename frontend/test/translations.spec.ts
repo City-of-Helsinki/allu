@@ -22,4 +22,8 @@ describe('translations', () => {
     expect(findTranslation(['application', 'status', 'HANDLING'])).toEqual('Käsittelyssä');
     expect(findTranslation(['application.status.HANDLING'])).toEqual('Käsittelyssä');
   });
+
+  it('should return key if only part of the path is valid', () => {
+    expect(findTranslation(['application.status', 'SHOULD_NOT_EXITS'])).toEqual('application.status.SHOULD_NOT_EXITS');
+  });
 });

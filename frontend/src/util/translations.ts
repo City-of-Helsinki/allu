@@ -306,6 +306,6 @@ const toKey = (path: string | Array<string>): Option<Array<string>> => {
  */
 export const findTranslation = (path: string | Array<string>): string => {
   return toKey(path)
-    .map(pathParts => pathParts.reduce((acc, cur) => Some(acc[cur]).orElse(path) , translations))
+    .map(pathParts => pathParts.reduce((acc, cur) => Some(acc[cur]).orElse(pathParts.join('.')) , translations))
     .orElse('');
 };
