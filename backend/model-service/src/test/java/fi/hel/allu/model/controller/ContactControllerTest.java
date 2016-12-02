@@ -1,6 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.types.ApplicantType;
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicantDao;
@@ -8,8 +9,9 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Applicant;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.OutdoorEvent;
+import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -182,12 +186,13 @@ public class ContactControllerTest {
     }
 
     Application appl = new Application();
-    appl.setType(ApplicationType.OUTDOOREVENT);
+    appl.setType(ApplicationType.EVENT);
+    appl.setKind(ApplicationKind.OUTDOOREVENT);
     appl.setMetadataVersion(1);
     appl.setName("Dummy apllication");
-    OutdoorEvent evt = new OutdoorEvent();
-    evt.setDescription("Dummy outdoor event");
-    appl.setEvent(evt);
+    Event evt = new Event();
+    evt.setDescription("Dummy event");
+    appl.setExtension(evt);
     int applId = applicationDao.insert(appl).getId();
 
     ResultActions resultActions = wtc

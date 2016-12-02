@@ -8,7 +8,7 @@ import java.io.IOException;
 
 import static org.junit.Assert.assertEquals;
 
-public class EventTest {
+public class ApplicationExtensionTest {
 
   ObjectMapper objectMapper;
 
@@ -19,14 +19,14 @@ public class EventTest {
 
   @Test
   public void testOutdoorEvent() throws IOException {
-    OutdoorEvent original = new OutdoorEvent();
-    original.setDescription("Test OutdoorEvent");
+    Event original = new Event();
+    original.setDescription("Test Event");
     original.setEntryFee(12340);
     String serialized = objectMapper.writer().writeValueAsString(original);
-    Event deserialized = objectMapper.readerFor(Event.class).readValue(serialized);
-    assertEquals(OutdoorEvent.class, deserialized.getClass());
-    assertEquals(original.getDescription(), ((OutdoorEvent) deserialized).getDescription());
-    assertEquals(original.getEntryFee(), ((OutdoorEvent) deserialized).getEntryFee());
+    ApplicationExtension deserialized = objectMapper.readerFor(ApplicationExtension.class).readValue(serialized);
+    assertEquals(Event.class, deserialized.getClass());
+    assertEquals(original.getDescription(), ((Event) deserialized).getDescription());
+    assertEquals(original.getEntryFee(), ((Event) deserialized).getEntryFee());
   }
 
 }

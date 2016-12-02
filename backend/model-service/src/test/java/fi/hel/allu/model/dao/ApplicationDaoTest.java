@@ -33,7 +33,7 @@ public class ApplicationDaoTest {
     ApplicationSequenceDao applicationSequenceDaoMock = Mockito.mock(ApplicationSequenceDao.class);
     Mockito.when(applicationSequenceDaoMock.getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.TP)).thenReturn(1600001L);
     ApplicationDao applicationDao = new ApplicationDao(null, applicationSequenceDaoMock);
-    Assert.assertEquals("TP1600001", applicationDao.createApplicationId(ApplicationType.OUTDOOREVENT));
+    Assert.assertEquals("TP1600001", applicationDao.createApplicationId(ApplicationType.EVENT));
   }
 
   @Test

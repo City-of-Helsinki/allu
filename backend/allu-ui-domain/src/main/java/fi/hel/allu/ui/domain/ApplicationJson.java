@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.domain;
 
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 
@@ -24,6 +25,8 @@ public class ApplicationJson {
   private StatusType status;
   @NotNull(message = "{application.type}")
   private ApplicationType type;
+  @NotNull(message = "{application.kind}")
+  private ApplicationKind kind;
   @NotNull(message = "{application.metadata}")
   private StructureMetaJson metadata;
   @NotBlank(message = "{application.name}")
@@ -43,7 +46,7 @@ public class ApplicationJson {
   private LocationJson location;
   @NotNull(message = "{application.event}")
   @Valid
-  private EventJson event;
+  private ApplicationExtensionJson extension;
   private ZonedDateTime decisionTime;
   @Valid
   private List<AttachmentInfoJson> attachmentList;
@@ -121,7 +124,18 @@ public class ApplicationJson {
   }
 
   /**
-   * @return  Metadata related to the application.
+   * in Finnish: Hakemuksen laji
+   */
+  public ApplicationKind getKind() {
+    return kind;
+  }
+
+  public void setKind(ApplicationKind kind) {
+    this.kind = kind;
+  }
+
+  /**
+   * @return Metadata related to the application.
    */
   public StructureMetaJson getMetadata() {
     return metadata;
@@ -215,12 +229,12 @@ public class ApplicationJson {
   /**
    * in Finnish: Tapahtuma
    */
-  public EventJson getEvent() {
-    return event;
+  public ApplicationExtensionJson getExtension() {
+    return extension;
   }
 
-  public void setEvent(EventJson event) {
-    this.event = event;
+  public void setExtension(ApplicationExtensionJson event) {
+    this.extension = event;
   }
 
   /**

@@ -1,5 +1,6 @@
 package fi.hel.allu.model.dao;
 
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 
@@ -42,7 +43,8 @@ public class ApplicationSequenceDaoTest {
   @Test
   public void testAllApplicationTypes() {
     for (ApplicationType applicationType : ApplicationType.values()) {
-      ApplicationSequenceDao.APPLICATION_TYPE_PREFIX prefix = ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType);
+      ApplicationSequenceDao.APPLICATION_TYPE_PREFIX prefix
+         = ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType);
       long seqValue = applicationSequenceDao.getNextValue(prefix);
       final long testValue = 1600000;
       Assert.assertTrue("Sequence is greater than " + testValue, seqValue > testValue);

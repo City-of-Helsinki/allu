@@ -1,6 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.types.ApplicantType;
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Applicant;
@@ -9,6 +10,7 @@ import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.model.domain.ShortTermRental;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +33,9 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -325,15 +329,15 @@ public class ProjectControllerTest {
 
   private Application createApplication(Applicant applicant, ZonedDateTime startTime, ZonedDateTime endTime) {
     ShortTermRental shortTermRental = new ShortTermRental();
-    shortTermRental.setType(ApplicationType.OTHER_SHORT_TERM_RENTAL);
     shortTermRental.setDescription("desc");
 
     Application application = new Application();
     application.setApplicantId(applicant.getId());
     application.setStartTime(startTime);
     application.setEndTime(endTime);
-    application.setEvent(shortTermRental);
-    application.setType(ApplicationType.OTHER_SHORT_TERM_RENTAL);
+    application.setExtension(shortTermRental);
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
+    application.setKind(ApplicationKind.OTHER_SHORT_TERM_RENTAL);
     application.setMetadataVersion(1);
     application.setName("short term test");
     return application;

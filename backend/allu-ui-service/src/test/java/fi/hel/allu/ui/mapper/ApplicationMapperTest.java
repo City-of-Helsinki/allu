@@ -1,12 +1,13 @@
 package fi.hel.allu.ui.mapper;
 
-import fi.hel.allu.common.types.ApplicationCategory;
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
+import fi.hel.allu.ui.domain.ApplicationExtensionJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.EventJson;
 import fi.hel.allu.ui.domain.UserJson;
+
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,18 +30,19 @@ public class ApplicationMapperTest {
     userJson.setId(1);
 
     ApplicationJson applicationJson = new ApplicationJson();
-    applicationJson.setType(ApplicationType.OUTDOOREVENT);
-    applicationJson.setEvent(eventJson);
+    applicationJson.setType(ApplicationType.EVENT);
+    applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
+    applicationJson.setExtension(eventJson);
     applicationJson.setHandler(userJson);
 
     ApplicationES applicationES = applicationMapper.createApplicationESModel(applicationJson);
     List<ESFlatValue> applicationTypeData = applicationES.getApplicationTypeData();
     Map<String, ESFlatValue> valueMap = applicationTypeData.stream().collect(Collectors.toMap(ESFlatValue::getFieldName, esFlatValue -> esFlatValue));
     Assert.assertEquals(1, valueMap.size());
-    Assert.assertEquals(testValue, valueMap.get("OUTDOOREVENT-testValue").getStrValue());
+    Assert.assertEquals(testValue, valueMap.get("EVENT-testValue").getStrValue());
   }
 
-  public static class TestEventJson extends EventJson {
+  public static class TestEventJson extends ApplicationExtensionJson {
     public String testValue;
 
     public String getTestValue() {
@@ -52,7 +54,7 @@ public class ApplicationMapperTest {
     }
 
     @Override
-    public ApplicationCategory getApplicationCategory() {
+    public ApplicationType getApplicationType() {
       // TODO Auto-generated method stub
       return null;
     }

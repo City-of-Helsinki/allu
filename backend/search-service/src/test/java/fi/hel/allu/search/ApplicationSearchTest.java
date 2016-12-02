@@ -1,11 +1,14 @@
 package fi.hel.allu.search;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.search.service.ApplicationSearchService;
+
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.client.Client;
@@ -67,7 +70,7 @@ public class ApplicationSearchTest {
   @Test
   public void testInsertApplication() {
     ApplicationES applicationES = new ApplicationES();
-    applicationES.setType(new ApplicationTypeES(ApplicationType.OUTDOOREVENT));
+    applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
     applicationES.setId(1);
     applicationES.setHandler(createUser());
     applicationES.setName("Ensimmäinen testi");
@@ -251,7 +254,7 @@ public class ApplicationSearchTest {
 
   private ApplicationES createApplication(Integer id) {
     ApplicationES applicationES = new ApplicationES();
-    applicationES.setType(new ApplicationTypeES(ApplicationType.OUTDOOREVENT));
+    applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
     applicationES.setId(id);
     applicationES.setHandler(createUser());
     applicationES.setName("Mock testi");
@@ -269,10 +272,10 @@ public class ApplicationSearchTest {
     ZonedDateTime zonedDateTimeStart = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
     ZonedDateTime zonedDateTimeEnd = ZonedDateTime.parse("2016-07-06T06:23:04.000Z");
 
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "startTime", zonedDateTimeStart.toString()));
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "endTime", zonedDateTimeEnd.toString()));
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "attendees", 1000L));
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "description", "Ulkoilmatapahtuman selitettä tässä."));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "startTime", zonedDateTimeStart.toString()));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "endTime", zonedDateTimeEnd.toString()));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "attendees", 1000L));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "description", "Ulkoilmatapahtuman selitettä tässä."));
     return esFlatValues;
   }
 

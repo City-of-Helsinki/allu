@@ -7,8 +7,8 @@ import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.OutdoorEvent;
 import fi.hel.allu.model.domain.ShortTermRental;
 import fi.hel.allu.model.pricing.Pricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
@@ -76,7 +76,7 @@ public class PricingService {
    */
   @Transactional(readOnly = true)
   public void updatePrice(Application application) {
-    switch (application.getType()) {
+    switch (application.getKind()) {
     case OUTDOOREVENT:
       updateOutdoorEventPrice(application);
       break;
@@ -100,10 +100,6 @@ public class PricingService {
       } else {
         updatePricePerUnit(application, ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
       }
-      break;
-    case CARGO_CONTAINER:
-      // Price not defined
-      application.setCalculatedPrice(0);
       break;
     case CIRCUS:
       updatePricePerUnit(application, ChronoUnit.DAYS, CIRCUS_DAILY_PRICE);
@@ -138,7 +134,7 @@ public class PricingService {
     case PROMOTION_OR_SALES:
       // 0.8 x 3.0 sqm: free of charge
       // bigger: 150 EUR/year
-      ShortTermRental str = (ShortTermRental) application.getEvent();
+      ShortTermRental str = (ShortTermRental) application.getExtension();
       if (str != null && str.getLargeSalesArea() == true) {
         updatePricePerUnit(application, ChronoUnit.YEARS, PROMOTION_OR_SALES_LARGE_YEARLY);
       } else {
@@ -230,7 +226,7 @@ public class PricingService {
   }
 
   private boolean isCommercial(Application application) {
-    ShortTermRental str = (ShortTermRental) application.getEvent();
+    ShortTermRental str = (ShortTermRental) application.getExtension();
     if (str != null && str.getCommercial() != null) {
       return str.getCommercial();
     }
@@ -240,15 +236,15 @@ public class PricingService {
 
   // Calculate price for outdoor event
   private void updateOutdoorEventPrice(Application application) {
-    OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
-    if (outdoorEvent != null) {
-      int priceInCents = calculatePrice(application, outdoorEvent);
+    Event event = (Event) application.getExtension();
+    if (event != null) {
+      int priceInCents = calculatePrice(application, event);
       application.setCalculatedPrice(priceInCents);
     }
   }
 
-  // Pricing calculation for OutdoorEvent applications
-  private int calculatePrice(Application application, OutdoorEvent outdoorEvent) {
+  // Pricing calculation for Event applications
+  private int calculatePrice(Application application, Event event) {
     Integer locationId = application.getLocationId();
     if (locationId == null) {
       return 0; // No location -> no price.
@@ -257,7 +253,7 @@ public class PricingService {
     if (location.isPresent() == false) {
       throw new NoSuchEntityException("Location (ID=" + application.getLocationId() + " doesn't exist");
     }
-    OutdoorEventNature nature = outdoorEvent.getNature();
+    OutdoorEventNature nature = event.getNature();
     if (nature == null) {
       return 0; // No nature defined -> no price
     }
@@ -272,10 +268,10 @@ public class PricingService {
         .collect(Collectors.toList());
     } // TODO: pricing configuration for non-fixed locations (Zones)
 
-    int eventDays = daysBetween(outdoorEvent.getEventStartTime(), outdoorEvent.getEventEndTime());
-    int buildDays = daysBetween(application.getStartTime(), outdoorEvent.getEventStartTime());
-    buildDays += daysBetween(outdoorEvent.getEventEndTime(), application.getEndTime());
-    double structureArea = outdoorEvent.getStructureArea();
+    int eventDays = daysBetween(event.getEventStartTime(), event.getEventEndTime());
+    int buildDays = daysBetween(application.getStartTime(), event.getEventStartTime());
+    buildDays += daysBetween(event.getEventEndTime(), application.getEndTime());
+    double structureArea = event.getStructureArea();
     double area = getApplicationArea(application);
 
     Pricing pricing = new Pricing();
@@ -286,8 +282,8 @@ public class PricingService {
     }
 
     // ... apply discounts...
-    pricing.applyDiscounts(outdoorEvent.isEcoCompass(), outdoorEvent.getNoPriceReason(),
-        outdoorEvent.isHeavyStructure(), outdoorEvent.isSalesActivity());
+    pricing.applyDiscounts(event.isEcoCompass(), event.getNoPriceReason(),
+        event.isHeavyStructure(), event.isSalesActivity());
     // ... and get the final price
     return pricing.getPrice();
   }

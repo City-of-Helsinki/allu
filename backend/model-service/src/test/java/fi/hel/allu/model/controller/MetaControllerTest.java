@@ -51,21 +51,21 @@ public class MetaControllerTest {
   }
 
   @Test
-  public void testLoadOutdoorEventMeta() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/OUTDOOREVENT")).andExpect(status().isOk());
+  public void testLoadEventMeta() throws Exception {
+    ResultActions resultActions = wtc.perform(get("/meta/EVENT")).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
-    assertOutdoorEventAttributes(sMetaInResult);
+    assertEventAttributes(sMetaInResult);
   }
 
   @Test
-  public void testLoadOutdoorEventMetaWithVersion() throws Exception {
-    ResultActions resultActions = wtc.perform(get("/meta/OUTDOOREVENT/1")).andExpect(status().isOk());
+  public void testLoadEventMetaWithVersion() throws Exception {
+    ResultActions resultActions = wtc.perform(get("/meta/EVENT/1")).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
-    assertOutdoorEventAttributes(sMetaInResult);
+    assertEventAttributes(sMetaInResult);
   }
 
-  private void assertOutdoorEventAttributes(StructureMeta sMetaInResult) {
-    assertEquals("OUTDOOREVENT", sMetaInResult.getApplicationType());
+  private void assertEventAttributes(StructureMeta sMetaInResult) {
+    assertEquals("EVENT", sMetaInResult.getApplicationType());
     System.out.println(sMetaInResult);
 
     Optional<AttributeMeta> natureOpt = sMetaInResult.getAttributes().stream().filter(am -> am.getName().equals("nature")).findFirst();

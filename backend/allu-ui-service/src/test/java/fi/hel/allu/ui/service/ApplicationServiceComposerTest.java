@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
@@ -7,6 +8,7 @@ import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -83,13 +85,14 @@ public class ApplicationServiceComposerTest {
     Mockito.when(application.getHandler()).thenReturn(userId);
     Mockito.when(application.getLocationId()).thenReturn(locationId);
     Mockito.when(application.getProjectId()).thenReturn(projectId);
-    Mockito.when(application.getType()).thenReturn(ApplicationType.ART);
+    Mockito.when(application.getType()).thenReturn(ApplicationType.SHORT_TERM_RENTAL);
+    Mockito.when(application.getKind()).thenReturn(ApplicationKind.ART);
     Mockito.when(application.getMetadataVersion()).thenReturn(1);
 
     Mockito.when(projectService.findById(projectId)).thenReturn(projectJson);
     Mockito.when(applicantService.findApplicantById(applicantId)).thenReturn(applicantJson);
     Mockito.when(contactService.findContactsForApplication(applicationId)).thenReturn(contactJsons);
-    Mockito.when(metaService.findMetadataForApplication(ApplicationType.ART, 1)).thenReturn(metaJson);
+    Mockito.when(metaService.findMetadataForApplication(ApplicationType.SHORT_TERM_RENTAL, 1)).thenReturn(metaJson);
     Mockito.when(userService.findUserById(userId)).thenReturn(userJson);
     Mockito.when(locationService.findLocationById(locationId)).thenReturn(locationJson);
     ResponseEntity<AttachmentInfo[]> responseEntity = Mockito.mock(ResponseEntity.class);

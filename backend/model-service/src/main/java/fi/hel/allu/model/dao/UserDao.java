@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.QUser;
 import fi.hel.allu.QUserApplicationType;
 import fi.hel.allu.QUserRole;
@@ -12,6 +13,7 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.model.postgres.ExceptionResolver;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -143,7 +145,8 @@ public class UserDao {
     Map<Integer, List<ApplicationType>> userIdToApplicationType = userIdToTypeName.entrySet().stream().collect(
         Collectors.toMap(
             entry -> entry.getKey(),
-            entry -> entry.getValue().stream().map(typeName -> ApplicationType.valueOf(typeName)).collect(Collectors.toList())));
+            entry -> entry.getValue().stream().map(typeName -> ApplicationType.valueOf(typeName))
+                .collect(Collectors.toList())));
     return userIdToApplicationType;
   }
 
@@ -154,7 +157,7 @@ public class UserDao {
     users.forEach(user ->
       {
         List<RoleType> roles = userIdToRoleType.get(user.getId()) == null ? Collections.emptyList() : userIdToRoleType.get(user.getId());
-        List<ApplicationType> types =
+      List<ApplicationType> types =
             userIdToApplicationType.get(user.getId()) == null ? Collections.emptyList() : userIdToApplicationType.get(user.getId());
         user.setAssignedRoles(roles);
         user.setAllowedApplicationTypes(types);

@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.ui.domain.StructureMetaJson;
 import fi.hel.allu.ui.service.MetaService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

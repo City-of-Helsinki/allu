@@ -7,12 +7,13 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -123,7 +124,6 @@ public class ApplicationDao {
   @Transactional
   public Application update(int id, Application appl) {
     appl.setId(id);
-    Event event = appl.getEvent();
     long changed = queryFactory.update(application).populate(appl, DefaultMapper.WITH_NULL_BINDINGS).where(application.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
@@ -132,7 +132,8 @@ public class ApplicationDao {
   }
 
   String createApplicationId(ApplicationType applicationType) {
-    long seqValue = applicationSequenceDao.getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));
+    long seqValue = applicationSequenceDao
+        .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));
     return ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType).name() + seqValue;
   }
 }

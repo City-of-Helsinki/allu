@@ -5,11 +5,9 @@ import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.spatial.PostGISTemplates;
 import com.querydsl.sql.spring.SpringConnectionProvider;
 import com.querydsl.sql.spring.SpringExceptionTranslator;
-import fi.hel.allu.model.querydsl.StringToApplicationType;
-import fi.hel.allu.model.querydsl.StringToAttributeDataType;
-import fi.hel.allu.model.querydsl.StringToApplicantType;
-import fi.hel.allu.model.querydsl.StringToEvent;
-import fi.hel.allu.model.querydsl.StringToStatusType;
+
+import fi.hel.allu.model.querydsl.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +18,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.inject.Provider;
 import javax.sql.DataSource;
+
 import java.sql.Connection;
 
 @Configuration
@@ -45,7 +44,8 @@ public class JdbcConfiguration {
     configuration.setExceptionTranslator(new SpringExceptionTranslator());
     configuration.register(new StringToApplicantType());
     configuration.register(new StringToApplicationType());
-    configuration.register(new StringToEvent());
+    configuration.register(new StringToApplicationKind());
+    configuration.register(new StringToApplicationExtension());
     configuration.register(new StringToAttributeDataType());
     configuration.register(new StringToStatusType());
     return configuration;

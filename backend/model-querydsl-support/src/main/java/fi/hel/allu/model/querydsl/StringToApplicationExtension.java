@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.querydsl.sql.types.AbstractType;
-import fi.hel.allu.model.domain.Event;
+import fi.hel.allu.model.domain.ApplicationExtension;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -13,36 +13,36 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
 
-public class StringToEvent extends AbstractType<Event> {
+public class StringToApplicationExtension extends AbstractType<ApplicationExtension> {
 
-  public StringToEvent() {
+  public StringToApplicationExtension() {
     super(Types.VARCHAR);
   }
 
   @Override
-  public Class<Event> getReturnedClass() {
-    return Event.class;
+  public Class<ApplicationExtension> getReturnedClass() {
+    return ApplicationExtension.class;
   }
 
   @Nullable
   @Override
-  public Event getValue(ResultSet resultSet, int i) throws SQLException {
+  public ApplicationExtension getValue(ResultSet resultSet, int i) throws SQLException {
     try {
       String jsonString = resultSet.getString(i);
       ObjectMapper mapper = new ObjectMapper();
       mapper.registerModule(new JavaTimeModule());
-      return mapper.readValue(jsonString, Event.class);
+      return mapper.readValue(jsonString, ApplicationExtension.class);
     } catch (IOException ex) {
       throw new SQLException(ex);
     }
   }
 
   @Override
-  public void setValue(PreparedStatement preparedStatement, int i, Event event) throws SQLException {
+  public void setValue(PreparedStatement preparedStatement, int i, ApplicationExtension applicationExtension) throws SQLException {
     try {
       ObjectMapper mapper = new ObjectMapper();
       mapper.registerModule(new JavaTimeModule());
-      preparedStatement.setString(i, mapper.writeValueAsString(event));
+      preparedStatement.setString(i, mapper.writeValueAsString(applicationExtension));
     } catch (JsonProcessingException ex) {
       throw new SQLException(ex);
     }

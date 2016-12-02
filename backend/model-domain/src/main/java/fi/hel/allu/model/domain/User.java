@@ -29,7 +29,7 @@ public class User {
               String emailAddress,
               String title,
               boolean isActive,
-              List<ApplicationType> allowedApplicationTypes,
+      List<ApplicationType> allowedApplicationTypes,
               List<RoleType> assignedRoles) {
     this.id = id;
     this.userName = userName;

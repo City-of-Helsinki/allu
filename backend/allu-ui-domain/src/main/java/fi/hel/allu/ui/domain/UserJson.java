@@ -2,6 +2,7 @@ package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.util.ArrayList;

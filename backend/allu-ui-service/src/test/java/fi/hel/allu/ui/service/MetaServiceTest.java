@@ -2,6 +2,7 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.ui.domain.StructureMetaJson;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -27,7 +28,7 @@ public class MetaServiceTest extends MockServices {
 
   @Test
   public void testReadMetadata() {
-    StructureMetaJson structureMetaJson = metaService.findMetadataForApplication(ApplicationType.OUTDOOREVENT);
+    StructureMetaJson structureMetaJson = metaService.findMetadataForApplication(ApplicationType.EVENT);
     assertEquals(1, structureMetaJson.getVersion());
     assertEquals(1, structureMetaJson.getAttributes().size());
     assertEquals("test_attribute", structureMetaJson.getAttributes().get(0).getName());
@@ -35,7 +36,7 @@ public class MetaServiceTest extends MockServices {
 
   @Test
   public void testReadMetadataWithVersion() {
-    StructureMetaJson structureMetaJson = metaService.findMetadataForApplication(ApplicationType.OUTDOOREVENT, 1);
+    StructureMetaJson structureMetaJson = metaService.findMetadataForApplication(ApplicationType.EVENT, 1);
     assertEquals(1, structureMetaJson.getVersion());
     assertEquals(1, structureMetaJson.getAttributes().size());
     assertEquals("test_attribute", structureMetaJson.getAttributes().get(0).getName());

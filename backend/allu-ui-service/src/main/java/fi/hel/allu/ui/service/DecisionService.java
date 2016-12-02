@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
@@ -117,25 +117,25 @@ public class DecisionService {
     if (application.getLocation() != null) {
       decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocation().getArea())));
     }
-    OutdoorEventJson oe = (OutdoorEventJson) application.getEvent();
-    if (oe != null) {
-      decisionJson.setBuildStartDate(formatDateWithDelta(oe.getStructureStartTime(), 0));
-      decisionJson.setBuildEndDate(formatDateWithDelta(oe.getEventStartTime(), -1));
-      decisionJson.setTeardownStartDate(formatDateWithDelta(oe.getEventEndTime(), 1));
-      decisionJson.setTeardownEndDate(formatDateWithDelta(oe.getStructureEndTime(), 0));
+    EventJson ej = (EventJson) application.getExtension();
+    if (ej != null) {
+      decisionJson.setBuildStartDate(formatDateWithDelta(ej.getStructureStartTime(), 0));
+      decisionJson.setBuildEndDate(formatDateWithDelta(ej.getEventStartTime(), -1));
+      decisionJson.setTeardownStartDate(formatDateWithDelta(ej.getEventEndTime(), 1));
+      decisionJson.setTeardownEndDate(formatDateWithDelta(ej.getStructureEndTime(), 0));
 
-      decisionJson.setNumBuildAndTeardownDays(daysBetween(oe.getStructureStartTime(), oe.getEventStartTime())
-          + daysBetween(oe.getEventEndTime(), oe.getStructureEndTime()));
-      decisionJson.setReservationTimeExceptions(oe.getTimeExceptions());
-      decisionJson.setEventDescription(oe.getDescription());
-      decisionJson.setStructureArea(String.format("%.0f", oe.getStructureArea()));
-      decisionJson.setStructureDescription(oe.getStructureDescription());
-      decisionJson.setEventUrl(oe.getUrl());
-      decisionJson.setHasCommercialActivities(oe.isSalesActivity());
-      decisionJson.setSportsWithHeavyStructures(oe.isHeavyStructure());
-      decisionJson.setHasEkokompassi(oe.isEcoCompass());
-      decisionJson.setEventNature(eventNature(oe.getNature()));
-      decisionJson.setPriceReason(oe.getNoPriceReason());
+      decisionJson.setNumBuildAndTeardownDays(daysBetween(ej.getStructureStartTime(), ej.getEventStartTime())
+          + daysBetween(ej.getEventEndTime(), ej.getStructureEndTime()));
+      decisionJson.setReservationTimeExceptions(ej.getTimeExceptions());
+      decisionJson.setEventDescription(ej.getDescription());
+      decisionJson.setStructureArea(String.format("%.0f", ej.getStructureArea()));
+      decisionJson.setStructureDescription(ej.getStructureDescription());
+      decisionJson.setEventUrl(ej.getUrl());
+      decisionJson.setHasCommercialActivities(ej.isSalesActivity());
+      decisionJson.setSportsWithHeavyStructures(ej.isHeavyStructure());
+      decisionJson.setHasEkokompassi(ej.isEcoCompass());
+      decisionJson.setEventNature(eventNature(ej.getNature()));
+      decisionJson.setPriceReason(ej.getNoPriceReason());
     }
     UserJson handler = application.getHandler();
     if (handler != null) {
@@ -215,7 +215,7 @@ public class DecisionService {
   private String fixedLocationAddressLine(List<Integer> locationIds) {
     // Get all defined fixed outdoor event locations from locationService:
     List<FixedLocationJson> allFixedLocations = locationService.getFixedLocationList().stream()
-        .filter(fl -> fl.getApplicationType() == ApplicationType.OUTDOOREVENT).collect(Collectors.toList());
+        .filter(fl -> fl.getApplicationKind() == ApplicationKind.OUTDOOREVENT).collect(Collectors.toList());
     // Create lookup map id -> fixed location:
     Map<Integer, FixedLocationJson> flMap = allFixedLocations.stream()
         .collect(Collectors.toMap(FixedLocationJson::getId, Function.identity()));
