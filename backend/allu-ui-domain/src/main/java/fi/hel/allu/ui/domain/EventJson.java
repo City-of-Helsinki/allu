@@ -10,14 +10,14 @@ import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 public class EventJson extends ApplicationExtensionJson {
-  @NotNull(message = "{outdoorevent.nature}")
+  @NotNull(message = "{event.nature}")
   private OutdoorEventNature nature;
-  @NotBlank(message = "{outdoorevent.description}")
+  @NotBlank(message = "{event.description}")
   private String description;
   private String url;
-  @NotNull(message = "{outdoorevent.starttime}")
+  @NotNull(message = "{event.starttime}")
   private ZonedDateTime eventStartTime;
-  @NotNull(message = "{outdoorevent.endtime}")
+  @NotNull(message = "{event.endtime}")
   private ZonedDateTime eventEndTime;
   private int attendees;
   private int entryFee;

@@ -170,12 +170,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_DECISION_GET = "/applications/{id}/decision";
 
   /**
-   * Search-service path to find applications by fields
-   */
-  public static final String PATH_SEARCH_APPLICATION_FIND_BY_FIELDS = "/applications/search";
-
-
-  /**
    * PDF-service path to generate pdf
    */
   public static final String PATH_PDF_GENERATE = "/generate?stylesheet={stylesheet}";
@@ -222,6 +216,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to send application search queries.
+   */
+  public String getApplicationSearchUrl() {
+    return getSearchServiceUrl("/applications/search");
+  }
+
+  /**
    * @return url to send multiple application search index updates.
    */
   public String getApplicationsSearchUpdateUrl() {
@@ -233,6 +234,13 @@ public class ApplicationProperties {
    */
   public String getApplicationSearchCreateUrl() {
     return getSearchServiceUrl("/applications");
+  }
+
+  /**
+   * @return url to send application search queries.
+   */
+  public String getProjectSearchUrl() {
+    return getSearchServiceUrl("/projects/search");
   }
 
   /**
