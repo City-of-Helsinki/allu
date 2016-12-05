@@ -4,7 +4,7 @@
   "emailAddress":"kasittelija@helsinki.fi",
   "title":"Käsittelijä",
   "allowedApplicationTypes":[
-    "OUTDOOREVENT"
+    "EVENT"
   ],
   "assignedRoles":[
     "ROLE_VIEW",

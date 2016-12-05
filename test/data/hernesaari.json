@@ -9,9 +9,10 @@
   "handler":null,
   "customer":null,
   "status":null,
-  "type":"OUTDOOREVENT",
+  "type":"EVENT",
+  "kind":"OUTDOOREVENT",
   "metadata":{
-    "applicationType":"OUTDOOREVENT",
+    "applicationType":"EVENT",
     "version":1,
     "attributes":[
       {
@@ -430,9 +431,8 @@
       "city":null
     }
   },
-  "event":{
-    "type":"OUTDOOREVENT",
-    "applicationCategory":"EVENT",
+  "extension":{
+    "applicationType":"EVENT",
     "nature":"PUBLIC_FREE",
     "description":"Hernekeittopäivä pakolliseksi kansallisella tasolla",
     "url":"http://www.hernerokka.fi",

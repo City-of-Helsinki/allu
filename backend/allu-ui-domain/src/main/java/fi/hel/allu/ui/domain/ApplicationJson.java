@@ -44,7 +44,7 @@ public class ApplicationJson {
   private List<ContactJson> contactList;
   @Valid
   private LocationJson location;
-  @NotNull(message = "{application.event}")
+  @NotNull(message = "{application.extension}")
   @Valid
   private ApplicationExtensionJson extension;
   private ZonedDateTime decisionTime;

@@ -9,9 +9,10 @@
   "handler":null,
   "customer":null,
   "status":null,
-  "type":"BRIDGE_BANNER",
+  "type":"SHORT_TERM_RENTAL",
+  "kind":"BRIDGE_BANNER",
   "metadata":{
-    "applicationType":"BRIDGE_BANNER",
+    "applicationType":"SHORT_TERM_RENTAL",
     "version":1,
     "attributes":[
       {
@@ -140,9 +141,8 @@
       "city":null
     }
   },
-  "event":{
-    "type":"BRIDGE_BANNER",
-    "applicationCategory":"SHORT_TERM_RENTAL",
+  "extension":{
+    "applicationType":"SHORT_TERM_RENTAL",
     "description":"Porkkalan siltamainos",
     "commercial":true
   }

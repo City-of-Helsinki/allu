@@ -4,7 +4,7 @@
   "emailAddress":"paattaja@helsinki.fi",
   "title":"Päättäjä",
   "allowedApplicationTypes":[
-    "OUTDOOREVENT"
+    "EVENT"
   ],
   "assignedRoles":[
     "ROLE_VIEW",
