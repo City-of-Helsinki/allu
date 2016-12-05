@@ -16,7 +16,7 @@ export class StreetAddress {
       let nameParts = StringUtil.filterStrings(parts);
       let numberParts = StringUtil.filterNumbers(parts);
 
-      streetAddress.streetName = nameParts.length > 0 ? nameParts[0] : '';
+      streetAddress.streetName = nameParts.join(' ');
       streetAddress.streetNumber = numberParts.length > 0 ? numberParts[0] : StreetAddress.DEFAULT_STREET_NUMBER;
     }
     return streetAddress;

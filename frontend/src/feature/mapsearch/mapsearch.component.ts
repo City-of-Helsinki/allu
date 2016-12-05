@@ -9,4 +9,14 @@ import {Component} from '@angular/core';
   ]
 })
 
-export class MapSearchComponent {}
+export class MapSearchComponent {
+  sidenavOpen = false;
+
+  showAdvancedSearch() {
+    this.sidenavOpen = true;
+  }
+
+  hideAdvancedSearch() {
+    this.sidenavOpen = false;
+  }
+}

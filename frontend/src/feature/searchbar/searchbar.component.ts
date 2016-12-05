@@ -1,17 +1,19 @@
 import {Component, Input, OnInit, OnDestroy, Output, EventEmitter, AfterViewInit} from '@angular/core';
+import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
-import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
-import {StringUtil} from '../../util/string.util';
 import {SearchbarFilter} from '../../service/searchbar-filter';
 import {MapHub} from '../../service/map-hub';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
-import {UIStateHub} from '../../service/ui-state/ui-state-hub';
-import {UIState} from '../../service/ui-state/ui-state';
-import {Geocoordinates} from '../../model/common/geocoordinates';
 import {MaterializeUtil} from '../../util/materialize.util';
 import {PostalAddress} from '../../model/common/postal-address';
+
+enum BarType {
+  SIMPLE,
+  BAR,
+  ADVANCED
+};
 
 @Component({
   selector: 'searchbar',
@@ -25,24 +27,42 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() addressSearch: string;
   @Input() startDate: Date;
   @Input() endDate: Date;
-  @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
+  @Input() barType: string = BarType[BarType.BAR];
 
+  @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
+  @Output() onShowAdvanced = new EventEmitter<boolean>();
+
+  searchForm: FormGroup;
   addressSearchSubject = new Subject<Array<PostalAddress>>();
   addressSearchResults = this.addressSearchSubject.asObservable()
     .map(addresses => addresses.map(address => { return { id: address.uiStreetAddress, name: address.uiStreetAddress}; }));
+
 
   private coordinateSubscription: Subscription;
   private pickadateParams = PICKADATE_PARAMETERS;
   private notFound: boolean;
 
-  constructor(private mapHub: MapHub) {}
+  constructor(private fb: FormBuilder, private mapHub: MapHub) {
+    this.searchForm = this.fb.group({
+      address: '',
+      startDate: '',
+      endDate: ''
+    });
+  }
 
   ngOnInit(): void {
-    this.notifySearchUpdated();
+    this.searchForm.patchValue({
+      address: this.addressSearch,
+      startDate: TimeUtil.getUiDateString(this.startDate),
+      endDate: TimeUtil.getUiDateString(this.endDate)
+    });
 
     this.coordinateSubscription = this.mapHub.coordinates()
       .filter(coords => !coords.isDefined())
       .subscribe(coords => MaterializeUtil.toast('Osoitetta ei löytynyt', 4000));
+
+    this.searchForm.valueChanges.subscribe(form => this.notifySearchUpdated(form));
+    this.notifySearchUpdated(this.searchForm.value);
   }
 
   ngAfterViewInit(): void {
@@ -53,15 +73,15 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
     this.coordinateSubscription.unsubscribe();
   }
 
-  public notifySearchUpdated(): void {
-    let filter = new SearchbarFilter(this.addressSearch, this.startDate, this.endDate);
+  public notifySearchUpdated(form: {address: string, startDate: string, endDate: string}): void {
+    let filter = new SearchbarFilter(form.address, TimeUtil.getDateFromUi(form.startDate), TimeUtil.getDateFromUi(form.endDate));
     this.searchUpdated.emit(filter);
     this.mapHub.addSearchFilter(filter);
   }
 
   public searchAddress(term: {id: any, name: string}) {
     this.mapHub.addSearch(term.name);
-    this.notifySearchUpdated();
+    this.searchForm.patchValue({address: term.name});
   }
 
   public onAddressSearchChange(searchTerm: string) {
@@ -70,21 +90,7 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(addresses => this.addressSearchSubject.next(addresses));
   }
 
-  set uiStartDate(date: string) {
-    this.startDate = TimeUtil.getDateFromUi(date);
-    this.notifySearchUpdated();
-  }
-
-  get uiStartDate(): string {
-    return TimeUtil.getUiDateString(this.startDate);
-  }
-
-  set uiEndDate(date: string) {
-    this.endDate = TimeUtil.getDateFromUi(date);
-    this.notifySearchUpdated();
-  }
-
-  get uiEndDate(): string {
-    return TimeUtil.getUiDateString(this.endDate);
+  public showMore() {
+    this.onShowAdvanced.emit(true);
   }
 }
