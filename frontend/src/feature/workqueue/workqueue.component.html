@@ -16,13 +16,11 @@
   <md-tab-group (selectChange)="tabSelected($event)">
       <md-tab *ngFor="let tab of tabs">
         <template md-tab-label>{{tab}}</template>
-        <template md-tab-content>
-          <workqueue-content
-              [applications]="applications"
-              (onSortChange)="sortChanged($event)"
-              (onSelectChange)="selectionChanged($event)">
-          </workqueue-content>
-        </template>
+        <workqueue-content
+            [applications]="applications"
+            (onSortChange)="sortChanged($event)"
+            (onSelectChange)="selectionChanged($event)">
+        </workqueue-content>
       </md-tab>
   </md-tab-group>
 </div>
