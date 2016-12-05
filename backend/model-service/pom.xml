@@ -209,18 +209,23 @@
                         </typeMapping>
                         <typeMapping>
                             <table>application</table>
+                            <column>kind</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationKind</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
                             <column>status</column>
                             <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
                         </typeMapping>
                         <typeMapping>
                             <table>application</table>
-                            <column>event</column>
-                            <type>fi.hel.allu.model.querydsl.StringToEvent</type>
+                            <column>extension</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationExtension</type>
                         </typeMapping>
                         <typeMapping>
                             <table>fixed_location</table>
-                            <column>application_type</column>
-                            <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                            <column>application_kind</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationKind</type>
                         </typeMapping>
                         <typeMapping>
                             <table>attribute_meta</table>

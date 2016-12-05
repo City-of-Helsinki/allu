@@ -147,7 +147,7 @@ public class LocationService {
     fixedLocationJson.setId(fixedLocation.getId());
     fixedLocationJson.setArea(fixedLocation.getArea());
     fixedLocationJson.setSection(fixedLocation.getSection());
-    fixedLocationJson.setApplicationType(fixedLocation.getApplicationType());
+    fixedLocationJson.setApplicationKind(fixedLocation.getApplicationKind());
     fixedLocationJson.setGeometry(fixedLocation.getGeometry());
 
     return fixedLocationJson;

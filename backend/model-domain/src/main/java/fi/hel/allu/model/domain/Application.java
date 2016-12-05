@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 
@@ -23,6 +24,8 @@ public class Application {
   @NotNull
   private ApplicationType type;
   @NotNull
+  private ApplicationKind kind;
+  @NotNull
   private Integer metadataVersion;
   @NotBlank
   private String name;
@@ -31,7 +34,7 @@ public class Application {
   private ZonedDateTime endTime;
   private Integer locationId;
   @NotNull
-  private Event event;
+  private ApplicationExtension extension;
   private ZonedDateTime decisionTime;
   private Integer calculatedPrice;
   private Integer priceOverride;
@@ -121,6 +124,17 @@ public class Application {
   }
 
   /**
+   * in Finnish: Hakemuksen laji
+   */
+  public ApplicationKind getKind() {
+    return kind;
+  }
+
+  public void setKind(ApplicationKind kind) {
+    this.kind = kind;
+  }
+
+  /**
    * Returns the metadata version of the application.
    *
    * @return
@@ -195,12 +209,12 @@ public class Application {
   /**
    * in Finnish: Tapahtuman tunniste
    */
-  public Event getEvent() {
-    return event;
+  public ApplicationExtension getExtension() {
+    return extension;
   }
 
-  public void setEvent(Event event) {
-    this.event = event;
+  public void setExtension(ApplicationExtension applicationExtension) {
+    this.extension = applicationExtension;
   }
 
   /**

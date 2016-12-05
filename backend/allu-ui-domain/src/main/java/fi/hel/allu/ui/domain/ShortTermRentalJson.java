@@ -1,19 +1,19 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.common.types.ApplicationCategory;
+import fi.hel.allu.common.types.ApplicationType;
 
 /**
  * JSON DAO covering all short term rental data requirements.
  */
-public class ShortTermRentalJson extends EventJson {
+public class ShortTermRentalJson extends ApplicationExtensionJson {
 
   private String description;
   private Boolean commercial;
   private Boolean largeSalesArea;
 
   @Override
-  public ApplicationCategory getApplicationCategory() {
-    return ApplicationCategory.SHORT_TERM_RENTAL;
+  public ApplicationType getApplicationType() {
+    return ApplicationType.SHORT_TERM_RENTAL;
   }
 
   /**

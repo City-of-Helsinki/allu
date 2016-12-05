@@ -2,7 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.pricing.PricingConfiguration;
@@ -19,8 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
+import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -45,8 +45,10 @@ public class PricingDaoTest {
   @Before
   public void setUp() throws Exception {
     testCommon.deleteAllData();
-    // Insert one fixedlocation and a pricing config for it:
-    queryFactory.insert(fixedLocation).set(fixedLocation.id, TEST_ID).set(fixedLocation.area, "Turbofolkstraße").set(fixedLocation.section, "Z").set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT).set(fixedLocation.isActive, true).execute();
+    // Insert one fixed location and a pricing config for it:
+    queryFactory.insert(fixedLocation).set(fixedLocation.id, TEST_ID).set(fixedLocation.area, "Turbofolkstraße")
+        .set(fixedLocation.section, "Z").set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT)
+        .set(fixedLocation.isActive, true).execute();
     queryFactory.insert(outdoorPricing).set(outdoorPricing.fixedLocationId, TEST_ID)
         .set(outdoorPricing.nature, "PUBLIC_FREE").set(outdoorPricing.baseCharge, TEST_BASE_CHARGE)
         .set(outdoorPricing.buildDiscountPercent, 0).set(outdoorPricing.durationDiscountPercent, 0)

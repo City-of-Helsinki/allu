@@ -1,10 +1,10 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.types.ApplicationCategory;
+import fi.hel.allu.common.types.ApplicationType;
 
 import java.util.List;
 
-public class CableReport extends Event {
+public class CableReport extends ApplicationExtension {
 
   private String cableReportId;
   private String workDescription;
@@ -14,8 +14,8 @@ public class CableReport extends Event {
   private List<CableInfoEntry> infoEntries;
 
   @Override
-  public ApplicationCategory getApplicationCategory() {
-    return ApplicationCategory.CABLE_REPORT;
+  public ApplicationType getApplicationType() {
+    return ApplicationType.CABLE_REPORT;
   }
 
   /**

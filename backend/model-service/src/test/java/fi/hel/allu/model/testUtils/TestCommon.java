@@ -1,11 +1,9 @@
 package fi.hel.allu.model.testUtils;
 
-import fi.hel.allu.common.types.ApplicantType;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.OutdoorEventNature;
-import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
+
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -68,37 +66,38 @@ public class TestCommon {
    */
   public Application dummyOutdoorApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
-    app.setType(ApplicationType.OUTDOOREVENT);
+    app.setType(ApplicationType.EVENT);
+    app.setKind(ApplicationKind.OUTDOOREVENT);
     app.setApplicationId("TP1600001");
-    app.setEvent(dummyOutdoorEvent());
+    app.setExtension(dummyOutdoorEvent());
     return app;
   }
 
   public Application dummyBridgeBannerApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
-    app.setType(ApplicationType.BRIDGE_BANNER);
+    app.setType(ApplicationType.SHORT_TERM_RENTAL);
+    app.setKind(ApplicationKind.BRIDGE_BANNER);
     app.setApplicationId("VL1600001");
-    app.setEvent(dummyBridgeBannerEvent());
+    app.setExtension(dummyBridgeBannerEvent());
     return app;
   }
 
   /**
-   * Create a dummy outdoor event.
+   * Create a dummy outdoor applicationExtension.
    *
-   * @return the event
+   * @return the applicationExtension
    */
-  public Event dummyOutdoorEvent() {
-    OutdoorEvent event = new OutdoorEvent();
+  public ApplicationExtension dummyOutdoorEvent() {
+    Event event = new Event();
     event.setDescription("desc");
     event.setAttendees(10);
     event.setNature(OutdoorEventNature.PUBLIC_FREE);
     return event;
   }
 
-  public Event dummyBridgeBannerEvent() {
+  public ApplicationExtension dummyBridgeBannerEvent() {
     ShortTermRental shortTermRental = new ShortTermRental();
     shortTermRental.setDescription("desc");
-    shortTermRental.setType(ApplicationType.BRIDGE_BANNER);
     shortTermRental.setCommercial(true);
     return shortTermRental;
   }
@@ -166,7 +165,7 @@ public class TestCommon {
     User user = new User();
     user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
     user.setIsActive(true);
-    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     user.setEmailAddress("email");
     user.setRealName("realname");
     user.setTitle("title");

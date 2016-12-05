@@ -47,14 +47,15 @@ public class ApplicationMapper {
     applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
+    applicationDomain.setKind(applicationJson.getKind());
     applicationDomain.setMetadataVersion(applicationJson.getMetadata().getVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
     applicationDomain.setDecisionTime(applicationJson.getDecisionTime());
     if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null) {
       applicationDomain.setLocationId(applicationJson.getLocation().getId());
     }
-    if (applicationJson.getEvent() != null) {
-      applicationDomain.setEvent(createEventModel(applicationJson));
+    if (applicationJson.getExtension() != null) {
+      applicationDomain.setExtension(createExtensionModel(applicationJson));
     }
     applicationDomain.setCalculatedPrice(applicationJson.getCalculatedPrice());
     applicationDomain.setPriceOverride(applicationJson.getPriceOverride());
@@ -103,12 +104,13 @@ public class ApplicationMapper {
     applicationJson.setApplicationId(application.getApplicationId());
     applicationJson.setStatus(application.getStatus());
     applicationJson.setType(application.getType());
+    applicationJson.setKind(application.getKind());
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setStartTime(application.getStartTime());
     applicationJson.setEndTime(application.getEndTime());
     applicationJson.setName(application.getName());
     applicationJson.setDecisionTime(application.getDecisionTime());
-    if (application.getEvent() != null) {
+    if (application.getExtension() != null) {
       mapEventToJson(applicationJson, application);
     }
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
@@ -125,72 +127,42 @@ public class ApplicationMapper {
    */
   public void mapEventToJson(ApplicationJson applicationJson, Application application) {
     switch (applicationJson.getType()) {
-      case OUTDOOREVENT:
-        OutdoorEvent outdoorEvent = (OutdoorEvent) application.getEvent();
-        OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
-        outdoorEventJson.setType(outdoorEvent.getType());
-        outdoorEventJson.setUrl(outdoorEvent.getUrl());
-        outdoorEventJson.setNature(outdoorEvent.getNature());
-        outdoorEventJson.setEventStartTime(outdoorEvent.getEventStartTime());
-        outdoorEventJson.setEventEndTime(outdoorEvent.getEventEndTime());
-        outdoorEventJson.setAttendees(outdoorEvent.getAttendees());
-        outdoorEventJson.setDescription(outdoorEvent.getDescription());
-        outdoorEventJson.setTimeExceptions(outdoorEvent.getTimeExceptions());
-        outdoorEventJson.setEcoCompass(outdoorEvent.isEcoCompass());
-        outdoorEventJson.setStructureArea(outdoorEvent.getStructureArea());
-        outdoorEventJson.setStructureDescription(outdoorEvent.getStructureDescription());
-        outdoorEventJson.setStructureEndTime(outdoorEvent.getStructureEndTime());
-        outdoorEventJson.setStructureStartTime(outdoorEvent.getStructureStartTime());
-        outdoorEventJson.setEntryFee(outdoorEvent.getEntryFee());
-        outdoorEventJson.setFoodProviders(outdoorEvent.getFoodProviders());
-        outdoorEventJson.setMarketingProviders(outdoorEvent.getMarketingProviders());
-        outdoorEventJson.setNoPriceReason(outdoorEvent.getNoPriceReason());
-        outdoorEventJson.setSalesActivity(outdoorEvent.isSalesActivity());
-        outdoorEventJson.setHeavyStructure(outdoorEvent.isHeavyStructure());
-        outdoorEventJson.setFoodSales(outdoorEvent.isFoodSales());
-        applicationJson.setEvent(outdoorEventJson);
+    case EVENT:
+        Event event = (Event) application.getExtension();
+        EventJson eventJson = new EventJson();
+        eventJson.setUrl(event.getUrl());
+        eventJson.setNature(event.getNature());
+        eventJson.setEventStartTime(event.getEventStartTime());
+        eventJson.setEventEndTime(event.getEventEndTime());
+        eventJson.setAttendees(event.getAttendees());
+        eventJson.setDescription(event.getDescription());
+        eventJson.setTimeExceptions(event.getTimeExceptions());
+        eventJson.setEcoCompass(event.isEcoCompass());
+        eventJson.setStructureArea(event.getStructureArea());
+        eventJson.setStructureDescription(event.getStructureDescription());
+        eventJson.setStructureEndTime(event.getStructureEndTime());
+        eventJson.setStructureStartTime(event.getStructureStartTime());
+        eventJson.setEntryFee(event.getEntryFee());
+        eventJson.setFoodProviders(event.getFoodProviders());
+        eventJson.setMarketingProviders(event.getMarketingProviders());
+        eventJson.setNoPriceReason(event.getNoPriceReason());
+        eventJson.setSalesActivity(event.isSalesActivity());
+        eventJson.setHeavyStructure(event.isHeavyStructure());
+        eventJson.setFoodSales(event.isFoodSales());
+        applicationJson.setExtension(eventJson);
         break;
       // short term rentals
-      case BRIDGE_BANNER:
-      case BENJI:
-      case PROMOTION_OR_SALES:
-      case URBAN_FARMING:
-      case KESKUSKATU_SALES:
-      case SUMMER_THEATER:
-      case DOG_TRAINING_EVENT:
-      case DOG_TRAINING_FIELD:
-      case CARGO_CONTAINER:
-      case SMALL_ART_AND_CULTURE:
-      case SEASON_SALE:
-      case CIRCUS:
-      case ART:
-      case STORAGE_AREA:
-      case OTHER_SHORT_TERM_RENTAL:
-        ShortTermRental shortTermRental = (ShortTermRental) application.getEvent();
+    case SHORT_TERM_RENTAL:
+        ShortTermRental shortTermRental = (ShortTermRental) application.getExtension();
         ShortTermRentalJson shortTermRentalJson = new ShortTermRentalJson();
-        shortTermRentalJson.setType(shortTermRental.getType());
         shortTermRentalJson.setDescription(shortTermRental.getDescription());
         shortTermRentalJson.setCommercial(shortTermRental.getCommercial());
         shortTermRentalJson.setLargeSalesArea(shortTermRental.getLargeSalesArea());
-        applicationJson.setEvent(shortTermRentalJson);
+        applicationJson.setExtension(shortTermRentalJson);
         break;
       // cable reports
-      case CITY_STREET_AND_GREEN:
-      case WATER_AND_SEWAGE:
-      case HKL:
-      case ELECTRIC_CABLE:
-      case DISTRICT_HEATING:
-      case DISTRICT_COOLING:
-      case TELECOMMUNICATION:
-      case GAS:
-      case AD_PILLARS_AND_STOPS:
-      case PROPERTY_MERGER:
-      case SOIL_INVESTIGATION:
-      case JOINT_MUNICIPAL_INFRASTRUCTURE:
-      case ABSORBING_SEWAGE_SYSTEM:
-      case UNDERGROUND_CONSTRUCTION:
-      case OTHER_CABLE_REPORT:
-        CableReport cableReport = (CableReport) application.getEvent();
+    case CABLE_REPORT:
+        CableReport cableReport = (CableReport) application.getExtension();
         CableReportJson cableReportJson = new CableReportJson();
         cableReportJson.setCableReportId(cableReport.getCableReportId());
         cableReportJson.setWorkDescription(cableReport.getWorkDescription());
@@ -200,81 +172,63 @@ public class ApplicationMapper {
         List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
           .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
         cableReportJson.setInfoEntries(infoEntries);
-        applicationJson.setEvent(cableReportJson);
+        applicationJson.setExtension(cableReportJson);
+      break;
+    case AREA_RENTAL:
+      break;
+    case EXCAVATION_ANNOUNCEMENT:
+      break;
+    case NOTE:
+      break;
+    case PLACEMENT_PERMIT:
+      break;
+    case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+      break;
+    default:
       break;
     }
   }
 
   /**
-   * Create a new <code>Event</code> model-domain object from given ui-domain object based on application type.
+   * Create a new <code>ApplicationExtension</code> model-domain object from given ui-domain object based on application type.
    * @param applicationJson Information that is mapped to model-domain object
    * @return created event object
    */
-  public Event createEventModel(ApplicationJson applicationJson) {
+  public ApplicationExtension createExtensionModel(ApplicationJson applicationJson) {
     switch (applicationJson.getType()) {
-      case OUTDOOREVENT:
-        OutdoorEventJson outdoorEventJson = (OutdoorEventJson) applicationJson.getEvent();
-        OutdoorEvent outdoorEvent = new OutdoorEvent();
-        outdoorEvent.setType(applicationJson.getType());
-        outdoorEvent.setDescription(outdoorEventJson.getDescription());
-        outdoorEvent.setNature(outdoorEventJson.getNature());
-        outdoorEvent.setUrl(outdoorEventJson.getUrl());
-        outdoorEvent.setAttendees(outdoorEventJson.getAttendees());
-        outdoorEvent.setEventEndTime(outdoorEventJson.getEventEndTime());
-        outdoorEvent.setEventStartTime(outdoorEventJson.getEventStartTime());
-        outdoorEvent.setFoodSales(outdoorEventJson.isFoodSales());
-        outdoorEvent.setMarketingProviders(outdoorEventJson.getMarketingProviders());
-        outdoorEvent.setNoPriceReason(outdoorEventJson.getNoPriceReason());
-        outdoorEvent.setSalesActivity(outdoorEventJson.isSalesActivity());
-        outdoorEvent.setHeavyStructure(outdoorEventJson.isHeavyStructure());
-        outdoorEvent.setFoodProviders(outdoorEventJson.getFoodProviders());
-        outdoorEvent.setEntryFee(outdoorEventJson.getEntryFee());
-        outdoorEvent.setEcoCompass(outdoorEventJson.isEcoCompass());
-        outdoorEvent.setStructureArea(outdoorEventJson.getStructureArea());
-        outdoorEvent.setStructureEndTime(outdoorEventJson.getStructureEndTime());
-        outdoorEvent.setStructureStartTime(outdoorEventJson.getStructureStartTime());
-        outdoorEvent.setStructureDescription(outdoorEventJson.getStructureDescription());
-        outdoorEvent.setTimeExceptions(outdoorEventJson.getTimeExceptions());
-        return outdoorEvent;
+    case EVENT:
+        EventJson eventJson = (EventJson) applicationJson.getExtension();
+        Event event = new Event();
+        event.setDescription(eventJson.getDescription());
+        event.setNature(eventJson.getNature());
+        event.setUrl(eventJson.getUrl());
+        event.setAttendees(eventJson.getAttendees());
+        event.setEventEndTime(eventJson.getEventEndTime());
+        event.setEventStartTime(eventJson.getEventStartTime());
+        event.setFoodSales(eventJson.isFoodSales());
+        event.setMarketingProviders(eventJson.getMarketingProviders());
+        event.setNoPriceReason(eventJson.getNoPriceReason());
+        event.setSalesActivity(eventJson.isSalesActivity());
+        event.setHeavyStructure(eventJson.isHeavyStructure());
+        event.setFoodProviders(eventJson.getFoodProviders());
+        event.setEntryFee(eventJson.getEntryFee());
+        event.setEcoCompass(eventJson.isEcoCompass());
+        event.setStructureArea(eventJson.getStructureArea());
+        event.setStructureEndTime(eventJson.getStructureEndTime());
+        event.setStructureStartTime(eventJson.getStructureStartTime());
+        event.setStructureDescription(eventJson.getStructureDescription());
+        event.setTimeExceptions(eventJson.getTimeExceptions());
+        return event;
       // short term rentals
-      case BRIDGE_BANNER:
-      case BENJI:
-      case PROMOTION_OR_SALES:
-      case URBAN_FARMING:
-      case KESKUSKATU_SALES:
-      case SUMMER_THEATER:
-      case DOG_TRAINING_EVENT:
-      case DOG_TRAINING_FIELD:
-      case CARGO_CONTAINER:
-      case SMALL_ART_AND_CULTURE:
-      case SEASON_SALE:
-      case CIRCUS:
-      case ART:
-      case STORAGE_AREA:
-      case OTHER_SHORT_TERM_RENTAL:
-        ShortTermRentalJson shortTermRentalJson = (ShortTermRentalJson) applicationJson.getEvent();
+    case SHORT_TERM_RENTAL:
+        ShortTermRentalJson shortTermRentalJson = (ShortTermRentalJson) applicationJson.getExtension();
         ShortTermRental shortTermRental = new ShortTermRental();
-        shortTermRental.setType(shortTermRentalJson.getType());
         shortTermRental.setDescription(shortTermRentalJson.getDescription());
         shortTermRental.setCommercial(shortTermRentalJson.getCommercial());
         shortTermRental.setLargeSalesArea(shortTermRentalJson.getLargeSalesArea());
         return shortTermRental;
-      case CITY_STREET_AND_GREEN:
-      case WATER_AND_SEWAGE:
-      case HKL:
-      case ELECTRIC_CABLE:
-      case DISTRICT_HEATING:
-      case DISTRICT_COOLING:
-      case TELECOMMUNICATION:
-      case GAS:
-      case AD_PILLARS_AND_STOPS:
-      case PROPERTY_MERGER:
-      case SOIL_INVESTIGATION:
-      case JOINT_MUNICIPAL_INFRASTRUCTURE:
-      case ABSORBING_SEWAGE_SYSTEM:
-      case UNDERGROUND_CONSTRUCTION:
-      case OTHER_CABLE_REPORT:
-        CableReportJson cableReportJson = (CableReportJson) applicationJson.getEvent();
+    case CABLE_REPORT:
+        CableReportJson cableReportJson = (CableReportJson) applicationJson.getExtension();
         CableReport cableReport = new CableReport();
         cableReport.setCableReportId(cableReportJson.getCableReportId());
         cableReport.setWorkDescription(cableReportJson.getWorkDescription());
@@ -285,6 +239,18 @@ public class ApplicationMapper {
           .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
         cableReport.setInfoEntries(infoEntries);
         return cableReport;
+    case AREA_RENTAL:
+      break;
+    case EXCAVATION_ANNOUNCEMENT:
+      break;
+    case NOTE:
+      break;
+    case PLACEMENT_PERMIT:
+      break;
+    case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+      break;
+    default:
+      break;
     }
     return null;
   }
@@ -301,7 +267,7 @@ public class ApplicationMapper {
 
     String json;
     try {
-      json = objectMapper.writeValueAsString(applicationJson.getEvent());
+      json = objectMapper.writeValueAsString(applicationJson.getExtension());
     } catch (JsonProcessingException e) {
       logger.error("Unexpected error while mapping {} as JSON", applicationJson);
       throw new RuntimeException(e);

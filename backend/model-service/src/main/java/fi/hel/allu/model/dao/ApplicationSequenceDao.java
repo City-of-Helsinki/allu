@@ -35,53 +35,25 @@ public class ApplicationSequenceDao {
   public enum APPLICATION_TYPE_PREFIX {
 
     /** In Finnish: kaivuilmoitus */
-    KP(),
+    KP(ApplicationType.EXCAVATION_ANNOUNCEMENT),
     /** In Finnish: aluevuokraus */
-    AL(),
+    AL(ApplicationType.AREA_RENTAL),
     /** In Finnish: tilapäinen liikennejärjestely */
-    LJ(),
+    LJ(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS),
     /** In Finnish: johtoselvitys */
-    JS(
-        ApplicationType.CITY_STREET_AND_GREEN,
-        ApplicationType.WATER_AND_SEWAGE,
-        ApplicationType.HKL,
-        ApplicationType.ELECTRIC_CABLE,
-        ApplicationType.DISTRICT_HEATING,
-        ApplicationType.DISTRICT_COOLING,
-        ApplicationType.TELECOMMUNICATION,
-        ApplicationType.GAS,
-        ApplicationType.AD_PILLARS_AND_STOPS,
-        ApplicationType.PROPERTY_MERGER,
-        ApplicationType.SOIL_INVESTIGATION,
-        ApplicationType.JOINT_MUNICIPAL_INFRASTRUCTURE,
-        ApplicationType.ABSORBING_SEWAGE_SYSTEM,
-        ApplicationType.UNDERGROUND_CONSTRUCTION,
-        ApplicationType.OTHER_CABLE_REPORT
-    ),
+    JS(ApplicationType.CABLE_REPORT),
     /** In Finnish: sijoituslupa */
-    SL(),
+    SL(ApplicationType.PLACEMENT_PERMIT),
     /** In Finnish: tapahtumalupa */
-    TP(ApplicationType.OUTDOOREVENT),
+    TP(ApplicationType.EVENT),
     /** In Finnish: lyhytaikainen maanvuokraus */
-    VL(
-        ApplicationType.ART,
-        ApplicationType.BENJI,
-        ApplicationType.BRIDGE_BANNER,
-        ApplicationType.CARGO_CONTAINER,
-        ApplicationType.CIRCUS,
-        ApplicationType.DOG_TRAINING_EVENT,
-        ApplicationType.DOG_TRAINING_FIELD,
-        ApplicationType.KESKUSKATU_SALES,
-        ApplicationType.OTHER_SHORT_TERM_RENTAL,
-        ApplicationType.PROMOTION_OR_SALES,
-        ApplicationType.SEASON_SALE,
-        ApplicationType.SMALL_ART_AND_CULTURE,
-        ApplicationType.STORAGE_AREA,
-        ApplicationType.SUMMER_THEATER,
-        ApplicationType.URBAN_FARMING
-    ),
+    VL(ApplicationType.SHORT_TERM_RENTAL),
     /** In Finnish: muistiinpano */
-    MP();
+    MP(ApplicationType.NOTE);
+
+    // TODO: Simplify the implementation. Since there's a 1-to-1 mapping from
+    // application type to prefix, the hashmap based solution is not needed
+    // anymore
 
     private final List<ApplicationType> applicationTypes;
     private static HashMap<ApplicationType, APPLICATION_TYPE_PREFIX> typeToPrefix = new HashMap<>();
@@ -113,11 +85,12 @@ public class ApplicationSequenceDao {
   private DataSource dataSource;
 
   /**
-   * Returns the next value for given applicatio type's sequence.
+   * Returns the next value for given application type's sequence.
    *
-   * @param   prefix  Prefix to use for finding the right seqeunce value.
+   * @param prefix
+   *          Prefix to use for finding the right sequence value.
    *
-   * @return  The value of the sequence.
+   * @return The value of the sequence.
    */
   @Transactional
   public long getNextValue(APPLICATION_TYPE_PREFIX prefix) {

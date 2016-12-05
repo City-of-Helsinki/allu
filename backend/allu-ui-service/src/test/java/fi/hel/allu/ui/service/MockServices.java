@@ -61,8 +61,8 @@ public abstract class MockServices {
         .thenAnswer((Answer<Location>) invocation -> createMockLocationModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(OutdoorEvent.class)))
-        .thenAnswer((Answer<OutdoorEvent>) invocation -> createMockOutdoorEventModel());
+        Mockito.eq(Event.class)))
+        .thenAnswer((Answer<Event>) invocation -> createMockOutdoorEventModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(ApplicationES.class)))
@@ -94,15 +94,15 @@ public abstract class MockServices {
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(OutdoorEvent.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<OutdoorEvent>>) invocation -> createMockOutdoorEventResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Event.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<Event>>) invocation -> createMockOutdoorEventResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Application[].class), Mockito.any
         (String.class)))
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
             createMockApplicationListResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class), Mockito.any(ApplicationType.class)))
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class), Mockito.any(ApplicationKind.class)))
         .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
 
     Mockito.when(restTemplate.postForEntity(Mockito.any(String.class), Mockito.anyObject(),
@@ -146,28 +146,27 @@ public abstract class MockServices {
     return project;
   }
 
-  public OutdoorEventJson createOutdoorEventJson() {
-    OutdoorEventJson outdoorEventJson = new OutdoorEventJson();
-    outdoorEventJson.setDescription("Outdoor event description, Json");
-    outdoorEventJson.setType(ApplicationType.OUTDOOREVENT);
-    outdoorEventJson.setAttendees(1000);
-    outdoorEventJson.setEventStartTime(ZonedDateTime.now());
-    outdoorEventJson.setNature(OutdoorEventNature.CLOSED);
-    outdoorEventJson.setUrl("Outdoor event url, Json");
-    outdoorEventJson.setEcoCompass(true);
-    outdoorEventJson.setTimeExceptions("Mock exceptions");
-    outdoorEventJson.setFoodSales(true);
-    outdoorEventJson.setStructureArea(100);
-    outdoorEventJson.setNoPriceReason("Mock pricing");
-    outdoorEventJson.setEntryFee(1233);
-    outdoorEventJson.setFoodProviders("Mock foodProviders");
-    outdoorEventJson.setStructureDescription("Structure description");
+  public EventJson createOutdoorEventJson() {
+    EventJson eventJson = new EventJson();
+    eventJson.setDescription("Outdoor event description, Json");
+    eventJson.setAttendees(1000);
+    eventJson.setEventStartTime(ZonedDateTime.now());
+    eventJson.setNature(OutdoorEventNature.CLOSED);
+    eventJson.setUrl("Outdoor event url, Json");
+    eventJson.setEcoCompass(true);
+    eventJson.setTimeExceptions("Mock exceptions");
+    eventJson.setFoodSales(true);
+    eventJson.setStructureArea(100);
+    eventJson.setNoPriceReason("Mock pricing");
+    eventJson.setEntryFee(1233);
+    eventJson.setFoodProviders("Mock foodProviders");
+    eventJson.setStructureDescription("Structure description");
     ZoneId zoneId = ZoneId.of("Europe/Helsinki");
     ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
     ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
-    outdoorEventJson.setEventStartTime(zonedDateTime);
-    outdoorEventJson.setEventEndTime(zonedDateTime2);
-    return outdoorEventJson;
+    eventJson.setEventStartTime(zonedDateTime);
+    eventJson.setEventEndTime(zonedDateTime2);
+    return eventJson;
   }
 
   public StructureMetaJson createMockStructureMetadataJson() {
@@ -177,7 +176,7 @@ public abstract class MockServices {
     attributeMetaJson.setDataType(AttributeDataType.STRING);
     StructureMetaJson structureMetaJson = new StructureMetaJson();
     structureMetaJson.setVersion(1);
-    structureMetaJson.setApplicationType(ApplicationType.OUTDOOREVENT.toString());
+    structureMetaJson.setApplicationType(ApplicationKind.OUTDOOREVENT.toString());
     structureMetaJson.setAttributes(Collections.singletonList(attributeMetaJson));
     return structureMetaJson;
   }
@@ -196,7 +195,8 @@ public abstract class MockServices {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setId(id);
     applicationJson.setName("Tapahtuma 1, Json");
-    applicationJson.setType(ApplicationType.OUTDOOREVENT);
+    applicationJson.setType(ApplicationType.EVENT);
+    applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
     applicationJson.setMetadata(createMockStructureMetadataJson());
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setStartTime(ZonedDateTime.now());
@@ -207,7 +207,7 @@ public abstract class MockServices {
     applicationJson.setApplicant(createApplicantJson(null, null));
     applicationJson.setLocation(createLocationJson(null));
     applicationJson.setProject(createProjectJson(null));
-    applicationJson.setEvent(createOutdoorEventJson());
+    applicationJson.setExtension(createOutdoorEventJson());
     applicationJson.setMetadata(createMockStructureMetadataJson());
     return applicationJson;
   }
@@ -220,11 +220,12 @@ public abstract class MockServices {
     application.setCreationTime(ZonedDateTime.now());
     application.setDecisionTime(ZonedDateTime.now());
     application.setHandler(createMockUser().getId());
-    application.setType(ApplicationType.OUTDOOREVENT);
+    application.setType(ApplicationType.EVENT);
+    application.setKind(ApplicationKind.OUTDOOREVENT);
     application.setLocationId(102);
     application.setApplicantId(103);
     application.setStatus(StatusType.PENDING);
-    application.setEvent(createMockOutdoorEventModel());
+    application.setExtension(createMockOutdoorEventModel());
     application.setMetadataVersion(1);
     return application;
   }
@@ -268,23 +269,23 @@ public abstract class MockServices {
     return location;
   }
 
-  public OutdoorEvent createMockOutdoorEventModel() {
-    OutdoorEvent outdoorEvent = new OutdoorEvent();
-    outdoorEvent.setUrl("url, Model");
-    outdoorEvent.setNature(OutdoorEventNature.PUBLIC_NONFREE);
-    outdoorEvent.setEventStartTime(ZonedDateTime.now());
-    outdoorEvent.setAttendees(1050);
-    outdoorEvent.setDescription("Outdoor event description, Model");
-    outdoorEvent.setEventEndTime(ZonedDateTime.now());
-    outdoorEvent.setEcoCompass(true);
-    outdoorEvent.setFoodSales(true);
-    outdoorEvent.setEntryFee(1234);
+  public Event createMockOutdoorEventModel() {
+    Event event = new Event();
+    event.setUrl("url, Model");
+    event.setNature(OutdoorEventNature.PUBLIC_NONFREE);
+    event.setEventStartTime(ZonedDateTime.now());
+    event.setAttendees(1050);
+    event.setDescription("Outdoor event description, Model");
+    event.setEventEndTime(ZonedDateTime.now());
+    event.setEcoCompass(true);
+    event.setFoodSales(true);
+    event.setEntryFee(1234);
     ZoneId zoneId = ZoneId.of("Europe/Helsinki");
     ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
     ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
-    outdoorEvent.setEventStartTime(zonedDateTime);
-    outdoorEvent.setEventEndTime(zonedDateTime2);
-    return outdoorEvent;
+    event.setEventStartTime(zonedDateTime);
+    event.setEventEndTime(zonedDateTime2);
+    return event;
   }
 
   public ApplicationES createMockApplicationES() {
@@ -299,7 +300,7 @@ public abstract class MockServices {
     User user = createMockUser();
     applicationES.setHandler(new UserES(user.getUserName(), user.getRealName()));
     applicationES.setId(1);
-    applicationES.setType(new ApplicationTypeES(ApplicationType.OUTDOOREVENT));
+    applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
     applicationES.setApplicationTypeData(createApplicationTypeDataES());
     return applicationES;
   }
@@ -310,10 +311,10 @@ public abstract class MockServices {
     ZonedDateTime zonedDateTimeStart = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
     ZonedDateTime zonedDateTimeEnd = ZonedDateTime.parse("2016-07-06T06:23:04.000Z");
 
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "startTime", zonedDateTimeStart.toString()));
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "endTime", zonedDateTimeEnd.toString()));
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "attendees", 1000L));
-    esFlatValues.add(new ESFlatValue(ApplicationType.OUTDOOREVENT.name(), "description", "Ulkoilmatapahtuman selitettä tässä."));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "startTime", zonedDateTimeStart.toString()));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "endTime", zonedDateTimeEnd.toString()));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "attendees", 1000L));
+    esFlatValues.add(new ESFlatValue(ApplicationKind.OUTDOOREVENT.name(), "description", "Ulkoilmatapahtuman selitettä tässä."));
     return esFlatValues;
   }
 
@@ -333,7 +334,7 @@ public abstract class MockServices {
     return new ResponseEntity<>(createMockLocationModel(), HttpStatus.OK);
   }
 
-  public ResponseEntity<OutdoorEvent> createMockOutdoorEventResponse() {
+  public ResponseEntity<Event> createMockOutdoorEventResponse() {
     return new ResponseEntity<>(createMockOutdoorEventModel(), HttpStatus.OK);
   }
 
@@ -342,7 +343,7 @@ public abstract class MockServices {
     user.setId(1);
     user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
     user.setIsActive(true);
-    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     user.setEmailAddress("email");
     user.setRealName("realname");
     user.setTitle("title");
@@ -360,14 +361,15 @@ public abstract class MockServices {
 
     Application applicationModel = new Application();
     applicationModel.setId(1234);
-    applicationModel.setType(ApplicationType.OUTDOOREVENT);
+    applicationModel.setType(ApplicationType.EVENT);
+    applicationModel.setKind(ApplicationKind.OUTDOOREVENT);
     applicationModel.setHandler(createMockUser().getId());
     applicationModel.setStatus(StatusType.HANDLING);
     applicationModel.setProjectId(4321);
     applicationModel.setName("MockName2");
     applicationModel.setApplicantId(655);
     applicationModel.setLocationId(345);
-    applicationModel.setEvent(createMockOutdoorEventModel());
+    applicationModel.setExtension(createMockOutdoorEventModel());
     applicationModel.setMetadataVersion(1);
     applicationModelArray[1] = applicationModel;
 
@@ -392,7 +394,7 @@ public abstract class MockServices {
     AttributeMeta attributeMeta = new AttributeMeta();
     attributeMeta.setName("test_attribute");
     StructureMeta structureMeta = new StructureMeta();
-    structureMeta.setApplicationType("OutdoorEvent");
+    structureMeta.setApplicationType("Event");
     structureMeta.setVersion(1);
     structureMeta.setAttributes(Collections.singletonList(attributeMeta));
     return new ResponseEntity<>(structureMeta, HttpStatus.OK);

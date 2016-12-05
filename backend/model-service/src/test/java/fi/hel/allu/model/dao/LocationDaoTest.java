@@ -2,7 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
@@ -147,9 +147,9 @@ public class LocationDaoTest {
     final List<Integer> fixedLocationIds = Arrays.asList(9876, 3325, 2344);
     long insertCount = fixedLocationIds.stream()
         .mapToLong(flId -> queryFactory.insert(fixedLocation)
-            .columns(fixedLocation.id, fixedLocation.area, fixedLocation.section, fixedLocation.applicationType,
+            .columns(fixedLocation.id, fixedLocation.area, fixedLocation.section, fixedLocation.applicationKind,
                 fixedLocation.isActive)
-            .values(flId, "Narinkka " + flId, "lohko A", ApplicationType.OUTDOOREVENT, true).execute())
+            .values(flId, "Narinkka " + flId, "lohko A", ApplicationKind.OUTDOOREVENT, true).execute())
         .sum();
     assertEquals(fixedLocationIds.size(), insertCount);
     // Test: add location with fixedLocationId
@@ -167,10 +167,14 @@ public class LocationDaoTest {
     // Setup: add three active rows and one passive
     long insertCount =
         queryFactory.insert(fixedLocation)
-            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko A").set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
-            .set(fixedLocation.area, "Senaatintori").set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
-            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko Q").set(fixedLocation.applicationType, ApplicationType.OUTDOOREVENT).set(fixedLocation.isActive, false).addBatch()
-            .set(fixedLocation.area, "Kaivopuisto").set(fixedLocation.applicationType, ApplicationType.SEASON_SALE).set(fixedLocation.isActive, true).addBatch()
+            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko A")
+            .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
+            .set(fixedLocation.area, "Senaatintori")
+            .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
+            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko Q")
+            .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, false).addBatch()
+            .set(fixedLocation.area, "Kaivopuisto")
+            .set(fixedLocation.applicationKind, ApplicationKind.SEASON_SALE).set(fixedLocation.isActive, true).addBatch()
             .execute();
     assertEquals(4, insertCount);
     // Test: get list, should only one 2 items, and only one at Kauppatori

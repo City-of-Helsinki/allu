@@ -3,7 +3,7 @@ package fi.hel.allu.model.domain.meta;
 import java.util.List;
 
 /**
- * Collection of attribute metadata modeling a single application type like OutdoorEvent.
+ * Collection of attribute metadata modeling a single application type like Event.
  */
 public class StructureMeta {
   private int id;
@@ -25,7 +25,7 @@ public class StructureMeta {
   }
 
   /**
-   * Returns the type of the application. For example OutdoorEvent.
+   * Returns the type of the application. For example Event.
    *
    * @return  the type of the application.
    */

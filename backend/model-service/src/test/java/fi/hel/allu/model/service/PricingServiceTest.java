@@ -1,7 +1,7 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.types.ApplicantType;
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicantDao;
@@ -58,7 +58,7 @@ public class PricingServiceTest {
   @Before
   public void setUp() throws Exception {
     knownFixedLocations = locationDao.getFixedLocationList().stream()
-        .filter(fl -> fl.getApplicationType() == ApplicationType.OUTDOOREVENT)
+        .filter(fl -> fl.getApplicationKind() == ApplicationKind.OUTDOOREVENT)
         .collect(Collectors
         .toMap(fl -> makePair(fl.getArea(), fl.getSection()), Function.identity()));
   }
@@ -70,15 +70,15 @@ public class PricingServiceTest {
     // The expected price is (3 * (500 + 400) + 1 * (250 + 200)) * 0.7 EUR =
     // 2205.00 EUR
     Application application = new Application();
-    application.setType(ApplicationType.OUTDOOREVENT);
+    application.setKind(ApplicationKind.OUTDOOREVENT);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T09:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-07T09:00:00+02:00"));
-    OutdoorEvent event = new OutdoorEvent();
+    Event event = new Event();
     event.setEcoCompass(true);
     event.setNature(OutdoorEventNature.PUBLIC_FREE);
     event.setEventStartTime(application.getStartTime().plusDays(1));
     event.setEventEndTime(application.getEndTime());
-    application.setEvent(event);
+    application.setExtension(event);
     Location location = new Location();
     List<Integer> fixedLocationIds = Arrays.asList(makePair("Kansalaistori", "A"), makePair("Kansalaistori", "C"))
         .stream()
@@ -93,12 +93,12 @@ public class PricingServiceTest {
   @Test
   public void testBridgeBanderol() {
     Application application = new Application();
-    application.setType(ApplicationType.BRIDGE_BANNER);
+    application.setKind(ApplicationKind.BRIDGE_BANNER);
     ShortTermRental event = new ShortTermRental();
     event.setCommercial(false);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T23:00:00+02:00"));
-    application.setEvent(event);
+    application.setExtension(event);
     pricingService.updatePrice(application);
     // Five weeks non-commercial -> 750 EUR
     assertEquals(75000, application.getCalculatedPrice().intValue());
@@ -113,7 +113,7 @@ public class PricingServiceTest {
   @Test
   public void testCircus() {
     Application application = new Application();
-    application.setType(ApplicationType.CIRCUS);
+    application.setKind(ApplicationKind.CIRCUS);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
     pricingService.updatePrice(application);
@@ -124,20 +124,20 @@ public class PricingServiceTest {
   @Test
   public void testDogTrainingEvent() {
     Application application = new Application();
-    application.setType(ApplicationType.DOG_TRAINING_EVENT);
+    application.setKind(ApplicationKind.DOG_TRAINING_EVENT);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
     Applicant applicant = new Applicant();
     applicant.setName("Hakija");
     applicant.setType(ApplicantType.ASSOCIATION);
     application.setApplicantId(applicantDao.insert(applicant).getId());
-    // association -> 50 EUR /event
+    // association -> 50 EUR /applicationExtension
     pricingService.updatePrice(application);
     assertEquals(5000, application.getCalculatedPrice().intValue());
 
     applicant.setType(ApplicantType.COMPANY);
     application.setApplicantId(applicantDao.insert(applicant).getId());
-    // Company -> 100 EUR /event
+    // Company -> 100 EUR /applicationExtension
     pricingService.updatePrice(application);
     assertEquals(10000, application.getCalculatedPrice().intValue());
   }
@@ -145,7 +145,7 @@ public class PricingServiceTest {
   @Test
   public void testDogTrainingField() {
     Application application = new Application();
-    application.setType(ApplicationType.DOG_TRAINING_FIELD);
+    application.setKind(ApplicationKind.DOG_TRAINING_FIELD);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-10T05:59:59+02:00"));
     Applicant applicant = new Applicant();
@@ -166,7 +166,7 @@ public class PricingServiceTest {
   @Test
   public void testKeskuskatuSales() {
     Application application = new Application();
-    application.setType(ApplicationType.KESKUSKATU_SALES);
+    application.setKind(ApplicationKind.KESKUSKATU_SALES);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-22T05:59:59+02:00"));
     Location location = new Location();
@@ -180,10 +180,10 @@ public class PricingServiceTest {
   @Test
   public void testPromotionOrSales() {
     Application application = new Application();
-    application.setType(ApplicationType.PROMOTION_OR_SALES);
+    application.setKind(ApplicationKind.PROMOTION_OR_SALES);
     ShortTermRental event = new ShortTermRental();
     event.setLargeSalesArea(true);
-    application.setEvent(event);
+    application.setExtension(event);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
     // Large area, price for three years = 150 EUR * 3 = 450 EUR
@@ -198,7 +198,7 @@ public class PricingServiceTest {
   @Test
   public void testSummerTheatre() {
     Application application = new Application();
-    application.setType(ApplicationType.SUMMER_THEATER);
+    application.setKind(ApplicationKind.SUMMER_THEATER);
     application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
     // Two months -> 240 EUR
@@ -209,7 +209,7 @@ public class PricingServiceTest {
   @Test
   public void testUrbanFarming() {
     Application application = new Application();
-    application.setType(ApplicationType.URBAN_FARMING);
+    application.setKind(ApplicationKind.URBAN_FARMING);
     application.setStartTime(ZonedDateTime.parse("2017-05-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2019-09-10T23:59:59+02:00"));
     Location location = new Location();

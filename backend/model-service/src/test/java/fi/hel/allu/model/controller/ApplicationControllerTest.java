@@ -111,7 +111,7 @@ public class ApplicationControllerTest {
         .andExpect(status().isOk());
     Application appOut = wtc.parseObjectFromResult(resultActions, Application.class);
     assertEquals(StatusType.PENDING, appOut.getStatus());
-    assertNotNull(appOut.getEvent());
+    assertNotNull(appOut.getExtension());
   }
 
   @Test

@@ -13,7 +13,7 @@ create table allu.fixed_location (
     id serial primary key,
     area text not null,
     section text,
-    application_type text not null,
+    application_kind text not null,
     is_active boolean not null,
     geometry geometry(GEOMETRY, 3879),
     unique (area, section) );
@@ -103,12 +103,13 @@ create table allu.application (
     applicant_id integer references allu.applicant(id),
     status text,   -- TODO: enum
     type text not null,
+    kind text not null,
     metadata_version integer not null,
     creation_time timestamp with time zone,
     location_id integer references allu.location(id),
     start_time timestamp with time zone,
     end_time timestamp with time zone,
-    event text not null,
+    extension text not null,
     decision_time timestamp with time zone,
     calculated_price integer,
     price_override integer,

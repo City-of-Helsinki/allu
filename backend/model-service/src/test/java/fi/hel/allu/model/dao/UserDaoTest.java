@@ -74,7 +74,7 @@ public class UserDaoTest {
     Assert.assertTrue(insertedUser.getAssignedRoles().contains(RoleType.ROLE_ADMIN));
     Assert.assertTrue(insertedUser.getAssignedRoles().contains(RoleType.ROLE_VIEW));
     Assert.assertEquals(1, insertedUser.getAllowedApplicationTypes().size());
-    Assert.assertTrue(insertedUser.getAllowedApplicationTypes().contains(ApplicationType.OUTDOOREVENT));
+    Assert.assertTrue(insertedUser.getAllowedApplicationTypes().contains(ApplicationType.EVENT));
   }
 
   @Test(expected = NonUniqueException.class)
@@ -99,14 +99,14 @@ public class UserDaoTest {
     Assert.assertTrue(updatedUser.getAssignedRoles().contains(RoleType.ROLE_ADMIN));
     Assert.assertTrue(updatedUser.getAssignedRoles().contains(RoleType.ROLE_VIEW));
     Assert.assertEquals(1, updatedUser.getAllowedApplicationTypes().size());
-    Assert.assertTrue(updatedUser.getAllowedApplicationTypes().contains(ApplicationType.OUTDOOREVENT));
+    Assert.assertTrue(updatedUser.getAllowedApplicationTypes().contains(ApplicationType.EVENT));
   }
 
   private User createDummyUser(String userName) {
     User user = new User();
     user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
     user.setIsActive(true);
-    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     user.setEmailAddress("email");
     user.setRealName("realname");
     user.setTitle("title");

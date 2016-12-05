@@ -1,18 +1,18 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.types.ApplicationCategory;
+import fi.hel.allu.common.types.ApplicationType;
 
 /**
  * Model for short term rentals.
  */
-public class ShortTermRental extends Event {
+public class ShortTermRental extends ApplicationExtension {
   private String description;
   private Boolean commercial;
   private Boolean largeSalesArea;
 
   @Override
-  public ApplicationCategory getApplicationCategory() {
-    return ApplicationCategory.SHORT_TERM_RENTAL;
+  public ApplicationType getApplicationType() {
+    return ApplicationType.SHORT_TERM_RENTAL;
   }
 
   public String getDescription() {

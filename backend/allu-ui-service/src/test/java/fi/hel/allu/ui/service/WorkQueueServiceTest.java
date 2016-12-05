@@ -9,6 +9,7 @@ import fi.hel.allu.ui.domain.QueryParameterJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.domain.UserJson;
 import fi.hel.allu.ui.security.AlluUser;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +40,7 @@ public class WorkQueueServiceTest {
     Mockito.when(userService.getCurrentUser()).thenReturn(alluUser);
 
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
-    userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
     Mockito.when(applicationServiceComposer.search(Mockito.any())).thenReturn(emptyList);
   }
@@ -48,7 +49,7 @@ public class WorkQueueServiceTest {
   public void testSearchSharedByGroup() {
 
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
-    userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.OUTDOOREVENT));
+    userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
     Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
     Mockito.when(applicationServiceComposer.search(Mockito.any())).thenReturn(emptyList);
 
@@ -64,7 +65,7 @@ public class WorkQueueServiceTest {
     QueryParameterJson queryParameterJson = searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_APPLICATION_TYPE)).findFirst()
         .orElseThrow(() -> new RuntimeException("value not set"));
-    Assert.assertEquals(ApplicationType.OUTDOOREVENT.name(), queryParameterJson.getFieldMultiValue().get(0));
+    Assert.assertEquals(ApplicationType.EVENT.name(), queryParameterJson.getFieldMultiValue().get(0));
     queryParameterJson = searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_STATUS)).findFirst()
         .orElseThrow(() -> new RuntimeException("value not set"));
@@ -102,7 +103,7 @@ public class WorkQueueServiceTest {
     QueryParameterJson queryParameterJson = searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_APPLICATION_TYPE)).findFirst()
         .orElseThrow(() -> new RuntimeException("value not set"));
-    Assert.assertEquals(ApplicationType.OUTDOOREVENT.name(), queryParameterJson.getFieldMultiValue().get(0));
+    Assert.assertEquals(ApplicationType.EVENT.name(), queryParameterJson.getFieldMultiValue().get(0));
 
     queryParameterJson = searchQuery.getQueryParameters().stream().filter(
         qp -> qp.getFieldName().equals(QueryParameter.FIELD_NAME_STATUS)).findFirst()

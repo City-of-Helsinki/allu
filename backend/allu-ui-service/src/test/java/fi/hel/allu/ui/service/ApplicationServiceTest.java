@@ -110,9 +110,9 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getApplicant());
     assertEquals(103, response.getApplicant().getId().intValue());
     assertNotNull(response.getLocation().getGeometry());
-    assertNotNull(response.getEvent());
+    assertNotNull(response.getExtension());
     assertNotNull(response.getDecisionTime());
-    assertEquals(1050, ((OutdoorEventJson) response.getEvent()).getAttendees());
+    assertEquals(1050, ((EventJson) response.getExtension()).getAttendees());
   }
 
 
@@ -149,7 +149,7 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response);
     assertNotNull(response.getProjectId());
     assertNotNull(response.getApplicantId());
-    assertNotNull(response.getEvent());
+    assertNotNull(response.getExtension());
     assertEquals(100, (long) response.getProjectId());
     assertEquals(102, (long) response.getLocationId());
     assertNotNull(response.getApplicantId());
@@ -174,7 +174,7 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.get(0).getProjectId());
     assertNotNull(response.get(0).getApplicantId());
     assertNotNull(response.get(0).getLocationId());
-    assertNotNull(response.get(0).getEvent());
+    assertNotNull(response.get(0).getExtension());
     assertEquals(100, (long) response.get(0).getProjectId());
     assertEquals(102, (long) response.get(0).getLocationId());
     assertNotNull(response.get(0).getApplicantId());
