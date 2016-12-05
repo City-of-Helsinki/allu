@@ -1,7 +1,6 @@
-import {Component, OnDestroy, OnInit, Input, AfterViewInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {translations} from '../../../../util/translations';
@@ -11,7 +10,6 @@ import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {MapHub} from '../../../../service/map-hub';
 import {UrlUtil} from '../../../../util/url.util';
-import {MaterializeUtil} from '../../../../util/materialize.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {CableReportForm} from './cable-report.form';
@@ -58,14 +56,6 @@ export class CableReportComponent implements OnInit {
       });
   }
 
-  ngOnDestroy(): any {
-  }
-
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
-    this.mapHub.selectApplication(this.application);
-  }
-
   onSubmit(form: CableReportForm) {
     this.submitPending = true;
     let application = this.application;
@@ -75,7 +65,7 @@ export class CableReportComponent implements OnInit {
     application.applicant = ApplicantForm.toApplicant(form.company);
     application.contactList = form.orderer;
 
-    application.event = CableReportForm.to(form, this.route.routeConfig.path);
+    application.extension = CableReportForm.to(form, application.extension);
 
     // Implement after backend supports saving cable reports
     console.log('application', application);

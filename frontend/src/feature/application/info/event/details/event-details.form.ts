@@ -1,15 +1,13 @@
-import {OutdoorEvent} from '../../../../../model/application/outdoor-event/outdoor-event';
+import {Event} from '../../../../../model/application/event/event';
 import {TimePeriod} from '../../time-period';
-import {ApplicationCategoryType} from '../../../type/application-category';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
 import {Application} from '../../../../../model/application/application';
 
-export class OutdoorEventDetailsForm {
+export class EventDetailsForm {
   constructor(public name?: string,
               public nature?: string,
               public description?: string,
               public url?: string,
-              public type?: string,
               public eventTimes?: TimePeriod,
               public timeExceptions?: string,
               public attendees?: number,
@@ -32,13 +30,12 @@ export class OutdoorEventDetailsForm {
     this.structureTimes = structureTimes || new TimePeriod();
   }
 
-  static fromOutdoorEvent(application: Application, event: OutdoorEvent): OutdoorEventDetailsForm {
-    return new OutdoorEventDetailsForm(
+  static fromEvent(application: Application, event: Event): EventDetailsForm {
+    return new EventDetailsForm(
       application.name,
       event.nature,
       event.description,
       event.url,
-      event.type,
       new TimePeriod(event.uiStartTime, event.uiEndTime),
       event.timeExceptions,
       event.attendees,
@@ -59,13 +56,12 @@ export class OutdoorEventDetailsForm {
       application.priceOverrideReason);
   }
 
-  static toOutdoorEvent(form: OutdoorEventDetailsForm, type: ApplicationType): OutdoorEvent {
-    let event = new OutdoorEvent();
+  static toEvent(form: EventDetailsForm, type: ApplicationType): Event {
+    let event = new Event();
     event.nature = form.nature;
     event.description = form.description;
     event.url = form.url;
-    event.type = ApplicationType[type];
-    event.applicationCategory = ApplicationCategoryType[ApplicationCategoryType.EVENT];
+    event.applicationType = ApplicationType[type];
     event.uiStartTime = form.eventTimes.startTime;
     event.uiEndTime = form.eventTimes.endTime;
     event.timeExceptions = form.timeExceptions;

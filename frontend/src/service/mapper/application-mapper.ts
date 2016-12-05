@@ -8,6 +8,8 @@ import {ApplicationTypeDataMapper} from './application-type-data-mapper';
 import {StructureMetaMapper} from './structure-meta-mapper';
 import {AttachmentInfoMapper} from './attachment-info-mapper';
 import {UserMapper} from './user-mapper';
+import {TimeUtil} from '../../util/time.util';
+import {Some} from '../../util/option';
 
 export class ApplicationMapper {
 
@@ -19,21 +21,22 @@ export class ApplicationMapper {
       UserMapper.mapBackend(backendApplication.handler),
       backendApplication.status,
       backendApplication.type,
-      backendApplication.specifiers,
-      backendApplication.name,
-      ApplicationTypeDataMapper.mapBackend(backendApplication.event),
+      backendApplication.kind,
       StructureMetaMapper.mapBackend(backendApplication.metadata),
-      new Date(backendApplication.creationTime),
-      new Date(backendApplication.startTime),
-      new Date(backendApplication.endTime),
+      backendApplication.name,
+      TimeUtil.dateFromBackend(backendApplication.creationTime),
+      TimeUtil.dateFromBackend(backendApplication.startTime),
+      TimeUtil.dateFromBackend(backendApplication.endTime),
       ApplicantMapper.mapBackend(backendApplication.applicant),
       (backendApplication.contactList) ? backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact)) : undefined,
       LocationMapper.mapBackend(backendApplication.location),
+      ApplicationTypeDataMapper.mapBackend(backendApplication.extension),
+      TimeUtil.dateFromBackend(backendApplication.decisionTime),
+      (backendApplication.attachmentList) ? backendApplication.attachmentList.map(
+        (attachment) => AttachmentInfoMapper.mapBackend(attachment)) : undefined,
       backendApplication.calculatedPrice,
       backendApplication.priceOverride,
-      backendApplication.priceOverrideReason,
-      (backendApplication.attachmentList) ? backendApplication.attachmentList.map(
-            (attachment) => AttachmentInfoMapper.mapBackend(attachment)) : undefined
+      backendApplication.priceOverrideReason
     );
   }
 
@@ -45,20 +48,21 @@ export class ApplicationMapper {
       handler: UserMapper.mapFrontend(application.handler),
       status: application.status,
       type: application.type,
-      specifiers: application.specifiers,
-      name: application.name,
-      event: ApplicationTypeDataMapper.mapFrontend(application.event),
+      kind: application.kind,
       metadata: StructureMetaMapper.mapFrontend(application.metadata),
+      name: application.name,
       creationTime: (application.creationTime) ? application.creationTime.toISOString() : undefined,
       startTime: application.startTime.toISOString(),
       endTime: application.endTime.toISOString(),
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
       location: LocationMapper.mapFrontend(application.location),
+      extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
+      decisionTime: Some(application.decisionTime).map(decisionTime => decisionTime.toISOString()).orElse(undefined),
+      attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application
       calculatedPrice: application.calculatedPrice,
       priceOverride: application.priceOverride,
-      priceOverrideReason: application.priceOverrideReason,
-      attachmentList: undefined // attachmentList not mapped, because it cannot be updated in the backend through application
+      priceOverrideReason: application.priceOverrideReason
     };
   }
 

@@ -1,9 +1,9 @@
 import {ApplicantForm} from '../applicant/applicant.form';
-import {OutdoorEventDetailsForm} from './details/outdoor-event-details.form';
+import {EventDetailsForm} from './details/event-details.form';
 import {Contact} from '../../../../model/application/contact';
 
-export interface OutdoorEventForm {
+export interface EventForm {
   applicant: ApplicantForm;
-  event: OutdoorEventDetailsForm;
+  event: EventDetailsForm;
   contacts: Array<Contact>;
 }

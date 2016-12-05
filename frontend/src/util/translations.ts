@@ -18,13 +18,17 @@ export const translations = {
       FINISHED: 'Valmis',
       CANCELLED: 'Peruttu'
     },
-    category: {
-      STREET: 'Katutyö',
+    type: {
       EVENT: 'Tapahtuma',
       SHORT_TERM_RENTAL: 'Lyhytaikainen maanvuokraus',
-      CABLE_REPORT: 'Johtoselvitykset'
+      CABLE_REPORT: 'Johtoselvitykset',
+      EXCAVATION_ANNOUNCEMENT: 'Kaivuilmoitus',
+      AREA_RENTAL: 'Aluevuokraus',
+      TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Väliaikainen liikennejärjestely',
+      PLACEMENT_PERMIT: 'Sijoitusluvat',
+      NOTE: 'Muistiinpano'
     },
-    type: {
+    kind: {
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
       PROMOTION: 'Promootio',
       ELECTION: 'Vaalit',
@@ -131,7 +135,7 @@ export const translations = {
       nameMissing: 'Tapahtuman nimi puuttuu',
       nameShort: 'Tapahtuman nimi on liian lyhyt'
     },
-    outdoorEvent: {
+    event: {
       billingType: {
         CASH: 'Käteinen',
         INVOICE: 'Lasku'

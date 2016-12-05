@@ -1,20 +1,15 @@
-import {Component, OnDestroy, OnInit, Input, AfterViewInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
-import {Location} from '../../../../model/common/location';
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
-import {TimeUtil, PICKADATE_PARAMETERS} from '../../../../util/time.util';
+import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MapHub} from '../../../../service/map-hub';
-import {ApplicationStatus} from '../../../../model/application/application-status';
 import {ApplicantForm} from '../applicant/applicant.form';
-import {EnumUtil} from '../../../../util/enum.util';
-import {ApplicationType} from '../../../../model/application/type/application-type';
 import {ShortTermRentalForm} from './short-term-rental.form.ts';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {translations} from '../../../../util/translations';
@@ -64,7 +59,7 @@ export class ShortTermRentalComponent implements OnInit {
           this.isSummary = summary;
         });
 
-        let rental = <ShortTermRental>application.event || new ShortTermRental();
+        let rental = <ShortTermRental>application.extension || new ShortTermRental();
         this.rentalForm.patchValue(ShortTermRentalDetailsForm.from(application, rental));
       });
   }
@@ -91,7 +86,7 @@ export class ShortTermRentalComponent implements OnInit {
     application.uiEndTime = form.details.rentalTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
-    application.event = ShortTermRentalDetailsForm.to(form.details, this.route.routeConfig.path);
+    application.extension = ShortTermRentalDetailsForm.to(form.details);
 
     this.applicationHub.save(application).subscribe(app => {
       console.log('application saved');

@@ -1,47 +1,42 @@
-import {OutdoorEvent} from '../../model/application/outdoor-event/outdoor-event';
-import {ApplicationTypeData} from '../../model/application/type/application-type-data';
+import {Event} from '../../model/application/event/event';
+import {ApplicationExtension} from '../../model/application/type/application-extension';
 import {TimeUtil} from '../../util/time.util';
 import {ApplicationType} from '../../model/application/type/application-type';
-import {ApplicationCategory} from '../../feature/application/type/application-category';
-import {shortTermRental} from '../../feature/application/type/application-category';
 import {ShortTermRental} from '../../model/application/short-term-rental/short-term-rental';
 
 export class ApplicationTypeDataMapper {
 
-  public static mapBackend(backendEvent: any): ApplicationTypeData {
-    let type: string = backendEvent.type;
-
-    if (type === ApplicationType[ApplicationType.OUTDOOREVENT]) {
-      return new OutdoorEvent(
-        backendEvent.nature,
-        backendEvent.description,
-        backendEvent.url,
-        backendEvent.type,
-        backendEvent.applicationCategory,
-        TimeUtil.dateFromBackend(backendEvent.eventStartTime),
-        TimeUtil.dateFromBackend(backendEvent.eventEndTime),
-        backendEvent.timeExceptions,
-        backendEvent.attendees,
-        backendEvent.entryFee,
-        backendEvent.noPriceReason,
-        backendEvent.salesActivity,
-        backendEvent.heavyStructure,
-        backendEvent.ecoCompass,
-        backendEvent.foodSales,
-        backendEvent.foodProviders,
-        backendEvent.marketingProviders,
-        backendEvent.structureArea,
-        backendEvent.structureDescription,
-        TimeUtil.dateFromBackend(backendEvent.structureStartTime),
-        TimeUtil.dateFromBackend(backendEvent.structureEndTime));
-    } else if (shortTermRental.containsType(ApplicationType[type])) {
-      return new ShortTermRental(type, backendEvent.description, backendEvent.commercial);
+  public static mapBackend(backendExtension: any): ApplicationExtension {
+    if (backendExtension.applicationType === ApplicationType[ApplicationType.EVENT]) {
+      return new Event(
+        backendExtension.nature,
+        backendExtension.description,
+        backendExtension.url,
+        backendExtension.applicationType,
+        TimeUtil.dateFromBackend(backendExtension.eventStartTime),
+        TimeUtil.dateFromBackend(backendExtension.eventEndTime),
+        backendExtension.timeExceptions,
+        backendExtension.attendees,
+        backendExtension.entryFee,
+        backendExtension.noPriceReason,
+        backendExtension.salesActivity,
+        backendExtension.heavyStructure,
+        backendExtension.ecoCompass,
+        backendExtension.foodSales,
+        backendExtension.foodProviders,
+        backendExtension.marketingProviders,
+        backendExtension.structureArea,
+        backendExtension.structureDescription,
+        TimeUtil.dateFromBackend(backendExtension.structureStartTime),
+        TimeUtil.dateFromBackend(backendExtension.structureEndTime));
+    } else if (backendExtension.applicationType === ApplicationType[ApplicationType.SHORT_TERM_RENTAL]) {
+      return new ShortTermRental(backendExtension.description, backendExtension.commercial);
     } else {
       return undefined;
     }
   }
 
-  public static mapFrontend(applicationTypeData: ApplicationTypeData): any {
+  public static mapFrontend(applicationTypeData: ApplicationExtension): any {
     return applicationTypeData;
   }
 }

@@ -6,19 +6,19 @@
                 <div class="row">
                     <div class="col m12">
                         <div>
-                            <select [ngModel]="category?.categoryTypeName" [disabled]="typeChangeDisabled"
+                            <select [ngModel]="type?.typeName" [disabled]="typeChangeDisabled"
                                     materialize="material_select" (change)="typeSelection($event.target.value)">
                                 <option value="" disabled selected>Hakemuksen tyyppi</option>
-                                <option *ngFor="let category of applicationCategories"
-                                        [value]="category.categoryTypeName">{{['application.category', category.categoryTypeName] | translation}}</option>
+                                <option *ngFor="let type of applicationTypes"
+                                        [value]="type.typeName">{{['application.type', type.typeName] | translation}}</option>
                             </select>
                         </div>
                         <div>
-                            <select [ngModel]="applicationType" [disabled]="typeChangeDisabled"
-                                    materialize="material_select" [materializeSelectOptions]="typeNames"
-                                    (change)="eventSelection($event.target.value)">
+                            <select [ngModel]="applicationKind" [disabled]="typeChangeDisabled"
+                                    materialize="material_select" [materializeSelectOptions]="kindNames"
+                                    (change)="kindSelection($event.target.value)">
                                 <option value="" disabled selected>Hakemuksen laji</option>
-                                <option *ngFor="let appType of typeNames" [value]="appType">{{['application.type', appType] | translation}}</option>
+                                <option *ngFor="let kind of kindNames" [value]="kind">{{['application.kind', kind] | translation}}</option>
                             </select>
                         </div>
                         <div *ngIf="showSpecifierSelection()">

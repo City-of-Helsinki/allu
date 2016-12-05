@@ -15,7 +15,7 @@
                             <textarea id="eventDescription" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
                             <label for="eventDescription">{{ meta?.getUiName('description') }}*</label>
                             <field-error [form]="eventForm" field="description" hasError="required">
-                                {{translations.application.outdoorEvent.field.descriptionMissing}}
+                                {{translations.application.event.field.descriptionMissing}}
                             </field-error>
                         </div>
                         <div class="input-field col m12">
@@ -35,7 +35,7 @@
                                 <input *ngIf="readonly" id="eventStartTime" type="text" formControlName="startTime" readonly>
                                 <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}*</label>
                                 <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
-                                    {{translations.application.outdoorEvent.field.eventStartTimeMissing}}
+                                    {{translations.application.event.field.eventStartTimeMissing}}
                                 </field-error>
                             </div>
                             <div class="input-field col m12">
@@ -47,12 +47,12 @@
                                 <input *ngIf="readonly" id="eventEndTime" type="text" formControlName="endTime" readonly>
                                 <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}*</label>
                                 <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
-                                    {{translations.application.outdoorEvent.field.eventEndTimeMissing}}
+                                    {{translations.application.event.field.eventEndTimeMissing}}
                                 </field-error>
                             </div>
                             <div class="col m12">
                                 <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
-                                    {{translations.application.outdoorEvent.field.startBeforeEnd}}
+                                    {{translations.application.event.field.startBeforeEnd}}
                                 </field-error>
                             </div>
                         </div>
@@ -64,14 +64,14 @@
                             <input id="eventAttendees" type="number" step="1" min="0" formControlName="attendees" [readonly]="readonly">
                             <label for="eventAttendees">{{ meta?.getUiName('attendees') }}</label>
                             <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
-                                {{translations.application.outdoorEvent.field.attendeesGreaterThanOrEqual}}
+                                {{translations.application.event.field.attendeesGreaterThanOrEqual}}
                             </field-error>
                         </div>
                         <div class="input-field col m4">
                             <input id="eventEntryFee" type="number" step="any" min="0" formControlName="entryFee" [readonly]="readonly">
                             <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
                             <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
-                                {{translations.application.outdoorEvent.field.eventEntryFeeThanOrEqual}}
+                                {{translations.application.event.field.eventEntryFeeThanOrEqual}}
                             </field-error>
                         </div>
                     </div>
@@ -97,7 +97,7 @@
                             <input id="structureArea" type="number" formControlName="structureArea" step="any" min="0" [readonly]="readonly">
                             <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
                             <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
-                                {{translations.application.outdoorEvent.field.structureAreaGreaterThanOrEqual}}
+                                {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
                             </field-error>
                         </div>
                         <div class="input-field col m12">
@@ -139,7 +139,7 @@
                                 <label for="structureEndTime">{{ meta?.getUiName('structureEndTime') }}</label>
                             </div>
                             <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
-                                {{translations.application.outdoorEvent.field.startBeforeEnd}}
+                                {{translations.application.event.field.startBeforeEnd}}
                             </field-error>
                         </div>
                     </div>
@@ -158,15 +158,15 @@
                             <select *ngIf="!readonly" materialize="material_select"
                                     formControlName="nature" (change)="eventNatureChange($event.target.value)">
                                 <option value="" disabled selected>{{ meta?.getUiName('nature') }}*</option>
-                                <option *ngFor="let nature of eventNatures" [value]="nature">{{translations.application.outdoorEvent.nature[nature]}}</option>
+                                <option *ngFor="let nature of eventNatures" [value]="nature">{{translations.application.event.nature[nature]}}</option>
                             </select>
                             <field-error [form]="eventForm" field="nature" hasError="required">
-                                {{translations.application.outdoorEvent.field.natureMissing}}
+                                {{translations.application.event.field.natureMissing}}
                             </field-error>
 
                             <div *ngIf="readonly">
                                 <input id="eventNature" type="text" readonly formControlName="nature"
-                                    value="{{translations.application.outdoorEvent.nature[eventForm.value.nature]}}">
+                                    value="{{translations.application.event.nature[eventForm.value.nature]}}">
                                 <label for="eventNature">Tapahtuman luonne</label>
                             </div>
                         </div>
@@ -183,11 +183,11 @@
                                     [materializeSelectOptions]="noPriceReasons" formControlName="noPriceReason">
                                 <option value="" disabled selected>{{ meta?.getUiName('noPriceReason') }}</option>
                                 <option *ngFor="let reason of noPriceReasons"
-                                        [value]="reason">{{translations.application.outdoorEvent.noPriceReason[reason]}}</option>
+                                        [value]="reason">{{translations.application.event.noPriceReason[reason]}}</option>
                             </select>
                             <div *ngIf="readonly">
                                 <input id="noPriceReason" type="text" readonly formControlName="noPriceReason"
-                                       value="{{translations.application.outdoorEvent.noPriceReason[eventForm.value.noPriceReason]}}">
+                                       value="{{translations.application.event.noPriceReason[eventForm.value.noPriceReason]}}">
                                 <label for="noPriceReason">Peruste korvauksettomuudelle</label>
                             </div>
                         </div>
@@ -226,7 +226,7 @@
                             <input type="number" id="priceOverride" formControlName="priceOverride" [readonly]="readonly">
                             <label for="priceOverride">Käsittelijän asettama hinta</label>
                             <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
-                                {{translations.application.outdoorEvent.field.priceOverrideGreaterThanOrEqual}}
+                                {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
                             </field-error>
                         </div>
                         <div class="col m3 input-field">
