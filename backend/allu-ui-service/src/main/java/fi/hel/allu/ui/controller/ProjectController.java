@@ -5,6 +5,7 @@ import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.ProjectService;
+import fi.hel.allu.ui.service.ProjectServiceComposer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class ProjectController {
 
   @Autowired
   private ProjectService projectService;
+  @Autowired
+  private ProjectServiceComposer projectServiceComposer;
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
 
@@ -51,6 +54,19 @@ public class ProjectController {
   }
 
   /**
+   * Returns the parents of the given project.
+   *
+   * @param   id  Project whose parents should be fetched.
+   * @return  List of parents. Never <code>null</code>. The requested project itself is the first item and most grand parent project
+   *          is the last item.
+   */
+  @RequestMapping(value = "/{id}/parents", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ProjectJson>> findParents(@PathVariable int id) {
+    return new ResponseEntity<>(projectService.findProjectParents(id), HttpStatus.OK);
+  }
+
+  /**
    * Adds new project.
    *
    * @param   project Project to be inserted.
@@ -59,7 +75,7 @@ public class ProjectController {
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
   public ResponseEntity<ProjectJson> insert(@Valid @RequestBody(required = true) ProjectJson project) {
-    return new ResponseEntity<>(projectService.insert(project), HttpStatus.OK);
+    return new ResponseEntity<>(projectServiceComposer.insert(project), HttpStatus.OK);
   }
 
   /**
@@ -71,7 +87,7 @@ public class ProjectController {
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ProjectJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ProjectJson project) {
-    return new ResponseEntity<>(projectService.update(id, project), HttpStatus.OK);
+    return new ResponseEntity<>(projectServiceComposer.update(id, project), HttpStatus.OK);
   }
 
   /**
@@ -97,7 +113,7 @@ public class ProjectController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ProjectJson> updateProjectApplications(
       @PathVariable int id, @Valid @RequestBody(required = true) List<Integer> applicationIds) {
-    return new ResponseEntity<>(projectService.updateProjectApplications(id, applicationIds), HttpStatus.OK);
+    return new ResponseEntity<>(projectServiceComposer.updateProjectApplications(id, applicationIds), HttpStatus.OK);
   }
 
   /**
@@ -111,6 +127,6 @@ public class ProjectController {
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ProjectJson> updateProjectParent(
       @PathVariable int id, @Valid @RequestBody(required = true) Integer parentProject) {
-    return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject), HttpStatus.OK);
+    return new ResponseEntity<>(projectServiceComposer.updateProjectParent(id, parentProject), HttpStatus.OK);
   }
 }

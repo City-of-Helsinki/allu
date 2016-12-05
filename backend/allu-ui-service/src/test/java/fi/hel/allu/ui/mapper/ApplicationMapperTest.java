@@ -55,7 +55,6 @@ public class ApplicationMapperTest {
 
     @Override
     public ApplicationType getApplicationType() {
-      // TODO Auto-generated method stub
       return null;
     }
   }

@@ -1,19 +1,13 @@
 package fi.hel.allu.search;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.search.service.ApplicationSearchService;
-
-import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
-import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
+import fi.hel.allu.search.service.GenericSearchService;
 import org.elasticsearch.client.Client;
-import org.elasticsearch.common.xcontent.XContentBuilder;
-import org.elasticsearch.index.IndexNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,10 +18,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_NAME;
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_TYPE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -40,31 +33,14 @@ public class ApplicationSearchTest {
   @Autowired
   private Client client;
   private ApplicationSearchService applicationSearchService;
+  private GenericSearchService genericSearchService;
 
 
   @Before
   public void setUp() throws Exception {
-
-    XContentBuilder mappingBuilder = new ElasticSearchMappingConfig(null).getMappingBuilder();
-
-      try {
-        client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_INDEX_NAME)).actionGet();
-      } catch (IndexNotFoundException e) {
-        System.out.println("Index not found for deleting...");
-      }
-
-      CreateIndexRequestBuilder createIndexRequestBuilder =
-          client.admin().indices().prepareCreate(APPLICATION_INDEX_NAME);
-      createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, mappingBuilder);
-      createIndexRequestBuilder.execute().actionGet();
-
-      try {
-        client.admin().indices().prepareGetMappings(APPLICATION_INDEX_NAME).get();
-      } catch (IndexNotFoundException e) {
-        System.out.println("Warning, index was not created immediately... test may fail because of this");
-      }
-
-    applicationSearchService = new ApplicationSearchService(null, client, new ObjectMapper());
+    ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
+    genericSearchService = new GenericSearchService(elasticSearchMappingConfig, client);
+    applicationSearchService = new ApplicationSearchService(genericSearchService, client);
   }
 
   @Test
@@ -85,7 +61,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insertApplication(applicationES);
 
-    QueryParameters params = createQueryParameters("name", "testi");
+    QueryParameters params = SearchTestUtil.createQueryParameters("name", "testi");
     applicationSearchService.refreshIndex();
     List<Integer> appList = applicationSearchService.findByField(params);
     assertNotNull(appList);
@@ -162,7 +138,7 @@ public class ApplicationSearchTest {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insertApplication(applicationES);
 
-    QueryParameters params = createQueryParameters("contacts.name", "kontakti");
+    QueryParameters params = SearchTestUtil.createQueryParameters("contacts.name", "kontakti");
     applicationSearchService.refreshIndex();
     List<Integer> appList = applicationSearchService.findByField(params);
     assertNotNull(appList);
@@ -243,19 +219,20 @@ public class ApplicationSearchTest {
     final String newName = "Päivitetty testi";
     applicationES.setName(newName);
 
-    applicationSearchService.updateApplication("100", applicationES);
+    applicationSearchService.updateApplications(Collections.singletonList(applicationES));
     applicationSearchService.refreshIndex();
 
-    QueryParameters params = createQueryParameters("name", newName);
+    QueryParameters params = SearchTestUtil.createQueryParameters("name", newName);
     List<Integer> appList = applicationSearchService.findByField(params);
     assertEquals(1, appList.size());
     applicationSearchService.deleteApplication("100");
   }
 
-  private ApplicationES createApplication(Integer id) {
+  public static ApplicationES createApplication(Integer id) {
     ApplicationES applicationES = new ApplicationES();
     applicationES.setType(new ApplicationTypeES(ApplicationType.EVENT));
     applicationES.setId(id);
+    applicationES.setApplicationId("TP000001");
     applicationES.setHandler(createUser());
     applicationES.setName("Mock testi");
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
@@ -267,7 +244,7 @@ public class ApplicationSearchTest {
     return applicationES;
   }
 
-  private List<ESFlatValue> createApplicationTypeData() {
+  public static List<ESFlatValue> createApplicationTypeData() {
     List<ESFlatValue> esFlatValues = new ArrayList<>();
     ZonedDateTime zonedDateTimeStart = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
     ZonedDateTime zonedDateTimeEnd = ZonedDateTime.parse("2016-07-06T06:23:04.000Z");
@@ -279,23 +256,14 @@ public class ApplicationSearchTest {
     return esFlatValues;
   }
 
-  private List<ContactES> createContacts() {
+  public static List<ContactES> createContacts() {
     ArrayList<ContactES> contacts = new ArrayList<>();
     contacts.add(new ContactES("kontakti ihminen"));
     contacts.add(new ContactES("toinen contact"));
     return contacts;
   }
 
-  private UserES createUser() {
+  public static UserES createUser() {
     return new UserES(USERNAME, "real name");
-  }
-
-  private QueryParameters createQueryParameters(String fieldName, String queryParameter) {
-    QueryParameters params = new QueryParameters();
-    QueryParameter parameter = new QueryParameter(fieldName, queryParameter);
-    List<QueryParameter> parameterList = new ArrayList<>();
-    parameterList.add(parameter);
-    params.setQueryParameters(parameterList);
-    return params;
   }
 }

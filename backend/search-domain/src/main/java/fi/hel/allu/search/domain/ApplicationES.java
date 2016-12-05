@@ -23,7 +23,7 @@ public class ApplicationES {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private List<ESFlatValue> applicationTypeData;
-  private ProjectES project;
+  private Integer projectId;
   private ZonedDateTime decisionTime;
   List<ContactES> contacts;
   LocationES location;
@@ -109,12 +109,12 @@ public class ApplicationES {
     this.applicationTypeData = applicationTypeData;
   }
 
-  public ProjectES getProject() {
-    return project;
+  public Integer getProjectId() {
+    return projectId;
   }
 
-  public void setProject(ProjectES project) {
-    this.project = project;
+  public void setProjectId(Integer projectId) {
+    this.projectId = projectId;
   }
 
   public ZonedDateTime getDecisionTime() {

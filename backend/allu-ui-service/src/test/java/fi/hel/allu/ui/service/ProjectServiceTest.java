@@ -1,10 +1,10 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.mapper.ProjectMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
 import javax.validation.ConstraintViolation;
@@ -13,11 +13,11 @@ import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class ProjectServiceTest extends MockServices {
   private static Validator validator;
-  @InjectMocks
   protected ProjectService projectService;
 
   @BeforeClass
@@ -31,6 +31,8 @@ public class ProjectServiceTest extends MockServices {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
+    ProjectMapper projectMapper = new ProjectMapper();
+    projectService = new ProjectService(props, restTemplate, projectMapper);
   }
 
   @Test

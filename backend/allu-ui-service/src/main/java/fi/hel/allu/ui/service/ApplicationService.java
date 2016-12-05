@@ -66,8 +66,8 @@ public class ApplicationService {
    * @return  List of applications or empty application list
    */
   public List<Application> findApplicationsById(List<Integer> applicationIds) {
-    ResponseEntity<Application[]> applicationResult = restTemplate.postForEntity(applicationProperties
-        .getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATIONS_FIND_BY_ID), applicationIds, Application[].class);
+    ResponseEntity<Application[]> applicationResult =
+        restTemplate.postForEntity(applicationProperties.getApplicationsByIdUrl(), applicationIds, Application[].class);
     return Arrays.asList(applicationResult.getBody());
   }
 

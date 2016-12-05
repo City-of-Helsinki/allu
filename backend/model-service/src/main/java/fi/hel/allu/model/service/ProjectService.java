@@ -47,6 +47,26 @@ public class ProjectService {
   }
 
   /**
+   * Resolve parent and grandparents of the given project.
+   *
+   * @param   projectId   Project id whose parents should be resolved.
+   * @return  List of projects, which has the given project as first item and most grandparent project as last item.
+   */
+  @Transactional(readOnly = true)
+  public List<Project> findProjectParents(Integer projectId) {
+    ArrayList<Project> resolvedProjects = new ArrayList<>();
+    Project currentProject = projectDao.findById(projectId)
+        .orElseThrow(() -> new NoSuchEntityException("Project not found", projectId.toString())); // should never happen
+    resolvedProjects.add(currentProject);
+    if (currentProject.getParentId() == null) {
+      return resolvedProjects;
+    } else {
+      resolvedProjects.addAll(findProjectParents(currentProject.getParentId()));
+      return resolvedProjects;
+    }
+  }
+
+  /**
    * Insert given project to database.
    *
    * @param   project Project to be inserted.
@@ -100,21 +120,25 @@ public class ProjectService {
    */
   @Transactional
   public Project updateProjectApplications(int id, List<Integer> applicationIds) {
+    // find out project ids of applications that will be added to given project
+    List<Application> updatedApplications = applicationDao.findByIds(applicationIds);
+    List<Integer> existingRelatedProjects = updatedApplications.stream()
+        .map(Application::getProjectId).filter(projectId -> projectId != null && projectId != id).distinct().collect(Collectors.toList());
+    // find out applications that are linked to the given project, but not included in the currently changed applications
     List<Application> existingRelatedApplications = applicationDao.findByProject(id);
     List<Integer> relatedApplicationsNotUpdated = existingRelatedApplications.stream().map(a -> a.getId())
         .filter(relatedId -> !applicationIds.contains(relatedId)).collect(Collectors.toList());
     if (!relatedApplicationsNotUpdated.isEmpty()) {
+      // update applications that are linked to given project, but not included in the currently
+      // changed applications, to have null project reference
       applicationDao.updateProject(null, relatedApplicationsNotUpdated);
     }
     applicationDao.updateProject(id, applicationIds);
 
     // update projects according to the changes
-    List<Integer> changedProjects = existingRelatedApplications.stream()
-        .filter(a -> a.getProjectId() != null)
-        .map(a -> a.getProjectId())
-        .distinct()
-        .collect(Collectors.toList());
+    List<Integer> changedProjects = new ArrayList<>();
     changedProjects.add(id);
+    changedProjects.addAll(existingRelatedProjects);
     updateProjectInformation(changedProjects);
     return projectDao.findById(id).get();
   }
@@ -133,7 +157,7 @@ public class ProjectService {
     ArrayList<Integer> changedProjects = new ArrayList<>();
     if (parentProject != null) {
       // make sure there's no circular references
-      List<Integer> newParents = resolveParents(parentProject);
+      List<Integer> newParents = resolveParentIds(parentProject);
       if (newParents.contains(currentProject.getId())) {
         throw new IllegalArgumentException("Attempted to create a circular reference for project id " + currentProject.getId());
       }
@@ -166,7 +190,7 @@ public class ProjectService {
         // the root of this project has been discovered previously
         continue;
       }
-      List<Integer> parents = resolveParents(projectId);
+      List<Integer> parents = resolveParentIds(projectId);
       rootParentIds.add(parents.get(parents.size() - 1));
       resolvedProjectIds.addAll(parents);
     }
@@ -180,22 +204,14 @@ public class ProjectService {
   }
 
   /**
-   * Resolve parent and grandparents of the given project.
+   * Resolve parent and grandparent ids of the given project.
    *
    * @param   projectId   Project id whose parents should be resolved.
-   * @return  List of project ids, which has the given project as first item and most grandparents project as last item.
+   * @return  List of project ids, which has the given project as first item and most grandparent project as last item.
    */
-  private List<Integer> resolveParents(Integer projectId) {
-    ArrayList<Integer> resolvedProjects = new ArrayList<>();
-    Project currentProject = projectDao.findById(projectId)
-        .orElseThrow(() -> new NoSuchEntityException("Project not found", projectId.toString())); // should never happen
-    resolvedProjects.add(currentProject.getId());
-    if (currentProject.getParentId() == null) {
-      return resolvedProjects;
-    } else {
-      resolvedProjects.addAll(resolveParents(currentProject.getParentId()));
-      return resolvedProjects;
-    }
+  private List<Integer> resolveParentIds(Integer projectId) {
+    List<Project> resolvedProjects = findProjectParents(projectId);
+    return resolvedProjects.stream().map(Project::getId).collect(Collectors.toList());
   }
 
   /**

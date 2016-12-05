@@ -24,10 +24,9 @@ public class ApplicationController {
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Void> update(@PathVariable String id,
-      @RequestBody(required = true) ApplicationES applicationES) {
-    applicationSearchService.updateApplication(id, applicationES);
+  @RequestMapping(value = "/update", method = RequestMethod.PUT)
+  public ResponseEntity<Void> update(@RequestBody(required = true) List<ApplicationES> applicationESs) {
+    applicationSearchService.updateApplications(applicationESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

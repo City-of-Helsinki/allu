@@ -175,24 +175,37 @@ public class ProjectControllerTest {
     ZonedDateTime endTime = ZonedDateTime.parse("2016-11-20T08:00:00+02:00[Europe/Helsinki]");
     Application newApplication = createApplication(applicant, startTime, endTime);
     Application addedApplication = addApplicationToDatabase(newApplication);
-    Project project = createDummyProject();
-    project = addProjectGetResult(project);
+    Project project1 = createDummyProject();
+    project1 = addProjectGetResult(project1);
+    Project project2 = createDummyProject();
+    project2 = addProjectGetResult(project2);
     // add application to the project
     ResultActions resultActions = wtc.perform(
-        put("/projects/" + project.getId() + "/applications"),
+        put("/projects/" + project1.getId() + "/applications"),
         Collections.singletonList(addedApplication.getId())).andExpect(status().isOk());
-    Project updatedProject = wtc.parseObjectFromResult(resultActions, Project.class);
-    assertEquals(startTime, updatedProject.getStartTime().withZoneSameInstant(zoneId));
-    assertEquals(endTime, updatedProject.getEndTime().withZoneSameInstant(zoneId));
-    // remove application from the project
+    Project updatedProject1 = wtc.parseObjectFromResult(resultActions, Project.class);
+    assertEquals(startTime, updatedProject1.getStartTime().withZoneSameInstant(zoneId));
+    assertEquals(endTime, updatedProject1.getEndTime().withZoneSameInstant(zoneId));
+    // add application to another project
     resultActions = wtc.perform(
-        put("/projects/" + project.getId() + "/applications"),
+        put("/projects/" + project2.getId() + "/applications"),
+        Collections.singletonList(addedApplication.getId())).andExpect(status().isOk());
+    Project updatedProject2 = wtc.parseObjectFromResult(resultActions, Project.class);
+    assertEquals(startTime, updatedProject2.getStartTime().withZoneSameInstant(zoneId));
+    assertEquals(endTime, updatedProject2.getEndTime().withZoneSameInstant(zoneId));
+    // remove application from the other project
+    resultActions = wtc.perform(
+        put("/projects/" + project2.getId() + "/applications"),
         Collections.emptyList()).andExpect(status().isOk());
-    updatedProject = wtc.parseObjectFromResult(resultActions, Project.class);
+    updatedProject2 = wtc.parseObjectFromResult(resultActions, Project.class);
     Application applicationIdDb = getApplication(addedApplication.getId());
+    updatedProject1 = getProject(updatedProject1.getId());
     assertNull(applicationIdDb.getProjectId());
-    assertEquals(null, updatedProject.getStartTime());
-    assertEquals(null, updatedProject.getEndTime());
+    // since none of the projects have applications, they should have null as start and end times
+    assertEquals(null, updatedProject1.getStartTime());
+    assertEquals(null, updatedProject1.getEndTime());
+    assertEquals(null, updatedProject2.getStartTime());
+    assertEquals(null, updatedProject2.getEndTime());
   }
 
   @Test

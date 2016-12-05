@@ -20,6 +20,7 @@ public class ElasticSearchMappingConfig {
 
   public static final String APPLICATION_INDEX_NAME = "allu";
   public static final String APPLICATION_TYPE_NAME = "application";
+  public static final String PROJECT_TYPE_NAME = "project";
 
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
   private Client client;
@@ -33,13 +34,15 @@ public class ElasticSearchMappingConfig {
     try {
       CreateIndexRequestBuilder createIndexRequestBuilder =
           client.admin().indices().prepareCreate(APPLICATION_INDEX_NAME);
-      createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilder());
+      createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
+      createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
       createIndexRequestBuilder.execute().actionGet();
     } catch (IndexAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + APPLICATION_INDEX_NAME  + " not created, because it exists already.");
     }
   }
-  public XContentBuilder getMappingBuilder() {
+
+  public XContentBuilder getMappingBuilderForApplication() {
     try {
       XContentBuilder mappingBuilder = null;
       mappingBuilder = XContentFactory.jsonBuilder()
@@ -61,5 +64,10 @@ public class ElasticSearchMappingConfig {
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
     }
+  }
+
+  public XContentBuilder getMappingBuilderForProject() {
+    // as long applications have "close enough" mapping, projects can use the same mapping
+    return getMappingBuilderForApplication();
   }
 }

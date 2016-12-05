@@ -2,15 +2,16 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.LocationQueryJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -37,6 +38,7 @@ public class ApplicationServiceComposer {
   private UserService userService;
   private LocationService locationService;
   private SearchService searchService;
+  private ApplicationJsonService applicationJsonService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -50,7 +52,8 @@ public class ApplicationServiceComposer {
       MetaService metaService,
       UserService userService,
       LocationService locationService,
-      SearchService searchService) {
+      SearchService searchService,
+      ApplicationJsonService applicationJsonService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
@@ -62,6 +65,7 @@ public class ApplicationServiceComposer {
     this.userService = userService;
     this.locationService = locationService;
     this.searchService = searchService;
+    this.applicationJsonService = applicationJsonService;
   }
 
   /**
@@ -71,7 +75,7 @@ public class ApplicationServiceComposer {
    * @return Application details or empty application list in DTO
    */
   public ApplicationJson findApplicationById(int applicationId) {
-    return getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
+    return applicationJsonService.getFullyPopulatedApplication(applicationService.findApplicationById(applicationId));
   }
 
   /**
@@ -82,7 +86,7 @@ public class ApplicationServiceComposer {
    */
   public List<ApplicationJson> findApplicationByLocation(LocationQueryJson query) {
     return applicationService.findApplicationByLocation(query)
-        .stream().map(a -> getFullyPopulatedApplication(a)).collect(Collectors.toList());
+        .stream().map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
   }
 
   /**
@@ -93,7 +97,7 @@ public class ApplicationServiceComposer {
    */
   public ApplicationJson createApplication(ApplicationJson applicationJson) {
     ApplicationJson createdApplication = applicationService.createApplication(applicationJson);
-    searchService.insertApplicationToES(createdApplication);
+    searchService.insertApplication(createdApplication);
     return createdApplication;
   }
 
@@ -109,9 +113,9 @@ public class ApplicationServiceComposer {
     if (updatedApplication.getProject() != null) {
       List<ProjectJson> updatedProjects =
           projectService.updateProjectInformation(Collections.singletonList(updatedApplication.getProject().getId()));
-      // TODO: update related projects in ElasticSearch
+      searchService.updateProjects(updatedProjects);
     }
-    searchService.updateApplication(updatedApplication);
+    searchService.updateApplications(Collections.singletonList(updatedApplication));
     return updatedApplication;
   }
 
@@ -125,7 +129,7 @@ public class ApplicationServiceComposer {
     applicationService.updateApplicationHandler(updatedHandler, applicationIds);
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
-    applicationJsons.forEach(a -> searchService.updateApplication(a));
+    searchService.updateApplications(applicationJsons);
   }
 
   /**
@@ -137,7 +141,7 @@ public class ApplicationServiceComposer {
     applicationService.removeApplicationHandler(applicationIds);
     // read updated applications to be able to update ElasticSearch
     List<ApplicationJson> applicationJsons = getFullyPopulatedApplications(applicationIds);
-    applicationJsons.forEach(a -> searchService.updateApplication(a));
+    searchService.updateApplications(applicationJsons);
   }
 
   /**
@@ -149,7 +153,7 @@ public class ApplicationServiceComposer {
   public List<ApplicationJson> search(QueryParametersJson queryParameters) {
     List<ApplicationJson> resultList = Collections.emptyList();
     if (!queryParameters.getQueryParameters().isEmpty()) {
-      List<Integer> ids = searchService.search(QueryParameterMapper.mapToQueryParameters(queryParameters));
+      List<Integer> ids = searchService.searchApplication(QueryParameterMapper.mapToQueryParameters(queryParameters));
       resultList = getFullyPopulatedApplications(ids);
       orderByIdList(ids, resultList);
     }
@@ -159,36 +163,12 @@ public class ApplicationServiceComposer {
   public ApplicationJson changeStatus(int applicationId, StatusType newStatus) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     Application application = applicationService.findApplicationById(applicationId);
-    ApplicationJson applicationJson = getFullyPopulatedApplication(application);
+    ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     logger.debug("found application {}, current status {}, handler {}",
         applicationJson.getId(), applicationJson.getStatus(), applicationJson.getHandler());
     applicationJson.setStatus(newStatus);
+    // TODO: add person who made the decision to somewhere
     return updateApplication(applicationId, applicationJson);
-  }
-
-
-  /**
-   * Returns fully populated application json i.e. having all related data structures like applicant and project populated.
-   *
-   * @param   applicationModel  Application to be mapped to fully populated application json.
-   * @return  fully populated application json.
-   */
-  public ApplicationJson getFullyPopulatedApplication(Application applicationModel) {
-    ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
-
-    if (applicationModel.getProjectId() != null) {
-      applicationJson.setProject(projectService.findById(applicationModel.getProjectId()));
-    }
-    applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
-    applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));
-    applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType(), applicationModel.getMetadataVersion()));
-    applicationJson.setHandler(applicationModel.getHandler() != null ? userService.findUserById(applicationModel.getHandler()) : null);
-
-    if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
-      applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
-    }
-    applicationJson.setAttachmentList(findAttachmentsForApplication(applicationModel.getId()));
-    return applicationJson;
   }
 
   /**
@@ -198,26 +178,13 @@ public class ApplicationServiceComposer {
    * @return  Applications of the given project. Never <code>null</code>.
    */
   public List<ApplicationJson> findApplicationsByProject(int id) {
-    return projectService.findApplicationsByProject(id).stream().map(a -> getFullyPopulatedApplication(a)).collect(Collectors.toList());
+    return projectService.findApplicationsByProject(id).stream()
+        .map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
   }
 
   private List<ApplicationJson> getFullyPopulatedApplications(List<Integer> ids) {
     List<Application> foundApplications = applicationService.findApplicationsById(ids);
-    return foundApplications.stream().map(a -> getFullyPopulatedApplication(a)).collect(Collectors.toList());
-  }
-
-  private List<AttachmentInfoJson> findAttachmentsForApplication(Integer applicationId) {
-    List<AttachmentInfoJson> resultList = new ArrayList<>();
-    ResponseEntity<AttachmentInfo[]> attachmentResult = restTemplate.getForEntity(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION),
-        AttachmentInfo[].class,
-        applicationId);
-    for (AttachmentInfo attachmentInfo : attachmentResult.getBody()) {
-      AttachmentInfoJson attachmentInfoJson = new AttachmentInfoJson();
-      applicationMapper.mapAttachmentInfoToJson(attachmentInfoJson, attachmentInfo);
-      resultList.add(attachmentInfoJson);
-    }
-    return resultList;
+    return foundApplications.stream().map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
   }
 
   /**

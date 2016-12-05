@@ -3,7 +3,7 @@ package fi.hel.allu.search.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import fi.hel.allu.common.exception.SearchException;
-import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.search.domain.QueryParameters;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,16 +12,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_NAME;
-import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_TYPE_NAME;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.PROJECT_TYPE_NAME;
 
+/**
+ * Support for project indexing and searching.
+ */
 @Service
-public class ApplicationSearchService {
+public class ProjectSearchService {
   private Client client;
   private ObjectMapper objectMapper;
   private GenericSearchService genericSearchService;
 
   @Autowired
-  public ApplicationSearchService(
+  public ProjectSearchService(
       GenericSearchService genericSearchService,
       Client client) {
     this.genericSearchService = genericSearchService;
@@ -29,25 +32,34 @@ public class ApplicationSearchService {
     this.objectMapper = genericSearchService.getObjectMapper();
   }
 
-  public void insertApplication(ApplicationES applicationES) {
+  public void insertProject(ProjectES projectES) {
     try {
-      byte[] json = objectMapper.writeValueAsBytes(applicationES);
-      genericSearchService.insert(APPLICATION_TYPE_NAME, applicationES.getId().toString(), json);
+      byte[] json = objectMapper.writeValueAsBytes(projectES);
+      genericSearchService.insert(PROJECT_TYPE_NAME, projectES.getId().toString(), json);
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
     }
   }
 
-  public void updateApplications(List<ApplicationES> applicationESs) {
-    applicationESs.forEach(a -> updateApplication(a));
+  public void updateProject(ProjectES projectES) {
+    try {
+      byte[] json = objectMapper.writeValueAsBytes(projectES);
+      genericSearchService.update(PROJECT_TYPE_NAME, projectES.getId().toString(), json);
+    } catch (JsonProcessingException e) {
+      throw new SearchException(e);
+    }
   }
 
-  public void deleteApplication(String id) {
-    genericSearchService.delete(APPLICATION_TYPE_NAME, id);
+  public void updateProjects(List<ProjectES> projectESs) {
+    projectESs.forEach(p -> updateProject(p));
+  }
+
+  public void deleteProject(String id) {
+    genericSearchService.delete(PROJECT_TYPE_NAME, id);
   }
 
   public List<Integer> findByField(QueryParameters queryParameters) {
-    return genericSearchService.findByField(APPLICATION_TYPE_NAME, queryParameters);
+    return genericSearchService.findByField(PROJECT_TYPE_NAME, queryParameters);
   }
 
   public void deleteIndex() {
@@ -59,14 +71,5 @@ public class ApplicationSearchService {
    */
   public void refreshIndex() {
     client.admin().indices().prepareRefresh(APPLICATION_INDEX_NAME).execute().actionGet();
-  }
-
-  private void updateApplication(ApplicationES applicationES) {
-    try {
-      byte[] json = objectMapper.writeValueAsBytes(applicationES);
-      genericSearchService.update(APPLICATION_TYPE_NAME, applicationES.getId().toString(), json);
-    } catch (JsonProcessingException e) {
-      throw new SearchException(e);
-    }
   }
 }
