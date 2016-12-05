@@ -100,12 +100,25 @@ public class SearchService {
    * Find applications by given fields.
    *
    * @param queryParameters list of query parameters
-   * @return List of ids of found applications
+   * @return List of ids of found applications.
    */
   public List<Integer> searchApplication(QueryParameters queryParameters) {
-    ResponseEntity<Integer[]> applicationResult = restTemplate.postForEntity(applicationProperties
-       .getSearchServiceUrl(ApplicationProperties.PATH_SEARCH_APPLICATION_FIND_BY_FIELDS), queryParameters, Integer[].class);
+    ResponseEntity<Integer[]> applicationResult = restTemplate.postForEntity(
+        applicationProperties.getApplicationSearchUrl(), queryParameters, Integer[].class);
 
     return Arrays.asList(applicationResult.getBody());
+  }
+
+  /**
+   * Find projects by given fields.
+   *
+   * @param queryParameters list of query parameters
+   * @return List of ids of found projects.
+   */
+  public List<Integer> searchProject(QueryParameters queryParameters) {
+    ResponseEntity<Integer[]> projectResult = restTemplate.postForEntity(
+        applicationProperties.getProjectSearchUrl(), queryParameters, Integer[].class);
+
+    return Arrays.asList(projectResult.getBody());
   }
 }
