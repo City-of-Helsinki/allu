@@ -134,3 +134,34 @@ VALUES (
     null,
     (select id from allu.structure_meta where application_type = 'Applicant' and version = 1),
     null);
+
+------------------------
+-- Cable report metadata
+------------------------
+-- CableInfoEntry
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('CableInfoEntry', 1);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'type', 'Tyyppi', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'additionalInfo', 'Lisätietoja', 'STRING', null, null, null);
+
+-- CABLE_REPORT
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('CABLE_REPORT', 1);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'cableReportId', 'Johtoselvitystunnus', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'workDescription', 'Työn kuvaus', 'STRING', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'owner', 'Omistaja', 'STRUCTURE', null,
+            (select id from allu.structure_meta where application_type = 'Applicant' and version = 1),
+            null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'contact', 'Yhteyshenkilö', 'STRUCTURE', null,
+            (select id from allu.structure_meta where application_type = 'Contact' and version = 1),
+            null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'mapExtractCount', 'Karttaotteiden määrä', 'INTEGER', null, null, null);
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'infoEntries', 'Johtotiedot', 'LIST', 'STRUCTURE',
+            (select id from allu.structure_meta where application_type = 'CableInfoEntry' and version = 1),
+            null);
