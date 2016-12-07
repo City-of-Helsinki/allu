@@ -1,4 +1,3 @@
-import {Injectable} from '@angular/core';
 import * as momentLib from 'moment';
 
 // jQuery pickadate configuration: http://amsul.ca/pickadate.js/date/

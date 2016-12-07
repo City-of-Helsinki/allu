@@ -8,8 +8,8 @@ import {translations} from '../../../util/translations';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Some} from '../../../util/option';
 import {MaterializeUtil} from '../../../util/materialize.util';
-
-declare var Materialize: any;
+import {EnumUtil} from '../../../util/enum.util';
+import {ApplicationType} from '../../../model/application/type/application-type';
 
 @Component({
   selector: 'user',
@@ -22,7 +22,7 @@ export class UserComponent implements OnInit, AfterViewInit {
   userForm: FormGroup;
   submitted = false;
   translations = translations;
-  applicationTypes = ['OUTDOOREVENT', 'PROMOTION'];
+  applicationTypes = EnumUtil.enumValues(ApplicationType);
   roles = [
     'ROLE_CREATE_APPLICATION',
     'ROLE_PROCESS_APPLICATION',

@@ -1,6 +1,6 @@
 import {BackendFixedLocation} from '../backend-model/backend-fixed-location';
 import {FixedLocation} from '../../model/common/fixed-location';
-import {ApplicationType} from '../../model/application/type/application-type';
+import {ApplicationKind} from '../../model/application/type/application-kind';
 
 export class FixedLocationMapper {
 
@@ -9,7 +9,7 @@ export class FixedLocationMapper {
       backendFixedLocation.id,
       backendFixedLocation.area,
       backendFixedLocation.section,
-      ApplicationType[backendFixedLocation.applicationType],
+      ApplicationKind[backendFixedLocation.applicationKind],
       backendFixedLocation.geometry
     )
       : undefined;
@@ -21,7 +21,7 @@ export class FixedLocationMapper {
       id: fixedLocation.id,
       area: fixedLocation.area,
       section: fixedLocation.section,
-      applicationType: ApplicationType[fixedLocation.applicationType],
+      applicationKind: ApplicationKind[fixedLocation.applicationKind],
       geometry: fixedLocation.geometry
     } : undefined;
   }

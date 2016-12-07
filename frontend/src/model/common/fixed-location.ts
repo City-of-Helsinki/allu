@@ -1,17 +1,18 @@
-import {ApplicationType} from '../application/type/application-type';
+import {ApplicationKind} from '../application/type/application-kind';
+
 export class FixedLocation {
   constructor()
   constructor(
     id: number,
     area: string,
     section: string,
-    applicationType: ApplicationType,
+    applicationKind: ApplicationKind,
     geometry: GeoJSON.GeometryCollection)
   constructor(
     public id?: number,
     public area?: string,
     public section?: string,
-    public applicationType?: ApplicationType,
+    public applicationKind?: ApplicationKind,
     public geometry?: GeoJSON.GeometryCollection) { }
 
   static sortBySection = (left, right) => {

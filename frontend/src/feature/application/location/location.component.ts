@@ -1,12 +1,10 @@
 import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {Observable} from 'rxjs/Observable';
 import '../../../rxjs-extensions.ts';
 
 import {ProgressStep} from '../../../feature/progressbar/progressbar.component';
 import {Application} from '../../../model/application/application';
 import {Location} from '../../../model/common/location';
-import {PostalAddress} from '../../../model/common/postal-address';
 import {MapUtil} from '../../../service/map.util.ts';
 import {SearchbarFilter} from '../../../service/searchbar-filter';
 import {LocationState} from '../../../service/application/location-state';
@@ -15,10 +13,9 @@ import {MapHub} from '../../../service/map-hub';
 import {FixedLocation} from '../../../model/common/fixed-location';
 import {Some} from '../../../util/option';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {ApplicationCategoryType} from '../type/application-category';
-import {None} from '../../../util/option';
 import {Option} from '../../../util/option';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
+import {ApplicationKind} from '../../../model/application/type/application-kind';
 
 @Component({
   selector: 'type',
@@ -61,8 +58,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         this.geometry = application.location.geometry;
         this.locationState.startDate = application.startTime;
         this.locationState.endDate = application.endTime;
-        this.locationState.specifiers = application.specifiers.map(s => ApplicationSpecifier[s]);
-        this.loadFixedLocationsForType(ApplicationType[application.type]);
+        this.loadFixedLocationsForKind(ApplicationKind[application.kind]);
+        this.locationState.specifiers = application.extension.specifiers.map(s => ApplicationSpecifier[s]);
       });
 
     this.progressStep = ProgressStep.LOCATION;
@@ -76,16 +73,16 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHub.selectApplication(this.application);
   }
 
-  onApplicationCategoryChange(category: ApplicationCategoryType) {
-    this.locationState.category = category;
-  }
-
   onApplicationTypeChange(type: ApplicationType) {
     this.locationState.applicationType = type;
-    this.typeSelected = type !== undefined;
+  }
 
-    if (type !== undefined) {
-      this.loadFixedLocationsForType(type);
+  onApplicationKindChange(kind: ApplicationKind) {
+    this.locationState.applicationKind = kind;
+    this.typeSelected = kind !== undefined;
+
+    if (kind !== undefined) {
+      this.loadFixedLocationsForKind(kind);
     }
   }
 
@@ -108,7 +105,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.application.location = this.locationState.location;
       this.application.startTime = this.locationState.startDate;
       this.application.endTime = this.locationState.endDate;
-      this.application.specifiers = this.locationState.specifiers.map(s => ApplicationSpecifier[s]);
+      this.application.extension.specifiers = this.locationState.specifiers.map(s => ApplicationSpecifier[s]);
       this.applicationHub.save(this.application).subscribe(application => {
         this.router.navigate(['/applications', application.id, 'summary']);
       });
@@ -162,15 +159,15 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private loadFixedLocationsForType(type: ApplicationType): void {
+  private loadFixedLocationsForKind(kind: ApplicationKind): void {
     this.mapHub.fixedLocations()
       .subscribe(fl => {
         this.areas = fl
-          .filter(f => f.applicationType === type)
+          .filter(f => f.applicationKind === kind)
           .map(entry => entry.area)
           .filter((v, i, a) => a.indexOf(v) === i); // unique area names
 
-        this.fixedLocations = fl.filter(f => f.applicationType === type);
+        this.fixedLocations = fl.filter(f => f.applicationKind === kind);
         this.sections = [];
 
         this.setSelections();

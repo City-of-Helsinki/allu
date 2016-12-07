@@ -1,35 +1,28 @@
-import {Component, OnDestroy, OnInit, Input, AfterViewInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
+import {FormGroup, FormBuilder} from '@angular/forms';
 
-import {Location} from '../../../../model/common/location';
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
-import {TimeUtil, PICKADATE_PARAMETERS} from '../../../../util/time.util';
-import {OutdoorEvent} from '../../../../model/application/outdoor-event/outdoor-event';
 import {AttachmentInfo} from '../../../../model/application/attachment-info';
 import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MapHub} from '../../../../service/map-hub';
-import {ApplicationStatus} from '../../../../model/application/application-status';
 import {ApplicationAttachmentHub} from '../attachment/application-attachment-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
-import {OutdoorEventDetailsForm} from './details/outdoor-event-details.form';
-import {OutdoorEventForm} from './outdoor-event.form';
-import {EnumUtil} from '../../../../util/enum.util';
+import {EventDetailsForm} from './details/event-details.form';
+import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {MaterializeUtil} from '../../../../util/materialize.util';
-import {ComplexValidator} from '../../../../util/complex-validator';
 
 @Component({
-  selector: 'outdoor-event',
+  selector: 'event',
   viewProviders: [],
-  template: require('./outdoor-event.component.html'),
+  template: require('./event.component.html'),
   styles: []
 })
-export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
+export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   application: Application;
   applicationForm: FormGroup;
   private isSummary: boolean;
@@ -54,7 +47,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
       .subscribe(application => {
         this.application = application;
 
-        this.applicationHub.loadMetaData('OUTDOOREVENT').subscribe(meta => this.metadataLoaded(meta));
+        this.applicationHub.loadMetaData('EVENT').subscribe(meta => this.metadataLoaded(meta));
 
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
           this.isSummary = summary;
@@ -76,7 +69,7 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
     this.attachments = attachments;
   }
 
-  onSubmit(form: OutdoorEventForm) {
+  onSubmit(form: EventForm) {
     this.submitPending = true;
     let application = this.application;
     application.metadata = this.meta;
@@ -85,9 +78,9 @@ export class OutdoorEventComponent implements OnInit, OnDestroy, AfterViewInit {
     application.calculatedPriceEuro = form.event.calculatedPrice;
     application.priceOverrideEuro = form.event.priceOverride;
     application.priceOverrideReason = form.event.priceOverrideReason;
-    application.type = ApplicationType[ApplicationType.OUTDOOREVENT];
+    application.type = ApplicationType[ApplicationType.EVENT];
     application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.event = OutdoorEventDetailsForm.toOutdoorEvent(form.event, ApplicationType.OUTDOOREVENT);
+    application.extension = EventDetailsForm.toEvent(form.event, ApplicationType.EVENT);
     application.contactList = form.contacts;
 
     this.applicationHub.save(application).subscribe(app => {

@@ -13,18 +13,19 @@ export interface BackendApplication {
   handler: BackendUser;
   status: string;
   type: string;
-  specifiers: Array<string>;
-  name: string;
-  event: any;
+  kind: string;
   metadata: BackendStructureMeta;
+  name: string;
   creationTime: string;
   startTime: string;
   endTime: string;
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;
   location: BackendLocation;
+  extension: any;
+  decisionTime: string;
+  attachmentList: Array<BackendAttachmentInfo>;
   calculatedPrice: number;
   priceOverride: number;
   priceOverrideReason: string;
-  attachmentList: Array<BackendAttachmentInfo>;
 }

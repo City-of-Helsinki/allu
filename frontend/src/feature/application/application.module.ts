@@ -1,8 +1,8 @@
-import {NgModule, ModuleWithProviders} from '@angular/core';
+import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {MdCardModule, MdToolbarModule, MdProgressBarModule} from '@angular/material';
-import {FILE_UPLOAD_DIRECTIVES, FileUploader} from 'ng2-file-upload';
+import {FILE_UPLOAD_DIRECTIVES} from 'ng2-file-upload';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -13,8 +13,7 @@ import {TypeModule} from './type/type.module';
 import {FileSelectDirective} from './info/attachment/file-select.directive';
 
 import {ApplicationComponent} from './info/application.component.ts';
-import {OutdoorEventComponent} from './info/outdoor-event/outdoor-event.component';
-import {PromotionEventComponent} from './info/promotion-event/promotion-event.component';
+import {EventComponent} from './info/event/event.component';
 import {ApplicationAttachmentComponent} from './info/attachment/application-attachment.component';
 import {LoadingComponent} from '../loading/loading.component';
 import {applicationRoutes} from './application.routing';
@@ -22,11 +21,10 @@ import {ApplicationResolve} from './application-resolve';
 import {ApplicationAttachmentHub} from './info/attachment/application-attachment-hub';
 import {ApplicantComponent} from './info/applicant/applicant.component';
 import {ContactComponent} from './info/contact/contact.component';
-import {EventDetailsComponent} from './info/outdoor-event/details/event-details.component.ts';
+import {EventDetailsComponent} from './info/event/details/event-details.component.ts';
 import {LocationDetailsComponent} from './info/location/location-details.component';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
 
-import {LocationState} from '../../service/application/location-state';
 import {AttachmentService} from '../../service/attachment-service';
 import {ApplicationActionsComponent} from './info/application-actions.component';
 import {CableReportComponent} from './info/cable-report/cable-report.component';
@@ -49,8 +47,7 @@ import {DefaultTextModalComponent} from './default-text/default-text-modal.compo
   ],
   declarations: [
     ApplicationComponent,
-    OutdoorEventComponent,
-    PromotionEventComponent,
+    EventComponent,
     ShortTermRentalComponent,
     CableReportComponent,
     CableInfoComponent,

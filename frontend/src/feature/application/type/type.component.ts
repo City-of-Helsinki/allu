@@ -2,11 +2,10 @@ import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 
 import {Application} from '../../../model/application/application';
-import {ApplicationType} from '../../../model/application/type/application-type';
-import {applicationCategories, ApplicationCategory, ApplicationCategoryType} from './application-category';
-import {translations} from '../../../util/translations';
+import {ApplicationType, applicationTypes, ApplicationTypeStructure} from '../../../model/application/type/application-type';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 import {Some} from '../../../util/option';
+import {ApplicationKind} from '../../../model/application/type/application-kind';
 
 @Component({
   selector: 'application-type',
@@ -14,17 +13,16 @@ import {Some} from '../../../util/option';
 })
 export class TypeComponent implements OnInit {
   @Input() typeChangeDisabled = false;
-  @Output() onCategoryChange = new EventEmitter<ApplicationCategoryType>();
   @Output() onTypeChange = new EventEmitter<ApplicationType>();
+  @Output() onKindChange = new EventEmitter<ApplicationKind>();
   @Output() onSpecifierChange = new EventEmitter<Array<ApplicationSpecifier>>();
 
-  applicationCategories = applicationCategories;
-  category: ApplicationCategory;
-  typeNames = [];
-  applicationType: string;
+  applicationTypes = applicationTypes;
+  type: ApplicationTypeStructure;
+  kindNames = [];
+  applicationKind: string;
   specifierNames = [];
   selectedSpecifiers: Array<string> = [];
-  translations = translations;
 
   constructor(private route: ActivatedRoute) {};
 
@@ -32,34 +30,34 @@ export class TypeComponent implements OnInit {
     this.route.data
       .map((data: {application: Application}) => data.application)
       .subscribe(application => {
-        this.category = this.applicationCategories.find(categories => categories.containsType(ApplicationType[application.type]));
-        this.typeNames = this.category ? this.category.applicationTypeNames : [];
-        this.applicationType = application.type;
-        this.selectedSpecifiers = application.specifiers;
-        this.eventSelection(application.type);
+        this.type = this.applicationTypes.find(types => types.containsKind(ApplicationKind[application.kind]));
+        this.kindNames = this.type ? this.type.applicationKindNames : [];
+        this.applicationKind = application.kind;
+        this.kindSelection(application.kind);
+        this.selectedSpecifiers = Some(application.extension).map(ext => ext.specifiers).orElse([]);
       });
   };
 
   typeSelection(value: string) {
-    let categoryType = ApplicationCategoryType[value];
-    this.category = applicationCategories.find(c => c.categoryType === categoryType);
-    this.typeNames = this.category.applicationTypeNames;
-    this.onCategoryChange.emit(categoryType);
+    let appType = ApplicationType[value];
+    this.type = applicationTypes.find(types => types.type === appType);
+    this.kindNames = this.type.applicationKindNames;
+    this.onTypeChange.emit(appType);
   };
 
-  eventSelection(value: string) {
+  kindSelection(value: string) {
     if (value !== undefined) {
-      this.applicationType = value;
-      let type = ApplicationType[value];
-      this.specifierNames = this.category.structureByType(type).applicationSpecifierNames;
-      this.onTypeChange.emit(type);
+      this.applicationKind = value;
+      let kind = ApplicationKind[value];
+      this.specifierNames = this.type.structureByKind(kind).applicationSpecifierNames;
+      this.onKindChange.emit(kind);
     }
   };
 
   showSpecifierSelection(): boolean {
-    let applicationTypeSelected = this.applicationType !== undefined;
-    let show = (c: ApplicationCategory) => c.categoryTypeName === 'CABLE_REPORT' && applicationTypeSelected;
-    return Some(this.category).map(show).orElse(false);
+    let applicationKindSelected = this.applicationKind !== undefined;
+    let show = (appType: ApplicationTypeStructure) => appType.typeName === 'CABLE_REPORT' && applicationKindSelected;
+    return Some(this.type).map(show).orElse(false);
   }
 
   set specifiers(values: Array<string>) {

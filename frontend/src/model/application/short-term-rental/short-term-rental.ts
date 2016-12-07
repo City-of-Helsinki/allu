@@ -1,17 +1,15 @@
-import {ApplicationTypeData} from '../type/application-type-data';
-import {ApplicationCategoryType} from '../../../feature/application/type/application-category';
+import {ApplicationExtension} from '../type/application-extension';
+import {ApplicationType} from '../type/application-type';
 
-export class ShortTermRental extends ApplicationTypeData {
-  public applicationCategory = ApplicationCategoryType[ApplicationCategoryType.SHORT_TERM_RENTAL];
+export class ShortTermRental extends ApplicationExtension {
+  public applicationType = ApplicationType[ApplicationType.SHORT_TERM_RENTAL];
 
   constructor()
   constructor(
-    type: string,
     description: string,
     commercial?: boolean,
     largeSalesArea?: boolean)
   constructor(
-    public type?: string,
     public description?: string,
     public commercial?: boolean,
     public largeSalesArea?: boolean) {

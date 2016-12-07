@@ -12,7 +12,7 @@ import {Location} from '../../../../model/common/location';
   template: require('./location-details.component.html'),
   styles: []
 })
-export class LocationDetailsComponent implements OnInit, AfterViewInit {
+export class LocationDetailsComponent implements OnInit {
   @Input() applicationId: number;
   @Input() location: Location;
   @Input() readonly: boolean;
@@ -32,9 +32,6 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
         this.area = fixedLocations[0].area;
         this.sections = fixedLocations.map(fx => fx.section).join(', ');
       });
-  }
-
-  ngAfterViewInit(): void {
   }
 
   private metadataLoaded(metadata: StructureMeta) {

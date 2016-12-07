@@ -1,24 +1,22 @@
 import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import moment = require('moment/moment');
 
 import {StructureMeta} from '../../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../../service/application/application-hub';
-import {ApplicationTypeData} from '../../../../../model/application/type/application-type-data';
 import {Location} from '../../../../../model/common/location';
 import {Application} from '../../../../../model/application/application';
-import {OutdoorEvent} from '../../../../../model/application/outdoor-event/outdoor-event';
-import {OutdoorEventDetailsForm} from './outdoor-event-details.form';
+import {Event} from '../../../../../model/application/event/event';
+import {EventDetailsForm} from './event-details.form';
 import {translations} from '../../../../../util/translations';
-import {TimeUtil} from '../../../../../util/time.util';
-import {Some} from '../../../../../util/option';
 import {PICKADATE_PARAMETERS} from '../../../../../util/time.util';
 import {ComplexValidator} from '../../../../../util/complex-validator';
 import {EnumUtil} from '../../../../../util/enum.util';
 import {BillingType} from '../../../../../model/application/billing-type';
-import {EventNature} from '../../../../../model/application/outdoor-event/event-nature';
+import {EventNature} from '../../../../../model/application/event/event-nature';
 import {NoPriceReason} from '../../../../../model/application/no-price-reason';
+import {ApplicationType} from '../../../../../model/application/type/application-type';
 
 @Component({
   selector: 'event-details',
@@ -51,11 +49,11 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
       .subscribe(application => {
         this.applicationId = application.id;
 
-        let outdoorEvent = <OutdoorEvent>application.event || new OutdoorEvent();
-        outdoorEvent.eventStartTime = outdoorEvent.eventStartTime || application.startTime;
-        outdoorEvent.eventEndTime = outdoorEvent.eventEndTime || application.endTime;
-        outdoorEvent.type = 'OUTDOOREVENT';
-        this.eventForm.patchValue(OutdoorEventDetailsForm.fromOutdoorEvent(application, outdoorEvent));
+        let event = <Event>application.extension || new Event();
+        event.eventStartTime = event.eventStartTime || application.startTime;
+        event.eventEndTime = event.eventEndTime || application.endTime;
+        event.applicationType = ApplicationType[ApplicationType.EVENT];
+        this.eventForm.patchValue(EventDetailsForm.fromEvent(application, event));
       });
   }
 
@@ -89,7 +87,6 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
       nature: ['', Validators.required],
       description: ['', Validators.required],
       url: [''],
-      type: ['', Validators.required],
       eventTimes: this.fb.group({
         startTime: ['', Validators.required],
         endTime: ['', Validators.required]

@@ -17,7 +17,7 @@ export class ApplicationResolve implements Resolve<Application> {
     if (id) {
       return this.applicationHub.getApplication(id);
     } else {
-      return Observable.of(Application.fromLocationState(this.locationState));
+      return Observable.of(this.locationState.createApplication());
     }
   }
 }

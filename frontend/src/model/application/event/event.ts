@@ -1,13 +1,12 @@
-import {ApplicationTypeData} from './../type/application-type-data';
+import {ApplicationExtension} from '../type/application-extension';
 import {TimeUtil} from '../../../util/time.util.ts';
 
-export class OutdoorEvent extends ApplicationTypeData {
+export class Event extends ApplicationExtension {
   constructor()
   constructor(nature: string,
               description: string,
               url: string,
-              type: string,
-              applicationCategory: string,
+              applicationType: string,
               eventStartTime: Date,
               eventEndTime: Date,
               timeExceptions: string,
@@ -27,8 +26,7 @@ export class OutdoorEvent extends ApplicationTypeData {
   constructor(public nature?: string,
               public description?: string,
               public url?: string,
-              public type?: string,
-              public applicationCategory?: string,
+              public applicationType?: string,
               public eventStartTime?: Date,
               public eventEndTime?: Date,
               public timeExceptions?: string,
@@ -45,7 +43,7 @@ export class OutdoorEvent extends ApplicationTypeData {
               public structureDescription?: string,
               public structureStartTime?: Date,
               public structureEndTime?: Date) {
-    super();
+    super(applicationType);
   }
 
   /*
