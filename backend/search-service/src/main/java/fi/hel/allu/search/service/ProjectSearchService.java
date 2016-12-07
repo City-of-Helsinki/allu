@@ -6,6 +6,8 @@ import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.search.domain.QueryParameters;
 import org.elasticsearch.client.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,8 @@ import static fi.hel.allu.search.config.ElasticSearchMappingConfig.PROJECT_TYPE_
  */
 @Service
 public class ProjectSearchService {
+  private static final Logger logger = LoggerFactory.getLogger(ProjectSearchService.class);
+
   private Client client;
   private ObjectMapper objectMapper;
   private GenericSearchService genericSearchService;
@@ -35,6 +39,7 @@ public class ProjectSearchService {
   public void insertProject(ProjectES projectES) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(projectES);
+      logger.debug("Inserting new project to search index: {}", objectMapper.writeValueAsString(projectES));
       genericSearchService.insert(PROJECT_TYPE_NAME, projectES.getId().toString(), json);
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
@@ -44,6 +49,7 @@ public class ProjectSearchService {
   public void updateProject(ProjectES projectES) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(projectES);
+      logger.debug("Updating project to search index: {}", objectMapper.writeValueAsString(projectES));
       genericSearchService.update(PROJECT_TYPE_NAME, projectES.getId().toString(), json);
     } catch (JsonProcessingException e) {
       throw new SearchException(e);

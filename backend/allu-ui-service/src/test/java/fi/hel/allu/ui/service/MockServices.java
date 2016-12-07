@@ -85,9 +85,6 @@ public abstract class MockServices {
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockPersonResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Project.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> createMockProjectResponse());
-
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockApplicantResponse());
 

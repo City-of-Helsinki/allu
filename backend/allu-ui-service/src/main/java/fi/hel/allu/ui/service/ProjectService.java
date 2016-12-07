@@ -5,7 +5,6 @@ import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.mapper.ProjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,27 +39,14 @@ public class ProjectService {
   }
 
   /**
-   * Search projects from ElasticSearch with given query.
-   *
-   * @param   queryParameters   Search query.
-   * @return  Projects matching given search. Never <code>null</code>.
-   */
-  public List<ProjectJson> search(QueryParametersJson queryParameters) {
-    // TODO: replace with real search. Added support for returning all existing project from database to support frontend development
-    ResponseEntity<Project[]> responseEntity =
-        restTemplate.getForEntity(applicationProperties.getModelServiceUrl("/projects/all"), Project[].class);
-    return Arrays.stream(responseEntity.getBody()).map(p -> projectMapper.mapProjectToJson(p)).collect(Collectors.toList());
-  }
-
-  /**
    * Find project by id.
    *
-   * @param   id  Id of the project.
-   * @return  Requested project.
+   * @param   ids  Ids of the projects.
+   * @return  Requested projects.
    */
-  public ProjectJson findById(int id) {
-    ResponseEntity<Project> responseEntity = restTemplate.getForEntity(applicationProperties.getProjectByIdUrl(), Project.class, id);
-    return projectMapper.mapProjectToJson(responseEntity.getBody());
+  public List<ProjectJson> findByIds(List<Integer> ids) {
+    Project[] projects = restTemplate.postForObject(applicationProperties.getProjectsByIdUrl(), ids, Project[].class);
+    return Arrays.stream(projects).map(p -> projectMapper.mapProjectToJson(p)).collect(Collectors.toList());
   }
 
   /**

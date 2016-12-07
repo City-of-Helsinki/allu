@@ -1,10 +1,12 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.AttachmentInfoJson;
+import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -63,7 +66,11 @@ public class ApplicationJsonService {
     ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
 
     if (applicationModel.getProjectId() != null) {
-      applicationJson.setProject(projectService.findById(applicationModel.getProjectId()));
+      List<ProjectJson> projects = projectService.findByIds(Collections.singletonList(applicationModel.getProjectId()));
+      if (projects.size() != 1) {
+        throw new NoSuchEntityException("Project linked to application not found!", applicationModel.getProjectId().toString());
+      }
+      applicationJson.setProject(projects.get(0));
     }
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));

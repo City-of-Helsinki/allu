@@ -354,10 +354,10 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return url for fetching project by its id.
+   * @return url for fetching projects by ids.
    */
-  public String getProjectByIdUrl() {
-    return getModelServiceUrl("/projects/{id}");
+  public String getProjectsByIdUrl() {
+    return getModelServiceUrl("/projects/find");
   }
 
   /**

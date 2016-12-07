@@ -3,12 +3,12 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.ui.mapper.QueryParameterMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +33,22 @@ public class ProjectServiceComposer {
     this.projectService = projectService;
     this.applicationJsonService = applicationJsonService;
     this.searchService = searchService;
+  }
+
+  /**
+   * Search projects with given query parameters. Returns projects in the order defined by query.
+   *
+   * @param   queryParameters   Parameters for search query.
+   * @return  found projects in the order defined by query.
+   */
+  public List<ProjectJson> search(QueryParametersJson queryParameters) {
+    List<ProjectJson> resultList = Collections.emptyList();
+    if (!queryParameters.getQueryParameters().isEmpty()) {
+      List<Integer> ids = searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters));
+      resultList = projectService.findByIds(ids);
+      orderByIdList(ids, resultList);
+    }
+    return resultList;
   }
 
   /**
@@ -110,5 +126,20 @@ public class ProjectServiceComposer {
     searchUpdate.addAll(updatedParents);
     searchService.updateProjects(new ArrayList(searchUpdate));
     return updatedProject;
+  }
+
+  /**
+   * Orders given projects list by the order of id list.
+   *
+   * @param ids           Order of projects.
+   * @param projectList   Projects to be ordered.
+   */
+  private void orderByIdList(List<Integer> ids, List<ProjectJson> projectList) {
+    // use the project order returned by search service
+    Map<Integer, Integer> idToOrder = new HashMap<>();
+    for (int i = 0; i < ids.size(); ++i) {
+      idToOrder.put(ids.get(i), i);
+    }
+    Collections.sort(projectList, Comparator.comparing(projectJson -> idToOrder.get(projectJson.getId())));
   }
 }

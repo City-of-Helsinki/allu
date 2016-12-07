@@ -27,18 +27,20 @@ public class ProjectService {
   @Autowired
   private ApplicationDao applicationDao;
 
-  /**
-   * TODO: REMOVE THIS FUNCTION AS SOON AS PROPER PROJECT SEARCH IS IMPLEMENTED
-   */
-  public List<Project> findAllProjects() {
-    return projectDao.findAllProjects();
-  }
-
-
   @Transactional(readOnly = true)
   public Project find(int id) {
     Optional<Project> project = projectDao.findById(id);
     return project.orElseThrow(() -> new NoSuchEntityException("Project not found", Integer.toString(id)));
+  }
+
+  /**
+   * Find projects by ids.
+   *
+   * @param   ids   Ids of projects to be fetched.
+   * @return  List of projects.
+   */
+  public List<Project> findByIds(List<Integer> ids) {
+    return projectDao.findByIds(ids);
   }
 
   @Transactional(readOnly = true)
