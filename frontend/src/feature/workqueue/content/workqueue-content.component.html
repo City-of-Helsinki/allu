@@ -7,16 +7,16 @@
                     <input type="checkbox" class="filled-in" [ngModel]="allSelected" (click)="checkAll()" id="all_none_checkbox" name="all_none_checkbox"/>
                     <label for="all_none_checkbox"></label>
                 </th>
-                <th class="clickable" (click)="sortBy('handler')">Käsittelijä <i class="material-icons icon-middle">{{iconForField('handler')}}</i></th>
-                <th class="clickable" (click)="sortBy('project')">Hanke <i class="material-icons icon-middle">{{iconForField('project')}}</i></th>
-                <th class="clickable" (click)="sortBy('applicationId')">Tunnus <i class="material-icons icon-middle">{{iconForField('applicationId')}}</i></th>
-                <th class="clickable" (click)="sortBy('type')">Tyyppi <i class="material-icons icon-middle">{{iconForField('type')}}</i></th>
-                <th class="clickable" (click)="sortBy('status')">Tila <i class="material-icons icon-middle">{{iconForField('status')}}</i></th>
-                <th class="clickable" (click)="sortBy('applicant')">Hakija <i class="material-icons icon-middle">{{iconForField('applicant')}}</i></th>
-                <th class="clickable" (click)="sortBy('streetAddress')">Katuosoite <i class="material-icons icon-middle">{{iconForField('streetAddress')}}</i></th>
-                <th class="clickable" (click)="sortBy('district')">Kaupunginosa <i class="material-icons icon-middle">{{iconForField('district')}}</i></th>
-                <th class="clickable" (click)="sortBy('creationTime')">Saapunut <i class="material-icons icon-middle">{{iconForField('creationTime')}}</i></th>
-                <th class="clickable" (click)="sortBy('startTime')">Aloitus <i class="material-icons icon-middle">{{iconForField('startTime')}}</i></th>
+                <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
+                <th>Hanke</th>
+                <th sortBy="applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
+                <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
+                <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
+                <th sortBy="applicant.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
+                <th sortBy="location.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">Katuosoite</th>
+                <th>Kaupunginosa</th>
+                <th>Saapunut</th>
+                <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
                 <th>Lisätietoja</th>
             </tr>
             </thead>

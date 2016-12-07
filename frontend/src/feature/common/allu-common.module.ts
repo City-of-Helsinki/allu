@@ -6,6 +6,7 @@ import {AutoCompletionDirective} from './auto-completion/auto-completion.directi
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component.ts';
 import {FieldErrorComponent} from './field-error.component';
 import {TranslationPipe} from '../../pipe/translation.pipe';
+import {SortByDirective} from './sort/sort-by.directive';
 
 @NgModule({
   imports: [
@@ -16,6 +17,7 @@ import {TranslationPipe} from '../../pipe/translation.pipe';
     MaterializeDirective,
     AutoCompletionDirective,
     AutoCompletionListComponent,
+    SortByDirective,
     FieldErrorComponent,
     TranslationPipe
   ],
@@ -27,6 +29,7 @@ import {TranslationPipe} from '../../pipe/translation.pipe';
     MaterializeDirective,
     AutoCompletionDirective,
     AutoCompletionListComponent,
+    SortByDirective,
     FieldErrorComponent,
     TranslationPipe
   ],

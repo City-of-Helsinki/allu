@@ -32,7 +32,7 @@ export class ApplicationSearchQuery implements SearchQuery {
     this.endTime = TimeUtil.getDateFromUi(dateString);
   }
 
-  public static from(queryForm: ApplicationSearchQueryForm) {
+  public static from(queryForm: ApplicationSearchQueryForm, sort?: Sort) {
     let query = new ApplicationSearchQuery();
     query.applicationId = queryForm.applicationId;
     query.type = queryForm.type;
@@ -44,6 +44,7 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.freeText = queryForm.freeText;
     query.startTime = TimeUtil.getDateFromUi(queryForm.startTime);
     query.endTime = TimeUtil.getDateFromUi(queryForm.endTime);
+    query.sort = sort;
     return query;
   }
 

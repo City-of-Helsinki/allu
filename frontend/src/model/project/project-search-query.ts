@@ -28,7 +28,7 @@ export class ProjectSearchQuery implements SearchQuery {
     this.endTime = TimeUtil.getDateFromUi(dateString);
   }
 
-  static fromForm(form: ProjectSearchQueryForm): ProjectSearchQuery {
+  static fromForm(form: ProjectSearchQueryForm, sort?: Sort): ProjectSearchQuery {
     let query = new ProjectSearchQuery();
     query.id = form.id;
     query.uiStartTime = form.startTime;
@@ -37,6 +37,7 @@ export class ProjectSearchQuery implements SearchQuery {
     query.status = form.status;
     query.district = form.district;
     query.creator = form.creator;
+    query.sort = sort;
     return query;
   }
 }

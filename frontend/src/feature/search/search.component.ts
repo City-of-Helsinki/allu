@@ -13,14 +13,17 @@ import {ApplicationHub} from '../../service/application/application-hub';
 import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/common/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
+import {Sort} from '../../model/common/sort';
 
 @Component({
   selector: 'search',
   template: require('./search.component.html')
 })
 export class SearchComponent implements OnInit {
+
+  sort: Sort = new Sort(undefined, undefined);
   private queryForm: FormGroup;
-  private applications: Observable<Array<Application>>;
+  private applications: Array<Application>;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
   // TODO: handlers should be fetched from some service later
   private handlers: Observable<Array<User>>;
@@ -50,12 +53,18 @@ export class SearchComponent implements OnInit {
     this.handlers = this.userHub.getActiveUsers();
   }
 
-  public goToSummary(application: Application): void {
+  goToSummary(application: Application): void {
     this.router.navigate(['applications', application.id, 'summary']);
   }
 
-  private search(): void {
-    console.log('search query', ApplicationSearchQuery.from(this.queryForm.value));
-    this.applications = this.applicationHub.searchApplications(ApplicationSearchQuery.from(this.queryForm.value));
+  sortBy(sort: Sort) {
+    this.sort = sort;
+    this.search();
+  }
+
+  search(): void {
+    this.applicationHub.searchApplications(ApplicationSearchQuery.from(this.queryForm.value, this.sort)).subscribe(apps => {
+      this.applications = apps;
+    });
   }
 }

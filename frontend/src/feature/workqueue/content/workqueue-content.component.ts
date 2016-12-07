@@ -52,22 +52,9 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.notifySelection();
   }
 
-  sortBy(field: string): void {
-    let unsorted = this.sort.field !== field || this.sort.direction === undefined;
-
-    if (unsorted) {
-      this.sort = new Sort(field, Direction.DESC);
-    } else if (this.sort.direction === Direction.DESC) {
-      this.sort = new Sort(this.sort.field, Direction.ASC);
-    } else {
-      this.sort = new Sort(field, undefined);
-    }
-
+  sortBy(sort: Sort) {
+    this.sort = sort;
     this.onSortChange.emit(this.sort);
-  }
-
-  iconForField(field: string): string {
-    return field === this.sort.field ? this.sort.icon() : '';
   }
 
   goToSummary(col: number, application: Application): void {
