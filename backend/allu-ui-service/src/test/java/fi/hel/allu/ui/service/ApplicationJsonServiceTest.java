@@ -64,7 +64,7 @@ public class ApplicationJsonServiceTest {
     Mockito.when(application.getType()).thenReturn(ApplicationType.SHORT_TERM_RENTAL);
     Mockito.when(application.getMetadataVersion()).thenReturn(1);
 
-    Mockito.when(projectService.findById(projectId)).thenReturn(projectJson);
+    Mockito.when(projectService.findByIds(Collections.singletonList(projectId))).thenReturn(Collections.singletonList(projectJson));
     Mockito.when(applicantService.findApplicantById(applicantId)).thenReturn(applicantJson);
     Mockito.when(contactService.findContactsForApplication(applicationId)).thenReturn(contactJsons);
     Mockito.when(metaService.findMetadataForApplication(ApplicationType.SHORT_TERM_RENTAL, 1)).thenReturn(metaJson);

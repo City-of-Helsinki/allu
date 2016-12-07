@@ -6,6 +6,8 @@ import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.QueryParameters;
 import org.elasticsearch.client.Client;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,8 @@ import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_T
 
 @Service
 public class ApplicationSearchService {
+  private static final Logger logger = LoggerFactory.getLogger(ApplicationSearchService.class);
+
   private Client client;
   private ObjectMapper objectMapper;
   private GenericSearchService genericSearchService;
@@ -32,6 +36,7 @@ public class ApplicationSearchService {
   public void insertApplication(ApplicationES applicationES) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(applicationES);
+      logger.debug("Inserting new application to search index: {}", objectMapper.writeValueAsString(applicationES));
       genericSearchService.insert(APPLICATION_TYPE_NAME, applicationES.getId().toString(), json);
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
@@ -64,6 +69,7 @@ public class ApplicationSearchService {
   private void updateApplication(ApplicationES applicationES) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(applicationES);
+      logger.debug("Updating application to search index: {}", objectMapper.writeValueAsString(applicationES));
       genericSearchService.update(APPLICATION_TYPE_NAME, applicationES.getId().toString(), json);
     } catch (JsonProcessingException e) {
       throw new SearchException(e);

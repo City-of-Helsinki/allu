@@ -1,6 +1,5 @@
 package fi.hel.allu.search.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -69,15 +68,11 @@ public class GenericSearchService {
    * @param json            Data added to search index.
    */
   public void insert(String indexTypeName, String id, byte[] json) {
-    try {
-      logger.debug("Insert to search index: {}", objectMapper.writeValueAsString(json));
-      IndexResponse response =
-          client.prepareIndex(APPLICATION_INDEX_NAME, indexTypeName, id).setSource(json).get();
-      if (!response.isCreated()) {
-        throw new SearchException("Unable to insert record to " + indexTypeName + " with id " + id);
-      }
-    } catch (JsonProcessingException e) {
-      throw new SearchException(e);
+    logger.debug("Insert to search index: {}", indexTypeName);
+    IndexResponse response =
+        client.prepareIndex(APPLICATION_INDEX_NAME, indexTypeName, id).setSource(json).get();
+    if (!response.isCreated()) {
+      throw new SearchException("Unable to insert record to " + indexTypeName + " with id " + id);
     }
   }
 

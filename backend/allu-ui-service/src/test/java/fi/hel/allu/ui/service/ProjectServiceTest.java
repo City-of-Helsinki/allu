@@ -1,16 +1,20 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ProjectMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.util.Collections;
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
@@ -33,6 +37,9 @@ public class ProjectServiceTest extends MockServices {
     initSearchMocks();
     ProjectMapper projectMapper = new ProjectMapper();
     projectService = new ProjectService(props, restTemplate, projectMapper);
+
+    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(), Mockito.eq(Project[].class)))
+        .thenAnswer((Answer<Project[]>) invocation -> new Project[] {createMockProjectModel()});
   }
 
   @Test
@@ -72,7 +79,7 @@ public class ProjectServiceTest extends MockServices {
 
   @Test
   public void testFindById() {
-    ProjectJson projectJson = projectService.findById(100);
+    ProjectJson projectJson = projectService.findByIds(Collections.singletonList(100)).get(0);
     assertNotNull(projectJson);
     assertNotNull(projectJson.getId());
     assertEquals(100, projectJson.getId().intValue());

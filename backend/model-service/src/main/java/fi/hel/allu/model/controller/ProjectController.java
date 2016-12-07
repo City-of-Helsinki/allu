@@ -27,11 +27,15 @@ public class ProjectController {
   }
 
   /**
-   * TODO: REMOVE THIS FUNCTION AS SOON AS PROPER PROJECT SEARCH IS IMPLEMENTED
+   * Find applications by application IDs
+   *
+   * @param   ids to be searched.
+   * @return  found applications
    */
-  @RequestMapping(value = "/all", method = RequestMethod.GET)
-  public List<Project> findAllProjects() {
-    return projectService.findAllProjects();
+  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  public ResponseEntity<List<Project>> findByIds(@RequestBody List<Integer> ids) {
+    List<Project> projects = projectService.findByIds(ids);
+    return new ResponseEntity<>(projects, HttpStatus.OK);
   }
 
   /**

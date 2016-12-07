@@ -23,18 +23,15 @@ public class ProjectDao {
 
   final QBean<Project> projectBean = bean(Project.class, project.all());
 
-  /**
-   * TODO: REMOVE THIS FUNCTION AS SOON AS PROPER PROJECT SEARCH IS IMPLEMENTED
-   */
-  @Transactional(readOnly = true)
-  public List<Project> findAllProjects() {
-    return queryFactory.select(projectBean).from(project).fetch();
-  }
-
   @Transactional(readOnly = true)
   public Optional<Project> findById(int id) {
     Project proj = queryFactory.select(projectBean).from(project).where(project.id.eq(id)).fetchOne();
     return Optional.ofNullable(proj);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Project> findByIds(List<Integer> ids) {
+    return queryFactory.select(projectBean).from(project).where(project.id.in(ids)).fetch();
   }
 
   @Transactional(readOnly = true)
