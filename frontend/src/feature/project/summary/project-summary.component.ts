@@ -50,7 +50,7 @@ export class ProjectSummaryComponent implements OnInit {
   }
 
   private fetchRelatedProjects(id: number): void {
-    // this.projectHub.getParentProjects(id).subscribe(projects => this.parentProjects = projects);
+    this.projectHub.getParentProjects(id).subscribe(projects => this.parentProjects = projects);
     this.projectHub.getChildProjects(id).subscribe(projects => this.childProjects = projects);
   }
 }
