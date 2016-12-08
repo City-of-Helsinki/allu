@@ -132,6 +132,10 @@ export class MapComponent implements OnInit, OnDestroy {
 
     // Disable editing map with draw controls when we have fixed locations
     this.setDynamicControls(fixedLocations.length === 0, this.editedItems);
+
+    Some(this.editedItems.getBounds())
+      .filter(bounds => Object.keys(bounds).length > 0) // has some bounds
+      .do(bounds => this.map.fitBounds(bounds));
   }
 
   private drawGeometry(geometryCollection: GeoJSON.GeometryCollection, drawLayer: L.LayerGroup<L.ILayer>, style?: Object) {
