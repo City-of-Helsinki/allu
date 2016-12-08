@@ -64,16 +64,16 @@
                 <thead>
                 <tr>
                     <th>Lisääjä</th>
-                    <th>Tunnus</th>
-                    <th>Omistaja</th>
+                    <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
+                    <th sortBy="ownerName" [currentSort]="sort" (onSortChange)="sortBy($event)">Omistaja</th>
                     <th>Tila</th>
                     <th>Kaupunginosa</th>
-                    <th>Alku</th>
-                    <th>Loppu</th>
+                    <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Alku</th>
+                    <th sortBy="endTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Loppu</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let project of projects | async" class="clickable row-highlight"
+                <tr *ngFor="let project of projects" class="clickable row-highlight"
                     (click)="goToSummary(project)">
                     <td>-</td>
                     <td>{{project.id}}</td>

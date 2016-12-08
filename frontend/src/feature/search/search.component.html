@@ -86,24 +86,24 @@
 
   <div class="row">
     <div class=" col s12">
-      <table class="striped responsive-table header">
+      <table class="striped responsive-table header" width="100%">
         <thead>
         <tr>
-          <th>Käsittelijä<i class="material-icons">arrow_drop_down</i></th>
-          <th>Nimi</th>
+          <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
+          <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">Nimi</th>
           <th>Hanke</th>
-          <th>Tyyppi<i class="material-icons">arrow_drop_down</i></th>
-          <th>Tila<i class="material-icons">arrow_drop_down</i></th>
-          <th>Hakija</th>
-          <th>Katuosoite</th>
+          <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
+          <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
+          <th sortBy="applicant.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
+          <th sortBy="location.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">Katuosoite</th>
           <th>Kaupunginosa</th>
           <th>Saapunut</th>
-          <th>Aloitus<i class="material-icons">arrow_drop_down</i></th>
+          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
           <th>Lisätietoja</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let application of applications | async" class="clickable row-highlight"
+        <tr *ngFor="let application of applications" class="clickable row-highlight"
             (click)="goToSummary(application)">
           <td>{{application.handler?.realName}}</td>
           <td>{{application.name}}</td>

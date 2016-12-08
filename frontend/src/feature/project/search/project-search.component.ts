@@ -9,6 +9,7 @@ import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {UI_DATE_FORMAT} from '../../../util/time.util';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {ProjectHub} from '../../../service/project/project-hub';
+import {Sort} from '../../../model/common/sort';
 
 
 @Component({
@@ -16,8 +17,9 @@ import {ProjectHub} from '../../../service/project/project-hub';
   template: require('./project-search.component.html')
 })
 export class ProjectSearchComponent implements OnInit {
-  private queryForm: FormGroup;
-  private projects: Observable<Array<Project>>;
+  sort: Sort = new Sort(undefined, undefined);
+  projects: Array<Project> = [];
+  queryForm: FormGroup;
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
   private format = UI_DATE_FORMAT;
@@ -38,12 +40,19 @@ export class ProjectSearchComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  public goToSummary(project: Project): void {
+  goToSummary(project: Project): void {
     this.router.navigate(['projects', project.id, 'summary']);
   }
 
-  private search(): void {
-    let query = ProjectSearchQuery.fromForm(this.queryForm.value);
-    this.projects = this.projectHub.searchProjects(query);
+  sortBy(sort: Sort) {
+    this.sort = sort;
+    this.search();
+  }
+
+  search(): void {
+    let query = ProjectSearchQuery.fromForm(this.queryForm.value, this.sort);
+    this.projectHub.searchProjects(query).subscribe(projects => {
+      this.projects = projects;
+    });
   }
 }
