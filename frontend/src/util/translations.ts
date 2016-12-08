@@ -24,7 +24,7 @@ export const translations = {
       CABLE_REPORT: 'Johtoselvitykset',
       EXCAVATION_ANNOUNCEMENT: 'Kaivuilmoitus',
       AREA_RENTAL: 'Aluevuokraus',
-      TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Väliaikainen liikennejärjestely',
+      TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Tilapäinen liikennejärjestely',
       PLACEMENT_PERMIT: 'Sijoitusluvat',
       NOTE: 'Muistiinpano'
     },

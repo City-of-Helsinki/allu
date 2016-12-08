@@ -154,7 +154,6 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private initMap(): void {
     this.map = this.createMap();
-    L.control.zoom({position: 'topright'}).addTo(this.map);
 
     let drawnItems = new L.FeatureGroup();
     let editedItems = new L.FeatureGroup();
@@ -185,7 +184,9 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.drawnItems = drawnItems;
     this.editedItems = editedItems;
+
     L.control.layers(this.mapLayers).addTo(this.map);
+    L.control.zoom({position: 'topright'}).addTo(this.map);
     L.control.scale().addTo(this.map);
   }
 

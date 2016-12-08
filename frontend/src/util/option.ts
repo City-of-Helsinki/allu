@@ -8,7 +8,8 @@ export interface Option<A> {
 }
 
 export function Some<T>(val: T) {
-  return val === undefined
+  /* tslint:disable:no-null-keyword */
+  return val === undefined || val === null
     ? new NoneOpt()
     : new SomeOpt(val);
 }
