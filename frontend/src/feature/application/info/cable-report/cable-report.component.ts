@@ -50,6 +50,8 @@ export class CableReportComponent implements OnInit {
         this.application = application;
         this.application.type = this.route.routeConfig.path;
 
+        this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
+
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
           this.isSummary = summary;
         });
