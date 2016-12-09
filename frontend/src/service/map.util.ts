@@ -103,7 +103,17 @@ export class MapUtil {
   }
 
   private mapWgs84Geometry(geometry: any): any {
-    return { type: geometry.type, coordinates: this.mapWgs84GeometryArray(geometry.coordinates) };
+    return { type: geometry.type, coordinates: this.mapWgs84GeometryObject(geometry) };
+  }
+
+  private mapWgs84GeometryObject(geometry: any): any {
+    switch (geometry.type) {
+      case 'Point':
+        return this.wgs84ToEpsg3879(geometry.coordinates);
+      default: {
+        return this.mapWgs84GeometryArray(geometry.coordinates);
+      }
+    }
   }
 
   private mapWgs84GeometryArray(geometryArray: Array<Array<Array<number>>>): Array<Array<Array<number>>> {
@@ -115,7 +125,17 @@ export class MapUtil {
   }
 
   private mapEPSG3879Geometry(geometry: any): any {
-    return { type: geometry.type, coordinates: this.mapEPSG3879GeometryArray(geometry.coordinates) };
+    return { type: geometry.type, coordinates: this.mapEPSG3879GeometryObject(geometry) };
+  }
+
+  private mapEPSG3879GeometryObject(geometry: any): any {
+    switch (geometry.type) {
+      case 'Point':
+        return this.epsg3879ToWgs84(geometry.coordinates);
+      default: {
+        return this.mapEPSG3879GeometryArray(geometry.coordinates);
+      }
+    }
   }
 
   private mapEPSG3879GeometryArray(geometryArray: Array<Array<Array<number>>>): Array<Array<Array<number>>> {

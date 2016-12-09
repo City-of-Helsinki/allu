@@ -83,17 +83,7 @@ export class MapComponent implements OnInit, OnDestroy {
         this.drawnItems.addLayer(layer);
       });
 
-      if (this.selection && featureCollection.features) {
-        let bounds = new Array<L.LatLng> ();
-        for (let feature of featureCollection.features) {
-          for (let list of feature.geometry.coordinates) {
-            for (let coordinates of list) {
-              bounds.push(L.latLng(coordinates[1], coordinates[0]));
-            }
-          }
-        }
-        this.map.fitBounds(L.latLngBounds(bounds));
-      }
+      this.map.fitBounds(L.latLngBounds(this.drawnItems.getBounds()));
     }
   }
 
@@ -188,6 +178,7 @@ export class MapComponent implements OnInit, OnDestroy {
     L.control.layers(this.mapLayers).addTo(this.map);
     L.control.zoom({position: 'topright'}).addTo(this.map);
     L.control.scale().addTo(this.map);
+    L.Icon.Default.imagePath = '/assets/images';
   }
 
   private addShape(features: L.FeatureGroup<L.ILayer>) {
