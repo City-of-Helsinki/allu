@@ -1,5 +1,6 @@
 import {BackendProject} from '../backend-model/backend-project';
 import {Project} from '../../model/project/project';
+import {Some} from '../../util/option';
 
 export class ProjectMapper {
 
@@ -8,8 +9,8 @@ export class ProjectMapper {
       new Project(
         backendProject.id,
         backendProject.name,
-        new Date(backendProject.startTime),
-        new Date(backendProject.endTime),
+        Some(backendProject.startTime).map(start => new Date(start)).orElse(undefined),
+        Some(backendProject.endTime).map(end => new Date(end)).orElse(undefined),
         backendProject.ownerName,
         backendProject.contactName,
         backendProject.email,

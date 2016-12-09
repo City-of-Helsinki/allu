@@ -1,4 +1,5 @@
 import {Component, Input} from '@angular/core';
+import {Router} from '@angular/router';
 
 import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
@@ -17,7 +18,7 @@ export class DecisionActionsComponent {
 
   private translations = translations;
 
-  constructor(private applicationHub: ApplicationHub) {}
+  constructor(private applicationHub: ApplicationHub, private router: Router) {}
 
   public decisionConfirmed(confirm: ApplicationStatusChange) {
     confirm.id = this.application.id;
@@ -32,5 +33,6 @@ export class DecisionActionsComponent {
   private statusChanged(application: Application): void {
     this.application = application;
     MaterializeUtil.toast(translations.decision.type[application.status], 4000);
+    this.router.navigateByUrl('/workqueue');
   }
 }
