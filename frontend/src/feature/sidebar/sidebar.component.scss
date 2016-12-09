@@ -1,0 +1,18 @@
+@import '../../assets/colors';
+
+.active {
+    font-weight: bolder;
+}
+
+.sidebar-item {
+    background: $allu-secondary-nav;
+    box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+    min-height: 30px;
+    margin-bottom: 5px;
+    text-align: center;
+
+    a {
+        color: $allu-text-white;
+    }
+}

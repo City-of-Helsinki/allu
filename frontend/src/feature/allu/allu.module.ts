@@ -26,7 +26,6 @@ import {rootRoutes} from './allu.routing';
 import {MapSearchModule} from '../mapsearch/mapsearch.module';
 import {WorkQueueModule} from '../workqueue/workqueue.module';
 import {LocationModule} from '../application/location/location.module';
-import {AlluCommonModule} from '../common/allu-common.module';
 import {DecisionModule} from '../decision/decision.module';
 import {SearchModule} from '../search/search.module';
 import {ToolbarModule} from '../toolbar/toolbar.module';
@@ -35,6 +34,7 @@ import {UserHub} from '../../service/user/user-hub';
 import {UserService} from '../../service/user/user-service';
 import {AdminModule} from '../admin/admin.module';
 import {ProjectModule} from '../project/project.module';
+import {SidebarModule} from '../sidebar/sidebar.module';
 
 
 @NgModule({
@@ -55,7 +55,8 @@ import {ProjectModule} from '../project/project.module';
     WorkQueueModule,
     DecisionModule,
     SearchModule,
-    AdminModule
+    AdminModule,
+    SidebarModule
   ],
   declarations: [
     AlluComponent
