@@ -36,7 +36,17 @@ public class AddressServiceTest {
       "<helsinki:postitoimipaikka>Helsinki</helsinki:postitoimipaikka><helsinki:osoitenumero_teksti>10</helsinki:osoitenumero_teksti>" +
       "<helsinki:geom><gml:Point srsName=\"http://www.opengis.net/gml/srs/epsg.xml#3879\">" +
       "<gml:coordinates xmlns:gml=\"http://www.opengis.net/gml\" decimal=\".\" cs=\",\" ts=\" \">25496886,6675339</gml:coordinates>" +
-      "</gml:Point></helsinki:geom></helsinki:Helsinki_osoiteluettelo></gml:featureMember></wfs:FeatureCollection>";
+      "</gml:Point></helsinki:geom></helsinki:Helsinki_osoiteluettelo></gml:featureMember>" +
+      "<gml:featureMember><helsinki:Helsinki_osoiteluettelo fid=\"Helsinki_osoiteluettelo.fid-2b4d8300_1569d8621e5_6dc0\">" +
+      "<helsinki:id>58478</helsinki:id><helsinki:katunimi>Viipurinkatu</helsinki:katunimi>" +
+      "<helsinki:gatan>Viborgsgatan</helsinki:gatan><helsinki:osoitenumero>11</helsinki:osoitenumero>" +
+      "<helsinki:n>6675339</helsinki:n><helsinki:e>25496886</helsinki:e><helsinki:kaupunki>Helsinki</helsinki:kaupunki>" +
+      "<helsinki:staden>Helsingfors</helsinki:staden><helsinki:tyyppi>1</helsinki:tyyppi><helsinki:postinumero>00510</helsinki:postinumero>" +
+      "<helsinki:postitoimipaikka>Helsinki</helsinki:postitoimipaikka><helsinki:osoitenumero_teksti>11</helsinki:osoitenumero_teksti>" +
+      "<helsinki:geom><gml:Point srsName=\"http://www.opengis.net/gml/srs/epsg.xml#3879\">" +
+      "<gml:coordinates xmlns:gml=\"http://www.opengis.net/gml\" decimal=\".\" cs=\",\" ts=\" \">25496886,6675339</gml:coordinates>" +
+      "</gml:Point></helsinki:geom></helsinki:Helsinki_osoiteluettelo></gml:featureMember>" +
+      "</wfs:FeatureCollection>";
 
   @Mock
   protected ApplicationProperties applicationProperties;
@@ -80,6 +90,36 @@ public class AddressServiceTest {
     Mockito.when(wfsRestTemplate.exchange(
         Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
     List<PostalAddressJson> postalAddressList = addressService.findMatchingStreet("Testikatu");
+    Assert.assertEquals(2, postalAddressList.size());
+    Assert.assertEquals("Viipurinkatu 10", postalAddressList.get(0).getStreetAddress());
+    Assert.assertEquals("Viipurinkatu 11", postalAddressList.get(1).getStreetAddress());
+    Assert.assertEquals("00510", postalAddressList.get(0).getPostalCode());
+    Assert.assertEquals("Helsinki", postalAddressList.get(0).getCity());
+  }
+
+  @Test
+  public void testFindMatchingStreetWithStreetNumber() {
+    String streetNumber = "1";
+    AddressService addressService = new AddressService(applicationProperties, wfsRestTemplate);
+    Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
+    Mockito.when(wfsRestTemplate.exchange(
+        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
+    List<PostalAddressJson> postalAddressList = addressService.findMatchingStreet("Testikatu " + streetNumber);
+    Assert.assertEquals(2, postalAddressList.size());
+    Assert.assertEquals("Viipurinkatu 10", postalAddressList.get(0).getStreetAddress());
+    Assert.assertEquals("Viipurinkatu 11", postalAddressList.get(1).getStreetAddress());
+    Assert.assertEquals("00510", postalAddressList.get(0).getPostalCode());
+    Assert.assertEquals("Helsinki", postalAddressList.get(0).getCity());
+  }
+
+  @Test
+  public void testFindMatchingExactStreetWithStreetNumber() {
+    String streetNumber = "10";
+    AddressService addressService = new AddressService(applicationProperties, wfsRestTemplate);
+    Mockito.when(wfsXmlEntity.getBody()).thenReturn(wfsGeocodeXml);
+    Mockito.when(wfsRestTemplate.exchange(
+        Mockito.eq(SEARCH_URL), Mockito.eq(HttpMethod.GET), Mockito.anyObject(), Mockito.eq(String.class), Mockito.eq("Testikatu"))).thenReturn((ResponseEntity<String>) wfsXmlEntity);
+    List<PostalAddressJson> postalAddressList = addressService.findMatchingStreet("Testikatu " + streetNumber);
     Assert.assertEquals(1, postalAddressList.size());
     Assert.assertEquals("Viipurinkatu 10", postalAddressList.get(0).getStreetAddress());
     Assert.assertEquals("00510", postalAddressList.get(0).getPostalCode());

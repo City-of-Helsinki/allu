@@ -21,6 +21,9 @@ import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +33,8 @@ import java.util.stream.Collectors;
 public class AddressService {
 
   private static final Logger logger = LoggerFactory.getLogger(AddressService.class);
+  private static final String NUMBER_REGEX = "\\d+";
+  private static final Pattern NUMBER_PATTERN = Pattern.compile(NUMBER_REGEX);
   private ApplicationProperties applicationProperties;
   private WfsRestTemplate restTemplate;
 
@@ -76,13 +81,17 @@ public class AddressService {
    * @return  List of street addresses starting with the given string.
    */
   public List<PostalAddressJson> findMatchingStreet(String partialStreetName) {
+
+    Optional<String> optionalStreetNumber = findStreetNumber(partialStreetName);
+    String partialStreetNameNoNumber = partialStreetName.replaceAll(NUMBER_REGEX,"").trim();
+
     HttpEntity<String> requestEntity = createRequestEntity();
     HttpEntity<String> wfsXmlEntity = restTemplate.exchange(
         applicationProperties.getStreetSearchUrl(),
         HttpMethod.GET,
         requestEntity,
         String.class,
-        partialStreetName);
+        partialStreetNameNoNumber);
 
     logger.debug("For street search {}, WFS service returned {}", partialStreetName, wfsXmlEntity.getBody());
     WfsFeatureCollection wfsFeatureCollection = unmarshalWfs(wfsXmlEntity.getBody());
@@ -92,7 +101,28 @@ public class AddressService {
           wfsFeatureCollection.featureMember.stream().map(fm -> mapFeatureMemberToAddress(fm)).collect(Collectors.toList());
     }
     logger.debug("For street search {}, the following addresses were found {}", partialStreetName, addresses);
-    return addresses;
+
+    return addresses.stream().filter(a -> filterByStreetNumber(a, optionalStreetNumber)).distinct().collect(Collectors.toList());
+  }
+
+  private Optional<String> findStreetNumber(String partialStreetName) {
+    Matcher matcher = NUMBER_PATTERN.matcher(partialStreetName);
+    if (matcher.find()) {
+      return Optional.of(matcher.group());
+    } else {
+      return Optional.empty();
+    }
+  }
+
+  private boolean filterByStreetNumber(PostalAddressJson postalAddressJson, Optional<String> optionalStreetNumber) {
+    if (optionalStreetNumber.isPresent()) {
+      Optional<String> filteredStreetNumber = findStreetNumber(postalAddressJson.getStreetAddress());
+      // street numbers that start with given number will return true. If filtered address does not contain street number at all,
+      // it will be skipped
+      return filteredStreetNumber.map(streetNumber -> streetNumber.startsWith(optionalStreetNumber.get())).orElse(false);
+    } else {
+      return true;
+    }
   }
 
   private HttpEntity<String> createRequestEntity() {
