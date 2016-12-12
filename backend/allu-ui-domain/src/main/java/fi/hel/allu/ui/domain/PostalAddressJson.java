@@ -43,6 +43,26 @@ public class PostalAddressJson {
   }
 
   @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    PostalAddressJson that = (PostalAddressJson) o;
+
+    if (streetAddress != null ? !streetAddress.equals(that.streetAddress) : that.streetAddress != null) return false;
+    if (postalCode != null ? !postalCode.equals(that.postalCode) : that.postalCode != null) return false;
+    return city != null ? city.equals(that.city) : that.city == null;
+  }
+
+  @Override
+  public int hashCode() {
+    int result = streetAddress != null ? streetAddress.hashCode() : 0;
+    result = 31 * result + (postalCode != null ? postalCode.hashCode() : 0);
+    result = 31 * result + (city != null ? city.hashCode() : 0);
+    return result;
+  }
+
+  @Override
   public String toString() {
     return "PostalAddressJson{" +
         "streetAddress='" + streetAddress + '\'' +
