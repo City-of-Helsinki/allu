@@ -1,0 +1,33 @@
+<div class="row">
+    <div class="col s12 sidebar-item" *ngFor="let item of items">
+        <div [ngSwitch]="item">
+            <div *ngSwitchCase="'BASIC_INFO'">
+                <a [routerLink]="['summary']" routerLinkActive="active">Perustiedot</a>
+            </div>
+            <div *ngSwitchCase="'ATTACHMENTS'">
+                <a [routerLink]="['attachments']" routerLinkActive="active">Liitteet</a>
+            </div>
+            <div *ngSwitchCase="'INVOICING'">
+                <a [routerLink]="['invoicing']" routerLinkActive="active">Laskutus</a>
+            </div>
+            <div *ngSwitchCase="'COMMENTS'">
+                <a [routerLink]="['comments']" routerLinkActive="active">Kommentit</a>
+            </div>
+            <div *ngSwitchCase="'EMAIL'">
+                <a [routerLink]="['email']" routerLinkActive="active">Sähköposti</a>
+            </div>
+            <div *ngSwitchCase="'HISTORY'">
+                <a [routerLink]="['history']" skipLocationChange="true" routerLinkActive="active">Historia</a>
+            </div>
+            <div *ngSwitchCase="'SUPERVISION'">
+                <a [routerLink]="['supervision']" routerLinkActive="active">Valvonta</a>
+            </div>
+            <div *ngSwitchCase="'APPLICATIONS'">
+                <a [routerLink]="['applications']" routerLinkActive="active">Hakemukset</a>
+            </div>
+            <div *ngSwitchCase="'PROJECTS'">
+                <a [routerLink]="['projects']" routerLinkActive="active">Hankkeet</a>
+            </div>
+        </div>
+    </div>
+</div>
