@@ -72,6 +72,13 @@ export class ProjectService {
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SAVE_FAILED, HttpUtil.extractMessage(err))));
   }
 
+  public addProjectApplication(id: number, applicationId: number): Observable<Project> {
+    return this.getProjectApplications(id)
+      .map(applications => applications.map(app => app.id))
+      .map(appIds => appIds.concat(applicationId))
+      .switchMap(appIds => this.updateProjectApplications(id, appIds));
+  }
+
   public getProjectApplications(id: number): Observable<Array<Application>> {
     let url = ProjectService.PROJECT_URL + '/' + id + '/applications';
     return this.authHttp.get(url)

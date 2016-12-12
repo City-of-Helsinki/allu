@@ -15,6 +15,8 @@ import {EventDetailsForm} from './details/event-details.form';
 import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {MaterializeUtil} from '../../../../util/materialize.util';
+import {Some} from '../../../../util/option';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 @Component({
   selector: 'event',
@@ -37,6 +39,7 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
               private fb: FormBuilder,
               private locationState: LocationState,
               private applicationHub: ApplicationHub,
+              private projectHub: ProjectHub,
               private mapHub: MapHub,
               private attachmentHub: ApplicationAttachmentHub) {
   };
@@ -84,9 +87,8 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
     application.contactList = form.contacts;
 
     this.applicationHub.save(application).subscribe(app => {
-      console.log('application saved');
-      this.locationState.clear();
       this.saveAttachments(app);
+      this.locationState.clear();
     });
   }
 
@@ -103,7 +105,16 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
           console.log('Error', error);
           this.submitPending = false;
         },
-        () => this.router.navigate(['applications', application.id, 'summary'])
-      );
+        () => this.saved(application));
+  }
+
+  private saved(application: Application): void {
+    // TODO: move to some common place when refactoring application page
+    // We had related project so navigate back to project page
+    Some(this.locationState.relatedProject)
+      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id).subscribe(project =>
+        this.router.navigate(['/projects', project.id])));
+
+    this.router.navigate(['applications', application.id, 'summary']);
   }
 }

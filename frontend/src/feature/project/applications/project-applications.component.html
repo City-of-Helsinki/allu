@@ -1,0 +1,53 @@
+<div class="row">
+    <div class="col m6">
+        <button type="button" md-raised-button class="waves-effect waves-light btn"
+                routerLink="/applications" [queryParams]="{relatedProject: project.id}">UUSI</button>
+        <button type="button" md-raised-button class="waves-effect waves-light btn" disabled>KOPIOI</button>
+    </div>
+</div>
+<div class="row form-group">
+    <div class="input-field col m3">
+        <input type="text" id="identifier" [readonly]="readonly"
+               [autocompletion]="matchingApplications"
+               nameField="applicationId"
+               (onSearchChange)="onIdentifierSearchChange($event)"
+               (onSelection)="add($event)">
+        <label for="identifier">Hae tunnuksella</label>
+    </div>
+</div>
+<div class="row">
+    <div class="row">
+        <div class=" col s12">
+            <table class="striped responsive-table">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>Käsittelijä</th>
+                    <th>Tunnus</th>
+                    <th>Tyyppi</th>
+                    <th>Tila</th>
+                    <th>Hakija</th>
+                    <th>Kaupunginosa</th>
+                    <th>Aloitus</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let application of applications" class="clickable row-highlight">
+                    <td (click)="remove(application.id)"><i class="material-icons">remove</i></td>
+                    <td>{{application.handler?.realName}}</td>
+                    <td>
+                        {{application.name}} <br>
+                        <span>{{application.id}}</span>
+                    </td>
+                    <td>{{['application.type', application.type] | translation}}</td>
+                    <td>{{['application.status', application.status] | translation}}</td>
+                    <td>{{application.applicant.name}}<br></td>
+                    <td>ei tuettuna</td>
+                    <td>{{ application.startTime | date:format }}</td>
+                    <td></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

@@ -7,6 +7,7 @@ import {ApplicationHub} from '../../../../service/application/application-hub';
 import {Contact} from '../../../../model/application/contact';
 import {Application} from '../../../../model/application/application';
 import {translations} from '../../../../util/translations';
+import {emailValidator} from '../../../../util/complex-validator';
 
 @Component({
   selector: 'contact',
@@ -67,7 +68,7 @@ export class ContactComponent implements OnInit, OnDestroy {
       streetAddress: [contact.streetAddress],
       postalCode: [contact.postalCode],
       city: [contact.city],
-      email: [contact.email, Validators.pattern('.+@.+\\..+')],
+      email: [contact.email, emailValidator],
       phone: [contact.phone, Validators.minLength(2)]
     });
   }

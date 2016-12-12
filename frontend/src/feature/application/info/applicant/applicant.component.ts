@@ -9,6 +9,7 @@ import {Application} from '../../../../model/application/application';
 import {translations} from '../../../../util/translations';
 import {EnumUtil} from '../../../../util/enum.util';
 import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
+import {emailValidator} from '../../../../util/complex-validator';
 
 @Component({
   selector: 'applicant',
@@ -53,7 +54,7 @@ export class ApplicantComponent implements OnInit, OnDestroy {
         postalCode: [''],
         city: ['']
       }),
-      email: ['', Validators.pattern('.+@.+\\..+')],
+      email: ['', emailValidator],
       phone: ['', Validators.minLength(2)]
     });
 

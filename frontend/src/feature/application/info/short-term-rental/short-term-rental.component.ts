@@ -16,6 +16,8 @@ import {translations} from '../../../../util/translations';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ShortTermRentalDetailsForm} from './short-term-rental.form';
 import {MaterializeUtil} from '../../../../util/materialize.util';
+import {Some} from '../../../../util/option';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 @Component({
   selector: 'short-term-rental',
@@ -41,6 +43,7 @@ export class ShortTermRentalComponent implements OnInit {
               private fb: FormBuilder,
               private locationState: LocationState,
               private applicationHub: ApplicationHub,
+              private projectHub: ProjectHub,
               private mapHub: MapHub) {
   };
 
@@ -73,7 +76,6 @@ export class ShortTermRentalComponent implements OnInit {
   }
 
   onSubmit(form: ShortTermRentalForm) {
-    console.log('onSubmit', form);
     this.submitPending = true;
     let application = this.application;
     application.metadata = this.meta;
@@ -92,7 +94,7 @@ export class ShortTermRentalComponent implements OnInit {
       console.log('application saved');
       this.locationState.clear();
       this.submitPending = false;
-      this.router.navigate(['applications', app.id, 'summary']);
+      this.saved(app);
     }, err => {
       this.submitPending = false;
     });
@@ -122,5 +124,15 @@ export class ShortTermRentalComponent implements OnInit {
   private metadataLoaded(metadata: StructureMeta) {
     this.application.metadata = metadata;
     this.meta = metadata;
+  }
+
+  private saved(application: Application): void {
+    // TODO: move to some common place when refactoring application page
+    // We had related project so navigate back to project page
+    Some(this.locationState.relatedProject)
+      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id).subscribe(project =>
+        this.router.navigate(['/projects', project.id])));
+
+    this.router.navigate(['applications', application.id, 'summary']);
   }
 }
