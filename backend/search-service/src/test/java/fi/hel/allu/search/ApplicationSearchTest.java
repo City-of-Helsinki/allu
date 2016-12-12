@@ -184,6 +184,7 @@ public class ApplicationSearchTest {
   public void testFindByDateField() {
     ApplicationES applicationES = createApplication(1);
     applicationSearchService.insertApplication(applicationES);
+    applicationSearchService.refreshIndex();
 
     QueryParameters params = new QueryParameters();
     ZonedDateTime testStartTime = ZonedDateTime.parse("2016-07-05T06:10:10.000Z");
@@ -192,7 +193,6 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    applicationSearchService.refreshIndex();
     List<Integer> appList = applicationSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());
@@ -203,7 +203,6 @@ public class ApplicationSearchTest {
     parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    applicationSearchService.refreshIndex();
     appList = applicationSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(0, appList.size());

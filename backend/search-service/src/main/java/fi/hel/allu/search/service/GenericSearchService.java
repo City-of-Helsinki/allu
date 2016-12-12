@@ -123,11 +123,6 @@ public class GenericSearchService {
    */
   public List<Integer> findByField(String indexTypeName, QueryParameters queryParameters) {
     try {
-
-      if (queryParameters == null || queryParameters.getQueryParameters() == null) {
-        throw new SearchException("Missing query parameters");
-      }
-
       BoolQueryBuilder qb = QueryBuilders.boolQuery();
 
       for (QueryParameter param : queryParameters.getQueryParameters()) {

@@ -7,7 +7,7 @@ export class ProjectSearchQuery implements SearchQuery {
   public startTime: Date;
   public endTime: Date;
   public ownerName: string;
-  public status: string;
+  public onlyActive: boolean;
   public district: string;
   public creator: number;
   public sort: Sort;
@@ -34,7 +34,7 @@ export class ProjectSearchQuery implements SearchQuery {
     query.uiStartTime = form.startTime;
     query.uiEndTime = form.endTime;
     query.ownerName = form.ownerName;
-    query.status = form.status;
+    query.onlyActive = form.onlyActive;
     query.district = form.district;
     query.creator = form.creator;
     query.sort = sort;
@@ -53,7 +53,7 @@ interface ProjectSearchQueryForm {
   startTime: string;
   endTime: string;
   ownerName: string;
-  status: string;
+  onlyActive: boolean;
   district: string;
   creator: number;
 }
