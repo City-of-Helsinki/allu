@@ -33,8 +33,6 @@ public class DecisionService {
   @SuppressWarnings("unused")
   private static final Logger logger = LoggerFactory.getLogger(DecisionService.class);
 
-  // Stylesheet name for decision PDF generation:
-  private static final String DECISION_STYLESHEET = "paatos";
   private static final FixedLocationJson BAD_LOCATION;
 
   private ApplicationProperties applicationProperties;
@@ -74,7 +72,7 @@ public class DecisionService {
     fillJson(decisionJson, application);
     byte[] pdfData = restTemplate.postForObject(
         applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE), decisionJson, byte[].class,
-        DECISION_STYLESHEET);
+        styleSheetName(application));
     // Store the generated PDF to model:
     MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
     requestParts.add("file", new ByteArrayResource(pdfData) {
@@ -117,25 +115,18 @@ public class DecisionService {
     if (application.getLocation() != null) {
       decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocation().getArea())));
     }
-    EventJson ej = (EventJson) application.getExtension();
-    if (ej != null) {
-      decisionJson.setBuildStartDate(formatDateWithDelta(ej.getStructureStartTime(), 0));
-      decisionJson.setBuildEndDate(formatDateWithDelta(ej.getEventStartTime(), -1));
-      decisionJson.setTeardownStartDate(formatDateWithDelta(ej.getEventEndTime(), 1));
-      decisionJson.setTeardownEndDate(formatDateWithDelta(ej.getStructureEndTime(), 0));
-
-      decisionJson.setNumBuildAndTeardownDays(daysBetween(ej.getStructureStartTime(), ej.getEventStartTime())
-          + daysBetween(ej.getEventEndTime(), ej.getStructureEndTime()));
-      decisionJson.setReservationTimeExceptions(ej.getTimeExceptions());
-      decisionJson.setEventDescription(ej.getDescription());
-      decisionJson.setStructureArea(String.format("%.0f", ej.getStructureArea()));
-      decisionJson.setStructureDescription(ej.getStructureDescription());
-      decisionJson.setEventUrl(ej.getUrl());
-      decisionJson.setHasCommercialActivities(ej.isSalesActivity());
-      decisionJson.setSportsWithHeavyStructures(ej.isHeavyStructure());
-      decisionJson.setHasEkokompassi(ej.isEcoCompass());
-      decisionJson.setEventNature(eventNature(ej.getNature()));
-      decisionJson.setPriceReason(ej.getNoPriceReason());
+    if (application.getType() == null) {
+      throw new IllegalArgumentException("Application type is required");
+    }
+    switch (application.getType()) {
+    case EVENT:
+      fillEventSpecifics(decisionJson, application.getExtension());
+      break;
+    case SHORT_TERM_RENTAL:
+      fillShortTermRentalSpecifics(decisionJson, application.getExtension());
+      break;
+    default:
+      break;
     }
     UserJson handler = application.getHandler();
     if (handler != null) {
@@ -165,6 +156,39 @@ public class DecisionService {
       decisionJson.setSeparateBill(priceInCents > 0);
     }
 
+  }
+
+  private void fillShortTermRentalSpecifics(DecisionJson decisionJson, ApplicationExtensionJson extension) {
+    ShortTermRentalJson strj = (ShortTermRentalJson) extension;
+    if (strj != null) {
+      decisionJson.setEventNature("[Tapahtuman tyyppi]");
+      decisionJson.setEventDescription("[Tapahtuman kuvaus]");
+      decisionJson.setEventUrl("[Tapahtuman kotisivu]");
+      decisionJson.setPriceReason("[Hinnan peruste]");
+    }
+  }
+
+  private void fillEventSpecifics(DecisionJson decisionJson, ApplicationExtensionJson extension) {
+    EventJson ej = (EventJson) extension;
+    if (ej != null) {
+      decisionJson.setBuildStartDate(formatDateWithDelta(ej.getStructureStartTime(), 0));
+      decisionJson.setBuildEndDate(formatDateWithDelta(ej.getEventStartTime(), -1));
+      decisionJson.setTeardownStartDate(formatDateWithDelta(ej.getEventEndTime(), 1));
+      decisionJson.setTeardownEndDate(formatDateWithDelta(ej.getStructureEndTime(), 0));
+
+      decisionJson.setNumBuildAndTeardownDays(daysBetween(ej.getStructureStartTime(), ej.getEventStartTime())
+          + daysBetween(ej.getEventEndTime(), ej.getStructureEndTime()));
+      decisionJson.setReservationTimeExceptions(ej.getTimeExceptions());
+      decisionJson.setEventDescription(ej.getDescription());
+      decisionJson.setStructureArea(String.format("%.0f", ej.getStructureArea()));
+      decisionJson.setStructureDescription(ej.getStructureDescription());
+      decisionJson.setEventUrl(ej.getUrl());
+      decisionJson.setHasCommercialActivities(ej.isSalesActivity());
+      decisionJson.setSportsWithHeavyStructures(ej.isHeavyStructure());
+      decisionJson.setHasEkokompassi(ej.isEcoCompass());
+      decisionJson.setEventNature(eventNature(ej.getNature()));
+      decisionJson.setPriceReason(ej.getNoPriceReason());
+    }
   }
 
   private String formatDateWithDelta(ZonedDateTime zonedDateTime, int deltaDays) {
@@ -280,5 +304,10 @@ public class DecisionService {
       return 0;
     }
     return (int) (startDate.until(endDateExclusive, ChronoUnit.DAYS));
+  }
+
+  // Get the stylesheet name to use for given application.
+  private String styleSheetName(ApplicationJson application) {
+    return application.getType().name();
   }
 }
