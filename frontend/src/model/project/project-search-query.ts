@@ -40,6 +40,12 @@ export class ProjectSearchQuery implements SearchQuery {
     query.sort = sort;
     return query;
   }
+
+  static fromProjectId(id: number): ProjectSearchQuery {
+    let query = new ProjectSearchQuery();
+    query.id = id;
+    return query;
+  }
 }
 
 interface ProjectSearchQueryForm {

@@ -1,13 +1,15 @@
 <div class="row search-bar">
     <h1>
-        <span *ngIf="project">HANKE {{project.name}} - </span>
-        <span *ngIf="isActive">AKTIIVINEN</span>
-        <span *ngIf="!isActive">INAKTIIVINEN</span>
+        <span *ngIf="project">
+            HANKE {{project.name}} -
+            <span *ngIf="project.active">AKTIIVINEN</span>
+            <span *ngIf="!project.active">INAKTIIVINEN</span>
+        </span>
     </h1>
 </div>
 <div class="row">
     <div class="col m1">
-        <sidebar [items]="['BASIC_INFO', 'APPLICATIONS']"></sidebar>
+        <sidebar [items]="['BASIC_INFO', 'APPLICATIONS', 'PROJECTS']"></sidebar>
     </div>
     <div class="col m11">
         <router-outlet></router-outlet>

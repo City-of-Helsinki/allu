@@ -69,7 +69,12 @@ export class HttpUtil {
   };
 
   static extractHttpResponse(responseObject: any): HttpResponse {
-    let response = responseObject.json();
+    let response = undefined;
+    if (responseObject.body && responseObject.body !== '') {
+      response = responseObject.json();
+    } else {
+      response = responseObject;
+    }
     return new HttpResponse(response.status, response.message);
   }
 }

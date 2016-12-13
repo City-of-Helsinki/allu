@@ -139,4 +139,16 @@ public class ProjectController {
       @PathVariable int id, @PathVariable Optional<Integer> parentProject) {
     return new ResponseEntity<>(projectServiceComposer.updateProjectParent(id, parentProject.orElse(null)), HttpStatus.OK);
   }
+
+  /**
+   * Remove parent from given projects.
+   * @param projectIds Projects which parent should be removed
+   * @return Updated project.
+   */
+  @RequestMapping(value = "/parent/remove", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ProjectJson> removeParent(@Valid @RequestBody(required = true) List<Integer> projectIds) {
+    projectServiceComposer.updateParentForProjects(null, projectIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

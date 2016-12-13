@@ -58,4 +58,14 @@ export class ProjectHub {
    * Fetches all parents (and grandparents and ...) of given project
    */
   public getParentProjects = (id: number) => this.projectService.getParentProjects(id);
+
+  /**
+   * Removes parent from given projects
+   */
+  public updateParent = (id: number, parentId: number) => this.projectService.updateParent(id, parentId);
+
+  /**
+   * Removes parent from given projects
+   */
+  public removeParent = (ids: Array<number>) => this.projectService.removeParent(ids);
 }
