@@ -62,6 +62,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         this.locationState.specifiers = application.extension.specifiers.map(s => ApplicationSpecifier[s]);
       });
 
+    this.route.queryParams
+      .map((params: {relatedProject}) => params.relatedProject)
+      .subscribe(relatedProject => this.locationState.relatedProject = relatedProject);
+
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
   }

@@ -30,16 +30,14 @@ export class ProjectSummaryComponent implements OnInit {
   constructor(private router: Router, private route: ActivatedRoute, private projectHub: ProjectHub) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe((params: {id: number}) => {
-      Some(params.id).do(id => {
-        this.projectHub.getProject(id).subscribe(project => {
-          this.project = project;
-          this.fetchApplications(id);
-          this.fetchRelatedProjects(id);
-          this.isActive = TimeUtil.isBetweenInclusive(new Date(), this.project.startTime, this.project.endTime);
-        });
+    this.route.data
+      .map((data: {project: Project}) => data.project)
+      .subscribe(project => {
+        this.project = project;
+        this.fetchApplications(project.id);
+        this.fetchRelatedProjects(project.id);
+        this.isActive = TimeUtil.isBetweenInclusive(new Date(), this.project.startTime, this.project.endTime);
       });
-    });
   }
 
   private fetchApplications(id: number): void {

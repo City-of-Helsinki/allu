@@ -1,4 +1,4 @@
-import {Project} from '../../model/project/project';
+import {Project} from '../../../model/project/project';
 
 export class ProjectForm {
   constructor()

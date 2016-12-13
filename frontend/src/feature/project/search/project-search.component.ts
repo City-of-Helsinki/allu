@@ -41,7 +41,7 @@ export class ProjectSearchComponent implements OnInit {
   }
 
   goToSummary(project: Project): void {
-    this.router.navigate(['projects', project.id, 'summary']);
+    this.router.navigate(['projects', project.id]);
   }
 
   sortBy(sort: Sort) {

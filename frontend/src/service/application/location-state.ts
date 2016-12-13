@@ -19,6 +19,7 @@ export class LocationState {
   public applicationType: ApplicationType;
   public applicationKind: ApplicationKind;
   public specifiers: Array<ApplicationSpecifier> = [];
+  public relatedProject: number;
 
   public clear() {
     this.location = new Location();

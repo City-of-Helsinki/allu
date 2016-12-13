@@ -1,4 +1,4 @@
-import {FormGroup, FormControl, AbstractControl} from '@angular/forms';
+import {FormGroup, FormControl, AbstractControl, Validators} from '@angular/forms';
 import {Some} from './option';
 import {TimeUtil} from './time.util';
 
@@ -52,3 +52,5 @@ export class ComplexValidator {
 interface ValidationResult {
   [key: string]: boolean;
 }
+
+export const emailValidator = Validators.pattern('.+@.+\\..+');

@@ -39,6 +39,12 @@ export class ProjectHub {
     this.projectService.updateProjectApplications(id, applicationIds);
 
   /**
+   * Adds single application to project
+   */
+  public addProjectApplication = (id: number, applicationId: number) =>
+    this.projectService.addProjectApplication(id, applicationId);
+
+  /**
    * Fetches projects applications
    */
   public getProjectApplications = (id: number) => this.projectService.getProjectApplications(id);
