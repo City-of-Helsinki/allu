@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Controller for managing projects.
@@ -132,10 +133,10 @@ public class ProjectController {
    * @param parentProject   New parent project.
    * @return Updated project.
    */
-  @RequestMapping(value = "/{id}/parentProject", method = RequestMethod.PUT)
+  @RequestMapping(value = {"/{id}/parentProject/{parentProject}", "/{id}/parentProject"}, method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<ProjectJson> updateProjectParent(
-      @PathVariable int id, @Valid @RequestBody(required = true) Integer parentProject) {
-    return new ResponseEntity<>(projectServiceComposer.updateProjectParent(id, parentProject), HttpStatus.OK);
+      @PathVariable int id, @PathVariable Optional<Integer> parentProject) {
+    return new ResponseEntity<>(projectServiceComposer.updateProjectParent(id, parentProject.orElse(null)), HttpStatus.OK);
   }
 }

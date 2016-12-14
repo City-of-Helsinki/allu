@@ -146,9 +146,9 @@ public class ProjectService {
    * @return  Updated project.
    */
   ProjectJson updateProjectParent(int id, Integer parentProject) {
-    HttpEntity<Integer> requestEntity = new HttpEntity<>(parentProject);
+    HttpEntity<String> requestEntity = new HttpEntity<>("empty");
     ResponseEntity<Project> updatedProjectResult = restTemplate.exchange(
-        applicationProperties.getProjectParentUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, id);
+        applicationProperties.getProjectParentUpdateUrl(), HttpMethod.PUT, requestEntity, Project.class, id, parentProject);
     return projectMapper.mapProjectToJson(updatedProjectResult.getBody());
   }
 }

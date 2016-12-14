@@ -392,7 +392,7 @@ public class ApplicationProperties {
    * @return  url for updating parent of existing project.
    */
   public String getProjectParentUpdateUrl() {
-    return getModelServiceUrl("/projects/{id}/parentProject");
+    return getModelServiceUrl("/projects/{id}/parentProject/{parentProject}");
   }
 
   /**
