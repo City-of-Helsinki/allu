@@ -230,8 +230,7 @@ public class ProjectControllerTest {
     Project projectParent = createDummyProject();
     projectParent = addProjectGetResult(projectParent);
     wtc.perform(
-        put("/projects/" + project.getId() + "/parentProject"),
-        projectParent.getId()).andExpect(status().isOk());
+        put("/projects/" + project.getId() + "/parentProject/" + projectParent.getId())).andExpect(status().isOk());
 
     Project updatedParentProject = wtc.parseObjectFromResult(resultActions, Project.class);
     assertEquals(startTime, updatedParentProject.getStartTime().withZoneSameInstant(zoneId));
