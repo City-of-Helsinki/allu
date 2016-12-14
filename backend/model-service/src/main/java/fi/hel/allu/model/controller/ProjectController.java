@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/projects")
@@ -115,10 +116,10 @@ public class ProjectController {
    * @param parentProject New parent project.
    * @return Updated project with new parent.
    */
-  @RequestMapping(value = "/{id}/parentProject", method = RequestMethod.PUT)
+  @RequestMapping(value = {"/{id}/parentProject/{parentProject}", "/{id}/parentProject"}, method = RequestMethod.PUT)
   public ResponseEntity<Project> updateProjectParent(
-      @PathVariable int id, @Valid @RequestBody(required = true) Integer parentProject) {
-    return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject), HttpStatus.OK);
+      @PathVariable int id, @PathVariable Optional<Integer> parentProject) {
+    return new ResponseEntity<>(projectService.updateProjectParent(id, parentProject.orElse(null)), HttpStatus.OK);
   }
 
 
