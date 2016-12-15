@@ -128,6 +128,10 @@ public class ProjectServiceComposer {
     return updatedProject;
   }
 
+  public void updateParentForProjects(Integer parentProject, List<Integer> ids) {
+    ids.forEach(id -> updateProjectParent(id, parentProject));
+  }
+
   /**
    * Orders given projects list by the order of id list.
    *

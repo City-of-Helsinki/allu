@@ -146,6 +146,10 @@ input:-webkit-autofill:active {
   }
 }
 
+.input-field-label {
+  font-weight: bold;
+}
+
 md-card {
   background: $allu-card-background;
 }
@@ -165,5 +169,38 @@ md-card-content {
 
   .col.info-field-group {
     padding-left: 0;
+  }
+}
+
+.button-group {
+  display: inline;
+  margin-left: 3px;
+  margin-right: 3px;
+
+  [type="button"] {
+    float: left;
+    box-shadow: none;
+  }
+
+  [type="button"]:first-child {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-right: 0;
+    border-right: 1px solid $allu-button-border;
+  }
+
+  [type="button"]:last-child {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    margin-left: 0;
+    border-left: 1px solid $allu-button-border;
+  }
+
+  [type="button"]:not(:first-child):not(:last-child) {
+    border-radius: 0;
+    margin-left: 0;
+    margin-right: 0;
+    border-left: 1px solid $allu-button-border;
+    border-right: 1px solid $allu-button-border;
   }
 }

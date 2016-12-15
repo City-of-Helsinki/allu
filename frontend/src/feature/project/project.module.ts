@@ -15,6 +15,7 @@ import {ProjectSummaryComponent} from './summary/project-summary.component';
 import {ProjectComponent} from './project.component';
 import {ProjectApplicationsComponent} from './applications/project-applications.component';
 import {ProjectResolve} from './project-resolve';
+import {ProjectProjectsComponent} from './projects/project-projects.component';
 
 @NgModule({
   imports: [
@@ -31,7 +32,8 @@ import {ProjectResolve} from './project-resolve';
     ProjectEditComponent,
     ProjectSearchComponent,
     ProjectSummaryComponent,
-    ProjectApplicationsComponent
+    ProjectApplicationsComponent,
+    ProjectProjectsComponent
   ],
   providers: [
     ProjectHub,

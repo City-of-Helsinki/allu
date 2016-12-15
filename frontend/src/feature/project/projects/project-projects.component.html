@@ -1,0 +1,63 @@
+<div class="row valign-wrapper">
+    <div class="col s6 valign">
+        <a type="button" md-raised-button class="waves-effect waves-light btn"
+           routerLink="/projects" [queryParams]="{parentProject: project.id}">UUSI</a>
+        <a type="button" md-raised-button class="waves-effect waves-light btn" (click)="remove()">POISTA</a>
+    </div>
+    <div class="col s6 valign-wrapper">
+        <div class="col s2 valign input-field-label">Liitä hanke:</div>
+        <div class="col s10 input-field">
+            <input type="text" id="identifier" [readonly]="readonly"
+                   [autocompletion]="matchingProjects"
+                   minTermLength="1"
+                   nameField="idWithName"
+                   (onSearchChange)="onIdentifierSearchChange($event)"
+                   (onSelection)="add($event)">
+            <label for="identifier">Hankkeen tunnus</label>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class=" col s12">
+        <table class="striped responsive-table header">
+            <thead>
+            <tr>
+                <th>
+                    <input type="checkbox" class="filled-in" [ngModel]="allSelected" (click)="checkAll()" id="all_none_checkbox" name="all_none_checkbox"/>
+                    <label for="all_none_checkbox"></label>
+                </th>
+                <th>Lisääjä</th>
+                <th>Tunnus</th>
+                <th>Omistaja</th>
+                <th>Tila</th>
+                <th>Kaupunginosa</th>
+                <th>Alku</th>
+                <th>Loppu</th>
+                <th>Suhde</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let row of relatedProjects" class="clickable row-highlight" (click)="goToSummary($event.target.cellIndex, row)">
+                <td>
+                    <input type="checkbox" class="filled-in" [ngModel]="row.selected" (change)="checkSingle(row)" id="{{row.id}}" />
+                    <label [attr.for]="row.id"></label>
+                </td>
+                <td>-</td>
+                <td>{{row.content.id}} <br></td>
+                <td>{{row.content.ownerName}}</td>
+                <td>
+                    <span *ngIf="row.content.isActive">Aktiivinen</span>
+                    <span *ngIf="!row.content.isActive">Inaktiivinen</span>
+                </td>
+                <td>Ei tuettuna<br></td>
+                <td>{{ row.content.startTime | date:dateFormat }}</td>
+                <td>{{ row.content.endTime | date:dateFormat }}</td>
+                <td>
+                    <i *ngIf="isChild(row.content.parentId)" class="material-icons">arrow_downward</i>
+                    <i *ngIf="!isChild(row.content.parentId)" class="material-icons">arrow_upward</i>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

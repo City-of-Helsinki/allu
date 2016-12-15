@@ -28,6 +28,8 @@ export class ProjectEditComponent {
   matchingApplications: Observable<Array<Application>>;
   translations = translations;
 
+  private parentProject: number;
+
   constructor(private router: Router, private route: ActivatedRoute,
               private applicationHub: ApplicationHub, private projectHub: ProjectHub,
               private fb: FormBuilder) {
@@ -47,6 +49,10 @@ export class ProjectEditComponent {
           MaterializeUtil.updateTextFields(50);
     });
 
+    this.route.queryParams
+      .map((params: {parentProject: number}) => params.parentProject)
+      .subscribe(parentProject => this.parentProject = parentProject);
+
     this.matchingApplications = this.applicationSearch.asObservable()
       .debounceTime(300)
       .distinctUntilChanged()
@@ -64,9 +70,11 @@ export class ProjectEditComponent {
 
   onSubmit(form: ProjectForm) {
     let project = ProjectForm.toProject(form);
+    project.parentId = this.parentProject || project.parentId;
+
     this.projectHub.save(project)
       .switchMap(p => this.projectHub.updateProjectApplications(p.id, this.applications.map(app => app.id)))
-      .subscribe(p => this.router.navigate(['/projects', p.id]));
+      .subscribe(p => this.navigateAfterSubmit(p, this.parentProject));
   }
 
   public onIdentifierSearchChange(identifier: string) {
@@ -84,5 +92,13 @@ export class ProjectEditComponent {
       customerReference: ['', Validators.required],
       additionalInfo: ['']
     });
+  }
+
+  private navigateAfterSubmit(project: Project, relatedProjectId: number): void {
+    if (relatedProjectId) {
+      this.router.navigate(['/projects', relatedProjectId, 'projects']);
+    } else {
+      this.router.navigate(['/projects', project.id]);
+    }
   }
 }

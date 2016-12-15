@@ -97,6 +97,21 @@ export class ProjectService {
     return this.getProjects(url);
   }
 
+  public updateParent(id: number, parentId: number): Observable<Project> {
+    let url = [ProjectService.PROJECT_URL, id, 'parentProject', parentId].join('/');
+    return this.authHttp.put(url, '')
+      .map(response => response.json())
+      .map(project => ProjectMapper.mapBackend(project))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
+  public removeParent(ids: Array<number>): Observable<HttpResponse> {
+    let url = [ProjectService.PROJECT_URL, 'parent', 'remove'].join('/');
+    return this.authHttp.put(url, JSON.stringify(ids))
+      .map(response => HttpUtil.extractHttpResponse(response))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
   private getProjects(url: string): Observable<Array<Project>> {
     return this.authHttp.get(url)
       .map(response => response.json())
