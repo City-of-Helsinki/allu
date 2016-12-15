@@ -50,6 +50,7 @@ export class QueryParametersMapper {
     QueryParametersMapper.mapParameter(queryParameters, '_all', query.freeText);
     QueryParametersMapper.mapDateParameter(queryParameters, 'startTime', MIN_DATE, query.endTime);
     QueryParametersMapper.mapDateParameter(queryParameters, 'endTime', query.startTime, MAX_DATE);
+    Some(query.projectId).do(projectId => QueryParametersMapper.mapParameter(queryParameters, 'projectId', projectId.toString()));
     return queryParameters;
   }
 
