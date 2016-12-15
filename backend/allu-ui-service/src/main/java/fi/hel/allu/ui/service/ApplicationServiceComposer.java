@@ -1,7 +1,9 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
@@ -9,6 +11,7 @@ import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,6 +183,51 @@ public class ApplicationServiceComposer {
   public List<ApplicationJson> findApplicationsByProject(int id) {
     return projectService.findApplicationsByProject(id).stream()
         .map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
+  }
+
+  /**
+   * Get the standard texts for cable infos
+   * 
+   * @return List of texts and their cable info types
+   */
+  public List<CableInfoText> getCableInfoTexts() {
+    return applicationService.getCableInfoTexts();
+  }
+
+  /**
+   * Delete a standard cable info text
+   * 
+   * @param id
+   *          the ID of the key to delete
+   */
+  public void deleteCableInfoText(int id) {
+    applicationService.deleteCableInfoText(id);
+  }
+
+  /**
+   * Create a new cable info text
+   * 
+   * @param type
+   *          the cable info type for the text
+   * @param text
+   *          the text
+   * @return the resulting CableInfoText entry
+   */
+  public CableInfoText createCableInfoText(CableInfoType type, String text) {
+    return applicationService.createCableInfoText(type, text);
+  }
+
+  /**
+   * Update a cable info text
+   * 
+   * @param id
+   *          id of the text entry to update
+   * @param text
+   *          new text for the entry
+   * @return the resulting CableInfoText entry after update
+   */
+  public CableInfoText updateCableInfoText(int id, String text) {
+    return applicationService.updateCableInfoText(id, text);
   }
 
   private List<ApplicationJson> getFullyPopulatedApplications(List<Integer> ids) {

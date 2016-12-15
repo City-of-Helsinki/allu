@@ -1,10 +1,13 @@
 package fi.hel.allu.ui.service;
 
 
+import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,16 +17,22 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -186,5 +195,59 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals("MockName2", response.get(1).getName());
   }
 
+  @Test
+  public void testGetCableInfoTexts() {
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(CableInfoText[].class)))
+    .then(invocation -> createMockCableInfoTexts());
+
+    List<CableInfoText> result = applicationService.getCableInfoTexts();
+
+    assertEquals(1, result.size());
+    assertEquals("Sähköjohto", result.get(0).getTextValue());
+  }
+
+  @Test
+  public void testCreateCableInfoText() {
+    Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.any(CableInfoText.class),
+        Mockito.eq(CableInfoText.class))).then(invocation -> createMockCableInfoText());
+
+    CableInfoText result = applicationService.createCableInfoText(CableInfoType.TRAMWAY, "Raitiovaunu");
+
+    assertEquals("Qwertyuiopå", result.getTextValue());
+  }
+
+  @Test
+  public void testDeleteCableInfoText() {
+    applicationService.deleteCableInfoText(112);
+
+    Mockito.verify(restTemplate).delete(Mockito.anyString(), Mockito.eq(112));
+  }
+
+  @Test
+  public void testUpdateCableInfoText() {
+    Mockito.when(restTemplate.exchange( Mockito.anyString(), Mockito.eq(HttpMethod.PUT),
+            Mockito.any(), Mockito.eq(CableInfoText.class), Mockito.eq(112)))
+    .then(invocation -> createMockCableInfoText());
+
+    CableInfoText result = applicationService.updateCableInfoText(112, "Raitiovaunu");
+
+    assertEquals("Qwertyuiopå", result.getTextValue());
+  }
+
+  private Object createMockCableInfoText() {
+    CableInfoText cit = new CableInfoText();
+    cit.setCableInfoType(CableInfoType.OTHER);
+    ;
+    cit.setTextValue("Qwertyuiopå");
+    return new ResponseEntity<>(cit, HttpStatus.OK);
+  }
+
+  private Object createMockCableInfoTexts() {
+    CableInfoText cit = new CableInfoText();
+    cit.setId(1);
+    cit.setCableInfoType(CableInfoType.ELECTRICITY);
+    cit.setTextValue("Sähköjohto");
+    return new ResponseEntity<>(new CableInfoText[] { cit }, HttpStatus.OK);
+  }
 
 }

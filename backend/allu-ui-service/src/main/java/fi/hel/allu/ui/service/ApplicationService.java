@@ -1,11 +1,16 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -88,9 +93,66 @@ public class ApplicationService {
   }
 
   /**
+   * Get the standard texts for cable infos
+   *
+   * @return List of texts and their cable info types
+   */
+  public List<CableInfoText> getCableInfoTexts() {
+    ResponseEntity<CableInfoText[]> restResult = restTemplate
+        .getForEntity(applicationProperties.getCableInfoTextListUrl(), CableInfoText[].class);
+    return Arrays.asList(restResult.getBody());
+  }
+
+  /**
+   * Delete a standard cable info text
+   *
+   * @param id the ID of the key to delete
+   */
+  public void deleteCableInfoText(int id) {
+    restTemplate.delete(applicationProperties.getCableInfoTextDeleteUrl(), id);
+  }
+
+  /**
+   * Create a new cable info text
+   *
+   * @param type the cable info type for the text
+   * @param text the text
+   * @return the resulting CableInfoText entry
+   */
+  public CableInfoText createCableInfoText(CableInfoType type, String text) {
+    CableInfoText cit = new CableInfoText();
+    cit.setCableInfoType(type);
+    cit.setTextValue(text);
+    ResponseEntity<CableInfoText> restResult = restTemplate.postForEntity(
+        applicationProperties.getCableInfoTextAddUrl(), cit, CableInfoText.class);
+    return restResult.getBody();
+  }
+
+  /**
+   * Update a cable info text
+   *
+   * @param id id of the text entry to update
+   * @param text new text for the entry
+   * @return the resulting CableInfoText entry after update
+   */
+  public CableInfoText updateCableInfoText(int id, String text) {
+    CableInfoText cit = new CableInfoText();
+    cit.setTextValue(text);
+    ResponseEntity<CableInfoText> restResult =
+        restTemplate.exchange(
+            applicationProperties.getCableInfoTextUpdateUrl(),
+            HttpMethod.PUT,
+            new HttpEntity<>(cit),
+            CableInfoText.class,
+            id);
+    return restResult.getBody();
+  }
+
+  /**
    * Create applications by calling backend service.
    *
-   * @param newApplication  Application to be added to backend.
+   * @param newApplication
+   *          Application to be added to backend.
    * @return Application with possibly updated information from backend.
    */
   ApplicationJson createApplication(ApplicationJson newApplication) {
