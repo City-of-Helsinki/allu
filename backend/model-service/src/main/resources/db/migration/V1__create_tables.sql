@@ -162,6 +162,11 @@ create table allu.decision (
     decision_time timestamp with time zone,
     status text );
 
+create table allu.cable_info_text (
+    id serial primary key,
+    cable_info_type text not null,
+    text_value text not null );
+
 create SEQUENCE allu.KP_application_type_sequence START 1600001;
 create SEQUENCE allu.AL_application_type_sequence START 1600001;
 create SEQUENCE allu.LJ_application_type_sequence START 1600001;
