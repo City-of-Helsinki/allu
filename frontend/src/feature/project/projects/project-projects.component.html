@@ -27,17 +27,17 @@
                     <label for="all_none_checkbox"></label>
                 </th>
                 <th>Lisääjä</th>
-                <th>Tunnus</th>
-                <th>Omistaja</th>
-                <th>Tila</th>
+                <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
+                <th sortBy="ownerName" [currentSort]="sort" (onSortChange)="sortBy($event)">Omistaja</th>
+                <th sortBy="isActive" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
                 <th>Kaupunginosa</th>
-                <th>Alku</th>
-                <th>Loppu</th>
+                <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Alku</th>
+                <th sortBy="endTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Loppu</th>
                 <th>Suhde</th>
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let row of relatedProjects" class="clickable row-highlight" (click)="goToSummary($event.target.cellIndex, row)">
+            <tr *ngFor="let row of sortedProjectRows" class="clickable row-highlight" (click)="goToSummary($event.target.cellIndex, row)">
                 <td>
                     <input type="checkbox" class="filled-in" [ngModel]="row.selected" (change)="checkSingle(row)" id="{{row.id}}" />
                     <label [attr.for]="row.id"></label>
