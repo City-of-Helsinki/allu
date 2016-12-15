@@ -14,6 +14,7 @@ export class ApplicationSearchQuery implements SearchQuery {
   public freeText: string;
   public startTime: Date;
   public endTime: Date;
+  public projectId: number;
   public sort: Sort;
 
   public get uiStartTime(): string {

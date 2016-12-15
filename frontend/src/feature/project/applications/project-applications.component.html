@@ -1,50 +1,57 @@
-<div class="row">
-    <div class="col m6">
-        <button type="button" md-raised-button class="waves-effect waves-light btn"
-                routerLink="/applications" [queryParams]="{relatedProject: project.id}">UUSI</button>
-        <button type="button" md-raised-button class="waves-effect waves-light btn" disabled>KOPIOI</button>
+<div class="row valign-wrapper">
+    <div class="col m6 valign">
+        <a type="button" md-raised-button class="waves-effect waves-light btn"
+                routerLink="/applications" [queryParams]="{relatedProject: project.id}">UUSI</a>
+        <a type="button" md-raised-button class="waves-effect waves-light btn" disabled>KOPIOI</a>
+        <a type="button" md-raised-button class="waves-effect waves-light btn" (click)="remove()">POISTA</a>
     </div>
-</div>
-<div class="row form-group">
-    <div class="input-field col m3">
-        <input type="text" id="identifier" [readonly]="readonly"
-               [autocompletion]="matchingApplications"
-               nameField="applicationId"
-               (onSearchChange)="onIdentifierSearchChange($event)"
-               (onSelection)="add($event)">
-        <label for="identifier">Hae tunnuksella</label>
+    <div class="col s6 valign-wrapper">
+        <div class="col s2 valign input-field-label">Liitä hakemus:</div>
+        <div class="col s10 input-field">
+            <input type="text" id="identifier" [readonly]="readonly"
+                   [autocompletion]="matchingApplications"
+                   nameField="applicationId"
+                   (onSearchChange)="onIdentifierSearchChange($event)"
+                   (onSelection)="add($event)">
+            <label for="identifier">Hakemuksen tunnus</label>
+        </div>
     </div>
 </div>
 <div class="row">
     <div class="row">
         <div class=" col s12">
-            <table class="striped responsive-table">
+            <table class="striped responsive-table header">
                 <thead>
                 <tr>
-                    <th></th>
-                    <th>Käsittelijä</th>
+                    <th>
+                        <input type="checkbox" class="filled-in" [ngModel]="allSelected" (click)="checkAll()" id="all_none_checkbox" name="all_none_checkbox"/>
+                        <label for="all_none_checkbox"></label>
+                    </th>
+                    <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
                     <th>Tunnus</th>
-                    <th>Tyyppi</th>
-                    <th>Tila</th>
-                    <th>Hakija</th>
+                    <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
+                    <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
+                    <th sortBy="applicant.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
                     <th>Kaupunginosa</th>
-                    <th>Aloitus</th>
+                    <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr *ngFor="let application of applications" class="clickable row-highlight">
-                    <td (click)="remove(application.id)"><i class="material-icons">remove</i></td>
-                    <td>{{application.handler?.realName}}</td>
+                <tr *ngFor="let row of applicationRows" class="clickable row-highlight" (click)="goToSummary($event.target.cellIndex, row)">
                     <td>
-                        {{application.name}} <br>
-                        <span>{{application.id}}</span>
+                        <input type="checkbox" class="filled-in" [ngModel]="row.selected" (change)="checkSingle(row)" id="{{row.id}}" />
+                        <label [attr.for]="row.id"></label>
                     </td>
-                    <td>{{['application.type', application.type] | translation}}</td>
-                    <td>{{['application.status', application.status] | translation}}</td>
-                    <td>{{application.applicant.name}}<br></td>
+                    <td>{{row.content.handler?.realName}}</td>
+                    <td>
+                        {{row.content.name}} <br>
+                        <span>{{row.content.id}}</span>
+                    </td>
+                    <td>{{['application.type', row.content.type] | translation}}</td>
+                    <td>{{['application.status', row.content.status] | translation}}</td>
+                    <td>{{row.content.applicant.name}}<br></td>
                     <td>ei tuettuna</td>
-                    <td>{{ application.startTime | date:format }}</td>
-                    <td></td>
+                    <td>{{ row.content.startTime | date:dateFormat }}</td>
                 </tr>
                 </tbody>
             </table>
