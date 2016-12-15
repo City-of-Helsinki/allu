@@ -91,6 +91,7 @@ public class ProjectServiceComposer {
         .collect(Collectors.toList());
     // link applications to the given project
     ProjectJson updatedProject = projectService.updateProjectApplications(id, applicationIds);
+    List<Application> applicationsWithUpdatedProjectId = applicationService.findApplicationsById(applicationIds);
     // find which projects are affected by the project change of the given applications
     List<ProjectJson> changedProjects = new ArrayList<>();
     changedProjects.add(updatedProject);
@@ -103,7 +104,7 @@ public class ProjectServiceComposer {
     // update search index with the changed projects
     searchService.updateProjects(changedProjects);
     // update search index with the changed applications
-    List<ApplicationJson> applicationJsons = updatedApplications.stream()
+    List<ApplicationJson> applicationJsons = applicationsWithUpdatedProjectId.stream()
         .map(a -> applicationJsonService.getFullyPopulatedApplication(a))
         .collect(Collectors.toList());
     searchService.updateApplications(applicationJsons);
