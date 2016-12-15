@@ -9,6 +9,17 @@ export class Sort {
     this.direction = direction;
   }
 
+  public byDirection<T>(original: Array<T>, sorted: Array<T>): Array<T> {
+    switch (this.direction) {
+      case Direction.ASC:
+        return sorted.reverse();
+      case Direction.DESC:
+        return sorted;
+      default:
+        return original;
+    }
+  }
+
   public icon(): string {
     if (this.direction === Direction.DESC) {
       return 'keyboard_arrow_down';
@@ -17,5 +28,19 @@ export class Sort {
     } else {
       return '';
     }
+  }
+
+  public sortFn():  (a, b) => number {
+    let sort = (left, right) => {
+      if (left[this.field] > right[this.field]) {
+        return 1;
+      }
+      if (left[this.field] < right[this.field]) {
+        return -1;
+      }
+      // a must be equal to b
+      return 0;
+    };
+    return sort;
   }
 }

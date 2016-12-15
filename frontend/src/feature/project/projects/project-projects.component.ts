@@ -9,6 +9,7 @@ import {Some} from '../../../util/option';
 import {UI_DATE_FORMAT} from '../../../util/time.util';
 import {ContentRow} from '../../../model/common/content-row';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
+import {Sort} from '../../../model/common/sort';
 
 
 
@@ -20,12 +21,14 @@ import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 export class ProjectProjectsComponent implements OnInit {
 
   project: Project;
-  relatedProjects: Array<ContentRow<Project>> = [];
+  sortedProjectRows: Array<ContentRow<Project>> = [];
   projectSearch = new Subject<number>();
   matchingProjects: Observable<Array<Project>>;
   allSelected = false;
-
+  sort: Sort = new Sort(undefined, undefined);
   dateFormat = UI_DATE_FORMAT;
+
+  private projectRows: Array<ContentRow<Project>> = [];
 
   constructor(private router: Router, private route: ActivatedRoute, private projectHub: ProjectHub) {}
 
@@ -48,14 +51,14 @@ export class ProjectProjectsComponent implements OnInit {
   add(project: Project) {
     if (this.notAdded(project.id)) {
       let row = new ContentRow(project);
-      this.relatedProjects.push(row);
+      this.projectRows.push(row);
       this.projectHub.updateParent(project.id, this.project.id)
         .subscribe(updated => this.fetchRelatedProjects(this.project.id));
     }
   }
 
   remove() {
-    let removeParentsFrom = this.relatedProjects
+    let removeParentsFrom = this.projectRows
       .filter(row => row.selected)
       .map(row => row.id);
 
@@ -79,7 +82,7 @@ export class ProjectProjectsComponent implements OnInit {
 
   checkAll() {
     let selection = !this.allSelected;
-    this.relatedProjects.forEach(row => row.selected = selection);
+    this.projectRows.forEach(row => row.selected = selection);
     this.updateAllSelected();
   }
 
@@ -95,8 +98,13 @@ export class ProjectProjectsComponent implements OnInit {
     }
   }
 
+  sortBy(sort: Sort): void {
+    this.sort = sort;
+    this.sortedProjectRows = this.sortRows(this.sort, this.projectRows);
+  }
+
   private updateAllSelected() {
-    this.allSelected = this.relatedProjects.every(row => row.selected);
+    this.allSelected = this.projectRows.every(row => row.selected);
   }
 
   private fetchRelatedProjects(id: number): void {
@@ -105,11 +113,24 @@ export class ProjectProjectsComponent implements OnInit {
       this.projectHub.getChildProjects(id)
     ).map(projects => [].concat.apply([], projects)) // maps array[array, array] => array
       .map(projects => projects.map(project => new ContentRow(project)))
-      .subscribe(projects => this.relatedProjects = projects);
+      .subscribe(projects => {
+        this.projectRows = projects;
+        this.sortedProjectRows = this.sortRows(this.sort, projects);
+      });
   }
 
   private notAdded(id: number): boolean {
-    return this.relatedProjects.map(p => p.id).indexOf(id) < 0;
+    return this.projectRows.map(p => p.id).indexOf(id) < 0;
+  }
+
+  private sortRows(sort: Sort, rows: Array<ContentRow<Project>>): Array<ContentRow<Project>> {
+    let original = rows;
+    let sorted =  rows
+      .map(row => row.content)
+      .sort(sort.sortFn())
+      .map(project => new ContentRow(project));
+
+    return sort.byDirection(original, sorted);
   }
 }
 
