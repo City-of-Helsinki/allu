@@ -1,8 +1,8 @@
 <div materialize class="row">
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
-        <applicant [applicationForm]="applicationForm" [readonly]="isSummary"></applicant>
+        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant" [readonly]="isSummary"></applicant>
 
-        <contact [applicationForm]="applicationForm" [readonly]="isSummary"></contact>
+        <contact [applicationForm]="applicationForm" [contactList]="application.contactList" [readonly]="isSummary"></contact>
 
         <form [formGroup]="rentalForm">
             <div class="col m12 loose">

@@ -1,11 +1,10 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, Validators, FormArray} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
 
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {Contact} from '../../../../model/application/contact';
-import {Application} from '../../../../model/application/application';
 import {translations} from '../../../../util/translations';
 import {emailValidator} from '../../../../util/complex-validator';
 
@@ -17,6 +16,7 @@ import {emailValidator} from '../../../../util/complex-validator';
 })
 export class ContactComponent implements OnInit, OnDestroy {
   @Input() applicationForm: FormGroup;
+  @Input() contactList: Array<Contact> = [];
   @Input() readonly: boolean;
   @Input() headerText = 'Yhteyshenkilö';
   @Input() formName = 'contacts';
@@ -39,9 +39,7 @@ export class ContactComponent implements OnInit, OnDestroy {
     });
     this.applicationForm.addControl(this.formName, this.contacts);
 
-    this.route.parent.data.subscribe((data: {application: Application}) => {
-      data.application.contactList.forEach(contact => this.addContact(contact));
-    });
+    this.contactList.forEach(contact => this.addContact(contact));
   }
 
   ngOnDestroy(): void {

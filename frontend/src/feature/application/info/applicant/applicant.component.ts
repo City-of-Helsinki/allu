@@ -1,15 +1,16 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicantForm} from './applicant.form';
-import {Application} from '../../../../model/application/application';
 import {translations} from '../../../../util/translations';
 import {EnumUtil} from '../../../../util/enum.util';
 import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
 import {emailValidator} from '../../../../util/complex-validator';
+import {Applicant} from '../../../../model/application/applicant';
+import {Some} from '../../../../util/option';
 
 @Component({
   selector: 'applicant',
@@ -19,6 +20,7 @@ import {emailValidator} from '../../../../util/complex-validator';
 })
 export class ApplicantComponent implements OnInit, OnDestroy {
   @Input() applicationForm: FormGroup;
+  @Input() applicant: Applicant;
   @Input() readonly: boolean;
   @Input() headerText = 'Hakija';
   @Input() formName = 'applicant';
@@ -60,12 +62,9 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
     this.applicationForm.addControl(this.formName, this.applicantForm);
 
-    this.route.parent.data
-      .map((data: {application: Application}) => data.application.applicant)
-      .filter(applicant => !!applicant)
-      .subscribe(applicant => {
-        this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant));
-      });
+    Some(this.applicant)
+      .map(applicant => ApplicantForm.fromApplicant(applicant))
+      .do(applicant => this.applicantForm.patchValue(applicant));
   }
 
   private metadataLoaded(metadata: StructureMeta) {
