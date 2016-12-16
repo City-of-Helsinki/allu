@@ -288,6 +288,104 @@ export const translations = {
     field: {
       emailInvalid: 'Virheellinen sähköpostiosoite'
     }
+  },
+  map: {
+    zoomIn: 'Lähennä',
+    zoomOut: 'Loitonna',
+    draw: {
+      toolbar: {
+        actions: {
+          title: 'Peruuta piirtäminen',
+          text: 'Peruuta'
+        },
+        finish: {
+          title: 'Lopeta piirtäminen',
+          text: 'Lopeta'
+        },
+        undo: {
+          title: 'Poista viimeisin piirretty piste',
+          text: 'Poista viimeisin piste'
+        },
+        buttons: {
+          polyline: 'Piirrä viiva',
+          polygon: 'Piirrä monikulmio',
+          rectangle: 'Piirrä suorakaide',
+          circle: 'Piirrä ympyrä',
+          marker: 'Piirrä piste'
+        }
+      },
+      handlers: {
+        circle: {
+          tooltip: {
+            start: 'Klikkaa ja raahaa piirtääksesi ympyrän.'
+          },
+          radius: 'Säde'
+        },
+        marker: {
+          tooltip: {
+            start: 'Klikkaa karttaa lisätäksesi pisteen.'
+          }
+        },
+        polygon: {
+          tooltip: {
+            start: 'Aloita kuvion piirtäminen klikkaamalla.',
+            cont: 'Jatka kuvion piirtämistä klikkaamalla.',
+            end: 'Klikkaa ensimmäistä pistettä kuvion päättämiseksi.'
+          }
+        },
+        polyline: {
+          error: '<strong>Virhe:</strong> kuvion reunat eivät saa leikata toisiaan!',
+          tooltip: {
+            start: 'Aloita viivan piirtäminen klikkaamalla.',
+            cont: 'Jatka viivan piirtämistä klikkaamalla.',
+            end: 'Klikkaa viimeistä pistettä viivan päättämiseksi'
+          }
+        },
+        rectangle: {
+          tooltip: {
+            start: 'Klikkaa ja raahaa piirtääksesi suorakulmion.'
+          }
+        },
+        simpleshape: {
+          tooltip: {
+            end: 'Vapauta hiiren nappi päättääksesi piirtämisen.'
+          }
+        }
+      }
+    },
+    edit: {
+      toolbar: {
+        actions: {
+          save: {
+            title: 'Tallenna muutokset.',
+            text: 'Tallenna'
+          },
+          cancel: {
+            title: 'Peruuta muokkaukset, hylkää kaikki muutokset.',
+            text: 'Peruuta'
+          }
+        },
+        buttons: {
+          edit: 'Muokkaa kuvioita.',
+          editDisabled: 'Ei muokattavia kuvioita.',
+          remove: 'Poista kuvioita.',
+          removeDisabled: 'Ei poistettavia kuvioita.'
+        }
+      },
+      handlers: {
+        edit: {
+          tooltip: {
+            text: 'Muokkaa aluetta tai pistettä raahaamalla.',
+            subtext: 'Paina peruuta peruaksesi muutokset.'
+          }
+        },
+        remove: {
+          tooltip: {
+            text: 'Poista piirretty alue klikkaamalla.'
+          }
+        }
+      }
+    }
   }
 };
 

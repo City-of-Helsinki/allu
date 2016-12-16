@@ -11,6 +11,7 @@ import {Application} from '../../model/application/application';
 import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
 import {ApplicationHub} from '../../service/application/application-hub';
+import {translations} from '../../util/translations';
 
 
 @Component({
@@ -176,7 +177,11 @@ export class MapComponent implements OnInit, OnDestroy {
     this.editedItems = editedItems;
 
     L.control.layers(this.mapLayers).addTo(this.map);
-    L.control.zoom({position: 'topright'}).addTo(this.map);
+    L.control.zoom({
+      position: 'topright',
+      zoomInTitle: translations.map.zoomIn,
+      zoomOutTitle: translations.map.zoomOut
+    }).addTo(this.map);
     L.control.scale().addTo(this.map);
     L.Icon.Default.imagePath = '/assets/images';
   }
@@ -225,6 +230,7 @@ export class MapComponent implements OnInit, OnDestroy {
         remove: controlsEnabled
       }
     });
+    this.setLocalizations();
 
     if (this.draw) {
       // remove old control
@@ -265,5 +271,9 @@ export class MapComponent implements OnInit, OnDestroy {
       // testi: new L.TileLayer('http://10.176.127.67:8080/tms/1.0.0/helsinki_kaupunkikartta/EPSG_3879/{z}/{x}/{y}.png',
       //   { tms: true }),
     };
+  }
+
+  private setLocalizations(): void {
+    L.drawLocal = translations.map;
   }
 }
