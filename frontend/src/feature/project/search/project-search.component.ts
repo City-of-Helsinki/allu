@@ -31,7 +31,7 @@ export class ProjectSearchComponent implements OnInit {
       startTime: undefined,
       endTime: undefined,
       ownerName: undefined,
-      status: undefined,
+      onlyActive: true,
       district: undefined,
       creator: undefined
     });

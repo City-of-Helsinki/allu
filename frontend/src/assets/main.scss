@@ -150,6 +150,11 @@ input:-webkit-autofill:active {
   font-weight: bold;
 }
 
+.row .input-field-checkbox {
+  min-height: 40px;
+  margin-bottom: 10px;
+}
+
 md-card {
   background: $allu-card-background;
 }

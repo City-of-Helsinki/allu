@@ -43,11 +43,9 @@ public class ProjectServiceComposer {
    */
   public List<ProjectJson> search(QueryParametersJson queryParameters) {
     List<ProjectJson> resultList = Collections.emptyList();
-    if (!queryParameters.getQueryParameters().isEmpty()) {
-      List<Integer> ids = searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters));
-      resultList = projectService.findByIds(ids);
-      orderByIdList(ids, resultList);
-    }
+    List<Integer> ids = searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters));
+    resultList = projectService.findByIds(ids);
+    orderByIdList(ids, resultList);
     return resultList;
   }
 

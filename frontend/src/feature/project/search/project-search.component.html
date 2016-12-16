@@ -12,14 +12,6 @@
                     <label for="projectId">Hankkeen tunnus</label>
                 </div>
                 <div class="input-field col m2">
-                    <select id="status" formControlName="status" materialize="material_select">
-                        <option value="" selected disabled>Tila</option>
-                        <option>Aktiivinen</option>
-                        <option>Inaktiivinen</option>
-                    </select>
-                    <label for="status">Hakemuksen käsittelijä</label>
-                </div>
-                <div class="input-field col m2">
                     <select id="district" formControlName="district" materialize="material_select">
                         <option value="" selected disabled>Kaupunginosa</option>
                     </select>
@@ -42,8 +34,12 @@
                     <label for="endDate">Loppupvm</label>
                 </div>
                 <div class="input-field col m3">
-                    <input id="creator" type="text" formControlName="creator">
-                    <label for="creator">Hankkeen lisääjä</label>
+                  <input id="creator" type="text" formControlName="creator">
+                  <label for="creator">Hankkeen lisääjä</label>
+                </div>
+                <div class="input-field col input-field-checkbox m3">
+                    <input type="checkbox" class="filled-in" id="onlyActive" formControlName="onlyActive"/>
+                    <label for="onlyActive">Vain aktiiviset</label>
                 </div>
                 <div class="col m12 s12">
                     <button (click)="search()" class="waves-effect waves-light btn">HAE</button>
@@ -66,7 +62,6 @@
                     <th>Lisääjä</th>
                     <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
                     <th sortBy="ownerName" [currentSort]="sort" (onSortChange)="sortBy($event)">Omistaja</th>
-                    <th>Tila</th>
                     <th>Kaupunginosa</th>
                     <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Alku</th>
                     <th sortBy="endTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Loppu</th>
@@ -78,7 +73,6 @@
                     <td>-</td>
                     <td>{{project.id}}</td>
                     <td>{{project.ownerName}}</td>
-                    <td>ei tuettuna</td>
                     <td>ei tuettuna</td>
                     <td>{{project.startTime | date:format}}</td>
                     <td>{{project.endTime | date:format}}</td>

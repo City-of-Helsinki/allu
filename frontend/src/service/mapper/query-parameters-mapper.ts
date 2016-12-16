@@ -11,6 +11,9 @@ const enumFields = [
   'type'
 ];
 
+const START_TIME_FIELD = 'startTime';
+const END_TIME_FIELD = 'endTime';
+
 export class QueryParametersMapper {
   public static mapApplicationQueryFrontend(query: ApplicationSearchQuery): BackendQueryParameters {
     return (query) ?
@@ -48,8 +51,8 @@ export class QueryParametersMapper {
     QueryParametersMapper.mapArrayParameter(queryParameters, 'status', query.status);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'type', query.type);
     QueryParametersMapper.mapParameter(queryParameters, '_all', query.freeText);
-    QueryParametersMapper.mapDateParameter(queryParameters, 'startTime', MIN_DATE, query.endTime);
-    QueryParametersMapper.mapDateParameter(queryParameters, 'endTime', query.startTime, MAX_DATE);
+    QueryParametersMapper.mapDateParameter(queryParameters, START_TIME_FIELD, MIN_DATE, query.endTime);
+    QueryParametersMapper.mapDateParameter(queryParameters, END_TIME_FIELD, query.startTime, MAX_DATE);
     Some(query.projectId).do(projectId => QueryParametersMapper.mapParameter(queryParameters, 'projectId', projectId.toString()));
     return queryParameters;
   }
@@ -57,10 +60,10 @@ export class QueryParametersMapper {
   private static mapProjectParameters(query: ProjectSearchQuery): Array<BackendQueryParameter> {
     let queryParameters: Array<BackendQueryParameter> = [];
     Some(query.id).do(id => QueryParametersMapper.mapParameter(queryParameters, 'id', id.toString()));
-    QueryParametersMapper.mapDateParameter(queryParameters, 'startTime', MIN_DATE, query.endTime);
-    QueryParametersMapper.mapDateParameter(queryParameters, 'endTime', query.startTime, MAX_DATE);
+    QueryParametersMapper.mapDateParameter(queryParameters, START_TIME_FIELD, MIN_DATE, query.endTime);
+    QueryParametersMapper.mapDateParameter(queryParameters, END_TIME_FIELD, query.startTime, MAX_DATE);
     QueryParametersMapper.mapParameter(queryParameters, 'ownerName', QueryParametersMapper.removeExtraWhitespace(query.ownerName));
-    QueryParametersMapper.mapParameter(queryParameters, 'status', QueryParametersMapper.removeExtraWhitespace(query.status));
+    Some(query.onlyActive).do(onlyActive => QueryParametersMapper.mapProjectActivityParameter(queryParameters, onlyActive));
     Some(query.creator).do(creator => QueryParametersMapper.mapParameter(queryParameters, 'creator', creator.toString()));
     // TODO: Map when supported
     // QueryParametersMapper.mapParameter(queryParameters, 'district', QueryParametersMapper.removeExtraWhitespace(query.district));
@@ -95,6 +98,17 @@ export class QueryParametersMapper {
     endDate: Date): void {
     if (startDate && endDate) {
       queryParameters.push(QueryParametersMapper.createDateParameter(parameterName, startDate, endDate));
+    }
+  }
+
+  private static mapProjectActivityParameter(
+    queryParameters: Array<BackendQueryParameter>,
+    onlyActive: boolean) {
+    if (onlyActive) {
+      let startTimeParameter = QueryParametersMapper.createDateParameter(START_TIME_FIELD, MIN_DATE, new Date());
+      let endTimeParameter = QueryParametersMapper.createDateParameter(END_TIME_FIELD, new Date(), MAX_DATE);
+      queryParameters.push(startTimeParameter);
+      queryParameters.push(endTimeParameter);
     }
   }
 
