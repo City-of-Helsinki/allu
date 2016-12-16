@@ -27,7 +27,6 @@ public class ApplicationJson {
   private ApplicationType type;
   @NotNull(message = "{application.kind}")
   private ApplicationKind kind;
-  @NotNull(message = "{application.metadata}")
   private StructureMetaJson metadata;
   @NotBlank(message = "{application.name}")
   private String name;
