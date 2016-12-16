@@ -1,4 +1,5 @@
 import {Component, OnDestroy, OnInit, Input} from '@angular/core';
+import {FormGroup} from '@angular/forms';
 
 @Component({
   selector: 'application-actions',
@@ -10,6 +11,6 @@ export class ApplicationActionsComponent {
 
   @Input() isSummary = true;
   @Input() applicationId: number;
-  @Input() formValid: boolean;
+  @Input() form: FormGroup;
   @Input() submitPending: boolean;
 }

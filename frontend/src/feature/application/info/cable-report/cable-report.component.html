@@ -1,10 +1,10 @@
 <div materialize class="row">
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
-        <applicant [applicationForm]="applicationForm" [readonly]="isSummary"
-                   headerText="Kaivajayritys/Toimija" formName="company"></applicant>
+        <applicant [applicationForm]="applicationForm"  [applicant]="application.applicant"
+                   [readonly]="isSummary" headerText="Kaivajayritys/Toimija" formName="company"></applicant>
 
-        <contact [applicationForm]="applicationForm" [readonly]="isSummary"
-                 headerText="Johtoselvityksen tilaaja" formName="orderer"
+        <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
+                 [readonly]="isSummary" headerText="Johtoselvityksen tilaaja" formName="orderer"
                  [saveToRegistry]="true"></contact>
 
         <div class="col m12 loose">
@@ -55,16 +55,18 @@
         </div>
 
         <div *ngIf="applicationForm.value.cableSurveyRequired">
-            <applicant [applicationForm]="applicationForm" [readonly]="isSummary" headerText="Omistaja" formName="owner"></applicant>
-            <contact [applicationForm]="applicationForm" [readonly]="isSummary" headerText="Yhteyshenkilö" formName="contact"></contact>
+            <applicant [applicationForm]="applicationForm" [applicant]="application.extension.owner"
+                       [readonly]="isSummary" headerText="Omistaja" formName="owner"></applicant>
+            <contact [applicationForm]="applicationForm" [contactList]="application.extension.contactList"
+                     [readonly]="isSummary" headerText="Yhteyshenkilö" formName="contact"></contact>
         </div>
 
-        <cable-info [parentForm]="applicationForm" [readonly]="readonly"></cable-info>
+        <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="isSummary"></cable-info>
 
         <application-actions
             [isSummary]="isSummary"
             [applicationId]="application.id"
-            [formValid]="applicationForm.valid"
+            [form]="applicationForm"
             [submitPending]="submitPending"></application-actions>
     </form>
 </div>

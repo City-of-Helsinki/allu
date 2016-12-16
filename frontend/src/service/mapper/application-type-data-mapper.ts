@@ -3,6 +3,7 @@ import {ApplicationExtension} from '../../model/application/type/application-ext
 import {TimeUtil} from '../../util/time.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {ShortTermRental} from '../../model/application/short-term-rental/short-term-rental';
+import {CableReport} from '../../model/application/cable-report/cable-report';
 
 export class ApplicationTypeDataMapper {
 
@@ -31,6 +32,16 @@ export class ApplicationTypeDataMapper {
         TimeUtil.dateFromBackend(backendExtension.structureEndTime));
     } else if (backendExtension.applicationType === ApplicationType[ApplicationType.SHORT_TERM_RENTAL]) {
       return new ShortTermRental(backendExtension.description, backendExtension.commercial);
+    } else if (backendExtension.applicationType === ApplicationType[ApplicationType.CABLE_REPORT]) {
+      return new CableReport(
+        backendExtension.cableSurveyRequired,
+        backendExtension.cableReportId,
+        backendExtension.workDescription,
+        backendExtension.owner,
+        backendExtension.contact,
+        backendExtension.mapExtractCount,
+        backendExtension.infoEntries
+      );
     } else {
       return undefined;
     }

@@ -1,18 +1,19 @@
-import {Component, Input, OnInit, ViewContainerRef} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, FormArray, Validators} from '@angular/forms';
-import {MdDialog, MdDialogRef, MdDialogConfig} from '@angular/material';
+import {Component, Input} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
+import {MdDialog, MdDialogRef} from '@angular/material';
 
 import {EnumUtil} from '../../../../util/enum.util.ts';
 import {CableInfoType} from '../../../../model/application/cable-report/cable-info-type';
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {translations} from '../../../../util/translations';
 import {ApplicationHub} from '../../../../service/application/application-hub';
-import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {MaterializeUtil} from '../../../../util/materialize.util.ts';
 import {DefaultText} from '../../../../model/application/cable-report/default-text';
 import {DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
+import {CableReport} from '../../../../model/application/cable-report/cable-report';
+import {Some} from '../../../../util/option';
 
 @Component({
   selector: 'cable-info',
@@ -21,6 +22,7 @@ import {DefaultTextModalComponent} from '../../default-text/default-text-modal.c
 export class CableInfoComponent {
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
+  @Input() cableReport: CableReport;
 
   cableInfoForm: FormGroup;
   cableInfoEntries: FormArray;
@@ -34,18 +36,13 @@ export class CableInfoComponent {
   constructor(private applicationHub: ApplicationHub,
               private route: ActivatedRoute,
               private fb: FormBuilder,
-              private viewContainerRef: ViewContainerRef,
               private dialog: MdDialog) {
   }
 
   ngOnInit(): void {
+    this.cableInfoEntries = Some(this.cableInfoEntries).orElse([]);
     this.initForm();
-
-    this.route.parent.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        // this.applicationHub.loadMetaData(application.type).subscribe(meta => this.meta = meta);
-      });
+    this.selectedCableInfoTypes = this.cableReport.infoEntries.map(entry => entry.type);
 
     this.applicationHub.loadDefaultTexts().subscribe(texts => this.defaultTexts = texts);
   }
@@ -76,7 +73,7 @@ export class CableInfoComponent {
 
   private initForm(): void {
     this.cableInfoForm = this.fb.group({
-      mapExtractCount: [0, ComplexValidator.greaterThanOrEqual(0)]
+      mapExtractCount: [Some(this.cableReport.mapExtractCount).orElse(0), ComplexValidator.greaterThanOrEqual(0)]
     });
 
     this.cableInfoEntries = this.fb.array([]);
@@ -87,9 +84,13 @@ export class CableInfoComponent {
   }
 
   private createCableInfoEntry(type: string) {
+    let additionalInfo = Some(this.cableReport.infoEntries.find(entry => entry.type === type))
+      .map(entry => entry.additionalInfo)
+      .orElse('') ;
+
     return this.fb.group({
-      cableInfoType: [type],
-      additionalInfo: ['']
+      type: [type],
+      additionalInfo: [additionalInfo]
     });
   }
 }
