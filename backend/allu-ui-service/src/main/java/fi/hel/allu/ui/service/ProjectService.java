@@ -68,7 +68,9 @@ public class ProjectService {
    */
   public List<ProjectJson> findProjectParents(int id) {
     ResponseEntity<Project[]> responseEntity = restTemplate.getForEntity(applicationProperties.getProjectParentsUrl(), Project[].class, id);
-    return Arrays.stream(responseEntity.getBody()).map(p -> projectMapper.mapProjectToJson(p)).collect(Collectors.toList());
+    List<ProjectJson> parentList = Arrays.stream(responseEntity.getBody()).map(p -> projectMapper.mapProjectToJson(p)).collect(Collectors.toList());
+    // remove first project as it's always the project itself
+    return parentList.subList(1, parentList.size());
   }
 
   /**
