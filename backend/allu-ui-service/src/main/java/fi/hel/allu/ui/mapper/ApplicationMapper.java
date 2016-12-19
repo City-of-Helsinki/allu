@@ -111,7 +111,7 @@ public class ApplicationMapper {
     applicationJson.setName(application.getName());
     applicationJson.setDecisionTime(application.getDecisionTime());
     if (application.getExtension() != null) {
-      mapEventToJson(applicationJson, application);
+      mapModelToJson(applicationJson, application);
     }
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setPriceOverride(application.getPriceOverride());
@@ -125,7 +125,7 @@ public class ApplicationMapper {
    * @param applicationJson
    * @param application
    */
-  public void mapEventToJson(ApplicationJson applicationJson, Application application) {
+  public void mapModelToJson(ApplicationJson applicationJson, Application application) {
     switch (applicationJson.getType()) {
     case EVENT:
         Event event = (Event) application.getExtension();
@@ -177,6 +177,7 @@ public class ApplicationMapper {
     case AREA_RENTAL:
       break;
     case EXCAVATION_ANNOUNCEMENT:
+      applicationJson.setExtension(mapExcavationAnnouncementToJson((ExcavationAnnouncement) application.getExtension()));
       break;
     case NOTE:
       break;
@@ -242,7 +243,7 @@ public class ApplicationMapper {
     case AREA_RENTAL:
       break;
     case EXCAVATION_ANNOUNCEMENT:
-      break;
+      return mapExcavationAnnouncementToModel((ExcavationAnnouncementJson) applicationJson.getExtension());
     case NOTE:
       break;
     case PLACEMENT_PERMIT:
@@ -360,6 +361,34 @@ public class ApplicationMapper {
     contact.setEmail(json.getEmail());
     contact.setPhone(json.getPhone());
     return contact;
+  }
+
+  private ExcavationAnnouncementJson mapExcavationAnnouncementToJson(ExcavationAnnouncement model) {
+    ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
+    json.setAdditionalInfo(model.getAdditionalInfo());
+    json.setCableReportId(model.getCableReportId());
+    json.setContractor(createApplicantJson(model.getContractor()));
+    json.setGuaranteeEndTime(model.getGuaranteeEndTime());
+    json.setResponsiblePerson(createContactJson(model.getResponsiblePerson()));
+    json.setSummerTimeOperation(model.getSummerTimeOperation());
+    json.setWinterTimeOperation(model.getWinterTimeOperation());
+    json.setWorkFinished(model.getWorkFinished());
+    json.setTrafficArrangements(model.getTrafficArrangements());
+    return json;
+  }
+
+  private ExcavationAnnouncement mapExcavationAnnouncementToModel(ExcavationAnnouncementJson excavationAnnouncementJson) {
+    ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
+    excavationAnnouncement.setAdditionalInfo(excavationAnnouncementJson.getAdditionalInfo());
+    excavationAnnouncement.setCableReportId(excavationAnnouncementJson.getCableReportId());
+    excavationAnnouncement.setContractor(createApplicantModel(excavationAnnouncementJson.getContractor()));
+    excavationAnnouncement.setGuaranteeEndTime(excavationAnnouncementJson.getGuaranteeEndTime());
+    excavationAnnouncement.setResponsiblePerson(createContactModel(excavationAnnouncementJson.getResponsiblePerson()));
+    excavationAnnouncement.setSummerTimeOperation(excavationAnnouncementJson.getSummerTimeOperation());
+    excavationAnnouncement.setWinterTimeOperation(excavationAnnouncementJson.getWinterTimeOperation());
+    excavationAnnouncement.setWorkFinished(excavationAnnouncementJson.getWorkFinished());
+    excavationAnnouncement.setTrafficArrangements(excavationAnnouncementJson.getTrafficArrangements());
+    return excavationAnnouncement;
   }
 
   private CableInfoEntryJson createCableInfoEntryJson(CableInfoEntry cableInfoEntry) {

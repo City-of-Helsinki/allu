@@ -12,7 +12,8 @@ import fi.hel.allu.common.types.ApplicationType;
 @JsonSubTypes({
     @JsonSubTypes.Type(value = EventJson.class, name = "EVENT"),
     @JsonSubTypes.Type(value = ShortTermRentalJson.class, name = "SHORT_TERM_RENTAL"),
-    @JsonSubTypes.Type(value = CableReportJson.class, name = "CABLE_REPORT")
+    @JsonSubTypes.Type(value = CableReportJson.class, name = "CABLE_REPORT"),
+    @JsonSubTypes.Type(value = ExcavationAnnouncementJson.class, name = "EXCAVATION_ANNOUNCEMENT")
 })
 public abstract class ApplicationExtensionJson {
 
