@@ -1,7 +1,11 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.model.domain.InvoiceRow;
+
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -22,6 +26,7 @@ public class PricingTest {
     // Verify that EcoCompass gives 30% discount
     bill.applyDiscounts(true, null, false, false);
     assertEquals(252000, bill.getPrice());
+    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPrice());
     // Verify that 100% discount works:
     bill.applyDiscounts(false, "SportsEvent", false, false);
     assertEquals(0, bill.getPrice());
@@ -47,6 +52,7 @@ public class PricingTest {
     // days with build price)
     bill.accumulatePrice(bc, 20, 4, 20, 5000.0);
     assertEquals(3562500L, bill.getPrice()); // The price should be 35625 EUR
+    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPrice());
   }
 
   @Test
@@ -60,6 +66,7 @@ public class PricingTest {
     // sqm area:
     bill.accumulatePrice(bc, 25, 3, 455.0, 1000.0);
     assertEquals(997500, bill.getPrice()); // The price should be 9975 EUR
+    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPrice());
   }
 
   @Test(expected = IllegalStateException.class)
@@ -76,4 +83,8 @@ public class PricingTest {
     pricingConfiguration.setStructureExtraCharges(new Long[] { Long.valueOf(1234L) });
   }
 
+  private void verifyInvoicePrice(List<InvoiceRow> invoiceRows, int expectedPrice) {
+    int invoicePrices = invoiceRows.stream().mapToInt(ir -> ir.getNetPrice()).sum();
+    assertEquals(expectedPrice, invoicePrices);
+  }
 }

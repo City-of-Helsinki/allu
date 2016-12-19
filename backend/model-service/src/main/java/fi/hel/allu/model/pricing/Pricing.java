@@ -1,13 +1,27 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.model.pricing.InvoiceRow.RowType;
+import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.InvoiceUnit;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Pricing {
 
+  private static final String BASE_TAX_TEXT = "Päivän perustaksa";
+  private static final String DAY_TOTAL_TAX_TEXT = "Päivätaksa sisältäen rakenne- ja pinta-alalisät";
+  private static final String TOTAL_DAY_TAX_TEXT = "Maksu %1$d päivältä à %2$.2f EUR";
+  private static final String LONG_EVENT_DISCOUNT_TEXT = "Alennus %1$d päivää ylittäviltä tapahtumapäiviltä";
+  private static final String BUILD_DAY_FEE_TEXT = "Rakennus-/purkupäiviä";
+  private static final String HEAVY_STRUCTURE_TEXT = "Raskaita rakenteita +50%";
+  private static final String SALES_ACTIVITY_TEXT = "Myyntitoimintaa +50%";
+  private static final String ECO_COMPASS_TEXT = "Ekokompassi-alennus -30%";
+
   private List<InvoiceRow> invoiceRows = new ArrayList<>();
+
+  public List<InvoiceRow> getInvoiceRows() {
+    return invoiceRows;
+  }
 
   // Privately store the price in 1/100 of cents, convert to cents on
   // extraction:
@@ -27,33 +41,46 @@ public class Pricing {
   public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     long dailyCharge = pricingConfig.getBaseCharge();
-    addInvoiceRow(RowType.BASE_CHARGE, dailyCharge);
+    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), BASE_TAX_TEXT, 0);
 
     dailyCharge += calculateStructureExtras(pricingConfig, structureArea);
     dailyCharge += calculateAreaExtras(pricingConfig, area);
-    addInvoiceRow(RowType.DAILY_CHARGE, dailyCharge);
+    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), DAY_TOTAL_TAX_TEXT, 0);
 
-    long totalCharge;
+    long totalCharge = dailyCharge * eventDays;
+    addInvoiceRow(InvoiceUnit.DAY, eventDays, priceInCents(dailyCharge),
+        String.format(TOTAL_DAY_TAX_TEXT, eventDays, priceInCents(dailyCharge) / 100.0), priceInCents(totalCharge));
     if (pricingConfig.getDurationDiscountLimit() != 0 && eventDays > pricingConfig.getDurationDiscountLimit()) {
-      totalCharge = dailyCharge * pricingConfig.getDurationDiscountLimit();
-      totalCharge += (long) (0.5
-          + (eventDays - pricingConfig.getDurationDiscountLimit()) // amount of discounted
-                                                        // days
-              * dailyCharge * (100 - pricingConfig.getDurationDiscountPercent()) / 100.0);
-    } else {
-      totalCharge = dailyCharge * eventDays;
+      int discountDays = eventDays - pricingConfig.getDurationDiscountLimit();
+      long dailyDiscount = Math.round(dailyCharge * pricingConfig.getDurationDiscountPercent() / 100.0);
+      long discount = dailyDiscount * discountDays;
+      addInvoiceRow(InvoiceUnit.DAY, discountDays, -priceInCents(dailyDiscount),
+          String.format(LONG_EVENT_DISCOUNT_TEXT, pricingConfig.getDurationDiscountLimit()),
+          -priceInCents(discount));
+      totalCharge -= discount;
     }
-    totalCharge += (long) (0.5 + buildDays * dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
+    if (buildDays != 0 && pricingConfig.getBuildDiscountPercent() != 0) {
+      long dailyBuildFee = Math.round(dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
+      long buildFees = buildDays * dailyBuildFee;
+      totalCharge += buildFees;
+      addInvoiceRow(InvoiceUnit.DAY, buildDays, priceInCents(dailyBuildFee), BUILD_DAY_FEE_TEXT,
+          priceInCents(buildFees));
+    }
 
-    addInvoiceRow(RowType.TOTAL_CHARGE, totalCharge);
     fullPrice += totalCharge;
+  }
+
+  private int priceInCents(long internalPrice) {
+    // Divide by 100 to convert internal price units to price in cents.
+    int absVal = (int) ((Math.abs(internalPrice) + 50) / 100);
+    return (internalPrice < 0) ? -absVal : absVal;
   }
 
   /**
    * Get the calculated price in cents.
    */
   public int getPrice() {
-    return (int) ((fullPrice + 50) / 100 * paymentPercentage / 100);
+    return Math.round(fullPrice / 100 * paymentPercentage / 100);
   }
 
   private long calculateStructureExtras(PricingConfiguration pricingConfig, double structureArea) {
@@ -76,7 +103,6 @@ public class Pricing {
                                                                    // per 10 sqm
       total += (long) (0.5 + structureExtraCharges[i] * billingMultiplier);
     }
-    addInvoiceRow(RowType.STRUCTURE_CHARGE, total);
     return total;
   }
 
@@ -97,30 +123,40 @@ public class Pricing {
       }
       total += (long) (0.5 + areaExtraCharges[i] * (upperLimit - lowerLimit));
     }
-    addInvoiceRow(RowType.AREA_CHARGE, total);
     return total;
   }
 
-  private void addInvoiceRow(InvoiceRow.RowType rowType, long value) {
-    invoiceRows.add(new InvoiceRow(rowType, value));
+  private void addInvoiceRow(InvoiceUnit unit, double quantity, int unitPrice, String explanation, int netPrice) {
+    InvoiceRow row = new InvoiceRow();
+    row.setUnit(unit);
+    row.setQuantity(quantity);
+    row.setUnitPrice(unitPrice);
+    row.setRowText(explanation);
+    row.setNetPrice(netPrice);
+    invoiceRows.add(row);
   }
 
   public void applyDiscounts(boolean ecoCompass, String noPriceReason, boolean heavyStructure, boolean salesActivity) {
     paymentPercentage = 100;
     if (noPriceReason != null) {
-      addInvoiceRow(RowType.FREE_EVENT, 0);
       paymentPercentage = 0;
       if (heavyStructure) {
-        addInvoiceRow(RowType.HEAVY_STRUCTURE, 0);
+        long structureFee = fullPrice / 2;
+        addInvoiceRow(InvoiceUnit.PIECE, 1, priceInCents(structureFee), HEAVY_STRUCTURE_TEXT,
+            priceInCents(structureFee));
         paymentPercentage += 50;
       }
       if (salesActivity) {
-        addInvoiceRow(RowType.SALES_ACTIVITY, 0);
+        long salesFee = fullPrice / 2;
+        addInvoiceRow(InvoiceUnit.PIECE, 1, priceInCents(salesFee), SALES_ACTIVITY_TEXT, priceInCents(salesFee));
         paymentPercentage += 50;
       }
     }
     if (ecoCompass) {
-      addInvoiceRow(RowType.ECO_COMPASS, 0);
+      // 30 percent discount from full price (incl. extra fees)
+      long ecoDiscount = -fullPrice * paymentPercentage / 100 * 30 / 100;
+      addInvoiceRow(InvoiceUnit.PIECE, 1, priceInCents(ecoDiscount), ECO_COMPASS_TEXT,
+          priceInCents(ecoDiscount));
       paymentPercentage = paymentPercentage * 7 / 10;
     }
   }
