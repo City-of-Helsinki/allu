@@ -6,7 +6,7 @@
                 <div *ngIf="!isSummary">
                     <div class="col m2 offset-m10">
                         <button type="submit" md-raised-button class="waves-effect waves-light btn"
-                                [disabled]="submitPending || !formValid">YHTEENVETOON</button>
+                                [disabled]="submitPending || !form.valid">YHTEENVETOON</button>
                     </div>
                 </div>
 

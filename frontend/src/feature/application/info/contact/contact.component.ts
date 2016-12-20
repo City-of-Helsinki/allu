@@ -7,6 +7,7 @@ import {ApplicationHub} from '../../../../service/application/application-hub';
 import {Contact} from '../../../../model/application/contact';
 import {translations} from '../../../../util/translations';
 import {emailValidator} from '../../../../util/complex-validator';
+import {Some} from '../../../../util/option';
 
 @Component({
   selector: 'contact',
@@ -39,6 +40,7 @@ export class ContactComponent implements OnInit, OnDestroy {
     });
     this.applicationForm.addControl(this.formName, this.contacts);
 
+    this.contactList = Some(this.contactList).orElse([new Contact()]);
     this.contactList.forEach(contact => this.addContact(contact));
   }
 

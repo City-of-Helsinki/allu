@@ -12,4 +12,8 @@ export class StringUtil {
     return stringArray
       .filter(str => isNaN(+str));
   }
+
+  public static isEmpty(s: string): boolean {
+    return (!s || s.length === 0);
+  }
 }

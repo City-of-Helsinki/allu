@@ -166,9 +166,10 @@ public class ApplicationMapper {
         CableReportJson cableReportJson = new CableReportJson();
         cableReportJson.setCableReportId(cableReport.getCableReportId());
         cableReportJson.setWorkDescription(cableReport.getWorkDescription());
-        cableReportJson.setOwner(createApplicantJson(cableReport.getOwner()));
-        cableReportJson.setContact(createContactJson(cableReport.getContact()));
+        Optional.ofNullable(cableReport.getOwner()).ifPresent(owner -> cableReportJson.setOwner(createApplicantJson(owner)));
+        Optional.ofNullable(cableReport.getContact()).ifPresent(contact -> cableReportJson.setContact(createContactJson(contact)));
         cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
+        cableReportJson.setCableSurveyRequired(cableReport.isCableSurveyRequired());
         List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
           .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
         cableReportJson.setInfoEntries(infoEntries);
@@ -232,9 +233,10 @@ public class ApplicationMapper {
         CableReport cableReport = new CableReport();
         cableReport.setCableReportId(cableReportJson.getCableReportId());
         cableReport.setWorkDescription(cableReportJson.getWorkDescription());
-        cableReport.setOwner(createApplicantModel(cableReportJson.getOwner()));
-        cableReport.setContact(createContactModel(cableReportJson.getContact()));
+        Optional.ofNullable(cableReportJson.getOwner()).ifPresent(owner -> cableReport.setOwner(createApplicantModel(owner)));
+        Optional.ofNullable(cableReportJson.getContact()).ifPresent(contact -> cableReport.setContact(createContactModel(contact)));
         cableReport.setMapExtractCount(cableReportJson.getMapExtractCount());
+        cableReport.setCableSurveyRequired(cableReportJson.getCableSurveyRequired());
         List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
           .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
         cableReport.setInfoEntries(infoEntries);

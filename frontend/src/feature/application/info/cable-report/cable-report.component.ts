@@ -13,6 +13,7 @@ import {UrlUtil} from '../../../../util/url.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {CableReportForm} from './cable-report.form';
+import {CableReport} from '../../../../model/application/cable-report/cable-report';
 
 
 @Component({
@@ -55,6 +56,8 @@ export class CableReportComponent implements OnInit {
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
           this.isSummary = summary;
         });
+
+        this.applicationForm.patchValue(CableReportForm.from(application));
       });
   }
 
@@ -62,23 +65,20 @@ export class CableReportComponent implements OnInit {
     this.submitPending = true;
     let application = this.application;
     application.metadata = this.meta;
+    application.name = 'Johtoselvitys'; // Cable reports have no name so set default
     application.uiStartTime = form.reportTimes.startTime;
     application.uiEndTime = form.reportTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.company);
     application.contactList = form.orderer;
+    application.extension = CableReportForm.to(form, application.extension.specifiers);
 
-    application.extension = CableReportForm.to(form, application.extension);
-
-    // Implement after backend supports saving cable reports
-    console.log('application', application);
-    /*this.applicationHub.save(application).subscribe(app => {
-      console.log('application saved');
+    this.applicationHub.save(application).subscribe(app => {
       this.locationState.clear();
       this.submitPending = false;
       this.router.navigate(['applications', app.id, 'summary']);
     }, err => {
       this.submitPending = false;
-    });*/
+    });
   }
 
   private initForm() {

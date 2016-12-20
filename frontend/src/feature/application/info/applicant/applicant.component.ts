@@ -32,21 +32,11 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
   constructor(private applicationHub: ApplicationHub, private fb: FormBuilder, private route: ActivatedRoute) {
     applicationHub.metaData().subscribe(meta => this.metadataLoaded(meta));
-  }
 
-  ngOnInit(): void {
-    this.initForm();
-  }
-
-  ngOnDestroy(): void {
-    this.applicationForm.removeControl(this.formName);
-  }
-
-  private initForm() {
     this.applicantForm = this.fb.group({
       id: undefined,
       type: [undefined, Validators.required],
-      representative: [false],
+      representative: [undefined],
       detailsId: undefined,
       name: ['', [Validators.required, Validators.minLength(2)]],
       registryKey: ['', [Validators.required, Validators.minLength(2)]],
@@ -59,7 +49,17 @@ export class ApplicantComponent implements OnInit, OnDestroy {
       email: ['', emailValidator],
       phone: ['', Validators.minLength(2)]
     });
+  }
 
+  ngOnInit(): void {
+    this.initForm();
+  }
+
+  ngOnDestroy(): void {
+    this.applicationForm.removeControl(this.formName);
+  }
+
+  private initForm() {
     this.applicationForm.addControl(this.formName, this.applicantForm);
 
     Some(this.applicant)

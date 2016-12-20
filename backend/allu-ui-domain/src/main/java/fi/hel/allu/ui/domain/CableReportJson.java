@@ -6,6 +6,7 @@ import java.util.List;
 
 public class CableReportJson extends ApplicationExtensionJson {
 
+  private boolean cableSurveyRequired;
   private String cableReportId;
   private String workDescription;
   private ApplicantJson owner;
@@ -16,6 +17,17 @@ public class CableReportJson extends ApplicationExtensionJson {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.CABLE_REPORT;
+  }
+
+  /**
+   * Whether cable survey is needed for cable report (in Finnish: "Johtokartoitettava")
+   */
+  public boolean getCableSurveyRequired() {
+    return cableSurveyRequired;
+  }
+
+  public void setCableSurveyRequired(boolean cableSurveyRequired) {
+    this.cableSurveyRequired = cableSurveyRequired;
   }
 
   /**
