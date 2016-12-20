@@ -29,7 +29,7 @@
                 <th>Lisääjä</th>
                 <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
                 <th sortBy="ownerName" [currentSort]="sort" (onSortChange)="sortBy($event)">Omistaja</th>
-                <th sortBy="isActive" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
+                <th sortBy="active" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
                 <th>Kaupunginosa</th>
                 <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Alku</th>
                 <th sortBy="endTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Loppu</th>
@@ -46,8 +46,8 @@
                 <td>{{row.content.id}} <br></td>
                 <td>{{row.content.ownerName}}</td>
                 <td>
-                    <span *ngIf="row.content.isActive">Aktiivinen</span>
-                    <span *ngIf="!row.content.isActive">Inaktiivinen</span>
+                    <span *ngIf="row.content.active">Aktiivinen</span>
+                    <span *ngIf="!row.content.active">Inaktiivinen</span>
                 </td>
                 <td>Ei tuettuna<br></td>
                 <td>{{ row.content.startTime | date:dateFormat }}</td>

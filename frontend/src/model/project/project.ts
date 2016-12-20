@@ -1,6 +1,6 @@
 import {TimeUtil} from '../../util/time.util';
 export class Project {
-  public isActive: boolean;
+  public active: boolean;
 
   constructor()
   constructor(
@@ -27,7 +27,7 @@ export class Project {
     public customerReference?: string,
     public additionalInfo?: string,
     public parentId?: number) {
-    this.isActive = startTime && endTime && TimeUtil.isBetweenInclusive(new Date(), this.startTime, this.endTime);
+    this.active = startTime && endTime && TimeUtil.isBetweenInclusive(new Date(), this.startTime, this.endTime);
   }
 
   get idWithName(): string {
