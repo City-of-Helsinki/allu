@@ -189,6 +189,11 @@ public class ApplicationMapper {
     default:
       break;
     }
+
+    if (applicationJson.getExtension() != null) {
+      applicationJson.getExtension().setSpecifiers(
+        application.getExtension() != null ? application.getExtension().getSpecifiers() : null);
+    }
   }
 
   /**
@@ -197,6 +202,7 @@ public class ApplicationMapper {
    * @return created event object
    */
   public ApplicationExtension createExtensionModel(ApplicationJson applicationJson) {
+    ApplicationExtension applicationExtension = null;
     switch (applicationJson.getType()) {
     case EVENT:
         EventJson eventJson = (EventJson) applicationJson.getExtension();
@@ -220,7 +226,8 @@ public class ApplicationMapper {
         event.setStructureStartTime(eventJson.getStructureStartTime());
         event.setStructureDescription(eventJson.getStructureDescription());
         event.setTimeExceptions(eventJson.getTimeExceptions());
-        return event;
+        applicationExtension = event;
+      break;
       // short term rentals
     case SHORT_TERM_RENTAL:
         ShortTermRentalJson shortTermRentalJson = (ShortTermRentalJson) applicationJson.getExtension();
@@ -228,7 +235,8 @@ public class ApplicationMapper {
         shortTermRental.setDescription(shortTermRentalJson.getDescription());
         shortTermRental.setCommercial(shortTermRentalJson.getCommercial());
         shortTermRental.setLargeSalesArea(shortTermRentalJson.getLargeSalesArea());
-        return shortTermRental;
+        applicationExtension = shortTermRental;
+      break;
     case CABLE_REPORT:
         CableReportJson cableReportJson = (CableReportJson) applicationJson.getExtension();
         CableReport cableReport = new CableReport();
@@ -241,11 +249,14 @@ public class ApplicationMapper {
         List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
           .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
         cableReport.setInfoEntries(infoEntries);
-        return cableReport;
+        applicationExtension = cableReport;
+      break;
     case AREA_RENTAL:
       break;
     case EXCAVATION_ANNOUNCEMENT:
-      return mapExcavationAnnouncementToModel((ExcavationAnnouncementJson) applicationJson.getExtension());
+      applicationExtension = mapExcavationAnnouncementToModel(
+          (ExcavationAnnouncementJson) applicationJson.getExtension());
+      break;
     case NOTE:
       break;
     case PLACEMENT_PERMIT:
@@ -255,7 +266,10 @@ public class ApplicationMapper {
     default:
       break;
     }
-    return null;
+    if (applicationExtension != null) {
+      applicationExtension.setSpecifiers(applicationJson.getExtension().getSpecifiers());
+    }
+    return applicationExtension;
   }
 
   /**

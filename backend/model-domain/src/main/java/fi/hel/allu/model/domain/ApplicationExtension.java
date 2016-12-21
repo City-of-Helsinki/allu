@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import fi.hel.allu.common.types.ApplicationType;
 
+import java.util.List;
+
 
 @JsonTypeInfo(
     use = JsonTypeInfo.Id.NAME,
@@ -18,6 +20,7 @@ import fi.hel.allu.common.types.ApplicationType;
 })
 public abstract class ApplicationExtension {
 
+  private List<String> specifiers;
 
   /**
    * Get the application category for the event. Each subclass must provide unique
@@ -26,5 +29,17 @@ public abstract class ApplicationExtension {
    */
   public abstract ApplicationType getApplicationType();
 
+  /**
+   * Get the specifiers for the application extension.
+   *
+   * @return List of the specifiers, empty list, or null
+   */
+  public List<String> getSpecifiers() {
+    return specifiers;
+  }
+
+  public void setSpecifiers(List<String> specifiers) {
+    this.specifiers = specifiers;
+  }
 }
 
