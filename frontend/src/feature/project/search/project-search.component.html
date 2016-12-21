@@ -62,6 +62,7 @@
                     <th>Lisääjä</th>
                     <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
                     <th sortBy="ownerName" [currentSort]="sort" (onSortChange)="sortBy($event)">Omistaja</th>
+                    <th>Aktiivinen</th>
                     <th>Kaupunginosa</th>
                     <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Alku</th>
                     <th sortBy="endTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Loppu</th>
@@ -73,6 +74,10 @@
                     <td>-</td>
                     <td>{{project.id}}</td>
                     <td>{{project.ownerName}}</td>
+                    <td>
+                        <span *ngIf="project.active">AKTIIVINEN</span>
+                        <span *ngIf="!project.active">INAKTIIVINEN</span>
+                    </td>
                     <td>ei tuettuna</td>
                     <td>{{project.startTime | date:format}}</td>
                     <td>{{project.endTime | date:format}}</td>

@@ -1,7 +1,7 @@
 <div class="row search-bar">
     <h1>
         <span *ngIf="project">
-            HANKE {{project.name}} -
+            <span>HANKE {{project.id}}: {{project.name}} -</span>
             <span *ngIf="project.active">AKTIIVINEN</span>
             <span *ngIf="!project.active">INAKTIIVINEN</span>
         </span>

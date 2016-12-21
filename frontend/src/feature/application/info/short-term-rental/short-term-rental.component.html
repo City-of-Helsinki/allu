@@ -71,7 +71,7 @@
                     <md-card-title>Hinnoitteluperusteet</md-card-title>
                     <md-card-content>
                         <div class="row form-group">
-                            <div *ngIf="application.type==='BRIDGE_BANNER'" class="col m6 no-padding">
+                            <div *ngIf="application.kind==='BRIDGE_BANNER'" class="col m6 no-padding">
                                 <div class="col m12 height-fix-bottom">
                                     <div *ngIf="!isSummary">
                                         <input type="checkbox" class="filled-in" id="commercial" formControlName="commercial"/>
@@ -80,7 +80,7 @@
                                     <div *ngIf="isSummary && rentalForm.value.commercial">{{ meta?.getUiName('commercial') }}</div>
                                 </div>
                             </div>
-                            <div *ngIf="application.type==='PROMOTION_OR_SALES'" class="col m6 no-padding">
+                            <div *ngIf="application.kind==='PROMOTION_OR_SALES'" class="col m6 no-padding">
                                 <div class="col m12 height-fix-bottom">
                                     <div *ngIf="!isSummary">
                                         <input type="checkbox" class="filled-in" id="largeSalesArea" formControlName="largeSalesArea"/>

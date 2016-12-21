@@ -24,17 +24,13 @@ public enum ApplicationKind {
   ART, // Taideteos
   STORAGE_AREA, // Varastoalue
   // cable reports - johtoselvitykset
-  CITY_STREET_AND_GREEN, // Kaupungin katu- ja vihertyöt
-  WATER_AND_SEWAGE, // HKR, HSY Vesijohto ja viemärityöt
-  HKL, // HKL:n työt
-  ELECTRIC_CABLE, // Sähkökaapelityöt
-  DISTRICT_HEATING, // Kaukolämpötyöt
-  DISTRICT_COOLING, // Kaukokylmätyöt
-  AD_PILLARS_AND_STOPS, // Ulkomainospilarit ja pysäkkikatokset
-  PROPERTY_MERGER, // Kiinteistö-/tonttiliitokset
-  SOIL_INVESTIGATION, // Maaperätutkimukset
-  JOINT_MUNICIPAL_INFRASTRUCTURE, // Yhteinen kunnallistekninen työmaa
-  ABSORBING_SEWAGE_SYSTEM, // Imujätejärjestelmä
-  UNDERGROUND_CONSTRUCTION, // Maanalainen rakentaminen
+  STREET_AND_GREEN, // Katu- ja vihertyöt
+  WATER_AND_SEWAGE, // Vesi / viemäri
+  ELECTRICITY, // Sähkö
+  DATA_TRANSFER, // Tiedonsiirto
+  HEATING_COOLING, // Lämmitys/viilennys
+  CONSTRUCTION, // Rakennus
+  YARD, // Piha
+  GEOLOGICAL_SURVEY, // Pohjatutkimus
   OTHER_CABLE_REPORT // Muut
 }
