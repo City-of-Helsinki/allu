@@ -4,7 +4,7 @@
   "handler":null,
   "status":null,
   "type":"EXCAVATION_ANNOUNCEMENT",
-  "kind":"DISTRICT_HEATING",
+  "kind":"HEATING_COOLING",
   "name":"Manskun lämpö ja puhallus",
   "creationTime":"2016-07-15T10:36:09.721Z",
   "startTime":"2017-01-01T05:00:00Z",
