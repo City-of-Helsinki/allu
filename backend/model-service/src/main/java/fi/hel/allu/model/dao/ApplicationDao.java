@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.CableInfoType;
@@ -15,7 +14,6 @@ import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;

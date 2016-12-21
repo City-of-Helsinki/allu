@@ -172,5 +172,7 @@ INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type,
             (select id from allu.structure_meta where application_type = 'CableInfoEntry' and version = 1),
             null);
 
-
-
+-----------------------------------
+-- Excavation announcement metadata
+-----------------------------------
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('EXCAVATION_ANNOUNCEMENT', 1);
