@@ -1,4 +1,5 @@
 import {ApplicationSpecifier} from './application-specifier';
+import {ArrayUtil} from '../../../util/array-util';
 
 export enum ApplicationKind {
   // EVENTS
@@ -43,5 +44,10 @@ export class ApplicationKindStructure {
 
   get applicationSpecifierNames() {
     return this.specifiers.map(s => ApplicationSpecifier[s]);
+  }
+
+  get applicationSpecifierNamesSortedByTranslation() {
+    return this.applicationSpecifierNames
+      .sort(ArrayUtil.naturalSortTranslated(['application.specifier'], (specifier: string) => specifier));
   }
 }
