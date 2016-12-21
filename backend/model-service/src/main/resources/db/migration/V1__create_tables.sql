@@ -47,6 +47,12 @@ create table allu.location_flids (
     location_id integer references allu.location(id),
     fixed_location_id integer references allu.fixed_location(id) );
 
+create table allu.city_district (
+  id serial primary key,
+  district_id integer not null unique,
+  name text,
+  geometry geometry(GEOMETRY, 3879));
+
 create table allu.geometry (
    id serial primary key,
    geometry geometry(GEOMETRY, 3879),
