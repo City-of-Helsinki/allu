@@ -1,6 +1,6 @@
 import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {AutoCompletionEntry} from './auto-completion-entry';
+import {ArrayUtil} from '../../../util/array-util';
 
 @Component({
   selector: 'auto-completion-list',
@@ -29,17 +29,7 @@ export class AutoCompletionListComponent implements OnInit {
     this.onSelection.emit(selection);
   }
 
-
   private sortByField(fieldName: string): (a, b) => number {
-    return (left, right) => {
-      if (left[fieldName] > right[fieldName]) {
-        return 1;
-      }
-      if (left[fieldName] < right[fieldName]) {
-        return -1;
-      }
-      // a must be equal to b
-      return 0;
-    };
+    return ArrayUtil.naturalSort(item => item[fieldName]);
   }
 }

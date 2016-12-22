@@ -6,6 +6,8 @@ import {ApplicationType, applicationTypes, ApplicationTypeStructure} from '../..
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 import {Some} from '../../../util/option';
 import {ApplicationKind} from '../../../model/application/type/application-kind';
+import {ArrayUtil} from '../../../util/array-util';
+import {findTranslation} from '../../../util/translations';
 
 @Component({
   selector: 'application-type',
@@ -31,7 +33,9 @@ export class TypeComponent implements OnInit {
       .map((data: {application: Application}) => data.application)
       .subscribe(application => {
         this.type = this.applicationTypes.find(types => types.containsKind(ApplicationKind[application.kind]));
-        this.kindNames = this.type ? this.type.applicationKindNames : [];
+        this.kindNames = this.type
+          ? this.type.applicationKindNames
+          : [];
         this.applicationKind = application.kind;
         this.kindSelection(application.kind);
         this.selectedSpecifiers = Some(application.extension).map(ext => ext.specifiers).orElse([]);
@@ -49,7 +53,7 @@ export class TypeComponent implements OnInit {
     if (value !== undefined) {
       this.applicationKind = value;
       let kind = ApplicationKind[value];
-      this.specifierNames = this.type.structureByKind(kind).applicationSpecifierNames;
+      this.specifierNames = this.type.structureByKind(kind).applicationSpecifierNamesSortedByTranslation;
       this.onKindChange.emit(kind);
     }
   };

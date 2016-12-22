@@ -1,5 +1,6 @@
 import {ApplicationKindStructure, ApplicationKind} from './application-kind';
 import {ApplicationSpecifier} from './application-specifier';
+import {ArrayUtil} from '../../../util/array-util';
 
 export enum ApplicationType {
   EXCAVATION_ANNOUNCEMENT, // Kaivuilmoitus
@@ -29,6 +30,10 @@ export class ApplicationTypeStructure {
 
   get applicationKindNames() {
     return this.kinds.map(k => ApplicationKind[k.kind]);
+  }
+
+  get applicationKindNamesSortedByTranslation() {
+    return this.applicationKindNames.sort(ArrayUtil.naturalSortTranslated(['application.kind'], (kind: string) => kind));
   }
 }
 
