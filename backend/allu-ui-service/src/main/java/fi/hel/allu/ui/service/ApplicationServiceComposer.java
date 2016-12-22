@@ -4,6 +4,7 @@ import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
+import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
@@ -187,7 +188,7 @@ public class ApplicationServiceComposer {
 
   /**
    * Get the standard texts for cable infos
-   * 
+   *
    * @return List of texts and their cable info types
    */
   public List<CableInfoText> getCableInfoTexts() {
@@ -196,7 +197,7 @@ public class ApplicationServiceComposer {
 
   /**
    * Delete a standard cable info text
-   * 
+   *
    * @param id
    *          the ID of the key to delete
    */
@@ -206,7 +207,7 @@ public class ApplicationServiceComposer {
 
   /**
    * Create a new cable info text
-   * 
+   *
    * @param type
    *          the cable info type for the text
    * @param text
@@ -219,7 +220,7 @@ public class ApplicationServiceComposer {
 
   /**
    * Update a cable info text
-   * 
+   *
    * @param id
    *          id of the text entry to update
    * @param text
@@ -248,5 +249,15 @@ public class ApplicationServiceComposer {
       idToOrder.put(ids.get(i), i);
     }
     Collections.sort(applicationList, Comparator.comparing(application -> idToOrder.get(application.getId())));
+  }
+
+  /**
+   * Get the invoice rows for an application
+   *
+   * @param id the application ID
+   * @return the invoice rows for the application
+   */
+  public List<InvoiceRow> getInvoiceRows(int id) {
+    return applicationService.getInvoiceRows(id);
   }
 }

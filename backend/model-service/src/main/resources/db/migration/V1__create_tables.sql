@@ -130,14 +130,15 @@ create table allu.application_contact (
     application_id integer references allu.application(id),
     contact_id integer references allu.contact(id) );
 
-create table allu.application_billing_line (
+create table allu.invoice_row (
     id serial primary key,
     application_id integer references allu.application(id),
-    line_number integer,
+    row_number integer,
+    unit text,
+    quantity double precision,
+    row_text text,
     unit_price integer,
-    amount integer,
-    total_price integer,
-    info_text text );
+    net_price integer );
 
 create table allu.structure_meta (
     id serial primary key,

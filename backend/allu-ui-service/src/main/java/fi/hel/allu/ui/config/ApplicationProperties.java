@@ -431,6 +431,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for getting the invoice rows for an application
+   */
+  public String getInvoiceRowsUrl() {
+    return getModelServiceUrl("/applications/{id}/invoice-rows");
+  }
+
+  /**
    * Returns username for the WFS service.
    *
    * @return username for the WFS service.

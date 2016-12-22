@@ -49,6 +49,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToAttributeDataType());
     configuration.register(new StringToStatusType());
     configuration.register(new StringToCableInfoType());
+    configuration.register(new StringToInvoiceUnit());
     return configuration;
   }
 

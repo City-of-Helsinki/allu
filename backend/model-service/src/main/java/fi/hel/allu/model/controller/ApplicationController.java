@@ -1,14 +1,8 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.AttachmentDao;
-import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.CableInfoText;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.PricingService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +16,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,14 +34,17 @@ public class ApplicationController {
 
   private PricingService pricingService;
 
+  private InvoiceRowDao invoiceRowDao;
+
   @Autowired
   public ApplicationController(ApplicationDao applicationDao, AttachmentDao attachmentDao, LocationDao locationDao,
-      DecisionDao decisionDao, PricingService pricingService) {
+      DecisionDao decisionDao, PricingService pricingService, InvoiceRowDao invoiceRowDao) {
     this.applicationDao = applicationDao;
     this.attachmentDao = attachmentDao;
     this.locationDao = locationDao;
     this.decisionDao = decisionDao;
     this.pricingService = pricingService;
+    this.invoiceRowDao = invoiceRowDao;
   }
 
   /**
@@ -99,8 +97,11 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Application> update(@PathVariable int id,
       @Valid @RequestBody(required = true) Application application) {
-    pricingService.updatePrice(application);
-    return new ResponseEntity<>(applicationDao.update(id, application), HttpStatus.OK);
+    List<InvoiceRow> invoiceRows = new ArrayList<>();
+    pricingService.updatePrice(application, invoiceRows);
+    Application result = applicationDao.update(id, application);
+    invoiceRowDao.setApplicationRows(result.getId(), invoiceRows);
+    return new ResponseEntity<>(result, HttpStatus.OK);
   }
 
   /**
@@ -140,8 +141,12 @@ public class ApplicationController {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
-    pricingService.updatePrice(application);
-    return new ResponseEntity<>(applicationDao.insert(application), HttpStatus.OK);
+    List<InvoiceRow> invoiceRows = new ArrayList<>();
+    pricingService.updatePrice(application, invoiceRows);
+    Application result = applicationDao.insert(application);
+    invoiceRowDao.setApplicationRows(result.getId(), invoiceRows);
+    return new ResponseEntity<>(result, HttpStatus.OK);
+
   }
 
   /**
@@ -228,7 +233,7 @@ public class ApplicationController {
 
   /**
    * Update a standard text for cable infos
-   * 
+   *
    * @param id ID of the text to update
    * @param cableInfoText the new contents for the info -- only the textValue field is used
    * @return the updated CableInfoText
@@ -243,7 +248,7 @@ public class ApplicationController {
 
   /**
    * Delete a cable info standard text
-   * 
+   *
    * @param id the ID of the text to remove
    * @return
    */
@@ -251,5 +256,16 @@ public class ApplicationController {
   public ResponseEntity<Void> deleteCableInfoText(@PathVariable int id) {
     applicationDao.deleteCableInfoText(id);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Get the invoice rows for an application
+   *
+   * @param id the application ID
+   * @return the invoice rows for the application
+   */
+  @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)
+  public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
+    return new ResponseEntity<>(invoiceRowDao.getApplicationRows(id), HttpStatus.OK);
   }
 }

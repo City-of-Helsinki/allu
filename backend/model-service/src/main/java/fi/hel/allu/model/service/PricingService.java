@@ -6,11 +6,8 @@ import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Event;
-import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.ShortTermRental;
-import fi.hel.allu.model.pricing.Pricing;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.pricing.EventPricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,12 +70,14 @@ public class PricingService {
    * @param application
    *          The application for which the pricing is calculated. New pricing
    *          is stored in the application.
+   * @param invoiceRows
+   *          List where to store the invoice rows from the price calculation.
    */
   @Transactional(readOnly = true)
-  public void updatePrice(Application application) {
+  public void updatePrice(Application application, List<InvoiceRow> invoiceRows) {
     switch (application.getKind()) {
     case OUTDOOREVENT:
-      updateOutdoorEventPrice(application);
+      updateOutdoorEventPrice(application, invoiceRows);
       break;
     case ART:
       // Free event
@@ -235,16 +234,19 @@ public class PricingService {
   }
 
   // Calculate price for outdoor event
-  private void updateOutdoorEventPrice(Application application) {
+  private void updateOutdoorEventPrice(Application application, List<InvoiceRow> invoiceRows) {
     Event event = (Event) application.getExtension();
     if (event != null) {
-      int priceInCents = calculatePrice(application, event);
+      EventPricing pricing = new EventPricing();
+      int priceInCents = calculatePrice(application, event, pricing);
       application.setCalculatedPrice(priceInCents);
+      // pass the invoice rows to caller
+      invoiceRows.addAll(pricing.getInvoiceRows());
     }
   }
 
-  // Pricing calculation for Event applications
-  private int calculatePrice(Application application, Event event) {
+  // EventPricing calculation for Event applications
+  private int calculatePrice(Application application, Event event, EventPricing pricing) {
     Integer locationId = application.getLocationId();
     if (locationId == null) {
       return 0; // No location -> no price.
@@ -274,7 +276,6 @@ public class PricingService {
     double structureArea = event.getStructureArea();
     double area = getApplicationArea(application);
 
-    Pricing pricing = new Pricing();
     for(PricingConfiguration pricingConfig : pricingConfigs) {
       // Calculate price per location...
       pricing.accumulatePrice(pricingConfig, eventDays, buildDays, structureArea,
