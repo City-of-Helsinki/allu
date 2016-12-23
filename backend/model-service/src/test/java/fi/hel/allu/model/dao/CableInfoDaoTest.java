@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.CableInfoText;
+import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -24,6 +26,9 @@ public class CableInfoDaoTest {
 
   @Autowired
   private CableInfoDao cableInfoDao;
+
+  @Autowired
+  TestCommon testCommon;
 
   @Test
   public void testCreateCableInfoText() {
@@ -41,7 +46,8 @@ public class CableInfoDaoTest {
   }
 
   @Test
-  public void testGetCableInfoTexts() {
+  public void testGetCableInfoTexts() throws SQLException {
+    testCommon.deleteAllData();
     cableInfoDao.createCableInfoText(CableInfoType.GAS, "Kaasua, komisario Palmu!");
     cableInfoDao.createCableInfoText(CableInfoType.ELECTRICITY, "Iskee kuin miljoona volttia");
     cableInfoDao.createCableInfoText(CableInfoType.STREET_HEATING, "Katu kuuma kaupungin");
