@@ -1,5 +1,9 @@
 @import 'variables';
 @import 'colors';
+@import 'modal';
+@import '~@angular/material/core/theming/all-theme';
+
+@include md-core();
 
 // Reset
 html,

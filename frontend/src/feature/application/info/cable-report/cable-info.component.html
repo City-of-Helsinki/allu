@@ -20,9 +20,11 @@
                                 <div class="form-group-label">{{['application.cableReport.cableInfo.type', infoEntry.value.type] | translation}}</div>
 
                                 <div *ngIf="!readonly" class="input-field col m4">
-                                    <select materialize="material_select" (change)="addDefaultText(index, $event.target.value)">
+                                    <select materialize="material_select"
+                                            [materializeSelectOptions]="defaultTexts[infoEntry.value.type]"
+                                            (change)="addDefaultText(index, $event.target.value)">
                                         <option value="" disabled selected>Vakiotekstit</option>
-                                        <option *ngFor="let defaultText of defaultTextsFor(infoEntry.value.type)">{{defaultText.text}}</option>
+                                        <option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]">{{defaultText.text}}</option>
                                     </select>
                                 </div>
                                 <div *ngIf="!readonly" class="col m2">

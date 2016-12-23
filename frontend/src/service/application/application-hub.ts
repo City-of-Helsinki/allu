@@ -65,4 +65,6 @@ export class ApplicationHub {
   public loadDefaultTexts = () => this.applicationService.loadDefaultTexts();
 
   public saveDefaultText = (text: DefaultText) => this.applicationService.saveDefaultText(text);
+
+  public removeDefaultText = (id: number) => this.applicationService.removeDefaultText(id);
 }

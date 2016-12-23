@@ -12,7 +12,7 @@ import {ApplicationSearch} from './application-hub';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {ApplicationLocationQueryMapper} from './../mapper/application-location-query-mapper';
 import {UIStateHub} from './../ui-state/ui-state-hub';
-import {HttpUtil} from '../../util/http.util.ts';
+import {HttpUtil, HttpStatus} from '../../util/http.util.ts';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {translations} from '../../util/translations';
@@ -45,7 +45,7 @@ export class ApplicationService {
   static SEARCH = '/search';
   static SEARCH_LOCATION = '/search_location';
   static METADATA_URL = '/api/meta';
-  static DEFAULT_TEXTS_URL = '/api/default_texts';
+  static DEFAULT_TEXTS_URL = ApplicationService.APPLICATIONS_URL + '/cable-info/texts';
 
   private statusToUrl = new Map<ApplicationStatus, string>();
 
@@ -131,34 +131,30 @@ export class ApplicationService {
   }
 
   public loadDefaultTexts(): Observable<Array<DefaultText>> {
-    let texts = Object.keys(defaultTexts)
-      .map(type => defaultTexts[type]
-        .map(text => new DefaultText(undefined, CableInfoType[type], text)));
-
-    return Observable.of([].concat.apply([], texts));
-
-    // TODO: enable when backend support is done
-    /*return this.authHttp.get(ApplicationService.DEFAULT_TEXTS_URL)
+    return this.authHttp.get(ApplicationService.DEFAULT_TEXTS_URL)
       .map(response => response.json())
       .map(texts => texts.map(text => DefaultText.mapBackend(text)))
-      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));*/
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   public saveDefaultText(text: DefaultText): Observable<DefaultText> {
-    defaultTexts[CableInfoType[text.type]].push(text.text);
-    return Observable.of(text);
-
-    // TODO: enable when backend support is done
-    /*if (text.id) {
+    if (text.id) {
       let url = ApplicationService.DEFAULT_TEXTS_URL + '/' + text.id;
       return this.authHttp.put(url, JSON.stringify(DefaultText.mapFrontend(text)))
         .map(response => DefaultText.mapBackend(response.json()))
-        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, HttpUtil.extractMessage(err))));
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.DEFAULT_TEXT_SAVE_FAILED, HttpUtil.extractMessage(err))));
     } else {
       return this.authHttp.post(ApplicationService.DEFAULT_TEXTS_URL, JSON.stringify(DefaultText.mapFrontend(text)))
         .map(response => DefaultText.mapBackend(response.json()))
-        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_SAVE_FAILED, HttpUtil.extractMessage(err))));
-    }*/
+        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.DEFAULT_TEXT_SAVE_FAILED, HttpUtil.extractMessage(err))));
+    }
+  }
+
+  public removeDefaultText(id: number): Observable<HttpStatus> {
+    let url = ApplicationService.DEFAULT_TEXTS_URL + '/' + id;
+    return this.authHttp.delete(url)
+      .map(response => HttpUtil.extractHttpResponse(response))
+      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.DEFAULT_TEXT_SAVE_FAILED, HttpUtil.extractMessage(err))));
   }
 }
 
