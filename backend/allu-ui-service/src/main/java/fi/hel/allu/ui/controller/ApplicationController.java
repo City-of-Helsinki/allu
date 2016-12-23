@@ -2,6 +2,7 @@ package fi.hel.allu.ui.controller;
 
 
 import fi.hel.allu.model.domain.CableInfoText;
+import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.LocationQueryJson;
@@ -9,6 +10,7 @@ import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.AttachmentService;
 import fi.hel.allu.ui.service.DecisionService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -20,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -221,7 +224,7 @@ public class ApplicationController {
 
   /**
    * Update a standard text for cable infos
-   * 
+   *
    * @param id ID of the text to update
    * @param cableInfoText the new contents for the info -- only the textValue field is used
    * @return the updated CableInfoText
@@ -237,7 +240,7 @@ public class ApplicationController {
 
   /**
    * Delete a cable info standard text
-   * 
+   *
    * @param id the ID of the text to remove
    * @return
    */
@@ -246,6 +249,18 @@ public class ApplicationController {
   public ResponseEntity<Void> deleteCableInfoText(@PathVariable int id) {
     applicationServiceComposer.deleteCableInfoText(id);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Get the invoice rows for an application
+   *
+   * @param id the application ID
+   * @return the invoice rows for the application
+   */
+  @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
+    return new ResponseEntity<>(applicationServiceComposer.getInvoiceRows(id), HttpStatus.OK);
   }
 
 }

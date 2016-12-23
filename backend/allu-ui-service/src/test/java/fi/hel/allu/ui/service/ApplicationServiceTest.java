@@ -4,6 +4,7 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
+import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
@@ -232,6 +233,19 @@ public class ApplicationServiceTest extends MockServices {
     CableInfoText result = applicationService.updateCableInfoText(112, "Raitiovaunu");
 
     assertEquals("Qwertyuiopå", result.getTextValue());
+  }
+
+  @Test
+  public void testGetInvoiceRows() {
+    InvoiceRow row = new InvoiceRow();
+    row.setRowText("Row row row your boat");
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(InvoiceRow[].class), Mockito.anyInt()))
+        .then(invocation -> new ResponseEntity<>(new InvoiceRow[] { row }, HttpStatus.OK));
+
+    List<InvoiceRow> result = applicationService.getInvoiceRows(99);
+
+    assertEquals(1, result.size());
+    assertEquals("Row row row your boat", result.get(0).getRowText());
   }
 
   private Object createMockCableInfoText() {

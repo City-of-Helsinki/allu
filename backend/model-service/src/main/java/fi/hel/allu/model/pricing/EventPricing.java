@@ -6,7 +6,7 @@ import fi.hel.allu.model.domain.InvoiceUnit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Pricing {
+public class EventPricing {
 
   private static final String BASE_TAX_TEXT = "Päivän perustaksa";
   private static final String DAY_TOTAL_TAX_TEXT = "Päivätaksa sisältäen rakenne- ja pinta-alalisät";

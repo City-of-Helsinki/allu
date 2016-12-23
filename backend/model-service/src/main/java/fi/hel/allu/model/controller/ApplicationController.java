@@ -1,15 +1,9 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.AttachmentDao;
-import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.CableInfoText;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.model.service.PricingService;
+import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.service.ApplicationService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -22,14 +16,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
 
-  private ApplicationDao applicationDao;
+  private ApplicationService applicationService;
 
   private AttachmentDao attachmentDao;
 
@@ -37,16 +30,20 @@ public class ApplicationController {
 
   private DecisionDao decisionDao;
 
-  private PricingService pricingService;
+  private CableInfoDao cableInfoDao;
+
+  private InvoiceRowDao invoiceRowDao;
 
   @Autowired
-  public ApplicationController(ApplicationDao applicationDao, AttachmentDao attachmentDao, LocationDao locationDao,
-      DecisionDao decisionDao, PricingService pricingService) {
-    this.applicationDao = applicationDao;
+  public ApplicationController(ApplicationService applicationService, AttachmentDao attachmentDao,
+      LocationDao locationDao, DecisionDao decisionDao, CableInfoDao cableInfoDao,
+      InvoiceRowDao invoiceRowDao) {
+    this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.locationDao = locationDao;
     this.decisionDao = decisionDao;
-    this.pricingService = pricingService;
+    this.cableInfoDao = cableInfoDao;
+    this.invoiceRowDao = invoiceRowDao;
   }
 
   /**
@@ -57,11 +54,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Application> findById(@PathVariable int id) {
-    List<Application> applications = applicationDao.findByIds(Collections.singletonList(id));
-    if (applications.size() != 1) {
-      throw new NoSuchEntityException("Application not found", Integer.toString(id));
-    }
-    return new ResponseEntity<>(applications.get(0), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.findById(id), HttpStatus.OK);
   }
 
   /**
@@ -72,8 +65,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/find", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByIds(@RequestBody List<Integer> ids) {
-    List<Application> applications = applicationDao.findByIds(ids);
-    return new ResponseEntity<>(applications, HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.findByIds(ids), HttpStatus.OK);
   }
 
   /**
@@ -85,8 +77,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByLocation(@Valid @RequestBody LocationSearchCriteria lsc) {
-    List<Application> applications = applicationDao.findByLocation(lsc);
-    return new ResponseEntity<>(applications, HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.findByLocation(lsc), HttpStatus.OK);
   }
 
   /**
@@ -99,8 +90,7 @@ public class ApplicationController {
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Application> update(@PathVariable int id,
       @Valid @RequestBody(required = true) Application application) {
-    pricingService.updatePrice(application);
-    return new ResponseEntity<>(applicationDao.update(id, application), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.update(id, application), HttpStatus.OK);
   }
 
   /**
@@ -111,7 +101,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
   public ResponseEntity<Void> updateHandler(@PathVariable int handlerId, @RequestBody List<Integer> applications) {
-    applicationDao.updateHandler(handlerId, applications);
+    applicationService.updateHandler(handlerId, applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -122,10 +112,9 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
   public ResponseEntity<Void> removeHandler(@RequestBody List<Integer> applications) {
-    applicationDao.removeHandler(applications);
+    applicationService.removeHandler(applications);
     return new ResponseEntity<>(HttpStatus.OK);
   }
-
 
 
   /**
@@ -137,11 +126,7 @@ public class ApplicationController {
    */
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Application> insert(@Valid @RequestBody(required = true) Application application) {
-    if (application.getId() != null) {
-      throw new IllegalArgumentException("Id must be null for insert");
-    }
-    pricingService.updatePrice(application);
-    return new ResponseEntity<>(applicationDao.insert(application), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.insert(application), HttpStatus.OK);
   }
 
   /**
@@ -210,7 +195,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/cable-info/texts", method = RequestMethod.GET)
   public ResponseEntity<List<CableInfoText>> getCableInfoTexts() {
-    return new ResponseEntity<>(applicationDao.getCableInfoTexts(), HttpStatus.OK);
+    return new ResponseEntity<>(cableInfoDao.getCableInfoTexts(), HttpStatus.OK);
   }
 
   /**
@@ -222,13 +207,13 @@ public class ApplicationController {
   @RequestMapping(value = "/cable-info/texts", method = RequestMethod.POST)
   public ResponseEntity<CableInfoText> addCableInfoText(@RequestBody CableInfoText cableInfoText) {
     return new ResponseEntity<>(
-        applicationDao.createCableInfoText(cableInfoText.getCableInfoType(), cableInfoText.getTextValue()),
+        cableInfoDao.createCableInfoText(cableInfoText.getCableInfoType(), cableInfoText.getTextValue()),
         HttpStatus.OK);
   }
 
   /**
    * Update a standard text for cable infos
-   * 
+   *
    * @param id ID of the text to update
    * @param cableInfoText the new contents for the info -- only the textValue field is used
    * @return the updated CableInfoText
@@ -237,19 +222,30 @@ public class ApplicationController {
   public ResponseEntity<CableInfoText> updateCableInfoText(@PathVariable int id,
       @RequestBody CableInfoText cableInfoText) {
     return new ResponseEntity<>(
-        applicationDao.updateCableInfoText(id, cableInfoText.getTextValue()),
+        cableInfoDao.updateCableInfoText(id, cableInfoText.getTextValue()),
         HttpStatus.OK);
   }
 
   /**
    * Delete a cable info standard text
-   * 
+   *
    * @param id the ID of the text to remove
    * @return
    */
   @RequestMapping(value = "/cable-info/texts/{id}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteCableInfoText(@PathVariable int id) {
-    applicationDao.deleteCableInfoText(id);
+    cableInfoDao.deleteCableInfoText(id);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Get the invoice rows for an application
+   *
+   * @param id the application ID
+   * @return the invoice rows for the application
+   */
+  @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)
+  public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
+    return new ResponseEntity<>(invoiceRowDao.getInvoiceRows(id), HttpStatus.OK);
   }
 }

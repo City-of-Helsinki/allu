@@ -3,7 +3,10 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.ui.domain.QueryParameterJson;
+import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 import org.junit.Assert;

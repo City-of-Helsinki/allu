@@ -242,6 +242,11 @@
                             <column>cable_info_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToCableInfoType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>invoice_row</table>
+                            <column>unit</column>
+                            <type>fi.hel.allu.model.querydsl.StringToInvoiceUnit</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

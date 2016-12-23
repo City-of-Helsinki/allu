@@ -7,24 +7,22 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QCableInfoText.cableInfoText;
 import static fi.hel.allu.QGeometry.geometry1;
 
 @Repository
@@ -40,7 +38,6 @@ public class ApplicationDao {
   }
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
-  final QBean<CableInfoText> cableInfoTextBean = bean(CableInfoText.class, cableInfoText.all());
 
   @Transactional(readOnly = true)
   public List<Application> findByIds(List<Integer> ids) {
@@ -140,61 +137,4 @@ public class ApplicationDao {
     return ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType).name() + seqValue;
   }
 
-  /**
-   * Get the standard texts for cable infos
-   * @return List of texts and their cable info types
-   */
-  @Transactional
-  public List<CableInfoText> getCableInfoTexts() {
-    return queryFactory.select(cableInfoTextBean).from(cableInfoText).fetch();
-  }
-
-  /**
-   * Delete a standard cable info text
-   * @param id the ID of the key to delete
-   */
-  @Transactional
-  public void deleteCableInfoText(int id) {
-    long deleteCount = queryFactory.delete(cableInfoText).where(cableInfoText.id.eq(id))
-        .execute();
-    if (deleteCount == 0) {
-      throw new NoSuchEntityException("No cable info text with id " + id);
-    }
-  }
-
-  /**
-   * Create a new cable info text
-   * @param type the cable info type for the text
-   * @param text the text
-   * @return the resulting CableInfoText entry
-   */
-  @Transactional
-  public CableInfoText createCableInfoText(CableInfoType type, String text) {
-    int id = queryFactory.insert(cableInfoText).set(cableInfoText.cableInfoType, type)
-        .set(cableInfoText.textValue, text)
-        .executeWithKey(cableInfoText.id);
-    return getCableInfoText(id);
-  }
-
-  /**
-   * Update a cable info text
-   * @param id id of the text entry to update
-   * @param text new text for the entry
-   * @return the resulting CableInfoText entry after update
-   */
-  @Transactional
-  public CableInfoText updateCableInfoText(int id, String text) {
-    long updateCount = queryFactory.update(cableInfoText).set(cableInfoText.textValue, text)
-        .where(cableInfoText.id.eq(id)).execute();
-    if (updateCount == 0) {
-      throw new NoSuchEntityException("No cable info text with id " + id);
-    }
-    return getCableInfoText(id);
-  }
-
-  private CableInfoText getCableInfoText(int id) {
-    Optional<CableInfoText> fromDatabase = Optional.ofNullable(
-        queryFactory.select(cableInfoTextBean).from(cableInfoText).where(cableInfoText.id.eq(id)).fetchFirst());
-    return fromDatabase.orElseThrow(() -> new NoSuchEntityException("CableInfoText not found"));
-  }
 }

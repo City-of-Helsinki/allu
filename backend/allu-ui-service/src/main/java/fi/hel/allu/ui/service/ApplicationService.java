@@ -3,6 +3,7 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
+import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
@@ -146,6 +147,18 @@ public class ApplicationService {
             CableInfoText.class,
             id);
     return restResult.getBody();
+  }
+
+  /**
+   * Get the invoice rows for an application
+   *
+   * @param id the application ID
+   * @return the invoice rows for the application
+   */
+  public List<InvoiceRow> getInvoiceRows(int id) {
+    ResponseEntity<InvoiceRow[]> restResult = restTemplate.getForEntity(applicationProperties.getInvoiceRowsUrl(),
+        InvoiceRow[].class, id);
+    return Arrays.asList(restResult.getBody());
   }
 
   /**
