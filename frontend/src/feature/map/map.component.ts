@@ -12,6 +12,7 @@ import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {translations} from '../../util/translations';
+import {ProjectHub} from '../../service/project/project-hub';
 
 
 @Component({
@@ -26,7 +27,8 @@ export class MapComponent implements OnInit, OnDestroy {
   @Input() edit: boolean;
   @Input() zoom: boolean;
   @Input() selection: boolean;
-  @Input() applicationId: Number;
+  @Input() applicationId: number;
+  @Input() projectId: number;
   @Input() showOnlyApplicationArea: boolean = false;
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
@@ -41,7 +43,8 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private mapService: MapUtil,
     private mapHub: MapHub,
-    private applicationHub: ApplicationHub) {
+    private applicationHub: ApplicationHub,
+    private projectHub: ProjectHub) {
     this.mapLayers = this.createLayers();
     this.applicationArea = undefined;
     this.zoom = false;
@@ -61,6 +64,8 @@ export class MapComponent implements OnInit, OnDestroy {
     this.mapHub.selectedFixedLocations().subscribe(fxs => this.drawFixedLocations(fxs));
     // Handle fetching and drawing edited application as separate case
     Some(this.applicationId).do(id => this.applicationHub.getApplication(id).subscribe(app => this.drawEditedApplication(app)));
+
+    Some(this.projectId).do(id => this.drawProject(id));
   }
 
   ngOnDestroy() {
@@ -84,23 +89,34 @@ export class MapComponent implements OnInit, OnDestroy {
         this.drawnItems.addLayer(layer);
       });
 
-      this.map.fitBounds(L.latLngBounds(this.drawnItems.getBounds()));
+      this.centerAndZoomOnDrawn();
     }
+  }
+
+  private drawProject(id: number) {
+    this.projectHub.getProjectApplications(id).subscribe(apps => {
+      this.drawApplications(apps);
+      this.centerAndZoomOnDrawn();
+    });
   }
 
 
   private drawApplications(applications: Array<Application>) {
     this.clearDrawn();
 
-    let applicationShouldBeDrawn = (application: Application) =>
-      !this.showOnlyApplicationArea || (this.showOnlyApplicationArea && application.id === this.applicationId);
-
     applications
       .filter(app => app.location !== undefined)
-      .filter(app => applicationShouldBeDrawn(app))
+      .filter(app => this.applicationShouldBeDrawn(app))
       .filter(app => app.id !== this.applicationId) // Only draw other than edited application
       .forEach(app => this.drawGeometry(app.location.geometry, this.drawnItems));
   }
+
+  private applicationShouldBeDrawn(application: Application): boolean {
+    let allAreDrawn = !this.showOnlyApplicationArea && this.projectId === undefined;
+    let isSelectedApplication = this.showOnlyApplicationArea && application.id === this.applicationId;
+    return isSelectedApplication || allAreDrawn || application.belongsToProject(this.projectId);
+  }
+
 
   private drawEditedApplication(application: Application) {
     this.drawGeometry(application.location.geometry, this.editedItems);
@@ -275,5 +291,12 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private setLocalizations(): void {
     L.drawLocal = translations.map;
+  }
+
+  private centerAndZoomOnDrawn() {
+    Some(this.drawnItems)
+      .filter(items => items.getLayers().length > 0)
+      .map(items => L.latLngBounds(items.getBounds()))
+      .do(bounds => this.map.fitBounds(bounds));
   }
 }

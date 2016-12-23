@@ -22,7 +22,7 @@ export class MapHub {
   private search$ = new Subject<string>();
   private applicationSelection$ = new Subject<Application>();
   private applications$ = new Subject<Array<Application>>();
-  private searchBar$ = new Subject<SearchbarFilter>();
+  private searchBar$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
   private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
   private fixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);

@@ -99,6 +99,10 @@ export class Application {
     return Some(this.location).map(loc => loc.fixedLocationIds.length > 0).orElse(false);
   }
 
+  public belongsToProject(projectId: number): boolean {
+    return Some(this.project).map(p => p.id === projectId).orElse(false);
+  }
+
   get calculatedPriceEuro(): number {
     return this.toEuros(this.calculatedPrice);
   }
