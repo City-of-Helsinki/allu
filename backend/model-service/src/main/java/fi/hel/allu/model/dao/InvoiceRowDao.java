@@ -30,7 +30,7 @@ public class InvoiceRowDao {
    * @return list of invoice rows (empty, if no rows are stored)
    */
   @Transactional(readOnly = true)
-  public List<InvoiceRow> getApplicationRows(int applicationId) {
+  public List<InvoiceRow> getInvoiceRows(int applicationId) {
     return queryFactory.select(invoiceRowBean).from(invoiceRow).where(invoiceRow.applicationId.eq(applicationId)).orderBy(invoiceRow.rowNumber.asc()).fetch();
   }
 
@@ -41,7 +41,7 @@ public class InvoiceRowDao {
    * @param rows list of invoice rows. Empty list is allowed and will remove existing rows.
    */
   @Transactional
-  public void setApplicationRows(int applicationId, List<InvoiceRow> rows) {
+  public void setInvoiceRows(int applicationId, List<InvoiceRow> rows) {
     queryFactory.delete(invoiceRow).where(invoiceRow.applicationId.eq(applicationId));
     if (!rows.isEmpty()) {
       SQLInsertClause insert = queryFactory.insert(invoiceRow);

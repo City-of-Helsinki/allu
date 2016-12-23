@@ -43,7 +43,7 @@ public class ApplicationServiceTest {
     applicationService.insert(newApp);
     Mockito.verify(pricingService).updatePrice(Mockito.eq(newApp), Mockito.anyListOf(InvoiceRow.class));
     Mockito.verify(applicationDao).insert(Mockito.eq(newApp));
-    Mockito.verify(invoiceRowDao).setApplicationRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class));
+    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class));
   }
 
   @Test
@@ -57,6 +57,6 @@ public class ApplicationServiceTest {
     applicationService.update(123, application);
     Mockito.verify(pricingService).updatePrice(Mockito.eq(application), Mockito.anyListOf(InvoiceRow.class));
     Mockito.verify(applicationDao).update(Mockito.eq(123), Mockito.eq(application));
-    Mockito.verify(invoiceRowDao).setApplicationRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class));
+    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class));
   }
 }

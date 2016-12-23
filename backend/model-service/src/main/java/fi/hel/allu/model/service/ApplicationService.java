@@ -78,7 +78,7 @@ public class ApplicationService {
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
     Application result = applicationDao.update(id, application);
-    invoiceRowDao.setApplicationRows(result.getId(), invoiceRows);
+    invoiceRowDao.setInvoiceRows(result.getId(), invoiceRows);
     return result;
   }
 
@@ -114,7 +114,7 @@ public class ApplicationService {
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
     Application result = applicationDao.insert(application);
-    invoiceRowDao.setApplicationRows(result.getId(), invoiceRows);
+    invoiceRowDao.setInvoiceRows(result.getId(), invoiceRows);
     return result;
   }
 

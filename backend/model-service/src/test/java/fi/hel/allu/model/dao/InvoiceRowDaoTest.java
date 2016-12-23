@@ -39,9 +39,9 @@ public class InvoiceRowDaoTest {
   }
 
   @Test
-  public void testGetApplicationRows() {
+  public void testGetInvoiceRows() {
     // Empty db: should get empty rows for application
-    List<InvoiceRow> rows = invoiceRowDao.getApplicationRows(123);
+    List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(123);
     assertEquals(0, rows.size());
   }
 
@@ -50,9 +50,9 @@ public class InvoiceRowDaoTest {
     int appId1 = testCommon.insertApplication("Hakemus", "Käsittelijä");
     int appId2 = testCommon.insertApplication("Ansökning", "Handläggare");
     // Setting shouldn't throw
-    invoiceRowDao.setApplicationRows(appId1, generateTestRows(15, "test"));
+    invoiceRowDao.setInvoiceRows(appId1, generateTestRows(15, "test"));
     // Setting empty list should pass too:
-    invoiceRowDao.setApplicationRows(appId2, Collections.emptyList());
+    invoiceRowDao.setInvoiceRows(appId2, Collections.emptyList());
   }
 
   @Test
@@ -60,11 +60,11 @@ public class InvoiceRowDaoTest {
     int appId1 = testCommon.insertApplication("Hakemus", "Käsittelijä");
     int appId2 = testCommon.insertApplication("Ansökning", "Handläggare");
     // Set rows for two separate applications and read them back
-    invoiceRowDao.setApplicationRows(appId1, generateTestRows(12, "First rows"));
-    invoiceRowDao.setApplicationRows(appId2, generateTestRows(23, "Second rows"));
+    invoiceRowDao.setInvoiceRows(appId1, generateTestRows(12, "First rows"));
+    invoiceRowDao.setInvoiceRows(appId2, generateTestRows(23, "Second rows"));
 
-    List<InvoiceRow> first = invoiceRowDao.getApplicationRows(appId1);
-    List<InvoiceRow> second = invoiceRowDao.getApplicationRows(appId2);
+    List<InvoiceRow> first = invoiceRowDao.getInvoiceRows(appId1);
+    List<InvoiceRow> second = invoiceRowDao.getInvoiceRows(appId2);
 
     assertEquals(12, first.size());
     assertEquals(23, second.size());

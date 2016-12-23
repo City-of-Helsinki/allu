@@ -246,6 +246,6 @@ public class ApplicationController {
    */
   @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)
   public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
-    return new ResponseEntity<>(invoiceRowDao.getApplicationRows(id), HttpStatus.OK);
+    return new ResponseEntity<>(invoiceRowDao.getInvoiceRows(id), HttpStatus.OK);
   }
 }
