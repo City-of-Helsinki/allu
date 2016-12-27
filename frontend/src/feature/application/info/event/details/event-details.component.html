@@ -4,76 +4,70 @@
             <md-card-title>Tapahtuman tiedot</md-card-title>
             <md-card-content>
                 <div class="row form-group">
-                    <div class="col m6">
-                        <div class="input-field col m12">
-                            <input id="eventName" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
-                            <label for="eventName">{{ meta?.getUiName('name') }}*</label>
-                            <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
-                            <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
-                        </div>
-                        <div class="input-field col m12">
-                            <textarea id="eventDescription" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
-                            <label for="eventDescription">{{ meta?.getUiName('description') }}*</label>
-                            <field-error [form]="eventForm" field="description" hasError="required">
-                                {{translations.application.event.field.descriptionMissing}}
-                            </field-error>
-                        </div>
-                        <div class="input-field col m12">
-                            <input id="eventUrl" type="text" formControlName="url" [readonly]="readonly">
-                            <label for="eventUrl">{{ meta?.getUiName('url') }}</label>
-                        </div>
+                    <div class="input-field col m6">
+                        <input id="eventName" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
+                        <label for="eventName">{{ meta?.getUiName('name') }}*</label>
+                        <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
+                        <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
                     </div>
-                    <div class="col m6 no-padding">
-                        <div formGroupName="eventTimes">
-                            <div class="input-field col m12">
-                                <input *ngIf="!readonly" id="eventStartTime"
-                                       formControlName="startTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
+                    <div class="input-field col m6">
+                        <textarea id="eventDescription" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
+                        <label for="eventDescription">{{ meta?.getUiName('description') }}*</label>
+                        <field-error [form]="eventForm" field="description" hasError="required">
+                            {{translations.application.event.field.descriptionMissing}}
+                        </field-error>
+                    </div>
+                    <div formGroupName="eventTimes">
+                        <div class="input-field col m3">
+                            <input *ngIf="!readonly" id="eventStartTime"
+                                   formControlName="startTime"
+                                   materialize="pickadate"
+                                   [materializeParams]="pickadateParams"
+                                   type="text"/>
 
-                                <input *ngIf="readonly" id="eventStartTime" type="text" formControlName="startTime" readonly>
-                                <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}*</label>
-                                <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
-                                    {{translations.application.event.field.eventStartTimeMissing}}
-                                </field-error>
-                            </div>
-                            <div class="input-field col m12">
-                                <input *ngIf="!readonly" id="eventEndTime"
-                                       formControlName="endTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-                                <input *ngIf="readonly" id="eventEndTime" type="text" formControlName="endTime" readonly>
-                                <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}*</label>
-                                <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
-                                    {{translations.application.event.field.eventEndTimeMissing}}
-                                </field-error>
-                            </div>
-                            <div class="col m12">
-                                <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
-                                    {{translations.application.event.field.startBeforeEnd}}
-                                </field-error>
-                            </div>
-                        </div>
-                        <div class="input-field col m12">
-                            <textarea id="eventTimeExceptions" class="materialize-textarea" formControlName="timeExceptions" [readonly]="readonly"></textarea>
-                            <label for="eventTimeExceptions">{{ meta?.getUiName('timeExceptions') }}</label>
+                            <input *ngIf="readonly" id="eventStartTime" type="text" formControlName="startTime" readonly>
+                            <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}*</label>
+                            <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
+                                {{translations.application.event.field.eventStartTimeMissing}}
+                            </field-error>
                         </div>
                         <div class="input-field col m3">
-                            <input id="eventAttendees" type="number" step="1" min="0" formControlName="attendees" [readonly]="readonly">
-                            <label for="eventAttendees">{{ meta?.getUiName('attendees') }}</label>
-                            <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
-                                {{translations.application.event.field.attendeesGreaterThanOrEqual}}
+                            <input *ngIf="!readonly" id="eventEndTime"
+                                   formControlName="endTime"
+                                   materialize="pickadate"
+                                   [materializeParams]="pickadateParams"
+                                   type="text"/>
+                            <input *ngIf="readonly" id="eventEndTime" type="text" formControlName="endTime" readonly>
+                            <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}*</label>
+                            <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
+                                {{translations.application.event.field.eventEndTimeMissing}}
                             </field-error>
                         </div>
-                        <div class="input-field col m4">
-                            <input id="eventEntryFee" type="number" step="any" min="0" formControlName="entryFee" [readonly]="readonly">
-                            <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
-                            <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
-                                {{translations.application.event.field.eventEntryFeeThanOrEqual}}
-                            </field-error>
-                        </div>
+                        <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
+                            {{translations.application.event.field.startBeforeEnd}}
+                        </field-error>
+                    </div>
+                    <div class="input-field col m6">
+                        <textarea id="eventTimeExceptions" class="materialize-textarea" formControlName="timeExceptions" [readonly]="readonly"></textarea>
+                        <label for="eventTimeExceptions">{{ meta?.getUiName('timeExceptions') }}</label>
+                    </div>
+                    <div class="input-field col m6">
+                        <input id="eventUrl" type="text" formControlName="url" [readonly]="readonly">
+                        <label for="eventUrl">{{ meta?.getUiName('url') }}</label>
+                    </div>
+                    <div class="input-field col m3">
+                        <input id="eventAttendees" type="number" step="1" min="0" formControlName="attendees" [readonly]="readonly">
+                        <label for="eventAttendees">{{ meta?.getUiName('attendees') }}</label>
+                        <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
+                            {{translations.application.event.field.attendeesGreaterThanOrEqual}}
+                        </field-error>
+                    </div>
+                    <div class="input-field col m3">
+                        <input id="eventEntryFee" type="number" step="any" min="0" formControlName="entryFee" [readonly]="readonly">
+                        <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
+                        <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
+                            {{translations.application.event.field.eventEntryFeeThanOrEqual}}
+                        </field-error>
                     </div>
                 </div>
             </md-card-content>
@@ -85,63 +79,59 @@
             <md-card-title>Rakenteet</md-card-title>
             <md-card-content>
                 <div class="row form-group">
-                    <div class="col m6 no-padding">
-                        <div class="col m6 height-fix-top">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="eventForm.value.structureArea"/>
-                                <label for="structureIncluded">Tapahtuma sisältää rakenteita</label>
-                            </div>
-                            <div *ngIf="readonly">Tapahtuma sisältää rakenteita</div>
+                    <div class="col m3 input-field-checkbox">
+                        <div *ngIf="!readonly">
+                            <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="eventForm.value.structureArea"/>
+                            <label for="structureIncluded">Tapahtuma sisältää rakenteita</label>
                         </div>
-                        <div class="input-field col m6">
-                            <input id="structureArea" type="number" formControlName="structureArea" step="any" min="0" [readonly]="readonly">
-                            <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
-                            <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
-                                {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
-                            </field-error>
-                        </div>
-                        <div class="input-field col m12">
-                            <textarea id="structureDescription" class="materialize-textarea textarea"
-                                      formControlName="structureDescription" [readonly]="readonly"></textarea>
-                            <label for="structureDescription">{{ meta?.getUiName('structureDescription') }}</label>
-                        </div>
-
+                        <div *ngIf="readonly">Tapahtuma sisältää rakenteita</div>
                     </div>
-                    <div class="col m6 no-padding">
-                        <div class="col m12 height-fix-top height-fix-bottom">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="structureBuildDate"
-                                       [checked]="eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime"/>
-                                <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
-                            </div>
-                            <div *ngIf="readonly && (eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime)">
-                                Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä
-                            </div>
-                        </div>
+                    <div class="input-field col m3">
+                        <input id="structureArea" type="number" formControlName="structureArea" step="any" min="0" [readonly]="readonly">
+                        <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
+                        <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
+                            {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
+                        </field-error>
+                    </div>
+                    <div class="input-field col m6">
+                        <textarea id="structureDescription" class="materialize-textarea textarea"
+                                  formControlName="structureDescription" [readonly]="readonly"></textarea>
+                        <label for="structureDescription">{{ meta?.getUiName('structureDescription') }}</label>
+                    </div>
 
-                        <div formGroupName="structureTimes">
-                            <div class="input-field col m12">
-                                <input *ngIf="!readonly" id="structureStartTime"
-                                       formControlName="startTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-                                <input *ngIf="readonly" id="structureStartTime" type="text" formControlName="startTime" readonly>
-                                <label for="structureStartTime">{{ meta?.getUiName('structureStartTime') }}</label>
-                            </div>
-                            <div class="input-field col m12">
-                                <input *ngIf="!readonly" id="structureEndTime"
-                                       formControlName="endTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-                                <input *ngIf="readonly" id="structureEndTime" type="text" formControlName="endTime" readonly>
-                                <label for="structureEndTime">{{ meta?.getUiName('structureEndTime') }}</label>
-                            </div>
-                            <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
-                                {{translations.application.event.field.startBeforeEnd}}
-                            </field-error>
+                    <div class="col m3 input-field-checkbox">
+                        <div *ngIf="!readonly">
+                            <input type="checkbox" class="filled-in" id="structureBuildDate"
+                                   [checked]="eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime"/>
+                            <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
                         </div>
+                        <div *ngIf="readonly && (eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime)">
+                            Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä
+                        </div>
+                    </div>
+
+                    <div formGroupName="structureTimes">
+                        <div class="input-field col m3">
+                            <input *ngIf="!readonly" id="structureStartTime"
+                                   formControlName="startTime"
+                                   materialize="pickadate"
+                                   [materializeParams]="pickadateParams"
+                                   type="text"/>
+                            <input *ngIf="readonly" id="structureStartTime" type="text" formControlName="startTime" readonly>
+                            <label for="structureStartTime">{{ meta?.getUiName('structureStartTime') }}</label>
+                        </div>
+                        <div class="input-field col m3">
+                            <input *ngIf="!readonly" id="structureEndTime"
+                                   formControlName="endTime"
+                                   materialize="pickadate"
+                                   [materializeParams]="pickadateParams"
+                                   type="text"/>
+                            <input *ngIf="readonly" id="structureEndTime" type="text" formControlName="endTime" readonly>
+                            <label for="structureEndTime">{{ meta?.getUiName('structureEndTime') }}</label>
+                        </div>
+                        <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
+                            {{translations.application.event.field.startBeforeEnd}}
+                        </field-error>
                     </div>
                 </div>
             </md-card-content>

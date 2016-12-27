@@ -10,56 +10,52 @@
                     <md-card-title>Vuokrauksen tiedot</md-card-title>
                     <md-card-content>
                         <div class="row form-group">
-                            <div class="col m6">
-                                <div class="input-field col m12">
-                                    <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="isSummary">
-                                    <label for="name">Vuokrauksen nimi*</label>
-                                    <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
-                                    <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
-                                </div>
-                                <div class="input-field col m12">
-                                    <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="isSummary"></textarea>
-                                    <label for="description">Vuokrauksen kuvaus*</label>
-                                    <field-error [form]="rentalForm" field="description" hasError="required">
-                                        {{translations.application.shortTermRental.field.descriptionMissing}}
+                            <div class="input-field col m6">
+                                <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="isSummary">
+                                <label for="name">Vuokrauksen nimi*</label>
+                                <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
+                                <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
+                            </div>
+                            <div class="input-field col m6">
+                                <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="isSummary"></textarea>
+                                <label for="description">Vuokrauksen kuvaus*</label>
+                                <field-error [form]="rentalForm" field="description" hasError="required">
+                                    {{translations.application.shortTermRental.field.descriptionMissing}}
+                                </field-error>
+                            </div>
+                            <div formGroupName="rentalTimes">
+                                <div class="input-field col m3">
+                                    <input *ngIf="!isSummary" id="rentalStartTime"
+                                           formControlName="startTime"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"
+                                           type="text"/>
+
+                                    <input *ngIf="isSummary" id="rentalStartTime" type="text" formControlName="startTime" readonly>
+                                    <label for="rentalStartTime">Alkupäivämäärä*</label>
+                                    <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
+                                        {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
                                     </field-error>
                                 </div>
+                                <div class="input-field col m3">
+                                    <input *ngIf="!isSummary" id="rentalEndTime"
+                                           formControlName="endTime"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"
+                                           type="text"/>
+                                    <input *ngIf="isSummary" id="rentalEndTime" type="text" formControlName="endTime" readonly>
+                                    <label for="rentalEndTime">Loppupäivämäärä*</label>
+                                    <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
+                                        {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
+                                    </field-error>
+                                </div>
+                                <field-error [form]="rentalForm" field="rentalTimes" hasError="startBeforeEnd">
+                                    {{translations.application.shortTermRental.field.startBeforeEnd}}
+                                </field-error>
                             </div>
                             <div class="input-field col m6">
                                 <input id="area" type="number" formControlName="area" [readonly]="isSummary">
                                 <label for="area">Pinta-ala</label>
-                            </div>
-                            <div class="col m6 no-padding">
-                                <div formGroupName="rentalTimes">
-                                    <div class="input-field col m12">
-                                        <input *ngIf="!isSummary" id="rentalStartTime"
-                                               formControlName="startTime"
-                                               materialize="pickadate"
-                                               [materializeParams]="pickadateParams"
-                                               type="text"/>
-
-                                        <input *ngIf="isSummary" id="rentalStartTime" type="text" formControlName="startTime" readonly>
-                                        <label for="rentalStartTime">Alkupäivämäärä*</label>
-                                        <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
-                                            {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
-                                        </field-error>
-                                    </div>
-                                    <div class="input-field col m12">
-                                        <input *ngIf="!isSummary" id="rentalEndTime"
-                                               formControlName="endTime"
-                                               materialize="pickadate"
-                                               [materializeParams]="pickadateParams"
-                                               type="text"/>
-                                        <input *ngIf="isSummary" id="rentalEndTime" type="text" formControlName="endTime" readonly>
-                                        <label for="rentalEndTime">Loppupäivämäärä*</label>
-                                        <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
-                                            {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
-                                        </field-error>
-                                    </div>
-                                    <field-error [form]="rentalForm" field="rentalTimes" hasError="startBeforeEnd">
-                                        {{translations.application.shortTermRental.field.startBeforeEnd}}
-                                    </field-error>
-                                </div>
                             </div>
                         </div>
                     </md-card-content>
