@@ -2,7 +2,6 @@ import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
 
-import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {Contact} from '../../../../model/application/contact';
 import {translations} from '../../../../util/translations';
@@ -26,12 +25,9 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   contactsForm: FormGroup;
   contacts: FormArray;
-  meta: StructureMeta;
   translations = translations;
 
-  constructor(private applicationHub: ApplicationHub, private route: ActivatedRoute, private fb: FormBuilder) {
-    applicationHub.metaData().subscribe(meta => this.metadataLoaded(meta));
-  }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.contacts = this.fb.array([]);
@@ -46,10 +42,6 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.applicationForm.removeControl(this.formName);
-  }
-
-  private metadataLoaded(metadata: StructureMeta) {
-    this.meta = metadata;
   }
 
   private addContact(contact: Contact): void {

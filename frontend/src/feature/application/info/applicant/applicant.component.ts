@@ -1,9 +1,6 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
-import {StructureMeta} from '../../../../model/application/structure-meta';
-import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicantForm} from './applicant.form';
 import {translations} from '../../../../util/translations';
 import {EnumUtil} from '../../../../util/enum.util';
@@ -27,12 +24,9 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
   applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
-  meta: StructureMeta;
   translations = translations;
 
-  constructor(private applicationHub: ApplicationHub, private fb: FormBuilder, private route: ActivatedRoute) {
-    applicationHub.metaData().subscribe(meta => this.metadataLoaded(meta));
-
+  constructor(private fb: FormBuilder) {
     this.applicantForm = this.fb.group({
       id: undefined,
       type: [undefined, Validators.required],
@@ -65,9 +59,5 @@ export class ApplicantComponent implements OnInit, OnDestroy {
     Some(this.applicant)
       .map(applicant => ApplicantForm.fromApplicant(applicant))
       .do(applicant => this.applicantForm.patchValue(applicant));
-  }
-
-  private metadataLoaded(metadata: StructureMeta) {
-    this.meta = metadata;
   }
 }

@@ -8,33 +8,33 @@
                         <div class="row form-group">
                             <div class="input-field col m12">
                                 <input id="contactName" type="text" formControlName="name" [readonly]="readonly">
-                                <label for="contactName">{{ meta?.getUiName('contact.contactName') }}*</label>
+                                <label for="contactName">Yhteyshenkilön nimi*</label>
                                 <field-error [form]="contact" field="name" hasError="required">{{translations.contact.field.nameMissing}}</field-error>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="input-field col m6">
                                 <input id="contactStreetAddress" type="text" formControlName="streetAddress" [readonly]="readonly">
-                                <label for="contactStreetAddress">{{ meta?.getUiName('contact.address') }}</label>
+                                <label for="contactStreetAddress">Henkilötunnus</label>
                             </div>
                             <div class="input-field col m3">
                                 <input id="contactPostalCode" type="text" formControlName="postalCode" [readonly]="readonly">
-                                <label for="contactPostalCode">{{ meta?.getUiName('contact.postalCode') }}</label>
+                                <label for="contactPostalCode">Postinumero</label>
                             </div>
                             <div class="input-field col m3">
                                 <input id="contactCity" type="text" formControlName="city" [readonly]="readonly">
-                                <label for="contactCity">{{ meta?.getUiName('contact.postOffice') }}</label>
+                                <label for="contactCity">Toimipaikka</label>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="input-field col m4">
                                 <input id="contactPhone" type="text" formControlName="phone" [readonly]="readonly">
-                                <label for="contactPhone">{{ meta?.getUiName('contact.phoneNumber') }}</label>
+                                <label for="contactPhone">Puhelin</label>
                                 <field-error [form]="contact" field="phone" hasError="minlength">{{translations.contact.field.phoneShort}}</field-error>
                             </div>
                             <div class="input-field col m8">
                                 <input id="contactEmail" type="text" formControlName="email" [readonly]="readonly">
-                                <label for="contactEmail">{{ meta?.getUiName('contact.email') }}</label>
+                                <label for="contactEmail">Sähköpostiosoite</label>
                                 <field-error [form]="contact" field="email" hasError="pattern">{{translations.contact.field.emailInvalid}}</field-error>
                             </div>
                         </div>

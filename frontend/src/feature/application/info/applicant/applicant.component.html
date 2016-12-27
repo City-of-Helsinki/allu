@@ -40,26 +40,26 @@
                 <div formGroupName="postalAddress" class="row form-group">
                     <div class="input-field col m6">
                         <input id="applicantAddress" type="text" formControlName="streetAddress" [readonly]="readonly">
-                        <label for="applicantAddress">{{ meta?.getUiName('applicant.address') }}</label>
+                        <label for="applicantAddress">Osoite</label>
                     </div>
                     <div class="input-field col m3">
                         <input id="applicantPostalCode" type="text" formControlName="postalCode" [readonly]="readonly">
-                        <label for="applicantPostalCode">{{ meta?.getUiName('applicant.postalCode') }}</label>
+                        <label for="applicantPostalCode">Postinumero</label>
                     </div>
                     <div class="input-field col m3">
                         <input id="applicantCity" type="text" formControlName="city" [readonly]="readonly">
-                        <label for="applicantCity">{{ meta?.getUiName('applicant.postOffice') }}</label>
+                        <label for="applicantCity">Toimipaikka</label>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="input-field col m4">
                         <input id="applicantPhone" type="text" formControlName="phone" [readonly]="readonly">
-                        <label for="applicantPhone">{{ meta?.getUiName('applicant.phoneNumber') }}</label>
+                        <label for="applicantPhone">Puhelin</label>
                         <field-error [form]="applicantForm" field="email" hasError="required">{{translations.applicant.field.phoneShort}}</field-error>
                     </div>
                     <div class="input-field col m8">
                         <input id="applicantEmail" type="text" formControlName="email" [readonly]="readonly">
-                        <label for="applicantEmail">{{ meta?.getUiName('applicant.email') }}</label>
+                        <label for="applicantEmail">Sähköpostiosoite</label>
                         <field-error [form]="applicantForm" field="email" hasError="pattern">{{translations.applicant.field.invalidEmail}}</field-error>
                     </div>
                 </div>
