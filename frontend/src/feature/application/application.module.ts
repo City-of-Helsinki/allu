@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdCardModule, MdToolbarModule, MdProgressBarModule} from '@angular/material';
+import {MdCardModule, MdToolbarModule, MdProgressBarModule, MdDialogModule} from '@angular/material';
 import {FILE_UPLOAD_DIRECTIVES} from 'ng2-file-upload';
 
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -40,6 +40,7 @@ import {DefaultTextModalComponent} from './default-text/default-text-modal.compo
     MdCardModule,
     MdToolbarModule,
     MdProgressBarModule,
+    MdDialogModule,
     MapModule,
     ProgressBarModule,
     LocationModule,

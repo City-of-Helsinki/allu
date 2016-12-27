@@ -1,19 +1,33 @@
-<div class="modal-content">
-    <h3>Oletustekstit: {{translations.application.cableReport.cableInfo.type[typeName]}}</h3>
-    <form [formGroup]="defaultTextform">
-        <div formArrayName="defaultTexts">
-            <div class="row" *ngFor="let defaultText of defaultTextform.controls.defaultTexts.controls; let index=index">
-                <div [formGroupName]="index" class="col m12">
-                    <input type="text" formControlName="text">
+<div class="allu-modal modal-medium">
+    <div class="modal-header">
+        <h1>Vakiotekstit: {{['application.cableReport.cableInfo.type', typeName] | translation}}</h1>
+    </div>
+    <div class="modal-content">
+        <form [formGroup]="defaultTextform">
+            <div formArrayName="defaultTexts">
+                <div *ngFor="let defaultText of defaultTextform.controls.defaultTexts.controls; let index=index">
+                    <div [formGroupName]="index" class="row">
+                        <div class="col s10">
+                            <input type="text" placeholder="Uusi vakioteksti" formControlName="text">
+                        </div>
+                        <div class="col s2">
+                            <button type="button" class="waves-effect waves-light btn btn-floating" (click)="remove(index, defaultText.value)">
+                                <i class="material-icons tiny icon-middle clickable warning">remove</i>
+                            </button>
+
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col m12">
-                    <button type="button" class="waves-effect waves-light btn" (click)="addText()">Lisää uusi</button>
-                </div>
+            <div>
+                <button type="button" class="waves-effect waves-light btn btn-floating" (click)="add()">
+                    <i class="material-icons tiny icon-middle clickable warning">add</i>
+                </button>
             </div>
-        </div>
+        </form>
+    </div>
+    <div class="modal-actions">
         <button type="button" class="waves-effect waves-light btn" (click)="confirm()">Tallenna</button>
         <button type="button" class="waves-effect waves-light btn" (click)="cancel()">Peruuta</button>
-    </form>
+    </div>
 </div>

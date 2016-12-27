@@ -1,12 +1,14 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
-import {FormGroup, FormBuilder, FormControl, Validators, FormArray} from '@angular/forms';
+import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
 
 import {ApplicationHub} from '../../../service/application/application-hub';
-import {DefaultText} from '../../../model/application/cable-report/default-text';
+import {DefaultText, CableInfoText} from '../../../model/application/cable-report/default-text';
 import {CableInfoType} from '../../../model/application/cable-report/cable-info-type';
 import {translations} from '../../../util/translations';
+import {Some} from '../../../util/option';
+import {StringUtil} from '../../../util/string.util';
 
 @Component({
   selector: 'default-text-modal',
@@ -34,15 +36,22 @@ export class DefaultTextModalComponent implements OnInit {
   ngOnInit(): void {
     this.applicationHub.loadDefaultTexts()
       .map(texts => texts.filter(text => text.type === this.type))
-      .subscribe(texts => texts.forEach(text => this.addText(text)));
+      .subscribe(texts => texts.forEach(text => this.add(text)));
 
-    this.defaultTextform.valueChanges.subscribe(form => console.log('changes', form));
     this.typeName = CableInfoType[this.type];
   }
 
-  addText(defaultText: DefaultText) {
-    let added = defaultText ? defaultText : new DefaultText();
+  add(defaultText: DefaultText) {
+    let added = defaultText ? defaultText : DefaultText.ofType(this.type);
     this.defaultTexts.push(this.createEntry(added));
+  }
+
+  remove(index, text: CableInfoText) {
+    Some(text.id)
+      .do(id => this.applicationHub.removeDefaultText(id)
+        .subscribe(result => console.log(result)));
+
+    this.defaultTexts.removeAt(index);
   }
 
   createEntry(defaultText: DefaultText): FormGroup {
@@ -54,10 +63,15 @@ export class DefaultTextModalComponent implements OnInit {
   }
 
   confirm() {
-    this.dialogRef.close();
+    let changed =  this.defaultTexts.controls
+      .filter(c => c.dirty)
+      .map(c => c.value)
+      .filter(value => !StringUtil.isEmpty(value.text));
+
+    this.dialogRef.close(changed);
   }
 
   cancel() {
-    this.dialogRef.close('Peruttu');
+    this.dialogRef.close([]);
   }
 }

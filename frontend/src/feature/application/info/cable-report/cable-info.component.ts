@@ -2,6 +2,8 @@ import {Component, Input} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
 import {MdDialog, MdDialogRef} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
+import '../../../../rxjs-extensions';
 
 import {EnumUtil} from '../../../../util/enum.util.ts';
 import {CableInfoType} from '../../../../model/application/cable-report/cable-info-type';
@@ -10,7 +12,7 @@ import {translations} from '../../../../util/translations';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {MaterializeUtil} from '../../../../util/materialize.util.ts';
-import {DefaultText} from '../../../../model/application/cable-report/default-text';
+import {DefaultText, DefaultTextMap} from '../../../../model/application/cable-report/default-text';
 import {DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {Some} from '../../../../util/option';
@@ -30,7 +32,7 @@ export class CableInfoComponent {
   translations = translations;
   cableInfoTypes = EnumUtil.enumValues(CableInfoType);
   selectedCableInfoTypes = [];
-  defaultTexts: Array<DefaultText>;
+  defaultTexts: DefaultTextMap = {};
   dialogRef: MdDialogRef<DefaultTextModalComponent>;
 
   constructor(private applicationHub: ApplicationHub,
@@ -44,15 +46,11 @@ export class CableInfoComponent {
     this.initForm();
     this.selectedCableInfoTypes = this.cableReport.infoEntries.map(entry => entry.type);
 
-    this.applicationHub.loadDefaultTexts().subscribe(texts => this.defaultTexts = texts);
+    this.applicationHub.loadDefaultTexts().subscribe(texts => this.setDefaultTexts(texts));
   }
 
   isSelected(type: string) {
     return this.selectedCableInfoTypes.indexOf(CableInfoType[type]) >= 0;
-  }
-
-  defaultTextsFor(type: string) {
-    return this.defaultTexts.filter(text => text.type === CableInfoType[type]);
   }
 
   addDefaultText(entryIndex: number, text: string) {
@@ -66,9 +64,17 @@ export class CableInfoComponent {
     this.dialogRef = this.dialog.open(DefaultTextModalComponent, {disableClose: false});
     this.dialogRef.componentInstance.type = CableInfoType[type];
 
-    this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
+    this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
       this.dialogRef = undefined;
+      Observable.from(defaultTexts)
+        .flatMap(text => this.applicationHub.saveDefaultText(text))
+        // counts save results to get single observable from array of observables
+        .reduce((saveCount, val, idx) => ++saveCount, 0)
+        .subscribe(result => this.applicationHub.loadDefaultTexts()
+            .subscribe(texts => this.setDefaultTexts(texts)));
     });
+
+
   }
 
   private initForm(): void {
@@ -92,5 +98,9 @@ export class CableInfoComponent {
       type: [type],
       additionalInfo: [additionalInfo]
     });
+  }
+
+  private setDefaultTexts(texts: Array<DefaultText>) {
+    this.defaultTexts = DefaultText.groupByType(texts);
   }
 }
