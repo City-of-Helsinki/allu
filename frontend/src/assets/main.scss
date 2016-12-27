@@ -155,8 +155,10 @@ input:-webkit-autofill:active {
 }
 
 .row .input-field-checkbox {
-  min-height: 40px;
-  margin-bottom: 10px;
+  min-height: 3rem;
+  height: 3rem;
+  margin-top: 26px;
+  margin-bottom: 5px;
 }
 
 md-card {

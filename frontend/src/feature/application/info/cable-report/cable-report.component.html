@@ -12,42 +12,36 @@
                 <md-card-title>Johtoselvityksen tiedot</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
-                        <div class="col m6">
-                            <div class="input-field col m12">
-                                <div *ngIf="!readonly">
-                                    <input type="checkbox" class="filled-in" id="cableSurveyRequired" formControlName="cableSurveyRequired"/>
-                                    <label for="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</label>
-                                </div>
-                                <div *ngIf="readonly && applicationForm.value.cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</div>
+                        <div class="col m3 input-field-checkbox">
+                            <div *ngIf="!readonly">
+                                <input type="checkbox" class="filled-in" id="cableSurveyRequired" formControlName="cableSurveyRequired"/>
+                                <label for="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</label>
                             </div>
+                            <div *ngIf="readonly && applicationForm.value.cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</div>
                         </div>
-                        <div class="col m6 no-padding">
-                            <div formGroupName="reportTimes">
-                                <div class="input-field col m12">
-                                    <input *ngIf="!readonly" id="reportStartTime"
-                                           formControlName="startTime"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"
-                                           type="text"/>
+                        <div formGroupName="reportTimes">
+                            <div class="input-field col m3">
+                                <input *ngIf="!readonly" id="reportStartTime"
+                                       formControlName="startTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text"/>
 
-                                    <input *ngIf="readonly" id="reportStartTime" type="text" formControlName="startTime" readonly>
-                                    <label for="reportStartTime">{{ meta?.getUiName('reportStartTime') }}*</label>
-                                </div>
-                                <div class="input-field col m12">
-                                    <input *ngIf="!readonly" id="reportEndTime"
-                                           formControlName="endTime"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"
-                                           type="text"/>
-                                    <input *ngIf="readonly" id="reportEndTime" type="text" formControlName="endTime" readonly>
-                                    <label for="reportEndTime">{{ meta?.getUiName('reportEndTime') }}*</label>
-                                </div>
-                                <div class="col m12">
-                                    <field-error [form]="cableReportForm" field="reportTimes" hasError="startBeforeEnd">
-                                        {{translations.application.cableReport.field.startBeforeEnd}}
-                                    </field-error>
-                                </div>
+                                <input *ngIf="readonly" id="reportStartTime" type="text" formControlName="startTime" readonly>
+                                <label for="reportStartTime">{{ meta?.getUiName('reportStartTime') }}*</label>
                             </div>
+                            <div class="input-field col m3">
+                                <input *ngIf="!readonly" id="reportEndTime"
+                                       formControlName="endTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text"/>
+                                <input *ngIf="readonly" id="reportEndTime" type="text" formControlName="endTime" readonly>
+                                <label for="reportEndTime">{{ meta?.getUiName('reportEndTime') }}*</label>
+                            </div>
+                            <field-error [form]="cableReportForm" field="reportTimes" hasError="startBeforeEnd">
+                                {{translations.application.cableReport.field.startBeforeEnd}}
+                            </field-error>
                         </div>
                     </div>
                 </md-card-content>
