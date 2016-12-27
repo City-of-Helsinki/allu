@@ -15,9 +15,9 @@ export const projectRoutes: Routes = [
       { path: '', component: ProjectComponent, resolve: { project: ProjectResolve }, children: [
         { path: '', children: [
           { path: '', redirectTo: 'summary' },
-          { path: 'summary', component: ProjectSummaryComponent },
-          { path: 'applications', component: ProjectApplicationsComponent },
-          { path: 'projects', component: ProjectProjectsComponent }
+          { path: 'summary', component: ProjectSummaryComponent, resolve: { project: ProjectResolve } },
+          { path: 'applications', component: ProjectApplicationsComponent, resolve: { project: ProjectResolve } },
+          { path: 'projects', component: ProjectProjectsComponent, resolve: { project: ProjectResolve } }
         ]}
       ]},
       { path: 'edit', component: ProjectEditComponent, resolve: { project: ProjectResolve }}
