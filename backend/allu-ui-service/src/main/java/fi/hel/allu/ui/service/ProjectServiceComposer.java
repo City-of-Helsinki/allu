@@ -5,6 +5,7 @@ import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -143,6 +144,6 @@ public class ProjectServiceComposer {
     for (int i = 0; i < ids.size(); ++i) {
       idToOrder.put(ids.get(i), i);
     }
-    Collections.sort(projectList, Comparator.comparing(projectJson -> idToOrder.get(projectJson.getId())));
+    Collections.sort(projectList, Comparator.comparingInt(projectJson -> idToOrder.get(projectJson.getId())));
   }
 }
