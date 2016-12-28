@@ -26,7 +26,7 @@ export class MapHub {
   private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
   private fixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);
-  private selectedFixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);
+  private selectedFixedLocations$ = new Subject<Array<FixedLocation>>();
 
   constructor(private applicationService: ApplicationService,
               private locationService: LocationService,
@@ -37,6 +37,7 @@ export class MapHub {
       this.searchBar$.asObservable(),
       this.mapView$.asObservable(),
       this.toApplicationLocationQuery)
+      .debounceTime(100)
       .subscribe(query => this.applicationService.getApplicationsByLocation(query)
         .subscribe(applications => this.applications$.next(applications)));
 
