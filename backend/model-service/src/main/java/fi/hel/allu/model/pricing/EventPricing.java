@@ -1,27 +1,17 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.InvoiceUnit;
 
-import java.util.ArrayList;
-import java.util.List;
+public class EventPricing extends Pricing {
 
-public class EventPricing {
-
-  private static final String BASE_TAX_TEXT = "Päivän perustaksa";
-  private static final String DAY_TOTAL_TAX_TEXT = "Päivätaksa sisältäen rakenne- ja pinta-alalisät";
-  private static final String TOTAL_DAY_TAX_TEXT = "Maksu %1$d päivältä à %2$.2f EUR";
+  private static final String BASE_FEE_TEXT = "Päivän perustaksa";
+  private static final String DAY_TOTAL_FEE_TEXT = "Päivätaksa sisältäen rakenne- ja pinta-alalisät";
+  private static final String MULTIPLE_DAY_FEE_TEXT = "Maksu %1$d päivältä à %2$.2f EUR";
   private static final String LONG_EVENT_DISCOUNT_TEXT = "Alennus %1$d päivää ylittäviltä tapahtumapäiviltä";
   private static final String BUILD_DAY_FEE_TEXT = "Rakennus-/purkupäiviä";
   private static final String HEAVY_STRUCTURE_TEXT = "Raskaita rakenteita +50%";
   private static final String SALES_ACTIVITY_TEXT = "Myyntitoimintaa +50%";
   private static final String ECO_COMPASS_TEXT = "Ekokompassi-alennus -30%";
-
-  private List<InvoiceRow> invoiceRows = new ArrayList<>();
-
-  public List<InvoiceRow> getInvoiceRows() {
-    return invoiceRows;
-  }
 
   // Privately store the price in 1/100 of cents, convert to cents on
   // extraction:
@@ -41,15 +31,15 @@ public class EventPricing {
   public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     long dailyCharge = pricingConfig.getBaseCharge();
-    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), BASE_TAX_TEXT, 0);
+    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), BASE_FEE_TEXT, 0);
 
     dailyCharge += calculateStructureExtras(pricingConfig, structureArea);
     dailyCharge += calculateAreaExtras(pricingConfig, area);
-    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), DAY_TOTAL_TAX_TEXT, 0);
+    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), DAY_TOTAL_FEE_TEXT, 0);
 
     long totalCharge = dailyCharge * eventDays;
     addInvoiceRow(InvoiceUnit.DAY, eventDays, priceInCents(dailyCharge),
-        String.format(TOTAL_DAY_TAX_TEXT, eventDays, priceInCents(dailyCharge) / 100.0), priceInCents(totalCharge));
+        String.format(MULTIPLE_DAY_FEE_TEXT, eventDays, priceInCents(dailyCharge) / 100.0), priceInCents(totalCharge));
     if (pricingConfig.getDurationDiscountLimit() != 0 && eventDays > pricingConfig.getDurationDiscountLimit()) {
       int discountDays = eventDays - pricingConfig.getDurationDiscountLimit();
       long dailyDiscount = Math.round(dailyCharge * pricingConfig.getDurationDiscountPercent() / 100.0);
@@ -124,16 +114,6 @@ public class EventPricing {
       total += (long) (0.5 + areaExtraCharges[i] * (upperLimit - lowerLimit));
     }
     return total;
-  }
-
-  private void addInvoiceRow(InvoiceUnit unit, double quantity, int unitPrice, String explanation, int netPrice) {
-    InvoiceRow row = new InvoiceRow();
-    row.setUnit(unit);
-    row.setQuantity(quantity);
-    row.setUnitPrice(unitPrice);
-    row.setRowText(explanation);
-    row.setNetPrice(netPrice);
-    invoiceRows.add(row);
   }
 
   public void applyDiscounts(boolean ecoCompass, String noPriceReason, boolean heavyStructure, boolean salesActivity) {
