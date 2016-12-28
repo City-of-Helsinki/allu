@@ -13,9 +13,17 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private ApplicantJson contractor;
   @NotNull(message = "{application.excavationAnnouncement.responsiblePerson}")
   private ContactJson responsiblePerson;
+  private Boolean pksCard;
+  private Boolean constructionWork;
+  private Boolean maintenanceWork;
+  private Boolean emergencyWork;
+  private Boolean plotConnectivity;
+  private Boolean propertyConnectivity;
   private ZonedDateTime winterTimeOperation;
   private ZonedDateTime summerTimeOperation;
   private ZonedDateTime workFinished;
+  private ZonedDateTime unauthorizedWorkStartTime;
+  private ZonedDateTime unauthorizedWorkEndTime;
   private ZonedDateTime guaranteeEndTime;
   private Integer cableReportId;
   private String additionalInfo;
@@ -51,6 +59,73 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   }
 
   /**
+   * In Finnish: PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
+   * True, if the contractor doing the actual work has PKS-card.
+   */
+  public Boolean getPksCard() {
+    return pksCard;
+  }
+
+  public void setPksCard(Boolean pksCard) {
+    this.pksCard = pksCard;
+  }
+
+  /**
+   * In Finnish: Rakentaminen.
+   */
+  public Boolean getConstructionWork() {
+    return constructionWork;
+  }
+
+  public void setConstructionWork(Boolean constructionWork) {
+    this.constructionWork = constructionWork;
+  }
+
+  /**
+   * In Finnish: Kunnossapito.
+   */
+  public Boolean getMaintenanceWork() {
+    return maintenanceWork;
+  }
+
+  public void setMaintenanceWork(Boolean maintenanceWork) {
+    this.maintenanceWork = maintenanceWork;
+  }
+
+  /**
+   * In Finnish: Hätätyö.
+   */
+  public Boolean getEmergencyWork() {
+    return emergencyWork;
+  }
+
+  public void setEmergencyWork(Boolean emergencyWork) {
+    this.emergencyWork = emergencyWork;
+  }
+
+  /**
+   * In Finnish: Tonttiliitos.
+   */
+  public Boolean getPlotConnectivity() {
+    return plotConnectivity;
+  }
+
+  public void setPlotConnectivity(Boolean plotConnectivity) {
+    this.plotConnectivity = plotConnectivity;
+  }
+
+  /**
+   * In Finnish: Kiinteistöliitos.
+   */
+  public Boolean getPropertyConnectivity() {
+    return propertyConnectivity;
+  }
+
+  public void setPropertyConnectivity(Boolean propertyConnectivity) {
+    this.propertyConnectivity = propertyConnectivity;
+  }
+
+  /**
    * In Finnish: Talvityön toiminnallinen kunto (päivämäärä, jolloin valmis).
    */
   public ZonedDateTime getWinterTimeOperation() {
@@ -81,6 +156,28 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
 
   public void setWorkFinished(ZonedDateTime workFinished) {
     this.workFinished = workFinished;
+  }
+
+  /**
+   * In Finnish: Luvattoman kaivutyön aloitusaika.
+   */
+  public ZonedDateTime getUnauthorizedWorkStartTime() {
+    return unauthorizedWorkStartTime;
+  }
+
+  public void setUnauthorizedWorkStartTime(ZonedDateTime unauthorizedWorkStartTime) {
+    this.unauthorizedWorkStartTime = unauthorizedWorkStartTime;
+  }
+
+  /**
+   * In Finnish: Luvattoman kaivutyön lopetusaika.
+   */
+  public ZonedDateTime getUnauthorizedWorkEndTime() {
+    return unauthorizedWorkEndTime;
+  }
+
+  public void setUnauthorizedWorkEndTime(ZonedDateTime unauthorizedWorkEndTime) {
+    this.unauthorizedWorkEndTime = unauthorizedWorkEndTime;
   }
 
   /**
