@@ -11,16 +11,15 @@ import {Application} from '../../model/application/application';
 import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
 import {ApplicationHub} from '../../service/application/application-hub';
-import {translations} from '../../util/translations';
+import {translations, findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
-
+import {EnumUtil} from '../../util/enum.util';
+import {ApplicationType} from '../../model/application/type/application-type';
 
 @Component({
   selector: 'map',
   template: require('./map.component.html'),
-  styles: [
-    require('./map.component.scss')
-  ]
+  styles: []
 })
 export class MapComponent implements OnInit, OnDestroy {
   @Input() draw: boolean;
@@ -37,7 +36,7 @@ export class MapComponent implements OnInit, OnDestroy {
   private map: Map;
   private mapLayers: any;
   private drawControl: L.Control.Draw;
-  private drawnItems: L.FeatureGroup<L.ILayer>;
+  private drawnItems: {[key: string]: L.FeatureGroup<L.ILayer>} = {};
   private editedItems: L.FeatureGroup<L.ILayer>;
 
   constructor(
@@ -45,7 +44,7 @@ export class MapComponent implements OnInit, OnDestroy {
     private mapHub: MapHub,
     private applicationHub: ApplicationHub,
     private projectHub: ProjectHub) {
-    this.mapLayers = this.createLayers();
+    this.mapLayers = this.createBaseLayers();
     this.applicationArea = undefined;
     this.zoom = false;
     this.draw = false;
@@ -53,6 +52,10 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    EnumUtil.enumValues(ApplicationType)
+      .map(type => findTranslation(['application.type', type]))
+      .forEach(type => this.drawnItems[type] = L.featureGroup());
+
     this.initMap();
     this.mapHub.coordinates()
       .subscribe((optCoords) =>
@@ -86,7 +89,7 @@ export class MapComponent implements OnInit, OnDestroy {
       let featureCollection = this.mapService.geometryCollectionToFeatureCollection(application.location.geometry);
       this.applicationArea = new L.GeoJSON(featureCollection);
       this.applicationArea.eachLayer((layer) => {
-        this.drawnItems.addLayer(layer);
+        this.drawnItems[findTranslation(['application.type', application.type])].addLayer(layer);
       });
 
       this.centerAndZoomOnDrawn();
@@ -108,7 +111,7 @@ export class MapComponent implements OnInit, OnDestroy {
       .filter(app => app.location !== undefined)
       .filter(app => this.applicationShouldBeDrawn(app))
       .filter(app => app.id !== this.applicationId) // Only draw other than edited application
-      .forEach(app => this.drawGeometry(app.location.geometry, this.drawnItems));
+      .forEach(app => this.drawGeometry(app.location.geometry, this.drawnItems[findTranslation(['application.type', app.type])]));
   }
 
   private applicationShouldBeDrawn(application: Application): boolean {
@@ -156,15 +159,15 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private clearDrawn() {
-    Some(this.drawnItems).do(fxs => fxs.clearLayers());
+    Object.keys(this.drawnItems)
+      .map(key => this.drawnItems[key])
+      .map(featureGroup => featureGroup.clearLayers());
   }
 
   private initMap(): void {
     this.map = this.createMap();
 
-    let drawnItems = new L.FeatureGroup();
     let editedItems = new L.FeatureGroup();
-    drawnItems.addTo(this.map);
     editedItems.addTo(this.map);
 
     this.setDynamicControls(false, editedItems);
@@ -189,10 +192,10 @@ export class MapComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.drawnItems = drawnItems;
     this.editedItems = editedItems;
 
-    L.control.layers(this.mapLayers).addTo(this.map);
+    L.control.layers(this.mapLayers, this.drawnItems).addTo(this.map);
+
     L.control.zoom({
       position: 'topright',
       zoomInTitle: translations.map.zoomIn,
@@ -209,6 +212,9 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private createMap(): L.Map {
+    // Default selected layers and overlays
+    let layers = [this.mapLayers.kaupunkikartta].concat(this.drawLayers().getLayers());
+
     let mapOption = {
       zoomControl: false,
       center: new L.LatLng(60.1708763, 24.9424988), // Helsinki railway station
@@ -218,7 +224,7 @@ export class MapComponent implements OnInit, OnDestroy {
       maxZoom: 13,
       maxBounds:
         new L.LatLngBounds(new L.LatLng(59.9084989595170114, 24.4555930248625906), new L.LatLng(60.4122137731072542, 25.2903558783246289)),
-      layers: [this.mapLayers.kaupunkikartta],
+      layers: layers,
       crs: this.mapService.getEPSG3879()
     };
 
@@ -266,7 +272,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.map.setView(new L.LatLng(coordinates.latitude, coordinates.longitude), zoomLevel, {animate: true});
   }
 
-  private createLayers(): any {
+  private createBaseLayers(): any {
     return {
       kaupunkikartta: new L.TileLayer.WMS('/wms?',
         {layers: 'helsinki_kaupunkikartta', format: 'image/png'}),
@@ -294,9 +300,18 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private centerAndZoomOnDrawn() {
-    Some(this.drawnItems)
+    Some(this.drawLayers())
       .filter(items => items.getLayers().length > 0)
       .map(items => L.latLngBounds(items.getBounds()))
       .do(bounds => this.map.fitBounds(bounds));
+  }
+
+  private drawLayers(): L.FeatureGroup<L.ILayer> {
+    return Object.keys(this.drawnItems)
+      .map(key => this.drawnItems[key])
+      .reduce((allLayers, currentLayer) => {
+        allLayers.addLayer(currentLayer);
+        return allLayers;
+      }, L.featureGroup());
   }
 }
