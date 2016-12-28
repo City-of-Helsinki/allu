@@ -390,6 +390,14 @@ public class ApplicationMapper {
     json.setWinterTimeOperation(model.getWinterTimeOperation());
     json.setWorkFinished(model.getWorkFinished());
     json.setTrafficArrangements(model.getTrafficArrangements());
+    json.setPksCard(model.getPksCard());
+    json.setConstructionWork(model.getConstructionWork());
+    json.setMaintenanceWork(model.getMaintenanceWork());
+    json.setEmergencyWork(model.getEmergencyWork());
+    json.setPlotConnectivity(model.getPlotConnectivity());
+    json.setPropertyConnectivity(model.getPropertyConnectivity());
+    json.setUnauthorizedWorkStartTime(model.getUnauthorizedWorkStartTime());
+    json.setUnauthorizedWorkEndTime(model.getUnauthorizedWorkEndTime());
     return json;
   }
 
@@ -404,6 +412,14 @@ public class ApplicationMapper {
     excavationAnnouncement.setWinterTimeOperation(excavationAnnouncementJson.getWinterTimeOperation());
     excavationAnnouncement.setWorkFinished(excavationAnnouncementJson.getWorkFinished());
     excavationAnnouncement.setTrafficArrangements(excavationAnnouncementJson.getTrafficArrangements());
+    excavationAnnouncement.setPksCard(excavationAnnouncementJson.getPksCard());
+    excavationAnnouncement.setConstructionWork(excavationAnnouncementJson.getConstructionWork());
+    excavationAnnouncement.setMaintenanceWork(excavationAnnouncementJson.getMaintenanceWork());
+    excavationAnnouncement.setEmergencyWork(excavationAnnouncementJson.getEmergencyWork());
+    excavationAnnouncement.setPlotConnectivity(excavationAnnouncementJson.getPlotConnectivity());
+    excavationAnnouncement.setPropertyConnectivity(excavationAnnouncementJson.getPropertyConnectivity());
+    excavationAnnouncement.setUnauthorizedWorkStartTime(excavationAnnouncementJson.getUnauthorizedWorkStartTime());
+    excavationAnnouncement.setUnauthorizedWorkEndTime(excavationAnnouncementJson.getUnauthorizedWorkEndTime());
     return excavationAnnouncement;
   }
 
