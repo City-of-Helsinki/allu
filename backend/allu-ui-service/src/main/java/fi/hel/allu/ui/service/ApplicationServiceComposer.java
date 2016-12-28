@@ -248,7 +248,7 @@ public class ApplicationServiceComposer {
     for (int i = 0; i < ids.size(); ++i) {
       idToOrder.put(ids.get(i), i);
     }
-    Collections.sort(applicationList, Comparator.comparing(application -> idToOrder.get(application.getId())));
+    Collections.sort(applicationList, Comparator.comparingInt(application -> idToOrder.get(application.getId())));
   }
 
   /**
