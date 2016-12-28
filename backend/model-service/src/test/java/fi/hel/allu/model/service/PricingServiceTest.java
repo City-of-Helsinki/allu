@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationKind;
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.OutdoorEventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicantDao;
@@ -91,6 +92,7 @@ public class PricingServiceTest {
   @Test
   public void testBridgeBanderol() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.BRIDGE_BANNER);
     ShortTermRental event = new ShortTermRental();
     event.setCommercial(false);
@@ -113,6 +115,7 @@ public class PricingServiceTest {
   @Test
   public void testCircus() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.CIRCUS);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
@@ -125,6 +128,7 @@ public class PricingServiceTest {
   @Test
   public void testDogTrainingEvent() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.DOG_TRAINING_EVENT);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
@@ -148,6 +152,7 @@ public class PricingServiceTest {
   @Test
   public void testDogTrainingField() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.DOG_TRAINING_FIELD);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-10T05:59:59+02:00"));
@@ -171,6 +176,7 @@ public class PricingServiceTest {
   @Test
   public void testKeskuskatuSales() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.KESKUSKATU_SALES);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-22T05:59:59+02:00"));
@@ -186,6 +192,7 @@ public class PricingServiceTest {
   @Test
   public void testPromotionOrSales() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.PROMOTION_OR_SALES);
     ShortTermRental event = new ShortTermRental();
     event.setLargeSalesArea(true);
@@ -206,6 +213,7 @@ public class PricingServiceTest {
   @Test
   public void testSummerTheatre() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.SUMMER_THEATER);
     application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
@@ -218,6 +226,7 @@ public class PricingServiceTest {
   @Test
   public void testUrbanFarming() {
     Application application = new Application();
+    application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.URBAN_FARMING);
     application.setStartTime(ZonedDateTime.parse("2017-05-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2019-09-10T23:59:59+02:00"));
