@@ -1,0 +1,14 @@
+@import 'colors';
+
+input[type="radio"]:not(:checked).leaflet-control-layers-selector,
+input[type="radio"]:checked.leaflet-control-layers-selector,
+input[type="checkbox"]:not(:checked).leaflet-control-layers-selector,
+input[type="checkbox"]:checked.leaflet-control-layers-selector {
+  left: 0;
+  opacity: 1;
+  position: relative;
+}
+
+.map {
+  height: 100%;
+}
