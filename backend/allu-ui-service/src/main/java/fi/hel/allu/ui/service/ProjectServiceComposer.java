@@ -88,9 +88,13 @@ public class ProjectServiceComposer {
         .map(Application::getProjectId)
         .distinct()
         .collect(Collectors.toList());
+    // find the applications previously linked to the given project (in case applications are removed from the project)
+    Set<Integer> updatedApplicationIds =
+        projectService.findApplicationsByProject(id).stream().map(a -> a.getId()).collect(Collectors.toSet());
     // link applications to the given project
     ProjectJson updatedProject = projectService.updateProjectApplications(id, applicationIds);
-    List<Application> applicationsWithUpdatedProjectId = applicationService.findApplicationsById(applicationIds);
+    updatedApplicationIds.addAll(applicationIds);
+    List<Application> applicationsWithUpdatedProjectId = applicationService.findApplicationsById(new ArrayList<>(updatedApplicationIds));
     // find which projects are affected by the project change of the given applications
     List<ProjectJson> changedProjects = new ArrayList<>();
     changedProjects.add(updatedProject);
