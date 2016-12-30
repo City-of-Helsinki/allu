@@ -18,6 +18,10 @@ public class ApplicationProperties {
   private String streetSearchUrl;
   private String wfsUsername;
   private String wfsPassword;
+  private String oauth2TokenUrl;
+  private String oauth2ClientId;
+  private String oauth2RedirectUri;
+  private String oauth2Certificate;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
@@ -29,7 +33,11 @@ public class ApplicationProperties {
                                @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
                                @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
                                @Value("${wfs.username}") @NotEmpty String wfsUsername,
-                               @Value("${wfs.password}") @NotEmpty String wfsPassword) {
+                               @Value("${wfs.password}") @NotEmpty String wfsPassword,
+                               @Value("${oauth2.url.token}") @NotEmpty String oauth2TokenUrl,
+                               @Value("${oauth2.clientid}") @NotEmpty String oauth2ClientId,
+                               @Value("${oauth2.redirect.uri}") @NotEmpty String oauth2RedirectUri,
+                               @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -40,6 +48,10 @@ public class ApplicationProperties {
     this.streetSearchUrl = streetSearchUrl;
     this.wfsUsername = wfsUsername;
     this.wfsPassword = wfsPassword;
+    this.oauth2TokenUrl = oauth2TokenUrl;
+    this.oauth2ClientId = oauth2ClientId;
+    this.oauth2RedirectUri = oauth2RedirectUri;
+    this.oauth2Certificate = oauth2Certificate;
   }
 
   public static final String PATH_PREFIX = "http://";
@@ -453,6 +465,42 @@ public class ApplicationProperties {
    */
   public String getWfsPassword() {
     return wfsPassword;
+  }
+
+  /**
+   * Returns the code for token exchange URI.
+   *
+   * @return  the code for token exchange URI.
+   */
+  public String getOauth2TokenUrl() {
+    return oauth2TokenUrl;
+  }
+
+  /**
+   * Returns the OAuth2 client id.
+   *
+   * @return  the OAuth2 client id.
+   */
+  public String getOauth2ClientId() {
+    return oauth2ClientId;
+  }
+
+  /**
+   * Returns the OAuth2 redirect uri.
+   *
+   * @return  the OAuth2 redirect uri.
+   */
+  public String getOauth2RedirectUri() {
+    return oauth2RedirectUri;
+  }
+
+  /**
+   * Returns the OAuth2 public certificate for verifying token signing.
+   *
+   * @return  the OAuth2 public certificate for verifying token signing.
+   */
+  public String getOauth2Certificate() {
+    return oauth2Certificate;
   }
 
   /**

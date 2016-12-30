@@ -1,8 +1,6 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.ui.domain.UserJson;
-import fi.hel.allu.ui.mapper.UserMapper;
-import fi.hel.allu.ui.security.AlluUser;
 import fi.hel.allu.ui.security.TokenHandler;
 import fi.hel.allu.ui.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+// TODO: remove or replace this with something once dummy login is removed
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -25,8 +24,7 @@ public class AuthController {
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<String> login(@RequestBody TempLogin user) {
     UserJson userJson = userService.findUserByUserName(user.userName);
-    AlluUser alluUser = UserMapper.mapToAlluUser(userJson);
-    return new ResponseEntity<String>(tokenHandler.createTokenForUser(alluUser), HttpStatus.OK);
+    return new ResponseEntity<String>(tokenHandler.createTokenForUser(userJson), HttpStatus.OK);
   }
 
   /**

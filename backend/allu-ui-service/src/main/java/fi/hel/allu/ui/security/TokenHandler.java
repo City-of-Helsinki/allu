@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.security;
 
-import com.google.common.collect.Sets;
+import fi.hel.allu.ui.domain.UserJson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -10,7 +10,9 @@ import org.springframework.security.core.userdetails.User;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class TokenHandler {
@@ -32,17 +34,17 @@ public class TokenHandler {
    * @param user User that contains principal that can be used to identify the user related to the JWT.
    * @return signed token
    */
-  public String createTokenForUser(AlluUser user) {
-    if (user == null || user.getUsername() == null || user.getUsername().trim().length() == 0) {
-      throw new IllegalArgumentException("user principle name must not be null");
+  public String createTokenForUser(UserJson user) {
+    if (user == null || user.getUserName() == null || user.getUserName().trim().length() == 0) {
+      throw new IllegalArgumentException("User principal name must not be null");
     }
     LocalDateTime dateTimeToConvert = LocalDateTime.now().plusHours(expirationHours);
     Date convertToDate = Date.from(dateTimeToConvert.atZone(ZoneId.systemDefault()).toInstant());
 
     return Jwts.builder()
         .setExpiration(convertToDate)
-        .setSubject(user.getUsername())
-        .claim(ROLES, user.getAuthorities())
+        .setSubject(user.getUserName())
+        .claim(ROLES, user.getAssignedRoles())
         .claim(EMAIL, user.getEmailAddress())
         .signWith(SignatureAlgorithm.HS512, secret)
         .compact();
@@ -55,27 +57,13 @@ public class TokenHandler {
    * @return <code>AlluUser</code> parsed from the token.
    */
   public User parseUserFromToken(String token) {
-    final Claims claims = Jwts.parser().setSigningKey(secret)
-        .parseClaimsJws(token).getBody();
+    final Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
 
-    return new AlluUser(claims.getSubject(), getRoles(claims), claims.get(EMAIL)
-        .toString());
+    return new AlluUser(claims.getSubject(), getRoles(claims), claims.get(EMAIL).toString());
   }
 
   private Set<GrantedAuthority> getRoles(Claims claims) {
-    Collection<? extends GrantedAuthority> roles = (Collection<? extends GrantedAuthority>) claims.get(ROLES);
-
-    Set<GrantedAuthority> roleSet = Sets.newHashSet();
-
-    Iterator<? extends GrantedAuthority> roleIterator = roles.iterator();
-
-    while (roleIterator.hasNext()) {
-      Map<String, String> roleMap = (Map<String, String>) roleIterator.next();
-      roleSet.addAll(roleMap.entrySet()
-          .stream()
-          .map(entry -> new SimpleGrantedAuthority(entry.getValue()))
-          .collect(Collectors.toList()));
-    }
-    return roleSet;
+    List<String> roles = claims.get(ROLES, List.class);
+    return roles.stream().map(r -> new SimpleGrantedAuthority(r)).collect(Collectors.toSet());
   }
 }

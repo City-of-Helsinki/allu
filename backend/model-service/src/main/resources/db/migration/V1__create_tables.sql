@@ -186,7 +186,7 @@ create SEQUENCE allu.MP_application_type_sequence START 1600001;
 insert into allu.user values (DEFAULT, 'admin', 'admin user', 'admin@no-mail.fi', 'administrator', true);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_ADMIN');
 
-insert into allu.user values (DEFAULT, 'allutest', 'all rights user', 'allutest@no-mail.fi', 'Kaikkivaltias', true);
+insert into allu.user values (DEFAULT, 'ALLUTE', 'all rights user', 'allutest@no-mail.fi', 'Kaikkivaltias', true);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_CREATE_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_PROCESS_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_DECISION');
