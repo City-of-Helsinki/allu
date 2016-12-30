@@ -12,3 +12,9 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
 .map {
   height: 100%;
 }
+
+h1.popup-header {
+  font-size: 15px;
+  line-height: 20px;
+  border-bottom: 2px solid $allu-field-border-ok;
+}

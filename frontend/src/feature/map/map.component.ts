@@ -7,8 +7,9 @@ import {Some} from '../../util/option';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
-import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
 import {styleByApplicationType} from '../../service/map/map-draw-styles';
+import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
+import {MapPopup} from '../../service/map/map-popup';
 
 @Component({
   selector: 'map',
@@ -79,10 +80,15 @@ export class MapComponent implements OnInit, OnDestroy {
       .filter(app => app.location !== undefined)
       .filter(app => this.applicationShouldBeDrawn(app))
       .filter(app => app.id !== this.applicationId) // Only draw other than edited application
-      .forEach(app => this.mapState.drawGeometry(
-        app.location.geometry,
-        findTranslation(['application.type', app.type]),
-        styleByApplicationType[app.type]));
+      .forEach(app => this.drawApplication(app));
+  }
+
+  private drawApplication(application: Application): void {
+    this.mapState.drawGeometry(
+      application.location.geometry,
+      findTranslation(['application.type', application.type]),
+      styleByApplicationType[application.type],
+      this.applicationPopup(application));
   }
 
   private applicationShouldBeDrawn(application: Application): boolean {
@@ -125,5 +131,15 @@ export class MapComponent implements OnInit, OnDestroy {
     if (shapeAdded.affectsControls) {
       this.editedItemCountChanged.emit(shape.features.length);
     }
+  }
+
+  private applicationPopup(application: Application): MapPopup {
+    let header = application.name;
+    let contentRows = [
+      application.applicationId,
+      findTranslation(['application.type', application.type]),
+      application.uiStartTime + ' - ' + application.uiEndTime
+    ];
+    return new MapPopup(header, contentRows);
   }
 }
