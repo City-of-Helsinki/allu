@@ -7,33 +7,33 @@
                     <md-card-content>
                         <div class="row form-group">
                             <div class="input-field col m12">
-                                <input id="contactName" type="text" formControlName="name" [readonly]="readonly">
+                                <input id="contactName" type="text" formControlName="name">
                                 <label for="contactName">Yhteyshenkilön nimi*</label>
                                 <field-error [form]="contact" field="name" hasError="required">{{translations.contact.field.nameMissing}}</field-error>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="input-field col m6">
-                                <input id="contactStreetAddress" type="text" formControlName="streetAddress" [readonly]="readonly">
+                                <input id="contactStreetAddress" type="text" formControlName="streetAddress">
                                 <label for="contactStreetAddress">Henkilötunnus</label>
                             </div>
                             <div class="input-field col m3">
-                                <input id="contactPostalCode" type="text" formControlName="postalCode" [readonly]="readonly">
+                                <input id="contactPostalCode" type="text" formControlName="postalCode">
                                 <label for="contactPostalCode">Postinumero</label>
                             </div>
                             <div class="input-field col m3">
-                                <input id="contactCity" type="text" formControlName="city" [readonly]="readonly">
+                                <input id="contactCity" type="text" formControlName="city">
                                 <label for="contactCity">Toimipaikka</label>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="input-field col m4">
-                                <input id="contactPhone" type="text" formControlName="phone" [readonly]="readonly">
+                                <input id="contactPhone" type="text" formControlName="phone">
                                 <label for="contactPhone">Puhelin</label>
                                 <field-error [form]="contact" field="phone" hasError="minlength">{{translations.contact.field.phoneShort}}</field-error>
                             </div>
                             <div class="input-field col m8">
-                                <input id="contactEmail" type="text" formControlName="email" [readonly]="readonly">
+                                <input id="contactEmail" type="text" formControlName="email">
                                 <label for="contactEmail">Sähköpostiosoite</label>
                                 <field-error [form]="contact" field="email" hasError="pattern">{{translations.contact.field.emailInvalid}}</field-error>
                             </div>

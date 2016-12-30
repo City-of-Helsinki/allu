@@ -25,7 +25,7 @@ export class CableReportForm {
     let cableReport = new CableReport();
     cableReport.cableSurveyRequired = form.cableSurveyRequired;
     cableReport.workDescription = form.workDescription;
-    cableReport.owner = Some(form.owner).filter(owner => !!owner.name).map(owner => ApplicantForm.fromApplicant(owner)).orElse(undefined);
+    cableReport.owner = Some(form.owner).filter(owner => !!owner.name).map(owner => ApplicantForm.toApplicant(owner)).orElse(undefined);
     cableReport.contact = Some(form.contact).filter(c => c.length > 0).map(c => c[0]).orElse(undefined);
     cableReport.specifiers = specifiers;
     return CableInfoForm.to(form.cableInfo, cableReport);

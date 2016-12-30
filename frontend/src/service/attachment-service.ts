@@ -44,7 +44,6 @@ export class ExtendedFileUploader extends FileUploader {
   }
 
   onBuildItemForm(fileItem: any, form: any): any {
-    console.log('onBuildItemForm', fileItem);
     let json = JSON.stringify([{ name: fileItem._file.name, description: fileItem._file.description }]);
     let blob = new Blob([json], {type: 'application/json'});
     form.append('meta', blob);

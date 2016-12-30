@@ -19,19 +19,19 @@
                         </div>
                     </div>
                     <div class="input-field col m6">
-                        <input id="country" type="text" [readonly]="readonly" formControlName="country">
+                        <input id="country" type="text" formControlName="country">
                         <label for="country">Maa</label>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="input-field col m8">
-                        <input id="applicantName" type="text" formControlName="name" [readonly]="readonly">
+                        <input id="applicantName" type="text" formControlName="name">
                         <label for="applicantName">{{translations.applicant.type[applicantForm.value.type || 'DEFAULT'].nameLabel}}*</label>
                         <field-error [form]="applicantForm" field="name" hasError="required">{{translations.applicant.field.nameMissing}}</field-error>
                         <field-error [form]="applicantForm" field="name" hasError="minlength">{{translations.applicant.field.nameShort}}</field-error>
                     </div>
                     <div class="input-field col m4">
-                        <input id="businessID" type="text" formControlName="registryKey" [readonly]="readonly">
+                        <input id="businessID" type="text" formControlName="registryKey">
                         <label for="businessID">{{translations.applicant.type[applicantForm.value.type || 'DEFAULT'].id}}*</label>
                         <field-error [form]="applicantForm" field="registryKey" hasError="required">{{translations.applicant.field.registryKeyMissing}}</field-error>
                         <field-error [form]="applicantForm" field="registryKey" hasError="minlength">{{translations.applicant.field.registryKeyShort}}</field-error>
@@ -39,26 +39,26 @@
                 </div>
                 <div formGroupName="postalAddress" class="row form-group">
                     <div class="input-field col m6">
-                        <input id="applicantAddress" type="text" formControlName="streetAddress" [readonly]="readonly">
+                        <input id="applicantAddress" type="text" formControlName="streetAddress">
                         <label for="applicantAddress">Osoite</label>
                     </div>
                     <div class="input-field col m3">
-                        <input id="applicantPostalCode" type="text" formControlName="postalCode" [readonly]="readonly">
+                        <input id="applicantPostalCode" type="text" formControlName="postalCode">
                         <label for="applicantPostalCode">Postinumero</label>
                     </div>
                     <div class="input-field col m3">
-                        <input id="applicantCity" type="text" formControlName="city" [readonly]="readonly">
+                        <input id="applicantCity" type="text" formControlName="city">
                         <label for="applicantCity">Toimipaikka</label>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="input-field col m4">
-                        <input id="applicantPhone" type="text" formControlName="phone" [readonly]="readonly">
+                        <input id="applicantPhone" type="text" formControlName="phone">
                         <label for="applicantPhone">Puhelin</label>
                         <field-error [form]="applicantForm" field="email" hasError="required">{{translations.applicant.field.phoneShort}}</field-error>
                     </div>
                     <div class="input-field col m8">
-                        <input id="applicantEmail" type="text" formControlName="email" [readonly]="readonly">
+                        <input id="applicantEmail" type="text" formControlName="email">
                         <label for="applicantEmail">Sähköpostiosoite</label>
                         <field-error [form]="applicantForm" field="email" hasError="pattern">{{translations.applicant.field.invalidEmail}}</field-error>
                     </div>

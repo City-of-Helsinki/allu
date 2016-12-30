@@ -1,22 +1,19 @@
 import {Component, OnDestroy, OnInit, AfterViewInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {AttachmentInfo} from '../../../../model/application/attachment-info';
-import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MapHub} from '../../../../service/map-hub';
-import {ApplicationAttachmentHub} from '../attachment/application-attachment-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {EventDetailsForm} from './details/event-details.form';
 import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {MaterializeUtil} from '../../../../util/materialize.util';
-import {Some} from '../../../../util/option';
-import {ProjectHub} from '../../../../service/project/project-hub';
+import {ApplicationState} from '../../../../service/application/application-state';
 
 @Component({
   selector: 'event',
@@ -27,21 +24,16 @@ import {ProjectHub} from '../../../../service/project/project-hub';
 export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   application: Application;
   applicationForm: FormGroup;
-  private isSummary: boolean;
-  private attachments: AttachmentInfo[];
-  private uploadProgress = 0;
+  private readonly: boolean;
   private submitPending = false;
 
   private meta: StructureMeta;
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private fb: FormBuilder,
-              private locationState: LocationState,
               private applicationHub: ApplicationHub,
-              private projectHub: ProjectHub,
               private mapHub: MapHub,
-              private attachmentHub: ApplicationAttachmentHub) {
+              private applicationState: ApplicationState) {
   };
 
   ngOnInit(): any {
@@ -53,10 +45,14 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
         this.applicationHub.loadMetaData('EVENT').subscribe(meta => this.metadataLoaded(meta));
 
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-          this.isSummary = summary;
+          this.readonly = summary;
         });
 
         this.applicationForm = this.fb.group({});
+
+        if (this.readonly) {
+          this.applicationForm.disable();
+        }
       });
   }
 
@@ -69,7 +65,7 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   currentAttachments(attachments: AttachmentInfo[]): void {
-    this.attachments = attachments;
+    this.applicationState.attachments = attachments;
   }
 
   onSubmit(form: EventForm) {
@@ -86,35 +82,12 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
     application.extension = EventDetailsForm.toEvent(form.event, ApplicationType.EVENT);
     application.contactList = form.contacts;
 
-    this.applicationHub.save(application).subscribe(app => {
-      this.saveAttachments(app);
-      this.locationState.clear();
-    });
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
   }
 
   private metadataLoaded(metadata: StructureMeta) {
     this.application.metadata = metadata;
     this.meta = metadata;
-  }
-
-  private saveAttachments(application: Application) {
-    this.attachmentHub.upload(application.id, this.attachments)
-      .subscribe(
-        progress => { this.uploadProgress = progress; },
-        error => {
-          console.log('Error', error);
-          this.submitPending = false;
-        },
-        () => this.saved(application));
-  }
-
-  private saved(application: Application): void {
-    // TODO: move to some common place when refactoring application page
-    // We had related project so navigate back to project page
-    Some(this.locationState.relatedProject)
-      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id).subscribe(project =>
-        this.router.navigate(['/projects', project.id])));
-
-    this.router.navigate(['applications', application.id, 'summary']);
   }
 }

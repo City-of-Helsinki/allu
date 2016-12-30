@@ -47,6 +47,10 @@ export class CableInfoComponent {
     this.selectedCableInfoTypes = this.cableReport.infoEntries.map(entry => entry.type);
 
     this.applicationHub.loadDefaultTexts().subscribe(texts => this.setDefaultTexts(texts));
+
+    if (this.readonly) {
+      this.cableInfoForm.disable();
+    }
   }
 
   isSelected(type: string) {

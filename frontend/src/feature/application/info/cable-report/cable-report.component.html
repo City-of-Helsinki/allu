@@ -1,10 +1,10 @@
 <div materialize class="row">
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
         <applicant [applicationForm]="applicationForm"  [applicant]="application.applicant"
-                   [readonly]="isSummary" headerText="Kaivajayritys/Toimija" formName="company"></applicant>
+                   [readonly]="readonly" headerText="Kaivajayritys/Toimija" formName="company"></applicant>
 
         <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
-                 [readonly]="isSummary" headerText="Johtoselvityksen tilaaja" formName="orderer"
+                 [readonly]="readonly" headerText="Johtoselvityksen tilaaja" formName="orderer"
                  [saveToRegistry]="true"></contact>
 
         <div class="col m12 loose">
@@ -27,7 +27,7 @@
                                        [materializeParams]="pickadateParams"
                                        type="text"/>
 
-                                <input *ngIf="readonly" id="reportStartTime" type="text" formControlName="startTime" readonly>
+                                <input *ngIf="readonly" id="reportStartTime" type="text" formControlName="startTime">
                                 <label for="reportStartTime">{{ meta?.getUiName('reportStartTime') }}*</label>
                             </div>
                             <div class="input-field col m3">
@@ -36,7 +36,7 @@
                                        materialize="pickadate"
                                        [materializeParams]="pickadateParams"
                                        type="text"/>
-                                <input *ngIf="readonly" id="reportEndTime" type="text" formControlName="endTime" readonly>
+                                <input *ngIf="readonly" id="reportEndTime" type="text" formControlName="endTime">
                                 <label for="reportEndTime">{{ meta?.getUiName('reportEndTime') }}*</label>
                             </div>
                             <field-error [form]="cableReportForm" field="reportTimes" hasError="startBeforeEnd">
@@ -50,15 +50,15 @@
 
         <div *ngIf="applicationForm.value.cableSurveyRequired">
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension.owner"
-                       [readonly]="isSummary" headerText="Omistaja" formName="owner"></applicant>
+                       [readonly]="readonly" headerText="Omistaja" formName="owner"></applicant>
             <contact [applicationForm]="applicationForm" [contactList]="application.extension.contactList"
-                     [readonly]="isSummary" headerText="Yhteyshenkilö" formName="contact"></contact>
+                     [readonly]="readonly" headerText="Yhteyshenkilö" formName="contact"></contact>
         </div>
 
-        <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="isSummary"></cable-info>
+        <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="readonly"></cable-info>
 
         <application-actions
-            [isSummary]="isSummary"
+            [isSummary]="readonly"
             [applicationId]="application.id"
             [form]="applicationForm"
             [submitPending]="submitPending"></application-actions>

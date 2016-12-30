@@ -31,6 +31,7 @@ import {ApplicationActionsComponent} from './info/application-actions.component'
 import {CableReportComponent} from './info/cable-report/cable-report.component';
 import {CableInfoComponent} from './info/cable-report/cable-info.component.ts';
 import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
+import {ApplicationState} from '../../service/application/application-state';
 
 
 @NgModule({
@@ -69,7 +70,8 @@ import {DefaultTextModalComponent} from './default-text/default-text-modal.compo
   providers: [
     ApplicationAttachmentHub,
     ApplicationResolve,
-    AttachmentService
+    AttachmentService,
+    ApplicationState
   ],
   entryComponents: [
     DefaultTextModalComponent

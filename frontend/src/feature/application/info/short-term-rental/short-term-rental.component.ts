@@ -1,11 +1,10 @@
 import {Component, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
-import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MapHub} from '../../../../service/map-hub';
@@ -16,8 +15,7 @@ import {translations} from '../../../../util/translations';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ShortTermRentalDetailsForm} from './short-term-rental.form';
 import {MaterializeUtil} from '../../../../util/materialize.util';
-import {Some} from '../../../../util/option';
-import {ProjectHub} from '../../../../service/project/project-hub';
+import {ApplicationState} from '../../../../service/application/application-state';
 
 @Component({
   selector: 'short-term-rental',
@@ -34,17 +32,15 @@ export class ShortTermRentalComponent implements OnInit {
   submitPending = false;
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;
-  isSummary: boolean;
+  readonly: boolean;
 
   private meta: StructureMeta;
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private fb: FormBuilder,
-              private locationState: LocationState,
               private applicationHub: ApplicationHub,
-              private projectHub: ProjectHub,
-              private mapHub: MapHub) {
+              private mapHub: MapHub,
+              private applicationState: ApplicationState) {
   };
 
   ngOnInit(): any {
@@ -59,11 +55,15 @@ export class ShortTermRentalComponent implements OnInit {
         this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
 
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-          this.isSummary = summary;
+          this.readonly = summary;
         });
 
         let rental = <ShortTermRental>application.extension || new ShortTermRental();
         this.rentalForm.patchValue(ShortTermRentalDetailsForm.from(application, rental));
+
+        if (this.readonly) {
+          this.applicationForm.disable();
+        }
       });
   }
 
@@ -90,14 +90,8 @@ export class ShortTermRentalComponent implements OnInit {
     application.contactList = form.contacts;
     application.extension = ShortTermRentalDetailsForm.to(form.details);
 
-    this.applicationHub.save(application).subscribe(app => {
-      console.log('application saved');
-      this.locationState.clear();
-      this.submitPending = false;
-      this.saved(app);
-    }, err => {
-      this.submitPending = false;
-    });
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
   }
 
   private initForm() {
@@ -124,15 +118,5 @@ export class ShortTermRentalComponent implements OnInit {
   private metadataLoaded(metadata: StructureMeta) {
     this.application.metadata = metadata;
     this.meta = metadata;
-  }
-
-  private saved(application: Application): void {
-    // TODO: move to some common place when refactoring application page
-    // We had related project so navigate back to project page
-    Some(this.locationState.relatedProject)
-      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id).subscribe(project =>
-        this.router.navigate(['/projects', project.id])));
-
-    this.router.navigate(['applications', application.id, 'summary']);
   }
 }
