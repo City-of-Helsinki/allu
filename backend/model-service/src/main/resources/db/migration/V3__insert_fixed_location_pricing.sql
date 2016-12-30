@@ -126,12 +126,6 @@ insert into allu.outdoor_pricing values
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 30000000, 50, 50, 14, NULL, NULL, NULL, NULL),
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 45000000, 0, 0, 0, NULL, NULL, NULL, NULL);
 
-insert into allu.fixed_location values (DEFAULT, 'Töölönlahden puisto', 'D', 'OUTDOOREVENT', true);
-insert into allu.outdoor_pricing values
-  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 25000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_NONFREE', 50000000, 50, 50, 14, NULL, NULL, NULL, NULL),
-  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'CLOSED', 75000000, 0, 0, 0, NULL, NULL, NULL, NULL);
-
 insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', NULL, 'OUTDOOREVENT', true);
 insert into allu.outdoor_pricing values
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), 'PUBLIC_FREE', 20000000, 50, 50, 14, NULL, NULL, NULL, NULL),
