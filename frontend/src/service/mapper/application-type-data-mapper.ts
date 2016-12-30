@@ -4,6 +4,7 @@ import {TimeUtil} from '../../util/time.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {ShortTermRental} from '../../model/application/short-term-rental/short-term-rental';
 import {CableReport} from '../../model/application/cable-report/cable-report';
+import {ExcavationAnnouncement} from '../../model/application/excavation-announcement/excavation-announcement';
 
 export class ApplicationTypeDataMapper {
 
@@ -41,6 +42,26 @@ export class ApplicationTypeDataMapper {
         backendExtension.contact,
         backendExtension.mapExtractCount,
         backendExtension.infoEntries
+      );
+    } else if (backendExtension.applicationType === ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT]) {
+      return new ExcavationAnnouncement(
+        backendExtension.contractor,
+        backendExtension.responsiblePerson,
+        backendExtension.pksCard,
+        backendExtension.constructionWork,
+        backendExtension.maintenanceWork,
+        backendExtension.emergencyWork,
+        backendExtension.plotConnectivity,
+        backendExtension.propertyConnectivity,
+        backendExtension.winterTimeOperation,
+        backendExtension.summerTimeOperation,
+        backendExtension.workFinished,
+        backendExtension.unauthorizedWorkStartTime,
+        backendExtension.unauthorizedWorkEndTime,
+        backendExtension.guaranteeEndTime,
+        backendExtension.cableReportId,
+        backendExtension.additionalInfo,
+        backendExtension.trafficArrangements
       );
     } else {
       return undefined;

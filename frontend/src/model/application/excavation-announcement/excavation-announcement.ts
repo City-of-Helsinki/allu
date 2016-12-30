@@ -1,0 +1,99 @@
+import {ApplicationExtension} from '../type/application-extension';
+import {ApplicationType} from '../type/application-type';
+import {Applicant} from '../applicant';
+import {Contact} from '../contact';
+import {TimeUtil} from '../../../util/time.util';
+
+export class ExcavationAnnouncement extends ApplicationExtension {
+  public applicationType = ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT];
+
+  constructor()
+  constructor(
+    contractor: Applicant,
+    responsiblePerson: Contact,
+    pksCard: boolean,
+    constructionWork: boolean,
+    maintenanceWork: boolean,
+    emergencyWork: boolean,
+    plotConnectivity: boolean,
+    propertyConnectivity: boolean,
+    winterTimeOperation: Date,
+    summerTimeOperation: Date,
+    workFinished: Date,
+    unauthorizedWorkStartTime: Date,
+    unauthorizedWorkEndTime: Date,
+    guaranteeEndTime: Date,
+    cableReportId: number,
+    additionalInfo: string,
+    trafficArrangements: string
+  )
+  constructor(
+    public contractor?: Applicant,
+    public responsiblePerson?: Contact,
+    public pksCard?: boolean,
+    public constructionWork?: boolean,
+    public maintenanceWork?: boolean,
+    public emergencyWork?: boolean,
+    public plotConnectivity?: boolean,
+    public propertyConnectivity?: boolean,
+    public winterTimeOperation?: Date,
+    public summerTimeOperation?: Date,
+    public workFinished?: Date,
+    public unauthorizedWorkStartTime?: Date,
+    public unauthorizedWorkEndTime?: Date,
+    public guaranteeEndTime?: Date,
+    public cableReportId?: number,
+    public additionalInfo?: string,
+    public trafficArrangements?: string
+  ) {
+    super();
+  }
+
+  get uiWinterTimeOperation(): string {
+    return TimeUtil.getUiDateString(this.winterTimeOperation);
+  }
+
+  set uiWinterTimeOperation(dateString: string) {
+    this.winterTimeOperation = TimeUtil.getDateFromUi(dateString);
+  }
+
+  get uiSummerTimeOperation(): string {
+    return TimeUtil.getUiDateString(this.summerTimeOperation);
+  }
+
+  set uiSummerTimeOperation(dateString: string) {
+    this.summerTimeOperation = TimeUtil.getDateFromUi(dateString);
+  }
+
+  get uiWorkFinished(): string {
+    return TimeUtil.getUiDateString(this.workFinished);
+  }
+
+  set uiWorkFinished(dateString: string) {
+    this.workFinished = TimeUtil.getDateFromUi(dateString);
+  }
+
+  get uiUnauthorizedWorkStartTime(): string {
+    return TimeUtil.getUiDateString(this.unauthorizedWorkStartTime);
+  }
+
+  set uiUnauthorizedWorkStartTime(dateString: string) {
+    this.unauthorizedWorkStartTime = TimeUtil.getDateFromUi(dateString);
+  }
+
+  get uiUnauthorizedWorkEndTime(): string {
+    return TimeUtil.getUiDateString(this.unauthorizedWorkEndTime);
+  }
+
+  set uiUnauthorizedWorkEndTime(dateString: string) {
+    this.unauthorizedWorkEndTime = TimeUtil.getDateFromUi(dateString);
+  }
+
+  get uiGuaranteeEndTime(): string {
+    return TimeUtil.getUiDateString(this.guaranteeEndTime);
+  }
+
+  set uiGuaranteeEndTime(dateString: string) {
+    this.guaranteeEndTime = TimeUtil.getDateFromUi(dateString);
+  }
+}

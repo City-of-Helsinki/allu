@@ -85,8 +85,11 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
     component.sortBy = this.sortBy;
 
     component.onSelection.subscribe(selection => {
-      this.inputEl.value = selection[this.nameField];
-      this.onSelection.emit(selection);
+      let name = selection[this.nameField] || selection;
+      this.inputEl.value = name;
+
+      let id = selection[this.idField] || selection;
+      this.onSelection.emit(id);
     });
 
     // when somewhere else clicked, hide this autocomplete
