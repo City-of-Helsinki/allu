@@ -5,10 +5,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 /**
- * XML Mapping for WFSFeatureCollection.
+ * XML Mapping for WFSFeatureCollection consisting of street addresses.
  */
 @XmlRootElement(name = "FeatureCollection", namespace = "http://www.opengis.net/wfs")
-public class WfsFeatureCollection {
+public class StreetAddressXml {
   @XmlElement(name = "featureMember", namespace = "http://www.opengis.net/gml")
   public List<FeatureMember> featureMember;
 
@@ -22,6 +22,7 @@ public class WfsFeatureCollection {
     public String streetName;
     @XmlElement(name = "osoitenumero", namespace = "http://www.hel.fi/hel")
     public int streetNumber;
+    // TODO: rename y and x to lat and long to make names more describing
     @XmlElement(name = "n", namespace = "http://www.hel.fi/hel")
     public double y;
     @XmlElement(name = "e", namespace = "http://www.hel.fi/hel")
