@@ -84,8 +84,8 @@ export class ExcavationAnnouncementComponent implements OnInit {
     this.cableReportSearch.next(identifier);
   }
 
-  setCableReportId(id: number) {
-    this.applicationForm.patchValue({cableReportId: id});
+  setCableReport(application: Application) {
+    this.applicationForm.patchValue({cableReportId: application.id});
   }
 
   getCableReport(applicationId: number): Observable<Application> {

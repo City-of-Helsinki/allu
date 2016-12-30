@@ -56,7 +56,7 @@ export class MapState {
 
   public centerAndZoomOnDrawn() {
     Some(this.drawLayers())
-      .filter(items => items.getLayers().length > 0)
+      .filter(items => Object.keys(items.getBounds()).length !== 0)
       .map(items => L.latLngBounds(items.getBounds()))
       .do(bounds => this.map.fitBounds(bounds));
   }
