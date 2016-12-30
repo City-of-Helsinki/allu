@@ -2,18 +2,17 @@ import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
-import {Geocoordinates} from '../model/common/geocoordinates';
-import '../rxjs-extensions.ts';
+import {Geocoordinates} from '../../model/common/geocoordinates';
+import '../../rxjs-extensions.ts';
 
-import {Application} from '../model/application/application';
-import {Option} from '../util/option';
-import {ApplicationService} from './application/application.service';
-import {ApplicationLocationQuery} from '../model/search/ApplicationLocationQuery';
-import {SearchbarFilter} from './searchbar-filter';
-import {LocationService} from './location.service';
-import {UIStateHub} from './ui-state/ui-state-hub';
-import {FixedLocation} from '../model/common/fixed-location';
-import {Some} from '../util/option';
+import {Application} from '../../model/application/application';
+import {Option} from '../../util/option';
+import {ApplicationService} from '../application/application.service';
+import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
+import {SearchbarFilter} from '../searchbar-filter';
+import {LocationService} from '../location.service';
+import {UIStateHub} from '../ui-state/ui-state-hub';
+import {FixedLocation} from '../../model/common/fixed-location';
 
 
 @Injectable()

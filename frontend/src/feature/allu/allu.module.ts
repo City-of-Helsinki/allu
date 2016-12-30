@@ -8,20 +8,13 @@ import {RouterModule} from '@angular/router';
 import {MaterialModule} from '@angular/material';
 
 import {ApplicationModule} from '../application/application.module';
-
-import {MapUtil} from '../../service/map.util.ts';
 import {ApplicationService} from '../../service/application/application.service.ts';
 import {LocationService} from '../../service/location.service';
-import {MapHub} from '../../service/map-hub';
+import {MapHub} from '../../service/map/map-hub';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
-import {LocationState} from '../../service/application/location-state';
 import {AuthGuard} from '../../feature/login/auth-guard.service';
-
-import {AlluComponent}   from './allu.component';
-import {Login} from '../login/login.component';
-import {ToolbarComponent} from '../toolbar/toolbar.component';
-import {NavbarComponent} from '../toolbar/navbar/navbar.component';
+import {AlluComponent} from './allu.component';
 import {rootRoutes} from './allu.routing';
 import {MapSearchModule} from '../mapsearch/mapsearch.module';
 import {WorkQueueModule} from '../workqueue/workqueue.module';

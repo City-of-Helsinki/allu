@@ -7,7 +7,7 @@ import {StructureMeta} from '../../../../model/application/structure-meta';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
-import {MapHub} from '../../../../service/map-hub';
+import {MapHub} from '../../../../service/map/map-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {ShortTermRentalForm} from './short-term-rental.form.ts';
 import {ComplexValidator} from '../../../../util/complex-validator';

@@ -1,4 +1,4 @@
-import {MapUtil} from './../src/service/map.util.ts';
+import {MapUtil} from '../src/service/map/map.util.ts';
 
 describe('MapService', () => {
   it('should project wgs84 to epsg:3879 correctly', () => {

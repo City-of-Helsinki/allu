@@ -7,7 +7,7 @@ import {StructureMeta} from '../../../../model/application/structure-meta';
 import {AttachmentInfo} from '../../../../model/application/attachment-info';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
-import {MapHub} from '../../../../service/map-hub';
+import {MapHub} from '../../../../service/map/map-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {EventDetailsForm} from './details/event-details.form';
 import {EventForm} from './event.form';
