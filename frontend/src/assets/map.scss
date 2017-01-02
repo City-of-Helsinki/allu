@@ -13,6 +13,9 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
   height: 100%;
 }
 
+.leaflet-popup-content-wrapper {
+  padding: 0 0 1px;
+}
 
 .leaflet-popup-content {
   margin: 0;
