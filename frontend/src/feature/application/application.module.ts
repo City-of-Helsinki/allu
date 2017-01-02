@@ -32,6 +32,7 @@ import {CableReportComponent} from './info/cable-report/cable-report.component';
 import {CableInfoComponent} from './info/cable-report/cable-info.component.ts';
 import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
 import {ApplicationState} from '../../service/application/application-state';
+import {NoteComponent} from './info/note/note.component';
 
 
 @NgModule({
@@ -65,7 +66,8 @@ import {ApplicationState} from '../../service/application/application-state';
     ContactComponent,
     EventDetailsComponent,
     LocationDetailsComponent,
-    DefaultTextModalComponent
+    DefaultTextModalComponent,
+    NoteComponent
   ],
   providers: [
     ApplicationAttachmentHub,

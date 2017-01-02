@@ -137,7 +137,20 @@ export const shortTermRental = new ApplicationTypeStructure(ApplicationType.SHOR
   new ApplicationKindStructure(ApplicationKind.OTHER_SHORT_TERM_RENTAL)
 ]);
 
-export const note = new ApplicationTypeStructure(ApplicationType.NOTE, []);
+export const note = new ApplicationTypeStructure(ApplicationType.NOTE, [
+  new ApplicationKindStructure(ApplicationKind.CHRISTMAS_TREE_SALES_AREA),
+  new ApplicationKindStructure(ApplicationKind.CITY_CYCLING_AREA),
+  new ApplicationKindStructure(ApplicationKind.AGILE_KIOSK_AREA),
+  new ApplicationKindStructure(ApplicationKind.STATEMENT),
+  new ApplicationKindStructure(ApplicationKind.SNOW_HEAP_AREA),
+  new ApplicationKindStructure(ApplicationKind.SNOW_GATHER_AREA),
+  new ApplicationKindStructure(ApplicationKind.OTHER_SUBVISION_OF_STATE_AREA),
+  new ApplicationKindStructure(ApplicationKind.MILITARY_EXCERCISE),
+  new ApplicationKindStructure(ApplicationKind.WINTER_PARKING),
+  new ApplicationKindStructure(ApplicationKind.REPAVING),
+  new ApplicationKindStructure(ApplicationKind.ELECTION_ADD_STAND),
+  new ApplicationKindStructure(ApplicationKind.NOTE_OTHER)
+]);
 
 export const applicationTypes: Array<ApplicationTypeStructure> = [
   excavationAnnouncement,
@@ -146,7 +159,8 @@ export const applicationTypes: Array<ApplicationTypeStructure> = [
   cableReport,
   placementPermit,
   event,
-  shortTermRental
+  shortTermRental,
+  note
 ];
 
 
