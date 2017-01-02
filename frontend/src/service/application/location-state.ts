@@ -11,6 +11,7 @@ import {Event} from '../../model/application/event/event';
 import {CableReport} from '../../model/application/cable-report/cable-report';
 import {ShortTermRental} from '../../model/application/short-term-rental/short-term-rental';
 import {ExcavationAnnouncement} from '../../model/application/excavation-announcement/excavation-announcement';
+import {Note} from '../../model/application/note/note';
 
 @Injectable()
 export class LocationState {
@@ -67,6 +68,8 @@ export class LocationState {
         return new ShortTermRental();
       case ApplicationType.EXCAVATION_ANNOUNCEMENT:
         return new ExcavationAnnouncement();
+      case ApplicationType.NOTE:
+        return new Note();
       default:
         throw new Error('Extension for ' + ApplicationType[this.applicationType] + ' not implemented yet');
     }

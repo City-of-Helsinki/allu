@@ -8,12 +8,14 @@ import {ApplicationResolve} from './application-resolve';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component.ts';
 import {CableReportComponent} from './info/cable-report/cable-report.component';
 import {ExcavationAnnouncementComponent} from './info/excavation-announcement/excavation-announcement.component';
+import {NoteComponent} from './info/note/note.component';
 
 const childRoutes: Routes = [
   { path: 'EVENT', component: EventComponent, canActivate: [AuthGuard] },
   { path: 'SHORT_TERM_RENTAL', component: ShortTermRentalComponent, canActivate: [AuthGuard] },
   { path: 'CABLE_REPORT', component: CableReportComponent, canActivate: [AuthGuard]},
-  { path: 'EXCAVATION_ANNOUNCEMENT', component: ExcavationAnnouncementComponent, canActivate: [AuthGuard]}
+  { path: 'EXCAVATION_ANNOUNCEMENT', component: ExcavationAnnouncementComponent, canActivate: [AuthGuard]},
+  { path: 'NOTE', component: NoteComponent, canActivate: [AuthGuard]}
 ];
 
 export const applicationRoutes: Routes = [

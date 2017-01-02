@@ -1,0 +1,77 @@
+<div materialize class="row">
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
+        <div class="row">
+            <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
+                       [readonly]="readonly" headerText="Hakija" formName="applicant"></applicant>
+
+            <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
+                     [readonly]="readonly" headerText="Yhteyshenkilö" formName="contacts"
+                     [saveToRegistry]="true"></contact>
+        </div>
+
+        <div class="col m12 loose">
+            <md-card>
+                <md-card-title>Muistiinpanon tiedot</md-card-title>
+                <md-card-content>
+                    <div class="row form-group">
+                        <div class="input-field col s6">
+                            <input id="name" type="text" [class.summary]="name" formControlName="name">
+                            <label for="name">Muistiinpanon nimi*</label>
+                            <field-error [form]="eventForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
+                            <field-error [form]="eventForm" field="name" hasError="minlength">{{'application.field.nameShort' | translation}}</field-error>
+                        </div>
+                        <div formGroupName="validityTimes">
+                            <div class="input-field col s3">
+                                <input id="validityStartTime"
+                                       formControlName="startTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text"/>
+
+                                <label for="validityStartTime">Alkupäivämäärä*</label>
+                                <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                                    {{'application.note.field.validityStartTimeMissing' | translation}}
+                                </field-error>
+                            </div>
+                            <div class="input-field col s3">
+                                <input id="validityEndTime"
+                                       formControlName="endTime"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"
+                                       type="text"/>
+
+                                <label for="validityEndTime">Loppupäivämäärä</label>
+                                <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                                    {{'application.note.field.validityEndTimeMissing' | translation}}
+                                </field-error>
+                            </div>
+                            <div class="col s12">
+                                <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                                    {{'application.note.field.validityStartBeforeEnd' | translation}}
+                                </field-error>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m2">
+                            <input type="checkbox" class="filled-in" id="reoccurring" formControlName="reoccurring"/>
+                            <label for="reoccurring">Toistuva varaus</label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="input-field col m12">
+                            <textarea id="description" class="materialize-textarea" formControlName="description"></textarea>
+                            <label for="description">Kuvaus</label>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+
+        <application-actions
+            [isSummary]="readonly"
+            [applicationId]="application.id"
+            [form]="applicationForm"
+            [submitPending]="submitPending"></application-actions>
+    </form>
+</div>
