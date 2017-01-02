@@ -14,6 +14,8 @@ import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {styleByApplicationType} from './map-draw-styles';
+import {MapPopup} from './map-popup';
+import LeafletMouseEvent = L.LeafletMouseEvent;
 
 export class ShapeAdded {
   constructor(public features: L.FeatureGroup<L.ILayer>, public affectsControls: boolean = true) {}
@@ -102,10 +104,11 @@ export class MapState {
     }
   }
 
-  public drawGeometry(geometryCollection: GeoJSON.GeometryCollection, layerName: string, style?: Object) {
+  public drawGeometry(geometryCollection: GeoJSON.GeometryCollection, layerName: string,
+                      style?: Object, popup?: MapPopup) {
     let layer = this.drawnItems[layerName];
     if (layer) {
-      this.drawGeometryToLayer(geometryCollection, layer, style);
+      this.drawGeometryToLayer(geometryCollection, layer, style, popup);
     } else {
       throw new Error('No draw layer with name ' + layerName);
     }
@@ -134,10 +137,19 @@ export class MapState {
     return this.mapView$.asObservable();
   }
 
-  private drawGeometryToLayer(geometryCollection: GeoJSON.GeometryCollection, drawLayer: L.LayerGroup<L.ILayer>, style?: Object) {
+  private drawGeometryToLayer(geometryCollection: GeoJSON.GeometryCollection,
+                              drawLayer: L.LayerGroup<L.ILayer>,
+                              style?: Object, popup?: MapPopup) {
     if (geometryCollection.geometries.length) {
       let featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
       let geoJSON = new L.GeoJSON(featureCollection, style);
+
+      Some(popup).do(pu => {
+        geoJSON.on('mouseover', (event: LeafletMouseEvent) =>
+          pu.toPopup(event.latlng).openOn(this.map)
+        );
+      });
+
       geoJSON.eachLayer((layer) => {
         drawLayer.addLayer(layer);
       });
