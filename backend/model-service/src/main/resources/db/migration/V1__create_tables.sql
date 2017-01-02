@@ -53,7 +53,7 @@ create table allu.city_district (
   name text,
   geometry geometry(GEOMETRY, 3879));
 
-create table allu.geometry (
+create table allu.location_geometry (
    id serial primary key,
    geometry geometry(GEOMETRY, 3879),
    location_id integer references allu.location(id) );

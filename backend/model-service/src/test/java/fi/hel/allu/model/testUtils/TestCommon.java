@@ -181,7 +181,7 @@ public class TestCommon {
       "delete from allu.application",
       "delete from allu.project",
       "delete from allu.applicant",
-      "delete from allu.geometry",
+      "delete from allu.location_geometry",
       "delete from allu.location",
       "delete from allu.outdoor_pricing",
       "delete from allu.fixed_location",
