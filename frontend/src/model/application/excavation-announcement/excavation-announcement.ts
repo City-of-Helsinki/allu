@@ -96,4 +96,8 @@ export class ExcavationAnnouncement extends ApplicationExtension {
   set uiGuaranteeEndTime(dateString: string) {
     this.guaranteeEndTime = TimeUtil.getDateFromUi(dateString);
   }
+
+  get responsiblePersonList(): Array<Contact> {
+    return this.responsiblePerson ? [this.responsiblePerson] : undefined;
+  }
 }
