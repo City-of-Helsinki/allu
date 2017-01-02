@@ -37,7 +37,7 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   ngOnInit(): any {
-    this.route.parent.data
+    this.route.data
       .map((data: {application: Application}) => data.application)
       .subscribe(application => {
         this.application = application;
@@ -61,7 +61,9 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     MaterializeUtil.updateTextFields(50);
-    this.mapHub.selectApplication(this.application);
+    if (this.readonly) {
+      this.mapHub.selectApplication(this.application);
+    }
   }
 
   currentAttachments(attachments: AttachmentInfo[]): void {

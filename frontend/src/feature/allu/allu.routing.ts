@@ -15,7 +15,6 @@ export const rootRoutes: Routes = [
   { path: 'workqueue', component: WorkQueueComponent, canActivate: [AuthGuard] },
   { path: 'workqueue/handler', component: HandlerModalComponent, canActivate: [AuthGuard] },
   { path: 'decision/:id', component: DecisionComponent, canActivate: [AuthGuard] },
-  { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
   { path: 'login', component: Login },
   { path: 'logout', component: Login },
   { path: '**', redirectTo: 'home' }

@@ -9,29 +9,30 @@ import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rent
 import {CableReportComponent} from './info/cable-report/cable-report.component';
 import {ExcavationAnnouncementComponent} from './info/excavation-announcement/excavation-announcement.component';
 import {NoteComponent} from './info/note/note.component';
-
-const childRoutes: Routes = [
-  { path: 'EVENT', component: EventComponent, canActivate: [AuthGuard] },
-  { path: 'SHORT_TERM_RENTAL', component: ShortTermRentalComponent, canActivate: [AuthGuard] },
-  { path: 'CABLE_REPORT', component: CableReportComponent, canActivate: [AuthGuard]},
-  { path: 'EXCAVATION_ANNOUNCEMENT', component: ExcavationAnnouncementComponent, canActivate: [AuthGuard]},
-  { path: 'NOTE', component: NoteComponent, canActivate: [AuthGuard]}
-];
+import {ApplicationInfoComponent} from './info/application-info.component';
+import {SearchComponent} from '../search/search.component';
 
 export const applicationRoutes: Routes = [
   { path: 'applications', canActivate: [AuthGuard], children: [
-    { path: '', canActivate: [AuthGuard], redirectTo: 'location', pathMatch: 'full' },
+    { path: '', canActivate: [AuthGuard], redirectTo: 'search', pathMatch: 'full' },
+    { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
     {
       path: 'location',
       component: LocationComponent,
       canActivate: [AuthGuard],
       resolve: { application: ApplicationResolve } },
     {
-      path: 'info',
+      path: 'edit',
       component: ApplicationComponent,
       canActivate: [AuthGuard],
       resolve: { application: ApplicationResolve },
-      children: childRoutes
+      children: [
+        { path: 'info',
+          component: ApplicationInfoComponent,
+          canActivate: [AuthGuard],
+          resolve: { application: ApplicationResolve }
+        }
+      ]
     }
   ]},
   { path:  'applications/:id', canActivate: [AuthGuard], children: [
@@ -40,18 +41,32 @@ export const applicationRoutes: Routes = [
       canActivate: [AuthGuard],
       resolve: { application: ApplicationResolve }},
     {
-      path: 'info',
+      path: 'edit',
       component: ApplicationComponent,
       canActivate: [AuthGuard],
       resolve: { application: ApplicationResolve },
-      children: childRoutes
+      children: [
+        { path: '', redirectTo: 'info' },
+        { path: 'info',
+          component: ApplicationInfoComponent,
+          canActivate: [AuthGuard],
+          resolve: { application: ApplicationResolve }
+        }
+      ]
     },
     {
       path: 'summary',
       component: ApplicationComponent,
       canActivate: [AuthGuard],
       resolve: { application: ApplicationResolve },
-      children: childRoutes
+      children: [
+        { path: '', redirectTo: 'info' },
+        { path: 'info',
+          component: ApplicationInfoComponent,
+          canActivate: [AuthGuard],
+          resolve: { application: ApplicationResolve }
+        }
+      ]
     }
   ]}
 ];

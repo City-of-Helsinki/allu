@@ -37,8 +37,6 @@ export class ApplicationComponent implements OnInit {
     if (type === undefined) {
       // No known type so navigate back to type selection
       this.router.navigateByUrl('applications/location');
-    } else {
-      this.router.navigate([ApplicationType[type]], {skipLocationChange: true, relativeTo: this.route});
     }
   }
 }

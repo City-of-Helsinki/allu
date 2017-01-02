@@ -114,7 +114,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         this.router.navigate(['/applications', application.id, 'summary']);
       });
     } else {
-      this.router.navigate(['/applications/info']);
+      this.router.navigate(['/applications/edit']);
     }
   }
 

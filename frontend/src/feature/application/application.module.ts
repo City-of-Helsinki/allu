@@ -9,6 +9,7 @@ import {MapModule} from '../map/map.module';
 import {ProgressBarModule} from '../progressbar/progressbar.module';
 import {LocationModule} from './location/location.module';
 import {TypeModule} from './type/type.module';
+import {SidebarModule} from '../sidebar/sidebar.module';
 
 import {FileSelectDirective} from './info/attachment/file-select.directive';
 
@@ -33,6 +34,7 @@ import {CableInfoComponent} from './info/cable-report/cable-info.component.ts';
 import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
 import {ApplicationState} from '../../service/application/application-state';
 import {NoteComponent} from './info/note/note.component';
+import {ApplicationInfoComponent} from './info/application-info.component';
 
 
 @NgModule({
@@ -48,10 +50,12 @@ import {NoteComponent} from './info/note/note.component';
     MapModule,
     ProgressBarModule,
     LocationModule,
-    TypeModule
+    TypeModule,
+    SidebarModule
   ],
   declarations: [
     ApplicationComponent,
+    ApplicationInfoComponent,
     EventComponent,
     ShortTermRentalComponent,
     CableReportComponent,
