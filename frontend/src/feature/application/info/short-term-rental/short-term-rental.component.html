@@ -1,8 +1,8 @@
 <div materialize class="row">
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant" [readonly]="isSummary"></applicant>
+        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant" [readonly]=readonly></applicant>
 
-        <contact [applicationForm]="applicationForm" [contactList]="application.contactList" [readonly]="isSummary"></contact>
+        <contact [applicationForm]="applicationForm" [contactList]="application.contactList" [readonly]=readonly></contact>
 
         <form [formGroup]="rentalForm">
             <div class="col m12 loose">
@@ -11,13 +11,13 @@
                     <md-card-content>
                         <div class="row form-group">
                             <div class="input-field col m6">
-                                <input id="name" type="text" [class.summary]="name" formControlName="name" [readonly]="isSummary">
+                                <input id="name" type="text" [class.summary]="name" formControlName="name">
                                 <label for="name">Vuokrauksen nimi*</label>
                                 <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                                 <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
                             </div>
                             <div class="input-field col m6">
-                                <textarea id="description" class="materialize-textarea" formControlName="description" [readonly]="isSummary"></textarea>
+                                <textarea id="description" class="materialize-textarea" formControlName="description"></textarea>
                                 <label for="description">Vuokrauksen kuvaus*</label>
                                 <field-error [form]="rentalForm" field="description" hasError="required">
                                     {{translations.application.shortTermRental.field.descriptionMissing}}
@@ -25,25 +25,25 @@
                             </div>
                             <div formGroupName="rentalTimes">
                                 <div class="input-field col m3">
-                                    <input *ngIf="!isSummary" id="rentalStartTime"
+                                    <input *ngIf="!readonly" id="rentalStartTime"
                                            formControlName="startTime"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"
                                            type="text"/>
 
-                                    <input *ngIf="isSummary" id="rentalStartTime" type="text" formControlName="startTime" readonly>
+                                    <input *ngIf="readonly" id="rentalStartTime" type="text" formControlName="startTime">
                                     <label for="rentalStartTime">Alkupäivämäärä*</label>
                                     <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
                                         {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
                                     </field-error>
                                 </div>
                                 <div class="input-field col m3">
-                                    <input *ngIf="!isSummary" id="rentalEndTime"
+                                    <input *ngIf="!readonly" id="rentalEndTime"
                                            formControlName="endTime"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"
                                            type="text"/>
-                                    <input *ngIf="isSummary" id="rentalEndTime" type="text" formControlName="endTime" readonly>
+                                    <input *ngIf="readonly" id="rentalEndTime" type="text" formControlName="endTime">
                                     <label for="rentalEndTime">Loppupäivämäärä*</label>
                                     <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
                                         {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
@@ -54,7 +54,7 @@
                                 </field-error>
                             </div>
                             <div class="input-field col m6">
-                                <input id="area" type="number" formControlName="area" [readonly]="isSummary">
+                                <input id="area" type="number" formControlName="area">
                                 <label for="area">Pinta-ala</label>
                             </div>
                         </div>
@@ -69,20 +69,14 @@
                         <div class="row form-group">
                             <div *ngIf="application.kind==='BRIDGE_BANNER'" class="col m6 no-padding">
                                 <div class="col m12 height-fix-bottom">
-                                    <div *ngIf="!isSummary">
-                                        <input type="checkbox" class="filled-in" id="commercial" formControlName="commercial"/>
-                                        <label for="commercial">{{ meta?.getUiName('commercial') }}</label>
-                                    </div>
-                                    <div *ngIf="isSummary && rentalForm.value.commercial">{{ meta?.getUiName('commercial') }}</div>
+                                    <input type="checkbox" class="filled-in" id="commercial" formControlName="commercial"/>
+                                    <label for="commercial">{{ meta?.getUiName('commercial') }}</label>
                                 </div>
                             </div>
                             <div *ngIf="application.kind==='PROMOTION_OR_SALES'" class="col m6 no-padding">
                                 <div class="col m12 height-fix-bottom">
-                                    <div *ngIf="!isSummary">
-                                        <input type="checkbox" class="filled-in" id="largeSalesArea" formControlName="largeSalesArea"/>
-                                        <label for="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</label>
-                                    </div>
-                                    <div *ngIf="isSummary && rentalForm.value.largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</div>
+                                    <input type="checkbox" class="filled-in" id="largeSalesArea" formControlName="largeSalesArea"/>
+                                    <label for="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</label>
                                 </div>
                             </div>
                             <div class="col m12">
@@ -93,14 +87,14 @@
                             </div>
                             <div class="col m12">
                                 <div class="col m3 input-field">
-                                    <input type="number" id="priceOverride" formControlName="priceOverride" [readonly]="isSummary">
+                                    <input type="number" id="priceOverride" formControlName="priceOverride">
                                     <label for="priceOverride">Käsittelijän asettama hinta</label>
                                     <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
                                         {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
                                     </field-error>
                                 </div>
                                 <div class="col m3 input-field">
-                                    <input type="text" id="priceOverrideReason" formControlName="priceOverrideReason" [readonly]="isSummary">
+                                    <input type="text" id="priceOverrideReason" formControlName="priceOverrideReason">
                                     <label for="priceOverrideReason">Peruste poikkeavaan hintaan</label>
                                 </div>
                             </div>
@@ -109,11 +103,11 @@
                 </md-card>
             </div>
 
-            <location-details *ngIf="isSummary" [applicationId]="application.id" [location]="application.location" [readonly]="isSummary"></location-details>
+            <location-details *ngIf="readonly" [applicationId]="application.id" [location]="application.location" [readonly]="readonly"></location-details>
         </form>
 
         <application-actions
-            [isSummary]="isSummary"
+            [isSummary]="readonly"
             [applicationId]="application.id"
             [form]="applicationForm"
             [submitPending]="submitPending"></application-actions>

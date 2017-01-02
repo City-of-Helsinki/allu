@@ -1,19 +1,17 @@
 import {Component, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {translations} from '../../../../util/translations';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {StructureMeta} from '../../../../model/application/structure-meta';
-import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
-import {MapHub} from '../../../../service/map-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {CableReportForm} from './cable-report.form';
-import {CableReport} from '../../../../model/application/cable-report/cable-report';
+import {ApplicationState} from '../../../../service/application/application-state';
 
 
 @Component({
@@ -30,16 +28,14 @@ export class CableReportComponent implements OnInit {
   submitPending = false;
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;
-  isSummary: boolean;
+  readonly: boolean;
 
   private meta: StructureMeta;
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private fb: FormBuilder,
-              private locationState: LocationState,
               private applicationHub: ApplicationHub,
-              private mapHub: MapHub) {
+              private applicationState: ApplicationState) {
   };
 
   ngOnInit(): any {
@@ -54,10 +50,14 @@ export class CableReportComponent implements OnInit {
         this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
 
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-          this.isSummary = summary;
+          this.readonly = summary;
         });
 
         this.applicationForm.patchValue(CableReportForm.from(application));
+
+        if (this.readonly) {
+          this.applicationForm.disable();
+        }
       });
   }
 
@@ -72,13 +72,9 @@ export class CableReportComponent implements OnInit {
     application.contactList = form.orderer;
     application.extension = CableReportForm.to(form, application.extension.specifiers);
 
-    this.applicationHub.save(application).subscribe(app => {
-      this.locationState.clear();
-      this.submitPending = false;
-      this.router.navigate(['applications', app.id, 'summary']);
-    }, err => {
-      this.submitPending = false;
-    });
+
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
   }
 
   private initForm() {

@@ -5,13 +5,13 @@
             <md-card-content>
                 <div class="row form-group">
                     <div class="input-field col m6">
-                        <input id="eventName" type="text" [class.summary]="name" formControlName="name" [readonly]="readonly">
+                        <input id="eventName" type="text" [class.summary]="name" formControlName="name">
                         <label for="eventName">{{ meta?.getUiName('name') }}*</label>
                         <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                         <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
                     </div>
                     <div class="input-field col m6">
-                        <textarea id="eventDescription" class="materialize-textarea" formControlName="description" [readonly]="readonly"></textarea>
+                        <textarea id="eventDescription" class="materialize-textarea" formControlName="description"></textarea>
                         <label for="eventDescription">{{ meta?.getUiName('description') }}*</label>
                         <field-error [form]="eventForm" field="description" hasError="required">
                             {{translations.application.event.field.descriptionMissing}}
@@ -25,7 +25,7 @@
                                    [materializeParams]="pickadateParams"
                                    type="text"/>
 
-                            <input *ngIf="readonly" id="eventStartTime" type="text" formControlName="startTime" readonly>
+                            <input *ngIf="readonly" id="eventStartTime" type="text" formControlName="startTime">
                             <label for="eventStartTime">{{ meta?.getUiName('eventStartTime') }}*</label>
                             <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
                                 {{translations.application.event.field.eventStartTimeMissing}}
@@ -37,7 +37,7 @@
                                    materialize="pickadate"
                                    [materializeParams]="pickadateParams"
                                    type="text"/>
-                            <input *ngIf="readonly" id="eventEndTime" type="text" formControlName="endTime" readonly>
+                            <input *ngIf="readonly" id="eventEndTime" type="text" formControlName="endTime">
                             <label for="eventEndTime">{{ meta?.getUiName('eventEndTime') }}*</label>
                             <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
                                 {{translations.application.event.field.eventEndTimeMissing}}
@@ -48,7 +48,7 @@
                         </field-error>
                     </div>
                     <div class="input-field col m6">
-                        <textarea id="eventTimeExceptions" class="materialize-textarea" formControlName="timeExceptions" [readonly]="readonly"></textarea>
+                        <textarea id="eventTimeExceptions" class="materialize-textarea" formControlName="timeExceptions"></textarea>
                         <label for="eventTimeExceptions">{{ meta?.getUiName('timeExceptions') }}</label>
                     </div>
                     <div class="input-field col m6">
@@ -56,14 +56,14 @@
                         <label for="eventUrl">{{ meta?.getUiName('url') }}</label>
                     </div>
                     <div class="input-field col m3">
-                        <input id="eventAttendees" type="number" step="1" min="0" formControlName="attendees" [readonly]="readonly">
+                        <input id="eventAttendees" type="number" step="1" min="0" formControlName="attendees">
                         <label for="eventAttendees">{{ meta?.getUiName('attendees') }}</label>
                         <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
                             {{translations.application.event.field.attendeesGreaterThanOrEqual}}
                         </field-error>
                     </div>
                     <div class="input-field col m3">
-                        <input id="eventEntryFee" type="number" step="any" min="0" formControlName="entryFee" [readonly]="readonly">
+                        <input id="eventEntryFee" type="number" step="any" min="0" formControlName="entryFee">
                         <label for="eventEntryFee">{{ meta?.getUiName('entryFee') }}</label>
                         <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
                             {{translations.application.event.field.eventEntryFeeThanOrEqual}}
@@ -80,14 +80,11 @@
             <md-card-content>
                 <div class="row form-group">
                     <div class="col m3 input-field-checkbox">
-                        <div *ngIf="!readonly">
-                            <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="eventForm.value.structureArea"/>
-                            <label for="structureIncluded">Tapahtuma sisältää rakenteita</label>
-                        </div>
-                        <div *ngIf="readonly">Tapahtuma sisältää rakenteita</div>
+                        <input type="checkbox" class="filled-in" id="structureIncluded" [checked]="eventForm.value.structureArea" [disabled]="readonly"/>
+                        <label for="structureIncluded">Tapahtuma sisältää rakenteita</label>
                     </div>
                     <div class="input-field col m3">
-                        <input id="structureArea" type="number" formControlName="structureArea" step="any" min="0" [readonly]="readonly">
+                        <input id="structureArea" type="number" formControlName="structureArea" step="any" min="0">
                         <label for="structureArea">{{ meta?.getUiName('structureArea') }}</label>
                         <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
                             {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
@@ -95,19 +92,15 @@
                     </div>
                     <div class="input-field col m6">
                         <textarea id="structureDescription" class="materialize-textarea textarea"
-                                  formControlName="structureDescription" [readonly]="readonly"></textarea>
+                                  formControlName="structureDescription"></textarea>
                         <label for="structureDescription">{{ meta?.getUiName('structureDescription') }}</label>
                     </div>
 
                     <div class="col m3 input-field-checkbox">
-                        <div *ngIf="!readonly">
-                            <input type="checkbox" class="filled-in" id="structureBuildDate"
-                                   [checked]="eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime"/>
-                            <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
-                        </div>
-                        <div *ngIf="readonly && (eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime)">
-                            Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä
-                        </div>
+                        <input type="checkbox" class="filled-in" id="structureBuildDate"
+                               [checked]="eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime"
+                               [disabled]="readonly"/>
+                        <label for="structureBuildDate">Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä</label>
                     </div>
 
                     <div formGroupName="structureTimes">
@@ -117,7 +110,7 @@
                                    materialize="pickadate"
                                    [materializeParams]="pickadateParams"
                                    type="text"/>
-                            <input *ngIf="readonly" id="structureStartTime" type="text" formControlName="startTime" readonly>
+                            <input *ngIf="readonly" id="structureStartTime" type="text" formControlName="startTime">
                             <label for="structureStartTime">{{ meta?.getUiName('structureStartTime') }}</label>
                         </div>
                         <div class="input-field col m3">
@@ -126,7 +119,7 @@
                                    materialize="pickadate"
                                    [materializeParams]="pickadateParams"
                                    type="text"/>
-                            <input *ngIf="readonly" id="structureEndTime" type="text" formControlName="endTime" readonly>
+                            <input *ngIf="readonly" id="structureEndTime" type="text" formControlName="endTime">
                             <label for="structureEndTime">{{ meta?.getUiName('structureEndTime') }}</label>
                         </div>
                         <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
@@ -161,12 +154,9 @@
                             </div>
                         </div>
                         <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.nature === 'PUBLIC_FREE'">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="noPrice" formControlName="noPrice"
-                                       (change)="noPriceChange($event.target.value)"/>
-                                <label for="noPrice">Korvauksetta</label>
-                            </div>
-                            <div *ngIf="readonly && noPrice">Korvauksetta</div>
+                            <input type="checkbox" class="filled-in" id="noPrice" formControlName="noPrice"
+                                   (change)="noPriceChange($event.target.value)"/>
+                            <label for="noPrice">Korvauksetta</label>
                         </div>
                         <div class="col m12" *ngIf="eventForm.value.noPrice">
                             <select *ngIf="!readonly" materialize="material_select"
@@ -176,7 +166,7 @@
                                         [value]="reason">{{translations.application.event.noPriceReason[reason]}}</option>
                             </select>
                             <div *ngIf="readonly">
-                                <input id="noPriceReason" type="text" readonly formControlName="noPriceReason"
+                                <input id="noPriceReason" type="text" formControlName="noPriceReason"
                                        value="{{translations.application.event.noPriceReason[eventForm.value.noPriceReason]}}">
                                 <label for="noPriceReason">Peruste korvauksettomuudelle</label>
                             </div>
@@ -184,25 +174,16 @@
                     </div>
                     <div class="col m6 no-padding">
                         <div class="col m12 height-fix-bottom">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="pricingEcoCompass" formControlName="ecoCompass"/>
-                                <label for="pricingEcoCompass">{{ meta?.getUiName('ecoCompass') }}</label>
-                            </div>
-                            <div *ngIf="readonly && eventForm.value.ecoCompass">{{ meta?.getUiName('ecoCompass') }}</div>
+                            <input type="checkbox" class="filled-in" id="pricingEcoCompass" formControlName="ecoCompass"/>
+                            <label for="pricingEcoCompass">{{ meta?.getUiName('ecoCompass') }}</label>
                         </div>
                         <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="pricingSalesActivity" formControlName="salesActivity"/>
-                                <label for="pricingSalesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</label>
-                            </div>
-                            <div *ngIf="readonly && eventForm.value.salesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</div>
+                            <input type="checkbox" class="filled-in" id="pricingSalesActivity" formControlName="salesActivity"/>
+                            <label for="pricingSalesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</label>
                         </div>
                         <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="includesHeavyStructure" formControlName="heavyStructure"/>
-                                <label for="includesHeavyStructure">{{ meta?.getUiName('heavyStructure') }}</label>
-                            </div>
-                            <div *ngIf="readonly && eventForm.value.heavyStructure">{{ meta?.getUiName('heavyStructure') }}</div>
+                            <input type="checkbox" class="filled-in" id="includesHeavyStructure" formControlName="heavyStructure"/>
+                            <label for="includesHeavyStructure">{{ meta?.getUiName('heavyStructure') }}</label>
                         </div>
                     </div>
                     <div class="col m12">
@@ -213,14 +194,14 @@
                     </div>
                     <div class="col m12">
                         <div class="col m3 input-field">
-                            <input type="number" id="priceOverride" formControlName="priceOverride" [readonly]="readonly">
+                            <input type="number" id="priceOverride" formControlName="priceOverride">
                             <label for="priceOverride">Käsittelijän asettama hinta</label>
                             <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
                                 {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
                             </field-error>
                         </div>
                         <div class="col m3 input-field">
-                            <input type="text" id="priceOverrideReason" formControlName="priceOverrideReason" [readonly]="readonly">
+                            <input type="text" id="priceOverrideReason" formControlName="priceOverrideReason">
                             <label for="priceOverrideReason">Peruste poikkeavaan hintaan</label>
                         </div>
                     </div>
@@ -238,11 +219,9 @@
                 <div class="row form-group">
                     <div class="col m6 no-padding">
                         <div class="col m12 height-fix-bottom">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="salesMarketing" [checked]="eventForm.value.marketingProviders"/>
-                                <label for="salesMarketing">Tapahtuma sisältää myynti- tai mainostoimintaa</label>
-                            </div>
-                            <div *ngIf="readonly && eventForm.value.marketingProviders">Tapahtuma sisältää myynti- tai mainostoimintaa</div>
+                            <input type="checkbox" class="filled-in" id="salesMarketing"
+                                   [checked]="eventForm.value.marketingProviders" [disabled]="readonly"/>
+                            <label for="salesMarketing">Tapahtuma sisältää myynti- tai mainostoimintaa</label>
                         </div>
                         <div class="input-field col m12">
                             <textarea id="salesMarketingDetails" class="materialize-textarea"
@@ -252,14 +231,11 @@
                     </div>
                     <div class="col m6 no-padding">
                         <div class="col m12 height-fix-bottom">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="salesFood" formControlName="foodSales"/>
-                                <label for="salesFood">{{ meta?.getUiName('foodSales') }}</label>
-                            </div>
-                            <div *ngIf="readonly && eventForm.value.foodSales">{{ meta?.getUiName('foodSales') }}</div>
+                            <input type="checkbox" class="filled-in" id="salesFood" formControlName="foodSales"/>
+                            <label for="salesFood">{{ meta?.getUiName('foodSales') }}</label>
                         </div>
                         <div class="input-field col m12">
-                            <textarea id="salesFoodProviders" class="materialize-textarea" formControlName="foodProviders" [readonly]="readonly"></textarea>
+                            <textarea id="salesFoodProviders" class="materialize-textarea" formControlName="foodProviders"></textarea>
                             <label for="salesFoodProviders">{{ meta?.getUiName('foodProviders') }}</label>
                         </div>
                     </div>

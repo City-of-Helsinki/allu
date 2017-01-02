@@ -47,6 +47,10 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initForm();
+
+    if (this.readonly) {
+      this.applicantForm.disable();
+    }
   }
 
   ngOnDestroy(): void {

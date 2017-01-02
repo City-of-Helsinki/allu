@@ -1,16 +1,16 @@
 <div materialize class="row">
   <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
-    <applicant [applicationForm]="applicationForm" [applicant]="application.applicant" [readonly]="isSummary"></applicant>
+    <applicant [applicationForm]="applicationForm" [applicant]="application.applicant" [readonly]="readonly"></applicant>
 
     <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
-             [readonly]="isSummary" [addNew]="true" [saveToRegistry]="true"></contact>
+             [readonly]="readonly" [addNew]="true" [saveToRegistry]="true"></contact>
 
-    <event-details [applicationForm]="applicationForm" [location]="application.location" [readonly]="isSummary"></event-details>
+    <event-details [applicationForm]="applicationForm" [location]="application.location" [readonly]="readonly"></event-details>
 
-    <application-attachment [existingAttachments]="application.attachmentList" [readonly]="isSummary" (currentAttachments)="currentAttachments($event)"></application-attachment>
+    <application-attachment [existingAttachments]="application.attachmentList" [readonly]="readonly" (currentAttachments)="currentAttachments($event)"></application-attachment>
 
     <application-actions
-        [isSummary]="isSummary"
+        [isSummary]="readonly"
         [applicationId]="application.id"
         [form]="applicationForm"
         [submitPending]="submitPending"></application-actions>

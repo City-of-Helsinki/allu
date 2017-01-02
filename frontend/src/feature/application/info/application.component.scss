@@ -63,18 +63,22 @@
     position: relative;
   }
 
-  input[type="text"] {
+  input[type="text"], input[type="number"] {
     border-bottom: 2px solid $allu-field-border-ok;
     color: $allu-field-text-ok;
     margin-bottom: 10px;
   }
 
-  input[type="text"]:disabled:not(.select-dropdown), textarea:disabled {
+  input[type="text"]:disabled:not(.select-dropdown),
+  input[type="number"]:disabled,
+  textarea:disabled {
     color: $allu-field-text-ok;
     border-bottom: 2px dotted $allu-field-border-readonly;
   }
 
-  input[readonly]:not(.select-dropdown):not(.picker__input), textarea[readonly] {
+  input[readonly]:not(.select-dropdown):not(.picker__input),
+  input[type="number"]:disabled,
+  textarea[readonly] {
     border-bottom: 2px dotted $allu-field-border-readonly;
   }
 

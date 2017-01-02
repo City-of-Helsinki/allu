@@ -54,6 +54,10 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
         event.eventEndTime = event.eventEndTime || application.endTime;
         event.applicationType = ApplicationType[ApplicationType.EVENT];
         this.eventForm.patchValue(EventDetailsForm.fromEvent(application, event));
+
+        if (this.readonly) {
+          this.eventForm.disable();
+        }
       });
   }
 

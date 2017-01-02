@@ -4,14 +4,14 @@
         <md-card-content>
             <div class="row form-group">
                 <div class="input-field col m4">
-                    <select [(ngModel)]="selectedCableInfoTypes" materialize="material_select" multiple [disabled]="readonly">
+                    <select [(ngModel)]="selectedCableInfoTypes" materialize="material_select" multiple>
                         <option value="" disabled selected>Valitse tyyppi*</option>
                         <option *ngFor="let type of cableInfoTypes" value="{{type}}">{{translations.application.cableReport.cableInfo.type[type]}}</option>
                     </select>
                 </div>
                 <div [formGroup]="cableInfoForm">
                     <div class="input-field col m2">
-                        <input id="mapExtractCount" type="number" formControlName="mapExtractCount" [readonly]="readonly">
+                        <input id="mapExtractCount" type="number" formControlName="mapExtractCount">
                         <label for="mapExtractCount">{{ meta?.getUiName('mapExtractCount') }}</label>
                     </div>
                     <div formArrayName="cableInfoEntries" class="row form-group">
@@ -34,7 +34,7 @@
 
                                 <div class="input-field col m12">
                                     <textarea id="additionalInfo" class="materialize-textarea textarea"
-                                              formControlName="additionalInfo" [readonly]="readonly"></textarea>
+                                              formControlName="additionalInfo"></textarea>
                                     <label for="additionalInfo">Lisätietoja</label>
                                 </div>
                             </div>

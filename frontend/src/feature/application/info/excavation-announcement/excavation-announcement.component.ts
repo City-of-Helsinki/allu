@@ -1,12 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../../../model/application/application';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
-import {LocationState} from '../../../../service/application/location-state';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MaterializeUtil} from '../../../../util/materialize.util';
@@ -17,6 +16,7 @@ import {ApplicationSearchQuery} from '../../../../model/search/ApplicationSearch
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {Some} from '../../../../util/option';
+import {ApplicationState} from '../../../../service/application/application-state';
 
 
 @Component({
@@ -36,11 +36,10 @@ export class ExcavationAnnouncementComponent implements OnInit {
   cableReportSearch = new Subject<string>();
   matchingApplications: Observable<Array<Application>>;
 
-  constructor(private router: Router,
-              private route: ActivatedRoute,
+  constructor(private route: ActivatedRoute,
               private fb: FormBuilder,
-              private locationState: LocationState,
-              private applicationHub: ApplicationHub) {
+              private applicationHub: ApplicationHub,
+              private applicationState: ApplicationState) {
   };
 
   ngOnInit(): any {
@@ -104,13 +103,8 @@ export class ExcavationAnnouncementComponent implements OnInit {
     application.contactList = form.contacts;
     application.extension = ExcavationAnnouncementForm.to(form);
 
-    this.applicationHub.save(application).subscribe(app => {
-      this.locationState.clear();
-      this.submitPending = false;
-      this.router.navigate(['applications', app.id, 'summary']);
-    }, err => {
-      this.submitPending = false;
-    });
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
   }
 
   private initForm() {

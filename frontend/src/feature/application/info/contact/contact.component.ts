@@ -38,6 +38,10 @@ export class ContactComponent implements OnInit, OnDestroy {
 
     this.contactList = Some(this.contactList).orElse([new Contact()]);
     this.contactList.forEach(contact => this.addContact(contact));
+
+    if (this.readonly) {
+      this.contactsForm.disable();
+    }
   }
 
   ngOnDestroy(): void {
