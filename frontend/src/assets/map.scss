@@ -13,8 +13,24 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
   height: 100%;
 }
 
-h1.popup-header {
-  font-size: 15px;
-  line-height: 20px;
-  border-bottom: 2px solid $allu-field-border-ok;
+
+.leaflet-popup-content {
+  margin: 0;
+
+  h1.popup-header {
+    font-size: 15px;
+    line-height: 20px;
+    color: $allu-text-white;
+    background: $allu-secondary-nav;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    padding: 5px 16px;
+    font-weight: bold;
+  }
+
+  .popup-content {
+    margin: 13px 19px;
+  }
 }
+
+
