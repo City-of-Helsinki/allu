@@ -1,13 +1,14 @@
 import {Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
 
-import {MapHub} from '../../service/map-hub';
+import {MapHub} from '../../service/map/map-hub';
 import {Application} from '../../model/application/application';
 import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
-import {MapService, ShapeAdded, MapState} from '../../service/map.service';
+import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
+import {styleByApplicationType} from '../../service/map/map-draw-styles';
 
 @Component({
   selector: 'map',
@@ -78,7 +79,10 @@ export class MapComponent implements OnInit, OnDestroy {
       .filter(app => app.location !== undefined)
       .filter(app => this.applicationShouldBeDrawn(app))
       .filter(app => app.id !== this.applicationId) // Only draw other than edited application
-      .forEach(app => this.mapState.drawGeometry(app.location.geometry, findTranslation(['application.type', app.type])));
+      .forEach(app => this.mapState.drawGeometry(
+        app.location.geometry,
+        findTranslation(['application.type', app.type]),
+        styleByApplicationType[app.type]));
   }
 
   private applicationShouldBeDrawn(application: Application): boolean {

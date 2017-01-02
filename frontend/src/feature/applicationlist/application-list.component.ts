@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
 import {SearchbarFilter} from '../../service/searchbar-filter';
-import {MapHub} from '../../service/map-hub';
+import {MapHub} from '../../service/map/map-hub';
 
 
 @Component({

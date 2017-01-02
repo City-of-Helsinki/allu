@@ -8,11 +8,12 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 
 import {MapUtil} from './map.util';
-import {Some} from '../util/option';
-import {translations, findTranslation} from '../util/translations';
-import {EnumUtil} from '../util/enum.util';
-import {ApplicationType} from '../model/application/type/application-type';
-import {Geocoordinates} from '../model/common/geocoordinates';
+import {Some} from '../../util/option';
+import {translations, findTranslation} from '../../util/translations';
+import {EnumUtil} from '../../util/enum.util';
+import {ApplicationType} from '../../model/application/type/application-type';
+import {Geocoordinates} from '../../model/common/geocoordinates';
+import {styleByApplicationType} from './map-draw-styles';
 
 export class ShapeAdded {
   constructor(public features: L.FeatureGroup<L.ILayer>, public affectsControls: boolean = true) {}
@@ -66,11 +67,18 @@ export class MapState {
 
     let draw = controlsEnabled ? {
         polygon: {
-          shapeOptions: {
-            color: '#BA1200'
-          },
+          shapeOptions: styleByApplicationType.DEFAULT,
           allowIntersection: false,
           showArea: true
+        },
+        circle: {
+          shapeOptions: styleByApplicationType.DEFAULT
+        },
+        rectangle: {
+          shapeOptions: styleByApplicationType.DEFAULT
+        },
+        polyline: {
+          shapeOptions: styleByApplicationType.DEFAULT
         },
         marker: false
       } : false;

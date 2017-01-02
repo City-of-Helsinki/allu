@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {Subject} from 'rxjs/Subject';
 
 import {SearchbarFilter} from '../../service/searchbar-filter';
-import {MapHub} from '../../service/map-hub';
+import {MapHub} from '../../service/map/map-hub';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 import {MaterializeUtil} from '../../util/materialize.util';
 import {PostalAddress} from '../../model/common/postal-address';
