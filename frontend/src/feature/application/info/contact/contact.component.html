@@ -7,34 +7,34 @@
                     <md-card-content>
                         <div class="row form-group">
                             <div class="input-field col m12">
-                                <input id="contactName" type="text" formControlName="name">
-                                <label for="contactName">Yhteyshenkilön nimi*</label>
+                                <input id="{{formName}}-contactName" type="text" formControlName="name">
+                                <label for="{{formName}}-contactName">Yhteyshenkilön nimi*</label>
                                 <field-error [form]="contact" field="name" hasError="required">{{translations.contact.field.nameMissing}}</field-error>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="input-field col m6">
-                                <input id="contactStreetAddress" type="text" formControlName="streetAddress">
-                                <label for="contactStreetAddress">Henkilötunnus</label>
+                                <input id="{{formName}}-contactStreetAddress" type="text" formControlName="streetAddress">
+                                <label for="{{formName}}-contactStreetAddress">Henkilötunnus</label>
                             </div>
                             <div class="input-field col m3">
-                                <input id="contactPostalCode" type="text" formControlName="postalCode">
-                                <label for="contactPostalCode">Postinumero</label>
+                                <input id="{{formName}}-contactPostalCode" type="text" formControlName="postalCode">
+                                <label for="{{formName}}-contactPostalCode">Postinumero</label>
                             </div>
                             <div class="input-field col m3">
-                                <input id="contactCity" type="text" formControlName="city">
-                                <label for="contactCity">Toimipaikka</label>
+                                <input id="{{formName}}-contactCity" type="text" formControlName="city">
+                                <label for="{{formName}}-contactCity">Toimipaikka</label>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="input-field col m4">
-                                <input id="contactPhone" type="text" formControlName="phone">
-                                <label for="contactPhone">Puhelin</label>
+                                <input id="{{formName}}-contactPhone" type="text" formControlName="phone">
+                                <label for="{{formName}}-contactPhone">Puhelin</label>
                                 <field-error [form]="contact" field="phone" hasError="minlength">{{translations.contact.field.phoneShort}}</field-error>
                             </div>
                             <div class="input-field col m8">
-                                <input id="contactEmail" type="text" formControlName="email">
-                                <label for="contactEmail">Sähköpostiosoite</label>
+                                <input id="{{formName}}-contactEmail" type="text" formControlName="email">
+                                <label for="{{formName}}-contactEmail">Sähköpostiosoite</label>
                                 <field-error [form]="contact" field="email" hasError="pattern">{{translations.contact.field.emailInvalid}}</field-error>
                             </div>
                         </div>

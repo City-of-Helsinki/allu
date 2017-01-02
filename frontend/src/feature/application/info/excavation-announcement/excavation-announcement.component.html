@@ -13,7 +13,7 @@
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension.contractor"
                        [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"></applicant>
 
-            <contact [applicationForm]="applicationForm" [contactList]="[application.extension.responsiblePerson]"
+            <contact [applicationForm]="applicationForm" [contactList]="application.extension.responsiblePersonList"
                      [readonly]="readonly" headerText="Vastuuhenkilö" formName="responsiblePerson"></contact>
         </div>
 
