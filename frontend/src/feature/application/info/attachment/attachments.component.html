@@ -1,37 +1,37 @@
-<div class="col m12 loose">
-  <md-card>
-    <md-card-title>Liitteet</md-card-title>
-    <md-card-content>
-      <div class="row">
-        <div class="col m4">
-          Liite
-        </div>
-        <div class="col m8">
-          Kuvaus
-        </div>
+<h1>Liitteet</h1>
+<ul class="slim-card-list">
+  <li class="slim-card" *ngFor="let attachment of attachments; let i = index;">
+      <div class="col s1">
+        <div class="clickable" (click)="remove(i, attachment)"><i class="material-icons">clear</i></div>
       </div>
-      <div class="row" *ngFor="let item of attachments; let i = index;">
-        <div class="col m4">
-          {{ item.name }}
-        </div>
-        <div class="col m6">
-          <input id="fileDescription" [disabled]='readonly' type="text" [(ngModel)]="item.description">
-        </div>
-        <div class="col m1">
-          <button type="button" md-raised-button class="waves-effect waves-light btn" [disabled]='readonly' (click)="removeAttachment(i)">POISTA</button>
-        </div>
-        <div class="col m1">
-          <button type="button" md-raised-button class="waves-effect waves-light btn" [disabled]="!item.id" (click)="download(i)">LATAA</button>
-        </div>
+      <div class="col s3">
+        <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
       </div>
-      <div class="row">
-        <div class="col m1 offset-m10">
-          <div class="fixedInputButton">
-            <button type="button" md-raised-button class="waves-effect waves-light btn" [disabled]='readonly' (click)="realFileInput.click()">VALITSE</button>
-            <input #realFileInput type="file" file-select (attachmentsSelected)="attachmentsSelected($event)" multiple />
-          </div>
-        </div>
+      <div class="col s1">
+        <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
+        <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
+
       </div>
-    </md-card-content>
-  </md-card>
+      <div class="col s1">
+        {{attachment.uiCreationTime}}
+      </div>
+      <div class="col s5">
+        {{attachment.description}}
+      </div>
+      <div class="col s1">
+        <i class="material-icons clickable right-align" (click)="download(attachment)">file_download</i>
+      </div>
+  </li>
+</ul>
+
+<div class="row" *ngFor="let attachment of editableAttachments; let i = index;">
+  <div class="col m11">
+    <attachment [applicationId]="application.id" [attachment]="attachment"
+                (onCancel)="cancel(i)" (onSave)="save(i, $event)"></attachment>
+  </div>
+</div>
+<div class="row">
+  <div class="col m11 col-centered">
+    <a class="btn-floating btn-huge waves-effect waves-light" (click)="addNewAttachment()"><i class="material-icons">add</i></a>
+  </div>
 </div>

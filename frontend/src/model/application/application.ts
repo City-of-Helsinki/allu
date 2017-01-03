@@ -3,7 +3,7 @@ import {Contact} from './contact';
 import {Location} from '../common/location';
 import {ApplicationExtension} from './type/application-extension';
 import {StructureMeta} from './structure-meta';
-import {AttachmentInfo} from './attachment-info';
+import {AttachmentInfo} from './attachment/attachment-info';
 import {TimeUtil} from '../../util/time.util';
 import {User} from '../common/user';
 import {Some} from '../../util/option';

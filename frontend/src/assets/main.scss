@@ -111,6 +111,20 @@ i.icon-middle {
   vertical-align: middle;
 }
 
+a.btn-huge {
+  width: 165px;
+  height: 165px;
+
+  i {
+    font-size: 10rem;
+    line-height: 165px;
+  }
+}
+
+.col.col-centered {
+  text-align: center;
+}
+
 md-dialog-container {
   background: white;
   overflow: visible !important;
@@ -208,5 +222,32 @@ md-card-content {
     margin-right: 0;
     border-left: 1px solid $allu-button-border;
     border-right: 1px solid $allu-button-border;
+  }
+}
+
+ul.slim-card-list {
+  padding: 10px;
+}
+
+.slim-card {
+  display: block;
+  min-height: 3rem;
+  line-height: 3rem;
+  padding: 0 1rem;
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+
+  .row {
+    margin-bottom: 0;
+  }
+
+  i {
+    width: 2rem;
+    font-size: 1.6rem;
+    line-height: 3rem;
+    display: block;
+    float: left;
+    text-align: center;
+    margin-right: 1rem;
   }
 }

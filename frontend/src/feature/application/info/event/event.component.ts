@@ -4,7 +4,7 @@ import {FormGroup, FormBuilder} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
-import {AttachmentInfo} from '../../../../model/application/attachment-info';
+import {AttachmentInfo} from '../../../../model/application/attachment/attachment-info';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MapHub} from '../../../../service/map/map-hub';
@@ -64,10 +64,6 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
     if (this.readonly) {
       this.mapHub.selectApplication(this.application);
     }
-  }
-
-  currentAttachments(attachments: AttachmentInfo[]): void {
-    this.applicationState.attachments = attachments;
   }
 
   onSubmit(form: EventForm) {

@@ -1,7 +1,15 @@
-import {Component, Input, Output, EventEmitter, OnInit, OnChanges, SimpleChange} from '@angular/core';
-import {AttachmentInfo} from '../../../../model/application/attachment-info';
-
+import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 import * as filesaverLib from 'filesaver';
+
+import {AttachmentInfo} from '../../../../model/application/attachment/attachment-info';
+import {Application} from '../../../../model/application/application';
+import {MaterializeUtil} from '../../../../util/materialize.util';
+import {ApplicationHub} from '../../../../service/application/application-hub';
+import {ApplicationState} from '../../../../service/application/application-state';
+import {AttachmentHub} from './attachment-hub';
+
+const toastTime = 4000;
 
 @Component({
   selector: 'attachments',
@@ -10,61 +18,71 @@ import * as filesaverLib from 'filesaver';
     require('./attachments.component.scss')
   ]
 })
-export class AttachmentsComponent implements OnChanges {
+export class AttachmentsComponent implements OnInit, AfterViewInit {
+  application: Application;
+  attachments: AttachmentInfo[] = [];
+  editableAttachments: AttachmentInfo[] = [];
 
-  @Input() readonly: boolean = false;
-  @Input() existingAttachments: AttachmentInfo[] = [];
-  @Output() currentAttachments = new EventEmitter();
+  constructor(private route: ActivatedRoute,
+              private applicationHub: ApplicationHub,
+              private attachmentHub: AttachmentHub,
+              private applicationState: ApplicationState) {}
 
-  private attachments: AttachmentInfo[] = [];
-  private attachmentsInitialized = false;
+  ngOnInit() {
+    this.route.data
+      .map((data: {application: Application}) => data.application)
+      .subscribe(application => this.setApplication(application));
+  }
 
-  constructor() {}
+  ngAfterViewInit(): void {
+    MaterializeUtil.updateTextFields(50);
+  }
 
+  addNewAttachment(): void {
+    this.editableAttachments.push(new AttachmentInfo());
+  }
 
-  ngOnChanges(changes: {[key: string]: SimpleChange}): any {
-    if (!this.attachmentsInitialized && this.existingAttachments) {
-      // we're doing this only once to initialize the attachment list. Further changes in host component list will not affect this component
-      this.attachmentsInitialized = true;
-      this.attachments = this.existingAttachments || [];
+  save(index, attachment: AttachmentInfo) {
+    if (this.application.id) {
+      this.applicationState.saveAttachment(this.application.id, attachment).subscribe(
+        saved => {
+          MaterializeUtil.toast('Liite ' + saved.name + ' tallennettu', toastTime);
+          this.attachments.push(saved);
+          this.editableAttachments.splice(index, 1);
+        },
+        error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' tallennus epäonnistui', toastTime)
+      );
+    } else {
+      this.applicationState.addAttachment(attachment);
+      MaterializeUtil.toast('Liite ' + attachment.name + ' lisätty hakemukselle', toastTime);
     }
   }
 
-  public attachmentsSelected(files: any[]): void {
-    let toBeUploadedAttachments = files.map(f => new AttachmentInfo(undefined, f.name, undefined, undefined, undefined, f));
-    this.attachments = this.attachments.concat(toBeUploadedAttachments);
-    this.currentAttachments.emit(this.attachments);
+  remove(index: number, attachment: AttachmentInfo) {
+    this.applicationState.removeAttachment(attachment.id)
+      .subscribe(status => {
+          MaterializeUtil.toast('Liite ' + attachment.name + ' poistettu', toastTime);
+          this.attachments.splice(index, 1);
+        },
+        error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' poistaminen epäonnistui', toastTime));
   }
 
-  public removeAttachment(index: number): void {
-    // TODO: if the file has been uploded already, it should be removed from the backend too!
-    this.attachments.splice(index, 1);
-    this.currentAttachments.emit(this.attachments);
+  cancel(index: number): void {
+    this.editableAttachments.splice(index, 1);
   }
 
-  public download(index: number) {
+  download(attachment: AttachmentInfo) {
+    this.attachmentHub.download(attachment.id, attachment.name)
+      .subscribe(file => filesaverLib.saveAs(file));
+  }
 
-    /**********
-     * TODO: replace direct use of XMLHttpRequest with Angular's Http (or AuthHttp) when it supports blobs:
-     * https://github.com/angular/angular/pull/10190
-     */
+  refreshAttachments(): void {
+    this.applicationHub.getApplication(this.application.id)
+      .subscribe(app => this.setApplication(app));
+  }
 
-    let xhr = new XMLHttpRequest();
-    let attachmentInfo = this.attachments[index];
-    let url = '/api/applications/attachments/index/data'.replace('index', String(attachmentInfo.id));
-
-    xhr.open('GET', url, true);
-    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem('jwt'));
-    xhr.responseType = 'blob';
-
-    xhr.onreadystatechange = function () {
-      // If we get an HTTP status OK (200), save the file using fileSaver
-      if (xhr.readyState === 4 && xhr.status === 200) {
-        let blob = new Blob([this.response], {type: 'application/pdf'});
-        filesaverLib.saveAs(blob, attachmentInfo.name);
-      }
-    };
-
-    xhr.send();
+  private setApplication(app: Application) {
+    this.application = app;
+    this.attachments = app.attachmentList || [];
   }
 }

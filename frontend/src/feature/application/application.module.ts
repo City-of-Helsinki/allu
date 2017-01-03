@@ -1,8 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdCardModule, MdToolbarModule, MdProgressBarModule, MdDialogModule} from '@angular/material';
-import {FILE_UPLOAD_DIRECTIVES} from 'ng2-file-upload';
+import {MdCardModule, MdToolbarModule, MdProgressBarModule, MdDialogModule, MdSlideToggleModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -35,6 +34,7 @@ import {DefaultTextModalComponent} from './default-text/default-text-modal.compo
 import {ApplicationState} from '../../service/application/application-state';
 import {NoteComponent} from './info/note/note.component';
 import {ApplicationInfoComponent} from './info/application-info.component';
+import {AttachmentComponent} from './info/attachment/attachment.component';
 
 
 @NgModule({
@@ -47,6 +47,7 @@ import {ApplicationInfoComponent} from './info/application-info.component';
     MdToolbarModule,
     MdProgressBarModule,
     MdDialogModule,
+    MdSlideToggleModule,
     MapModule,
     ProgressBarModule,
     LocationModule,
@@ -62,8 +63,8 @@ import {ApplicationInfoComponent} from './info/application-info.component';
     CableInfoComponent,
     ExcavationAnnouncementComponent,
     AttachmentsComponent,
+    AttachmentComponent,
     ApplicationActionsComponent,
-    FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,
     LoadingComponent,
     ApplicantComponent,
