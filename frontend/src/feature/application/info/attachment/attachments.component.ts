@@ -4,13 +4,13 @@ import {AttachmentInfo} from '../../../../model/application/attachment-info';
 import * as filesaverLib from 'filesaver';
 
 @Component({
-  selector: 'application-attachment',
-  template: require('./application-attachment.component.html'),
+  selector: 'attachments',
+  template: require('./attachments.component.html'),
   styles: [
-    require('./application-attachment.component.scss')
+    require('./attachments.component.scss')
   ]
 })
-export class ApplicationAttachmentComponent implements OnChanges {
+export class AttachmentsComponent implements OnChanges {
 
   @Input() readonly: boolean = false;
   @Input() existingAttachments: AttachmentInfo[] = [];

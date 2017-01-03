@@ -8,7 +8,7 @@ import {LocationState} from './location-state';
 import {Some} from '../../util/option';
 import {ProjectHub} from '../project/project-hub';
 import {AttachmentInfo} from '../../model/application/attachment-info';
-import {ApplicationAttachmentHub} from '../../feature/application/info/attachment/application-attachment-hub';
+import {AttachmentHub} from '../../feature/application/info/attachment/attachment-hub';
 
 
 @Injectable()
@@ -19,7 +19,7 @@ export class ApplicationState {
               private applicationHub: ApplicationHub,
               private projectHub: ProjectHub,
               private locationState: LocationState,
-              private attachmentHub: ApplicationAttachmentHub) {}
+              private attachmentHub: AttachmentHub) {}
 
   set attachments(attachments: Array<AttachmentInfo>) {
     this._attachments = attachments;

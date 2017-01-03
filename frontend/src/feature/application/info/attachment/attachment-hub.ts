@@ -6,7 +6,7 @@ import {AttachmentService} from '../../../../service/attachment-service';
 import {AttachmentInfo} from '../../../../model/application/attachment-info';
 
 @Injectable()
-export class ApplicationAttachmentHub {
+export class AttachmentHub {
 
   constructor(private attachmentService: AttachmentService) {
   }

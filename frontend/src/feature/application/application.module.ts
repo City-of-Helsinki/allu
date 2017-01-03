@@ -15,11 +15,11 @@ import {FileSelectDirective} from './info/attachment/file-select.directive';
 
 import {ApplicationComponent} from './info/application.component.ts';
 import {EventComponent} from './info/event/event.component';
-import {ApplicationAttachmentComponent} from './info/attachment/application-attachment.component';
+import {AttachmentsComponent} from './info/attachment/attachments.component';
 import {LoadingComponent} from '../loading/loading.component';
 import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
-import {ApplicationAttachmentHub} from './info/attachment/application-attachment-hub';
+import {AttachmentHub} from './info/attachment/attachment-hub';
 import {ApplicantComponent} from './info/applicant/applicant.component';
 import {ContactComponent} from './info/contact/contact.component';
 import {EventDetailsComponent} from './info/event/details/event-details.component.ts';
@@ -61,7 +61,7 @@ import {ApplicationInfoComponent} from './info/application-info.component';
     CableReportComponent,
     CableInfoComponent,
     ExcavationAnnouncementComponent,
-    ApplicationAttachmentComponent,
+    AttachmentsComponent,
     ApplicationActionsComponent,
     FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,
@@ -74,7 +74,7 @@ import {ApplicationInfoComponent} from './info/application-info.component';
     NoteComponent
   ],
   providers: [
-    ApplicationAttachmentHub,
+    AttachmentHub,
     ApplicationResolve,
     AttachmentService,
     ApplicationState

@@ -7,8 +7,6 @@
 
     <event-details [applicationForm]="applicationForm" [location]="application.location" [readonly]="readonly"></event-details>
 
-    <application-attachment [existingAttachments]="application.attachmentList" [readonly]="readonly" (currentAttachments)="currentAttachments($event)"></application-attachment>
-
     <application-actions
         [isSummary]="readonly"
         [applicationId]="application.id"
