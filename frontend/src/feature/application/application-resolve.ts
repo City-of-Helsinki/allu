@@ -6,18 +6,18 @@ import '../../rxjs-extensions.ts';
 import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {LocationState} from '../../service/application/location-state';
+import {Some} from '../../util/option';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
   constructor(private applicationHub: ApplicationHub, private locationState: LocationState) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Application> {
-    let id = Number(route.params['id']);
+    let appId = Some(route.params['id']).orElse(route.parent.params['id']);
 
-    if (id) {
-      return this.applicationHub.getApplication(id);
-    } else {
-      return Observable.of(this.locationState.createApplication());
-    }
+    return Some(appId)
+      .map(id => Number(id))
+      .map(id => this.applicationHub.getApplication(id))
+      .orElse(Observable.of(this.locationState.createApplication()));
   }
 }

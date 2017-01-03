@@ -1,5 +1,9 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
-<div materialize class="row application">
-  <application-type typeChangeDisabled="true"></application-type>
-  <router-outlet></router-outlet>
+<div class="row application">
+  <div class="col s1">
+    <sidebar [items]="['BASIC_INFO']"></sidebar>
+  </div>
+  <div class="col s11">
+    <router-outlet></router-outlet>
+  </div>
 </div>

@@ -10,18 +10,19 @@ import {ProjectProjectsComponent} from './projects/project-projects.component';
 
 export const projectRoutes: Routes = [
   { path: 'projects', children: [
-    { path: '', component: ProjectEditComponent, resolve: { project: ProjectResolve }},
+    { path: '', redirectTo: 'search', pathMatch: 'full' },
+    { path: 'search', component: ProjectSearchComponent },
+    { path: 'edit', component: ProjectEditComponent, resolve: { project: ProjectResolve }},
     { path: ':id', children: [
       { path: '', component: ProjectComponent, resolve: { project: ProjectResolve }, children: [
         { path: '', children: [
-          { path: '', redirectTo: 'summary' },
-          { path: 'summary', component: ProjectSummaryComponent, resolve: { project: ProjectResolve } },
+          { path: '', redirectTo: 'info' },
+          { path: 'info', component: ProjectSummaryComponent, resolve: { project: ProjectResolve } },
           { path: 'applications', component: ProjectApplicationsComponent, resolve: { project: ProjectResolve } },
           { path: 'projects', component: ProjectProjectsComponent, resolve: { project: ProjectResolve } }
         ]}
       ]},
       { path: 'edit', component: ProjectEditComponent, resolve: { project: ProjectResolve }}
     ]}
-  ]},
-  { path: 'projectSearch', component: ProjectSearchComponent }
+  ]}
 ];

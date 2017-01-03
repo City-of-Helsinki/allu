@@ -34,11 +34,10 @@ export class NoteComponent implements OnInit {
   ngOnInit(): any {
     this.initForm();
 
-    this.route.parent.data
+    this.route.data
       .map((data: {application: Application}) => data.application)
       .subscribe(application => {
         this.application = application;
-        this.application.type = this.route.routeConfig.path;
 
         UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
           this.readonly = summary;

@@ -44,7 +44,7 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.initForm();
 
-    this.route.parent.data
+    this.route.data
       .map((data: {application: Application}) => data.application)
       .subscribe(application => {
         this.applicationId = application.id;

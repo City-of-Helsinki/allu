@@ -1,0 +1,8 @@
+<application-type typeChangeDisabled="true"></application-type>
+<div [ngSwitch]="application.type">
+    <event *ngSwitchCase="'EVENT'"></event>
+    <short-term-rental *ngSwitchCase="'SHORT_TERM_RENTAL'"></short-term-rental>
+    <cable-report *ngSwitchCase="'CABLE_REPORT'"></cable-report>
+    <excavation-announcement *ngSwitchCase="'EXCAVATION_ANNOUNCEMENT'"></excavation-announcement>
+    <note *ngSwitchCase="'NOTE'"></note>
+</div>

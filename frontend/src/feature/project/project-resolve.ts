@@ -12,7 +12,9 @@ export class ProjectResolve implements Resolve<Project> {
   constructor(private projectHub: ProjectHub) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Project> {
-    return Some(Some(route.params['id']).orElse(route.parent.params['id']))
+    let projectId = Some(route.params['id']).orElse(route.parent.params['id']);
+
+    return Some(projectId)
       .map(id => Number(id))
       .map(id => this.projectHub.getProject(id))
       .orElse(Observable.of(new Project()));

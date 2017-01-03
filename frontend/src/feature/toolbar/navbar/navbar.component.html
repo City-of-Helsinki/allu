@@ -1,8 +1,8 @@
 <nav>
   <a [routerLink]="['/home']" routerLinkActive="active">ETUSIVU</a>
   <a [routerLink]="['/workqueue']" routerLinkActive="active">TYÖJONO</a>
-  <a [routerLink]="['/search']" routerLinkActive="active">HAKEMUKSET</a>
-  <a [routerLink]="['/projectSearch']" routerLinkActive="active">HANKKEET</a>
+  <a [routerLink]="['/applications']" routerLinkActive="active">HAKEMUKSET</a>
+  <a [routerLink]="['/projects']" routerLinkActive="active">HANKKEET</a>
   <a [routerLink]="['/admin']" routerLinkActive="active" *ngIf="hasRole('ROLE_ADMIN')">YLLÄPITO</a>
   <a class="align-right" [routerLink]="['/logout']" routerLinkActive="active">KIRJAUDU ULOS</a>
 </nav>

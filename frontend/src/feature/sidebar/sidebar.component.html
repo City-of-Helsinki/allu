@@ -2,7 +2,7 @@
     <div class="col s12 sidebar-item" *ngFor="let item of items">
         <div [ngSwitch]="item">
             <div *ngSwitchCase="'BASIC_INFO'">
-                <a [routerLink]="['summary']" routerLinkActive="active">Perustiedot</a>
+                <a [routerLink]="['info']" routerLinkActive="active">Perustiedot</a>
             </div>
             <div *ngSwitchCase="'ATTACHMENTS'">
                 <a [routerLink]="['attachments']" routerLinkActive="active">Liitteet</a>

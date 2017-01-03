@@ -46,11 +46,10 @@ export class ShortTermRentalComponent implements OnInit {
   ngOnInit(): any {
     this.initForm();
 
-    this.route.parent.data
+    this.route.data
       .map((data: {application: Application}) => data.application)
       .subscribe(application => {
         this.application = application;
-        this.application.type = this.route.routeConfig.path;
 
         this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
 
@@ -72,7 +71,9 @@ export class ShortTermRentalComponent implements OnInit {
 
   ngAfterViewInit(): void {
     MaterializeUtil.updateTextFields(50);
-    this.mapHub.selectApplication(this.application);
+    if (this.readonly) {
+      this.mapHub.selectApplication(this.application);
+    }
   }
 
   onSubmit(form: ShortTermRentalForm) {
