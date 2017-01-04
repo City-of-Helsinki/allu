@@ -1,10 +1,16 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.types.AttachmentType;
+
+import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
 public class AttachmentInfo {
   private Integer id;
   private Integer applicationId;
+  private Integer userId;
+  @NotNull
+  private AttachmentType type;
   private String name;
   private String description;
   private Long size;
@@ -27,6 +33,32 @@ public class AttachmentInfo {
 
   public void setApplicationId(Integer applicationId) {
     this.applicationId = applicationId;
+  }
+
+  /**
+   * Returns the id of the user who added the attachment.
+   *
+   * @return  the id of the user who added the attachment or <code>null</code> in case attachment was added by customer.
+   */
+  public Integer getUserId() {
+    return userId;
+  }
+
+  public void setUserId(Integer userId) {
+    this.userId = userId;
+  }
+
+  /**
+   * Returns the type of the attachment.
+   *
+   * @return  the type of the attachment.
+   */
+  public AttachmentType getType() {
+    return type;
+  }
+
+  public void setType(AttachmentType type) {
+    this.type = type;
   }
 
   /**

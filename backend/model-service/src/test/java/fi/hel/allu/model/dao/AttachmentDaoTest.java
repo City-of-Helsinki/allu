@@ -1,6 +1,8 @@
 package fi.hel.allu.model.dao;
 
+import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.testUtils.TestCommon;
 
@@ -32,9 +34,14 @@ public class AttachmentDaoTest {
   private AttachmentDao attachmentDao;
 
   @Autowired
+  private ApplicationDao applicationDao;
+
+  @Autowired
   TestCommon testCommon;
 
   private AttachmentInfo dummy;
+  private Application application;
+  private Application newApplication;
 
   @Rule
   public final ExpectedException exception = ExpectedException.none();
@@ -42,6 +49,9 @@ public class AttachmentDaoTest {
   @Before
   public void setup() throws Exception {
     testCommon.deleteAllData();
+
+    newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    application = applicationDao.insert(newApplication);
     // dummy will be used as a no-match info in some tests:
     dummy = newInfo();
     dummy.setName("NO MATCH");
@@ -70,16 +80,15 @@ public class AttachmentDaoTest {
   @Test
   public void testFindByApplication() throws Exception {
     // Setup: store a few attachments for various applications:
-    storeInitialAttachments();
-    // Add some extra attachments for application 25
-    AttachmentInfo info = newInfo();
-    info.setApplicationId(25);
+    List<AttachmentInfo> attachmentInfos = storeInitialAttachments();
+    // Add some extra attachments for test application
+    AttachmentInfo info = attachmentInfos.get(10);
     for (int i = 20; i < 22; ++i) {
       info.setName(String.format("Attachment_%d.txt", i));
       attachmentDao.insert(info, generateTestData(5432));
     }
-    // Now there should be attachments 10, 20, and 21 for application 25
-    List<AttachmentInfo> results = attachmentDao.findByApplication(25);
+    // Now there should be attachments 10, 20, and 21 for test application
+    List<AttachmentInfo> results = attachmentDao.findByApplication(info.getApplicationId());
     String expectedNames[] = { "Attachment_10.txt", "Attachment_20.txt", "Attachment_21.txt" };
     Assert.assertEquals(expectedNames.length,
         results.stream().mapToInt(a -> Arrays.asList(expectedNames).contains(a.getName()) ? 1 : 0).sum());
@@ -177,7 +186,7 @@ public class AttachmentDaoTest {
     AttachmentInfo info = newInfo();
     List<AttachmentInfo> stored = new ArrayList<>();
     for (int i = 0; i < 20; ++i) {
-      info.setApplicationId(15 + i);
+      info.setApplicationId(applicationDao.insert(newApplication).getId());
       info.setName(String.format("Attachment_%d.txt", i));
       info.setDescription(String.format("Attachment %d", i));
       stored.add(attachmentDao.insert(info, generateTestData(4321)));
@@ -187,7 +196,8 @@ public class AttachmentDaoTest {
 
   private AttachmentInfo newInfo() {
     AttachmentInfo info = new AttachmentInfo();
-    info.setApplicationId(123);
+    info.setType(AttachmentType.ADDED_BY_CUSTOMER);
+    info.setApplicationId(application.getId());
     info.setCreationTime(ZonedDateTime.now());
     info.setId(313);
     info.setName("Test_attachment.pdf");

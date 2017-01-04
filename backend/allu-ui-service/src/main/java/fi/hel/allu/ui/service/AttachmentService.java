@@ -1,18 +1,15 @@
 package fi.hel.allu.ui.service;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.AttachmentInfoJson;
+import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.ui.security.AlluUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -20,9 +17,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class AttachmentService {
@@ -32,11 +29,13 @@ public class AttachmentService {
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
+  private UserService userService;
 
   @Autowired
-  public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate) {
+  public AttachmentService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
+    this.userService = userService;
   }
 
   public List<AttachmentInfoJson> addAttachments(int id, AttachmentInfoJson[] infos, MultipartFile[] files)
@@ -52,7 +51,9 @@ public class AttachmentService {
   }
 
   public AttachmentInfoJson updateAttachment(int id, AttachmentInfoJson attachmentInfoJson) {
-    HttpEntity<AttachmentInfo> requestEntity = new HttpEntity<>(toAttachmentInfo(attachmentInfoJson));
+    AttachmentInfo attachmentInfo = toAttachmentInfo(attachmentInfoJson);
+    attachmentInfo.setUserId(resolveUserId());
+    HttpEntity<AttachmentInfo> requestEntity = new HttpEntity<>(attachmentInfo);
     ResponseEntity<AttachmentInfo> response = restTemplate.exchange(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_UPDATE), HttpMethod.PUT,
         requestEntity, AttachmentInfo.class, id);
@@ -64,6 +65,19 @@ public class AttachmentService {
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_FIND_BY_ID),
         AttachmentInfo.class, id);
     return toAttachmentInfoJson(response);
+  }
+
+  public List<AttachmentInfoJson> findAttachmentsForApplication(Integer applicationId) {
+    List<AttachmentInfoJson> resultList = new ArrayList<>();
+    ResponseEntity<AttachmentInfo[]> attachmentResult = restTemplate.getForEntity(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION),
+        AttachmentInfo[].class,
+        applicationId);
+    for (AttachmentInfo attachmentInfo : attachmentResult.getBody()) {
+      AttachmentInfoJson attachmentInfoJson = toAttachmentInfoJson(attachmentInfo);
+      resultList.add(attachmentInfoJson);
+    }
+    return resultList;
   }
 
   public void deleteAttachment(int id) {
@@ -87,6 +101,7 @@ public class AttachmentService {
       throws IOException {
     // Create the attachment info for model-service:
     AttachmentInfo toModel = toAttachmentInfo(info);
+    toModel.setUserId(resolveUserId());
     toModel.setApplicationId(applicationId);
     // Generate suitable multi-part request...
     MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
@@ -124,6 +139,7 @@ public class AttachmentService {
   private AttachmentInfo toAttachmentInfo(AttachmentInfoJson attachmentInfoJson) {
     AttachmentInfo result = new AttachmentInfo();
     result.setId(attachmentInfoJson.getId());
+    result.setType(attachmentInfoJson.getType());
     result.setName(attachmentInfoJson.getName());
     result.setDescription(attachmentInfoJson.getDescription());
     result.setCreationTime(attachmentInfoJson.getCreationTime());
@@ -135,6 +151,8 @@ public class AttachmentService {
   private AttachmentInfoJson toAttachmentInfoJson(AttachmentInfo attachmentInfo) {
     AttachmentInfoJson result = new AttachmentInfoJson();
     result.setId(attachmentInfo.getId());
+    result.setHandlerName(resolveRealName(attachmentInfo.getUserId()));
+    result.setType(attachmentInfo.getType());
     result.setName(attachmentInfo.getName());
     result.setDescription(attachmentInfo.getDescription());
     result.setCreationTime(attachmentInfo.getCreationTime());
@@ -142,4 +160,13 @@ public class AttachmentService {
     return result;
   }
 
+  private int resolveUserId() {
+    AlluUser alluUser = userService.getCurrentUser();
+    return userService.findUserByUserName(alluUser.getUsername()).getId();
+  }
+
+  private String resolveRealName(int userId) {
+    UserJson userJson = userService.findUserById(userId);
+    return userJson.getRealName();
+  }
 }

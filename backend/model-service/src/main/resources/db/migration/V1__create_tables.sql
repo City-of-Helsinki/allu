@@ -124,7 +124,9 @@ create table allu.application (
 
 create table allu.attachment (
    id serial primary key,
-   application_id integer, -- TODO: references allu.application,
+   application_id integer not null references allu.application(id),
+   user_id integer references allu.user(id),
+   type text not null,
    name text,
    description text,
    size bigint,

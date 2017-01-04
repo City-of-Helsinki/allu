@@ -2,8 +2,11 @@ package fi.hel.allu.model.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 
 import org.junit.Assert;
@@ -33,15 +36,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class AttachmentControllerTest {
 
+  private Application application;
+
   @Autowired
   WebTestCommon wtc;
 
   @Autowired
   ObjectMapper objectMapper;
 
+  @Autowired
+  TestCommon testCommon;
+
   @Before
   public void setup() throws Exception {
     wtc.setup();
+
+    application = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
+    ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
+    application = wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
   // Helper for inserting attachment info
@@ -136,7 +148,8 @@ public class AttachmentControllerTest {
 
   private AttachmentInfo newInfo() {
     AttachmentInfo info = new AttachmentInfo();
-    info.setApplicationId(123);
+    info.setApplicationId(application.getId());
+    info.setType(AttachmentType.ADDED_BY_CUSTOMER);
     info.setCreationTime(ZonedDateTime.now());
     info.setId(313);
     info.setName("Test_attachment.pdf");

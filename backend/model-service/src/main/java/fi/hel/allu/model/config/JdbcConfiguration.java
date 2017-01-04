@@ -50,6 +50,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToStatusType());
     configuration.register(new StringToCableInfoType());
     configuration.register(new StringToInvoiceUnit());
+    configuration.register(new StringToAttachmentType());
     return configuration;
   }
 

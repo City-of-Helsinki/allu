@@ -2,18 +2,14 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,6 +28,7 @@ public class ApplicationJsonService {
   private MetaService metaService;
   private UserService userService;
   private LocationService locationService;
+  private AttachmentService attachmentService;
 
   @Autowired
   public ApplicationJsonService(
@@ -43,7 +40,8 @@ public class ApplicationJsonService {
       ContactService contactService,
       MetaService metaService,
       UserService userService,
-      LocationService locationService
+      LocationService locationService,
+      AttachmentService attachmentService
   ) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
@@ -54,6 +52,7 @@ public class ApplicationJsonService {
     this.metaService = metaService;
     this.userService = userService;
     this.locationService = locationService;
+    this.attachmentService = attachmentService;
   }
 
   /**
@@ -80,21 +79,7 @@ public class ApplicationJsonService {
     if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
     }
-    applicationJson.setAttachmentList(findAttachmentsForApplication(applicationModel.getId()));
+    applicationJson.setAttachmentList(attachmentService.findAttachmentsForApplication(applicationModel.getId()));
     return applicationJson;
-  }
-
-  private List<AttachmentInfoJson> findAttachmentsForApplication(Integer applicationId) {
-    List<AttachmentInfoJson> resultList = new ArrayList<>();
-    ResponseEntity<AttachmentInfo[]> attachmentResult = restTemplate.getForEntity(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION),
-        AttachmentInfo[].class,
-        applicationId);
-    for (AttachmentInfo attachmentInfo : attachmentResult.getBody()) {
-      AttachmentInfoJson attachmentInfoJson = new AttachmentInfoJson();
-      applicationMapper.mapAttachmentInfoToJson(attachmentInfoJson, attachmentInfo);
-      resultList.add(attachmentInfoJson);
-    }
-    return resultList;
   }
 }

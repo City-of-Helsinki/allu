@@ -300,20 +300,6 @@ public class ApplicationMapper {
     return flatList;
   }
 
-  /**
-   * Map a model-domain AttachmentInfo to ui-domain AttachmentInfoJson
-   *
-   * @param attachmentInfoJson
-   * @param attachmentInfo
-   */
-  public void mapAttachmentInfoToJson(AttachmentInfoJson attachmentInfoJson, AttachmentInfo attachmentInfo) {
-    attachmentInfoJson.setId(attachmentInfo.getId());
-    attachmentInfoJson.setName(attachmentInfo.getName());
-    attachmentInfoJson.setDescription(attachmentInfo.getDescription());
-    attachmentInfoJson.setSize(attachmentInfo.getSize());
-    attachmentInfoJson.setCreationTime(attachmentInfo.getCreationTime());
-  }
-
   public void mapApplicantToJson(ApplicantJson applicantJson, Applicant applicant) {
     applicantJson.setId(applicant.getId());
     applicantJson.setType(applicant.getType());
