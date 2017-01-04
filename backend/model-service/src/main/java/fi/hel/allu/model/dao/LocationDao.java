@@ -105,7 +105,7 @@ public class LocationDao {
     return fxs.stream()
             .map(fx -> {
               GeometryCollection gc = Optional.ofNullable(fx.getGeometry())
-                .map(geometry -> toGeometryCollection(Arrays.asList(geometry)))
+                .map(geometry -> toGeometryCollectionIfNeeded(geometry))
                 .orElse(GeometryCollection.createEmpty());
 
               fx.setGeometry(gc);
@@ -128,6 +128,12 @@ public class LocationDao {
     }
     // store geometry's area to the location
     queryFactory.update(location).set(location.area, area).where(location.id.eq(locationId)).execute();
+  }
+
+  private GeometryCollection toGeometryCollectionIfNeeded(Geometry geometry) {
+    if (geometry instanceof GeometryCollection)
+      return (GeometryCollection) geometry;
+    return toGeometryCollection(Arrays.asList(geometry));
   }
 
   private GeometryCollection toGeometryCollection(List<Geometry> geometries) {

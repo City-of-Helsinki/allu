@@ -13,17 +13,19 @@ import org.geolatte.common.FeatureCollection;
 import org.geolatte.common.dataformats.json.jackson.JsonException;
 import org.geolatte.common.dataformats.json.jackson.JsonMapper;
 import org.geolatte.geom.Geometry;
+import org.geolatte.geom.GeometryCollection;
 import org.geolatte.geom.crs.CrsId;
 
 import javax.sql.DataSource;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
+import java.util.*;
 
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 
@@ -111,9 +113,20 @@ public class LocationGeometryReader {
         output.write(String.format("-- input file: %s\n", fileName).getBytes());
         String content = new String(Files.readAllBytes(Paths.get(fileName)), "UTF-8");
         FeatureCollection fc = lgr.parseJson(content);
+
+        // Group all locations with same name into same SingleLocation:
+        Map<String,SingleLocation> locations = new HashMap<>();
         for (Feature f : fc.getFeatures()) {
-          lgr.insertIntoDb(f, output);
+          storeLocation(locations, f);
         }
+        // Write insert clauses for all locations
+        locations.forEach((key, location) -> {
+          try {
+            lgr.insertIntoDb(location, output);
+          } catch (IOException e) {
+            throw new UncheckedIOException(e);
+          }
+        });
       }
       output.write(SQL_EPILOGUE.getBytes());
     }
@@ -149,8 +162,10 @@ public class LocationGeometryReader {
     return mapper.fromJson(jsonContents, FeatureCollection.class);
   }
 
-  // Generate SQL to insert geometries into database:
-  private void insertIntoDb(Feature feature, OutputStream output) throws IOException {
+  /*
+   * Get area, section, and geometry from a single feature and store it to locations:
+   */
+  private static void storeLocation(Map<String, SingleLocation> locations, Feature feature) {
     Geometry geometry = feature.getGeometry();
 
     String area = (String) feature.getProperty("Paikka");
@@ -163,7 +178,25 @@ public class LocationGeometryReader {
         area = String.format("%d%s ", bridge, side);
       }
     }
-    area += "%"; // To match the beginning
+    String key = String.format("|%s|%s|", area, section);
+    SingleLocation sl = locations.get(key);
+    if (sl == null) {
+      sl = new SingleLocation(area, section);
+      locations.put(key, sl);
+    }
+    sl.geometries.add(geometry);
+  }
+
+  /*
+   * Generate SQL to insert geometries into database:
+   */
+  private void insertIntoDb(SingleLocation location, OutputStream output) throws IOException {
+    Geometry geometry = new GeometryCollection(
+        location.geometries.toArray(new Geometry[location.geometries.size()]));
+
+    String area = location.area + "%"; // to match the beginning
+    String section = location.section;
+
     BooleanExpression sectionCondition;
     if (section == null) {
       sectionCondition = fixedLocation.section.isNull();
@@ -179,5 +212,20 @@ public class LocationGeometryReader {
     String insert = queryFactory.update(fixedLocation).set(fixedLocation.geometry, geometry)
         .where(fixedLocation.area.like(area).and(sectionCondition)).getSQL().get(0).getSQL();
     output.write((insert + ";\n").getBytes());
+  }
+
+  /*
+   * Class to collect all the geometries
+   */
+  private static class SingleLocation {
+    List<Geometry> geometries;
+    String area;
+    String section;
+
+    public SingleLocation(String area, String section) {
+      this.geometries = new ArrayList<>();
+      this.area = area;
+      this.section = section;
+    }
   }
 }
