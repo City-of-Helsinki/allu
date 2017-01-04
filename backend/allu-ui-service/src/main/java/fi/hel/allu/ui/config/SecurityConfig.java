@@ -3,6 +3,7 @@ package fi.hel.allu.ui.config;
 import fi.hel.allu.ui.security.StatelessAuthenticationFilter;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
 import fi.hel.allu.ui.security.TokenHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   public enum SECURITY_PATHS {
-    LOGIN("/auth/login");
+    LOGIN("/auth/login"), // TODO: remove or replace this with something once dummy login is removed
+    OAUTH2("/oauth2/");
 
     private final String path;
 
@@ -41,16 +43,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Value("${jwt.expiration.hours:12}")
   private String expirationHours;
 
+  @Autowired
+  private TokenAuthenticationService tokenAuthenticationService;
+
   @Override
   protected void configure(HttpSecurity http) throws Exception {
     http
         .authorizeRequests()
         // Allow anonymous logins
-        .antMatchers(SECURITY_PATHS.LOGIN.toString()).permitAll()
+        .antMatchers(SECURITY_PATHS.LOGIN.toString()).permitAll() // TODO: remove or replace this with something once dummy login is removed
+        .antMatchers(SECURITY_PATHS.OAUTH2.toString()).permitAll()
         .anyRequest()
         .authenticated()
         .and().addFilterBefore(
-        new StatelessAuthenticationFilter(tokenAuthenticationService()),
+        new StatelessAuthenticationFilter(tokenAuthenticationService),
         UsernamePasswordAuthenticationFilter.class)
         .csrf().disable();
   }
@@ -71,10 +77,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Bean
   public TokenHandler tokenHandler() {
     return new TokenHandler(secret, Integer.parseInt(expirationHours));
-  }
-
-  @Bean
-  public TokenAuthenticationService tokenAuthenticationService() {
-    return new TokenAuthenticationService();
   }
 }

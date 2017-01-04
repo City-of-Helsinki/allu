@@ -2,6 +2,7 @@ package fi.hel.allu.ui.security;
 
 import com.google.common.collect.Sets;
 import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.ui.domain.UserJson;
 import fi.hel.allu.ui.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
@@ -11,9 +12,7 @@ import org.junit.Test;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.junit.Assert.*;
@@ -21,7 +20,7 @@ import static org.junit.Assert.*;
 public class TokenHandlerTest {
   private TokenHandler tokenHandler;
   private UserService userService;
-  private AlluUser user;
+  private UserJson user;
   private String secret = "Allun salainen avain";
 
   @Before
@@ -30,13 +29,21 @@ public class TokenHandlerTest {
     List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
     roles.add(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
     roles.add(new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()));
-    user = new AlluUser("johndoe", roles, "email");
+    user = new UserJson(
+        1,
+        "johndoe",
+        "John Doe",
+        "email",
+        "Johtaja",
+        true,
+        Collections.emptyList(),
+        Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN));
   }
 
   @Test(expected = IllegalArgumentException.class)
   public void testCreateTokenWithoutPrinciple() {
     Set<GrantedAuthority> roles = Sets.newHashSet(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
-    AlluUser userNullId = new AlluUser(null, roles, "email");
+    UserJson userNullId = new UserJson();
     tokenHandler.createTokenForUser(userNullId);
   }
 

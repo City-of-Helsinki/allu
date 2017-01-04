@@ -8,8 +8,7 @@ export class CurrentUser {
   }
 
   static roles(): Option<Array<string>> {
-    return this.decode().map(token => token['alluRoles'])
-      .map(roles => roles.map(role => role['authority']));
+    return this.decode().map(token => token['alluRoles']);
   }
 
   static hasRole(role: string): boolean {

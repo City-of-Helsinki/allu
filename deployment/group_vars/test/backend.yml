@@ -1,5 +1,6 @@
 # add environment specific backend variables here
 
+oauth2.redirect.uri: http://185.26.49.172/oauth2/
 # process specific Java -Xmx settings for limiting memory usage. If nothing is specified here for a service, service will use the default
 # value specified elsewhere
 allu_service_memory_limit:

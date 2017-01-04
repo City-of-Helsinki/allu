@@ -7,7 +7,6 @@ import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.ProjectService;
 import fi.hel.allu.ui.service.ProjectServiceComposer;
-import fi.hel.allu.ui.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +31,6 @@ public class ProjectController {
   private ProjectServiceComposer projectServiceComposer;
   @Autowired
   private ApplicationServiceComposer applicationServiceComposer;
-  @Autowired
-  private SearchService searchService;
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
