@@ -4,18 +4,21 @@ import '../../../rxjs-extensions.ts';
 
 import {ProgressStep} from '../../../feature/progressbar/progressbar.component';
 import {Application} from '../../../model/application/application';
-import {Location} from '../../../model/common/location';
 import {MapUtil} from '../../../service/map/map.util.ts';
 import {SearchbarFilter} from '../../../service/searchbar-filter';
-import {LocationState} from '../../../service/application/location-state';
-import {ApplicationHub} from '../../../service/application/application-hub';
 import {MapHub} from '../../../service/map/map-hub';
 import {FixedLocation} from '../../../model/common/fixed-location';
-import {Some} from '../../../util/option';
+import {Some, Option} from '../../../util/option';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {Option} from '../../../util/option';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 import {ApplicationKind} from '../../../model/application/type/application-kind';
+import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationExtension} from '../../../model/application/type/application-extension';
+import {CableReport} from '../../../model/application/cable-report/cable-report';
+import {Event} from '../../../model/application/event/event';
+import {ShortTermRental} from '../../../model/application/short-term-rental/short-term-rental';
+import {ExcavationAnnouncement} from '../../../model/application/excavation-announcement/excavation-announcement';
+import {Note} from '../../../model/application/note/note';
 
 @Component({
   selector: 'type',
@@ -38,33 +41,19 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private geometry: GeoJSON.GeometryCollection;
 
   constructor(
-    private locationState: LocationState,
+    private applicationState: ApplicationState,
     private mapService: MapUtil,
     private router: Router,
     private route: ActivatedRoute,
-    private applicationHub: ApplicationHub,
     private mapHub: MapHub) {
-    this.application = new Application();
-    this.locationState.location = new Location();
   };
 
   ngOnInit() {
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .filter(application => application.id !== undefined)
-      .subscribe(application => {
-        this.application = application;
-        this.locationState.location = application.location || new Location();
-        this.geometry = application.location.geometry;
-        this.locationState.startDate = application.startTime;
-        this.locationState.endDate = application.endTime;
-        this.loadFixedLocationsForKind(ApplicationKind[application.kind]);
-        this.locationState.specifiers = application.extension.specifiers.map(s => ApplicationSpecifier[s]);
-      });
-
-    this.route.queryParams
-      .map((params: {relatedProject}) => params.relatedProject)
-      .subscribe(relatedProject => this.locationState.relatedProject = relatedProject);
+      this.application = this.applicationState.application;
+      this.geometry = this.application.location.geometry;
+      if (this.application.id) {
+        this.loadFixedLocationsForKind(ApplicationKind[this.application.kind]);
+      };
 
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
@@ -78,11 +67,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onApplicationTypeChange(type: ApplicationType) {
-    this.locationState.applicationType = type;
+    this.application.type = ApplicationType[type];
+    this.application.extension = this.createExtension(type);
   }
 
   onApplicationKindChange(kind: ApplicationKind) {
-    this.locationState.applicationKind = kind;
+    this.application.kind = ApplicationKind[kind];
     this.typeSelected = kind !== undefined;
 
     if (kind !== undefined) {
@@ -91,28 +81,23 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onApplicationSpecifierChange(specifiers: Array<ApplicationSpecifier>) {
-    this.locationState.specifiers = specifiers;
+    Some(this.application.extension).do(extension => extension.specifiers = specifiers);
   }
 
   searchUpdated(filter: SearchbarFilter) {
-    this.locationState.location.postalAddress.streetAddress = filter.search;
-    this.locationState.startDate = filter.startDate;
-    this.locationState.endDate = filter.endDate;
+    this.application.location.postalAddress.streetAddress = filter.search;
+    this.application.startTime = filter.startDate;
+    this.application.endTime = filter.endDate;
   }
 
   save() {
-    this.locationState.location.fixedLocationIds = this.selectedFixedLocations;
-    this.locationState.location.geometry = this.geometry;
+    this.application.location.fixedLocationIds = this.selectedFixedLocations;
+    this.application.location.geometry = this.geometry;
+    this.applicationState.application = this.application;
 
     if (this.application.id) {
-      // If there is an application to save the location data to
-      this.application.location = this.locationState.location;
-      this.application.startTime = this.locationState.startDate;
-      this.application.endTime = this.locationState.endDate;
-      this.application.extension.specifiers = this.locationState.specifiers.map(s => ApplicationSpecifier[s]);
-      this.applicationHub.save(this.application).subscribe(application => {
-        this.router.navigate(['/applications', application.id, 'summary']);
-      });
+      this.applicationState.save(this.application)
+        .subscribe(app => console.log('Application saved'));
     } else {
       this.router.navigate(['/applications/edit']);
     }
@@ -188,5 +173,31 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     Some(this.application.location).do(location => {
       this.selectedFixedLocations = location.fixedLocationIds;
     });
+  }
+
+  private createEmptyExtension(type: ApplicationType): ApplicationExtension {
+    switch (type) {
+      case ApplicationType.CABLE_REPORT:
+        return new CableReport();
+      case ApplicationType.EVENT:
+        return new Event();
+      case ApplicationType.SHORT_TERM_RENTAL:
+        return new ShortTermRental();
+      case ApplicationType.EXCAVATION_ANNOUNCEMENT:
+        return new ExcavationAnnouncement();
+      case ApplicationType.NOTE:
+        return new Note();
+      default:
+        throw new Error('Extension for ' + ApplicationType[type] + ' not implemented yet');
+    }
+  }
+
+  private createExtension(applicationType: ApplicationType): ApplicationExtension {
+    return Some(applicationType)
+      .map(type => this.createEmptyExtension(type))
+      .map(ext => {
+        ext.applicationType = ApplicationType[applicationType];
+        return ext;
+      }).orElse(undefined);
   }
 }

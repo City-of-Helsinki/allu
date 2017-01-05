@@ -31,7 +31,6 @@ import {ApplicationActionsComponent} from './info/application-actions.component'
 import {CableReportComponent} from './info/cable-report/cable-report.component';
 import {CableInfoComponent} from './info/cable-report/cable-info.component.ts';
 import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
-import {ApplicationState} from '../../service/application/application-state';
 import {NoteComponent} from './info/note/note.component';
 import {ApplicationInfoComponent} from './info/application-info.component';
 import {AttachmentComponent} from './info/attachment/attachment.component';
@@ -77,8 +76,7 @@ import {AttachmentComponent} from './info/attachment/attachment.component';
   providers: [
     AttachmentHub,
     ApplicationResolve,
-    AttachmentService,
-    ApplicationState
+    AttachmentService
   ],
   entryComponents: [
     DefaultTextModalComponent

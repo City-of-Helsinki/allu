@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 
 import {Application} from '../../../../model/application/application';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
@@ -26,36 +27,48 @@ export class NoteComponent implements OnInit {
   pickadateParams = PICKADATE_PARAMETERS;
   readonly: boolean;
 
+  private routeEvents: Subscription;
+
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private fb: FormBuilder,
               private applicationState: ApplicationState) {
   };
 
   ngOnInit(): any {
     this.initForm();
+    this.application = this.applicationState.application;
+    this.applicationForm.patchValue(NoteForm.from(this.application));
 
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.application = application;
+    UrlUtil.urlPathContains(this.route.parent, 'summary')
+      .filter(contains => contains)
+      .forEach(summary => {
+        this.readonly = summary;
+        this.applicationForm.disable();
+      });
 
-        UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-          this.readonly = summary;
-        });
-
-        this.applicationForm.patchValue(NoteForm.from(application));
-
-        if (this.readonly) {
-          this.applicationForm.disable();
+    this.routeEvents = this.router.events
+      .filter(event => event instanceof NavigationStart)
+      .subscribe(navStart => {
+        if (!this.readonly) {
+          this.applicationState.application = this.update(this.applicationForm.value);
         }
       });
   }
 
   ngOnDestroy(): any {
+    this.routeEvents.unsubscribe();
   }
 
   onSubmit(form: NoteForm) {
     this.submitPending = true;
+    let application = this.update(form);
+
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+  }
+
+  private update(form: NoteForm) {
     let application = this.application;
     application.name = form.name;
     application.uiStartTime = form.validityTimes.startTime;
@@ -63,9 +76,7 @@ export class NoteComponent implements OnInit {
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = NoteForm.to(form);
-
-    this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+    return application;
   }
 
   private initForm() {

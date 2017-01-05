@@ -1,12 +1,10 @@
 import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import moment = require('moment/moment');
 
 import {StructureMeta} from '../../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../../service/application/application-hub';
 import {Location} from '../../../../../model/common/location';
-import {Application} from '../../../../../model/application/application';
 import {Event} from '../../../../../model/application/event/event';
 import {EventDetailsForm} from './event-details.form';
 import {translations} from '../../../../../util/translations';
@@ -17,6 +15,7 @@ import {BillingType} from '../../../../../model/application/billing-type';
 import {EventNature} from '../../../../../model/application/event/event-nature';
 import {NoPriceReason} from '../../../../../model/application/no-price-reason';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
+import {ApplicationState} from '../../../../../service/application/application-state';
 
 @Component({
   selector: 'event-details',
@@ -37,28 +36,25 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;
 
-  constructor(private applicationHub: ApplicationHub, private route: ActivatedRoute, private fb: FormBuilder) {
-    applicationHub.metaData().subscribe(meta => this.metadataLoaded(meta));
+  constructor(private applicationHub: ApplicationHub, private applicationState: ApplicationState, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
     this.initForm();
+    this.applicationHub.loadMetaData('EVENT').subscribe(meta => this.metadataLoaded(meta));
+    let application = this.applicationState.application;
 
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.applicationId = application.id;
+    this.applicationId = application.id;
 
-        let event = <Event>application.extension || new Event();
-        event.eventStartTime = event.eventStartTime || application.startTime;
-        event.eventEndTime = event.eventEndTime || application.endTime;
-        event.applicationType = ApplicationType[ApplicationType.EVENT];
-        this.eventForm.patchValue(EventDetailsForm.fromEvent(application, event));
+    let event = <Event>application.extension || new Event();
+    event.eventStartTime = event.eventStartTime || application.startTime;
+    event.eventEndTime = event.eventEndTime || application.endTime;
+    event.applicationType = ApplicationType[ApplicationType.EVENT];
+    this.eventForm.patchValue(EventDetailsForm.fromEvent(application, event));
 
-        if (this.readonly) {
-          this.eventForm.disable();
-        }
-      });
+    if (this.readonly) {
+      this.eventForm.disable();
+    }
   }
 
   ngAfterViewInit(): void {

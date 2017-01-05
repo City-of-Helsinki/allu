@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
@@ -23,7 +24,7 @@ import {ApplicationState} from '../../../../service/application/application-stat
   template: require('./short-term-rental.component.html'),
   styles: []
 })
-export class ShortTermRentalComponent implements OnInit {
+export class ShortTermRentalComponent implements OnInit, OnDestroy {
 
   path: string;
   application: Application;
@@ -35,8 +36,10 @@ export class ShortTermRentalComponent implements OnInit {
   readonly: boolean;
 
   private meta: StructureMeta;
+  private routeEvents: Subscription;
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private fb: FormBuilder,
               private applicationHub: ApplicationHub,
               private mapHub: MapHub,
@@ -46,27 +49,30 @@ export class ShortTermRentalComponent implements OnInit {
   ngOnInit(): any {
     this.initForm();
 
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.application = application;
+    this.application = this.applicationState.application;
+    let rental = <ShortTermRental>this.application.extension || new ShortTermRental();
+    this.rentalForm.patchValue(ShortTermRentalDetailsForm.from(this.application, rental));
 
-        this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
+    this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
 
-        UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-          this.readonly = summary;
-        });
+    UrlUtil.urlPathContains(this.route.parent, 'summary')
+      .filter(contains => contains)
+      .forEach(summary => {
+      this.readonly = summary;
+      this.applicationForm.disable();
+    });
 
-        let rental = <ShortTermRental>application.extension || new ShortTermRental();
-        this.rentalForm.patchValue(ShortTermRentalDetailsForm.from(application, rental));
-
-        if (this.readonly) {
-          this.applicationForm.disable();
+    this.routeEvents = this.router.events
+      .filter(event => event instanceof NavigationStart)
+      .subscribe(navStart => {
+        if (!this.readonly) {
+          this.applicationState.application = this.update(this.applicationForm.value);
         }
       });
   }
 
   ngOnDestroy(): any {
+    this.routeEvents.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -78,6 +84,13 @@ export class ShortTermRentalComponent implements OnInit {
 
   onSubmit(form: ShortTermRentalForm) {
     this.submitPending = true;
+    let application = this.update(form);
+
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+  }
+
+  private update(form: ShortTermRentalForm): Application {
     let application = this.application;
     application.metadata = this.meta;
     application.name = form.details.name;
@@ -90,10 +103,9 @@ export class ShortTermRentalComponent implements OnInit {
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = ShortTermRentalDetailsForm.to(form.details);
-
-    this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+    return application;
   }
+
 
   private initForm() {
     this.applicationForm = this.fb.group({});

@@ -8,7 +8,6 @@ import {AlluCommonModule} from '../../common/allu-common.module';
 import {SearchBarModule} from '../../searchbar/searchbar.module';
 import {MapModule} from '../../map/map.module';
 import {ProgressBarModule} from '../../progressbar/progressbar.module';
-import {LocationState} from '../../../service/application/location-state';
 import {TypeModule} from '../type/type.module';
 
 @NgModule({
@@ -26,16 +25,12 @@ import {TypeModule} from '../type/type.module';
     LocationComponent
   ],
   providers: [
-    LocationState
   ]
 })
 export class LocationModule {
   static forRoot(): ModuleWithProviders {
     return {
-      ngModule: LocationModule,
-      providers: [
-        LocationState
-      ]
+      ngModule: LocationModule
     };
   }
 }

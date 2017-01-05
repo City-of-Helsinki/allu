@@ -1,13 +1,10 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 
-import {Application} from '../../../model/application/application';
 import {ApplicationType, applicationTypes, ApplicationTypeStructure} from '../../../model/application/type/application-type';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 import {Some} from '../../../util/option';
 import {ApplicationKind} from '../../../model/application/type/application-kind';
-import {ArrayUtil} from '../../../util/array-util';
-import {findTranslation} from '../../../util/translations';
+import {ApplicationState} from '../../../service/application/application-state';
 
 @Component({
   selector: 'application-type',
@@ -26,20 +23,17 @@ export class TypeComponent implements OnInit {
   specifierNames = [];
   selectedSpecifiers: Array<string> = [];
 
-  constructor(private route: ActivatedRoute) {};
+  constructor(private applicationState: ApplicationState) {};
 
   ngOnInit(): any {
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.type = this.applicationTypes.find(types => types.containsKind(ApplicationKind[application.kind]));
-        this.kindNames = this.type
-          ? this.type.applicationKindNames
-          : [];
-        this.applicationKind = application.kind;
-        this.kindSelection(application.kind);
-        this.selectedSpecifiers = Some(application.extension).map(ext => ext.specifiers).orElse([]);
-      });
+    let application = this.applicationState.application;
+    this.type = this.applicationTypes.find(types => types.containsKind(ApplicationKind[application.kind]));
+    this.kindNames = this.type
+      ? this.type.applicationKindNames
+      : [];
+    this.applicationKind = application.kind;
+    this.kindSelection(application.kind);
+    this.selectedSpecifiers = Some(application.extension).map(ext => ext.specifiers).orElse([]);
   };
 
   typeSelection(value: string) {

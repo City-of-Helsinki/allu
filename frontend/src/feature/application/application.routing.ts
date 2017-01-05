@@ -10,55 +10,20 @@ import {AttachmentsComponent} from './info/attachment/attachments.component';
 
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info' },
-  {
-    path: 'info',
-    component: ApplicationInfoComponent,
-    canActivate: [AuthGuard],
-    resolve: { application: ApplicationResolve }
-  },
-  {
-    path: 'attachments',
-    component: AttachmentsComponent,
-    canActivate: [AuthGuard],
-    resolve: { application: ApplicationResolve }
-  }
+  { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard] },
+  { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard] }
 ];
 
 export const applicationRoutes: Routes = [
-  { path: 'applications', canActivate: [AuthGuard], children: [
+  { path: 'applications', canActivate: [AuthGuard], resolve: { application: ApplicationResolve }, children: [
     { path: '', canActivate: [AuthGuard], redirectTo: 'search', pathMatch: 'full' },
     { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
-    {
-      path: 'location',
-      component: LocationComponent,
-      canActivate: [AuthGuard],
-      resolve: { application: ApplicationResolve } },
-    {
-      path: 'edit',
-      component: ApplicationComponent,
-      canActivate: [AuthGuard],
-      resolve: { application: ApplicationResolve },
-      children: applicationTabs
-    }
+    { path: 'location', component: LocationComponent, canActivate: [AuthGuard]},
+    { path: 'edit', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs }
   ]},
-  { path:  'applications/:id', canActivate: [AuthGuard], children: [
-    { path: 'location',
-      component: LocationComponent,
-      canActivate: [AuthGuard],
-      resolve: { application: ApplicationResolve }},
-    {
-      path: 'edit',
-      component: ApplicationComponent,
-      canActivate: [AuthGuard],
-      resolve: { application: ApplicationResolve },
-      children: applicationTabs
-    },
-    {
-      path: 'summary',
-      component: ApplicationComponent,
-      canActivate: [AuthGuard],
-      resolve: { application: ApplicationResolve },
-      children: applicationTabs
-    }
+  { path:  'applications/:id', canActivate: [AuthGuard], resolve: { application: ApplicationResolve }, children: [
+    { path: 'location', component: LocationComponent, canActivate: [AuthGuard] },
+    { path: 'edit', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs },
+    { path: 'summary', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs }
   ]}
 ];

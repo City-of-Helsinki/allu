@@ -18,7 +18,7 @@
       <div class="col s5">
         {{attachment.description}}
       </div>
-      <div class="col s1">
+      <div class="col s1" *ngIf="attachment.id !== undefined">
         <i class="material-icons clickable right-align" (click)="download(attachment)">file_download</i>
       </div>
   </li>

@@ -1,23 +1,24 @@
 import {Injectable} from '@angular/core';
-import {Router, Resolve, ActivatedRouteSnapshot} from '@angular/router';
+import {Resolve, ActivatedRouteSnapshot} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
-import {ApplicationHub} from '../../service/application/application-hub';
-import {LocationState} from '../../service/application/location-state';
 import {Some} from '../../util/option';
+import {ApplicationState} from '../../service/application/application-state';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
-  constructor(private applicationHub: ApplicationHub, private locationState: LocationState) {}
+  constructor(private applicationState: ApplicationState) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Application> {
-    let appId = Some(route.params['id']).orElse(route.parent.params['id']);
+    Some(route.queryParams)
+      .map((params: {relatedProject}) => params.relatedProject)
+      .do(relatedProject => this.applicationState.relatedProject = relatedProject);
 
-    return Some(appId)
+    return Some(route.params['id'])
       .map(id => Number(id))
-      .map(id => this.applicationHub.getApplication(id))
-      .orElse(Observable.of(this.locationState.createApplication()));
+      .map(id => this.applicationState.load(id))
+      .orElse(Observable.of(new Application()));
   }
 }

@@ -28,6 +28,7 @@ import {UserService} from '../../service/user/user-service';
 import {AdminModule} from '../admin/admin.module';
 import {ProjectModule} from '../project/project.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
+import {ApplicationState} from '../../service/application/application-state';
 
 
 @NgModule({
@@ -64,6 +65,7 @@ import {SidebarModule} from '../sidebar/sidebar.module';
     MapHub,
     UIStateHub,
     AuthGuard,
+    ApplicationState,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({

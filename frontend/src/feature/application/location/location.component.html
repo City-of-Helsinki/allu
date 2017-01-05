@@ -10,12 +10,12 @@
       <md-card-title>Sijainti</md-card-title>
       <md-card-content>
         <div class="row">
-          <searchbar [addressSearch]="locationState.location.postalAddress.streetAddress"
-                     [startDate]="locationState.startDate" [endDate]="locationState.endDate"
+          <searchbar [addressSearch]="application.location.postalAddress.streetAddress"
+                     [startDate]="application.startDate" [endDate]="application.endDate"
                      (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
           <div class="col m12">
             <div class="input-field col m12">
-              <input id="info" type="text" class="" [(ngModel)]="locationState.location.info">
+              <input id="info" type="text" class="" [(ngModel)]="application.location.info">
               <label for="info">Lisätietoja paikasta</label>
             </div>
             <div *ngIf="editedItemCount > 0" class="input-field col m10">
@@ -40,7 +40,7 @@
               </div>
             </div>
             <div class="input-field col m2">
-              <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="locationState.location.uiArea">
+              <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="application.location.uiArea">
               <label for="area">Alueen pinta-ala</label>
             </div>
           </div>

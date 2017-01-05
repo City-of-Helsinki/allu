@@ -5,6 +5,7 @@ import {ProgressStep} from '../../progressbar/progressbar.component.ts';
 import {UrlUtil} from '../../../util/url.util.ts';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {Application} from '../../../model/application/application';
+import {ApplicationState} from '../../../service/application/application-state';
 
 @Component({
   selector: 'application',
@@ -18,15 +19,12 @@ export class ApplicationComponent implements OnInit {
   progressStep: ProgressStep;
   application: Application;
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private route: ActivatedRoute, private router: Router, private applicationState: ApplicationState) {
+  }
 
   ngOnInit(): void {
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.application = application;
-        this.verifyTypeExists(ApplicationType[application.type]);
-      });
+    this.application = this.applicationState.application;
+    this.verifyTypeExists(ApplicationType[this.application.type]);
 
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
       this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;

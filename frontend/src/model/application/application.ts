@@ -59,7 +59,9 @@ export class Application {
     public calculatedPrice?: number,
     public priceOverride?: number,
     public priceOverrideReason?: string) {
+    this.location = location || new Location();
     this.contactList = contactList || [new Contact()];
+    this.attachmentList = attachmentList || [];
   }
 
   /*
