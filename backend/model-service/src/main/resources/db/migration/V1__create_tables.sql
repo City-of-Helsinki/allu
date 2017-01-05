@@ -34,31 +34,32 @@ create table allu.outdoor_pricing (
     area_extra_charge_limits double precision[]        -- area limits for the area extra charges
     );
 
-create table allu.location (
-   id serial primary key,
-   street_address text,
-   postal_code text,
-   city text,
-   area double precision,
-   area_override double precision );
-
-create table allu.location_flids (
-    id serial primary key,
-    location_id integer references allu.location(id),
-    fixed_location_id integer references allu.fixed_location(id) );
-
 create table allu.city_district (
   id serial primary key,
   district_id integer not null unique,
   name text,
   geometry geometry(GEOMETRY, 3879));
 
-create table allu.geometry (
+create table allu.location (
+   id serial primary key,
+   street_address text,
+   postal_code text,
+   city text,
+   area double precision,
+   area_override double precision,
+   district_id integer references allu.city_district(id),
+   district_id_override integer references allu.city_district(id) );
+
+create table allu.location_flids (
+    id serial primary key,
+    location_id integer references allu.location(id),
+    fixed_location_id integer references allu.fixed_location(id) );
+
+create table allu.location_geometry (
    id serial primary key,
    geometry geometry(GEOMETRY, 3879),
    location_id integer references allu.location(id) );
 
--- TODO: reference to city districts (kaupunginosat) is missing. Add when support for districts is added elsewhere
 create table allu.project (
     id serial primary key,
     parent_id integer references allu.project(id),

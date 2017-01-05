@@ -366,6 +366,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for fetching the list of city districts.
+   */
+  public String getCityDistrictUrl() {
+    return getModelServiceUrl("/locations/city-district");
+  }
+
+  /**
    * @return url for fetching projects by ids.
    */
   public String getProjectsByIdUrl() {

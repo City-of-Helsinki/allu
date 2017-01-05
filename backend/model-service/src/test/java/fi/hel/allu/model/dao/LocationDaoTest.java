@@ -26,9 +26,7 @@ import java.util.TreeSet;
 
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -181,6 +179,52 @@ public class LocationDaoTest {
     List<FixedLocation> queryResult = locationDao.getFixedLocationList();
     assertEquals(3, queryResult.size());
     assertEquals(1, queryResult.stream().filter(fl -> fl.getArea().equals("Kauppatori")).count());
+  }
+
+  // Polygon that's mostly in Herttoniemi:
+  private static final Polygon2DToken herttoniemi_polygon = polygon(
+      ring(c(25502404.097045037895441, 6675352.16425826959312), c(25502772.543876249343157, 6675370.854831204749644),
+          c(25502767.204117525368929, 6675095.857257002033293), c(25502393.421108055859804, 6675101.196953509002924),
+          c(25502404.097045037895441, 6675352.16425826959312)));
+
+  @Test
+  public void testFindDistrictOnInsert() {
+    Location location = new Location();
+    location.setStreetAddress("Testiosoite 1");
+    location.setGeometry(geometrycollection(3879, herttoniemi_polygon));
+
+    Location inserted = locationDao.insert(location);
+
+    // Check that the location now has a district ID:
+    Integer districtId = inserted.getDistrictId();
+    assertNotNull(districtId);
+
+    // Make sure the district is Herttoniemi:
+    String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getDistrictId() == districtId)
+        .map(d -> d.getName()).findFirst().orElse("NOT FOUND");
+    assertEquals("HERTTONIEMI", districtName);
+  }
+
+  @Test
+  public void testFindDistrictOnUpdate() {
+
+    Location location = new Location();
+    location.setStreetAddress("Testiosoite 1");
+
+    Location inserted = locationDao.insert(location);
+    assertNull(inserted.getDistrictId());
+
+    inserted.setGeometry(geometrycollection(3879, herttoniemi_polygon));
+    inserted = locationDao.update(inserted.getId(), inserted);
+
+    // Check that the location now has a district ID:
+    Integer districtId = inserted.getDistrictId();
+    assertNotNull(districtId);
+
+    // Make sure the district is Herttoniemi:
+    String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getDistrictId() == districtId)
+        .map(d -> d.getName()).findFirst().orElse("NOT FOUND");
+    assertEquals("HERTTONIEMI", districtName);
   }
 
 }

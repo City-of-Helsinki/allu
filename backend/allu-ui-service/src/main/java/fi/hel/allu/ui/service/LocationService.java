@@ -1,8 +1,10 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.CityDistrictInfo;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.CityDistrictInfoJson;
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.domain.PostalAddressJson;
@@ -112,6 +114,14 @@ public class LocationService {
     return resultList;
   }
 
+  public List<CityDistrictInfoJson> getCityDistrictList() {
+    ResponseEntity<CityDistrictInfo[]> queryResult = restTemplate
+        .getForEntity(applicationProperties.getCityDistrictUrl(), CityDistrictInfo[].class);
+    List<CityDistrictInfoJson> resultList = Arrays.stream(queryResult.getBody()).map(LocationService::mapToJson)
+        .collect(Collectors.toList());
+    return resultList;
+  }
+
   private Location createLocationModel(LocationJson locationJson) {
     Location location = new Location();
     if (locationJson != null && locationJson.getId() != null) {
@@ -126,6 +136,8 @@ public class LocationService {
     location.setArea(locationJson.getArea());
     location.setAreaOverride(locationJson.getAreaOverride());
     location.setFixedLocationIds(locationJson.getFixedLocationIds());
+    location.setDistrictId(locationJson.getDistrictId());
+    location.setDistrictIdOverride(locationJson.getDistrictIdOverride());
     return location;
   }
 
@@ -140,6 +152,8 @@ public class LocationService {
     locationJson.setArea(location.getArea());
     locationJson.setAreaOverride(location.getAreaOverride());
     locationJson.setFixedLocationIds(location.getFixedLocationIds());
+    locationJson.setDistrictId(location.getDistrictId());
+    locationJson.setDistrictIdOverride(location.getDistrictIdOverride());
   }
 
   private FixedLocationJson mapToFixedLocationJson(FixedLocation fixedLocation) {
@@ -151,5 +165,12 @@ public class LocationService {
     fixedLocationJson.setGeometry(fixedLocation.getGeometry());
 
     return fixedLocationJson;
+  }
+
+  private static CityDistrictInfoJson mapToJson(CityDistrictInfo cityDistrictInfo) {
+    CityDistrictInfoJson result = new CityDistrictInfoJson();
+    result.setDistrictId(cityDistrictInfo.getDistrictId());
+    result.setName(cityDistrictInfo.getName());
+    return result;
   }
 }
