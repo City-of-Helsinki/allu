@@ -2,16 +2,21 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.domain.CityDistrict;
+import fi.hel.allu.model.domain.CityDistrictInfo;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/locations")
@@ -44,5 +49,25 @@ public class LocationController {
   @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
   public ResponseEntity<List<FixedLocation>> getFixedLocationList() {
     return new ResponseEntity<>(locationDao.getFixedLocationList(), HttpStatus.OK);
+  }
+
+  /**
+   * Get the list of known city districts.
+   *
+   * @return city district list
+   */
+  @RequestMapping(value = "/city-district", method = RequestMethod.GET)
+  public ResponseEntity<List<CityDistrictInfo>> getCityDistrictList() {
+    List<CityDistrictInfo> result = locationDao.getCityDistrictList().stream().map(LocationController::mapToInfo)
+        .collect(Collectors.toList());
+    return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
+  // Make a stripped-down view of a city district: only the district ID + name.
+  private static CityDistrictInfo mapToInfo(CityDistrict cityDistrict) {
+    CityDistrictInfo result = new CityDistrictInfo();
+    result.setDistrictId(cityDistrict.getDistrictId());
+    result.setName(cityDistrict.getName());
+    return result;
   }
 }

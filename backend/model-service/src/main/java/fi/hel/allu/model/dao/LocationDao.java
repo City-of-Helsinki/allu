@@ -1,12 +1,21 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
+import fi.hel.allu.QCityDistrict;
+import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.domain.CityDistrict;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
 
@@ -23,6 +32,7 @@ import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationFlids.locationFlids;
@@ -113,6 +123,12 @@ public class LocationDao {
             }).collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
+  public List<CityDistrict> getCityDistrictList() {
+    return queryFactory.select(bean(CityDistrict.class, QCityDistrict.cityDistrict.all()))
+        .from(QCityDistrict.cityDistrict).fetch();
+  }
+
   private void setGeometry(int locationId, Geometry geometry) {
     double area = 0.0;
     if (geometry != null) {
@@ -128,8 +144,10 @@ public class LocationDao {
       }
       area = getArea(locationId);
     }
-    // store geometry's area to the location
-    queryFactory.update(location).set(location.area, area).where(location.id.eq(locationId)).execute();
+    // store geometry's area and district id to the location
+    queryFactory.update(location).set(location.area, area)
+        .set(location.districtId, findDistrict(locationId).orElse(null))
+        .where(location.id.eq(locationId)).execute();
   }
 
   private GeometryCollection toGeometryCollectionIfNeeded(Geometry geometry) {
@@ -184,4 +202,55 @@ public class LocationDao {
     logger.debug("Resulting geometries: {}", collOut.asText());
     return collOut;
   }
+
+  /*
+   * Find location's district and return its ID
+   */
+  private Optional<Integer> findDistrict(int locationId) {
+
+    // The following SQL finds the district that has the largest overlap area
+    // with the application when application's location_id is known:
+
+    // with appGeom as
+    // (select st_union(g.geometry) as geom
+    // from allu.location_geometry as g where g.location_id = {0})
+    // select st_area(ST_Intersection(d.geometry, (select geom from appGeom)))
+    // as area,
+    // d.district_id from allu.city_district as d
+    // where ST_Intersects(d.geometry, (select geom from appGeom)) order by area
+    // desc
+    // limit 1
+
+    // This code creates the query using querydsl:
+
+    // alias handle for the "WITH" clause:
+    PathBuilder<Tuple> appGeom = new PathBuilder<>(Tuple.class, "appGeom");
+    // reference to the table allu.location_geometry as "lg":
+    QLocationGeometry geo = new QLocationGeometry("lg", "allu", "location_geometry");
+
+    // The SQL query for the "with" clause:
+    Optional<Tuple> result = Optional
+        .ofNullable(
+            queryFactory.query()
+                .with(appGeom,
+                    SQLExpressions
+                        .select(Expressions.simpleTemplate(Geometry.class, "st_union(lg.geometry)").as("geom")).from(
+                            geo)
+                        .where(
+                            geo.locationId.eq(locationId)))
+                .select(
+                    Expressions
+                        .simpleTemplate(Float.class, "st_area({0})",
+                            cityDistrict.geometry.intersection(
+                                SQLExpressions.select(Expressions.path(Geometry.class, "geom")).from(appGeom)))
+                        .as("area"),
+                    cityDistrict.districtId)
+                .from(cityDistrict)
+                .where(cityDistrict.geometry
+                    .intersects(SQLExpressions.select(Expressions.path(Geometry.class, "geom")).from(appGeom)))
+                .orderBy(new OrderSpecifier<>(Order.DESC, Expressions.stringPath("area"))).fetchFirst());
+
+    return result.map(r -> r.get(1, Integer.class));
+  }
+
 }
