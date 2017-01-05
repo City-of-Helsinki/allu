@@ -1,0 +1,37 @@
+<h1>Liitteet</h1>
+<ul class="slim-card-list">
+  <li class="slim-card" *ngFor="let attachment of attachments; let i = index;">
+      <div class="col s1">
+        <div class="clickable" (click)="remove(i, attachment)"><i class="material-icons">clear</i></div>
+      </div>
+      <div class="col s3">
+        <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
+      </div>
+      <div class="col s1">
+        <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
+        <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
+
+      </div>
+      <div class="col s1">
+        {{attachment.uiCreationTime}}
+      </div>
+      <div class="col s5">
+        {{attachment.description}}
+      </div>
+      <div class="col s1">
+        <i class="material-icons clickable right-align" (click)="download(attachment)">file_download</i>
+      </div>
+  </li>
+</ul>
+
+<div class="row" *ngFor="let attachment of editableAttachments; let i = index;">
+  <div class="col m11">
+    <attachment [applicationId]="application.id" [attachment]="attachment"
+                (onCancel)="cancel(i)" (onSave)="save(i, $event)"></attachment>
+  </div>
+</div>
+<div class="row">
+  <div class="col m11 col-centered">
+    <a class="btn-floating btn-huge waves-effect waves-light" (click)="addNewAttachment()"><i class="material-icons">add</i></a>
+  </div>
+</div>

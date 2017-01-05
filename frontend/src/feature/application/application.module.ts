@@ -1,8 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdCardModule, MdToolbarModule, MdProgressBarModule, MdDialogModule} from '@angular/material';
-import {FILE_UPLOAD_DIRECTIVES} from 'ng2-file-upload';
+import {MdCardModule, MdToolbarModule, MdProgressBarModule, MdDialogModule, MdSlideToggleModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -15,11 +14,11 @@ import {FileSelectDirective} from './info/attachment/file-select.directive';
 
 import {ApplicationComponent} from './info/application.component.ts';
 import {EventComponent} from './info/event/event.component';
-import {ApplicationAttachmentComponent} from './info/attachment/application-attachment.component';
+import {AttachmentsComponent} from './info/attachment/attachments.component';
 import {LoadingComponent} from '../loading/loading.component';
 import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
-import {ApplicationAttachmentHub} from './info/attachment/application-attachment-hub';
+import {AttachmentHub} from './info/attachment/attachment-hub';
 import {ApplicantComponent} from './info/applicant/applicant.component';
 import {ContactComponent} from './info/contact/contact.component';
 import {EventDetailsComponent} from './info/event/details/event-details.component.ts';
@@ -35,6 +34,7 @@ import {DefaultTextModalComponent} from './default-text/default-text-modal.compo
 import {ApplicationState} from '../../service/application/application-state';
 import {NoteComponent} from './info/note/note.component';
 import {ApplicationInfoComponent} from './info/application-info.component';
+import {AttachmentComponent} from './info/attachment/attachment.component';
 
 
 @NgModule({
@@ -47,6 +47,7 @@ import {ApplicationInfoComponent} from './info/application-info.component';
     MdToolbarModule,
     MdProgressBarModule,
     MdDialogModule,
+    MdSlideToggleModule,
     MapModule,
     ProgressBarModule,
     LocationModule,
@@ -61,9 +62,9 @@ import {ApplicationInfoComponent} from './info/application-info.component';
     CableReportComponent,
     CableInfoComponent,
     ExcavationAnnouncementComponent,
-    ApplicationAttachmentComponent,
+    AttachmentsComponent,
+    AttachmentComponent,
     ApplicationActionsComponent,
-    FILE_UPLOAD_DIRECTIVES,
     FileSelectDirective,
     LoadingComponent,
     ApplicantComponent,
@@ -74,7 +75,7 @@ import {ApplicationInfoComponent} from './info/application-info.component';
     NoteComponent
   ],
   providers: [
-    ApplicationAttachmentHub,
+    AttachmentHub,
     ApplicationResolve,
     AttachmentService,
     ApplicationState

@@ -1,15 +1,19 @@
+import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {FileUploader} from 'ng2-file-upload';
-import {AttachmentInfo} from '../model/application/attachment-info';
+import {AttachmentInfo} from '../model/application/attachment/attachment-info';
+import {HttpUtil, HttpResponse} from '../util/http.util';
+import {ResponseContentType} from '@angular/http';
 
 @Injectable()
 export class AttachmentService {
 
   private static uploadUrl = '/api/applications/appId/attachments';
+  private static attachmentUrl = '/api/applications/attachments/';
 
-  constructor() {}
+  constructor(private authHttp: AuthHttp) {}
 
   public uploadFiles(applicationId: number, attachments: AttachmentInfo[]): Observable<number> {
     let uploadSubject = new Subject<number>();
@@ -29,6 +33,19 @@ export class AttachmentService {
     }
 
     return uploadSubject.asObservable();
+  }
+
+  remove(attachmentId: number): Observable<HttpResponse> {
+    let url = AttachmentService.attachmentUrl + attachmentId;
+    return this.authHttp.delete(url)
+      .map(response => HttpUtil.extractHttpResponse(response));
+  }
+
+  download(attachmentId: number, name: string): Observable<File> {
+    let url = AttachmentService.attachmentUrl + attachmentId + '/data';
+    let options = {responseType: ResponseContentType.Blob };
+    return this.authHttp.get(url, options)
+      .map(response => new File([response.blob()], name));
   }
 
   private mapDescription(file: any, description: string): any {
