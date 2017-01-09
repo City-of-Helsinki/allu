@@ -4,47 +4,67 @@ import {Observable} from 'rxjs/Observable';
 
 import {ApplicationHub} from './application-hub';
 import {Application} from '../../model/application/application';
-import {LocationState} from './location-state';
 import {Some} from '../../util/option';
 import {ProjectHub} from '../project/project-hub';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentHub} from '../../feature/application/info/attachment/attachment-hub';
 import {Subject} from 'rxjs';
-import {HttpResponse} from '../../util/http.util';
+import {HttpResponse, HttpStatus} from '../../util/http.util';
 
 
 @Injectable()
 export class ApplicationState {
-  private pendingAttachments: Array<AttachmentInfo> = [];
+  public relatedProject: number;
+
+  private _application = new Application();
+  private _pendingAttachments: Array<AttachmentInfo> = [];
 
   constructor(private router: Router,
               private applicationHub: ApplicationHub,
               private projectHub: ProjectHub,
-              private locationState: LocationState,
-              private attachmentHub: AttachmentHub) {}
+              private attachmentHub: AttachmentHub) {
+  }
+
+  get application(): Application {
+    return this._application;
+  }
+
+  set application(value: Application) {
+    this._application = value;
+  }
+
+  get pendingAttachments(): Array<AttachmentInfo> {
+    return this._pendingAttachments;
+  }
 
   addAttachment(attachment: AttachmentInfo) {
-    this.pendingAttachments.push(attachment);
+    this._pendingAttachments.push(attachment);
   }
 
   saveAttachment(applicationId: number, attachment: AttachmentInfo): Observable<AttachmentInfo> {
     let result = new Subject<AttachmentInfo>();
 
-    // TODO: use saved attachment as return value
     this.attachmentHub.upload(applicationId, [attachment])
       .subscribe(
-        progress => console.log('Upload progress', progress),
+        items => result.next(items[0]),
         error => result.error(error),
-        () =>  {
-          result.next(attachment);
-          result.complete();
-        });
+        () => result.complete());
 
     return result;
   }
 
-  removeAttachment(attachmentId: number): Observable<HttpResponse> {
-    return this.attachmentHub.remove(attachmentId);
+  removeAttachment(index: number, attachmentId: number): Observable<HttpResponse> {
+    if (attachmentId) {
+      return this.attachmentHub.remove(attachmentId);
+    } else {
+      this._pendingAttachments.splice(index, 1);
+      return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
+    }
+  }
+
+  load(id: number): Observable<Application> {
+    return this.applicationHub.getApplication(id)
+      .do(app => this.application = app);
   }
 
   save(application: Application): Observable<Application> {
@@ -55,14 +75,14 @@ export class ApplicationState {
   private saveAttachments(application: Application): Observable<Application> {
     let result = new Subject<Application>();
 
-    this.attachmentHub.upload(application.id, this.pendingAttachments)
+    this.attachmentHub.upload(application.id, this._pendingAttachments)
       .subscribe(
-        progress => console.log('Upload progress', progress),
+        items => { /* Nothing to do with saved items */ },
         error => result.error(error),
         () => {
           this.saved(application).subscribe(app => result.next(app));
           result.complete();
-          this.pendingAttachments = [];
+          this._pendingAttachments = [];
         });
 
     return result;
@@ -70,9 +90,9 @@ export class ApplicationState {
 
   private saved(application: Application): Observable<Application> {
     console.log('Application saved');
-    this.locationState.clear();
+    this.application = application;
     // We had related project so navigate back to project page
-    Some(this.locationState.relatedProject)
+    Some(this.relatedProject)
       .do(projectId => this.projectHub.addProjectApplication(projectId, application.id).subscribe(project =>
         this.router.navigate(['/projects', project.id])));
 

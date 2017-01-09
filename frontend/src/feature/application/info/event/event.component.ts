@@ -1,10 +1,10 @@
 import {Component, OnDestroy, OnInit, AfterViewInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
 import {FormGroup, FormBuilder} from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
-import {AttachmentInfo} from '../../../../model/application/attachment/attachment-info';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
 import {MapHub} from '../../../../service/map/map-hub';
@@ -14,6 +14,7 @@ import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {MaterializeUtil} from '../../../../util/materialize.util';
 import {ApplicationState} from '../../../../service/application/application-state';
+
 
 @Component({
   selector: 'event',
@@ -26,10 +27,12 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   applicationForm: FormGroup;
   private readonly: boolean;
   private submitPending = false;
+  private routeEvents: Subscription;
 
   private meta: StructureMeta;
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private fb: FormBuilder,
               private applicationHub: ApplicationHub,
               private mapHub: MapHub,
@@ -37,26 +40,28 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   ngOnInit(): any {
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.application = application;
+    this.applicationForm = this.fb.group({});
+    this.application = this.applicationState.application;
+    this.applicationHub.loadMetaData('EVENT').subscribe(meta => this.metadataLoaded(meta));
 
-        this.applicationHub.loadMetaData('EVENT').subscribe(meta => this.metadataLoaded(meta));
+    UrlUtil.urlPathContains(this.route.parent, 'summary')
+      .filter(contains => contains)
+      .forEach(summary => {
+        this.readonly = summary;
+        this.applicationForm.disable();
+      });
 
-        UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-          this.readonly = summary;
-        });
-
-        this.applicationForm = this.fb.group({});
-
-        if (this.readonly) {
-          this.applicationForm.disable();
+    this.routeEvents = this.router.events
+      .filter(event => event instanceof NavigationStart)
+      .subscribe(navStart => {
+        if (!this.readonly) {
+          this.applicationState.application = this.update(this.applicationForm.value);
         }
       });
   }
 
   ngOnDestroy(): any {
+    this.routeEvents.unsubscribe();
   }
 
   ngAfterViewInit(): void {
@@ -68,6 +73,18 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
 
   onSubmit(form: EventForm) {
     this.submitPending = true;
+    let application = this.update(form);
+
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+  }
+
+  private metadataLoaded(metadata: StructureMeta) {
+    this.application.metadata = metadata;
+    this.meta = metadata;
+  }
+
+  private update(form: EventForm): Application {
     let application = this.application;
     application.metadata = this.meta;
 
@@ -79,13 +96,6 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.extension = EventDetailsForm.toEvent(form.event, ApplicationType.EVENT);
     application.contactList = form.contacts;
-
-    this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
-  }
-
-  private metadataLoaded(metadata: StructureMeta) {
-    this.application.metadata = metadata;
-    this.meta = metadata;
+    return application;
   }
 }

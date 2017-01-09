@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
 import {Application} from '../../../model/application/application';
+import {ApplicationState} from '../../../service/application/application-state';
 
 @Component({
   selector: 'application-info',
@@ -12,13 +12,9 @@ export class ApplicationInfoComponent implements OnInit {
 
   application: Application;
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(private applicationState: ApplicationState) {}
 
   ngOnInit(): void {
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.application = application;
-      });
+    this.application = this.applicationState.application;
   }
 }

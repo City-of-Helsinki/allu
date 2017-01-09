@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Subscription} from 'rxjs/Subscription';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 
@@ -25,7 +26,7 @@ import {ApplicationState} from '../../../../service/application/application-stat
   template: require('./excavation-announcement.component.html'),
   styles: []
 })
-export class ExcavationAnnouncementComponent implements OnInit {
+export class ExcavationAnnouncementComponent implements OnInit, OnDestroy {
 
   path: string;
   application: Application;
@@ -36,7 +37,10 @@ export class ExcavationAnnouncementComponent implements OnInit {
   cableReportSearch = new Subject<string>();
   matchingApplications: Observable<Array<Application>>;
 
+  private routeEvents: Subscription;
+
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private fb: FormBuilder,
               private applicationHub: ApplicationHub,
               private applicationState: ApplicationState) {
@@ -44,28 +48,21 @@ export class ExcavationAnnouncementComponent implements OnInit {
 
   ngOnInit(): any {
     this.initForm();
+    this.application = this.applicationState.application;
+    let excavation = <ExcavationAnnouncement>this.application.extension || new ExcavationAnnouncement();
+    this.applicationForm.patchValue(ExcavationAnnouncementForm.from(this.application, excavation));
 
-    this.route.data
-      .map((data: {application: Application}) => data.application)
-      .subscribe(application => {
-        this.application = application;
+    UrlUtil.urlPathContains(this.route.parent, 'summary')
+      .filter(contains => contains)
+      .forEach(summary => {
+        this.readonly = summary;
+        this.applicationForm.disable();
+      });
 
-        UrlUtil.urlPathContains(this.route.parent, 'summary').forEach(summary => {
-          this.readonly = summary;
-        });
-
-        let excavation = <ExcavationAnnouncement>application.extension || new ExcavationAnnouncement();
-        this.applicationForm.patchValue(ExcavationAnnouncementForm.from(application, excavation));
-
-        this.getCableReport(excavation.cableReportId)
-          .subscribe(app => {
-            this.applicationForm.patchValue({cableReportIdentifier: app.applicationId});
-            MaterializeUtil.updateTextFields(10);
-          });
-
-        if (this.readonly) {
-          this.applicationForm.disable();
-        }
+    this.getCableReport(excavation.cableReportId)
+      .subscribe(app => {
+        this.applicationForm.patchValue({cableReportIdentifier: app.applicationId});
+        MaterializeUtil.updateTextFields(10);
       });
 
     this.matchingApplications = this.cableReportSearch.asObservable()
@@ -73,9 +70,18 @@ export class ExcavationAnnouncementComponent implements OnInit {
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forIdAndTypes(idSearch, [ApplicationType[ApplicationType.CABLE_REPORT]]))
       .switchMap(search => this.applicationHub.searchApplications(search));
+
+    this.routeEvents = this.router.events
+      .filter(event => event instanceof NavigationStart)
+      .subscribe(navStart => {
+        if (!this.readonly) {
+          this.applicationState.application = this.update(this.applicationForm.value);
+        }
+      });
   }
 
   ngOnDestroy(): any {
+    this.routeEvents.unsubscribe();
   }
 
   onIdentifierSearchChange(identifier: string) {
@@ -94,6 +100,13 @@ export class ExcavationAnnouncementComponent implements OnInit {
 
   onSubmit(form: ExcavationAnnouncementForm) {
     this.submitPending = true;
+    let application = this.update(form);
+
+    this.applicationState.save(application)
+      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+  }
+
+  private update(form: ExcavationAnnouncementForm): Application {
     let application = this.application;
     application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
     application.uiStartTime = form.validityTimes.startTime;
@@ -101,9 +114,7 @@ export class ExcavationAnnouncementComponent implements OnInit {
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = ExcavationAnnouncementForm.to(form);
-
-    this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+    return application;
   }
 
   private initForm() {

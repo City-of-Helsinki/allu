@@ -14,6 +14,7 @@ import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/common/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Sort} from '../../model/common/sort';
+import {ApplicationState} from '../../service/application/application-state';
 
 @Component({
   selector: 'search',
@@ -34,7 +35,11 @@ export class SearchComponent implements OnInit {
   private applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
   private selections = [];
 
-  constructor(private applicationHub: ApplicationHub, private userHub: UserHub, private router: Router, fb: FormBuilder) {
+  constructor(private applicationHub: ApplicationHub,
+              private applicationState: ApplicationState,
+              private userHub: UserHub,
+              private router: Router,
+              private fb: FormBuilder) {
     this.queryForm = fb.group({
       applicationId: undefined,
       type: undefined,
@@ -55,6 +60,11 @@ export class SearchComponent implements OnInit {
 
   goToSummary(application: Application): void {
     this.router.navigate(['applications', application.id, 'summary']);
+  }
+
+  newApplication(): void {
+    this.applicationState.application = new Application();
+    this.router.navigate(['applications/location']);
   }
 
   sortBy(sort: Sort) {
