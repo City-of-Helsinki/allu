@@ -3,6 +3,7 @@ package fi.hel.allu.ui.domain;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import fi.hel.allu.common.types.ApplicationSpecifier;
 import fi.hel.allu.common.types.ApplicationType;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import java.util.List;
 })
 public abstract class ApplicationExtensionJson {
 
-  private List<String> specifiers;
+  private List<ApplicationSpecifier> specifiers;
 
   /**
    * Get the application category for the event. Each subclass must provide unique
@@ -34,11 +35,11 @@ public abstract class ApplicationExtensionJson {
    *
    * @return List of the specifiers, empty list, or null
    */
-  public List<String> getSpecifiers() {
+  public List<ApplicationSpecifier> getSpecifiers() {
     return specifiers;
   }
 
-  public void setSpecifiers(List<String> specifiers) {
+  public void setSpecifiers(List<ApplicationSpecifier> specifiers) {
     this.specifiers = specifiers;
   }
 
