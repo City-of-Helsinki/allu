@@ -2,16 +2,13 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
@@ -28,6 +25,7 @@ public class ApplicationJsonServiceTest {
   private MetaService metaService;
   private UserService userService;
   private LocationService locationService;
+  private AttachmentService attachmentService;
 
   private static final int applicationId = 1;
   private static final int applicantId = 12;
@@ -55,6 +53,7 @@ public class ApplicationJsonServiceTest {
     userService = Mockito.mock(UserService.class);
     locationService = Mockito.mock(LocationService.class);
     restTemplate = Mockito.mock(RestTemplate.class);
+    attachmentService = Mockito.mock(AttachmentService.class);
 
     Mockito.when(application.getId()).thenReturn(applicationId);
     Mockito.when(application.getApplicantId()).thenReturn(applicantId);
@@ -70,12 +69,7 @@ public class ApplicationJsonServiceTest {
     Mockito.when(metaService.findMetadataForApplication(ApplicationType.SHORT_TERM_RENTAL, 1)).thenReturn(metaJson);
     Mockito.when(userService.findUserById(userId)).thenReturn(userJson);
     Mockito.when(locationService.findLocationById(locationId)).thenReturn(locationJson);
-    ResponseEntity<AttachmentInfo[]> responseEntity = Mockito.mock(ResponseEntity.class);
-    Mockito.when(responseEntity.getBody()).thenReturn(new AttachmentInfo[0]);
-    Mockito.when(restTemplate.getForEntity(
-        Matchers.eq(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION)),
-        Matchers.eq(AttachmentInfo[].class),
-        Matchers.anyInt())).thenReturn(responseEntity);
+    Mockito.when(attachmentService.findAttachmentsForApplication(applicationId)).thenReturn(Collections.emptyList());
   }
 
 
@@ -91,7 +85,8 @@ public class ApplicationJsonServiceTest {
         contactService,
         metaService,
         userService,
-        locationService);
+        locationService,
+        attachmentService);
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     Assert.assertEquals(projectJson, applicationJson.getProject());
     Assert.assertEquals(applicantJson, applicationJson.getApplicant());

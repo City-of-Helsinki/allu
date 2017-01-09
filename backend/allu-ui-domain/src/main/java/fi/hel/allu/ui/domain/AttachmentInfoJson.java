@@ -1,8 +1,9 @@
 package fi.hel.allu.ui.domain;
 
-import java.time.ZonedDateTime;
+import fi.hel.allu.common.types.AttachmentType;
 
 import javax.validation.constraints.NotNull;
+import java.time.ZonedDateTime;
 
 /**
  * Attachment information
@@ -10,6 +11,9 @@ import javax.validation.constraints.NotNull;
 public class AttachmentInfoJson {
 
   private Integer id;
+  private String handlerName;
+  @NotNull(message = "{attachment.type}")
+  private AttachmentType type;
   @NotNull(message = "{attachment.name}")
   private String name;
   private String description;
@@ -25,6 +29,32 @@ public class AttachmentInfoJson {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  /**
+   * Id of the user who has made the latest change to the attachment.
+   *
+   * @return  Name of the handler who has made the latest change to the attachment.
+   */
+  public String getHandlerName() {
+    return handlerName;
+  }
+
+  public void setHandlerName(String handlerName) {
+    this.handlerName = handlerName;
+  }
+
+  /**
+   * Type of the attachment.
+   *
+   * @return  Type of the attachment.
+   */
+  public AttachmentType getType() {
+    return type;
+  }
+
+  public void setType(AttachmentType type) {
+    this.type = type;
   }
 
   /**

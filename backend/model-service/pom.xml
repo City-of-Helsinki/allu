@@ -247,6 +247,11 @@
                             <column>unit</column>
                             <type>fi.hel.allu.model.querydsl.StringToInvoiceUnit</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>attachment</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToAttachmentType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>
