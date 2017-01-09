@@ -6,8 +6,10 @@ import {Application} from '../../../../model/application/application';
 import {MaterializeUtil} from '../../../../util/materialize.util';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {AttachmentHub} from './attachment-hub';
+import {FileUploader} from 'ng2-file-upload';
 
 const toastTime = 4000;
+const URL = '/api/applications/appId/attachments';
 
 @Component({
   selector: 'attachments',
@@ -32,10 +34,17 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
     MaterializeUtil.updateTextFields(50);
   }
 
-  addNewAttachment(): void {
-    let attachment = new AttachmentInfo();
-    attachment.creationTime = new Date();
-    this.editableAttachments.push(attachment);
+  addNewAttachment(attachment?: AttachmentInfo): void {
+    let att = attachment || new AttachmentInfo();
+    att.creationTime = new Date();
+    this.editableAttachments.push(att);
+  }
+
+  onFileDrop(fileList: FileList) {
+    for (let i = 0; i < fileList.length; ++i) {
+      let file = fileList.item(i);
+      this.addNewAttachment(AttachmentInfo.fromFile(file));
+    }
   }
 
   save(index, attachment: AttachmentInfo) {

@@ -7,6 +7,7 @@ import {AutoCompletionListComponent} from './auto-completion/auto-completion-lis
 import {FieldErrorComponent} from './field-error.component';
 import {TranslationPipe} from '../../pipe/translation.pipe';
 import {SortByDirective} from './sort/sort-by.directive';
+import {FileDropDirective} from './file-drop/file-drop.directive';
 
 @NgModule({
   imports: [
@@ -19,7 +20,8 @@ import {SortByDirective} from './sort/sort-by.directive';
     AutoCompletionListComponent,
     SortByDirective,
     FieldErrorComponent,
-    TranslationPipe
+    TranslationPipe,
+    FileDropDirective
   ],
   exports: [
     CommonModule,
@@ -31,7 +33,8 @@ import {SortByDirective} from './sort/sort-by.directive';
     AutoCompletionListComponent,
     SortByDirective,
     FieldErrorComponent,
-    TranslationPipe
+    TranslationPipe,
+    FileDropDirective
   ],
   entryComponents: [
     AutoCompletionListComponent
