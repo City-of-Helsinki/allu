@@ -15,7 +15,8 @@ import java.util.List;
     @JsonSubTypes.Type(value = EventJson.class, name = "EVENT"),
     @JsonSubTypes.Type(value = ShortTermRentalJson.class, name = "SHORT_TERM_RENTAL"),
     @JsonSubTypes.Type(value = CableReportJson.class, name = "CABLE_REPORT"),
-    @JsonSubTypes.Type(value = ExcavationAnnouncementJson.class, name = "EXCAVATION_ANNOUNCEMENT")
+    @JsonSubTypes.Type(value = ExcavationAnnouncementJson.class, name = "EXCAVATION_ANNOUNCEMENT"),
+    @JsonSubTypes.Type(value = NoteJson.class, name="NOTE")
 })
 public abstract class ApplicationExtensionJson {
 
@@ -42,4 +43,3 @@ public abstract class ApplicationExtensionJson {
   }
 
 }
-
