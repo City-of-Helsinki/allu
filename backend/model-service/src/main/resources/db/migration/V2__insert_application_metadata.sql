@@ -176,3 +176,8 @@ INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type,
 -- Excavation announcement metadata
 -----------------------------------
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('EXCAVATION_ANNOUNCEMENT', 1);
+
+----------------
+-- Note metadata
+----------------
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('NOTE', 1);

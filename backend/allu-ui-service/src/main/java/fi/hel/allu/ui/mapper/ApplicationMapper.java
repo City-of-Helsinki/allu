@@ -181,6 +181,7 @@ public class ApplicationMapper {
       applicationJson.setExtension(mapExcavationAnnouncementToJson((ExcavationAnnouncement) application.getExtension()));
       break;
     case NOTE:
+      applicationJson.setExtension(createNoteJson((Note) application.getExtension()));
       break;
     case PLACEMENT_PERMIT:
       break;
@@ -258,6 +259,7 @@ public class ApplicationMapper {
           (ExcavationAnnouncementJson) applicationJson.getExtension());
       break;
     case NOTE:
+      applicationExtension = createNoteModel((NoteJson) applicationJson.getExtension());
       break;
     case PLACEMENT_PERMIT:
       break;
@@ -435,6 +437,20 @@ public class ApplicationMapper {
     cableInfoEntry.setType(cableInfoEntryJson.getType());
     cableInfoEntry.setAdditionalInfo(cableInfoEntryJson.getAdditionalInfo());
     return cableInfoEntry;
+  }
+
+  private NoteJson createNoteJson(Note note) {
+    NoteJson noteJson = new NoteJson();
+    noteJson.setDescription(note.getDescription());
+    noteJson.setReoccurring(note.getReoccurring());
+    return noteJson;
+  }
+
+  private Note createNoteModel(NoteJson noteJson) {
+    Note note = new Note();
+    note.setDescription(noteJson.getDescription());
+    note.setReoccurring(noteJson.getReoccurring());
+    return note;
   }
 
   private ApplicantJson createApplicantJson(Applicant applicant) {

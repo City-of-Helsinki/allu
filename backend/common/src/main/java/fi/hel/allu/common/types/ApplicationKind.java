@@ -32,5 +32,18 @@ public enum ApplicationKind {
   CONSTRUCTION, // Rakennus
   YARD, // Piha
   GEOLOGICAL_SURVEY, // Pohjatutkimus
-  OTHER_CABLE_REPORT // Muut
+  OTHER_CABLE_REPORT, // Muut
+  // NOTES
+  CHRISTMAS_TREE_SALES_AREA, // Joulukuusenmyyntipaikka
+  CITY_CYCLING_AREA, // Kaupunkipyöräpaikka
+  AGILE_KIOSK_AREA, // Ketterien kioskien myyntipaikka
+  STATEMENT, // Lausunto
+  SNOW_HEAP_AREA, // Lumenkasauspaikka
+  SNOW_GATHER_AREA, // Lumenvastaanottopaikka
+  OTHER_SUBVISION_OF_STATE_AREA, // Muun hallintokunnan alue
+  MILITARY_EXCERCISE, // Sotaharjoitus
+  WINTER_PARKING, // Talvipysäköinti
+  REPAVING, // Uudelleenpäällystykset
+  ELECTION_ADD_STAND, // Vaalimainosteline
+  NOTE_OTHER // Muu
 }
