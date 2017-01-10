@@ -4,9 +4,12 @@ import fi.hel.allu.ui.domain.UserJson;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -15,15 +18,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Service
 public class TokenHandler {
 
   public static final String EMAIL = "emailAddress";
   public static final String ROLES = "alluRoles";
+
   private String secret;
-  private int expirationHours;
+  private Integer expirationHours;
 
-
-  public TokenHandler(String secret, int expirationHours) {
+  @Autowired
+  TokenHandler(
+          @Value("${jwt.secret}") String secret,
+          @Value("${jwt.expiration.hours:12}") int expirationHours) {
     this.secret = secret;
     this.expirationHours = expirationHours;
   }

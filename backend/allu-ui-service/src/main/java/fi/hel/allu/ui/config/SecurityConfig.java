@@ -2,9 +2,7 @@ package fi.hel.allu.ui.config;
 
 import fi.hel.allu.ui.security.StatelessAuthenticationFilter;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
-import fi.hel.allu.ui.security.TokenHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -37,12 +35,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
   }
 
-  @Value("${jwt.secret}")
-  private String secret;
-
-  @Value("${jwt.expiration.hours:12}")
-  private String expirationHours;
-
   @Autowired
   private TokenAuthenticationService tokenAuthenticationService;
 
@@ -72,10 +64,5 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   @Override
   public AuthenticationManager authenticationManagerBean() throws Exception {
     return super.authenticationManagerBean();
-  }
-
-  @Bean
-  public TokenHandler tokenHandler() {
-    return new TokenHandler(secret, Integer.parseInt(expirationHours));
   }
 }
