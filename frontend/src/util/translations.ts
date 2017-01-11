@@ -230,6 +230,16 @@ export const translations = {
         nameLabel: 'Henkilön nimi',
         id: 'Henkilötunnus'
       },
+      PROPERTY: {
+        name: 'Kiinteistö',
+        nameLabel: 'Kiinteistön nimi',
+        id: 'Kiinteistötunnus'
+      },
+      OTHER: {
+        name: 'Hakija',
+        nameLabel: 'Hakijan nimi',
+        id: 'Y-tunnus'
+      },
       DEFAULT: {
         name: 'Hakija',
         nameLabel: 'Hakijan nimi',

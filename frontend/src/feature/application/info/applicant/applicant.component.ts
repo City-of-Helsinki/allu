@@ -26,7 +26,6 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
   applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
-  translations = translations;
 
   constructor(private fb: FormBuilder) {
     this.applicantForm = this.fb.group({

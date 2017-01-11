@@ -8,13 +8,13 @@
                         <select *ngIf="!readonly" formControlName="type"
                                 materialize="material_select">
                             <option value="" disabled selected>Valitse hakijan tyyppi*</option>
-                            <option *ngFor="let type of applicantTypes" [value]="type">{{translations.applicant.type[type].name}}</option>
+                            <option *ngFor="let type of applicantTypes" [value]="type">{{['applicant.type', type, 'name'] | translation}}</option>
                         </select>
-                        <field-error [form]="applicantForm" field="type" hasError="required">{{translations.applicant.field.typeMissing}}</field-error>
+                        <field-error [form]="applicantForm" field="type" hasError="required">{{'applicant.field.typeMissing' | translation}}</field-error>
 
                         <div *ngIf="readonly">
                             <input id="{{formName}}-applicantType" type="text" [readonly]="true"
-                                   value="{{translations.applicant.type[applicantForm.value.type || 'DEFAULT'].name}}" >
+                                   value="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'name'] | translation}}">
                             <label for="{{formName}}-applicantType">Hakijan tyyppi</label>
                         </div>
                     </div>
@@ -26,15 +26,15 @@
                 <div class="row form-group">
                     <div class="input-field col m8">
                         <input id="{{formName}}-applicantName" type="text" formControlName="name">
-                        <label for="{{formName}}-applicantName">{{translations.applicant.type[applicantForm.value.type || 'DEFAULT'].nameLabel}}*</label>
-                        <field-error [form]="applicantForm" field="name" hasError="required">{{translations.applicant.field.nameMissing}}</field-error>
-                        <field-error [form]="applicantForm" field="name" hasError="minlength">{{translations.applicant.field.nameShort}}</field-error>
+                        <label for="{{formName}}-applicantName">{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*</label>
+                        <field-error [form]="applicantForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>
+                        <field-error [form]="applicantForm" field="name" hasError="minlength">{{'applicant.field.nameShort' | translation}}</field-error>
                     </div>
                     <div class="input-field col m4">
                         <input id="{{formName}}-businessID" type="text" formControlName="registryKey">
-                        <label for="{{formName}}-businessID">{{translations.applicant.type[applicantForm.value.type || 'DEFAULT'].id}}*</label>
-                        <field-error [form]="applicantForm" field="registryKey" hasError="required">{{translations.applicant.field.registryKeyMissing}}</field-error>
-                        <field-error [form]="applicantForm" field="registryKey" hasError="minlength">{{translations.applicant.field.registryKeyShort}}</field-error>
+                        <label for="{{formName}}-businessID">{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'id'] | translation}}*</label>
+                        <field-error [form]="applicantForm" field="registryKey" hasError="required">{{'applicant.field.registryKeyMissing' | translation}}</field-error>
+                        <field-error [form]="applicantForm" field="registryKey" hasError="minlength">{{'applicant.field.registryKeyShort' | translation}}</field-error>
                     </div>
                 </div>
                 <div formGroupName="postalAddress" class="row form-group">
@@ -55,12 +55,12 @@
                     <div class="input-field col m4">
                         <input id="{{formName}}-applicantPhone" type="text" formControlName="phone">
                         <label for="{{formName}}-applicantPhone">Puhelin</label>
-                        <field-error [form]="applicantForm" field="email" hasError="required">{{translations.applicant.field.phoneShort}}</field-error>
+                        <field-error [form]="applicantForm" field="email" hasError="required">{{'applicant.field.phoneShort' | translation}}</field-error>
                     </div>
                     <div class="input-field col m8">
                         <input id="{{formName}}-applicantEmail" type="text" formControlName="email">
                         <label for="{{formName}}-applicantEmail">Sähköpostiosoite</label>
-                        <field-error [form]="applicantForm" field="email" hasError="pattern">{{translations.applicant.field.invalidEmail}}</field-error>
+                        <field-error [form]="applicantForm" field="email" hasError="pattern">{{'applicant.field.invalidEmail' | translation}}</field-error>
                     </div>
                 </div>
                 <div *ngIf="!readonly" class="row form-group">

@@ -1,5 +1,7 @@
 export enum ApplicantType {
   COMPANY,
   ASSOCIATION,
-  PERSON
+  PERSON,
+  PROPERTY,
+  OTHER
 }
