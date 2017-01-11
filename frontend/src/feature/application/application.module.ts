@@ -10,15 +10,15 @@ import {LocationModule} from './location/location.module';
 import {TypeModule} from './type/type.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
 
-import {FileSelectDirective} from './info/attachment/file-select.directive';
+import {FileSelectDirective} from './attachment/file-select.directive';
 
 import {ApplicationComponent} from './info/application.component.ts';
 import {EventComponent} from './info/event/event.component';
-import {AttachmentsComponent} from './info/attachment/attachments.component';
+import {AttachmentsComponent} from './attachment/attachments.component';
 import {LoadingComponent} from '../loading/loading.component';
 import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
-import {AttachmentHub} from './info/attachment/attachment-hub';
+import {AttachmentHub} from './attachment/attachment-hub';
 import {ApplicantComponent} from './info/applicant/applicant.component';
 import {ContactComponent} from './info/contact/contact.component';
 import {EventDetailsComponent} from './info/event/details/event-details.component.ts';
@@ -33,7 +33,7 @@ import {CableInfoComponent} from './info/cable-report/cable-info.component.ts';
 import {DefaultTextModalComponent} from './default-text/default-text-modal.component';
 import {NoteComponent} from './info/note/note.component';
 import {ApplicationInfoComponent} from './info/application-info.component';
-import {AttachmentComponent} from './info/attachment/attachment.component';
+import {AttachmentComponent} from './attachment/attachment.component';
 
 
 @NgModule({

@@ -7,7 +7,7 @@ import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {ProjectHub} from '../project/project-hub';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
-import {AttachmentHub} from '../../feature/application/info/attachment/attachment-hub';
+import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
 import {Subject} from 'rxjs';
 import {HttpResponse, HttpStatus} from '../../util/http.util';
 

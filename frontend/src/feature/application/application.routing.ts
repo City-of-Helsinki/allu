@@ -6,7 +6,7 @@ import {AuthGuard} from '../../feature/login/auth-guard.service';
 import {ApplicationResolve} from './application-resolve';
 import {ApplicationInfoComponent} from './info/application-info.component';
 import {SearchComponent} from '../search/search.component';
-import {AttachmentsComponent} from './info/attachment/attachments.component';
+import {AttachmentsComponent} from './attachment/attachments.component';
 
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info' },
