@@ -1,6 +1,7 @@
 <div materialize class="row">
   <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
-    <applicant [applicationForm]="applicationForm" [applicant]="application.applicant" [readonly]="readonly"></applicant>
+    <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
+               [readonly]="readonly" [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
 
     <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
              [readonly]="readonly" [addNew]="true" [saveToRegistry]="true"></contact>

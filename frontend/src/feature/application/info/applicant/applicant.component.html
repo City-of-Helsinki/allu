@@ -64,11 +64,11 @@
                     </div>
                 </div>
                 <div *ngIf="!readonly" class="row form-group">
-                    <div class="col m7 height-fix-bottom">
+                    <div class="col m7 height-fix-bottom" *ngIf="showCopyToBilling">
                         <input type="checkbox" class="filled-in" id="{{formName}}-copyToBilling" />
                         <label for="{{formName}}-copyToBilling">Kopioi tiedot laskutusosoitteeksi</label>
                     </div>
-                    <div class="col m5 height-fix-bottom">
+                    <div class="col m5 height-fix-bottom" *ngIf="showRepresentative">
                         <input type="checkbox" class="filled-in" formControlName="representative" id="{{formName}}-representative"/>
                         <label for="{{formName}}-representative">Asiaa hoitaa asiamies</label>
                     </div>

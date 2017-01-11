@@ -21,6 +21,8 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   @Input() readonly: boolean;
   @Input() headerText = 'Hakija';
   @Input() formName = 'applicant';
+  @Input() showCopyToBilling = false;
+  @Input() showRepresentative = false;
 
   applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;

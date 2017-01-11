@@ -2,7 +2,8 @@
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
         <div class="row">
             <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                       [readonly]="readonly" headerText="Hakija" formName="applicant"></applicant>
+                       [readonly]="readonly" headerText="Hakija" formName="applicant"
+                       [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
 
             <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
                      [readonly]="readonly" headerText="Yhteyshenkilö" formName="contacts"
@@ -11,7 +12,8 @@
 
         <div class="row">
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension.contractor"
-                       [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"></applicant>
+                       [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
+                       [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
 
             <contact [applicationForm]="applicationForm" [contactList]="application.extension.responsiblePersonList"
                      [readonly]="readonly" headerText="Vastuuhenkilö" formName="responsiblePerson"></contact>
