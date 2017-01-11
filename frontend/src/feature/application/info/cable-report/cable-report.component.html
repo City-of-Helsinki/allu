@@ -60,7 +60,7 @@
         <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="readonly"></cable-info>
 
         <application-actions
-            [isSummary]="readonly"
+            [readonly]="readonly"
             [applicationId]="application.id"
             [form]="applicationForm"
             [submitPending]="submitPending"></application-actions>

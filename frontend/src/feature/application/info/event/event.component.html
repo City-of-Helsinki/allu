@@ -9,7 +9,7 @@
     <event-details [applicationForm]="applicationForm" [location]="application.location" [readonly]="readonly"></event-details>
 
     <application-actions
-        [isSummary]="readonly"
+        [readonly]="readonly"
         [applicationId]="application.id"
         [form]="applicationForm"
         [submitPending]="submitPending"></application-actions>
