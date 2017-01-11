@@ -162,23 +162,13 @@ public class ApplicationMapper {
         break;
       // cable reports
     case CABLE_REPORT:
-        CableReport cableReport = (CableReport) application.getExtension();
-        CableReportJson cableReportJson = new CableReportJson();
-        cableReportJson.setCableReportId(cableReport.getCableReportId());
-        cableReportJson.setWorkDescription(cableReport.getWorkDescription());
-        Optional.ofNullable(cableReport.getOwner()).ifPresent(owner -> cableReportJson.setOwner(createApplicantJson(owner)));
-        Optional.ofNullable(cableReport.getContact()).ifPresent(contact -> cableReportJson.setContact(createContactJson(contact)));
-        cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
-        cableReportJson.setCableSurveyRequired(cableReport.isCableSurveyRequired());
-        List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
-          .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
-        cableReportJson.setInfoEntries(infoEntries);
-        applicationJson.setExtension(cableReportJson);
+      applicationJson.setExtension(createCableReportJson((CableReport) application.getExtension()));
       break;
     case AREA_RENTAL:
       break;
     case EXCAVATION_ANNOUNCEMENT:
-      applicationJson.setExtension(mapExcavationAnnouncementToJson((ExcavationAnnouncement) application.getExtension()));
+      applicationJson
+          .setExtension(createExcavationAnnouncementJson((ExcavationAnnouncement) application.getExtension()));
       break;
     case NOTE:
       applicationJson.setExtension(createNoteJson((Note) application.getExtension()));
@@ -239,23 +229,12 @@ public class ApplicationMapper {
         applicationExtension = shortTermRental;
       break;
     case CABLE_REPORT:
-        CableReportJson cableReportJson = (CableReportJson) applicationJson.getExtension();
-        CableReport cableReport = new CableReport();
-        cableReport.setCableReportId(cableReportJson.getCableReportId());
-        cableReport.setWorkDescription(cableReportJson.getWorkDescription());
-        Optional.ofNullable(cableReportJson.getOwner()).ifPresent(owner -> cableReport.setOwner(createApplicantModel(owner)));
-        Optional.ofNullable(cableReportJson.getContact()).ifPresent(contact -> cableReport.setContact(createContactModel(contact)));
-        cableReport.setMapExtractCount(cableReportJson.getMapExtractCount());
-        cableReport.setCableSurveyRequired(cableReportJson.getCableSurveyRequired());
-        List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
-          .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
-        cableReport.setInfoEntries(infoEntries);
-        applicationExtension = cableReport;
+      applicationExtension = createCableReportModel((CableReportJson) applicationJson.getExtension());
       break;
     case AREA_RENTAL:
       break;
     case EXCAVATION_ANNOUNCEMENT:
-      applicationExtension = mapExcavationAnnouncementToModel(
+      applicationExtension = createExcavationAnnouncementModel(
           (ExcavationAnnouncementJson) applicationJson.getExtension());
       break;
     case NOTE:
@@ -367,7 +346,55 @@ public class ApplicationMapper {
     return contact;
   }
 
-  private ExcavationAnnouncementJson mapExcavationAnnouncementToJson(ExcavationAnnouncement model) {
+  /*
+   * Map CableReportJson to CableReport
+   */
+  private CableReport createCableReportModel(CableReportJson cableReportJson) {
+    CableReport cableReport = new CableReport();
+    cableReport.setCableReportId(cableReportJson.getCableReportId());
+    cableReport.setWorkDescription(cableReportJson.getWorkDescription());
+    Optional.ofNullable(cableReportJson.getOwner())
+        .ifPresent(owner -> cableReport.setOwner(createApplicantModel(owner)));
+    Optional.ofNullable(cableReportJson.getContact())
+        .ifPresent(contact -> cableReport.setContact(createContactModel(contact)));
+    cableReport.setMapExtractCount(cableReportJson.getMapExtractCount());
+    cableReport.setCableSurveyRequired(cableReportJson.getCableSurveyRequired());
+    List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
+        .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
+    cableReport.setInfoEntries(infoEntries);
+    cableReport.setPksCard(cableReportJson.getPksCard());
+    cableReport.setConstructionWork(cableReportJson.getConstructionWork());
+    cableReport.setMaintenanceWork(cableReportJson.getMaintenanceWork());
+    cableReport.setEmergencyWork(cableReportJson.getEmergencyWork());
+    cableReport.setPropertyConnectivity(cableReportJson.getPropertyConnectivity());
+    return cableReport;
+  }
+
+  /*
+   * Map CableReport to CableReportJson
+   */
+  private CableReportJson createCableReportJson(CableReport cableReport) {
+    CableReportJson cableReportJson = new CableReportJson();
+    cableReportJson.setCableReportId(cableReport.getCableReportId());
+    cableReportJson.setWorkDescription(cableReport.getWorkDescription());
+    Optional.ofNullable(cableReport.getOwner())
+        .ifPresent(owner -> cableReportJson.setOwner(createApplicantJson(owner)));
+    Optional.ofNullable(cableReport.getContact())
+        .ifPresent(contact -> cableReportJson.setContact(createContactJson(contact)));
+    cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
+    cableReportJson.setCableSurveyRequired(cableReport.isCableSurveyRequired());
+    List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
+        .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
+    cableReportJson.setInfoEntries(infoEntries);
+    cableReportJson.setPksCard(cableReport.getPksCard());
+    cableReportJson.setConstructionWork(cableReport.getConstructionWork());
+    cableReportJson.setMaintenanceWork(cableReport.getMaintenanceWork());
+    cableReportJson.setEmergencyWork(cableReport.getEmergencyWork());
+    cableReportJson.setPropertyConnectivity(cableReport.getPropertyConnectivity());
+    return cableReportJson;
+  }
+
+  private ExcavationAnnouncementJson createExcavationAnnouncementJson(ExcavationAnnouncement model) {
     ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
     json.setAdditionalInfo(model.getAdditionalInfo());
     json.setCableReportId(model.getCableReportId());
@@ -382,14 +409,13 @@ public class ApplicationMapper {
     json.setConstructionWork(model.getConstructionWork());
     json.setMaintenanceWork(model.getMaintenanceWork());
     json.setEmergencyWork(model.getEmergencyWork());
-    json.setPlotConnectivity(model.getPlotConnectivity());
     json.setPropertyConnectivity(model.getPropertyConnectivity());
     json.setUnauthorizedWorkStartTime(model.getUnauthorizedWorkStartTime());
     json.setUnauthorizedWorkEndTime(model.getUnauthorizedWorkEndTime());
     return json;
   }
 
-  private ExcavationAnnouncement mapExcavationAnnouncementToModel(ExcavationAnnouncementJson excavationAnnouncementJson) {
+  private ExcavationAnnouncement createExcavationAnnouncementModel(ExcavationAnnouncementJson excavationAnnouncementJson) {
     ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
     excavationAnnouncement.setAdditionalInfo(excavationAnnouncementJson.getAdditionalInfo());
     excavationAnnouncement.setCableReportId(excavationAnnouncementJson.getCableReportId());
@@ -404,7 +430,6 @@ public class ApplicationMapper {
     excavationAnnouncement.setConstructionWork(excavationAnnouncementJson.getConstructionWork());
     excavationAnnouncement.setMaintenanceWork(excavationAnnouncementJson.getMaintenanceWork());
     excavationAnnouncement.setEmergencyWork(excavationAnnouncementJson.getEmergencyWork());
-    excavationAnnouncement.setPlotConnectivity(excavationAnnouncementJson.getPlotConnectivity());
     excavationAnnouncement.setPropertyConnectivity(excavationAnnouncementJson.getPropertyConnectivity());
     excavationAnnouncement.setUnauthorizedWorkStartTime(excavationAnnouncementJson.getUnauthorizedWorkStartTime());
     excavationAnnouncement.setUnauthorizedWorkEndTime(excavationAnnouncementJson.getUnauthorizedWorkEndTime());

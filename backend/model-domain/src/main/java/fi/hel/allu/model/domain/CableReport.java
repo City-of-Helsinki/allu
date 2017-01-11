@@ -6,13 +6,18 @@ import java.util.List;
 
 public class CableReport extends ApplicationExtension {
 
-  private boolean cableSurveyRequired;
+  private Boolean cableSurveyRequired;
   private String cableReportId;
   private String workDescription;
   private Applicant owner;
   private Contact contact;
   private Integer mapExtractCount;
   private List<CableInfoEntry> infoEntries;
+  private Boolean pksCard;
+  private Boolean constructionWork;
+  private Boolean maintenanceWork;
+  private Boolean emergencyWork;
+  private Boolean propertyConnectivity;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -22,11 +27,11 @@ public class CableReport extends ApplicationExtension {
   /**
    * Whether cable survey is needed for cable report (in Finnish: "Johtokartoitettava")
    */
-  public boolean isCableSurveyRequired() {
+  public Boolean isCableSurveyRequired() {
     return cableSurveyRequired;
   }
 
-  public void setCableSurveyRequired(boolean cableSurveyRequired) {
+  public void setCableSurveyRequired(Boolean cableSurveyRequired) {
     this.cableSurveyRequired = cableSurveyRequired;
   }
 
@@ -108,4 +113,59 @@ public class CableReport extends ApplicationExtension {
     this.infoEntries = infoEntries;
   }
 
+  /**
+   * In Finnish: PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
+   * True, if the contractor doing the actual work has PKS-card.
+   */
+  public Boolean getPksCard() {
+    return pksCard;
+  }
+
+  public void setPksCard(Boolean pksCard) {
+    this.pksCard = pksCard;
+  }
+
+  /**
+   * In Finnish: Rakentaminen.
+   */
+  public Boolean getConstructionWork() {
+    return constructionWork;
+  }
+
+  public void setConstructionWork(Boolean constructionWork) {
+    this.constructionWork = constructionWork;
+  }
+
+  /**
+   * In Finnish: Kunnossapito.
+   */
+  public Boolean getMaintenanceWork() {
+    return maintenanceWork;
+  }
+
+  public void setMaintenanceWork(Boolean maintenanceWork) {
+    this.maintenanceWork = maintenanceWork;
+  }
+
+  /**
+   * In Finnish: Hätätyö.
+   */
+  public Boolean getEmergencyWork() {
+    return emergencyWork;
+  }
+
+  public void setEmergencyWork(Boolean emergencyWork) {
+    this.emergencyWork = emergencyWork;
+  }
+
+  /**
+   * In Finnish: Kiinteistöliitos.
+   */
+  public Boolean getPropertyConnectivity() {
+    return propertyConnectivity;
+  }
+
+  public void setPropertyConnectivity(Boolean propertyConnectivity) {
+    this.propertyConnectivity = propertyConnectivity;
+  }
 }
