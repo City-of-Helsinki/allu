@@ -10,6 +10,8 @@ import {AttachmentInfo} from '../../model/application/attachment/attachment-info
 import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
 import {Subject} from 'rxjs';
 import {HttpResponse, HttpStatus} from '../../util/http.util';
+import {Comment} from '../../model/application/comment/comment';
+import {CommentHub} from './comment/comment-hub';
 
 
 @Injectable()
@@ -22,7 +24,8 @@ export class ApplicationState {
   constructor(private router: Router,
               private applicationHub: ApplicationHub,
               private projectHub: ProjectHub,
-              private attachmentHub: AttachmentHub) {
+              private attachmentHub: AttachmentHub,
+              private commentHub: CommentHub) {
   }
 
   get application(): Application {
@@ -60,6 +63,14 @@ export class ApplicationState {
       this._pendingAttachments.splice(index, 1);
       return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
     }
+  }
+
+  saveComment(applicationId: number, comment: Comment): Observable<Comment> {
+    return this.commentHub.saveComment(applicationId, comment);
+  }
+
+  removeComment(comment: Comment): Observable<HttpResponse> {
+    return this.commentHub.removeComment(comment.id);
   }
 
   load(id: number): Observable<Application> {

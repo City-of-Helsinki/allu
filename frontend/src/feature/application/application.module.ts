@@ -34,6 +34,7 @@ import {DefaultTextModalComponent} from './default-text/default-text-modal.compo
 import {NoteComponent} from './info/note/note.component';
 import {ApplicationInfoComponent} from './info/application-info.component';
 import {AttachmentComponent} from './attachment/attachment.component';
+import {CommentModule} from './comment/comment.module';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import {AttachmentComponent} from './attachment/attachment.component';
     ProgressBarModule,
     LocationModule,
     TypeModule,
-    SidebarModule
+    SidebarModule,
+    CommentModule
   ],
   declarations: [
     ApplicationComponent,

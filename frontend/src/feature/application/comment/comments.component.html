@@ -1,0 +1,15 @@
+<h1>Kommentit</h1>
+<div class="row">
+    <ul>
+        <li *ngFor="let comment of comments; let i = index;">
+            <div class="col s11 loose">
+                <comment [comment]="comment" (onSave)="save(i, $event)" (onRemove)="remove(i, $event)"></comment>
+            </div>
+        </li>
+    </ul>
+</div>
+<div class="row">
+    <div class="col m11 col-centered">
+        <a class="btn-floating btn-huge waves-effect waves-light" (click)="addNew()"><i class="material-icons">add</i></a>
+    </div>
+</div>

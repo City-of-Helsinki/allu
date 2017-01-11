@@ -170,6 +170,13 @@ input:-webkit-autofill:active {
   margin-bottom: 5px;
 }
 
+.row.no-left-pad .col {
+  padding: 0 0.75rem 0 0;
+  label {
+    left: 0;
+  }
+}
+
 md-card {
   background: $allu-card-background;
 }
@@ -250,4 +257,8 @@ ul.slim-card-list {
     text-align: center;
     margin-right: 1rem;
   }
+}
+
+.col.loose {
+  margin: 5px 0;
 }
