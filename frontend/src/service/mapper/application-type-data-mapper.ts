@@ -37,6 +37,7 @@ export class ApplicationTypeDataMapper {
         return new ShortTermRental(backendExtension.description, backendExtension.commercial);
       case ApplicationType.CABLE_REPORT:
         return new CableReport(
+          backendExtension.specifiers,
           backendExtension.cableSurveyRequired,
           backendExtension.cableReportId,
           backendExtension.workDescription,
@@ -47,6 +48,7 @@ export class ApplicationTypeDataMapper {
         );
       case ApplicationType.EXCAVATION_ANNOUNCEMENT:
         return new ExcavationAnnouncement(
+          backendExtension.specifiers,
           backendExtension.contractor,
           backendExtension.responsiblePerson,
           backendExtension.pksCard,

@@ -5,10 +5,9 @@ import {Contact} from '../contact';
 import {TimeUtil} from '../../../util/time.util';
 
 export class ExcavationAnnouncement extends ApplicationExtension {
-  public applicationType = ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT];
-
   constructor()
   constructor(
+    specifiers: Array<string>,
     contractor: Applicant,
     responsiblePerson: Contact,
     pksCard: boolean,
@@ -28,6 +27,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     trafficArrangements: string
   )
   constructor(
+    public specifiers?: Array<string>,
     public contractor?: Applicant,
     public responsiblePerson?: Contact,
     public pksCard?: boolean,
@@ -46,7 +46,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public additionalInfo?: string,
     public trafficArrangements?: string
   ) {
-    super();
+    super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], specifiers);
   }
 
   get uiWinterTimeOperation(): string {

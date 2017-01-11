@@ -81,7 +81,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   onApplicationSpecifierChange(specifiers: Array<ApplicationSpecifier>) {
-    Some(this.application.extension).do(extension => extension.specifiers = specifiers);
+    Some(this.application.extension).do(extension =>
+      extension.specifiers = specifiers.map(s => ApplicationSpecifier[s]));
   }
 
   searchUpdated(filter: SearchbarFilter) {

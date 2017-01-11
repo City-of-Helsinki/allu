@@ -4,7 +4,7 @@
         <md-card-content>
             <div class="row form-group">
                 <div class="input-field col m4">
-                    <select [(ngModel)]="selectedCableInfoTypes" materialize="material_select" multiple>
+                    <select [(ngModel)]="selectedCableInfoTypes" materialize="material_select" multiple [disabled]="readonly">
                         <option value="" disabled selected>Valitse tyyppi*</option>
                         <option *ngFor="let type of cableInfoTypes" value="{{type}}">{{translations.application.cableReport.cableInfo.type[type]}}</option>
                     </select>

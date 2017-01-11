@@ -5,10 +5,9 @@ import {Contact} from '../contact';
 import {ApplicationType} from '../type/application-type';
 
 export class CableReport extends ApplicationExtension {
-  public applicationType = ApplicationType[ApplicationType.CABLE_REPORT];
-
   constructor()
   constructor(
+    specifiers: Array<string>,
     cableSurveyRequired: boolean,
     cableReportId: string,
     workDescription: string,
@@ -18,6 +17,7 @@ export class CableReport extends ApplicationExtension {
     infoEntries: Array<CableInfoEntry>
   )
   constructor(
+    public specifiers?: Array<string>,
     public cableSurveyRequired?: boolean,
     public cableReportId?: string,
     public workDescription?: string,
@@ -25,7 +25,7 @@ export class CableReport extends ApplicationExtension {
     public contact?: Contact,
     public mapExtractCount?: number,
     public infoEntries?: Array<CableInfoEntry>) {
-    super();
+    super(ApplicationType[ApplicationType.CABLE_REPORT], specifiers);
     this.infoEntries = infoEntries || [];
   }
 
