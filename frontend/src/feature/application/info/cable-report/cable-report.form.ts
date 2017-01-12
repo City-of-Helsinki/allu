@@ -11,6 +11,11 @@ import {StringUtil} from '../../../../util/string.util';
 export class CableReportForm {
   constructor(
     public cableSurveyRequired?: boolean,
+    public pksCard?: boolean,
+    public constructionWork?: boolean,
+    public maintenanceWork?: boolean,
+    public emergencyWork?: boolean,
+    public propertyConnectivity?: boolean,
     public reportTimes?: TimePeriod,
     public workDescription?: string,
     public company?: ApplicantForm,
@@ -24,6 +29,11 @@ export class CableReportForm {
   static to(form: CableReportForm, specifiers: Array<string>): CableReport {
     let cableReport = new CableReport();
     cableReport.cableSurveyRequired = form.cableSurveyRequired;
+    cableReport.pksCard = form.pksCard;
+    cableReport.constructionWork = form.constructionWork;
+    cableReport.maintenanceWork = form.maintenanceWork;
+    cableReport.emergencyWork = form.emergencyWork;
+    cableReport.propertyConnectivity = form.propertyConnectivity;
     cableReport.workDescription = form.workDescription;
     cableReport.owner = Some(form.owner).filter(owner => !!owner.name).map(owner => ApplicantForm.toApplicant(owner)).orElse(undefined);
     cableReport.contact = Some(form.contact).filter(c => c.length > 0).map(c => c[0]).orElse(undefined);
@@ -35,6 +45,11 @@ export class CableReportForm {
     let cableReport = <CableReport>application.extension || new CableReport();
     return new CableReportForm(
       cableReport.cableSurveyRequired,
+      cableReport.pksCard,
+      cableReport.constructionWork,
+      cableReport.maintenanceWork,
+      cableReport.emergencyWork,
+      cableReport.propertyConnectivity,
       new TimePeriod(application.uiStartTime, application.uiEndTime),
       cableReport.workDescription,
       undefined, // these are added by subcomponents (application and contact)

@@ -39,6 +39,11 @@ export class ApplicationTypeDataMapper {
         return new CableReport(
           backendExtension.specifiers,
           backendExtension.cableSurveyRequired,
+          backendExtension.pksCard,
+          backendExtension.constructionWork,
+          backendExtension.maintenanceWork,
+          backendExtension.emergencyWork,
+          backendExtension.propertyConnectivity,
           backendExtension.cableReportId,
           backendExtension.workDescription,
           backendExtension.owner,
