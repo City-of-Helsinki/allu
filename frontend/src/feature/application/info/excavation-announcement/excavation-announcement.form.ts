@@ -16,7 +16,6 @@ export class ExcavationAnnouncementForm {
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
     public emergencyWork?: boolean,
-    public plotConnectivity?: boolean,
     public propertyConnectivity?: boolean,
     public winterTimeOperation?: string,
     public summerTimeOperation?: string,
@@ -37,7 +36,6 @@ export class ExcavationAnnouncementForm {
     ea.constructionWork = form.constructionWork;
     ea.maintenanceWork = form.maintenanceWork;
     ea.emergencyWork = form.emergencyWork;
-    ea.plotConnectivity = form.plotConnectivity;
     ea.propertyConnectivity = form.propertyConnectivity;
     ea.uiWinterTimeOperation = form.winterTimeOperation;
     ea.uiSummerTimeOperation = form.summerTimeOperation;
@@ -63,7 +61,6 @@ export class ExcavationAnnouncementForm {
       excavation.constructionWork,
       excavation.maintenanceWork,
       excavation.emergencyWork,
-      excavation.plotConnectivity,
       excavation.propertyConnectivity,
       excavation.uiWinterTimeOperation,
       excavation.uiSummerTimeOperation,

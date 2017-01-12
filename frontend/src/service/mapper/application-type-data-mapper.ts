@@ -55,7 +55,6 @@ export class ApplicationTypeDataMapper {
           backendExtension.constructionWork,
           backendExtension.maintenanceWork,
           backendExtension.emergencyWork,
-          backendExtension.plotConnectivity,
           backendExtension.propertyConnectivity,
           backendExtension.winterTimeOperation,
           backendExtension.summerTimeOperation,

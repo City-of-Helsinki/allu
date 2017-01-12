@@ -17,7 +17,6 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private Boolean constructionWork;
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
-  private Boolean plotConnectivity;
   private Boolean propertyConnectivity;
   private ZonedDateTime winterTimeOperation;
   private ZonedDateTime summerTimeOperation;
@@ -104,18 +103,7 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   }
 
   /**
-   * In Finnish: Tonttiliitos.
-   */
-  public Boolean getPlotConnectivity() {
-    return plotConnectivity;
-  }
-
-  public void setPlotConnectivity(Boolean plotConnectivity) {
-    this.plotConnectivity = plotConnectivity;
-  }
-
-  /**
-   * In Finnish: Kiinteistöliitos.
+   * In Finnish: Tontti-/Kiinteistöliitos.
    */
   public Boolean getPropertyConnectivity() {
     return propertyConnectivity;

@@ -127,7 +127,6 @@ export class ExcavationAnnouncementComponent implements OnInit, OnDestroy {
       constructionWork: [{value: false, disabled: this.readonly}],
       maintenanceWork: [{value: false, disabled: this.readonly}],
       emergencyWork: [{value: false, disabled: this.readonly}],
-      plotConnectivity: [{value: false, disabled: this.readonly}],
       propertyConnectivity: [{value: false, disabled: this.readonly}],
       winterTimeOperation: [''],
       summerTimeOperation: [''],
