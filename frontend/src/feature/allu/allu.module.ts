@@ -29,6 +29,7 @@ import {AdminModule} from '../admin/admin.module';
 import {ProjectModule} from '../project/project.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
 import {ApplicationState} from '../../service/application/application-state';
+import {Oauth2Component} from '../oauth2/oauth2.component';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import {ApplicationState} from '../../service/application/application-state';
     SidebarModule
   ],
   declarations: [
-    AlluComponent
+    AlluComponent,
+    Oauth2Component
   ],
   bootstrap: [AlluComponent],
   providers: [

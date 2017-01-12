@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {CurrentUser} from '../../../service/user/current-user';
+import {AuthService} from '../../login/auth.service';
 
 @Component({
   selector: 'navbar',
@@ -9,6 +10,12 @@ import {CurrentUser} from '../../../service/user/current-user';
   ]
 })
 export class NavbarComponent {
+  authenticated: () => boolean;
+
+  constructor(authService: AuthService) {
+    this.authenticated = () => authService.authenticated();
+  }
+
   hasRole(role: string): boolean {
     return CurrentUser.hasRole(role);
   }
