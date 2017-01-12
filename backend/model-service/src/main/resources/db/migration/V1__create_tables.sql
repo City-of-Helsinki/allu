@@ -122,6 +122,14 @@ create table allu.application (
     price_override integer,
     price_override_reason text );
 
+create table allu.application_tag (
+    id serial primary key,
+    application_id integer not null references allu.application(id),
+    added_by integer references allu.user(id),
+    type text not null,
+    creation_time timestamp with time zone not null
+);
+
 create table allu.attachment (
    id serial primary key,
    application_id integer not null references allu.application(id),

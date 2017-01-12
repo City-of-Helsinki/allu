@@ -190,9 +190,15 @@
                             <table>decision</table>
                             <column>creation_time</column>
                             <type>java.time.ZonedDateTime</type>
-                        </typeMapping><typeMapping>
+                        </typeMapping>
+                        <typeMapping>
                             <table>decision</table>
                             <column>decision_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application_tag</table>
+                            <column>creation_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <!-- Map enumeration types -->
@@ -251,6 +257,11 @@
                             <table>attachment</table>
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToAttachmentType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application_tag</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationTagType</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>

@@ -1,8 +1,10 @@
 package fi.hel.allu.model.dao;
 
+import fi.hel.allu.common.types.ApplicationTagType;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.junit.Assert;
@@ -15,7 +17,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.Collections;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -51,4 +59,39 @@ public class ApplicationDaoTest {
     assertEquals(OVERRIDE_REASON, applOut.getPriceOverrideReason());
   }
 
+  @Test
+  public void testInsertApplicationTags() {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    newApplication.setApplicationTags(Collections.singletonList(createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
+    Application application = applicationDao.insert(newApplication);
+    assertNotNull(application.getApplicationTags());
+    assertEquals(1, application.getApplicationTags().size());
+    assertEquals(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED, application.getApplicationTags().get(0).getType());
+  }
+
+  @Test
+  public void testUpdateApplicationTags() {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    newApplication.setApplicationTags(Collections.singletonList(
+        createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
+    Application application = applicationDao.insert(newApplication);
+    application.setApplicationTags(Arrays.asList(
+        createApplicationTag(ApplicationTagType.COMPENSATION_CLARIFICATION),
+        createApplicationTag(ApplicationTagType.DEPOSIT_PAID)));
+    application = applicationDao.update(application.getId(), application);
+    assertNotNull(application.getApplicationTags());
+    assertEquals(2, application.getApplicationTags().size());
+    assertTrue(application.getApplicationTags().stream()
+        .filter(tag -> tag.getType().equals(ApplicationTagType.COMPENSATION_CLARIFICATION)).findFirst().isPresent());
+    assertTrue(application.getApplicationTags().stream()
+        .filter(tag -> tag.getType().equals(ApplicationTagType.DEPOSIT_PAID)).findFirst().isPresent());
+  }
+
+  private ApplicationTag createApplicationTag(ApplicationTagType applicationTagType) {
+    ApplicationTag applicationTag = new ApplicationTag();
+    applicationTag.setAddedBy(1);
+    applicationTag.setCreationTime(ZonedDateTime.now());
+    applicationTag.setType(applicationTagType);
+    return applicationTag;
+  }
 }

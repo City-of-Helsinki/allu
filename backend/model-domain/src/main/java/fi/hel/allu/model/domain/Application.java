@@ -9,6 +9,8 @@ import org.hibernate.validator.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
+import java.util.List;
+
 /**
  * In Finnish: hakemus
  */
@@ -25,6 +27,7 @@ public class Application {
   private ApplicationType type;
   @NotNull
   private ApplicationKind kind;
+  private List<ApplicationTag> applicationTags;
   @NotNull
   private Integer metadataVersion;
   @NotBlank
@@ -132,6 +135,17 @@ public class Application {
 
   public void setKind(ApplicationKind kind) {
     this.kind = kind;
+  }
+
+  /**
+   * in Finnish: Hakemuksen tagit.
+   */
+  public List<ApplicationTag> getApplicationTags() {
+    return applicationTags;
+  }
+
+  public void setApplicationTags(List<ApplicationTag> applicationTags) {
+    this.applicationTags = applicationTags;
   }
 
   /**

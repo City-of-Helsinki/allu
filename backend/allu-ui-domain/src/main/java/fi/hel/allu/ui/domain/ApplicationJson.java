@@ -3,12 +3,10 @@ package fi.hel.allu.ui.domain;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
-
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -27,6 +25,7 @@ public class ApplicationJson {
   private ApplicationType type;
   @NotNull(message = "{application.kind}")
   private ApplicationKind kind;
+  private List<ApplicationTagJson> applicationTags;
   private StructureMetaJson metadata;
   @NotBlank(message = "{application.name}")
   private String name;
@@ -131,6 +130,17 @@ public class ApplicationJson {
 
   public void setKind(ApplicationKind kind) {
     this.kind = kind;
+  }
+
+  /**
+   * in Finnish: Hakemuksen tagit
+   */
+  public List<ApplicationTagJson> getApplicationTags() {
+    return applicationTags;
+  }
+
+  public void setApplicationTags(List<ApplicationTagJson> applicationTags) {
+    this.applicationTags = applicationTags;
   }
 
   /**
