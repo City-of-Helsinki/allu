@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import '../../../rxjs-extensions.ts';
 
-import {ProgressStep} from '../../../feature/progressbar/progressbar.component';
+import {ProgressStep} from '../progressbar/progressbar.component';
 import {Application} from '../../../model/application/application';
 import {MapUtil} from '../../../service/map/map.util.ts';
 import {SearchbarFilter} from '../../../service/searchbar-filter';

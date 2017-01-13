@@ -5,7 +5,7 @@ import {MdCardModule, MdToolbarModule, MdProgressBarModule, MdDialogModule, MdSl
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
-import {ProgressBarModule} from '../progressbar/progressbar.module';
+import {ProgressBarModule} from './progressbar/progressbar.module';
 import {LocationModule} from './location/location.module';
 import {TypeModule} from './type/type.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
@@ -35,6 +35,7 @@ import {NoteComponent} from './info/note/note.component';
 import {ApplicationInfoComponent} from './info/application-info.component';
 import {AttachmentComponent} from './attachment/attachment.component';
 import {CommentModule} from './comment/comment.module';
+import {TagBarModule} from './tagbar/tagbar.module';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import {CommentModule} from './comment/comment.module';
     LocationModule,
     TypeModule,
     SidebarModule,
-    CommentModule
+    CommentModule,
+    TagBarModule
   ],
   declarations: [
     ApplicationComponent,

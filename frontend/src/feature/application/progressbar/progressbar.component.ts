@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
-import {Application} from '../../model/application/application';
+import {Application} from '../../../model/application/application';
 
 export enum ProgressStep {
   LOCATION,

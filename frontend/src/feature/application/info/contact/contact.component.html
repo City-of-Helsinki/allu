@@ -40,7 +40,7 @@
                         </div>
                         <div *ngIf="!readonly" class="row form-group">
                             <div class="buttons col m12">
-                                <button *ngIf="saveToRegistry" md-raised-button class="waves-effect waves-light btn"
+                                <button *ngIf="saveToRegistry" class="waves-effect waves-light btn"
                                         (click)="saveToRegistry(contactList[0])">TALLENNA REKISTERIIN</button>
                                 <button *ngIf="addNew" md-raised-button
                                         class="waves-effect waves-light btn" (click)="newContact(contactList[0])">UUSI YHTEYSHENKILÖ</button>

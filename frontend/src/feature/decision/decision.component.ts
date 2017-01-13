@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 
-import {ProgressStep} from '../../feature/progressbar/progressbar.component';
+import {ProgressStep} from '../application/progressbar/progressbar.component';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {Application} from '../../model/application/application';
 import {DecisionHub} from '../../service/decision/decision-hub';

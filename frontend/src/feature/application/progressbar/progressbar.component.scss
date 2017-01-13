@@ -1,9 +1,10 @@
-@import '../../assets/colors';
+@import '../../../assets/colors';
 
 :host {
   md-toolbar {
     background-color: $allu-secondary-nav;
     color: $allu-text-white;
+    margin-bottom: 0px;
   }
 
   .progress {

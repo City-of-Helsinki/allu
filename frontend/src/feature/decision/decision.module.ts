@@ -8,7 +8,7 @@ import {DecisionModalComponent} from './decision-modal.component';
 import {ApplicationBasicInfoComponent} from '../decision/application.basic-info.component';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DecisionService} from '../../service/decision/decision.service';
-import {ProgressBarModule} from '../progressbar/progressbar.module';
+import {ProgressBarModule} from '../application/progressbar/progressbar.module';
 
 @NgModule({
   imports: [
