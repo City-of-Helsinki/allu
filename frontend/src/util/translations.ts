@@ -236,7 +236,7 @@ export const translations = {
         id: 'Kiinteistötunnus'
       },
       OTHER: {
-        name: 'Hakija',
+        name: 'Muu',
         nameLabel: 'Hakijan nimi',
         id: 'Y-tunnus'
       },

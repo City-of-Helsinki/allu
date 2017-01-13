@@ -13,13 +13,6 @@
                 <md-card-title>Johtoselvityksen tiedot</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
-                        <div class="col m3 input-field-checkbox">
-                            <div *ngIf="!readonly">
-                                <input type="checkbox" class="filled-in" id="cableSurveyRequired" formControlName="cableSurveyRequired"/>
-                                <label for="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</label>
-                            </div>
-                            <div *ngIf="readonly && applicationForm.value.cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</div>
-                        </div>
                         <div formGroupName="reportTimes">
                             <div class="input-field col m3">
                                 <input *ngIf="!readonly" id="reportStartTime"
@@ -43,6 +36,34 @@
                             <field-error [form]="cableReportForm" field="reportTimes" hasError="startBeforeEnd">
                                 {{translations.application.cableReport.field.startBeforeEnd}}
                             </field-error>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m2">
+                            <input type="checkbox" class="filled-in" id="cableSurveyRequired" formControlName="cableSurveyRequired"/>
+                            <label for="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</label>
+                        </div>
+                        <div class="col m2">
+                            <input type="checkbox" class="filled-in" id="pksCard" formControlName="pksCard"/>
+                            <label for="pksCard">Pks-kortti</label>
+                        </div>
+                        <div class="col m2">
+                            <input type="checkbox" class="filled-in" id="propertyConnectivity" formControlName="propertyConnectivity"/>
+                            <label for="propertyConnectivity">Tontti- / Kiinteistöliitos</label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m2">
+                            <input type="checkbox" class="filled-in" id="constructionWork" formControlName="constructionWork"/>
+                            <label for="constructionWork">Rakentaminen</label>
+                        </div>
+                        <div class="col m2">
+                            <input type="checkbox" class="filled-in" id="maintenanceWork" formControlName="maintenanceWork"/>
+                            <label for="maintenanceWork">Kunnossapito</label>
+                        </div>
+                        <div class="col m2">
+                            <input type="checkbox" class="filled-in" id="emergencyWork" formControlName="emergencyWork"/>
+                            <label for="emergencyWork">Hätätyö</label>
                         </div>
                     </div>
                 </md-card-content>
