@@ -406,6 +406,13 @@ export const translations = {
       DEFAULT_IMAGE: 'Hakemustyyppikohtainen tyyppikuvaliite',
       DEFAULT_TERMS: 'Hakemustyyppikohtainen ehtoliite'
     }
+  },
+  comment: {
+    type: {
+      INTERNAL: 'Sisäinen kommentti',
+      INVOICING: 'Laskutuksen kommentti',
+      DECISION: 'Päätöksentekijän kommentti'
+    }
   }
 };
 

@@ -1,12 +1,11 @@
 import {Component, OnInit, AfterViewInit} from '@angular/core';
 import * as filesaverLib from 'filesaver';
 
-import {AttachmentInfo} from '../../../../model/application/attachment/attachment-info';
-import {Application} from '../../../../model/application/application';
-import {MaterializeUtil} from '../../../../util/materialize.util';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
+import {Application} from '../../../model/application/application';
+import {MaterializeUtil} from '../../../util/materialize.util';
+import {ApplicationState} from '../../../service/application/application-state';
 import {AttachmentHub} from './attachment-hub';
-import {FileUploader} from 'ng2-file-upload';
 
 const toastTime = 4000;
 const URL = '/api/applications/appId/attachments';

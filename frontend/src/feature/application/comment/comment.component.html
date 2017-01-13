@@ -1,0 +1,51 @@
+<md-card>
+    <md-card-title>
+        <div *ngIf="comment.id === undefined">
+            Uusi kommentti
+        </div>
+        <div *ngIf="comment.id !== undefined">
+            {{['comment.type', comment.type] | translation}}
+        </div>
+    </md-card-title>
+    <md-card-content>
+        <div *ngIf="edit">
+            <div class="row no-left-pad">
+                <div class="input-field col m6">
+                    <select [(ngModel)]="comment.type" materialize="material_select">
+                        <option value="" disabled selected>Kommentin tyyppi</option>
+                        <option *ngFor="let type of commentTypes" [value]="type">{{['comment.type', type] | translation}}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div *ngIf="comment.id !== undefined">
+            <div class="save-info">
+                <span>{{comment.user.realName}} {{comment.uiCreateTime}}</span>
+                <span *ngIf="comment.updateTime">- Päivitetty {{comment.uiUpdateTime}}</span>
+            </div>
+        </div>
+        <div class="row no-left-pad">
+            <div class="col s12 input-field" *ngIf="edit">
+                <textarea [(ngModel)]="comment.text" id="commentText" class="materialize-textarea"></textarea>
+                <label for="commentText">Kommentit</label>
+            </div>
+            <div class="col s12" *ngIf="!edit">
+                {{comment.text}}
+            </div>
+        </div>
+        <div class="row" *ngIf="comment.id === undefined">
+            <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
+            <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="remove()">PERUUTA</button>
+        </div>
+        <div class="row" *ngIf="comment.id !== undefined">
+            <div *ngIf="edit">
+                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
+                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="cancel()">PERUUTA</button>
+            </div>
+            <div *ngIf="!edit">
+                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="editComment()">MUOKKAA</button>
+                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="remove()">POISTA</button>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>

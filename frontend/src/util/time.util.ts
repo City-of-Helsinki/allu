@@ -27,6 +27,10 @@ export class TimeUtil {
     return time ? momentLib(time).format('DD.MM.YYYY').toString() : undefined;
   }
 
+  public static getUiDateTimeString(time: Date): string {
+    return time ? momentLib(time).format('DD.MM.YYYY hh:mm').toString() : undefined;
+  }
+
   public static getDateFromUi(dateString: string): Date {
     return dateString ? momentLib(dateString, 'DD.MM.YYYY').toDate() : undefined;
   }
