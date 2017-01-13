@@ -11,6 +11,7 @@
   "status":null,
   "type":"EVENT",
   "kind":"OUTDOOREVENT",
+  "applicationTags":[{"addedBy":1,"type":"ADDITIONAL_INFORMATION_REQUESTED","creationTime":"2016-07-15T05:08:10.514Z"}],
   "name":"Tervasaaren tohinat",
   "creationTime":"2016-07-15T05:08:10.514Z",
   "startTime":"2016-11-20T22:00:00Z",

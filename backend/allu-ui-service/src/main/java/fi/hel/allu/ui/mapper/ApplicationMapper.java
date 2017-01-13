@@ -48,6 +48,10 @@ public class ApplicationMapper {
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
     applicationDomain.setKind(applicationJson.getKind());
+    if (applicationJson.getApplicationTags() != null) {
+      applicationDomain.setApplicationTags(applicationJson.getApplicationTags().stream()
+          .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime())).collect(Collectors.toList()));
+    }
     applicationDomain.setMetadataVersion(applicationJson.getMetadata().getVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
     applicationDomain.setDecisionTime(applicationJson.getDecisionTime());
@@ -105,6 +109,10 @@ public class ApplicationMapper {
     applicationJson.setStatus(application.getStatus());
     applicationJson.setType(application.getType());
     applicationJson.setKind(application.getKind());
+    if (application.getApplicationTags() != null) {
+      applicationJson.setApplicationTags(application.getApplicationTags().stream()
+          .map(t -> new ApplicationTagJson(t.getAddedBy(), t.getType(), t.getCreationTime())).collect(Collectors.toList()));
+    }
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setStartTime(application.getStartTime());
     applicationJson.setEndTime(application.getEndTime());

@@ -12,6 +12,7 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import java.util.List;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
 
 @Repository
@@ -31,23 +33,26 @@ public class ApplicationDao {
   private SQLQueryFactory queryFactory;
   private ApplicationSequenceDao applicationSequenceDao;
 
+  final QBean<Application> applicationBean = bean(Application.class, application.all());
+  final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
+
   @Autowired
   public ApplicationDao(SQLQueryFactory queryFactory, ApplicationSequenceDao applicationSequenceDao) {
     this.queryFactory = queryFactory;
     this.applicationSequenceDao = applicationSequenceDao;
   }
 
-  final QBean<Application> applicationBean = bean(Application.class, application.all());
-
   @Transactional(readOnly = true)
   public List<Application> findByIds(List<Integer> ids) {
     List<Application> appl = queryFactory.select(applicationBean).from(application).where(application.id.in(ids)).fetch();
-    return appl;
+    return populateTags(appl);
   }
 
   @Transactional(readOnly = true)
   public List<Application> findByProject(int projectId) {
-    return queryFactory.select(applicationBean).from(application).where(application.projectId.eq(projectId)).fetch();
+    List<Application> applications =
+        queryFactory.select(applicationBean).from(application).where(application.projectId.eq(projectId)).fetch();
+    return populateTags(applications);
   }
 
   @Transactional(readOnly = true)
@@ -60,8 +65,8 @@ public class ApplicationDao {
     if (lsc.getBefore() != null) {
       condition = condition.and(application.startTime.before(lsc.getBefore()));
     }
-    return queryFactory.select(applicationBean).from(application)
-        .where(condition).fetch();
+    List<Application> applications = queryFactory.select(applicationBean).from(application).where(condition).fetch();
+    return populateTags(applications);
   }
 
   @Transactional
@@ -72,7 +77,9 @@ public class ApplicationDao {
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
-    return findByIds(Collections.singletonList(id)).get(0);
+    Application application = findByIds(Collections.singletonList(id)).get(0);
+    replaceApplicationTags(application.getId(), appl.getApplicationTags());
+    return populateTags(application);
   }
 
   /**
@@ -128,13 +135,39 @@ public class ApplicationDao {
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
-    return findByIds(Collections.singletonList(id)).get(0);
+    Application application = findByIds(Collections.singletonList(id)).get(0);
+    replaceApplicationTags(application.getId(), appl.getApplicationTags());
+    return populateTags(application);
   }
 
   String createApplicationId(ApplicationType applicationType) {
     long seqValue = applicationSequenceDao
         .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));
     return ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType).name() + seqValue;
+  }
+
+  private List<Application> populateTags(List<Application> applications) {
+    applications.forEach(a -> populateTags(a));
+    return applications;
+  }
+
+  private Application populateTags(Application application) {
+    application.setApplicationTags(findTagsByApplicationId(application.getId()));
+    return application;
+  }
+
+  private List<ApplicationTag> findTagsByApplicationId(Integer applicationId) {
+    List<ApplicationTag> applicationTags =
+        queryFactory.select(applicationTagBean).from(applicationTag).where(applicationTag.applicationId.eq(applicationId)).fetch();
+    return applicationTags;
+  }
+
+  private void replaceApplicationTags(Integer applicationId, List<ApplicationTag> tags) {
+    queryFactory.delete(applicationTag).where(applicationTag.applicationId.eq(applicationId)).execute();
+    if (tags != null && !tags.isEmpty()) {
+      tags.forEach(tag -> tag.setApplicationId(applicationId));
+      tags.forEach(tag -> queryFactory.insert(applicationTag).populate(tag).execute());
+    }
   }
 
 }
