@@ -1,11 +1,8 @@
 <div class="login">
   <h1>Login</h1>
-  <form role="form" (submit)="login($event, username.value, password.value)">
+  <form role="form" (submit)="login($event, username.value)">
       <label for="username">Username</label>
       <input type="text" #username class="form-control" id="username" placeholder="Username">
-      <label for="password">Password</label>
-      <input type="password" #password class="form-control" id="password" placeholder="Password">
       <button type="submit" class="btn btn-default">Submit</button>
   </form>
-  <button (click)="testAuthHttp()" class="btn btn-default">AuthHttp</button>
 </div>

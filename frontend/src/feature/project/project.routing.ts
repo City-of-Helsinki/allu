@@ -7,9 +7,10 @@ import {ProjectComponent} from './project.component';
 import {ProjectApplicationsComponent} from './applications/project-applications.component';
 import {ProjectResolve} from './project-resolve';
 import {ProjectProjectsComponent} from './projects/project-projects.component';
+import {AuthGuard} from '../login/auth-guard.service';
 
 export const projectRoutes: Routes = [
-  { path: 'projects', children: [
+  { path: 'projects', canActivate: [AuthGuard], children: [
     { path: '', redirectTo: 'search', pathMatch: 'full' },
     { path: 'search', component: ProjectSearchComponent },
     { path: 'edit', component: ProjectEditComponent, resolve: { project: ProjectResolve }},

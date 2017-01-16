@@ -1,4 +1,4 @@
-<nav>
+<nav *ngIf="authenticated()">
   <a [routerLink]="['/home']" routerLinkActive="active">ETUSIVU</a>
   <a [routerLink]="['/workqueue']" routerLinkActive="active">TYÖJONO</a>
   <a [routerLink]="['/applications']" routerLinkActive="active">HAKEMUKSET</a>
@@ -6,5 +6,3 @@
   <a [routerLink]="['/admin']" routerLinkActive="active" *ngIf="hasRole('ROLE_ADMIN')">YLLÄPITO</a>
   <a class="align-right" [routerLink]="['/logout']" routerLinkActive="active">KIRJAUDU ULOS</a>
 </nav>
-
-
