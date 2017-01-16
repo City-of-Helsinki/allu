@@ -13,7 +13,7 @@ export class AttachmentInfo {
   ) {};
 
   get uiCreationTime(): string {
-    return TimeUtil.getUiDateString(this.creationTime);
+    return TimeUtil.getUiDateTimeString(this.creationTime);
   }
 
   static fromFile(file: File): AttachmentInfo {

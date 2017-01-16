@@ -144,11 +144,7 @@ export class MapState {
       let featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
       let geoJSON = new L.GeoJSON(featureCollection, style);
 
-      Some(popup).do(pu => {
-        geoJSON.on('mouseover', (event: LeafletMouseEvent) =>
-          pu.toPopup(event.latlng).openOn(this.map)
-        );
-      });
+      Some(popup).do(pu => geoJSON.bindPopup(pu.content()));
 
       geoJSON.eachLayer((layer) => {
         drawLayer.addLayer(layer);

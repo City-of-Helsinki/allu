@@ -21,11 +21,11 @@ export const translations = {
     type: {
       EVENT: 'Tapahtuma',
       SHORT_TERM_RENTAL: 'Lyhytaikainen maanvuokraus',
-      CABLE_REPORT: 'Johtoselvitykset',
+      CABLE_REPORT: 'Johtoselvitys',
       EXCAVATION_ANNOUNCEMENT: 'Kaivuilmoitus',
       AREA_RENTAL: 'Aluevuokraus',
       TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Tilapäinen liikennejärjestely',
-      PLACEMENT_PERMIT: 'Sijoitusluvat',
+      PLACEMENT_PERMIT: 'Sijoituslupa',
       NOTE: 'Muistiinpano'
     },
     kind: {
@@ -101,7 +101,7 @@ export const translations = {
       UNDERGROUND_SPACE: 'Maanalainen tila',
       BASE_STRUCTURES: 'Perusrakenteet',
       DRILL_PILE: 'Porapaalu',
-      CONSTRUCTION_EQUIPMENT: ' Rakennuksen laite/varuste',
+      CONSTRUCTION_EQUIPMENT: 'Rakennuksen laite/varuste',
       CONSTRUCTION_PART: 'Rakennuksen osa',
       GROUND_FROST_INSULATION: 'Routaeriste',
       SMOKE_HATCH_OR_PIPE:  'Savunpoistoluukku/-putki, IV-putki',
