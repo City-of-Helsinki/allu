@@ -1,18 +1,14 @@
 import {Injectable, OnInit} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
-import {SearchbarFilter} from '../searchbar-filter';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationService} from './application.service';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {StructureMeta} from '../../model/application/structure-meta';
 import {DefaultText} from '../../model/application/cable-report/default-text';
-import {Comment} from '../../model/application/comment/comment';
-import {CommentService} from './comment/comment.service';
 
 export type ApplicationSearch = ApplicationLocationQuery | number;
 
@@ -22,8 +18,7 @@ export class ApplicationHub {
   private metaData$ = new Subject<StructureMeta>();
 
   constructor(
-    private applicationService: ApplicationService,
-    private commentService: CommentService
+    private applicationService: ApplicationService
   ) {}
 
   /**

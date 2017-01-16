@@ -1,0 +1,16 @@
+@import '../../../assets/colors';
+
+.btn-chip {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 24px;
+  font-size: 13px;
+  line-height: 16px;
+  height: 32px;
+  background-color: $allu-chip-dark;
+  color: $allu-text-white;
+}
+
+.btn-chip.selected {
+  background-color: $allu-chip-selected;
+}

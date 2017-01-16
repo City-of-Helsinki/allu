@@ -1,5 +1,6 @@
-import {Component, OnInit, OnDestroy, Input, ViewContainerRef} from '@angular/core';
+import {Component, OnInit, OnDestroy, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
+import {ConnectableObservable} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {MdTabChangeEvent} from '@angular/material/tabs';
 import {MdDialog, MdDialogRef, MdDialogConfig} from '@angular/material';
@@ -17,9 +18,9 @@ import {HandlerModalComponent} from './handlerModal/handler-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/common/user';
 import {UserHub} from '../../service/user/user-hub';
-import {UserService} from '../../service/user/user-service';
-import {DialogCloseValue, DialogCloseReason} from '../common/dialog-close-value';
+import {DialogCloseReason} from '../common/dialog-close-value';
 import {WorkQueueHub} from './workqueue-search/workqueue-hub';
+import {} from 'rxjs';
 
 @Component({
   selector: 'workqueue',
@@ -33,7 +34,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   static OWN_TAB = 'Omat';
   static COMMON_TAB = 'Yhteiset';
 
-  applications: Observable<Array<Application>>;
+  applications: ConnectableObservable<Array<Application>>;
   tabs = [WorkQueueComponent.OWN_TAB, WorkQueueComponent.COMMON_TAB];
   tab = WorkQueueComponent.OWN_TAB;
   dialogRef: MdDialogRef<HandlerModalComponent>;
@@ -56,7 +57,8 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     this.applications = this.applicationQuery.asObservable()
       .debounceTime(500)
       .distinctUntilChanged()
-      .switchMap(query => this.getApplicationsSearch(query));
+      .switchMap(query => this.getApplicationsSearch(query))
+      .publish();
 
     this.userHub.getActiveUsers().subscribe(users => this.handlers = users);
   }

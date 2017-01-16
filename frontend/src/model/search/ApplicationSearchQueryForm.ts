@@ -10,4 +10,5 @@ export interface ApplicationSearchQueryForm {
   freeText?: string;
   startTime?: string;
   endTime?: string;
+  tags?: Array<string>;
 }
