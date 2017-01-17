@@ -38,7 +38,8 @@ create table allu.city_district (
   id serial primary key,
   district_id integer not null unique,
   name text,
-  geometry geometry(GEOMETRY, 3879));
+  geometry geometry(GEOMETRY, 3879),
+  zone_id integer);
 
 create table allu.location (
    id serial primary key,
