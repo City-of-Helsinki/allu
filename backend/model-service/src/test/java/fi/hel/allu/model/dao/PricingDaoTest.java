@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
 import static org.junit.Assert.assertEquals;
@@ -71,4 +72,21 @@ public class PricingDaoTest {
     assertFalse(opt_pc.isPresent());
   }
 
+  /*
+   * Test that a pricing location can be correctly read with district id:
+   */
+  @Test
+  public void testWithDistrictId() {
+    final int DISTRICT_ID = 99;
+    final int ZONE_ID = 42;
+    queryFactory.insert(cityDistrict).set(cityDistrict.districtId, DISTRICT_ID).set(cityDistrict.zoneId, ZONE_ID)
+        .execute();
+    queryFactory.insert(outdoorPricing).set(outdoorPricing.zoneId, ZONE_ID).set(outdoorPricing.nature, "PUBLIC_FREE")
+        .set(outdoorPricing.baseCharge, TEST_BASE_CHARGE).set(outdoorPricing.buildDiscountPercent, 0)
+        .set(outdoorPricing.durationDiscountPercent, 0).set(outdoorPricing.durationDiscountLimit, 0).execute();
+    Optional<PricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(DISTRICT_ID,
+        OutdoorEventNature.PUBLIC_FREE);
+    assertTrue(opt_pc.isPresent());
+    assertEquals(TEST_BASE_CHARGE, opt_pc.get().getBaseCharge());
+  }
 }
