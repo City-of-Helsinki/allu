@@ -18,6 +18,7 @@ public class ApplicationES {
   private UserES handler;
   private StatusTypeES status;
   private ApplicationTypeES type;
+  private List<String> applicationTags;
   private String name;
   private ZonedDateTime creationTime;
   private ZonedDateTime startTime;
@@ -67,6 +68,14 @@ public class ApplicationES {
 
   public void setType(ApplicationTypeES type) {
     this.type = type;
+  }
+
+  public List<String> getApplicationTags() {
+    return applicationTags;
+  }
+
+  public void setApplicationTags(List<String> applicationTags) {
+    this.applicationTags = applicationTags;
   }
 
   public String getName() {

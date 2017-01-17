@@ -84,6 +84,10 @@ public class ApplicationMapper {
         applicationJson.getHandler() != null ?
             new UserES(applicationJson.getHandler().getUserName(), applicationJson.getHandler().getRealName()) : null);
     applicationES.setType(new ApplicationTypeES(applicationJson.getType()));
+    if (applicationJson.getApplicationTags() != null) {
+      applicationES.setApplicationTags(
+          applicationJson.getApplicationTags().stream().map(tag -> tag.getType().toString()).collect(Collectors.toList()));
+    }
     applicationES.setStatus(new StatusTypeES(applicationJson.getStatus()));
     applicationES.setDecisionTime(applicationJson.getDecisionTime());
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
