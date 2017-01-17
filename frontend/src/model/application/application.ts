@@ -8,6 +8,7 @@ import {TimeUtil} from '../../util/time.util';
 import {User} from '../common/user';
 import {Some} from '../../util/option';
 import {Project} from '../project/project';
+import {ApplicationTag} from './tag/application-tag';
 
 const CENTS = 100;
 
@@ -35,7 +36,8 @@ export class Application {
     attachmentList: Array<AttachmentInfo>,
     calculatedPrice: number,
     priceOverride: number,
-    priceOverrideReason: string
+    priceOverrideReason: string,
+    tagList: Array<ApplicationTag>
     )
   constructor(
     public id?: number,
@@ -58,10 +60,12 @@ export class Application {
     public attachmentList?: Array<AttachmentInfo>,
     public calculatedPrice?: number,
     public priceOverride?: number,
-    public priceOverrideReason?: string) {
+    public priceOverrideReason?: string,
+    public applicationTags?: Array<ApplicationTag>) {
     this.location = location || new Location();
     this.contactList = contactList || [new Contact()];
     this.attachmentList = attachmentList || [];
+    this.applicationTags = applicationTags || [];
   }
 
   /*

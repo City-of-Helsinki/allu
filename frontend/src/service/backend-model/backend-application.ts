@@ -5,6 +5,7 @@ import {BackendLocation} from './backend-location';
 import {BackendStructureMeta} from './backend-structure-meta';
 import {BackendAttachmentInfo} from './backend-attachment-info';
 import {BackendUser} from './backend-user';
+import {BackendApplicationTag} from '../mapper/application-tag-mapper';
 
 export interface BackendApplication {
   id: number;
@@ -28,4 +29,5 @@ export interface BackendApplication {
   calculatedPrice: number;
   priceOverride: number;
   priceOverrideReason: string;
+  applicationTags: Array<BackendApplicationTag>;
 }

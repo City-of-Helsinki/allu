@@ -1,6 +1,12 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {MdToolbarModule, MdTabsModule, MdDialogModule, MdCardModule} from '@angular/material';
+import {
+  MdToolbarModule,
+  MdTabsModule,
+  MdDialogModule,
+  MdCardModule,
+  MdIconModule,
+  MdButtonModule} from '@angular/material';
 import {MaterializeDirective} from 'angular2-materialize';
 import {AutoCompletionDirective} from './auto-completion/auto-completion.directive.ts';
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component.ts';
@@ -29,6 +35,8 @@ import {FileDropDirective} from './file-drop/file-drop.directive';
     MdTabsModule,
     MdDialogModule,
     MdCardModule,
+    MdIconModule,
+    MdButtonModule,
     MaterializeDirective,
     AutoCompletionDirective,
     AutoCompletionListComponent,

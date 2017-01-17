@@ -7,7 +7,7 @@ import {LocationComponent} from './location.component';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {SearchBarModule} from '../../searchbar/searchbar.module';
 import {MapModule} from '../../map/map.module';
-import {ProgressBarModule} from '../../progressbar/progressbar.module';
+import {ProgressBarModule} from '../progressbar/progressbar.module';
 import {TypeModule} from '../type/type.module';
 
 @NgModule({

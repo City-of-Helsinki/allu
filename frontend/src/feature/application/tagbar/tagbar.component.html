@@ -1,0 +1,19 @@
+<div class="row item-bar">
+    <div class="item-bar-content">
+        <span class="single-line" *ngIf="application.startTime">{{application.uiStartTime}} - {{application.uiEndTime}}</span>
+        <span>Tila:</span>
+        <md-chip-list>
+            <md-chip class="chip-dark" *ngFor="let tag of application.applicationTags; let i = index;">
+                {{['application.tag.type', tag.type] | translation}}
+                <button *ngIf="!readonly" class="btn-circle btn-gray" (click)="remove(i)"><md-icon>remove</md-icon></button>
+            </md-chip>
+        </md-chip-list>
+        <span class="single-line" *ngIf="!readonly">
+            Lisää tila
+            <button md-icon-button [mdMenuTriggerFor]="menu" class="btn-circle btn-gray"><md-icon>add</md-icon></button>
+        </span>
+    </div>
+</div>
+<md-menu x-position="before" #menu="mdMenu">
+    <button md-menu-item *ngFor="let type of tagTypes" (click)="add(type)">{{['application.tag.type', type] | translation}}</button>
+</md-menu>

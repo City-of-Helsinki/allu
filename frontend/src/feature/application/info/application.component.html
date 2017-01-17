@@ -1,4 +1,5 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
+<tagbar [application]="application" [readonly]="readonly" (onTagChange)="onTagChange($event)"></tagbar>
 <div class="row application">
   <div class="col s1">
     <sidebar *ngIf="application.id === undefined" [items]="['BASIC_INFO', 'ATTACHMENTS']"></sidebar>

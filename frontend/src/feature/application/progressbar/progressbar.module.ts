@@ -1,5 +1,5 @@
 import {NgModule} from '@angular/core';
-import {AlluCommonModule} from '../common/allu-common.module';
+import {AlluCommonModule} from '../../common/allu-common.module';
 import {ProgressbarComponent} from './progressbar.component';
 
 @NgModule({

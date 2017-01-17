@@ -34,17 +34,17 @@
             </div>
         </div>
         <div class="row" *ngIf="comment.id === undefined">
-            <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
-            <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="remove()">PERUUTA</button>
+            <button type="button" class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
+            <button type="button" class="waves-effect waves-light btn" (click)="remove()">PERUUTA</button>
         </div>
         <div class="row" *ngIf="comment.id !== undefined">
             <div *ngIf="edit">
-                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
-                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="cancel()">PERUUTA</button>
+                <button type="button" class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
+                <button type="button" class="waves-effect waves-light btn" (click)="cancel()">PERUUTA</button>
             </div>
             <div *ngIf="!edit">
-                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="editComment()">MUOKKAA</button>
-                <button type="button" md-raised-button class="waves-effect waves-light btn" (click)="remove()">POISTA</button>
+                <button type="button" class="waves-effect waves-light btn" (click)="editComment()">MUOKKAA</button>
+                <button type="button" class="waves-effect waves-light btn" (click)="remove()">POISTA</button>
             </div>
         </div>
     </md-card-content>

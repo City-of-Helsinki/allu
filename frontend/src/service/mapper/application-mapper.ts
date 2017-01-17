@@ -10,6 +10,7 @@ import {AttachmentInfoMapper} from './attachment-info-mapper';
 import {UserMapper} from './user-mapper';
 import {TimeUtil} from '../../util/time.util';
 import {Some} from '../../util/option';
+import {ApplicationTagMapper} from './application-tag-mapper';
 
 export class ApplicationMapper {
 
@@ -36,7 +37,8 @@ export class ApplicationMapper {
         (attachment) => AttachmentInfoMapper.mapBackend(attachment)) : undefined,
       backendApplication.calculatedPrice,
       backendApplication.priceOverride,
-      backendApplication.priceOverrideReason
+      backendApplication.priceOverrideReason,
+      ApplicationTagMapper.mapBackendList(backendApplication.applicationTags)
     );
   }
 
@@ -62,7 +64,8 @@ export class ApplicationMapper {
       attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application
       calculatedPrice: application.calculatedPrice,
       priceOverride: application.priceOverride,
-      priceOverrideReason: application.priceOverrideReason
+      priceOverrideReason: application.priceOverrideReason,
+      applicationTags: ApplicationTagMapper.mapFrontendList(application.applicationTags)
     };
   }
 

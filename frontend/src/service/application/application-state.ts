@@ -12,6 +12,7 @@ import {Subject} from 'rxjs';
 import {HttpResponse, HttpStatus} from '../../util/http.util';
 import {Comment} from '../../model/application/comment/comment';
 import {CommentHub} from './comment/comment-hub';
+import {ApplicationTag} from '../../model/application/tag/application-tag';
 
 
 @Injectable()
@@ -34,6 +35,14 @@ export class ApplicationState {
 
   set application(value: Application) {
     this._application = value;
+  }
+
+  set tags(tags: Array<ApplicationTag>) {
+    this._application.applicationTags = tags;
+  }
+
+  get tags(): Array<ApplicationTag> {
+    return this._application.applicationTags;
   }
 
   get pendingAttachments(): Array<AttachmentInfo> {
