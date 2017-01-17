@@ -16,6 +16,7 @@ export class ApplicationSearchQuery implements SearchQuery {
   public endTime: Date;
   public projectId: number;
   public sort: Sort;
+  public tags: Array<string>;
 
   public get uiStartTime(): string {
     return TimeUtil.getUiDateString(this.startTime);
@@ -45,6 +46,7 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.freeText = queryForm.freeText;
     query.startTime = TimeUtil.getDateFromUi(queryForm.startTime);
     query.endTime = TimeUtil.getDateFromUi(queryForm.endTime);
+    query.tags = queryForm.tags;
     query.sort = sort;
     return query;
   }
@@ -74,6 +76,7 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.freeText = this.freeText;
     query.startTime = this.startTime;
     query.endTime = this.endTime;
+    query.tags = this.tags;
     return query;
   }
 

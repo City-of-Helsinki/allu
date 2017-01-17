@@ -2,6 +2,7 @@ import {Component, OnInit, OnDestroy, Input, Output, EventEmitter} from '@angula
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {ConnectableObservable} from 'rxjs';
 import {Subscription} from 'rxjs/Subscription';
 import '../../../rxjs-extensions.ts';
 
@@ -16,7 +17,7 @@ import {translations} from '../../../util/translations';
   styles: [require('./workqueue-content.component.scss')]
 })
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
-  @Input() applications: Observable<Array<Application>>;
+  @Input() applications: ConnectableObservable<Array<Application>>;
   @Output() onSortChange = new EventEmitter<Sort>();
   @Output() onSelectChange = new EventEmitter<Array<number>>();
   applicationRows: Array<ApplicationRow>;
@@ -29,7 +30,8 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private applicationSubscription: Subscription;
 
   ngOnInit(): void {
-    this.applicationSubscription = this.applications
+    this.applicationSubscription = this.applications.connect();
+     this.applications
       .map(applications => this.toApplicationRows(applications))
       .subscribe(applicationRows => {
         this.allSelected = false;

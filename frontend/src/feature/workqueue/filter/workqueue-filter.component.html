@@ -5,7 +5,7 @@
             <div class="input-field col s2">
                 <select formControlName="type" materialize="material_select" multiple>
                     <option value="" selected disabled>Hakemuksen tyyppi</option>
-                    <option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</option>
+                    <option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</option>
                 </select>
                 <label>Hakemuksen tyyppi</label>
             </div>
@@ -19,7 +19,7 @@
             <div class="input-field col s2">
                 <select formControlName="status" materialize="material_select" multiple>
                     <option value="" selected disabled>Hakemuksen tila</option>
-                    <option *ngFor="let status of applicationStatuses" [value]="status">{{translations.application.status[status]}}</option>
+                    <option *ngFor="let status of applicationStatuses" [value]="status">{{['application.status', status] | translation}}</option>
                 </select>
                 <label>Hakemuksen tila</label>
             </div>
@@ -45,6 +45,17 @@
                        [materializeParams]="pickadateParams"
                        type="text" />
                 <label for="endDate">Loppupäivämäärä</label>
+            </div>
+            <div class="col s12 item-bar">
+                <div class="item-bar-content">
+                    <span>Tilat:</span>
+                    <selection-group (onSelection)="tagChange($event)">
+                        <selection-item *ngFor="let type of tagTypes"
+                                        [item]="type"
+                                        itemLabel="{{['application.tag.type', type] | translation}}"></selection-item>
+                    </selection-group>
+
+                </div>
             </div>
         </div>
     </form>

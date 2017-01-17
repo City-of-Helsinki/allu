@@ -11,6 +11,7 @@ import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {ApplicationSearchQueryForm} from '../../../model/search/ApplicationSearchQueryForm';
 import {User} from '../../../model/common/user';
 import {CurrentUser} from '../../../service/user/current-user';
+import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
 
 declare var Materialize: any;
 
@@ -30,10 +31,10 @@ export class WorkQueueFilterComponent implements OnInit {
   @Output() onQueryChange = new EventEmitter<ApplicationSearchQuery>();
   pickadateParams = PICKADATE_PARAMETERS;
 
-  private translations = translations;
-  private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
-  private applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
-  private applicationTypes = EnumUtil.enumValues(ApplicationType);
+  items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
+  applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
+  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  tagTypes = EnumUtil.enumValues(ApplicationTagType);
 
   constructor(fb: FormBuilder) {
     this.queryForm = fb.group({
@@ -42,7 +43,8 @@ export class WorkQueueFilterComponent implements OnInit {
       status: undefined,
       district: undefined,
       startTime: undefined,
-      endTime: undefined
+      endTime: undefined,
+      tags: [[]]
     });
   }
 
@@ -62,5 +64,9 @@ export class WorkQueueFilterComponent implements OnInit {
     } else {
       control.setValue([]);
     }
+  }
+
+  tagChange(tags: Array<string>): void {
+    this.queryForm.patchValue({tags: tags});
   }
 }
