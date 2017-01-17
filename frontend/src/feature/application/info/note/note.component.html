@@ -68,6 +68,8 @@
             </md-card>
         </div>
 
+        <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
+
         <application-actions
             [readonly]="readonly"
             [applicationId]="application.id"

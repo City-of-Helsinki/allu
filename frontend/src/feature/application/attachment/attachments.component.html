@@ -1,26 +1,25 @@
 <h1>Liitteet</h1>
 <ul class="slim-card-list">
   <li class="slim-card" *ngFor="let attachment of attachments; let i = index;">
-      <div class="col s1">
+      <span>
         <div class="clickable" (click)="remove(i, attachment)"><i class="material-icons">clear</i></div>
-      </div>
-      <div class="col s3">
+      </span>
+      <span>
         <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
-      </div>
-      <div class="col s1">
+      </span>
+      <span>
         <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
         <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
-
-      </div>
-      <div class="col s1">
+      </span>
+      <span>
         {{attachment.uiCreationTime}}
-      </div>
-      <div class="col s5">
+      </span>
+      <span>
         {{attachment.description}}
-      </div>
-      <div class="col s1" *ngIf="attachment.id !== undefined">
+      </span>
+      <span *ngIf="attachment.id !== undefined" class="card-item-align-right">
         <i class="material-icons clickable right-align" (click)="download(attachment)">file_download</i>
-      </div>
+      </span>
   </li>
 </ul>
 

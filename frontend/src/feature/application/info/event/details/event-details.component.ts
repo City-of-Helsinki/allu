@@ -4,7 +4,6 @@ import moment = require('moment/moment');
 
 import {StructureMeta} from '../../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../../service/application/application-hub';
-import {Location} from '../../../../../model/common/location';
 import {Event} from '../../../../../model/application/event/event';
 import {EventDetailsForm} from './event-details.form';
 import {translations} from '../../../../../util/translations';
@@ -16,15 +15,16 @@ import {EventNature} from '../../../../../model/application/event/event-nature';
 import {NoPriceReason} from '../../../../../model/application/no-price-reason';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
 import {ApplicationState} from '../../../../../service/application/application-state';
+import {Application} from '../../../../../model/application/application';
 
 @Component({
   selector: 'event-details',
   template: require('./event-details.component.html'),
   styles: []
 })
-export class EventDetailsComponent implements OnInit, AfterViewInit {
+export class EventDetailsComponent implements OnInit {
   @Input() applicationForm: FormGroup;
-  @Input() location: Location;
+  @Input() application: Application;
   @Input() readonly: boolean;
 
   eventForm: FormGroup;
@@ -55,9 +55,6 @@ export class EventDetailsComponent implements OnInit, AfterViewInit {
     if (this.readonly) {
       this.eventForm.disable();
     }
-  }
-
-  ngAfterViewInit(): void {
   }
 
   eventNatureChange(nature: string): void {

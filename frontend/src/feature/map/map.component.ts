@@ -4,12 +4,12 @@ import {MapHub} from '../../service/map/map-hub';
 import {Application} from '../../model/application/application';
 import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
-import {ApplicationHub} from '../../service/application/application-hub';
 import {findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
 import {styleByApplicationType} from '../../service/map/map-draw-styles';
 import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
 import {MapPopup} from '../../service/map/map-popup';
+import {ApplicationState} from '../../service/application/application-state';
 
 @Component({
   selector: 'map',
@@ -32,7 +32,7 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private mapService: MapService,
     private mapHub: MapHub,
-    private applicationHub: ApplicationHub,
+    private applicationState: ApplicationState,
     private projectHub: ProjectHub) {}
 
   ngOnInit() {
@@ -49,7 +49,7 @@ export class MapComponent implements OnInit, OnDestroy {
     this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app));
     this.mapHub.selectedFixedLocations().subscribe(fxs => this.drawFixedLocations(fxs));
     // Handle fetching and drawing edited application as separate case
-    Some(this.applicationId).do(id => this.applicationHub.getApplication(id).subscribe(app => this.drawEditedApplication(app)));
+    Some(this.applicationId).do(id => this.drawEditedApplication(this.applicationState.application));
 
     Some(this.projectId).do(id => this.drawProject(id));
   }
