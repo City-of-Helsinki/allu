@@ -27,7 +27,7 @@ export class TypeComponent implements OnInit {
 
   ngOnInit(): any {
     let application = this.applicationState.application;
-    this.type = this.applicationTypes.find(types => types.containsKind(ApplicationKind[application.kind]));
+    this.type = this.applicationTypes.find(types => types.type === ApplicationType[application.type]);
     this.kindNames = this.type
       ? this.type.applicationKindNames
       : [];
