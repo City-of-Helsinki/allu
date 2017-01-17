@@ -75,7 +75,7 @@ public class CityDistrictReader {
     Polygon polygon = DSL.polygon(3879, DSL.ring(vertex2DTokens.toArray(new DSL.Vertex2DToken[vertex2DTokens.size()])));
     CityDistrict district = new CityDistrict();
     district.setDistrictId(xmlDistrict.districtId);
-    district.setName(xmlDistrict.districtName.trim());
+    district.setName(xmlDistrict.districtId + " " + xmlDistrict.districtName.trim());
     district.setGeometry(polygon);
     String insert = queryFactory.insert(cityDistrict)
         .populate(district)
