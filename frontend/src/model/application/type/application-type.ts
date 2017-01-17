@@ -115,8 +115,7 @@ export const placementPermit = new ApplicationTypeStructure(ApplicationType.PLAC
 
 export const event = new ApplicationTypeStructure(ApplicationType.EVENT, [
   new ApplicationKindStructure(ApplicationKind.PROMOTION),
-  new ApplicationKindStructure(ApplicationKind.OUTDOOREVENT),
-  new ApplicationKindStructure(ApplicationKind.ELECTION)
+  new ApplicationKindStructure(ApplicationKind.OUTDOOREVENT)
 ]);
 
 export const shortTermRental = new ApplicationTypeStructure(ApplicationType.SHORT_TERM_RENTAL, [

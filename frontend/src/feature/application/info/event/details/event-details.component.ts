@@ -16,6 +16,7 @@ import {NoPriceReason} from '../../../../../model/application/no-price-reason';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
 import {ApplicationState} from '../../../../../service/application/application-state';
 import {Application} from '../../../../../model/application/application';
+import {ApplicationKind} from '../../../../../model/application/type/application-kind';
 
 @Component({
   selector: 'event-details',
@@ -46,10 +47,7 @@ export class EventDetailsComponent implements OnInit {
 
     this.applicationId = application.id;
 
-    let event = <Event>application.extension || new Event();
-    event.eventStartTime = event.eventStartTime || application.startTime;
-    event.eventEndTime = event.eventEndTime || application.endTime;
-    event.applicationType = ApplicationType[ApplicationType.EVENT];
+    let event = this.event(application);
     this.eventForm.patchValue(EventDetailsForm.fromEvent(application, event));
 
     if (this.readonly) {
@@ -111,5 +109,18 @@ export class EventDetailsComponent implements OnInit {
     });
 
     this.applicationForm.addControl('event', this.eventForm);
+  }
+
+  private event(application: Application): Event {
+    let event = <Event>application.extension || new Event();
+    event.eventStartTime = event.eventStartTime || application.startTime;
+    event.eventEndTime = event.eventEndTime || application.endTime;
+    event.applicationType = ApplicationType[ApplicationType.EVENT];
+
+    if (application.kind === ApplicationKind[ApplicationKind.PROMOTION]) {
+      event.nature = EventNature[EventNature.PROMOTION];
+    }
+
+    return event;
   }
 }

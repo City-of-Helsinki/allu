@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.OutdoorEventNature;
+import fi.hel.allu.common.types.EventNature;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 
 public class EventJson extends ApplicationExtensionJson {
   @NotNull(message = "{event.nature}")
-  private OutdoorEventNature nature;
+  private EventNature nature;
   @NotBlank(message = "{event.description}")
   private String description;
   private String url;
@@ -42,11 +42,11 @@ public class EventJson extends ApplicationExtensionJson {
   /**
    * in Finnish: Tapahtuman luonne
    */
-  public OutdoorEventNature getNature() {
+  public EventNature getNature() {
     return nature;
   }
 
-  public void setNature(OutdoorEventNature nature) {
+  public void setNature(EventNature nature) {
     this.nature = nature;
   }
 

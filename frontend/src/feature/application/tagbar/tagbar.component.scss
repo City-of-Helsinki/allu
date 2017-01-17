@@ -1,40 +1,13 @@
 @import '../../../assets/colors';
 
-.item-bar {
-    font-size: 0.9rem;
-    font-weight: 400;
-    font-family: Roboto,"Helvetica Neue",sans-serif;
-    padding: 0 16px;
-    display: flex;
-    flex-direction: column;
-    min-height: 64px;
-    background-color: $allu-tertiary-nav;
-
-    .item-bar-content {
-        display: inline-flex;
-        flex-direction: row;
-        align-items: center;
-        box-sizing: border-box;
-        min-height: 64px;
-        width: 100%;
-        padding: 10px 0px;
-
-        span {
-            padding: 0 5px;
-        }
-
-        span:first-of-type {
-            padding: 0 40px 0 5px;
-        }
-    }
+.item-bar .item-bar-content > span:first-of-type {
+    padding: 0 40px 0 5px;
 }
 
-
-
-    .chip-dark {
-        background-color: $allu-chip-dark;
-        color: $allu-text-white;
-    }
+.chip-dark {
+    background-color: $allu-chip-dark;
+    color: $allu-text-white;
+}
 
 
 button.btn-gray {

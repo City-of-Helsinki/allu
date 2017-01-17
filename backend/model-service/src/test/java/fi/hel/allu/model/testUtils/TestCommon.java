@@ -91,7 +91,7 @@ public class TestCommon {
     Event event = new Event();
     event.setDescription("desc");
     event.setAttendees(10);
-    event.setNature(OutdoorEventNature.PUBLIC_FREE);
+    event.setNature(EventNature.PUBLIC_FREE);
     return event;
   }
 

@@ -31,7 +31,6 @@ export const translations = {
     kind: {
       OUTDOOREVENT: 'Ulkoilmatapahtuma',
       PROMOTION: 'Promootio',
-      ELECTION: 'Vaalit',
       AREA_RENTAL: 'Aluevuokraus',
       TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Tilapäiset liikennejärjestelyt',
       BRIDGE_BANNER: 'Banderollit silloissa',

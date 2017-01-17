@@ -3,7 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.OutdoorEventNature;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.pricing.PricingConfiguration;
 import fi.hel.allu.model.testUtils.TestCommon;
@@ -60,7 +60,7 @@ public class PricingDaoTest {
   @Test
   public void testWithExistingFixedLocation() {
     Optional<PricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID,
-        OutdoorEventNature.PUBLIC_FREE);
+        EventNature.PUBLIC_FREE);
     assertTrue(opt_pc.isPresent());
     PricingConfiguration pc = opt_pc.get();
     assertEquals(TEST_BASE_CHARGE, pc.getBaseCharge());
@@ -68,7 +68,7 @@ public class PricingDaoTest {
 
   @Test
   public void testWithBadFixedLocation() {
-    Optional<PricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID + 1, OutdoorEventNature.PUBLIC_FREE);
+    Optional<PricingConfiguration> opt_pc = pricingDao.findByFixedLocationAndNature(TEST_ID + 1, EventNature.PUBLIC_FREE);
     assertFalse(opt_pc.isPresent());
   }
 
@@ -85,7 +85,7 @@ public class PricingDaoTest {
         .set(outdoorPricing.baseCharge, TEST_BASE_CHARGE).set(outdoorPricing.buildDiscountPercent, 0)
         .set(outdoorPricing.durationDiscountPercent, 0).set(outdoorPricing.durationDiscountLimit, 0).execute();
     Optional<PricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(DISTRICT_ID,
-        OutdoorEventNature.PUBLIC_FREE);
+        EventNature.PUBLIC_FREE);
     assertTrue(opt_pc.isPresent());
     assertEquals(TEST_BASE_CHARGE, opt_pc.get().getBaseCharge());
   }

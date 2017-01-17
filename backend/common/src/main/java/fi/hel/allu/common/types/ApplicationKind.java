@@ -7,7 +7,6 @@ public enum ApplicationKind {
   // for EVENT:
   PROMOTION,
   OUTDOOREVENT,
-  ELECTION,
   // for SHORT_TERM_RENTAL: lyhytaikainen maanvuokraus
   BRIDGE_BANNER, // Banderollit silloissa
   BENJI, // Benji-hyppylaite

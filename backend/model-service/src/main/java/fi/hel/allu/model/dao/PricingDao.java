@@ -3,7 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
-import fi.hel.allu.common.types.OutdoorEventNature;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.pricing.PricingConfiguration;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +24,7 @@ public class PricingDao {
   final QBean<PricingConfiguration> pricingBean = bean(PricingConfiguration.class, outdoorPricing.all());
 
   @Transactional(readOnly = true)
-  public Optional<PricingConfiguration> findByFixedLocationAndNature(int fixedLocationId, OutdoorEventNature nature) {
+  public Optional<PricingConfiguration> findByFixedLocationAndNature(int fixedLocationId, EventNature nature) {
     PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing)
         .where(outdoorPricing.fixedLocationId.eq(fixedLocationId).and(outdoorPricing.nature.eq(nature.toString())))
         .fetchFirst();
@@ -32,7 +32,7 @@ public class PricingDao {
   }
 
   @Transactional(readOnly = true)
-  public Optional<PricingConfiguration> findByDisctrictAndNature(int districtId, OutdoorEventNature nature) {
+  public Optional<PricingConfiguration> findByDisctrictAndNature(int districtId, EventNature nature) {
     PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing).innerJoin(cityDistrict)
         .on(outdoorPricing.zoneId.eq(cityDistrict.zoneId))
         .where(cityDistrict.districtId.eq(districtId).and(outdoorPricing.nature.eq(nature.toString()))).fetchFirst();
