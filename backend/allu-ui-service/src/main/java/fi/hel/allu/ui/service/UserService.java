@@ -31,8 +31,9 @@ public class UserService {
     this.restTemplate = restTemplate;
   }
 
-  public AlluUser getCurrentUser() {
-    return (AlluUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+  public UserJson getCurrentUser() {
+    AlluUser alluUser = (AlluUser) SecurityContextHolder.getContext().getAuthentication().getDetails();
+    return findUserByUserName(alluUser.getUsername());
   }
 
   public List<UserJson> findAllUsers() {

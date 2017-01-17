@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class ApplicationService {
   private ApplicationMapper applicationMapper;
   private ContactService contactService;
   private MetaService metaService;
+  private UserService userService;
 
   @Autowired
   public ApplicationService(
@@ -37,7 +39,8 @@ public class ApplicationService {
       ApplicantService applicantService,
       ApplicationMapper applicationMapper,
       ContactService contactService,
-      MetaService metaService) {
+      MetaService metaService,
+      UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
@@ -45,6 +48,7 @@ public class ApplicationService {
     this.applicationMapper = applicationMapper;
     this.contactService = contactService;
     this.metaService = metaService;
+    this.userService = userService;
   }
 
 
@@ -174,6 +178,10 @@ public class ApplicationService {
     newApplication.setMetadata(metaService.findMetadataForApplication(newApplication.getType()));
     List<ContactJson> contacts = newApplication.getContactList();
     setContactApplicant(contacts, newApplication.getApplicant());
+    if (newApplication.getApplicationTags() != null) {
+      UserJson currentUser = userService.getCurrentUser();
+      newApplication.getApplicationTags().forEach(t -> updateTag(currentUser, t));
+    }
     Application applicationModel = restTemplate.postForObject(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
         applicationMapper.createApplicationModel(newApplication),
@@ -203,6 +211,10 @@ public class ApplicationService {
     }
     List<ContactJson> contacts = contactService.setContactsForApplication(applicationId,
         applicationJson.getContactList());
+    if (applicationJson.getApplicationTags() != null) {
+      UserJson currentUser = userService.getCurrentUser();
+      applicationJson.getApplicationTags().forEach(t -> updateTag(currentUser, t));
+    }
     restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), applicationMapper
         .createApplicationModel(applicationJson), applicationId);
     applicationJson.setContactList(contacts);
@@ -233,6 +245,13 @@ public class ApplicationService {
       if (cj.getApplicantId() == null) {
         cj.setApplicantId(applicantId);
       }
+    }
+  }
+
+  private void updateTag(UserJson currentUser, ApplicationTagJson tag) {
+    if (tag.getAddedBy() == null) {
+      tag.setAddedBy(currentUser.getId());
+      tag.setCreationTime(ZonedDateTime.now());
     }
   }
 }

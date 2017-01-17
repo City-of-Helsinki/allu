@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.service;
 
 
+import fi.hel.allu.common.types.ApplicationTagType;
 import fi.hel.allu.common.types.CableInfoType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
@@ -8,11 +9,12 @@ import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
-
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -26,14 +28,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
+import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -55,6 +56,9 @@ public class ApplicationServiceTest extends MockServices {
 
   private ApplicationService applicationService;
 
+  private UserJson userJson;
+  private static final int USER_ID = 123;
+
   @BeforeClass
   public static void setUpBeforeClass() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -64,11 +68,11 @@ public class ApplicationServiceTest extends MockServices {
   @Before
   public void setUp() {
     applicationMapper = new ApplicationMapper();
-    applicationService = new ApplicationService(
-        props, restTemplate, locationService, applicantService, applicationMapper, contactService, metaService);
 
     initSaveMocks();
     initSearchMocks();
+    userService = Mockito.mock(UserService.class);
+
     Mockito.when(locationService.createLocation(Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
     Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
@@ -85,6 +89,12 @@ public class ApplicationServiceTest extends MockServices {
         .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
     Mockito.when(metaService.findMetadataForApplication(Mockito.any(), Mockito.anyInt()))
         .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
+
+    userJson = new UserJson(USER_ID, null, null, null, null, true, null, null);
+    Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
+
+    applicationService = new ApplicationService(
+        props, restTemplate, locationService, applicantService, applicationMapper, contactService, metaService, userService);
   }
 
   @Test
@@ -96,7 +106,6 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals(1, constraintViolations.size());
     assertEquals("Application name is required", constraintViolations.iterator().next().getMessage());
   }
-
 
   @Test
   public void testCreateWithEmptyApplicationType() {
@@ -141,6 +150,40 @@ public class ApplicationServiceTest extends MockServices {
     applicationService.updateApplicationHandler(2, Collections.singletonList(applicationJson.getId()));
     Mockito.verify(restTemplate, Mockito.times(1)).put(null, Collections.singletonList(applicationJson.getId()), 2);
   }
+
+  @Test
+  public void testCreateWithApplicationTags() {
+    ApplicationJson applicationJson = createMockApplicationJson(null);
+    ApplicationTagJson applicationTag = new ApplicationTagJson(null, ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED, null);
+    applicationJson.setApplicationTags(Collections.singletonList(applicationTag));
+    applicationService.createApplication(applicationJson);
+    ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
+
+    Mockito.verify(restTemplate, Mockito.times(1))
+        .postForObject(Mockito.anyString(), applicationArgumentCaptor.capture(), Mockito.eq(Application.class));
+    Application application = applicationArgumentCaptor.getValue();
+    Assert.assertEquals(1, application.getApplicationTags().size());
+    Assert.assertEquals(USER_ID, (int) application.getApplicationTags().get(0).getAddedBy());
+    Assert.assertNotNull(application.getApplicationTags().get(0).getCreationTime());
+  }
+
+  @Test
+  public void testUpdateWithApplicationTags() {
+    ApplicationJson applicationJson = createMockApplicationJson(null);
+    ApplicationTagJson applicationTag1 = new ApplicationTagJson(null, ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED, null);
+    ApplicationTagJson applicationTag2 = new ApplicationTagJson(1, ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED, ZonedDateTime.now());
+    applicationJson.setApplicationTags(Arrays.asList(applicationTag1, applicationTag2));
+    applicationService.createApplication(applicationJson);
+    ArgumentCaptor<Application> applicationArgumentCaptor = ArgumentCaptor.forClass(Application.class);
+
+    Mockito.verify(restTemplate, Mockito.times(1))
+        .postForObject(Mockito.anyString(), applicationArgumentCaptor.capture(), Mockito.eq(Application.class));
+    Application application = applicationArgumentCaptor.getValue();
+    Assert.assertEquals(2, application.getApplicationTags().size());
+    Assert.assertEquals(USER_ID, (int) application.getApplicationTags().get(0).getAddedBy());
+    Assert.assertEquals(1, (int) application.getApplicationTags().get(1).getAddedBy());
+  }
+
 
   @Test
   public void testRemoveApplicationHandler() {

@@ -8,8 +8,6 @@ import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.QueryParameterJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.domain.UserJson;
-import fi.hel.allu.ui.security.AlluUser;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -36,12 +34,9 @@ public class WorkQueueServiceTest {
     userService = Mockito.mock(UserService.class);
     workQueueService = new WorkQueueService(applicationServiceComposer, userService);
 
-    AlluUser alluUser = new AlluUser(TEST_USER, Collections.emptyList(), "foo@bar.fi");
-    Mockito.when(userService.getCurrentUser()).thenReturn(alluUser);
-
     userJson.setAssignedRoles(Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_PROCESS_APPLICATION));
     userJson.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
-    Mockito.when(userService.findUserByUserName(TEST_USER)).thenReturn(userJson);
+    Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
     Mockito.when(applicationServiceComposer.search(Mockito.any())).thenReturn(emptyList);
   }
 

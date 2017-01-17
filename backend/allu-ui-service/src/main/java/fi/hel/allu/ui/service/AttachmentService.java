@@ -3,8 +3,6 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.UserJson;
-import fi.hel.allu.ui.security.AlluUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,7 +50,7 @@ public class AttachmentService {
 
   public AttachmentInfoJson updateAttachment(int id, AttachmentInfoJson attachmentInfoJson) {
     AttachmentInfo attachmentInfo = toAttachmentInfo(attachmentInfoJson);
-    attachmentInfo.setUserId(resolveUserId());
+    attachmentInfo.setUserId(userService.getCurrentUser().getId());
     HttpEntity<AttachmentInfo> requestEntity = new HttpEntity<>(attachmentInfo);
     ResponseEntity<AttachmentInfo> response = restTemplate.exchange(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_UPDATE), HttpMethod.PUT,
@@ -101,7 +99,7 @@ public class AttachmentService {
       throws IOException {
     // Create the attachment info for model-service:
     AttachmentInfo toModel = toAttachmentInfo(info);
-    toModel.setUserId(resolveUserId());
+    toModel.setUserId(userService.getCurrentUser().getId());
     toModel.setApplicationId(applicationId);
     // Generate suitable multi-part request...
     MultiValueMap<String, Object> requestParts = new LinkedMultiValueMap<>();
@@ -151,22 +149,12 @@ public class AttachmentService {
   private AttachmentInfoJson toAttachmentInfoJson(AttachmentInfo attachmentInfo) {
     AttachmentInfoJson result = new AttachmentInfoJson();
     result.setId(attachmentInfo.getId());
-    result.setHandlerName(resolveRealName(attachmentInfo.getUserId()));
+    result.setHandlerName(userService.getCurrentUser().getRealName());
     result.setType(attachmentInfo.getType());
     result.setName(attachmentInfo.getName());
     result.setDescription(attachmentInfo.getDescription());
     result.setCreationTime(attachmentInfo.getCreationTime());
     result.setSize(attachmentInfo.getSize());
     return result;
-  }
-
-  private int resolveUserId() {
-    AlluUser alluUser = userService.getCurrentUser();
-    return userService.findUserByUserName(alluUser.getUsername()).getId();
-  }
-
-  private String resolveRealName(int userId) {
-    UserJson userJson = userService.findUserById(userId);
-    return userJson.getRealName();
   }
 }

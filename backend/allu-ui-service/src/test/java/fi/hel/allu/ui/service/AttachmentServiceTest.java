@@ -4,7 +4,6 @@ import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.UserJson;
-import fi.hel.allu.ui.security.AlluUser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.ZonedDateTime;
-import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -47,11 +45,10 @@ public class AttachmentServiceTest {
     restTemplate = Mockito.mock(RestTemplate.class);
     userService = Mockito.mock(UserService.class);
     attachmentService = new AttachmentService(applicationProperties, restTemplate, userService);
-    Mockito.when(userService.getCurrentUser()).thenReturn(new AlluUser("username", Collections.emptyList(), "email"));
     UserJson userJson = new UserJson();
     userJson.setId(USER_ID);
     userJson.setRealName("real name");
-    Mockito.when(userService.findUserByUserName("username")).thenReturn(userJson);
+    Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
     Mockito.when(userService.findUserById(USER_ID)).thenReturn(userJson);
   }
 

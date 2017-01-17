@@ -7,7 +7,6 @@ import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.QueryParameterJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.domain.UserJson;
-import fi.hel.allu.ui.security.AlluUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -61,8 +60,7 @@ public class WorkQueueService {
     List<QueryParameterJson> otherParameters = partitionedByStatus.get(Boolean.FALSE);
 
     // merge given parameters with the ones extracted from user information
-    AlluUser alluUser = userService.getCurrentUser();
-    UserJson user = userService.findUserByUserName(alluUser.getUsername());
+    UserJson user = userService.getCurrentUser();
 
     applicationTypeParameter.setFieldMultiValue(
         mergeLists(
