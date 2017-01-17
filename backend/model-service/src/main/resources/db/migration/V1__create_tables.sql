@@ -22,7 +22,8 @@ comment on table allu.fixed_location is 'Predefined Area+Section type location';
 
 create table allu.outdoor_pricing (
     id serial primary key,
-    fixed_location_id integer not null references allu.fixed_location(id),
+    fixed_location_id integer references allu.fixed_location(id),
+    zone_id integer,
     nature text not null,              -- event's nature
     base_charge bigint not null,                -- base charge per day, in 1/100 eurocents
     build_discount_percent integer not null,    -- discount percent for build days
