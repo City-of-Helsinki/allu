@@ -42,7 +42,6 @@ export class ShortTermRentalComponent implements OnInit, OnDestroy {
               private router: Router,
               private fb: FormBuilder,
               private applicationHub: ApplicationHub,
-              private mapHub: MapHub,
               private applicationState: ApplicationState) {
   };
 
@@ -77,9 +76,6 @@ export class ShortTermRentalComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit(): void {
     MaterializeUtil.updateTextFields(50);
-    if (this.readonly) {
-      this.mapHub.selectApplication(this.application);
-    }
   }
 
   onSubmit(form: ShortTermRentalForm) {

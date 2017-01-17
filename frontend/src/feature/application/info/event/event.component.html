@@ -6,7 +6,7 @@
     <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
              [readonly]="readonly" [addNew]="true" [saveToRegistry]="true"></contact>
 
-    <event-details [applicationForm]="applicationForm" [location]="application.location" [readonly]="readonly"></event-details>
+    <event-details [applicationForm]="applicationForm" [application]="application" [readonly]="readonly"></event-details>
 
     <application-actions
         [readonly]="readonly"

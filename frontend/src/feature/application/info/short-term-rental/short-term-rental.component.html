@@ -104,7 +104,7 @@
                 </md-card>
             </div>
 
-            <location-details *ngIf="readonly" [applicationId]="application.id" [location]="application.location" [readonly]="readonly"></location-details>
+            <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
         </form>
 
         <application-actions

@@ -80,6 +80,8 @@
 
         <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="readonly"></cable-info>
 
+        <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
+
         <application-actions
             [readonly]="readonly"
             [applicationId]="application.id"

@@ -35,7 +35,6 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
               private router: Router,
               private fb: FormBuilder,
               private applicationHub: ApplicationHub,
-              private mapHub: MapHub,
               private applicationState: ApplicationState) {
   };
 
@@ -66,9 +65,6 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngAfterViewInit(): void {
     MaterializeUtil.updateTextFields(50);
-    if (this.readonly) {
-      this.mapHub.selectApplication(this.application);
-    }
   }
 
   onSubmit(form: EventForm) {
