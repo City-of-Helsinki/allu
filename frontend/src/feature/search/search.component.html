@@ -22,17 +22,16 @@
           <label>Hakemuksen tila</label>
         </div>
         <div class="input-field col m2 s6">
-          <!-- select disabled formControlName="district" materialize="material_select" -->
-          <select disabled materialize="material_select" multiple>
+          <select formControlName="districts" materialize="material_select" multiple>
             <option value="" disabled selected>Kaupunginosa</option>
-            <option *ngFor="let option of items" [value]="option">{{option}}</option>
+            <option *ngFor="let district of districts | async" [value]="district.districtId">{{district.name}}</option>
           </select>
           <label>Kaupunginosa</label>
         </div>
         <div class="input-field col m2 s6">
           <select formControlName="handler" materialize="material_select" multiple>
             <option value="" selected disabled>Hakemuksen käsittelijä</option>
-            <option *ngFor="let option of handlers | async" [value]="option.userName">{{option.realName}}</option>
+            <option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</option>
           </select>
           <label>Hakemuksen käsittelijä</label>
         </div>
@@ -117,7 +116,7 @@
             {{application.applicant.name}}<br>
           </td>
           <td>{{application.location.postalAddress.streetAddress}}</td>
-          <td>ei tuettuna</td>
+          <td>{{application.location.districtId}} {{districtName(application.location.districtId) | async}}</td>
           <td>{{ application.creationTime | date:format }}</td>
           <td>{{ application.startTime | date:format }}</td>
           <td></td>
@@ -125,4 +124,5 @@
         </tbody>
       </table>
     </div>
+  </div>
 </div>

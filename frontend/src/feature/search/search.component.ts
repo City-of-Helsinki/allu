@@ -15,6 +15,9 @@ import {User} from '../../model/common/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Sort} from '../../model/common/sort';
 import {ApplicationState} from '../../service/application/application-state';
+import {MapHub} from '../../service/map/map-hub';
+import {CityDistrict} from '../../model/common/city-district';
+import {Some} from '../../util/option';
 
 @Component({
   selector: 'search',
@@ -23,11 +26,11 @@ import {ApplicationState} from '../../service/application/application-state';
 export class SearchComponent implements OnInit {
 
   sort: Sort = new Sort(undefined, undefined);
-  private queryForm: FormGroup;
-  private applications: Array<Application>;
+  queryForm: FormGroup;
+  applications: Array<Application>;
+  handlers: Observable<Array<User>>;
+  districts: Observable<Array<CityDistrict>>;
   private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
-  // TODO: handlers should be fetched from some service later
-  private handlers: Observable<Array<User>>;
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
   private format = UI_DATE_FORMAT;
@@ -38,12 +41,14 @@ export class SearchComponent implements OnInit {
   constructor(private applicationHub: ApplicationHub,
               private applicationState: ApplicationState,
               private userHub: UserHub,
+              private mapHub: MapHub,
               private router: Router,
               private fb: FormBuilder) {
     this.queryForm = fb.group({
       applicationId: undefined,
       type: undefined,
       status: undefined,
+      districts: undefined,
       handler: undefined,
       address: undefined,
       applicant: undefined,
@@ -56,6 +61,7 @@ export class SearchComponent implements OnInit {
 
   ngOnInit(): void {
     this.handlers = this.userHub.getActiveUsers();
+    this.districts = this.mapHub.districts();
   }
 
   goToSummary(application: Application): void {
@@ -76,5 +82,9 @@ export class SearchComponent implements OnInit {
     this.applicationHub.searchApplications(ApplicationSearchQuery.from(this.queryForm.value, this.sort)).subscribe(apps => {
       this.applications = apps;
     });
+  }
+
+  districtName(id: number): Observable<string> {
+    return id !== undefined ? this.mapHub.districtById(id).map(d => d.name) : Observable.empty();
   }
 }

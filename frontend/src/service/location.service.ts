@@ -1,35 +1,32 @@
 import {Injectable} from '@angular/core';
-import {Http, Response, URLSearchParams} from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
-import {Observable}     from 'rxjs/Observable';
+import {Observable} from 'rxjs/Observable';
+import '../rxjs-extensions.ts';
 
-import {Location} from './location.class';
 import {Geocoordinates} from '../model/common/geocoordinates';
 import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
 import {StreetAddress} from '../model/common/street-address';
 import {MapUtil} from './map/map.util.ts';
-import {MapHub} from './map/map-hub';
-import '../rxjs-extensions.ts';
 import {UIStateHub} from './ui-state/ui-state-hub';
 import {HttpUtil} from './../util/http.util.ts';
-import {HttpResponse} from '../util/http.util.ts';
 import {ErrorInfo} from './ui-state/error-info';
 import {ErrorType} from './ui-state/error-type';
-import {None} from '../util/option';
-import {Option} from '../util/option';
-import {Some} from '../util/option';
+import {None, Option, Some} from '../util/option';
 import {FixedLocationMapper} from './mapper/fixed-location-mapper';
 import {FixedLocation} from '../model/common/fixed-location';
 import {HttpStatus} from '../util/http.util';
 import {PostalAddress} from '../model/common/postal-address';
+import {CityDistrict} from '../model/common/city-district';
+import {CityDistrictMapper} from './mapper/city-district-mapper';
+
+const ADDRESS_URL = '/api/address';
+const GEOCODE_URL = '/geocode/helsinki';
+const FIXED_LOCATION_URL = '/api/locations/fixed-location';
+const CITY_DISTRICT_URL = '/api/locations/city-district';
+const SEARCH_URL = '/search';
 
 @Injectable()
 export class LocationService {
-
-  static ADDRESS_URL = '/api/address';
-  static GEOCODE_URL = '/geocode/helsinki';
-  static FIXED_LOCATION_URL = '/api/locations/fixed-location';
-  static SEARCH_URL = '/search';
 
   constructor(
     private authHttp: AuthHttp,
@@ -47,14 +44,21 @@ export class LocationService {
   }
 
   public getFixedLocations(): Observable<Array<FixedLocation>> {
-    return this.authHttp.get(LocationService.FIXED_LOCATION_URL)
+    return this.authHttp.get(FIXED_LOCATION_URL)
       .map(response => response.json())
       .map(json => json.map(ss => FixedLocationMapper.mapBackend(ss)))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
+  public districts(): Observable<Array<CityDistrict>> {
+    return this.authHttp.get(CITY_DISTRICT_URL)
+      .map(response => response.json())
+      .map(json => json.map(district => CityDistrictMapper.mapBackend(district)))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
   public search(searchTerm: string): Observable<Array<PostalAddress>> {
-    let searchUrl = LocationService.ADDRESS_URL + LocationService.SEARCH_URL + '/' + searchTerm;
+    let searchUrl = ADDRESS_URL + SEARCH_URL + '/' + searchTerm;
     return this.authHttp.get(searchUrl)
       .map(response => response.json())
       .map(json => json.map(address => PostalAddress.fromBackend(address)))
@@ -63,7 +67,7 @@ export class LocationService {
 
   private geocodeUrl(address: string) {
     let streetAddress = StreetAddress.fromAddressString(address);
-    return LocationService.ADDRESS_URL + LocationService.GEOCODE_URL
+    return ADDRESS_URL + GEOCODE_URL
       + '/' + streetAddress.streetName
       + '/' + streetAddress.streetNumber;
   }

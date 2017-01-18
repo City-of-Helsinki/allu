@@ -11,6 +11,7 @@ export class LocationMapper {
         backendLocation.area,
         PostalAddress.fromBackend(backendLocation.postalAddress),
         backendLocation.fixedLocationIds,
+        backendLocation.districtId,
         backendLocation.info) : undefined;
   }
   public static mapFrontend(location: Location): BackendLocation {
@@ -21,6 +22,7 @@ export class LocationMapper {
       area: location.area,
       postalAddress: location.postalAddress.toBackend(),
       fixedLocationIds: location.fixedLocationIds,
+      districtId: location.districtId,
       info: location.info
     } : undefined;
   }
