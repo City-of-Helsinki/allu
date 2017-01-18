@@ -1,11 +1,11 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
 <tagbar [application]="application" [readonly]="readonly" (onTagChange)="onTagChange($event)"></tagbar>
 <div class="row application">
-  <div class="col s1">
+  <div class="col s3 m2 l1">
     <sidebar *ngIf="application.id === undefined" [items]="['BASIC_INFO', 'ATTACHMENTS']"></sidebar>
     <sidebar *ngIf="application.id !== undefined" [items]="['BASIC_INFO', 'ATTACHMENTS', 'COMMENTS']"></sidebar>
   </div>
-  <div class="col s11">
+  <div class="col s9 m10 l11">
     <router-outlet></router-outlet>
   </div>
 </div>
