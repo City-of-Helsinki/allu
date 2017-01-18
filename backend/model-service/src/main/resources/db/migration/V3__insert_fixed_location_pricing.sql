@@ -162,9 +162,119 @@ insert into allu.outdoor_pricing values
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PUBLIC_NONFREE', 5000000, 50, 50, 14, NULL, NULL, '{10000, 5000, 2500}', '{0, 2000, 4000}'),
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'CLOSED', 5000000, 0, 0, 0, NULL, NULL, '{20000}', '{0}');
 
+-- Promotions
+
+insert into allu.fixed_location values (DEFAULT, 'Narinkka','A', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 6000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Narinkka','B', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 6000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Narinkka','C', 'PROMOTION', true);
+insert into allu.outdoor_pricing  values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 6000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Narinkka','D', 'PROMOTION', true);
+insert into allu.outdoor_pricing  values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 6000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Mauno Koiviston aukio', 'E', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'A', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'B', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'C', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'D', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'E', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Rautatientori', 'F', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kansalaistori', 'A', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kansalaistori', 'B', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kansalaistori', 'C', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemenpuisto', 'A', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemenpuisto', 'B', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemenpuisto', 'C', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kaisaniemenpuisto', 'D', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Töölönlahden puisto', 'A', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Töölönlahden puisto', 'B', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Töölönlahden puisto', 'C', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', NULL, 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Senaatintori', NULL, 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Säiliö 468', NULL, 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 1250000, 50, 0, 0, '{125000}', '{10}', NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Asema-aukio', 'A', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Asema-aukio', 'B', 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, NULL, NULL, NULL, NULL);
+
+insert into allu.fixed_location values (DEFAULT, 'Kolmensepänaukio', NULL, 'PROMOTION', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL);
+
 -- Short term rental - banderols
 
-insert into allu.fixed_location values (DEFAULT, '1a Sörnäisten rantatie – Kaikukatu, Kaupunkiin päin ajettaessa', NULL,'BRIDGE_BANNER', true);
+insert into allu.fixed_location values (DEFAULT, '1a Sörnäisten rantatie – Kaikukatu, Kaupunkiin päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '1b Sörnäisten rantatie – Kaikukatu, Kaupungista poispäin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '2a Sörnäisten rantatie – Vilhonvuorenkatu, Kaupunkiin päin ajettaessa', NULL, 'BRIDGE_BANNER', true);
 insert into allu.fixed_location values (DEFAULT, '2b Sörnäisten rantatie – Vilhonvuorenkatu,Kaupungista poispäin ajettaessa', NULL, 'BRIDGE_BANNER', true);
@@ -304,3 +414,9 @@ insert into allu.outdoor_pricing values
   (DEFAULT, NULL, 1, 'CLOSED', 5000000, 0, 0, 0, NULL, NULL, '{20000}', '{0}'),
   (DEFAULT, NULL, 2, 'CLOSED', 2500000, 0, 0, 0, NULL, NULL, '{20000}', '{0}'),
   (DEFAULT, NULL, 3, 'CLOSED', 1250000, 0, 0, 0, NULL, NULL, '{20000}', '{0}');
+
+  -- Promotion events have extra fees for structures and no duration discount:
+insert into allu.outdoor_pricing values
+  (DEFAULT, NULL, 1, 'PROMOTION', 5000000, 50, 0, 0, '{500000}', '{10}', NULL, NULL),
+  (DEFAULT, NULL, 2, 'PROMOTION', 2500000, 50, 0, 0, '{250000}', '{10}', NULL, NULL),
+  (DEFAULT, NULL, 3, 'PROMOTION', 1250000, 50, 0, 0, '{125000}', '{10}', NULL, NULL);
