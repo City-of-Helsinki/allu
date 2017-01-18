@@ -3,7 +3,7 @@ package fi.hel.allu.model.service;
 import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.OutdoorEventNature;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.LocationDao;
@@ -73,7 +73,7 @@ public class PricingServiceTest {
     application.setEndTime(ZonedDateTime.parse("2016-12-07T09:00:00+02:00"));
     Event event = new Event();
     event.setEcoCompass(true);
-    event.setNature(OutdoorEventNature.PUBLIC_FREE);
+    event.setNature(EventNature.PUBLIC_FREE);
     event.setEventStartTime(application.getStartTime().plusDays(1));
     event.setEventEndTime(application.getEndTime());
     application.setExtension(event);

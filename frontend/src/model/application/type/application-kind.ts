@@ -5,8 +5,7 @@ export enum ApplicationKind {
   // EVENTS
   OUTDOOREVENT, // Ulkoilmatapahtuma
   PROMOTION, // Promootio
-  ELECTION, // Vaalit
-    // SHORT TERM RENTALS
+  // SHORT TERM RENTALS
   EXCAVATION_ANNOUNCEMENT, // Kaivuuilmoitus
   AREA_RENTAL, // ALuevuokraus
   TEMPORARY_TRAFFIC_ARRANGEMENTS, // Tilapäiset liikennejärjestelyt

@@ -312,13 +312,9 @@ ul.slim-card-list {
     min-height: 64px;
     width: 100%;
     padding: 10px 0px;
+  }
 
-    span {
-      padding: 0 5px;
-    }
-
-    span:first-of-type {
-      padding: 0 40px 0 5px;
-    }
+  .item-bar-content > span {
+    padding: 0 5px;
   }
 }

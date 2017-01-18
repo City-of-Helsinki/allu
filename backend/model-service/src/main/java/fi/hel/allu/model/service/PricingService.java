@@ -4,7 +4,7 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.OutdoorEventNature;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
@@ -110,7 +110,7 @@ public class PricingService {
     if (location.isPresent() == false) {
       throw new NoSuchEntityException("Location (ID=" + application.getLocationId() + " doesn't exist");
     }
-    OutdoorEventNature nature = event.getNature();
+    EventNature nature = event.getNature();
     if (nature == null) {
       return 0; // No nature defined -> no price
     }

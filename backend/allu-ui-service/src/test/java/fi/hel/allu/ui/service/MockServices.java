@@ -148,7 +148,7 @@ public abstract class MockServices {
     eventJson.setDescription("Outdoor event description, Json");
     eventJson.setAttendees(1000);
     eventJson.setEventStartTime(ZonedDateTime.now());
-    eventJson.setNature(OutdoorEventNature.CLOSED);
+    eventJson.setNature(EventNature.CLOSED);
     eventJson.setUrl("Outdoor event url, Json");
     eventJson.setEcoCompass(true);
     eventJson.setTimeExceptions("Mock exceptions");
@@ -269,7 +269,7 @@ public abstract class MockServices {
   public Event createMockOutdoorEventModel() {
     Event event = new Event();
     event.setUrl("url, Model");
-    event.setNature(OutdoorEventNature.PUBLIC_NONFREE);
+    event.setNature(EventNature.PUBLIC_NONFREE);
     event.setEventStartTime(ZonedDateTime.now());
     event.setAttendees(1050);
     event.setDescription("Outdoor event description, Model");

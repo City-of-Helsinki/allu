@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.OutdoorEventNature;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
@@ -286,7 +286,7 @@ public class DecisionService {
     return String.format("%s, %s %s", a.getStreetAddress(), a.getPostalCode(), a.getCity());
   }
 
-  private String eventNature(OutdoorEventNature nature) {
+  private String eventNature(EventNature nature) {
     switch (nature) {
     case CLOSED:
       return "Kutsuvierastilaisuus tai muu vastaava suljettu tapahtuma";

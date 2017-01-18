@@ -136,54 +136,56 @@
             <md-card-title>Hinnoitteluperusteet</md-card-title>
             <md-card-content>
                 <div class="row form-group">
-                    <div class="col m6">
-                        <div class="input-field col m12">
-                            <select *ngIf="!readonly" materialize="material_select"
-                                    formControlName="nature" (change)="eventNatureChange($event.target.value)">
-                                <option value="" disabled selected>{{ meta?.getUiName('nature') }}*</option>
-                                <option *ngFor="let nature of eventNatures" [value]="nature">{{translations.application.event.nature[nature]}}</option>
-                            </select>
-                            <field-error [form]="eventForm" field="nature" hasError="required">
-                                {{translations.application.event.field.natureMissing}}
-                            </field-error>
+                    <div *ngIf="application.kind==='OUTDOOREVENT'">
+                        <div class="col m6">
+                            <div class="input-field col m12">
+                                <select *ngIf="!readonly" materialize="material_select"
+                                        formControlName="nature" (change)="eventNatureChange($event.target.value)">
+                                    <option value="" disabled selected>{{ meta?.getUiName('nature') }}*</option>
+                                    <option *ngFor="let nature of eventNatures" [value]="nature">{{translations.application.event.nature[nature]}}</option>
+                                </select>
+                                <field-error [form]="eventForm" field="nature" hasError="required">
+                                    {{translations.application.event.field.natureMissing}}
+                                </field-error>
 
-                            <div *ngIf="readonly">
-                                <input id="eventNature" type="text" readonly formControlName="nature"
-                                    value="{{translations.application.event.nature[eventForm.value.nature]}}">
-                                <label for="eventNature">Tapahtuman luonne</label>
+                                <div *ngIf="readonly">
+                                    <input id="eventNature" type="text" readonly formControlName="nature"
+                                        value="{{translations.application.event.nature[eventForm.value.nature]}}">
+                                    <label for="eventNature">Tapahtuman luonne</label>
+                                </div>
+                            </div>
+                            <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.nature === 'PUBLIC_FREE'">
+                                <input type="checkbox" class="filled-in" id="noPrice" formControlName="noPrice"
+                                       (change)="noPriceChange($event.target.value)"/>
+                                <label for="noPrice">Korvauksetta</label>
+                            </div>
+                            <div class="col m12" *ngIf="eventForm.value.noPrice">
+                                <select *ngIf="!readonly" materialize="material_select"
+                                        [materializeSelectOptions]="noPriceReasons" formControlName="noPriceReason">
+                                    <option value="" disabled selected>{{ meta?.getUiName('noPriceReason') }}</option>
+                                    <option *ngFor="let reason of noPriceReasons"
+                                            [value]="reason">{{translations.application.event.noPriceReason[reason]}}</option>
+                                </select>
+                                <div *ngIf="readonly">
+                                    <input id="noPriceReason" type="text" formControlName="noPriceReason"
+                                           value="{{translations.application.event.noPriceReason[eventForm.value.noPriceReason]}}">
+                                    <label for="noPriceReason">Peruste korvauksettomuudelle</label>
+                                </div>
                             </div>
                         </div>
-                        <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.nature === 'PUBLIC_FREE'">
-                            <input type="checkbox" class="filled-in" id="noPrice" formControlName="noPrice"
-                                   (change)="noPriceChange($event.target.value)"/>
-                            <label for="noPrice">Korvauksetta</label>
-                        </div>
-                        <div class="col m12" *ngIf="eventForm.value.noPrice">
-                            <select *ngIf="!readonly" materialize="material_select"
-                                    [materializeSelectOptions]="noPriceReasons" formControlName="noPriceReason">
-                                <option value="" disabled selected>{{ meta?.getUiName('noPriceReason') }}</option>
-                                <option *ngFor="let reason of noPriceReasons"
-                                        [value]="reason">{{translations.application.event.noPriceReason[reason]}}</option>
-                            </select>
-                            <div *ngIf="readonly">
-                                <input id="noPriceReason" type="text" formControlName="noPriceReason"
-                                       value="{{translations.application.event.noPriceReason[eventForm.value.noPriceReason]}}">
-                                <label for="noPriceReason">Peruste korvauksettomuudelle</label>
+                        <div class="col m6 no-padding">
+                            <div class="col m12 height-fix-bottom">
+                                <input type="checkbox" class="filled-in" id="pricingEcoCompass" formControlName="ecoCompass"/>
+                                <label for="pricingEcoCompass">{{ meta?.getUiName('ecoCompass') }}</label>
                             </div>
-                        </div>
-                    </div>
-                    <div class="col m6 no-padding">
-                        <div class="col m12 height-fix-bottom">
-                            <input type="checkbox" class="filled-in" id="pricingEcoCompass" formControlName="ecoCompass"/>
-                            <label for="pricingEcoCompass">{{ meta?.getUiName('ecoCompass') }}</label>
-                        </div>
-                        <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
-                            <input type="checkbox" class="filled-in" id="pricingSalesActivity" formControlName="salesActivity"/>
-                            <label for="pricingSalesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</label>
-                        </div>
-                        <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
-                            <input type="checkbox" class="filled-in" id="includesHeavyStructure" formControlName="heavyStructure"/>
-                            <label for="includesHeavyStructure">{{ meta?.getUiName('heavyStructure') }}</label>
+                            <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
+                                <input type="checkbox" class="filled-in" id="pricingSalesActivity" formControlName="salesActivity"/>
+                                <label for="pricingSalesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</label>
+                            </div>
+                            <div class="col m12 height-fix-bottom" *ngIf="eventForm.value.noPrice">
+                                <input type="checkbox" class="filled-in" id="includesHeavyStructure" formControlName="heavyStructure"/>
+                                <label for="includesHeavyStructure">{{ meta?.getUiName('heavyStructure') }}</label>
+                            </div>
                         </div>
                     </div>
                     <div class="col m12">
