@@ -38,7 +38,7 @@
                     {{row.application.applicant.name}}<br>
                 </td>
                 <td class="clickable">{{row.application.location?.postalAddress?.streetAddress}}</td>
-                <td class="clickable">Kamppi</td>
+                <td class="clickable">{{districtName(row.application.location.districtId) | async}}</td>
                 <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>
                 <td class="clickable">{{row.application.extension.uiStartTime}}</td>
                 <td class="clickable"></td>

@@ -427,6 +427,13 @@ export const translations = {
       INVOICING: 'Laskutuksen kommentti',
       DECISION: 'Päätöksentekijän kommentti'
     }
+  },
+  workqueue: {
+    tab: {
+      OWN: 'Omat',
+      COMMON:  'Yhteiset',
+      WAITING: 'Odottaa'
+    }
   }
 };
 

@@ -1,22 +1,22 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
-import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
+import {FormGroup, FormBuilder} from '@angular/forms';
+import '../../../rxjs-extensions.ts';
 
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
-import {translations} from '../../../util/translations';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import '../../../rxjs-extensions.ts';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';
-import {ApplicationSearchQueryForm} from '../../../model/search/ApplicationSearchQueryForm';
 import {User} from '../../../model/common/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
+import {Observable} from 'rxjs';
+import {CityDistrict} from '../../../model/common/city-district';
+import {MapHub} from '../../../service/map/map-hub';
+import {WorkQueueTab} from '../workqueue-tab';
 
-declare var Materialize: any;
-
-const TAB_OWN = 'Omat';
 const HANDLER_FIELD = 'handler';
+const TAGS_FIELD = 'tags';
 
 @Component({
   selector: 'workqueue-filter',
@@ -30,18 +30,18 @@ export class WorkQueueFilterComponent implements OnInit {
   @Input() handlers: Array<User>;
   @Output() onQueryChange = new EventEmitter<ApplicationSearchQuery>();
   pickadateParams = PICKADATE_PARAMETERS;
-
-  items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
+  districts: Observable<Array<CityDistrict>>;
   applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
+  tab: string;
 
-  constructor(fb: FormBuilder) {
+  constructor(fb: FormBuilder, private mapHub: MapHub) {
     this.queryForm = fb.group({
       type: undefined,
       handler: undefined,
       status: undefined,
-      district: undefined,
+      districts: undefined,
       startTime: undefined,
       endTime: undefined,
       tags: [[]]
@@ -52,21 +52,50 @@ export class WorkQueueFilterComponent implements OnInit {
     this.queryForm.valueChanges
       .distinctUntilChanged()
       .subscribe(query => this.onQueryChange.emit(ApplicationSearchQuery.from(query)));
+
+    this.districts = this.mapHub.districts();
   }
 
-  @Input() set selectedTab(tab: string) {
-    let control = this.queryForm.get(HANDLER_FIELD);
-
-    if (TAB_OWN === tab) {
-      CurrentUser.userName().do(userName => control.setValue([userName]));
-      // initiate search with the set username filter
-      this.onQueryChange.emit(ApplicationSearchQuery.from(this.queryForm.value));
+  @Input() set selectedTab(tab: WorkQueueTab) {
+    this.tab = WorkQueueTab[tab];
+    if (WorkQueueTab.OWN === tab) {
+      this.ownTabSelected();
+    } else if (WorkQueueTab.WAITING === tab) {
+      this.waitingTabSelected();
     } else {
-      control.setValue([]);
+      this.commonTabSelected();
     }
   }
 
   tagChange(tags: Array<string>): void {
     this.queryForm.patchValue({tags: tags});
+  }
+
+  private ownTabSelected(): void {
+    // initiate search with the set username filter
+    this.tagTypes = EnumUtil.enumValues(ApplicationTagType).filter(tagType => tagType !== ApplicationTagType[ApplicationTagType.WAITING]);
+    // remove waiting tag filter if such was selected
+    let tagControl = this.queryForm.get(TAGS_FIELD);
+    let tags = this.queryForm.value.tags.filter(tag => tag !== ApplicationTagType[ApplicationTagType.WAITING]);
+    tagControl.setValue(tags);
+
+    CurrentUser.userName().do(userName => this.setHandlers([userName]));
+  }
+
+  private waitingTabSelected(): void {
+    let tags = this.queryForm.get(TAGS_FIELD);
+    tags.setValue([ApplicationTagType[ApplicationTagType.WAITING]]);
+    this.onQueryChange.emit(ApplicationSearchQuery.from(this.queryForm.value));
+  }
+
+  private commonTabSelected(): void {
+    this.tagTypes = EnumUtil.enumValues(ApplicationTagType);
+    this.setHandlers([]);
+  }
+
+  private setHandlers(handlers: Array<string>): void {
+    let control = this.queryForm.get(HANDLER_FIELD);
+    control.setValue(handlers);
+    this.onQueryChange.emit(ApplicationSearchQuery.from(this.queryForm.value));
   }
 }

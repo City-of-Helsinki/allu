@@ -15,7 +15,7 @@
 
   <md-tab-group (selectChange)="tabSelected($event)">
       <md-tab *ngFor="let tab of tabs">
-        <template md-tab-label>{{tab}}</template>
+        <template md-tab-label>{{['workqueue.tab', tab] | translation}}</template>
         <workqueue-content
             [applications]="applications"
             (onSortChange)="sortChanged($event)"
