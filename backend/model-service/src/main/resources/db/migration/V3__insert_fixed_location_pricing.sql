@@ -145,7 +145,22 @@ insert into allu.outdoor_pricing values
   (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'CLOSED', 2000000, 50, 0, 0, NULL, NULL, NULL, NULL);
 
 insert into allu.fixed_location values (DEFAULT, 'Asema-aukio', 'A', 'OUTDOOREVENT', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PUBLIC_FREE', 5000000, 50, 50, 14, '{500000, 250000}', '{100, 300}', NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PUBLIC_NONFREE', 5000000, 50, 50, 14, NULL, NULL, '{10000, 5000, 2500}', '{0, 2000, 4000}'),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'CLOSED', 5000000, 0, 0, 0, NULL, NULL, '{20000}', '{0}');
+
 insert into allu.fixed_location values (DEFAULT, 'Asema-aukio', 'B', 'OUTDOOREVENT', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PUBLIC_FREE', 5000000, 50, 50, 14, '{500000, 250000}', '{100, 300}', NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PUBLIC_NONFREE', 5000000, 50, 50, 14, NULL, NULL, '{10000, 5000, 2500}', '{0, 2000, 4000}'),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'CLOSED', 5000000, 0, 0, 0, NULL, NULL, '{20000}', '{0}');
+
+insert into allu.fixed_location values (DEFAULT, 'Kolmensepänaukio', NULL, 'OUTDOOREVENT', true);
+insert into allu.outdoor_pricing values
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PUBLIC_FREE', 5000000, 50, 50, 14, '{500000, 250000}', '{100, 300}', NULL, NULL),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'PUBLIC_NONFREE', 5000000, 50, 50, 14, NULL, NULL, '{10000, 5000, 2500}', '{0, 2000, 4000}'),
+  (DEFAULT, currval(pg_get_serial_sequence('allu.fixed_location', 'id')), NULL, 'CLOSED', 5000000, 0, 0, 0, NULL, NULL, '{20000}', '{0}');
 
 -- Short term rental - banderols
 
@@ -212,7 +227,8 @@ insert into allu.fixed_location values (DEFAULT, 'Malminkartanon sirkuskenttä',
 insert into allu.fixed_location values (DEFAULT, 'Munkkipuiston kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Pajalahden kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Pyhtään puiston kenttä', NULL, 'DOG_TRAINING_FIELD', true);
-insert into allu.fixed_location values (DEFAULT, 'Sahaajankadun kenttä', NULL, 'DOG_TRAINING_FIELD', true);
+insert into allu.fixed_location values (DEFAULT, 'Sahaajankadun kenttä, hiekka-alue', NULL, 'DOG_TRAINING_FIELD', true);
+insert into allu.fixed_location values (DEFAULT, 'Sahaajankadun kenttä, nurmialue', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Skatan kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Talinhuipun kenttä', NULL, 'DOG_TRAINING_FIELD', true);
 insert into allu.fixed_location values (DEFAULT, 'Tattarisuon täyttömäen kenttä', NULL, 'DOG_TRAINING_FIELD', true);
@@ -221,14 +237,55 @@ insert into allu.fixed_location values (DEFAULT, 'Viilarintien kenttä', NULL, '
 -- Short term rental - seasonal sales locations
 
 insert into allu.fixed_location values (DEFAULT, 'Heikkilänaukio', NULL, 'SEASON_SALE', true);
-insert into allu.fixed_location values (DEFAULT, 'Hesperian puisto', NULL, 'SEASON_SALE', true);
-insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', NULL, 'SEASON_SALE', true);
-insert into allu.fixed_location values (DEFAULT, 'Keskuskatu', NULL, 'SEASON_SALE', true);
-insert into allu.fixed_location values (DEFAULT, 'Kolmensepänaukio', NULL, 'SEASON_SALE', true);
-insert into allu.fixed_location values (DEFAULT, 'Narinkka', NULL, 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'A', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'B', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'C', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'D', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'E', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'F', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'G', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'H', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'I', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Hesperianpuisto', 'J', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', '1', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', '2', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', '3', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', '4', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', '5', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kaivopuisto', '6', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Keskuskatu', 'A', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Keskuskatu', 'B', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Keskuskatu', 'C', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Keskuskatu', 'D', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Keskuskatu', 'E', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Keskuskatu', 'F', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kolmensepänaukio', 'Muu', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Kolmensepänaukio', 'Joulu', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A1', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A2', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A3', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A4', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A5', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A6', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A7', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A8', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'A9', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B1', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B2', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B3', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B4', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B5', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B6', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B7', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B8', 'SEASON_SALE', true);
+insert into allu.fixed_location values (DEFAULT, 'Narinkka', 'B9', 'SEASON_SALE', true);
 insert into allu.fixed_location values (DEFAULT, 'Ruoholahdentori', NULL, 'SEASON_SALE', true);
 
 -- Zone pricing:
+
+-- NOTE: event pricing for locations "Asema-aukio" and "Kolmensepänaukio" is
+-- the same as for Zone 1, so if zone pricing changes those locations need
+-- to be updated too!
 
 -- Public free events have extra fees for structures:
 insert into allu.outdoor_pricing values
