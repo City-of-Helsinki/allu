@@ -261,15 +261,25 @@ ul.slim-card-list {
 }
 
 .slim-card {
-  display: inline-flex;
+  display: flex;
   flex-direction: row;
-  align-items: center;
   min-height: 3rem;
   line-height: 3rem;
   padding: 0 1rem;
   background-color: #fff;
   border-bottom: 1px solid #ddd;
-  white-space: nowrap;
+
+  .card-content {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+
+    div {
+      padding: 0 10px;
+      white-space: nowrap;
+    }
+  }
 
   i {
     width: 2rem;
@@ -281,11 +291,7 @@ ul.slim-card-list {
     margin-right: 1rem;
   }
 
-  span {
-    padding: 0 10px;
-  }
-
-  span.card-item-align-right {
+  .card-item-align-right {
     margin-left: auto;
   }
 }
