@@ -4,6 +4,9 @@
       <div>
         <div class="clickable" (click)="remove(i, attachment)"><i class="material-icons">clear</i></div>
       </div>
+      <div *ngIf="attachment.id !== undefined">
+          <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
+      </div>
       <div class="card-content">
           <div>
               <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
@@ -18,9 +21,6 @@
           <div>
               {{attachment.description}}
           </div>
-      </div>
-      <div *ngIf="attachment.id !== undefined" class="card-item-align-right">
-        <i class="material-icons clickable right-align" (click)="download(attachment)">file_download</i>
       </div>
   </li>
 </ul>

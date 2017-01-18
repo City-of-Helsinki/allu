@@ -6,6 +6,8 @@ import {Application} from '../../../model/application/application';
 import {MaterializeUtil} from '../../../util/materialize.util';
 import {ApplicationState} from '../../../service/application/application-state';
 import {AttachmentHub} from './attachment-hub';
+import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
+import {MdDialog} from '@angular/material';
 
 const toastTime = 4000;
 const URL = '/api/applications/appId/attachments';
@@ -23,7 +25,8 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
   editableAttachments: AttachmentInfo[] = [];
 
   constructor(private attachmentHub: AttachmentHub,
-              private applicationState: ApplicationState) {}
+              private applicationState: ApplicationState,
+              private dialog: MdDialog) {}
 
   ngOnInit() {
     this.setApplication(this.applicationState.application);
@@ -65,12 +68,11 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
   }
 
   remove(index: number, attachment: AttachmentInfo) {
-    this.applicationState.removeAttachment(index, attachment.id)
-      .subscribe(status => {
-          MaterializeUtil.toast('Liite ' + attachment.name + ' poistettu', toastTime);
-          this.attachments.splice(index, 1);
-        },
-        error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' poistaminen epäonnistui', toastTime));
+    let dialogRef = this.dialog.open(ConfirmDialogComponent);
+    let component = dialogRef.componentInstance;
+    component.title = 'Haluatko varmasti poistaa liitteen';
+    component.description = attachment.name;
+    dialogRef.afterClosed().subscribe(result => this.onRemoveConfirm(index, attachment, result));
   }
 
   cancel(index: number): void {
@@ -80,6 +82,17 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
   download(attachment: AttachmentInfo) {
     this.attachmentHub.download(attachment.id, attachment.name)
       .subscribe(file => filesaverLib.saveAs(file));
+  }
+
+  private onRemoveConfirm(index: number, attachment: AttachmentInfo, result: boolean) {
+    if (result) {
+      this.applicationState.removeAttachment(index, attachment.id)
+        .subscribe(status => {
+            MaterializeUtil.toast('Liite ' + attachment.name + ' poistettu', toastTime);
+            this.attachments.splice(index, 1);
+          },
+          error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' poistaminen epäonnistui', toastTime));
+    }
   }
 
   private setApplication(app: Application) {
