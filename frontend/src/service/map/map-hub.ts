@@ -13,6 +13,8 @@ import {SearchbarFilter} from '../searchbar-filter';
 import {LocationService} from '../location.service';
 import {UIStateHub} from '../ui-state/ui-state-hub';
 import {FixedLocation} from '../../model/common/fixed-location';
+import {CityDistrict} from '../../model/common/city-district';
+import {ArrayUtil} from '../../util/array-util';
 
 
 @Injectable()
@@ -26,6 +28,7 @@ export class MapHub {
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
   private fixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);
   private selectedFixedLocations$ = new Subject<Array<FixedLocation>>();
+  private cityDistricts$ = new BehaviorSubject<Array<CityDistrict>>([]);
 
   constructor(private applicationService: ApplicationService,
               private locationService: LocationService,
@@ -48,8 +51,12 @@ export class MapHub {
         err => this.uiState.addError(err)
       );
 
-    this.locationService.getFixedLocations()
-      .subscribe(fixedLocations => this.fixedLocations$.next(fixedLocations));
+    this.locationService.getFixedLocations().subscribe(fls => this.fixedLocations$.next(fls));
+
+    this.locationService.districts().subscribe(ds =>  {
+      let sorted = ds.sort(ArrayUtil.naturalSort((district: CityDistrict) => district.name));
+      this.cityDistricts$.next(sorted);
+    });
   }
 
   /**
@@ -110,6 +117,16 @@ export class MapHub {
    * Observable to provide selected fixed locations
    */
   public selectedFixedLocations = () => this.selectedFixedLocations$.asObservable();
+
+  /**
+   * Used for fetching all available city districts
+   */
+  public districts = () => this.cityDistricts$.asObservable();
+
+  /**
+   * Used for fetching city district by id
+   */
+  public districtById = (id: number) => this.districts().map(ds => ds.find(d => d.districtId === id));
 
   /**
    * Search addresses matching with partial search term

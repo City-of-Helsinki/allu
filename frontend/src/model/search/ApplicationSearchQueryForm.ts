@@ -4,7 +4,7 @@ export interface ApplicationSearchQueryForm {
   status?: Array<string>;
   handler?: Array<string>;
   address?: string;
-  district?: string;
+  districts?: Array<number>;
   applicant?: string;
   contact?: string;
   freeText?: string;

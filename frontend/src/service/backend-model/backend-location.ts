@@ -6,5 +6,6 @@ export interface BackendLocation {
   area: number;
   postalAddress: BackendPostalAddress;
   fixedLocationIds: Array<number>;
+  districtId: number;
   info: string;
 }

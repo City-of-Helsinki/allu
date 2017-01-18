@@ -2,11 +2,14 @@ import {TimeUtil} from '../../util/time.util';
 import {Sort} from '../common/sort';
 import {ApplicationSearchQueryForm} from './ApplicationSearchQueryForm';
 import {SearchQuery} from '../common/search-query';
+import {Some} from '../../util/option';
+import {StringUtil} from '../../util/string.util';
 
 export class ApplicationSearchQuery implements SearchQuery {
   public applicationId: string;
   public type: Array<string>;
   public status: Array<string>;
+  public districts: Array<string>;
   public handler: Array<string>;
   public address: string;
   public applicant: string;
@@ -39,6 +42,10 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.applicationId = queryForm.applicationId;
     query.type = queryForm.type;
     query.status = queryForm.status;
+    query.districts = Some(queryForm.districts)
+      .map(ds => ds
+        .map(d => d.toString()))
+      .orElse([]);
     query.handler = queryForm.handler;
     query.address = queryForm.address;
     query.applicant = queryForm.applicant;

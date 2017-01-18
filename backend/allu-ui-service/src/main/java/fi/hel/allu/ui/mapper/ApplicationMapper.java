@@ -487,7 +487,8 @@ public class ApplicationMapper {
       return new LocationES(
           locationJson.getPostalAddress().getStreetAddress(),
           locationJson.getPostalAddress().getPostalCode(),
-          locationJson.getPostalAddress().getCity());
+          locationJson.getPostalAddress().getCity(),
+          locationJson.getDistrictId());
     } else {
       return null;
     }
