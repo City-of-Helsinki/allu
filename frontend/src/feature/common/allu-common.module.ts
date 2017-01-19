@@ -14,6 +14,7 @@ import {FieldErrorComponent} from './field-error.component';
 import {TranslationPipe} from '../../pipe/translation.pipe';
 import {SortByDirective} from './sort/sort-by.directive';
 import {FileDropDirective} from './file-drop/file-drop.directive';
+import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 
 @NgModule({
   imports: [
@@ -27,7 +28,8 @@ import {FileDropDirective} from './file-drop/file-drop.directive';
     SortByDirective,
     FieldErrorComponent,
     TranslationPipe,
-    FileDropDirective
+    FileDropDirective,
+    ConfirmDialogComponent
   ],
   exports: [
     CommonModule,
@@ -43,10 +45,12 @@ import {FileDropDirective} from './file-drop/file-drop.directive';
     SortByDirective,
     FieldErrorComponent,
     TranslationPipe,
-    FileDropDirective
+    FileDropDirective,
+    ConfirmDialogComponent
   ],
   entryComponents: [
-    AutoCompletionListComponent
+    AutoCompletionListComponent,
+    ConfirmDialogComponent
   ]
 })
 export class AlluCommonModule {}
