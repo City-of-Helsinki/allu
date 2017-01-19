@@ -95,7 +95,7 @@
           <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
           <th sortBy="applicant.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
           <th sortBy="location.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">Katuosoite</th>
-          <th>Kaupunginosa</th>
+          <th sortBy="location.districtId" [currentSort]="sort" (onSortChange)="sortBy($event)">Kaupunginosa</th>
           <th>Saapunut</th>
           <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
           <th>Lisätietoja</th>
