@@ -202,7 +202,7 @@ public class LocationDaoTest {
     // Make sure the district is Herttoniemi:
     String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getDistrictId() == districtId)
         .map(d -> d.getName()).findFirst().orElse("NOT FOUND");
-    assertEquals("HERTTONIEMI", districtName);
+    assertEquals("43 HERTTONIEMI", districtName);
   }
 
   @Test
@@ -224,7 +224,7 @@ public class LocationDaoTest {
     // Make sure the district is Herttoniemi:
     String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getDistrictId() == districtId)
         .map(d -> d.getName()).findFirst().orElse("NOT FOUND");
-    assertEquals("HERTTONIEMI", districtName);
+    assertEquals("43 HERTTONIEMI", districtName);
   }
 
 }
