@@ -9,6 +9,7 @@ import {User} from '../common/user';
 import {Some} from '../../util/option';
 import {Project} from '../project/project';
 import {ApplicationTag} from './tag/application-tag';
+import {ApplicationTagType} from './tag/application-tag-type';
 
 const CENTS = 100;
 
@@ -123,6 +124,11 @@ export class Application {
 
   set priceOverrideEuro(overrideInEuros: number) {
     this.priceOverride = this.toCents(overrideInEuros);
+  }
+
+  get waiting(): boolean {
+    return this.applicationTags
+      .some(tag => ApplicationTagType[tag.type] === ApplicationTagType.WAITING);
   }
 
   private toEuros(priceInCents: number): number {

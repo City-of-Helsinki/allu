@@ -76,6 +76,7 @@ export class ApplicationSearchQuery implements SearchQuery {
     query.applicationId = this.applicationId;
     query.type = this.type;
     query.status = this.status;
+    query.districts = this.districts;
     query.handler = this.handler;
     query.address = this.address;
     query.applicant = this.applicant;

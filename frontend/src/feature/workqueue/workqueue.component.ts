@@ -21,6 +21,8 @@ import {UserHub} from '../../service/user/user-hub';
 import {DialogCloseReason} from '../common/dialog-close-value';
 import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 import {} from 'rxjs';
+import {WorkQueueTab} from './workqueue-tab';
+import {ApplicationTagType} from '../../model/application/tag/application-tag-type';
 
 @Component({
   selector: 'workqueue',
@@ -31,12 +33,9 @@ import {} from 'rxjs';
 })
 export class WorkQueueComponent implements OnInit, OnDestroy {
 
-  static OWN_TAB = 'Omat';
-  static COMMON_TAB = 'Yhteiset';
-
   applications: ConnectableObservable<Array<Application>>;
-  tabs = [WorkQueueComponent.OWN_TAB, WorkQueueComponent.COMMON_TAB];
-  tab = WorkQueueComponent.OWN_TAB;
+  tabs = EnumUtil.enumValues(WorkQueueTab);
+  tab = WorkQueueTab.OWN;
   dialogRef: MdDialogRef<HandlerModalComponent>;
   private selectedApplicationIds = new Array<number>();
   private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
@@ -80,7 +79,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   tabSelected(event: MdTabChangeEvent) {
-    this.tab = this.tabs[event.index];
+    this.tab = WorkQueueTab[this.tabs[event.index]];
   }
 
   moveSelectedToSelf() {
@@ -108,8 +107,11 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   private getApplicationsSearch(query: ApplicationSearchQuery): Observable<Array<Application>> {
-    if (this.tab === WorkQueueComponent.COMMON_TAB) {
+    if (this.tab === WorkQueueTab.COMMON) {
       return this.workqueueHub.searchApplicationsSharedByGroup(query);
+    } else if (this.tab === WorkQueueTab.OWN) {
+      return this.applicationHub.searchApplications(query)
+        .map(apps => apps.filter(app => !app.waiting));
     } else {
       return this.applicationHub.searchApplications(query);
     }

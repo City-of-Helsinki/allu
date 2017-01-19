@@ -10,6 +10,7 @@ import {Application} from '../../../model/application/application';
 import {Sort, Direction} from '../../../model/common/sort';
 import {User} from '../../../model/common/user';
 import {translations} from '../../../util/translations';
+import {MapHub} from '../../../service/map/map-hub';
 
 @Component({
   selector: 'workqueue-content',
@@ -25,7 +26,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   sort = new Sort(undefined, undefined);
   translations = translations;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private mapHub: MapHub) {}
 
   private applicationSubscription: Subscription;
 
@@ -64,6 +65,10 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     if (col) {
       this.router.navigate(['applications', application.id, 'summary']);
     }
+  }
+
+  districtName(id: number): Observable<string> {
+    return id !== undefined ? this.mapHub.districtById(id).map(d => d.name) : Observable.empty();
   }
 
   private toApplicationRows(applications: Array<Application>): Array<ApplicationRow> {

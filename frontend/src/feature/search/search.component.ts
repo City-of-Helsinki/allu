@@ -30,7 +30,6 @@ export class SearchComponent implements OnInit {
   applications: Array<Application>;
   handlers: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
-  private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
   private format = UI_DATE_FORMAT;

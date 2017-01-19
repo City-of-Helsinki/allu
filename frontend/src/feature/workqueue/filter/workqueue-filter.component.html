@@ -10,7 +10,8 @@
                 <label>Hakemuksen tyyppi</label>
             </div>
             <div class="input-field col s2">
-                <select formControlName="handler" materialize="material_select" multiple>
+                <select formControlName="handler" materialize="material_select"
+                        multiple [materializeSelectOptions]="queryForm.value.handler">
                     <option value="" selected disabled>Hakemuksen käsittelijä</option>
                     <option *ngFor="let handler of handlers" [value]="handler.userName">{{handler.realName}}</option>
                 </select>
@@ -24,9 +25,9 @@
                 <label>Hakemuksen tila</label>
             </div>
             <div class="input-field col s2">
-                <select formControlName="district" materialize="material_select">
+                <select formControlName="districts" materialize="material_select" multiple>
                     <option value="" selected disabled>Kaupunginosa</option>
-                    <option *ngFor="let district of items" [value]="district">{{district}}</option>
+                    <option *ngFor="let district of districts | async" [value]="district.districtId">{{district.name}}</option>
                 </select>
                 <label>Kaupunginosa</label>
             </div>
@@ -46,7 +47,7 @@
                        type="text" />
                 <label for="endDate">Loppupäivämäärä</label>
             </div>
-            <div class="col s12 item-bar">
+            <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
                 <div class="item-bar-content">
                     <span>Tilat:</span>
                     <selection-group (onSelection)="tagChange($event)">
