@@ -16,7 +16,7 @@ create table allu.fixed_location (
     application_kind text not null,
     is_active boolean not null,
     geometry geometry(GEOMETRY, 3879),
-    unique (area, section) );
+    unique (area, section, application_kind) );
 
 comment on table allu.fixed_location is 'Predefined Area+Section type location';
 
