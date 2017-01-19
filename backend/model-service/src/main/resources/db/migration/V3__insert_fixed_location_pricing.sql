@@ -232,7 +232,7 @@ insert into allu.fixed_location values (DEFAULT, 'Ruoholahdentori', NULL, 'SEASO
 
 -- Public free events have extra fees for structures:
 insert into allu.outdoor_pricing values
-  (DEFAULT, NULL, 1, 'PUBLIC_FREE', 5000000, 50, 50, 14, '{500000, 1000000}', '{100, 300}', NULL, NULL),
+  (DEFAULT, NULL, 1, 'PUBLIC_FREE', 5000000, 50, 50, 14, '{500000, 250000}', '{100, 300}', NULL, NULL),
   (DEFAULT, NULL, 2, 'PUBLIC_FREE', 2500000, 50, 50, 14, '{250000, 125000}', '{100, 300}', NULL, NULL),
   (DEFAULT, NULL, 3, 'PUBLIC_FREE', 1250000, 50, 50, 14, '{125000, 62500}', '{100, 300}', NULL, NULL);
 

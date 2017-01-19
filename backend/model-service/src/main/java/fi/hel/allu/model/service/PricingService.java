@@ -115,15 +115,7 @@ public class PricingService {
       return 0; // No nature defined -> no price
     }
 
-    List<PricingConfiguration> pricingConfigs = Collections.emptyList();
-    List<Integer> fixedLocationIds = location.get().getFixedLocationIds();
-    if (fixedLocationIds != null && !fixedLocationIds.isEmpty()) {
-      pricingConfigs = fixedLocationIds.stream()
-        .map(flId -> pricingDao.findByFixedLocationAndNature(flId, nature))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
-        .collect(Collectors.toList());
-    } // TODO: pricing configuration for non-fixed locations (Zones)
+    List<PricingConfiguration> pricingConfigs = getEventPricing(location.get(), nature);
 
     int eventDays = daysBetween(event.getEventStartTime(), event.getEventEndTime());
     int buildDays = daysBetween(application.getStartTime(), event.getEventStartTime());
@@ -142,6 +134,28 @@ public class PricingService {
         event.isHeavyStructure(), event.isSalesActivity());
     // ... and get the final price
     return pricing.getPrice();
+  }
+
+  /*
+   * Get event pricings for given location and nature.
+   * May return multiple pricings if location consists of fixed locations.
+   */
+  private List<PricingConfiguration> getEventPricing(Location location, EventNature nature) {
+    List<Integer> fixedLocationIds = location.getFixedLocationIds();
+    if (fixedLocationIds != null && !fixedLocationIds.isEmpty()) {
+      // fixed locations exist, so they define the pricing
+      return fixedLocationIds.stream().map(flId -> pricingDao.findByFixedLocationAndNature(flId, nature))
+          .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+    } else {
+      // Check if district is defined:
+      Integer districtId = Optional.ofNullable(location.getDistrictIdOverride()).orElse(location.getDistrictId());
+      if (districtId != null) {
+        return pricingDao.findByDisctrictAndNature(districtId, nature).map(Collections::singletonList)
+            .orElse(Collections.emptyList());
+      }
+    }
+    // No pricing could be found:
+    return Collections.emptyList();
   }
 
   private double getApplicationArea(Application application) {
