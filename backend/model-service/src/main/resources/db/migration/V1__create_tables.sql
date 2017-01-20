@@ -89,7 +89,7 @@ create table allu.user (
   id serial primary key,
   user_name text NOT NULL UNIQUE,
   real_name text NOT NULL,
-  email_address text NOT NULL,
+  email_address text,
   title text NOT NULL,
   is_active boolean NOT NULL);
 

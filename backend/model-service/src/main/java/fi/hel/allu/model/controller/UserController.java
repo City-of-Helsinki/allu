@@ -35,7 +35,6 @@ public class UserController {
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
-  // TODO: what's the OAuth2 service's user identification? Is it user name, email or something else?
   @RequestMapping(value = "/userName/{userName}", method = RequestMethod.GET)
   public ResponseEntity<User> getUser(@PathVariable String userName) {
     User user = userDao.findByUserName(userName).orElseThrow(() -> new NoSuchEntityException("No such user", userName));
