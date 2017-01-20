@@ -123,7 +123,7 @@ export const translations = {
         STATEMENT_REQUESTED: 'lausunnolla',
         DEPOSIT_REQUESTED: 'vakuus määritetty',
         DEPOSIT_PAID: 'vakuus suoritettu',
-        PRELIMINARY_INSPECTION_REQUESTED: 'aloituskatselmointipyyntö lähetetty',
+        PRELIMINARY_INSPECTION_REQUESTED: 'aloituskatselmuspyyntö lähetetty',
         PRELIMINARY_INSPECTION_DONE: 'aloituskatselmus suoritettu',
         FINAL_INSPECTION_AGREED: 'loppukatselmus sovittu',
         FINAL_INSPECTION_DONE: 'loppukatselmus suoritettu',
