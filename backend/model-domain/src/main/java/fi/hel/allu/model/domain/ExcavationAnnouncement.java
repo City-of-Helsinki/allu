@@ -10,6 +10,8 @@ import java.time.ZonedDateTime;
 public class ExcavationAnnouncement extends ApplicationExtension {
   private Applicant contractor;
   private Contact responsiblePerson;
+  private Applicant propertyDeveloper;
+  private Contact propertyDeveloperContact;
   private Boolean pksCard;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
@@ -52,6 +54,30 @@ public class ExcavationAnnouncement extends ApplicationExtension {
 
   public void setResponsiblePerson(Contact responsiblePerson) {
     this.responsiblePerson = responsiblePerson;
+  }
+
+  /**
+   * In Finnish: Rakennuttaja
+   * The person ordering the construction work.
+   */
+  public Applicant getPropertyDeveloper() {
+    return propertyDeveloper;
+  }
+
+  public void setPropertyDeveloper(Applicant propertyDeveloper) {
+    this.propertyDeveloper = propertyDeveloper;
+  }
+
+  /**
+   * In Finnish: Rakennuttajan yhteyshenkilö
+   * The contact person of the property developer.
+   */
+  public Contact getPropertyDeveloperContact() {
+    return propertyDeveloperContact;
+  }
+
+  public void setPropertyDeveloperContact(Contact propertyDeveloperContact) {
+    this.propertyDeveloperContact = propertyDeveloperContact;
   }
 
   /**

@@ -413,6 +413,12 @@ public class ApplicationMapper {
     json.setContractor(createApplicantJson(model.getContractor()));
     json.setGuaranteeEndTime(model.getGuaranteeEndTime());
     json.setResponsiblePerson(createContactJson(model.getResponsiblePerson()));
+    Optional.ofNullable(model.getPropertyDeveloper())
+        .map(developer -> createApplicantJson(developer))
+        .ifPresent(developer -> json.setPropertyDeveloper(developer));
+    Optional.ofNullable(model.getPropertyDeveloperContact())
+        .map(contact -> createContactJson(contact))
+        .ifPresent(contact -> json.setPropertyDeveloperContact(contact));
     json.setSummerTimeOperation(model.getSummerTimeOperation());
     json.setWinterTimeOperation(model.getWinterTimeOperation());
     json.setWorkFinished(model.getWorkFinished());
@@ -434,6 +440,12 @@ public class ApplicationMapper {
     excavationAnnouncement.setContractor(createApplicantModel(excavationAnnouncementJson.getContractor()));
     excavationAnnouncement.setGuaranteeEndTime(excavationAnnouncementJson.getGuaranteeEndTime());
     excavationAnnouncement.setResponsiblePerson(createContactModel(excavationAnnouncementJson.getResponsiblePerson()));
+    Optional.ofNullable(excavationAnnouncementJson.getPropertyDeveloper())
+        .map(developer -> createApplicantModel(developer))
+        .ifPresent(developer -> excavationAnnouncement.setPropertyDeveloper(developer));
+    Optional.ofNullable(excavationAnnouncementJson.getPropertyDeveloperContact())
+        .map(contact -> createContactModel(contact))
+        .ifPresent(contact -> excavationAnnouncement.setPropertyDeveloperContact(contact));
     excavationAnnouncement.setSummerTimeOperation(excavationAnnouncementJson.getSummerTimeOperation());
     excavationAnnouncement.setWinterTimeOperation(excavationAnnouncementJson.getWinterTimeOperation());
     excavationAnnouncement.setWorkFinished(excavationAnnouncementJson.getWorkFinished());

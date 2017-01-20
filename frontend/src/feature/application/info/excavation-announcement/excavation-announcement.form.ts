@@ -12,6 +12,8 @@ export class ExcavationAnnouncementForm {
     public contacts?: Array<Contact>,
     public contractor?: ApplicantForm,
     public responsiblePerson?: Array<Contact>,
+    public propertyDeveloper?: ApplicantForm,
+    public propertyDeveloperContact?: Array<Contact>,
     public pksCard?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
@@ -32,6 +34,10 @@ export class ExcavationAnnouncementForm {
     let ea = new ExcavationAnnouncement();
     ea.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
     ea.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
+    ea.propertyDeveloper = Some(form.propertyDeveloper).map(developer => ApplicantForm.toApplicant(developer)).orElse(undefined);
+    ea.propertyDeveloperContact = Some(form.propertyDeveloperContact)
+      .filter(contacts => contacts.length > 0)
+      .map(c => c[0]).orElse(undefined);
     ea.pksCard = form.pksCard;
     ea.constructionWork = form.constructionWork;
     ea.maintenanceWork = form.maintenanceWork;
@@ -54,6 +60,8 @@ export class ExcavationAnnouncementForm {
     return new ExcavationAnnouncementForm(
       new TimePeriod(application.uiStartTime, application.uiEndTime),
       undefined, // these are added by subcomponents (application and contact)
+      undefined,
+      undefined,
       undefined,
       undefined,
       undefined,
