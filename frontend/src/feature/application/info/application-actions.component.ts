@@ -15,6 +15,7 @@ export class ApplicationActionsComponent {
   @Input() applicationId: number;
   @Input() form: FormGroup;
   @Input() submitPending: boolean;
+  @Input() showDecision: boolean = true;
 
   constructor(private router: Router, private applicationState: ApplicationState) {
   }
