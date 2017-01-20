@@ -1,32 +1,59 @@
-<div class="row">
-    <div class="col s12 sidebar-item" *ngFor="let item of items">
-        <div [ngSwitch]="item">
+<div class="sidebar">
+    <div class="sidebar-item" *ngFor="let item of items" routerLinkActive="active">
+        <div [ngSwitch]="item.type">
             <div *ngSwitchCase="'BASIC_INFO'">
-                <a [routerLink]="['info']" routerLinkActive="active">Perustiedot</a>
+                <a [routerLink]="['info']" routerLinkActive="active">
+                    <md-icon class="md-36">list</md-icon>
+                    <div>Perustiedot</div>
+                </a>
             </div>
             <div *ngSwitchCase="'ATTACHMENTS'">
-                <a [routerLink]="['attachments']" routerLinkActive="active">Liitteet</a>
+                <a [routerLink]="['attachments']" routerLinkActive="active">
+                    <md-icon class="md-36">attach_file</md-icon>
+                    <div>Liitteet ({{item.count}})</div>
+                </a>
             </div>
             <div *ngSwitchCase="'INVOICING'">
-                <a [routerLink]="['invoicing']" routerLinkActive="active">Laskutus</a>
+                <a [routerLink]="['invoicing']" routerLinkActive="active">
+                    <md-icon class="md-36">euro_symbol</md-icon>
+                    <div>Laskutus</div>
+                </a>
             </div>
             <div *ngSwitchCase="'COMMENTS'">
-                <a [routerLink]="['comments']" routerLinkActive="active">Kommentit</a>
+                <a [routerLink]="['comments']" routerLinkActive="active">
+                    <md-icon class="md-36">chat_bubble_outline</md-icon>
+                    <div>Kommentit ({{item.count}})</div>
+                </a>
             </div>
             <div *ngSwitchCase="'EMAIL'">
-                <a [routerLink]="['email']" routerLinkActive="active">Sähköposti</a>
+                <a [routerLink]="['email']" routerLinkActive="active">
+                    <md-icon class="md-36">email</md-icon>
+                    <div>Sähköposti</div>
+                </a>
             </div>
             <div *ngSwitchCase="'HISTORY'">
-                <a [routerLink]="['history']" skipLocationChange="true" routerLinkActive="active">Historia</a>
+                <a [routerLink]="['history']" skipLocationChange="true" routerLinkActive="active">
+                    <md-icon class="md-36">history</md-icon>
+                    <div>Historia</div>
+                </a>
             </div>
             <div *ngSwitchCase="'SUPERVISION'">
-                <a [routerLink]="['supervision']" routerLinkActive="active">Valvonta</a>
+                <a [routerLink]="['supervision']" routerLinkActive="active">
+                    <md-icon class="md-36">search</md-icon>
+                    <div>Valvonta</div>
+                </a>
             </div>
             <div *ngSwitchCase="'APPLICATIONS'">
-                <a [routerLink]="['applications']" routerLinkActive="active">Hakemukset</a>
+                <a [routerLink]="['applications']" routerLinkActive="active">
+                    <md-icon class="md-36">filter_none</md-icon>
+                    <div>Hakemukset ({{item.count}})</div>
+                </a>
             </div>
             <div *ngSwitchCase="'PROJECTS'">
-                <a [routerLink]="['projects']" routerLinkActive="active">Hankkeet</a>
+                <a [routerLink]="['projects']" routerLinkActive="active">
+                    <md-icon class="md-36">line_style</md-icon>
+                    <div>Hankkeet ({{item.count}})</div>
+                </a>
             </div>
         </div>
     </div>

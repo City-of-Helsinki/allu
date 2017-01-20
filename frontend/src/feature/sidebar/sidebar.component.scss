@@ -1,19 +1,36 @@
 @import '../../assets/colors';
 
-.active {
-    font-weight: bolder;
+.sidebar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
-
 .sidebar-item {
     background: $allu-secondary-nav;
     box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
     border-radius: 2px;
-    min-height: 30px;
+    height: 96px;
+    width: 116px;
     margin-bottom: 5px;
-
+    font-size: 16px;
+    display: flex;
     text-align: center;
+    align-items: center;
+    justify-content: center;
 
     a {
         color: $allu-text-white;
+    }
+
+    a.active {
+        font-weight: bolder;
+    }
+}
+
+.sidebar-item.active {
+    background: $allu-background;
+
+    a {
+        color: $allu-primary-nav;
     }
 }

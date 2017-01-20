@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {SidebarItemType} from './sidebar-item-type';
+import {SidebarItemType, SidebarItem} from './sidebar-item';
 
 @Component({
   selector: 'sidebar',
@@ -9,5 +9,5 @@ import {SidebarItemType} from './sidebar-item-type';
   ]
 })
 export class SidebarComponent {
-  @Input() items: Array<SidebarItemType> = ['BASIC_INFO'];
+  @Input() items: Array<SidebarItem> = [{type: 'BASIC_INFO'}];
 }
