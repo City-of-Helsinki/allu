@@ -3,7 +3,8 @@
         <div class="row">
             <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
                        [readonly]="readonly" headerText="Hakija" formName="applicant"
-                       [showPropertyDeveloper]="true" [propertyDeveloper]="!!application.extension.propertyDeveloper"></applicant>
+                       [showCopyToBilling]="true" [showPropertyDeveloper]="true"
+                       [propertyDeveloper]="!!application.extension.propertyDeveloper"></applicant>
 
             <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
                      [readonly]="readonly" headerText="Yhteyshenkilö" formName="contacts"
@@ -12,7 +13,8 @@
 
         <div class="row" *ngIf="applicationForm.value.applicant?.propertyDeveloper">
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension.propertyDeveloper"
-                       [readonly]="readonly" headerText="Rakennuttaja" formName="propertyDeveloper"></applicant>
+                       [readonly]="readonly" headerText="Rakennuttaja" formName="propertyDeveloper"
+                       [showCopyToBilling]="true"></applicant>
 
             <contact [applicationForm]="applicationForm" [contactList]="application.extension.propertyDeveloperContactList"
                      [readonly]="readonly" headerText="Yhteyshenkilö" formName="propertyDeveloperContact"></contact>
