@@ -9,7 +9,7 @@ export class Location {
     area: number,
     postalAddress: PostalAddress,
     fixedLocationIds: Array<number>,
-    districtId: number,
+    cityDistrictId: number,
     info: string)
   constructor(
     public id?: number,
@@ -17,7 +17,7 @@ export class Location {
     public area?: number,
     public postalAddress?: PostalAddress,
     public fixedLocationIds?: Array<number>,
-    public districtId?: number,
+    public cityDistrictId?: number,
     public info?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
     this.fixedLocationIds = fixedLocationIds || [];

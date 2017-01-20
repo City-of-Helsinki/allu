@@ -500,7 +500,7 @@ public class ApplicationMapper {
           locationJson.getPostalAddress().getStreetAddress(),
           locationJson.getPostalAddress().getPostalCode(),
           locationJson.getPostalAddress().getCity(),
-          locationJson.getDistrictId());
+          locationJson.getCityDistrictId());
     } else {
       return null;
     }

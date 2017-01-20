@@ -4,8 +4,22 @@ package fi.hel.allu.ui.domain;
  * Helsinki city district info.
  */
 public class CityDistrictInfoJson {
+  private Integer id;
   private Integer districtId;
   private String name;
+
+  /**
+   * Internal (database) id of the city district.
+   *
+   * @return  Internal (database) id of the city district.
+   */
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
   /**
    * The official district id.

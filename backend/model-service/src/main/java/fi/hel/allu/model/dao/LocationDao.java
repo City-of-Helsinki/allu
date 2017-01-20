@@ -146,7 +146,7 @@ public class LocationDao {
     }
     // store geometry's area and district id to the location
     queryFactory.update(location).set(location.area, area)
-        .set(location.districtId, findDistrict(locationId).orElse(null))
+        .set(location.cityDistrictId, findDistrict(locationId).orElse(null))
         .where(location.id.eq(locationId)).execute();
   }
 
@@ -216,7 +216,7 @@ public class LocationDao {
     // from allu.location_geometry as g where g.location_id = {0})
     // select st_area(ST_Intersection(d.geometry, (select geom from appGeom)))
     // as area,
-    // d.district_id from allu.city_district as d
+    // d.id from allu.city_district as d
     // where ST_Intersects(d.geometry, (select geom from appGeom)) order by area
     // desc
     // limit 1
@@ -244,7 +244,7 @@ public class LocationDao {
                             cityDistrict.geometry.intersection(
                                 SQLExpressions.select(Expressions.path(Geometry.class, "geom")).from(appGeom)))
                         .as("area"),
-                    cityDistrict.districtId)
+                    cityDistrict.id)
                 .from(cityDistrict)
                 .where(cityDistrict.geometry
                     .intersects(SQLExpressions.select(Expressions.path(Geometry.class, "geom")).from(appGeom)))

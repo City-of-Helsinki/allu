@@ -21,8 +21,8 @@ public class Location {
   private String postalCode;
   private String city;
   private List<Integer> fixedLocationIds;
-  private Integer districtId;
-  private Integer districtIdOverride;
+  private Integer cityDistrictId;
+  private Integer cityDistrictIdOverride;
 
   /**
    * Get location's database ID
@@ -133,12 +133,12 @@ public class Location {
    *
    * @return district ID or null
    */
-  public Integer getDistrictId() {
-    return districtId;
+  public Integer getCityDistrictId() {
+    return cityDistrictId;
   }
 
-  public void setDistrictId(Integer districtId) {
-    this.districtId = districtId;
+  public void setCityDistrictId(Integer cityDistrictId) {
+    this.cityDistrictId = cityDistrictId;
   }
 
   /**
@@ -146,12 +146,12 @@ public class Location {
    *
    * @return district ID or null
    */
-  public Integer getDistrictIdOverride() {
-    return districtIdOverride;
+  public Integer getCityDistrictIdOverride() {
+    return cityDistrictIdOverride;
   }
 
-  public void setDistrictIdOverride(Integer districtIdOverride) {
-    this.districtIdOverride = districtIdOverride;
+  public void setCityDistrictIdOverride(Integer cityDistrictIdOverride) {
+    this.cityDistrictIdOverride = cityDistrictIdOverride;
   }
 
 }

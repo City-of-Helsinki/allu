@@ -32,10 +32,10 @@ public class PricingDao {
   }
 
   @Transactional(readOnly = true)
-  public Optional<PricingConfiguration> findByDisctrictAndNature(int districtId, EventNature nature) {
+  public Optional<PricingConfiguration> findByDisctrictAndNature(int cityDistrictId, EventNature nature) {
     PricingConfiguration pc = queryFactory.select(pricingBean).from(outdoorPricing).innerJoin(cityDistrict)
         .on(outdoorPricing.zoneId.eq(cityDistrict.zoneId))
-        .where(cityDistrict.districtId.eq(districtId).and(outdoorPricing.nature.eq(nature.toString()))).fetchFirst();
+        .where(cityDistrict.id.eq(cityDistrictId).and(outdoorPricing.nature.eq(nature.toString()))).fetchFirst();
     return Optional.ofNullable(pc);
   }
 }

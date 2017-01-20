@@ -49,8 +49,8 @@ create table allu.location (
    city text,
    area double precision,
    area_override double precision,
-   district_id integer references allu.city_district(id),
-   district_id_override integer references allu.city_district(id) );
+   city_district_id integer references allu.city_district(id),
+   city_district_id_override integer references allu.city_district(id) );
 
 create table allu.location_flids (
     id serial primary key,

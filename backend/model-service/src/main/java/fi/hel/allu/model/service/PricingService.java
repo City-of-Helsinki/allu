@@ -148,9 +148,9 @@ public class PricingService {
           .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     } else {
       // Check if district is defined:
-      Integer districtId = Optional.ofNullable(location.getDistrictIdOverride()).orElse(location.getDistrictId());
-      if (districtId != null) {
-        return pricingDao.findByDisctrictAndNature(districtId, nature).map(Collections::singletonList)
+      Integer cityDistrictId = Optional.ofNullable(location.getCityDistrictIdOverride()).orElse(location.getCityDistrictId());
+      if (cityDistrictId != null) {
+        return pricingDao.findByDisctrictAndNature(cityDistrictId, nature).map(Collections::singletonList)
             .orElse(Collections.emptyList());
       }
     }
