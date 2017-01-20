@@ -1,4 +1,4 @@
-<form [formGroup]="applicantForm">
+<form [formGroup]="applicantForm" materialize>
     <div class="col m6 loose">
         <md-card>
             <md-card-title>{{headerText}}</md-card-title>
@@ -71,6 +71,10 @@
                     <div class="col m5 height-fix-bottom" *ngIf="showRepresentative">
                         <input type="checkbox" class="filled-in" formControlName="representative" id="{{formName}}-representative"/>
                         <label for="{{formName}}-representative">Asiaa hoitaa asiamies</label>
+                    </div>
+                    <div class="col m5 height-fix-bottom" *ngIf="showPropertyDeveloper">
+                        <input type="checkbox" class="filled-in" formControlName="propertyDeveloper" id="{{formName}}-propertyDeveloper"/>
+                        <label for="{{formName}}-propertyDeveloper">Hakemuksella on rakennuttaja</label>
                     </div>
                 </div>
             </md-card-content>

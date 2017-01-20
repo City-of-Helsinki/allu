@@ -13,6 +13,8 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   private ApplicantJson contractor;
   @NotNull(message = "{application.excavationAnnouncement.responsiblePerson}")
   private ContactJson responsiblePerson;
+  private ApplicantJson propertyDeveloper;
+  private ContactJson propertyDeveloperContact;
   private Boolean pksCard;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
@@ -55,6 +57,30 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
 
   public void setResponsiblePerson(ContactJson responsiblePerson) {
     this.responsiblePerson = responsiblePerson;
+  }
+
+  /**
+   * In Finnish: Rakennuttaja
+   * The person ordering the construction work.
+   */
+  public ApplicantJson getPropertyDeveloper() {
+    return propertyDeveloper;
+  }
+
+  public void setPropertyDeveloper(ApplicantJson propertyDeveloper) {
+    this.propertyDeveloper = propertyDeveloper;
+  }
+
+  /**
+   * In Finnish: Rakennuttajan yhteyshenkilö
+   * The contact person of the property developer.
+   */
+  public ContactJson getPropertyDeveloperContact() {
+    return propertyDeveloperContact;
+  }
+
+  public void setPropertyDeveloperContact(ContactJson propertyDeveloperContact) {
+    this.propertyDeveloperContact = propertyDeveloperContact;
   }
 
   /**

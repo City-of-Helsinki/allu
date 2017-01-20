@@ -10,6 +10,8 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     specifiers: Array<string>,
     contractor: Applicant,
     responsiblePerson: Contact,
+    propertyDeveloper: Applicant,
+    propertyDeveloperContact: Contact,
     pksCard: boolean,
     constructionWork: boolean,
     maintenanceWork: boolean,
@@ -29,6 +31,8 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public specifiers?: Array<string>,
     public contractor?: Applicant,
     public responsiblePerson?: Contact,
+    public propertyDeveloper?: Applicant,
+    public propertyDeveloperContact?: Contact,
     public pksCard?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
@@ -97,5 +101,9 @@ export class ExcavationAnnouncement extends ApplicationExtension {
 
   get responsiblePersonList(): Array<Contact> {
     return this.responsiblePerson ? [this.responsiblePerson] : undefined;
+  }
+
+  get propertyDeveloperContactList(): Array<Contact> {
+    return this.propertyDeveloperContact ? [this.propertyDeveloperContact] : undefined;
   }
 }

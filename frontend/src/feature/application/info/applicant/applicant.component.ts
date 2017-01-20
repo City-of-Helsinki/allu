@@ -23,6 +23,8 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   @Input() formName = 'applicant';
   @Input() showCopyToBilling = false;
   @Input() showRepresentative = false;
+  @Input() showPropertyDeveloper = false;
+  @Input() propertyDeveloper = false;
 
   applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
@@ -42,7 +44,8 @@ export class ApplicantComponent implements OnInit, OnDestroy {
         city: ['']
       }),
       email: ['', emailValidator],
-      phone: ['', Validators.minLength(2)]
+      phone: ['', Validators.minLength(2)],
+      propertyDeveloper: [false]
     });
   }
 
@@ -64,5 +67,7 @@ export class ApplicantComponent implements OnInit, OnDestroy {
     Some(this.applicant)
       .map(applicant => ApplicantForm.fromApplicant(applicant))
       .do(applicant => this.applicantForm.patchValue(applicant));
+
+    this.applicantForm.patchValue({propertyDeveloper: this.propertyDeveloper});
   }
 }

@@ -56,6 +56,8 @@ export class ApplicationTypeDataMapper {
           backendExtension.specifiers,
           backendExtension.contractor,
           backendExtension.responsiblePerson,
+          backendExtension.propertyDeveloper,
+          backendExtension.propertyDeveloperContact,
           backendExtension.pksCard,
           backendExtension.constructionWork,
           backendExtension.maintenanceWork,

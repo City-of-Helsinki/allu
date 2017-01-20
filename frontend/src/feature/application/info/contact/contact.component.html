@@ -1,4 +1,4 @@
-<div [formGroup]="contactsForm">
+<div [formGroup]="contactsForm" materialize>
     <div formArrayName="contacts" class="col m6 loose no-border">
         <div *ngFor="let contact of contactsForm.controls.contacts.controls; let index=index">
             <div [formGroupName]="index" class="no-border">
