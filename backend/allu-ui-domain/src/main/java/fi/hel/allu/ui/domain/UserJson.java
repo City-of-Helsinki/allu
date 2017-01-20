@@ -17,7 +17,6 @@ public class UserJson {
   private String userName;
   @NotBlank(message = "{user.realName}")
   private String realName;
-  @NotBlank(message = "{user.emailAddress}")
   private String emailAddress;
   @NotBlank(message = "{user.title}")
   private String title;
