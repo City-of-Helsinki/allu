@@ -5,6 +5,7 @@ import {ApplicationHub} from '../../../../service/application/application-hub';
 import {MapHub} from '../../../../service/map/map-hub';
 import {Application} from '../../../../model/application/application';
 import {Location} from '../../../../model/common/location';
+import {MaterializeUtil} from '../../../../util/materialize.util';
 
 @Component({
   selector: 'location-details',
@@ -37,6 +38,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.mapHub.selectApplication(this.application);
+    MaterializeUtil.updateTextFields(50);
   }
 
   private metadataLoaded(metadata: StructureMeta) {
