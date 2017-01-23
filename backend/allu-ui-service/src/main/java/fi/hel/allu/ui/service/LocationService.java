@@ -136,8 +136,8 @@ public class LocationService {
     location.setArea(locationJson.getArea());
     location.setAreaOverride(locationJson.getAreaOverride());
     location.setFixedLocationIds(locationJson.getFixedLocationIds());
-    location.setDistrictId(locationJson.getDistrictId());
-    location.setDistrictIdOverride(locationJson.getDistrictIdOverride());
+    location.setCityDistrictId(locationJson.getCityDistrictId());
+    location.setCityDistrictIdOverride(locationJson.getCityDistrictIdOverride());
     return location;
   }
 
@@ -152,8 +152,8 @@ public class LocationService {
     locationJson.setArea(location.getArea());
     locationJson.setAreaOverride(location.getAreaOverride());
     locationJson.setFixedLocationIds(location.getFixedLocationIds());
-    locationJson.setDistrictId(location.getDistrictId());
-    locationJson.setDistrictIdOverride(location.getDistrictIdOverride());
+    locationJson.setCityDistrictId(location.getCityDistrictId());
+    locationJson.setCityDistrictIdOverride(location.getCityDistrictIdOverride());
   }
 
   private FixedLocationJson mapToFixedLocationJson(FixedLocation fixedLocation) {
@@ -169,6 +169,7 @@ public class LocationService {
 
   private static CityDistrictInfoJson mapToJson(CityDistrictInfo cityDistrictInfo) {
     CityDistrictInfoJson result = new CityDistrictInfoJson();
+    result.setId(cityDistrictInfo.getId());
     result.setDistrictId(cityDistrictInfo.getDistrictId());
     result.setName(cityDistrictInfo.getName());
     return result;

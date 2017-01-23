@@ -66,6 +66,7 @@ public class LocationController {
   // Make a stripped-down view of a city district: only the district ID + name.
   private static CityDistrictInfo mapToInfo(CityDistrict cityDistrict) {
     CityDistrictInfo result = new CityDistrictInfo();
+    result.setId(cityDistrict.getId());
     result.setDistrictId(cityDistrict.getDistrictId());
     result.setName(cityDistrict.getName());
     return result;

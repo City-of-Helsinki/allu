@@ -79,13 +79,12 @@ public class PricingDaoTest {
   public void testWithDistrictId() {
     final int DISTRICT_ID = 99;
     final int ZONE_ID = 42;
-    queryFactory.insert(cityDistrict).set(cityDistrict.districtId, DISTRICT_ID).set(cityDistrict.zoneId, ZONE_ID)
-        .execute();
+    int cityDistrictId = queryFactory.insert(cityDistrict).set(cityDistrict.districtId, DISTRICT_ID).set(cityDistrict.zoneId, ZONE_ID)
+        .executeWithKey(cityDistrict.id);
     queryFactory.insert(outdoorPricing).set(outdoorPricing.zoneId, ZONE_ID).set(outdoorPricing.nature, "PUBLIC_FREE")
         .set(outdoorPricing.baseCharge, TEST_BASE_CHARGE).set(outdoorPricing.buildDiscountPercent, 0)
         .set(outdoorPricing.durationDiscountPercent, 0).set(outdoorPricing.durationDiscountLimit, 0).execute();
-    Optional<PricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(DISTRICT_ID,
-        EventNature.PUBLIC_FREE);
+    Optional<PricingConfiguration> opt_pc = pricingDao.findByDisctrictAndNature(cityDistrictId, EventNature.PUBLIC_FREE);
     assertTrue(opt_pc.isPresent());
     assertEquals(TEST_BASE_CHARGE, opt_pc.get().getBaseCharge());
   }

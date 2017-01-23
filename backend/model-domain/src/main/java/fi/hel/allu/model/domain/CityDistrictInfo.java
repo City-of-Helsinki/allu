@@ -5,8 +5,22 @@ package fi.hel.allu.model.domain;
  * class is intended to transmit the "need to know only" data to the UI.
  */
 public class CityDistrictInfo {
+  private Integer id;
   private Integer districtId;
   private String name;
+
+  /**
+   * Internal (database) id of the city district.
+   *
+   * @return  Internal (database) id of the city district.
+   */
+  public Integer getId() {
+    return id;
+  }
+
+  public void setId(Integer id) {
+    this.id = id;
+  }
 
   /**
    * The official district id.

@@ -196,11 +196,11 @@ public class LocationDaoTest {
     Location inserted = locationDao.insert(location);
 
     // Check that the location now has a district ID:
-    Integer districtId = inserted.getDistrictId();
-    assertNotNull(districtId);
+    Integer cityDistrictId = inserted.getCityDistrictId();
+    assertNotNull(cityDistrictId);
 
     // Make sure the district is Herttoniemi:
-    String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getDistrictId() == districtId)
+    String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getId() == cityDistrictId)
         .map(d -> d.getName()).findFirst().orElse("NOT FOUND");
     assertEquals("43 HERTTONIEMI", districtName);
   }
@@ -212,17 +212,17 @@ public class LocationDaoTest {
     location.setStreetAddress("Testiosoite 1");
 
     Location inserted = locationDao.insert(location);
-    assertNull(inserted.getDistrictId());
+    assertNull(inserted.getCityDistrictId());
 
     inserted.setGeometry(geometrycollection(3879, herttoniemi_polygon));
     inserted = locationDao.update(inserted.getId(), inserted);
 
     // Check that the location now has a district ID:
-    Integer districtId = inserted.getDistrictId();
-    assertNotNull(districtId);
+    Integer cityDistrictId = inserted.getCityDistrictId();
+    assertNotNull(cityDistrictId);
 
     // Make sure the district is Herttoniemi:
-    String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getDistrictId() == districtId)
+    String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getId() == cityDistrictId)
         .map(d -> d.getName()).findFirst().orElse("NOT FOUND");
     assertEquals("43 HERTTONIEMI", districtName);
   }
