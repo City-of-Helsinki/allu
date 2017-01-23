@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -65,8 +66,8 @@ public class TokenHandler {
    */
   public User parseUserFromToken(String token) {
     final Claims claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(token).getBody();
-
-    return new AlluUser(claims.getSubject(), getRoles(claims), claims.get(EMAIL).toString());
+    String email = Optional.ofNullable(claims.get(EMAIL)).map(e -> e.toString()).orElse(null);
+    return new AlluUser(claims.getSubject(), getRoles(claims), email);
   }
 
   private Set<GrantedAuthority> getRoles(Claims claims) {
