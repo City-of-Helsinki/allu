@@ -10,6 +10,7 @@ import {UI_DATE_FORMAT} from '../../../util/time.util';
 import {ContentRow} from '../../../model/common/content-row';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {Sort} from '../../../model/common/sort';
+import {ProjectState} from '../../../service/project/project-state';
 
 
 
@@ -30,7 +31,10 @@ export class ProjectProjectsComponent implements OnInit {
 
   private projectRows: Array<ContentRow<Project>> = [];
 
-  constructor(private router: Router, private route: ActivatedRoute, private projectHub: ProjectHub) {}
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              private projectHub: ProjectHub,
+              private projectState: ProjectState) {}
 
   ngOnInit(): void {
     this.route.data
@@ -38,7 +42,7 @@ export class ProjectProjectsComponent implements OnInit {
       .subscribe(project => {
         this.project = project;
 
-        Some(project.id).do(id => this.fetchRelatedProjects(id));
+        Some(project.id).do(id => this.fetchRelatedProjects());
       });
 
     this.matchingProjects = this.projectSearch.asObservable()
@@ -52,8 +56,8 @@ export class ProjectProjectsComponent implements OnInit {
     if (this.notAdded(project.id)) {
       let row = new ContentRow(project);
       this.projectRows.push(row);
-      this.projectHub.updateParent(project.id, this.project.id)
-        .subscribe(updated => this.fetchRelatedProjects(this.project.id));
+      this.projectState.updateParentProject(project)
+        .subscribe(updated => this.fetchRelatedProjects());
     }
   }
 
@@ -62,10 +66,8 @@ export class ProjectProjectsComponent implements OnInit {
       .filter(row => row.selected)
       .map(row => row.id);
 
-    if (removeParentsFrom.length > 0) {
-      this.projectHub.removeParent(removeParentsFrom)
-        .subscribe(response => this.fetchRelatedProjects(this.project.id));
-    }
+    this.projectState.removeParentsFrom(removeParentsFrom)
+      .subscribe(updated => this.fetchRelatedProjects());
   }
 
   onIdentifierSearchChange(identifier: string) {
@@ -107,12 +109,8 @@ export class ProjectProjectsComponent implements OnInit {
     this.allSelected = this.projectRows.every(row => row.selected);
   }
 
-  private fetchRelatedProjects(id: number): void {
-    Observable.combineLatest(
-      this.projectHub.getParentProjects(id),
-      this.projectHub.getChildProjects(id)
-    ).map(projects => [].concat.apply([], projects)) // maps array[array, array] => array
-      .map(projects => projects.map(project => new ContentRow(project)))
+  private fetchRelatedProjects(): void {
+    this.projectState.relatedProjects.map(projects => projects.map(project => new ContentRow(project)))
       .subscribe(projects => {
         this.projectRows = projects;
         this.sortedProjectRows = this.sortRows(this.sort, projects);

@@ -11,6 +11,7 @@ import {ApplicationHub} from '../../../service/application/application-hub';
 import {ContentRow} from '../../../model/common/content-row';
 import {Sort} from '../../../model/common/sort';
 import {UI_DATE_FORMAT} from '../../../util/time.util';
+import {ProjectState} from '../../../service/project/project-state';
 
 
 @Component({
@@ -29,16 +30,13 @@ export class ProjectApplicationsComponent implements OnInit {
   dateFormat = UI_DATE_FORMAT;
 
   constructor(private route: ActivatedRoute, private router: Router,
-              private projectHub: ProjectHub, private applicationHub: ApplicationHub) {}
+              private projectHub: ProjectHub, private applicationHub: ApplicationHub,
+              private projectState: ProjectState) {}
 
   ngOnInit(): void {
-    this.route.data
-      .map((data: {project: Project}) => data.project)
-      .subscribe(project => {
-        this.project = project;
-
-        this.getProjectApplications().subscribe(rows => this.applicationRows = rows);
-      });
+    this.project = this.projectState.project;
+    this.getProjectApplications()
+      .subscribe(rows => this.applicationRows = rows);
 
     this.matchingApplications = this.applicationSearch.asObservable()
       .debounceTime(300)
@@ -66,13 +64,13 @@ export class ProjectApplicationsComponent implements OnInit {
   }
 
   add(application: Application) {
-    this.applicationRows.push(new ContentRow(application));
-    this.updateApplications();
+    let rows = this.applicationRows.concat(new ContentRow(application));
+    this.updateApplications(rows);
   }
 
   remove() {
-    this.applicationRows = this.applicationRows.filter(row => !row.selected);
-    this.updateApplications();
+    let rows = this.applicationRows.filter(row => !row.selected);
+    this.updateApplications(rows);
   }
 
   onIdentifierSearchChange(identifier: string) {
@@ -81,24 +79,30 @@ export class ProjectApplicationsComponent implements OnInit {
 
   sortBy(sort: Sort) {
     this.sort = sort;
-    this.getProjectApplications().subscribe(rows => this.applicationRows = rows);
+    this.applicationRows = this.sortRows(this.sort, this.applicationRows);
   }
 
   private getProjectApplications(): Observable<Array<ContentRow<Application>>> {
-    let query = new ApplicationSearchQuery();
-    query.projectId = this.project.id;
-    query.sort = this.sort;
-
-    return this.applicationHub.searchApplications(query)
+    return this.projectState.applications
       .map(applications => applications.map(app => new ContentRow(app)));
   }
 
-  private updateApplications(): void {
-    this.projectHub.updateProjectApplications(this.project.id, this.applicationRows.map(app => app.id))
+  private updateApplications(rows: Array<ContentRow<Application>>): void {
+    this.projectState.updateApplications(rows.map(app => app.id))
       .subscribe(p => this.project = p);
   }
 
   private updateAllSelected(): void {
     this.allSelected = this.applicationRows.every(row => row.selected);
+  }
+
+  private sortRows(sort: Sort, rows: Array<ContentRow<Application>>): Array<ContentRow<Application>> {
+    let original = rows;
+    let sorted =  rows
+      .map(row => row.content)
+      .sort(sort.sortFn())
+      .map(app => new ContentRow(app));
+
+    return sort.byDirection(original, sorted);
   }
 }

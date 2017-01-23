@@ -1,6 +1,6 @@
-import {Component, Input} from '@angular/core';
+import {Component} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormBuilder, FormControl, Validators} from '@angular/forms';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
@@ -12,8 +12,8 @@ import {ProjectForm} from './project.form';
 import {ProjectHub} from '../../../service/project/project-hub';
 import {MaterializeUtil} from '../../../util/materialize.util';
 import {Project} from '../../../model/project/project';
-import {Some} from '../../../util/option';
 import {emailValidator} from '../../../util/complex-validator';
+import {ProjectState} from '../../../service/project/project-state';
 
 
 @Component({
@@ -32,22 +32,14 @@ export class ProjectEditComponent {
 
   constructor(private router: Router, private route: ActivatedRoute,
               private applicationHub: ApplicationHub, private projectHub: ProjectHub,
+              private projectState: ProjectState,
               private fb: FormBuilder) {
     this.initForm();
 
-    this.route.data
-      .map((data: {project: Project}) => data.project)
-      .subscribe(project => {
-          this.projectInfoForm.patchValue(project);
+    let project = this.projectState.project;
+    this.projectInfoForm.patchValue(project);
 
-          Some(project.id).do(id => {
-            this.projectHub.getProjectApplications(id).subscribe(apps => {
-              this.applications = apps;
-            });
-          });
-
-          MaterializeUtil.updateTextFields(50);
-    });
+    this.projectState.applications.subscribe(apps => this.applications = apps);
 
     this.route.queryParams
       .map((params: {parentProject: number}) => params.parentProject)
@@ -58,6 +50,8 @@ export class ProjectEditComponent {
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
       .switchMap(search => this.applicationHub.searchApplications(search));
+
+    MaterializeUtil.updateTextFields(50);
   }
 
   add(application: Application) {
@@ -72,8 +66,8 @@ export class ProjectEditComponent {
     let project = ProjectForm.toProject(form);
     project.parentId = this.parentProject || project.parentId;
 
-    this.projectHub.save(project)
-      .switchMap(p => this.projectHub.updateProjectApplications(p.id, this.applications.map(app => app.id)))
+    this.projectState.save(project)
+      .switchMap(p => this.projectState.updateApplications(this.applications.map(app => app.id)))
       .subscribe(p => this.navigateAfterSubmit(p, this.parentProject));
   }
 
