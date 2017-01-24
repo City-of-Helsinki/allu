@@ -101,12 +101,12 @@
                         <div *ngIf="parentProjects.length === 0 && childProjects.length === 0">Hankkeeseen ei liity muita hankkeita</div>
                         <div *ngFor="let project of parentProjects">
                             <div class="col m12">
-                                <a [routerLink]="['/projects', project.id, 'summary']">Hanke {{project.id}}</a>
+                                <a [routerLink]="['/projects', project.id, 'info']">Hanke {{project.id}}</a>
                             </div>
                         </div>
                         <div *ngFor="let project of childProjects">
                             <div class="col m12">
-                                <a [routerLink]="['/projects', project.id, 'summary']">Hanke {{project.id}}</a>
+                                <a [routerLink]="['/projects', project.id, 'info']">Hanke {{project.id}}</a>
                             </div>
                         </div>
                     </div>

@@ -18,6 +18,14 @@ export class ProjectState {
   constructor(private projectHub: ProjectHub,
               private applicationHub: ApplicationHub) {}
 
+  createNew(): Observable<Project> {
+    this._project = new Project();
+    this.childProjects$.next([]);
+    this.parentProjects$.next([]);
+    this.applications$.next([]);
+    return Observable.of(this._project);
+  }
+
   load(id: number): Observable<Project> {
     return this.projectHub.getProject(id)
       .do(p => this._project = p);

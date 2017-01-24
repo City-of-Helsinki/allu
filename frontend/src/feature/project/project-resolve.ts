@@ -18,7 +18,7 @@ export class ProjectResolve implements Resolve<Project> {
       .map(id => Number(id))
       .map(id => this.projectState.load(id)
         .do(project => this.loadRelated(id)))
-      .orElse(Observable.of(new Project()));
+      .orElse(this.projectState.createNew());
   }
 
   private loadRelated(id: number) {
