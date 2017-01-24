@@ -5,6 +5,8 @@ import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.ui.domain.ProjectJson;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+
 /**
  * Mapper for projects in their different forms.
  */
@@ -16,6 +18,9 @@ public class ProjectMapper {
     projectDomain.setName(projectJson.getName());
     projectDomain.setStartTime(projectJson.getStartTime());
     projectDomain.setEndTime(projectJson.getEndTime());
+    if (projectJson.getCityDistricts() != null) {
+      projectDomain.setCityDistricts(projectJson.getCityDistricts().toArray(new Integer[0]));
+    }
     projectDomain.setOwnerName(projectJson.getOwnerName());
     projectDomain.setContactName(projectJson.getContactName());
     projectDomain.setEmail(projectJson.getEmail());
@@ -32,6 +37,9 @@ public class ProjectMapper {
     projectJson.setName(projectDomain.getName());
     projectJson.setStartTime(projectDomain.getStartTime());
     projectJson.setEndTime(projectDomain.getEndTime());
+    if (projectDomain.getCityDistricts() != null) {
+      projectJson.setCityDistricts(Arrays.asList(projectDomain.getCityDistricts()));
+    }
     projectJson.setOwnerName(projectDomain.getOwnerName());
     projectJson.setContactName(projectDomain.getContactName());
     projectJson.setEmail(projectDomain.getEmail());
@@ -48,6 +56,7 @@ public class ProjectMapper {
     projectES.setName(projectJson.getName());
     projectES.setStartTime(projectJson.getStartTime());
     projectES.setEndTime(projectJson.getEndTime());
+    projectES.setCityDistricts(projectJson.getCityDistricts());
     projectES.setOwnerName(projectJson.getOwnerName());
     projectES.setContactName(projectJson.getContactName());
     projectES.setEmail(projectJson.getEmail());

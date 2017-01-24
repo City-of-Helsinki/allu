@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.domain;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * in Finnish: Hanke
@@ -10,6 +11,7 @@ public class ProjectJson {
   private String name;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
+  private List<Integer> cityDistricts;
   private String ownerName;
   private String contactName;
   private String email;
@@ -59,6 +61,17 @@ public class ProjectJson {
 
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
+  }
+
+  /**
+   * in Finnish: hankkeen kaupunginosat. Lasketaan hankkeeseen sisältyvien hakemusten kaupunginosista.
+   */
+  public List<Integer> getCityDistricts() {
+    return cityDistricts;
+  }
+
+  public void setCityDistricts(List<Integer> cityDistricts) {
+    this.cityDistricts = cityDistricts;
   }
 
   /**

@@ -12,6 +12,7 @@ public class Project {
   private String name;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
+  private Integer[] cityDistricts;
   private String ownerName;
   private String contactName;
   private String email;
@@ -72,6 +73,19 @@ public class Project {
 
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
+  }
+
+  /**
+   * Returns list of city districts related to the project.
+   *
+   * @return  list of city districts related to the project.
+   */
+  public Integer[] getCityDistricts() {
+    return cityDistricts;
+  }
+
+  public void setCityDistricts(Integer[] cityDistricts) {
+    this.cityDistricts = cityDistricts;
   }
 
   /**
