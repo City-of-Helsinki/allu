@@ -116,7 +116,7 @@
             {{application.applicant.name}}<br>
           </td>
           <td>{{application.location.postalAddress.streetAddress}}</td>
-          <td>{{districtName(application.location.districtId) | async}}</td>
+          <td>{{districtName(application.location.cityDistrictId) | async}}</td>
           <td>{{ application.creationTime | date:format }}</td>
           <td>{{ application.startTime | date:format }}</td>
           <td></td>
