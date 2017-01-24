@@ -9,6 +9,7 @@ import {Application} from '../../../model/application/application';
 import {UI_DATE_FORMAT, TimeUtil} from '../../../util/time.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {translations} from '../../../util/translations';
+import {ProjectState} from '../../../service/project/project-state';
 
 @Component({
   selector: 'project-summary',
@@ -27,28 +28,24 @@ export class ProjectSummaryComponent implements OnInit {
   dateFormat = UI_DATE_FORMAT;
   translations = translations;
 
-  constructor(private router: Router, private route: ActivatedRoute, private projectHub: ProjectHub) {}
+  constructor(private projectState: ProjectState) {}
 
   ngOnInit(): void {
-    this.route.data
-      .map((data: {project: Project}) => data.project)
-      .subscribe(project => {
-        this.project = project;
-        this.fetchApplications(project.id);
-        this.fetchRelatedProjects(project.id);
-        this.isActive = TimeUtil.isBetweenInclusive(new Date(), this.project.startTime, this.project.endTime);
-      });
+    this.project = this.projectState.project;
+    this.isActive = TimeUtil.isBetweenInclusive(new Date(), this.project.startTime, this.project.endTime);
+    this.fetchApplications();
+    this.fetchRelatedProjects();
   }
 
-  private fetchApplications(id: number): void {
-    this.projectHub.getProjectApplications(id).subscribe(applications => {
+  private fetchApplications(): void {
+    this.projectState.applications.subscribe(applications => {
       this.activeApplications = applications.filter(app => ApplicationStatus[app.status] < ApplicationStatus.DECISION);
       this.decidedApplications = applications.filter(app => ApplicationStatus[app.status] === ApplicationStatus.DECISION);
     });
   }
 
-  private fetchRelatedProjects(id: number): void {
-    this.projectHub.getParentProjects(id).subscribe(projects => this.parentProjects = projects);
-    this.projectHub.getChildProjects(id).subscribe(projects => this.childProjects = projects);
+  private fetchRelatedProjects(): void {
+    this.projectState.parentProjects.subscribe(projects => this.parentProjects = projects);
+    this.projectState.childProjects.subscribe(projects => this.childProjects = projects);
   }
 }

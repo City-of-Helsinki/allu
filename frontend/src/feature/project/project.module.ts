@@ -16,6 +16,7 @@ import {ProjectComponent} from './project.component';
 import {ProjectApplicationsComponent} from './applications/project-applications.component';
 import {ProjectResolve} from './project-resolve';
 import {ProjectProjectsComponent} from './projects/project-projects.component';
+import {ProjectState} from '../../service/project/project-state';
 
 @NgModule({
   imports: [
@@ -38,7 +39,8 @@ import {ProjectProjectsComponent} from './projects/project-projects.component';
   providers: [
     ProjectHub,
     ProjectService,
-    ProjectResolve
+    ProjectResolve,
+    ProjectState
   ]
 })
 export class ProjectModule {}
