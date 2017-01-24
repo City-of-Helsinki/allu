@@ -31,7 +31,9 @@ export class TagBarComponent implements OnInit {
   }
 
   add(type: string): void {
-    this.tags.push(new ApplicationTag(type, undefined, new Date()));
-    this.onTagChange.emit(this.tags);
+    if (!this.tags.some(tag => tag.type === type)) {
+      this.tags.push(new ApplicationTag(type, undefined, new Date()));
+      this.onTagChange.emit(this.tags);
+    }
   }
 }

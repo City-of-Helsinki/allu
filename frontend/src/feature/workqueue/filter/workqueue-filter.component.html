@@ -49,7 +49,7 @@
             </div>
             <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
                 <div class="item-bar-content">
-                    <span>Tilat:</span>
+                    <span>Tunnisteet:</span>
                     <selection-group (onSelection)="tagChange($event)">
                         <selection-item *ngFor="let type of tagTypes"
                                         [item]="type"

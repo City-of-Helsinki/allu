@@ -1,8 +1,7 @@
 <div class="row item-bar">
     <div class="item-bar-content">
         <span class="single-line" *ngIf="application.startTime">{{application.uiStartTime}} - {{application.uiEndTime}}</span>
-        <span><b>Tila:</b></span>
-        <span>{{['application.status', application.status] | translation}}</span>
+        <span><b>Tunnisteet:</b></span>
         <md-chip-list>
             <md-chip class="chip-dark" *ngFor="let tag of application.applicationTags; let i = index;">
                 {{['application.tag.type', tag.type] | translation}}
@@ -10,7 +9,7 @@
             </md-chip>
         </md-chip-list>
         <span class="single-line" *ngIf="!readonly">
-            Lisää tila
+            Lisää tunniste
             <button md-icon-button [mdMenuTriggerFor]="menu" class="btn-circle btn-gray"><md-icon>add</md-icon></button>
         </span>
     </div>
