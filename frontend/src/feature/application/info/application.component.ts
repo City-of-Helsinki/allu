@@ -7,6 +7,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
+import {SidebarItem} from '../../sidebar/sidebar-item';
 
 @Component({
   selector: 'application',
@@ -20,6 +21,7 @@ export class ApplicationComponent implements OnInit {
   progressStep: ProgressStep;
   application: Application;
   readonly: boolean;
+  sidebarItems: Array<SidebarItem> = [];
 
   constructor(private route: ActivatedRoute, private router: Router, private applicationState: ApplicationState) {
   }
@@ -29,8 +31,10 @@ export class ApplicationComponent implements OnInit {
     this.verifyTypeExists(ApplicationType[this.application.type]);
 
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
-      this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
       this.readonly = summary;
+
+      this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
+      this.sidebarItems = this.sidebar(summary);
     });
   }
 
@@ -43,5 +47,18 @@ export class ApplicationComponent implements OnInit {
 
   onTagChange(tags: Array<ApplicationTag>): void {
     this.applicationState.tags = tags;
+  }
+
+  sidebar(summary: boolean): Array<SidebarItem> {
+    let summarySidebar: Array<SidebarItem> = [
+      { type: 'BASIC_INFO'},
+      { type: 'ATTACHMENTS', count: this.application.attachmentList.length }
+    ];
+
+    if (summary) {
+      summarySidebar.push({type: 'COMMENTS', count: 0});
+    }
+
+    return summarySidebar;
   }
 }
