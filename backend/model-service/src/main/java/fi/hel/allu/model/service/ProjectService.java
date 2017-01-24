@@ -2,18 +2,17 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -26,6 +25,8 @@ public class ProjectService {
   private ProjectDao projectDao;
   @Autowired
   private ApplicationDao applicationDao;
+  @Autowired
+  private LocationDao locationDao;
 
   @Transactional(readOnly = true)
   public Project find(int id) {
@@ -241,7 +242,8 @@ public class ProjectService {
     }
     project.setStartTime(summary.minStartTime);
     project.setEndTime(summary.maxEndTime);
-    projectDao.update(project.getId(), project);
+    project.setCityDistricts(summary.districts.toArray(new Integer[0]));
+    project = projectDao.update(project.getId(), project);
     summary.updatedProjects.add(project);
 
     return summary;
@@ -251,7 +253,11 @@ public class ProjectService {
     ProjectSummary ps = new ProjectSummary();
     ps.minStartTime = application.getStartTime();
     ps.maxEndTime = application.getEndTime();
-    // TODO: districts
+    if (application.getLocationId() != null) {
+      Optional<Location> location = locationDao.findById(application.getLocationId());
+      Optional<Integer> cityDistrictId = location.map(l -> Optional.ofNullable(l.getCityDistrictIdOverride()).orElse(l.getCityDistrictId()));
+      cityDistrictId.ifPresent(id -> ps.districts.add(id));
+    }
     return mergeSummaries(ps, projectSummary);
   }
 
@@ -259,7 +265,7 @@ public class ProjectService {
    * Merges given project summaries in the following way:
    * - earliest start time is returned as start time
    * - latest end time is returned as end time
-   * - TODO: all districts are combined together
+   * - all districts are combined together
    *
    * @param summary1  Summary to be merged.
    * @param summary2  Summary to be merged.
@@ -287,14 +293,15 @@ public class ProjectService {
     }
     ps.updatedProjects.addAll(summary1.updatedProjects);
     ps.updatedProjects.addAll(summary2.updatedProjects);
-    // TODO: districts
+    ps.districts.addAll(summary1.districts);
+    ps.districts.addAll(summary2.districts);
     return ps;
   }
 
   private static class ProjectSummary {
     ZonedDateTime minStartTime;
     ZonedDateTime maxEndTime;
+    HashSet<Integer> districts = new HashSet<>();
     List<Project> updatedProjects = new ArrayList<>();
-    // TOOD: districts
   }
 }

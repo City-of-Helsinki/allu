@@ -1,12 +1,14 @@
 package fi.hel.allu.search.domain;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public class ProjectES {
   private Integer id;
   private String name;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
+  private List<Integer> cityDistricts;
   private String ownerName;
   private String contactName;
   private String email;
@@ -45,6 +47,14 @@ public class ProjectES {
 
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
+  }
+
+  public List<Integer> getCityDistricts() {
+    return cityDistricts;
+  }
+
+  public void setCityDistricts(List<Integer> cityDistricts) {
+    this.cityDistricts = cityDistricts;
   }
 
   public String getOwnerName() {

@@ -68,6 +68,7 @@ create table allu.project (
     name text,
     start_time timestamp with time zone,
     end_time timestamp with time zone,
+    city_districts integer[],         -- references to allu.city_district(id)
     owner_name text,
     contact_name text,
     email text,
