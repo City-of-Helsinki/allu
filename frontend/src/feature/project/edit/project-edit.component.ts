@@ -31,7 +31,7 @@ export class ProjectEditComponent {
   private parentProject: number;
 
   constructor(private router: Router, private route: ActivatedRoute,
-              private applicationHub: ApplicationHub, private projectHub: ProjectHub,
+              private applicationHub: ApplicationHub,
               private projectState: ProjectState,
               private fb: FormBuilder) {
     this.initForm();

@@ -93,10 +93,10 @@ export class ProjectProjectsComponent implements OnInit {
     this.updateAllSelected();
   }
 
-  goToSummary(col: number, row: ContentRow<Project>): void {
+  goToInfo(col: number, row: ContentRow<Project>): void {
     // undefined and 0 should not trigger navigation
     if (col) {
-      this.router.navigate(['projects', row.id, 'summary']);
+      this.router.navigate(['projects', row.id, 'info']);
     }
   }
 
