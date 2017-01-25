@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.CommentJson;
@@ -22,6 +23,9 @@ import java.util.stream.Collectors;
 public class CommentService {
 
   private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
+
+  private static final String REJECT_PREFIX = "HYLÄTTY: ";
+  private static final String RETURN_PREFIX = "PALAUTETTU: ";
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
@@ -63,6 +67,32 @@ public class CommentService {
     ResponseEntity<Comment> result = restTemplate.postForEntity(applicationProperties.getCommentsCreateUrl(), comment,
         Comment.class, applicationId);
     return mapToJson(result.getBody());
+  }
+
+  /**
+   * Add a "Rejected" comment to an application
+   *
+   * @param applicationId
+   *          the application's ID
+   * @param reason
+   *          Rejection reason
+   * @return the added comment
+   */
+  public CommentJson addRejectComment(int applicationId, String reason) {
+    return addComment(applicationId, newCommentJson(CommentType.DECISION, REJECT_PREFIX + reason));
+  }
+
+  /**
+   * Add a "Returned to preparation" comment to an application
+   *
+   * @param applicationId
+   *          the application's ID
+   * @param reason
+   *          Rejection reason
+   * @return the added comment
+   */
+  public CommentJson addReturnComment(int applicationId, String text) {
+    return addComment(applicationId, newCommentJson(CommentType.DECISION, RETURN_PREFIX + text));
   }
 
   /**
@@ -119,4 +149,15 @@ public class CommentService {
     comment.setUpdateTime(commentJson.getUpdateTime());
     return comment;
   }
+
+  /*
+   * Create a CommentJson with given type and text
+   */
+  private CommentJson newCommentJson(CommentType type, String text) {
+    CommentJson commentJson = new CommentJson();
+    commentJson.setType(type);
+    commentJson.setText(text);
+    return commentJson;
+  }
+
 }

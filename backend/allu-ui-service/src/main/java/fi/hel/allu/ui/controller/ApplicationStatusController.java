@@ -4,6 +4,8 @@ import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.StatusCommentJson;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
+import fi.hel.allu.ui.service.CommentService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class ApplicationStatusController {
     @Autowired
     private ApplicationServiceComposer applicationServiceComposer;
+    @Autowired
+    private CommentService commentService;
 
     @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
@@ -49,14 +53,14 @@ public class ApplicationStatusController {
     @RequestMapping(value = "/{id}/status/rejected", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_DECISION')")
     public ResponseEntity<ApplicationJson> changeStatusToRejected(@PathVariable int id, @RequestBody StatusCommentJson comment) {
-        // TODO: add comment handling
+        commentService.addRejectComment(id, comment.getComment());
         return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.REJECTED), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/toPreparation", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_DECISION')")
     public ResponseEntity<ApplicationJson> changeStatusToReturnedToPreparation(@PathVariable int id, @RequestBody StatusCommentJson comment) {
-        // TODO: add comment handling
+        commentService.addReturnComment(id, comment.getComment());
         return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.RETURNED_TO_PREPARATION), HttpStatus.OK);
     }
 
