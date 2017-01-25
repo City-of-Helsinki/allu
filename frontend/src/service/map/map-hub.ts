@@ -126,7 +126,7 @@ export class MapHub {
   /**
    * Used for fetching city district by id
    */
-  public districtById = (id: number) => this.districts().map(ds => ds.find(d => d.districtId === id));
+  public districtById = (id: number) => this.districts().map(ds => ds.find(d => d.id === id));
 
   /**
    * Search addresses matching with partial search term
