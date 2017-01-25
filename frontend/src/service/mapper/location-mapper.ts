@@ -9,9 +9,11 @@ export class LocationMapper {
         backendLocation.id,
         backendLocation.geometry,
         backendLocation.area,
+        backendLocation.areaOverride,
         PostalAddress.fromBackend(backendLocation.postalAddress),
         backendLocation.fixedLocationIds,
         backendLocation.cityDistrictId,
+        backendLocation.cityDistrictIdOverride,
         backendLocation.info) : undefined;
   }
   public static mapFrontend(location: Location): BackendLocation {
@@ -20,9 +22,11 @@ export class LocationMapper {
       id: location.id,
       geometry: location.geometry,
       area: location.area,
+      areaOverride: location.areaOverride,
       postalAddress: location.postalAddress.toBackend(),
       fixedLocationIds: location.fixedLocationIds,
       cityDistrictId: location.cityDistrictId,
+      cityDistrictIdOverride: location.cityDistrictIdOverride,
       info: location.info
     } : undefined;
   }

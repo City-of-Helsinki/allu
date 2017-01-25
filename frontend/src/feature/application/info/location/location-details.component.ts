@@ -1,4 +1,5 @@
 import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
+import {Observable} from 'rxjs/Observable';
 
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
@@ -39,6 +40,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.mapHub.selectApplication(this.application);
     MaterializeUtil.updateTextFields(50);
+  }
+
+  districtName(id: number): Observable<string> {
+    return this.mapHub.districtById(id).map(d => d.name);
   }
 
   private metadataLoaded(metadata: StructureMeta) {

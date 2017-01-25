@@ -7,17 +7,21 @@ export class Location {
     id: number,
     geometry: GeoJSON.GeometryCollection,
     area: number,
+    areaOverride: number,
     postalAddress: PostalAddress,
     fixedLocationIds: Array<number>,
     cityDistrictId: number,
+    cityDistrictIdOverride: number,
     info: string)
   constructor(
     public id?: number,
     public geometry?: GeoJSON.GeometryCollection,
     public area?: number,
+    public areaOverride?: number,
     public postalAddress?: PostalAddress,
     public fixedLocationIds?: Array<number>,
     public cityDistrictId?: number,
+    public cityDistrictIdOverride?: number,
     public info?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
     this.fixedLocationIds = fixedLocationIds || [];

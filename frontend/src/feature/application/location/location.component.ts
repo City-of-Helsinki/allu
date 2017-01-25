@@ -1,6 +1,7 @@
 import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import '../../../rxjs-extensions.ts';
+import {Observable} from 'rxjs/Observable';
 
 import {ProgressStep} from '../progressbar/progressbar.component';
 import {Application} from '../../../model/application/application';
@@ -19,6 +20,7 @@ import {Event} from '../../../model/application/event/event';
 import {ShortTermRental} from '../../../model/application/short-term-rental/short-term-rental';
 import {ExcavationAnnouncement} from '../../../model/application/excavation-announcement/excavation-announcement';
 import {Note} from '../../../model/application/note/note';
+import {CityDistrict} from '../../../model/common/city-district';
 
 @Component({
   selector: 'type',
@@ -36,6 +38,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   typeSelected = false;
   selectedFixedLocations = [];
   editedItemCount = 0;
+  districts: Observable<Array<CityDistrict>>;
+  selectedDistrict: CityDistrict;
 
   private fixedLocations = new Array<FixedLocation>();
   private geometry: GeoJSON.GeometryCollection;
@@ -57,6 +61,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
+    this.districts = this.mapHub.districts();
   }
 
   ngOnDestroy() {
@@ -139,6 +144,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   editedItemCountChanged(editedItemCount: number) {
     this.editedItemCount = editedItemCount;
+  }
+
+  districtName(id: number): Observable<string> {
+    return this.mapHub.districtById(id).map(d => d.name);
   }
 
   private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {
