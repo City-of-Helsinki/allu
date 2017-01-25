@@ -188,6 +188,15 @@ create table allu.cable_info_text (
     cable_info_type text not null,
     text_value text not null );
 
+create table allu.application_comment (
+    id serial primary key,
+    application_id integer references allu.application(id),
+    user_id integer references allu.user(id),
+    type text not null,
+    text text not null,
+    create_time timestamp with time zone,
+    update_time timestamp with time zone );
+
 create SEQUENCE allu.KP_application_type_sequence START 1600001;
 create SEQUENCE allu.AL_application_type_sequence START 1600001;
 create SEQUENCE allu.LJ_application_type_sequence START 1600001;

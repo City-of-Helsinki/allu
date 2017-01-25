@@ -1,4 +1,4 @@
-package fi.hel.allu.ui.domain;
+package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.CommentType;
 
@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
 /**
  * Comment for an application
  */
-public class CommentJson {
+public class Comment {
   private Integer id;
   @NotNull
   private CommentType type;
@@ -19,7 +19,7 @@ public class CommentJson {
   private String text;
   private ZonedDateTime createTime;
   private ZonedDateTime updateTime;
-  private UserJson user;
+  private Integer userId;
 
   /**
    * Get the database ID of the comment. Can be null for new comments.
@@ -87,15 +87,16 @@ public class CommentJson {
   }
 
   /**
-   * Get the user who last updated the comment. Can be null for new comments.
+   * Get the ID of the user who last updated the comment. Can be null for new
+   * comments.
    *
-   * @return user info or null
+   * @return user ID or null
    */
-  public UserJson getUser() {
-    return user;
+  public Integer getUserId() {
+    return userId;
   }
 
-  public void setUser(UserJson user) {
-    this.user = user;
+  public void setUserId(Integer userId) {
+    this.userId = userId;
   }
 }

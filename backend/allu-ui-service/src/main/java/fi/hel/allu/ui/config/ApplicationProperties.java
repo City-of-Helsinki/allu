@@ -344,6 +344,42 @@ public class ApplicationProperties {
   }
 
   /**
+   * Get URL to find all comments for an application
+   *
+   * @return the URL
+   */
+  public String getCommentsFindByApplicationUrl() {
+    return getModelServiceUrl("/comments/applications/{applicationId}");
+  }
+
+  /**
+   * Get URL to add a comment for an application
+   *
+   * @return the URL
+   */
+  public String getCommentsCreateUrl() {
+    return getModelServiceUrl("/comments/applications/{applicationId}");
+  }
+
+  /**
+   * Get URL to update an existing comment
+   *
+   * @return the URL
+   */
+  public String getCommentsUpdateUrl() {
+    return getModelServiceUrl("/comments/{commentId}");
+  }
+
+  /**
+   * Get URL to delete an existing comment
+   *
+   * @return the URL
+   */
+  public String getCommentsDeleteUrl() {
+    return getModelServiceUrl("/comments/{commentId}");
+  }
+
+  /**
    * Returns URL for geocoding a street address.
    * @return  Request URL for geocoding a street address.
    */
