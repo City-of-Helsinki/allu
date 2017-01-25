@@ -22,7 +22,8 @@ export class ProgressbarComponent implements OnInit, OnChanges {
   @Input() step: number;
   @Input() application: Application;
   width: number;
-  text: string;
+  identifier: string;
+  status: string;
 
   constructor() {}
 
@@ -44,10 +45,12 @@ export class ProgressbarComponent implements OnInit, OnChanges {
         this.width = 0;
         break;
     }
+
+    this.status = this.application ? this.application.status : undefined;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.text = this.hasId(this.application) ? this.application.applicationId : 'UUSI HAKEMUS';
+    this.identifier = this.hasId(this.application) ? this.application.applicationId : 'UUSI HAKEMUS';
   }
 
   private hasId(application: Application): boolean {
