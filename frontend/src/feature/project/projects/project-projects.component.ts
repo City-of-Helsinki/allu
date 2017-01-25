@@ -105,6 +105,10 @@ export class ProjectProjectsComponent implements OnInit {
     this.sortedProjectRows = this.sortRows(this.sort, this.projectRows);
   }
 
+  districtNames(ids: Array<number>): Observable<Array<string>> {
+    return this.projectState.districtNames(ids);
+  }
+
   private updateAllSelected() {
     this.allSelected = this.projectRows.every(row => row.selected);
   }

@@ -8,6 +8,7 @@ export class Project {
     name: string,
     startTime: Date,
     endTime: Date,
+    cityDistricts: Array<number>,
     ownerName: string,
     contactName: string,
     email: string,
@@ -20,6 +21,7 @@ export class Project {
     public name?: string,
     public startTime?: Date,
     public endTime?: Date,
+    public cityDistricts?: Array<number>,
     public ownerName?: string,
     public contactName?: string,
     public email?: string,
@@ -28,6 +30,7 @@ export class Project {
     public additionalInfo?: string,
     public parentId?: number) {
     this.active = startTime && endTime && TimeUtil.isBetweenInclusive(new Date(), this.startTime, this.endTime);
+    this.cityDistricts = cityDistricts || [];
   }
 
   get idWithName(): string {

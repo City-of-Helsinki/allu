@@ -49,7 +49,7 @@
                     <span *ngIf="row.content.active">Aktiivinen</span>
                     <span *ngIf="!row.content.active">Inaktiivinen</span>
                 </td>
-                <td>Ei tuettuna<br></td>
+                <td>{{districtNames(row.content.cityDistricts) | async | commaSeparated}}</td>
                 <td>{{ row.content.startTime | date:dateFormat }}</td>
                 <td>{{ row.content.endTime | date:dateFormat }}</td>
                 <td>
