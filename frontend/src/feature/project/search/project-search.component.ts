@@ -10,6 +10,9 @@ import {UI_DATE_FORMAT} from '../../../util/time.util';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {ProjectHub} from '../../../service/project/project-hub';
 import {Sort} from '../../../model/common/sort';
+import {CityDistrict} from '../../../model/common/city-district';
+import {ProjectState} from '../../../service/project/project-state';
+import {MapHub} from '../../../service/map/map-hub';
 
 
 @Component({
@@ -20,24 +23,30 @@ export class ProjectSearchComponent implements OnInit {
   sort: Sort = new Sort(undefined, undefined);
   projects: Array<Project> = [];
   queryForm: FormGroup;
+  districts: Observable<Array<CityDistrict>>;
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
   private format = UI_DATE_FORMAT;
   private selections = [];
 
-  constructor(private projectHub: ProjectHub, private router: Router, private fb: FormBuilder) {
+  constructor(private projectHub: ProjectHub,
+              private projectState: ProjectState,
+              private mapHub: MapHub,
+              private router: Router,
+              private fb: FormBuilder) {
     this.queryForm = fb.group({
       id: undefined,
       startTime: undefined,
       endTime: undefined,
       ownerName: undefined,
       onlyActive: true,
-      district: undefined,
+      districts: undefined,
       creator: undefined
     });
   }
 
   ngOnInit(): void {
+    this.districts = this.mapHub.districts();
   }
 
   goToSummary(project: Project): void {
@@ -54,5 +63,9 @@ export class ProjectSearchComponent implements OnInit {
     this.projectHub.searchProjects(query).subscribe(projects => {
       this.projects = projects;
     });
+  }
+
+  districtNames(ids: Array<number>): Observable<Array<string>> {
+    return this.projectState.districtNames(ids);
   }
 }

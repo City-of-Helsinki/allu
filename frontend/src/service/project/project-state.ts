@@ -7,6 +7,8 @@ import {ApplicationHub} from '../application/application-hub';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {BehaviorSubject} from 'rxjs';
 import {Sort} from '../../model/common/sort';
+import {StringUtil} from '../../util/string.util';
+import {MapHub} from '../map/map-hub';
 
 @Injectable()
 export class ProjectState {
@@ -16,7 +18,7 @@ export class ProjectState {
   private applications$ = new BehaviorSubject<Array<Application>>([]);
 
   constructor(private projectHub: ProjectHub,
-              private applicationHub: ApplicationHub) {}
+              private mapHub: MapHub) {}
 
   createNew(): Observable<Project> {
     this._project = new Project();
@@ -105,5 +107,12 @@ export class ProjectState {
     } else {
       return this.relatedProjects;
     }
+  }
+
+  districtNames(ids?: Array<number>): Observable<Array<string>> {
+    let districtIds = ids || this._project.cityDistricts;
+
+    return this.mapHub.districtsById(districtIds)
+      .map(ds => ds.map(d => d.name));
   }
 }

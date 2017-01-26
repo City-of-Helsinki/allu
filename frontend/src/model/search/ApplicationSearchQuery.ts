@@ -3,7 +3,6 @@ import {Sort} from '../common/sort';
 import {ApplicationSearchQueryForm} from './ApplicationSearchQueryForm';
 import {SearchQuery} from '../common/search-query';
 import {Some} from '../../util/option';
-import {StringUtil} from '../../util/string.util';
 
 export class ApplicationSearchQuery implements SearchQuery {
   public applicationId: string;

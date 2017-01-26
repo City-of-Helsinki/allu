@@ -15,6 +15,7 @@ import {TranslationPipe} from '../../pipe/translation.pipe';
 import {SortByDirective} from './sort/sort-by.directive';
 import {FileDropDirective} from './file-drop/file-drop.directive';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
+import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
     FieldErrorComponent,
     TranslationPipe,
     FileDropDirective,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    CommaSeparatedPipe
   ],
   exports: [
     CommonModule,
@@ -46,7 +48,8 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
     FieldErrorComponent,
     TranslationPipe,
     FileDropDirective,
-    ConfirmDialogComponent
+    ConfirmDialogComponent,
+    CommaSeparatedPipe
   ],
   entryComponents: [
     AutoCompletionListComponent,

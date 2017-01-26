@@ -24,7 +24,7 @@ export class ProjectSummaryComponent implements OnInit {
   childProjects: Array<Project> = [];
   history: Observable<Array<string>>; // TODO: history
   isActive: boolean;
-
+  districts: Observable<Array<string>>;
   dateFormat = UI_DATE_FORMAT;
   translations = translations;
 
@@ -32,6 +32,7 @@ export class ProjectSummaryComponent implements OnInit {
 
   ngOnInit(): void {
     this.project = this.projectState.project;
+    this.districts = this.projectState.districtNames();
     this.isActive = TimeUtil.isBetweenInclusive(new Date(), this.project.startTime, this.project.endTime);
     this.fetchApplications();
     this.fetchRelatedProjects();

@@ -3,6 +3,7 @@ export interface BackendProject {
   name: string;
   startTime: string;
   endTime: string;
+  cityDistricts: Array<number>;
   ownerName: string;
   contactName: string;
   email: string;

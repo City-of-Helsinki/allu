@@ -19,8 +19,7 @@ import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
   ],
   declarations: [
     UserListComponent,
-    UserComponent,
-    CommaSeparatedPipe
+    UserComponent
   ],
   providers: []
 })

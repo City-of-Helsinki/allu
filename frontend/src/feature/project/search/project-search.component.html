@@ -12,10 +12,11 @@
                     <label for="projectId">Hankkeen tunnus</label>
                 </div>
                 <div class="input-field col m2">
-                    <select id="district" formControlName="district" materialize="material_select">
-                        <option value="" selected disabled>Kaupunginosa</option>
+                    <select formControlName="districts" materialize="material_select" multiple>
+                        <option value="" disabled selected>Kaupunginosa</option>
+                        <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
                     </select>
-                    <label for="district">Kaupunginosa</label>
+                    <label>Kaupunginosa</label>
                 </div>
                 <div class="input-field col m1">
                     <label for="startDate">Alkupvm</label>
@@ -78,7 +79,7 @@
                         <span *ngIf="project.active">AKTIIVINEN</span>
                         <span *ngIf="!project.active">INAKTIIVINEN</span>
                     </td>
-                    <td>ei tuettuna</td>
+                    <td>{{districtNames(project.cityDistricts) | async | commaSeparated}}</td>
                     <td>{{project.startTime | date:format}}</td>
                     <td>{{project.endTime | date:format}}</td>
                 </tr>

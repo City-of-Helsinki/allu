@@ -129,6 +129,11 @@ export class MapHub {
   public districtById = (id: number) => this.districts().map(ds => ds.find(d => d.id === id));
 
   /**
+   * Used for fetching multiple city district by ids
+   */
+  public districtsById = (ids: Array<number>) => this.districts().map(ds => ds.filter(d => ids.indexOf(d.id) >= 0));
+
+  /**
    * Search addresses matching with partial search term
    */
   public addressSearch = (searchTerm: string) => this.locationService.search(searchTerm);

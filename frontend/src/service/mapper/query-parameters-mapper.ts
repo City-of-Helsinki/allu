@@ -64,11 +64,10 @@ export class QueryParametersMapper {
     Some(query.id).do(id => QueryParametersMapper.mapParameter(queryParameters, 'id', id.toString()));
     QueryParametersMapper.mapDateParameter(queryParameters, START_TIME_FIELD, MIN_DATE, query.endTime);
     QueryParametersMapper.mapDateParameter(queryParameters, END_TIME_FIELD, query.startTime, MAX_DATE);
+    QueryParametersMapper.mapArrayParameter(queryParameters, 'cityDistricts', query.districts);
     QueryParametersMapper.mapParameter(queryParameters, 'ownerName', QueryParametersMapper.removeExtraWhitespace(query.ownerName));
     Some(query.onlyActive).do(onlyActive => QueryParametersMapper.mapProjectActivityParameter(queryParameters, onlyActive));
     Some(query.creator).do(creator => QueryParametersMapper.mapParameter(queryParameters, 'creator', creator.toString()));
-    // TODO: Map when supported
-    // QueryParametersMapper.mapParameter(queryParameters, 'district', QueryParametersMapper.removeExtraWhitespace(query.district));
     return queryParameters;
   }
 
