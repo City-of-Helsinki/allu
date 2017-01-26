@@ -18,11 +18,15 @@
               <input id="info" type="text" class="" [(ngModel)]="application.location.info">
               <label for="info">Lisätietoja paikasta</label>
             </div>
-            <div *ngIf="editedItemCount > 0" class="input-field col m10">
-              Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+          </div>
+          <div class="info-field col m12">
+            <div *ngIf="editedItemCount > 0" class="col m10">
+              <div class="input-field-info-text">
+                Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+              </div>
             </div>
             <div *ngIf="editedItemCount === 0">
-              <div class="input-field col m8">
+              <div class="input-field col m6">
               <select [(ngModel)]="selectedArea" materialize="material_select" [materializeSelectOptions]="areas"
                   [disabled]="editedItemCount > 0">
                 <option value="">Ei tapahtuma-aluetta</option>
@@ -39,9 +43,26 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="col m12">
             <div class="input-field col m2">
               <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="application.location.uiArea">
               <label for="area">Alueen pinta-ala</label>
+            </div>
+            <div class="input-field col m2">
+              <input id="areaOverride" type="number" class="validate" [(ngModel)]="application.location.areaOverride">
+              <label for="area">Käsittelijän syöttämä pinta-ala</label>
+            </div>
+            <div class="input-field col m2">
+              <input id="district" type="text" disabled="true" value="{{districtName(application.location.cityDistrictId) | async}}">
+              <label for="area">Kaupunginosa</label>
+            </div>
+            <div class="input-field col m2">
+              <select [(ngModel)]="application.location.cityDistrictIdOverride" materialize="material_select">
+                <option value="" selected>-</option>
+                <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
+              </select>
+              <label>Käsittelijän valitsema kaupunginosa</label>
             </div>
           </div>
           <div class="col m12">
