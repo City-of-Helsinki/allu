@@ -496,11 +496,12 @@ public class ApplicationMapper {
 
   private LocationES createLocationES(LocationJson locationJson) {
     if (locationJson != null && locationJson.getPostalAddress() != null) {
+      Integer cityDistrict = Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
       return new LocationES(
           locationJson.getPostalAddress().getStreetAddress(),
           locationJson.getPostalAddress().getPostalCode(),
           locationJson.getPostalAddress().getCity(),
-          locationJson.getCityDistrictId());
+          cityDistrict);
     } else {
       return null;
     }
