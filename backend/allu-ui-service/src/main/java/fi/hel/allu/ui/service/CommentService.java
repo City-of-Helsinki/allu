@@ -24,9 +24,6 @@ public class CommentService {
 
   private static final Logger logger = LoggerFactory.getLogger(CommentService.class);
 
-  private static final String REJECT_PREFIX = "HYLÄTTY: ";
-  private static final String RETURN_PREFIX = "PALAUTETTU: ";
-
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
@@ -49,11 +46,11 @@ public class CommentService {
   public List<CommentJson> findByApplicationId(int applicationId) {
     ResponseEntity<Comment[]> userResults = restTemplate
         .getForEntity(applicationProperties.getCommentsFindByApplicationUrl(), Comment[].class, applicationId);
-    return Arrays.asList(userResults.getBody()).stream().map(c -> mapToJson(c)).collect(Collectors.toList());
+    return Arrays.stream(userResults.getBody()).map(c -> mapToJson(c)).collect(Collectors.toList());
   }
 
   /**
-   * Create new comment for an application
+   * Create new comment for an application. Validates the comment type.
    *
    * @param applicationId
    *          the application ID
@@ -62,11 +59,8 @@ public class CommentService {
    * @return The created comment
    */
   public CommentJson addComment(int applicationId, CommentJson commentJson) {
-    Comment comment = mapToModel(commentJson);
-    comment.setUserId(userService.getCurrentUser().getId());
-    ResponseEntity<Comment> result = restTemplate.postForEntity(applicationProperties.getCommentsCreateUrl(), comment,
-        Comment.class, applicationId);
-    return mapToJson(result.getBody());
+    validateCommentType(commentJson.getType());
+    return addCommentUnchecked(applicationId, commentJson);
   }
 
   /**
@@ -79,7 +73,7 @@ public class CommentService {
    * @return the added comment
    */
   public CommentJson addRejectComment(int applicationId, String reason) {
-    return addComment(applicationId, newCommentJson(CommentType.DECISION, REJECT_PREFIX + reason));
+    return addCommentUnchecked(applicationId, newCommentJson(CommentType.REJECT, reason));
   }
 
   /**
@@ -92,11 +86,11 @@ public class CommentService {
    * @return the added comment
    */
   public CommentJson addReturnComment(int applicationId, String text) {
-    return addComment(applicationId, newCommentJson(CommentType.DECISION, RETURN_PREFIX + text));
+    return addCommentUnchecked(applicationId, newCommentJson(CommentType.RETURN, text));
   }
 
   /**
-   * Update existing comment
+   * Update existing comment. Validates the comment type.
    *
    * @param id
    *          comment's ID
@@ -105,6 +99,7 @@ public class CommentService {
    * @return the updated comment
    */
   public CommentJson updateComment(int id, CommentJson commentJson) {
+    validateCommentType(commentJson.getType());
     Comment comment = mapToModel(commentJson);
     comment.setUserId(userService.getCurrentUser().getId());
     HttpEntity<Comment> request = new HttpEntity<>(comment);
@@ -158,6 +153,26 @@ public class CommentService {
     commentJson.setType(type);
     commentJson.setText(text);
     return commentJson;
+  }
+
+  /*
+   * Make sure that the given comment type is valid for insert or update
+   */
+  private void validateCommentType(CommentType type) {
+    if (type != CommentType.INTERNAL && type != CommentType.INVOICING) {
+      throw new IllegalArgumentException("CommentType " + type.name() + " not allowed!");
+    }
+  }
+
+  /*
+   * Add comment to an application, don't validate type.
+   */
+  private CommentJson addCommentUnchecked(int applicationId, CommentJson commentJson) {
+    Comment comment = mapToModel(commentJson);
+    comment.setUserId(userService.getCurrentUser().getId());
+    ResponseEntity<Comment> result = restTemplate.postForEntity(applicationProperties.getCommentsCreateUrl(), comment,
+        Comment.class, applicationId);
+    return mapToJson(result.getBody());
   }
 
 }

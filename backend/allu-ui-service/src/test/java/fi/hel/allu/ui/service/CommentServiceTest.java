@@ -70,7 +70,7 @@ public class CommentServiceTest {
     final int USER_ID = 7;
     Comment comment = newComment(CommentType.INVOICING, "Sovittu laskutettavaksi kolmessa erässä", USER_ID);
     UserJson userJson = newUserJson("Kalle Käyttäjä", USER_ID);
-    CommentJson commentJson = newCommentJson(CommentType.DECISION, "JSON-kommentti", USER_ID + 1);
+    CommentJson commentJson = newCommentJson(CommentType.INTERNAL, "JSON-kommentti", USER_ID + 1);
     Mockito.when(restTemplate.postForEntity(Mockito.eq(COMMENTS_CREATE_URL), Mockito.any(Comment.class),
             Mockito.eq(Comment.class), Mockito.eq(APPLICATION_ID)))
         .thenReturn(new ResponseEntity<>(comment, HttpStatus.OK));
@@ -88,7 +88,7 @@ public class CommentServiceTest {
     final int USER_ID = 7;
     Comment comment = newComment(CommentType.INVOICING, "Sovittu laskutettavaksi kolmessa erässä", USER_ID);
     UserJson userJson = newUserJson("Kalle Käyttäjä", USER_ID);
-    CommentJson commentJson = newCommentJson(CommentType.DECISION, "JSON-kommentti", USER_ID + 1);
+    CommentJson commentJson = newCommentJson(CommentType.INTERNAL, "JSON-kommentti", USER_ID + 1);
     Mockito
         .when(restTemplate.exchange(Mockito.eq(COMMENTS_UPDATE_URL), Mockito.eq(HttpMethod.PUT),
             Mockito.any(HttpEntity.class), Mockito.eq(Comment.class), Mockito.eq(APPLICATION_ID)))

@@ -50,7 +50,7 @@ public class CommentController {
    * @return The created comment
    */
   @RequestMapping(value = "/applications/{applicationId}", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<CommentJson> insert(@PathVariable int applicationId,
       @Valid @RequestBody(required = true) CommentJson commentJson) {
     return new ResponseEntity<>(commentService.addComment(applicationId, commentJson), HttpStatus.OK);
@@ -66,7 +66,7 @@ public class CommentController {
    * @return the updated comment
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<CommentJson> update(@PathVariable int id,
       @Valid @RequestBody(required = true) CommentJson commentJson) {
     return new ResponseEntity<>(commentService.updateComment(id, commentJson), HttpStatus.OK);
@@ -79,7 +79,7 @@ public class CommentController {
    *          comment's ID
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<Void> delete(@PathVariable int id) {
     commentService.deleteComment(id);
     return new ResponseEntity<>(HttpStatus.OK);

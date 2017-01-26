@@ -42,7 +42,8 @@ public class CommentDaoTest {
     int applicationId = testCommon.insertApplication("Testihakemus", "Käsittelijä");
     Comment comment = new Comment();
     comment.setText("Kommentskij");
-    comment.setType(CommentType.DECISION);
+    comment.setType(CommentType.REJECT);
+    comment.setUserId(testCommon.insertUser("Test User").getId());
     Comment inserted = commentDao.insert(comment, applicationId);
     assertEquals(comment.getText(), inserted.getText());
     assertEquals(comment.getType(), inserted.getType());
@@ -54,7 +55,8 @@ public class CommentDaoTest {
     int applicationId = testCommon.insertApplication("Testihakemus", "Käsittelijä");
     Comment comment = new Comment();
     comment.setText("Kommentskij");
-    comment.setType(CommentType.DECISION);
+    comment.setType(CommentType.REJECT);
+    comment.setUserId(testCommon.insertUser("Test User").getId());
     Comment inserted = commentDao.insert(comment, applicationId);
     inserted.setText("Horoshij kommentskij");
     Comment updated = commentDao.update(inserted.getId(), inserted);
@@ -68,7 +70,8 @@ public class CommentDaoTest {
     int applicationId = testCommon.insertApplication("Testihakemus", "Käsittelijä");
     Comment comment = new Comment();
     comment.setText("Kommentskij");
-    comment.setType(CommentType.DECISION);
+    comment.setType(CommentType.REJECT);
+    comment.setUserId(testCommon.insertUser("Test User").getId());
     Comment inserted = commentDao.insert(comment, applicationId);
     commentDao.delete(inserted.getId());
     assertFalse(commentDao.findById(inserted.getId()).isPresent());
@@ -79,7 +82,8 @@ public class CommentDaoTest {
     int applicationId = testCommon.insertApplication("Testihakemus", "Käsittelijä");
     Comment comment = new Comment();
     comment.setText("Pervij kommentskij");
-    comment.setType(CommentType.DECISION);
+    comment.setType(CommentType.REJECT);
+    comment.setUserId(testCommon.insertUser("Test User").getId());
     commentDao.insert(comment, applicationId);
     comment.setText("Vtoroij kommentskij");
     comment.setType(CommentType.INTERNAL);
@@ -90,7 +94,7 @@ public class CommentDaoTest {
     List<Comment> comments = commentDao.findByApplicationId(applicationId);
     assertEquals(3, comments.size());
     assertEquals(1, comments.stream()
-        .filter(c -> c.getText().equals("Pervij kommentskij") && c.getType() == CommentType.DECISION).count());
+        .filter(c -> c.getText().equals("Pervij kommentskij") && c.getType() == CommentType.REJECT).count());
     assertEquals(1, comments.stream()
         .filter(c -> c.getText().equals("Vtoroij kommentskij") && c.getType() == CommentType.INTERNAL).count());
     assertEquals(1, comments.stream()
