@@ -106,7 +106,7 @@ create table allu.user_application_type (
 
 create table allu.application (
     id serial primary key,
-    application_id text not null,
+    application_id text unique not null,
     project_id integer references allu.project(id),
     name text,
     handler integer references allu.user,

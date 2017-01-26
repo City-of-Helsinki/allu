@@ -102,7 +102,8 @@ public class ApplicationSequenceDao {
       SimpleExpression<Long> seqExp = SQLExpressions.nextval(getSequenceName(prefix));
       long seqVal = queryFactory.select(seqExp).fetchOne();
       if (seqVal < currentYearMinimumSeq) {
-        resetSequence(prefix, currentYearMinimumSeq);
+        // sequence is reset to minimum + 1, because the current value is returned and next sequence read will return the value set in reset
+        resetSequence(prefix, currentYearMinimumSeq + 1);
         return currentYearMinimumSeq;
       } else {
         return seqVal;
