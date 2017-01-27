@@ -425,7 +425,8 @@ export const translations = {
     type: {
       INTERNAL: 'Sisäinen kommentti',
       INVOICING: 'Laskutuksen kommentti',
-      DECISION: 'Päätöksentekijän kommentti'
+      RETURN: 'Valmisteluun palauttajan kommentti',
+      REJECT: 'Hylkääjän kommentti'
     }
   },
   workqueue: {
