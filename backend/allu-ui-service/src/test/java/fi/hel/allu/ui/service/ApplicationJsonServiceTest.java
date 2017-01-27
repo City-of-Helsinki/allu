@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class ApplicationJsonServiceTest {
   private UserService userService;
   private LocationService locationService;
   private AttachmentService attachmentService;
+  private CommentService commentService;
 
   private static final int applicationId = 1;
   private static final int applicantId = 12;
@@ -41,6 +43,7 @@ public class ApplicationJsonServiceTest {
   private StructureMetaJson metaJson = Mockito.mock(StructureMetaJson.class);
   private UserJson userJson = Mockito.mock(UserJson.class);
   private LocationJson locationJson = Mockito.mock(LocationJson.class);
+  private List<CommentJson> comments = new ArrayList<>();
 
   @Before
   public void init() {
@@ -54,6 +57,7 @@ public class ApplicationJsonServiceTest {
     locationService = Mockito.mock(LocationService.class);
     restTemplate = Mockito.mock(RestTemplate.class);
     attachmentService = Mockito.mock(AttachmentService.class);
+    commentService = Mockito.mock(CommentService.class);
 
     Mockito.when(application.getId()).thenReturn(applicationId);
     Mockito.when(application.getApplicantId()).thenReturn(applicantId);
@@ -70,6 +74,10 @@ public class ApplicationJsonServiceTest {
     Mockito.when(userService.findUserById(userId)).thenReturn(userJson);
     Mockito.when(locationService.findLocationById(locationId)).thenReturn(locationJson);
     Mockito.when(attachmentService.findAttachmentsForApplication(applicationId)).thenReturn(Collections.emptyList());
+
+    comments.add(Mockito.mock(CommentJson.class));
+    comments.add(Mockito.mock(CommentJson.class));
+    Mockito.when(commentService.findByApplicationId(applicationId)).thenReturn(comments);
   }
 
 
@@ -86,7 +94,8 @@ public class ApplicationJsonServiceTest {
         metaService,
         userService,
         locationService,
-        attachmentService);
+        attachmentService,
+        commentService);
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     Assert.assertEquals(projectJson, applicationJson.getProject());
     Assert.assertEquals(applicantJson, applicationJson.getApplicant());
@@ -95,5 +104,6 @@ public class ApplicationJsonServiceTest {
     Assert.assertEquals(userJson, applicationJson.getHandler());
     Assert.assertEquals(locationJson, applicationJson.getLocation());
     Assert.assertEquals(0, applicationJson.getAttachmentList().size());
+    Assert.assertEquals(2, applicationJson.getComments().size());
   }
 }

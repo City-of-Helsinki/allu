@@ -29,6 +29,7 @@ public class ApplicationJsonService {
   private UserService userService;
   private LocationService locationService;
   private AttachmentService attachmentService;
+  private CommentService commentService;
 
   @Autowired
   public ApplicationJsonService(
@@ -41,7 +42,8 @@ public class ApplicationJsonService {
       MetaService metaService,
       UserService userService,
       LocationService locationService,
-      AttachmentService attachmentService
+      AttachmentService attachmentService,
+      CommentService commentService
   ) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
@@ -53,6 +55,7 @@ public class ApplicationJsonService {
     this.userService = userService;
     this.locationService = locationService;
     this.attachmentService = attachmentService;
+    this.commentService = commentService;
   }
 
   /**
@@ -80,6 +83,8 @@ public class ApplicationJsonService {
       applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
     }
     applicationJson.setAttachmentList(attachmentService.findAttachmentsForApplication(applicationModel.getId()));
+    applicationJson.setComments(commentService.findByApplicationId(applicationModel.getId()));
+
     return applicationJson;
   }
 }

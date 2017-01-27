@@ -11,6 +11,7 @@ import {UserMapper} from './user-mapper';
 import {TimeUtil} from '../../util/time.util';
 import {Some} from '../../util/option';
 import {ApplicationTagMapper} from './application-tag-mapper';
+import {CommentMapper} from '../application/comment/comment-mapper';
 
 export class ApplicationMapper {
 
@@ -38,7 +39,8 @@ export class ApplicationMapper {
       backendApplication.calculatedPrice,
       backendApplication.priceOverride,
       backendApplication.priceOverrideReason,
-      ApplicationTagMapper.mapBackendList(backendApplication.applicationTags)
+      ApplicationTagMapper.mapBackendList(backendApplication.applicationTags),
+      CommentMapper.mapBackendList(backendApplication.comments)
     );
   }
 

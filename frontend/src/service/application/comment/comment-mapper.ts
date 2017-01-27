@@ -5,6 +5,12 @@ import {UserMapper} from '../../mapper/user-mapper';
 import {Some} from '../../../util/option';
 
 export class CommentMapper {
+  public static mapBackendList(comments: Array<BackendComment>): Array<Comment> {
+    return (comments)
+      ? comments.map(comment => CommentMapper.mapBackend(comment))
+      : [];
+  }
+
   static mapBackend(backendComment: BackendComment): Comment {
     return new Comment(
       backendComment.id,
@@ -30,7 +36,7 @@ export class CommentMapper {
   }
 }
 
-interface BackendComment {
+export interface BackendComment {
   id: number;
   type: string;
   text: string;

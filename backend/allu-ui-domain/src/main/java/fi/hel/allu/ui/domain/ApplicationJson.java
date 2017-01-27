@@ -48,6 +48,8 @@ public class ApplicationJson {
   private ZonedDateTime decisionTime;
   @Valid
   private List<AttachmentInfoJson> attachmentList;
+  @Valid
+  private List<CommentJson> comments;
   private Integer calculatedPrice;
   private Integer priceOverride;
   private String priceOverrideReason;
@@ -267,6 +269,17 @@ public class ApplicationJson {
 
   public void setAttachmentList(List<AttachmentInfoJson> attachmentList) {
     this.attachmentList = attachmentList;
+  }
+
+  /**
+   * in Finnish: Hakemuksen kommentit
+   */
+  public List<CommentJson> getComments() {
+    return comments;
+  }
+
+  public void setComments(List<CommentJson> comments) {
+    this.comments = comments;
   }
 
   /**

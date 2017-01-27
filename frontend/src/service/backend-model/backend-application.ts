@@ -6,6 +6,7 @@ import {BackendStructureMeta} from './backend-structure-meta';
 import {BackendAttachmentInfo} from './backend-attachment-info';
 import {BackendUser} from './backend-user';
 import {BackendApplicationTag} from '../mapper/application-tag-mapper';
+import {BackendComment} from '../application/comment/comment-mapper';
 
 export interface BackendApplication {
   id: number;
@@ -30,4 +31,5 @@ export interface BackendApplication {
   priceOverride: number;
   priceOverrideReason: string;
   applicationTags: Array<BackendApplicationTag>;
+  comments?: Array<BackendComment>;
 }
