@@ -6,7 +6,8 @@ import {
   MdDialogModule,
   MdCardModule,
   MdIconModule,
-  MdButtonModule} from '@angular/material';
+  MdButtonModule,
+  MdInputModule} from '@angular/material';
 import {MaterializeDirective} from 'angular2-materialize';
 import {AutoCompletionDirective} from './auto-completion/auto-completion.directive.ts';
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component.ts';
@@ -41,6 +42,7 @@ import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
     MdCardModule,
     MdIconModule,
     MdButtonModule,
+    MdInputModule,
     MaterializeDirective,
     AutoCompletionDirective,
     AutoCompletionListComponent,

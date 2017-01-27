@@ -22,7 +22,7 @@ export class CommentsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.application = this.applicationState.application;
-    this.commentHub.getComments(this.application.id).subscribe(comments => this.comments = comments);
+    this.applicationState.comments.subscribe(comments => this.comments = comments);
   }
 
   ngAfterViewInit(): void {

@@ -2,8 +2,7 @@ import {Component, OnInit, AfterViewInit, Input, Output, EventEmitter} from '@an
 import {MaterializeUtil} from '../../../util/materialize.util';
 
 import {Comment} from '../../../model/application/comment/comment';
-import {CommentType} from '../../../model/application/comment/comment-type';
-import {EnumUtil} from '../../../util/enum.util';
+import {manualCommentNames} from '../../../model/application/comment/comment-type';
 
 @Component({
   selector: 'comment',
@@ -18,7 +17,7 @@ export class CommentComponent implements OnInit, AfterViewInit {
   @Output() onSave = new EventEmitter<Comment>();
 
   _edit = false;
-  commentTypes = EnumUtil.enumValues(CommentType);
+  commentTypes = manualCommentNames;
 
   private originalComment: Comment;
 
@@ -50,7 +49,8 @@ export class CommentComponent implements OnInit, AfterViewInit {
 
   editComment(): void {
     this._edit = true;
-    MaterializeUtil.updateTextFields(10);
+    MaterializeUtil.updateTextFields(50);
+    MaterializeUtil.resizeTextArea('#commentText');
     this.originalComment = this.comment.copy();
   }
 

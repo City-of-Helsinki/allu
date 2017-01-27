@@ -8,7 +8,8 @@ import {Some} from '../../util/option';
 import {ProjectHub} from '../project/project-hub';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
-import {Subject} from 'rxjs';
+import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {HttpResponse, HttpStatus} from '../../util/http.util';
 import {Comment} from '../../model/application/comment/comment';
 import {CommentHub} from './comment/comment-hub';
@@ -21,6 +22,7 @@ export class ApplicationState {
 
   private _application = new Application();
   private _pendingAttachments: Array<AttachmentInfo> = [];
+  private comments$ = new BehaviorSubject<Array<Comment>>([]);
 
   constructor(private router: Router,
               private applicationHub: ApplicationHub,
@@ -49,6 +51,10 @@ export class ApplicationState {
     return this._pendingAttachments;
   }
 
+  get comments(): Observable<Array<Comment>> {
+    return this.comments$.asObservable();
+  }
+
   addAttachment(attachment: AttachmentInfo) {
     this._pendingAttachments.push(attachment);
   }
@@ -75,11 +81,18 @@ export class ApplicationState {
   }
 
   saveComment(applicationId: number, comment: Comment): Observable<Comment> {
-    return this.commentHub.saveComment(applicationId, comment);
+    return this.commentHub.saveComment(applicationId, comment)
+      .do(c => this.loadComments(this._application.id).subscribe());
   }
 
   removeComment(comment: Comment): Observable<HttpResponse> {
-    return this.commentHub.removeComment(comment.id);
+    return this.commentHub.removeComment(comment.id)
+      .do(c => this.loadComments(this._application.id).subscribe());
+  }
+
+  loadComments(id: number): Observable<Array<Comment>> {
+    return this.commentHub.getComments(id)
+      .do(comments => this.comments$.next(comments));
   }
 
   load(id: number): Observable<Application> {

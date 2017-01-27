@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
+import {Observable} from 'rxjs/Observable';
 
 import {ProgressStep} from '../progressbar/progressbar.component.ts';
 import {UrlUtil} from '../../../util/url.util.ts';
@@ -8,6 +9,7 @@ import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {SidebarItem} from '../../sidebar/sidebar-item';
+
 
 @Component({
   selector: 'application',
@@ -34,7 +36,7 @@ export class ApplicationComponent implements OnInit {
       this.readonly = summary;
 
       this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
-      this.sidebarItems = this.sidebar(summary);
+      this.sidebar(summary).subscribe(items => this.sidebarItems = items);
     });
   }
 
@@ -49,16 +51,33 @@ export class ApplicationComponent implements OnInit {
     this.applicationState.tags = tags;
   }
 
-  sidebar(summary: boolean): Array<SidebarItem> {
-    let summarySidebar: Array<SidebarItem> = [
-      { type: 'BASIC_INFO'},
-      { type: 'ATTACHMENTS', count: this.application.attachmentList.length }
-    ];
+  sidebar(summary: boolean): Observable<Array<SidebarItem>> {
+    return Observable.combineLatest(
+      this.attachmentCount(),
+      this.commentCount(),
+      this.createSidebar(summary));
+  }
 
-    if (summary) {
-      summarySidebar.push({type: 'COMMENTS', count: 0});
-    }
+  private attachmentCount(): Observable<number> {
+    return Observable.of(this.application.attachmentList.length);
+  }
 
-    return summarySidebar;
+  private commentCount(): Observable<number> {
+    return this.applicationState.comments
+      .map(comments => comments.length);
+  }
+
+  private createSidebar(summary: boolean): (a: number, c: number) => Array<SidebarItem> {
+    return (attachmentCount: number, commentCount: number) => {
+      let sidebar: Array<SidebarItem> = [
+        { type: 'BASIC_INFO'},
+        { type: 'ATTACHMENTS', count: attachmentCount }
+      ];
+
+      if (summary) {
+        sidebar.push({type: 'COMMENTS', count: commentCount});
+      }
+      return sidebar;
+    };
   }
 }
