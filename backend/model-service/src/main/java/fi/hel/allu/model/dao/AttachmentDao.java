@@ -1,24 +1,28 @@
 package fi.hel.allu.model.dao;
 
-import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QAttachment.attachment;
-
-import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Optional;
-
+import com.querydsl.core.QueryException;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.DefaultMapper;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.querydsl.core.QueryException;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.DefaultMapper;
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.domain.AttachmentInfo;
+import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplicationAttachment.applicationAttachment;
+import static fi.hel.allu.QAttachment.attachment;
+import static fi.hel.allu.QDefaultAttachment.defaultAttachment;
+import static fi.hel.allu.QDefaultAttachmentApplicationType.defaultAttachmentApplicationType;
 
 @Repository
 public class AttachmentDao {
@@ -37,8 +41,13 @@ public class AttachmentDao {
    */
   @Transactional(readOnly = true)
   public List<AttachmentInfo> findByApplication(int applicationId) {
-    return queryFactory.select(attachmentInfoBean).from(attachment).where(attachment.applicationId.eq(applicationId))
+    List<AttachmentInfo> attachmentInfos = queryFactory
+        .select(attachmentInfoBean)
+        .from(attachment)
+        .join(applicationAttachment).on(attachment.id.eq(applicationAttachment.attachmentId))
+        .where(applicationAttachment.applicationId.eq(applicationId))
         .fetch();
+    return attachmentInfos;
   }
 
   /**
@@ -46,43 +55,164 @@ public class AttachmentDao {
    */
   @Transactional(readOnly = true)
   public Optional<AttachmentInfo> findById(int attachmentId) {
-    AttachmentInfo info = queryFactory.select(attachmentInfoBean).from(attachment).where(attachment.id.eq(attachmentId))
+    AttachmentInfo attachmentInfo =
+        queryFactory.select(attachmentInfoBean).from(attachment).where(attachment.id.eq(attachmentId)).fetchOne();
+
+    return Optional.ofNullable(attachmentInfo);
+  }
+
+  /**
+   * Find default attachment info by Id
+   */
+  @Transactional(readOnly = true)
+  public Optional<DefaultAttachmentInfo> findDefaultById(int attachmentId) {
+    Tuple result = queryFactory
+        .select(
+            attachment.id,
+            attachment.userId,
+            attachment.type,
+            attachment.name,
+            attachment.description,
+            attachment.size,
+            attachment.creationTime,
+            defaultAttachment.id,
+            defaultAttachment.deleted,
+            defaultAttachment.fixedLocation)
+        .from(attachment)
+        .leftJoin(defaultAttachment).on(attachment.id.eq(defaultAttachment.attachmentId))
+        .where(attachment.id.eq(attachmentId).and(defaultAttachment.deleted.eq(false)))
         .fetchOne();
-    return Optional.ofNullable(info);
+
+    DefaultAttachmentInfo dai = null;
+    if (result != null) {
+      Integer defaultAttachmentId = result.get(defaultAttachment.id);
+      List<ApplicationType> applicationTypes = queryFactory
+            .select(defaultAttachmentApplicationType.applicationType)
+            .from(defaultAttachmentApplicationType)
+            .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).fetch();
+
+      dai =  new DefaultAttachmentInfo(
+          result.get(attachment.id),
+          result.get(attachment.userId),
+          result.get(attachment.type),
+          result.get(attachment.name),
+          result.get(attachment.description),
+          result.get(attachment.size),
+          result.get(attachment.creationTime),
+          defaultAttachmentId,
+          applicationTypes,
+          result.get(defaultAttachment.fixedLocation)
+      );
+    }
+
+    return Optional.ofNullable(dai);
+  }
+
+  /**
+   * Returns all default attachments, which have not been deleted.
+   *
+   * @return  List of default attachments.
+   */
+  @Transactional(readOnly = true)
+  public List<DefaultAttachmentInfo> findDefault() {
+    List<Integer> attachmentIds = queryFactory
+        .select(defaultAttachment.attachmentId)
+        .from(defaultAttachment)
+        .where(defaultAttachment.deleted.eq(false))
+        .fetch();
+    return attachmentIds.stream().map(id -> findDefaultById(id).get()).collect(Collectors.toList());
+  }
+
+  /**
+   * Returns default attachments for the given application type.
+   *
+   * @param   applicationType   Application type whose default attachments are requested.
+   * @return  List of related default attachments.
+   */
+  @Transactional(readOnly = true)
+  public List<DefaultAttachmentInfo> searchDefault(ApplicationType applicationType) {
+    List<Integer> attachmentIds = queryFactory
+        .select(defaultAttachment.attachmentId)
+        .from(defaultAttachmentApplicationType)
+        .join(defaultAttachment).on(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachment.id))
+        .where(defaultAttachmentApplicationType.applicationType.eq(applicationType).and(defaultAttachment.deleted.eq(false)))
+        .fetch();
+    return attachmentIds.stream().map(id -> findDefaultById(id).get()).collect(Collectors.toList());
   }
 
   /**
    * Insert new attachment into DB
    *
-   * @param att
-   *          The attachment to insert
+   * @param info    The description of the attachment to insert.
+   * @param data    Binary data to attach.
    * @return The inserted attachment
    */
   @Transactional
-  public AttachmentInfo insert(AttachmentInfo info, byte[] data) {
-    info.setId(null); // Don't respect any ID given, let database assign the ID.
-    info.setSize((long) data.length);
-    info.setCreationTime(ZonedDateTime.now());
-    Integer id = queryFactory.insert(attachment).populate(info)
-        .set(attachment.data, data) // Set data also
-        .executeWithKey(attachment.id);
-    if (id == null) {
-      throw new QueryException("Failed to insert record");
-    }
-    return findById(id).get();
+  public AttachmentInfo insert(int applicationId, AttachmentInfo info, byte[] data) {
+    int attachmentId = insertCommon(info, data);
+    linkApplicationToAttachment(applicationId, attachmentId);
+    return findById(attachmentId).get();
   }
 
   /**
-   * Delete single attachment from DB
+   * Insert new default attachment into DB
    *
-   * @param id
-   *          The attachment ID to delete
+   * @param info    The description of the attachment to insert.
+   * @param data    Binary data to attach.
+   * @return The inserted attachment
    */
   @Transactional
-  public void delete(int id) {
+  public DefaultAttachmentInfo insertDefault(DefaultAttachmentInfo info, byte[] data) {
+    int id = insertCommon(info, data);
+    int defaultAttachmentId = queryFactory.insert(defaultAttachment)
+        .set(defaultAttachment.attachmentId, id)
+        .set(defaultAttachment.deleted, false)
+        .set(defaultAttachment.fixedLocation, info.getFixedLocationId())
+        .executeWithKey(defaultAttachment.id);
+    updateDefaultAttachmentApplicationTypes(defaultAttachmentId, info.getApplicationTypes());
+    return findDefaultById(id).get();
+  }
+
+  /**
+   * Delete single attachment from DB.
+   *
+   * @param id  The attachment ID to delete
+   */
+  @Transactional
+  public void delete(int applicationId, int id) {
+    removeLinkApplicationToAttachment(applicationId, id);
     long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Deleting attachment failed", Integer.toString(id));
+    }
+  }
+
+  /**
+   * Delete single default attachment from DB.
+   *
+   * @param id  The attachment ID to delete
+   */
+  @Transactional
+  public void deleteDefault(int id) {
+    long count = queryFactory.select(applicationAttachment.id).from(applicationAttachment).where(applicationAttachment.attachmentId.eq(id)).fetchCount();
+    if (count == 0) {
+      // only default attachments may appear on more than one row in application_attachment table and they are physically deleted only,
+      // if there's no applications referencing them
+      int defaultAttachmentId = queryFactory.select(defaultAttachment.id)
+          .from(defaultAttachment).where(defaultAttachment.attachmentId.eq(id)).fetchOne();
+      queryFactory.delete(defaultAttachmentApplicationType)
+          .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).execute();
+      queryFactory.delete(applicationAttachment).where(applicationAttachment.attachmentId.eq(id)).execute();
+      queryFactory.delete(defaultAttachment).where(defaultAttachment.attachmentId.eq(id)).execute();
+      long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
+      if (changed == 0) {
+        throw new NoSuchEntityException("Deleting attachment failed", Integer.toString(id));
+      }
+    } else {
+      queryFactory.update(defaultAttachment)
+          .set(defaultAttachment.deleted, true)
+          .where(defaultAttachment.attachmentId.eq(id))
+          .execute();
     }
   }
 
@@ -107,6 +237,21 @@ public class AttachmentDao {
     return findById(id).get();
   }
 
+  @Transactional
+  public DefaultAttachmentInfo updateDefault(int id, DefaultAttachmentInfo info) {
+    info.setId(id);
+    update(id, info);
+    long changed = queryFactory.update(defaultAttachment)
+        .set(defaultAttachment.fixedLocation, info.getFixedLocationId())
+        .where(defaultAttachment.attachmentId.eq(id))
+        .execute();
+    if (changed == 0) {
+      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+    }
+    updateDefaultAttachmentApplicationTypes(info.getDefaultAttachmentId(), info.getApplicationTypes());
+    return findDefaultById(id).get();
+  }
+
   /**
    * Get attachment data
    *
@@ -121,4 +266,103 @@ public class AttachmentDao {
     return Optional.ofNullable(data);
   }
 
+  /**
+   * Link default attachment to application.
+   *
+   * @param applicationId   Application to which attachment is linked to.
+   * @param attachmentId    Attachment to be linked with the application.
+   */
+  @Transactional
+  public void linkApplicationToAttachment(int applicationId, int attachmentId) {
+    queryFactory.insert(applicationAttachment)
+        .set(applicationAttachment.applicationId, applicationId)
+        .set(applicationAttachment.attachmentId, attachmentId)
+        .execute();
+  }
+
+  /**
+   * Remove link from attachment to application.
+   *
+   * @param applicationId   Application to which attachment is linked to.
+   * @param attachmentId    Attachment to be unlinked with the application.
+   */
+  @Transactional
+  public void removeLinkApplicationToAttachment(int applicationId, int attachmentId) {
+    long changed = queryFactory.delete(applicationAttachment)
+        .where(applicationAttachment.attachmentId.eq(attachmentId).and(applicationAttachment.applicationId.eq(applicationId)))
+        .execute();
+    if (changed == 0) {
+      throw new NoSuchEntityException("Failed to unlink default attachment from application", Integer.toString(applicationId));
+    }
+  }
+
+  private int insertCommon(AttachmentInfo info, byte[] data) {
+    info.setId(null); // Don't respect any ID given, let database assign the ID.
+    info.setSize((long) data.length);
+    info.setCreationTime(ZonedDateTime.now());
+    Integer id = queryFactory.insert(attachment).populate(info)
+        .set(attachment.data, data) // Set data also
+        .executeWithKey(attachment.id);
+    if (id == null) {
+      throw new QueryException("Failed to insert record");
+    }
+    return id;
+  }
+
+  private DefaultAttachmentInfo findByIdCommon(int attachmentId) {
+    Tuple result = queryFactory
+        .select(
+            attachment.id,
+            attachment.userId,
+            attachment.type,
+            attachment.name,
+            attachment.description,
+            attachment.size,
+            attachment.creationTime,
+            defaultAttachment.id,
+            defaultAttachment.deleted,
+            defaultAttachment.fixedLocation)
+        .from(attachment)
+        .leftJoin(defaultAttachment).on(attachment.id.eq(defaultAttachment.attachmentId))
+        .where(attachment.id.eq(attachmentId))
+        .fetchOne();
+
+    if (result != null) {
+      Integer defaultAttachmentId = result.get(defaultAttachment.id);
+      List<ApplicationType> applicationTypes = null;
+      if (defaultAttachmentId != null) {
+        applicationTypes = queryFactory
+            .select(defaultAttachmentApplicationType.applicationType)
+            .from(defaultAttachmentApplicationType)
+            .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).fetch();
+      }
+
+      return new DefaultAttachmentInfo(
+          result.get(attachment.id),
+          result.get(attachment.userId),
+          result.get(attachment.type),
+          result.get(attachment.name),
+          result.get(attachment.description),
+          result.get(attachment.size),
+          result.get(attachment.creationTime),
+          defaultAttachmentId,
+          applicationTypes,
+          result.get(defaultAttachment.fixedLocation)
+      );
+    } else {
+      return null;
+    }
+  }
+
+  private void updateDefaultAttachmentApplicationTypes(int defaultAttachmentId, List<ApplicationType> applicationTypes) {
+    queryFactory.delete(defaultAttachmentApplicationType)
+        .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).execute();
+    if (applicationTypes != null) {
+      applicationTypes.forEach(at ->
+          queryFactory.insert(defaultAttachmentApplicationType)
+              .set(defaultAttachmentApplicationType.defaultAttachmentId, defaultAttachmentId)
+              .set(defaultAttachmentApplicationType.applicationType, at)
+              .execute());
+    }
+  }
 }

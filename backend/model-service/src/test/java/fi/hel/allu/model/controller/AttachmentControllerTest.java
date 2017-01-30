@@ -2,10 +2,12 @@ package fi.hel.allu.model.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 
@@ -22,6 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -56,14 +59,19 @@ public class AttachmentControllerTest {
     application = wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
+  /********************************
+   * Attachment tests
+   ********************************/
+
   // Helper for inserting attachment info
-  private AttachmentInfo insertAttachmentInfo(AttachmentInfo info, byte[] data) throws Exception {
+  private AttachmentInfo insertAttachmentInfo(int applicationId, AttachmentInfo info, byte[] data) throws Exception {
     String infoJson = objectMapper.writeValueAsString(info);
     MockMultipartFile infoPart = new MockMultipartFile("info", "", "application/json", infoJson.getBytes());
     if (data == null) {
       data = new byte[100];
     }
-    ResultActions resultActions = wtc.perform(fileUpload("/attachments").file(infoPart).file("data", data));
+    ResultActions resultActions =
+        wtc.perform(fileUpload("/attachments/applications/" + applicationId).file(infoPart).file("data", data));
     resultActions.andExpect(status().isCreated());
     return wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
   }
@@ -77,7 +85,7 @@ public class AttachmentControllerTest {
   public void testAddAndGetAttachment() throws Exception {
     // Test: add attachment info and make sure result is CREATED
     AttachmentInfo info = newInfo();
-    AttachmentInfo stored = insertAttachmentInfo(info, null);
+    AttachmentInfo stored = insertAttachmentInfo(application.getId(), info, null);
     ResultActions resultActions = wtc
         .perform(get(String.format("/attachments/%d", stored.getId())));
     resultActions.andExpect(status().isOk());
@@ -94,7 +102,7 @@ public class AttachmentControllerTest {
   @Test
   public void testUpdateAttachment() throws Exception {
     // Setup: insert an attachment info
-    AttachmentInfo stored = insertAttachmentInfo(newInfo(), null);
+    AttachmentInfo stored = insertAttachmentInfo(application.getId(), newInfo(), null);
     // Test: Update the attachment info
     String infoUri = String.format("/attachments/%d", stored.getId());
     AttachmentInfo updatedInfo = newInfo();
@@ -118,11 +126,43 @@ public class AttachmentControllerTest {
   @Test
   public void testDeleteAttachment() throws Exception {
     // Setup: insert an attachment info
-    AttachmentInfo stored = insertAttachmentInfo(newInfo(), null);
+    AttachmentInfo stored = insertAttachmentInfo(application.getId(), newInfo(), null);
     // Test: delete the attachment and verify that it doesn't exist anymore
-    String infoUri = String.format("/attachments/%d", stored.getId());
-    wtc.perform(delete(infoUri)).andExpect(status().isOk());
+    String deleteInfoUri = String.format("/attachments/applications/%d/%d", application.getId(), stored.getId());
+    String infoUri = String.format("/attachments/%d", application.getId(), stored.getId());
+    wtc.perform(delete(deleteInfoUri)).andExpect(status().isOk());
     wtc.perform(get(infoUri)).andExpect(status().isNotFound());
+  }
+
+  @Test
+  public void testDeleteOrUpdateDefaultAsNormalAttachment() throws Exception {
+    DefaultAttachmentInfo info = newDefaultInfo();
+    DefaultAttachmentInfo inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
+    // try to delete and update the attachment as normal attachment (should fail)
+    String deleteUri = String.format("/attachments/applications/%d/%d", application.getId(), inserted.getId());
+    String updateUri = String.format("/attachments/%d", inserted.getId());
+    wtc.perform(delete(deleteUri)).andExpect(status().is4xxClientError());
+    wtc.perform(put(updateUri), inserted).andExpect(status().is4xxClientError());
+  }
+
+  @Test
+  public void testDeleteDefaultAttachmentFromApplication() throws Exception {
+    DefaultAttachmentInfo info = newDefaultInfo();
+    DefaultAttachmentInfo inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
+    AttachmentInfo test = insertAttachmentInfo(application.getId(), inserted, new byte[1]);
+    // make sure application has the attachment
+    ResultActions resultActions = wtc.perform(get(String.format("/applications/%d/attachments", application.getId())));
+    resultActions.andExpect(status().isOk());
+    AttachmentInfo[] applicationAttachments = wtc.parseObjectFromResult(resultActions, AttachmentInfo[].class);
+    Assert.assertEquals(1, applicationAttachments.length);
+    verifyEqual(inserted, applicationAttachments[0]);
+    // delete the attachment from application and verify that it doesn't exist anymore
+    String deleteUri = String.format("/attachments/applications/%d/%d", application.getId(), inserted.getId());
+    wtc.perform(delete(deleteUri)).andExpect(status().isOk());
+    resultActions = wtc.perform(get(String.format("/applications/%d/attachments", application.getId())));
+    resultActions.andExpect(status().isOk());
+    applicationAttachments = wtc.parseObjectFromResult(resultActions, AttachmentInfo[].class);
+    Assert.assertEquals(0, applicationAttachments.length);
   }
 
   /**
@@ -137,7 +177,7 @@ public class AttachmentControllerTest {
     for (int i = 0; i < content.length; ++i) {
       content[i] = (byte) (i);
     }
-    AttachmentInfo stored = insertAttachmentInfo(newInfo(), content);
+    AttachmentInfo stored = insertAttachmentInfo(application.getId(), newInfo(), content);
     // Verify that the attachment's content can now be read and is the same as
     // the stored one:
     String uri = String.format("/attachments/%d/data", stored.getId());
@@ -148,10 +188,8 @@ public class AttachmentControllerTest {
 
   private AttachmentInfo newInfo() {
     AttachmentInfo info = new AttachmentInfo();
-    info.setApplicationId(application.getId());
     info.setType(AttachmentType.ADDED_BY_CUSTOMER);
     info.setCreationTime(ZonedDateTime.now());
-    info.setId(313);
     info.setName("Test_attachment.pdf");
     info.setDescription("A test attachment");
     return info;
@@ -159,11 +197,107 @@ public class AttachmentControllerTest {
 
   private void verifyEqual(AttachmentInfo expected, AttachmentInfo actual) {
     Assert.assertEquals(expected.getId(), actual.getId());
-    Assert.assertEquals(expected.getApplicationId(), actual.getApplicationId());
     Assert.assertEquals(expected.getName(), actual.getName());
     Assert.assertEquals(expected.getDescription(), actual.getDescription());
     Assert.assertEquals(expected.getSize(), actual.getSize());
     Assert.assertEquals(expected.getCreationTime(), actual.getCreationTime());
   }
 
+  /********************************
+   * Default attachment tests
+   ********************************/
+  @Test
+  public void testAddDefaultAttachment() throws Exception {
+    // insert first default attachment
+    DefaultAttachmentInfo info = newDefaultInfo();
+    DefaultAttachmentInfo inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
+    Assert.assertEquals(info.getApplicationTypes(), inserted.getApplicationTypes());
+    // insert second default attachment
+    inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
+    ResultActions resultActions = wtc.perform(get("/attachments/default/applicationType/" + ApplicationType.EVENT.toString()));
+    resultActions.andExpect(status().isOk());
+    DefaultAttachmentInfo[] retrieved = wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo[].class);
+    Assert.assertEquals(2, retrieved.length);
+  }
+
+  @Test
+  public void testUpdateDefaultAttachment() throws Exception {
+    DefaultAttachmentInfo info = newDefaultInfo();
+    DefaultAttachmentInfo inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
+    String infoUri = String.format("/attachments/default/%d", inserted.getId());
+    inserted.setName("Muokattu hakemus");
+    inserted.setApplicationTypes(Collections.singletonList(ApplicationType.NOTE));
+    ResultActions resultActions = wtc.perform(put(infoUri), inserted).andExpect(status().isOk());
+    DefaultAttachmentInfo updateResult = wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo.class);
+    Assert.assertEquals(inserted.getApplicationTypes(), updateResult.getApplicationTypes());
+    Assert.assertEquals(inserted.getName(), updateResult.getName());
+  }
+
+  @Test
+  public void testSearchDeleteDefaultAttachment() throws Exception {
+    // insert new default attachment
+    DefaultAttachmentInfo info = newDefaultInfo();
+    DefaultAttachmentInfo inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
+    // search inserted
+    ResultActions resultActions = wtc.perform(get("/attachments/default/applicationType/" + ApplicationType.EVENT.toString()));
+    resultActions.andExpect(status().isOk());
+    DefaultAttachmentInfo[] retrieved = wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo[].class);
+    Assert.assertEquals(1, retrieved.length);
+    // find all inserted
+    resultActions = wtc.perform(get("/attachments/default"));
+    resultActions.andExpect(status().isOk());
+    retrieved = wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo[].class);
+    Assert.assertEquals(1, retrieved.length);
+    // delete inserted
+    resultActions = wtc.perform(delete(String.format("/attachments/default/%d", inserted.getId())));
+    resultActions.andExpect(status().isOk());
+    // make sure deleted is gone
+    resultActions = wtc.perform(get("/attachments/default/applicationType/" + ApplicationType.EVENT.toString()));
+    resultActions.andExpect(status().isOk());
+    retrieved = wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo[].class);
+    Assert.assertEquals(0, retrieved.length);
+  }
+
+  @Test
+  public void testDeleteDefaultAttachment() throws Exception {
+    // insert new default attachment
+    DefaultAttachmentInfo info = newDefaultInfo();
+    DefaultAttachmentInfo inserted = insertDefaultAttachmentInfo(info, info.toString().getBytes());
+    // add default as attachment to an application
+    insertAttachmentInfo(application.getId(), inserted, new byte[1]);
+    // delete inserted
+    ResultActions resultActions = wtc.perform(delete(String.format("/attachments/default/%d", inserted.getId())));
+    resultActions.andExpect(status().isOk());
+    // make sure deleted is gone
+    resultActions = wtc.perform(get("/attachments/default/applicationType/" + ApplicationType.EVENT.toString()));
+    resultActions.andExpect(status().isOk());
+    DefaultAttachmentInfo[] retrieved = wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo[].class);
+    Assert.assertEquals(0, retrieved.length);
+    // make sure application still has the attachment
+    resultActions = wtc.perform(get(String.format("/applications/%d/attachments", application.getId())));
+    resultActions.andExpect(status().isOk());
+    AttachmentInfo[] applicationAttachments = wtc.parseObjectFromResult(resultActions, AttachmentInfo[].class);
+    Assert.assertEquals(1, applicationAttachments.length);
+  }
+
+  private DefaultAttachmentInfo insertDefaultAttachmentInfo(DefaultAttachmentInfo info, byte[] data) throws Exception {
+    String infoJson = objectMapper.writeValueAsString(info);
+    MockMultipartFile infoPart = new MockMultipartFile("info", "", "application/json", infoJson.getBytes());
+    if (data == null) {
+      data = new byte[100];
+    }
+    ResultActions resultActions = wtc.perform(fileUpload("/attachments/default").file(infoPart).file("data", data));
+    resultActions.andExpect(status().isCreated());
+    return wtc.parseObjectFromResult(resultActions, DefaultAttachmentInfo.class);
+  }
+
+  private DefaultAttachmentInfo newDefaultInfo() {
+    DefaultAttachmentInfo info = new DefaultAttachmentInfo();
+    info.setType(AttachmentType.ADDED_BY_CUSTOMER);
+    info.setCreationTime(ZonedDateTime.now());
+    info.setName("Test_attachment.pdf");
+    info.setDescription("A test attachment");
+    info.setApplicationTypes(Collections.singletonList(ApplicationType.EVENT));
+    return info;
+  }
 }

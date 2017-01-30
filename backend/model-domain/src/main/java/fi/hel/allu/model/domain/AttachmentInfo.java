@@ -1,13 +1,14 @@
 package fi.hel.allu.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import fi.hel.allu.common.types.AttachmentType;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
 
+@JsonIgnoreProperties(ignoreUnknown = true) // without this DefaultAttachmentInfo fields would mess JSON deserialization
 public class AttachmentInfo {
   private Integer id;
-  private Integer applicationId;
   private Integer userId;
   @NotNull
   private AttachmentType type;
@@ -16,23 +17,31 @@ public class AttachmentInfo {
   private Long size;
   private ZonedDateTime creationTime;
 
+  public AttachmentInfo() {
+  }
+
+  public AttachmentInfo(Integer id,
+                        Integer userId,
+                        AttachmentType type,
+                        String name,
+                        String description,
+                        Long size,
+                        ZonedDateTime creationTime) {
+    this.id = id;
+    this.userId = userId;
+    this.type = type;
+    this.name = name;
+    this.description = description;
+    this.size = size;
+    this.creationTime = creationTime;
+  }
+
   public Integer getId() {
     return id;
   }
 
   public void setId(Integer id) {
     this.id = id;
-  }
-
-  /**
-   * @return the attachmentId
-   */
-  public Integer getApplicationId() {
-    return applicationId;
-  }
-
-  public void setApplicationId(Integer applicationId) {
-    this.applicationId = applicationId;
   }
 
   /**
