@@ -30,7 +30,7 @@
                 <label for="commentText">Kommentit</label>
             </div>
             <div class="col s12" *ngIf="!edit">
-                {{comment.text}}
+                <p class="text-multiline">{{comment.text}}</p>
             </div>
         </div>
         <div class="row" *ngIf="comment.id === undefined">

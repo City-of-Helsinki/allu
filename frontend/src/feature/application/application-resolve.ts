@@ -18,7 +18,12 @@ export class ApplicationResolve implements Resolve<Application> {
 
     return Some(route.params['id'])
       .map(id => Number(id))
-      .map(id => this.applicationState.load(id))
+      .map(id => this.applicationState.load(id)
+        .do(app => this.loadComments(id)))
       .orElse(Observable.of(new Application()));
+  }
+
+  private loadComments(id: number) {
+    this.applicationState.loadComments(id).subscribe(comments => {});
   }
 }
