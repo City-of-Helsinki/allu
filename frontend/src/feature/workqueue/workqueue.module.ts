@@ -10,6 +10,7 @@ import {HandlerModalComponent} from './handlerModal/handler-modal.component';
 import {WorkQueueService} from './workqueue-search/workqueue.service';
 import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
+import {CommentsModalComponent} from '../application/comment/comments-modal.component';
 
 @NgModule({
   imports: [
@@ -23,11 +24,15 @@ import {SelectionGroupModule} from '../common/selection-group/selection-group.mo
     WorkQueueComponent,
     WorkQueueFilterComponent,
     WorkQueueContentComponent,
-    HandlerModalComponent
+    HandlerModalComponent,
+    CommentsModalComponent
   ],
   providers: [
     WorkQueueHub,
     WorkQueueService
+  ],
+  entryComponents: [
+    CommentsModalComponent
   ]
 })
 export class WorkQueueModule {}

@@ -5,12 +5,15 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ConnectableObservable} from 'rxjs';
 import {Subscription} from 'rxjs/Subscription';
 import '../../../rxjs-extensions.ts';
+import {MdDialogRef, MdDialog} from '@angular/material';
 
 import {Application} from '../../../model/application/application';
 import {Sort, Direction} from '../../../model/common/sort';
 import {User} from '../../../model/common/user';
 import {translations} from '../../../util/translations';
 import {MapHub} from '../../../service/map/map-hub';
+import {CommentsModalComponent} from '../../application/comment/comments-modal.component';
+
 
 @Component({
   selector: 'workqueue-content',
@@ -26,9 +29,10 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   sort = new Sort(undefined, undefined);
   translations = translations;
 
-  constructor(private router: Router, private mapHub: MapHub) {}
+  constructor(private router: Router, private mapHub: MapHub, private dialog: MdDialog) {}
 
   private applicationSubscription: Subscription;
+  private dialogRef: MdDialogRef<CommentsModalComponent>;
 
   ngOnInit(): void {
     this.applicationSubscription = this.applications.connect();
@@ -65,6 +69,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     if (col) {
       this.router.navigate(['applications', application.id, 'summary']);
     }
+  }
+
+  showComments(applicationId: number): void {
+    this.dialogRef = this.dialog.open(CommentsModalComponent, {disableClose: false, width: '800px'});
+    this.dialogRef.componentInstance.applicationId = applicationId;
   }
 
   districtName(id: number): Observable<string> {

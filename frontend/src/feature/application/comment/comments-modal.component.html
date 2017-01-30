@@ -1,0 +1,20 @@
+<h1 md-dialog-title>Hakemuksen kommentit</h1>
+<div md-dialog-content>
+    <div *ngFor="let comment of comments | async">
+        <h1>{{['comment.type', comment.type] | translation}}</h1>
+        <div class="row">
+            <div class="col s12 text-faint">
+                <span>{{comment.user.realName}} {{comment.uiCreateTime}}</span>
+                <span *ngIf="comment.updateTime">- Päivitetty {{comment.uiUpdateTime}}</span>
+            </div>
+
+            <div class="col s12">
+                {{comment.text}}
+            </div>
+        </div>
+        <hr>
+    </div>
+</div>
+<div md-dialog-actions>
+    <button class="waves-effect waves-light btn" (click)="close()">SULJE</button>
+</div>

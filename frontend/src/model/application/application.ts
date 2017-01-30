@@ -10,6 +10,7 @@ import {Some} from '../../util/option';
 import {Project} from '../project/project';
 import {ApplicationTag} from './tag/application-tag';
 import {ApplicationTagType} from './tag/application-tag-type';
+import {Comment} from './comment/comment';
 
 const CENTS = 100;
 
@@ -38,7 +39,8 @@ export class Application {
     calculatedPrice: number,
     priceOverride: number,
     priceOverrideReason: string,
-    tagList: Array<ApplicationTag>
+    tagList: Array<ApplicationTag>,
+    comments: Array<Comment>
     )
   constructor(
     public id?: number,
@@ -62,11 +64,13 @@ export class Application {
     public calculatedPrice?: number,
     public priceOverride?: number,
     public priceOverrideReason?: string,
-    public applicationTags?: Array<ApplicationTag>) {
+    public applicationTags?: Array<ApplicationTag>,
+    public comments?: Array<Comment>) {
     this.location = location || new Location();
     this.contactList = contactList || [new Contact()];
     this.attachmentList = attachmentList || [];
     this.applicationTags = applicationTags || [];
+    this.comments = comments || [];
   }
 
   /*
