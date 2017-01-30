@@ -54,7 +54,7 @@ export class TypeComponent implements OnInit {
 
   showSpecifierSelection(): boolean {
     let applicationKindSelected = this.applicationKind !== undefined;
-    let show = (appType: ApplicationTypeStructure) => ['CABLE_REPORT', 'EXCAVATION_ANNOUNCEMENT'].indexOf(appType.typeName) >= 0
+    let show = (appType: ApplicationTypeStructure) => this.specifierSelectionShownForType(appType.type)
       && applicationKindSelected;
     return Some(this.type).map(show).orElse(false);
   }
@@ -66,5 +66,13 @@ export class TypeComponent implements OnInit {
 
   get specifiers(): Array<string> {
     return this.selectedSpecifiers;
+  }
+
+  private specifierSelectionShownForType(type: ApplicationType): boolean {
+    return [
+        ApplicationType.CABLE_REPORT,
+        ApplicationType.EXCAVATION_ANNOUNCEMENT,
+        ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS
+      ].indexOf(type) >= 0;
   }
 }

@@ -6,6 +6,7 @@ import {ShortTermRental} from '../../model/application/short-term-rental/short-t
 import {CableReport} from '../../model/application/cable-report/cable-report';
 import {ExcavationAnnouncement} from '../../model/application/excavation-announcement/excavation-announcement';
 import {Note} from '../../model/application/note/note';
+import {TrafficArrangement} from '../../model/application/traffic-arrangement/traffic-arrangement';
 
 export class ApplicationTypeDataMapper {
   public static mapBackend(backendExtension: any): ApplicationExtension {
@@ -75,6 +76,16 @@ export class ApplicationTypeDataMapper {
         );
       case ApplicationType.NOTE:
         return new Note(backendExtension.reoccurring, backendExtension.description);
+      case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
+        return new TrafficArrangement(
+          backendExtension.specifiers,
+          backendExtension.contractor,
+          backendExtension.responsiblePerson,
+          backendExtension.pksCard,
+          backendExtension.workFinished,
+          backendExtension.trafficArrangements,
+          backendExtension.additionalInfo
+        );
       default:
         throw new Error('No mapping from backend for ' + applicationType);
     }

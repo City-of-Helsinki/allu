@@ -21,6 +21,7 @@ import {ShortTermRental} from '../../../model/application/short-term-rental/shor
 import {ExcavationAnnouncement} from '../../../model/application/excavation-announcement/excavation-announcement';
 import {Note} from '../../../model/application/note/note';
 import {CityDistrict} from '../../../model/common/city-district';
+import {TrafficArrangement} from '../../../model/application/traffic-arrangement/traffic-arrangement';
 
 @Component({
   selector: 'type',
@@ -197,6 +198,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         return new ExcavationAnnouncement();
       case ApplicationType.NOTE:
         return new Note();
+      case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
+        return new TrafficArrangement();
       default:
         throw new Error('Extension for ' + ApplicationType[type] + ' not implemented yet');
     }

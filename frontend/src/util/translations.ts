@@ -213,6 +213,13 @@ export const translations = {
         validityStartTimeMissing: 'Alkupäivämäärä puuttuu',
         validityEndTimeMissing: 'Loppupäivämäärä puuttuu'
       }
+    },
+    trafficArrangement: {
+      field: {
+        validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
+        validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
+        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
+      }
     }
   },
   project: {

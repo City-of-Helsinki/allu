@@ -1,0 +1,49 @@
+import {TimePeriod} from '../time-period';
+import {ApplicantForm} from '../applicant/applicant.form';
+import {Contact} from '../../../../model/application/contact';
+import {Some} from '../../../../util/option';
+import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
+import {Application} from '../../../../model/application/application';
+import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
+
+export class TrafficArrangementForm {
+  constructor(
+    public validityTimes?: TimePeriod,
+    public applicant?: ApplicantForm,
+    public contacts?: Array<Contact>,
+    public contractor?: ApplicantForm,
+    public responsiblePerson?: Array<Contact>,
+    public pksCard?: boolean,
+    public workFinished?: string,
+    public trafficArrangements?: string,
+    public additionalInfo?: string,
+    public specifiers?: Array<string>
+  ) {}
+
+  static to(form: TrafficArrangementForm): TrafficArrangement {
+    let arrangement = new TrafficArrangement();
+    arrangement.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
+    arrangement.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
+    arrangement.pksCard = form.pksCard;
+    arrangement.uiWorkFinished = form.workFinished;
+    arrangement.trafficArrangements = form.trafficArrangements;
+    arrangement.additionalInfo = form.additionalInfo;
+    arrangement.specifiers = form.specifiers;
+    return arrangement;
+  }
+
+  static from(application: Application, arrangement: TrafficArrangement) {
+    return new TrafficArrangementForm(
+      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      undefined, // these are added by subcomponents (application and contact)
+      undefined,
+      undefined,
+      undefined,
+      arrangement.pksCard,
+      arrangement.uiWorkFinished,
+      arrangement.trafficArrangements,
+      arrangement.additionalInfo,
+      arrangement.specifiers
+    );
+  }
+}

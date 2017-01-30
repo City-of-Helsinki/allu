@@ -36,6 +36,7 @@ import {ApplicationInfoComponent} from './info/application-info.component';
 import {AttachmentComponent} from './attachment/attachment.component';
 import {CommentModule} from './comment/comment.module';
 import {TagBarModule} from './tagbar/tagbar.module';
+import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-arrangement.component';
 
 
 @NgModule({
@@ -75,7 +76,8 @@ import {TagBarModule} from './tagbar/tagbar.module';
     EventDetailsComponent,
     LocationDetailsComponent,
     DefaultTextModalComponent,
-    NoteComponent
+    NoteComponent,
+    TrafficArrangementComponent
   ],
   providers: [
     AttachmentHub,
