@@ -1,28 +1,28 @@
 <md-toolbar class="row">
-  <span class="col m2">
+  <span class="col m4 l2">
     <span>{{identifier}}</span>
     <span *ngIf="status" class="application-status-text">{{['application.status', status] | translation}}</span>
   </span>
-  <div class="col m10">
-    <div class="col m2 center-align">
+  <div class="col m8 l10">
+    <div class="col s2 center-align">
       <p>Sijainti</p>
     </div>
-    <div class="col m2 center-align">
+    <div class="col s2 center-align">
       <p>Perustiedot</p>
     </div>
-    <div class="col m2 center-align">
+    <div class="col s2 center-align">
       <p>Yhteenveto</p>
     </div>
-    <div class="col m2 center-align">
+    <div class="col s2 center-align">
       <p>Käsittely</p>
     </div>
-    <div class="col m2 center-align">
+    <div class="col s2 center-align">
       <p>Päätös</p>
     </div>
-    <div class="col m2 center-align">
+    <div class="col s2 center-align">
       <p>Valvonta</p>
     </div>
-    <div class="m12 progress">
+    <div class="s12 progress">
       <div class="determinate" [style.width.%]="width"></div>
     </div>
   </div>
