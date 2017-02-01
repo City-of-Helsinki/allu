@@ -1,8 +1,7 @@
 <div materialize class="row">
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
         <applicant [applicationForm]="applicationForm"  [applicant]="application.applicant"
-                   [readonly]="readonly" headerText="Kaivajayritys/Toimija" formName="company"
-                   [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
+                   [readonly]="readonly" headerText="Kaivajayritys/Toimija" formName="company"></applicant>
 
         <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
                  [readonly]="readonly" headerText="Johtoselvityksen tilaaja" formName="orderer"
@@ -72,8 +71,7 @@
 
         <div *ngIf="applicationForm.value.cableSurveyRequired">
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension.owner"
-                       [readonly]="readonly" headerText="Omistaja" formName="owner"
-                       [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
+                       [readonly]="readonly" headerText="Omistaja" formName="owner"></applicant>
             <contact [applicationForm]="applicationForm" [contactList]="application.extension.contactList"
                      [readonly]="readonly" headerText="Yhteyshenkilö" formName="contact"></contact>
         </div>
