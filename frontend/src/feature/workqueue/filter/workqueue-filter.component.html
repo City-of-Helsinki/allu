@@ -27,7 +27,7 @@
             <div class="input-field col s2">
                 <select formControlName="districts" materialize="material_select" multiple>
                     <option value="" selected disabled>Kaupunginosa</option>
-                    <option *ngFor="let district of districts | async" [value]="district.districtId">{{district.name}}</option>
+                    <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
                 </select>
                 <label>Kaupunginosa</label>
             </div>
