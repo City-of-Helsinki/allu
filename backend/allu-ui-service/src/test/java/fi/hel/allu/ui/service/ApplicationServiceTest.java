@@ -9,6 +9,7 @@ import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -20,6 +21,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,13 +30,16 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -137,6 +142,11 @@ public class ApplicationServiceTest extends MockServices {
 
   @Test
   public void testUpdateApplication() {
+    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(HttpEntity.class),
+        Mockito.eq(Application.class), Mockito.anyInt())).thenAnswer(
+            (Answer<ResponseEntity<Application>>) invocation -> new ResponseEntity<>(createMockApplicationModel(),
+                HttpStatus.CREATED));
+
     ApplicationJson applicationJson = createMockApplicationJson(1);
     applicationService.updateApplication(1, applicationJson);
     assertNotNull(applicationJson);

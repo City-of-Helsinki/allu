@@ -62,11 +62,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_CREATE = "/applications";
 
   /**
-   * Model-service path to update an application
-   */
-  public static final String PATH_MODEL_APPLICATION_UPDATE = "/applications/{applicationId}";
-
-  /**
    * Model-service path to find application by identifier
    */
   public static final String PATH_MODEL_APPLICATION_FIND_BY_ID = "/applications/{applicationId}";
@@ -225,6 +220,13 @@ public class ApplicationProperties {
    */
   public String getMetadataUrl() {
     return getModelServiceUrl("/meta/{applicationType}");
+  }
+
+  /**
+   * @return url to update an application in model service.
+   */
+  public String getApplicationUpdateUrl() {
+    return getModelServiceUrl("/applications/{applicationId}");
   }
 
   /**

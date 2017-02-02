@@ -215,10 +215,16 @@ public class ApplicationService {
       UserJson currentUser = userService.getCurrentUser();
       applicationJson.getApplicationTags().forEach(t -> updateTag(currentUser, t));
     }
-    restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_UPDATE), applicationMapper
-        .createApplicationModel(applicationJson), applicationId);
-    applicationJson.setContactList(contacts);
-    return applicationJson;
+    HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
+        HttpMethod.PUT, requestEntity, Application.class, applicationId);
+    ApplicationJson resultJson = applicationMapper.mapApplicationToJson(responseEntity.getBody());
+
+    resultJson.setContactList(contacts);
+    resultJson.setApplicant(applicationJson.getApplicant());
+    resultJson.setLocation(applicationJson.getLocation());
+    resultJson.setMetadata(metaService.findMetadataForApplication(resultJson.getType()));
+    return resultJson;
   }
 
   void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
