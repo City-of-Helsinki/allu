@@ -12,6 +12,13 @@
                 <md-card-title>Johtoselvityksen tiedot</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
+                        <div class="input-field col m12">
+                            <textarea id="workDescription" class="materialize-textarea textarea"
+                                      formControlName="workDescription"></textarea>
+                            <label for="workDescription">Työn kuvaus</label>
+                        </div>
+                    </div>
+                    <div class="row form-group">
                         <div formGroupName="reportTimes">
                             <div class="input-field col m3">
                                 <input *ngIf="!readonly" id="reportStartTime"
