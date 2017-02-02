@@ -40,7 +40,7 @@ export class ApplicationTypeDataMapper {
         return new CableReport(
           backendExtension.specifiers,
           backendExtension.cableSurveyRequired,
-          backendExtension.pksCard,
+          backendExtension.mapUpdated,
           backendExtension.constructionWork,
           backendExtension.maintenanceWork,
           backendExtension.emergencyWork,

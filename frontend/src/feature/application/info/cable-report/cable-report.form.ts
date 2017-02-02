@@ -11,7 +11,7 @@ import {StringUtil} from '../../../../util/string.util';
 export class CableReportForm {
   constructor(
     public cableSurveyRequired?: boolean,
-    public pksCard?: boolean,
+    public mapUpdated?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
     public emergencyWork?: boolean,
@@ -29,7 +29,7 @@ export class CableReportForm {
   static to(form: CableReportForm, specifiers: Array<string>): CableReport {
     let cableReport = new CableReport();
     cableReport.cableSurveyRequired = form.cableSurveyRequired;
-    cableReport.pksCard = form.pksCard;
+    cableReport.mapUpdated = form.mapUpdated;
     cableReport.constructionWork = form.constructionWork;
     cableReport.maintenanceWork = form.maintenanceWork;
     cableReport.emergencyWork = form.emergencyWork;
@@ -45,7 +45,7 @@ export class CableReportForm {
     let cableReport = <CableReport>application.extension || new CableReport();
     return new CableReportForm(
       cableReport.cableSurveyRequired,
-      cableReport.pksCard,
+      cableReport.mapUpdated,
       cableReport.constructionWork,
       cableReport.maintenanceWork,
       cableReport.emergencyWork,

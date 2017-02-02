@@ -374,7 +374,7 @@ public class ApplicationMapper {
     List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
         .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
     cableReport.setInfoEntries(infoEntries);
-    cableReport.setPksCard(cableReportJson.getPksCard());
+    cableReport.setMapUpdated(cableReportJson.getMapUpdated());
     cableReport.setConstructionWork(cableReportJson.getConstructionWork());
     cableReport.setMaintenanceWork(cableReportJson.getMaintenanceWork());
     cableReport.setEmergencyWork(cableReportJson.getEmergencyWork());
@@ -398,7 +398,7 @@ public class ApplicationMapper {
     List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
         .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
     cableReportJson.setInfoEntries(infoEntries);
-    cableReportJson.setPksCard(cableReport.getPksCard());
+    cableReportJson.setMapUpdated(cableReport.getMapUpdated());
     cableReportJson.setConstructionWork(cableReport.getConstructionWork());
     cableReportJson.setMaintenanceWork(cableReport.getMaintenanceWork());
     cableReportJson.setEmergencyWork(cableReport.getEmergencyWork());

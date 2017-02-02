@@ -9,7 +9,7 @@ export class CableReport extends ApplicationExtension {
   constructor(
     specifiers: Array<string>,
     cableSurveyRequired: boolean,
-    pksCard: boolean,
+    mapUpdated: boolean,
     constructionWork: boolean,
     maintenanceWork: boolean,
     emergencyWork: boolean,
@@ -24,7 +24,7 @@ export class CableReport extends ApplicationExtension {
   constructor(
     public specifiers?: Array<string>,
     public cableSurveyRequired?: boolean,
-    public pksCard?: boolean,
+    public mapUpdated?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
     public emergencyWork?: boolean,

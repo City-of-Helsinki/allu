@@ -81,7 +81,7 @@ export class CableReportComponent implements OnInit, OnDestroy {
   private initForm() {
     this.applicationForm = this.fb.group({
       cableSurveyRequired: [false],
-      pksCard: [false],
+      mapUpdated: [false],
       constructionWork: [{value: false, disabled: this.readonly}],
       maintenanceWork: [{value: false, disabled: this.readonly}],
       emergencyWork: [{value: false, disabled: this.readonly}],

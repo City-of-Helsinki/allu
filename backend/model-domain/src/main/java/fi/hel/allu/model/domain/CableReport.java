@@ -13,7 +13,7 @@ public class CableReport extends ApplicationExtension {
   private Contact contact;
   private Integer mapExtractCount;
   private List<CableInfoEntry> infoEntries;
-  private Boolean pksCard;
+  private Boolean mapUpdated;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
@@ -114,15 +114,14 @@ public class CableReport extends ApplicationExtension {
   }
 
   /**
-   * In Finnish: PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
-   * True, if the contractor doing the actual work has PKS-card.
+   * In Finnish: Kartta päivitetty.
    */
-  public Boolean getPksCard() {
-    return pksCard;
+  public Boolean getMapUpdated() {
+    return mapUpdated;
   }
 
-  public void setPksCard(Boolean pksCard) {
-    this.pksCard = pksCard;
+  public void setMapUpdated(Boolean mapUpdated) {
+    this.mapUpdated = mapUpdated;
   }
 
   /**

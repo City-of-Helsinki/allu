@@ -12,7 +12,7 @@
                 <div [formGroup]="cableInfoForm">
                     <div class="input-field col m2">
                         <input id="mapExtractCount" type="number" formControlName="mapExtractCount">
-                        <label for="mapExtractCount">{{ meta?.getUiName('mapExtractCount') }}</label>
+                        <label for="mapExtractCount">Karttaotteiden määrä</label>
                     </div>
                     <div formArrayName="cableInfoEntries" class="row form-group">
                         <div class="col m8" *ngFor="let infoEntry of cableInfoForm.controls.cableInfoEntries.controls; let index=index">
