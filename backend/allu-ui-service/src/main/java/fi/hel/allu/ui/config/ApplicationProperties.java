@@ -139,22 +139,12 @@ public class ApplicationProperties {
   /**
    * Model-service path to create attachment
    */
-  public static final String PATH_MODEL_ATTACHMENT_CREATE = "/attachments";
-
-  /**
-   * Model-service path to create attachment
-   */
   public static final String PATH_MODEL_ATTACHMENT_UPDATE = "/attachments/{attachmentId}";
 
   /**
    * Model-service path to find attachment by ID
    */
   public static final String PATH_MODEL_ATTACHMENT_FIND_BY_ID = "/attachments/{attachmentId}";
-
-  /**
-   * Model-service path to delete attachment
-   */
-  public static final String PATH_MODEL_ATTACHMENT_DELETE = "/attachments/{attachmentId}";
 
   /**
    * Model-service path to set attachment data
@@ -492,6 +482,62 @@ public class ApplicationProperties {
    */
   public String getInvoiceRowsUrl() {
     return getModelServiceUrl("/applications/{id}/invoice-rows");
+  }
+
+  /**
+   * @return url for deleting attachment from application.
+   */
+  public String getAddAttachmentUrl() {
+    return getModelServiceUrl("/attachments/applications/{applicationId}");
+  }
+
+  /**
+   * @return url for deleting attachment from application.
+   */
+  public String getDeleteAttachmentUrl() {
+    return getModelServiceUrl("/attachments/applications/{applicationId}/{attachmentId}");
+  }
+
+  /**
+   * @return url for adding a default attachment.
+   */
+  public String getAddDefaultAttachmentUrl() {
+    return getModelServiceUrl("/attachments/default");
+  }
+
+  /**
+   * @return url for updating a default attachment.
+   */
+  public String getUpdateDefaultAttachmentUrl() {
+    return getModelServiceUrl("/attachments/default/{id}");
+  }
+
+  /**
+   * @return url for getting information of a default attachment.
+   */
+  public String getDefaultAttachmentInfoUrl() {
+    return getModelServiceUrl("/attachments/default/{id}");
+  }
+
+  /**
+   * @return url for getting information of all default attachments.
+   */
+  public String getAllDefaultAttachmentInfoUrl() {
+    return getModelServiceUrl("/attachments/default");
+  }
+
+  /**
+   * @return url for getting information of all default attachments for a given application type.
+   */
+  public String getDefaultAttachmentInfoByApplicationTypeUrl() {
+    return getModelServiceUrl("/attachments/default/applicationType/{applicationType}");
+  }
+
+  /**
+   * @return url for deleting default attachment.
+   */
+  public String getDeleteDefaultAttachmentUrl() {
+    return getModelServiceUrl("/attachments/default/{attachmentId}");
   }
 
   /**

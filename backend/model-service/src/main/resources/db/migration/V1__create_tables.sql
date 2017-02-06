@@ -135,7 +135,6 @@ create table allu.application_tag (
 
 create table allu.attachment (
    id serial primary key,
-   application_id integer not null references allu.application(id),
    user_id integer references allu.user(id),
    type text not null,
    name text,
@@ -143,6 +142,25 @@ create table allu.attachment (
    size bigint,
    creation_time timestamp with time zone,
    data bytea );
+
+create table allu.application_attachment (
+  id serial primary key,
+  application_id integer not null references allu.application(id),
+  attachment_id integer not null references allu.attachment(id)
+);
+
+create table allu.default_attachment (
+    id serial primary key,
+    attachment_id integer not null unique references allu.attachment(id),
+    deleted boolean not null,
+    fixed_location integer references allu.fixed_location(id)
+);
+
+create table allu.default_attachment_application_type (
+  id serial primary key,
+  default_attachment_id integer not null references allu.default_attachment(id),
+  application_type text not null
+);
 
 create table allu.application_contact (
     id serial primary key,

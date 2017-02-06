@@ -140,10 +140,12 @@ public class ApplicationController {
    * @param id  attachment ID
    * @return
    */
-  @RequestMapping(value = "/attachments/{id}", method = RequestMethod.DELETE)
+  @RequestMapping(value = "/{applicationId}/attachments/{attachmentId}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Void> deleteAttachment(@PathVariable int id) {
-    attachmentService.deleteAttachment(id);
+  public ResponseEntity<Void> deleteAttachment(
+      @PathVariable int applicationId,
+      @PathVariable int attachmentId) {
+    attachmentService.deleteAttachment(applicationId, attachmentId);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

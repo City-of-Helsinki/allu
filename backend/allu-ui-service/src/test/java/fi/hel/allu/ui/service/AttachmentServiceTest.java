@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.AttachmentInfoJson;
 import fi.hel.allu.ui.domain.UserJson;
@@ -54,8 +55,12 @@ public class AttachmentServiceTest {
 
   @Test
   public void testAddAttachment() throws IllegalArgumentException, IOException {
-    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(HttpEntity.class),
-        Mockito.eq(AttachmentInfo.class))).thenAnswer(
+    Mockito.when(restTemplate.exchange(
+        Mockito.anyString(),
+        Mockito.eq(HttpMethod.POST),
+        Mockito.any(HttpEntity.class),
+        Mockito.eq(AttachmentInfo.class),
+        Mockito.eq(99))).thenAnswer(
             (Answer<ResponseEntity<AttachmentInfo>>) invocation -> new ResponseEntity<>(createMockAttachmentInfo(),
                 HttpStatus.CREATED));
 
@@ -87,16 +92,16 @@ public class AttachmentServiceTest {
 
   @Test
   public void testGetAttachment() {
-    Mockito.when(restTemplate.getForObject(Mockito.anyString(), Mockito.eq(AttachmentInfo.class), Mockito.anyInt()))
+    Mockito.when(restTemplate.getForObject(Mockito.anyString(), Mockito.eq(DefaultAttachmentInfo.class), Mockito.anyInt()))
         .thenReturn(createMockAttachmentInfo());
     AttachmentInfoJson result = attachmentService.getAttachment(1);
     checkThatIsMockResult(result);
   }
 
   @Test
-  public void testDeleteAttactment() {
-    attachmentService.deleteAttachment(1);
-    Mockito.verify(restTemplate).delete(Mockito.anyString(), Mockito.anyInt());
+  public void testDeleteAttachment() {
+    attachmentService.deleteAttachment(123, 1);
+    Mockito.verify(restTemplate).delete(Mockito.anyString(), Mockito.anyInt(), Mockito.anyInt());
   }
 
   @Test
@@ -148,15 +153,14 @@ public class AttachmentServiceTest {
     return result;
   }
 
-  private AttachmentInfo createMockAttachmentInfo() {
-    AttachmentInfo attachmentInfo = new AttachmentInfo();
+  private DefaultAttachmentInfo createMockAttachmentInfo() {
+    DefaultAttachmentInfo attachmentInfo = new DefaultAttachmentInfo();
     attachmentInfo.setId(12);
     attachmentInfo.setUserId(USER_ID);
     attachmentInfo.setName("Mock.pdf");
     attachmentInfo.setDescription("Mock attachment");
     attachmentInfo.setSize(9999L);
     attachmentInfo.setCreationTime(ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"));
-    attachmentInfo.setApplicationId(APPLICATION_ID);
     return attachmentInfo;
   }
 

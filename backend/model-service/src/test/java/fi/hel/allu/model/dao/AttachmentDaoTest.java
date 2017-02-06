@@ -1,11 +1,12 @@
 package fi.hel.allu.model.dao;
 
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.model.testUtils.TestCommon;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,10 +20,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -48,8 +46,6 @@ public class AttachmentDaoTest {
 
   @Before
   public void setup() throws Exception {
-    testCommon.deleteAllData();
-
     newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
     application = applicationDao.insert(newApplication);
     // dummy will be used as a no-match info in some tests:
@@ -62,13 +58,22 @@ public class AttachmentDaoTest {
    *
    * @throws Exception
    */
-
   @Test
   public void testInsert() throws Exception {
     AttachmentInfo info = newInfo();
     byte[] data = generateTestData(3243);
-    AttachmentInfo inserted = attachmentDao.insert(info, data);
+    AttachmentInfo inserted = attachmentDao.insert(application.getId(), info, data);
     Assert.assertEquals(inserted.getSize().longValue(), data.length);
+  }
+
+  @Test
+  public void testDefaultInsert() throws Exception {
+    DefaultAttachmentInfo dai = newDefaultInfo();
+    byte[] data = generateTestData(3243);
+    DefaultAttachmentInfo inserted = attachmentDao.insertDefault(dai, data);
+    Assert.assertEquals(data.length, inserted.getSize().longValue());
+    Assert.assertEquals(1, inserted.getApplicationTypes().size());
+    Assert.assertEquals(ApplicationType.EVENT, inserted.getApplicationTypes().get(0));
   }
 
   /**
@@ -76,19 +81,19 @@ public class AttachmentDaoTest {
    *
    * @throws Exception
    */
-
   @Test
   public void testFindByApplication() throws Exception {
     // Setup: store a few attachments for various applications:
     List<AttachmentInfo> attachmentInfos = storeInitialAttachments();
     // Add some extra attachments for test application
     AttachmentInfo info = attachmentInfos.get(10);
+    int applicationId = ((TestAttachmentInfo) attachmentInfos.get(10)).applicationId;
     for (int i = 20; i < 22; ++i) {
       info.setName(String.format("Attachment_%d.txt", i));
-      attachmentDao.insert(info, generateTestData(5432));
+      attachmentDao.insert(applicationId, info, generateTestData(5432));
     }
     // Now there should be attachments 10, 20, and 21 for test application
-    List<AttachmentInfo> results = attachmentDao.findByApplication(info.getApplicationId());
+    List<AttachmentInfo> results = attachmentDao.findByApplication(applicationId);
     String expectedNames[] = { "Attachment_10.txt", "Attachment_20.txt", "Attachment_21.txt" };
     Assert.assertEquals(expectedNames.length,
         results.stream().mapToInt(a -> Arrays.asList(expectedNames).contains(a.getName()) ? 1 : 0).sum());
@@ -111,6 +116,29 @@ public class AttachmentDaoTest {
     }
   }
 
+  @Test
+  public void testFindDefaultById() throws Exception {
+    DefaultAttachmentInfo dai = newDefaultInfo();
+    byte[] data = generateTestData(3243);
+    DefaultAttachmentInfo inserted = attachmentDao.insertDefault(dai, data);
+    Assert.assertTrue(attachmentDao.findDefaultById(inserted.getId()).isPresent());
+    // deleted should not be available anymore
+    attachmentDao.deleteDefault(inserted.getId());
+    Assert.assertFalse(attachmentDao.findDefaultById(inserted.getId()).isPresent());
+  }
+
+  @Test
+  public void testFindDefault() throws Exception {
+    DefaultAttachmentInfo dai = newDefaultInfo();
+    byte[] data = generateTestData(3243);
+    DefaultAttachmentInfo inserted1 = attachmentDao.insertDefault(dai, data);
+    DefaultAttachmentInfo inserted2 = attachmentDao.insertDefault(dai, data);
+    DefaultAttachmentInfo inserted3 = attachmentDao.insertDefault(dai, data);
+    attachmentDao.deleteDefault(inserted3.getId());
+    // deleted should not be available anymore
+    Assert.assertEquals(2, attachmentDao.findDefault().size());
+  }
+
   /**
    * Test that deleting works
    *
@@ -123,14 +151,22 @@ public class AttachmentDaoTest {
     // stored infos:
     List<AttachmentInfo> stored = storeInitialAttachments();
     // Test: delete first attachment and verify that it can't be retrieved.
-    int id = stored.get(0).getId();
-    attachmentDao.delete(id);
-    Assert.assertFalse(attachmentDao.findById(id).isPresent());
+    TestAttachmentInfo testAttachmentInfo = (TestAttachmentInfo) stored.get(0);
+    attachmentDao.delete(testAttachmentInfo.applicationId, testAttachmentInfo.getId());
+    Assert.assertFalse(attachmentDao.findById(testAttachmentInfo.getId()).isPresent());
     // Make sure the others still exist
     stored.remove(0);
     for (AttachmentInfo i : stored) {
       assertEquals(i, attachmentDao.findById(i.getId()).orElse(dummy));
     }
+  }
+
+  @Test
+  public void testDefaultDelete() throws Exception {
+    DefaultAttachmentInfo dai = newDefaultInfo();
+    byte[] data = generateTestData(3243);
+    DefaultAttachmentInfo inserted = attachmentDao.insertDefault(dai, data);
+    attachmentDao.deleteDefault(inserted.getId());
   }
 
   /**
@@ -152,6 +188,18 @@ public class AttachmentDaoTest {
     }
   }
 
+  @Test
+  public void testDefaultUpdate() throws Exception {
+    DefaultAttachmentInfo dai = newDefaultInfo();
+    byte[] data = generateTestData(3243);
+    DefaultAttachmentInfo inserted = attachmentDao.insertDefault(dai, data);
+    inserted.setFixedLocationId(2);
+    DefaultAttachmentInfo updated = attachmentDao.updateDefault(inserted.getId(), inserted);
+    Assert.assertEquals(data.length, updated.getSize().longValue());
+    Assert.assertEquals(1, updated.getApplicationTypes().size());
+    Assert.assertEquals(2, (int) updated.getFixedLocationId());
+  }
+
   /**
    * Test that getting data works
    *
@@ -162,11 +210,11 @@ public class AttachmentDaoTest {
     AttachmentInfo info = newInfo();
     byte[] testData = generateTestData(543210);
     Assert.assertEquals(543210, testData.length);
-    info = attachmentDao.insert(info, testData);
+    info = attachmentDao.insert(application.getId(), info, testData);
     int goodId = info.getId();
     // store another info with different data:
     byte[] otherData = generateTestData(10);
-    info = attachmentDao.insert(info, otherData);
+    info = attachmentDao.insert(application.getId(), info, otherData);
     int otherId = info.getId();
     // Test: stored data should be readable and equal to original
     Optional<byte[]> readData = attachmentDao.getData(goodId);
@@ -181,23 +229,56 @@ public class AttachmentDaoTest {
     Assert.assertFalse(readData.isPresent());
   }
 
+  @Test
+  public void testLinkToApplication() {
+    Application linkApplication1 = testCommon.dummyOutdoorApplication("Test Application", "Test Handler1");
+    Application linkApplication2 = testCommon.dummyOutdoorApplication("Test Application", "Test Handler2");
+    Application application1 = applicationDao.insert(linkApplication1);
+    Application application2 = applicationDao.insert(linkApplication2);
+    DefaultAttachmentInfo dai = newDefaultInfo();
+    byte[] data = generateTestData(3243);
+    DefaultAttachmentInfo inserted1 = attachmentDao.insertDefault(dai, data);
+    DefaultAttachmentInfo inserted2 = attachmentDao.insertDefault(dai, data);
+    attachmentDao.linkApplicationToAttachment(application1.getId(), inserted1.getId());
+    attachmentDao.linkApplicationToAttachment(application1.getId(), inserted2.getId());
+    attachmentDao.linkApplicationToAttachment(application2.getId(), inserted1.getId());
+    attachmentDao.linkApplicationToAttachment(application2.getId(), inserted2.getId());
+    Assert.assertEquals(2, attachmentDao.findByApplication(application1.getId()).size());
+    Assert.assertEquals(2, attachmentDao.findByApplication(application2.getId()).size());
+    attachmentDao.removeLinkApplicationToAttachment(application1.getId(), inserted1.getId());
+    Assert.assertEquals(1, attachmentDao.findByApplication(application1.getId()).size());
+  }
+
   // Setup helper: store a bunch of attachment infos
   private List<AttachmentInfo> storeInitialAttachments() {
     AttachmentInfo info = newInfo();
     List<AttachmentInfo> stored = new ArrayList<>();
     for (int i = 0; i < 20; ++i) {
-      info.setApplicationId(applicationDao.insert(newApplication).getId());
       info.setName(String.format("Attachment_%d.txt", i));
       info.setDescription(String.format("Attachment %d", i));
-      stored.add(attachmentDao.insert(info, generateTestData(4321)));
+      int applicationId = applicationDao.insert(newApplication).getId();
+      AttachmentInfo attachmentInfo = attachmentDao.insert(applicationId, info, generateTestData(4321));
+      TestAttachmentInfo testAttachmentInfo = new TestAttachmentInfo(attachmentInfo, applicationId);
+      stored.add(testAttachmentInfo);
+      System.out.println("Added " + stored.get(stored.size() - 1).getId() + " / appid " + applicationId);
     }
     return stored;
+  }
+
+  private class TestAttachmentInfo extends AttachmentInfo {
+    public Integer applicationId = null;
+
+    public TestAttachmentInfo(
+        AttachmentInfo info,
+        Integer applicationId) {
+      super(info.getId(), info.getUserId(), info.getType(), info.getName(), info.getDescription(), info.getSize(), info.getCreationTime());
+      this.applicationId = applicationId;
+    }
   }
 
   private AttachmentInfo newInfo() {
     AttachmentInfo info = new AttachmentInfo();
     info.setType(AttachmentType.ADDED_BY_CUSTOMER);
-    info.setApplicationId(application.getId());
     info.setCreationTime(ZonedDateTime.now());
     info.setId(313);
     info.setName("Test_attachment.pdf");
@@ -205,9 +286,20 @@ public class AttachmentDaoTest {
     return info;
   }
 
+  private DefaultAttachmentInfo newDefaultInfo() {
+    DefaultAttachmentInfo info = new DefaultAttachmentInfo();
+    info.setType(AttachmentType.ADDED_BY_CUSTOMER);
+    info.setCreationTime(ZonedDateTime.now());
+    info.setId(313);
+    info.setName("Test_attachment.pdf");
+    info.setDescription("Test attachment");
+    info.setApplicationTypes(Collections.singletonList(ApplicationType.EVENT));
+    info.setFixedLocationId(1);
+    return info;
+  }
+
   private void assertEquals(AttachmentInfo expected, AttachmentInfo actual) {
     Assert.assertEquals(expected.getId(), actual.getId());
-    Assert.assertEquals(expected.getApplicationId(), actual.getApplicationId());
     Assert.assertEquals(expected.getName(), actual.getName());
     Assert.assertEquals(expected.getDescription(), actual.getDescription());
     Assert.assertEquals(expected.getSize(), actual.getSize());

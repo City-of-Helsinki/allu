@@ -278,6 +278,11 @@
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToCommentType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>default_attachment_application_type</table>
+                            <column>application_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>
