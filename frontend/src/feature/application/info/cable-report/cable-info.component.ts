@@ -42,7 +42,7 @@ export class CableInfoComponent {
   }
 
   ngOnInit(): void {
-    this.cableInfoEntries = Some(this.cableInfoEntries).orElse([]);
+    this.cableInfoEntries = Some(this.cableInfoEntries).orElse(this.fb.array([]));
     this.initForm();
     this.selectedCableInfoTypes = this.cableReport.infoEntries.map(entry => entry.type);
 

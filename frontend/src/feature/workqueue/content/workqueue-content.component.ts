@@ -29,10 +29,10 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   sort = new Sort(undefined, undefined);
   translations = translations;
 
-  constructor(private router: Router, private mapHub: MapHub, private dialog: MdDialog) {}
-
   private applicationSubscription: Subscription;
   private dialogRef: MdDialogRef<CommentsModalComponent>;
+
+  constructor(private router: Router, private mapHub: MapHub, private dialog: MdDialog) {}
 
   ngOnInit(): void {
     this.applicationSubscription = this.applications.connect();

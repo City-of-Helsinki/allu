@@ -1,4 +1,4 @@
 export enum BillingType {
   CASH,
-  INVOICE,
+  INVOICE
 }

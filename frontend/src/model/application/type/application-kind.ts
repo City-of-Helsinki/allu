@@ -46,7 +46,7 @@ export enum ApplicationKind {
   WINTER_PARKING, // Talvipysäköinti
   REPAVING, 	// Uudelleenpäällystykset
   ELECTION_ADD_STAND, // Vaalimainosteline
-  NOTE_OTHER, // Muu
+  NOTE_OTHER // Muu
 }
 
 export class ApplicationKindStructure {

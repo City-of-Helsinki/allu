@@ -7,7 +7,7 @@ export interface Option<A> {
   orElse<B>(val: B): B;
 }
 
-export function Some<T>(val: T) {
+export function Some<T>(val: T): Option<T> {
   /* tslint:disable:no-null-keyword */
   return val === undefined || val === null
     ? new NoneOpt()
