@@ -12,6 +12,8 @@ import fi.hel.allu.ui.domain.PostalAddressJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -37,26 +39,25 @@ public class LocationService {
 
 
   /**
-   * Create a new location. If the given location object is null or id is null, empty location is created.
+   * Create a new location. If the given location object is null, empty location
+   * is created.
    *
-   * @param locationJson Location that is going to be created
+   * @param locationJson
+   *          Location that is going to be created
    * @return Created location
    */
   public LocationJson createLocation(LocationJson locationJson) {
-    if (locationJson != null && (locationJson.getId() == null || locationJson.getId() == 0)) {
-      callModelService(locationJson);
-    } else if (locationJson == null || locationJson.getId() == null || locationJson.getId() == 0) {
+    if (locationJson == null) {
       locationJson = new LocationJson();
-      callModelService(locationJson);
     }
-    return locationJson;
+    return callModelService(locationJson);
   }
 
-  private void callModelService(LocationJson locationJson) {
+  private LocationJson callModelService(LocationJson locationJson) {
     Location location = restTemplate.postForObject(applicationProperties
             .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(locationJson),
         Location.class);
-    mapLocationToJson(locationJson, location);
+    return mapToLocationJson(location);
   }
 
   /**
@@ -69,9 +70,9 @@ public class LocationService {
    */
   public LocationJson updateOrCreateLocation(LocationJson locationJson) {
     if (locationJson.getId() != null && locationJson.getId() > 0) {
-      restTemplate.put(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), createLocationModel
-          (locationJson), locationJson.getId().intValue());
-      return locationJson;
+      HttpEntity<Location> requestEntity = new HttpEntity<>(createLocationModel(locationJson));
+      ResponseEntity<Location> responseEntity = restTemplate.exchange(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), HttpMethod.PUT, requestEntity, Location.class, locationJson.getId().intValue());
+      return mapToLocationJson(responseEntity.getBody());
     } else {
       return createLocation(locationJson);
     }
@@ -95,11 +96,9 @@ public class LocationService {
    * @return Location details or empty location object
    */
   public LocationJson findLocationById(int locationId) {
-    LocationJson locationJson = new LocationJson();
     ResponseEntity<Location> locationResult = restTemplate.getForEntity(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_FIND_BY_ID), Location.class, locationId);
-    mapLocationToJson(locationJson, locationResult.getBody());
-    return locationJson;
+    return mapToLocationJson(locationResult.getBody());
   }
 
   /**
@@ -141,7 +140,8 @@ public class LocationService {
     return location;
   }
 
-  private void mapLocationToJson(LocationJson locationJson, Location location) {
+  private LocationJson mapToLocationJson(Location location) {
+    LocationJson locationJson = new LocationJson();
     locationJson.setId(location.getId());
     PostalAddressJson postalAddressJson = new PostalAddressJson();
     postalAddressJson.setCity(location.getCity());
@@ -154,6 +154,7 @@ public class LocationService {
     locationJson.setFixedLocationIds(location.getFixedLocationIds());
     locationJson.setCityDistrictId(location.getCityDistrictId());
     locationJson.setCityDistrictIdOverride(location.getCityDistrictIdOverride());
+    return locationJson;
   }
 
   private FixedLocationJson mapToFixedLocationJson(FixedLocation fixedLocation) {

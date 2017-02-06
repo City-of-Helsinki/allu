@@ -1,17 +1,26 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.mockito.stubbing.Answer;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.util.List;
 import java.util.Set;
 
@@ -72,8 +81,13 @@ public class LocationServiceTest extends MockServices {
     assertEquals(3879, locationJson.getGeometry().getSRID());
   }
 
+  @SuppressWarnings("unchecked") // Needed for Mockito invocation.getArgumentAt()
   @Test
   public void updateValidLocation() {
+    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
+        Mockito.eq(Location.class), Mockito.anyInt())).thenAnswer(
+            (Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse(
+                invocation.getArgumentAt(2, HttpEntity.class)));
     LocationJson locationJson = createLocationJson(1);
     locationJson = locationService.updateOrCreateLocation(locationJson);
     assertNotNull(locationJson);
@@ -121,5 +135,9 @@ public class LocationServiceTest extends MockServices {
     List<FixedLocationJson> fixedLocationList = locationService.getFixedLocationList();
     assertEquals(2, fixedLocationList.size());
     assertEquals("FixedLocation 0", fixedLocationList.get(0).getArea());
+  }
+
+  private ResponseEntity<Location> createMockLocationResponse(HttpEntity<Location> request) {
+    return new ResponseEntity<>(createMockLocationModel(request.getBody()), HttpStatus.OK);
   }
 }

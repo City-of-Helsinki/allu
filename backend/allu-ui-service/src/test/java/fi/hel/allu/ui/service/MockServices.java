@@ -58,7 +58,8 @@ public abstract class MockServices {
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Location.class)))
-        .thenAnswer((Answer<Location>) invocation -> createMockLocationModel());
+        .thenAnswer(
+            (Answer<Location>) invocation -> createMockLocationModel(invocation.getArgumentAt(1, Location.class)));
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Event.class)))
@@ -255,7 +256,10 @@ public abstract class MockServices {
     return applicant;
   }
 
-  public Location createMockLocationModel() {
+  public Location createMockLocationModel(Location input) {
+    if (input != null && input.getId() != null) {
+      return input;
+    }
     Location location = new Location();
     location.setCity("City1, Model");
     location.setPostalCode("33333, Model");
@@ -328,7 +332,7 @@ public abstract class MockServices {
   }
 
   public ResponseEntity<Location> createMockLocationResponse() {
-    return new ResponseEntity<>(createMockLocationModel(), HttpStatus.OK);
+    return new ResponseEntity<>(createMockLocationModel(null), HttpStatus.OK);
   }
 
   public ResponseEntity<Event> createMockOutdoorEventResponse() {
