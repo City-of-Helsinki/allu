@@ -181,3 +181,8 @@ INSERT INTO allu.structure_meta (application_type, version) VALUES ('EXCAVATION_
 -- Note metadata
 ----------------
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('NOTE', 1);
+
+------------------------------------------
+-- Temporary traffic arrangements metadata
+------------------------------------------
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('TEMPORARY_TRAFFIC_ARRANGEMENTS', 1);

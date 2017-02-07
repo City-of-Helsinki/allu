@@ -1,0 +1,128 @@
+{
+  "type":"TEMPORARY_TRAFFIC_ARRANGEMENTS",
+  "kind":"STREET_AND_GREEN",
+  "name":"Liikennejärjestely",
+  "startTime":"2017-03-31T21:00:00.000Z",
+  "endTime":"2017-04-01T21:00:00.000Z",
+  "applicant":{
+    "id":null,
+    "type":"PERSON",
+    "representative":null,
+    "name":"Lasse Liikennejärjestelijä",
+    "registryKey":"123",
+    "postalAddress":{
+      "streetAddress":"Kotiosoite 1",
+      "postalCode":"33440",
+      "city":"Tampere"
+    },
+    "email":"lasse.liikennejarjestelija@liikennejarjestely.com",
+    "phone":"040098765"
+  },
+  "contactList":[
+    {
+      "id":null,
+      "applicantId":null,
+      "name":"Lasse Kumminkaima",
+      "streetAddress":"321",
+      "postalCode":"30100",
+      "city":"Tampere",
+      "email":"lasse.kumminkaima@liikennejarjestely.com",
+      "phone":"031234567"
+    }
+  ],
+  "location":{
+    "geometry":{
+      "type":"GeometryCollection",
+      "crs":{
+        "properties":{
+          "name":"EPSG:3879"
+        },
+        "type":"name"
+      },
+      "geometries":[
+        {
+          "type":"Polygon",
+          "coordinates":[
+            [
+              [
+                25495324.625,
+                6674697.49999896
+              ],
+              [
+                25495324.625,
+                6674722.999998959
+              ],
+              [
+                25495378.625,
+                6674754.49999896
+              ],
+              [
+                25495394.875,
+                6674750.749998957
+              ],
+              [
+                25495406.375,
+                6674731.749998958
+              ],
+              [
+                25495414.125,
+                6674715.749998958
+              ],
+              [
+                25495352.125,
+                6674680.249998959
+              ],
+              [
+                25495334.625,
+                6674682.999998959
+              ],
+              [
+                25495324.625,
+                6674697.49999896
+              ]
+            ]
+          ]
+        }
+      ]
+    },
+    "postalAddress":{
+
+    },
+    "fixedLocationIds":[
+
+    ]
+  },
+  "extension":{
+    "applicationType":"TEMPORARY_TRAFFIC_ARRANGEMENTS",
+    "contractor":{
+      "id":null,
+      "type":"COMPANY",
+      "representative":null,
+      "name":"Liikennejärjestelyt.com",
+      "registryKey":"43124123-1",
+      "postalAddress":{
+        "streetAddress":"Tampereentie 1",
+        "postalCode":"32312",
+        "city":"Hämeenlinna"
+      },
+      "email":"suorittaja@liikennejarjestelyt.com",
+      "phone":"0421431234"
+    },
+    "responsiblePerson":{
+      "id":null,
+      "applicantId":null,
+      "name":"Väinö Vastuuton",
+      "streetAddress":"234124",
+      "postalCode":"03042",
+      "city":"PL 100",
+      "email":"vaino.vastuuton@vastuuttomuus.net",
+      "phone":"03123352"
+    },
+    "pksCard":true,
+    "workFinished":"2017-03-31T21:00:00.000Z",
+    "trafficArrangements":"Nordenskiöldin aukio muutetaan suureksi liikenneympyräksi"
+  },
+  "applicationTags":[
+
+  ]
+}

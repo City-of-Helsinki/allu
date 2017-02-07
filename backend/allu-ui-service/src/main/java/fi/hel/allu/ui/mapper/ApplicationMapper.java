@@ -188,6 +188,7 @@ public class ApplicationMapper {
     case PLACEMENT_PERMIT:
       break;
     case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+      applicationJson.setExtension(createTrafficArrangementJson((TrafficArrangement) application.getExtension()));
       break;
     default:
       break;
@@ -255,6 +256,7 @@ public class ApplicationMapper {
     case PLACEMENT_PERMIT:
       break;
     case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+      applicationExtension = createTrafficArrangementModel((TrafficArrangementJson) applicationJson.getExtension());
       break;
     default:
       break;
@@ -486,6 +488,28 @@ public class ApplicationMapper {
     note.setDescription(noteJson.getDescription());
     note.setReoccurring(noteJson.getReoccurring());
     return note;
+  }
+
+  private TrafficArrangementJson createTrafficArrangementJson(TrafficArrangement trafficArrangement) {
+    TrafficArrangementJson trafficArrangementJson = new TrafficArrangementJson();
+    trafficArrangementJson.setContractor(createApplicantJson(trafficArrangement.getContractor()));
+    trafficArrangementJson.setResponsiblePerson(createContactJson(trafficArrangement.getResponsiblePerson()));
+    trafficArrangementJson.setPksCard(trafficArrangement.getPksCard());
+    trafficArrangementJson.setWorkFinished(trafficArrangement.getWorkFinished());
+    trafficArrangementJson.setAdditionalInfo(trafficArrangement.getAdditionalInfo());
+    trafficArrangementJson.setTrafficArrangements(trafficArrangement.getTrafficArrangements());
+    return trafficArrangementJson;
+  }
+
+  private TrafficArrangement createTrafficArrangementModel(TrafficArrangementJson trafficArrangementJson) {
+    TrafficArrangement trafficArrangement = new TrafficArrangement();
+    trafficArrangement.setContractor(createApplicantModel(trafficArrangementJson.getContractor()));
+    trafficArrangement.setResponsiblePerson(createContactModel(trafficArrangementJson.getResponsiblePerson()));
+    trafficArrangement.setPksCard(trafficArrangementJson.getPksCard());
+    trafficArrangement.setWorkFinished(trafficArrangementJson.getWorkFinished());
+    trafficArrangement.setAdditionalInfo(trafficArrangementJson.getAdditionalInfo());
+    trafficArrangement.setTrafficArrangements(trafficArrangementJson.getTrafficArrangements());
+    return trafficArrangement;
   }
 
   private ApplicantJson createApplicantJson(Applicant applicant) {
