@@ -1,0 +1,29 @@
+.labels-solid .md-tab-label {
+  margin: 0 5px;
+  background-color: md-color($allu-primary, 200);
+  color: md-contrast($allu-primary, 500);
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.labels-solid .md-tab-label.md-tab-label-active {
+  background-color: white;
+  color: md-color($allu-primary, 500);
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.labels-end .md-tab-list {
+  justify-content: flex-end;
+  padding-right:10%;
+}
+
+.work-queue-action-buttons {
+  padding: 0 0.75rem;
+  position: relative;
+  top: 35px;
+}
+
+
+

@@ -1,16 +1,19 @@
 <div class="row item-bar">
     <div class="item-bar-content">
         <span class="single-line" *ngIf="application.startTime">{{application.uiStartTime}} - {{application.uiEndTime}}</span>
-        <span><b>Tunnisteet:</b></span>
+        <span>Tunnisteet:</span>
         <md-chip-list>
-            <md-chip class="chip-dark" *ngFor="let tag of application.applicationTags; let i = index;">
+            <md-chip class="accent-chip slim-chip" color="accent" selected="true" *ngFor="let tag of application.applicationTags; let i = index;">
                 {{['application.tag.type', tag.type] | translation}}
-                <button *ngIf="!readonly" class="btn-circle btn-gray" (click)="remove(i)"><md-icon>remove</md-icon></button>
+                <button md-icon-button *ngIf="!readonly" (click)="remove(i)"><md-icon>remove_circle_outline</md-icon></button>
             </md-chip>
         </md-chip-list>
         <span class="single-line" *ngIf="!readonly">
-            Lisää tunniste
-            <button md-icon-button [mdMenuTriggerFor]="menu" class="btn-circle btn-gray"><md-icon>add</md-icon></button>
+            <md-chip class="slim-chip chip-outline" color="primary" selected="true">
+                Lisää tunniste
+                <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>add_circle_outline</md-icon></button>
+            </md-chip>
+
         </span>
     </div>
 </div>

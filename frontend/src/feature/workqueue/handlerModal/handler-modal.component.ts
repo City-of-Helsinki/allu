@@ -10,9 +10,7 @@ import {DialogCloseReason, DialogCloseValue} from '../../common/dialog-close-val
 @Component({
   selector: 'handler-modal',
   template: require('./handler-modal.component.html'),
-  styles: [
-    require('./handler-modal.component.scss')
-  ]
+  styles: []
 })
 export class HandlerModalComponent implements OnInit {
   allUsers: Array<User>;

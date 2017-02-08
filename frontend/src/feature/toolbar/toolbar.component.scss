@@ -1,8 +1,8 @@
 @import '../../assets/colors';
 
 :host {
-  background-color: $allu-primary-nav;
-  color: $allu-text-white;
+  background: md-color($allu-primary, 500);
+  color: md-contrast($allu-primary, 500);
   display: flex;
   height: 50px;
   padding: 0 16px;

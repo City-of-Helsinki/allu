@@ -2,16 +2,21 @@
 
 :host {
   md-toolbar {
-    background-color: $allu-secondary-nav;
-    color: $allu-text-white;
+    background: md-color($allu-primary, 50);
+    color: md-color($allu-primary, 500);
     margin-bottom: 0px;
   }
 
+  .progress-label p {
+    color: md-color($allu-primary, 300);
+    font-weight: bold;
+  }
+
   .progress {
-    background-color: #9b9b9b;
-    
+    background-color: md-color($allu-accent, 50);
+
     .determinate {
-      background-color: #1de9b6;
+      background-color: md-color($allu-accent, A100);
     }
   }
 

@@ -85,7 +85,6 @@ export class ProjectProjectsComponent implements OnInit {
   checkAll() {
     let selection = !this.allSelected;
     this.projectRows.forEach(row => row.selected = selection);
-    this.updateAllSelected();
   }
 
   checkSingle(row: ContentRow<Project>) {

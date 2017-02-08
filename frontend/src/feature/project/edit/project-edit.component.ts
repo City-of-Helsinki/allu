@@ -83,7 +83,7 @@ export class ProjectEditComponent {
       contactName: ['', Validators.required],
       email: ['', emailValidator],
       phone: [''],
-      customerReference: ['', Validators.required],
+      customerReference: [''],
       additionalInfo: ['']
     });
   }

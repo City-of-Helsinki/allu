@@ -1,0 +1,108 @@
+@import '~@angular/material/core/theming/all-theme';
+
+// Base input styling
+input[type="text"] {
+  display: block;
+  margin: 0;
+  width: 100%;
+  appearance: none;
+  box-shadow: none;
+}
+input[type="text"]:focus {
+  outline: none;
+}
+
+.input-with-addon.input,
+.input-with-addon.button {
+  border: none;
+}
+
+.input-with-addon {
+  display: flex;
+  margin-bottom: 1.5em;
+  background: md-contrast($allu-primary, 500);
+
+  .addon-btn {
+    background-color: md-color($allu-accent, 500);
+
+    .material-icons {
+      color: md-contrast($allu-accent, 800);
+    }
+  }
+}
+
+.input-addon-item {
+  padding: .5em .75em;
+  border: 1px solid #dcdcdc;
+
+  &:not(:first-child) {
+    border-left: 0;
+  }
+
+  &:not(:last-child):not(.last-item) {
+    border-right: 0;
+  }
+
+  &:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+
+  &:last-child,
+  &.last-item {
+    border-radius: 0 6px 6px 0;
+  }
+}
+
+.input-addon-field {
+  @extend .input-addon-item;
+  flex: 1;
+
+  &:focus {
+    border: 1px solid md-color($allu-primary, 200);
+  }
+}
+
+.select-wrapper {
+  input[type="text"] {
+    color: md-color($allu-primary, 300);
+  }
+}
+
+.md-select-placeholder.md-floating-placeholder {
+  color: md-color($allu-primary, 300);
+}
+
+@mixin placeholder-text() {
+  ::-webkit-input-placeholder {
+    color: md-color($allu-primary, 300);
+  }
+
+  :-moz-placeholder { /* Firefox 18- */
+    color: md-color($allu-primary, 300);
+  }
+
+  ::-moz-placeholder {  /* Firefox 19+ */
+    color: md-color($allu-primary, 300);
+  }
+
+  :-ms-input-placeholder {
+    color: md-color($allu-primary, 300);
+  }
+
+  .md-input-placeholder,
+  .md-select-placeholder {
+    color: md-color($allu-primary, 300);
+  }
+
+  input.ng-invalid.ng-touched + .md-input-placeholder {
+    color: md-color($allu-warn, 500);
+  }
+}
+
+md-input-container.ng-invalid.ng-touched .md-input-underline{
+  border-color: md-color($allu-warn, 500);
+}
+
+md-input-container.ng-invalid.ng-touched .md-input-underline .md-focused {
+  background-color: md-color($allu-warn, 500);
+}

@@ -11,52 +11,58 @@
                     <md-card-title>Vuokrauksen tiedot</md-card-title>
                     <md-card-content>
                         <div class="row form-group">
-                            <div class="input-field col m6">
-                                <input id="name" type="text" [class.summary]="name" formControlName="name">
-                                <label for="name">Vuokrauksen nimi*</label>
-                                <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
-                                <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
+                                    <md-hint>
+                                        <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
+                                        <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
+                                    </md-hint>
+                                </md-input-container>
                             </div>
-                            <div class="input-field col m6">
-                                <textarea id="description" class="materialize-textarea" formControlName="description"></textarea>
-                                <label for="description">Vuokrauksen kuvaus*</label>
-                                <field-error [form]="rentalForm" field="description" hasError="required">
-                                    {{translations.application.shortTermRental.field.descriptionMissing}}
-                                </field-error>
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <textarea md-input md-autosize formControlName="description" placeholder="Vuokrauksen kuvaus*"></textarea>
+                                    <md-hint>
+                                        <field-error [form]="rentalForm" field="description" hasError="required">
+                                            {{translations.application.shortTermRental.field.descriptionMissing}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
                             </div>
                             <div formGroupName="rentalTimes">
-                                <div class="input-field col m3">
-                                    <input *ngIf="!readonly" id="rentalStartTime"
-                                           formControlName="startTime"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"
-                                           type="text"/>
-
-                                    <input *ngIf="readonly" id="rentalStartTime" type="text" formControlName="startTime">
-                                    <label for="rentalStartTime">Alkupäivämäärä*</label>
-                                    <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
-                                        {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
-                                    </field-error>
+                                <div class="col m3">
+                                    <md-input-container class="input-full-width">
+                                        <input md-input type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
+                                               materialize="pickadate"
+                                               [materializeParams]="pickadateParams"/>
+                                        <md-hint>
+                                            <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
+                                                {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
+                                            </field-error>
+                                            <field-error [form]="rentalForm" field="rentalTimes" hasError="startBeforeEnd">
+                                                {{translations.application.shortTermRental.field.startBeforeEnd}}
+                                            </field-error>
+                                        </md-hint>
+                                    </md-input-container>
                                 </div>
-                                <div class="input-field col m3">
-                                    <input *ngIf="!readonly" id="rentalEndTime"
-                                           formControlName="endTime"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"
-                                           type="text"/>
-                                    <input *ngIf="readonly" id="rentalEndTime" type="text" formControlName="endTime">
-                                    <label for="rentalEndTime">Loppupäivämäärä*</label>
-                                    <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
-                                        {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
-                                    </field-error>
+                                <div class="col m3">
+                                    <md-input-container class="input-full-width">
+                                        <input md-input type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
+                                               materialize="pickadate"
+                                               [materializeParams]="pickadateParams"/>
+                                        <md-hint>
+                                            <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
+                                                {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
+                                            </field-error>
+                                        </md-hint>
+                                    </md-input-container>
                                 </div>
-                                <field-error [form]="rentalForm" field="rentalTimes" hasError="startBeforeEnd">
-                                    {{translations.application.shortTermRental.field.startBeforeEnd}}
-                                </field-error>
                             </div>
-                            <div class="input-field col m6">
-                                <input id="area" type="number" formControlName="area">
-                                <label for="area">Pinta-ala</label>
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="number" formControlName="area" placeholder="Pinta-ala"/>
+                                </md-input-container>
                             </div>
                         </div>
                     </md-card-content>
@@ -69,35 +75,38 @@
                     <md-card-content>
                         <div class="row form-group">
                             <div *ngIf="application.kind==='BRIDGE_BANNER'" class="col m6 no-padding">
-                                <div class="col m12 height-fix-bottom">
-                                    <input type="checkbox" class="filled-in" id="commercial" formControlName="commercial"/>
-                                    <label for="commercial">{{ meta?.getUiName('commercial') }}</label>
+                                <div class="col m12">
+                                    <md-checkbox formControlName="commercial">{{ meta?.getUiName('commercial') }}</md-checkbox>
                                 </div>
                             </div>
                             <div *ngIf="application.kind==='PROMOTION_OR_SALES'" class="col m6 no-padding">
-                                <div class="col m12 height-fix-bottom">
-                                    <input type="checkbox" class="filled-in" id="largeSalesArea" formControlName="largeSalesArea"/>
-                                    <label for="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</label>
+                                <div class="col m12">
+                                    <md-checkbox formControlName="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</md-checkbox>
                                 </div>
                             </div>
-                            <div class="col m12">
-                                <div class="col m3 input-field">
-                                    <input type="text" readonly id="calculatedPrice" formControlName="calculatedPrice">
-                                    <label for="calculatedPrice">Hinta</label>
-                                </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col m3">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
+                                </md-input-container>
                             </div>
-                            <div class="col m12">
-                                <div class="col m3 input-field">
-                                    <input type="number" id="priceOverride" formControlName="priceOverride">
-                                    <label for="priceOverride">Käsittelijän asettama hinta</label>
-                                    <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
-                                        {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
-                                    </field-error>
-                                </div>
-                                <div class="col m3 input-field">
-                                    <input type="text" id="priceOverrideReason" formControlName="priceOverrideReason">
-                                    <label for="priceOverrideReason">Peruste poikkeavaan hintaan</label>
-                                </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col m3">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
+                                    <md-hint>
+                                        <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
+                                            {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
+                            </div>
+                            <div class="col m3">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
+                                </md-input-container>
                             </div>
                         </div>
                     </md-card-content>

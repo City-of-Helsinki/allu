@@ -1,0 +1,18 @@
+@import '~@angular/material/core/theming/all-theme';
+
+@mixin auto-completion-list-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  .autocompletion-dropdown-content {
+    background-color: md-contrast($primary, 500);
+
+    .autocompletion-dropdown-entry {
+      color: md-color($primary, 500);
+    }
+
+    .autocompletion-dropdown-entry:hover {
+      background-color: md-color($primary, 200);
+    }
+  }
+}

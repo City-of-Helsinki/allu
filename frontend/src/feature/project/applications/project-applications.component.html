@@ -1,19 +1,19 @@
 <div class="row valign-wrapper">
     <div class="col m6 valign">
-        <a type="button" class="waves-effect waves-light btn"
-                routerLink="/applications/location" [queryParams]="{relatedProject: project.id}">UUSI</a>
-        <a type="button" class="waves-effect waves-light btn" disabled>KOPIOI</a>
-        <a type="button" class="waves-effect waves-light btn" (click)="remove()">POISTA</a>
+        <a md-raised-button type="button" color="primary" routerLink="/applications/location" [queryParams]="{relatedProject: project.id}">UUSI</a>
+        <a md-raised-button type="button" color="primary" disabled>KOPIOI</a>
+        <a md-raised-button type="button" color="primary" (click)="remove()">POISTA</a>
     </div>
     <div class="col s6 valign-wrapper">
         <div class="col s2 valign input-field-label">Liitä hakemus:</div>
-        <div class="col s10 input-field">
-            <input type="text" id="identifier" [readonly]="readonly"
-                   [autocompletion]="matchingApplications"
-                   nameField="applicationId"
-                   (onSearchChange)="onIdentifierSearchChange($event)"
-                   (onSelection)="add($event)">
-            <label for="identifier">Hakemuksen tunnus</label>
+        <div class="col s10">
+            <md-input-container class="input-full-width">
+                <input md-input type="text" [readonly]="readonly"
+                       [autocompletion]="matchingApplications"
+                       nameField="applicationId"
+                       (onSearchChange)="onIdentifierSearchChange($event)"
+                       (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
+            </md-input-container>
         </div>
     </div>
 </div>
@@ -24,8 +24,7 @@
                 <thead>
                 <tr>
                     <th>
-                        <input type="checkbox" class="filled-in" [ngModel]="allSelected" (click)="checkAll()" id="all_none_checkbox" name="all_none_checkbox"/>
-                        <label for="all_none_checkbox"></label>
+                        <md-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></md-checkbox>
                     </th>
                     <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
                     <th>Tunnus</th>
@@ -39,8 +38,7 @@
                 <tbody>
                 <tr *ngFor="let row of applicationRows" class="clickable row-highlight" (click)="goToSummary($event.target.cellIndex, row)">
                     <td>
-                        <input type="checkbox" class="filled-in" [ngModel]="row.selected" (change)="checkSingle(row)" id="{{row.id}}" />
-                        <label [attr.for]="row.id"></label>
+                        <md-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></md-checkbox>
                     </td>
                     <td>{{row.content.handler?.realName}}</td>
                     <td>

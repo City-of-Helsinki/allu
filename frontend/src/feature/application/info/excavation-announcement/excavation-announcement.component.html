@@ -35,78 +35,74 @@
                 <md-card-content>
                     <div class="row form-group">
                         <div formGroupName="validityTimes">
-                            <div class="input-field col s6">
-                                <input *ngIf="!readonly" id="validityStartTime"
-                                       formControlName="startTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-
-                                <input *ngIf="readonly" id="validityTimes" type="text" formControlName="startTime">
-                                <label for="validityStartTime">Voimassaolon aloitus*</label>
-                                <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                                    {{'application.excavationAnnouncement.field.validityStartTime' | translation}}
-                                </field-error>
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                                            {{'application.excavationAnnouncement.field.validityStartTime' | translation}}
+                                        </field-error>
+                                        <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                                            {{'application.excavationAnnouncement.field.validityStartBeforeEnd' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
                             </div>
-                            <div class="input-field col s6">
-                                <input *ngIf="!readonly" id="validityEndTime"
-                                       formControlName="endTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-                                <input *ngIf="readonly" id="validityEndTime" type="text" formControlName="endTime">
-                                <label for="validityEndTime">Voimassaolon lopetus*</label>
-                                <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                                    {{'application.excavationAnnouncement.field.validityEndTime' | translation}}
-                                </field-error>
-                            </div>
-                            <div class="col s12">
-                                <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                                    {{'application.excavationAnnouncement.field.validityStartBeforeEnd' | translation}}
-                                </field-error>
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                                            {{'application.excavationAnnouncement.field.validityEndTime' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
                             </div>
                         </div>
                         <div formGroupName="unauthorizedWork">
-                            <div class="input-field col s6">
-                                <input *ngIf="!readonly" id="unauthorizedWorkStartTime"
-                                       formControlName="startTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-
-                                <input *ngIf="readonly" id="unauthorizedWorkStartTime" type="text" formControlName="startTime">
-                                <label for="unauthorizedWorkStartTime">Luvattoman kaivun aloitus</label>
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
+                                            {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
                             </div>
-                            <div class="input-field col s6">
-                                <input *ngIf="!readonly" id="unauthorizedWorkEndTime"
-                                       formControlName="endTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-                                <input *ngIf="readonly" id="unauthorizedWorkEndTime" type="text" formControlName="endTime">
-                                <label for="unauthorizedWorkEndTime">Luvattoman kaivun lopetus</label>
-                            </div>
-                            <div class="col s12">
-                                <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
-                                    {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
-                                </field-error>
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                </md-input-container>
                             </div>
                         </div>
-                        <div class="input-field col s6">
-                            <input id="winterTimeOperation" type="text" formControlName="winterTimeOperation" readonly>
-                            <label for="winterTimeOperation">Talvityön toiminn. kunto</label>
+                        <div class="col s6">
+                            <md-input-container class="input-full-width">
+                                <input md-input readonly type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"/>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col s6">
-                            <input id="summerTimeOperation" type="text" formControlName="summerTimeOperation" readonly>
-                            <label for="summerTimeOperation">Kesätyön toiminn. kunto</label>
+                        <div class="col s6">
+                            <md-input-container class="input-full-width">
+                                <input md-input readonly type="text" formControlName="summerTimeOperation" placeholder="Kesätyön toiminn. kunto"/>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col s6">
-                            <input id="workFinished" type="text" formControlName="workFinished" readonly>
-                            <label for="workFinished">Työ valmis</label>
+                        <div class="col s6">
+                            <md-input-container class="input-full-width">
+                                <input md-input readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col s6">
-                            <input id="guaranteeEndTime" type="text" formControlName="guaranteeEndTime" readonly>
-                            <label for="guaranteeEndTime">Takuu päättyy (katutyö)</label>
+                        <div class="col s6">
+                            <md-input-container class="input-full-width">
+                                <input md-input readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
+                            </md-input-container>
                         </div>
                     </div>
                 </md-card-content>
@@ -118,49 +114,48 @@
                 <md-card-title>Kaivuilmoituksen tiedot</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
-                        <div class="input-field col m6">
-                            <input type="text" formControlName="cableReportIdentifier" id="identifier"
-                                   [readonly]="readonly"
-                                   [autocompletion]="matchingApplications"
-                                   nameField="applicationId"
-                                   (onSearchChange)="onIdentifierSearchChange($event)"
-                                   (onSelection)="setCableReport($event)">
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" formControlName="cableReportIdentifier" placeholder="Johtoselvitys"
+                                       [readonly]="readonly"
+                                       [autocompletion]="matchingApplications"
+                                       nameField="applicationId"
+                                       (onSearchChange)="onIdentifierSearchChange($event)"
+                                       (onSelection)="setCableReport($event)"/>
+                            </md-input-container>
                             <input type="hidden" formControlName="cableReportId">
-                            <label for="identifier">Johtoselvitys</label>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="pksCard" formControlName="pksCard"/>
-                            <label for="pksCard">Pks-kortti</label>
+                            <md-checkbox formControlName="pksCard">Pks-kortti</md-checkbox>
                         </div>
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="propertyConnectivity" formControlName="propertyConnectivity"/>
-                            <label for="propertyConnectivity">Tontti- / Kiinteistöliitos</label>
+                            <md-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</md-checkbox>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="constructionWork" formControlName="constructionWork"/>
-                            <label for="constructionWork">Rakentaminen</label>
+                            <md-checkbox formControlName="constructionWork">Rakentaminen</md-checkbox>
                         </div>
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="maintenanceWork" formControlName="maintenanceWork"/>
-                            <label for="maintenanceWork">Kunnossapito</label>
+                            <md-checkbox formControlName="maintenanceWork">Kunnossapito</md-checkbox>
                         </div>
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="emergencyWork" formControlName="emergencyWork"/>
-                            <label for="emergencyWork">Hätätyö</label>
+                            <md-checkbox formControlName="emergencyWork">Hätätyö</md-checkbox>
                         </div>
                     </div>
                     <div class="row form-group">
-                        <div class="input-field col m12">
-                            <textarea id="additionalInfo" class="materialize-textarea" formControlName="additionalInfo"></textarea>
-                            <label for="additionalInfo">Lisätiedot</label>
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <textarea md-input md-autosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m12">
-                            <textarea id="trafficArrangements" class="materialize-textarea" formControlName="trafficArrangements"></textarea>
-                            <label for="trafficArrangements">Suoritettavat liikennejärjestelyt</label>
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <textarea md-input md-autosize formControlName="trafficArrangements"
+                                          placeholder="Suoritettavat liikennejärjestelyt"></textarea>
+                            </md-input-container>
                         </div>
                     </div>
                 </md-card-content>

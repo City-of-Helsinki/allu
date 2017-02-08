@@ -4,25 +4,6 @@
     padding: 0 40px 0 5px;
 }
 
-.chip-dark {
-    background-color: $allu-chip-dark;
-    color: $allu-text-white;
-}
-
-
-button.btn-gray {
-    background: $allu-button-gray;
-    color: $allu-text-black;
-}
-
-button.btn-gray:hover {
-    background: lighten($allu-button-gray, 5%);
-}
-
-button.btn-gray:active {
-    background: darken($allu-button-gray, 10%);
-}
-
 .single-line {
     white-space: nowrap;
 }

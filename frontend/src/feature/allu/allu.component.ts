@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ChangeDetectorRef, ApplicationRef} from '@angular/core';
 import {Router, NavigationEnd, Event} from '@angular/router';
 import {ViewEncapsulation} from '@angular/core';
 import {MaterializeUtil} from '../../util/materialize.util';

@@ -75,8 +75,8 @@ module.exports = {
     alias: {
       leafletcss: 'leaflet/dist/leaflet.css',
       leafletdrawcss: 'leaflet-draw/dist/leaflet.draw.css',
-      materializecss: 'materialize-css/dist/css/materialize.css',
-      materialize: 'materialize-css/dist/js/materialize.js',
+      materializecss: helpers.root('src/assets/materialize/materialize.css'),
+      materialize: helpers.root('src/assets/materialize/materialize.min.js'),
       filesaver: 'file-saver/FileSaver.js'
     }
 

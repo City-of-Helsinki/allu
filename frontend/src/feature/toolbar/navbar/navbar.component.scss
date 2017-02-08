@@ -16,13 +16,13 @@
     box-shadow: none;
     height: 100%;
     min-height: 100%;
-    background: $allu-primary-nav;
+    background: md-color($allu-primary, 500);
 
     a {
       display: inline-flex;
       align-items: center;
       height: 100%;
-      color: $allu-text-white;
+      color: md-contrast($allu-primary, 500);
       font-size: 14px;
       font-weight: 500;
       padding: 0 15px;
@@ -33,7 +33,7 @@
     }
 
     .active {
-      background: $allu-primary-nav-active;
+      background: md-color($allu-primary, 800);
     }
   }
 }

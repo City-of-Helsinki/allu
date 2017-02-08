@@ -1,75 +1,75 @@
 <div>
-  <div class=" search-bar">
+  <div class="search-bar">
     <h1>HAKU</h1>
     <form [formGroup]="queryForm">
       <div class="row">
-        <div class="input-field col m4 s6">
-          <input id="applicationId" type="text" formControlName="applicationId">
-          <label>Hakemuksen tunnus</label>
+        <div class="col m4 s6">
+          <md-input-container class="input-full-width">
+            <input md-input type="text" formControlName="applicationId" placeholder="Hakemuksen tunnus"/>
+          </md-input-container>
         </div>
-        <div class="input-field col m2 s6">
+        <div class="col m2 s6">
           <select formControlName="type" materialize="material_select" multiple>
             <option value="" selected disabled>Hakemuksen tyyppi</option>
             <option *ngFor="let option of applicationTypeStrings" [value]="option">{{ translations.application.type[option] }}</option>
           </select>
           <label>Hakemuksen tyyppi</label>
         </div>
-        <div class="input-field col m2 s6">
+        <div class="col m2 s6">
           <select formControlName="status" materialize="material_select" multiple>
             <option value="" selected disabled>Hakemuksen tila</option>
             <option *ngFor="let option of applicationStatusStrings" [value]="option">{{ translations.application.status[option] }}</option>
           </select>
-          <label>Hakemuksen tila</label>
         </div>
-        <div class="input-field col m2 s6">
+        <div class="col m2 s6">
           <select formControlName="districts" materialize="material_select" multiple>
             <option value="" disabled selected>Kaupunginosa</option>
             <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
           </select>
-          <label>Kaupunginosa</label>
         </div>
-        <div class="input-field col m2 s6">
+        <div class="col m2 s6">
           <select formControlName="handler" materialize="material_select" multiple>
             <option value="" selected disabled>Hakemuksen käsittelijä</option>
             <option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</option>
           </select>
-          <label>Hakemuksen käsittelijä</label>
         </div>
 
-        <div class="input-field col m4 s6">
-          <input id="address" type="text" formControlName="address">
-          <label>Osoite</label>
+        <div class="col m4 s6">
+          <md-input-container class="input-full-width">
+            <input md-input type="text" formControlName="address" placeholder="Osoite"/>
+          </md-input-container>
         </div>
-        <div class="input-field col m2 s6">
-          <input id="applicantName" type="text" formControlName="applicant">
-          <label>Hakija</label>
+        <div class="col m2 s6">
+          <md-input-container class="input-full-width">
+            <input md-input type="text" formControlName="applicant" placeholder="Hakija"/>
+          </md-input-container>
         </div>
-        <div class="input-field col m2 s6">
-          <input id="contactName" type="text" formControlName="contact">
-          <label>Yhteyshenkilö</label>
+        <div class="col m2 s6">
+          <md-input-container class="input-full-width">
+            <input md-input type="text" formControlName="contact" placeholder="Yhteyshenkilö"/>
+          </md-input-container>
         </div>
-        <div class="input-field col m2 s6">
-          <input placeholder="Vapaa tekstihaku" id="freeText" type="text" formControlName="freeText">
-          <label>Vapaa tekstihaku</label>
+        <div class="col m2 s6">
+          <md-input-container class="input-full-width">
+            <input md-input type="text" formControlName="freeText" placeholder="Vapaa tekstihaku"/>
+          </md-input-container>
         </div>
-        <div class="input-field col m1 s6">
-          <label for="startDate">Alkupvm</label>
-          <input id="startDate"
-                 formControlName="startTime"
-                 materialize="pickadate"
-                 [materializeParams]="pickadateParams"
-                 type="text"/>
+        <div class="col m1 s6">
+          <md-input-container class="input-full-width">
+            <input md-input type="text" formControlName="startTime" placeholder="Alkupvm"
+                   materialize="pickadate"
+                   [materializeParams]="pickadateParams"/>
+          </md-input-container>
         </div>
-        <div class="input-field col m1 s6">
-          <input id="endDate"
-                 formControlName="endTime"
-                 materialize="pickadate"
-                 [materializeParams]="pickadateParams"
-                 type="text"/>
-          <label for="endDate">Loppupvm</label>
+        <div class="col m1 s6">
+          <md-input-container class="input-full-width">
+            <input md-input type="text" formControlName="endTime" placeholder="Loppupvm"
+                   materialize="pickadate"
+                   [materializeParams]="pickadateParams"/>
+          </md-input-container>
         </div>
         <div class="col m12 s12">
-          <button (click)="search()" class="waves-effect waves-light btn">HAE</button>
+          <button (click)="search()" md-raised-button type="button" color="primary">HAE</button>
         </div>
       </div>
     </form>
@@ -78,14 +78,14 @@
   <div class="row">
     <div class="col s12">
       <div class="col s2 push-s10">
-        <a type="button" class="waves-effect waves-light btn" (click)="newApplication()">UUSI HAKEMUS</a>
+        <a md-raised-button type="button" color="primary" (click)="newApplication()">UUSI HAKEMUS</a>
       </div>
     </div>
   </div>
 
   <div class="row">
     <div class=" col s12">
-      <table class="striped responsive-table header" width="100%">
+      <table class="bordered responsive-table">
         <thead>
         <tr>
           <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>

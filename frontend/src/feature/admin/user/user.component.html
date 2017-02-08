@@ -4,25 +4,28 @@
         <h5>Käyttäjän tiedot</h5>
         <div class="row">
             <div class="col m12">
-                <div class="input-field col s12">
-                    <input id="userName" type="text" formControlName="userName" />
-                    <label for="userName">Käyttäjänimi</label>
+                <div class="col s12">
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="userName" placeholder="Käyttäjänimi"/>
+                    </md-input-container>
                 </div>
                 <div class="input-field col s12">
-                    <input id="realName" type="text" formControlName="realName" />
-                    <label for="realName">Nimi</label>
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="realName" placeholder="Nimi"/>
+                    </md-input-container>
                 </div>
                 <div class="input-field col s12">
-                    <input id="emailAddress" type="text" formControlName="emailAddress" />
-                    <label for="emailAddress">Sähköpostiosoite</label>
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
+                    </md-input-container>
                 </div>
                 <div class="input-field col s12">
-                    <input id="title" type="text" formControlName="title" />
-                    <label for="title">Tehtävänimike</label>
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="title" placeholder="Tehtävänimike"/>
+                    </md-input-container>
                 </div>
                 <div class="input-field col s12 checkbox-height">
-                    <input id="isActive" type="checkbox" formControlName="isActive" />
-                    <label for="isActive">Aktiivinen</label>
+                    <md-checkbox formControlName="isActive">Aktiivinen</md-checkbox>
                 </div>
                 <div class="input-field col s12">
                     <select formControlName="allowedApplicationTypes" materialize="material_select" multiple>
@@ -43,7 +46,7 @@
         </div>
         <div class="row">
             <div class="col m12">
-                <button type="submit" [disabled]="!userForm.valid || submitted" class="waves-effect waves-light btn">Tallenna</button>
+                <button md-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna</button>
             </div>
         </div>
     </form>

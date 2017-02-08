@@ -5,46 +5,55 @@
             <div class="row">
                 <div class="col m8">
                     <div class="col m12">
-                        <div class="input-field col m3">
-                            <input id="address" type="text" [ngModel]="location.postalAddress.streetAddress" [readonly]="readonly">
-                            <label for="address">Osoite</label>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" [ngModel]="location.postalAddress.streetAddress" [readonly]="readonly" placeholder="Osoite"/>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m9">
-                            <input id="info" type="text" [ngModel]="location.info" [readonly]="readonly">
-                            <label for="info">Lisätietoja paikasta</label>
+                        <div class="col m9">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" [ngModel]="location.info" [readonly]="readonly" placeholder="Lisätietoja paikasta" />
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m10">
-                            <input id="fixedArea" type="text" [ngModel]="area" [readonly]="readonly">
-                            <label for="fixedArea">Alue</label>
+                        <div class="col m10">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" [ngModel]="area" [readonly]="readonly" placeholder="Alue"/>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m2">
-                            <input id="section" type="text" [ngModel]="sections" [readonly]="readonly">
-                            <label for="section">Lohko(t)</label>
+                        <div class="col m2">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" [ngModel]="sections" [readonly]="readonly" placeholder="Lohko(t)"/>
+                            </md-input-container>
                         </div>
                     </div>
                     <div class="col m12">
-                        <div class="input-field col m3">
-                            <input id="area" type="text" [ngModel]="location.uiArea" [readonly]="readonly">
-                            <label for="area">Alueen pinta-ala</label>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" [ngModel]="location.uiArea" [readonly]="readonly" placeholder="Alueen pinta-ala" />
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m3">
-                            <input id="areaOverride" type="number" [ngModel]="application.location.areaOverride" [readonly]="readonly">
-                            <label for="area">Käsittelijän syöttämä pinta-ala</label>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" [ngModel]="application.location.areaOverride" [readonly]="readonly"
+                                       placeholder="Käsittelijän syöttämä pinta-ala" />
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m3">
-                            <input id="district" type="text" [readonly]="readonly"
-                                   value="{{districtName(application.location.cityDistrictId) | async}}">
-                            <label for="area">Kaupunginosa</label>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
+                                       [readonly]="readonly" placeholder="Kaupunginosa"/>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m3">
-                            <input id="cityDistrictIdOverride" type="text" [readonly]="readonly"
-                                   value="{{districtName(application.location.cityDistrictIdOverride) | async}}">
-                            <label>Käsittelijän valitsema kaupunginosa</label>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" value="{{districtName(application.location.cityDistrictIdOverride) | async}}"
+                                       [readonly]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
+                            </md-input-container>
                         </div>
                     </div>
                 </div>
                 <div class="col m2 offset-m2">
-                    <button type="button" class="waves-effect waves-light btn" [routerLink]="['/applications', application.id, 'location']">MUOKKAA</button>
+                    <button md-raised-button type="button" color="primary" [routerLink]="['/applications', application.id, 'location']">MUOKKAA</button>
                 </div>
                 <div class="col m12">
                     <div class="mapcontainer">

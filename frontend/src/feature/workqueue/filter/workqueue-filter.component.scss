@@ -10,11 +10,11 @@ h1 {
 }
 
 .search-bar {
-    background: $allu-search-bar-background;
+    background: md-color($allu-primary, 50);
     margin-bottom: 10px;
     padding-bottom: 10px;
 
     .item-bar {
-        background: $allu-search-bar-background;
+        background: md-color($allu-primary, 50);
     }
 }

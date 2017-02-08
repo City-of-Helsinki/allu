@@ -1,50 +1,67 @@
 <form [formGroup]="searchForm">
-  <div *ngIf="barType === 'SIMPLE'" class="col s12">
-      <div class="col s12 input-field search-box">
-        <i class="material-icons prefix clickable" (click)="showMore()">add</i>
+  <div *ngIf="barType === 'SIMPLE'" class="search-box">
+    <div class="input-with-addon">
+        <button (click)="showMore()" class="input-addon-item addon-btn"><md-icon>add</md-icon></button>
         <input id="address" type="text" value="{{addressSearch}}"
+               class="input-addon-field last-item"
                placeholder="Hae hankkeita osoitteella"
                [autocompletion]="addressSearchResults"
                (onSearchChange)="onAddressSearchChange($event)"
                (onSelection)="searchAddress($event)"/>
-      </div>
+    </div>
   </div>
 
-  <div *ngIf="barType === 'BAR'" class="col s12">
-    <div class="input-field col s8">
-      <input id="address" type="text" value="{{addressSearch}}"
-             [autocompletion]="addressSearchResults"
-             (onSearchChange)="onAddressSearchChange($event)"
-             (onSelection)="searchAddress($event)"/>
-      <label for="address">Kirjoita osoite</label>
+  <div *ngIf="barType === 'BAR'" class="row">
+    <div class="col s8">
+      <md-input-container class="input-full-width">
+        <input md-input type="text" value="{{addressSearch}}"
+               placeholder="Hae osoitteella"
+               [autocompletion]="addressSearchResults"
+               (onSearchChange)="onAddressSearchChange($event)"
+               (onSelection)="searchAddress($event)"/>
+      </md-input-container>
     </div>
 
-    <div class="input-field col s2">
-      <input type="text" id="startDate" formControlName="startDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
-      <label for="startDate">Alkupäivämäärä</label>
+    <div class="col s2">
+      <md-input-container class="input-full-width">
+        <input md-input type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
+               materialize="pickadate"
+               [materializeParams]="pickadateParams"/>
+      </md-input-container>
     </div>
-    <div class="input-field col s2">
-      <input type="text" id="endDate" formControlName="endDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
-      <label for="endDate">Loppupäivämäärä</label>
+    <div class="col s2">
+      <md-input-container class="input-full-width">
+        <input md-input type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
+               materialize="pickadate"
+               [materializeParams]="pickadateParams"/>
+      </md-input-container>
     </div>
   </div>
 
   <div *ngIf="barType === 'ADVANCED'">
-    <div class="input-field col s12">
-      <input id="address" type="text" value="{{addressSearch}}"
-             [autocompletion]="addressSearchResults"
-             (onSearchChange)="onAddressSearchChange($event)"
-             (onSelection)="searchAddress($event)"/>
-      <label for="address">Kirjoita osoite</label>
+    <div class="col s12">
+      <md-input-container class="input-full-width">
+        <input md-input type="text" value="{{addressSearch}}"
+               placeholder="Hae osoitteella"
+               [autocompletion]="addressSearchResults"
+               (onSearchChange)="onAddressSearchChange($event)"
+               (onSelection)="searchAddress($event)"/>
+      </md-input-container>
     </div>
 
     <div class="input-field col s4">
-      <input type="text" id="startDate" formControlName="startDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
-      <label for="startDate">Alkupäivämäärä</label>
+      <md-input-container class="input-full-width">
+        <input md-input type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
+               materialize="pickadate"
+               [materializeParams]="pickadateParams"/>
+      </md-input-container>
     </div>
     <div class="input-field col s4">
-      <input type="text" id="endDate" formControlName="endDate" materialize="pickadate" [materializeParams]="pickadateParams"/>
-      <label for="endDate">Loppupäivämäärä</label>
+      <md-input-container class="input-full-width">
+        <input md-input type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
+               materialize="pickadate"
+               [materializeParams]="pickadateParams"/>
+      </md-input-container>
     </div>
   </div>
 </form>

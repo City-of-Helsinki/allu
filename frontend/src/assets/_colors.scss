@@ -1,70 +1,87 @@
-// ----- Based on Angular Material 2 -----
-$app-link-text-color: #8f8f8f;
-$app-border-color: #e1e1e1;
-$app-text-color-light: rgba(255, 255, 255, .87);
-$app-text-black: rgba(0, 0, 0, 1);
+@import '~@angular/material/core/theming/all-theme';
+
+@include md-core();
+
+$black-87-opacity: rgba(black, 0.87);
+$white-87-opacity: rgba(white, 0.87);
+
+$allu-blue: (
+  50: #f1f7fc,
+  100: #b3d3ee,
+  200: #99bedc,
+  300: #5090c5,
+  400: #2682cf,
+  500: #006cc6,
+  600: #0064c0,
+  700: #0059b9,
+  800: #004fb1,
+  900: #00307f,
+  A100: #82b1ff,
+  A200: #448aff,
+  A400: #2979ff,
+  A700: #2962ff,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: white,
+    600: white,
+    700: white,
+    800: $white-87-opacity,
+    900: $white-87-opacity,
+    A100: $black-87-opacity,
+    A200: white,
+    A400: white,
+    A700: white,
+  )
+);
+
+$allu-orange: (
+  50: #fff8e1,
+  100: #ffecb3,
+  200: #ffe082,
+  300: #ffd54f,
+  400: #ffca28,
+  500: #ffc107,
+  600: #ffb300,
+  700: #ffa000,
+  800: #ff8f00,
+  900: #ff6f00,
+  A100: #ffc61e,
+  A200: #ffbe00,
+  A400: #ffb31e,
+  A700: #ffab11,
+  contrast: (
+    50: $black-87-opacity,
+    100: $black-87-opacity,
+    200: $black-87-opacity,
+    300: $black-87-opacity,
+    400: $black-87-opacity,
+    500: $black-87-opacity,
+    600: $black-87-opacity,
+    700: $black-87-opacity,
+    800: white,
+    900: white,
+    A100: $black-87-opacity,
+    A200: $black-87-opacity,
+    A400: $black-87-opacity,
+    A700: black,
+  )
+);
+
+$allu-primary: md-palette($allu-blue);
+$allu-accent:  md-palette($allu-orange, A200, A100, A400);
+$allu-warn:    md-palette($md-red);
+$allu-theme:   md-light-theme($allu-primary, $allu-accent, $allu-warn);
+
+$allu-background: md-color($allu-primary, 50);
 $allu-text-black: #1f1f1f;
-$allu-text-white: #eeeded;
-$allu-primary-nav: #00695c;
-$allu-primary-nav-active: #00796b;
-$allu-secondary-nav: #009688;
-$allu-tertiary-nav: #d8d8d8;
-$allu-demo-infobar-color: #eeeded;
-$allu-demo-infobar-text: #1f1f1f;
-$allu-background: #f1f1f1;
 $allu-card-background: #ffffff;
 $allu-card-shadow: #f5f5f5;
 $allu-field-border-ok: rgba(22, 150, 136, 1);
 $allu-field-text-ok: rgba(0, 0, 0, .87);
-$allu-field-text-disabled: #9e9e9e;
 $allu-field-border-readonly: #8f8f8f;
 $allu-chip-dark: #9b9b9b;
-$allu-chip-selected: #009688;
-$allu-button-gray: #c4c2c2;
 $allu-search-bar-background: #eeeded;
-$allu-field-error: #d50000;
-$allu-dropdown-border: #f5f5f5;
-$allu-item-highlight: #aad1f9;
-$allu-button-border: #009688;
-
-// Palette
-$app-blue: (
-  50: #dcefff,
-  100: #aad1f9,
-  200: #7bb8f5,
-  300: #4c9ef1,
-  400: #1c85ed,
-  500: #106cc8,
-  600: #0159a2,
-  700: #025ee9,
-  800: #014ab6,
-  900: #013583,
-  A100: #ff8a80,
-  A200: #ff5252,
-  A400: #ff1744,
-  A700: #d50000,
-);
-
-$demo: (
-  50: #222,
-);
-
-// Returns a color from a palette/color-map.
-// For example: md-color($app-blue, 500) will return #106cc8
-//
-// $color-map: a map of {key: color}.
-// $hue-key: key used to lookup the color in $colorMap. Defaults to 'default'
-//     If $hue-key is a number between 0 and 1, it will be treated as $opacity.
-// $opacity: the opacity to apply to the color.
-@function md-color($color-map, $hue-key: default, $opacity: 1) {
-  // If hueKey is a number between zero and one, then it actually contains an
-  // opacity value, so recall this function with the default hue and that given opacity.
-  @if type-of($hue-key) == number and $hue-key >= 0 and $hue-key <= 1 {
-    @return md-color($color-map, default, $hue-key)
-  }
-
-  $color: map-get($color-map, $hue-key);
-  $opacity: if(opacity($color) < 1, opacity($color), $opacity);
-
-  @return rgba($color, $opacity);
-}

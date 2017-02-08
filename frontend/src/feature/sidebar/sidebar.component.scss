@@ -6,7 +6,7 @@
     align-items: center;
 }
 .sidebar-item {
-    background: $allu-secondary-nav;
+    background: md-color($allu-primary, 500);
     box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
     border-radius: 2px;
     height: 96px;
@@ -19,7 +19,7 @@
     justify-content: center;
 
     a {
-        color: $allu-text-white;
+        color: md-contrast($allu-primary, 500);
     }
 
     a.active {
@@ -28,9 +28,9 @@
 }
 
 .sidebar-item.active {
-    background: $allu-background;
+    background: md-contrast($allu-primary, 500);
 
     a {
-        color: $allu-primary-nav;
+        color: md-color($allu-primary, 500);
     }
 }

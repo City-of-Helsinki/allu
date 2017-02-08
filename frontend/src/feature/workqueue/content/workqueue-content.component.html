@@ -1,11 +1,10 @@
 <div class="row">
     <div class=" col s12">
-        <table class="striped responsive-table header">
+        <table class="bordered responsive-table">
             <thead>
             <tr>
                 <th>
-                    <input type="checkbox" class="filled-in" [ngModel]="allSelected" (click)="checkAll()" id="all_none_checkbox" name="all_none_checkbox"/>
-                    <label for="all_none_checkbox"></label>
+                    <md-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></md-checkbox>
                 </th>
                 <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
                 <th>Hanke</th>
@@ -23,8 +22,7 @@
             <tbody>
             <tr *ngFor="let row of applicationRows" class="row-highlight" (click)="goToSummary($event.target.cellIndex, row.application)">
                 <td>
-                    <input type="checkbox" class="filled-in" [ngModel]="row.selected" (change)="checkSingle(row)" id="{{row.application.id}}" />
-                    <label [attr.for]="row.application.id"></label>
+                    <md-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></md-checkbox>
                 </td>
                 <td class="clickable">{{row.application.handler?.realName}}</td>
                 <td class="clickable">
@@ -43,7 +41,7 @@
                 <td class="clickable">{{row.application.extension.uiStartTime}}</td>
                 <td class="clickable">
                     <span *ngIf="row.application.comments.length">
-                        <button class="waves-effect waves-light btn" (click)="showComments(row.application.id)">NÄYTÄ</button>
+                        <button md-raised-button type="button" color="primary" (click)="showComments(row.application.id)">NÄYTÄ</button>
                     </span>
                 </td>
             </tr>

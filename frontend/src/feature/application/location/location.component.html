@@ -14,62 +14,63 @@
                      [startDate]="application.startTime" [endDate]="application.endTime"
                      (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
           <div class="col m12">
-            <div class="input-field col m12">
-              <input id="info" type="text" class="" [(ngModel)]="application.location.info">
-              <label for="info">Lisätietoja paikasta</label>
+            <md-input-container class="input-full-width">
+              <input md-input type="text" [(ngModel)]="application.location.info" placeholder="Lisätietoja paikasta"/>
+            </md-input-container>
+          </div>
+        </div>
+        <div class="row">
+          <div *ngIf="editedItemCount > 0" class="col m10">
+            <div class="input-field-info-text">
+              Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
             </div>
           </div>
-          <div class="info-field col m12">
-            <div *ngIf="editedItemCount > 0" class="col m10">
-              <div class="input-field-info-text">
-                Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
-              </div>
+          <div *ngIf="editedItemCount === 0">
+            <div class="col m6">
+              <md-select placeholder="Alue" class="input-full-width" [(ngModel)]="selectedArea" [disabled]="editedItemCount > 0">
+                <md-option value="">Ei tapahtuma-aluetta</md-option>
+                <md-option *ngFor="let area of areas" [value]="area">{{area}}</md-option>
+              </md-select>
             </div>
-            <div *ngIf="editedItemCount === 0">
-              <div class="input-field col m6">
-              <select [(ngModel)]="selectedArea" materialize="material_select" [materializeSelectOptions]="areas"
-                  [disabled]="editedItemCount > 0">
-                <option value="">Ei tapahtuma-aluetta</option>
-                <option *ngFor="let area of areas" [value]="area">{{area}}</option>
-              </select>
-              </div>
-              <div class="input-field col m2">
-                <div *ngIf="!noSections()">
-                  <select [(ngModel)]="selectedFxs" materialize="material_select"
-                          [materializeSelectOptions]="sections" multiple>
-                    <option value="" disabled>Ei lohkoa</option>
-                    <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
-                  </select>
-                </div>
+            <div class="col m2">
+              <div *ngIf="!noSections()">
+                <select [(ngModel)]="selectedFxs" materialize="material_select" [materializeSelectOptions]="sections" multiple>
+                  <option value="" disabled>Ei lohkoa</option>
+                  <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
+                </select>
               </div>
             </div>
           </div>
-          <div class="col m12">
-            <div class="input-field col m2">
-              <input id="area" type="number" class="validate" disabled="true" [(ngModel)]="application.location.uiArea">
-              <label for="area">Alueen pinta-ala</label>
-            </div>
-            <div class="input-field col m2">
-              <input id="areaOverride" type="number" class="validate" [(ngModel)]="application.location.areaOverride">
-              <label for="area">Käsittelijän syöttämä pinta-ala</label>
-            </div>
-            <div class="input-field col m2">
-              <input id="district" type="text" disabled="true" value="{{districtName(application.location.cityDistrictId) | async}}">
-              <label for="area">Kaupunginosa</label>
-            </div>
-            <div class="input-field col m2">
-              <select [(ngModel)]="application.location.cityDistrictIdOverride" materialize="material_select">
-                <option value="" selected>-</option>
-                <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
-              </select>
-              <label>Käsittelijän valitsema kaupunginosa</label>
-            </div>
+        </div>
+        <div class="row">
+          <div class="col m2">
+            <md-input-container class="input-full-width">
+              <input md-input disabled type="number" [(ngModel)]="application.location.uiArea" placeholder="Alueen pinta-ala"/>
+            </md-input-container>
           </div>
-          <div class="col m12">
-            <div class="mapcontainer">
-              <map [draw]="true" [edit]="selectedFixedLocations.length === 0" [selection]="true"
-                   [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
-            </div>
+          <div class="col m2">
+            <md-input-container class="input-full-width">
+              <input md-input disabled type="number" [(ngModel)]="application.location.areaOverride"
+                     placeholder="Käsittelijän syöttämä pinta-ala"/>
+            </md-input-container>
+          </div>
+          <div class="col m2">
+            <md-input-container class="input-full-width">
+              <input md-input disabled type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
+                     placeholder="Kaupunginosa"/>
+            </md-input-container>
+          </div>
+          <div class="col m2">
+            <md-select [(ngModel)]="application.location.cityDistrictIdOverride" class="input-full-width" placeholder="Käsittelijän valitsema kaupunginosa">
+              <md-option value="" selected>-</md-option>
+              <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
+            </md-select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="mapcontainer">
+            <map [draw]="true" [edit]="selectedFixedLocations.length === 0" [selection]="true"
+                 [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
           </div>
         </div>
       </md-card-content>
@@ -81,10 +82,10 @@
       <md-card-content>
         <div class="row">
           <div class="col m2">
-            <button class="waves-effect waves-light btn" [routerLink]="['/home']">PERUUTA</button>
+            <a md-raised-button type="button" color="primary" [routerLink]="['/home']">PERUUTA</a>
           </div>
           <div class="col m4 offset-m6">
-            <button class="waves-effect waves-light btn" (click)="save()">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
+            <a md-raised-button type="button" color="primary" (click)="save()">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</a>
           </div>
         </div>
       </md-card-content>

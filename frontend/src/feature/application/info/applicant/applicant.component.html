@@ -1,80 +1,91 @@
-<form [formGroup]="applicantForm" materialize>
+<form [formGroup]="applicantForm">
     <div class="col m6 loose">
         <md-card>
             <md-card-title>{{headerText}}</md-card-title>
             <md-card-content>
                 <div class="row form-group">
-                    <div class="input-field col m6">
-                        <select *ngIf="!readonly" formControlName="type"
-                                materialize="material_select">
-                            <option value="" disabled selected>Valitse hakijan tyyppi*</option>
-                            <option *ngFor="let type of applicantTypes" [value]="type">{{['applicant.type', type, 'name'] | translation}}</option>
-                        </select>
-                        <field-error [form]="applicantForm" field="type" hasError="required">{{'applicant.field.typeMissing' | translation}}</field-error>
-
-                        <div *ngIf="readonly">
-                            <input id="{{formName}}-applicantType" type="text" [readonly]="true"
-                                   value="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'name'] | translation}}">
-                            <label for="{{formName}}-applicantType">Hakijan tyyppi</label>
-                        </div>
+                    <div class="col m6">
+                        <md-select class="input-full-width" formControlName="type" placeholder="Valitse hakijan tyyppi*">
+                            <md-option *ngFor="let type of applicantTypes" [value]="type">
+                                {{['applicant.type', type, 'name'] | translation}}
+                            </md-option>
+                        </md-select>
+                        <small>
+                            <field-error [form]="applicantForm" field="type" hasError="required">{{'applicant.field.typeMissing' | translation}}</field-error>
+                        </small>
                     </div>
-                    <div class="input-field col m6">
-                        <input id="{{formName}}-country" type="text" formControlName="country">
-                        <label for="{{formName}}-country">Maa</label>
+                    <div class="col m6">
+                        <md-select class="input-full-width" formControlName="country" placeholder="Maa">
+                            <md-option value="Suomi">Suomi</md-option>
+                        </md-select>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="input-field col m8">
-                        <input id="{{formName}}-applicantName" type="text" formControlName="name">
-                        <label for="{{formName}}-applicantName">{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*</label>
-                        <field-error [form]="applicantForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>
-                        <field-error [form]="applicantForm" field="name" hasError="minlength">{{'applicant.field.nameShort' | translation}}</field-error>
+                    <div class="col m8">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" formControlName="name"
+                                   placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"/>
+                            <md-hint>
+                                <field-error [form]="applicantForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>
+                                <field-error [form]="applicantForm" field="name" hasError="minlength">{{'applicant.field.nameShort' | translation}}</field-error>
+                            </md-hint>
+                        </md-input-container>
                     </div>
-                    <div class="input-field col m4">
-                        <input id="{{formName}}-businessID" type="text" formControlName="registryKey">
-                        <label for="{{formName}}-businessID">{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'id'] | translation}}*</label>
-                        <field-error [form]="applicantForm" field="registryKey" hasError="required">{{'applicant.field.registryKeyMissing' | translation}}</field-error>
-                        <field-error [form]="applicantForm" field="registryKey" hasError="minlength">{{'applicant.field.registryKeyShort' | translation}}</field-error>
+                    <div class="col m4">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" formControlName="registryKey"
+                                   placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'id'] | translation}}*"/>
+                            <md-hint>
+                                <field-error [form]="applicantForm" field="registryKey" hasError="required">{{'applicant.field.registryKeyMissing' | translation}}</field-error>
+                                <field-error [form]="applicantForm" field="registryKey" hasError="minlength">{{'applicant.field.registryKeyShort' | translation}}</field-error>
+                            </md-hint>
+                        </md-input-container>
                     </div>
                 </div>
                 <div formGroupName="postalAddress" class="row form-group">
-                    <div class="input-field col m6">
-                        <input id="{{formName}}-applicantAddress" type="text" formControlName="streetAddress">
-                        <label for="{{formName}}-applicantAddress">Osoite</label>
+                    <div class="col m6">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" formControlName="streetAddress" placeholder="Osoite"/>
+                        </md-input-container>
                     </div>
-                    <div class="input-field col m3">
-                        <input id="{{formName}}-applicantPostalCode" type="text" formControlName="postalCode">
-                        <label for="{{formName}}-applicantPostalCode">Postinumero</label>
+                    <div class="col m3">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                        </md-input-container>
                     </div>
-                    <div class="input-field col m3">
-                        <input id="{{formName}}-applicantCity" type="text" formControlName="city">
-                        <label for="{{formName}}-applicantCity">Toimipaikka</label>
+                    <div class="col m3">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" formControlName="city" placeholder="Toimipaikka"/>
+                        </md-input-container>
                     </div>
                 </div>
                 <div class="row form-group">
-                    <div class="input-field col m4">
-                        <input id="{{formName}}-applicantPhone" type="text" formControlName="phone">
-                        <label for="{{formName}}-applicantPhone">Puhelin</label>
-                        <field-error [form]="applicantForm" field="email" hasError="required">{{'applicant.field.phoneShort' | translation}}</field-error>
+                    <div class="col m4">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" formControlName="phone" placeholder="Puhelin"/>
+                            <md-hint>
+                                <field-error [form]="applicantForm" field="email" hasError="required">{{'applicant.field.phoneShort' | translation}}</field-error>
+                            </md-hint>
+                        </md-input-container>
                     </div>
-                    <div class="input-field col m8">
-                        <input id="{{formName}}-applicantEmail" type="text" formControlName="email">
-                        <label for="{{formName}}-applicantEmail">Sähköpostiosoite</label>
-                        <field-error [form]="applicantForm" field="email" hasError="pattern">{{'applicant.field.invalidEmail' | translation}}</field-error>
+                    <div class="col m8">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                            <md-hint>
+                                <field-error [form]="applicantForm" field="email" hasError="pattern">{{'applicant.field.invalidEmail' | translation}}</field-error>
+                            </md-hint>
+                        </md-input-container>
                     </div>
                 </div>
                 <div *ngIf="!readonly" class="row form-group">
-                    <div class="col m6 height-fix-bottom" *ngIf="showCopyToBilling">
-                        <input type="checkbox" class="filled-in" id="{{formName}}-copyToBilling" />
-                        <label for="{{formName}}-copyToBilling">Kopioi tiedot laskutusosoitteeksi</label>
+                    <div class="col m6" *ngIf="showCopyToBilling">
+                        <md-checkbox>Kopioi tiedot laskutusosoitteeksi</md-checkbox>
                     </div>
                     <div class="col m6 height-fix-bottom" *ngIf="showRepresentative">
-                        <input type="checkbox" class="filled-in" formControlName="representative" id="{{formName}}-representative"/>
-                        <label for="{{formName}}-representative">Asiaa hoitaa asiamies</label>
+                        <md-checkbox formControlName="representative">Asiaa hoitaa asiamies</md-checkbox>
                     </div>
                     <div class="col m6 height-fix-bottom" *ngIf="showPropertyDeveloper">
-                        <input type="checkbox" class="filled-in" formControlName="propertyDeveloper" id="{{formName}}-propertyDeveloper"/>
-                        <label for="{{formName}}-propertyDeveloper">Hakemuksella on rakennuttaja</label>
+                        <md-checkbox formControlName="propertyDeveloper">Hakemuksella on rakennuttaja</md-checkbox>
                     </div>
                 </div>
             </md-card-content>

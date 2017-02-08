@@ -2,50 +2,44 @@
     <h1>TYÖJONO</h1>
     <form [formGroup]="queryForm">
         <div class="row">
-            <div class="input-field col s2">
+            <div class="col s2">
                 <select formControlName="type" materialize="material_select" multiple>
                     <option value="" selected disabled>Hakemuksen tyyppi</option>
                     <option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</option>
                 </select>
-                <label>Hakemuksen tyyppi</label>
             </div>
-            <div class="input-field col s2">
+            <div class="col s2">
                 <select formControlName="handler" materialize="material_select"
                         multiple [materializeSelectOptions]="queryForm.value.handler">
                     <option value="" selected disabled>Hakemuksen käsittelijä</option>
                     <option *ngFor="let handler of handlers" [value]="handler.userName">{{handler.realName}}</option>
                 </select>
-                <label>Hakemuksen käsittelijä</label>
             </div>
-            <div class="input-field col s2">
+            <div class="col s2">
                 <select formControlName="status" materialize="material_select" multiple>
                     <option value="" selected disabled>Hakemuksen tila</option>
                     <option *ngFor="let status of applicationStatuses" [value]="status">{{['application.status', status] | translation}}</option>
                 </select>
-                <label>Hakemuksen tila</label>
             </div>
-            <div class="input-field col s2">
+            <div class="col s2">
                 <select formControlName="districts" materialize="material_select" multiple>
                     <option value="" selected disabled>Kaupunginosa</option>
                     <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
                 </select>
-                <label>Kaupunginosa</label>
             </div>
-            <div class="input-field col s2">
-                <label for="startDate">Alkupäivämäärä</label>
-                <input id="startDate"
-                       formControlName="startTime"
-                       materialize="pickadate"
-                       [materializeParams]="pickadateParams"
-                       type="text" />
+            <div class="col s2">
+                <md-input-container class="input-full-width">
+                    <input md-input type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
+                           materialize="pickadate"
+                           [materializeParams]="pickadateParams"/>
+                </md-input-container>
             </div>
-            <div class="input-field col s2">
-                <input id="endDate"
-                       formControlName="endTime"
-                       materialize="pickadate"
-                       [materializeParams]="pickadateParams"
-                       type="text" />
-                <label for="endDate">Loppupäivämäärä</label>
+            <div class="col s2">
+                <md-input-container class="input-full-width">
+                    <input md-input type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
+                           materialize="pickadate"
+                           [materializeParams]="pickadateParams"/>
+                </md-input-container>
             </div>
             <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
                 <div class="item-bar-content">

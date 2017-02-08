@@ -3,7 +3,7 @@
     <span>{{identifier}}</span>
     <span *ngIf="status" class="application-status-text">{{['application.status', status] | translation}}</span>
   </span>
-  <div class="col m8 l10">
+  <div class="col m8 l10 progress-label">
     <div class="col s2 center-align">
       <p>Sijainti</p>
     </div>
@@ -23,7 +23,7 @@
       <p>Valvonta</p>
     </div>
     <div class="s12 progress">
-      <div class="determinate" [style.width.%]="width"></div>
+      <md-progress-bar color="accent" [value]="width"></md-progress-bar>
     </div>
   </div>
 </md-toolbar>

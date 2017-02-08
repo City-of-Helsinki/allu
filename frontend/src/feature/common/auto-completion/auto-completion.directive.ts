@@ -1,12 +1,12 @@
-import {Directive, Input, Output, EventEmitter, HostListener, Renderer,
+import {
+  Directive, Input, Output, EventEmitter, HostListener, Renderer,
   ViewContainerRef, OnInit, OnDestroy, ComponentRef, ComponentFactoryResolver
 } from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 
-import {AutoCompletionListComponent} from './auto-completion-list.component.ts';
+import {AutoCompletionListComponent} from './auto-completion-list.component';
 import {Some} from '../../../util/option';
-import {AutoCompletionEntry} from './auto-completion-entry';
 
 @Directive({
   selector: '[autocompletion]'

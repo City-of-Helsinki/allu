@@ -1,13 +1,10 @@
 <md-sidenav-layout>
     <md-sidenav mode="side" [opened]="sidenavOpen">
+        <div class="sidenav-header flex-container">
+            <h1 class="flex-item">Osoitehaku</h1>
+            <button class="btn-right" (click)="hideAdvancedSearch()"><md-icon>clear</md-icon></button>
+        </div>
         <div class="row">
-            <div class="col m10">
-                <h1>Osoitehaku</h1>
-            </div>
-            <div class="col m2">
-                <i class="material-icons small clickable" (click)="hideAdvancedSearch()">remove</i>
-            </div>
-
             <div class="col m12">
                 <searchbar barType="ADVANCED"></searchbar>
             </div>

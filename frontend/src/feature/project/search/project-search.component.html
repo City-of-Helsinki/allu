@@ -1,49 +1,52 @@
 <div>
-    <div class=" search-bar">
+    <div class="search-bar">
         <h1>HAKU</h1>
         <form [formGroup]="queryForm">
             <div class="row">
-                <div class="input-field col m3">
-                    <input id="ownerName" type="text" formControlName="ownerName">
-                    <label for="ownerName">Hankkeen omistaja</label>
+                <div class="col m3">
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="ownerName" placeholder="Hankkeen omistaja"/>
+                    </md-input-container>
                 </div>
-                <div class="input-field col m2">
-                    <input id="projectId" type="text" formControlName="id">
-                    <label for="projectId">Hankkeen tunnus</label>
+                <div class="col m2">
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="id" placeholder="Hankkeen tunnus"/>
+                    </md-input-container>
                 </div>
-                <div class="input-field col m2">
+                <div class="col m2">
                     <select formControlName="districts" materialize="material_select" multiple>
                         <option value="" disabled selected>Kaupunginosa</option>
                         <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
                     </select>
-                    <label>Kaupunginosa</label>
                 </div>
-                <div class="input-field col m1">
-                    <label for="startDate">Alkupvm</label>
-                    <input id="startDate"
-                           formControlName="startTime"
-                           materialize="pickadate"
-                           [materializeParams]="pickadateParams"
-                           type="text"/>
+                <div class="col m1">
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="startTime" placeholder="Alkupvm"
+                               materialize="pickadate"
+                               [materializeParams]="pickadateParams"/>
+                    </md-input-container>
                 </div>
-                <div class="input-field col m1">
-                    <input id="endDate"
-                           formControlName="endTime"
-                           materialize="pickadate"
-                           [materializeParams]="pickadateParams"
-                           type="text"/>
-                    <label for="endDate">Loppupvm</label>
+                <div class="col m1">
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="endTime" placeholder="Loppupvm"
+                               materialize="pickadate"
+                               [materializeParams]="pickadateParams"/>
+                    </md-input-container>
                 </div>
-                <div class="input-field col m3">
-                  <input id="creator" type="text" formControlName="creator">
-                  <label for="creator">Hankkeen lisääjä</label>
+                <div class="col m3">
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="creator" placeholder="Hankkeen lisääjä"/>
+                    </md-input-container>
                 </div>
-                <div class="input-field col input-field-checkbox m3">
-                    <input type="checkbox" class="filled-in" id="onlyActive" formControlName="onlyActive"/>
-                    <label for="onlyActive">Vain aktiiviset</label>
+            </div>
+            <div class="row">
+                <div class="col m3">
+                    <md-checkbox formControlName="onlyActive">Vain aktiiviset</md-checkbox>
                 </div>
+            </div>
+            <div class="row">
                 <div class="col m12 s12">
-                    <button (click)="search()" class="waves-effect waves-light btn">HAE</button>
+                    <button (click)="search()" md-raised-button type="button" color="primary">HAE</button>
                 </div>
             </div>
         </form>
@@ -51,13 +54,13 @@
     <div class="row">
         <div class="col s12">
             <div class="col s2 push-s10">
-                <a type="button" class="waves-effect waves-light btn" [routerLink]="['/projects/edit']">UUSI HANKE</a>
+                <button md-raised-button type="button" color="primary" [routerLink]="['/projects/edit']">UUSI HANKE</button>
             </div>
         </div>
     </div>
     <div class="row">
         <div class=" col s12">
-            <table class="striped responsive-table header">
+            <table class="bordered responsive-table">
                 <thead>
                 <tr>
                     <th>Lisääjä</th>

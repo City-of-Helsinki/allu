@@ -10,12 +10,11 @@ h1 {
 }
 
 .search-bar {
-  background: $allu-search-bar-background;
+  background: md-color($allu-primary, 50);
   margin-bottom: 10px;
   padding-bottom: 10px;
-  box-shadow: 0 0 3px 1px rgba(0, 0, 0, 0.2);
 }
 
 table.header {
-  background: $allu-search-bar-background;
+  background: md-color($allu-primary, 50);
 }

@@ -5,21 +5,20 @@
             <div class="row">
                 <div *ngIf="!readonly">
                     <div class="col m2 offset-m10">
-                        <button type="submit" class="waves-effect waves-light btn"
+                        <button type="submit" md-raised-button color="primary"
                                 [disabled]="submitPending || !form.valid">YHTEENVETOON</button>
                     </div>
                 </div>
 
                 <div *ngIf="readonly">
                     <div class="col m4">
-                        <button type="button" class="waves-effect waves-light btn" [routerLink]="['/applications', applicationId, 'edit']">MUOKKAA</button>
-                        <button type="button" class="waves-effect waves-light btn" (click)="copyApplicationAsNew()">KOPIOI UUDEKSI</button>
+                        <button md-raised-button type="button" color="primary" [routerLink]="['/applications', applicationId, 'edit']">MUOKKAA</button>
+                        <button md-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">KOPIOI UUDEKSI</button>
                     </div>
                     <div class="col m4 offset-m4">
-                        <button type="button" class="waves-effect waves-light btn" [routerLink]="['/']">ETUSIVULLE</button>
-                        <button type="button" class="waves-effect waves-light btn" [disabled]="true">TYÖJONOON</button>
-                        <button *ngIf="showDecision" type="button"
-                                class="waves-effect waves-light btn" [routerLink]="['/decision', applicationId]">PÄÄTTÄMISEEN</button>
+                        <button md-raised-button type="button" color="primary" [routerLink]="['/']">ETUSIVULLE</button>
+                        <button md-raised-button type="button" color="primary" [disabled]="true">TYÖJONOON</button>
+                        <button *ngIf="showDecision" md-raised-button type="button" color="primary" [routerLink]="['/decision', applicationId]">PÄÄTTÄMISEEN</button>
                     </div>
                 </div>
             </div>

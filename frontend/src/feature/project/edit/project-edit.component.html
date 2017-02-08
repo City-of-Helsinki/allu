@@ -5,44 +5,59 @@
                 <md-card-title>Hankkeen perustiedot</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
-                        <div class="input-field col m6">
-                            <input id="ownerName" type="text" [readonly]="readonly" formControlName="ownerName">
-                            <label for="ownerName">Hankkeen omistaja</label>
-                            <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{translations.project.field.ownerNameMissing}}</field-error>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" formControlName="ownerName" [readonly]="readonly" placeholder="Hankkeen omistaja"/>
+                                <md-hint>
+                                    <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{translations.project.field.ownerNameMissing}}</field-error>
+                                </md-hint>
+                            </md-input-container>
+
                         </div>
-                        <div class="input-field col m6">
-                            <input id="contactName" type="text" [readonly]="readonly" formControlName="contactName">
-                            <label for="contactName">Yhteyshenkilö</label>
-                            <field-error [form]="projectInfoForm" field="contactName" hasError="required">{{translations.project.field.contactNameMissing}}</field-error>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="input-field col m6">
-                            <input id="email" type="text" [readonly]="readonly" formControlName="email">
-                            <label for="email">Sähköposti</label>
-                            <field-error [form]="projectInfoForm" field="email" hasError="required">{{translations.common.field.emailInvalid}}</field-error>
-                        </div>
-                        <div class="input-field col m6">
-                            <input id="phone" type="text" [readonly]="readonly" formControlName="phone">
-                            <label for="phone">Puhelinnumero</label>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" formControlName="contactName" [readonly]="readonly" placeholder="Yhteyshenkilö"/>
+                                <md-hint>
+                                    <field-error [form]="projectInfoForm" field="contactName" hasError="required">{{translations.project.field.contactNameMissing}}</field-error>
+                                </md-hint>
+                            </md-input-container>
                         </div>
                     </div>
                     <div class="row form-group">
-                        <div class="input-field col m6">
-                            <input id="name" type="text" [readonly]="readonly" formControlName="name">
-                            <label for="name">Hankkeen nimi</label>
-                            <field-error [form]="projectInfoForm" field="name" hasError="required">{{translations.project.field.nameMissing}}</field-error>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" formControlName="email" [readonly]="readonly" placeholder="Sähköposti"/>
+                                <md-hint>
+                                    <field-error [form]="projectInfoForm" field="email" hasError="required">{{translations.common.field.emailInvalid}}</field-error>
+                                </md-hint>
+                            </md-input-container>
                         </div>
-                        <div class="input-field col m6">
-                            <input id="customerReference" type="text" [readonly]="readonly" formControlName="customerReference">
-                            <label for="customerReference">Asiakkaan viite/työnumero</label>
-                            <field-error [form]="projectInfoForm" field="customerReference" hasError="required">{{translations.project.field.customerReferenceMissing}}</field-error>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" formControlName="phone" [readonly]="readonly" placeholder="Puhelinnumero"/>
+                            </md-input-container>
                         </div>
                     </div>
                     <div class="row form-group">
-                        <div class="input-field col m12">
-                            <textarea id="additionalInfo" class="materialize-textarea" formControlName="additionalInfo" [readonly]="readonly"></textarea>
-                            <label for="additionalInfo">Lisätietoja</label>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" formControlName="name" [readonly]="readonly" placeholder="Hankkeen nimi"/>
+                                <md-hint>
+                                    <field-error [form]="projectInfoForm" field="name" hasError="required">{{translations.project.field.nameMissing}}</field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input md-input type="text" formControlName="customerReference" [readonly]="readonly" placeholder="Asiakkaan viite/työnumero"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <textarea md-input md-autosize formControlName="additionalInfo" [readonly]="readonly" placeholder="Lisätietoja"></textarea>
+                            </md-input-container>
                         </div>
                     </div>
                 </md-card-content>
@@ -57,13 +72,14 @@
             <md-card-title>Liittyvät hakemukset</md-card-title>
             <md-card-content>
                 <div class="row form-group">
-                    <div class="input-field col m3">
-                        <input type="text" id="identifier" [readonly]="readonly"
-                               [autocompletion]="matchingApplications"
-                               nameField="applicationId"
-                               (onSearchChange)="onIdentifierSearchChange($event)"
-                               (onSelection)="add($event)">
-                        <label for="identifier">Hae tunnuksella</label>
+                    <div class="col m3">
+                        <md-input-container class="input-full-width">
+                            <input md-input type="text" [readonly]="readonly"
+                                   [autocompletion]="matchingApplications"
+                                   nameField="applicationId"
+                                   (onSearchChange)="onIdentifierSearchChange($event)"
+                                   (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
+                        </md-input-container>
                     </div>
                 </div>
                 <div class="row">
@@ -115,15 +131,13 @@
                 <div class="row">
                     <div class="col m2">
                         <button type="submit" form="projectInfoForm" [disabled]="!projectInfoForm.valid"
-                                class="waves-effect waves-light btn">TALLENNA</button>
+                                md-raised-button color="primary">TALLENNA</button>
                     </div>
                     <div class="col m2">
-                        <button *ngIf="!projectInfoForm.value.id" md-raised-button
-                                class="waves-effect waves-light btn"
+                        <button *ngIf="!projectInfoForm.value.id" md-raised-button type="button" color="primary"
                                 [routerLink]="['/projectSearch']">PERUUTA</button>
 
-                        <button *ngIf="projectInfoForm.value.id" md-raised-button
-                                class="waves-effect waves-light btn"
+                        <button *ngIf="projectInfoForm.value.id" md-raised-button type="button" color="primary"
                                 [routerLink]="['/projects', projectInfoForm.value.id]">PERUUTA</button>
                     </div>
                 </div>

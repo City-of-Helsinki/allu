@@ -32,7 +32,7 @@ export class EventDetailsComponent implements OnInit {
   applicationId: number;
   meta: StructureMeta;
   billingTypes = EnumUtil.enumValues(BillingType);
-  eventNatures = EnumUtil.enumValues(EventNature);
+  eventNatures = EnumUtil.enumValues(EventNature).filter(nature => nature !== 'PROMOTION');
   noPriceReasons = EnumUtil.enumValues(NoPriceReason);
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;

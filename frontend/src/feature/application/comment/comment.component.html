@@ -10,11 +10,12 @@
     <md-card-content>
         <div *ngIf="edit">
             <div class="row no-left-pad">
-                <div class="input-field col m6">
-                    <select [(ngModel)]="comment.type" materialize="material_select">
-                        <option value="" disabled selected>Kommentin tyyppi</option>
-                        <option *ngFor="let type of commentTypes" [value]="type">{{['comment.type', type] | translation}}</option>
-                    </select>
+                <div class="col m4">
+                    <md-select placeholder="Kommentin tyyppi" class="input-full-width" [(ngModel)]="comment.type">
+                        <md-option *ngFor="let type of commentTypes" [value]="type">
+                            {{['comment.type', type] | translation}}
+                        </md-option>
+                    </md-select>
                 </div>
             </div>
         </div>
@@ -25,26 +26,26 @@
             </div>
         </div>
         <div class="row no-left-pad">
-            <div class="col s12 input-field" *ngIf="edit">
-                <textarea [(ngModel)]="comment.text" id="commentText" class="materialize-textarea"></textarea>
-                <label for="commentText">Kommentit</label>
-            </div>
-            <div class="col s12" *ngIf="!edit">
-                <p class="text-multiline">{{comment.text}}</p>
+            <div class="col s12">
+                <md-input-container class="input-full-width" *ngIf="edit">
+                    <textarea md-input md-autosize [(ngModel)]="comment.text" id="commentText" placeholder="Kommentit"></textarea>
+                </md-input-container>
+
+                <p *ngIf="!edit" class="text-multiline">{{comment.text}}</p>
             </div>
         </div>
         <div class="row" *ngIf="comment.id === undefined">
-            <button type="button" class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
-            <button type="button" class="waves-effect waves-light btn" (click)="remove()">PERUUTA</button>
+            <button md-raised-button type="button" color="primary" (click)="save()">TALLENNA</button>
+            <button md-raised-button type="button" color="primary" (click)="remove()">PERUUTA</button>
         </div>
         <div class="row" *ngIf="comment.id !== undefined">
             <div *ngIf="edit">
-                <button type="button" class="waves-effect waves-light btn" (click)="save()">TALLENNA</button>
-                <button type="button" class="waves-effect waves-light btn" (click)="cancel()">PERUUTA</button>
+                <button md-raised-button type="button" color="primary" (click)="save()">TALLENNA</button>
+                <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
             </div>
             <div *ngIf="!edit">
-                <button type="button" class="waves-effect waves-light btn" (click)="editComment()">MUOKKAA</button>
-                <button type="button" class="waves-effect waves-light btn" (click)="remove()">POISTA</button>
+                <button md-raised-button type="button" color="primary" (click)="editComment()">MUOKKAA</button>
+                <button md-raised-button type="button" color="primary" (click)="remove()">POISTA</button>
             </div>
         </div>
     </md-card-content>

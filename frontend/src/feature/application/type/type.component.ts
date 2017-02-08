@@ -8,7 +8,10 @@ import {ApplicationState} from '../../../service/application/application-state';
 
 @Component({
   selector: 'application-type',
-  template: require('./type.component.html')
+  template: require('./type.component.html'),
+  styles: [
+    require('./type.component.scss')
+  ]
 })
 export class TypeComponent implements OnInit {
   @Input() typeChangeDisabled = false;
@@ -40,6 +43,7 @@ export class TypeComponent implements OnInit {
     let appType = ApplicationType[value];
     this.type = applicationTypes.find(types => types.type === appType);
     this.kindNames = this.type.applicationKindNames;
+    this.applicationKind = undefined;
     this.onTypeChange.emit(appType);
   };
 

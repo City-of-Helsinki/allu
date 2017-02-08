@@ -12,64 +12,55 @@
                 <md-card-title>Johtoselvityksen tiedot</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
-                        <div class="input-field col m12">
-                            <textarea id="workDescription" class="materialize-textarea textarea"
-                                      formControlName="workDescription"></textarea>
-                            <label for="workDescription">Työn kuvaus</label>
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <textarea md-input md-autosize formControlName="workDescription" placeholder="Työn kuvaus"></textarea>
+                            </md-input-container>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div formGroupName="reportTimes">
-                            <div class="input-field col m3">
-                                <input *ngIf="!readonly" id="reportStartTime"
-                                       formControlName="startTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-
-                                <input *ngIf="readonly" id="reportStartTime" type="text" formControlName="startTime">
-                                <label for="reportStartTime">{{ meta?.getUiName('reportStartTime') }}*</label>
+                            <div class="col m3">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('reportStartTime') }}*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm" field="reportTimes" hasError="startBeforeEnd">
+                                            {{translations.application.cableReport.field.startBeforeEnd}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
                             </div>
-                            <div class="input-field col m3">
-                                <input *ngIf="!readonly" id="reportEndTime"
-                                       formControlName="endTime"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"
-                                       type="text"/>
-                                <input *ngIf="readonly" id="reportEndTime" type="text" formControlName="endTime">
-                                <label for="reportEndTime">{{ meta?.getUiName('reportEndTime') }}*</label>
+                            <div class="col m3">
+                                <md-input-container class="input-full-width">
+                                    <input md-input type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('reportEndTime') }}*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                </md-input-container>
                             </div>
-                            <field-error [form]="cableReportForm" field="reportTimes" hasError="startBeforeEnd">
-                                {{translations.application.cableReport.field.startBeforeEnd}}
-                            </field-error>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="cableSurveyRequired" formControlName="cableSurveyRequired"/>
-                            <label for="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</label>
+                            <md-checkbox formControlName="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</md-checkbox>
                         </div>
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="mapUpdated" formControlName="mapUpdated"/>
-                            <label for="mapUpdated">Kartta päivitetty</label>
+                            <md-checkbox formControlName="mapUpdated">Kartta päivitetty</md-checkbox>
                         </div>
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="propertyConnectivity" formControlName="propertyConnectivity"/>
-                            <label for="propertyConnectivity">Tontti- / Kiinteistöliitos</label>
+                            <md-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</md-checkbox>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="constructionWork" formControlName="constructionWork"/>
-                            <label for="constructionWork">Rakentaminen</label>
+                            <md-checkbox formControlName="constructionWork">Rakentaminen</md-checkbox>
                         </div>
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="maintenanceWork" formControlName="maintenanceWork"/>
-                            <label for="maintenanceWork">Kunnossapito</label>
+                            <md-checkbox formControlName="maintenanceWork">Kunnossapito</md-checkbox>
                         </div>
                         <div class="col m2">
-                            <input type="checkbox" class="filled-in" id="emergencyWork" formControlName="emergencyWork"/>
-                            <label for="emergencyWork">Hätätyö</label>
+                            <md-checkbox formControlName="emergencyWork">Hätätyö</md-checkbox>
                         </div>
                     </div>
                 </md-card-content>

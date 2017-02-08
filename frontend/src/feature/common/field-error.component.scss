@@ -1,8 +1,8 @@
 @import '../../assets/colors';
 
 :host {
-  small {
-    color: $allu-field-error;
+  span {
+    color: md-color($allu-warn, 500);
   }
 }
 

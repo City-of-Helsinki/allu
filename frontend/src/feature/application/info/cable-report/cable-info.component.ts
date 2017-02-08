@@ -31,7 +31,6 @@ export class CableInfoComponent {
   meta: StructureMeta;
   translations = translations;
   cableInfoTypes = EnumUtil.enumValues(CableInfoType);
-  selectedCableInfoTypes = [];
   defaultTexts: DefaultTextMap = {};
   dialogRef: MdDialogRef<DefaultTextModalComponent>;
 
@@ -44,8 +43,6 @@ export class CableInfoComponent {
   ngOnInit(): void {
     this.cableInfoEntries = Some(this.cableInfoEntries).orElse(this.fb.array([]));
     this.initForm();
-    this.selectedCableInfoTypes = this.cableReport.infoEntries.map(entry => entry.type);
-
     this.applicationHub.loadDefaultTexts().subscribe(texts => this.setDefaultTexts(texts));
 
     if (this.readonly) {
@@ -54,14 +51,13 @@ export class CableInfoComponent {
   }
 
   isSelected(type: string) {
-    return this.selectedCableInfoTypes.indexOf(CableInfoType[type]) >= 0;
+    return this.cableInfoForm.value.selectedCableInfoTypes.indexOf(CableInfoType[type]) >= 0;
   }
 
   addDefaultText(entryIndex: number, text: string) {
     let textValue = this.cableInfoEntries.at(entryIndex).get('additionalInfo').value;
     textValue = textValue + ' ' + text;
     this.cableInfoEntries.at(entryIndex).get('additionalInfo').patchValue(textValue);
-    MaterializeUtil.updateTextFields(50);
   }
 
   editDefaultTexts(type: string) {
@@ -83,6 +79,7 @@ export class CableInfoComponent {
 
   private initForm(): void {
     this.cableInfoForm = this.fb.group({
+      selectedCableInfoTypes: [this.cableReport.infoEntries.map(entry => entry.type)],
       mapExtractCount: [Some(this.cableReport.mapExtractCount).orElse(0), ComplexValidator.greaterThanOrEqual(0)]
     });
 

@@ -56,6 +56,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   checkSingle(row: ApplicationRow) {
     row.selected = !row.selected;
+    this.allSelected = this.applicationRows.every(r => r.selected);
     this.notifySelection();
   }
 
@@ -91,8 +92,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   private notifySelection() {
-    this.allSelected = this.applicationRows.every(row => row.selected);
-
     this.onSelectChange.emit(
       this.applicationRows
         .filter(row => row.selected)
