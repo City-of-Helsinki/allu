@@ -211,6 +211,11 @@
                             <column>update_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>application_change</table>
+                            <column>change_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
                         <!-- Map enumeration types -->
                         <!-- NOTE that if you add new kind of typeMapping type, you have to configure it in JdbcConfiguration class! -->
                         <typeMapping>
@@ -282,6 +287,16 @@
                             <table>default_attachment_application_type</table>
                             <column>application_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application_change</table>
+                            <column>change_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToChangeType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application_change</table>
+                            <column>new_status</column>
+                            <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>

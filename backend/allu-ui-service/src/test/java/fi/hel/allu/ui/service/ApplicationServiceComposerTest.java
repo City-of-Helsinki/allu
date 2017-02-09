@@ -2,19 +2,16 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.domain.QueryParameterJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -23,18 +20,11 @@ import java.util.List;
 public class ApplicationServiceComposerTest {
 
   private ApplicationServiceComposer applicationServiceComposer;
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private ApplicationMapper applicationMapper;
   private ApplicationService applicationService;
   private ProjectService projectService;
-  private ApplicantService applicantService;
-  private ContactService contactService;
-  private MetaService metaService;
-  private UserService userService;
-  private LocationService locationService;
   private SearchService searchService;
   private ApplicationJsonService applicationJsonService;
+  private ApplicationHistoryService applicationHistoryService;
 
   private static final int applicationId = 1;
   private static final int projectId = 12;
@@ -44,32 +34,18 @@ public class ApplicationServiceComposerTest {
 
   @Before
   public void init() {
-    applicationProperties = Mockito.mock(ApplicationProperties.class);
-    applicationMapper = Mockito.mock(ApplicationMapper.class);
     projectService = Mockito.mock(ProjectService.class);
     applicationService = Mockito.mock(ApplicationService.class);
-    applicantService = Mockito.mock(ApplicantService.class);
-    contactService = Mockito.mock(ContactService.class);
-    metaService = Mockito.mock(MetaService.class);
-    userService = Mockito.mock(UserService.class);
-    locationService = Mockito.mock(LocationService.class);
-    restTemplate = Mockito.mock(RestTemplate.class);
     searchService = Mockito.mock(SearchService.class);
     applicationJsonService = Mockito.mock(ApplicationJsonService.class);
+    applicationHistoryService = Mockito.mock(ApplicationHistoryService.class);
 
     applicationServiceComposer = new ApplicationServiceComposer(
-        applicationProperties,
-        restTemplate,
-        applicationMapper,
         applicationService,
         projectService,
-        applicantService,
-        contactService,
-        metaService,
-        userService,
-        locationService,
         searchService,
-        applicationJsonService
+        applicationJsonService,
+        applicationHistoryService
     );
   }
 

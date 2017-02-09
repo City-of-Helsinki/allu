@@ -541,6 +541,20 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for getting application's history
+   */
+  public String getApplicationHistoryUrl() {
+    return getModelServiceUrl("/applications/{applicationId}/history");
+  }
+
+  /**
+   * @return URL for posting new application's history item
+   */
+  public String getAddApplicationHistoryUrl() {
+    return getModelServiceUrl("/applications/{applicationId}/history");
+  }
+
+  /**
    * Returns username for the WFS service.
    *
    * @return username for the WFS service.

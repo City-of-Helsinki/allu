@@ -5,19 +5,13 @@ import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
-import fi.hel.allu.ui.mapper.ApplicationMapper;
+import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,45 +25,24 @@ public class ApplicationServiceComposer {
 
   private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceComposer.class);
 
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
-  private ApplicationMapper applicationMapper;
   private ApplicationService applicationService;
   private ProjectService projectService;
-  private ApplicantService applicantService;
-  private ContactService contactService;
-  private MetaService metaService;
-  private UserService userService;
-  private LocationService locationService;
   private SearchService searchService;
   private ApplicationJsonService applicationJsonService;
+  private ApplicationHistoryService applicationHistoryService;
 
   @Autowired
   public ApplicationServiceComposer(
-      ApplicationProperties applicationProperties,
-      RestTemplate restTemplate,
-      ApplicationMapper applicationMapper,
       ApplicationService applicationService,
       ProjectService projectService,
-      ApplicantService applicantService,
-      ContactService contactService,
-      MetaService metaService,
-      UserService userService,
-      LocationService locationService,
       SearchService searchService,
-      ApplicationJsonService applicationJsonService) {
-    this.applicationProperties = applicationProperties;
-    this.restTemplate = restTemplate;
-    this.applicationMapper = applicationMapper;
+      ApplicationJsonService applicationJsonService,
+      ApplicationHistoryService applicationHistoryService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
-    this.applicantService = applicantService;
-    this.contactService = contactService;
-    this.metaService = metaService;
-    this.userService = userService;
-    this.locationService = locationService;
     this.searchService = searchService;
     this.applicationJsonService = applicationJsonService;
+    this.applicationHistoryService = applicationHistoryService;
   }
 
   /**
@@ -101,6 +74,7 @@ public class ApplicationServiceComposer {
    */
   public ApplicationJson createApplication(ApplicationJson applicationJson) {
     ApplicationJson createdApplication = applicationService.createApplication(applicationJson);
+    applicationHistoryService.addApplicationCreated(createdApplication.getId());
     searchService.insertApplication(createdApplication);
     return createdApplication;
   }
@@ -113,10 +87,28 @@ public class ApplicationServiceComposer {
    * @return Updated application
    */
   public ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
+    ApplicationJson oldApplication = findApplicationById(applicationId);
+
+    ApplicationJson updatedApplication = updateApplicationNoTracking(applicationId, applicationJson);
+
+    applicationHistoryService.addFieldChanges(applicationId, oldApplication, updatedApplication);
+    return updatedApplication;
+  }
+
+  /**
+   * Update the given application by calling back-end service, don't track the
+   * changes in application history. To make sure application changes are
+   * tracked properly, the caller should handle them.
+   *
+   * @param applicationJson
+   *          application that is going to be updated
+   * @return Updated application
+   */
+  private ApplicationJson updateApplicationNoTracking(int applicationId, ApplicationJson applicationJson) {
     ApplicationJson updatedApplication = applicationService.updateApplication(applicationId, applicationJson);
     if (updatedApplication.getProject() != null) {
-      List<ProjectJson> updatedProjects =
-          projectService.updateProjectInformation(Collections.singletonList(updatedApplication.getProject().getId()));
+      List<ProjectJson> updatedProjects = projectService
+          .updateProjectInformation(Collections.singletonList(updatedApplication.getProject().getId()));
       searchService.updateProjects(updatedProjects);
     }
     searchService.updateApplications(Collections.singletonList(updatedApplication));
@@ -126,8 +118,10 @@ public class ApplicationServiceComposer {
   /**
    * Updates handler of given applications.
    *
-   * @param updatedHandler  Handler to be set.
-   * @param applicationIds  Applications to be updated.
+   * @param updatedHandler
+   *          Handler to be set.
+   * @param applicationIds
+   *          Applications to be updated.
    */
   public void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
     applicationService.updateApplicationHandler(updatedHandler, applicationIds);
@@ -172,7 +166,9 @@ public class ApplicationServiceComposer {
         applicationJson.getId(), applicationJson.getStatus(), applicationJson.getHandler());
     applicationJson.setStatus(newStatus);
     // TODO: add person who made the decision to somewhere
-    return updateApplication(applicationId, applicationJson);
+    ApplicationJson result = updateApplicationNoTracking(applicationId, applicationJson);
+    applicationHistoryService.addStatusChange(applicationId, newStatus);
+    return result;
   }
 
   /**
@@ -259,5 +255,16 @@ public class ApplicationServiceComposer {
    */
   public List<InvoiceRow> getInvoiceRows(int id) {
     return applicationService.getInvoiceRows(id);
+  }
+
+  /**
+   * Get change items for an application
+   *
+   * @param applicationId
+   *          application ID
+   * @return list of changes ordered from oldest to newest
+   */
+  public List<ApplicationChangeJson> getChanges(Integer applicationId) {
+    return applicationHistoryService.getChanges(applicationId);
   }
 }

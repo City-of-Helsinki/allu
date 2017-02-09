@@ -53,6 +53,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToAttachmentType());
     configuration.register(new StringToApplicationTagType());
     configuration.register(new StringToCommentType());
+    configuration.register(new StringToChangeType());
     return configuration;
   }
 

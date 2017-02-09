@@ -215,6 +215,21 @@ create table allu.application_comment (
     create_time timestamp with time zone not null,
     update_time timestamp with time zone not null);
 
+create table allu.application_change (
+    id serial primary key,
+    application_id integer references allu.application(id) not null,
+    user_id integer references allu.user(id) not null,
+    change_type text not null,   -- change type
+    new_status text,      -- new status if applicable
+    change_time timestamp with time zone not null);
+
+create table allu.application_field_change (
+    id serial primary key,
+    application_change_id integer references allu.application_change(id) not null,
+    field_name text not null,
+    old_value text,
+    new_value text);
+
 create SEQUENCE allu.KP_application_type_sequence START 1600001;
 create SEQUENCE allu.AL_application_type_sequence START 1600001;
 create SEQUENCE allu.LJ_application_type_sequence START 1600001;

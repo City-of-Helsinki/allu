@@ -3,10 +3,7 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.AttachmentInfoJson;
-import fi.hel.allu.ui.domain.LocationQueryJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.AttachmentService;
 import fi.hel.allu.ui.service.DecisionService;
@@ -81,6 +78,19 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
     return new ResponseEntity<>(applicationServiceComposer.search(queryParameters), HttpStatus.OK);
+  }
+
+  /**
+   * Get change items for an application
+   *
+   * @param applicationId
+   *          application ID
+   * @return list of changes ordered from oldest to newest
+   */
+  @RequestMapping(value = "/{applicationId}/history", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ApplicationChangeJson>> getChanges(@PathVariable Integer applicationId) {
+    return new ResponseEntity<>(applicationServiceComposer.getChanges(applicationId), HttpStatus.OK);
   }
 
   // Attachment API

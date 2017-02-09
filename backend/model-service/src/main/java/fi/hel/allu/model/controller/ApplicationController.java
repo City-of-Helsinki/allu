@@ -34,16 +34,19 @@ public class ApplicationController {
 
   private InvoiceRowDao invoiceRowDao;
 
+  private HistoryDao historyDao;
+
   @Autowired
   public ApplicationController(ApplicationService applicationService, AttachmentDao attachmentDao,
       LocationDao locationDao, DecisionDao decisionDao, CableInfoDao cableInfoDao,
-      InvoiceRowDao invoiceRowDao) {
+      InvoiceRowDao invoiceRowDao, HistoryDao historyDao) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.locationDao = locationDao;
     this.decisionDao = decisionDao;
     this.cableInfoDao = cableInfoDao;
     this.invoiceRowDao = invoiceRowDao;
+    this.historyDao = historyDao;
   }
 
   /**
@@ -247,5 +250,27 @@ public class ApplicationController {
   @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)
   public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
     return new ResponseEntity<>(invoiceRowDao.getInvoiceRows(id), HttpStatus.OK);
+  }
+
+  /**
+   * Get application history
+   *
+   * @param id the application's database ID
+   * @return list of changes for the application
+   */
+  @RequestMapping(value = "{id}/history", method = RequestMethod.GET)
+  public ResponseEntity<List<ApplicationChange>> getChanges(@PathVariable int id) {
+    return new ResponseEntity<>(historyDao.getApplicationHistory(id), HttpStatus.OK);
+  }
+
+  /**
+   * Add an application history entry
+   * @param id The application's database ID
+   * @param change the change item to add
+   */
+  @RequestMapping(value = "{id}/history", method = RequestMethod.POST)
+  public ResponseEntity<Void> addChange(@PathVariable int id, @RequestBody ApplicationChange change) {
+    historyDao.addApplicationChange(id, change);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }
