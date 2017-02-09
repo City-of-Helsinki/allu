@@ -54,6 +54,11 @@ function insert_project_data() {
   eval $CURRENT_REQUEST
 }
 
+function insert_default_attachment() {
+  echo Inserting default attachment data from $1
+  CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: multipart/form-data\" --header \"Authorization: Bearer $AUTH_KEY\" -F 'meta=[{\"type\":\"DEFAULT\",\"name\":\"Testivakioliite\",\"applicationTypes\":[\"EVENT\"]}];type=application/json' -F \"file=@$1\" http://$TARGET_HOST/api/admin/attachments &> /dev/null"
+  eval $CURRENT_REQUEST
+}
 function search_and_ignore() {
   echo Sending a search request..
   CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: application/json\" --header \"Authorization: Bearer $AUTH_KEY\" --data '{\"queryParameters\":[{\"fieldName\":\"handler\",\"fieldValue\":\"TestHandler\"}]}' http://$TARGET_HOST/api/applications/search &> /dev/null"
@@ -80,3 +85,5 @@ try_repeat insert_data "data/mannerheimintie_kaivuilmoitus.json"
 try_repeat insert_data "data/joulukuusimyynti.json"
 try_repeat insert_data "data/johtoselvitys.json"
 try_repeat insert_data "data/nordenskiold_liikennejarjestely.json"
+try_repeat login admin
+try_repeat insert_default_attachment "data/hernesaari.json"
