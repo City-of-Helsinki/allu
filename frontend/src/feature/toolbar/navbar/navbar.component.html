@@ -4,5 +4,4 @@
   <a [routerLink]="['/applications']" routerLinkActive="active">HAKEMUKSET</a>
   <a [routerLink]="['/projects']" routerLinkActive="active">HANKKEET</a>
   <a [routerLink]="['/admin']" routerLinkActive="active" *ngIf="hasRole('ROLE_ADMIN')">YLLÄPITO</a>
-  <a class="align-right" [routerLink]="['/logout']" routerLinkActive="active">KIRJAUDU ULOS</a>
 </nav>

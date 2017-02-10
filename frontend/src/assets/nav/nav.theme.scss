@@ -1,0 +1,56 @@
+@import '~@angular/material/core/theming/all-theme';
+
+@mixin nav-primary-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  .labels-solid .md-tab-label {
+    background-color: md-color($primary, 200);
+    color: md-contrast($primary, 500);
+  }
+
+  .labels-solid .md-tab-label.md-tab-label-active {
+    background-color: white;
+    color: md-color($primary, 500);
+  }
+
+  a {
+    color: md-contrast($primary, 500);
+  }
+
+  nav {
+    background: md-color($primary, 500);
+
+    .active {
+      background: md-color($primary, 900);
+    }
+  }
+
+  .nav-controls {
+    margin-left: auto;
+  }
+}
+
+@mixin nav-secondary-theme($theme) {
+  $primary: map-get($theme, primary);
+  $accent: map-get($theme, accent);
+
+  nav.nav-bar-secondary {
+    background-color: md-color($primary, 900);
+    color: md-contrast($primary, 900);
+
+    a {
+      color: md-contrast($primary, 900);
+    }
+
+    .active {
+      color: md-contrast($primary, 500);
+      border-bottom: 2px solid md-color($accent, A100);
+    }
+  }
+}
+
+@mixin nav-theme($theme) {
+  @include nav-primary-theme($theme);
+  @include nav-secondary-theme($theme);
+}

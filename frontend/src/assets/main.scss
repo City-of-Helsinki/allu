@@ -4,13 +4,14 @@
 @import 'map';
 @import "inputs";
 @import "buttons";
-@import "tabs";
+@import "nav/nav";
 @import '../feature/common/auto-completion/auto-completion-list.component.theme';
 
 // Theme components
 @include angular-material-theme($allu-theme);
 @include auto-completion-list-theme($allu-theme);
 @include placeholder-text();
+@include nav-theme($allu-theme);
 
 // Reset
 html,

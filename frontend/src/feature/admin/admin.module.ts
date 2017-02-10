@@ -7,7 +7,8 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {adminRoutes} from './admin.routing';
 import {UserListComponent} from './user/user-list.component';
 import {UserComponent} from './user/user.component';
-import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
+import {AdminComponent} from './admin.component';
+import {AdminNavComponent} from './nav/admin-nav.component';
 
 @NgModule({
   imports: [
@@ -18,6 +19,8 @@ import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
     MdCardModule
   ],
   declarations: [
+    AdminComponent,
+    AdminNavComponent,
     UserListComponent,
     UserComponent
   ],

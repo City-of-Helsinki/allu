@@ -1,0 +1,63 @@
+@import "nav.theme";
+
+nav {
+  display: flex;
+  align-items:center;
+  justify-content: flex-start;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  height: 100%;
+  min-height: 100%;
+  width: 100%;
+  min-width: 100%;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    font-size: 16px;
+    font-weight: 500;
+    padding: 0 30px;
+  }
+
+  .align-right {
+    margin-left: auto;
+  }
+}
+
+.nav-bar-row {
+  height: 50px;
+  font-size: 16px;
+}
+
+nav.nav-bar-secondary {
+  justify-content: center;
+
+  a {
+    font-size: 14px;
+  }
+}
+
+.labels-solid .md-tab-label {
+  margin: 0 5px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  font-size: 16px !important;
+  font-weight: bold !important;
+}
+
+.labels-solid .md-tab-label.md-tab-label-active {
+  box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
+}
+
+.labels-end .md-tab-list {
+  justify-content: flex-end;
+  padding-right:10%;
+}
+
+.work-queue-action-buttons {
+  padding: 0 0.75rem;
+  position: relative;
+  top: 35px;
+}

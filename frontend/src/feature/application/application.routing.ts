@@ -1,6 +1,6 @@
 import {Routes} from '@angular/router';
 
-import {ApplicationComponent} from './info/application.component.ts';
+import {ApplicationComponent} from './info/application.component';
 import {LocationComponent} from '../application/location/location.component';
 import {AuthGuard} from '../../feature/login/auth-guard.service';
 import {ApplicationResolve} from './application-resolve';
@@ -10,7 +10,7 @@ import {AttachmentsComponent} from './attachment/attachments.component';
 import {CommentsComponent} from './comment/comments.component';
 
 export const applicationTabs: Routes = [
-  { path: '', redirectTo: 'info' },
+  { path: '', redirectTo: 'info', pathMatch: 'full' },
   { path: 'info', component: ApplicationInfoComponent, canActivate: [AuthGuard] },
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard] },
   { path: 'comments', component: CommentsComponent, canActivate: [AuthGuard] }
