@@ -7,7 +7,7 @@ export enum ApplicationType {
   AREA_RENTAL, // Aluevuokraus
   TEMPORARY_TRAFFIC_ARRANGEMENTS, // Väliaikainen liikennejärjestely
   CABLE_REPORT, // Johtoselvitykset
-  PLACEMENT_PERMIT, // Sijoitusluvat
+  PLACEMENT_CONTRACT, // Sijoitusopimukset
   EVENT, // Tapahtuma
   SHORT_TERM_RENTAL, // Lyhytaikainen maanvuokraus
   NOTE // Muistiinpano
@@ -112,7 +112,7 @@ export const temporaryTrafficArrangements = new ApplicationTypeStructure(
 
 export const cableReport = new ApplicationTypeStructure(ApplicationType.CABLE_REPORT, commonApplicationKinds);
 
-export const placementPermit = new ApplicationTypeStructure(ApplicationType.PLACEMENT_PERMIT, commonApplicationKinds);
+export const placementContract = new ApplicationTypeStructure(ApplicationType.PLACEMENT_CONTRACT, commonApplicationKinds);
 
 export const event = new ApplicationTypeStructure(ApplicationType.EVENT, [
   new ApplicationKindStructure(ApplicationKind.PROMOTION),
@@ -157,7 +157,7 @@ export const applicationTypes: Array<ApplicationTypeStructure> = [
   areaRental,
   temporaryTrafficArrangements,
   cableReport,
-  placementPermit,
+  placementContract,
   event,
   shortTermRental,
   note

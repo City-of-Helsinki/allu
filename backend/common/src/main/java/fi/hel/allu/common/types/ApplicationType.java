@@ -9,7 +9,7 @@ public enum ApplicationType {
   AREA_RENTAL, // Aluevuokraus
   TEMPORARY_TRAFFIC_ARRANGEMENTS, // Väliaikainen liikennejärjestely
   CABLE_REPORT, // Johtoselvitykset
-  PLACEMENT_PERMIT, // Sijoitusluvat
+  PLACEMENT_CONTRACT, // Sijoitussopimus
   EVENT, // Tapahtuma
   SHORT_TERM_RENTAL, // Lyhytaikainen maanvuokraus
   NOTE // Muistiinpano

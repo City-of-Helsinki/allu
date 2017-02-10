@@ -185,7 +185,8 @@ public class ApplicationMapper {
     case NOTE:
       applicationJson.setExtension(createNoteJson((Note) application.getExtension()));
       break;
-    case PLACEMENT_PERMIT:
+    case PLACEMENT_CONTRACT:
+      applicationJson.setExtension(createPlacementContractJson((PlacementContract) application.getExtension()));
       break;
     case TEMPORARY_TRAFFIC_ARRANGEMENTS:
       applicationJson.setExtension(createTrafficArrangementJson((TrafficArrangement) application.getExtension()));
@@ -253,7 +254,8 @@ public class ApplicationMapper {
     case NOTE:
       applicationExtension = createNoteModel((NoteJson) applicationJson.getExtension());
       break;
-    case PLACEMENT_PERMIT:
+    case PLACEMENT_CONTRACT:
+      applicationExtension = createPlacementContractModel((PlacementContractJson) applicationJson.getExtension());
       break;
     case TEMPORARY_TRAFFIC_ARRANGEMENTS:
       applicationExtension = createTrafficArrangementModel((TrafficArrangementJson) applicationJson.getExtension());
@@ -488,6 +490,26 @@ public class ApplicationMapper {
     note.setDescription(noteJson.getDescription());
     note.setReoccurring(noteJson.getReoccurring());
     return note;
+  }
+
+  private ApplicationExtensionJson createPlacementContractJson(PlacementContract placementContract) {
+    PlacementContractJson placementContractJson = new PlacementContractJson();
+    placementContractJson.setRepresentative(createApplicantJson(placementContract.getRepresentative()));
+    placementContractJson.setContact(createContactJson(placementContract.getContact()));
+    placementContractJson.setDiaryNumber(placementContract.getDiaryNumber());
+    placementContractJson.setAdditionalInfo(placementContract.getAdditionalInfo());
+    placementContractJson.setGeneralTerms(placementContract.getGeneralTerms());
+    return placementContractJson;
+  }
+
+  private ApplicationExtension createPlacementContractModel(PlacementContractJson placementContractJson) {
+    PlacementContract placementContract = new PlacementContract();
+    placementContract.setRepresentative(createApplicantModel(placementContractJson.getRepresentative()));
+    placementContract.setContact(createContactModel(placementContractJson.getContact()));
+    placementContract.setDiaryNumber(placementContractJson.getDiaryNumber());
+    placementContract.setAdditionalInfo(placementContractJson.getAdditionalInfo());
+    placementContract.setGeneralTerms(placementContractJson.getGeneralTerms());
+    return placementContract;
   }
 
   private TrafficArrangementJson createTrafficArrangementJson(TrafficArrangement trafficArrangement) {

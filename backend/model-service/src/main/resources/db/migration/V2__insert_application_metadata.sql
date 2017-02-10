@@ -186,3 +186,8 @@ INSERT INTO allu.structure_meta (application_type, version) VALUES ('NOTE', 1);
 -- Temporary traffic arrangements metadata
 ------------------------------------------
 INSERT INTO allu.structure_meta (application_type, version) VALUES ('TEMPORARY_TRAFFIC_ARRANGEMENTS', 1);
+
+------------------------------------------
+-- Placement contract metadata
+------------------------------------------
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('PLACEMENT_CONTRACT', 1);
