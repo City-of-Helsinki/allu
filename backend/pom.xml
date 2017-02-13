@@ -20,12 +20,16 @@
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skip.frontend>true</skip.frontend>
+        <!-- Note that the version of Spring Framework should be equal to the version used by Spring Boot.
+            Check documentation http://docs.spring.io/spring-boot/docs/1.3.5.RELEASE/reference/htmlsingle/#appendix-dependency-versions -->
+        <springframework.version>4.2.6.RELEASE</springframework.version>
         <node.version>v5.5.0</node.version>
         <npm.version>3.3.12</npm.version>
     </properties>
 
     <modules>
         <module>common</module>
+        <module>mail</module>
         <module>model-domain</module>
         <module>model-querydsl-support</module>
         <module>model-service</module>
@@ -46,6 +50,18 @@
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.18.1</version>
+                <configuration>
+                    <includes>
+                        <!-- Also Spec i.e. Spectrum tests are considered as tests -->
+                        <include>**/*Test.java</include>
+                        <include>**/*Spec.java</include>
+                    </includes>
                 </configuration>
             </plugin>
             <plugin>
@@ -101,16 +117,17 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
         </dependency>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.greghaskins</groupId>
+            <artifactId>spectrum</artifactId>
+            <version>1.0.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
