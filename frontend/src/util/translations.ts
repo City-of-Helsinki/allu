@@ -25,7 +25,7 @@ export const translations = {
       EXCAVATION_ANNOUNCEMENT: 'Kaivuilmoitus',
       AREA_RENTAL: 'Aluevuokraus',
       TEMPORARY_TRAFFIC_ARRANGEMENTS: 'Tilapäinen liikennejärjestely',
-      PLACEMENT_PERMIT: 'Sijoituslupa',
+      PLACEMENT_CONTRACT: 'Sijoitussopimus',
       NOTE: 'Muistiinpano'
     },
     kind: {

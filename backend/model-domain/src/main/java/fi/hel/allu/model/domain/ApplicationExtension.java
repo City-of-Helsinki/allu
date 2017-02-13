@@ -19,7 +19,8 @@ import java.util.List;
     @JsonSubTypes.Type(value = CableReport.class, name = "CABLE_REPORT"),
     @JsonSubTypes.Type(value = ExcavationAnnouncement.class, name = "EXCAVATION_ANNOUNCEMENT"),
     @JsonSubTypes.Type(value = Note.class, name = "NOTE"),
-    @JsonSubTypes.Type(value = TrafficArrangement.class, name = "TEMPORARY_TRAFFIC_ARRANGEMENTS")
+    @JsonSubTypes.Type(value = TrafficArrangement.class, name = "TEMPORARY_TRAFFIC_ARRANGEMENTS"),
+    @JsonSubTypes.Type(value = PlacementContract.class, name = "PLACEMENT_CONTRACT")
 })
 public abstract class ApplicationExtension {
 

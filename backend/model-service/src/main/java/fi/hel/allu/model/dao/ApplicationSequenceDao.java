@@ -43,7 +43,7 @@ public class ApplicationSequenceDao {
     /** In Finnish: johtoselvitys */
     JS(ApplicationType.CABLE_REPORT),
     /** In Finnish: sijoituslupa */
-    SL(ApplicationType.PLACEMENT_PERMIT),
+    SL(ApplicationType.PLACEMENT_CONTRACT),
     /** In Finnish: tapahtumalupa */
     TP(ApplicationType.EVENT),
     /** In Finnish: lyhytaikainen maanvuokraus */
