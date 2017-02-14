@@ -76,7 +76,8 @@ export class TypeComponent implements OnInit {
     return [
         ApplicationType.CABLE_REPORT,
         ApplicationType.EXCAVATION_ANNOUNCEMENT,
-        ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS
+        ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
+        ApplicationType.PLACEMENT_CONTRACT
       ].indexOf(type) >= 0;
   }
 }

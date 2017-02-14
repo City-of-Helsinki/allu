@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {ProgressStep} from '../progressbar/progressbar.component';
 import {Application} from '../../../model/application/application';
-import {MapUtil} from '../../../service/map/map.util.ts';
+import {MapUtil} from '../../../service/map/map.util';
 import {SearchbarFilter} from '../../../service/searchbar-filter';
 import {MapHub} from '../../../service/map/map-hub';
 import {FixedLocation} from '../../../model/common/fixed-location';
@@ -22,6 +22,7 @@ import {ExcavationAnnouncement} from '../../../model/application/excavation-anno
 import {Note} from '../../../model/application/note/note';
 import {CityDistrict} from '../../../model/common/city-district';
 import {TrafficArrangement} from '../../../model/application/traffic-arrangement/traffic-arrangement';
+import {PlacementContract} from '../../../model/application/placement-contract/placement-contract';
 
 @Component({
   selector: 'type',
@@ -200,6 +201,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         return new Note();
       case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
         return new TrafficArrangement();
+      case ApplicationType.PLACEMENT_CONTRACT:
+        return new PlacementContract();
       default:
         throw new Error('Extension for ' + ApplicationType[type] + ' not implemented yet');
     }

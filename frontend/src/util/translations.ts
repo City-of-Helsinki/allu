@@ -136,6 +136,13 @@ export const translations = {
       nameMissing: 'Tapahtuman nimi puuttuu',
       nameShort: 'Tapahtuman nimi on liian lyhyt'
     },
+    common: {
+      field: {
+        validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
+        validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
+        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
+      }
+    },
     event: {
       billingType: {
         CASH: 'Käteinen',
