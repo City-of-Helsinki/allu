@@ -107,8 +107,10 @@ export const excavationAnnouncement = new ApplicationTypeStructure(ApplicationTy
 
 export const areaRental = new ApplicationTypeStructure(ApplicationType.AREA_RENTAL, []);
 
-export const temporaryTrafficArrangements = new ApplicationTypeStructure(
-  ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, commonApplicationKinds);
+export const temporaryTrafficArrangements = new ApplicationTypeStructure(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, [
+  new ApplicationKindStructure(ApplicationKind.PUBLIC_EVENT),
+  new ApplicationKindStructure(ApplicationKind.OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT)
+]);
 
 export const cableReport = new ApplicationTypeStructure(ApplicationType.CABLE_REPORT, commonApplicationKinds);
 
