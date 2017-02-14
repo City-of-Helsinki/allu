@@ -476,3 +476,14 @@ export const findTranslation = (path: string | Array<string>): string => {
     .map(pathParts => pathParts.reduce((acc: any, cur: any) => Some(acc[cur]).orElse(pathParts.join('.')) , translations))
     .orElse('');
 };
+
+/**
+ * Translates array of key values with given prefix to array of translated values
+ *
+ * @param pathPrefix prefix for all keys
+ * @param pathValues values to be translated
+ * @returns {string[]} array of translated values from prefix + value for all values
+ */
+export const translateArray = (pathPrefix: string, pathValues: Array<string>): Array<string> => {
+  return pathValues.map(val => findTranslation([pathPrefix, val]));
+};

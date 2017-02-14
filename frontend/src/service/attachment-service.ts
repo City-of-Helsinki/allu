@@ -7,20 +7,74 @@ import {AttachmentInfo} from '../model/application/attachment/attachment-info';
 import {HttpUtil, HttpResponse} from '../util/http.util';
 import {ResponseContentType} from '@angular/http';
 import {AttachmentInfoMapper} from './mapper/attachment-info-mapper';
+import {DefaultAttachmentInfo} from '../model/application/attachment/default-attachment-info';
+import {DefaultAttachmentInfoMapper} from './mapper/default-attachment-info-mapper';
+
+const uploadUrl = '/api/applications/appId/attachments';
+const attachmentUrl = '/api/applications/attachments/';
+const defaultAttachmentUrl = '/api/admin/attachments';
 
 @Injectable()
 export class AttachmentService {
 
-  private static uploadUrl = '/api/applications/appId/attachments';
-  private static attachmentUrl = '/api/applications/attachments/';
-
   constructor(private authHttp: AuthHttp) {}
 
   public uploadFiles(applicationId: number, attachments: AttachmentInfo[]): Observable<Array<AttachmentInfo>> {
-    let uploadSubject = new Subject<Array<AttachmentInfo>>();
+    let url = uploadUrl.replace('appId', String(applicationId));
+    return this.upload(url, attachments);
+  }
 
+  remove(attachmentId: number): Observable<HttpResponse> {
+    let url = attachmentUrl + attachmentId;
+    return this.authHttp.delete(url)
+      .map(response => HttpUtil.extractHttpResponse(response));
+  }
+
+  download(attachmentId: number, name: string): Observable<File> {
+    let url = attachmentUrl + attachmentId + '/data';
+    let options = {responseType: ResponseContentType.Blob };
+    return this.authHttp.get(url, options)
+      .map(response => new File([response.blob()], name));
+  }
+
+  getDefaultAttachmentInfo(id: number): Observable<DefaultAttachmentInfo> {
+    let url = defaultAttachmentUrl + '/' + id;
+    return this.authHttp.get(url)
+      .map(response => response.json())
+      .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
+  }
+
+  getDefaultAttachmentInfos(): Observable<Array<DefaultAttachmentInfo>> {
+    return this.authHttp.get(defaultAttachmentUrl)
+      .map(response => response.json())
+      .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
+  }
+
+  saveDefaultAttachments(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
+    if (attachment.id) {
+      return this.updateDefaultAttachmentInfo(attachment);
+    } else {
+      return this.upload(defaultAttachmentUrl, [attachment]).map(results => results[0]);
+    }
+  }
+
+  updateDefaultAttachmentInfo(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
+    let url = defaultAttachmentUrl + '/' + attachment.id;
+    return this.authHttp.put(url, attachment)
+      .map(response => response.json())
+      .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
+  }
+
+  removeDefaultAttachment(id: number): Observable<HttpResponse> {
+    let url = defaultAttachmentUrl + '/' + id;
+    return this.authHttp.delete(url)
+      .map(response => HttpUtil.extractHttpResponse(response));
+  }
+
+  private upload<T extends AttachmentInfo>(url: string, attachments: T[]): Observable<Array<T>> {
+    let uploadSubject = new Subject<Array<AttachmentInfo>>();
     if (attachments && attachments.length !== 0) {
-      let url = AttachmentService.uploadUrl.replace('appId', String(applicationId));
+
       let uploader = new ExtendedFileUploader({
         url: url,
         authToken: 'Bearer ' + localStorage.getItem('jwt')}, attachments);
@@ -41,19 +95,6 @@ export class AttachmentService {
     }
 
     return uploadSubject.asObservable();
-  }
-
-  remove(attachmentId: number): Observable<HttpResponse> {
-    let url = AttachmentService.attachmentUrl + attachmentId;
-    return this.authHttp.delete(url)
-      .map(response => HttpUtil.extractHttpResponse(response));
-  }
-
-  download(attachmentId: number, name: string): Observable<File> {
-    let url = AttachmentService.attachmentUrl + attachmentId + '/data';
-    let options = {responseType: ResponseContentType.Blob };
-    return this.authHttp.get(url, options)
-      .map(response => new File([response.blob()], name));
   }
 }
 

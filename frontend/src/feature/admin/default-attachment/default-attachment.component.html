@@ -1,0 +1,58 @@
+<md-card>
+    <md-card-title>
+        <h1>Vakioliite</h1>
+    </md-card-title>
+    <md-card-content>
+        <form [formGroup]="attachmentForm">
+            <div class="row">
+                <div class="col m5">
+                    <md-input-container class="input-full-width">
+                        <input md-input type="text" formControlName="name" placeholder="Vakioliitteen nimi">
+                    </md-input-container>
+                </div>
+            </div>
+            <div class="row">
+                <h1>
+                    Liitteen hakemustyypit
+                </h1>
+                <div class="col m12">
+                    <selection-group formControlName="applicationTypes">
+                        <selection-item *ngFor="let type of applicationTypes"
+                                        [item]="type"
+                                        itemLabel="{{['application.type', type] | translation}}"></selection-item>
+                    </selection-group>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col m6" *ngIf="!file">
+                    <div fileDrop (onFileDrop)="attachmentSelected($event)" (onFileOver)="fileOverDropzone($event)"
+                         class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
+                        <button md-raised-button type="button" color="primary" (click)="realFileInput.click()">
+                            LISÄÄ LIITE
+                            <md-icon>file_upload</md-icon>
+                        </button>
+                    </div>
+
+                    <input #realFileInput class="real-file-input" type="file" file-select
+                           (attachmentsSelected)="attachmentSelected($event)"/>
+                </div>
+                <div class="col m6" *ngIf="file">
+                    <div class="file-download-card">
+                        <button type="button" md-icon-button (click)="download()">
+                            <md-icon color="primary">attach_file</md-icon>
+                        </button>
+                        <span>{{attachmentForm.value.name}}</span>
+                    </div>
+                    <button type="button" md-icon-button (click)="remove()" color="accent"><md-icon>clear</md-icon></button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col m12">
+                    <button md-raised-button type="button" color="primary"
+                            (click)="save()" [disabled]="!attachmentForm.valid">TALLENNA</button>
+                    <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
+                </div>
+            </div>
+        </form>
+    </md-card-content>
+</md-card>

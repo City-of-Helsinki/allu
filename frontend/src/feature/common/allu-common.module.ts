@@ -13,14 +13,15 @@ import {
 } from '@angular/material';
 import {MaterializeDirective} from 'angular2-materialize';
 
-import {AutoCompletionDirective} from './auto-completion/auto-completion.directive.ts';
-import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component.ts';
+import {AutoCompletionDirective} from './auto-completion/auto-completion.directive';
+import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component';
 import {FieldErrorComponent} from './field-error.component';
 import {TranslationPipe} from '../../pipe/translation.pipe';
 import {SortByDirective} from './sort/sort-by.directive';
 import {FileDropDirective} from './file-drop/file-drop.directive';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
+import {FileSelectDirective} from '../application/attachment/file-select.directive';
 
 @NgModule({
   imports: [
@@ -34,6 +35,7 @@ import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
     SortByDirective,
     FieldErrorComponent,
     TranslationPipe,
+    FileSelectDirective,
     FileDropDirective,
     ConfirmDialogComponent,
     CommaSeparatedPipe
@@ -55,6 +57,7 @@ import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
     SortByDirective,
     FieldErrorComponent,
     TranslationPipe,
+    FileSelectDirective,
     FileDropDirective,
     ConfirmDialogComponent,
     CommaSeparatedPipe

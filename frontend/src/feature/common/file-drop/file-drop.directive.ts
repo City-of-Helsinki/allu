@@ -17,6 +17,7 @@ export class FileDropDirective {
     this.preventDefault(event);
     let files = this.getFiles(event);
     this.onFileDrop.emit(files);
+    this.onFileOver.emit(false);
   }
 
   @HostListener('dragover', ['$event'])

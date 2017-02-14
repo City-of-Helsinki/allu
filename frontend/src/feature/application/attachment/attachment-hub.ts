@@ -4,6 +4,7 @@ import '../../../rxjs-extensions.ts';
 
 import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
+import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 
 @Injectable()
 export class AttachmentHub {
@@ -27,4 +28,19 @@ export class AttachmentHub {
    * and converts to file with given filename
    */
   download = (attachmentId: number, name: string) => this.attachmentService.download(attachmentId, name);
+
+
+  /**
+   * Fetches single default attachment info
+   */
+  defaultAttachmentInfo = (id) => this.attachmentService.getDefaultAttachmentInfo(id);
+
+  /**
+   * Fetches all default attachment infos
+   */
+  defaultAttachmentInfos = () => this.attachmentService.getDefaultAttachmentInfos();
+
+  saveDefaultAttachments = (attachment: DefaultAttachmentInfo) => this.attachmentService.saveDefaultAttachments(attachment);
+
+  removeDefaultAttachment = (id: number) => this.attachmentService.removeDefaultAttachment(id);
 }

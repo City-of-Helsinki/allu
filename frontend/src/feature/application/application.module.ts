@@ -9,9 +9,6 @@ import {ProgressBarModule} from './progressbar/progressbar.module';
 import {LocationModule} from './location/location.module';
 import {TypeModule} from './type/type.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
-
-import {FileSelectDirective} from './attachment/file-select.directive';
-
 import {ApplicationComponent} from './info/application.component';
 import {EventComponent} from './info/event/event.component';
 import {AttachmentsComponent} from './attachment/attachments.component';
@@ -70,7 +67,6 @@ import {PlacementContractComponent} from './info/placement-contract/placement-co
     AttachmentsComponent,
     AttachmentComponent,
     ApplicationActionsComponent,
-    FileSelectDirective,
     LoadingComponent,
     ApplicantComponent,
     ContactComponent,

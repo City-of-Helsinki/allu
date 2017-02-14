@@ -9,6 +9,9 @@ import {UserListComponent} from './user/user-list.component';
 import {UserComponent} from './user/user.component';
 import {AdminComponent} from './admin.component';
 import {AdminNavComponent} from './nav/admin-nav.component';
+import {DefaultAttachmentsComponent} from './default-attachment/default-attachments.component';
+import {DefaultAttachmentComponent} from './default-attachment/default-attachment.component';
+import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 
 @NgModule({
   imports: [
@@ -16,13 +19,16 @@ import {AdminNavComponent} from './nav/admin-nav.component';
     RouterModule.forChild(adminRoutes),
     FormsModule,
     ReactiveFormsModule,
-    MdCardModule
+    MdCardModule,
+    SelectionGroupModule
   ],
   declarations: [
     AdminComponent,
     AdminNavComponent,
     UserListComponent,
-    UserComponent
+    UserComponent,
+    DefaultAttachmentsComponent,
+    DefaultAttachmentComponent
   ],
   providers: []
 })

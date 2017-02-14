@@ -9,9 +9,7 @@ import {MaterializeUtil} from '../../../util/materialize.util';
 @Component({
   selector: 'attachment',
   template: require('./attachment.component.html'),
-  styles: [
-    require('./attachment.component.scss')
-  ]
+  styles: []
 })
 export class AttachmentComponent implements OnInit {
   @Input() applicationId: number;
