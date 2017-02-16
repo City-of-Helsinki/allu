@@ -55,18 +55,18 @@
                     </div>
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <textarea mdInput md-autosize formControlName="timeExceptions" placeholder="{{ meta?.getUiName('timeExceptions') }}*"></textarea>
+                            <textarea mdInput md-autosize formControlName="timeExceptions" placeholder="{{ meta?.getUiName('timeExceptions') }}"></textarea>
                         </md-input-container>
                     </div>
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <input mdInput type="text" formControlName="url" placeholder="{{ meta?.getUiName('url') }}*"/>
+                            <input mdInput type="text" formControlName="url" placeholder="{{ meta?.getUiName('url') }}"/>
                         </md-input-container>
                     </div>
                     <div class="col m3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="number" formControlName="attendees"
-                                   step="1" min="0" placeholder="{{ meta?.getUiName('attendees') }}*"/>
+                                   step="1" min="0" placeholder="{{ meta?.getUiName('attendees') }}"/>
                             <md-hint>
                                 <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
                                     {{translations.application.event.field.attendeesGreaterThanOrEqual}}
@@ -77,7 +77,7 @@
                     <div class="col m3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="number" formControlName="entryFee"
-                                   step="any" min="0" placeholder="{{ meta?.getUiName('entryFee') }}*"/>
+                                   step="any" min="0" placeholder="{{ meta?.getUiName('entryFee') }}"/>
                             <md-hint>
                                 <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
                                     {{translations.application.event.field.eventEntryFeeThanOrEqual}}
@@ -101,7 +101,7 @@
                     <div class="col m3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="number" formControlName="structureArea" step="any" min="0"
-                                   placeholder="{{ meta?.getUiName('structureArea') }}*"/>
+                                   placeholder="{{ meta?.getUiName('structureArea') }}"/>
                             <md-hint>
                                 <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
                                     {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
@@ -112,7 +112,7 @@
                     <div class="col m6">
                         <md-input-container class="input-full-width">
                             <textarea mdInput md-autosize formControlName="structureDescription"
-                                      placeholder="{{ meta?.getUiName('structureDescription') }}*"></textarea>
+                                      placeholder="{{ meta?.getUiName('structureDescription') }}"></textarea>
                         </md-input-container>
                     </div>
 
@@ -125,7 +125,7 @@
                     <div formGroupName="structureTimes">
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('structureStartTime') }}*"
+                                <input mdInput type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('structureStartTime') }}"
                                        materialize="pickadate"
                                        [materializeParams]="pickadateParams"/>
                                 <md-hint>
@@ -137,7 +137,7 @@
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('structureEndTime') }}*"
+                                <input mdInput type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('structureEndTime') }}"
                                        materialize="pickadate"
                                        [materializeParams]="pickadateParams"/>
                             </md-input-container>
@@ -171,7 +171,7 @@
                                 </md-checkbox>
                             </div>
                             <div class="col m12" *ngIf="eventForm.value.noPrice">
-                                <md-select formControlName="noPriceReason" placeholder="{{ meta?.getUiName('noPriceReason') }}*" class="input-full-width">
+                                <md-select formControlName="noPriceReason" placeholder="{{ meta?.getUiName('noPriceReason') }}" class="input-full-width">
                                     <md-option *ngFor="let reason of noPriceReasons" [value]="reason">
                                         {{['application.event.noPriceReason', reason] | translation}}
                                     </md-option>
@@ -235,7 +235,7 @@
                         <div class="col m12">
                             <md-input-container class="input-full-width">
                                 <textarea mdInput md-autosize formControlName="marketingProviders"
-                                          placeholder="{{ meta?.getUiName('salesOrPromotionDescription') }}*"></textarea>
+                                          placeholder="{{ meta?.getUiName('salesOrPromotionDescription') }}"></textarea>
                             </md-input-container>
                         </div>
                     </div>
@@ -246,7 +246,7 @@
                         <div class="col m12">
                             <md-input-container class="input-full-width">
                                 <textarea mdInput md-autosize formControlName="foodProviders"
-                                          placeholder="{{ meta?.getUiName('foodProviders') }}*"></textarea>
+                                          placeholder="{{ meta?.getUiName('foodProviders') }}"></textarea>
                             </md-input-container>
                         </div>
                     </div>

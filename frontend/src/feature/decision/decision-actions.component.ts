@@ -11,7 +11,7 @@ import {translations} from '../../util/translations';
 @Component({
   selector: 'decision-actions',
   template: require('./decision-actions.component.html'),
-  styles: []
+  styles: [require('./decision-actions.component.scss')]
 })
 export class DecisionActionsComponent {
   @Input() application: Application;

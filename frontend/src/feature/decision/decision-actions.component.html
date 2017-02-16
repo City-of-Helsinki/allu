@@ -1,16 +1,14 @@
 <div class="row" *ngFor="let error of errors | async">{{error}}</div>
-<div class="row">
-    <div class="col m4 offset-m4">
-        <div class="col m4">
-            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="accept()">Hyväksy</button>
-        </div>
-        <div class="col m4">
-            <decision-modal status="RETURNED_TO_PREPARATION" header="Palauta hakemus" confirmText="Palauta"
-                            (statusChange)="decisionConfirmed($event)">Palauta</decision-modal>
-        </div>
-        <div class="col m4">
-            <decision-modal status="REJECTED" header="Hylkää hakemus" confirmText="Hylkää"
-                            (statusChange)="decisionConfirmed($event)">Hylkää</decision-modal>
-        </div>
+<div class="action-row">
+    <div class="action-item">
+        <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="accept()">Hyväksy</button>
+    </div>
+    <div class="action-item">
+        <decision-modal status="RETURNED_TO_PREPARATION" header="Palauta hakemus"
+                        confirmText="Palauta" (statusChange)="decisionConfirmed($event)">Palauta</decision-modal>
+    </div>
+    <div class="action-item">
+        <decision-modal class="flex-item" status="REJECTED" header="Hylkää hakemus" confirmText="Hylkää"
+                        (statusChange)="decisionConfirmed($event)">Hylkää</decision-modal>
     </div>
 </div>

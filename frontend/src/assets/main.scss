@@ -162,16 +162,9 @@ input:-webkit-autofill:active {
   padding: 5px 0px;
   margin-bottom: 0px;
 
-  .input-field {
-    .ng-invalid.ng-dirty, .ng-invalid.ng-touched {
-      border-bottom: 2px solid mat-color($allu-warn, 500);
-      box-shadow: none;
-    }
-
-    .ng-invalid.ng-dirty ~ label,
-    .ng-invalid.ng-touched ~label {
-      color: mat-color($allu-warn, 500);
-    }
+  .ng-invalid.ng-dirty label.mat-input-placeholder,
+  .ng-invalid.ng-touched label.mat-input-placeholder {
+    color: mat-color($allu-warn, 500);
   }
 
   .form-group-label {
