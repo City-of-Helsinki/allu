@@ -5,3 +5,10 @@ export enum AttachmentType {
   DEFAULT_IMAGE,    // Hakemustyyppikohtainen tyyppikuvaliite
   DEFAULT_TERMS     // Hakemustyyppikohtainen ehtoliite
 }
+
+export const commonAttachmentTypes = [
+  AttachmentType.ADDED_BY_CUSTOMER,
+  AttachmentType.ADDED_BY_HANDLER
+];
+
+export const isCommon = (type: string) => commonAttachmentTypes.indexOf(AttachmentType[type]) >= 0;

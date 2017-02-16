@@ -9,9 +9,10 @@ import {ResponseContentType} from '@angular/http';
 import {AttachmentInfoMapper} from './mapper/attachment-info-mapper';
 import {DefaultAttachmentInfo} from '../model/application/attachment/default-attachment-info';
 import {DefaultAttachmentInfoMapper} from './mapper/default-attachment-info-mapper';
+import {ApplicationType} from '../model/application/type/application-type';
 
 const uploadUrl = '/api/applications/appId/attachments';
-const attachmentUrl = '/api/applications/appId/attachments/';
+const downloadUrl = '/api/applications/attachments/:attachmentId/data';
 const defaultAttachmentUrl = '/api/admin/attachments';
 
 @Injectable()
@@ -31,7 +32,7 @@ export class AttachmentService {
   }
 
   download(attachmentId: number, name: string): Observable<File> {
-    let url = attachmentUrl + attachmentId + '/data';
+    let url = downloadUrl.replace(':attachmentId', String(attachmentId));
     let options = {responseType: ResponseContentType.Blob };
     return this.authHttp.get(url, options)
       .map(response => new File([response.blob()], name));
@@ -46,6 +47,13 @@ export class AttachmentService {
 
   getDefaultAttachmentInfos(): Observable<Array<DefaultAttachmentInfo>> {
     return this.authHttp.get(defaultAttachmentUrl)
+      .map(response => response.json())
+      .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
+  }
+
+  getDefaultAttachmentInfosByType(appType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
+    let url = defaultAttachmentUrl + '/applicationType/' + ApplicationType[appType];
+    return this.authHttp.get(url)
       .map(response => response.json())
       .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
   }
@@ -71,14 +79,13 @@ export class AttachmentService {
       .map(response => HttpUtil.extractHttpResponse(response));
   }
 
-  private upload<T extends AttachmentInfo>(url: string, attachments: T[]): Observable<Array<T>> {
+  private upload(url: string, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
     let uploadSubject = new Subject<Array<AttachmentInfo>>();
     if (attachments && attachments.length !== 0) {
-
       let uploader = new ExtendedFileUploader({
         url: url,
         authToken: 'Bearer ' + localStorage.getItem('jwt')}, attachments);
-      let files = attachments.filter(a => !a.id).map(a => a.file);
+      let files = attachments.map(a => a.file);
 
       uploader.onSuccessItem = (item, response, status, headers) => {
         let items = JSON.parse(response);

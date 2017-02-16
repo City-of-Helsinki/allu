@@ -5,6 +5,7 @@ import '../../../rxjs-extensions.ts';
 import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
+import {ApplicationType} from '../../../model/application/type/application-type';
 
 @Injectable()
 export class AttachmentHub {
@@ -40,7 +41,19 @@ export class AttachmentHub {
    */
   defaultAttachmentInfos = () => this.attachmentService.getDefaultAttachmentInfos();
 
+  /**
+   * Fetches default attachment infos which are for given application type
+   */
+  defaultAttachmentInfosByType = (applicationType: ApplicationType) =>
+    this.attachmentService.getDefaultAttachmentInfosByType(applicationType);
+
+  /**
+   * Saves given default attachment
+   */
   saveDefaultAttachments = (attachment: DefaultAttachmentInfo) => this.attachmentService.saveDefaultAttachments(attachment);
 
+  /**
+   * Removes given default attachment by id
+   */
   removeDefaultAttachment = (id: number) => this.attachmentService.removeDefaultAttachment(id);
 }

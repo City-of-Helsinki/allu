@@ -1,5 +1,6 @@
 import {AttachmentInfo} from './attachment-info';
 import {TimeUtil} from '../../../util/time.util';
+import {DefaultAttachmentInfoForm} from './default-attachment-info-form';
 
 export class DefaultAttachmentInfo extends AttachmentInfo {
   constructor(
@@ -18,16 +19,16 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
     super(id, type, name, description, size, creationTime, handlerName, file);
   };
 
-  static fromForm(form: DefaultAttachmentInfoForm, type: string): DefaultAttachmentInfo {
+  static fromForm(form: DefaultAttachmentInfoForm): DefaultAttachmentInfo {
     return new DefaultAttachmentInfo(
       form.id,
-      type,
+      form.type,
       form.name,
       form.description,
       form.size,
       TimeUtil.getDateFromUi(form.creationTime),
       form.handlerName,
-      undefined,
+      form.file,
       form.defaultAttachmentId,
       form.applicationTypes,
       form.fixedLocationId
@@ -37,10 +38,12 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
   static toForm(attachmentInfo: DefaultAttachmentInfo): DefaultAttachmentInfoForm {
     return {
       id: attachmentInfo.id,
+      type: attachmentInfo.type,
       name: attachmentInfo.name,
       description: attachmentInfo.description,
       creationTime: attachmentInfo.uiCreationTime,
       handlerName: attachmentInfo.handlerName,
+      file: attachmentInfo.file,
       defaultAttachmentId: attachmentInfo.defaultAttachmentId,
       applicationTypes: attachmentInfo.applicationTypes,
       fixedLocationId: attachmentInfo.fixedLocationId
@@ -48,14 +51,3 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
   }
 }
 
-export interface DefaultAttachmentInfoForm {
-  id?: number;
-  name?: string;
-  description?: string;
-  size?: number;
-  creationTime?: string;
-  handlerName?: string;
-  defaultAttachmentId?: number;
-  applicationTypes?: Array<string>;
-  fixedLocationId?: number;
-}

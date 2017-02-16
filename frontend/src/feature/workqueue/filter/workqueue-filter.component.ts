@@ -67,10 +67,6 @@ export class WorkQueueFilterComponent implements OnInit {
     }
   }
 
-  tagChange(tags: Array<string>): void {
-    this.queryForm.patchValue({tags: tags});
-  }
-
   private ownTabSelected(): void {
     // initiate search with the set username filter
     this.tagTypes = EnumUtil.enumValues(ApplicationTagType).filter(tagType => tagType !== ApplicationTagType[ApplicationTagType.WAITING]);

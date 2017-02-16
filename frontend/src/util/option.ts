@@ -22,7 +22,8 @@ export class SomeOpt<T> implements Option<T> {
   constructor(private val: T) {}
 
   isDefined(): boolean {
-    return this.val !== undefined;
+    /* tslint:disable:no-null-keyword */
+    return this.val !== undefined && this.val !== null;
   }
 
   value(): T {
@@ -35,7 +36,7 @@ export class SomeOpt<T> implements Option<T> {
   }
 
   do(fn: (a: T) => any): void {
-    if (this.val) {
+    if (this.isDefined()) {
       fn(this.val);
     }
   }

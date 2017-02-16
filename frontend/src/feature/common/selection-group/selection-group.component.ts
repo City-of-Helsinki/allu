@@ -3,6 +3,7 @@ import {
 } from '@angular/core';
 import {SelectionEventService, SelectionEvent} from './selection-event.service';
 import {Subscription} from 'rxjs/Subscription';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
 import {SelectionItemComponent} from './selection-item.component';
 
@@ -19,13 +20,13 @@ const SELECTION_GROUP_VALUE_ACCESSOR = {
   providers: [SELECTION_GROUP_VALUE_ACCESSOR]
 })
 export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor, AfterContentInit {
-
-  @Output() onSelection = new EventEmitter<any>();
+  @Output() select = new EventEmitter<SelectionEvent>();
 
   @ContentChildren(SelectionItemComponent) selectionItems: QueryList<SelectionItemComponent> = new QueryList<SelectionItemComponent>();
 
-  private selectedItems: Array<any> = [];
+  private selectedItems$ = new BehaviorSubject<Array<any>>([]);
   private eventSubscription: Subscription;
+  private selectedItemsSubscription: Subscription;
 
   constructor(private selectionService: SelectionEventService) {
     this.eventSubscription = selectionService.subscribe(event => this.onSelectionEvent(event));
@@ -33,17 +34,17 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
 
   ngOnDestroy(): void {
     this.eventSubscription.unsubscribe();
+    this.selectedItemsSubscription.unsubscribe();
   }
 
-
   ngAfterContentInit(): void {
+    this.selectedItemsSubscription = this.selectedItems$.subscribe(items =>
+        this.selectionItems.forEach(item => item.selected = items.some(i => this.isSame(i, item.item))));
   }
 
   writeValue(items: Array<any>): void {
-    this.selectedItems = items;
-
     if (items) {
-      this.selectionItems.forEach(item => item.selected = this.selectedItems.some(i => i === item.item));
+      this.selectedItems$.next(items);
     }
   }
 
@@ -56,12 +57,18 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
   private _onChange = (_: any) => {};
 
   private onSelectionEvent(event: SelectionEvent): void {
+    let current = this.selectedItems$.getValue();
+    let next;
     if (event.selected) {
-      this.selectedItems.push(event.item);
+      next = current.concat(event.item);
     } else {
-      this.selectedItems = this.selectedItems.filter(item => item !== event.item);
+      next = current.filter(item => !this.isSame(item, event.item));
     }
-    this.onSelection.emit(this.selectedItems);
-    this._onChange(this.selectedItems);
+    this.select.emit(event);
+    this._onChange(next);
+  }
+
+  private isSame(item1: any, item2: any): boolean {
+    return (item1.id === item2.id) || (item1 === item2);
   }
 }

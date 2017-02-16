@@ -9,7 +9,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {CityDistrict} from '../../../model/common/city-district';
 import {MapHub} from '../../../service/map/map-hub';
 import {AttachmentHub} from '../../application/attachment/attachment-hub';
-import {DefaultAttachmentInfo, DefaultAttachmentInfoForm} from '../../../model/application/attachment/default-attachment-info';
+import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
 import {MaterializeUtil} from '../../../util/materialize.util';
 
@@ -32,13 +32,14 @@ export class DefaultAttachmentComponent implements OnInit {
 
     this.attachmentForm = fb.group({
       id: [undefined],
+      type: [''],
       name: ['', Validators.required],
       description: [''],
       district: [],
       defaultAttachmentId: [],
       applicationTypes: []
     });
-    this.attachmentForm.patchValue({applicationTypes: []});
+    this.attachmentForm.patchValue({type: 'DEFAULT', applicationTypes: []});
   }
 
 
@@ -65,7 +66,7 @@ export class DefaultAttachmentComponent implements OnInit {
   }
 
   save(): void {
-    let attachmentInfo = DefaultAttachmentInfo.fromForm(this.attachmentForm.value, AttachmentType[AttachmentType.DEFAULT]);
+    let attachmentInfo = DefaultAttachmentInfo.fromForm(this.attachmentForm.value);
     attachmentInfo.file = this.file;
     this.attachmentHub.saveDefaultAttachments(attachmentInfo).subscribe(
       attachment => {

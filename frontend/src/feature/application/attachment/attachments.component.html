@@ -1,35 +1,40 @@
 <h1>Liitteet</h1>
-<ul class="slim-card-list">
-  <li class="slim-card" *ngFor="let attachment of attachments; let i = index;">
-      <div>
-        <div class="clickable" (click)="remove(i, attachment)"><i class="material-icons">clear</i></div>
-      </div>
-      <div *ngIf="attachment.id !== undefined">
-          <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
-      </div>
-      <div class="card-content">
-          <div>
-              <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
-          </div>
-          <div>
-              <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
-              <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
-          </div>
-          <div>
-              {{attachment.uiCreationTime}}
-          </div>
-          <div>
-              {{attachment.description}}
-          </div>
-      </div>
-  </li>
+<ul class="card-list">
+    <li *ngFor="let attachment of commonAttachments; let i = index;">
+        <md-card class="slim-card">
+            <div>
+                <div class="clickable" (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
+            </div>
+            <div *ngIf="attachment.id !== undefined">
+                <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
+            </div>
+            <md-card-content class="card-content">
+                <div>
+                    <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
+                </div>
+                <div>
+                    <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
+                    <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
+                </div>
+                <div>
+                    {{attachment.uiCreationTime}}
+                </div>
+                <div>
+                    {{attachment.description}}
+                </div>
+            </md-card-content>
+        </md-card>
+    </li>
+    <li>
+        <default-attachments [selectedAttachments]="defaultAttachments" [applicationType]="application.type"
+                             (add)="save($event)" (remove)="remove($event)"></default-attachments>
+    </li>
 </ul>
 
-<div class="row" *ngFor="let attachment of editableAttachments; let i = index;">
-  <div class="col m11">
-    <attachment [applicationId]="application.id" [attachment]="attachment"
-                (onCancel)="cancel(i)" (onSave)="save(i, $event)"></attachment>
-  </div>
+<div class="row">
+    <div class="col m11"  *ngFor="let attachment of editableAttachments; let i = index;">
+        <attachment [attachment]="attachment" (onCancel)="cancel(i)" (onSave)="save($event, i)"></attachment>
+    </div>
 </div>
 <div class="row">
   <div class="col m11 col-centered">

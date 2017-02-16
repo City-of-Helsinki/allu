@@ -1,4 +1,5 @@
 import {TimeUtil} from '../../../util/time.util';
+import {AttachmentInfoForm} from './attachment-info-form';
 
 export class AttachmentInfo {
   constructor(
@@ -22,4 +23,30 @@ export class AttachmentInfo {
     attachment.file = file;
     return attachment;
   }
+
+  static fromForm(form: AttachmentInfoForm): AttachmentInfo {
+    return new AttachmentInfo(
+      form.id,
+      form.type,
+      form.name,
+      form.description,
+      form.size,
+      TimeUtil.getDateFromUi(form.creationTime),
+      form.handlerName,
+      form.file
+    );
+  }
+
+  static toForm(attachmentInfo: AttachmentInfo): AttachmentInfoForm {
+    return {
+      id: attachmentInfo.id,
+      type: attachmentInfo.type,
+      name: attachmentInfo.name,
+      description: attachmentInfo.description,
+      creationTime: attachmentInfo.uiCreationTime,
+      handlerName: attachmentInfo.handlerName,
+      file: attachmentInfo.file
+    };
+  }
 }
+

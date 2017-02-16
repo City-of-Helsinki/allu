@@ -1,0 +1,18 @@
+<md-card>
+    <md-card-title>Vakioliitteet</md-card-title>
+    <md-card-content>
+        <div class="row" *ngIf="defaultAttachments">
+            <selection-group [ngModel]="selectedAttachments" (select)="onSelect($event)" *ngIf="defaultAttachments">
+                <div class="col m3" *ngFor="let attachment of defaultAttachments">
+                    <selection-item [item]="attachment"
+                                    selectType="CHECKBOX"
+                                    itemLabel="{{attachment.name}}"></selection-item>
+                    <button md-icon-button (click)="download(attachment)"><md-icon>file_download</md-icon></button>
+                </div>
+            </selection-group>
+            <div *ngIf="defaultAttachments.length === 0">
+                <p>Hakemustyypille ei löydy valittavia vakioliitteitä.</p>
+            </div>
+        </div>
+    </md-card-content>
+</md-card>

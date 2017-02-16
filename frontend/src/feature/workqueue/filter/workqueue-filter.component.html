@@ -44,9 +44,10 @@
             <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
                 <div class="item-bar-content">
                     <span>Tunnisteet:</span>
-                    <selection-group (onSelection)="tagChange($event)">
+                    <selection-group formControlName="tags">
                         <selection-item *ngFor="let type of tagTypes"
                                         [item]="type"
+                                        selectType="CHIP"
                                         itemLabel="{{['application.tag.type', type] | translation}}"></selection-item>
                     </selection-group>
 

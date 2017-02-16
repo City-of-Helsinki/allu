@@ -27,4 +27,10 @@ describe('Option', () => {
   it('Some should create None when passed value is undefined', () => {
     expect(Some(undefined).map(val => val + 1)).toEqual(jasmine.any(NoneOpt));
   });
+
+  it('Some.do should work with value 0', () => {
+    let val = 1;
+    Some(0).do(v => val = v);
+    expect(val).toBe(0);
+  });
 })

@@ -1,3 +1,12 @@
-<button class="btn-chip"
-        (click)="toggle()"
-        [ngClass]="{'selected': selected}">{{itemLabel}}</button>
+<span [ngSwitch]="selectType">
+    <button *ngSwitchCase="'CHIP'"
+            class="btn-chip"
+            (click)="toggle()"
+            [ngClass]="{'selected': selected}">{{itemLabel}}</button>
+
+    <md-checkbox *ngSwitchDefault
+                 [(ngModel)]="selected"
+                 (change)="notify()"
+                 [ngClass]="{'selected': selected}">{{itemLabel}}</md-checkbox>
+</span>
+

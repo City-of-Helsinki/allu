@@ -65,23 +65,30 @@ export class ApplicationState {
   }
 
   saveAttachment(applicationId: number, attachment: AttachmentInfo): Observable<AttachmentInfo> {
-    let result = new Subject<AttachmentInfo>();
+    return this.saveAttachments(applicationId, [attachment])
+      .filter(attachments => attachments.length > 0)
+      .map(attachments => attachments[0]);
 
-    this.attachmentHub.upload(applicationId, [attachment])
+  }
+
+  saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
+    let result = new Subject<Array<AttachmentInfo>>();
+
+    this.attachmentHub.upload(applicationId, attachments)
       .subscribe(
-        items => result.next(items[0]),
+        items => result.next(items),
         error => result.error(error),
         () => result.complete());
 
     return result.do(saved => this.loadAttachments(applicationId).subscribe());
   }
 
-  removeAttachment(index: number, attachmentId: number): Observable<HttpResponse> {
+  removeAttachment(attachmentId: number, index?: number): Observable<HttpResponse> {
     if (attachmentId) {
       return this.attachmentHub.remove(this._application.id, attachmentId)
         .do(response => this.loadAttachments(this._application.id).subscribe());
     } else {
-      this._pendingAttachments.splice(index, 1);
+      Some(index).do(i => this._pendingAttachments.splice(i, 1));
       return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
     }
   }
@@ -117,15 +124,13 @@ export class ApplicationState {
 
   save(application: Application): Observable<Application> {
     return this.applicationHub.save(application)
-      .switchMap(app => this.saveAttachments(app));
+      .switchMap(app => this.savePendingAttachments(app));
   }
 
-  private saveAttachments(application: Application): Observable<Application> {
+  private savePendingAttachments(application: Application): Observable<Application> {
     let result = new Subject<Application>();
-
-    this.attachmentHub.upload(application.id, this._pendingAttachments)
-      .subscribe(
-        items => { /* Nothing to do with saved items */ },
+    this.saveAttachments(application.id, this._pendingAttachments)
+      .subscribe(items => { /* Nothing to do with saved items */ },
         error => result.error(error),
         () => {
           this.saved(application).subscribe(app => result.next(app));
