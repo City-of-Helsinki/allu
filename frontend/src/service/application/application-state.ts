@@ -22,6 +22,7 @@ export class ApplicationState {
 
   private _application = new Application();
   private _pendingAttachments: Array<AttachmentInfo> = [];
+  private attachments$ = new BehaviorSubject<Array<AttachmentInfo>>([]);
   private comments$ = new BehaviorSubject<Array<Comment>>([]);
 
   constructor(private router: Router,
@@ -47,6 +48,10 @@ export class ApplicationState {
     return this._application.applicationTags;
   }
 
+  get attachments(): Observable<Array<AttachmentInfo>> {
+    return this.attachments$.asObservable();
+  }
+
   get pendingAttachments(): Array<AttachmentInfo> {
     return this._pendingAttachments;
   }
@@ -68,16 +73,23 @@ export class ApplicationState {
         error => result.error(error),
         () => result.complete());
 
-    return result;
+    return result.do(saved => this.loadAttachments(applicationId).subscribe());
   }
 
   removeAttachment(index: number, attachmentId: number): Observable<HttpResponse> {
     if (attachmentId) {
-      return this.attachmentHub.remove(attachmentId);
+      return this.attachmentHub.remove(this._application.id, attachmentId)
+        .do(response => this.loadAttachments(this._application.id).subscribe());
     } else {
       this._pendingAttachments.splice(index, 1);
       return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
     }
+  }
+
+  loadAttachments(id: number): Observable<Array<AttachmentInfo>> {
+    return this.applicationHub.getApplication(id)
+      .map(app => app.attachmentList)
+      .do(attachments => this.attachments$.next(attachments));
   }
 
   saveComment(applicationId: number, comment: Comment): Observable<Comment> {
@@ -97,7 +109,10 @@ export class ApplicationState {
 
   load(id: number): Observable<Application> {
     return this.applicationHub.getApplication(id)
-      .do(app => this.application = app);
+      .do(app => {
+        this.attachments$.next(app.attachmentList);
+        this.application = app;
+      });
   }
 
   save(application: Application): Observable<Application> {

@@ -69,6 +69,16 @@ export class TimeUtil {
       return momentLib(date).isBetween(start, end, undefined, '[]');
   }
 
+  public static compareTo(left: Date, right: Date): number {
+    if (left > right) {
+      return 1;
+    } else if (left < right) {
+      return -1;
+    } else {
+      return 0;
+    }
+  }
+
   private static toMoment(dateString: string): any {
     return dateString ? momentLib(dateString, 'DD.MM.YYYY') : undefined;
   }

@@ -11,7 +11,7 @@ import {DefaultAttachmentInfo} from '../model/application/attachment/default-att
 import {DefaultAttachmentInfoMapper} from './mapper/default-attachment-info-mapper';
 
 const uploadUrl = '/api/applications/appId/attachments';
-const attachmentUrl = '/api/applications/attachments/';
+const attachmentUrl = '/api/applications/appId/attachments/';
 const defaultAttachmentUrl = '/api/admin/attachments';
 
 @Injectable()
@@ -24,8 +24,8 @@ export class AttachmentService {
     return this.upload(url, attachments);
   }
 
-  remove(attachmentId: number): Observable<HttpResponse> {
-    let url = attachmentUrl + attachmentId;
+  remove(applicationId: number, attachmentId: number): Observable<HttpResponse> {
+    let url = uploadUrl.replace('appId', String(applicationId)) + '/' + attachmentId;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response));
   }

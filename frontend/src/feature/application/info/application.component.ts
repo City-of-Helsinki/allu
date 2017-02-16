@@ -59,7 +59,8 @@ export class ApplicationComponent implements OnInit {
   }
 
   private attachmentCount(): Observable<number> {
-    return Observable.of(this.application.attachmentList.length);
+    return this.applicationState.attachments
+      .map(attachments => attachments.length + this.applicationState.pendingAttachments.length);
   }
 
   private commentCount(): Observable<number> {

@@ -6,6 +6,7 @@ import {ApplicationState} from '../../../service/application/application-state';
 import {Comment} from '../../../model/application/comment/comment';
 import {findTranslation} from '../../../util/translations';
 import {CommentHub} from '../../../service/application/comment/comment-hub';
+import {TimeUtil} from '../../../util/time.util';
 
 const toastTime = 4000;
 
@@ -22,7 +23,9 @@ export class CommentsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.application = this.applicationState.application;
-    this.applicationState.comments.subscribe(comments => this.comments = comments);
+    this.applicationState.comments
+      .map(comments => comments.sort((l, r) => TimeUtil.compareTo(r.createTime, l.createTime))) // sort latest first
+      .subscribe(comments => this.comments = comments);
   }
 
   ngAfterViewInit(): void {

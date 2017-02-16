@@ -8,9 +8,9 @@ import {ApplicationState} from '../../../service/application/application-state';
 import {AttachmentHub} from './attachment-hub';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {MdDialog} from '@angular/material';
+import {TimeUtil} from '../../../util/time.util';
 
 const toastTime = 4000;
-const URL = '/api/applications/appId/attachments';
 
 @Component({
   selector: 'attachments',
@@ -30,6 +30,9 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.setApplication(this.applicationState.application);
+    this.applicationState.attachments
+      .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
+      .subscribe(attachments => this.attachments = attachments);
   }
 
   ngAfterViewInit(): void {
@@ -54,7 +57,6 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
       this.applicationState.saveAttachment(this.application.id, attachment).subscribe(
         saved => {
           MaterializeUtil.toast('Liite ' + saved.name + ' tallennettu', toastTime);
-          this.attachments.push(saved);
           this.editableAttachments.splice(index, 1);
         },
         error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' tallennus epäonnistui', toastTime)
@@ -89,7 +91,6 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
       this.applicationState.removeAttachment(index, attachment.id)
         .subscribe(status => {
             MaterializeUtil.toast('Liite ' + attachment.name + ' poistettu', toastTime);
-            this.attachments.splice(index, 1);
           },
           error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' poistaminen epäonnistui', toastTime));
     }
@@ -98,6 +99,8 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
   private setApplication(app: Application) {
     this.application = app;
     // Only new applications can have pending attachments
-    this.attachments = app.id ? app.attachmentList : this.applicationState.pendingAttachments;
+    if (!app.id) {
+      this.attachments = this.applicationState.pendingAttachments;
+    }
   }
 }

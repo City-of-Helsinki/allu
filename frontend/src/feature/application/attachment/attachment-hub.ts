@@ -21,7 +21,7 @@ export class AttachmentHub {
   /**
    * Removes given attachment
    */
-  remove = (attachmentId: number) => this.attachmentService.remove(attachmentId);
+  remove = (applicationId: number, attachmentId: number) => this.attachmentService.remove(applicationId, attachmentId);
 
   /**
    * Retrieves attachment in downloadable format
