@@ -5,14 +5,14 @@
   $accent: map-get($theme, accent);
 
   .autocompletion-dropdown-content {
-    background-color: md-contrast($primary, 500);
+    background-color: mat-contrast($primary, 500);
 
     .autocompletion-dropdown-entry {
-      color: md-color($primary, 500);
+      color: mat-color($primary, 500);
     }
 
     .autocompletion-dropdown-entry:hover {
-      background-color: md-color($primary, 200);
+      background-color: mat-color($primary, 200);
     }
   }
 }

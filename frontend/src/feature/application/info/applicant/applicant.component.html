@@ -23,7 +23,7 @@
                 <div class="row form-group">
                     <div class="col m8">
                         <md-input-container class="input-full-width">
-                            <input md-input type="text" formControlName="name"
+                            <input mdInput type="text" formControlName="name"
                                    placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"/>
                             <md-hint>
                                 <field-error [form]="applicantForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>
@@ -33,7 +33,7 @@
                     </div>
                     <div class="col m4">
                         <md-input-container class="input-full-width">
-                            <input md-input type="text" formControlName="registryKey"
+                            <input mdInput type="text" formControlName="registryKey"
                                    placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'id'] | translation}}*"/>
                             <md-hint>
                                 <field-error [form]="applicantForm" field="registryKey" hasError="required">{{'applicant.field.registryKeyMissing' | translation}}</field-error>
@@ -45,24 +45,24 @@
                 <div formGroupName="postalAddress" class="row form-group">
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <input md-input type="text" formControlName="streetAddress" placeholder="Osoite"/>
+                            <input mdInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
                         </md-input-container>
                     </div>
                     <div class="col m3">
                         <md-input-container class="input-full-width">
-                            <input md-input type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                            <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
                         </md-input-container>
                     </div>
                     <div class="col m3">
                         <md-input-container class="input-full-width">
-                            <input md-input type="text" formControlName="city" placeholder="Toimipaikka"/>
+                            <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
                         </md-input-container>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col m4">
                         <md-input-container class="input-full-width">
-                            <input md-input type="text" formControlName="phone" placeholder="Puhelin"/>
+                            <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
                             <md-hint>
                                 <field-error [form]="applicantForm" field="email" hasError="required">{{'applicant.field.phoneShort' | translation}}</field-error>
                             </md-hint>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="col m8">
                         <md-input-container class="input-full-width">
-                            <input md-input type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                            <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                             <md-hint>
                                 <field-error [form]="applicantForm" field="email" hasError="pattern">{{'applicant.field.invalidEmail' | translation}}</field-error>
                             </md-hint>

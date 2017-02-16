@@ -39,7 +39,7 @@ nav.nav-bar-secondary {
   }
 }
 
-.labels-solid .md-tab-label {
+.labels-solid .mat-tab-label {
   margin: 0 5px;
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
@@ -47,11 +47,11 @@ nav.nav-bar-secondary {
   font-weight: bold !important;
 }
 
-.labels-solid .md-tab-label.md-tab-label-active {
+.labels-solid .mat-tab-label.mat-tab-label-active {
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5);
 }
 
-.labels-end .md-tab-list {
+.labels-end .mat-tab-labels {
   justify-content: flex-end;
   padding-right:10%;
 }

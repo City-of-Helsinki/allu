@@ -13,7 +13,7 @@
                         <div class="row form-group">
                             <div class="col m6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
+                                    <input mdInput type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
                                     <md-hint>
                                         <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                                         <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
@@ -22,7 +22,7 @@
                             </div>
                             <div class="col m6">
                                 <md-input-container class="input-full-width">
-                                    <textarea md-input md-autosize formControlName="description" placeholder="Vuokrauksen kuvaus*"></textarea>
+                                    <textarea mdInput md-autosize formControlName="description" placeholder="Vuokrauksen kuvaus*"></textarea>
                                     <md-hint>
                                         <field-error [form]="rentalForm" field="description" hasError="required">
                                             {{translations.application.shortTermRental.field.descriptionMissing}}
@@ -33,7 +33,7 @@
                             <div formGroupName="rentalTimes">
                                 <div class="col m3">
                                     <md-input-container class="input-full-width">
-                                        <input md-input type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
+                                        <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
                                                materialize="pickadate"
                                                [materializeParams]="pickadateParams"/>
                                         <md-hint>
@@ -48,7 +48,7 @@
                                 </div>
                                 <div class="col m3">
                                     <md-input-container class="input-full-width">
-                                        <input md-input type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
+                                        <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
                                                materialize="pickadate"
                                                [materializeParams]="pickadateParams"/>
                                         <md-hint>
@@ -61,7 +61,7 @@
                             </div>
                             <div class="col m6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="number" formControlName="area" placeholder="Pinta-ala"/>
+                                    <input mdInput type="number" formControlName="area" placeholder="Pinta-ala"/>
                                 </md-input-container>
                             </div>
                         </div>
@@ -88,14 +88,14 @@
                         <div class="row form-group">
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
+                                    <input mdInput type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
                                 </md-input-container>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
+                                    <input mdInput type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
                                     <md-hint>
                                         <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
                                             {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
@@ -105,7 +105,7 @@
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
+                                    <input mdInput type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
                                 </md-input-container>
                             </div>
                         </div>

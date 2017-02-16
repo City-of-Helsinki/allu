@@ -1,6 +1,6 @@
 @import '~@angular/material/core/theming/all-theme';
 
-@include md-core();
+@include mat-core();
 
 $black-87-opacity: rgba(black, 0.87);
 $white-87-opacity: rgba(white, 0.87);
@@ -71,12 +71,12 @@ $allu-orange: (
   )
 );
 
-$allu-primary: md-palette($allu-blue);
-$allu-accent:  md-palette($allu-orange, A200, A100, A400);
-$allu-warn:    md-palette($md-red);
-$allu-theme:   md-light-theme($allu-primary, $allu-accent, $allu-warn);
+$allu-primary: mat-palette($allu-blue);
+$allu-accent:  mat-palette($allu-orange, A200, A100, A400);
+$allu-warn:    mat-palette($mat-red);
+$allu-theme:   mat-light-theme($allu-primary, $allu-accent, $allu-warn);
 
-$allu-background: md-color($allu-primary, 50);
+$allu-background: mat-color($allu-primary, 50);
 $allu-text-black: #1f1f1f;
 $allu-card-background: #ffffff;
 $allu-card-shadow: #f5f5f5;

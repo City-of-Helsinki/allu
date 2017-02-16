@@ -8,7 +8,7 @@
         <div class="col s2 valign input-field-label">Liitä hakemus:</div>
         <div class="col s10">
             <md-input-container class="input-full-width">
-                <input md-input type="text" [readonly]="readonly"
+                <input mdInput type="text" [readonly]="readonly"
                        [autocompletion]="matchingApplications"
                        nameField="applicationId"
                        (onSearchChange)="onIdentifierSearchChange($event)"

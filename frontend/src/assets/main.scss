@@ -63,11 +63,11 @@ li {
 }
 
 table {
-  background-color: md-contrast($allu-primary, 500);
+  background-color: mat-contrast($allu-primary, 500);
 }
 
 tr.row-highlight:hover {
-  background-color: md-color($allu-primary, 100) !important;
+  background-color: mat-color($allu-primary, 100) !important;
 }
 
 button:focus {
@@ -115,13 +115,13 @@ i.icon-middle {
 }
 
 
-.material-icons.md-36 {
+.material-icons.mat-36 {
   font-size: 36px;
   width: 36px;
   height: 36px;
 }
 
-.material-icons.md-48 {
+.material-icons.mat-48 {
   font-size: 48px;
   width: 48px;
   height: 48px;
@@ -131,7 +131,7 @@ button.btn-huge {
   width: 165px;
   height: 165px;
 
-  md-icon {
+  .mat-icon {
     padding: 0;
     width: 165px;
     height: 165px;
@@ -164,13 +164,13 @@ input:-webkit-autofill:active {
 
   .input-field {
     .ng-invalid.ng-dirty, .ng-invalid.ng-touched {
-      border-bottom: 2px solid md-color($allu-warn, 500);
+      border-bottom: 2px solid mat-color($allu-warn, 500);
       box-shadow: none;
     }
 
     .ng-invalid.ng-dirty ~ label,
     .ng-invalid.ng-touched ~label {
-      color: md-color($allu-warn, 500);
+      color: mat-color($allu-warn, 500);
     }
   }
 
@@ -237,22 +237,22 @@ md-card-content {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
     margin-right: 0;
-    border-right: 1px solid md-color($allu-primary, 600);
+    border-right: 1px solid mat-color($allu-primary, 600);
   }
 
   [type="button"]:last-child {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
     margin-left: 0;
-    border-left: 1px solid md-color($allu-primary, 600);
+    border-left: 1px solid mat-color($allu-primary, 600);
   }
 
   [type="button"]:not(:first-child):not(:last-child) {
     border-radius: 0;
     margin-left: 0;
     margin-right: 0;
-    border-left: 1px solid md-color($allu-primary, 600);
-    border-right: 1px solid md-color($allu-primary, 600);
+    border-left: 1px solid mat-color($allu-primary, 600);
+    border-right: 1px solid mat-color($allu-primary, 600);
   }
 }
 
@@ -310,8 +310,8 @@ ul.slim-card-list {
   display: flex;
   flex-direction: column;
   min-height: 64px;
-  background-color: md-contrast($allu-primary, 500);
-  color: md-color($allu-primary, 500);
+  background-color: mat-contrast($allu-primary, 500);
+  color: mat-color($allu-primary, 500);
 
   .item-bar-content {
     display: inline-flex;
@@ -329,7 +329,7 @@ ul.slim-card-list {
 }
 
 .text-faint {
-  color: md-contrast($allu-primary, 100);
+  color: mat-contrast($allu-primary, 100);
 }
 
 .allu-chip {
@@ -342,26 +342,26 @@ ul.slim-card-list {
   letter-spacing: normal;
 }
 
-.md-chip.md-chip-selected:not(.md-basic-chip).md-accent {
+.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-accent {
   @extend .allu-chip;
-  color: md-contrast($allu-accent, 800);
+  color: mat-contrast($allu-accent, 800);
   font-weight: bold;
   letter-spacing: 1.5px;
 }
 
-.md-chip.md-chip-selected:not(.md-basic-chip).md-primary {
+.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary {
   @extend .allu-chip;
-  color: md-contrast($allu-primary, 500);
+  color: mat-contrast($allu-primary, 500);
 }
 
-.md-chip:not(.md-basic-chip).slim-chip {
+.mat-chip:not(.mat-basic-chip).slim-chip {
   padding: 0px 12px;
 }
 
-.md-chip.md-chip-selected:not(.md-basic-chip).md-primary.chip-outline {
-  color: md-color($allu-primary, 500);
+.mat-chip.mat-chip-selected:not(.mat-basic-chip).mat-primary.chip-outline {
+  color: mat-color($allu-primary, 500);
   background-color: transparent;
-  border: 2px solid md-color($allu-primary, 500);
+  border: 2px solid mat-color($allu-primary, 500);
 }
 
 .input-full-width {
@@ -369,7 +369,7 @@ ul.slim-card-list {
 }
 
 .select-wrapper input.select-dropdown,
-.md-select-trigger {
+.mat-select-trigger {
   height: 2.5rem !important;
 }
 
@@ -387,7 +387,7 @@ input.real-file-input {
 
 .file-drop-zone {
   display: inline-block;
-  border: 2px dashed md-color($allu-primary, 200);
+  border: 2px dashed mat-color($allu-primary, 200);
   border-radius: 6px;
   width: 100%;
   height: 100px;
@@ -397,15 +397,15 @@ input.real-file-input {
 }
 
 .file-over-drop-zone {
-  border-color: md-color($allu-primary, 500);
+  border-color: mat-color($allu-primary, 500);
 }
 
 .file-download-card {
   display: inline-flex;
-  border: 2px solid md-color($allu-primary, 200);
+  border: 2px solid mat-color($allu-primary, 200);
   border-radius: 6px;
   padding: 10px 30px;
-  color: md-color($allu-primary, 500);
+  color: mat-color($allu-primary, 500);
 
   span {
     vertical-align: middle;

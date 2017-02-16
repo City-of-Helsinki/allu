@@ -1,13 +1,11 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
-import {FormGroup, FormControl, FormBuilder, Validators} from '@angular/forms';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
-import {User} from '../../../model/common/user';
 import {UserHub} from '../../../service/user/user-hub';
 import {translations} from '../../../util/translations';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Some} from '../../../util/option';
-import {MaterializeUtil} from '../../../util/materialize.util';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 
@@ -18,7 +16,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
     require('./user.component.scss')
   ]
 })
-export class UserComponent implements OnInit, AfterViewInit {
+export class UserComponent implements OnInit {
   userForm: FormGroup;
   submitted = false;
   translations = translations;
@@ -53,10 +51,6 @@ export class UserComponent implements OnInit, AfterViewInit {
         });
       });
     });
-  }
-
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
   }
 
   save(user: UserForm): void {

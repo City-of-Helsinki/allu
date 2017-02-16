@@ -14,7 +14,7 @@
                     <div class="row form-group">
                         <div class="col m12">
                             <md-input-container class="input-full-width">
-                                <textarea md-input md-autosize formControlName="workDescription" placeholder="Työn kuvaus"></textarea>
+                                <textarea mdInput md-autosize formControlName="workDescription" placeholder="Työn kuvaus"></textarea>
                             </md-input-container>
                         </div>
                     </div>
@@ -22,7 +22,7 @@
                         <div formGroupName="reportTimes">
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('reportStartTime') }}*"
+                                    <input mdInput type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('reportStartTime') }}*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
@@ -34,7 +34,7 @@
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('reportEndTime') }}*"
+                                    <input mdInput type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('reportEndTime') }}*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                 </md-input-container>

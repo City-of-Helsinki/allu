@@ -37,7 +37,7 @@
                         <div formGroupName="validityTimes">
                             <div class="col s6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
@@ -52,7 +52,7 @@
                             </div>
                             <div class="col s6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
@@ -66,7 +66,7 @@
                         <div formGroupName="unauthorizedWork">
                             <div class="col s6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
+                                    <input mdInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
@@ -78,7 +78,7 @@
                             </div>
                             <div class="col s6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
+                                    <input mdInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                 </md-input-container>
@@ -86,22 +86,22 @@
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
-                                <input md-input readonly type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"/>
+                                <input mdInput readonly type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"/>
                             </md-input-container>
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
-                                <input md-input readonly type="text" formControlName="summerTimeOperation" placeholder="Kesätyön toiminn. kunto"/>
+                                <input mdInput readonly type="text" formControlName="summerTimeOperation" placeholder="Kesätyön toiminn. kunto"/>
                             </md-input-container>
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
-                                <input md-input readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
+                                <input mdInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
                             </md-input-container>
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
-                                <input md-input readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
+                                <input mdInput readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
                             </md-input-container>
                         </div>
                     </div>
@@ -116,7 +116,7 @@
                     <div class="row form-group">
                         <div class="col m6">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" formControlName="cableReportIdentifier" placeholder="Johtoselvitys"
+                                <input mdInput type="text" formControlName="cableReportIdentifier" placeholder="Johtoselvitys"
                                        [readonly]="readonly"
                                        [autocompletion]="matchingApplications"
                                        nameField="applicationId"
@@ -148,12 +148,12 @@
                     <div class="row form-group">
                         <div class="col m12">
                             <md-input-container class="input-full-width">
-                                <textarea md-input md-autosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
+                                <textarea mdInput md-autosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
                             </md-input-container>
                         </div>
                         <div class="col m12">
                             <md-input-container class="input-full-width">
-                                <textarea md-input md-autosize formControlName="trafficArrangements"
+                                <textarea mdInput md-autosize formControlName="trafficArrangements"
                                           placeholder="Suoritettavat liikennejärjestelyt"></textarea>
                             </md-input-container>
                         </div>

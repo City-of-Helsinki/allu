@@ -8,10 +8,10 @@
   line-height: 16px;
   height: 32px;
   background-color: $allu-chip-dark;
-  color: md-contrast($allu-primary, 500);
+  color: mat-contrast($allu-primary, 500);
   border-width: 0px;
 }
 
 .btn-chip.selected {
-  background-color: md-color($allu-accent, 500);
+  background-color: mat-color($allu-accent, 500);
 }

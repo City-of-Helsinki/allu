@@ -9,8 +9,6 @@ import {Application} from '../../../model/application/application';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {ProjectForm} from './project.form';
-import {ProjectHub} from '../../../service/project/project-hub';
-import {MaterializeUtil} from '../../../util/materialize.util';
 import {Project} from '../../../model/project/project';
 import {emailValidator} from '../../../util/complex-validator';
 import {ProjectState} from '../../../service/project/project-state';
@@ -50,8 +48,6 @@ export class ProjectEditComponent {
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
       .switchMap(search => this.applicationHub.searchApplications(search));
-
-    MaterializeUtil.updateTextFields(50);
   }
 
   add(application: Application) {

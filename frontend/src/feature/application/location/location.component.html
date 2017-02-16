@@ -15,7 +15,7 @@
                      (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
           <div class="col m12">
             <md-input-container class="input-full-width">
-              <input md-input type="text" [(ngModel)]="application.location.info" placeholder="Lisätietoja paikasta"/>
+              <input mdInput type="text" [(ngModel)]="application.location.info" placeholder="Lisätietoja paikasta"/>
             </md-input-container>
           </div>
         </div>
@@ -45,18 +45,18 @@
         <div class="row">
           <div class="col m2">
             <md-input-container class="input-full-width">
-              <input md-input disabled type="number" [(ngModel)]="application.location.uiArea" placeholder="Alueen pinta-ala"/>
+              <input mdInput disabled type="number" [(ngModel)]="application.location.uiArea" placeholder="Alueen pinta-ala"/>
             </md-input-container>
           </div>
           <div class="col m2">
             <md-input-container class="input-full-width">
-              <input md-input disabled type="number" [(ngModel)]="application.location.areaOverride"
+              <input mdInput disabled type="number" [(ngModel)]="application.location.areaOverride"
                      placeholder="Käsittelijän syöttämä pinta-ala"/>
             </md-input-container>
           </div>
           <div class="col m2">
             <md-input-container class="input-full-width">
-              <input md-input disabled type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
+              <input mdInput disabled type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
                      placeholder="Kaupunginosa"/>
             </md-input-container>
           </div>

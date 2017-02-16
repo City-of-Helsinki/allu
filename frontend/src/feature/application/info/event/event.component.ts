@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
 import {FormGroup, FormBuilder} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
@@ -7,12 +7,10 @@ import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
-import {MapHub} from '../../../../service/map/map-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {EventDetailsForm} from './details/event-details.form';
 import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {MaterializeUtil} from '../../../../util/materialize.util';
 import {ApplicationState} from '../../../../service/application/application-state';
 
 
@@ -22,7 +20,7 @@ import {ApplicationState} from '../../../../service/application/application-stat
   template: require('./event.component.html'),
   styles: []
 })
-export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
+export class EventComponent implements OnInit, OnDestroy {
   application: Application;
   applicationForm: FormGroup;
   private readonly: boolean;
@@ -61,10 +59,6 @@ export class EventComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnDestroy(): any {
     this.routeEvents.unsubscribe();
-  }
-
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
   }
 
   onSubmit(form: EventForm) {

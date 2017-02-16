@@ -45,12 +45,12 @@ md-sidenav {
   border: 1px solid #dcdcdc;
   flex: 0;
   border-radius: 6px 0 0 6px;
-  background-color: md-color($allu-accent, 500);
+  background-color: mat-color($allu-accent, 500);
   min-width: 60px;
   width: 60px;
   height: 60px;
 
   .material-icons {
-    color: md-contrast($allu-accent, 800);
+    color: mat-contrast($allu-accent, 800);
   }
 }

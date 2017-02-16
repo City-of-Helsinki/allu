@@ -8,14 +8,12 @@ import {StructureMeta} from '../../../../model/application/structure-meta';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
-import {MapHub} from '../../../../service/map/map-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
-import {ShortTermRentalForm} from './short-term-rental.form.ts';
+import {ShortTermRentalForm} from './short-term-rental.form';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {translations} from '../../../../util/translations';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ShortTermRentalDetailsForm} from './short-term-rental.form';
-import {MaterializeUtil} from '../../../../util/materialize.util';
 import {ApplicationState} from '../../../../service/application/application-state';
 
 @Component({
@@ -72,10 +70,6 @@ export class ShortTermRentalComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): any {
     this.routeEvents.unsubscribe();
-  }
-
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
   }
 
   onSubmit(form: ShortTermRentalForm) {

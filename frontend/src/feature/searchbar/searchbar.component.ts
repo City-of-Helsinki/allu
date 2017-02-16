@@ -1,5 +1,5 @@
-import {Component, Input, OnInit, OnDestroy, Output, EventEmitter, AfterViewInit} from '@angular/core';
-import {FormGroup, FormBuilder, FormControl} from '@angular/forms';
+import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
+import {FormGroup, FormBuilder} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 import {Subject} from 'rxjs/Subject';
 
@@ -22,7 +22,7 @@ enum BarType {
     require('./searchbar.component.scss')
   ]
 })
-export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
+export class SearchbarComponent implements OnInit, OnDestroy {
 
   @Input() addressSearch: string;
   @Input() startDate: Date;
@@ -63,10 +63,6 @@ export class SearchbarComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.searchForm.valueChanges.subscribe(form => this.notifySearchUpdated(form));
     this.notifySearchUpdated(this.searchForm.value);
-  }
-
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
   }
 
   ngOnDestroy(): void {

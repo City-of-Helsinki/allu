@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import * as filesaverLib from 'filesaver';
 
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
@@ -19,7 +19,7 @@ const toastTime = 4000;
     require('./attachments.component.scss')
   ]
 })
-export class AttachmentsComponent implements OnInit, AfterViewInit {
+export class AttachmentsComponent implements OnInit {
   application: Application;
   attachments: AttachmentInfo[] = [];
   editableAttachments: AttachmentInfo[] = [];
@@ -33,10 +33,6 @@ export class AttachmentsComponent implements OnInit, AfterViewInit {
     this.applicationState.attachments
       .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
       .subscribe(attachments => this.attachments = attachments);
-  }
-
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
   }
 
   addNewAttachment(attachment?: AttachmentInfo): void {

@@ -7,46 +7,46 @@
                     <div class="col m12">
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" [ngModel]="location.postalAddress.streetAddress" [readonly]="readonly" placeholder="Osoite"/>
+                                <input mdInput type="text" [ngModel]="location.postalAddress.streetAddress" [readonly]="readonly" placeholder="Osoite"/>
                             </md-input-container>
                         </div>
                         <div class="col m9">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" [ngModel]="location.info" [readonly]="readonly" placeholder="Lisätietoja paikasta" />
+                                <input mdInput type="text" [ngModel]="location.info" [readonly]="readonly" placeholder="Lisätietoja paikasta" />
                             </md-input-container>
                         </div>
                         <div class="col m10">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" [ngModel]="area" [readonly]="readonly" placeholder="Alue"/>
+                                <input mdInput type="text" [ngModel]="area" [readonly]="readonly" placeholder="Alue"/>
                             </md-input-container>
                         </div>
                         <div class="col m2">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" [ngModel]="sections" [readonly]="readonly" placeholder="Lohko(t)"/>
+                                <input mdInput type="text" [ngModel]="sections" [readonly]="readonly" placeholder="Lohko(t)"/>
                             </md-input-container>
                         </div>
                     </div>
                     <div class="col m12">
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" [ngModel]="location.uiArea" [readonly]="readonly" placeholder="Alueen pinta-ala" />
+                                <input mdInput type="text" [ngModel]="location.uiArea" [readonly]="readonly" placeholder="Alueen pinta-ala" />
                             </md-input-container>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" [ngModel]="application.location.areaOverride" [readonly]="readonly"
+                                <input mdInput type="text" [ngModel]="application.location.areaOverride" [readonly]="readonly"
                                        placeholder="Käsittelijän syöttämä pinta-ala" />
                             </md-input-container>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
+                                <input mdInput type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
                                        [readonly]="readonly" placeholder="Kaupunginosa"/>
                             </md-input-container>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" value="{{districtName(application.location.cityDistrictIdOverride) | async}}"
+                                <input mdInput type="text" value="{{districtName(application.location.cityDistrictIdOverride) | async}}"
                                        [readonly]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
                             </md-input-container>
                         </div>

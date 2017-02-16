@@ -8,7 +8,7 @@ import {RouterModule} from '@angular/router';
 import {MaterialModule} from '@angular/material';
 
 import {ApplicationModule} from '../application/application.module';
-import {ApplicationService} from '../../service/application/application.service.ts';
+import {ApplicationService} from '../../service/application/application.service';
 import {LocationService} from '../../service/location.service';
 import {MapHub} from '../../service/map/map-hub';
 import {ApplicationHub} from '../../service/application/application-hub';
@@ -39,7 +39,7 @@ import {Oauth2Component} from '../oauth2/oauth2.component';
     FormsModule,
     RouterModule.forRoot(rootRoutes),
     // Material
-    MaterialModule.forRoot(),
+    MaterialModule,
     // App modules
     ApplicationModule,
     ProjectModule,

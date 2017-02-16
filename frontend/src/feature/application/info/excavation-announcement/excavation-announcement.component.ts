@@ -9,7 +9,6 @@ import {Application} from '../../../../model/application/application';
 import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {UrlUtil} from '../../../../util/url.util';
-import {MaterializeUtil} from '../../../../util/materialize.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {ExcavationAnnouncementForm} from './excavation-announcement.form';
@@ -62,7 +61,6 @@ export class ExcavationAnnouncementComponent implements OnInit, OnDestroy {
     this.getCableReport(excavation.cableReportId)
       .subscribe(app => {
         this.applicationForm.patchValue({cableReportIdentifier: app.applicationId});
-        MaterializeUtil.updateTextFields(10);
       });
 
     this.matchingApplications = this.cableReportSearch.asObservable()

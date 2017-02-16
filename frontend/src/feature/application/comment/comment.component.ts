@@ -1,5 +1,4 @@
-import {Component, OnInit, AfterViewInit, Input, Output, EventEmitter} from '@angular/core';
-import {MaterializeUtil} from '../../../util/materialize.util';
+import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 
 import {Comment} from '../../../model/application/comment/comment';
 import {manualCommentNames} from '../../../model/application/comment/comment-type';
@@ -11,7 +10,7 @@ import {manualCommentNames} from '../../../model/application/comment/comment-typ
     require('./comment.component.scss')
   ]
 })
-export class CommentComponent implements OnInit, AfterViewInit {
+export class CommentComponent implements OnInit {
   @Input() comment = new Comment();
   @Output() onRemove = new EventEmitter<Comment>();
   @Output() onSave = new EventEmitter<Comment>();
@@ -27,10 +26,6 @@ export class CommentComponent implements OnInit, AfterViewInit {
     this._edit = this.comment.id === undefined;
   }
 
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
-  }
-
   remove(): void {
     this.onRemove.emit(this.comment);
   }
@@ -38,7 +33,6 @@ export class CommentComponent implements OnInit, AfterViewInit {
   save(): void {
     this._edit = false;
     this.onSave.emit(this.comment);
-    MaterializeUtil.updateTextFields(50);
   }
 
   cancel(): void {
@@ -49,8 +43,6 @@ export class CommentComponent implements OnInit, AfterViewInit {
 
   editComment(): void {
     this._edit = true;
-    MaterializeUtil.updateTextFields(50);
-    MaterializeUtil.resizeTextArea('#commentText');
     this.originalComment = this.comment.copy();
   }
 

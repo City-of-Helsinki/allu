@@ -8,7 +8,7 @@
                         <div class="row form-group">
                             <div class="col m6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
+                                    <input mdInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
                                     <md-hint>
                                         <field-error [form]="contact" field="name" hasError="required">{{translations.contact.field.nameMissing}}</field-error>
                                     </md-hint>
@@ -18,24 +18,24 @@
                         <div class="row form-group">
                             <div class="col m6">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+                                    <input mdInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
                                 </md-input-container>
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                                    <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
                                 </md-input-container>
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="city" placeholder="Toimipaikka"/>
+                                    <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
                                 </md-input-container>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col m4">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="phone" placeholder="Puhelin"/>
+                                    <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
                                     <md-hint>
                                         <field-error [form]="contact" field="phone" hasError="minlength">{{translations.contact.field.phoneShort}}</field-error>
                                     </md-hint>
@@ -43,7 +43,7 @@
                             </div>
                             <div class="col m8">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                                    <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                                     <md-hint>
                                         <field-error [form]="contact" field="email" hasError="pattern">{{translations.contact.field.emailInvalid}}</field-error>
                                     </md-hint>

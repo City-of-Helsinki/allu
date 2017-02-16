@@ -1,4 +1,4 @@
-import {Component, OnInit, AfterViewInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 import {Application} from '../../../model/application/application';
 import {MaterializeUtil} from '../../../util/materialize.util';
@@ -15,7 +15,7 @@ const toastTime = 4000;
   template: require('./comments.component.html'),
   styles: []
 })
-export class CommentsComponent implements OnInit, AfterViewInit {
+export class CommentsComponent implements OnInit {
   application: Application;
   comments = [];
 
@@ -26,10 +26,6 @@ export class CommentsComponent implements OnInit, AfterViewInit {
     this.applicationState.comments
       .map(comments => comments.sort((l, r) => TimeUtil.compareTo(r.createTime, l.createTime))) // sort latest first
       .subscribe(comments => this.comments = comments);
-  }
-
-  ngAfterViewInit(): void {
-    MaterializeUtil.updateTextFields(50);
   }
 
   addNew(): void {

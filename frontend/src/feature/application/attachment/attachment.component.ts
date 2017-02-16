@@ -3,7 +3,6 @@ import {Component, Input, Output, OnInit, EventEmitter} from '@angular/core';
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
 import {EnumUtil} from '../../../util/enum.util';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
-import {MaterializeUtil} from '../../../util/materialize.util';
 
 
 @Component({
@@ -24,7 +23,6 @@ export class AttachmentComponent implements OnInit {
 
   ngOnInit(): void {
     this.edit = this.attachment.id === undefined;
-    MaterializeUtil.updateTextFields(100);
   }
 
   attachmentSelected(files: any[]): void {

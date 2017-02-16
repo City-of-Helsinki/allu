@@ -1,8 +1,8 @@
 @import '../../assets/colors';
 
 :host {
-  background: md-color($allu-primary, 500);
-  color: md-contrast($allu-primary, 500);
+  background: mat-color($allu-primary, 500);
+  color: mat-contrast($allu-primary, 500);
   display: flex;
   height: 50px;
   padding: 0 16px;

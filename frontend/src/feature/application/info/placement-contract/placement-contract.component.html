@@ -25,7 +25,7 @@
                     <div class="row form-group">
                         <div class="col m6">
                             <md-input-container class="input-full-width">
-                                <input md-input type="text" formControlName="diaryNumber" placeholder="Diaarinumero"/>
+                                <input mdInput type="text" formControlName="diaryNumber" placeholder="Diaarinumero"/>
                             </md-input-container>
                         </div>
                     </div>
@@ -33,7 +33,7 @@
                         <div formGroupName="validityTimes">
                             <div class="col s3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
@@ -48,7 +48,7 @@
                             </div>
                             <div class="col s3">
                                 <md-input-container class="input-full-width">
-                                    <input md-input type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
@@ -63,12 +63,12 @@
                     <div class="row form-group">
                         <div class="col m12">
                             <md-input-container class="input-full-width">
-                                <textarea md-input md-autosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
+                                <textarea mdInput md-autosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
                             </md-input-container>
                         </div>
                         <div class="col m12">
                             <md-input-container class="input-full-width">
-                                <textarea md-input md-autosize formControlName="generalTerms" placeholder="Yleiset"></textarea>
+                                <textarea mdInput md-autosize formControlName="generalTerms" placeholder="Yleiset"></textarea>
                             </md-input-container>
                         </div>
                     </div>

@@ -23,8 +23,8 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
   h1.popup-header {
     font-size: 15px;
     line-height: 20px;
-    color: md-contrast($allu-primary, 500);
-    background: md-color($allu-primary, 50);
+    color: mat-contrast($allu-primary, 500);
+    background: mat-color($allu-primary, 50);
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     padding: 5px 16px;
