@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.NullNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.util.*;
@@ -119,6 +122,21 @@ public class ObjectComparer {
       Map.Entry<String, JsonNode> field = iter.next();
       String name = prefix + field.getKey();
       JsonNode value = field.getValue();
+      // Special case: handle empty arrays as null nodes => avoids extra history
+      // lines
+      if (value.isArray()) {
+        ArrayNode array = (ArrayNode) value;
+        if (array.size() == 0) {
+          value = NullNode.getInstance();
+        }
+      }
+      // Similar special case for empty strings
+      if (value.isTextual()) {
+        TextNode text = (TextNode) value;
+        if (text.textValue().isEmpty()) {
+          value = NullNode.getInstance();
+        }
+      }
       if (value.isObject()) {
         flattenRecurse(mapper, value, name + SLASH, results);
       } else {

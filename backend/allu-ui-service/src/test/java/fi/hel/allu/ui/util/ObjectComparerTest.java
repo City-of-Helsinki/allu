@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -70,5 +71,27 @@ public class ObjectComparerTest {
     assertNotNull(cityDiff);
     assertEquals("\"Siti\"", cityDiff.oldValue);
     assertEquals("\"Villits\"", cityDiff.newValue);
+  }
+
+  @Test
+  public void testEmptyArrayEqualsNull() {
+    ApplicationJson applicationJson1 = new ApplicationJson();
+    applicationJson1.setApplicationTags(null);
+    ApplicationJson applicationJson2 = new ApplicationJson();
+    applicationJson2.setApplicationTags(Collections.emptyList());
+    ObjectComparer oc = new ObjectComparer();
+    List<Difference> diff = oc.compare(applicationJson1, applicationJson2);
+    assertEquals(0, diff.size());
+  }
+
+  @Test
+  public void testEmptyStringEqualsNull() {
+    ApplicantJson app1 = new ApplicantJson();
+    app1.setName("");
+    ApplicantJson app2 = new ApplicantJson();
+    app2.setName(null);
+    ObjectComparer oc = new ObjectComparer();
+    List<Difference> diff = oc.compare(app1, app2);
+    assertEquals(0, diff.size());
   }
 }
