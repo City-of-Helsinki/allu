@@ -1,16 +1,14 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
-import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
-import {UrlUtil} from '../../../../util/url.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {TrafficArrangementForm} from './traffic-arrangement.form';
+import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 
 
 @Component({
@@ -19,57 +17,21 @@ import {TrafficArrangementForm} from './traffic-arrangement.form';
   template: require('./traffic-arrangement.component.html'),
   styles: []
 })
-export class TrafficArrangementComponent implements OnInit, OnDestroy {
+export class TrafficArrangementComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  path: string;
-  application: Application;
-  applicationForm: FormGroup;
-  submitPending = false;
-  pickadateParams = PICKADATE_PARAMETERS;
-  readonly: boolean;
-
-  private routeEvents: Subscription;
-
-  constructor(private route: ActivatedRoute,
-              private router: Router,
-              private fb: FormBuilder,
-              private applicationState: ApplicationState) {
+  constructor(private fb: FormBuilder,
+              route: ActivatedRoute,
+              applicationState: ApplicationState) {
+    super(route, applicationState);
   };
 
   ngOnInit(): any {
-    this.initForm();
-    this.application = this.applicationState.application;
+    super.ngOnInit();
     let arrangement = <TrafficArrangement>this.application.extension || new TrafficArrangement();
     this.applicationForm.patchValue(TrafficArrangementForm.from(this.application, arrangement));
-
-    UrlUtil.urlPathContains(this.route.parent, 'summary')
-      .filter(contains => contains)
-      .forEach(summary => {
-        this.readonly = summary;
-        this.applicationForm.disable();
-      });
-
-    this.routeEvents = this.router.events
-      .filter(event => event instanceof NavigationStart)
-      .subscribe(navStart => {
-        if (!this.readonly) {
-          this.applicationState.application = this.update(this.applicationForm.value);
-        }
-      });
   }
 
-  ngOnDestroy(): any {
-    this.routeEvents.unsubscribe();
-  }
-
-  onSubmit(form: TrafficArrangementForm) {
-    this.submitPending = true;
-    let application = this.update(form);
-    this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
-  }
-
-  private update(form: TrafficArrangementForm): Application {
+  protected update(form: TrafficArrangementForm): Application {
     let application = this.application;
     application.name = 'Liikennejärjestely'; // Traffic arrangements have no name so set default
     application.uiStartTime = form.validityTimes.startTime;
@@ -80,7 +42,7 @@ export class TrafficArrangementComponent implements OnInit, OnDestroy {
     return application;
   }
 
-  private initForm() {
+  protected initForm() {
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: ['', Validators.required],

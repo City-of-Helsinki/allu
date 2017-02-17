@@ -4,8 +4,9 @@ import {Contact} from '../../../../model/application/contact';
 import {Some} from '../../../../util/option';
 import {Application} from '../../../../model/application/application';
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
+import {ApplicationForm} from '../application-form';
 
-export class PlacementContractForm {
+export class PlacementContractForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
     public applicant?: ApplicantForm,

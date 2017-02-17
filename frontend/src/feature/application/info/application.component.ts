@@ -2,8 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
-import {ProgressStep} from '../progressbar/progressbar.component.ts';
-import {UrlUtil} from '../../../util/url.util.ts';
+import {ProgressStep} from '../progressbar/progressbar.component';
+import {UrlUtil} from '../../../util/url.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';

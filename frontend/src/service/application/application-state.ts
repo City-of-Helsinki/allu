@@ -14,6 +14,7 @@ import {HttpResponse, HttpStatus} from '../../util/http.util';
 import {Comment} from '../../model/application/comment/comment';
 import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
+import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
 
 
 @Injectable()
@@ -24,6 +25,7 @@ export class ApplicationState {
   private _pendingAttachments: Array<AttachmentInfo> = [];
   private attachments$ = new BehaviorSubject<Array<AttachmentInfo>>([]);
   private comments$ = new BehaviorSubject<Array<Comment>>([]);
+  private tabChange$ = new Subject<SidebarItemType>();
 
   constructor(private router: Router,
               private applicationHub: ApplicationHub,
@@ -58,6 +60,10 @@ export class ApplicationState {
 
   get comments(): Observable<Array<Comment>> {
     return this.comments$.asObservable();
+  }
+
+  get tabChange(): Observable<SidebarItemType> {
+    return this.tabChange$.asObservable();
   }
 
   addAttachment(attachment: AttachmentInfo) {
@@ -120,6 +126,10 @@ export class ApplicationState {
         this.attachments$.next(app.attachmentList);
         this.application = app;
       });
+  }
+
+  notifyTabChange(tab: SidebarItemType): void {
+    this.tabChange$.next(tab);
   }
 
   save(application: Application): Observable<Application> {

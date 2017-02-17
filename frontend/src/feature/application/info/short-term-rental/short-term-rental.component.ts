@@ -1,20 +1,16 @@
 import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
+import {ActivatedRoute} from '@angular/router';
+import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
-import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
 import {ApplicationHub} from '../../../../service/application/application-hub';
-import {UrlUtil} from '../../../../util/url.util';
 import {ApplicantForm} from '../applicant/applicant.form';
-import {ShortTermRentalForm} from './short-term-rental.form';
+import {ShortTermRentalForm, ShortTermRentalDetailsForm} from './short-term-rental.form';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {translations} from '../../../../util/translations';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
-import {ShortTermRentalDetailsForm} from './short-term-rental.form';
 import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 
 @Component({
   selector: 'short-term-rental',
@@ -22,65 +18,27 @@ import {ApplicationState} from '../../../../service/application/application-stat
   template: require('./short-term-rental.component.html'),
   styles: []
 })
-export class ShortTermRentalComponent implements OnInit, OnDestroy {
-
-  path: string;
-  application: Application;
-  applicationForm: FormGroup;
-  rentalForm: FormGroup;
-  submitPending = false;
-  translations = translations;
-  pickadateParams = PICKADATE_PARAMETERS;
-  readonly: boolean;
+export class ShortTermRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
 
   private meta: StructureMeta;
-  private routeEvents: Subscription;
 
-  constructor(private route: ActivatedRoute,
-              private router: Router,
+  constructor(private applicationHub: ApplicationHub,
               private fb: FormBuilder,
-              private applicationHub: ApplicationHub,
-              private applicationState: ApplicationState) {
+              route: ActivatedRoute,
+              applicationState: ApplicationState) {
+    super(route, applicationState);
   };
 
   ngOnInit(): any {
-    this.initForm();
+    super.ngOnInit();
 
-    this.application = this.applicationState.application;
     let rental = <ShortTermRental>this.application.extension || new ShortTermRental();
-    this.rentalForm.patchValue(ShortTermRentalDetailsForm.from(this.application, rental));
+    this.applicationForm.patchValue(ShortTermRentalDetailsForm.from(this.application, rental));
 
     this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
-
-    UrlUtil.urlPathContains(this.route.parent, 'summary')
-      .filter(contains => contains)
-      .forEach(summary => {
-      this.readonly = summary;
-      this.applicationForm.disable();
-    });
-
-    this.routeEvents = this.router.events
-      .filter(event => event instanceof NavigationStart)
-      .subscribe(navStart => {
-        if (!this.readonly) {
-          this.applicationState.application = this.update(this.applicationForm.value);
-        }
-      });
   }
 
-  ngOnDestroy(): any {
-    this.routeEvents.unsubscribe();
-  }
-
-  onSubmit(form: ShortTermRentalForm) {
-    this.submitPending = true;
-    let application = this.update(form);
-
-    this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
-  }
-
-  private update(form: ShortTermRentalForm): Application {
+  protected update(form: ShortTermRentalForm): Application {
     let application = this.application;
     application.metadata = this.meta;
     application.name = form.details.name;
@@ -97,10 +55,8 @@ export class ShortTermRentalComponent implements OnInit, OnDestroy {
   }
 
 
-  private initForm() {
-    this.applicationForm = this.fb.group({});
-
-    this.rentalForm = this.fb.group({
+  protected initForm() {
+    this.applicationForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       description: ['', Validators.required],
       area: undefined,
@@ -114,8 +70,6 @@ export class ShortTermRentalComponent implements OnInit, OnDestroy {
         endTime: ['', Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
     });
-
-    this.applicationForm.addControl('details', this.rentalForm);
   }
 
   private metadataLoaded(metadata: StructureMeta) {

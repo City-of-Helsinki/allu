@@ -3,6 +3,7 @@ import {Contact} from '../../../../model/application/contact';
 import {TimePeriod} from '../time-period';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {Application} from '../../../../model/application/application';
+import {ApplicationForm} from '../application-form';
 
 export interface ShortTermRentalForm {
   applicant: ApplicantForm;
@@ -10,7 +11,7 @@ export interface ShortTermRentalForm {
   details: ShortTermRentalDetailsForm;
 }
 
-export class ShortTermRentalDetailsForm {
+export class ShortTermRentalDetailsForm implements ApplicationForm {
   constructor(
     public name?: string,
     public description?: string,

@@ -27,7 +27,7 @@
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
                                         <field-error [form]="applicationForm" field="reportTimes" hasError="startBeforeEnd">
-                                            {{translations.application.cableReport.field.startBeforeEnd}}
+                                            {{'application.cableReport.field.startBeforeEnd' | translation}}
                                         </field-error>
                                     </md-hint>
                                 </md-input-container>

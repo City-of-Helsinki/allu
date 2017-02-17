@@ -2,11 +2,11 @@ import {TimePeriod} from '../time-period';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {Contact} from '../../../../model/application/contact';
 import {Some} from '../../../../util/option';
-import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {Application} from '../../../../model/application/application';
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
+import {ApplicationForm} from '../application-form';
 
-export class TrafficArrangementForm {
+export class TrafficArrangementForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
     public applicant?: ApplicantForm,

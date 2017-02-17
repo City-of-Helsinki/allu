@@ -5,116 +5,114 @@
 
         <contact [applicationForm]="applicationForm" [contactList]="application.contactList" [readonly]=readonly></contact>
 
-        <form [formGroup]="rentalForm">
-            <div class="col m12 loose">
-                <md-card>
-                    <md-card-title>Vuokrauksen tiedot</md-card-title>
-                    <md-card-content>
-                        <div class="row form-group">
-                            <div class="col m6">
+        <div class="col m12 loose">
+            <md-card>
+                <md-card-title>Vuokrauksen tiedot</md-card-title>
+                <md-card-content>
+                    <div class="row form-group">
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
+                                <md-hint>
+                                    <field-error [form]="applicationForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
+                                    <field-error [form]="applicationForm" field="name" hasError="minlength">{{'translations.application.field.nameShort' | translation}}</field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <textarea mdInput md-autosize formControlName="description" placeholder="Vuokrauksen kuvaus*"></textarea>
+                                <md-hint>
+                                    <field-error [form]="applicationForm" field="description" hasError="required">
+                                        {{'application.shortTermRental.field.descriptionMissing' | translation}}
+                                    </field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div formGroupName="rentalTimes">
+                            <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
+                                    <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
                                     <md-hint>
-                                        <field-error [form]="rentalForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
-                                        <field-error [form]="rentalForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
-                                    </md-hint>
-                                </md-input-container>
-                            </div>
-                            <div class="col m6">
-                                <md-input-container class="input-full-width">
-                                    <textarea mdInput md-autosize formControlName="description" placeholder="Vuokrauksen kuvaus*"></textarea>
-                                    <md-hint>
-                                        <field-error [form]="rentalForm" field="description" hasError="required">
-                                            {{translations.application.shortTermRental.field.descriptionMissing}}
+                                        <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
+                                            {{'application.shortTermRental.field.rentalStartTimeMissing' | translation}}
                                         </field-error>
-                                    </md-hint>
-                                </md-input-container>
-                            </div>
-                            <div formGroupName="rentalTimes">
-                                <div class="col m3">
-                                    <md-input-container class="input-full-width">
-                                        <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
-                                               materialize="pickadate"
-                                               [materializeParams]="pickadateParams"/>
-                                        <md-hint>
-                                            <field-error [form]="rentalForm.get('rentalTimes')" field="startTime" hasError="required">
-                                                {{translations.application.shortTermRental.field.rentalStartTimeMissing}}
-                                            </field-error>
-                                            <field-error [form]="rentalForm" field="rentalTimes" hasError="startBeforeEnd">
-                                                {{translations.application.shortTermRental.field.startBeforeEnd}}
-                                            </field-error>
-                                        </md-hint>
-                                    </md-input-container>
-                                </div>
-                                <div class="col m3">
-                                    <md-input-container class="input-full-width">
-                                        <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
-                                               materialize="pickadate"
-                                               [materializeParams]="pickadateParams"/>
-                                        <md-hint>
-                                            <field-error [form]="rentalForm.get('rentalTimes')" field="endTime" hasError="required">
-                                                {{translations.application.shortTermRental.field.rentalEndTimeMissing}}
-                                            </field-error>
-                                        </md-hint>
-                                    </md-input-container>
-                                </div>
-                            </div>
-                            <div class="col m6">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="number" formControlName="area" placeholder="Pinta-ala"/>
-                                </md-input-container>
-                            </div>
-                        </div>
-                    </md-card-content>
-                </md-card>
-            </div>
-
-            <div class="col m12 loose">
-                <md-card>
-                    <md-card-title>Hinnoitteluperusteet</md-card-title>
-                    <md-card-content>
-                        <div class="row form-group">
-                            <div *ngIf="application.kind==='BRIDGE_BANNER'" class="col m6 no-padding">
-                                <div class="col m12">
-                                    <md-checkbox formControlName="commercial">{{ meta?.getUiName('commercial') }}</md-checkbox>
-                                </div>
-                            </div>
-                            <div *ngIf="application.kind==='PROMOTION_OR_SALES'" class="col m6 no-padding">
-                                <div class="col m12">
-                                    <md-checkbox formControlName="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</md-checkbox>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col m3">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
-                                </md-input-container>
-                            </div>
-                        </div>
-                        <div class="row form-group">
-                            <div class="col m3">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
-                                    <md-hint>
-                                        <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
-                                            {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
+                                        <field-error [form]="applicationForm" field="rentalTimes" hasError="startBeforeEnd">
+                                            {{'application.shortTermRental.field.startBeforeEnd' | translation}}
                                         </field-error>
                                     </md-hint>
                                 </md-input-container>
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
+                                    <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
+                                            {{'application.shortTermRental.field.rentalEndTimeMissing' | translation}}
+                                        </field-error>
+                                    </md-hint>
                                 </md-input-container>
                             </div>
                         </div>
-                    </md-card-content>
-                </md-card>
-            </div>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="number" formControlName="area" placeholder="Pinta-ala"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
 
-            <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
-        </form>
+        <div class="col m12 loose">
+            <md-card>
+                <md-card-title>Hinnoitteluperusteet</md-card-title>
+                <md-card-content>
+                    <div class="row form-group">
+                        <div *ngIf="application.kind==='BRIDGE_BANNER'" class="col m6 no-padding">
+                            <div class="col m12">
+                                <md-checkbox formControlName="commercial">{{ meta?.getUiName('commercial') }}</md-checkbox>
+                            </div>
+                        </div>
+                        <div *ngIf="application.kind==='PROMOTION_OR_SALES'" class="col m6 no-padding">
+                            <div class="col m12">
+                                <md-checkbox formControlName="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</md-checkbox>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
+                                <md-hint>
+                                    <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
+                                        {{'application.event.field.priceOverrideGreaterThanOrEqual' | translation}}
+                                    </field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+
+        <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
 
         <application-actions
             [readonly]="readonly"

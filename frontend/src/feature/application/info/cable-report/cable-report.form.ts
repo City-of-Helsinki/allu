@@ -4,11 +4,11 @@ import {Contact} from '../../../../model/application/contact';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {Some} from '../../../../util/option';
 import {CableInfoEntry} from '../../../../model/application/cable-report/cable-info-entry';
-import {ApplicationExtension} from '../../../../model/application/type/application-extension';
 import {Application} from '../../../../model/application/application';
 import {StringUtil} from '../../../../util/string.util';
+import {ApplicationForm} from '../application-form';
 
-export class CableReportForm {
+export class CableReportForm implements ApplicationForm {
   constructor(
     public cableSurveyRequired?: boolean,
     public mapUpdated?: boolean,

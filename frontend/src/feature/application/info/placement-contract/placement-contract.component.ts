@@ -1,17 +1,14 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute, Router, NavigationStart} from '@angular/router';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
+import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
+import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
-import {PICKADATE_PARAMETERS} from '../../../../util/time.util';
-import {ApplicationHub} from '../../../../service/application/application-hub';
-import {UrlUtil} from '../../../../util/url.util';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
 import {PlacementContractForm} from './placement-contract.form';
+import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 
 
 @Component({
@@ -20,58 +17,21 @@ import {PlacementContractForm} from './placement-contract.form';
   template: require('./placement-contract.component.html'),
   styles: []
 })
-export class PlacementContractComponent implements OnInit, OnDestroy {
+export class PlacementContractComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  path: string;
-  application: Application;
-  applicationForm: FormGroup;
-  submitPending = false;
-  pickadateParams = PICKADATE_PARAMETERS;
-  readonly: boolean;
-
-  private routeEvents: Subscription;
-
-  constructor(private route: ActivatedRoute,
-              private router: Router,
-              private fb: FormBuilder,
-              private applicationState: ApplicationState) {
+  constructor(private fb: FormBuilder,
+              route: ActivatedRoute,
+              applicationState: ApplicationState) {
+    super(route, applicationState);
   };
 
   ngOnInit(): any {
-    this.initForm();
-    this.application = this.applicationState.application;
+    super.ngOnInit();
     let contract = <PlacementContract>this.application.extension || new PlacementContract();
     this.applicationForm.patchValue(PlacementContractForm.from(this.application, contract));
-
-    UrlUtil.urlPathContains(this.route.parent, 'summary')
-      .filter(contains => contains)
-      .forEach(summary => {
-        this.readonly = summary;
-        this.applicationForm.disable();
-      });
-
-    this.routeEvents = this.router.events
-      .filter(event => event instanceof NavigationStart)
-      .subscribe(navStart => {
-        if (!this.readonly) {
-          this.applicationState.application = this.update(this.applicationForm.value);
-        }
-      });
   }
 
-  ngOnDestroy(): any {
-    this.routeEvents.unsubscribe();
-  }
-
-  onSubmit(form: PlacementContractForm) {
-    this.submitPending = true;
-    let application = this.update(form);
-
-    this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
-  }
-
-  private update(form: PlacementContractForm): Application {
+  protected update(form: PlacementContractForm): Application {
     let application = this.application;
     application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
     application.uiStartTime = form.validityTimes.startTime;
@@ -82,7 +42,7 @@ export class PlacementContractComponent implements OnInit, OnDestroy {
     return application;
   }
 
-  private initForm() {
+  protected initForm() {
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: ['', Validators.required],

@@ -2,55 +2,55 @@
     <div class="sidebar-item" *ngFor="let item of items" routerLinkActive="active">
         <div [ngSwitch]="item.type">
             <div *ngSwitchCase="'BASIC_INFO'">
-                <a [routerLink]="['info']" routerLinkActive="active">
+                <a [routerLink]="['info']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">list</md-icon>
                     <div>Perustiedot</div>
                 </a>
             </div>
             <div *ngSwitchCase="'ATTACHMENTS'">
-                <a [routerLink]="['attachments']" routerLinkActive="active">
+                <a [routerLink]="['attachments']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">attach_file</md-icon>
                     <div>Liitteet ({{item.count}})</div>
                 </a>
             </div>
             <div *ngSwitchCase="'INVOICING'">
-                <a [routerLink]="['invoicing']" routerLinkActive="active">
+                <a [routerLink]="['invoicing']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">euro_symbol</md-icon>
                     <div>Laskutus</div>
                 </a>
             </div>
             <div *ngSwitchCase="'COMMENTS'">
-                <a [routerLink]="['comments']" routerLinkActive="active">
+                <a [routerLink]="['comments']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">chat_bubble_outline</md-icon>
                     <div>Kommentit ({{item.count}})</div>
                 </a>
             </div>
             <div *ngSwitchCase="'EMAIL'">
-                <a [routerLink]="['email']" routerLinkActive="active">
+                <a [routerLink]="['email']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">email</md-icon>
                     <div>Sähköposti</div>
                 </a>
             </div>
             <div *ngSwitchCase="'HISTORY'">
-                <a [routerLink]="['history']" skipLocationChange="true" routerLinkActive="active">
+                <a [routerLink]="['history']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">history</md-icon>
                     <div>Historia</div>
                 </a>
             </div>
             <div *ngSwitchCase="'SUPERVISION'">
-                <a [routerLink]="['supervision']" routerLinkActive="active">
+                <a [routerLink]="['supervision']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">search</md-icon>
                     <div>Valvonta</div>
                 </a>
             </div>
             <div *ngSwitchCase="'APPLICATIONS'">
-                <a [routerLink]="['applications']" routerLinkActive="active">
+                <a [routerLink]="['applications']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">filter_none</md-icon>
                     <div>Hakemukset ({{item.count}})</div>
                 </a>
             </div>
             <div *ngSwitchCase="'PROJECTS'">
-                <a [routerLink]="['projects']" routerLinkActive="active">
+                <a [routerLink]="['projects']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">line_style</md-icon>
                     <div>Hankkeet ({{item.count}})</div>
                 </a>

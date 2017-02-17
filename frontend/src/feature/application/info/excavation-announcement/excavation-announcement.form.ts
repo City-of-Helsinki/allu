@@ -4,8 +4,9 @@ import {Contact} from '../../../../model/application/contact';
 import {Some} from '../../../../util/option';
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {Application} from '../../../../model/application/application';
+import {ApplicationForm} from '../application-form';
 
-export class ExcavationAnnouncementForm {
+export class ExcavationAnnouncementForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
     public applicant?: ApplicantForm,

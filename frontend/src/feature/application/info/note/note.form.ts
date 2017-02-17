@@ -3,8 +3,9 @@ import {TimePeriod} from '../time-period';
 import {Application} from '../../../../model/application/application';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {Contact} from '../../../../model/application/contact';
+import {ApplicationForm} from '../application-form';
 
-export class NoteForm {
+export class NoteForm implements ApplicationForm {
   constructor(
     public name: string,
     public validityTimes: TimePeriod,
