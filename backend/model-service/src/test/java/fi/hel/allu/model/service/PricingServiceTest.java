@@ -24,6 +24,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -84,9 +85,8 @@ public class PricingServiceTest {
     location.setFixedLocationIds(fixedLocationIds);
     int locationId = locationDao.insert(location).getId();
     application.setLocationId(locationId);
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(220500, application.getCalculatedPrice().intValue());
+
+    checkPrice(application, 220500);
   }
 
   @Test
@@ -99,17 +99,14 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T23:00:00+02:00"));
     application.setExtension(event);
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
     // Five weeks non-commercial -> 750 EUR
-    assertEquals(75000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 75000);
+
     event.setCommercial(true);
     application.setStartTime(ZonedDateTime.parse("2016-11-14T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-11-28T05:59:59+02:00"));
-    invoiceRows.clear();
-    pricingService.updatePrice(application, invoiceRows);
     // Two week commercial -> 1500 EUR
-    assertEquals(150000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 150000);
   }
 
   @Test
@@ -119,10 +116,8 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.CIRCUS);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
     // Thirty-three days -> 6600 EUR
-    assertEquals(660000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 660000);
   }
 
   @Test
@@ -137,16 +132,12 @@ public class PricingServiceTest {
     applicant.setType(ApplicantType.ASSOCIATION);
     application.setApplicantId(applicantDao.insert(applicant).getId());
     // association -> 50 EUR /applicationExtension
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(5000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 5000);
 
     applicant.setType(ApplicantType.COMPANY);
     application.setApplicantId(applicantDao.insert(applicant).getId());
     // Company -> 100 EUR /applicationExtension
-    invoiceRows.clear();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(10000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 10000);
   }
 
   @Test
@@ -160,17 +151,13 @@ public class PricingServiceTest {
     applicant.setName("Hakija");
     applicant.setType(ApplicantType.ASSOCIATION);
     application.setApplicantId(applicantDao.insert(applicant).getId());
-    // association -> 100 EUR /year
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(30000, application.getCalculatedPrice().intValue());
+    // association -> 100 EUR /year -> 300 EUR total
+    checkPrice(application, 30000);
 
     applicant.setType(ApplicantType.COMPANY);
     application.setApplicantId(applicantDao.insert(applicant).getId());
-    // Company -> 200 EUR /year
-    invoiceRows.clear();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(60000, application.getCalculatedPrice().intValue());
+    // Company -> 200 EUR /year -> 600 EUR total
+    checkPrice(application, 60000);
   }
 
   @Test
@@ -184,9 +171,7 @@ public class PricingServiceTest {
     location.setAreaOverride(135.5);
     application.setLocationId(locationDao.insert(location).getId());
     // 19 days, 135.5 sqm -> 14 * 14 * 50 + 5 * 14 * 25 = 11550 EUR
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(1155000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 1155000);
   }
 
   @Test
@@ -200,14 +185,11 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
     // Large area, price for three years = 150 EUR * 3 = 450 EUR
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(45000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 45000);
+
     // Small area is free
     event.setLargeSalesArea(false);
-    invoiceRows.clear();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(0, application.getCalculatedPrice().intValue());
+    checkPrice(application, 0);
   }
 
   @Test
@@ -218,9 +200,7 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
     // Two months -> 240 EUR
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
-    assertEquals(24000, application.getCalculatedPrice().intValue());
+    checkPrice(application, 24000);
   }
 
   @Test
@@ -234,8 +214,24 @@ public class PricingServiceTest {
     location.setAreaOverride(222.2);
     application.setLocationId(locationDao.insert(location).getId());
     // Three terms, 222.2 sqm -> 223 * 2 * 3 = 1338 EUR
+    checkPrice(application, 133800);
+  }
+
+  /*
+   * Verify that the sum of invoice lines matches the application's calculated
+   * price
+   */
+  private void checkPrice(Application application, int expectedPrice) {
     List<InvoiceRow> invoiceRows = new ArrayList<>();
+
     pricingService.updatePrice(application, invoiceRows);
-    assertEquals(133800, application.getCalculatedPrice().intValue());
+
+    assertEquals(expectedPrice, application.getCalculatedPrice().intValue());
+    int invoiced = invoiceRows.stream().mapToInt(row -> row.getNetPrice()).sum();
+    assertEquals(application.getCalculatedPrice().intValue(), invoiced);
+    for (InvoiceRow invoiceRow : invoiceRows) {
+      double error = Math.abs(invoiceRow.getNetPrice() - invoiceRow.getUnitPrice() * invoiceRow.getQuantity());
+      assertTrue(error < 0.00001);
+    }
   }
 }

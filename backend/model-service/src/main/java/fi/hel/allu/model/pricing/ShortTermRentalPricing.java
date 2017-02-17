@@ -1,6 +1,7 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.InvoiceUnit;
 import fi.hel.allu.model.domain.ShortTermRental;
 
 import java.time.ZonedDateTime;
@@ -36,6 +37,28 @@ public class ShortTermRentalPricing extends Pricing {
   private static final int LONG_TERM_DISCOUNT_LIMIT = 14; // how many days
                                                           // before discount?
 
+  /*
+   * Invoice line string constants
+   */
+  static class InvoiceLines {
+    static final String BANDEROL_NONCOMMERCIAL = "Banderollit silloissa, ei-kaupallinen";
+    static final String BANDEROL_COMMERCIAL = "Banderollit silloissa, kaupallinen";
+    static final String PROMOTION_OR_SALES_SMALL = "Promootio- tai myyntitila liikkeen edustalla, alle 0,8 m x 3,0 m";
+    static final String PROMOTION_OR_SALES_LARGE = "Promootio- tai myyntitila liikkeen edustalla, yli 0,8 m x 3,0 m";
+    static final String URBAN_FARMING = "Kaupunkiviljelypaikka yhdistyksille ja yhteisöille";
+    static final String KESKUSKATU_SALES_SHORT = "Keskuskadun myyntipaikka, 1-14 päivää";
+    static final String KESKUSKATU_SALES_LONG = "Keskuskadun myyntipaikka, 15. päivästä alkaen";
+    static final String SUMMER_THEATER = "Kesäteatteri, maksu näytäntöajalta";
+    static final String DOG_TRAINING_FIELD_ORG = "Koirankoulutuskentän vuosimaksu yhdistykselle";
+    static final String DOG_TRAINING_FIELD_COM = "Koirankoulutuskentän vuosimaksu yritykselle";
+    static final String DOG_TRAINING_EVENT_ORG = "Koirankoulutustapahtuma, järjestäjänä yhdistys";
+    static final String DOG_TRAINING_EVENT_COM = "Koirankoulutustapahtuma, järjestäjänä yritys";
+    static final String SMALL_ART_AND_CULTURE = "Pienimuotoinen taide- ja kulttuuritapahtuma";
+    static final String SEASON_SALES_SHORT = "Sesonkimyyntipaikka, 1-14 päivää";
+    static final String SEASON_SALES_LONG = "Sesonkimyyntipaikka, 15. päivästä alkaen";
+    static final String CIRCUS = "Sirkukset ja tivolit";
+  }
+
   public ShortTermRentalPricing(Application application, double applicationArea, boolean applicantIsCompany) {
     super();
     this.application = application;
@@ -57,10 +80,12 @@ public class ShortTermRentalPricing extends Pricing {
     case ART:
       // Free event
       setPriceInCents(0);
+      addInvoiceRow(InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.SMALL_ART_AND_CULTURE, 0);
       break;
     case SMALL_ART_AND_CULTURE:
       // Free event
       setPriceInCents(0);
+      addInvoiceRow(InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.SMALL_ART_AND_CULTURE, 0);
       break;
     case BENJI:
       // Price not defined
@@ -70,36 +95,43 @@ public class ShortTermRentalPricing extends Pricing {
       // Non-commercial organizer: 150 EUR/week
       // Commercial organizer: 750 EUR/week
       if (isCommercial()) {
-        updatePricePerUnit(ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL);
+        updatePricePerUnit(ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL, InvoiceLines.BANDEROL_COMMERCIAL);
       } else {
-        updatePricePerUnit(ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL);
+        updatePricePerUnit(ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL,
+            InvoiceLines.BANDEROL_NONCOMMERCIAL);
       }
       break;
     case CIRCUS:
-      updatePricePerUnit(ChronoUnit.DAYS, CIRCUS_DAILY_PRICE);
+      updatePricePerUnit(ChronoUnit.DAYS, CIRCUS_DAILY_PRICE, InvoiceLines.CIRCUS);
       break;
     case DOG_TRAINING_EVENT:
       // Associations: 50 EUR/event
       // Companies: 100 EUR/event
       if (applicantIsCompany) {
         setPriceInCents(DOG_TRAINING_EVENT_COMPANY_PRICE);
+        addInvoiceRow(InvoiceUnit.PIECE, 1, DOG_TRAINING_EVENT_COMPANY_PRICE, InvoiceLines.DOG_TRAINING_EVENT_COM,
+            DOG_TRAINING_EVENT_COMPANY_PRICE);
       } else {
         setPriceInCents(DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
+        addInvoiceRow(InvoiceUnit.PIECE, 1, DOG_TRAINING_EVENT_ASSOCIATION_PRICE, InvoiceLines.DOG_TRAINING_EVENT_ORG,
+            DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
       }
       break;
     case DOG_TRAINING_FIELD:
       // Associations: 100 EUR/year
       // Companies: 200 EUR/year
       if (applicantIsCompany) {
-        updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_COMPANY);
+        updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_COMPANY, InvoiceLines.DOG_TRAINING_FIELD_COM);
       } else {
-        updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_ASSOCIATION);
+        updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_ASSOCIATION,
+            InvoiceLines.DOG_TRAINING_FIELD_ORG);
       }
       break;
     case KESKUSKATU_SALES:
       // 1..14 days: 50 EUR/day/starting 10 sqm
       // 50% discount from 15. day onwards
-      updatePriceByTimeAndArea(KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true);
+      updatePriceByTimeAndArea(KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true,
+          InvoiceLines.KESKUSKATU_SALES_SHORT, InvoiceLines.KESKUSKATU_SALES_LONG);
       break;
     case OTHER_SHORT_TERM_RENTAL:
       // Unknown price
@@ -110,16 +142,18 @@ public class ShortTermRentalPricing extends Pricing {
       // bigger: 150 EUR/year
       ShortTermRental str = (ShortTermRental) application.getExtension();
       if (str != null && str.getLargeSalesArea() == true) {
-        updatePricePerUnit(ChronoUnit.YEARS, PROMOTION_OR_SALES_LARGE_YEARLY);
+        updatePricePerUnit(ChronoUnit.YEARS, PROMOTION_OR_SALES_LARGE_YEARLY, InvoiceLines.PROMOTION_OR_SALES_LARGE);
       } else {
         // free of charge
+        addInvoiceRow(InvoiceUnit.PIECE, 1, 0, InvoiceLines.PROMOTION_OR_SALES_SMALL, 0);
         setPriceInCents(0);
       }
       break;
     case SEASON_SALE:
       // 1..14 days: 50 EUR/day/starting 10 sqm
       // 50% discount from 15. day onwards
-      updatePriceByTimeAndArea(SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true);
+      updatePriceByTimeAndArea(SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true, InvoiceLines.SEASON_SALES_SHORT,
+          InvoiceLines.SEASON_SALES_LONG);
       break;
     case STORAGE_AREA:
       // Unknown price
@@ -127,7 +161,7 @@ public class ShortTermRentalPricing extends Pricing {
       break;
     case SUMMER_THEATER:
       // 120 EUR/month
-      updatePricePerUnit(ChronoUnit.MONTHS, SUMMER_THEATER_YEARLY_PRICE);
+      updatePricePerUnit(ChronoUnit.MONTHS, SUMMER_THEATER_YEARLY_PRICE, InvoiceLines.SUMMER_THEATER);
       break;
     case URBAN_FARMING:
       updateUrbanFarmingPrice();
@@ -142,9 +176,11 @@ public class ShortTermRentalPricing extends Pricing {
    * calculated as [centsPerUnit] * [starting units] and stored into
    * application.
    */
-  private void updatePricePerUnit(ChronoUnit chronoUnit, int centsPerUnit) {
+  private void updatePricePerUnit(ChronoUnit chronoUnit, int centsPerUnit, String invoiceRowText) {
     final int units = amountOfStartingUnits(application.getStartTime(), application.getEndTime(), chronoUnit);
-    setPriceInCents(centsPerUnit * units);
+    int priceInCents = centsPerUnit * units;
+    addInvoiceRow(InvoiceUnit.fromChronoUnit(chronoUnit), units, centsPerUnit, invoiceRowText, priceInCents);
+    setPriceInCents(priceInCents);
   }
 
   private boolean isCommercial() {
@@ -156,16 +192,33 @@ public class ShortTermRentalPricing extends Pricing {
     return false;
   }
 
+  /**
+   * Update price based on application time and area
+   * @param priceInCents     unit price in cents
+   * @param pricePeriod      billing time unit
+   * @param priceArea        billing area unit in square meters
+   * @param longTermDiscount should long time discount be applied?
+   * @param invoiceRowText   explanation text for full-price invoice rows
+   * @param invoiceRowTextLongTerm  explanation text for discounted invoice rows
+   */
   private void updatePriceByTimeAndArea(int priceInCents,
-      ChronoUnit pricePeriod, int priceArea, boolean longTermDiscount) {
+      ChronoUnit pricePeriod, int priceArea, boolean longTermDiscount,
+      String invoiceRowText, String invoiceRowTextLongTerm) {
     final int numTimeUnits = amountOfStartingUnits(application.getStartTime(), application.getEndTime(), pricePeriod);
 
     final int numAreaUnits = (int) Math.ceil(applicationArea / priceArea);
-    long price = numAreaUnits * numTimeUnits * priceInCents;
+    // How many time units are charged full price?
+    int fullPriceUnits = longTermDiscount ? Math.min(numTimeUnits, LONG_TERM_DISCOUNT_LIMIT) : numTimeUnits;
+    long price = numAreaUnits * fullPriceUnits * priceInCents;
+    addInvoiceRow(InvoiceUnit.fromChronoUnit(pricePeriod), fullPriceUnits, numAreaUnits * priceInCents, invoiceRowText, (int) price);
+
     if (longTermDiscount == true && numTimeUnits > LONG_TERM_DISCOUNT_LIMIT) {
       // 50% discount for extra days
       final int numDiscountUnits = numTimeUnits - LONG_TERM_DISCOUNT_LIMIT;
-      price -= numAreaUnits * numDiscountUnits * priceInCents / 2;
+      long discountPrice = numAreaUnits * numDiscountUnits * priceInCents / 2;
+      addInvoiceRow(InvoiceUnit.fromChronoUnit(pricePeriod), numDiscountUnits, numAreaUnits * priceInCents / 2,
+          invoiceRowTextLongTerm, (int) discountPrice);
+      price += discountPrice;
     }
     setPriceInCents((int) price);
   }
@@ -189,10 +242,13 @@ public class ShortTermRentalPricing extends Pricing {
     if (application.getEndTime() != null && application.getStartTime() != null) {
       numTerms = application.getEndTime().getYear() - application.getStartTime().getYear() + 1;
     }
-    if (applicationArea != 0.0) {
-      setPriceInCents(URBAN_FARMING_TERM_PRICE * (int) Math.ceil(applicationArea) * numTerms);
-    } else {
-      setPriceInCents(0);
-    }
+
+    double billableArea = applicationArea == 0.0 ? 0.0 : Math.ceil(applicationArea);
+    int netPrice = URBAN_FARMING_TERM_PRICE * (int) billableArea * numTerms;
+
+    addInvoiceRow(InvoiceUnit.SQUARE_METER, billableArea, URBAN_FARMING_TERM_PRICE * numTerms,
+        InvoiceLines.URBAN_FARMING, netPrice);
+    setPriceInCents(netPrice);
   }
+
 }
