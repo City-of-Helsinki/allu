@@ -9,58 +9,12 @@ create table allu.applicant (
     email text,
     phone text );
 
-create table allu.fixed_location (
-    id serial primary key,
-    area text not null,
-    section text,
-    application_kind text not null,
-    is_active boolean not null,
-    geometry geometry(GEOMETRY, 3879),
-    unique (area, section, application_kind) );
-
-comment on table allu.fixed_location is 'Predefined Area+Section type location';
-
-create table allu.outdoor_pricing (
-    id serial primary key,
-    fixed_location_id integer references allu.fixed_location(id),
-    zone_id integer,
-    nature text not null,              -- event's nature
-    base_charge bigint not null,                -- base charge per day, in 1/100 eurocents
-    build_discount_percent integer not null,    -- discount percent for build days
-    duration_discount_percent integer not null, -- discount percent after N days
-    duration_discount_limit integer not null,   -- day limit after which duration discount is given
-    structure_extra_charges bigint[],      -- possible extra charges for structures, per 10 sqm
-    structure_extra_charge_limits double precision[],  -- area limits for the structure extra charges
-    area_extra_charges bigint[],           -- possible extra charges for event area, per 1 sqm
-    area_extra_charge_limits double precision[]        -- area limits for the area extra charges
-    );
-
 create table allu.city_district (
   id serial primary key,
   district_id integer not null unique,
   name text,
   geometry geometry(GEOMETRY, 3879),
   zone_id integer);
-
-create table allu.location (
-   id serial primary key,
-   street_address text,
-   postal_code text,
-   city text,
-   area double precision,
-   area_override double precision,
-   city_district_id integer references allu.city_district(id),
-   city_district_id_override integer references allu.city_district(id) );
-
-create table allu.location_flids (
-    id serial primary key,
-    location_id integer references allu.location(id),
-    fixed_location_id integer references allu.fixed_location(id) );
-
-create table allu.location_geometry (
-   id serial primary key,
-   geometry geometry(GEOMETRY, 3879),
-   location_id integer references allu.location(id) );
 
 create table allu.project (
     id serial primary key,
@@ -116,7 +70,6 @@ create table allu.application (
     kind text not null,
     metadata_version integer not null,
     creation_time timestamp with time zone,
-    location_id integer references allu.location(id),
     start_time timestamp with time zone,
     end_time timestamp with time zone,
     extension text not null,
@@ -131,6 +84,53 @@ create table allu.application_tag (
     added_by integer references allu.user(id),
     type text not null,
     creation_time timestamp with time zone not null
+);
+
+create table allu.fixed_location (
+  id serial primary key,
+  area text not null,
+  section text,
+  application_kind text not null,
+  is_active boolean not null,
+  geometry geometry(GEOMETRY, 3879),
+unique (area, section, application_kind) );
+
+comment on table allu.fixed_location is 'Predefined Area+Section type location';
+
+create table allu.location (
+  id serial primary key,
+  application_id integer not null references allu.application(id),
+  street_address text,
+  postal_code text,
+  city text,
+  area double precision,
+  area_override double precision,
+  city_district_id integer references allu.city_district(id),
+  city_district_id_override integer references allu.city_district(id) );
+
+create table allu.location_flids (
+  id serial primary key,
+  location_id integer references allu.location(id),
+  fixed_location_id integer references allu.fixed_location(id) );
+
+create table allu.location_geometry (
+  id serial primary key,
+  geometry geometry(GEOMETRY, 3879),
+  location_id integer references allu.location(id) );
+
+create table allu.outdoor_pricing (
+  id serial primary key,
+  fixed_location_id integer references allu.fixed_location(id),
+  zone_id integer,
+  nature text not null,              -- event's nature
+  base_charge bigint not null,                -- base charge per day, in 1/100 eurocents
+  build_discount_percent integer not null,    -- discount percent for build days
+  duration_discount_percent integer not null, -- discount percent after N days
+  duration_discount_limit integer not null,   -- day limit after which duration discount is given
+  structure_extra_charges bigint[],      -- possible extra charges for structures, per 10 sqm
+  structure_extra_charge_limits double precision[],  -- area limits for the structure extra charges
+  area_extra_charges bigint[],           -- possible extra charges for event area, per 1 sqm
+  area_extra_charge_limits double precision[]        -- area limits for the area extra charges
 );
 
 create table allu.attachment (

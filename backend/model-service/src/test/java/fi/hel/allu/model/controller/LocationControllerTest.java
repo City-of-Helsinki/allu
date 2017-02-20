@@ -1,7 +1,9 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 
 import org.geolatte.geom.Geometry;
@@ -31,12 +33,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 public class LocationControllerTest {
 
+  Application application;
+
   @Autowired
   private WebTestCommon wtc;
+
+  @Autowired
+  TestCommon testCommon;
 
   @Before
   public void setup() throws Exception {
     wtc.setup();
+    application = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
+    ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
+    application = wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
   private Geometry makeGeometry() {
@@ -47,6 +57,7 @@ public class LocationControllerTest {
   private ResultActions addLocation(String streetAddress, String postalCode, String city, Geometry geometry, Integer id)
       throws Exception {
     Location location = new Location();
+    location.setApplicationId(application.getId());
     location.setStreetAddress(streetAddress);
     location.setPostalCode(postalCode);
     location.setCity(city);
@@ -95,6 +106,7 @@ public class LocationControllerTest {
     Location result = addLocationAndGetResult("Kuoppakuja 2", "06660", "Hellsinki", makeGeometry(), null);
 
     Location newLocation = new Location();
+    newLocation.setApplicationId(application.getId());
     newLocation.setStreetAddress("Ikuisen Vapun Aukio 3");
     newLocation.setCity("Hellsing");
     newLocation.setId(999);
@@ -109,6 +121,7 @@ public class LocationControllerTest {
     location.setStreetAddress("Ikuisen Vapun Aukio 3");
     location.setCity("Hellsing");
     location.setId(999);
+    location.setApplicationId(123);
     wtc.perform(put(String.format("/locations/27312")), location).andExpect(status().isNotFound());
   }
 }

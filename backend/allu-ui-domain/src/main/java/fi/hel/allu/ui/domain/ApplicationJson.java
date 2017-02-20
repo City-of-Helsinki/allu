@@ -41,7 +41,7 @@ public class ApplicationJson {
   @Valid
   private List<ContactJson> contactList;
   @Valid
-  private LocationJson location;
+  private List<LocationJson> locations;
   @NotNull(message = "{application.extension}")
   @Valid
   private ApplicationExtensionJson extension;
@@ -229,12 +229,12 @@ public class ApplicationJson {
   /**
    * in Finnish: Hakemuksen sijainti
    */
-  public LocationJson getLocation() {
-    return location;
+  public List<LocationJson> getLocations() {
+    return locations;
   }
 
-  public void setLocation(LocationJson location) {
-    this.location = location;
+  public void setLocations(List<LocationJson> locations) {
+    this.locations = locations;
   }
 
   /**

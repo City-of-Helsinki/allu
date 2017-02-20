@@ -1,6 +1,5 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
@@ -15,7 +14,6 @@ import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.pricing.EventPricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
 import fi.hel.allu.model.pricing.ShortTermRentalPricing;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -78,7 +76,8 @@ public class PricingService {
    */
   private void updateOutdoorEventPrice(Application application, List<InvoiceRow> invoiceRows) {
     Event event = (Event) application.getExtension();
-    if (event != null) {
+    // check that application is not new
+    if (application.getId() != null && event != null) {
       EventPricing pricing = new EventPricing();
       int priceInCents = calculatePrice(application, event, pricing);
       application.setCalculatedPrice(priceInCents);
@@ -91,7 +90,12 @@ public class PricingService {
    * Calculate price for short term rental application
    */
   private void updateShortTermRentalPrice(Application application, List<InvoiceRow> invoiceRows) {
-    double applicationArea = getApplicationArea(application);
+    List<Location> locations = Collections.emptyList();
+    if (application.getId() != null) {
+      locations = locationDao.findByApplication(application.getId());
+    }
+    // TODO: should we handle different locations as their own invoice rows? This works anyway as long as only area rentals have multiple locations
+    double applicationArea = locations.stream().mapToDouble(l -> getLocationArea(l)).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, applicationArea, isCompany(application));
     pricing.calculatePrice();
     application.setCalculatedPrice(pricing.getPriceInCents());
@@ -102,26 +106,26 @@ public class PricingService {
    * EventPricing calculation for Event applications
    */
   private int calculatePrice(Application application, Event event, EventPricing pricing) {
-    Integer locationId = application.getLocationId();
-    if (locationId == null) {
-      return 0; // No location -> no price.
-    }
-    Optional<Location> location = locationDao.findById(locationId.intValue());
-    if (location.isPresent() == false) {
-      throw new NoSuchEntityException("Location (ID=" + application.getLocationId() + " doesn't exist");
-    }
+    List<Location> locations = locationDao.findByApplication(application.getId());
+    return locations.stream().mapToInt(l -> calculateSingleLocationPrice(application, l, event, pricing)).sum();
+  }
+
+  /*
+   * EventPricing calculation for single Event application location.
+   */
+  private int calculateSingleLocationPrice(Application application, Location location, Event event, EventPricing pricing) {
     EventNature nature = event.getNature();
     if (nature == null) {
       return 0; // No nature defined -> no price
     }
 
-    List<PricingConfiguration> pricingConfigs = getEventPricing(location.get(), nature);
+    List<PricingConfiguration> pricingConfigs = getEventPricing(location, nature);
 
     int eventDays = daysBetween(event.getEventStartTime(), event.getEventEndTime());
     int buildDays = daysBetween(application.getStartTime(), event.getEventStartTime());
     buildDays += daysBetween(event.getEventEndTime(), application.getEndTime());
     double structureArea = event.getStructureArea();
-    double area = getApplicationArea(application);
+    double area = getLocationArea(location);
 
     for(PricingConfiguration pricingConfig : pricingConfigs) {
       // Calculate price per location...
@@ -158,14 +162,8 @@ public class PricingService {
     return Collections.emptyList();
   }
 
-  private double getApplicationArea(Application application) {
-    if (application.getLocationId() == null) {
-      return 0.0;
-    }
-    Location location = locationDao.findById(application.getLocationId()).orElse(EMPTY_LOCATION);
-
-    Double area = Optional.ofNullable(location.getAreaOverride()).orElse(location.getArea());
-    return area == null ? 0.0 : area.doubleValue();
+  private double getLocationArea(Location location) {
+    return Optional.ofNullable(location.getAreaOverride()).orElse(location.getArea());
   }
 
   /*

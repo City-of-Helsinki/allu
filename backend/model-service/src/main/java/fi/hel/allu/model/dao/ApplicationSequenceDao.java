@@ -71,6 +71,7 @@ public class ApplicationSequenceDao {
     }
 
     static public APPLICATION_TYPE_PREFIX of(ApplicationType applicationType) {
+      if (applicationType == null) { throw new NullPointerException("Null application type is not allowed"); }
       return typeToPrefix.get(applicationType);
     }
   };

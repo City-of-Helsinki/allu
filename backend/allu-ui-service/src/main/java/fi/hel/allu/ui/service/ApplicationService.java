@@ -1,10 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.CableInfoType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.CableInfoText;
-import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
@@ -18,7 +15,9 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -174,7 +173,6 @@ public class ApplicationService {
    */
   ApplicationJson createApplication(ApplicationJson newApplication) {
     newApplication.setApplicant(applicantService.createApplicant(newApplication.getApplicant()));
-    newApplication.setLocation(locationService.createLocation(newApplication.getLocation()));
     newApplication.setMetadata(metaService.findMetadataForApplication(newApplication.getType()));
     List<ContactJson> contacts = newApplication.getContactList();
     setContactApplicant(contacts, newApplication.getApplicant());
@@ -187,10 +185,17 @@ public class ApplicationService {
         applicationMapper.createApplicationModel(newApplication),
         Application.class);
 
+    List<LocationJson> newLocations = newApplication.getLocations();
+    List<LocationJson> locations = Collections.emptyList();
+    if (newLocations != null) {
+      locations = newApplication.getLocations().stream()
+          .map(l -> locationService.createLocation(applicationModel.getId(), l)).collect(Collectors.toList());
+    }
+
     ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
     applicationJson.setContactList(contactService.setContactsForApplication(applicationJson.getId(), contacts));
     applicationJson.setApplicant(newApplication.getApplicant());
-    applicationJson.setLocation(newApplication.getLocation());
+    applicationJson.setLocations(locations);
     applicationJson.setMetadata(newApplication.getMetadata());
     return applicationJson;
   }
@@ -203,9 +208,11 @@ public class ApplicationService {
    */
   ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicantService.updateApplicant(applicationJson.getApplicant());
-    LocationJson locationJson = applicationJson.getLocation();
-    if (locationJson != null) {
-      applicationJson.setLocation(locationService.updateOrCreateLocation(locationJson));
+    if (applicationJson.getLocations() != null) {
+      locationService.deleteApplicationLocation(applicationId);
+      List<LocationJson> locationJsons =
+          applicationJson.getLocations().stream().map(l -> locationService.updateOrCreateLocation(applicationId, l)).collect(Collectors.toList());
+      applicationJson.setLocations(locationJsons);
     } else {
       locationService.deleteApplicationLocation(applicationId);
     }
@@ -222,7 +229,6 @@ public class ApplicationService {
 
     resultJson.setContactList(contacts);
     resultJson.setApplicant(applicationJson.getApplicant());
-    resultJson.setLocation(applicationJson.getLocation());
     resultJson.setMetadata(metaService.findMetadataForApplication(resultJson.getType()));
     return resultJson;
   }

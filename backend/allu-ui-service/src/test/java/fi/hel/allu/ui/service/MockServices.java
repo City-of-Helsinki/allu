@@ -203,7 +203,7 @@ public abstract class MockServices {
     applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setHandler(UserMapper.mapToUserJson(createMockUser()));
     applicationJson.setApplicant(createApplicantJson(null, null));
-    applicationJson.setLocation(createLocationJson(null));
+    applicationJson.setLocations(Collections.singletonList(createLocationJson(null)));
     applicationJson.setProject(createProjectJson(null));
     applicationJson.setExtension(createOutdoorEventJson());
     applicationJson.setMetadata(createMockStructureMetadataJson());
@@ -220,7 +220,6 @@ public abstract class MockServices {
     application.setHandler(createMockUser().getId());
     application.setType(ApplicationType.EVENT);
     application.setKind(ApplicationKind.OUTDOOREVENT);
-    application.setLocationId(102);
     application.setApplicantId(103);
     application.setStatus(StatusType.PENDING);
     application.setExtension(createMockOutdoorEventModel());
@@ -369,7 +368,6 @@ public abstract class MockServices {
     applicationModel.setProjectId(4321);
     applicationModel.setName("MockName2");
     applicationModel.setApplicantId(655);
-    applicationModel.setLocationId(345);
     applicationModel.setExtension(createMockOutdoorEventModel());
     applicationModel.setMetadataVersion(1);
     applicationModelArray[1] = applicationModel;

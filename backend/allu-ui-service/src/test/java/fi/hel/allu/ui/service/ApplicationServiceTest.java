@@ -78,7 +78,7 @@ public class ApplicationServiceTest extends MockServices {
     initSearchMocks();
     userService = Mockito.mock(UserService.class);
 
-    Mockito.when(locationService.createLocation(Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
+    Mockito.when(locationService.createLocation(Mockito.anyInt(), Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
     Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
@@ -129,11 +129,12 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response);
     assertEquals(1, response.getId().intValue());
     assertNotNull(response.getApplicant());
-    assertNotNull(response.getLocation());
-    assertEquals(102, response.getLocation().getId().intValue());
+    assertNotNull(response.getLocations());
+    assertEquals(1, response.getLocations().size());
+    assertEquals(102, response.getLocations().get(0).getId().intValue());
     assertNotNull(response.getApplicant());
     assertEquals(103, response.getApplicant().getId().intValue());
-    assertNotNull(response.getLocation().getGeometry());
+    assertNotNull(response.getLocations().get(0).getGeometry());
     assertNotNull(response.getExtension());
     assertNotNull(response.getDecisionTime());
     assertEquals(1050, ((EventJson) response.getExtension()).getAttendees());
@@ -214,7 +215,6 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.getApplicantId());
     assertNotNull(response.getExtension());
     assertEquals(100, (long) response.getProjectId());
-    assertEquals(102, (long) response.getLocationId());
     assertNotNull(response.getApplicantId());
     assertEquals(103, (long) response.getApplicantId());
   }
@@ -236,16 +236,13 @@ public class ApplicationServiceTest extends MockServices {
 
     assertNotNull(response.get(0).getProjectId());
     assertNotNull(response.get(0).getApplicantId());
-    assertNotNull(response.get(0).getLocationId());
     assertNotNull(response.get(0).getExtension());
     assertEquals(100, (long) response.get(0).getProjectId());
-    assertEquals(102, (long) response.get(0).getLocationId());
     assertNotNull(response.get(0).getApplicantId());
     assertEquals(103, (long) response.get(0).getApplicantId());
     assertNotNull(response.get(1));
     assertNotNull(response.get(1).getProjectId());
     assertNotNull(response.get(1).getApplicantId());
-    assertNotNull(response.get(1).getLocationId());
     assertEquals("MockName2", response.get(1).getName());
   }
 

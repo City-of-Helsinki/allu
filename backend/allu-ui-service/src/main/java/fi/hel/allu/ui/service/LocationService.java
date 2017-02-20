@@ -46,16 +46,16 @@ public class LocationService {
    *          Location that is going to be created
    * @return Created location
    */
-  public LocationJson createLocation(LocationJson locationJson) {
+  public LocationJson createLocation(int applicationId, LocationJson locationJson) {
     if (locationJson == null) {
       locationJson = new LocationJson();
     }
-    return callModelService(locationJson);
+    return callModelService(applicationId, locationJson);
   }
 
-  private LocationJson callModelService(LocationJson locationJson) {
+  private LocationJson callModelService(int applicationId, LocationJson locationJson) {
     Location location = restTemplate.postForObject(applicationProperties
-            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(locationJson),
+            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(applicationId, locationJson),
         Location.class);
     return mapToLocationJson(location);
   }
@@ -68,25 +68,23 @@ public class LocationService {
    *          location that is going to be updated
    * @return locationJson result of the operation
    */
-  public LocationJson updateOrCreateLocation(LocationJson locationJson) {
+  public LocationJson updateOrCreateLocation(int applicationId, LocationJson locationJson) {
     if (locationJson.getId() != null && locationJson.getId() > 0) {
-      HttpEntity<Location> requestEntity = new HttpEntity<>(createLocationModel(locationJson));
+      HttpEntity<Location> requestEntity = new HttpEntity<>(createLocationModel(applicationId, locationJson));
       ResponseEntity<Location> responseEntity = restTemplate.exchange(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), HttpMethod.PUT, requestEntity, Location.class, locationJson.getId().intValue());
       return mapToLocationJson(responseEntity.getBody());
     } else {
-      return createLocation(locationJson);
+      return createLocation(applicationId, locationJson);
     }
   }
 
   /**
-   * Delete location from the given application.
+   * Delete all locations from the given application.
    *
    * @param applicationId
    */
   public void deleteApplicationLocation(int applicationId) {
-    restTemplate.delete(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_DELETE_LOCATION),
-        applicationId);
+    restTemplate.delete(applicationProperties.getDeleteLocationsByApplicationIdUrl(), applicationId);
   }
 
   /**
@@ -99,6 +97,18 @@ public class LocationService {
     ResponseEntity<Location> locationResult = restTemplate.getForEntity(applicationProperties
         .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_FIND_BY_ID), Location.class, locationId);
     return mapToLocationJson(locationResult.getBody());
+  }
+
+  /**
+   * Find given location details by related application.
+   *
+   * @param applicationId   Id of the application whose locations should be returned.
+   * @return List of related locations or empty list.
+   */
+  public List<LocationJson> findLocationsByApplication(int applicationId) {
+    ResponseEntity<Location[]> locationResult = restTemplate.getForEntity(
+        applicationProperties.getLocationsByApplicationIdUrl(), Location[].class, applicationId);
+    return mapToLocationJsons(Arrays.asList(locationResult.getBody()));
   }
 
   /**
@@ -121,11 +131,12 @@ public class LocationService {
     return resultList;
   }
 
-  private Location createLocationModel(LocationJson locationJson) {
+  private Location createLocationModel(int applicationId, LocationJson locationJson) {
     Location location = new Location();
     if (locationJson != null && locationJson.getId() != null) {
       location.setId(locationJson.getId());
     }
+    location.setApplicationId(applicationId);
     if (locationJson != null && locationJson.getPostalAddress() != null) {
       location.setStreetAddress(locationJson.getPostalAddress().getStreetAddress());
       location.setPostalCode(locationJson.getPostalAddress().getPostalCode());
@@ -138,6 +149,10 @@ public class LocationService {
     location.setCityDistrictId(locationJson.getCityDistrictId());
     location.setCityDistrictIdOverride(locationJson.getCityDistrictIdOverride());
     return location;
+  }
+
+  private List<LocationJson> mapToLocationJsons(List<Location> locations) {
+    return locations.stream().map(l -> mapToLocationJson(l)).collect(Collectors.toList());
   }
 
   private LocationJson mapToLocationJson(Location location) {

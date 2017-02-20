@@ -6,6 +6,7 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
 
@@ -31,6 +32,9 @@ import static org.junit.Assert.assertTrue;
 @WebAppConfiguration
 @Transactional
 public class PricingServiceTest {
+
+  @Autowired
+  private ApplicationDao applicationDao;
 
   @Autowired
   private PricingService pricingService;
@@ -69,28 +73,35 @@ public class PricingServiceTest {
     // The expected price is (3 * (500 + 400) + 1 * (250 + 200)) * 0.7 EUR =
     // 2205.00 EUR
     Application application = new Application();
+    application.setType(ApplicationType.EVENT);
     application.setKind(ApplicationKind.OUTDOOREVENT);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T09:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-07T09:00:00+02:00"));
+    application.setMetadataVersion(1);
     Event event = new Event();
     event.setEcoCompass(true);
     event.setNature(EventNature.PUBLIC_FREE);
     event.setEventStartTime(application.getStartTime().plusDays(1));
     event.setEventEndTime(application.getEndTime());
     application.setExtension(event);
+    application = applicationDao.insert(application);
     Location location = new Location();
     List<Integer> fixedLocationIds = Arrays.asList(makePair("Kansalaistori", "A"), makePair("Kansalaistori", "C"))
         .stream()
         .map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
     location.setFixedLocationIds(fixedLocationIds);
+    location.setApplicationId(application.getId());
     int locationId = locationDao.insert(location).getId();
-    application.setLocationId(locationId);
-
+    Location foobar = locationDao.findById(locationId).get();
+    Location foobar2 = locationDao.findByApplication(application.getId()).get(0);
+    List<InvoiceRow> invoiceRows = new ArrayList<>();
+    pricingService.updatePrice(application, invoiceRows);
+    assertEquals(220500, application.getCalculatedPrice().intValue());
     checkPrice(application, 220500);
   }
 
   @Test
-  public void testBridgeBanderol() {
+  public void testBridgeBanner() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.BRIDGE_BANNER);
@@ -167,9 +178,13 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.KESKUSKATU_SALES);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-22T05:59:59+02:00"));
+    application.setMetadataVersion(1);
+    application.setExtension(new ShortTermRental());
+    application = applicationDao.insert(application);
     Location location = new Location();
     location.setAreaOverride(135.5);
-    application.setLocationId(locationDao.insert(location).getId());
+    location.setApplicationId(application.getId());
+    locationDao.insert(location).getId();
     // 19 days, 135.5 sqm -> 14 * 14 * 50 + 5 * 14 * 25 = 11550 EUR
     checkPrice(application, 1155000);
   }
@@ -199,6 +214,8 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.SUMMER_THEATER);
     application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
+    application.setExtension(new ShortTermRental());
+    application.setMetadataVersion(1);
     // Two months -> 240 EUR
     checkPrice(application, 24000);
   }
@@ -210,9 +227,13 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.URBAN_FARMING);
     application.setStartTime(ZonedDateTime.parse("2017-05-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2019-09-10T23:59:59+02:00"));
+    application.setExtension(new ShortTermRental());
+    application.setMetadataVersion(1);
+    application = applicationDao.insert(application);
     Location location = new Location();
     location.setAreaOverride(222.2);
-    application.setLocationId(locationDao.insert(location).getId());
+    location.setApplicationId(application.getId());
+    locationDao.insert(location).getId();
     // Three terms, 222.2 sqm -> 223 * 2 * 3 = 1338 EUR
     checkPrice(application, 133800);
   }

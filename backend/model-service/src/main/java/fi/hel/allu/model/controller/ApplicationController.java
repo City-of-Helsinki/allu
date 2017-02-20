@@ -26,8 +26,6 @@ public class ApplicationController {
 
   private AttachmentDao attachmentDao;
 
-  private LocationDao locationDao;
-
   private DecisionDao decisionDao;
 
   private CableInfoDao cableInfoDao;
@@ -38,11 +36,10 @@ public class ApplicationController {
 
   @Autowired
   public ApplicationController(ApplicationService applicationService, AttachmentDao attachmentDao,
-      LocationDao locationDao, DecisionDao decisionDao, CableInfoDao cableInfoDao,
+      DecisionDao decisionDao, CableInfoDao cableInfoDao,
       InvoiceRowDao invoiceRowDao, HistoryDao historyDao) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
-    this.locationDao = locationDao;
     this.decisionDao = decisionDao;
     this.cableInfoDao = cableInfoDao;
     this.invoiceRowDao = invoiceRowDao;
@@ -130,19 +127,6 @@ public class ApplicationController {
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Application> insert(@Valid @RequestBody(required = true) Application application) {
     return new ResponseEntity<>(applicationService.insert(application), HttpStatus.OK);
-  }
-
-  /**
-   * Delete a location from application
-   *
-   * @param id
-   *          application's ID
-   * @return
-   */
-  @RequestMapping(value = "/{id}/location", method = RequestMethod.DELETE)
-  public ResponseEntity<Void> deleteLocation(@PathVariable int id) {
-    locationDao.deleteByApplication(id);
-    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

@@ -1,14 +1,14 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.types.ApplicationKind;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
-import fi.hel.allu.model.domain.User;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.service.LocationService;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
-
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.Before;
@@ -24,9 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
+import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -43,9 +41,12 @@ public class ApplicationControllerTest {
   @Autowired
   TestCommon testCommon;
 
+  @Autowired
+  LocationService locationService;
+
   @Before
   public void setup() throws Exception {
-    wtc.setup();
+    wtc.setupNoDelete();
   }
 
   @Test
@@ -76,12 +77,6 @@ public class ApplicationControllerTest {
         .andExpect(status().isOk());
     Application[] appsOut = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(0, appsOut.length);
-  }
-
-  // Helper to insert an application. Returns the result application.
-  private Application insertApplication(Application appIn) throws Exception {
-    ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
-    return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
   @Test
@@ -203,15 +198,56 @@ public class ApplicationControllerTest {
   @Test
   public void testDeleteApplicationLocation() throws Exception {
     // Setup: create application with location
-    ResultActions ra = createLocationTestApplication(testAppParams[0], "Syrjäkuja 5", "Hämärähomma", 1);
-    Application app = wtc.parseObjectFromResult(ra, Application.class);
-    assertNotNull(app.getLocationId());
+    Application app = createLocationTestApplication(testAppParams[0], "Syrjäkuja 5", "Hämärähomma", 1);
+    ResultActions ra = wtc.perform(get(String.format("/locations/applications/%d", app.getId()))).andExpect(status().isOk());
+    Location[] locations = wtc.parseObjectFromResult(ra, Location[].class);
+    assertEquals(1, locations.length);
     // Test: delete the application's location and verify that it gets deleted.
     Integer appId = app.getId();
-    wtc.perform(delete(String.format("/applications/%d/location", appId))).andExpect(status().isOk());
-    ra = wtc.perform(get(String.format("/applications/%d", appId))).andExpect(status().isOk());
-    app = wtc.parseObjectFromResult(ra, Application.class);
-    assertNull(app.getLocationId());
+    wtc.perform(delete(String.format("/locations/applications/%d", appId))).andExpect(status().isOk());
+    ra = wtc.perform(get(String.format("/locations/applications/%d", app.getId()))).andExpect(status().isOk());
+    locations = wtc.parseObjectFromResult(ra, Location[].class);
+    assertEquals(0, locations.length);
+  }
+
+  /**
+   * Test that application price calculation works.
+   */
+  @Test
+  public void testCalculateEventApplicationPrice() throws Exception {
+    // Setup: create application with location and enough information for calculating price
+    Integer eventApplicant = testCommon.insertPerson();
+    Application newApplication = new Application();
+    newApplication.setType(ApplicationType.EVENT);
+    newApplication.setKind(ApplicationKind.OUTDOOREVENT);
+    newApplication.setName("test outdoor event");
+    newApplication.setApplicantId(eventApplicant);
+    newApplication.setStartTime(ZonedDateTime.parse("2017-02-01T00:00:01+02:00[Europe/Helsinki]"));
+    newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
+    newApplication.setMetadataVersion(1);
+    Event event = new Event();
+    event.setEcoCompass(true);
+    event.setNature(EventNature.CLOSED);
+    event.setEventStartTime(newApplication.getStartTime());
+    event.setEventEndTime(newApplication.getEndTime());
+    newApplication.setExtension(event);
+    Application application =
+        insertApplicationWithGeometry(newApplication, new GeometryCollection(new Geometry[] { bigArea }), "Mannerheimintie 1");
+
+    // read application back from database and check the calculated price
+    ResultActions ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
+    application = wtc.parseObjectFromResult(ra, Application.class);
+    int expectedPriceOfBigArea = 2147483647;
+    assertEquals(expectedPriceOfBigArea, (int) application.getCalculatedPrice());
+    // add the same area second time and make sure price is twice as big
+    Location addedLocation = new Location();
+    addedLocation.setGeometry(bigArea);
+    addedLocation.setStreetAddress("Mannerheimintie 2");
+    addedLocation.setApplicationId(application.getId());
+    locationService.insert(addedLocation);
+    ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
+    application = wtc.parseObjectFromResult(ra, Application.class);
+    assertEquals(expectedPriceOfBigArea * 2, (int) application.getCalculatedPrice());
   }
 
 
@@ -258,15 +294,25 @@ public class ApplicationControllerTest {
           ZonedDateTime.parse("2017-03-03T10:15:30+02:00[Europe/Helsinki]"),
           ZonedDateTime.parse("2017-03-08T10:15:30+02:00[Europe/Helsinki]")) };
 
-  private ResultActions createLocationTestApplication(TestAppParam tap, String streetAddress, String applicationName, int count)
+  // Helper to insert an application. Returns the result application.
+  private Application insertApplication(Application appIn) throws Exception {
+    ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
+    return wtc.parseObjectFromResult(resultActions, Application.class);
+  }
+
+  private Application createLocationTestApplication(TestAppParam tap, String streetAddress, String applicationName, int count)
       throws Exception {
-    Integer locationId = testCommon.insertLocation(streetAddress,
-        new GeometryCollection(new Geometry[] { tap.geometry }));
     Application app = testCommon.dummyOutdoorApplication(applicationName, "locationUserName" + count);
-    app.setLocationId(locationId);
     app.setStartTime(tap.startTime);
     app.setEndTime(tap.endTime);
-    return wtc.perform(post("/applications"), app).andExpect(status().isOk());
+    return insertApplicationWithGeometry(app, new GeometryCollection(new Geometry[] { tap.geometry }), streetAddress);
+  }
+
+  private Application insertApplicationWithGeometry(Application application, GeometryCollection geometryCollection, String streetAddress)
+      throws Exception {
+    Application insertedApp = insertApplication(application);
+    testCommon.insertLocation(streetAddress, geometryCollection, insertedApp.getId());
+    return insertedApp;
   }
 
   private void createLocationTestApplications() throws Exception {

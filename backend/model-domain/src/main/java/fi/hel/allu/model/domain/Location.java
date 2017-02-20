@@ -12,6 +12,7 @@ import java.util.List;
 
 public class Location {
   private Integer id;
+  private Integer applicationId;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
@@ -35,6 +36,17 @@ public class Location {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  /**
+   * @return  The application id related to this location.
+   */
+  public Integer getApplicationId() {
+    return applicationId;
+  }
+
+  public void setApplicationId(Integer applicationId) {
+    this.applicationId = applicationId;
   }
 
   /**

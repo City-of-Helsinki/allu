@@ -31,7 +31,7 @@ export class ApplicationMapper {
       TimeUtil.dateFromBackend(backendApplication.endTime),
       ApplicantMapper.mapBackend(backendApplication.applicant),
       (backendApplication.contactList) ? backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact)) : undefined,
-      LocationMapper.mapBackend(backendApplication.location),
+      LocationMapper.mapBackend(backendApplication.locations[0]),
       ApplicationTypeDataMapper.mapBackend(backendApplication.extension),
       TimeUtil.dateFromBackend(backendApplication.decisionTime),
       (backendApplication.attachmentList) ? backendApplication.attachmentList.map(
@@ -60,7 +60,7 @@ export class ApplicationMapper {
       endTime: application.endTime.toISOString(),
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
-      location: LocationMapper.mapFrontend(application.location),
+      locations: (application.location) ? [LocationMapper.mapFrontend(application.location)] : undefined,
       extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
       decisionTime: Some(application.decisionTime).map(decisionTime => decisionTime.toISOString()).orElse(undefined),
       attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application

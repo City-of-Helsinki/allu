@@ -35,7 +35,6 @@ public class Application {
   private ZonedDateTime creationTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
-  private Integer locationId;
   @NotNull
   private ApplicationExtension extension;
   private ZonedDateTime decisionTime;
@@ -207,17 +206,6 @@ public class Application {
 
   public void setApplicantId(Integer applicantId) {
     this.applicantId = applicantId;
-  }
-
-  /**
-   * In Finnish: Hakemuksen sijainnin tunniste
-   */
-  public Integer getLocationId() {
-    return locationId;
-  }
-
-  public void setLocationId(Integer locationId) {
-    this.locationId = locationId;
   }
 
   /**

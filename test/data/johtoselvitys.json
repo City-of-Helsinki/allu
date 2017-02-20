@@ -1,118 +1,120 @@
 {
-   "applicant" : {
-      "postalAddress" : {
-         "streetAddress" : "",
-         "city" : "",
-         "postalCode" : ""
+  "applicant": {
+    "postalAddress": {
+      "streetAddress": "",
+      "city": "",
+      "postalCode": ""
+    },
+    "id": null,
+    "name": "Kallen Kaivuri",
+    "email": "",
+    "phone": "",
+    "registryKey": "123",
+    "representative": null,
+    "type": "COMPANY"
+  },
+  "kind": "STREET_AND_GREEN",
+  "contactList": [
+    {
+      "email": null,
+      "name": "Kalle",
+      "applicantId": null,
+      "id": null,
+      "postalCode": null,
+      "streetAddress": null,
+      "city": null,
+      "phone": null
+    }
+  ],
+  "type": "CABLE_REPORT",
+  "extension": {
+    "owner": {
+      "registryKey": "234",
+      "phone": "",
+      "representative": null,
+      "type": "COMPANY",
+      "id": null,
+      "postalAddress": {
+        "city": "",
+        "streetAddress": "",
+        "postalCode": ""
       },
-      "id" : null,
-      "name" : "Kallen Kaivuri",
-      "email" : "",
-      "phone" : "",
-      "registryKey" : "123",
-      "representative" : null,
-      "type" : "COMPANY"
-   },
-   "kind" : "STREET_AND_GREEN",
-   "contactList" : [
+      "email": "",
+      "name": "Ollin Ojitus"
+    },
+    "mapExtractCount": 0,
+    "contact": {
+      "email": null,
+      "name": "Olli",
+      "applicantId": null,
+      "id": null,
+      "postalCode": null,
+      "streetAddress": null,
+      "city": null,
+      "phone": null
+    },
+    "specifiers": [],
+    "cableSurveyRequired": true,
+    "applicationType": "CABLE_REPORT",
+    "infoEntries": [
       {
-         "email" : null,
-         "name" : "Kalle",
-         "applicantId" : null,
-         "id" : null,
-         "postalCode" : null,
-         "streetAddress" : null,
-         "city" : null,
-         "phone" : null
+        "type": "WATER_AND_SEWAGE",
+        "additionalInfo": " Tilattava näyttö."
       }
-   ],
-   "type" : "CABLE_REPORT",
-   "extension" : {
-      "owner" : {
-         "registryKey" : "234",
-         "phone" : "",
-         "representative" : null,
-         "type" : "COMPANY",
-         "id" : null,
-         "postalAddress" : {
-            "city" : "",
-            "streetAddress" : "",
-            "postalCode" : ""
-         },
-         "email" : "",
-         "name" : "Ollin Ojitus"
-      },
-      "mapExtractCount" : 0,
-      "contact" : {
-         "email" : null,
-         "name" : "Olli",
-         "applicantId" : null,
-         "id" : null,
-         "postalCode" : null,
-         "streetAddress" : null,
-         "city" : null,
-         "phone" : null
-      },
-      "specifiers" : [],
-      "cableSurveyRequired" : true,
-      "applicationType" : "CABLE_REPORT",
-      "infoEntries" : [
-         {
-            "type" : "WATER_AND_SEWAGE",
-            "additionalInfo" : " Tilattava näyttö."
-         }
-      ],
-      "mapUpdated" : true,
-      "maintenanceWork" : true
-   },
-   "endTime" : "2017-01-29T22:00:00.000Z",
-   "startTime" : "2017-01-22T22:00:00.000Z",
-   "location" : {
-      "postalAddress" : {},
-      "fixedLocationIds" : [],
-      "geometry" : {
-         "type" : "GeometryCollection",
-         "geometries" : [
-            {
-               "type" : "Polygon",
-               "coordinates" : [
-                  [
-                     [
-                        25496023.25,
-                        6672779.99999896
-                     ],
-                     [
-                        25496114.25,
-                        6672754.49999896
-                     ],
-                     [
-                        25496108.75,
-                        6672735.99999896
-                     ],
-                     [
-                        25496014.75,
-                        6672759.99999896
-                     ],
-                     [
-                        25496023.25,
-                        6672779.99999896
-                     ]
-                  ]
-               ]
-            }
-         ],
-         "crs" : {
-            "type" : "name",
-            "properties" : {
-               "name" : "EPSG:3879"
-            }
-         }
+    ],
+    "mapUpdated": true,
+    "maintenanceWork": true
+  },
+  "endTime": "2017-01-29T22:00:00.000Z",
+  "startTime": "2017-01-22T22:00:00.000Z",
+  "locations": [
+    {
+      "postalAddress": {},
+      "fixedLocationIds": [],
+      "geometry": {
+        "type": "GeometryCollection",
+        "geometries": [
+          {
+            "type": "Polygon",
+            "coordinates": [
+              [
+                [
+                  25496023.25,
+                  6672779.99999896
+                ],
+                [
+                  25496114.25,
+                  6672754.49999896
+                ],
+                [
+                  25496108.75,
+                  6672735.99999896
+                ],
+                [
+                  25496014.75,
+                  6672759.99999896
+                ],
+                [
+                  25496023.25,
+                  6672779.99999896
+                ]
+              ]
+            ]
+          }
+        ],
+        "crs": {
+          "type": "name",
+          "properties": {
+            "name": "EPSG:3879"
+          }
+        }
       }
-   },
-   "name" : "Johtoselvitys",
-   "metadata" : {
-      "applicationType" : "CABLE_REPORT",
-      "attributes" : [],
-      "version" : 1
-   }
+    }
+  ],
+  "name": "Johtoselvitys",
+  "metadata": {
+    "applicationType": "CABLE_REPORT",
+    "attributes": [],
+    "version": 1
+  }
 }

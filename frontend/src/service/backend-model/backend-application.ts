@@ -23,7 +23,7 @@ export interface BackendApplication {
   endTime: string;
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;
-  location: BackendLocation;
+  locations: Array<BackendLocation>;
   extension: any;
   decisionTime: string;
   attachmentList: Array<BackendAttachmentInfo>;

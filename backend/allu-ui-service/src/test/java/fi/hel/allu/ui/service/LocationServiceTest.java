@@ -32,6 +32,8 @@ public class LocationServiceTest extends MockServices {
   @InjectMocks
   protected LocationService locationService;
 
+  private static final int APPLICATION_ID = 12345;
+
   @BeforeClass
   public static void setUpBeforeClass() {
     ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
@@ -54,7 +56,7 @@ public class LocationServiceTest extends MockServices {
 
   @Test
   public void createValidLocation() {
-    LocationJson locationJson = locationService.createLocation(createLocationJson(null));
+    LocationJson locationJson = locationService.createLocation(APPLICATION_ID, createLocationJson(null));
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(102, locationJson.getId().intValue());
@@ -69,7 +71,7 @@ public class LocationServiceTest extends MockServices {
   @Test
   public void createLocationWithId() {
     LocationJson locationJsonRequest = createLocationJson(1);
-    LocationJson locationJson = locationService.createLocation(locationJsonRequest);
+    LocationJson locationJson = locationService.createLocation(APPLICATION_ID, locationJsonRequest);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(1, locationJson.getId().intValue());
@@ -89,7 +91,7 @@ public class LocationServiceTest extends MockServices {
             (Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse(
                 invocation.getArgumentAt(2, HttpEntity.class)));
     LocationJson locationJson = createLocationJson(1);
-    locationJson = locationService.updateOrCreateLocation(locationJson);
+    locationJson = locationService.updateOrCreateLocation(APPLICATION_ID, locationJson);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(1, locationJson.getId().intValue());
@@ -104,7 +106,7 @@ public class LocationServiceTest extends MockServices {
   @Test
   public void updateLocationWithoutId() {
     LocationJson locationJson = createLocationJson(null);
-    locationJson = locationService.updateOrCreateLocation(locationJson);
+    locationJson = locationService.updateOrCreateLocation(APPLICATION_ID, locationJson);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(102, locationJson.getId().intValue());

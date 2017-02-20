@@ -55,9 +55,6 @@ public class ApplicationMapper {
     applicationDomain.setMetadataVersion(applicationJson.getMetadata().getVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
     applicationDomain.setDecisionTime(applicationJson.getDecisionTime());
-    if (applicationJson.getLocation() != null && applicationJson.getLocation().getId() != null) {
-      applicationDomain.setLocationId(applicationJson.getLocation().getId());
-    }
     if (applicationJson.getExtension() != null) {
       applicationDomain.setExtension(createExtensionModel(applicationJson));
     }
@@ -91,7 +88,7 @@ public class ApplicationMapper {
     applicationES.setStatus(new StatusTypeES(applicationJson.getStatus()));
     applicationES.setDecisionTime(applicationJson.getDecisionTime());
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
-    applicationES.setLocation(createLocationES(applicationJson.getLocation()));
+    applicationES.setLocations(createLocationES(applicationJson.getLocations()));
     applicationES.setContacts(createContactES(applicationJson.getContactList()));
     applicationES.setApplicant(createApplicantES(applicationJson.getApplicant()));
     if (applicationJson.getProject() != null) {
@@ -540,17 +537,23 @@ public class ApplicationMapper {
     return applicantJson;
   }
 
-  private LocationES createLocationES(LocationJson locationJson) {
-    if (locationJson != null && locationJson.getPostalAddress() != null) {
-      Integer cityDistrict = Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
-      return new LocationES(
-          locationJson.getPostalAddress().getStreetAddress(),
-          locationJson.getPostalAddress().getPostalCode(),
-          locationJson.getPostalAddress().getCity(),
-          cityDistrict);
+  private List<LocationES> createLocationES(List<LocationJson> locationJsons) {
+    if (locationJsons != null) {
+      return locationJsons.stream()
+          .filter(l -> l.getPostalAddress() != null)
+          .map(json -> new LocationES(
+              json.getPostalAddress().getStreetAddress(),
+              json.getPostalAddress().getPostalCode(),
+              json.getPostalAddress().getCity(),
+              getCityDistrictId(json)))
+          .collect(Collectors.toList());
     } else {
       return null;
     }
+  }
+
+  private Integer getCityDistrictId(LocationJson locationJson) {
+    return Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
   }
 
   private List<ContactES> createContactES(List<ContactJson> contacts) {

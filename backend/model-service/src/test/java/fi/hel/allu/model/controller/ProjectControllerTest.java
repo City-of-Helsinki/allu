@@ -237,13 +237,13 @@ public class ProjectControllerTest {
     final int HERTTONIEMI_CITY_DISTRICT_ID = 44;
     // add application to the parent project
     Application parentApplication = createApplication(applicant, startTime.minusDays(1), endTime.plusDays(1));
+    Application addedParentApplication = addApplicationToDatabase(parentApplication);
     // Polygon that's mostly in Herttoniemi:
     DSL.Polygon2DToken herttoniemi_polygon = polygon(
         ring(c(25502404.097045037895441, 6675352.16425826959312), c(25502772.543876249343157, 6675370.854831204749644),
             c(25502767.204117525368929, 6675095.857257002033293), c(25502393.421108055859804, 6675101.196953509002924),
             c(25502404.097045037895441, 6675352.16425826959312)));
-    addCityDistrictToApplication(parentApplication, herttoniemi_polygon);
-    Application addedParentApplication = addApplicationToDatabase(parentApplication);
+    addCityDistrictToApplication(addedParentApplication, herttoniemi_polygon);
     resultActions = wtc.perform(
         put("/projects/" + projectParent.getId() + "/applications"),
         Collections.singletonList(addedParentApplication.getId())).andExpect(status().isOk());
@@ -259,8 +259,8 @@ public class ProjectControllerTest {
 
     // add another application to child
     Application newApplication2 = createApplication(applicant, startTime.minusDays(2), endTime.minusDays(1));
-    addCityDistrictToApplication(newApplication2, KRUUNUNHAKA_CITY_DISTRICT_ID);
     Application addedApplication2 = addApplicationToDatabase(newApplication2);
+    addCityDistrictToApplication(addedApplication2, KRUUNUNHAKA_CITY_DISTRICT_ID);
     wtc.perform(
         put("/projects/" + project.getId() + "/applications"),
         Arrays.asList(addedApplication1.getId(), addedApplication2.getId())).andExpect(status().isOk());
@@ -375,17 +375,17 @@ public class ProjectControllerTest {
 
   private void addCityDistrictToApplication(Application application, DSL.Polygon2DToken polygon) throws Exception {
     Location location = new Location();
+    location.setApplicationId(application.getId());
     location.setGeometry(geometrycollection(3879, polygon));
     ResultActions resultActions = wtc.perform(post("/locations"), location).andExpect(status().isOk());
     Location dbLocation = wtc.parseObjectFromResult(resultActions, Location.class);
-    application.setLocationId(dbLocation.getId());
   }
 
   private void addCityDistrictToApplication(Application application, int districtOverride) throws Exception {
     Location location = new Location();
+    location.setApplicationId(application.getId());
     location.setCityDistrictIdOverride(districtOverride);
     ResultActions resultActions = wtc.perform(post("/locations"), location).andExpect(status().isOk());
     Location dbLocation = wtc.parseObjectFromResult(resultActions, Location.class);
-    application.setLocationId(dbLocation.getId());
   }
 }

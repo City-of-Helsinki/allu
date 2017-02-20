@@ -2,13 +2,11 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +17,6 @@ import java.util.List;
 @Service
 public class ApplicationJsonService {
 
-  private RestTemplate restTemplate;
-  private ApplicationProperties applicationProperties;
   private ApplicationMapper applicationMapper;
   private ProjectService projectService;
   private ApplicantService applicantService;
@@ -33,8 +29,6 @@ public class ApplicationJsonService {
 
   @Autowired
   public ApplicationJsonService(
-      ApplicationProperties applicationProperties,
-      RestTemplate restTemplate,
       ApplicationMapper applicationMapper,
       ProjectService projectService,
       ApplicantService applicantService,
@@ -45,8 +39,6 @@ public class ApplicationJsonService {
       AttachmentService attachmentService,
       CommentService commentService
   ) {
-    this.applicationProperties = applicationProperties;
-    this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
     this.projectService = projectService;
     this.applicantService = applicantService;
@@ -79,9 +71,7 @@ public class ApplicationJsonService {
     applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType(), applicationModel.getMetadataVersion()));
     applicationJson.setHandler(applicationModel.getHandler() != null ? userService.findUserById(applicationModel.getHandler()) : null);
 
-    if (applicationModel.getLocationId() != null && applicationModel.getLocationId() > 0) {
-      applicationJson.setLocation(locationService.findLocationById(applicationModel.getLocationId()));
-    }
+    applicationJson.setLocations(locationService.findLocationsByApplication(applicationModel.getId()));
     applicationJson.setAttachmentList(attachmentService.findAttachmentsForApplication(applicationModel.getId()));
     applicationJson.setComments(commentService.findByApplicationId(applicationModel.getId()));
 

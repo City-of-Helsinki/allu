@@ -4,6 +4,7 @@ import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 
+import fi.hel.allu.model.service.LocationService;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class TestCommon {
   @Autowired
   private ApplicationDao applicationDao;
   @Autowired
-  private LocationDao locationDao;
+  private LocationService locationService;
   @Autowired
   private ApplicantDao applicantDao;
   @Autowired
@@ -123,11 +124,12 @@ public class TestCommon {
    * @param geometry
    * @return inserted location's ID
    */
-  public Integer insertLocation(String streetAddress, Geometry geometry) {
+  public Integer insertLocation(String streetAddress, Geometry geometry, int applicationId) {
     Location location = new Location();
     location.setGeometry(geometry);
     location.setStreetAddress(streetAddress);
-    return locationDao.insert(location).getId();
+    location.setApplicationId(applicationId);
+    return locationService.insert(location).getId();
   }
 
   /**

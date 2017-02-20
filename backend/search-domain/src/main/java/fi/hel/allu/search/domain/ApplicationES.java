@@ -27,7 +27,7 @@ public class ApplicationES {
   private Integer projectId;
   private ZonedDateTime decisionTime;
   List<ContactES> contacts;
-  LocationES location;
+  List<LocationES> locations;
   ApplicantES applicant;
 
   public Integer getId() {
@@ -142,12 +142,12 @@ public class ApplicationES {
     this.contacts = contacts;
   }
 
-  public LocationES getLocation() {
-    return location;
+  public List<LocationES> getLocations() {
+    return locations;
   }
 
-  public void setLocation(LocationES location) {
-    this.location = location;
+  public void setLocations(List<LocationES> locations) {
+    this.locations = locations;
   }
 
   public ApplicantES getApplicant() {

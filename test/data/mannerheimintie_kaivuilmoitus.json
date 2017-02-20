@@ -1,133 +1,134 @@
 {
-  "id":null,
-  "project":null,
-  "handler":null,
-  "status":null,
-  "type":"EXCAVATION_ANNOUNCEMENT",
-  "kind":"HEATING_COOLING",
-  "name":"Manskun lämpö ja puhallus",
-  "creationTime":"2016-07-15T10:36:09.721Z",
-  "startTime":"2017-01-01T05:00:00Z",
-  "endTime":"2017-03-31T22:00:00Z",
-  "applicant":{
-    "type":"COMPANY",
-    "person":null,
-    "id":null,
-    "name":"Penan putki ja puhallus",
-    "registryKey":"1212121-6",
-    "postalAddress":{
-      "streetAddress":"Mannerheimintie 1",
-      "postalCode":"00100",
-      "city":"Helsinki"
+  "id": null,
+  "project": null,
+  "handler": null,
+  "status": null,
+  "type": "EXCAVATION_ANNOUNCEMENT",
+  "kind": "HEATING_COOLING",
+  "name": "Manskun lämpö ja puhallus",
+  "creationTime": "2016-07-15T10:36:09.721Z",
+  "startTime": "2017-01-01T05:00:00Z",
+  "endTime": "2017-03-31T22:00:00Z",
+  "applicant": {
+    "type": "COMPANY",
+    "person": null,
+    "id": null,
+    "name": "Penan putki ja puhallus",
+    "registryKey": "1212121-6",
+    "postalAddress": {
+      "streetAddress": "Mannerheimintie 1",
+      "postalCode": "00100",
+      "city": "Helsinki"
     },
-    "email":"pena@puhallus.fi",
-    "phone":"0441212121"
+    "email": "pena@puhallus.fi",
+    "phone": "0441212121"
   },
-  "contactList":[
+  "contactList": [
     {
-      "id":null,
-      "applicantId":null,
-      "name":"Pena Puhallus",
-      "streetAddress":"Porkkalantie 1",
-      "postalCode":"00110",
-      "city":"Helsinki",
-      "email":"pena@puhallus.fi",
-      "phone":"0441212121"
+      "id": null,
+      "applicantId": null,
+      "name": "Pena Puhallus",
+      "streetAddress": "Porkkalantie 1",
+      "postalCode": "00110",
+      "city": "Helsinki",
+      "email": "pena@puhallus.fi",
+      "phone": "0441212121"
     }
   ],
-  "location":{
-    "id":null,
-    "geometry":{
-      "type":"GeometryCollection",
-      "crs":{
-        "properties":{
-          "name":"EPSG:3879"
+  "locations": [
+    {
+      "id": null,
+      "geometry": {
+        "type": "GeometryCollection",
+        "crs": {
+          "properties": {
+            "name": "EPSG:3879"
+          },
+          "type": "name"
         },
-        "type":"name"
-      },
-      "bbox":null,
-      "geometries":[
-        {
-          "type":"Polygon",
-          "crs":null,
-          "bbox":[
-            2.549589275E7,
-            6674232.999998959,
-            2.549606025E7,
-            6674407.499998961
-          ],
-          "coordinates":[
-            [
+        "bbox": null,
+        "geometries": [
+          {
+            "type": "Polygon",
+            "crs": null,
+            "bbox": [
+              2.549589275E7,
+              6674232.999998959,
+              2.549606025E7,
+              6674407.499998961
+            ],
+            "coordinates": [
               [
-                2.549589975E7,
-                6674390.49999896
-              ],
-              [
-                2.549592575E7,
-                6674407.499998961
-              ],
-              [
-                2.549596925E7,
-                6674348.99999896
-              ],
-              [
-                2.549603675E7,
-                6674393.499998959
-              ],
-              [
-                2.549606025E7,
-                6674357.999998961
-              ],
-              [
-                2.549599975E7,
-                6674320.99999896
-              ],
-              [
-                2.549602225E7,
-                6674239.999998959
-              ],
-              [
-                2.549597825E7,
-                6674232.999998959
-              ],
-              [
-                2.549596175E7,
-                6674303.499998958
-              ],
-              [
-                2.549590825E7,
-                6674251.999998959
-              ],
-              [
-                2.549589275E7,
-                6674283.999998958
-              ],
-              [
-                2.549594775E7,
-                6674327.999998961
-              ],
-              [
-                2.549589975E7,
-                6674390.49999896
+                [
+                  2.549589975E7,
+                  6674390.49999896
+                ],
+                [
+                  2.549592575E7,
+                  6674407.499998961
+                ],
+                [
+                  2.549596925E7,
+                  6674348.99999896
+                ],
+                [
+                  2.549603675E7,
+                  6674393.499998959
+                ],
+                [
+                  2.549606025E7,
+                  6674357.999998961
+                ],
+                [
+                  2.549599975E7,
+                  6674320.99999896
+                ],
+                [
+                  2.549602225E7,
+                  6674239.999998959
+                ],
+                [
+                  2.549597825E7,
+                  6674232.999998959
+                ],
+                [
+                  2.549596175E7,
+                  6674303.499998958
+                ],
+                [
+                  2.549590825E7,
+                  6674251.999998959
+                ],
+                [
+                  2.549589275E7,
+                  6674283.999998958
+                ],
+                [
+                  2.549594775E7,
+                  6674327.999998961
+                ],
+                [
+                  2.549589975E7,
+                  6674390.49999896
+                ]
               ]
             ]
-          ]
-        }
+          }
+        ]
+      },
+      "area": 12229.125000074739,
+      "areaOverride": null,
+      "postalAddress": {
+        "streetAddress": null,
+        "postalCode": null,
+        "city": null
+      },
+      "fixedLocationIds": [
       ]
-    },
-    "area":12229.125000074739,
-    "areaOverride":null,
-    "postalAddress":{
-      "streetAddress":null,
-      "postalCode":null,
-      "city":null
-    },
-    "fixedLocationIds":[
-
-    ]
-  },
-  "extension":{
-    "applicationType":"EXCAVATION_ANNOUNCEMENT",
+    }
+  ],
+  "extension": {
+    "applicationType": "EXCAVATION_ANNOUNCEMENT",
     "contractor": {
       "type": "COMPANY",
       "person": null,
@@ -140,19 +141,19 @@
         "city": "Helsinki"
       }
     },
-    "responsiblePerson":{
-      "id":null,
-      "applicantId":null,
-      "name":"Make Morottaja",
-      "streetAddress":"Kaivokuja 6",
-      "postalCode":"00111",
-      "city":"Helsinki",
-      "email":"make@kaivu.fi",
-      "phone":"04431313131"
+    "responsiblePerson": {
+      "id": null,
+      "applicantId": null,
+      "name": "Make Morottaja",
+      "streetAddress": "Kaivokuja 6",
+      "postalCode": "00111",
+      "city": "Helsinki",
+      "email": "make@kaivu.fi",
+      "phone": "04431313131"
     },
-    "guaranteeEndTime":"2019-03-31T22:00:00Z",
-    "additionalInfo":"Automaagisesti tehty kaivuilmoitus",
-    "traffixArrangements":"Mannerheimintie kokonaan poikki. Koittakaa selvitä!",
-    "pksCard":true
+    "guaranteeEndTime": "2019-03-31T22:00:00Z",
+    "additionalInfo": "Automaagisesti tehty kaivuilmoitus",
+    "traffixArrangements": "Mannerheimintie kokonaan poikki. Koittakaa selvitä!",
+    "pksCard": true
   }
 }

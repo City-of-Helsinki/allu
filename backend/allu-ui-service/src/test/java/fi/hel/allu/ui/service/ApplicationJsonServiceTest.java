@@ -62,7 +62,6 @@ public class ApplicationJsonServiceTest {
     Mockito.when(application.getId()).thenReturn(applicationId);
     Mockito.when(application.getApplicantId()).thenReturn(applicantId);
     Mockito.when(application.getHandler()).thenReturn(userId);
-    Mockito.when(application.getLocationId()).thenReturn(locationId);
     Mockito.when(application.getProjectId()).thenReturn(projectId);
     Mockito.when(application.getType()).thenReturn(ApplicationType.SHORT_TERM_RENTAL);
     Mockito.when(application.getMetadataVersion()).thenReturn(1);
@@ -72,7 +71,7 @@ public class ApplicationJsonServiceTest {
     Mockito.when(contactService.findContactsForApplication(applicationId)).thenReturn(contactJsons);
     Mockito.when(metaService.findMetadataForApplication(ApplicationType.SHORT_TERM_RENTAL, 1)).thenReturn(metaJson);
     Mockito.when(userService.findUserById(userId)).thenReturn(userJson);
-    Mockito.when(locationService.findLocationById(locationId)).thenReturn(locationJson);
+    Mockito.when(locationService.findLocationsByApplication(applicationId)).thenReturn(Collections.singletonList(locationJson));
     Mockito.when(attachmentService.findAttachmentsForApplication(applicationId)).thenReturn(Collections.emptyList());
 
     comments.add(Mockito.mock(CommentJson.class));
@@ -85,8 +84,6 @@ public class ApplicationJsonServiceTest {
   public void testGetFullyPopulatedApplication() {
     Mockito.when(applicationMapper.mapApplicationToJson(application)).thenReturn(new ApplicationJson());
     ApplicationJsonService applicationJsonService = new ApplicationJsonService(
-        applicationProperties,
-        restTemplate,
         applicationMapper,
         projectService,
         applicantService,
@@ -102,7 +99,7 @@ public class ApplicationJsonServiceTest {
     Assert.assertEquals(contactJsons, applicationJson.getContactList());
     Assert.assertEquals(metaJson, applicationJson.getMetadata());
     Assert.assertEquals(userJson, applicationJson.getHandler());
-    Assert.assertEquals(locationJson, applicationJson.getLocation());
+    Assert.assertEquals(locationJson, applicationJson.getLocations().get(0));
     Assert.assertEquals(0, applicationJson.getAttachmentList().size());
     Assert.assertEquals(2, applicationJson.getComments().size());
   }

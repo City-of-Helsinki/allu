@@ -72,11 +72,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_BY_LOCATION = "/applications/search";
 
   /**
-   * Model-service path to delete application's location
-   */
-  public static final String PATH_MODEL_APPLICATION_DELETE_LOCATION = "/applications/{applicationId}/location";
-
-  /**
    * Model-service path to find attachments by application
    */
   public static final String PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION = "/applications/{applicationId}/attachments";
@@ -384,6 +379,20 @@ public class ApplicationProperties {
    */
   public String getStreetSearchUrl() {
     return this.streetSearchUrl;
+  }
+
+  /**
+   * @return url for fetching locations by their application.
+   */
+  public String getLocationsByApplicationIdUrl() {
+    return getModelServiceUrl("/locations/applications/{applicationId}");
+  }
+
+  /**
+   * @return url for deleting locations by their application.
+   */
+  public String getDeleteLocationsByApplicationIdUrl() {
+    return getModelServiceUrl("/locations/applications/{applicationId}");
   }
 
   /**

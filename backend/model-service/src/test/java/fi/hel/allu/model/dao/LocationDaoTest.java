@@ -4,6 +4,7 @@ import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.testUtils.TestCommon;
@@ -34,8 +35,13 @@ import static org.junit.Assert.*;
 @Transactional
 public class LocationDaoTest {
 
+  private Application application;
+
   @Autowired
   LocationDao locationDao;
+
+  @Autowired
+  ApplicationDao applicationDao;
 
   @Autowired
   TestCommon testCommon;
@@ -46,6 +52,8 @@ public class LocationDaoTest {
   @Before
   public void setUp() throws Exception {
     testCommon.deleteAllData();
+    application = testCommon.dummyOutdoorApplication("test application", "käsittelijä");
+    application = applicationDao.insert(application);
   }
 
   // Test geometries: four 2x2 squares in a diagonal, three of them overlapping
@@ -61,6 +69,7 @@ public class LocationDaoTest {
     Geometry geoIn = geometrycollection(3879, Sq_0_0);
     Location locIn = new Location();
     locIn.setGeometry(geoIn);
+    locIn.setApplicationId(application.getId());
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 4 m^2:
@@ -71,6 +80,7 @@ public class LocationDaoTest {
   @Test
   public void testAreaNoGeometry() {
     Location locIn = new Location();
+    locIn.setApplicationId(application.getId());
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 0 m^2:
@@ -82,6 +92,7 @@ public class LocationDaoTest {
   public void testAreaOverride() {
     final double AREA_OVERRIDE = 123.23;
     Location locIn = new Location();
+    locIn.setApplicationId(application.getId());
     locIn.setAreaOverride(AREA_OVERRIDE);
     Location locOut = locationDao.insert(locIn);
     assertTrue(Math.abs(locOut.getAreaOverride() - AREA_OVERRIDE) < 0.0001);
@@ -91,6 +102,7 @@ public class LocationDaoTest {
   public void testAreaEmptyGeometry() {
     Geometry geoIn = geometrycollection(3879, new Polygon2DToken[0]);
     Location locIn = new Location();
+    locIn.setApplicationId(application.getId());
     locIn.setGeometry(geoIn);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
@@ -105,6 +117,7 @@ public class LocationDaoTest {
     Geometry geoIn = geometrycollection(3879, Sq_0_0, Sq_1_1, Sq_2_2);
     Location locIn = new Location();
     locIn.setGeometry(geoIn);
+    locIn.setApplicationId(application.getId());
     Location locOut = locationDao.insert(locIn);
     Geometry geoOut = locOut.getGeometry();
     assertNotNull(geoOut);
@@ -123,6 +136,7 @@ public class LocationDaoTest {
     // three non-overlapping squares, 4 m^2 each.
     Geometry geoIn = geometrycollection(3879, Sq_0_0, Sq_2_2, Sq_5_5);
     Location locIn = new Location();
+    locIn.setApplicationId(application.getId());
     locIn.setGeometry(geoIn);
     Location locOut = locationDao.insert(locIn);
     Geometry geoOut = locOut.getGeometry();
@@ -152,6 +166,7 @@ public class LocationDaoTest {
     assertEquals(fixedLocationIds.size(), insertCount);
     // Test: add location with fixedLocationId
     Location locIn = new Location();
+    locIn.setApplicationId(application.getId());
     locIn.setFixedLocationIds(fixedLocationIds);
     Location locOut = locationDao.insert(locIn);
     // Check that all inserted IDs and none other are returned:
@@ -192,7 +207,7 @@ public class LocationDaoTest {
     Location location = new Location();
     location.setStreetAddress("Testiosoite 1");
     location.setGeometry(geometrycollection(3879, herttoniemi_polygon));
-
+    location.setApplicationId(application.getId());
     Location inserted = locationDao.insert(location);
 
     // Check that the location now has a district ID:
@@ -210,7 +225,7 @@ public class LocationDaoTest {
 
     Location location = new Location();
     location.setStreetAddress("Testiosoite 1");
-
+    location.setApplicationId(application.getId());
     Location inserted = locationDao.insert(location);
     assertNull(inserted.getCityDistrictId());
 

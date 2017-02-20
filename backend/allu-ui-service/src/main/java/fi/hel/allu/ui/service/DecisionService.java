@@ -34,6 +34,7 @@ public class DecisionService {
   private static final Logger logger = LoggerFactory.getLogger(DecisionService.class);
 
   private static final FixedLocationJson BAD_LOCATION;
+  private static final String ADDRESS_LINE_SEPARATOR = "; ";
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
@@ -112,8 +113,8 @@ public class DecisionService {
     decisionJson.setApplicantAddressLines(applicantAddressLines(application));
     decisionJson.setApplicantContactLines(applicantContactLines(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
-    if (application.getLocation() != null) {
-      decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocation().getArea())));
+    if (application.getLocations() != null) {
+      decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocations().stream().mapToDouble(l -> l.getArea()).sum())));
     }
     if (application.getType() == null) {
       throw new IllegalArgumentException("Application type is required");
@@ -224,16 +225,30 @@ public class DecisionService {
   }
 
   private String siteAddressLine(ApplicationJson application) {
-    LocationJson location = application.getLocation();
-    if (location == null) {
-      return "";
+    List<Integer> locationIds = null;
+    if (application.getLocations() != null) {
+      locationIds = application.getLocations().stream()
+          .filter(l -> l.getFixedLocationIds() != null)
+          .flatMap(l -> l.getFixedLocationIds().stream())
+          .collect(Collectors.toList());
     }
-    List<Integer> locationIds = location.getFixedLocationIds();
+
+    StringBuilder sb = new StringBuilder();
     if (locationIds != null && !locationIds.isEmpty()) {
-      return fixedLocationAddressLine(locationIds);
-    } else {
-      return application.getLocation().getPostalAddress().getStreetAddress();
+      sb.append(fixedLocationAddressLine(locationIds));
     }
+    if (application.getLocations() != null && application.getLocations().size() > 0) {
+      if (sb.length() != 0) {
+        sb.append(ADDRESS_LINE_SEPARATOR);
+      }
+      // return comma separated street address list
+      sb.append(application.getLocations().stream()
+          .filter(l -> l.getPostalAddress() != null)
+          .map(l -> l.getPostalAddress().getStreetAddress())
+          .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR)));
+    }
+
+    return sb.toString();
   }
 
   private String fixedLocationAddressLine(List<Integer> locationIds) {
@@ -254,7 +269,7 @@ public class DecisionService {
     StringBuilder addressLine = new StringBuilder();
     for (Map.Entry<String, List<FixedLocationJson>> entry : grouped.entrySet()) {
       if (addressLine.length() != 0) {
-        addressLine.append("; ");
+        addressLine.append(ADDRESS_LINE_SEPARATOR);
       }
       addressLine.append(addressLineFor(entry.getValue()));
     }

@@ -11,14 +11,12 @@ import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
-
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.CityDistrict;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
-
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
@@ -31,7 +29,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocation.location;
@@ -64,6 +61,12 @@ public class LocationDao {
   }
 
   @Transactional
+  public List<Location> findByApplication(int applicationId) {
+    List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
+    return locationIds.stream().map(id -> findById(id).get()).collect(Collectors.toList());
+  }
+
+  @Transactional
   public Location insert(Location locationData) {
     Integer id = queryFactory.insert(location).populate(locationData).executeWithKey(location.id);
     if (id == null) {
@@ -91,17 +94,12 @@ public class LocationDao {
 
   @Transactional
   public void deleteByApplication(int applicationId) {
-    Integer locationId = queryFactory.select(application.locationId).from(application)
-        .where(application.id.eq(applicationId)).fetchOne();
-    if (locationId == null) {
-      throw new NoSuchEntityException("Can't find location for application", Integer.toString(applicationId));
-    } else {
-      queryFactory.update(application).setNull(application.locationId).where(application.id.eq(applicationId))
-          .execute();
+    List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
+    locationIds.forEach(locationId -> {
       queryFactory.delete(locationGeometry).where(locationGeometry.locationId.eq(locationId)).execute();
       queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
       queryFactory.delete(location).where(location.id.eq(locationId)).execute();
-    }
+    });
   }
 
   @Transactional(readOnly = true)

@@ -1,11 +1,8 @@
 package fi.hel.allu.model.testUtils;
 
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import fi.hel.allu.model.ModelApplication;
 import org.junit.Assert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
@@ -20,10 +17,13 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 
-import fi.hel.allu.model.ModelApplication;;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+;
 
 /**
  * Common routines for testing Web components (i.e., controllers)
@@ -64,6 +64,10 @@ public class WebTestCommon {
   public void setup() throws Exception {
     mockMvc = webAppContextSetup(webApplicationContext).build();
     testCommon.deleteAllData();
+  }
+
+  public void setupNoDelete() throws Exception {
+    mockMvc = webAppContextSetup(webApplicationContext).build();
   }
 
   /*

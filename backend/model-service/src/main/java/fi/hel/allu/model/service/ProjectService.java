@@ -253,11 +253,12 @@ public class ProjectService {
     ProjectSummary ps = new ProjectSummary();
     ps.minStartTime = application.getStartTime();
     ps.maxEndTime = application.getEndTime();
-    if (application.getLocationId() != null) {
-      Optional<Location> location = locationDao.findById(application.getLocationId());
-      Optional<Integer> cityDistrictId = location.map(l -> Optional.ofNullable(l.getCityDistrictIdOverride()).orElse(l.getCityDistrictId()));
-      cityDistrictId.ifPresent(id -> ps.districts.add(id));
-    }
+    List<Location> locations = locationDao.findByApplication(application.getId());
+    List<Integer> cityDistrictIds = locations.stream()
+        .map(l -> Optional.ofNullable(l.getCityDistrictIdOverride()).orElse(l.getCityDistrictId()))
+        .filter(id -> id != null)
+        .collect(Collectors.toList());
+    ps.districts.addAll(cityDistrictIds);
     return mergeSummaries(ps, projectSummary);
   }
 

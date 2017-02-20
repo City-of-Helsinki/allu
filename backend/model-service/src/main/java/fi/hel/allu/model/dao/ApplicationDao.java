@@ -25,6 +25,7 @@ import java.util.List;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationTag.applicationTag;
+import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
 
 @Repository
@@ -57,8 +58,10 @@ public class ApplicationDao {
 
   @Transactional(readOnly = true)
   public List<Application> findByLocation(LocationSearchCriteria lsc) {
-    BooleanExpression condition = application.locationId.in(SQLExpressions.select(locationGeometry.locationId)
-        .from(locationGeometry).where(locationGeometry.geometry.intersects(lsc.getIntersects())));
+    BooleanExpression condition =
+        application.id.in(SQLExpressions.select(location.applicationId)
+        .from(locationGeometry).join(location).on(locationGeometry.locationId.eq(location.id))
+            .where(locationGeometry.geometry.intersects(lsc.getIntersects())));
     if (lsc.getAfter() != null) {
       condition = condition.and(application.endTime.after(lsc.getAfter()));
     }
