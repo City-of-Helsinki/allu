@@ -208,11 +208,12 @@ public class ApplicationService {
    */
   ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicantService.updateApplicant(applicationJson.getApplicant());
+    List<LocationJson> locationJsons = null;
     if (applicationJson.getLocations() != null) {
       // TODO: deleting all existing locations and creating them from scratch cannot be done, because deleting is not ok for "korvaava hakemus"
       // TODO: creation, modification and deletes (c/sh)ould be done without the application so that they are handled separately
 //      locationService.deleteApplicationLocation(applicationId);
-      List<LocationJson> locationJsons =
+      locationJsons =
           applicationJson.getLocations().stream().map(l -> locationService.updateOrCreateLocation(applicationId, l)).collect(Collectors.toList());
       applicationJson.setLocations(locationJsons);
     } else {
@@ -231,6 +232,7 @@ public class ApplicationService {
 
     resultJson.setContactList(contacts);
     resultJson.setApplicant(applicationJson.getApplicant());
+    resultJson.setLocations(locationJsons);
     resultJson.setMetadata(metaService.findMetadataForApplication(resultJson.getType()));
     return resultJson;
   }
