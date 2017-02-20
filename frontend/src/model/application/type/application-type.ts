@@ -1,6 +1,7 @@
 import {ApplicationKindStructure, ApplicationKind} from './application-kind';
 import {ApplicationSpecifier} from './application-specifier';
 import {ArrayUtil} from '../../../util/array-util';
+import {Some, Option} from '../../../util/option';
 
 export enum ApplicationType {
   EXCAVATION_ANNOUNCEMENT, // Kaivuilmoitus
@@ -32,7 +33,7 @@ export class ApplicationTypeStructure {
     return this.kinds.map(k => ApplicationKind[k.kind]);
   }
 
-  get applicationKindNamesSortedByTranslation() {
+  get applicationKindNamesSortedByTranslation(): Array<string> {
     return this.applicationKindNames.sort(ArrayUtil.naturalSortTranslated(['application.kind'], (kind: string) => kind));
   }
 }
@@ -154,7 +155,7 @@ export const note = new ApplicationTypeStructure(ApplicationType.NOTE, [
   new ApplicationKindStructure(ApplicationKind.NOTE_OTHER)
 ]);
 
-export const applicationTypes: Array<ApplicationTypeStructure> = [
+export const applicationTypeStructures: Array<ApplicationTypeStructure> = [
   excavationAnnouncement,
   areaRental,
   temporaryTrafficArrangements,
@@ -164,5 +165,16 @@ export const applicationTypes: Array<ApplicationTypeStructure> = [
   shortTermRental,
   note
 ];
+
+export function typeStructureByType(type: string): Option<ApplicationTypeStructure> {
+  let appType = ApplicationType[type];
+  return Some(applicationTypeStructures.find(ts => ts.type === appType));
+}
+
+export function kindStructureByTypeAndKind(type: string, kind: string): Option<ApplicationKindStructure> {
+  let kindType = ApplicationKind[kind];
+  return typeStructureByType(type)
+    .map(ts => ts.structureByKind(kindType));
+}
 
 

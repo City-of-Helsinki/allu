@@ -1,7 +1,8 @@
 import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
+import {Router} from '@angular/router';
 import '../../../rxjs-extensions.ts';
 import {Observable} from 'rxjs/Observable';
+import {FormBuilder} from '@angular/forms';
 
 import {ProgressStep} from '../progressbar/progressbar.component';
 import {Application} from '../../../model/application/application';
@@ -50,16 +51,17 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private applicationState: ApplicationState,
     private mapService: MapUtil,
     private router: Router,
-    private route: ActivatedRoute,
-    private mapHub: MapHub) {
+    private mapHub: MapHub,
+    private fb: FormBuilder) {
   };
 
   ngOnInit() {
-      this.application = this.applicationState.application;
-      this.geometry = this.application.location.geometry;
-      if (this.application.id) {
-        this.loadFixedLocationsForKind(ApplicationKind[this.application.kind]);
-      };
+    this.application = this.applicationState.application;
+    this.geometry = this.application.location.geometry;
+    if (this.application.id) {
+      this.typeSelected = this.application.kind !== undefined;
+      this.loadFixedLocationsForKind(ApplicationKind[this.application.kind]);
+    };
 
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
@@ -101,12 +103,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   save() {
     this.application.location.fixedLocationIds = this.selectedFixedLocations;
     this.application.location.geometry = this.geometry;
-    this.applicationState.application = this.application;
 
     if (this.application.id) {
       this.applicationState.save(this.application)
         .subscribe(app => console.log('Application saved'));
     } else {
+      this.applicationState.application = this.application;
       this.router.navigate(['/applications/edit']);
     }
   }
@@ -118,7 +120,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.selectedFixedLocations = this.sections.length === 1
       ? [this.sections[0].id]
       : [];
-    this.mapHub.selectFixedLocations(this.selectedFixedLocations);
+    if (!!area) {
+      this.mapHub.selectFixedLocations(this.selectedFixedLocations);
+    }
   }
 
   get selectedArea(): string {

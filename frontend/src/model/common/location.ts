@@ -30,4 +30,8 @@ export class Location {
   get uiArea(): number {
     return this.area ? Math.ceil(this.area) : undefined;
   }
+
+  get effectiveCityDistrictId(): number {
+    return this.cityDistrictIdOverride === undefined ? this.cityDistrictId : this.cityDistrictIdOverride;
+  }
 }

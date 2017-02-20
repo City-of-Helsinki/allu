@@ -3,31 +3,30 @@
         <md-card>
             <md-card-title>Hakemuksen tyyppi</md-card-title>
             <md-card-content>
-                <div class="row">
-                    <div class="col m12 type-select">
-                        <md-select [ngModel]="type?.typeName" [disabled]="typeChangeDisabled" class="input-full-width"
-                                   [disabled]="typeChangeDisabled" placeholder="Hakemuksen tyyppi">
-                            <md-option *ngFor="let type of applicationTypes" [value]="type.typeName" (onSelect)="typeSelection(type.typeName)">
-                                {{['application.type', type.typeName] | translation}}
-                            </md-option>
-                        </md-select>
+                <form [formGroup]="form">
+                    <div class="row">
+                        <div class="col m12 type-select">
+                            <md-select formControlName="type" class="input-full-width" placeholder="Hakemuksen tyyppi">
+                                <md-option *ngFor="let type of applicationTypes" [value]="type">
+                                    {{['application.type', type] | translation}}
+                                </md-option>
+                            </md-select>
+                        </div>
+                        <div class="col m12 type-select">
+                            <md-select  formControlName="kind" class="input-full-width" placeholder="Hakemuksen laji">
+                                <md-option *ngFor="let kind of selectableKinds" [value]="kind">
+                                    {{['application.kind', kind] | translation}}
+                                </md-option>
+                            </md-select>
+                        </div>
+                        <div class="col m12 type-select" *ngIf="showSpecifierSelection()">
+                            <select formControlName="specifiers" materialize="material_select" multiple [materializeSelectOptions]="selectableSpecifiers">
+                                <option value="" disabled selected>Työn tarkenne</option>
+                                <option *ngFor="let specifier of selectableSpecifiers" [value]="specifier">{{['application.specifier', specifier] | translation}}</option>
+                            </select>
+                        </div>
                     </div>
-                    <div class="col m12 type-select">
-                        <md-select [ngModel]="applicationKind" [disabled]="typeChangeDisabled" class="input-full-width"
-                                   [disabled]="typeChangeDisabled" placeholder="Hakemuksen laji">
-                            <md-option *ngFor="let kind of kindNames" [value]="kind" (onSelect)="kindSelection(kind)">
-                                {{['application.kind', kind] | translation}}
-                            </md-option>
-                        </md-select>
-                    </div>
-                    <div class="col m12 type-select" *ngIf="showSpecifierSelection()">
-                        <select [(ngModel)]="specifiers" [disabled]="typeChangeDisabled" materialize="material_select"
-                                multiple [materializeSelectOptions]="specifierNames">
-                            <option value="" disabled selected>Työn tarkenne</option>
-                            <option *ngFor="let specifier of specifierNames" [value]="specifier">{{['application.specifier', specifier] | translation}}</option>
-                        </select>
-                    </div>
-                </div>
+                </form>
             </md-card-content>
         </md-card>
     </div>

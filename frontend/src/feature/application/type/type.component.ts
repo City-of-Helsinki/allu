@@ -1,10 +1,15 @@
 import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
-import {ApplicationType, applicationTypes, ApplicationTypeStructure} from '../../../model/application/type/application-type';
+import {
+  ApplicationType, ApplicationTypeStructure, applicationTypeStructures,
+  typeStructureByType, kindStructureByTypeAndKind
+} from '../../../model/application/type/application-type';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 import {Some} from '../../../util/option';
 import {ApplicationKind} from '../../../model/application/type/application-kind';
 import {ApplicationState} from '../../../service/application/application-state';
+import {EnumUtil} from '../../../util/enum.util';
 
 @Component({
   selector: 'application-type',
@@ -19,57 +24,67 @@ export class TypeComponent implements OnInit {
   @Output() onKindChange = new EventEmitter<ApplicationKind>();
   @Output() onSpecifierChange = new EventEmitter<Array<ApplicationSpecifier>>();
 
-  applicationTypes = applicationTypes;
-  type: ApplicationTypeStructure;
-  kindNames = [];
-  applicationKind: string;
-  specifierNames = [];
-  selectedSpecifiers: Array<string> = [];
+  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  selectableKinds = [];
+  selectableSpecifiers = [];
+  form: FormGroup;
 
-  constructor(private applicationState: ApplicationState) {};
+  constructor(private applicationState: ApplicationState, private fb: FormBuilder) {
+  };
 
   ngOnInit(): any {
     let application = this.applicationState.application;
-    this.type = this.applicationTypes.find(types => types.type === ApplicationType[application.type]);
-    this.kindNames = this.type
-      ? this.type.applicationKindNames
-      : [];
-    this.applicationKind = application.kind;
-    this.kindSelection(application.kind);
-    this.selectedSpecifiers = Some(application.extension).map(ext => ext.specifiers).orElse([]);
+    this.form = this.fb.group({
+      type: [application.type],
+      kind: [application.kind],
+      specifiers: [Some(application.extension).map(ext => ext.specifiers).orElse([])]
+    });
+
+    this.selectableKinds = this.getSelectableKinds();
+    this.selectableSpecifiers = this.getSelectableSpecifiers();
+
+    if (this.typeChangeDisabled) {
+      this.form.disable();
+    }
+
+    this.form.get('type').valueChanges.subscribe(type => this.typeSelection(type));
+    this.form.get('kind').valueChanges.subscribe(kind => this.kindSelection(kind));
+    this.form.get('specifiers').valueChanges.subscribe(specifiers => {
+      this.onSpecifierChange.emit(specifiers.map(s => ApplicationSpecifier[s]));
+    });
   };
 
   typeSelection(value: string) {
     let appType = ApplicationType[value];
-    this.type = applicationTypes.find(types => types.type === appType);
-    this.kindNames = this.type.applicationKindNames;
-    this.applicationKind = undefined;
+    this.form.patchValue({kind: undefined}, {onlySelf: true});
+    this.selectableKinds = this.getSelectableKinds();
     this.onTypeChange.emit(appType);
   };
 
   kindSelection(value: string) {
-    if (value !== undefined) {
-      this.applicationKind = value;
-      let kind = ApplicationKind[value];
-      this.specifierNames = this.type.structureByKind(kind).applicationSpecifierNamesSortedByTranslation;
-      this.onKindChange.emit(kind);
-    }
+    let kind = ApplicationKind[value];
+    this.form.patchValue({specifiers: []}, {onlySelf: true});
+    this.selectableSpecifiers = this.getSelectableSpecifiers();
+    this.onKindChange.emit(kind);
   };
 
   showSpecifierSelection(): boolean {
-    let applicationKindSelected = this.applicationKind !== undefined;
-    let show = (appType: ApplicationTypeStructure) => this.specifierSelectionShownForType(appType.type)
+    let applicationKindSelected = this.form.value.kind !== undefined;
+    let show = (appType: string) => this.specifierSelectionShownForType(ApplicationType[appType])
       && applicationKindSelected;
-    return Some(this.type).map(show).orElse(false);
+    return Some(this.form.value.type).map(show).orElse(false);
   }
 
-  set specifiers(values: Array<string>) {
-    this.selectedSpecifiers = values;
-    this.onSpecifierChange.emit(values.map(v => ApplicationSpecifier[v]));
+  getSelectableKinds(): Array<string> {
+    return typeStructureByType(this.form.value.type)
+      .map(ts => ts.applicationKindNamesSortedByTranslation)
+      .orElse([]);
   }
 
-  get specifiers(): Array<string> {
-    return this.selectedSpecifiers;
+  getSelectableSpecifiers(): Array<string> {
+    return kindStructureByTypeAndKind(this.form.value.type, this.form.value.kind)
+      .map(ts => ts.applicationSpecifierNamesSortedByTranslation)
+      .orElse([]);
   }
 
   private specifierSelectionShownForType(type: ApplicationType): boolean {

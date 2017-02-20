@@ -1,5 +1,5 @@
 import {NgModule, ModuleWithProviders} from '@angular/core';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 import {MdCardModule} from '@angular/material';
 
@@ -13,6 +13,7 @@ import {TypeModule} from '../type/type.module';
 @NgModule({
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     RouterModule,
     AlluCommonModule,
     MdCardModule,
