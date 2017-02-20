@@ -491,8 +491,12 @@ public class ApplicationMapper {
 
   private ApplicationExtensionJson createPlacementContractJson(PlacementContract placementContract) {
     PlacementContractJson placementContractJson = new PlacementContractJson();
-    placementContractJson.setRepresentative(createApplicantJson(placementContract.getRepresentative()));
-    placementContractJson.setContact(createContactJson(placementContract.getContact()));
+    Optional.ofNullable(placementContract.getRepresentative())
+            .map(representative -> createApplicantJson(representative))
+            .ifPresent(representative -> placementContractJson.setRepresentative(representative));
+    Optional.ofNullable(placementContract.getContact())
+            .map(contact -> createContactJson(contact))
+            .ifPresent(contact -> placementContractJson.setContact(contact));
     placementContractJson.setDiaryNumber(placementContract.getDiaryNumber());
     placementContractJson.setAdditionalInfo(placementContract.getAdditionalInfo());
     placementContractJson.setGeneralTerms(placementContract.getGeneralTerms());
@@ -501,8 +505,12 @@ public class ApplicationMapper {
 
   private ApplicationExtension createPlacementContractModel(PlacementContractJson placementContractJson) {
     PlacementContract placementContract = new PlacementContract();
-    placementContract.setRepresentative(createApplicantModel(placementContractJson.getRepresentative()));
-    placementContract.setContact(createContactModel(placementContractJson.getContact()));
+    Optional.ofNullable(placementContractJson.getRepresentative())
+            .map(representative -> createApplicantModel(representative))
+            .ifPresent(representative -> placementContract.setRepresentative(representative));
+    Optional.ofNullable(placementContractJson.getContact())
+            .map(contact -> createContactModel(contact))
+            .ifPresent(contact -> placementContract.setContact(contact));
     placementContract.setDiaryNumber(placementContractJson.getDiaryNumber());
     placementContract.setAdditionalInfo(placementContractJson.getAdditionalInfo());
     placementContract.setGeneralTerms(placementContractJson.getGeneralTerms());

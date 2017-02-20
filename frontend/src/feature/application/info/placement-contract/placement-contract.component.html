@@ -3,7 +3,8 @@
         <div class="row">
             <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
                        [readonly]="readonly" headerText="Hakija" formName="applicant"
-                       [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
+                       [showCopyToBilling]="true" [showRepresentative]="true"
+                       [representative]="application.extension.representative"></applicant>
 
             <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
                      [readonly]="readonly" headerText="Yhteyshenkilö" formName="contacts"

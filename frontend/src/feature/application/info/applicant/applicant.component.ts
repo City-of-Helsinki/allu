@@ -25,6 +25,7 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   @Input() showRepresentative = false;
   @Input() showPropertyDeveloper = false;
   @Input() propertyDeveloper = false;
+  @Input() representative = false;
 
   applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
@@ -68,6 +69,9 @@ export class ApplicantComponent implements OnInit, OnDestroy {
       .map(applicant => ApplicantForm.fromApplicant(applicant))
       .do(applicant => this.applicantForm.patchValue(applicant));
 
-    this.applicantForm.patchValue({propertyDeveloper: this.propertyDeveloper});
+    this.applicantForm.patchValue({
+      propertyDeveloper: this.propertyDeveloper,
+      representative: this.representative
+    });
   }
 }
