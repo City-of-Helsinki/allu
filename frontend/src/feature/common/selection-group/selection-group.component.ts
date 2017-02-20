@@ -13,6 +13,8 @@ const SELECTION_GROUP_VALUE_ACCESSOR = {
   multi: true
 };
 
+const ID_FIELD = 'id';
+
 @Component({
   selector: 'selection-group',
   template: '<ng-content></ng-content>',
@@ -66,9 +68,16 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
     }
     this.select.emit(event);
     this._onChange(next);
+    this.selectedItems$.next(next);
   }
 
   private isSame(item1: any, item2: any): boolean {
-    return (item1.id === item2.id) || (item1 === item2);
+    return (item1 === item2) || this.idSame(item1, item2);
+  }
+
+  private idSame(item1: any, item2: any): boolean {
+    return item1.hasOwnProperty(ID_FIELD)
+      && item2.hasOwnProperty(ID_FIELD)
+      && item1.id === item2.id;
   }
 }
