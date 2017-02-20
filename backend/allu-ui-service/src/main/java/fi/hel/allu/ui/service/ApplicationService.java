@@ -209,7 +209,9 @@ public class ApplicationService {
   ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
     applicantService.updateApplicant(applicationJson.getApplicant());
     if (applicationJson.getLocations() != null) {
-      locationService.deleteApplicationLocation(applicationId);
+      // TODO: deleting all existing locations and creating them from scratch cannot be done, because deleting is not ok for "korvaava hakemus"
+      // TODO: creation, modification and deletes (c/sh)ould be done without the application so that they are handled separately
+//      locationService.deleteApplicationLocation(applicationId);
       List<LocationJson> locationJsons =
           applicationJson.getLocations().stream().map(l -> locationService.updateOrCreateLocation(applicationId, l)).collect(Collectors.toList());
       applicationJson.setLocations(locationJsons);
