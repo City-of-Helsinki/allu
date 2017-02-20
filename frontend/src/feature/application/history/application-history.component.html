@@ -1,0 +1,29 @@
+<md-card>
+    <md-card-title>
+        Muutoshistoria
+    </md-card-title>
+    <md-card-content>
+        <table class="bordered">
+            <thead>
+                <tr>
+                    <th>Muutettu</th>
+                    <th>Muutos</th>
+                    <th>Tekijä</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let change of history | async">
+                    <td>{{change.uiChangeTime}}</td>
+                    <td>
+                        <span>{{['history.change.type', change.changeType] | translation}}</span>
+                        <span *ngIf="change.newStatus">{{['application.status', change.newStatus] | translation}}</span>
+                        <span *ngFor="let fieldChange of change.fieldChanges; let last=last">
+                            {{fieldChange.fieldName | commaSeparated: last}}
+                        </span>
+                    </td>
+                    <td>{{handlers.get(change.userId)}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </md-card-content>
+</md-card>

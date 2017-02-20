@@ -87,7 +87,7 @@ public class ApplicationController {
    *          application ID
    * @return list of changes ordered from oldest to newest
    */
-  @RequestMapping(value = "/{applicationId}/history", method = RequestMethod.POST)
+  @RequestMapping(value = "/{applicationId}/history", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicationChangeJson>> getChanges(@PathVariable Integer applicationId) {
     return new ResponseEntity<>(applicationServiceComposer.getChanges(applicationId), HttpStatus.OK);

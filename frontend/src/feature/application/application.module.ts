@@ -31,6 +31,7 @@ import {TagBarModule} from './tagbar/tagbar.module';
 import {AttachmentModule} from './attachment/attachment.module';
 import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-arrangement.component';
 import {PlacementContractComponent} from './info/placement-contract/placement-contract.component';
+import {ApplicationHistoryModule} from './history/application-history.module';
 
 
 @NgModule({
@@ -51,7 +52,8 @@ import {PlacementContractComponent} from './info/placement-contract/placement-co
     SidebarModule,
     CommentModule,
     TagBarModule,
-    AttachmentModule
+    AttachmentModule,
+    ApplicationHistoryModule
   ],
   declarations: [
     ApplicationComponent,

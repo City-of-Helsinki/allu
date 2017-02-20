@@ -77,6 +77,7 @@ export class ApplicationComponent implements OnInit {
 
       if (summary) {
         sidebar.push({type: 'COMMENTS', count: commentCount});
+        sidebar.push({type: 'HISTORY'});
       }
       return sidebar;
     };

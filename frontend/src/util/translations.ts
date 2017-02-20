@@ -451,6 +451,15 @@ export const translations = {
       COMMON:  'Yhteiset',
       WAITING: 'Odottaa'
     }
+  },
+  history: {
+    change: {
+      type: {
+        CREATED: 'Luotu',
+        STATUS_CHANGED: 'Siirretty tilaan',
+        CONTENTS_CHANGED: 'Tietoja päivitetty.'
+      }
+    }
   }
 };
 

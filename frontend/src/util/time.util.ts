@@ -28,7 +28,7 @@ export class TimeUtil {
   }
 
   public static getUiDateTimeString(time: Date): string {
-    return time ? momentLib(time).format('DD.MM.YYYY hh:mm').toString() : undefined;
+    return time ? momentLib(time).format('DD.MM.YYYY HH:mm').toString() : undefined;
   }
 
   public static getDateFromUi(dateString: string): Date {
