@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
@@ -6,7 +6,7 @@ import {Application} from '../../../../model/application/application';
 import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
-import {ShortTermRentalForm, ShortTermRentalDetailsForm} from './short-term-rental.form';
+import {ShortTermRentalForm} from './short-term-rental.form';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ApplicationState} from '../../../../service/application/application-state';
@@ -33,7 +33,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     super.ngOnInit();
 
     let rental = <ShortTermRental>this.application.extension || new ShortTermRental();
-    this.applicationForm.patchValue(ShortTermRentalDetailsForm.from(this.application, rental));
+    this.applicationForm.patchValue(ShortTermRentalForm.from(this.application, rental));
 
     this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
   }
@@ -41,16 +41,16 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   protected update(form: ShortTermRentalForm): Application {
     let application = this.application;
     application.metadata = this.meta;
-    application.name = form.details.name;
-    application.calculatedPriceEuro = form.details.calculatedPrice;
-    application.priceOverrideEuro = form.details.priceOverride;
-    application.priceOverrideReason = form.details.priceOverrideReason;
-    application.location.area = form.details.area;
-    application.uiStartTime = form.details.rentalTimes.startTime;
-    application.uiEndTime = form.details.rentalTimes.endTime;
+    application.name = form.name;
+    application.calculatedPriceEuro = form.calculatedPrice;
+    application.priceOverrideEuro = form.priceOverride;
+    application.priceOverrideReason = form.priceOverrideReason;
+    application.location.area = form.area;
+    application.uiStartTime = form.rentalTimes.startTime;
+    application.uiEndTime = form.rentalTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
-    application.extension = ShortTermRentalDetailsForm.to(form.details);
+    application.extension = ShortTermRentalForm.to(form);
     return application;
   }
 

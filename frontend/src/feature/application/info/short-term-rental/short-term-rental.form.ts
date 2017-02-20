@@ -5,13 +5,7 @@ import {ShortTermRental} from '../../../../model/application/short-term-rental/s
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
 
-export interface ShortTermRentalForm {
-  applicant: ApplicantForm;
-  contacts: Array<Contact>;
-  details: ShortTermRentalDetailsForm;
-}
-
-export class ShortTermRentalDetailsForm implements ApplicationForm {
+export class ShortTermRentalForm implements ApplicationForm {
   constructor(
     public name?: string,
     public description?: string,
@@ -21,10 +15,12 @@ export class ShortTermRentalDetailsForm implements ApplicationForm {
     public largeSalesArea?: boolean,
     public calculatedPrice?: number,
     public priceOverride?: number,
-    public priceOverrideReason?: string) {}
+    public priceOverrideReason?: string,
+    public applicant?: ApplicantForm,
+    public contacts?: Array<Contact>) {}
 
-  static from(application: Application, rental: ShortTermRental): ShortTermRentalDetailsForm {
-    return new ShortTermRentalDetailsForm(
+  static from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
+    return new ShortTermRentalForm(
       application.name,
       rental.description,
       application.location.area,
@@ -37,7 +33,7 @@ export class ShortTermRentalDetailsForm implements ApplicationForm {
     );
   }
 
-  static to(form: ShortTermRentalDetailsForm): ShortTermRental {
+  static to(form: ShortTermRentalForm): ShortTermRental {
     return new ShortTermRental(form.description, form.commercial, form.largeSalesArea);
   }
 }
