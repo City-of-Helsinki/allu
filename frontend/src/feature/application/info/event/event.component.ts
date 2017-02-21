@@ -3,7 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
-import {StructureMeta} from '../../../../model/application/structure-meta';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {EventDetailsForm} from './details/event-details.form';
@@ -21,8 +20,6 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class EventComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  private meta: StructureMeta;
-
   constructor(private fb: FormBuilder,
               private applicationHub: ApplicationHub,
               route: ActivatedRoute,
@@ -32,7 +29,6 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
 
   ngOnInit(): any {
     super.ngOnInit();
-    this.applicationHub.loadMetaData('EVENT').subscribe(meta => this.metadataLoaded(meta));
   }
 
   protected initForm() {
@@ -41,7 +37,6 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
 
   protected update(form: EventForm): Application {
     let application = this.application;
-    application.metadata = this.meta;
 
     application.name = form.event.name;
     application.calculatedPriceEuro = form.event.calculatedPrice;
@@ -52,10 +47,5 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     application.extension = EventDetailsForm.toEvent(form.event, ApplicationType.EVENT);
     application.contactList = form.contacts;
     return application;
-  }
-
-  private metadataLoaded(metadata: StructureMeta) {
-    this.application.metadata = metadata;
-    this.meta = metadata;
   }
 }

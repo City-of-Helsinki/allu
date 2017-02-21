@@ -1,8 +1,6 @@
 import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
-import {StructureMeta} from '../../../../model/application/structure-meta';
-import {ApplicationHub} from '../../../../service/application/application-hub';
 import {MapHub} from '../../../../service/map/map-hub';
 import {Application} from '../../../../model/application/application';
 import {Location} from '../../../../model/common/location';
@@ -18,12 +16,10 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
   @Input() readonly: boolean;
   location: Location;
 
-  meta: StructureMeta;
   area: string;
   sections: string;
 
-  constructor(private applicationHub: ApplicationHub, private mapHub: MapHub) {
-    applicationHub.metaData().subscribe(meta => this.metadataLoaded(meta));
+  constructor(private mapHub: MapHub) {
   }
 
   ngOnInit(): void {
@@ -42,9 +38,5 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
 
   districtName(id: number): Observable<string> {
     return this.mapHub.districtById(id).map(d => d.name);
-  }
-
-  private metadataLoaded(metadata: StructureMeta) {
-    this.meta = metadata;
   }
 }

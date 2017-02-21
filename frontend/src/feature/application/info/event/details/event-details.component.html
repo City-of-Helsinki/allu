@@ -6,7 +6,7 @@
                 <div class="row form-group">
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <input mdInput type="text" formControlName="name" placeholder="{{ meta?.getUiName('name') }}*"/>
+                            <input mdInput type="text" formControlName="name" placeholder="Tapahtuman nimi*"/>
                             <md-hint>
                                 <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                                 <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
@@ -15,7 +15,7 @@
                     </div>
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <textarea mdInput md-autosize formControlName="description" placeholder="{{ meta?.getUiName('description') }}*"></textarea>
+                            <textarea mdInput md-autosize formControlName="description" placeholder="Tapahtuman kuvaus*"></textarea>
                             <md-hint>
                                 <field-error [form]="eventForm" field="description" hasError="required">
                                     {{translations.application.event.field.descriptionMissing}}
@@ -26,7 +26,7 @@
                     <div formGroupName="eventTimes">
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('eventStartTime') }}*"
+                                <input mdInput type="text" formControlName="startTime" placeholder="Tapahtuman alkupäivämäärä*"
                                        materialize="pickadate"
                                        [materializeParams]="pickadateParams"/>
                                 <md-hint>
@@ -42,7 +42,7 @@
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('eventEndTime') }}*"
+                                <input mdInput type="text" formControlName="endTime" placeholder="Tapahtuman loppupäivämäärä*"
                                        materialize="pickadate"
                                        [materializeParams]="pickadateParams"/>
                                 <md-hint>
@@ -55,18 +55,18 @@
                     </div>
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <textarea mdInput md-autosize formControlName="timeExceptions" placeholder="{{ meta?.getUiName('timeExceptions') }}"></textarea>
+                            <textarea mdInput md-autosize formControlName="timeExceptions" placeholder="Tapahtuma-ajan poikkeukset"></textarea>
                         </md-input-container>
                     </div>
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <input mdInput type="text" formControlName="url" placeholder="{{ meta?.getUiName('url') }}"/>
+                            <input mdInput type="text" formControlName="url" placeholder="Tapahtuman www-sivu"/>
                         </md-input-container>
                     </div>
                     <div class="col m3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="number" formControlName="attendees"
-                                   step="1" min="0" placeholder="{{ meta?.getUiName('attendees') }}"/>
+                                   step="1" min="0" placeholder="Yleisömäärä"/>
                             <md-hint>
                                 <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
                                     {{translations.application.event.field.attendeesGreaterThanOrEqual}}
@@ -77,7 +77,7 @@
                     <div class="col m3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="number" formControlName="entryFee"
-                                   step="any" min="0" placeholder="{{ meta?.getUiName('entryFee') }}"/>
+                                   step="any" min="0" placeholder="Osallistumismaksu, jos urheilutapahtuma"/>
                             <md-hint>
                                 <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
                                     {{translations.application.event.field.eventEntryFeeThanOrEqual}}
@@ -101,7 +101,7 @@
                     <div class="col m3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="number" formControlName="structureArea" step="any" min="0"
-                                   placeholder="{{ meta?.getUiName('structureArea') }}"/>
+                                   placeholder="Rakenteiden kokonaisneliömäärä"/>
                             <md-hint>
                                 <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
                                     {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
@@ -112,7 +112,7 @@
                     <div class="col m6">
                         <md-input-container class="input-full-width">
                             <textarea mdInput md-autosize formControlName="structureDescription"
-                                      placeholder="{{ meta?.getUiName('structureDescription') }}"></textarea>
+                                      placeholder="Rakenteiden kuvaus"></textarea>
                         </md-input-container>
                     </div>
 
@@ -125,7 +125,7 @@
                     <div formGroupName="structureTimes">
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('structureStartTime') }}"
+                                <input mdInput type="text" formControlName="startTime" placeholder="Rakennuspäivämäärä"
                                        materialize="pickadate"
                                        [materializeParams]="pickadateParams"/>
                                 <md-hint>
@@ -137,7 +137,7 @@
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('structureEndTime') }}"
+                                <input mdInput type="text" formControlName="endTime" placeholder="Purkupäivämäärä"
                                        materialize="pickadate"
                                        [materializeParams]="pickadateParams"/>
                             </md-input-container>
@@ -156,7 +156,7 @@
                     <div *ngIf="application.kind==='OUTDOOREVENT'">
                         <div class="col m6">
                             <div class="col m12">
-                                <md-select formControlName="nature" placeholder="{{ meta?.getUiName('nature') }}*" class="input-full-width">
+                                <md-select formControlName="nature" placeholder="Tapahtuman luonne*" class="input-full-width">
                                     <md-option *ngFor="let nature of eventNatures" [value]="nature" (onSelect)="eventNatureChange(nature)">
                                         {{['application.event.nature', nature] | translation}}
                                     </md-option>
@@ -171,7 +171,7 @@
                                 </md-checkbox>
                             </div>
                             <div class="col m12" *ngIf="eventForm.value.noPrice">
-                                <md-select formControlName="noPriceReason" placeholder="{{ meta?.getUiName('noPriceReason') }}" class="input-full-width">
+                                <md-select formControlName="noPriceReason" placeholder="Peruste korvauksettomuudelle" class="input-full-width">
                                     <md-option *ngFor="let reason of noPriceReasons" [value]="reason">
                                         {{['application.event.noPriceReason', reason] | translation}}
                                     </md-option>
@@ -180,13 +180,13 @@
                         </div>
                         <div class="col m6 no-padding">
                             <div class="col m12">
-                                <md-checkbox formControlName="ecoCompass">{{ meta?.getUiName('ecoCompass') }}</md-checkbox>
+                                <md-checkbox formControlName="ecoCompass">Hakijalla Ekokompassi tapahtuma -sertifikaatti (-30 %)</md-checkbox>
                             </div>
                             <div class="col m12" *ngIf="eventForm.value.noPrice">
-                                <md-checkbox formControlName="salesActivity">{{ meta?.getUiName('salesOrPromotionThemeless') }}</md-checkbox>
+                                <md-checkbox formControlName="salesActivity">Tapahtuma sisältää kaupallista toimintaa (+50%)</md-checkbox>
                             </div>
                             <div class="col m12" *ngIf="eventForm.value.noPrice">
-                                <md-checkbox formControlName="heavyStructure">{{ meta?.getUiName('heavyStructure') }}</md-checkbox>
+                                <md-checkbox formControlName="heavyStructure">Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (+50 %)</md-checkbox>
                             </div>
                         </div>
                     </div>
@@ -235,18 +235,18 @@
                         <div class="col m12">
                             <md-input-container class="input-full-width">
                                 <textarea mdInput md-autosize formControlName="marketingProviders"
-                                          placeholder="{{ meta?.getUiName('salesOrPromotionDescription') }}"></textarea>
+                                          placeholder="Myynti- tai mainostoiminnan kuvaus"></textarea>
                             </md-input-container>
                         </div>
                     </div>
                     <div class="col m6 no-padding">
                         <div class="col m12">
-                            <md-checkbox formControlName="foodSales">{{ meta?.getUiName('foodSales') }}</md-checkbox>
+                            <md-checkbox formControlName="foodSales">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua</md-checkbox>
                         </div>
                         <div class="col m12">
                             <md-input-container class="input-full-width">
                                 <textarea mdInput md-autosize formControlName="foodProviders"
-                                          placeholder="{{ meta?.getUiName('foodProviders') }}"></textarea>
+                                          placeholder="Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua"></textarea>
                             </md-input-container>
                         </div>
                     </div>

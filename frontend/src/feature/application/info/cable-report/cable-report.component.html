@@ -22,7 +22,7 @@
                         <div formGroupName="reportTimes">
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="{{ meta?.getUiName('reportStartTime') }}*"
+                                    <input mdInput type="text" formControlName="startTime" placeholder="Arvioitu aloitus*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                     <md-hint>
@@ -34,7 +34,7 @@
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="{{ meta?.getUiName('reportEndTime') }}*"
+                                    <input mdInput type="text" formControlName="endTime" placeholder="Arvioitu lopetus*"
                                            materialize="pickadate"
                                            [materializeParams]="pickadateParams"/>
                                 </md-input-container>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="row form-group">
                         <div class="col m2">
-                            <md-checkbox formControlName="cableSurveyRequired">{{ meta?.getUiName('cableSurveyRequired') }}</md-checkbox>
+                            <md-checkbox formControlName="cableSurveyRequired">Johtokartoitettava</md-checkbox>
                         </div>
                         <div class="col m2">
                             <md-checkbox formControlName="mapUpdated">Kartta päivitetty</md-checkbox>

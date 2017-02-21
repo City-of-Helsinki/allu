@@ -5,13 +5,11 @@ import {MdDialog, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import '../../../../rxjs-extensions';
 
-import {EnumUtil} from '../../../../util/enum.util.ts';
+import {EnumUtil} from '../../../../util/enum.util';
 import {CableInfoType} from '../../../../model/application/cable-report/cable-info-type';
-import {StructureMeta} from '../../../../model/application/structure-meta';
 import {translations} from '../../../../util/translations';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {MaterializeUtil} from '../../../../util/materialize.util.ts';
 import {DefaultText, DefaultTextMap} from '../../../../model/application/cable-report/default-text';
 import {DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
@@ -28,7 +26,6 @@ export class CableInfoComponent {
 
   cableInfoForm: FormGroup;
   cableInfoEntries: FormArray;
-  meta: StructureMeta;
   translations = translations;
   cableInfoTypes = EnumUtil.enumValues(CableInfoType);
   defaultTexts: DefaultTextMap = {};

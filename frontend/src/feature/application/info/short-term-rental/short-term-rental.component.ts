@@ -3,8 +3,6 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
-import {StructureMeta} from '../../../../model/application/structure-meta';
-import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {ShortTermRentalForm} from './short-term-rental.form';
 import {ComplexValidator} from '../../../../util/complex-validator';
@@ -20,10 +18,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class ShortTermRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  private meta: StructureMeta;
-
-  constructor(private applicationHub: ApplicationHub,
-              private fb: FormBuilder,
+  constructor(private fb: FormBuilder,
               route: ActivatedRoute,
               applicationState: ApplicationState) {
     super(route, applicationState);
@@ -31,16 +26,12 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   ngOnInit(): any {
     super.ngOnInit();
-
     let rental = <ShortTermRental>this.application.extension || new ShortTermRental();
     this.applicationForm.patchValue(ShortTermRentalForm.from(this.application, rental));
-
-    this.applicationHub.loadMetaData(this.application.type).subscribe(meta => this.metadataLoaded(meta));
   }
 
   protected update(form: ShortTermRentalForm): Application {
     let application = this.application;
-    application.metadata = this.meta;
     application.name = form.name;
     application.calculatedPriceEuro = form.calculatedPrice;
     application.priceOverrideEuro = form.priceOverride;
@@ -70,10 +61,5 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
         endTime: ['', Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
     });
-  }
-
-  private metadataLoaded(metadata: StructureMeta) {
-    this.application.metadata = metadata;
-    this.meta = metadata;
   }
 }
