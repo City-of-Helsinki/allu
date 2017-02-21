@@ -125,7 +125,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addShape(shapeAdded: ShapeAdded) {
-    let shape = shapeAdded.features.toGeoJSON();
+    let shape = <GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>shapeAdded.features.toGeoJSON();
     this.mapHub.addShape(shape);
 
     if (shapeAdded.affectsControls) {

@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
-import {Map} from 'leaflet';
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -15,18 +14,17 @@ import {ApplicationType} from '../../model/application/type/application-type';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {styleByApplicationType} from './map-draw-styles';
 import {MapPopup} from './map-popup';
-import LeafletMouseEvent = L.LeafletMouseEvent;
 
 export class ShapeAdded {
-  constructor(public features: L.FeatureGroup<L.ILayer>, public affectsControls: boolean = true) {}
+  constructor(public features: L.FeatureGroup, public affectsControls: boolean = true) {}
 }
 
 export class MapState {
-  private map: Map;
+  private map: L.Map;
   private mapLayers: any;
   private drawControl: L.Control.Draw;
-  private drawnItems: {[key: string]: L.FeatureGroup<L.ILayer>} = {};
-  private editedItems: L.FeatureGroup<L.ILayer>;
+  private drawnItems: {[key: string]: L.FeatureGroup} = {};
+  private editedItems: L.FeatureGroup;
   private shapes$ = new Subject<ShapeAdded>();
   private mapView$: BehaviorSubject<GeoJSON.GeometryObject>;
 
@@ -54,17 +52,17 @@ export class MapState {
 
   public panToCoordinates(coordinates: Geocoordinates) {
     const zoomLevel = 10;
-    this.map.setView(new L.LatLng(coordinates.latitude, coordinates.longitude), zoomLevel, {animate: true});
+    this.map.setView(L.latLng(coordinates.latitude, coordinates.longitude), zoomLevel, {animate: true});
   }
 
   public centerAndZoomOnDrawn() {
     Some(this.drawLayers())
       .filter(items => Object.keys(items.getBounds()).length !== 0)
-      .map(items => L.latLngBounds(items.getBounds()))
+      .map(items => items.getBounds())
       .do(bounds => this.map.fitBounds(bounds));
   }
 
-  public setDynamicControls(controlsEnabled: boolean, editedItems?: L.FeatureGroup<L.ILayer>): void {
+  public setDynamicControls(controlsEnabled: boolean, editedItems?: L.FeatureGroup): void {
     let items = editedItems || this.editedItems;
 
     let draw = controlsEnabled ? {
@@ -138,15 +136,14 @@ export class MapState {
   }
 
   private drawGeometryToLayer(geometryCollection: GeoJSON.GeometryCollection,
-                              drawLayer: L.LayerGroup<L.ILayer>,
+                              drawLayer: L.LayerGroup,
                               style?: Object, popup?: MapPopup) {
     if (geometryCollection.geometries.length) {
       let featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
-      let geoJSON = new L.GeoJSON(featureCollection, style);
-
-      Some(popup).do(pu => geoJSON.bindPopup(pu.content()));
+      let geoJSON = L.geoJSON(featureCollection, style);
 
       geoJSON.eachLayer((layer) => {
+        Some(popup).do(pu => layer.bindPopup((l) => pu.content()));
         drawLayer.addLayer(layer);
       });
     }
@@ -192,26 +189,26 @@ export class MapState {
       zoomOutTitle: translations.map.zoomOut
     }).addTo(this.map);
     L.control.scale().addTo(this.map);
-    L.Icon.Default.imagePath = '/assets/images';
+    L.Icon.Default['imagePath'] = '/assets/images/';
     this.setDynamicControls(true, editedItems);
   }
 
   private createBaseLayers(): any {
     return {
-      kaupunkikartta: new L.TileLayer.WMS('/wms?',
+      kaupunkikartta: L.tileLayer.wms('/wms?',
         {layers: 'helsinki_kaupunkikartta', format: 'image/png'}),
-      ortoilmakuva: new L.TileLayer.WMS('/wms?',
+      ortoilmakuva: L.tileLayer.wms('/wms?',
         {layers: 'helsinki_ortoilmakuva', format: 'image/png'}),
-      kiinteistokartta: new L.TileLayer.WMS('/wms?',
+      kiinteistokartta: L.tileLayer.wms('/wms?',
         {layers: 'helsinki_kiinteistokartta', format: 'image/png'}),
-      ajantasaasemakaava: new L.TileLayer.WMS('/wms?',
+      ajantasaasemakaava: L.tileLayer.wms('/wms?',
         {layers: 'helsinki_ajantasaasemakaava', format: 'image/png'}),
-      opaskartta: new L.TileLayer.WMS('/wms?',
+      opaskartta: L.tileLayer.wms('/wms?',
         {layers: 'helsinki_opaskartta', format: 'image/png'}),
-      kaupunginosajako: new L.TileLayer.WMS('/wms?',
+      kaupunginosajako: L.tileLayer.wms('/wms?',
         {layers: 'helsinki_kaupunginosajako', format: 'image/png'})
       // working URL for accessing Helsinki maps directly (requires authentication)
-      // testi: new L.TileLayer.WMS('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
+      // testi: new L.tileLayer.wms('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
       //   {layers: 'helsinki:Kaupunkikartta'}),
       // TMS works, but unfortunately seems to use somehow invalid CRS. Thus, WMS is used. Left here for possible future use
       // testi: new L.TileLayer('http://10.176.127.67:8080/tms/1.0.0/helsinki_kaupunkikartta/EPSG_3879/{z}/{x}/{y}.png',
@@ -222,33 +219,33 @@ export class MapState {
   private createMap(): L.Map {
     // Default selected layers and overlays
     let layers = [this.mapLayers.kaupunkikartta].concat(this.drawLayers().getLayers());
-
     let mapOption = {
       zoomControl: false,
-      center: new L.LatLng(60.1708763, 24.9424988), // Helsinki railway station
+      center: L.latLng(60.1708763, 24.9424988), // Helsinki railway station
       scrollWheelZoom: this.zoom,
       zoom: 6,
       minZoom: 3,
       maxZoom: 13,
       maxBounds:
-        new L.LatLngBounds(new L.LatLng(59.9084989595170114, 24.4555930248625906), new L.LatLng(60.4122137731072542, 25.2903558783246289)),
+        L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
       layers: layers,
-      crs: this.mapUtil.getEPSG3879()
+      crs: this.mapUtil.getEPSG3879(),
+      continuousWorld: true,
+      worldCopyJump: false
     };
-
-    return new L.Map('map', mapOption);
+    return L.map('map', mapOption);
   }
 
   private getCurrentMapView(): GeoJSON.GeometryObject {
-    let mapView = this.mapUtil.polygonFromBounds(this.map.getBounds()).toGeoJSON();
-    return this.mapUtil.featureToGeometry(mapView);
+    let viewPoly = this.mapUtil.polygonFromBounds(this.map.getBounds());
+    return this.mapUtil.featureToGeometry(viewPoly.toGeoJSON());
   }
 
   private setLocalizations(): void {
     L.drawLocal = translations.map;
   }
 
-  private drawLayers(): L.FeatureGroup<L.ILayer> {
+  private drawLayers(): L.FeatureGroup {
     return Object.keys(this.drawnItems)
       .map(key => this.drawnItems[key])
       .reduce((allLayers, currentLayer) => {

@@ -7,7 +7,7 @@ export class MapPopup {
     private contentRows: Array<string> = []
   ) {}
 
-  content(): string {
+  content(): HTMLElement {
     let popup = L.DomUtil.create('div', 'popup-wrapper');
     let header = L.DomUtil.create('h1', 'popup-header', popup);
     header.innerHTML = this.header;
@@ -18,6 +18,6 @@ export class MapPopup {
       rowContent.innerHTML = row;
     });
 
-    return popup.outerHTML;
+    return popup;
   }
 }

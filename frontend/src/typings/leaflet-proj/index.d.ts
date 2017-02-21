@@ -4,25 +4,21 @@
 
 declare namespace L {
   namespace Proj {
-    namespace TMS {
-      export interface TMSStatic extends L.ClassStatic {
-        new(code: string, def: string, projectedBounds: Array<number>, options: any): L.ICRS;
-      }
-    }
+    export interface Projection extends L.Projection {}
 
-    export interface CRSStatic extends L.ClassStatic {
-      TMS: TMS.TMSStatic;
+    export interface CRS extends L.CRS {
+      projection: L.Proj.Projection;
+      new(code: string, def: string, options: any): CRS;
     }
   }
 
-  export interface ProjStatic extends L.ClassStatic {
-    CRS: Proj.CRSStatic;
+  export interface Proj extends Class {
+    CRS: Proj.CRS;
   }
 
-  /* tslint:disable */ export var Proj: ProjStatic;
+  /* tslint:disable */ export var Proj: Proj;
 
 
-  export var extend;
   // localization for draw toolbars
   export var drawLocal: {
     draw: {

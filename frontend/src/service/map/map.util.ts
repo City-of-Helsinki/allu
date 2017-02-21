@@ -1,13 +1,11 @@
 import {Injectable} from '@angular/core';
 import 'leaflet';
-
 import 'proj4leaflet';
-import LatLngBounds = L.LatLngBounds;
 
 @Injectable()
 export class MapUtil {
 
-  private epsg3879: L.ICRS;
+  private epsg3879: L.Proj.CRS;
 
   public featureCollectionToGeometryCollection(
     featureCollection: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>): GeoJSON.GeometryCollection {
@@ -52,41 +50,37 @@ export class MapUtil {
     return geometry;
   }
 
-  public polygonFromBounds(bounds: LatLngBounds) {
-    let latLngs = [];
-    latLngs.push(bounds.getSouthWest());
-    latLngs.push(bounds.getSouthEast());
-    latLngs.push(bounds.getNorthEast());
-    latLngs.push(bounds.getNorthWest());
-    return L.polygon(latLngs);
+  public polygonFromBounds(bounds: L.LatLngBounds): L.Rectangle {
+    return L.rectangle(bounds);
   }
 
   constructor() {
     this.epsg3879 = this.createCrsEPSG3879();
   }
 
-  public getEPSG3879(): L.ICRS {
+  public getEPSG3879(): L.Proj.CRS {
     return this.epsg3879;
   }
 
   public wgs84ToEpsg3879(coordinate: Array<number>): Array<number> {
     let myProj = this.getEPSG3879();
-    let projected = myProj.projection.project(new L.LatLng(coordinate[1], coordinate[0]));
+    let projected = myProj.projection.project(L.latLng(coordinate[1], coordinate[0]));
     return [projected.x, projected.y];
   }
 
   public epsg3879ToWgs84(coordinate: Array<number>): Array<number> {
     let myProj = this.getEPSG3879();
-    let projected = myProj.projection.unproject(new L.Point(coordinate[0], coordinate[1]));
+    let projected = myProj.projection.unproject(L.point(coordinate[0], coordinate[1]));
     return [projected.lng, projected.lat];
   }
 
-  private createCrsEPSG3879(): L.ICRS {
+  private createCrsEPSG3879(): L.Proj.CRS {
     let crsName = 'EPSG:3879';
-    let bounds = [25440000, 6630000, 25571072, 6761072];
+    let bounds = L.bounds([25440000, 6630000], [25571072, 6761072]);
     let projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
-    return new L.Proj.CRS.TMS(crsName, projDef, bounds, {
-      resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
+    return new L.Proj.CRS(crsName, projDef, {
+      resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125],
+      bounds: bounds
     });
   }
 
