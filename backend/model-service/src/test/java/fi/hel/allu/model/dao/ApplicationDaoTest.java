@@ -21,9 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -52,11 +50,25 @@ public class ApplicationDaoTest {
     Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
     application.setPriceOverride(OVERRIDE_PRICE);
     application.setPriceOverrideReason(OVERRIDE_REASON);
+    application.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
     Application applOut = applicationDao.insert(application);
 
     assertEquals(application.getName(), applOut.getName());
     assertEquals(OVERRIDE_PRICE, applOut.getPriceOverride().intValue());
     assertEquals(OVERRIDE_REASON, applOut.getPriceOverrideReason());
+    assertNotEquals(application.getCreationTime(), applOut.getCreationTime());
+  }
+
+  @Test
+  public void testUpdateApplication() {
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application applOut = applicationDao.insert(application);
+    applOut.setName("Updated application");
+    applOut.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
+    Application updated = applicationDao.update(applOut.getId(), applOut);
+
+    assertEquals("Updated application", updated.getName());
+    assertNotEquals(applOut.getCreationTime(), updated.getCreationTime());
   }
 
   @Test

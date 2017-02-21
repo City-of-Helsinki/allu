@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -76,6 +77,7 @@ public class ApplicationDao {
   public Application insert(Application appl) {
     appl.setApplicationId(createApplicationId(appl.getType()));
     appl.setStatus(StatusType.PENDING);
+    appl.setCreationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
@@ -131,10 +133,17 @@ public class ApplicationDao {
     return updated;
   }
 
+  /*
+   * Update application. All other fields are taken from appl, but creationTime
+   * is from the existing value in the database.
+   */
   @Transactional
   public Application update(int id, Application appl) {
     appl.setId(id);
-    long changed = queryFactory.update(application).populate(appl, DefaultMapper.WITH_NULL_BINDINGS).where(application.id.eq(id)).execute();
+    long changed = queryFactory.update(application).populate(appl, DefaultMapper.WITH_NULL_BINDINGS)
+        .set(application.creationTime,
+            SQLExpressions.select(application.creationTime).from(application).where(application.id.eq(id)))
+        .where(application.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
