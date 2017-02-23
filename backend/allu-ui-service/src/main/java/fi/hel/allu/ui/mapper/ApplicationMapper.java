@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,7 +40,7 @@ public class ApplicationMapper {
     if (applicationJson.getProject() != null) {
       applicationDomain.setProjectId(applicationJson.getProject().getId());
     }
-    applicationDomain.setCreationTime(ZonedDateTime.now());
+    applicationDomain.setCreationTime(applicationJson.getCreationTime());
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
     applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
@@ -74,7 +73,7 @@ public class ApplicationMapper {
     applicationES.setId(applicationJson.getId());
     applicationES.setApplicationId(applicationJson.getApplicationId());
     applicationES.setName(applicationJson.getName());
-    applicationES.setCreationTime(ZonedDateTime.now());
+    applicationES.setCreationTime(applicationJson.getCreationTime());
     applicationES.setStartTime(applicationJson.getStartTime());
     applicationES.setEndTime(applicationJson.getEndTime());
     applicationES.setHandler(
