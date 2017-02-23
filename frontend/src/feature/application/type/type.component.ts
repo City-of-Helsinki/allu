@@ -2,8 +2,9 @@ import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {
-  ApplicationType, ApplicationTypeStructure, applicationTypeStructures,
-  typeStructureByType, kindStructureByTypeAndKind
+  ApplicationType,
+  typeStructureByType,
+  kindStructureByTypeAndKind
 } from '../../../model/application/type/application-type';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 import {Some} from '../../../util/option';
@@ -91,7 +92,6 @@ export class TypeComponent implements OnInit {
     return [
         ApplicationType.CABLE_REPORT,
         ApplicationType.EXCAVATION_ANNOUNCEMENT,
-        ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS,
         ApplicationType.PLACEMENT_CONTRACT
       ].indexOf(type) >= 0;
   }

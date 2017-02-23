@@ -19,7 +19,7 @@
             </md-input-container>
           </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="areas.length > 0">
           <div *ngIf="editedItemCount > 0" class="col m10">
             <div class="input-field-info-text">
               Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
@@ -50,7 +50,7 @@
           </div>
           <div class="col m2">
             <md-input-container class="input-full-width">
-              <input mdInput disabled type="number" [(ngModel)]="application.location.areaOverride"
+              <input mdInput type="number" [(ngModel)]="application.location.areaOverride"
                      placeholder="Käsittelijän syöttämä pinta-ala"/>
             </md-input-container>
           </div>
@@ -69,7 +69,7 @@
         </div>
         <div class="row">
           <div class="mapcontainer">
-            <map [draw]="true" [edit]="selectedFixedLocations.length === 0" [selection]="true"
+            <map [draw]="true" [edit]="editingAllowed()" [selection]="true"
                  [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
           </div>
         </div>

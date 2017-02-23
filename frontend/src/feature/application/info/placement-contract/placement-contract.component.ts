@@ -38,7 +38,7 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
     application.uiEndTime = form.validityTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
-    application.extension = PlacementContractForm.to(form);
+    application.extension = PlacementContractForm.to(form, application.extension.specifiers);
     return application;
   }
 

@@ -66,3 +66,8 @@ export class ApplicationKindStructure {
       .sort(ArrayUtil.naturalSortTranslated(['application.specifier'], (specifier: string) => specifier));
   }
 }
+
+export function drawingAllowedForKind(kind: ApplicationKind): boolean {
+  return ![ApplicationKind.BRIDGE_BANNER, ApplicationKind.DOG_TRAINING_EVENT, ApplicationKind.DOG_TRAINING_FIELD]
+    .some(k => k === kind);
+}

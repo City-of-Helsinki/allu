@@ -172,6 +172,14 @@ input:-webkit-autofill:active {
   }
 }
 
+label.mat-checkbox-layout,
+.mat-input-element:disabled,
+.mat-select-disabled .mat-select-value,
+.select-wrapper input.select-dropdown:disabled {
+  color: $black-50-opacity;
+}
+
+
 .input-field-label {
   font-weight: bold;
 }

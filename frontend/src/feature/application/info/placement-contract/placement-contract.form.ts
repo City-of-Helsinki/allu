@@ -18,13 +18,14 @@ export class PlacementContractForm implements ApplicationForm {
     public generalTerms?: string
   ) {}
 
-  static to(form: PlacementContractForm): PlacementContract {
+  static to(form: PlacementContractForm, specifiers: Array<string>): PlacementContract {
     let pc = new PlacementContract();
     pc.representative = Some(form.representative).map(representative => ApplicantForm.toApplicant(representative)).orElse(undefined);
     pc.contact = Some(form.contact).filter(contacts => contacts.length > 0).map(c => c[0]).orElse(undefined);
     pc.diaryNumber = form.diaryNumber;
     pc.additionalInfo = form.additionalInfo;
     pc.generalTerms = form.generalTerms;
+    pc.specifiers = specifiers;
     return pc;
   }
 
@@ -37,7 +38,6 @@ export class PlacementContractForm implements ApplicationForm {
       undefined,
       contract.diaryNumber,
       contract.additionalInfo,
-      contract.generalTerms
-    );
+      contract.generalTerms);
   }
 }

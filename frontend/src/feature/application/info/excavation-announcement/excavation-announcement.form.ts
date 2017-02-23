@@ -27,11 +27,9 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public guaranteeEndTime?: string,
     public cableReportId?: number,
     public additionalInfo?: string,
-    public trafficArrangements?: string,
-    public specifiers?: Array<string>
-  ) {}
+    public trafficArrangements?: string) {}
 
-  static to(form: ExcavationAnnouncementForm): ExcavationAnnouncement {
+  static to(form: ExcavationAnnouncementForm, specifiers: Array<string>): ExcavationAnnouncement {
     let ea = new ExcavationAnnouncement();
     ea.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
     ea.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
@@ -53,7 +51,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.cableReportId = form.cableReportId;
     ea.additionalInfo = form.additionalInfo;
     ea.trafficArrangements = form.trafficArrangements;
-    ea.specifiers = form.specifiers;
+    ea.specifiers = specifiers;
     return ea;
   }
 
@@ -78,8 +76,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.uiGuaranteeEndTime,
       excavation.cableReportId,
       excavation.additionalInfo,
-      excavation.trafficArrangements,
-      excavation.specifiers
+      excavation.trafficArrangements
     );
   }
 }

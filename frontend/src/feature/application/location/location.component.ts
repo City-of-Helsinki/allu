@@ -13,7 +13,7 @@ import {FixedLocation} from '../../../model/common/fixed-location';
 import {Some, Option} from '../../../util/option';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
-import {ApplicationKind} from '../../../model/application/type/application-kind';
+import {ApplicationKind, drawingAllowedForKind} from '../../../model/application/type/application-kind';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationExtension} from '../../../model/application/type/application-extension';
 import {CableReport} from '../../../model/application/cable-report/cable-report';
@@ -154,6 +154,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   districtName(id: number): Observable<string> {
     return this.mapHub.districtById(id).map(d => d.name);
+  }
+
+  editingAllowed(): boolean {
+    return drawingAllowedForKind(ApplicationKind[this.application.kind]) && this.selectedFixedLocations.length === 0;
   }
 
   private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {

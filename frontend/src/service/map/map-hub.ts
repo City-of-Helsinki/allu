@@ -54,8 +54,10 @@ export class MapHub {
     this.locationService.getFixedLocations().subscribe(fls => this.fixedLocations$.next(fls));
 
     this.locationService.districts().subscribe(ds =>  {
-      let sorted = ds.sort(ArrayUtil.naturalSort((district: CityDistrict) => district.name));
-      this.cityDistricts$.next(sorted);
+      let districts = ds
+        .filter(d => d.districtId !== 0) // Ignore 0 Aluemeri
+        .sort(ArrayUtil.naturalSort((district: CityDistrict) => district.name));
+      this.cityDistricts$.next(districts);
     });
   }
 

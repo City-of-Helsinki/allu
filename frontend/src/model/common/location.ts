@@ -32,6 +32,6 @@ export class Location {
   }
 
   get effectiveCityDistrictId(): number {
-    return this.cityDistrictIdOverride === undefined ? this.cityDistrictId : this.cityDistrictIdOverride;
+    return Number.isInteger(this.cityDistrictIdOverride) ? this.cityDistrictIdOverride : this.cityDistrictId;
   }
 }
