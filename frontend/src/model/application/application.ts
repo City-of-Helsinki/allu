@@ -11,6 +11,7 @@ import {Project} from '../project/project';
 import {ApplicationTag} from './tag/application-tag';
 import {ApplicationTagType} from './tag/application-tag-type';
 import {Comment} from './comment/comment';
+import {NumberUtil} from '../../util/number.util';
 
 const CENTS = 100;
 
@@ -136,10 +137,10 @@ export class Application {
   }
 
   private toEuros(priceInCents: number): number {
-    return priceInCents !== undefined ? priceInCents / CENTS : undefined;
+    return NumberUtil.isDefined(priceInCents) ? priceInCents / CENTS : undefined;
   }
 
   private toCents(priceInEuros: number): number {
-    return priceInEuros !== undefined ? priceInEuros * CENTS : undefined;
+    return NumberUtil.isDefined(priceInEuros) ? priceInEuros * CENTS : undefined;
   }
 }

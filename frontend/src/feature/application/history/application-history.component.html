@@ -3,7 +3,7 @@
         Muutoshistoria
     </md-card-title>
     <md-card-content>
-        <table class="bordered">
+        <table class="bordered responsive-table">
             <thead>
                 <tr>
                     <th>Muutettu</th>
@@ -12,7 +12,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr *ngFor="let change of history | async">
+                <tr *ngFor="let change of history | async" (click)="showDetails(change)" class="clickable row-highlight">
                     <td>{{change.uiChangeTime}}</td>
                     <td>
                         <span>{{['history.change.type', change.changeType] | translation}}</span>
@@ -21,7 +21,7 @@
                             {{fieldChange.fieldName | commaSeparated: last}}
                         </span>
                     </td>
-                    <td>{{handlers.get(change.userId)}}</td>
+                    <td>{{handlers.get(change.userId)?.realName}}</td>
                 </tr>
             </tbody>
         </table>

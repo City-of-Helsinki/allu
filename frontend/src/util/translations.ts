@@ -457,7 +457,7 @@ export const translations = {
       type: {
         CREATED: 'Luotu',
         STATUS_CHANGED: 'Siirretty tilaan',
-        CONTENTS_CHANGED: 'Tietoja päivitetty.'
+        CONTENTS_CHANGED: 'Tietoja päivitetty'
       }
     }
   }

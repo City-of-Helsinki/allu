@@ -1,0 +1,32 @@
+<h2 md-dialog-title>
+    {{['history.change.type', change.changeType] | translation}} - {{change.uiChangeTime}}
+</h2>
+<md-dialog-content>
+    <div *ngIf="change.changeType === 'CREATED'">
+        Käyttäjä {{user.realName}} luonut hakemuksen {{change.uiChangeTime}}
+    </div>
+    <table class="striped" *ngIf="change.changeType === 'STATUS_CHANGED'">
+        Tila vaihdettu {{['application.status', change.newStatus] | translation}}
+    </table>
+    <table class="striped" *ngIf="change.changeType === 'CONTENTS_CHANGED'">
+        <thead>
+        <tr>
+            <th>Kenttä</th>
+            <th>Vanha</th>
+            <th>Uusi</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let fieldChange of change.fieldChanges">
+            <td>{{fieldChange.fieldName}}</td>
+            <td>{{fieldChange.oldValue}}</td>
+            <td>{{fieldChange.newValue}}</td>
+        </tr>
+        </tbody>
+    </table>
+</md-dialog-content>
+<md-dialog-actions>
+    <button md-raised-button md-dialog-close color="primary">SULJE</button>
+</md-dialog-actions>
+
+
