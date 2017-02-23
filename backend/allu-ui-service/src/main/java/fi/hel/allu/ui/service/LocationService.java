@@ -132,12 +132,13 @@ public class LocationService {
   }
 
   private Location createLocationModel(int applicationId, LocationJson locationJson) {
+    if (locationJson == null) { throw new NullPointerException("LocationJson should not be null"); }
     Location location = new Location();
-    if (locationJson != null && locationJson.getId() != null) {
-      location.setId(locationJson.getId());
-    }
+    location.setId(locationJson.getId());
+    location.setLocationKey(locationJson.getLocationKey());
+    location.setLocationVersion(locationJson.getLocationVersion());
     location.setApplicationId(applicationId);
-    if (locationJson != null && locationJson.getPostalAddress() != null) {
+    if (locationJson.getPostalAddress() != null) {
       location.setStreetAddress(locationJson.getPostalAddress().getStreetAddress());
       location.setPostalCode(locationJson.getPostalAddress().getPostalCode());
       location.setCity(locationJson.getPostalAddress().getCity());
@@ -148,6 +149,9 @@ public class LocationService {
     location.setFixedLocationIds(locationJson.getFixedLocationIds());
     location.setCityDistrictId(locationJson.getCityDistrictId());
     location.setCityDistrictIdOverride(locationJson.getCityDistrictIdOverride());
+    location.setPaymentTariff(locationJson.getPaymentTariff());
+    location.setPaymentTariffOverride(locationJson.getPaymentTariffOverride());
+    location.setUnderpass(locationJson.getUnderpass());
     return location;
   }
 
@@ -158,6 +162,8 @@ public class LocationService {
   private LocationJson mapToLocationJson(Location location) {
     LocationJson locationJson = new LocationJson();
     locationJson.setId(location.getId());
+    locationJson.setLocationKey(location.getLocationKey());
+    locationJson.setLocationVersion(location.getLocationVersion());
     PostalAddressJson postalAddressJson = new PostalAddressJson();
     postalAddressJson.setCity(location.getCity());
     postalAddressJson.setPostalCode(location.getPostalCode());
@@ -169,6 +175,9 @@ public class LocationService {
     locationJson.setFixedLocationIds(location.getFixedLocationIds());
     locationJson.setCityDistrictId(location.getCityDistrictId());
     locationJson.setCityDistrictIdOverride(location.getCityDistrictIdOverride());
+    locationJson.setPaymentTariff(location.getPaymentTariff());
+    locationJson.setPaymentTariffOverride(location.getPaymentTariffOverride());
+    locationJson.setUnderpass(location.getUnderpass());
     return locationJson;
   }
 

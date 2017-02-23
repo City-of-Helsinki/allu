@@ -63,6 +63,7 @@ public class LocationControllerTest {
     location.setCity(city);
     location.setGeometry(geometry);
     location.setId(id);
+    location.setUnderpass(false);
     return wtc.perform(post("/locations"), location);
   }
 
@@ -110,6 +111,7 @@ public class LocationControllerTest {
     newLocation.setStreetAddress("Ikuisen Vapun Aukio 3");
     newLocation.setCity("Hellsing");
     newLocation.setId(999);
+    newLocation.setUnderpass(false);
     wtc.perform(put(String.format("/locations/%d", result.getId())), newLocation).andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.city", is("Hellsing")));
 

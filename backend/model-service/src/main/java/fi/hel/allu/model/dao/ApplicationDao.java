@@ -6,15 +6,13 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.DefaultMapper;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
-
+import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +26,7 @@ import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class ApplicationDao {
@@ -134,15 +133,13 @@ public class ApplicationDao {
   }
 
   /*
-   * Update application. All other fields are taken from appl, but creationTime
-   * is from the existing value in the database.
+   * Update application. All other fields are taken from appl, but creationTime is not updated.
    */
   @Transactional
   public Application update(int id, Application appl) {
     appl.setId(id);
-    long changed = queryFactory.update(application).populate(appl, DefaultMapper.WITH_NULL_BINDINGS)
-        .set(application.creationTime,
-            SQLExpressions.select(application.creationTime).from(application).where(application.id.eq(id)))
+    long changed = queryFactory.update(application)
+        .populate(appl, new ExcludingMapper(WITH_NULL_BINDINGS, Collections.singleton(application.creationTime)))
         .where(application.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));

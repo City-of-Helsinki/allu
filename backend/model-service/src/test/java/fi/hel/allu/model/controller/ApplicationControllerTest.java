@@ -244,6 +244,7 @@ public class ApplicationControllerTest {
     addedLocation.setGeometry(bigArea);
     addedLocation.setStreetAddress("Mannerheimintie 2");
     addedLocation.setApplicationId(application.getId());
+    addedLocation.setUnderpass(false);
     locationService.insert(addedLocation);
     ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(ra, Application.class);

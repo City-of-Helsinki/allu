@@ -13,10 +13,12 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * inFinnish: Hakemuksen sijainti
+ * in Finnish: Hakemuksen sijainti
  */
 public class LocationJson {
   private Integer id;
+  private Integer locationKey;
+  private Integer locationVersion;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
@@ -27,6 +29,9 @@ public class LocationJson {
   private List<Integer> fixedLocationIds;
   private Integer cityDistrictId;
   private Integer cityDistrictIdOverride;
+  private Integer paymentTariff;
+  private Integer paymentTariffOverride;
+  private Boolean underpass;
 
   public Integer getId() {
     return id;
@@ -34,6 +39,35 @@ public class LocationJson {
 
   public void setId(Integer id) {
     this.id = id;
+  }
+
+  /**
+   * Returns the human readable name of location (actually a number, which can be converted into a name). Each new location for one
+   * application gets a key greater than the previous key. In case there are locations 1,2 and 3 and 2 is deleted and a new location is
+   * added, the new location gets key 4.
+   *
+   * @return  Returns the human readable name of location (actually a number, which can be converted into a name).
+   */
+  public Integer getLocationKey() {
+    return locationKey;
+  }
+
+  public void setLocationKey(Integer locationKey) {
+    this.locationKey = locationKey;
+  }
+
+  /**
+   * Returns the version of the location. If location is updated, the new version will get higher version number than the previous.
+   * Location's application + location key + location version is unique.
+   *
+   * @return  Returns the version of the location.
+   */
+  public Integer getLocationVersion() {
+    return locationVersion;
+  }
+
+  public void setLocationVersion(Integer locationVersion) {
+    this.locationVersion = locationVersion;
   }
 
   public Geometry getGeometry() {
@@ -113,4 +147,42 @@ public class LocationJson {
     this.cityDistrictIdOverride = cityDistrictIdOverride;
   }
 
+  /**
+   * Returns the calculated payment tariff (maksuluokka) of the location.
+   *
+   * @return  the calculated payment tariff (maksuluokka) of the location or <code>null</code>.
+   */
+  public Integer getPaymentTariff() {
+    return paymentTariff;
+  }
+
+  public void setPaymentTariff(Integer paymentTariff) {
+    this.paymentTariff = paymentTariff;
+  }
+
+  /**
+   * Returns the user overridden payment tariff (maksuluokka) of the location.
+   *
+   * @return  the user overridden payment tariff (maksuluokka) of the location or <code>null</code>.
+   */
+  public Integer getPaymentTariffOverride() {
+    return paymentTariffOverride;
+  }
+
+  public void setPaymentTariffOverride(Integer paymentTariffOverride) {
+    this.paymentTariffOverride = paymentTariffOverride;
+  }
+
+  /**
+   * Returns true if it's possible to pass through the reserved area without obstacles (altakuljettava).
+   *
+   * @return  true if it's possible to pass through the reserved area without obstacles (altakuljettava).
+   */
+  public Boolean getUnderpass() {
+    return underpass;
+  }
+
+  public void setUnderpass(Boolean underpass) {
+    this.underpass = underpass;
+  }
 }

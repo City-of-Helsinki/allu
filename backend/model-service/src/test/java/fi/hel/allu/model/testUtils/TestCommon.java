@@ -129,6 +129,7 @@ public class TestCommon {
     location.setGeometry(geometry);
     location.setStreetAddress(streetAddress);
     location.setApplicationId(applicationId);
+    location.setUnderpass(false);
     return locationService.insert(location).getId();
   }
 

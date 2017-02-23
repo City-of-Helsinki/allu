@@ -64,12 +64,51 @@ public class LocationDaoTest {
   private static final Polygon2DToken Sq_5_5 = polygon(ring(c(5, 5), c(5, 7), c(7, 7), c(7, 5), c(5, 5)));
 
   @Test
+  public void testLocationKeyGeneration() {
+    Location locIn = new Location();
+    locIn.setApplicationId(application.getId());
+    locIn.setUnderpass(false);
+    Location locOut1 = locationDao.insert(locIn);
+    Location locOut2 = locationDao.insert(locIn);
+    Location locOut3 = locationDao.insert(locIn);
+    // insert 3 locations so that the greatest location key in database is 3
+    assertEquals(1, (int) locOut1.getLocationKey());
+    assertEquals(2, (int) locOut2.getLocationKey());
+    assertEquals(3, (int) locOut3.getLocationKey());
+    locationDao.deleteById(locOut2.getId());
+    // expecting location key to increase, because the greatest number in database is 3
+    Location locOut4 = locationDao.insert(locIn);
+    assertEquals(4, (int) locOut4.getLocationKey());
+    locationDao.deleteById(locOut4.getId());
+    // expecting location key to not to increase, because the greatest number in database is still 3
+    Location locOut5 = locationDao.insert(locIn);
+    assertEquals(4, (int) locOut5.getLocationKey());
+  }
+
+  @Test
+  public void testLocationKeyUpdateWithNull() {
+    Location locIn = new Location();
+    locIn.setApplicationId(application.getId());
+    locIn.setUnderpass(false);
+    Location locOut1 = locationDao.insert(locIn);
+    int loc1Key = locOut1.getLocationKey();
+    int loc1Version = locOut1.getLocationVersion();
+    locOut1.setLocationKey(null);
+    locOut1.setLocationVersion(null);
+    Location locOut2 = locationDao.update(locOut1.getId(), locOut1);
+    assertEquals(loc1Key, (int) locOut2.getLocationKey());
+    assertEquals(loc1Version, (int) locOut2.getLocationVersion());
+  }
+
+
+  @Test
   public void testArea() {
     // Single 4 m^2 square
     Geometry geoIn = geometrycollection(3879, Sq_0_0);
     Location locIn = new Location();
     locIn.setGeometry(geoIn);
     locIn.setApplicationId(application.getId());
+    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 4 m^2:
@@ -81,6 +120,7 @@ public class LocationDaoTest {
   public void testAreaNoGeometry() {
     Location locIn = new Location();
     locIn.setApplicationId(application.getId());
+    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 0 m^2:
@@ -94,6 +134,7 @@ public class LocationDaoTest {
     Location locIn = new Location();
     locIn.setApplicationId(application.getId());
     locIn.setAreaOverride(AREA_OVERRIDE);
+    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     assertTrue(Math.abs(locOut.getAreaOverride() - AREA_OVERRIDE) < 0.0001);
   }
@@ -104,6 +145,7 @@ public class LocationDaoTest {
     Location locIn = new Location();
     locIn.setApplicationId(application.getId());
     locIn.setGeometry(geoIn);
+    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 0 m^2:
@@ -118,6 +160,7 @@ public class LocationDaoTest {
     Location locIn = new Location();
     locIn.setGeometry(geoIn);
     locIn.setApplicationId(application.getId());
+    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     Geometry geoOut = locOut.getGeometry();
     assertNotNull(geoOut);
@@ -138,6 +181,7 @@ public class LocationDaoTest {
     Location locIn = new Location();
     locIn.setApplicationId(application.getId());
     locIn.setGeometry(geoIn);
+    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     Geometry geoOut = locOut.getGeometry();
     assertNotNull(geoOut);
@@ -168,6 +212,7 @@ public class LocationDaoTest {
     Location locIn = new Location();
     locIn.setApplicationId(application.getId());
     locIn.setFixedLocationIds(fixedLocationIds);
+    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     // Check that all inserted IDs and none other are returned:
     TreeSet<Integer> flIdsIn = new TreeSet<>(fixedLocationIds);
@@ -208,6 +253,7 @@ public class LocationDaoTest {
     location.setStreetAddress("Testiosoite 1");
     location.setGeometry(geometrycollection(3879, herttoniemi_polygon));
     location.setApplicationId(application.getId());
+    location.setUnderpass(false);
     Location inserted = locationDao.insert(location);
 
     // Check that the location now has a district ID:
@@ -226,6 +272,7 @@ public class LocationDaoTest {
     Location location = new Location();
     location.setStreetAddress("Testiosoite 1");
     location.setApplicationId(application.getId());
+    location.setUnderpass(false);
     Location inserted = locationDao.insert(location);
     assertNull(inserted.getCityDistrictId());
 

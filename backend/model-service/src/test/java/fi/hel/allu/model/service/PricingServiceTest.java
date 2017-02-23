@@ -91,6 +91,7 @@ public class PricingServiceTest {
         .map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
     location.setFixedLocationIds(fixedLocationIds);
     location.setApplicationId(application.getId());
+    location.setUnderpass(false);
     int locationId = locationDao.insert(location).getId();
     Location foobar = locationDao.findById(locationId).get();
     Location foobar2 = locationDao.findByApplication(application.getId()).get(0);
@@ -184,6 +185,7 @@ public class PricingServiceTest {
     Location location = new Location();
     location.setAreaOverride(135.5);
     location.setApplicationId(application.getId());
+    location.setUnderpass(false);
     locationDao.insert(location).getId();
     // 19 days, 135.5 sqm -> 14 * 14 * 50 + 5 * 14 * 25 = 11550 EUR
     checkPrice(application, 1155000);
@@ -233,6 +235,7 @@ public class PricingServiceTest {
     Location location = new Location();
     location.setAreaOverride(222.2);
     location.setApplicationId(application.getId());
+    location.setUnderpass(false);
     locationDao.insert(location).getId();
     // Three terms, 222.2 sqm -> 223 * 2 * 3 = 1338 EUR
     checkPrice(application, 133800);

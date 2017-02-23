@@ -10,13 +10,13 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
-import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.CityDistrict;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
@@ -34,6 +34,7 @@ import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationFlids.locationFlids;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class LocationDao {
@@ -68,6 +69,10 @@ public class LocationDao {
 
   @Transactional
   public Location insert(Location locationData) {
+    Integer maxLocationKey = queryFactory.select(SQLExpressions.max(location.locationKey))
+        .from(location).where(location.applicationId.eq(locationData.getApplicationId())).fetchOne();
+    locationData.setLocationKey(Optional.ofNullable(maxLocationKey).orElse(0) + 1);
+    locationData.setLocationVersion(1);
     Integer id = queryFactory.insert(location).populate(locationData).executeWithKey(location.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
@@ -80,7 +85,10 @@ public class LocationDao {
   @Transactional
   public Location update(int id, Location locationData) {
     locationData.setId(id);
-    long changed = queryFactory.update(location).populate(locationData, DefaultMapper.WITH_NULL_BINDINGS)
+    long changed = queryFactory
+        .update(location)
+        .populate(locationData,
+            new ExcludingMapper(WITH_NULL_BINDINGS, Arrays.asList(location.locationKey, location.locationVersion)))
         .where(location.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
@@ -93,12 +101,17 @@ public class LocationDao {
   }
 
   @Transactional
+  public void deleteById(int locationId) {
+    queryFactory.delete(locationGeometry).where(locationGeometry.locationId.eq(locationId)).execute();
+    queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
+    queryFactory.delete(location).where(location.id.eq(locationId)).execute();
+  }
+
+  @Transactional
   public void deleteByApplication(int applicationId) {
     List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
     locationIds.forEach(locationId -> {
-      queryFactory.delete(locationGeometry).where(locationGeometry.locationId.eq(locationId)).execute();
-      queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
-      queryFactory.delete(location).where(location.id.eq(locationId)).execute();
+      deleteById(locationId);
     });
   }
 

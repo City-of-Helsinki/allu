@@ -377,6 +377,7 @@ public class ProjectControllerTest {
     Location location = new Location();
     location.setApplicationId(application.getId());
     location.setGeometry(geometrycollection(3879, polygon));
+    location.setUnderpass(false);
     ResultActions resultActions = wtc.perform(post("/locations"), location).andExpect(status().isOk());
     Location dbLocation = wtc.parseObjectFromResult(resultActions, Location.class);
   }
@@ -385,6 +386,7 @@ public class ProjectControllerTest {
     Location location = new Location();
     location.setApplicationId(application.getId());
     location.setCityDistrictIdOverride(districtOverride);
+    location.setUnderpass(false);
     ResultActions resultActions = wtc.perform(post("/locations"), location).andExpect(status().isOk());
     Location dbLocation = wtc.parseObjectFromResult(resultActions, Location.class);
   }

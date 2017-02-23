@@ -100,13 +100,19 @@ comment on table allu.fixed_location is 'Predefined Area+Section type location';
 create table allu.location (
   id serial primary key,
   application_id integer not null references allu.application(id),
+  location_key integer not null,            -- human readable name for location. Each location has names from 1 to number of locations
+  location_version integer not null,        -- version of the location with same location_key. If area changes, it will be stored as new version
   street_address text,
   postal_code text,
   city text,
   area double precision,
   area_override double precision,
   city_district_id integer references allu.city_district(id),
-  city_district_id_override integer references allu.city_district(id) );
+  city_district_id_override integer references allu.city_district(id),
+  payment_tariff integer,                   -- the payment tariff (maksuluokka) of the location
+  payment_tariff_override integer,          -- possible user defined override for the payment tariff
+  underpass boolean not null,               -- altakuljettava i.e. it's possible to pass through the reserved area without obstacles
+  unique (application_id, location_key, location_version));
 
 create table allu.location_flids (
   id serial primary key,
