@@ -5,6 +5,8 @@ export class Location {
   constructor()
   constructor(
     id: number,
+    locationKey: number,
+    locationVersion: number,
     geometry: GeoJSON.GeometryCollection,
     area: number,
     areaOverride: number,
@@ -12,9 +14,14 @@ export class Location {
     fixedLocationIds: Array<number>,
     cityDistrictId: number,
     cityDistrictIdOverride: number,
+    paymentTariff: number,
+    paymentTariffOverride: number,
+    underpass: boolean,
     info: string)
   constructor(
     public id?: number,
+    public locationKey?: number,
+    public locationVersion?: number,
     public geometry?: GeoJSON.GeometryCollection,
     public area?: number,
     public areaOverride?: number,
@@ -22,9 +29,13 @@ export class Location {
     public fixedLocationIds?: Array<number>,
     public cityDistrictId?: number,
     public cityDistrictIdOverride?: number,
+    public paymentTariff?: number,
+    public paymentTariffOverride?: number,
+    public underpass?: boolean,
     public info?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
     this.fixedLocationIds = fixedLocationIds || [];
+    this.underpass = underpass || false;
   };
 
   get uiArea(): number {
