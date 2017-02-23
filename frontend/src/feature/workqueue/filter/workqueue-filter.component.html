@@ -3,8 +3,10 @@
     <form [formGroup]="queryForm">
         <div class="row">
             <div class="col s2">
-                <select formControlName="type" materialize="material_select" multiple>
-                    <option value="" selected disabled>Hakemuksen tyyppi</option>
+                <select formControlName="type" materialize="material_select"
+                        multiple [materializeSelectOptions]="queryForm.value.type">
+                    <option *ngIf="tab!=='COMMON'" value="" selected disabled>Hakemuksen tyyppi</option>
+                    <option *ngIf="tab==='COMMON'" value="" selected disabled>Yhteiset hakemustyypit</option>
                     <option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</option>
                 </select>
             </div>
@@ -16,8 +18,10 @@
                 </select>
             </div>
             <div class="col s2">
-                <select formControlName="status" materialize="material_select" multiple>
-                    <option value="" selected disabled>Hakemuksen tila</option>
+                <select formControlName="status" materialize="material_select"
+                        multiple [materializeSelectOptions]="queryForm.value.status">
+                    <option *ngIf="tab!=='COMMON'" value="" selected disabled>Hakemuksen tila</option>
+                    <option *ngIf="tab==='COMMON'" value="" selected disabled>Yhteiset tilat</option>
                     <option *ngFor="let status of applicationStatuses" [value]="status">{{['application.status', status] | translation}}</option>
                 </select>
             </div>

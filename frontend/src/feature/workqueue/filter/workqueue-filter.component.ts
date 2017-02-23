@@ -17,6 +17,8 @@ import {WorkQueueTab} from '../workqueue-tab';
 
 const HANDLER_FIELD = 'handler';
 const TAGS_FIELD = 'tags';
+const TYPE_FIELD = 'type';
+const STATUS_FIELD = 'status';
 
 @Component({
   selector: 'workqueue-filter',
@@ -57,6 +59,7 @@ export class WorkQueueFilterComponent implements OnInit {
   }
 
   @Input() set selectedTab(tab: WorkQueueTab) {
+    this.queryForm.enable();
     this.tab = WorkQueueTab[tab];
     if (WorkQueueTab.OWN === tab) {
       this.ownTabSelected();
@@ -76,6 +79,7 @@ export class WorkQueueFilterComponent implements OnInit {
     tagControl.setValue(tags);
 
     CurrentUser.userName().do(userName => this.setHandlers([userName]));
+    this.queryForm.get(HANDLER_FIELD).disable();
   }
 
   private waitingTabSelected(): void {
@@ -86,7 +90,10 @@ export class WorkQueueFilterComponent implements OnInit {
 
   private commonTabSelected(): void {
     this.tagTypes = EnumUtil.enumValues(ApplicationTagType);
+    this.queryForm.patchValue({tags: []});
     this.setHandlers([]);
+    this.queryForm.get(TYPE_FIELD).disable();
+    this.queryForm.get(STATUS_FIELD).disable();
   }
 
   private setHandlers(handlers: Array<string>): void {
