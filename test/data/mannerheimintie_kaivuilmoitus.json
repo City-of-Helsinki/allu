@@ -118,6 +118,7 @@
       },
       "area": 12229.125000074739,
       "areaOverride": null,
+      "underpass": false,
       "postalAddress": {
         "streetAddress": null,
         "postalCode": null,
