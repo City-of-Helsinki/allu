@@ -1,4 +1,8 @@
-<h1>Kommentit</h1>
+<h1>
+    <span>Kommentit</span>
+    <span><button md-mini-fab type="button" color="primary" (click)="addNew()"><md-icon>add</md-icon></button></span>
+</h1>
+
 <div class="row">
     <ul>
         <li *ngFor="let comment of comments; let i = index;">
@@ -7,9 +11,4 @@
             </div>
         </li>
     </ul>
-</div>
-<div class="row">
-    <div class="col m11 col-centered">
-        <button md-fab type="button" color="primary"class="btn-huge" (click)="addNew()"><md-icon>add</md-icon></button>
-    </div>
 </div>

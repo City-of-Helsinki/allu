@@ -26,6 +26,7 @@ export class AttachmentsComponent implements OnInit {
   commonAttachments: AttachmentInfo[] = [];
   defaultAttachments: AttachmentInfo[] = [];
   editableAttachments: AttachmentInfo[] = [];
+  hasFileOverDropzone = false;
 
   constructor(private attachmentHub: AttachmentHub,
               private applicationState: ApplicationState,
@@ -88,6 +89,10 @@ export class AttachmentsComponent implements OnInit {
   download(attachment: AttachmentInfo) {
     this.attachmentHub.download(attachment.id, attachment.name)
       .subscribe(file => filesaverLib.saveAs(file));
+  }
+
+  fileOverDropzone(hasFileOverDropzone: boolean) {
+    this.hasFileOverDropzone = hasFileOverDropzone;
   }
 
   private onRemoveConfirm(attachment: AttachmentInfo, index?: number) {

@@ -29,7 +29,7 @@ export class CommentsComponent implements OnInit {
   }
 
   addNew(): void {
-    this.comments.push(new Comment());
+    this.comments = [new Comment].concat(this.comments);
   }
 
   save(index: number, comment: Comment): void {

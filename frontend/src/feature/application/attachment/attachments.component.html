@@ -1,47 +1,49 @@
 <h1>Liitteet</h1>
-<ul class="card-list">
-    <li *ngFor="let attachment of commonAttachments; let i = index;">
-        <md-card class="slim-card">
-            <div>
-                <div class="clickable" (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
-            </div>
-            <div *ngIf="attachment.id !== undefined">
-                <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
-            </div>
-            <md-card-content class="card-content">
-                <div>
-                    <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
-                </div>
-                <div>
-                    <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
-                    <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
-                </div>
-                <div>
-                    {{attachment.uiCreationTime}}
-                </div>
-                <div>
-                    {{attachment.description}}
-                </div>
-            </md-card-content>
-        </md-card>
-    </li>
-    <li>
-        <default-attachments [selectedAttachments]="defaultAttachments" [applicationType]="application.type"
-                             (add)="save($event)" (remove)="remove($event)"></default-attachments>
-    </li>
-</ul>
-
 <div class="row">
-    <div class="col m11"  *ngFor="let attachment of editableAttachments; let i = index;">
-        <attachment [attachment]="attachment" (onCancel)="cancel(i)" (onSave)="save($event, i)"></attachment>
+    <div class="col m11 col-centered">
+        <div fileDrop (onFileDrop)="onFileDrop($event)" (onFileOver)="fileOverDropzone($event)"
+             class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
+            <button md-raised-button type="button" color="primary" (click)="addNewAttachment()">
+                LISÄÄ LIITE
+                <md-icon>file_upload</md-icon>
+            </button>
+        </div>
     </div>
 </div>
 <div class="row">
-  <div class="col m11 col-centered">
-      <div fileDrop
-           (onFileDrop)="onFileDrop($event)"
-           class="well my-drop-zone">
-          <button md-fab type="button" color="primary"class="btn-huge" (click)="addNewAttachment()"><md-icon>add</md-icon></button>
-      </div>
-  </div>
+    <ul class="card-list">
+        <li *ngFor="let attachment of editableAttachments; let i = index;">
+            <attachment [attachment]="attachment" (onCancel)="cancel(i)" (onSave)="save($event, i)"></attachment>
+        </li>
+
+        <li *ngFor="let attachment of commonAttachments; let i = index;">
+            <md-card class="slim-card">
+                <div>
+                    <div class="clickable" (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
+                </div>
+                <div *ngIf="attachment.id !== undefined">
+                    <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
+                </div>
+                <md-card-content class="card-content">
+                    <div>
+                        <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
+                    </div>
+                    <div>
+                        <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
+                        <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
+                    </div>
+                    <div>
+                        {{attachment.uiCreationTime}}
+                    </div>
+                    <div>
+                        {{attachment.description}}
+                    </div>
+                </md-card-content>
+            </md-card>
+        </li>
+        <li>
+            <default-attachments [selectedAttachments]="defaultAttachments" [applicationType]="application.type"
+                                 (add)="save($event)" (remove)="remove($event)"></default-attachments>
+        </li>
+    </ul>
 </div>
