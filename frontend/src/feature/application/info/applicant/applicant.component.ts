@@ -2,10 +2,9 @@ import {Component, Input, OnInit, OnDestroy} from '@angular/core';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 
 import {ApplicantForm} from './applicant.form';
-import {translations} from '../../../../util/translations';
 import {EnumUtil} from '../../../../util/enum.util';
 import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
-import {emailValidator} from '../../../../util/complex-validator';
+import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 import {Applicant} from '../../../../model/application/applicant';
 import {Some} from '../../../../util/option';
 
@@ -41,7 +40,7 @@ export class ApplicantComponent implements OnInit, OnDestroy {
       country: ['Suomi'],
       postalAddress: this.fb.group({
         streetAddress: [''],
-        postalCode: [''],
+        postalCode: ['', postalCodeValidator],
         city: ['']
       }),
       email: ['', emailValidator],

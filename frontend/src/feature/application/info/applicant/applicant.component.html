@@ -51,6 +51,11 @@
                     <div class="col m3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                           <md-hint>
+                                <field-error [form]="applicantForm.get('postalAddress')" field="postalCode" hasError="pattern">
+                                    {{'common.field.postalCode' | translation}}
+                                </field-error>
+                            </md-hint>
                         </md-input-container>
                     </div>
                     <div class="col m3">

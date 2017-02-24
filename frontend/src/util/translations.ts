@@ -327,7 +327,8 @@ export const translations = {
   },
   common: {
     field: {
-      emailInvalid: 'Virheellinen sähköpostiosoite'
+      emailInvalid: 'Virheellinen sähköpostiosoite',
+      postalCode: 'Virheellinen postinumero'
     }
   },
   map: {

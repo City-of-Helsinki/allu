@@ -10,7 +10,7 @@
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
                                     <md-hint>
-                                        <field-error [form]="contact" field="name" hasError="required">{{translations.contact.field.nameMissing}}</field-error>
+                                        <field-error [form]="contact" field="name" hasError="required">{{'contact.field.nameMissing' | translation}}</field-error>
                                     </md-hint>
                                 </md-input-container>
                             </div>
@@ -24,6 +24,9 @@
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                                    <md-hint>
+                                        <field-error [form]="contact" field="postalCode" hasError="pattern">{{'common.field.postalCode' | translation}}</field-error>
+                                    </md-hint>
                                 </md-input-container>
                             </div>
                             <div class="col m3">
@@ -37,7 +40,7 @@
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
                                     <md-hint>
-                                        <field-error [form]="contact" field="phone" hasError="minlength">{{translations.contact.field.phoneShort}}</field-error>
+                                        <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
                                     </md-hint>
                                 </md-input-container>
                             </div>
@@ -45,7 +48,7 @@
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                                     <md-hint>
-                                        <field-error [form]="contact" field="email" hasError="pattern">{{translations.contact.field.emailInvalid}}</field-error>
+                                        <field-error [form]="contact" field="email" hasError="pattern">{{'contact.field.emailInvalid' | translation}}</field-error>
                                     </md-hint>
                                 </md-input-container>
                             </div>

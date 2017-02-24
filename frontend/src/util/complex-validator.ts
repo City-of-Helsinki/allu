@@ -54,3 +54,5 @@ interface ValidationResult {
 }
 
 export const emailValidator = Validators.pattern('.+@.+\\..+');
+
+export const postalCodeValidator = Validators.pattern(/[0-9]{5}/);

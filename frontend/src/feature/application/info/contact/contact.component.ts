@@ -1,11 +1,8 @@
 import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
 
-import {ApplicationHub} from '../../../../service/application/application-hub';
 import {Contact} from '../../../../model/application/contact';
-import {translations} from '../../../../util/translations';
-import {emailValidator} from '../../../../util/complex-validator';
+import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 import {Some} from '../../../../util/option';
 
 @Component({
@@ -25,7 +22,6 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   contactsForm: FormGroup;
   contacts: FormArray;
-  translations = translations;
 
   constructor(private fb: FormBuilder) {}
 
@@ -62,7 +58,7 @@ export class ContactComponent implements OnInit, OnDestroy {
       applicantId: contact.applicantId,
       name: [contact.name, [Validators.required, Validators.minLength(2)]],
       streetAddress: [contact.streetAddress],
-      postalCode: [contact.postalCode],
+      postalCode: [contact.postalCode, postalCodeValidator],
       city: [contact.city],
       email: [contact.email, emailValidator],
       phone: [contact.phone, Validators.minLength(2)]
