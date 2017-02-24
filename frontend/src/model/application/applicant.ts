@@ -21,5 +21,7 @@ export class Applicant {
     public registryKey?: string,
     public postalAddress?: PostalAddress,
     public email?: string,
-    public phone?: string) {}
+    public phone?: string) {
+    this.postalAddress = postalAddress || new PostalAddress();
+  }
 }

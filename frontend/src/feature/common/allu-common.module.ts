@@ -11,7 +11,8 @@ import {
   MdSelectModule,
   MdCheckboxModule
 } from '@angular/material';
-import {MaterializeDirective} from 'angular2-materialize';
+import 'materialize-css';
+import {MaterializeModule} from 'angular2-materialize';
 
 import {AutoCompletionDirective} from './auto-completion/auto-completion.directive';
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component';
@@ -26,10 +27,10 @@ import {FileSelectDirective} from '../application/attachment/file-select.directi
 @NgModule({
   imports: [
     MdToolbarModule,
-    CommonModule
+    CommonModule,
+    MaterializeModule
   ],
   declarations: [
-    MaterializeDirective,
     AutoCompletionDirective,
     AutoCompletionListComponent,
     SortByDirective,
@@ -51,7 +52,7 @@ import {FileSelectDirective} from '../application/attachment/file-select.directi
     MdInputModule,
     MdSelectModule,
     MdCheckboxModule,
-    MaterializeDirective,
+    MaterializeModule,
     AutoCompletionDirective,
     AutoCompletionListComponent,
     SortByDirective,
