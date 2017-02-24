@@ -8,6 +8,7 @@ import {DefaultAttachmentInfo} from '../../../model/application/attachment/defau
 import {translateArray} from '../../../util/translations';
 import {ContentRow} from '../../../model/common/content-row';
 import {MaterializeUtil} from '../../../util/materialize.util';
+import {AttachmentType} from '../../../model/application/attachment/attachment-type';
 
 @Component({
   selector: 'default-attachments',
@@ -17,12 +18,14 @@ import {MaterializeUtil} from '../../../util/materialize.util';
 export class DefaultAttachmentsComponent implements OnInit {
   translateArray = translateArray;
   attachmentRows: Array<ContentRow<DefaultAttachmentInfo>>;
+  attachmentType: string;
 
   constructor(private router: Router, private route: ActivatedRoute, private attachmentHub: AttachmentHub) {
   }
 
   ngOnInit(): void {
     this.loadAttachmentInfos();
+    this.route.data.subscribe((data: {attachmentType: string}) => this.attachmentType = data.attachmentType);
   }
 
   remove(row: ContentRow<DefaultAttachmentInfo>): void {
@@ -44,7 +47,9 @@ export class DefaultAttachmentsComponent implements OnInit {
 
   private loadAttachmentInfos(): void {
     this.attachmentHub.defaultAttachmentInfos()
-      .map(attachmentInfos => attachmentInfos.map(ai => new ContentRow(ai)))
+      .map(attachmentInfos => attachmentInfos
+        .filter(ai => ai.type === this.attachmentType)
+        .map(ai => new ContentRow(ai)))
       .subscribe(rows => this.attachmentRows = rows);
   }
 }

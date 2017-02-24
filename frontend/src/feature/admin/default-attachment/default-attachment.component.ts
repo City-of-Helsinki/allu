@@ -24,6 +24,7 @@ export class DefaultAttachmentComponent implements OnInit {
   districts: Observable<Array<CityDistrict>>;
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   hasFileOverDropzone = false;
+  attachmentType: string;
 
   private file: File;
 
@@ -39,7 +40,6 @@ export class DefaultAttachmentComponent implements OnInit {
       defaultAttachmentId: [],
       applicationTypes: []
     });
-    this.attachmentForm.patchValue({type: 'DEFAULT', applicationTypes: []});
   }
 
 
@@ -51,6 +51,11 @@ export class DefaultAttachmentComponent implements OnInit {
       .filter(id => !!id)
       .switchMap(id => this.loadDefaultAttachment(id))
       .subscribe(attachment => this.updateForm(attachment));
+
+    this.route.data.subscribe((data: {attachmentType: string}) => {
+      this.attachmentType = data.attachmentType;
+      this.attachmentForm.patchValue({type: data.attachmentType, applicationTypes: []});
+    });
   }
 
   attachmentSelected(files: File[]): void {
@@ -71,7 +76,7 @@ export class DefaultAttachmentComponent implements OnInit {
     this.attachmentHub.saveDefaultAttachments(attachmentInfo).subscribe(
       attachment => {
         MaterializeUtil.toast('Liite ' + attachment.name + ' tallennettu');
-        this.router.navigateByUrl('admin/default-attachments');
+        this.router.navigate(['../'], { relativeTo: this.route });
       },
       error => MaterializeUtil.toast('Liitteen ' + attachmentInfo.name + ' tallentaminen epäonnistui'));
   }
@@ -82,7 +87,7 @@ export class DefaultAttachmentComponent implements OnInit {
   }
 
   cancel(): void {
-    this.router.navigateByUrl('admin/default-attachments');
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
 
   fileOverDropzone(hasFileOverDropzone: boolean) {

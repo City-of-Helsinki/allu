@@ -1,19 +1,19 @@
 <md-card>
     <md-card-title>
-        <h1>Vakioliite</h1>
+        <h1>{{['attachment.type', attachmentType] | translation}}</h1>
     </md-card-title>
     <md-card-content>
         <form [formGroup]="attachmentForm">
             <div class="row">
                 <div class="col m5">
                     <md-input-container class="input-full-width">
-                        <input mdInput type="text" formControlName="name" placeholder="Vakioliitteen nimi">
+                        <input mdInput type="text" formControlName="name" placeholder="Nimi">
                     </md-input-container>
                 </div>
             </div>
             <div class="row">
                 <h1>
-                    Liitteen hakemustyypit
+                    Hakemustyypit
                 </h1>
                 <div class="col m12">
                     <selection-group formControlName="applicationTypes">
