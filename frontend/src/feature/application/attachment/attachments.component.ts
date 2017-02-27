@@ -10,7 +10,7 @@ import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog
 import {MdDialog} from '@angular/material';
 import {TimeUtil} from '../../../util/time.util';
 import {Some} from '../../../util/option';
-import {isCommon} from '../../../model/application/attachment/attachment-type';
+import {isCommon, AttachmentType} from '../../../model/application/attachment/attachment-type';
 
 const toastTime = 4000;
 
@@ -25,6 +25,7 @@ export class AttachmentsComponent implements OnInit {
   application: Application;
   commonAttachments: AttachmentInfo[] = [];
   defaultAttachments: AttachmentInfo[] = [];
+  defaultImages: AttachmentInfo[] = [];
   editableAttachments: AttachmentInfo[] = [];
   hasFileOverDropzone = false;
 
@@ -114,6 +115,7 @@ export class AttachmentsComponent implements OnInit {
 
   private setAttachments(attachments: Array<AttachmentInfo>): void {
     this.commonAttachments = attachments.filter(a => isCommon(a.type));
-    this.defaultAttachments = attachments.filter(a => !isCommon(a.type));
+    this.defaultAttachments = attachments.filter(a => AttachmentType[a.type] === AttachmentType.DEFAULT);
+    this.defaultImages = attachments.filter(a => AttachmentType[a.type] === AttachmentType.DEFAULT_IMAGE);
   }
 }

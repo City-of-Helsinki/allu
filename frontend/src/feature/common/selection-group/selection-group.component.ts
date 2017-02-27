@@ -19,7 +19,7 @@ const ID_FIELD = 'id';
   selector: 'selection-group',
   template: '<ng-content></ng-content>',
   styles: [],
-  providers: [SELECTION_GROUP_VALUE_ACCESSOR]
+  providers: [SELECTION_GROUP_VALUE_ACCESSOR, SelectionEventService]
 })
 export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor, AfterContentInit {
   @Output() select = new EventEmitter<SelectionEvent>();

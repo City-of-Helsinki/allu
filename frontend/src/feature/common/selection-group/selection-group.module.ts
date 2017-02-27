@@ -3,7 +3,6 @@ import {FormsModule} from '@angular/forms';
 
 import {SelectionGroupComponent} from './selection-group.component';
 import {SelectionItemComponent} from './selection-item.component';
-import {SelectionEventService} from './selection-event.service';
 import {AlluCommonModule} from '../allu-common.module';
 
 @NgModule({
@@ -14,9 +13,6 @@ import {AlluCommonModule} from '../allu-common.module';
   declarations: [
     SelectionGroupComponent,
     SelectionItemComponent
-  ],
-  providers: [
-    SelectionEventService
   ],
   exports: [
     SelectionGroupComponent,

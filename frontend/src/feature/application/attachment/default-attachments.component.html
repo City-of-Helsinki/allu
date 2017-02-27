@@ -1,7 +1,7 @@
-<md-card>
-    <md-card-title>Vakioliitteet</md-card-title>
+<md-card *ngIf="defaultAttachments?.length > 0">
+    <md-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</md-card-title>
     <md-card-content>
-        <div class="row" *ngIf="defaultAttachments">
+        <div class="row">
             <selection-group [ngModel]="selectedAttachments" (select)="onSelect($event)" *ngIf="defaultAttachments">
                 <div class="col m3" *ngFor="let attachment of defaultAttachments">
                     <selection-item [item]="attachment"
@@ -10,9 +10,6 @@
                     <button md-icon-button (click)="download(attachment)"><md-icon>file_download</md-icon></button>
                 </div>
             </selection-group>
-            <div *ngIf="defaultAttachments.length === 0">
-                <p>Hakemustyypille ei löydy valittavia vakioliitteitä.</p>
-            </div>
         </div>
     </md-card-content>
 </md-card>

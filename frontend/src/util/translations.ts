@@ -436,6 +436,10 @@ export const translations = {
       DEFAULT: 'Hakemustyyppikohtainen vakioliite',
       DEFAULT_IMAGE: 'Hakemustyyppikohtainen tyyppikuvaliite',
       DEFAULT_TERMS: 'Hakemustyyppikohtainen ehtoliite'
+    },
+    selectionTitle: {
+      DEFAULT: 'Vakioliitteet',
+      DEFAULT_IMAGE: 'Tyyppikuvat'
     }
   },
   comment: {

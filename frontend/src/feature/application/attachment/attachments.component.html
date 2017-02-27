@@ -43,7 +43,11 @@
         </li>
         <li>
             <default-attachments [selectedAttachments]="defaultAttachments" [applicationType]="application.type"
-                                 (add)="save($event)" (remove)="remove($event)"></default-attachments>
+                                 attachmentType="DEFAULT" (add)="save($event)" (remove)="remove($event)"></default-attachments>
+        </li>
+        <li>
+            <default-attachments [selectedAttachments]="defaultImages" [applicationType]="application.type"
+                                 attachmentType="DEFAULT_IMAGE" (add)="save($event)" (remove)="remove($event)"></default-attachments>
         </li>
     </ul>
 </div>

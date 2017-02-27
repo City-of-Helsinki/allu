@@ -6,6 +6,7 @@ import {AttachmentService} from '../../../service/attachment-service';
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {ApplicationType} from '../../../model/application/type/application-type';
+import {AttachmentType} from '../../../model/application/attachment/attachment-type';
 
 @Injectable()
 export class AttachmentHub {
@@ -42,10 +43,11 @@ export class AttachmentHub {
   defaultAttachmentInfos = () => this.attachmentService.getDefaultAttachmentInfos();
 
   /**
-   * Fetches default attachment infos which are for given application type
+   * Fetches default attachment infos which are for given application- and attachment type
    */
-  defaultAttachmentInfosByType = (applicationType: ApplicationType) =>
-    this.attachmentService.getDefaultAttachmentInfosByType(applicationType);
+  defaultAttachmentInfosBy = (applicationType: ApplicationType, attachmentType: AttachmentType) =>
+    this.attachmentService.getDefaultAttachmentInfosByType(applicationType)
+      .map(attachments => attachments.filter(attachment => AttachmentType[attachment.type] === attachmentType));
 
   /**
    * Saves given default attachment

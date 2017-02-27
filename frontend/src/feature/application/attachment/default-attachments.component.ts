@@ -6,6 +6,7 @@ import {AttachmentHub} from './attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {SelectionEvent} from '../../common/selection-group/selection-event.service';
 import {ApplicationType} from '../../../model/application/type/application-type';
+import {AttachmentType} from '../../../model/application/attachment/attachment-type';
 
 @Component({
   selector: 'default-attachments',
@@ -14,6 +15,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 })
 export class DefaultAttachmentsComponent implements OnInit {
   @Input() applicationType: string;
+  @Input() attachmentType: string;
   @Input() selectedAttachments: Array<DefaultAttachmentInfo> = [];
   @Output() add = new EventEmitter<DefaultAttachmentInfo>();
   @Output() remove = new EventEmitter<DefaultAttachmentInfo>();
@@ -22,7 +24,7 @@ export class DefaultAttachmentsComponent implements OnInit {
   constructor(private attachmentHub: AttachmentHub) {}
 
   ngOnInit(): void {
-    this.attachmentHub.defaultAttachmentInfosByType(ApplicationType[this.applicationType])
+    this.attachmentHub.defaultAttachmentInfosBy(ApplicationType[this.applicationType], AttachmentType[this.attachmentType])
       .subscribe(das => this.defaultAttachments = das);
   }
 
