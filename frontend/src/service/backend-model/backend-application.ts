@@ -16,7 +16,7 @@ export interface BackendApplication {
   status: string;
   type: string;
   kind: string;
-  metadata: BackendStructureMeta;
+  metadataVersion: number;
   name: string;
   creationTime: string;
   startTime: string;
