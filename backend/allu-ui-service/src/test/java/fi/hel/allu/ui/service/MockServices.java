@@ -124,6 +124,8 @@ public abstract class MockServices {
     locationJson.setPostalAddress(postalAddressJsonLocation);
     locationJson.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
     locationJson.setFixedLocationIds(Arrays.asList(12345, 5432));
+    locationJson.setStartTime(ZonedDateTime.parse("2016-11-12T08:00:00+02:00[Europe/Helsinki]"));
+    locationJson.setEndTime(ZonedDateTime.parse("2016-11-12T08:00:00+02:00[Europe/Helsinki]"));
     return locationJson;
   }
 

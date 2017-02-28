@@ -32,9 +32,7 @@ public class ApplicationJson {
   @NotBlank(message = "{application.name}")
   private String name;
   private ZonedDateTime creationTime;
-  @NotNull(message = "{application.startTime}")
   private ZonedDateTime startTime;
-  @NotNull(message = "{application.endTime}")
   private ZonedDateTime endTime;
 
   @NotNull(message = "{application.applicant}")

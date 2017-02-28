@@ -20,8 +20,6 @@
   ],
   "name": "Tervasaaren tohinat",
   "creationTime": "2016-07-15T05:08:10.514Z",
-  "startTime": "2016-11-20T22:00:00Z",
-  "endTime": "2016-12-20T22:00:00Z",
   "applicant": {
     "type": "COMPANY",
     "person": null,
@@ -51,6 +49,8 @@
   "locations": [
     {
       "id": null,
+      "startTime": "2016-11-20T22:00:00Z",
+      "endTime": "2016-12-20T22:00:00Z",
       "geometry": {
         "type": "GeometryCollection",
         "crs": {

@@ -2,8 +2,6 @@
   "type": "PLACEMENT_CONTRACT",
   "kind": "WATER_AND_SEWAGE",
   "name": "Sijoitussopimus",
-  "startTime": "2017-02-28T21:00:00.000Z",
-  "endTime": "2017-05-01T21:00:00.000Z",
   "applicant": {
     "id": null,
     "type": "PERSON",
@@ -32,6 +30,8 @@
   ],
   "locations": [
     {
+      "startTime": "2017-02-28T21:00:00.000Z",
+      "endTime": "2017-05-01T21:00:00.000Z",
       "geometry": {
         "type": "GeometryCollection",
         "crs": {

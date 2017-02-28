@@ -69,6 +69,10 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = ExcavationAnnouncementForm.to(form, application.extension.specifiers);
+
+    application.location.startTime = application.startTime;
+    application.location.endTime = application.endTime;
+
     return application;
   }
 

@@ -61,7 +61,7 @@ public class PricingService {
    * @param invoiceRows
    *          List where to store the invoice rows from the price calculation.
    */
-  @Transactional(readOnly = true)
+  @Transactional
   public void updatePrice(Application application, List<InvoiceRow> invoiceRows) {
     if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
       updateShortTermRentalPrice(application, invoiceRows);
@@ -79,7 +79,7 @@ public class PricingService {
     // check that application is not new
     if (application.getId() != null && event != null) {
       EventPricing pricing = new EventPricing();
-      int priceInCents = calculatePrice(application, event, pricing);
+      int priceInCents = calculateEventPrice(application, event, pricing);
       application.setCalculatedPrice(priceInCents);
       // pass the invoice rows to caller
       invoiceRows.addAll(pricing.getInvoiceRows());
@@ -105,15 +105,15 @@ public class PricingService {
   /*
    * EventPricing calculation for Event applications
    */
-  private int calculatePrice(Application application, Event event, EventPricing pricing) {
+  private int calculateEventPrice(Application application, Event event, EventPricing pricing) {
     List<Location> locations = locationDao.findByApplication(application.getId());
-    return locations.stream().mapToInt(l -> calculateSingleLocationPrice(application, l, event, pricing)).sum();
-  }
+    if (locations.size() > 1) {
+      throw new RuntimeException("Event application has more than one location, which is the maximum");
+    } else if (locations.isEmpty()) {
+      return 0; // No location -> no price.
+    }
+    Location location = locations.get(0);
 
-  /*
-   * EventPricing calculation for single Event application location.
-   */
-  private int calculateSingleLocationPrice(Application application, Location location, Event event, EventPricing pricing) {
     EventNature nature = event.getNature();
     if (nature == null) {
       return 0; // No nature defined -> no price

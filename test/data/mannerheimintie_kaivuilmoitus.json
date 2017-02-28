@@ -7,8 +7,6 @@
   "kind": "HEATING_COOLING",
   "name": "Manskun lämpö ja puhallus",
   "creationTime": "2016-07-15T10:36:09.721Z",
-  "startTime": "2017-01-01T05:00:00Z",
-  "endTime": "2017-03-31T22:00:00Z",
   "applicant": {
     "type": "COMPANY",
     "person": null,
@@ -38,6 +36,8 @@
   "locations": [
     {
       "id": null,
+      "startTime": "2017-01-01T05:00:00Z",
+      "endTime": "2017-03-31T22:00:00Z",
       "geometry": {
         "type": "GeometryCollection",
         "crs": {

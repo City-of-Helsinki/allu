@@ -98,6 +98,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.application.location.postalAddress.streetAddress = filter.search;
     this.application.startTime = filter.startDate;
     this.application.endTime = filter.endDate;
+    this.application.location.startTime = filter.startDate;
+    this.application.location.endTime = filter.endDate;
   }
 
   save() {

@@ -4,6 +4,8 @@ export interface BackendLocation {
   id: number;
   locationKey: number;
   locationVersion: number;
+  startTime: Date;
+  endTime: Date;
   geometry: GeoJSON.GeometryCollection;
   area: number;
   areaOverride: number;

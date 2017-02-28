@@ -65,10 +65,10 @@
     "mapUpdated": true,
     "maintenanceWork": true
   },
-  "endTime": "2017-01-29T22:00:00.000Z",
-  "startTime": "2017-01-22T22:00:00.000Z",
   "locations": [
     {
+      "startTime": "2017-01-22T22:00:00.000Z",
+      "endTime": "2017-01-29T22:00:00.000Z",
       "underpass": false,
       "postalAddress": {},
       "fixedLocationIds": [],

@@ -85,13 +85,12 @@ public class PricingServiceTest {
     event.setEventEndTime(application.getEndTime());
     application.setExtension(event);
     application = applicationDao.insert(application);
-    Location location = new Location();
+    Location location = newLocationWithDefaults();
     List<Integer> fixedLocationIds = Arrays.asList(makePair("Kansalaistori", "A"), makePair("Kansalaistori", "C"))
         .stream()
         .map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
     location.setFixedLocationIds(fixedLocationIds);
     location.setApplicationId(application.getId());
-    location.setUnderpass(false);
     int locationId = locationDao.insert(location).getId();
     Location foobar = locationDao.findById(locationId).get();
     Location foobar2 = locationDao.findByApplication(application.getId()).get(0);
@@ -182,10 +181,9 @@ public class PricingServiceTest {
     application.setMetadataVersion(1);
     application.setExtension(new ShortTermRental());
     application = applicationDao.insert(application);
-    Location location = new Location();
+    Location location = newLocationWithDefaults();
     location.setAreaOverride(135.5);
     location.setApplicationId(application.getId());
-    location.setUnderpass(false);
     locationDao.insert(location).getId();
     // 19 days, 135.5 sqm -> 14 * 14 * 50 + 5 * 14 * 25 = 11550 EUR
     checkPrice(application, 1155000);
@@ -232,10 +230,9 @@ public class PricingServiceTest {
     application.setExtension(new ShortTermRental());
     application.setMetadataVersion(1);
     application = applicationDao.insert(application);
-    Location location = new Location();
+    Location location = newLocationWithDefaults();
     location.setAreaOverride(222.2);
     location.setApplicationId(application.getId());
-    location.setUnderpass(false);
     locationDao.insert(location).getId();
     // Three terms, 222.2 sqm -> 223 * 2 * 3 = 1338 EUR
     checkPrice(application, 133800);
@@ -258,4 +255,13 @@ public class PricingServiceTest {
       assertTrue(error < 0.00001);
     }
   }
+
+ private Location newLocationWithDefaults() {
+   Location location = new Location();
+   location.setUnderpass(false);
+   location.setStartTime(ZonedDateTime.now());
+   location.setEndTime(ZonedDateTime.now());
+   return location;
+ }
 }
+

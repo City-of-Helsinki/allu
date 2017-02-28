@@ -25,10 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocation.location;
@@ -79,6 +81,7 @@ public class LocationDao {
     }
     setGeometry(id, locationData.getGeometry());
     setFixedLocationIds(id, locationData.getFixedLocationIds());
+    updateApplicationDate(locationData.getApplicationId());
     return findById(id).get();
   }
 
@@ -97,14 +100,20 @@ public class LocationDao {
     setGeometry(id, locationData.getGeometry());
     queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(id)).execute();
     setFixedLocationIds(id, locationData.getFixedLocationIds());
+    updateApplicationDate(locationData.getApplicationId());
     return findById(id).get();
   }
 
   @Transactional
   public void deleteById(int locationId) {
+    Location deletedLocation = queryFactory.query().select(locationBean).from(location).where(location.id.eq(locationId)).fetchOne();
+    if (deletedLocation == null) {
+      throw new NoSuchEntityException("Attempted to delete non-existent location", Integer.toString(locationId));
+    }
     queryFactory.delete(locationGeometry).where(locationGeometry.locationId.eq(locationId)).execute();
     queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
     queryFactory.delete(location).where(location.id.eq(locationId)).execute();
+    updateApplicationDate(deletedLocation.getApplicationId());
   }
 
   @Transactional
@@ -264,4 +273,20 @@ public class LocationDao {
     return result.map(r -> r.get(1, Integer.class));
   }
 
+  private void updateApplicationDate(int applicationId) {
+    Tuple startEndDate =
+        queryFactory.query().select(SQLExpressions.min(location.startTime), SQLExpressions.max(location.endTime))
+            .from(location).where(location.applicationId.eq(applicationId)).fetchOne();
+    if (startEndDate != null) {
+      // update the application start and end time only if there are locations available for application. Otherwise just leave them be
+      ZonedDateTime startTime = startEndDate.get(SQLExpressions.min(location.startTime));
+      ZonedDateTime endTime = startEndDate.get(SQLExpressions.max(location.endTime));
+      queryFactory
+          .update(application)
+          .set(application.startTime, startTime)
+          .set(application.endTime, endTime)
+          .where(application.id.eq(applicationId))
+          .execute();
+    }
+  }
 }

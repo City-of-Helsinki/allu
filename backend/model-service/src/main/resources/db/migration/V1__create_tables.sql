@@ -102,6 +102,8 @@ create table allu.location (
   application_id integer not null references allu.application(id),
   location_key integer not null,            -- human readable name for location. Each location has names from 1 to number of locations
   location_version integer not null,        -- version of the location with same location_key. If area changes, it will be stored as new version
+  start_time timestamp with time zone not null,
+  end_time timestamp with time zone not null,
   street_address text,
   postal_code text,
   city text,

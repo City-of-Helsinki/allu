@@ -9,6 +9,7 @@ import fi.hel.allu.model.domain.LocationSearchCriteria;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,6 +40,7 @@ public class ApplicationService {
    * @param id
    * @return the application
    */
+  @Transactional(readOnly = true)
   public Application findById(int id) {
     List<Application> applications = applicationDao.findByIds(Collections.singletonList(id));
     if (applications.size() != 1) {
@@ -53,6 +55,7 @@ public class ApplicationService {
    * @param   ids to be searched.
    * @return  found applications
    */
+  @Transactional(readOnly = true)
   public List<Application> findByIds(List<Integer> ids) {
     return applicationDao.findByIds(ids);
   }
@@ -63,6 +66,7 @@ public class ApplicationService {
    * @param   lsc the location search criteria
    * @return  All intersecting applications
    */
+  @Transactional(readOnly = true)
   public List<Application> findByLocation(LocationSearchCriteria lsc) {
     return applicationDao.findByLocation(lsc);
   }
@@ -74,6 +78,7 @@ public class ApplicationService {
    * @param application
    * @return the updated application
    */
+  @Transactional
   public Application update(int id, Application application) {
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
@@ -88,6 +93,7 @@ public class ApplicationService {
    * @param   handlerId     New handler set to the applications.
    * @param   applications  Applications whose handler is updated.
    */
+  @Transactional
   public void updateHandler(int handlerId, List<Integer> applications) {
     applicationDao.updateHandler(handlerId, applications);
   }
@@ -97,6 +103,7 @@ public class ApplicationService {
    *
    * @param   applications  Applications whose handler is removed.
    */
+  @Transactional
   public void removeHandler(List<Integer> applications) {
     applicationDao.removeHandler(applications);
   }
@@ -107,6 +114,7 @@ public class ApplicationService {
    * @param   application  The application data
    * @return  The created application
    */
+  @Transactional
   public Application insert(Application application) {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");

@@ -222,33 +222,32 @@ public class ApplicationControllerTest {
     newApplication.setKind(ApplicationKind.OUTDOOREVENT);
     newApplication.setName("test outdoor event");
     newApplication.setApplicantId(eventApplicant);
+    // TODO: remove these two lines setStartTime and setEndTime, because they should get set automatically from location
     newApplication.setStartTime(ZonedDateTime.parse("2017-02-01T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setMetadataVersion(1);
     Event event = new Event();
     event.setEcoCompass(true);
     event.setNature(EventNature.CLOSED);
+    // TODO: remove these two lines setStartTime and setEndTime, because they should get set automatically from location
     event.setEventStartTime(newApplication.getStartTime());
     event.setEventEndTime(newApplication.getEndTime());
     newApplication.setExtension(event);
+    Geometry geometry = polygon(3879,
+        ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));
     Application application =
-        insertApplicationWithGeometry(newApplication, new GeometryCollection(new Geometry[] { bigArea }), "Mannerheimintie 1");
+        insertApplicationWithGeometry(
+            newApplication,
+            new GeometryCollection(new Geometry[] { geometry }),
+            "Mannerheimintie 1",
+            ZonedDateTime.parse("2017-02-01T00:00:01+02:00[Europe/Helsinki]"),
+            ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
 
     // read application back from database and check the calculated price
     ResultActions ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(ra, Application.class);
-    int expectedPriceOfBigArea = 2147483647;
-    assertEquals(expectedPriceOfBigArea, (int) application.getCalculatedPrice());
-    // add the same area second time and make sure price is twice as big
-    Location addedLocation = new Location();
-    addedLocation.setGeometry(bigArea);
-    addedLocation.setStreetAddress("Mannerheimintie 2");
-    addedLocation.setApplicationId(application.getId());
-    addedLocation.setUnderpass(false);
-    locationService.insert(addedLocation);
-    ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
-    application = wtc.parseObjectFromResult(ra, Application.class);
-    assertEquals(expectedPriceOfBigArea * 2, (int) application.getCalculatedPrice());
+    int expectedPrice = 24622500;
+    assertEquals(expectedPrice, (int) application.getCalculatedPrice());
   }
 
 
@@ -301,18 +300,26 @@ public class ApplicationControllerTest {
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }
 
-  private Application createLocationTestApplication(TestAppParam tap, String streetAddress, String applicationName, int count)
+  private Application createLocationTestApplication(
+      TestAppParam tap,
+      String streetAddress,
+      String applicationName,
+      int count)
       throws Exception {
     Application app = testCommon.dummyOutdoorApplication(applicationName, "locationUserName" + count);
-    app.setStartTime(tap.startTime);
-    app.setEndTime(tap.endTime);
-    return insertApplicationWithGeometry(app, new GeometryCollection(new Geometry[] { tap.geometry }), streetAddress);
+    return insertApplicationWithGeometry(
+        app, new GeometryCollection(new Geometry[] { tap.geometry }), streetAddress, tap.startTime, tap.endTime);
   }
 
-  private Application insertApplicationWithGeometry(Application application, GeometryCollection geometryCollection, String streetAddress)
+  private Application insertApplicationWithGeometry(
+      Application application,
+      GeometryCollection geometryCollection,
+      String streetAddress,
+      ZonedDateTime startTime,
+      ZonedDateTime endTime)
       throws Exception {
     Application insertedApp = insertApplication(application);
-    testCommon.insertLocation(streetAddress, geometryCollection, insertedApp.getId());
+    testCommon.insertLocation(streetAddress, geometryCollection, insertedApp.getId(), startTime, endTime);
     return insertedApp;
   }
 

@@ -8,6 +8,7 @@ import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
 
 import org.geolatte.geom.Geometry;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class Location {
@@ -15,6 +16,8 @@ public class Location {
   private Integer applicationId;
   private Integer locationKey;
   private Integer locationVersion;
+  private ZonedDateTime startTime;
+  private ZonedDateTime endTime;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
@@ -81,6 +84,32 @@ public class Location {
 
   public void setLocationVersion(Integer locationVersion) {
     this.locationVersion = locationVersion;
+  }
+
+  /**
+   * Returns the time location use starts.
+   *
+   * @return  the time location use starts.
+   */
+  public ZonedDateTime getStartTime() {
+    return startTime;
+  }
+
+  public void setStartTime(ZonedDateTime startTime) {
+    this.startTime = startTime;
+  }
+
+  /**
+   * Returns the time location use ends.
+   *
+   * @return  the time location use ends.
+   */
+  public ZonedDateTime getEndTime() {
+    return endTime;
+  }
+
+  public void setEndTime(ZonedDateTime endTime) {
+    this.endTime = endTime;
   }
 
   /**

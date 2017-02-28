@@ -35,6 +35,10 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = NoteForm.to(form);
+
+    application.location.startTime = application.startTime;
+    application.location.endTime = application.endTime;
+
     return application;
   }
 

@@ -110,6 +110,7 @@ public class ProjectService {
    * @param   id    Id of the project whose applications are fetched.
    * @return  List of applications under given project. Never <code>null</code>.
    */
+  @Transactional(readOnly = true)
   public List<Application> findApplicationsByProject(int id) {
     return applicationDao.findByProject(id);
   }
@@ -184,6 +185,7 @@ public class ProjectService {
    *
    * @param projectIds
    */
+  @Transactional
   public List<Project> updateProjectInformation(List<Integer> projectIds) {
 
     List<Integer> rootParentIds = new ArrayList<>();

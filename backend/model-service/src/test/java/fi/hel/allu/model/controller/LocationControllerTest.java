@@ -17,6 +17,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+
 import static org.geolatte.geom.builder.DSL.c;
 import static org.geolatte.geom.builder.DSL.geometrycollection;
 import static org.geolatte.geom.builder.DSL.ring;
@@ -64,6 +66,9 @@ public class LocationControllerTest {
     location.setGeometry(geometry);
     location.setId(id);
     location.setUnderpass(false);
+    location.setStartTime(ZonedDateTime.now());
+    location.setEndTime(ZonedDateTime.now());
+
     return wtc.perform(post("/locations"), location);
   }
 
@@ -112,6 +117,8 @@ public class LocationControllerTest {
     newLocation.setCity("Hellsing");
     newLocation.setId(999);
     newLocation.setUnderpass(false);
+    newLocation.setStartTime(ZonedDateTime.now());
+    newLocation.setEndTime(ZonedDateTime.now());
     wtc.perform(put(String.format("/locations/%d", result.getId())), newLocation).andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.city", is("Hellsing")));
 

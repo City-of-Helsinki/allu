@@ -124,12 +124,19 @@ public class TestCommon {
    * @param geometry
    * @return inserted location's ID
    */
-  public Integer insertLocation(String streetAddress, Geometry geometry, int applicationId) {
+  public Integer insertLocation(
+      String streetAddress,
+      Geometry geometry,
+      int applicationId,
+      ZonedDateTime startTime,
+      ZonedDateTime endTime) {
     Location location = new Location();
     location.setGeometry(geometry);
     location.setStreetAddress(streetAddress);
     location.setApplicationId(applicationId);
     location.setUnderpass(false);
+    location.setStartTime(startTime);
+    location.setEndTime(endTime);
     return locationService.insert(location).getId();
   }
 

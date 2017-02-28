@@ -21,6 +21,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
@@ -65,9 +66,8 @@ public class LocationDaoTest {
 
   @Test
   public void testLocationKeyGeneration() {
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setApplicationId(application.getId());
-    locIn.setUnderpass(false);
     Location locOut1 = locationDao.insert(locIn);
     Location locOut2 = locationDao.insert(locIn);
     Location locOut3 = locationDao.insert(locIn);
@@ -87,9 +87,8 @@ public class LocationDaoTest {
 
   @Test
   public void testLocationKeyUpdateWithNull() {
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setApplicationId(application.getId());
-    locIn.setUnderpass(false);
     Location locOut1 = locationDao.insert(locIn);
     int loc1Key = locOut1.getLocationKey();
     int loc1Version = locOut1.getLocationVersion();
@@ -105,10 +104,9 @@ public class LocationDaoTest {
   public void testArea() {
     // Single 4 m^2 square
     Geometry geoIn = geometrycollection(3879, Sq_0_0);
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setGeometry(geoIn);
     locIn.setApplicationId(application.getId());
-    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 4 m^2:
@@ -118,9 +116,8 @@ public class LocationDaoTest {
 
   @Test
   public void testAreaNoGeometry() {
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setApplicationId(application.getId());
-    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 0 m^2:
@@ -131,10 +128,9 @@ public class LocationDaoTest {
   @Test
   public void testAreaOverride() {
     final double AREA_OVERRIDE = 123.23;
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setApplicationId(application.getId());
     locIn.setAreaOverride(AREA_OVERRIDE);
-    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     assertTrue(Math.abs(locOut.getAreaOverride() - AREA_OVERRIDE) < 0.0001);
   }
@@ -142,10 +138,9 @@ public class LocationDaoTest {
   @Test
   public void testAreaEmptyGeometry() {
     Geometry geoIn = geometrycollection(3879, new Polygon2DToken[0]);
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setApplicationId(application.getId());
     locIn.setGeometry(geoIn);
-    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
     // Area should be close to 0 m^2:
@@ -157,10 +152,10 @@ public class LocationDaoTest {
   public void testCombineGeometries() {
     // three overlapping squares, 4 m^2 each.
     Geometry geoIn = geometrycollection(3879, Sq_0_0, Sq_1_1, Sq_2_2);
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setGeometry(geoIn);
     locIn.setApplicationId(application.getId());
-    locIn.setUnderpass(false);
+
     Location locOut = locationDao.insert(locIn);
     Geometry geoOut = locOut.getGeometry();
     assertNotNull(geoOut);
@@ -178,10 +173,9 @@ public class LocationDaoTest {
   public void testSeparateGeometries() {
     // three non-overlapping squares, 4 m^2 each.
     Geometry geoIn = geometrycollection(3879, Sq_0_0, Sq_2_2, Sq_5_5);
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setApplicationId(application.getId());
     locIn.setGeometry(geoIn);
-    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     Geometry geoOut = locOut.getGeometry();
     assertNotNull(geoOut);
@@ -209,10 +203,9 @@ public class LocationDaoTest {
         .sum();
     assertEquals(fixedLocationIds.size(), insertCount);
     // Test: add location with fixedLocationId
-    Location locIn = new Location();
+    Location locIn = newLocationWithDefaults();
     locIn.setApplicationId(application.getId());
     locIn.setFixedLocationIds(fixedLocationIds);
-    locIn.setUnderpass(false);
     Location locOut = locationDao.insert(locIn);
     // Check that all inserted IDs and none other are returned:
     TreeSet<Integer> flIdsIn = new TreeSet<>(fixedLocationIds);
@@ -249,11 +242,10 @@ public class LocationDaoTest {
 
   @Test
   public void testFindDistrictOnInsert() {
-    Location location = new Location();
+    Location location = newLocationWithDefaults();
     location.setStreetAddress("Testiosoite 1");
     location.setGeometry(geometrycollection(3879, herttoniemi_polygon));
     location.setApplicationId(application.getId());
-    location.setUnderpass(false);
     Location inserted = locationDao.insert(location);
 
     // Check that the location now has a district ID:
@@ -269,10 +261,9 @@ public class LocationDaoTest {
   @Test
   public void testFindDistrictOnUpdate() {
 
-    Location location = new Location();
+    Location location = newLocationWithDefaults();
     location.setStreetAddress("Testiosoite 1");
     location.setApplicationId(application.getId());
-    location.setUnderpass(false);
     Location inserted = locationDao.insert(location);
     assertNull(inserted.getCityDistrictId());
 
@@ -289,4 +280,11 @@ public class LocationDaoTest {
     assertEquals("43 HERTTONIEMI", districtName);
   }
 
+  private Location newLocationWithDefaults() {
+    Location location = new Location();
+    location.setUnderpass(false);
+    location.setStartTime(ZonedDateTime.now());
+    location.setEndTime(ZonedDateTime.now());
+    return location;
+  }
 }

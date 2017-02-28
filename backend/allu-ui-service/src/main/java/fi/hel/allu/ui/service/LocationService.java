@@ -137,6 +137,8 @@ public class LocationService {
     location.setId(locationJson.getId());
     location.setLocationKey(locationJson.getLocationKey());
     location.setLocationVersion(locationJson.getLocationVersion());
+    location.setStartTime(locationJson.getStartTime());
+    location.setEndTime(locationJson.getEndTime());
     location.setApplicationId(applicationId);
     if (locationJson.getPostalAddress() != null) {
       location.setStreetAddress(locationJson.getPostalAddress().getStreetAddress());
@@ -164,6 +166,8 @@ public class LocationService {
     locationJson.setId(location.getId());
     locationJson.setLocationKey(location.getLocationKey());
     locationJson.setLocationVersion(location.getLocationVersion());
+    locationJson.setStartTime(location.getStartTime());
+    locationJson.setEndTime(location.getEndTime());
     PostalAddressJson postalAddressJson = new PostalAddressJson();
     postalAddressJson.setCity(location.getCity());
     postalAddressJson.setPostalCode(location.getPostalCode());

@@ -1,7 +1,6 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.InvoiceRowDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
@@ -22,23 +21,24 @@ public class LocationService {
 
   private LocationDao locationDao;
   private ApplicationService applicationService;
+  private ProjectService projectService;
 
   @Autowired
   public LocationService(
       LocationDao locationDao,
       ApplicationService applicationService,
-      PricingService pricingService,
-      InvoiceRowDao invoiceRowDao) {
+      ProjectService projectService) {
     this.locationDao = locationDao;
     this.applicationService = applicationService;
+    this.projectService = projectService;
   }
 
 
   @Transactional
   public Location insert(Location location) {
-    Application application = findApplication(location.getApplicationId());
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
     Location insertedLocation = locationDao.insert(location);
+    Application application = findApplication(location.getApplicationId());
+    updateProject(insertedLocation);
     // update application to get the price calculations done
     applicationService.update(application.getId(), application);
     return insertedLocation;
@@ -48,6 +48,7 @@ public class LocationService {
   public Location update(int locationId, Location location) {
     Application application = findApplication(location.getApplicationId());
     Location updatedLocation = locationDao.update(locationId, location);
+    updateProject(updatedLocation);
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     // update application to get the price calculations done
     applicationService.update(application.getId(), application);
@@ -60,5 +61,12 @@ public class LocationService {
       throw new NoSuchEntityException("Location referenced to non-existent application", Integer.toString(applicationId));
     }
     return applications.get(0);
+  }
+
+  private void updateProject(Location location) {
+    Application application = applicationService.findById(location.getApplicationId());
+    if (application.getProjectId() != null) {
+      projectService.updateProjectInformation(Collections.singletonList(application.getProjectId()));
+    }
   }
 }
