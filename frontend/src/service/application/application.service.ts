@@ -50,14 +50,14 @@ export class ApplicationService {
   private statusToUrl = new Map<ApplicationStatus, string>();
 
   constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {
-    this.statusToUrl.set(ApplicationStatus.CANCELLED, 'status/cancelled');
-    this.statusToUrl.set(ApplicationStatus.PENDING, 'status/pending');
-    this.statusToUrl.set(ApplicationStatus.HANDLING, 'status/handling');
-    this.statusToUrl.set(ApplicationStatus.DECISIONMAKING, 'status/decisionmaking');
-    this.statusToUrl.set(ApplicationStatus.DECISION, 'status/decision');
-    this.statusToUrl.set(ApplicationStatus.REJECTED, 'status/rejected');
-    this.statusToUrl.set(ApplicationStatus.RETURNED_TO_PREPARATION, 'status/toPreparation');
-    this.statusToUrl.set(ApplicationStatus.FINISHED, 'status/finished');
+    this.statusToUrl.set(ApplicationStatus.CANCELLED, '/status/cancelled');
+    this.statusToUrl.set(ApplicationStatus.PENDING, '/status/pending');
+    this.statusToUrl.set(ApplicationStatus.HANDLING, '/status/handling');
+    this.statusToUrl.set(ApplicationStatus.DECISIONMAKING, '/status/decisionmaking');
+    this.statusToUrl.set(ApplicationStatus.DECISION, '/status/decision');
+    this.statusToUrl.set(ApplicationStatus.REJECTED, '/status/rejected');
+    this.statusToUrl.set(ApplicationStatus.RETURNED_TO_PREPARATION, '/status/toPreparation');
+    this.statusToUrl.set(ApplicationStatus.FINISHED, '/status/finished');
   }
 
   public getApplication(id: number): Observable<Application> {
@@ -112,7 +112,7 @@ export class ApplicationService {
   }
 
   public applicationStatusChange(statusChange: ApplicationStatusChange): Observable<Application> {
-    let url = ApplicationService.APPLICATIONS_URL + '/' + statusChange.id + '/' + this.statusToUrl.get(statusChange.status);
+    let url = ApplicationService.APPLICATIONS_URL + '/' + statusChange.id + this.statusToUrl.get(statusChange.status);
     return this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
       .map(response => ApplicationMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.APPLICATION_STATUS_CHANGE_FAILED)));

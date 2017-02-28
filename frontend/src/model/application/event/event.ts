@@ -22,7 +22,8 @@ export class Event extends ApplicationExtension {
               structureArea: number,
               structureDescription: string,
               structureStartTime: Date,
-              structureEndTime: Date)
+              structureEndTime: Date,
+              terms: string)
   constructor(public nature?: string,
               public description?: string,
               public url?: string,
@@ -42,8 +43,9 @@ export class Event extends ApplicationExtension {
               public structureArea?: number,
               public structureDescription?: string,
               public structureStartTime?: Date,
-              public structureEndTime?: Date) {
-    super(applicationType);
+              public structureEndTime?: Date,
+              public terms?: string) {
+    super(applicationType, [], terms);
   }
 
   /*

@@ -21,7 +21,7 @@ import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
 export class ApplicationState {
   public relatedProject: number;
 
-  private _application = new Application();
+  private application$ = new BehaviorSubject<Application>(new Application());
   private _pendingAttachments: Array<AttachmentInfo> = [];
   private attachments$ = new BehaviorSubject<Array<AttachmentInfo>>([]);
   private comments$ = new BehaviorSubject<Array<Comment>>([]);
@@ -35,19 +35,25 @@ export class ApplicationState {
   }
 
   get application(): Application {
-    return this._application;
+    return this.application$.getValue();
   }
 
   set application(value: Application) {
-    this._application = value;
+    this.application$.next(value);
+  }
+
+  get applicationChanges(): Observable<Application> {
+    return this.application$.asObservable();
   }
 
   set tags(tags: Array<ApplicationTag>) {
-    this._application.applicationTags = tags;
+    let app = this.application;
+    app.applicationTags = tags;
+    this.application = app;
   }
 
   get tags(): Array<ApplicationTag> {
-    return this._application.applicationTags;
+    return this.application.applicationTags;
   }
 
   get attachments(): Observable<Array<AttachmentInfo>> {
@@ -91,8 +97,8 @@ export class ApplicationState {
 
   removeAttachment(attachmentId: number, index?: number): Observable<HttpResponse> {
     if (attachmentId) {
-      return this.attachmentHub.remove(this._application.id, attachmentId)
-        .do(response => this.loadAttachments(this._application.id).subscribe());
+      return this.attachmentHub.remove(this.application.id, attachmentId)
+        .do(response => this.loadAttachments(this.application.id).subscribe());
     } else {
       Some(index).do(i => this._pendingAttachments.splice(i, 1));
       return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
@@ -107,12 +113,12 @@ export class ApplicationState {
 
   saveComment(applicationId: number, comment: Comment): Observable<Comment> {
     return this.commentHub.saveComment(applicationId, comment)
-      .do(c => this.loadComments(this._application.id).subscribe());
+      .do(c => this.loadComments(this.application.id).subscribe());
   }
 
   removeComment(comment: Comment): Observable<HttpResponse> {
     return this.commentHub.removeComment(comment.id)
-      .do(c => this.loadComments(this._application.id).subscribe());
+      .do(c => this.loadComments(this.application.id).subscribe());
   }
 
   loadComments(id: number): Observable<Array<Comment>> {

@@ -249,5 +249,4 @@ public class Event extends ApplicationExtension {
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
   }
-
 }

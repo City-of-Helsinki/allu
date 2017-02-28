@@ -25,7 +25,8 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     guaranteeEndTime: Date,
     cableReportId: number,
     additionalInfo: string,
-    trafficArrangements: string
+    trafficArrangements: string,
+    terms: string
   )
   constructor(
     public specifiers?: Array<string>,
@@ -46,9 +47,10 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public guaranteeEndTime?: Date,
     public cableReportId?: number,
     public additionalInfo?: string,
-    public trafficArrangements?: string
+    public trafficArrangements?: string,
+    public terms?: string
   ) {
-    super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], specifiers);
+    super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], specifiers, terms);
   }
 
   get uiWinterTimeOperation(): string {

@@ -249,5 +249,4 @@ public class EventJson extends ApplicationExtensionJson {
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
   }
-
 }

@@ -11,7 +11,8 @@ export class PlacementContract extends ApplicationExtension {
     contact: Contact,
     diaryNumber: string,
     additionalInfo: string,
-    generalTerms: string
+    generalTerms: string,
+    terms: string
   )
   constructor(
     public specifiers?: Array<string>,
@@ -19,9 +20,10 @@ export class PlacementContract extends ApplicationExtension {
     public contact?: Contact,
     public diaryNumber?: string,
     public additionalInfo?: string,
-    public generalTerms?: string
+    public generalTerms?: string,
+    public terms?: string
   ) {
-    super(ApplicationType[ApplicationType.PLACEMENT_CONTRACT], specifiers);
+    super(ApplicationType[ApplicationType.PLACEMENT_CONTRACT], specifiers, terms);
   }
 
   get representativeContactList(): Array<Contact> {

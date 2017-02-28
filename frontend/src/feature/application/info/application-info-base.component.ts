@@ -8,6 +8,7 @@ import {ApplicationState} from '../../../service/application/application-state';
 import {UrlUtil} from '../../../util/url.util';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {ApplicationForm} from './application-form';
+import {ApplicationStatus} from '../../../model/application/application-status';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
 
@@ -16,7 +17,9 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
   readonly: boolean;
   pickadateParams = PICKADATE_PARAMETERS;
   submitPending = false;
+  showTerms = false;
 
+  private appChanges: Subscription;
   private tabChanges: Subscription;
 
   constructor(protected route: ActivatedRoute,
@@ -24,7 +27,10 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
 
   ngOnInit(): void {
     this.initForm();
-    this.application = this.applicationState.application;
+    this.appChanges = this.applicationState.applicationChanges.subscribe(app => {
+      this.application = app;
+      this.showTerms = app.status === ApplicationStatus[ApplicationStatus.HANDLING];
+    });
 
     UrlUtil.urlPathContains(this.route.parent, 'summary')
       .filter(contains => contains)
@@ -41,6 +47,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
   }
 
   ngOnDestroy(): any {
+    this.appChanges.unsubscribe();
     this.tabChanges.unsubscribe();
   }
 
@@ -52,6 +59,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
   onSubmit(form: ApplicationForm) {
     this.submitPending = true;
     let application = this.update(form);
+    application.extension.terms = form.terms;
 
     this.applicationState.save(application)
       .subscribe(app => this.submitPending = false, err => this.submitPending = false);

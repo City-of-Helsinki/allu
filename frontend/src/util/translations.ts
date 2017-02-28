@@ -18,6 +18,9 @@ export const translations = {
       FINISHED: 'Valmis',
       CANCELLED: 'Peruttu'
     },
+    statusChange: {
+      HANDLING: 'Hakemus siirretty käsittelyyn'
+    },
     type: {
       EVENT: 'Tapahtuma',
       SHORT_TERM_RENTAL: 'Lyhytaikainen maanvuokraus',

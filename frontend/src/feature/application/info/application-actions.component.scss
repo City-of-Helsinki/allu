@@ -1,0 +1,16 @@
+.button-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.left-aligned {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.right-aligned {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+}

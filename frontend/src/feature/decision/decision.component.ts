@@ -2,11 +2,11 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 
-import {ProgressStep} from '../application/progressbar/progressbar.component';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {Application} from '../../model/application/application';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {Decision} from '../../model/decision/Decision';
+import {ProgressStep} from '../application/progressbar/progress-step';
 
 @Component({
   selector: 'decision',

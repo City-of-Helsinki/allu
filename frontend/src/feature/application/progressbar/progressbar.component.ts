@@ -1,14 +1,6 @@
 import {Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
 import {Application} from '../../../model/application/application';
-
-export enum ProgressStep {
-  LOCATION,
-  INFORMATION,
-  SUMMARY,
-  HANDLING,
-  DECISION,
-  MONITORING
-}
+import {ProgressStep} from './progress-step';
 
 @Component({
   selector: 'progressbar',
@@ -28,29 +20,29 @@ export class ProgressbarComponent implements OnInit, OnChanges {
   constructor() {}
 
   ngOnInit() {
-    switch (this.step) {
-      case ProgressStep.LOCATION:
-        this.width = 9;
-        break;
-      case ProgressStep.INFORMATION:
-        this.width = 25;
-        break;
-      case ProgressStep.SUMMARY:
-        this.width = 42;
-        break;
-      case ProgressStep.DECISION:
-        this.width = 75;
-        break;
-      default:
-        this.width = 0;
-        break;
-    }
-
+    this.width = this.calculateWidth(this.step);
     this.status = this.application ? this.application.status : undefined;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     this.identifier = this.hasId(this.application) ? this.application.applicationId : 'UUSI HAKEMUS';
+  }
+
+  private calculateWidth(step: ProgressStep): number {
+    switch (step) {
+      case ProgressStep.LOCATION:
+        return 9;
+      case ProgressStep.INFORMATION:
+        return 25;
+      case ProgressStep.SUMMARY:
+        return 42;
+      case ProgressStep.HANDLING:
+        return 58;
+      case ProgressStep.DECISION:
+        return 75;
+      default:
+        return  0;
+    }
   }
 
   private hasId(application: Application): boolean {

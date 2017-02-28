@@ -41,8 +41,7 @@ export class Application {
     priceOverride: number,
     priceOverrideReason: string,
     tagList: Array<ApplicationTag>,
-    comments: Array<Comment>
-    )
+    comments: Array<Comment>)
   constructor(
     public id?: number,
     public applicationId?: string,

@@ -4,7 +4,6 @@ import '../../../rxjs-extensions.ts';
 import {Observable} from 'rxjs/Observable';
 import {FormBuilder} from '@angular/forms';
 
-import {ProgressStep} from '../progressbar/progressbar.component';
 import {Application} from '../../../model/application/application';
 import {MapUtil} from '../../../service/map/map.util';
 import {SearchbarFilter} from '../../../service/searchbar-filter';
@@ -24,6 +23,7 @@ import {Note} from '../../../model/application/note/note';
 import {CityDistrict} from '../../../model/common/city-district';
 import {TrafficArrangement} from '../../../model/application/traffic-arrangement/traffic-arrangement';
 import {PlacementContract} from '../../../model/application/placement-contract/placement-contract';
+import {ProgressStep} from '../progressbar/progress-step';
 
 @Component({
   selector: 'type',
@@ -37,7 +37,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   areas = new Array<string>();
   sections = new Array<FixedLocation>();
   application: Application;
-  progressStep: number;
+  progressStep: ProgressStep;
   typeSelected = false;
   selectedFixedLocations = [];
   editedItemCount = 0;

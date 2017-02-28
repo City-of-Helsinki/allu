@@ -191,10 +191,8 @@ public class ApplicationMapper {
       break;
     }
 
-    if (applicationJson.getExtension() != null) {
-      applicationJson.getExtension().setSpecifiers(
-        application.getExtension() != null ? application.getExtension().getSpecifiers() : null);
-    }
+    applicationJson.getExtension().setSpecifiers(application.getExtension().getSpecifiers());
+    applicationJson.getExtension().setTerms(application.getExtension().getTerms());
   }
 
   /**
@@ -259,9 +257,10 @@ public class ApplicationMapper {
     default:
       break;
     }
-    if (applicationExtension != null) {
-      applicationExtension.setSpecifiers(applicationJson.getExtension().getSpecifiers());
-    }
+
+    applicationExtension.setSpecifiers(applicationJson.getExtension().getSpecifiers());
+    applicationExtension.setTerms(applicationJson.getExtension().getTerms());
+
     return applicationExtension;
   }
 

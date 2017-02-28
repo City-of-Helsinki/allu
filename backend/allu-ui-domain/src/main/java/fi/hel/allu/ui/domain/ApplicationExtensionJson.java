@@ -24,6 +24,7 @@ import java.util.List;
 public abstract class ApplicationExtensionJson {
 
   private List<ApplicationSpecifier> specifiers;
+  private String terms;
 
   /**
    * Get the application category for the event. Each subclass must provide unique
@@ -45,4 +46,16 @@ public abstract class ApplicationExtensionJson {
     this.specifiers = specifiers;
   }
 
+  /**
+   * Terms for application extension.
+   *
+   * @return Terms as string which can be null.
+   */
+  public String getTerms() {
+    return terms;
+  }
+
+  public void setTerms(String terms) {
+    this.terms = terms;
+  }
 }

@@ -34,7 +34,8 @@ export class ApplicationTypeDataMapper {
           backendExtension.structureArea,
           backendExtension.structureDescription,
           TimeUtil.dateFromBackend(backendExtension.structureStartTime),
-          TimeUtil.dateFromBackend(backendExtension.structureEndTime));
+          TimeUtil.dateFromBackend(backendExtension.structureEndTime),
+          backendExtension.terms);
       case ApplicationType.SHORT_TERM_RENTAL:
         return new ShortTermRental(backendExtension.description, backendExtension.commercial);
       case ApplicationType.CABLE_REPORT:
@@ -73,7 +74,8 @@ export class ApplicationTypeDataMapper {
           backendExtension.guaranteeEndTime,
           backendExtension.cableReportId,
           backendExtension.additionalInfo,
-          backendExtension.trafficArrangements
+          backendExtension.trafficArrangements,
+          backendExtension.terms
         );
       case ApplicationType.NOTE:
         return new Note(backendExtension.reoccurring, backendExtension.description);
@@ -85,7 +87,8 @@ export class ApplicationTypeDataMapper {
           backendExtension.pksCard,
           backendExtension.workFinished,
           backendExtension.trafficArrangements,
-          backendExtension.additionalInfo
+          backendExtension.additionalInfo,
+          backendExtension.terms
         );
       case ApplicationType.PLACEMENT_CONTRACT:
         return new PlacementContract(
@@ -94,7 +97,8 @@ export class ApplicationTypeDataMapper {
           backendExtension.contact,
           backendExtension.diaryNumber,
           backendExtension.additionalInfo,
-          backendExtension.generalTerms
+          backendExtension.generalTerms,
+          backendExtension.terms
         );
       default:
         throw new Error('No mapping from backend for ' + applicationType);

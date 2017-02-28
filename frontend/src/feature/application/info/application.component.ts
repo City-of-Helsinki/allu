@@ -2,13 +2,14 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
-import {ProgressStep} from '../progressbar/progressbar.component';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {SidebarItem} from '../../sidebar/sidebar-item';
+import {ProgressStep, stepFrom} from '../progressbar/progress-step';
+import {ApplicationStatus} from '../../../model/application/application-status';
 
 
 @Component({
@@ -35,7 +36,7 @@ export class ApplicationComponent implements OnInit {
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
       this.readonly = summary;
 
-      this.progressStep = summary ? ProgressStep.SUMMARY : ProgressStep.INFORMATION;
+      this.progressStep = stepFrom(ApplicationStatus[this.application.status], summary);
       this.sidebar(summary).subscribe(items => this.sidebarItems = items);
     });
   }

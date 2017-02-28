@@ -21,7 +21,6 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 export class EventComponent extends ApplicationInfoBaseComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
-              private applicationHub: ApplicationHub,
               route: ActivatedRoute,
               applicationState: ApplicationState) {
     super(route, applicationState);

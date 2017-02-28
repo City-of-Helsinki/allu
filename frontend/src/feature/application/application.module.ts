@@ -32,6 +32,7 @@ import {AttachmentModule} from './attachment/attachment.module';
 import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-arrangement.component';
 import {PlacementContractComponent} from './info/placement-contract/placement-contract.component';
 import {ApplicationHistoryModule} from './history/application-history.module';
+import {TermsModule} from './terms/terms.module';
 
 
 @NgModule({
@@ -53,7 +54,8 @@ import {ApplicationHistoryModule} from './history/application-history.module';
     CommentModule,
     TagBarModule,
     AttachmentModule,
-    ApplicationHistoryModule
+    ApplicationHistoryModule,
+    TermsModule
   ],
   declarations: [
     ApplicationComponent,

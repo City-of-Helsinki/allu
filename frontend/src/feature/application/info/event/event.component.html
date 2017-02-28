@@ -8,6 +8,10 @@
 
     <event-details [applicationForm]="applicationForm" [application]="application" [readonly]="readonly"></event-details>
 
+    <div class="col s12" *ngIf="showTerms">
+      <terms [form]="applicationForm" [terms]="application.extension.terms" [readonly]="readonly"></terms>
+    </div>
+
     <application-actions
         [readonly]="readonly"
         [applicationId]="application.id"

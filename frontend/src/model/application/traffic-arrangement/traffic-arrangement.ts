@@ -13,7 +13,8 @@ export class TrafficArrangement extends ApplicationExtension {
     pksCard: boolean,
     workFinished: Date,
     trafficArrangements: string,
-    additionalInfo: string
+    additionalInfo: string,
+    terms: string
   )
   constructor(
     public specifiers?: Array<string>,
@@ -22,9 +23,10 @@ export class TrafficArrangement extends ApplicationExtension {
     public pksCard?: boolean,
     public workFinished?: Date,
     public trafficArrangements?: string,
-    public additionalInfo?: string
+    public additionalInfo?: string,
+    public terms?: string
   ) {
-    super(ApplicationType[ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS], specifiers);
+    super(ApplicationType[ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS], specifiers, terms);
   }
 
   get uiWorkFinished(): string {
