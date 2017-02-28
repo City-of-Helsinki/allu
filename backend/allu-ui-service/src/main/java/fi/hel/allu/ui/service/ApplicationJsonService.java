@@ -68,7 +68,6 @@ public class ApplicationJsonService {
     }
     applicationJson.setApplicant(applicantService.findApplicantById(applicationModel.getApplicantId()));
     applicationJson.setContactList(contactService.findContactsForApplication(applicationModel.getId()));
-    applicationJson.setMetadata(metaService.findMetadataForApplication(applicationModel.getType(), applicationModel.getMetadataVersion()));
     applicationJson.setHandler(applicationModel.getHandler() != null ? userService.findUserById(applicationModel.getHandler()) : null);
 
     applicationJson.setLocations(locationService.findLocationsByApplication(applicationModel.getId()));

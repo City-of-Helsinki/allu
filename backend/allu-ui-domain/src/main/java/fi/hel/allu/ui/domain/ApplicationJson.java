@@ -3,10 +3,12 @@ package fi.hel.allu.ui.domain;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -26,7 +28,7 @@ public class ApplicationJson {
   @NotNull(message = "{application.kind}")
   private ApplicationKind kind;
   private List<ApplicationTagJson> applicationTags;
-  private StructureMetaJson metadata;
+  private Integer metadataVersion;
   @NotBlank(message = "{application.name}")
   private String name;
   private ZonedDateTime creationTime;
@@ -146,14 +148,14 @@ public class ApplicationJson {
   }
 
   /**
-   * @return Metadata related to the application.
+   * @return Metadata version related to the application.
    */
-  public StructureMetaJson getMetadata() {
-    return metadata;
+  public Integer getMetadataVersion() {
+    return metadataVersion;
   }
 
-  public void setMetadata(StructureMetaJson metadata) {
-    this.metadata = metadata;
+  public void setMetadataVersion(Integer metadataVersion) {
+    this.metadataVersion = metadataVersion;
   }
 
   /**

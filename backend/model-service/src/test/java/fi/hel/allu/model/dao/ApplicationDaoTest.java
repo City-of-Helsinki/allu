@@ -38,7 +38,9 @@ public class ApplicationDaoTest {
   public void testCreateApplicationIdString() {
     ApplicationSequenceDao applicationSequenceDaoMock = Mockito.mock(ApplicationSequenceDao.class);
     Mockito.when(applicationSequenceDaoMock.getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.TP)).thenReturn(1600001L);
-    ApplicationDao applicationDao = new ApplicationDao(null, applicationSequenceDaoMock);
+    StructureMetaDao structureMetaDaoMock = Mockito.mock(StructureMetaDao.class);
+    Mockito.when(structureMetaDaoMock.getLatestMetadataVersion()).thenReturn(1);
+    ApplicationDao applicationDao = new ApplicationDao(null, applicationSequenceDaoMock, structureMetaDaoMock);
     Assert.assertEquals("TP1600001", applicationDao.createApplicationId(ApplicationType.EVENT));
   }
 

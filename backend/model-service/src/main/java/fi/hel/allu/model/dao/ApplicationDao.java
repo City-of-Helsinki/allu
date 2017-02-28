@@ -6,6 +6,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
@@ -13,11 +14,13 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,14 +36,17 @@ public class ApplicationDao {
 
   private SQLQueryFactory queryFactory;
   private ApplicationSequenceDao applicationSequenceDao;
+  private StructureMetaDao structureMetaDao;
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
 
   @Autowired
-  public ApplicationDao(SQLQueryFactory queryFactory, ApplicationSequenceDao applicationSequenceDao) {
+  public ApplicationDao(SQLQueryFactory queryFactory, ApplicationSequenceDao applicationSequenceDao,
+      StructureMetaDao structureMetaDao) {
     this.queryFactory = queryFactory;
     this.applicationSequenceDao = applicationSequenceDao;
+    this.structureMetaDao = structureMetaDao;
   }
 
   @Transactional(readOnly = true)
@@ -77,6 +83,7 @@ public class ApplicationDao {
     appl.setApplicationId(createApplicationId(appl.getType()));
     appl.setStatus(StatusType.PENDING);
     appl.setCreationTime(ZonedDateTime.now());
+    appl.setMetadataVersion(structureMetaDao.getLatestMetadataVersion());
     Integer id = queryFactory.insert(application).populate(appl).executeWithKey(application.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
@@ -139,7 +146,9 @@ public class ApplicationDao {
   public Application update(int id, Application appl) {
     appl.setId(id);
     long changed = queryFactory.update(application)
-        .populate(appl, new ExcludingMapper(WITH_NULL_BINDINGS, Collections.singleton(application.creationTime)))
+        .populate(appl,
+            new ExcludingMapper(WITH_NULL_BINDINGS,
+                Arrays.asList(application.creationTime, application.metadataVersion)))
         .where(application.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));

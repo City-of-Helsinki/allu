@@ -1,13 +1,18 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.ui.domain.StructureMetaJson;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
+import org.springframework.http.ResponseEntity;
 
 import static org.junit.Assert.assertEquals;
 
@@ -23,6 +28,15 @@ public class MetaServiceTest extends MockServices {
   @Before
   public void setUp() {
     metaService = new MetaService(props, restTemplate);
+    Mockito
+        .when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class),
+            Mockito.any(ApplicationKind.class)))
+        .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
+    Mockito
+        .when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class),
+            Mockito.any(ApplicationKind.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
+
     initSearchMocks();
   }
 

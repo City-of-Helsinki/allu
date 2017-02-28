@@ -1,7 +1,10 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.CableInfoType;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.CableInfoText;
+import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
@@ -173,7 +176,6 @@ public class ApplicationService {
    */
   ApplicationJson createApplication(ApplicationJson newApplication) {
     newApplication.setApplicant(applicantService.createApplicant(newApplication.getApplicant()));
-    newApplication.setMetadata(metaService.findMetadataForApplication(newApplication.getType()));
     List<ContactJson> contacts = newApplication.getContactList();
     setContactApplicant(contacts, newApplication.getApplicant());
     if (newApplication.getApplicationTags() != null) {
@@ -196,7 +198,6 @@ public class ApplicationService {
     applicationJson.setContactList(contactService.setContactsForApplication(applicationJson.getId(), contacts));
     applicationJson.setApplicant(newApplication.getApplicant());
     applicationJson.setLocations(locations);
-    applicationJson.setMetadata(newApplication.getMetadata());
     return applicationJson;
   }
 
@@ -233,7 +234,6 @@ public class ApplicationService {
     resultJson.setContactList(contacts);
     resultJson.setApplicant(applicationJson.getApplicant());
     resultJson.setLocations(locationJsons);
-    resultJson.setMetadata(metaService.findMetadataForApplication(resultJson.getType()));
     return resultJson;
   }
 

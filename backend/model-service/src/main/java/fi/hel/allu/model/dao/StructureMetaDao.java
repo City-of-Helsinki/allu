@@ -1,11 +1,15 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.types.QBean;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -84,10 +89,116 @@ public class StructureMetaDao {
   }
 
   /**
+   * Parse the complete metadata tree for an application type. Recurses into
+   * each STRUCTURE type attribute it can find and puts all their attributes
+   * into the result set, too. All found attributes are returned as a flat list,
+   * so to prevent name clashes, the attribute names consist also of the path
+   * into the attribute, for example "/applicant/postalAddress/streetAddress".
+   *
+   * The recursion can be guided by giving a set of path overrides that can used
+   * to, for example, recurse into "EVENT" while handling the attribute
+   * "/extension", instead of simply going into the statically defined
+   * "ApplicationExtension" type.
+   *
+   *
+   * @param applicationType
+   *          The name of the application type to parse
+   * @param version
+   *          Metadata version to use
+   * @param pathOverrides
+   *          Mapping of attributePath -> typeName to override the static types
+   * @return Structure meta information
+   */
+  @Transactional
+  public Optional<StructureMeta> findCompleteByApplicationType(String applicationType, int version,
+      Map<String, String> typeOverrides) {
+    StructureMeta meta = queryFactory.select(structureMetaBean).from(structureMeta)
+        .where(structureMeta.applicationType.eq(applicationType).and(structureMeta.version.eq(version))).fetchOne();
+    if (meta==null) {
+      return Optional.empty();
+    }
+    List<AttributeMeta> attributes = new ArrayList<>();
+    recurseAttributes(meta.getId(), typeOverrides, "/", version, attributes);
+    meta.setAttributes(attributes);
+    return Optional.of(meta);
+  }
+
+  /**
+   * Get the latest metadata version
+   *
+   * @return Latest metadata version
+   */
+  @Transactional(readOnly = true)
+  public Integer getLatestMetadataVersion() {
+    return queryFactory.select(SQLExpressions.max(structureMeta.version)).from(structureMeta).fetchOne();
+  }
+
+  /**
+   * Parse the complete metadata tree for an application type. Recurses into
+   * each STRUCTURE type attribute it can find and puts all their attributes
+   * into the result set, too. All found attributes are returned as a flat list,
+   * so to prevent name clashes, the attribute names consist also of the path
+   * into the attribute, for example "/applicant/postalAddress/streetAddress".
+   *
+   * The recursion can be guided by giving a set of path overrides that can used
+   * to, for example, recurse into "EVENT" while handling the attribute
+   * "/extension", instead of simply going into the statically defined
+   * "ApplicationExtension" type.
+   *
+   * This version uses the latest available version of the application type.
+   *
+   * @param applicationType
+   *          The name of the application type to parse
+   * @param pathOverrides
+   *          Mapping of attributePath -> typeName to override the static types
+   * @return Structure meta information
+   */
+  @Transactional
+  public Optional<StructureMeta> findCompleteByApplicationType(String applicationType,
+      Map<String, String> typeOverrides) {
+    int latestVersion = queryFactory.select(SQLExpressions.max(structureMeta.version)).from(structureMeta)
+        .where(structureMeta.applicationType.eq(applicationType)).fetchOne();
+    return findCompleteByApplicationType(applicationType, latestVersion, typeOverrides);
+  }
+
+  /*
+   * Recursively fetch all attributes for given structureType. Every attribute
+   * name will be prefixed with given prefix when added into attributeList. If
+   * an attribute type is STRUCTURE, instead of adding it into attributeList,
+   * recursively add all its attributes. In recursion, if the attributes path is
+   * found in typeOverrides, use the corresponding value as the recursion type.
+   */
+  private void recurseAttributes(int structureTypeId, Map<String, String> typeOverrides, String prefix,
+      int metadataVersion, List<AttributeMeta> attributeList) {
+    List<AttributeMeta> attributes = queryFactory.select(attributeMetaBean).from(attributeMeta)
+        .where(attributeMeta.structure.eq(structureTypeId)).fetch();
+    for (AttributeMeta attribute : attributes) {
+      attribute.setName(prefix + attribute.getName());
+      if (attribute.getDataType() != AttributeDataType.STRUCTURE) {
+        attributeList.add(attribute);
+      } else {
+        // Structure, so recurse
+        int childStructureId = attribute.getStructureAttribute();
+        String childStructureName = attribute.getName();
+        if (typeOverrides.containsKey(childStructureName)) {
+          // Type override defined, find its type id
+          String overrideType = typeOverrides.get(attribute.getName());
+          childStructureId = Optional.ofNullable(queryFactory
+              .select(structureMeta.id).from(structureMeta).where(structureMeta.applicationType
+                  .eq(overrideType).and(structureMeta.version.eq(metadataVersion)))
+              .fetchOne()).orElseThrow(() -> new NoSuchEntityException("No metadata for type", overrideType));
+        }
+        recurseAttributes(childStructureId, typeOverrides, childStructureName + "/", metadataVersion, attributeList);
+      }
+    }
+  }
+
+  /**
    * Returns metadata with given id.
    *
-   * @param   id    The id of metadata structure requested.
-   * @return  metadata with given id.
+   * @param id
+   *          The id of metadata structure requested.
+   * @return metadata with given id.
    */
   @Transactional
   public Optional<StructureMeta> findByid(int id) {

@@ -37,6 +37,8 @@ public abstract class MockServices {
   @Mock
   protected RestTemplate restTemplate;
 
+  private static final int METADATA_VERSION = 1;
+
   public void initSaveMocks() {
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Application.class)))
@@ -99,9 +101,6 @@ public abstract class MockServices {
         (String.class)))
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
             createMockApplicationListResponse());
-
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(StructureMeta.class), Mockito.any(ApplicationKind.class)))
-        .thenAnswer((Answer<ResponseEntity<StructureMeta>>) invocation -> createMockStructureMetaResponse());
 
     Mockito.when(restTemplate.postForEntity(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Application[].class)))
@@ -167,7 +166,7 @@ public abstract class MockServices {
     return eventJson;
   }
 
-  public StructureMetaJson createMockStructureMetadataJson() {
+  protected StructureMetaJson createMockStructureMetadataJson() {
     AttributeMetaJson attributeMetaJson = new AttributeMetaJson();
     attributeMetaJson.setName("test_attribute");
     attributeMetaJson.setUiName("test ui name");
@@ -195,7 +194,7 @@ public abstract class MockServices {
     applicationJson.setName("Tapahtuma 1, Json");
     applicationJson.setType(ApplicationType.EVENT);
     applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
-    applicationJson.setMetadata(createMockStructureMetadataJson());
+    applicationJson.setMetadataVersion(METADATA_VERSION);
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setStartTime(ZonedDateTime.now());
     applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
@@ -206,7 +205,6 @@ public abstract class MockServices {
     applicationJson.setLocations(Collections.singletonList(createLocationJson(null)));
     applicationJson.setProject(createProjectJson(null));
     applicationJson.setExtension(createOutdoorEventJson());
-    applicationJson.setMetadata(createMockStructureMetadataJson());
     return applicationJson;
   }
 
@@ -389,7 +387,7 @@ public abstract class MockServices {
     return new ResponseEntity<>(attachmentInfoArray, HttpStatus.OK);
   }
 
-  private ResponseEntity<StructureMeta> createMockStructureMetaResponse() {
+  protected ResponseEntity<StructureMeta> createMockStructureMetaResponse() {
     AttributeMeta attributeMeta = new AttributeMeta();
     attributeMeta.setName("test_attribute");
     StructureMeta structureMeta = new StructureMeta();

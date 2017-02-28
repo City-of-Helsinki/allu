@@ -327,6 +327,14 @@ INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type,
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'creationTime', 'Luontiaika', 'DATETIME', null, null, null);
 
+-----------------------
+-- ApplicationExtension
+-----------------------
+INSERT INTO allu.structure_meta (application_type, version) VALUES ('ApplicationExtension', 1);
+
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'specifiers', 'Tarkenteet', 'LIST', 'STRING', null, null);
+
 --------------
 -- Application
 --------------
@@ -371,7 +379,10 @@ INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type,
             (select id from allu.structure_meta where application_type = 'Contact' and version = 1),
             null);
 -- TODO: location
--- TODO: extension
+INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
+    VALUES (currval('allu.structure_meta_id_seq'), 'extension', 'Hakemuksen laajenne', 'STRUCTURE', null,
+            (select id from allu.structure_meta where application_type = 'ApplicationExtension' and version = 1),
+            null);
 INSERT INTO allu.attribute_meta (structure, name, ui_name, data_type, list_type, structure_attribute, validation_rule)
     VALUES (currval('allu.structure_meta_id_seq'), 'decisionTime', 'Päätöksen aikaleima', 'DATETIME', null, null, null);
 -- TODO: attachmentList

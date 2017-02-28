@@ -204,7 +204,14 @@ public class ApplicationProperties {
    * @return url to request metadata from model service.
    */
   public String getMetadataUrl() {
-    return getModelServiceUrl("/meta/{applicationType}");
+    return getModelServiceUrl("/meta/r/{applicationType}");
+  }
+
+  /**
+   * @return url to request metadata from model service.
+   */
+  public String getMetadataVersionedUrl() {
+    return getModelServiceUrl("/meta/r/{applicationType}/{version}");
   }
 
   /**

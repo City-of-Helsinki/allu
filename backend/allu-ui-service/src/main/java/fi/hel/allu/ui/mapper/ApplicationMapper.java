@@ -51,7 +51,7 @@ public class ApplicationMapper {
       applicationDomain.setApplicationTags(applicationJson.getApplicationTags().stream()
           .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime())).collect(Collectors.toList()));
     }
-    applicationDomain.setMetadataVersion(applicationJson.getMetadata().getVersion());
+    applicationDomain.setMetadataVersion(applicationJson.getMetadataVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
     applicationDomain.setDecisionTime(applicationJson.getDecisionTime());
     if (applicationJson.getExtension() != null) {
@@ -113,6 +113,7 @@ public class ApplicationMapper {
       applicationJson.setApplicationTags(application.getApplicationTags().stream()
           .map(t -> new ApplicationTagJson(t.getAddedBy(), t.getType(), t.getCreationTime())).collect(Collectors.toList()));
     }
+    applicationJson.setMetadataVersion(application.getMetadataVersion());
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setStartTime(application.getStartTime());
     applicationJson.setEndTime(application.getEndTime());

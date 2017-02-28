@@ -50,7 +50,7 @@ public class MetaService {
    */
   public StructureMetaJson findMetadataForApplication(ApplicationType applicationType, int version) {
     ResponseEntity<StructureMeta> structureMetaResult = restTemplate.getForEntity(
-        applicationProperties.getMetadataUrl(), StructureMeta.class, applicationType);
+        applicationProperties.getMetadataVersionedUrl(), StructureMeta.class, applicationType, version);
     return mapStructureMeta(structureMetaResult.getBody());
   }
 

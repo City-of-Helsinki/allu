@@ -28,7 +28,6 @@ public class Application {
   @NotNull
   private ApplicationKind kind;
   private List<ApplicationTag> applicationTags;
-  @NotNull
   private Integer metadataVersion;
   @NotBlank
   private String name;
