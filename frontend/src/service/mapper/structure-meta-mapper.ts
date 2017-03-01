@@ -1,5 +1,5 @@
 import {BackendStructureMeta} from '../backend-model/backend-structure-meta';
-import {StructureMeta} from '../../model/application/structure-meta';
+import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {AttributeMetaMapper} from './attribute-meta-mapper';
 
 export class StructureMetaMapper {

@@ -17,7 +17,9 @@ export const PICKADATE_PARAMETERS = [
 
 export const MIN_DATE: Date = new Date(0);
 export const MAX_DATE: Date = new Date('2099-12-31T23:59:59');
-export const UI_DATE_FORMAT: string = 'dd.MM.yyyy';
+export const UI_DATE_FORMAT: string = 'DD.MM.YYYY';
+export const UI_DATE_TIME_FORMAT: string = 'DD.MM.YYYY HH:mm';
+const HISTORY_DATE__TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 
 /**
  * Helpers for time related UI functionality.
@@ -28,7 +30,7 @@ export class TimeUtil {
   }
 
   public static getUiDateTimeString(time: Date): string {
-    return time ? momentLib(time).format('DD.MM.YYYY HH:mm').toString() : undefined;
+    return time ? momentLib(time).format(UI_DATE_TIME_FORMAT).toString() : undefined;
   }
 
   public static getDateFromUi(dateString: string): Date {
@@ -37,6 +39,10 @@ export class TimeUtil {
 
   public static dateFromBackend(dateString: string): Date {
     return dateString ? momentLib(dateString).toDate() : undefined;
+  }
+
+  public static formatHistoryDateTimeString(dateTime: string): string {
+    return dateTime ? momentLib(dateTime, HISTORY_DATE__TIME_FORMAT).format(UI_DATE_FORMAT).toString() : undefined;
   }
 
   /**

@@ -332,6 +332,10 @@ export const translations = {
     field: {
       emailInvalid: 'Virheellinen sähköpostiosoite',
       postalCode: 'Virheellinen postinumero'
+    },
+    boolean: {
+      'true': 'Kyllä',
+      'false': 'Ei'
     }
   },
   map: {

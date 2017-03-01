@@ -2,7 +2,7 @@ import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import moment = require('moment/moment');
 
-import {StructureMeta} from '../../../../../model/application/structure-meta';
+import {StructureMeta} from '../../../../../model/application/meta/structure-meta';
 import {ApplicationHub} from '../../../../../service/application/application-hub';
 import {Event} from '../../../../../model/application/event/event';
 import {EventDetailsForm} from './event-details.form';

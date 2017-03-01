@@ -8,6 +8,8 @@ import {ApplicationChange} from '../../../model/application/application-change/a
 import {UserHub} from '../../../service/user/user-hub';
 import {User} from '../../../model/common/user';
 import {ApplicationHistoryDetailsComponent} from './application-history-details.component';
+import {ApplicationHub} from '../../../service/application/application-hub';
+import {StructureMeta} from '../../../model/application/meta/structure-meta';
 
 @Component({
   selector: 'application-history',
@@ -18,15 +20,20 @@ export class ApplicationHistoryComponent implements OnInit {
 
   history: Observable<Array<ApplicationChange>>;
   handlers = new Map<number, User>();
+  meta: StructureMeta;
 
   constructor(private applicationState: ApplicationState,
+              private applicationHub: ApplicationHub,
               private historyHub: HistoryHub,
               private userHub: UserHub,
               private dialog: MdDialog) {}
 
   ngOnInit(): void {
-    this.history = this.historyHub.applicationHistory(this.applicationState.application.id);
-    this.userHub.getActiveUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
+    this.applicationHub.loadMetaData(this.applicationState.application.type).subscribe(meta => {
+      this.meta = meta;
+      this.history = this.historyHub.applicationHistory(this.applicationState.application.id);
+      this.userHub.getActiveUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
+    });
   }
 
   showDetails(change: ApplicationChange) {
@@ -34,5 +41,6 @@ export class ApplicationHistoryComponent implements OnInit {
     let detailsComponent = dialogRef.componentInstance;
     detailsComponent.change = change;
     detailsComponent.user = this.handlers.get(change.userId);
+    detailsComponent.meta = this.meta;
   }
 }

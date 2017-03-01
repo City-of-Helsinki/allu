@@ -2,7 +2,7 @@ import {Applicant} from './applicant';
 import {Contact} from './contact';
 import {Location} from '../common/location';
 import {ApplicationExtension} from './type/application-extension';
-import {StructureMeta} from './structure-meta';
+import {StructureMeta} from './meta/structure-meta';
 import {AttachmentInfo} from './attachment/attachment-info';
 import {TimeUtil} from '../../util/time.util';
 import {User} from '../common/user';

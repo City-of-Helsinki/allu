@@ -2,8 +2,12 @@ import {AttributeMeta} from './attribute-meta';
 export class StructureMeta {
   constructor(public applicationType: string, public version: number, public attributes: Array<AttributeMeta>) {}
 
-  public getUiName(path: string): string {
+  public uiName(path: string): string {
     return this.getPath(this, path).uiName;
+  }
+
+  public dataType(path: string): string {
+    return this.getPath(this, path).dataType;
   }
 
   private getPath(structureMeta: StructureMeta, path: string) {

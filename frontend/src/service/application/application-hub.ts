@@ -7,7 +7,7 @@ import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQu
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationService} from './application.service';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
-import {StructureMeta} from '../../model/application/structure-meta';
+import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {DefaultText} from '../../model/application/cable-report/default-text';
 
 export type ApplicationSearch = ApplicationLocationQuery | number;

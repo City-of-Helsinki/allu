@@ -15,6 +15,7 @@ import {Comment} from '../../model/application/comment/comment';
 import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
+import {ApplicationType} from '../../model/application/type/application-type';
 
 
 @Injectable()

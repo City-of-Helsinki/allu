@@ -16,4 +16,8 @@ export class StringUtil {
   public static isEmpty(s: string): boolean {
     return (!s || s.length === 0);
   }
+
+  public static replaceNull(s: string): string {
+    return !!s ? s.replace('null', '-') : s;
+  }
 }

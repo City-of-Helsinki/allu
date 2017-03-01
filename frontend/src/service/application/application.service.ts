@@ -6,7 +6,7 @@ import {Observable} from 'rxjs/Observable';
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
 import {StructureMetaMapper} from './../mapper/structure-meta-mapper';
-import {StructureMeta} from '../../model/application/structure-meta';
+import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {ApplicationHub} from './application-hub';
 import {ApplicationSearch} from './application-hub';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';

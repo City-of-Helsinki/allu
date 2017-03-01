@@ -18,7 +18,7 @@
                         <span>{{['history.change.type', change.changeType] | translation}}</span>
                         <span *ngIf="change.newStatus">{{['application.status', change.newStatus] | translation}}</span>
                         <span *ngFor="let fieldChange of change.fieldChanges; let last=last">
-                            {{fieldChange.fieldName | commaSeparated: last}}
+                            {{meta.uiName(fieldChange.fieldName) | commaSeparated: last}}
                         </span>
                     </td>
                     <td>{{handlers.get(change.userId)?.realName}}</td>

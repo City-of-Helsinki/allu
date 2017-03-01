@@ -1,0 +1,3 @@
+export enum AttributeDataType {
+  STRING, INTEGER, BOOLEAN, FLOAT, LIST, STRUCTURE, DATETIME, MONEY
+}
