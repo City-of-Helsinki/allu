@@ -17,9 +17,10 @@ export const PICKADATE_PARAMETERS = [
 
 export const MIN_DATE: Date = new Date(0);
 export const MAX_DATE: Date = new Date('2099-12-31T23:59:59');
-export const UI_DATE_FORMAT: string = 'DD.MM.YYYY';
+export const UI_DATE_FORMAT: string = 'dd.MM.yyyy'; // Used by angular date pipe
 export const UI_DATE_TIME_FORMAT: string = 'DD.MM.YYYY HH:mm';
-const HISTORY_DATE__TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
+const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
+const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
 
 /**
  * Helpers for time related UI functionality.
@@ -42,7 +43,7 @@ export class TimeUtil {
   }
 
   public static formatHistoryDateTimeString(dateTime: string): string {
-    return dateTime ? momentLib(dateTime, HISTORY_DATE__TIME_FORMAT).format(UI_DATE_FORMAT).toString() : undefined;
+    return dateTime ? momentLib(dateTime, HISTORY_DATE_TIME_FORMAT).format(HISTORY_DATE_FORMAT).toString() : undefined;
   }
 
   /**
