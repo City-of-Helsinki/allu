@@ -69,8 +69,8 @@ public class ObjectComparerTest {
     Difference cityDiff = diff.stream().filter(d -> d.keyName.equals("/applicant/postalAddress/city")).findFirst()
         .orElse(null);
     assertNotNull(cityDiff);
-    assertEquals("\"Siti\"", cityDiff.oldValue);
-    assertEquals("\"Villits\"", cityDiff.newValue);
+    assertEquals("Siti", cityDiff.oldValue);
+    assertEquals("Villits", cityDiff.newValue);
   }
 
   @Test

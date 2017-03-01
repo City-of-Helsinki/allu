@@ -147,6 +147,9 @@ public class ObjectComparer {
   }
 
   private String stringify(ObjectMapper mapper, JsonNode value) {
+    if (value.isTextual()) {
+      return value.textValue();
+    }
     if (value.isContainerNode())
       return value.toString();
     try {
