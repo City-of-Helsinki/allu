@@ -24,6 +24,7 @@ import {CityDistrict} from '../../../model/common/city-district';
 import {TrafficArrangement} from '../../../model/application/traffic-arrangement/traffic-arrangement';
 import {PlacementContract} from '../../../model/application/placement-contract/placement-contract';
 import {ProgressStep} from '../progressbar/progress-step';
+import {ArrayUtil} from '../../../util/array-util';
 
 @Component({
   selector: 'type',
@@ -172,13 +173,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   private loadFixedLocationsForKind(kind: ApplicationKind): void {
     this.mapHub.fixedLocations()
-      .subscribe(fl => {
-        this.areas = fl
+      .subscribe(fixedLocations => {
+        this.areas = fixedLocations
           .filter(f => f.applicationKind === kind)
           .map(entry => entry.area)
-          .filter((v, i, a) => a.indexOf(v) === i); // unique area names
+          .filter((v, i, a) => a.indexOf(v) === i) // unique area names
+          .sort(ArrayUtil.naturalSort((area: string) => area));
 
-        this.fixedLocations = fl.filter(f => f.applicationKind === kind);
+        this.fixedLocations = fixedLocations.filter(f => f.applicationKind === kind);
         this.sections = [];
 
         this.setSelections();

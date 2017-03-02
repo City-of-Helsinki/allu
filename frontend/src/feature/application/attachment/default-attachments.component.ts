@@ -7,6 +7,7 @@ import {DefaultAttachmentInfo} from '../../../model/application/attachment/defau
 import {SelectionEvent} from '../../common/selection-group/selection-event.service';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
+import {ArrayUtil} from '../../../util/array-util';
 
 @Component({
   selector: 'default-attachments',
@@ -25,6 +26,7 @@ export class DefaultAttachmentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.attachmentHub.defaultAttachmentInfosBy(ApplicationType[this.applicationType], AttachmentType[this.attachmentType])
+      .map(das => das.sort(ArrayUtil.naturalSort((item: DefaultAttachmentInfo) => item.name)))
       .subscribe(das => this.defaultAttachments = das);
   }
 
