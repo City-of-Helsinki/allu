@@ -1,3 +1,8 @@
 /typings
 /reports
 webpack.local.js
+/src/feature/**/*.js
+/src/model/**/*.js
+/src/pipe/**/*.js
+/src/service/**/*.js
+/src/util/**/*.js
