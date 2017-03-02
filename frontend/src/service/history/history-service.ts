@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 
-import {HttpResponse, HttpUtil} from '../../util/http.util';
 import {ApplicationChange} from '../../model/application/application-change/application-change';
 import {ApplicationChangeMapper} from '../mapper/application-change-mapper';
 

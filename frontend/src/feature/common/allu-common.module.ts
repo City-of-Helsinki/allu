@@ -12,6 +12,7 @@ import {
   MdCheckboxModule
 } from '@angular/material';
 import 'materialize-css';
+import 'angular2-materialize';
 import {MaterializeModule} from 'angular2-materialize';
 
 import {AutoCompletionDirective} from './auto-completion/auto-completion.directive';

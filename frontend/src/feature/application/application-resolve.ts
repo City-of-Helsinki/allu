@@ -24,6 +24,9 @@ export class ApplicationResolve implements Resolve<Application> {
   }
 
   private loadComments(id: number) {
-    this.applicationState.loadComments(id).subscribe(comments => {});
+    this.applicationState.loadComments(id).subscribe(
+      comments => {},
+      err => console.error('Failed to load comments for application', id, '.')
+    );
   }
 }

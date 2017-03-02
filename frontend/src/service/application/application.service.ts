@@ -1,5 +1,4 @@
 import {Injectable} from '@angular/core';
-import {URLSearchParams} from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {Observable} from 'rxjs/Observable';
 
@@ -7,37 +6,18 @@ import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
 import {StructureMetaMapper} from './../mapper/structure-meta-mapper';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
-import {ApplicationHub} from './application-hub';
-import {ApplicationSearch} from './application-hub';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {ApplicationLocationQueryMapper} from './../mapper/application-location-query-mapper';
 import {UIStateHub} from './../ui-state/ui-state-hub';
-import {HttpUtil, HttpStatus} from '../../util/http.util.ts';
+import {HttpUtil} from '../../util/http.util';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
-import {translations} from '../../util/translations';
 import {ErrorInfo} from './../ui-state/error-info';
 import {ErrorType} from '../ui-state/error-type';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
 import {DefaultText} from '../../model/application/cable-report/default-text';
-import {CableInfoType} from '../../model/application/cable-report/cable-info-type';
-
-const defaultTexts = {
-  TELECOMMUNICATION: ['TELECOMMUNICATION1', 'TELECOMMUNICATION2', 'TELECOMMUNICATION3'],
-  ELECTRICITY: ['ELECTRICITY1', 'ELECTRICITY2', 'ELECTRICITY3'],
-  WATER_AND_SEWAGE: ['WATER_AND_SEWAGE1', 'WATER_AND_SEWAGE2'],
-  DISTRICT_HEATING_COOLING: ['DISTRICT_HEATING_COOLING1'],
-  GAS: ['GAS1', 'GAS2', 'GAS3'],
-  UNDERGROUND_STRUCTURE: ['UNDERGROUND_STRUCTURE1'],
-  TRAMWAY: ['TRAMWAY1'],
-  STREET_HEATING: ['STREET_HEATING1'],
-  SEWAGE_PIPE: ['SEWAGE_PIPE1'],
-  GEOTHERMAL_WELL: ['GEOTHERMAL_WELL1'],
-  GEOTECHNICAL_OBSERVATION_POST: ['GEOTECHNICAL_OBSERVATION_POST1'],
-  OTHER: ['OTHER1']
-};
-
+import {HttpStatus} from '../../util/http-response';
 
 @Injectable()
 export class ApplicationService {

@@ -7,9 +7,9 @@ export class Comment {
     id: number,
     type: string,
     text: string,
-    createTime: Date,
-    updateTime: Date,
-    user: User
+    createTime?: Date,
+    updateTime?: Date,
+    user?: User
   )
   constructor(
     public id?: number,

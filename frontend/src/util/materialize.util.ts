@@ -1,8 +1,5 @@
 import {toast as materializeToast} from 'angular2-materialize';
 
-declare var Materialize: any;
-declare var $: any;
-
 const defaultToastTime = 4000;
 
 export class MaterializeUtil {

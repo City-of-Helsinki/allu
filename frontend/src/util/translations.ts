@@ -455,6 +455,11 @@ export const translations = {
       INVOICING: 'Laskutuksen kommentti',
       RETURN: 'Valmisteluun palauttajan kommentti',
       REJECT: 'Hylkääjän kommentti'
+    },
+    error: {
+      fetch: 'Kommenttien hakeminen epäonnistui',
+      save: 'Kommentin tallentaminen epäonnistui',
+      remove: 'Kommentin poistaminen epäonnistui'
     }
   },
   workqueue: {

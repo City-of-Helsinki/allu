@@ -30,6 +30,7 @@ import {ProjectModule} from '../project/project.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
 import {ApplicationState} from '../../service/application/application-state';
 import {Oauth2Component} from '../oauth2/oauth2.component';
+import {ErrorHandler} from '../../service/error/error-handler.service';
 
 
 @NgModule({
@@ -68,6 +69,7 @@ import {Oauth2Component} from '../oauth2/oauth2.component';
     UIStateHub,
     AuthGuard,
     ApplicationState,
+    ErrorHandler,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({

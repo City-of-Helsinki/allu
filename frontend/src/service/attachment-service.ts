@@ -4,12 +4,13 @@ import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {FileUploader} from 'ng2-file-upload';
 import {AttachmentInfo} from '../model/application/attachment/attachment-info';
-import {HttpUtil, HttpResponse} from '../util/http.util';
+import {HttpUtil} from '../util/http.util';
 import {ResponseContentType} from '@angular/http';
 import {AttachmentInfoMapper} from './mapper/attachment-info-mapper';
 import {DefaultAttachmentInfo} from '../model/application/attachment/default-attachment-info';
 import {DefaultAttachmentInfoMapper} from './mapper/default-attachment-info-mapper';
 import {ApplicationType} from '../model/application/type/application-type';
+import {HttpResponse} from '../util/http-response';
 
 const uploadUrl = '/api/applications/appId/attachments';
 const downloadUrl = '/api/applications/attachments/:attachmentId/data';

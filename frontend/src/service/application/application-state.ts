@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-
 import {ApplicationHub} from './application-hub';
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
@@ -10,13 +9,11 @@ import {AttachmentInfo} from '../../model/application/attachment/attachment-info
 import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {HttpResponse, HttpStatus} from '../../util/http.util';
 import {Comment} from '../../model/application/comment/comment';
 import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
-import {ApplicationType} from '../../model/application/type/application-type';
-
+import {HttpResponse, HttpStatus} from '../../util/http-response';
 
 @Injectable()
 export class ApplicationState {

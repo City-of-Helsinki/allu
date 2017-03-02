@@ -63,7 +63,7 @@
     "ng2-file-upload": "1.1.4-2",
     "file-saver": "1.3.2",
     "ng2-select": "1.0.3",
-    "angular2-jwt": "0.1.23",
+    "angular2-jwt": "0.1.28",
     "materialize-css": "0.98.0",
     "angular2-materialize": "6.0.1",
     "es-module-loader": "1.3.4",

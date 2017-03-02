@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {CommentHub} from '../../../service/application/comment/comment-hub';
 import {Comment} from '../../../model/application/comment/comment';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 @Component({
   selector: 'comments-modal',
@@ -20,7 +21,11 @@ export class CommentsModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.comments = this.commentHub.getComments(this.applicationId);
+    this.comments = this.commentHub.getComments(this.applicationId)
+      .catch(err => {
+        NotificationService.error(err);
+        return Observable.empty();
+      });
   }
 
   close() {

@@ -1,12 +1,9 @@
 import {Injectable} from '@angular/core';
-import {URLSearchParams} from '@angular/http';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {Observable} from 'rxjs/Observable';
 import '../../rxjs-extensions.ts';
 
 import {Project} from '../../model/project/project';
-import {HttpResponse} from '../../util/http.util';
-import {HttpStatus} from '../../util/http.util';
 import {ProjectMapper} from '../mapper/project-mapper';
 import {UIStateHub} from '../ui-state/ui-state-hub';
 import {HttpUtil} from '../../util/http.util';
@@ -16,6 +13,7 @@ import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
 import {ProjectSearchQuery} from '../../model/project/project-search-query';
 import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
+import {HttpResponse, HttpStatus} from '../../util/http-response';
 
 @Injectable()
 export class ProjectService {

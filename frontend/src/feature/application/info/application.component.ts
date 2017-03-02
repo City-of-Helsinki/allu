@@ -37,7 +37,10 @@ export class ApplicationComponent implements OnInit {
       this.readonly = summary;
 
       this.progressStep = stepFrom(ApplicationStatus[this.application.status], summary);
-      this.sidebar(summary).subscribe(items => this.sidebarItems = items);
+      this.sidebar(summary).subscribe(
+        items => this.sidebarItems = items,
+        err => console.log('Failed to load sidebar statistics')
+      );
     });
   }
 
