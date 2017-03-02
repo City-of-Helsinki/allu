@@ -1,6 +1,6 @@
 package fi.hel.allu.model.dao;
 
-import fi.hel.allu.common.types.CableInfoType;
+import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.testUtils.TestCommon;
@@ -32,36 +32,36 @@ public class CableInfoDaoTest {
 
   @Test
   public void testCreateCableInfoText() {
-    CableInfoText result = cableInfoDao.createCableInfoText(CableInfoType.GAS, "Gasoline is good");
-    assertEquals(CableInfoType.GAS, result.getCableInfoType());
+    CableInfoText result = cableInfoDao.createCableInfoText(DefaultTextType.GAS, "Gasoline is good");
+    assertEquals(DefaultTextType.GAS, result.getCableInfoType());
     assertEquals("Gasoline is good", result.getTextValue());
   }
 
   @Test
   public void testUpdateCableInfoText() {
-    CableInfoText original = cableInfoDao.createCableInfoText(CableInfoType.TRAMWAY, "Raitsikka!");
+    CableInfoText original = cableInfoDao.createCableInfoText(DefaultTextType.TRAMWAY, "Raitsikka!");
     CableInfoText updated = cableInfoDao.updateCableInfoText(original.getId(), "Spåra");
-    assertEquals(CableInfoType.TRAMWAY, updated.getCableInfoType());
+    assertEquals(DefaultTextType.TRAMWAY, updated.getCableInfoType());
     assertEquals("Spåra", updated.getTextValue());
   }
 
   @Test
   public void testGetCableInfoTexts() throws SQLException {
     testCommon.deleteAllData();
-    cableInfoDao.createCableInfoText(CableInfoType.GAS, "Kaasua, komisario Palmu!");
-    cableInfoDao.createCableInfoText(CableInfoType.ELECTRICITY, "Iskee kuin miljoona volttia");
-    cableInfoDao.createCableInfoText(CableInfoType.STREET_HEATING, "Katu kuuma kaupungin");
+    cableInfoDao.createCableInfoText(DefaultTextType.GAS, "Kaasua, komisario Palmu!");
+    cableInfoDao.createCableInfoText(DefaultTextType.ELECTRICITY, "Iskee kuin miljoona volttia");
+    cableInfoDao.createCableInfoText(DefaultTextType.STREET_HEATING, "Katu kuuma kaupungin");
     List<CableInfoText> texts = cableInfoDao.getCableInfoTexts();
     assertEquals(3, texts.size());
-    assertEquals(1, texts.stream().filter(ci -> ci.getCableInfoType() == CableInfoType.GAS).count());
+    assertEquals(1, texts.stream().filter(ci -> ci.getCableInfoType() == DefaultTextType.GAS).count());
     assertEquals(1, texts.stream().filter(ci -> ci.getTextValue().startsWith("Kaasua")).count());
   }
 
   @Test
   public void testDeleteCableInfoText() {
-    cableInfoDao.createCableInfoText(CableInfoType.SEWAGE_PIPE, "Viemäri");
-    cableInfoDao.createCableInfoText(CableInfoType.TELECOMMUNICATION, "Puhelinlanka");
-    cableInfoDao.createCableInfoText(CableInfoType.OTHER, "Joku ihan muu");
+    cableInfoDao.createCableInfoText(DefaultTextType.SEWAGE_PIPE, "Viemäri");
+    cableInfoDao.createCableInfoText(DefaultTextType.TELECOMMUNICATION, "Puhelinlanka");
+    cableInfoDao.createCableInfoText(DefaultTextType.OTHER, "Joku ihan muu");
     List<CableInfoText> texts = cableInfoDao.getCableInfoTexts();
     int deleteId = texts.stream().filter(ci -> ci.getTextValue().equals("Viemäri")).findAny().get().getId();
     cableInfoDao.deleteCableInfoText(deleteId);

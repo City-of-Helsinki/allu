@@ -1,6 +1,7 @@
 package fi.hel.allu.common.types;
 
-public enum CableInfoType {
+public enum DefaultTextType {
+  // cable reports - johtoselvitykset
   TELECOMMUNICATION, // Tietoliikenne
   ELECTRICITY, // Sähkö
   WATER_AND_SEWAGE, // Vesi ja viemäri

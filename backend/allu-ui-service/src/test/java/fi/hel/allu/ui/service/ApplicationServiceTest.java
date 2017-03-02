@@ -2,7 +2,7 @@ package fi.hel.allu.ui.service;
 
 
 import fi.hel.allu.common.types.ApplicationTagType;
-import fi.hel.allu.common.types.CableInfoType;
+import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.InvoiceRow;
@@ -262,7 +262,7 @@ public class ApplicationServiceTest extends MockServices {
     Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.any(CableInfoText.class),
         Mockito.eq(CableInfoText.class))).then(invocation -> createMockCableInfoText());
 
-    CableInfoText result = applicationService.createCableInfoText(CableInfoType.TRAMWAY, "Raitiovaunu");
+    CableInfoText result = applicationService.createCableInfoText(DefaultTextType.TRAMWAY, "Raitiovaunu");
 
     assertEquals("Qwertyuiopå", result.getTextValue());
   }
@@ -300,7 +300,7 @@ public class ApplicationServiceTest extends MockServices {
 
   private Object createMockCableInfoText() {
     CableInfoText cit = new CableInfoText();
-    cit.setCableInfoType(CableInfoType.OTHER);
+    cit.setCableInfoType(DefaultTextType.OTHER);
     ;
     cit.setTextValue("Qwertyuiopå");
     return new ResponseEntity<>(cit, HttpStatus.OK);
@@ -309,7 +309,7 @@ public class ApplicationServiceTest extends MockServices {
   private Object createMockCableInfoTexts() {
     CableInfoText cit = new CableInfoText();
     cit.setId(1);
-    cit.setCableInfoType(CableInfoType.ELECTRICITY);
+    cit.setCableInfoType(DefaultTextType.ELECTRICITY);
     cit.setTextValue("Sähköjohto");
     return new ResponseEntity<>(new CableInfoText[] { cit }, HttpStatus.OK);
   }

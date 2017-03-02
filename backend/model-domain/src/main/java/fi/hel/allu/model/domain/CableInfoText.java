@@ -1,10 +1,10 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.types.CableInfoType;
+import fi.hel.allu.common.types.DefaultTextType;
 
 public class CableInfoText {
   private Integer id;
-  private CableInfoType cableInfoType;
+  private DefaultTextType cableInfoType;
   private String textValue;
 
   public Integer getId() {
@@ -15,12 +15,12 @@ public class CableInfoText {
     this.id = id;
   }
 
-  public CableInfoType getCableInfoType() {
+  public DefaultTextType getCableInfoType() {
     return cableInfoType;
   }
 
-  public void setCableInfoType(CableInfoType cableInfoType) {
-    this.cableInfoType = cableInfoType;
+  public void setCableInfoType(DefaultTextType defaultTextType) {
+    this.cableInfoType = defaultTextType;
   }
 
   public String getTextValue() {

@@ -48,7 +48,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToApplicationExtension());
     configuration.register(new StringToAttributeDataType());
     configuration.register(new StringToStatusType());
-    configuration.register(new StringToCableInfoType());
+    configuration.register(new StringToDefaultTextType());
     configuration.register(new StringToInvoiceUnit());
     configuration.register(new StringToAttachmentType());
     configuration.register(new StringToApplicationTagType());

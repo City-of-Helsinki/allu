@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.CableInfoType;
+import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.CableInfoText;
@@ -210,7 +210,7 @@ public class ApplicationServiceComposer {
    *          the text
    * @return the resulting CableInfoText entry
    */
-  public CableInfoText createCableInfoText(CableInfoType type, String text) {
+  public CableInfoText createCableInfoText(DefaultTextType type, String text) {
     return applicationService.createCableInfoText(type, text);
   }
 

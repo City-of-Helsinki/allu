@@ -465,6 +465,7 @@ public class ApplicationProperties {
     return getModelServiceUrl("/projects/update");
   }
 
+  // TODO: remove cable info entries
   /**
    * @return url for retrieving the cable info standard texts.
    */
@@ -492,6 +493,42 @@ public class ApplicationProperties {
   public String getCableInfoTextDeleteUrl() {
     return getModelServiceUrl("/applications/cable-info/texts/{id}");
   }
+
+  /**
+   * @return url for retrieving the default texts for given application type.
+   */
+  public String getDefaultTextListUrl() {
+    return getModelServiceUrl("/defaulttext/applicationtype/{applicationType}");
+  }
+
+  /**
+   * @return url for retrieving the default text by id.
+   */
+  public String getDefaultTextByIdUrl() {
+    return getModelServiceUrl("/defaulttext/{id}");
+  }
+
+  /**
+   * @return url for adding default text.
+   */
+  public String getDefaultTextAddUrl() {
+    return getModelServiceUrl("/defaulttext");
+  }
+
+  /**
+   * @return url for updating default text.
+   */
+  public String getDefaultTextUpdateUrl() {
+    return getModelServiceUrl("/defaulttext/{id}");
+  }
+
+  /**
+   * @return url for deleting default text.
+   */
+  public String getDefaultTextDeleteUrl() {
+    return getModelServiceUrl("/defaulttext/{id}");
+  }
+
 
   /**
    * @return url for getting the invoice rows for an application

@@ -215,6 +215,12 @@ create table allu.cable_info_text (
     cable_info_type text not null,
     text_value text not null );
 
+create table allu.default_text (
+    id serial primary key,
+    application_type text not null,
+    text_type text not null,
+    text_value text not null );
+
 create table allu.application_comment (
     id serial primary key,
     application_id integer references allu.application(id) not null,
@@ -330,6 +336,47 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'EVENT');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'SHORT_TERM_RENTAL');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'NOTE');
+
+insert into allu.default_text (application_type, text_type, text_value) values
+  ('CABLE_REPORT', 'ELECTRICITY', 'Sijainti johtokartalla epävarma.'),
+  ('CABLE_REPORT', 'ELECTRICITY', 'Kohteessa 10, 20, 30kV kaapeli.'),
+  ('CABLE_REPORT', 'ELECTRICITY', 'Kohteessa suurjännitekaapeli 110kV.'),
+  ('CABLE_REPORT', 'ELECTRICITY', 'Tilattava näyttö. puh. 040 763 6626'),
+  ('CABLE_REPORT', 'ELECTRICITY', 'Sijainti johtokartalla osittain epävarma.'),
+  ('CABLE_REPORT', 'ELECTRICITY', 'Kartassa saattaa esiintyä puutteita, otettava yhteys näyttäjään puh. 040 763 6626'),
+  ('CABLE_REPORT', 'ELECTRICITY', 'Otettava yhteys liikennevalo-ohjauskeskukseen. Päivystys puh: 310 37975 ksv.liikenteenohjaus@hel.fi'),
+  ('CABLE_REPORT', 'ELECTRICITY', 'Poliisin päivystys: Ark. 6-23 Su. 7-23 Puh: 310 37555'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Sijainti johtokartalla epävarma.'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Sijainti johtokartalla osittain epävarma.'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Tilattava näyttö.'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Johtotieto Oy 0800 12 600'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Relacom 0800 133 544'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Otettava yhteys Johtotieto Oy: puh. 0800 12600 !'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Otettava yhteys Johtotieto Oy: puh. 0800 12600 ! (Elisa)'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Otettava yhteys Johtotieto Oy: puh. 0800 12600 ! (TeliaSonera)'),
+  ('CABLE_REPORT', 'TELECOMMUNICATION', 'Otettava yhteys Johtotieto Oy: puh. 0800 12600 ! (DNA)'),
+  ('CABLE_REPORT', 'WATER_AND_SEWAGE', 'Sijainti johtokartalla epävarma.'),
+  ('CABLE_REPORT', 'WATER_AND_SEWAGE', 'Sijainti johtokartalla osittain epävarma.'),
+  ('CABLE_REPORT', 'WATER_AND_SEWAGE', 'Tilattava näyttö.'),
+  ('CABLE_REPORT', 'DISTRICT_HEATING_COOLING', 'Sijainti johtokartalla epävarma.'),
+  ('CABLE_REPORT', 'DISTRICT_HEATING_COOLING', 'Sijainti johtokartalla osittain epävarma.'),
+  ('CABLE_REPORT', 'DISTRICT_HEATING_COOLING', 'Tilattava näyttö.'),
+  ('CABLE_REPORT', 'GAS', 'Otettava yhteyttä Aurora Kaasunjakelu Oy ennen työn aloittamista. Puh. 0800 122 722.'),
+  ('CABLE_REPORT', 'GAS', 'Otettava yhteyttä Gasum Oy:hyn ennen työn aloittamista. Puh. 0800 122 722'),
+  ('CABLE_REPORT', 'GAS', 'Sijainti johtokartalla epävarma.'),
+  ('CABLE_REPORT', 'GAS', 'Sijainti johtokartalla osittain epävarma.'),
+  ('CABLE_REPORT', 'UNDERGROUND_STRUCTURE', ' Sijainti kartalla epävarma.'),
+  ('CABLE_REPORT', 'UNDERGROUND_STRUCTURE', 'Maanalaisen yleiskaavaluonnoksen mukainen varaus.'),
+  ('CABLE_REPORT', 'UNDERGROUND_STRUCTURE', 'Porakaivon etäisyys tunnelista tulee olla vähintään 20m.'),
+  ('CABLE_REPORT', 'UNDERGROUND_STRUCTURE', 'Selvitettävä kiinteistön omat maanalaiset tilat esim. isännöitsijältä'),
+  ('CABLE_REPORT', 'UNDERGROUND_STRUCTURE', 'Korkotiedot liitteenä.'),
+  ('CABLE_REPORT', 'TRAMWAY', 'Työskenneltäessä 2m lähempänä kiskoja tai ajojohtimia otettava yhteys HKL:ään. Puh: 310 35413'),
+  ('CABLE_REPORT', 'SEWAGE_PIPE', 'Ota tarvittaessa yhteyttä: Caverion Oy puh: 010 4079780 kiinteistovalvomo@caverion.fi'),
+  ('CABLE_REPORT', 'GEOTECHNICAL_OBSERVATION_POST', 'Geoteknisen osaston pysyvä tarkkailupiste.'),
+  ('CABLE_REPORT', 'OTHER', 'Nykyiset ja entiset VR:n alueet: Otettava aina yhteys Liikennevirastoon ja Eltel Networks Oy:n näyttäjään puh. 040 311 4459'),
+  ('CABLE_REPORT', 'OTHER', 'Liitosalueella vesihuolto näytöt tekee Johtotieto Oy. puh. 044 587 1114.'),
+  ('CABLE_REPORT', 'OTHER', 'Liitosalueella sähköverkon näytöt tekee Kaivulupa.fi. puh. 0800 133 544'),
+  ('CABLE_REPORT', 'OTHER', 'Kiinteistön alueella sijaitsevissa johdoissa puutteita.');
 
 insert into allu.cable_info_text (cable_info_type, text_value) values
   ('ELECTRICITY', 'Sijainti johtokartalla epävarma.'),

@@ -269,9 +269,20 @@
                             <type>fi.hel.allu.model.querydsl.StringToAttributeDataType</type>
                         </typeMapping>
                         <typeMapping>
+                            <!-- TODO: remove when cable info is removed -->
                             <table>cable_info_text</table>
                             <column>cable_info_type</column>
-                            <type>fi.hel.allu.model.querydsl.StringToCableInfoType</type>
+                            <type>fi.hel.allu.model.querydsl.StringToDefaultTextType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>default_text</table>
+                            <column>application_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>default_text</table>
+                            <column>text_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToDefaultTextType</type>
                         </typeMapping>
                         <typeMapping>
                             <table>invoice_row</table>

@@ -4,7 +4,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.CableInfoType;
+import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.model.domain.CableInfoText;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,10 +61,13 @@ public class CableInfoDao {
    * @return the resulting CableInfoText entry
    */
   @Transactional
-  public CableInfoText createCableInfoText(CableInfoType type, String text) {
+  public CableInfoText createCableInfoText(DefaultTextType type, String text) {
     int id = queryFactory.insert(cableInfoText).set(cableInfoText.cableInfoType, type)
         .set(cableInfoText.textValue, text)
         .executeWithKey(cableInfoText.id);
+
+    System.out.println("SQL!!!!!: " + queryFactory.insert(cableInfoText).set(cableInfoText.cableInfoType, type)
+        .set(cableInfoText.textValue, text).getSQL().get(0).getSQL());
     return getCableInfoText(id);
   }
 
