@@ -175,7 +175,7 @@ public abstract class MockServices {
     attributeMetaJson.setDataType(AttributeDataType.STRING);
     StructureMetaJson structureMetaJson = new StructureMetaJson();
     structureMetaJson.setVersion(1);
-    structureMetaJson.setApplicationType(ApplicationKind.OUTDOOREVENT.toString());
+    structureMetaJson.setTypeName(ApplicationKind.OUTDOOREVENT.toString());
     structureMetaJson.setAttributes(Collections.singletonList(attributeMetaJson));
     return structureMetaJson;
   }
@@ -393,7 +393,7 @@ public abstract class MockServices {
     AttributeMeta attributeMeta = new AttributeMeta();
     attributeMeta.setName("test_attribute");
     StructureMeta structureMeta = new StructureMeta();
-    structureMeta.setApplicationType("Event");
+    structureMeta.setTypeName("Event");
     structureMeta.setVersion(1);
     structureMeta.setAttributes(Collections.singletonList(attributeMeta));
     return new ResponseEntity<>(structureMeta, HttpStatus.OK);

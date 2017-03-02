@@ -29,24 +29,6 @@ public class MetaController {
   private static final String EXTENSION = "/extension";
 
   @RequestMapping(value = "/{applicationType}", method = RequestMethod.GET)
-  public ResponseEntity<StructureMeta> findById(@PathVariable String applicationType) {
-    Optional<StructureMeta> structureMetaOpt = structureMetaDao.findByApplicationType(applicationType);
-    StructureMeta structureMeta = structureMetaOpt
-        .orElseThrow(() -> new NoSuchEntityException("Metadata not found for application type", applicationType));
-    return new ResponseEntity<>(structureMeta, HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{applicationType}/{version}", method = RequestMethod.GET)
-  public ResponseEntity<StructureMeta> findById(
-      @PathVariable String applicationType,
-      @PathVariable int version) {
-    Optional<StructureMeta> structureMetaOpt = structureMetaDao.findByApplicationType(applicationType, version);
-    StructureMeta structureMeta = structureMetaOpt
-        .orElseThrow(() -> new NoSuchEntityException("Metadata not found for application type", applicationType));
-    return new ResponseEntity<>(structureMeta, HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/r/{applicationType}", method = RequestMethod.GET)
   public ResponseEntity<StructureMeta> findByIdRecurse(@PathVariable String applicationType) {
     Optional<StructureMeta> structureMetaOpt = structureMetaDao.findCompleteByApplicationType(APPLICATION,
         Collections.singletonMap(EXTENSION, applicationType));
@@ -55,7 +37,7 @@ public class MetaController {
     return new ResponseEntity<>(structureMeta, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/r/{applicationType}/{version}", method = RequestMethod.GET)
+  @RequestMapping(value = "/{applicationType}/{version}", method = RequestMethod.GET)
   public ResponseEntity<StructureMeta> findByIdRecurse(@PathVariable String applicationType,
       @PathVariable int version) {
     Optional<StructureMeta> structureMetaOpt = structureMetaDao.findCompleteByApplicationType(APPLICATION, version,

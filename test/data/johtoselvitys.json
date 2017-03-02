@@ -112,10 +112,5 @@
       }
     }
   ],
-  "name": "Johtoselvitys",
-  "metadata": {
-    "applicationType": "CABLE_REPORT",
-    "attributes": [],
-    "version": 1
-  }
+  "name": "Johtoselvitys"
 }

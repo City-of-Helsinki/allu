@@ -5,6 +5,4 @@ export interface BackendAttributeMeta {
   uiName: string;
   dataType: string;
   listType: string;
-  structureMeta: BackendStructureMeta;
-  validationRule: string;
 }

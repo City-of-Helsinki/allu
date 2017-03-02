@@ -8,12 +8,8 @@ export class AttributeMetaMapper {
     let mappedAttributes: Array<AttributeMeta> = [];
 
     for (let attribute of backendAttributeMetas) {
-      let structureMeta: StructureMeta = undefined;
-      if (attribute.structureMeta) {
-        structureMeta = StructureMetaMapper.mapBackend(attribute.structureMeta);
-      }
       mappedAttributes.push(new AttributeMeta(
-        attribute.name, attribute.uiName, attribute.dataType, attribute.listType, structureMeta, attribute.validationRule));
+        attribute.name, attribute.uiName, attribute.dataType, attribute.listType));
     }
     return mappedAttributes;
   }

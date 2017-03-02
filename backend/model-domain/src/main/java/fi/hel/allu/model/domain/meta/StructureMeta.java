@@ -7,7 +7,7 @@ import java.util.List;
  */
 public class StructureMeta {
   private int id;
-  private String applicationType;
+  private String typeName;
   private int version;
   private List<AttributeMeta> attributes;
 
@@ -25,16 +25,16 @@ public class StructureMeta {
   }
 
   /**
-   * Returns the type of the application. For example Event.
+   * Returns the type name for the structure. For example "Application".
    *
-   * @return  the type of the application.
+   * @return the type of the application.
    */
-  public String getApplicationType() {
-    return applicationType;
+  public String getTypeName() {
+    return typeName;
   }
 
-  public void setApplicationType(String applicationType) {
-    this.applicationType = applicationType;
+  public void setTypeName(String typeName) {
+    this.typeName = typeName;
   }
 
   /**
@@ -67,7 +67,7 @@ public class StructureMeta {
   public String toString() {
     return "StructureMeta{" +
         "id=" + id +
-        ", applicationType='" + applicationType + '\'' +
+        ", typeName='" + typeName + '\'' +
         ", version=" + version +
         ", attributes=" + attributes +
         '}';

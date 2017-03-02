@@ -5,7 +5,5 @@ export class AttributeMeta {
     public name: string,
     public uiName: string,
     public dataType: string,
-    public listType: string,
-    public structureMeta: StructureMeta,
-    public validationRule: string) {}
+    public listType: string) {}
 }

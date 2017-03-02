@@ -56,7 +56,7 @@ public class MetaService {
 
   private StructureMetaJson mapStructureMeta(StructureMeta structureMeta) {
     StructureMetaJson structureMetaJson = new StructureMetaJson();
-    structureMetaJson.setApplicationType(structureMeta.getApplicationType());
+    structureMetaJson.setTypeName(structureMeta.getTypeName());
     structureMetaJson.setVersion(structureMeta.getVersion());
     structureMetaJson.setAttributes(structureMeta.getAttributes().stream().map(a -> mapAttribute(a)).collect(Collectors.toList()));
     return structureMetaJson;
@@ -68,12 +68,6 @@ public class MetaService {
     attributeMetaJson.setListType(attribute.getListType());
     attributeMetaJson.setName(attribute.getName());
     attributeMetaJson.setUiName(attribute.getUiName());
-    attributeMetaJson.setValidationRule(attribute.getValidationRule());
-    if (attribute.getStructureMeta() != null) {
-      attributeMetaJson.setStructureMeta(mapStructureMeta(attribute.getStructureMeta()));
-    } else {
-      attributeMetaJson.setStructureMeta(null);
-    }
     return attributeMetaJson;
   }
 }

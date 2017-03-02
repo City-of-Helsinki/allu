@@ -11,8 +11,6 @@ public class AttributeMeta {
   private AttributeDataType dataType;
   private AttributeDataType listType;
   private Integer structureAttribute;
-  private StructureMeta structureMeta;
-  private String validationRule;
 
   /**
    * Returns the name of the attribute, for example streetAddress.
@@ -79,32 +77,6 @@ public class AttributeMeta {
     this.structureAttribute = structureAttribute;
   }
 
-  /**
-   * Returns the structure type of attribute.
-   *
-   * @return  the structure type of attribute or <code>null</code> if attribute is not a structure.
-   */
-  public StructureMeta getStructureMeta() {
-    return structureMeta;
-  }
-
-  public void setStructureMeta(StructureMeta structureMeta) {
-    this.structureMeta = structureMeta;
-  }
-
-  /**
-   * Returns the validation rule of the attribute.
-   *
-   * @return  the validation rule of the attribute.
-   */
-  public String getValidationRule() {
-    return validationRule;
-  }
-
-  public void setValidationRule(String validationRule) {
-    this.validationRule = validationRule;
-  }
-
   @Override
   public String toString() {
     return "AttributeMeta{" +
@@ -113,8 +85,6 @@ public class AttributeMeta {
         ", dataType=" + dataType +
         ", listType=" + listType +
         ", structureAttribute=" + structureAttribute +
-        ", structureMeta=" + structureMeta +
-        ", validationRule='" + validationRule + '\'' +
         '}';
   }
 }

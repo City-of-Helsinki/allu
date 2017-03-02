@@ -188,18 +188,19 @@ create table allu.invoice_row (
 
 create table allu.structure_meta (
     id serial primary key,
-    application_type text not null,
-    version integer not null); -- TOOD: application_type + version = unique
+    type_name text not null,
+    version integer not null, -- when the structure was last changed
+    unique (type_name, version) );
 
 create table allu.attribute_meta (
     id serial primary key,
-    structure integer references allu.structure_meta(id),
-    name text not null, -- TODO: structure + name = unique
+    structure_meta_id integer references allu.structure_meta(id),
+    name text not null,
     ui_name text not null,
     data_type text not null,
     list_type text,
     structure_attribute integer references allu.structure_meta(id),
-    validation_rule text);
+    unique (structure_meta_id, name) );
 
 create table allu.decision (
     id serial primary key,

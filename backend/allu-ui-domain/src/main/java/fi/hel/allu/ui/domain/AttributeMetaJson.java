@@ -10,8 +10,6 @@ public class AttributeMetaJson {
   private String uiName;
   private AttributeDataType dataType;
   private AttributeDataType listType;
-  private StructureMetaJson structureMeta;
-  private String validationRule;
 
   /**
    * @return  the technical name of the attribute.
@@ -56,27 +54,5 @@ public class AttributeMetaJson {
 
   public void setListType(AttributeDataType listType) {
     this.listType = listType;
-  }
-
-  /**
-   * @return  the structure metadata of the attribute or <code>null</code>, if attribute is not a structure.
-   */
-  public StructureMetaJson getStructureMeta() {
-    return structureMeta;
-  }
-
-  public void setStructureMeta(StructureMetaJson structureMeta) {
-    this.structureMeta = structureMeta;
-  }
-
-  /**
-   * @return  the validation rule related to the attribute.
-   */
-  public String getValidationRule() {
-    return validationRule;
-  }
-
-  public void setValidationRule(String validationRule) {
-    this.validationRule = validationRule;
   }
 }

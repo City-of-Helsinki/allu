@@ -17,9 +17,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,16 +64,21 @@ public class MetaControllerTest {
   }
 
   private void assertEventAttributes(StructureMeta sMetaInResult) {
-    assertEquals("EVENT", sMetaInResult.getApplicationType());
-    System.out.println(sMetaInResult);
+    assertEquals("Application", sMetaInResult.getTypeName());
 
-    Optional<AttributeMeta> natureOpt = sMetaInResult.getAttributes().stream().filter(am -> am.getName().equals("nature")).findFirst();
-    AttributeMeta nature = natureOpt.orElseThrow(() -> new RuntimeException("Nature not found"));
+    // Exactly one of the attributes should be "/extension/nature"
+    List<AttributeMeta> natures = sMetaInResult.getAttributes().stream()
+        .filter(am -> am.getName().equals("/extension/nature")).collect(Collectors.toList());
+    assertEquals(1, natures.size());
+    AttributeMeta nature = natures.get(0);
+    // It should be a string with proper UI name
     assertEquals("Tapahtuman luonne", nature.getUiName());
     assertEquals(AttributeDataType.STRING, nature.getDataType());
     assertNull(nature.getListType());
-    assertNull(nature.getStructureMeta());
-    assertNull(nature.getValidationRule());
 
+    // Make sure all attributes have UI names
+    for (AttributeMeta attributeMeta : sMetaInResult.getAttributes()) {
+      assertNotNull(attributeMeta.getUiName());
+    }
   }
 }

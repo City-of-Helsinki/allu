@@ -6,16 +6,16 @@ import java.util.List;
  * JSON for describing metadata structures related to application.
  */
 public class StructureMetaJson {
-  private String applicationType;
+  private String typeName;
   private int version;
   private List<AttributeMetaJson> attributes;
 
-  public String getApplicationType() {
-    return applicationType;
+  public String getTypeName() {
+    return typeName;
   }
 
-  public void setApplicationType(String applicationType) {
-    this.applicationType = applicationType;
+  public void setTypeName(String typeName) {
+    this.typeName = typeName;
   }
 
   public int getVersion() {
