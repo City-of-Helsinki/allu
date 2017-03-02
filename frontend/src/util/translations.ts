@@ -72,7 +72,7 @@ export const translations = {
       REPAVING: 'Uudelleenpäällystykset',
       ELECTION_ADD_STAND: 'Vaalimainosteline',
       NOTE_OTHER: 'Muu',
-      PUBLIC_EVENT: 'Yleisötilaisus',
+      PUBLIC_EVENT: 'Yleisötilaisuus',
       OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT: 'Muu'
     },
     specifier: {
@@ -124,17 +124,17 @@ export const translations = {
     },
     tag: {
       type: {
-        ADDITIONAL_INFORMATION_REQUESTED: 'täydennyspyyntö lähetetty',
-        STATEMENT_REQUESTED: 'lausunnolla',
-        DEPOSIT_REQUESTED: 'vakuus määritetty',
-        DEPOSIT_PAID: 'vakuus suoritettu',
-        PRELIMINARY_INSPECTION_REQUESTED: 'aloituskatselmuspyyntö lähetetty',
-        PRELIMINARY_INSPECTION_DONE: 'aloituskatselmus suoritettu',
-        FINAL_INSPECTION_AGREED: 'loppukatselmus sovittu',
-        FINAL_INSPECTION_DONE: 'loppukatselmus suoritettu',
-        WAITING: 'odottaa lisätietoa',
-        COMPENSATION_CLARIFICATION: 'hyvitysselvitys',
-        PAYMENT_BASIS_CORRECTION: 'maksuperusteet korjattava'
+        ADDITIONAL_INFORMATION_REQUESTED: 'Täydennyspyyntö lähetetty',
+        STATEMENT_REQUESTED: 'Lausunnolla',
+        DEPOSIT_REQUESTED: 'Vakuus määritetty',
+        DEPOSIT_PAID: 'Vakuus suoritettu',
+        PRELIMINARY_INSPECTION_REQUESTED: 'Aloituskatselmuspyyntö lähetetty',
+        PRELIMINARY_INSPECTION_DONE: 'Aloituskatselmus suoritettu',
+        FINAL_INSPECTION_AGREED: 'Loppukatselmus sovittu',
+        FINAL_INSPECTION_DONE: 'Loppukatselmus suoritettu',
+        WAITING: 'Odottaa lisätietoa',
+        COMPENSATION_CLARIFICATION: 'Hyvitysselvitys',
+        PAYMENT_BASIS_CORRECTION: 'Maksuperusteet korjattava'
       }
     },
     field: {
@@ -331,7 +331,7 @@ export const translations = {
   common: {
     field: {
       emailInvalid: 'Virheellinen sähköpostiosoite',
-      postalCode: 'Virheellinen postinumero'
+      postalCode: 'Tarkista postinumero'
     },
     boolean: {
       'true': 'Kyllä',
