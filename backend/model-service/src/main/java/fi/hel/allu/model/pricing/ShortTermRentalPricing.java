@@ -6,6 +6,7 @@ import fi.hel.allu.model.domain.ShortTermRental;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Optional;
 
 public class ShortTermRentalPricing extends Pricing {
   private int priceInCents;
@@ -141,7 +142,7 @@ public class ShortTermRentalPricing extends Pricing {
       // 0.8 x 3.0 sqm: free of charge
       // bigger: 150 EUR/year
       ShortTermRental str = (ShortTermRental) application.getExtension();
-      if (str != null && str.getLargeSalesArea() == true) {
+      if (str != null && Optional.ofNullable(str.getLargeSalesArea()).orElse(false) == true) {
         updatePricePerUnit(ChronoUnit.YEARS, PROMOTION_OR_SALES_LARGE_YEARLY, InvoiceLines.PROMOTION_OR_SALES_LARGE);
       } else {
         // free of charge
