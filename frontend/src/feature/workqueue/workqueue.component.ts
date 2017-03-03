@@ -23,6 +23,7 @@ import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 import {} from 'rxjs';
 import {WorkQueueTab} from './workqueue-tab';
 import {ApplicationTagType} from '../../model/application/tag/application-tag-type';
+import {NotificationService} from '../../service/notification/notification.service';
 
 @Component({
   selector: 'workqueue',
@@ -57,6 +58,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       .debounceTime(500)
       .distinctUntilChanged()
       .switchMap(query => this.getApplicationsSearch(query))
+      .catch(err => NotificationService.errorCatch(err, []))
       .publish();
 
     this.userHub.getActiveUsers().subscribe(users => this.handlers = users);
@@ -120,15 +122,15 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private changeHandler(newHandler: string, ids: Array<number>): void {
     let targetUser = this.handlers.find(handler => handler.userName === newHandler);
     this.applicationHub.changeHandler(targetUser.id, ids).subscribe(
-      () => {},
-      () => {},
+      () => NotificationService.message('Hakemuksien käsittelijä vaihdettu'),
+      () => NotificationService.errorMessage('Hakemuksien käsittelijän vaihtaminen epäonnistui'),
       () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
   }
 
   private removeHandler(ids: Array<number>): void {
     this.applicationHub.removeHandler(ids).subscribe(
-      () => {},
-      () => {},
+      () => NotificationService.message('Käsittelijä poistettu hakemuksilta'),
+      () => NotificationService.errorMessage('Käsittelijän poistaminen hakemuksilta epäonnistui'),
       () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
   }
 }

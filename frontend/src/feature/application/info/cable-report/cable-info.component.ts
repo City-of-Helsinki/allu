@@ -14,6 +14,7 @@ import {DefaultText, DefaultTextMap} from '../../../../model/application/cable-r
 import {DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {Some} from '../../../../util/option';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 @Component({
   selector: 'cable-info',
@@ -67,11 +68,11 @@ export class CableInfoComponent {
         .flatMap(text => this.applicationHub.saveDefaultText(text))
         // counts save results to get single observable from array of observables
         .reduce((saveCount, val, idx) => ++saveCount, 0)
-        .subscribe(result => this.applicationHub.loadDefaultTexts()
-            .subscribe(texts => this.setDefaultTexts(texts)));
+        .subscribe(
+          result => this.applicationHub.loadDefaultTexts()
+            .subscribe(texts => this.setDefaultTexts(texts)),
+          error => NotificationService.error(error));
     });
-
-
   }
 
   private initForm(): void {

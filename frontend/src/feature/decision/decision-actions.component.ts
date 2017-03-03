@@ -5,8 +5,8 @@ import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
-import {MaterializeUtil} from '../../util/materialize.util';
-import {translations} from '../../util/translations';
+import {findTranslation} from '../../util/translations';
+import {NotificationService} from '../../service/notification/notification.service';
 
 @Component({
   selector: 'decision-actions',
@@ -16,23 +16,25 @@ import {translations} from '../../util/translations';
 export class DecisionActionsComponent {
   @Input() application: Application;
 
-  private translations = translations;
-
   constructor(private applicationHub: ApplicationHub, private router: Router) {}
 
   public decisionConfirmed(confirm: ApplicationStatusChange) {
     confirm.id = this.application.id;
-    this.applicationHub.changeStatus(confirm).subscribe(application => this.statusChanged(application));
+    this.applicationHub.changeStatus(confirm).subscribe(
+      application => this.statusChanged(application),
+      error => NotificationService.error(error));
   }
 
   public accept() {
     this.applicationHub.changeStatus(ApplicationStatusChange.of(this.application.id, ApplicationStatus.DECISION))
-      .subscribe(application => this.statusChanged(application));
+      .subscribe(
+        application => this.statusChanged(application),
+        error => NotificationService.error(error));
   }
 
   private statusChanged(application: Application): void {
     this.application = application;
-    MaterializeUtil.toast(translations.decision.type[application.status], 4000);
+    NotificationService.message(findTranslation(['decision.type', this.application.status]));
     this.router.navigateByUrl('/workqueue');
   }
 }

@@ -30,19 +30,17 @@ export class EventDetailsComponent implements OnInit {
 
   eventForm: FormGroup;
   applicationId: number;
-  meta: StructureMeta;
   billingTypes = EnumUtil.enumValues(BillingType);
   eventNatures = EnumUtil.enumValues(EventNature).filter(nature => nature !== 'PROMOTION');
   noPriceReasons = EnumUtil.enumValues(NoPriceReason);
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;
 
-  constructor(private applicationHub: ApplicationHub, private applicationState: ApplicationState, private fb: FormBuilder) {
+  constructor(private applicationState: ApplicationState, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
     this.initForm();
-    this.applicationHub.loadMetaData('EVENT').subscribe(meta => this.metadataLoaded(meta));
     let application = this.applicationState.application;
 
     this.applicationId = application.id;
@@ -70,10 +68,6 @@ export class EventDetailsComponent implements OnInit {
         noPriceReason: undefined
       });
     }
-  }
-
-  private metadataLoaded(metadata: StructureMeta) {
-    this.meta = metadata;
   }
 
   private initForm(): void {

@@ -12,6 +12,7 @@ import {ProjectForm} from './project.form';
 import {Project} from '../../../model/project/project';
 import {emailValidator} from '../../../util/complex-validator';
 import {ProjectState} from '../../../service/project/project-state';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 
 @Component({
@@ -47,7 +48,8 @@ export class ProjectEditComponent {
       .debounceTime(300)
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
-      .switchMap(search => this.applicationHub.searchApplications(search));
+      .switchMap(search => this.applicationHub.searchApplications(search))
+      .catch(err => NotificationService.errorCatch(err, []));
   }
 
   add(application: Application) {

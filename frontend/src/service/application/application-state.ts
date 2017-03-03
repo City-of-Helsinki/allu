@@ -90,7 +90,7 @@ export class ApplicationState {
         error => result.error(error),
         () => result.complete());
 
-    return result.do(saved => this.loadAttachments(applicationId).subscribe());
+    return result.switchMap(saved => this.loadAttachments(applicationId));
   }
 
   removeAttachment(attachmentId: number, index?: number): Observable<HttpResponse> {

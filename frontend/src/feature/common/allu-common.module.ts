@@ -28,6 +28,7 @@ import {FileSelectDirective} from '../application/attachment/file-select.directi
 @NgModule({
   imports: [
     MdToolbarModule,
+    MdButtonModule,
     CommonModule,
     MaterializeModule
   ],

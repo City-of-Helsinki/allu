@@ -10,6 +10,8 @@ import {User} from '../../../model/common/user';
 import {ApplicationHistoryDetailsComponent} from './application-history-details.component';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {findTranslation} from '../../../util/translations';
 
 @Component({
   selector: 'application-history',
@@ -33,7 +35,8 @@ export class ApplicationHistoryComponent implements OnInit {
       this.meta = meta;
       this.history = this.historyHub.applicationHistory(this.applicationState.application.id);
       this.userHub.getActiveUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
-    });
+    },
+    err => NotificationService.errorMessage(findTranslation('history.error.metadata')));
   }
 
   showDetails(change: ApplicationChange) {

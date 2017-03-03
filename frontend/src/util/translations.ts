@@ -2,10 +2,15 @@ import {Some, Option} from './option';
 export const translations = {
   application: {
     error: {
+      fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
       handlerChangeFailed: 'Hakemuksen käsittelijän vaihto epäonnistui',
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
-      saveFailed: 'Hakemuksen tallentaminen epäonnistui'
+      saveFailed: 'Hakemuksen tallentaminen epäonnistui',
+      toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui'
+    },
+    action: {
+      saved: 'Hakemus tallennettu'
     },
     status: {
       PRE_RESERVED: 'Alustava varaus',
@@ -325,7 +330,9 @@ export const translations = {
   },
   defaultText: {
     error: {
-      saveFailed: 'Vakiotekstin tallentaminen epäonnistui'
+      fetch: 'Vakiotekstien hakeminen epäonnistui',
+      saveFailed: 'Vakiotekstin tallentaminen epäonnistui',
+      remove: 'Vakiotekstin poistaminen epäonnistui'
     }
   },
   common: {
@@ -470,6 +477,9 @@ export const translations = {
     }
   },
   history: {
+    error: {
+      metadata: 'Historian kenttien käännöksien lataus epäonnistui'
+    },
     change: {
       type: {
         CREATED: 'Luotu',

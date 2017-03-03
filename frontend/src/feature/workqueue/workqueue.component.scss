@@ -6,5 +6,9 @@ md-card {
 
 .work-queue-controls {
   background-color: mat-color($allu-primary, 50);
+
+  .in-front {
+    z-index: 100;
+  }
 }
 

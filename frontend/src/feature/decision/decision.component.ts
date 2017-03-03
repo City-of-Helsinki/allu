@@ -7,6 +7,7 @@ import {Application} from '../../model/application/application';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {Decision} from '../../model/decision/Decision';
 import {ProgressStep} from '../application/progressbar/progress-step';
+import {NotificationService} from '../../service/notification/notification.service';
 
 @Component({
   selector: 'decision',
@@ -33,9 +34,9 @@ export class DecisionComponent implements OnInit {
     this.route.params.subscribe(params => {
       this.id = Number(params['id']);
 
-      this.applicationHub.getApplication(this.id).subscribe(application => {
-        this.application = application;
-      });
+      this.applicationHub.getApplication(this.id).subscribe(
+        application => this.application = application,
+        err => NotificationService.error(err));
 
       this.decisionHub.generate(this.id).subscribe(decision => this.providePdf(decision));
     });

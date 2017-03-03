@@ -4,10 +4,10 @@
 
   <div class="work-queue-action-buttons">
     <button md-raised-button type="button" color="primary" [disabled]="selectedApplicationIds.length === 0"
-            (click)="moveSelectedToSelf()">OMAKSI</button>
+            class="in-front" (click)="moveSelectedToSelf()">OMAKSI</button>
 
     <button md-raised-button type="button" color="primary" [disabled]="selectedApplicationIds.length === 0"
-            (click)="openHandlerModal()">SIIRRÄ</button>
+            class="in-front" (click)="openHandlerModal()">SIIRRÄ</button>
   </div>
   <div class="labels-solid labels-end">
     <md-tab-group (selectChange)="tabSelected($event)">

@@ -18,6 +18,7 @@ import {ApplicationState} from '../../service/application/application-state';
 import {MapHub} from '../../service/map/map-hub';
 import {CityDistrict} from '../../model/common/city-district';
 import {Some} from '../../util/option';
+import {NotificationService} from '../../service/notification/notification.service';
 
 @Component({
   selector: 'search',
@@ -78,9 +79,13 @@ export class SearchComponent implements OnInit {
   }
 
   search(): void {
-    this.applicationHub.searchApplications(ApplicationSearchQuery.from(this.queryForm.value, this.sort)).subscribe(apps => {
-      this.applications = apps;
-    });
+    this.applicationHub.searchApplications(ApplicationSearchQuery.from(this.queryForm.value, this.sort)).subscribe(
+      apps => this.applications = apps,
+      err => {
+        NotificationService.error(err);
+        this.applications = [];
+      }
+    );
   }
 
   districtName(id: number): Observable<string> {

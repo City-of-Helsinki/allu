@@ -12,6 +12,7 @@ import {ContentRow} from '../../../model/common/content-row';
 import {Sort} from '../../../model/common/sort';
 import {UI_DATE_FORMAT} from '../../../util/time.util';
 import {ProjectState} from '../../../service/project/project-state';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 
 @Component({
@@ -42,7 +43,8 @@ export class ProjectApplicationsComponent implements OnInit {
       .debounceTime(300)
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
-      .switchMap(search => this.applicationHub.searchApplications(search));
+      .switchMap(search => this.applicationHub.searchApplications(search))
+      .catch(err => NotificationService.errorCatch(err, []));
   }
 
   checkAll() {

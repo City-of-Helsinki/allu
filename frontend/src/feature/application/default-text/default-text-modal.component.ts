@@ -9,6 +9,7 @@ import {CableInfoType} from '../../../model/application/cable-report/cable-info-
 import {translations} from '../../../util/translations';
 import {Some} from '../../../util/option';
 import {StringUtil} from '../../../util/string.util';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 @Component({
   selector: 'default-text-modal',
@@ -36,7 +37,9 @@ export class DefaultTextModalComponent implements OnInit {
   ngOnInit(): void {
     this.applicationHub.loadDefaultTexts()
       .map(texts => texts.filter(text => text.type === this.type))
-      .subscribe(texts => texts.forEach(text => this.add(text)));
+      .subscribe(
+        texts => texts.forEach(text => this.add(text)),
+        error => NotificationService.error(error));
 
     this.typeName = CableInfoType[this.type];
   }
@@ -49,9 +52,10 @@ export class DefaultTextModalComponent implements OnInit {
   remove(index, text: CableInfoText) {
     Some(text.id)
       .do(id => this.applicationHub.removeDefaultText(id)
-        .subscribe(result => console.log(result)));
-
-    this.defaultTexts.removeAt(index);
+        .subscribe(
+          result => this.defaultTexts.removeAt(index),
+          error => NotificationService.error(error)
+        ));
   }
 
   createEntry(defaultText: DefaultText): FormGroup {

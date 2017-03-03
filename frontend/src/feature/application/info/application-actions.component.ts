@@ -8,6 +8,7 @@ import {ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {MaterializeUtil} from '../../../util/materialize.util';
 import {findTranslation} from '../../../util/translations';
+import {NotificationService} from '../../../service/notification/notification.service';
 
 @Component({
   selector: 'application-actions',
@@ -54,6 +55,7 @@ export class ApplicationActionsComponent implements OnInit {
         MaterializeUtil.toast(findTranslation('application.statusChange.HANDLING'));
         this.applicationState.application = app;
         this.router.navigate(['/applications', this.applicationId, 'edit']);
-    });
+    },
+    err => NotificationService.errorMessage(findTranslation('application.error.toHandling')));
   }
 }

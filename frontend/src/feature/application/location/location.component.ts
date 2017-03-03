@@ -25,6 +25,8 @@ import {TrafficArrangement} from '../../../model/application/traffic-arrangement
 import {PlacementContract} from '../../../model/application/placement-contract/placement-contract';
 import {ProgressStep} from '../progressbar/progress-step';
 import {ArrayUtil} from '../../../util/array-util';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {findTranslation} from '../../../util/translations';
 
 @Component({
   selector: 'type',
@@ -109,7 +111,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     if (this.application.id) {
       this.applicationState.save(this.application)
-        .subscribe(app => console.log('Application saved'));
+        .subscribe(
+          app => NotificationService.message(findTranslation('application.action.saved')),
+          err => NotificationService.error(err));
     } else {
       this.applicationState.application = this.application;
       this.router.navigate(['/applications/edit']);

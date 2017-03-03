@@ -15,6 +15,7 @@ import {ApplicationType} from '../../../../model/application/type/application-ty
 import {Some} from '../../../../util/option';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {NotificationService} from '../../../../service/notification/notification.service';
 
 
 @Component({
@@ -44,7 +45,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       .debounceTime(300)
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forIdAndTypes(idSearch, [ApplicationType[ApplicationType.CABLE_REPORT]]))
-      .switchMap(search => this.applicationHub.searchApplications(search));
+      .switchMap(search => this.applicationHub.searchApplications(search))
+      .catch(err => NotificationService.errorCatch(err, []));
   }
 
   onIdentifierSearchChange(identifier: string) {
@@ -58,7 +60,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   getCableReport(applicationId: number): Observable<Application> {
     return Some(applicationId)
       .map(id => this.applicationHub.getApplication(id))
-      .orElse(Observable.empty());
+      .orElse(Observable.empty())
+      .catch(err => NotificationService.errorCatch(err));
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {

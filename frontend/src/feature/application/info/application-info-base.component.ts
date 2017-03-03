@@ -9,6 +9,8 @@ import {UrlUtil} from '../../../util/url.util';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {ApplicationForm} from './application-form';
 import {ApplicationStatus} from '../../../model/application/application-status';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {findTranslation} from '../../../util/translations';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
 
@@ -62,7 +64,15 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
     application.extension.terms = form.terms;
 
     this.applicationState.save(application)
-      .subscribe(app => this.submitPending = false, err => this.submitPending = false);
+      .subscribe(
+        app => {
+          NotificationService.message(findTranslation('application.action.saved'));
+          this.submitPending = false;
+        },
+        err => {
+          NotificationService.error(err);
+          this.submitPending = false;
+        });
   }
 
   /**
