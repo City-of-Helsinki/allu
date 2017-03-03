@@ -1,33 +1,32 @@
-<div class="allu-modal modal-medium">
-    <div class="modal-header">
-        <h1>Vakiotekstit: {{['application.cableReport.cableInfo.type', typeName] | translation}}</h1>
-    </div>
-    <div class="modal-content">
-        <form [formGroup]="defaultTextform">
-            <div formArrayName="defaultTexts">
-                <div *ngFor="let defaultText of defaultTextform.controls.defaultTexts.controls; let index=index">
-                    <div [formGroupName]="index" class="row">
-                        <div class="col s10">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" placeholder="Uusi vakioteksti" formControlName="text">
-                            </md-input-container>
-                        </div>
-                        <div class="col s2">
-                            <button md-mini-fab type="button" color="primary" (click)="remove(index, defaultText.value)">
-                                <md-icon>remove</md-icon>
-                            </button>
+<h1 md-dialog-title>
+    <span>Vakiotekstit</span>
+    <span *ngIf="typeName">- {{['defaultText.type', typeName] | translation}}</span>
+</h1>
+<div md-dialog-content>
+    <form [formGroup]="defaultTextform">
+        <div formArrayName="defaultTexts">
+            <div *ngFor="let defaultText of defaultTextform.controls.defaultTexts.controls; let index=index">
+                <div [formGroupName]="index" class="row">
+                    <div class="col s10">
+                        <md-input-container class="input-full-width">
+                            <input mdInput type="text" placeholder="Vakioteksti" formControlName="text">
+                        </md-input-container>
+                    </div>
+                    <div class="col s2">
+                        <button md-mini-fab type="button" color="primary" (click)="remove(index, defaultText.value)">
+                            <md-icon>remove</md-icon>
+                        </button>
 
-                        </div>
                     </div>
                 </div>
             </div>
-            <div>
-                <button md-mini-fab type="button" color="primary" (click)="add()"><md-icon>add</md-icon></button>
-            </div>
-        </form>
-    </div>
-    <div class="modal-actions">
-        <button md-raised-button type="button" color="primary" (click)="confirm()">Tallenna</button>
-        <button md-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
-    </div>
+        </div>
+        <div>
+            <button md-mini-fab type="button" color="primary" (click)="add()"><md-icon>add</md-icon></button>
+        </div>
+    </form>
+</div>
+<div md-dialog-actions>
+    <button md-raised-button type="button" color="primary" (click)="confirm()">Tallenna</button>
+    <button md-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
 </div>

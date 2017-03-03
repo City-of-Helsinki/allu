@@ -1,30 +1,3 @@
-.allu-modal {
-  max-height: 500px;
-  overflow: auto;
-
-  .modal-content {
-  }
-
-  .modal-header {
-    h1 {
-      font-size: 30px;
-    }
-    padding-bottom: 20px;
-  }
-
-  .modal-actions {
-    padding: 15px 0 0 0;
-  }
-}
-
-.modal-small {
-  width: 300px;
-}
-
-.modal-medium {
-  width: 600px;
-}
-
-.modal-large {
-  width: 800px;
+.mat-dialog-actions button {
+  margin: 0 5px;
 }

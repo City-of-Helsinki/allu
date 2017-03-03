@@ -1,22 +1,19 @@
 import {Injectable} from '@angular/core';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {Observable} from 'rxjs/Observable';
-
 import {Application} from '../../model/application/application';
 import {ApplicationMapper} from './../mapper/application-mapper';
 import {StructureMetaMapper} from './../mapper/structure-meta-mapper';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
 import {ApplicationLocationQueryMapper} from './../mapper/application-location-query-mapper';
-import {HttpUtil} from '../../util/http.util';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
-import {DefaultText} from '../../model/application/cable-report/default-text';
-import {HttpStatus} from '../../util/http-response';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
+
 
 @Injectable()
 export class ApplicationService {
@@ -24,7 +21,6 @@ export class ApplicationService {
   static SEARCH = '/search';
   static SEARCH_LOCATION = '/search_location';
   static METADATA_URL = '/api/meta';
-  static DEFAULT_TEXTS_URL = ApplicationService.APPLICATIONS_URL + '/cable-info/texts';
 
   private statusToUrl = new Map<ApplicationStatus, string>();
 
@@ -107,33 +103,6 @@ export class ApplicationService {
     let url = ApplicationService.APPLICATIONS_URL + '/handler/remove';
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
-  }
-
-  public loadDefaultTexts(): Observable<Array<DefaultText>> {
-    return this.authHttp.get(ApplicationService.DEFAULT_TEXTS_URL)
-      .map(response => response.json())
-      .map(texts => texts.map(text => DefaultText.mapBackend(text)))
-      .catch(error => this.errorHandler.handle(error, findTranslation('defaultText.error.fetch')));
-  }
-
-  public saveDefaultText(text: DefaultText): Observable<DefaultText> {
-    if (text.id) {
-      let url = ApplicationService.DEFAULT_TEXTS_URL + '/' + text.id;
-      return this.authHttp.put(url, JSON.stringify(DefaultText.mapFrontend(text)))
-        .map(response => DefaultText.mapBackend(response.json()))
-        .catch(error => this.errorHandler.handle(error, findTranslation('defaultText.error.saveFailed')));
-    } else {
-      return this.authHttp.post(ApplicationService.DEFAULT_TEXTS_URL, JSON.stringify(DefaultText.mapFrontend(text)))
-        .map(response => DefaultText.mapBackend(response.json()))
-        .catch(error => this.errorHandler.handle(error, findTranslation('defaultText.error.saveFailed')));
-    }
-  }
-
-  public removeDefaultText(id: number): Observable<HttpStatus> {
-    let url = ApplicationService.DEFAULT_TEXTS_URL + '/' + id;
-    return this.authHttp.delete(url)
-      .map(response => HttpUtil.extractHttpResponse(response))
-      .catch(error => this.errorHandler.handle(error, findTranslation('defaultText.error.remove')));
   }
 }
 

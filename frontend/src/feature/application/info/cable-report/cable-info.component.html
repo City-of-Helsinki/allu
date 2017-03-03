@@ -7,7 +7,7 @@
                     <div class="col m4">
                         <select formControlName="selectedCableInfoTypes" materialize="material_select" multiple>
                             <option value="" disabled selected>Valitse tyyppi*</option>
-                            <option *ngFor="let type of cableInfoTypes" value="{{type}}">{{translations.application.cableReport.cableInfo.type[type]}}</option>
+                            <option *ngFor="let type of cableInfoTypes" value="{{type}}">{{['defaultText.type', type] | translation}}</option>
                         </select>
                     </div>
                     <div class="col m2">
@@ -19,7 +19,7 @@
                 <div formArrayName="cableInfoEntries" class="row form-group">
                     <div class="col m8" *ngFor="let infoEntry of cableInfoForm.controls.cableInfoEntries.controls; let index=index">
                         <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
-                            <div class="form-group-label">{{['application.cableReport.cableInfo.type', infoEntry.value.type] | translation}}</div>
+                            <div class="form-group-label">{{['defaultText.type', infoEntry.value.type] | translation}}</div>
 
                             <div *ngIf="!readonly" class="col m4">
                                 <md-select class="input-full-width" placeholder="Vakiotekstit">

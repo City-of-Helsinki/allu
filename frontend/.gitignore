@@ -1,10 +1,17 @@
 /typings
 /reports
 webpack.local.js
+
+#Ignore generated js-files
 /src/feature/**/*.js
+/src/feature/*.js
 /src/model/**/*.js
+/src/model/*.js
 /src/pipe/**/*.js
+/src/pipe/*.js
 /src/service/**/*.js
-/src/util/*.js
+/src/service/*.js
 /src/util/**/*.js
+/src/util/*.js
 /test/**/*.js
+/test/*.js

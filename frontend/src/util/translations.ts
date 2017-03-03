@@ -198,20 +198,6 @@ export const translations = {
     },
     cableReport: {
       cableInfo: {
-        type: {
-          TELECOMMUNICATION: 'Tietoliikenne',
-          ELECTRICITY: 'Sähkö',
-          WATER_AND_SEWAGE: 'Vesi ja viemäri',
-          DISTRICT_HEATING_COOLING: 'Kaukolämpö/jäähdytys',
-          GAS: 'Kaasu',
-          UNDERGROUND_STRUCTURE: 'Maanalainen rakenne/tila',
-          TRAMWAY: 'Raitiotie',
-          STREET_HEATING: 'Katulämmitys',
-          SEWAGE_PIPE: 'Jäteputki',
-          GEOTHERMAL_WELL: 'Maalämpökaivo',
-          GEOTECHNICAL_OBSERVATION_POST: 'Geotekninen tarkkailupiste',
-          OTHER: 'Yleisesti/muut'
-        }
       },
       field: {
         startBeforeEnd: 'Lopetuspäivä ei voi olla ennen aloituspäivää'
@@ -329,10 +315,27 @@ export const translations = {
     }
   },
   defaultText: {
+    actions: {
+      saved: 'Vakiotekstit tallennettu'
+    },
     error: {
       fetch: 'Vakiotekstien hakeminen epäonnistui',
       saveFailed: 'Vakiotekstin tallentaminen epäonnistui',
       remove: 'Vakiotekstin poistaminen epäonnistui'
+    },
+    type: {
+      TELECOMMUNICATION: 'Tietoliikenne',
+      ELECTRICITY: 'Sähkö',
+      WATER_AND_SEWAGE: 'Vesi ja viemäri',
+      DISTRICT_HEATING_COOLING: 'Kaukolämpö/jäähdytys',
+      GAS: 'Kaasu',
+      UNDERGROUND_STRUCTURE: 'Maanalainen rakenne/tila',
+      TRAMWAY: 'Raitiotie',
+      STREET_HEATING: 'Katulämmitys',
+      SEWAGE_PIPE: 'Jäteputki',
+      GEOTHERMAL_WELL: 'Maalämpökaivo',
+      GEOTECHNICAL_OBSERVATION_POST: 'Geotekninen tarkkailupiste',
+      OTHER: 'Yleisesti/muut'
     }
   },
   common: {

@@ -9,6 +9,8 @@ import {ApplicationService} from './application.service';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {DefaultText} from '../../model/application/cable-report/default-text';
+import {DefaultTextService} from './default-text.service';
+import {ApplicationType} from '../../model/application/type/application-type';
 
 export type ApplicationSearch = ApplicationLocationQuery | number;
 
@@ -18,7 +20,8 @@ export class ApplicationHub {
   private metaData$ = new Subject<StructureMeta>();
 
   constructor(
-    private applicationService: ApplicationService
+    private applicationService: ApplicationService,
+    private defaultTextService: DefaultTextService
   ) {}
 
   /**
@@ -62,9 +65,9 @@ export class ApplicationHub {
   public removeHandler =
     (applicationIds: Array<number>) => this.applicationService.applicationHandlerRemove(applicationIds);
 
-  public loadDefaultTexts = () => this.applicationService.loadDefaultTexts();
+  public loadDefaultTexts = (applicationType: ApplicationType) => this.defaultTextService.load(applicationType);
 
-  public saveDefaultText = (text: DefaultText) => this.applicationService.saveDefaultText(text);
+  public saveDefaultText = (text: DefaultText) => this.defaultTextService.save(text);
 
-  public removeDefaultText = (id: number) => this.applicationService.removeDefaultText(id);
+  public removeDefaultText = (id: number) => this.defaultTextService.remove(id);
 }

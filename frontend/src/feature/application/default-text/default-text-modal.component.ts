@@ -1,15 +1,17 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
-import {Observable} from 'rxjs/Observable';
 import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
 
 import {ApplicationHub} from '../../../service/application/application-hub';
-import {DefaultText, CableInfoText} from '../../../model/application/cable-report/default-text';
-import {CableInfoType} from '../../../model/application/cable-report/cable-info-type';
+import {DefaultText} from '../../../model/application/cable-report/default-text';
+import {DefaultTextType} from '../../../model/application/default-text-type';
 import {translations} from '../../../util/translations';
 import {Some} from '../../../util/option';
 import {StringUtil} from '../../../util/string.util';
 import {NotificationService} from '../../../service/notification/notification.service';
+import {ApplicationType} from '../../../model/application/type/application-type';
+
+export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '600px'};
 
 @Component({
   selector: 'default-text-modal',
@@ -17,7 +19,8 @@ import {NotificationService} from '../../../service/notification/notification.se
   styles: []
 })
 export class DefaultTextModalComponent implements OnInit {
-  @Input() type: CableInfoType;
+  @Input() applicationType: ApplicationType;
+  @Input() type: DefaultTextType;
 
   typeName: string;
   defaultTextform: FormGroup;
@@ -35,21 +38,21 @@ export class DefaultTextModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.applicationHub.loadDefaultTexts()
+    this.applicationHub.loadDefaultTexts(this.applicationType)
       .map(texts => texts.filter(text => text.type === this.type))
       .subscribe(
         texts => texts.forEach(text => this.add(text)),
         error => NotificationService.error(error));
 
-    this.typeName = CableInfoType[this.type];
+    this.typeName = DefaultTextType[this.type];
   }
 
   add(defaultText: DefaultText) {
-    let added = defaultText ? defaultText : DefaultText.ofType(this.type);
+    let added = defaultText ? defaultText : DefaultText.ofType(this.applicationType, this.type);
     this.defaultTexts.push(this.createEntry(added));
   }
 
-  remove(index, text: CableInfoText) {
+  remove(index, text: DefaultText) {
     Some(text.id)
       .do(id => this.applicationHub.removeDefaultText(id)
         .subscribe(
@@ -61,7 +64,8 @@ export class DefaultTextModalComponent implements OnInit {
   createEntry(defaultText: DefaultText): FormGroup {
     return this.fb.group({
       id: defaultText.id,
-      type: CableInfoType[defaultText.type],
+      applicationType: ApplicationType[defaultText.applicationType],
+      type: DefaultTextType[defaultText.type],
       text: defaultText.text
     });
   }

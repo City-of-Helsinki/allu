@@ -12,6 +12,7 @@ import {ApplicationTag} from './tag/application-tag';
 import {ApplicationTagType} from './tag/application-tag-type';
 import {Comment} from './comment/comment';
 import {NumberUtil} from '../../util/number.util';
+import {ApplicationType} from './type/application-type';
 
 const CENTS = 100;
 
@@ -133,6 +134,10 @@ export class Application {
   get waiting(): boolean {
     return this.applicationTags
       .some(tag => ApplicationTagType[tag.type] === ApplicationTagType.WAITING);
+  }
+
+  get typeEnum(): ApplicationType {
+    return ApplicationType[this.type];
   }
 
   private toEuros(priceInCents: number): number {

@@ -1,20 +1,20 @@
 import {Component, Input} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import '../../../../rxjs-extensions';
 
 import {EnumUtil} from '../../../../util/enum.util';
-import {CableInfoType} from '../../../../model/application/cable-report/cable-info-type';
-import {translations} from '../../../../util/translations';
+import {DefaultTextType} from '../../../../model/application/default-text-type';
+import {translations, findTranslation} from '../../../../util/translations';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {DefaultText, DefaultTextMap} from '../../../../model/application/cable-report/default-text';
-import {DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
+import {DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG} from '../../default-text/default-text-modal.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {Some} from '../../../../util/option';
 import {NotificationService} from '../../../../service/notification/notification.service';
+import {ApplicationType} from '../../../../model/application/type/application-type';
 
 @Component({
   selector: 'cable-info',
@@ -28,12 +28,11 @@ export class CableInfoComponent {
   cableInfoForm: FormGroup;
   cableInfoEntries: FormArray;
   translations = translations;
-  cableInfoTypes = EnumUtil.enumValues(CableInfoType);
+  cableInfoTypes = EnumUtil.enumValues(DefaultTextType);
   defaultTexts: DefaultTextMap = {};
   dialogRef: MdDialogRef<DefaultTextModalComponent>;
 
   constructor(private applicationHub: ApplicationHub,
-              private route: ActivatedRoute,
               private fb: FormBuilder,
               private dialog: MdDialog) {
   }
@@ -41,7 +40,7 @@ export class CableInfoComponent {
   ngOnInit(): void {
     this.cableInfoEntries = Some(this.cableInfoEntries).orElse(this.fb.array([]));
     this.initForm();
-    this.applicationHub.loadDefaultTexts().subscribe(texts => this.setDefaultTexts(texts));
+    this.applicationHub.loadDefaultTexts(ApplicationType.CABLE_REPORT).subscribe(texts => this.setDefaultTexts(texts));
 
     if (this.readonly) {
       this.cableInfoForm.disable();
@@ -49,7 +48,7 @@ export class CableInfoComponent {
   }
 
   isSelected(type: string) {
-    return this.cableInfoForm.value.selectedCableInfoTypes.indexOf(CableInfoType[type]) >= 0;
+    return this.cableInfoForm.value.selectedCableInfoTypes.indexOf(DefaultTextType[type]) >= 0;
   }
 
   addDefaultText(entryIndex: number, text: string) {
@@ -59,19 +58,22 @@ export class CableInfoComponent {
   }
 
   editDefaultTexts(type: string) {
-    this.dialogRef = this.dialog.open(DefaultTextModalComponent, {disableClose: false});
-    this.dialogRef.componentInstance.type = CableInfoType[type];
+    this.dialogRef = this.dialog.open(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
+    let comp = this.dialogRef.componentInstance;
+    comp.type = DefaultTextType[type];
+    comp.applicationType = ApplicationType.CABLE_REPORT;
 
     this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
       this.dialogRef = undefined;
-      Observable.from(defaultTexts)
-        .flatMap(text => this.applicationHub.saveDefaultText(text))
-        // counts save results to get single observable from array of observables
-        .reduce((saveCount, val, idx) => ++saveCount, 0)
+
+      Observable.forkJoin(defaultTexts.map(dt => this.applicationHub.saveDefaultText(dt)))
+        .switchMap(result => this.applicationHub.loadDefaultTexts(ApplicationType.CABLE_REPORT))
         .subscribe(
-          result => this.applicationHub.loadDefaultTexts()
-            .subscribe(texts => this.setDefaultTexts(texts)),
-          error => NotificationService.error(error));
+          texts => {
+            this.setDefaultTexts(texts);
+            NotificationService.message(findTranslation('defaultText.actions.saved'));
+          },
+          err => NotificationService.error(err));
     });
   }
 

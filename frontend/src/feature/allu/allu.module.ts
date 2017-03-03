@@ -31,6 +31,7 @@ import {SidebarModule} from '../sidebar/sidebar.module';
 import {ApplicationState} from '../../service/application/application-state';
 import {Oauth2Component} from '../oauth2/oauth2.component';
 import {ErrorHandler} from '../../service/error/error-handler.service';
+import {DefaultTextService} from '../../service/application/default-text.service';
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import {ErrorHandler} from '../../service/error/error-handler.service';
     AuthGuard,
     ApplicationState,
     ErrorHandler,
+    DefaultTextService,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({

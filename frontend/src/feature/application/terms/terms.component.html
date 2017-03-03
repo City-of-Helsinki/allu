@@ -3,6 +3,17 @@
         <md-card-title>Ehdot</md-card-title>
         <md-card-content>
             <div class="row">
+                <div class="col s6">
+                    <md-select class="input-full-width" placeholder="Vakiotekstit">
+                        <md-option *ngFor="let defaultText of defaultTexts" value="defaultText.id"
+                                   (onSelect)="addDefaultText(index, defaultText.text)">
+                            {{defaultText.text}}
+                        </md-option>
+                    </md-select>
+                </div>
+                <div class="col s4">
+                    <button md-raised-button type="button" color="primary" (click)="editDefaultTexts()">MUOKKAA</button>
+                </div>
                 <div class="col s12">
                     <md-input-container class="input-full-width">
                         <textarea mdInput md-autosize formControlName="terms" placeholder="Hakemuksen ehdot"></textarea>

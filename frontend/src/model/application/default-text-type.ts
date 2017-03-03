@@ -1,4 +1,4 @@
-export enum CableInfoType {
+export enum DefaultTextType {
   TELECOMMUNICATION, // Tietoliikenne
   ELECTRICITY, // Sähkö
   WATER_AND_SEWAGE, // Vesi ja viemäri

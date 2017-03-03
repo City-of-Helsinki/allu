@@ -9,7 +9,7 @@
     <event-details [applicationForm]="applicationForm" [application]="application" [readonly]="readonly"></event-details>
 
     <div class="col s12" *ngIf="showTerms">
-      <terms [form]="applicationForm" [terms]="application.extension.terms" [readonly]="readonly"></terms>
+      <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
     </div>
 
     <application-actions
