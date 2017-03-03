@@ -6,3 +6,4 @@ webpack.local.js
 /src/pipe/**/*.js
 /src/service/**/*.js
 /src/util/**/*.js
+/test/**/*.js

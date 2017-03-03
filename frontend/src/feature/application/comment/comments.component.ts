@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Subscription} from 'rxjs/Subscription';
 
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
@@ -7,24 +8,30 @@ import {findTranslation} from '../../../util/translations';
 import {TimeUtil} from '../../../util/time.util';
 import {NotificationService} from '../../../service/notification/notification.service';
 
+
 @Component({
   selector: 'comments',
   template: require('./comments.component.html'),
   styles: []
 })
-export class CommentsComponent implements OnInit {
+export class CommentsComponent implements OnInit, OnDestroy {
   application: Application;
   comments = [];
+  commentSubsciption: Subscription;
 
   constructor(private applicationState: ApplicationState) {}
 
   ngOnInit() {
     this.application = this.applicationState.application;
-    this.applicationState.comments
+    this.commentSubsciption = this.applicationState.comments
       .map(comments => comments.sort((l, r) => TimeUtil.compareTo(r.createTime, l.createTime))) // sort latest first
       .subscribe(
         comments => this.comments = comments,
         err => NotificationService.error(err));
+  }
+
+  ngOnDestroy(): void {
+    this.commentSubsciption.unsubscribe();
   }
 
   addNew(): void {
