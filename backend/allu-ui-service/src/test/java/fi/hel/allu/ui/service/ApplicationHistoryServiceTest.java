@@ -95,10 +95,10 @@ public class ApplicationHistoryServiceTest extends MockServices {
     List<ApplicationFieldChange> fieldChanges = capturedChange.getFieldChanges();
     assertNotNull(fieldChanges);
     assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name")).count());
-    assertEquals("\"Changed Name\"", fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name"))
+    assertEquals("Changed Name", fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name"))
         .map(fc -> fc.getNewValue()).findFirst().orElse(null));
     assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/applicant/email")).count());
-    assertEquals("\"new.email@company.org\"",
+    assertEquals("new.email@company.org",
         fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/applicant/email")).map(fc -> fc.getNewValue())
             .findFirst().orElse(null));
   }
