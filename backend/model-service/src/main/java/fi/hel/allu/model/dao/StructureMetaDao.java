@@ -136,10 +136,10 @@ public class StructureMetaDao {
         .where(attributeMeta.structureMetaId.eq(structureTypeId)).fetch();
     for (AttributeMeta attribute : attributes) {
       attribute.setName(prefix + attribute.getName());
-      if (attribute.getDataType() != AttributeDataType.STRUCTURE) {
-        attributeList.add(attribute);
-      } else {
-        // Structure, so recurse
+      attributeList.add(attribute);
+      if (attribute.getDataType() == AttributeDataType.STRUCTURE
+          || attribute.getDataType() == AttributeDataType.ENUMERATION) {
+        // Structure or enum, so recurse deeper
         int childStructureId = attribute.getStructureAttribute();
         String childStructureName = attribute.getName();
         if (typeOverrides.containsKey(childStructureName)) {

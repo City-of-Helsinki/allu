@@ -71,9 +71,9 @@ public class MetaControllerTest {
         .filter(am -> am.getName().equals("/extension/nature")).collect(Collectors.toList());
     assertEquals(1, natures.size());
     AttributeMeta nature = natures.get(0);
-    // It should be a string with proper UI name
+    // It should be an enumeration with proper UI name
     assertEquals("Tapahtuman luonne", nature.getUiName());
-    assertEquals(AttributeDataType.STRING, nature.getDataType());
+    assertEquals(AttributeDataType.ENUMERATION, nature.getDataType());
     assertNull(nature.getListType());
 
     // Make sure all attributes have UI names
