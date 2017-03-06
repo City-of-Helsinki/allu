@@ -1,7 +1,6 @@
 package fi.hel.allu.ui.controller;
 
 
-import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
@@ -207,60 +206,6 @@ public class ApplicationController {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
-  }
-
-  /**
-   * Get standard texts for cable info
-   *
-   * @return all CableIOnfoTexts in a list
-   */
-  @RequestMapping(value = "/cable-info/texts", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<CableInfoText>> getCableInfoTexts() {
-    return new ResponseEntity<>(applicationServiceComposer.getCableInfoTexts(), HttpStatus.OK);
-  }
-
-  /**
-   * Add a standard text for cable infos
-   *
-   * @param cableInfoText the new CableInfoText to add -- the ID field will be ignored.
-   * @return the new CableInfoText, with ID
-   */
-  @RequestMapping(value = "/cable-info/texts", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<CableInfoText> addCableInfoText(@RequestBody CableInfoText cableInfoText) {
-    return new ResponseEntity<>(
-        applicationServiceComposer.createCableInfoText(cableInfoText.getCableInfoType(), cableInfoText.getTextValue()),
-        HttpStatus.OK);
-  }
-
-  /**
-   * Update a standard text for cable infos
-   *
-   * @param id ID of the text to update
-   * @param cableInfoText the new contents for the info -- only the textValue field is used
-   * @return the updated CableInfoText
-   */
-  @RequestMapping(value = "/cable-info/texts/{id}", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<CableInfoText> updateCableInfoText(@PathVariable int id,
-      @RequestBody CableInfoText cableInfoText) {
-    return new ResponseEntity<>(
-        applicationServiceComposer.updateCableInfoText(id, cableInfoText.getTextValue()),
-        HttpStatus.OK);
-  }
-
-  /**
-   * Delete a cable info standard text
-   *
-   * @param id the ID of the text to remove
-   * @return
-   */
-  @RequestMapping(value = "/cable-info/texts/{id}", method = RequestMethod.DELETE)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<Void> deleteCableInfoText(@PathVariable int id) {
-    applicationServiceComposer.deleteCableInfoText(id);
-    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

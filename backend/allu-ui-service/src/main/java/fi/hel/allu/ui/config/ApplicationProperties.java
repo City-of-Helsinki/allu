@@ -465,35 +465,6 @@ public class ApplicationProperties {
     return getModelServiceUrl("/projects/update");
   }
 
-  // TODO: remove cable info entries
-  /**
-   * @return url for retrieving the cable info standard texts.
-   */
-  public String getCableInfoTextListUrl() {
-    return getModelServiceUrl("/applications/cable-info/texts");
-  }
-
-  /**
-   * @return url for adding a cable info standard text.
-   */
-  public String getCableInfoTextAddUrl() {
-    return getModelServiceUrl("/applications/cable-info/texts");
-  }
-
-  /**
-   * @return url for updating a cable info standard text.
-   */
-  public String getCableInfoTextUpdateUrl() {
-    return getModelServiceUrl("/applications/cable-info/texts/{id}");
-  }
-
-  /**
-   * @return url for deleting a cable info standard text.
-   */
-  public String getCableInfoTextDeleteUrl() {
-    return getModelServiceUrl("/applications/cable-info/texts/{id}");
-  }
-
   /**
    * @return url for retrieving the default texts for given application type.
    */

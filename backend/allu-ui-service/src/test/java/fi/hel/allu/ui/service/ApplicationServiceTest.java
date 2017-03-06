@@ -2,14 +2,11 @@ package fi.hel.allu.ui.service;
 
 
 import fi.hel.allu.common.types.ApplicationTagType;
-import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.CableInfoText;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -30,16 +27,13 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.c;
-import static org.geolatte.geom.builder.DSL.polygon;
-import static org.geolatte.geom.builder.DSL.ring;
+import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -247,45 +241,6 @@ public class ApplicationServiceTest extends MockServices {
   }
 
   @Test
-  public void testGetCableInfoTexts() {
-    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(CableInfoText[].class)))
-    .then(invocation -> createMockCableInfoTexts());
-
-    List<CableInfoText> result = applicationService.getCableInfoTexts();
-
-    assertEquals(1, result.size());
-    assertEquals("Sähköjohto", result.get(0).getTextValue());
-  }
-
-  @Test
-  public void testCreateCableInfoText() {
-    Mockito.when(restTemplate.postForEntity(Mockito.anyString(), Mockito.any(CableInfoText.class),
-        Mockito.eq(CableInfoText.class))).then(invocation -> createMockCableInfoText());
-
-    CableInfoText result = applicationService.createCableInfoText(DefaultTextType.TRAMWAY, "Raitiovaunu");
-
-    assertEquals("Qwertyuiopå", result.getTextValue());
-  }
-
-  @Test
-  public void testDeleteCableInfoText() {
-    applicationService.deleteCableInfoText(112);
-
-    Mockito.verify(restTemplate).delete(Mockito.anyString(), Mockito.eq(112));
-  }
-
-  @Test
-  public void testUpdateCableInfoText() {
-    Mockito.when(restTemplate.exchange( Mockito.anyString(), Mockito.eq(HttpMethod.PUT),
-            Mockito.any(), Mockito.eq(CableInfoText.class), Mockito.eq(112)))
-    .then(invocation -> createMockCableInfoText());
-
-    CableInfoText result = applicationService.updateCableInfoText(112, "Raitiovaunu");
-
-    assertEquals("Qwertyuiopå", result.getTextValue());
-  }
-
-  @Test
   public void testGetInvoiceRows() {
     InvoiceRow row = new InvoiceRow();
     row.setRowText("Row row row your boat");
@@ -297,21 +252,4 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals(1, result.size());
     assertEquals("Row row row your boat", result.get(0).getRowText());
   }
-
-  private Object createMockCableInfoText() {
-    CableInfoText cit = new CableInfoText();
-    cit.setCableInfoType(DefaultTextType.OTHER);
-    ;
-    cit.setTextValue("Qwertyuiopå");
-    return new ResponseEntity<>(cit, HttpStatus.OK);
-  }
-
-  private Object createMockCableInfoTexts() {
-    CableInfoText cit = new CableInfoText();
-    cit.setId(1);
-    cit.setCableInfoType(DefaultTextType.ELECTRICITY);
-    cit.setTextValue("Sähköjohto");
-    return new ResponseEntity<>(new CableInfoText[] { cit }, HttpStatus.OK);
-  }
-
 }

@@ -28,20 +28,17 @@ public class ApplicationController {
 
   private DecisionDao decisionDao;
 
-  private CableInfoDao cableInfoDao;
-
   private InvoiceRowDao invoiceRowDao;
 
   private HistoryDao historyDao;
 
   @Autowired
   public ApplicationController(ApplicationService applicationService, AttachmentDao attachmentDao,
-      DecisionDao decisionDao, CableInfoDao cableInfoDao,
+      DecisionDao decisionDao,
       InvoiceRowDao invoiceRowDao, HistoryDao historyDao) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
-    this.cableInfoDao = cableInfoDao;
     this.invoiceRowDao = invoiceRowDao;
     this.historyDao = historyDao;
   }
@@ -173,56 +170,6 @@ public class ApplicationController {
     byte[] bytes = decisionDao.getDecision(id)
         .orElseThrow(() -> new NoSuchEntityException("Decision not found", Integer.toString(id)));
     return new ResponseEntity<>(bytes, HttpStatus.OK);
-  }
-
-  /**
-   * Get standard texts for cable info
-   *
-   * @return all CableIOnfoTexts in a list
-   */
-  @RequestMapping(value = "/cable-info/texts", method = RequestMethod.GET)
-  public ResponseEntity<List<CableInfoText>> getCableInfoTexts() {
-    return new ResponseEntity<>(cableInfoDao.getCableInfoTexts(), HttpStatus.OK);
-  }
-
-  /**
-   * Add a standard text for cable infos
-   *
-   * @param cableInfoText the new CableInfoText to add -- the ID field will be ignored.
-   * @return the new CableInfoText, with ID
-   */
-  @RequestMapping(value = "/cable-info/texts", method = RequestMethod.POST)
-  public ResponseEntity<CableInfoText> addCableInfoText(@RequestBody CableInfoText cableInfoText) {
-    return new ResponseEntity<>(
-        cableInfoDao.createCableInfoText(cableInfoText.getCableInfoType(), cableInfoText.getTextValue()),
-        HttpStatus.OK);
-  }
-
-  /**
-   * Update a standard text for cable infos
-   *
-   * @param id ID of the text to update
-   * @param cableInfoText the new contents for the info -- only the textValue field is used
-   * @return the updated CableInfoText
-   */
-  @RequestMapping(value = "/cable-info/texts/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<CableInfoText> updateCableInfoText(@PathVariable int id,
-      @RequestBody CableInfoText cableInfoText) {
-    return new ResponseEntity<>(
-        cableInfoDao.updateCableInfoText(id, cableInfoText.getTextValue()),
-        HttpStatus.OK);
-  }
-
-  /**
-   * Delete a cable info standard text
-   *
-   * @param id the ID of the text to remove
-   * @return
-   */
-  @RequestMapping(value = "/cable-info/texts/{id}", method = RequestMethod.DELETE)
-  public ResponseEntity<Void> deleteCableInfoText(@PathVariable int id) {
-    cableInfoDao.deleteCableInfoText(id);
-    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

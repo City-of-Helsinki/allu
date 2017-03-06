@@ -204,7 +204,6 @@ public class TestCommon {
       "delete from allu.user_application_type",
       "delete from allu.user_role",
       "delete from allu.user",
-      "delete from allu.cable_info_text",
       "delete from allu.default_text",
    };
 }
