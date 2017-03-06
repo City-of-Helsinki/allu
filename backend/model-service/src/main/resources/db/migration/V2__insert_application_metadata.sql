@@ -232,7 +232,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'NOTE', 'Muistiinpano', 'ENUM_VALUE');
 
--- AttachmentType TODO: use!!!!
+-- AttachmentType
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('AttachmentType', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'ADDED_BY_CUSTOMER', 'Asiakkaan lisäämä liite', 'ENUM_VALUE');
@@ -281,7 +281,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'CONTENTS_CHANGED', 'Tietoja päivitetty', 'ENUM_VALUE');
 
--- CommentType !!!!
+-- CommentType
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('CommentType', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'INVOICING', 'Laskutuksen kommentti', 'ENUM_VALUE');
@@ -682,6 +682,81 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'specifiers', 'Tarkenteet', 'LIST', 'ENUMERATION',
             (select id from allu.structure_meta where type_name = 'ApplicationSpecifier' and version = 1));
 
+-----------
+-- Location
+-----------
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('Location', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Sijainnin tunniste', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'locationKey', 'Sijainnin alue', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'locationVersion', 'Sijainnin alueen versio', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'startTime', 'Alkupäivämäärä', 'DATETIME', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'endTime', 'Loppupäivämäärä', 'DATETIME', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'geometry', 'Alueen geometria', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'area', 'Alueen pinta-ala', 'FLOAT', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'areaOverride', 'Käsittelijän syöttämä pinta-ala', 'FLOAT', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'postalAddress', 'Alueen osoitetiedot', 'STRUCTURE', null,
+        (select id from allu.structure_meta where type_name = 'PostalAddress' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'fixedLocationIds', 'Kiinteät alueet', 'LIST', 'INTEGER', null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'cityDistrictId', 'Kaupunginosa', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'cityDistrictOverride', 'Käsittelijän valitsema kaupunginosa', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'paymentTariff', 'Maksuluokka', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'paymentTariffOverride', 'Käsittelijän valitseman maksuluokka', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'underpass', 'Altakuljettava', 'BOOLEAN', null, null);
+
+-------------
+-- Attachment
+-------------
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('Attachment', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Liitteen tunniste', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'handlerName', 'Käsittelijän nimi', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'type', 'Liitteen tyyppi', 'ENUMERATION', null,
+        (select id from allu.structure_meta where type_name = 'AttachmentType' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'name', 'Liitteen nimi', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'description', 'Liitteen kuvaus', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'size', 'Liitteen koko', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'creationTime', 'Luontipäivämäärä', 'DATETIME', null, null);
+
+-----------
+-- Comments
+-----------
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('Comment', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Kommentin tunniste', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'type', 'Kommentin tyyppi', 'ENUMERATION', null,
+        (select id from allu.structure_meta where type_name = 'CommentType' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'text', 'Kommentti', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'createTime', 'Luontipäivämäärä', 'DATETIME', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'updateTime', 'Luontipäivämäärä', 'DATETIME', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'user', 'Kommentoija', 'STRUCTURE', null,
+        (select id from allu.structure_meta where type_name = 'User' and version = 1));
+
 --------------
 -- Application
 --------------
@@ -723,18 +798,23 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'contactList', 'Hakemuksen yhteyshenkilöt', 'LIST', 'STRUCTURE',
             (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
--- TODO: location
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'locations', 'Hakemuksen sijainti', 'LIST', 'STRUCTURE',
+            (select id from allu.structure_meta where type_name = 'Location' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'extension', 'Hakemuksen laajenne', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'ApplicationExtension' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'decisionTime', 'Päätöksen aikaleima', 'DATETIME', null, null);
--- TODO: attachmentList
--- TODO: comments
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'attachmentList', 'Hakemuksen liitteet', 'LIST', 'STRUCTURE',
+            (select id from allu.structure_meta where type_name = 'Attachment' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'comments', 'Hakemuksen kommentit', 'LIST', 'STRUCTURE',
+            (select id from allu.structure_meta where type_name = 'Comment' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'calculatedPrice', 'Laskettu hinta', 'MONEY', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'priceOverride', 'Korvaava hinta', 'MONEY', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'),  'priceOverrideReason', 'Korvaavan hinnan peruste', 'STRING', null, null);
-
