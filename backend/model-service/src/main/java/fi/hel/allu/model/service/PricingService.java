@@ -11,14 +11,15 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.pricing.CalendarUtil;
 import fi.hel.allu.model.pricing.EventPricing;
 import fi.hel.allu.model.pricing.PricingConfiguration;
 import fi.hel.allu.model.pricing.ShortTermRentalPricing;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -121,9 +122,12 @@ public class PricingService {
 
     List<PricingConfiguration> pricingConfigs = getEventPricing(location, nature);
 
-    int eventDays = daysBetween(event.getEventStartTime(), event.getEventEndTime());
-    int buildDays = daysBetween(application.getStartTime(), event.getEventStartTime());
-    buildDays += daysBetween(event.getEventEndTime(), application.getEndTime());
+    int eventDays = (int) CalendarUtil.startingUnitsBetween(event.getEventStartTime(), event.getEventEndTime(),
+        ChronoUnit.DAYS);
+    int buildDays = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), event.getEventStartTime(),
+        ChronoUnit.DAYS) - 1;
+    buildDays += (int) CalendarUtil.startingUnitsBetween(event.getEventEndTime(), application.getEndTime(),
+        ChronoUnit.DAYS) - 1;
     double structureArea = event.getStructureArea();
     double area = getLocationArea(location);
 
@@ -164,16 +168,6 @@ public class PricingService {
 
   private double getLocationArea(Location location) {
     return Optional.ofNullable(location.getAreaOverride()).orElse(location.getArea());
-  }
-
-  /*
-   * Calculate amount of days between two timestamps, ignoring the hours.
-   */
-  private int daysBetween(ZonedDateTime startTime, ZonedDateTime endTime) {
-    if (startTime == null || endTime == null)
-      return 0;
-    return (int) startTime.truncatedTo(ChronoUnit.DAYS).until(endTime.truncatedTo(ChronoUnit.DAYS),
-        ChronoUnit.DAYS);
   }
 
   private boolean isCompany(Application application) {

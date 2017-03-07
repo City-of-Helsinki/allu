@@ -9,6 +9,7 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.LocationService;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.junit.Before;
@@ -24,8 +25,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 
-import static org.geolatte.geom.builder.DSL.*;
-import static org.junit.Assert.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -246,7 +251,7 @@ public class ApplicationControllerTest {
     // read application back from database and check the calculated price
     ResultActions ra = wtc.perform(get(String.format("/applications/%d", application.getId()))).andExpect(status().isOk());
     application = wtc.parseObjectFromResult(ra, Application.class);
-    int expectedPrice = 24622500;
+    int expectedPrice = 28140000;
     assertEquals(expectedPrice, (int) application.getCalculatedPrice());
   }
 

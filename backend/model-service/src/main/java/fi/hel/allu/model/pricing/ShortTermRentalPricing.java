@@ -4,7 +4,6 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceUnit;
 import fi.hel.allu.model.domain.ShortTermRental;
 
-import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
@@ -16,6 +15,7 @@ public class ShortTermRentalPricing extends Pricing {
   private final boolean applicantIsCompany;
 
   // Various price constants for short term rental
+  private static final int BENJI_DAILY_PRICE = 32000; // 320 EUR/day
   private static final int BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL = 75000; // 750
                                                                           // EUR/week
   private static final int BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL = 15000; // 150
@@ -33,6 +33,7 @@ public class ShortTermRentalPricing extends Pricing {
   private static final int PROMOTION_OR_SALES_LARGE_YEARLY = 15000; // 150
                                                                     // EUR/year
   private static final int SEASON_SALE_TEN_SQM_PRICE = 5000; // 50 EUR/10sqm/day
+  private static final int STORAGE_AREA_MONTHLY_PRICE = 50;  // 0.50 EUR/sqm/month
   private static final int SUMMER_THEATER_YEARLY_PRICE = 12000; // 120 EUR/year
   private static final int URBAN_FARMING_TERM_PRICE = 200; // 2.00 EUR/sqm/term
   private static final int LONG_TERM_DISCOUNT_LIMIT = 14; // how many days
@@ -42,19 +43,23 @@ public class ShortTermRentalPricing extends Pricing {
    * Invoice line string constants
    */
   static class InvoiceLines {
+    static final String ART = "Taideteos";
     static final String BANDEROL_NONCOMMERCIAL = "Banderollit silloissa, ei-kaupallinen";
     static final String BANDEROL_COMMERCIAL = "Banderollit silloissa, kaupallinen";
-    static final String PROMOTION_OR_SALES_SMALL = "Promootio- tai myyntitila liikkeen edustalla, alle 0,8 m x 3,0 m";
-    static final String PROMOTION_OR_SALES_LARGE = "Promootio- tai myyntitila liikkeen edustalla, yli 0,8 m x 3,0 m";
+    static final String BENJI = "Benji-hyppylaite";
+    static final String OTHER_SHORT_TERM_RENTAL = "Muu lyhytaikainen maanvuokraus";
+    static final String PROMOTION_OR_SALES_SMALL = "Esittely- tai myyntitila liikkeen edustalla, alle 0,8 m x 3,0 m";
+    static final String PROMOTION_OR_SALES_LARGE = "Esittely- tai myyntitila liikkeen edustalla, yli 0,8 m x 3,0 m";
+    static final String STORAGE_AREA = "Varastoalue";
     static final String URBAN_FARMING = "Kaupunkiviljelypaikka yhdistyksille ja yhteisöille";
     static final String KESKUSKATU_SALES_SHORT = "Keskuskadun myyntipaikka, 1-14 päivää";
     static final String KESKUSKATU_SALES_LONG = "Keskuskadun myyntipaikka, 15. päivästä alkaen";
-    static final String SUMMER_THEATER = "Kesäteatteri, maksu näytäntöajalta";
+    static final String SUMMER_THEATER = "Kesäteatterit, maksu näytäntöajalta";
     static final String DOG_TRAINING_FIELD_ORG = "Koirankoulutuskentän vuosimaksu yhdistykselle";
     static final String DOG_TRAINING_FIELD_COM = "Koirankoulutuskentän vuosimaksu yritykselle";
     static final String DOG_TRAINING_EVENT_ORG = "Koirankoulutustapahtuma, järjestäjänä yhdistys";
     static final String DOG_TRAINING_EVENT_COM = "Koirankoulutustapahtuma, järjestäjänä yritys";
-    static final String SMALL_ART_AND_CULTURE = "Pienimuotoinen taide- ja kulttuuritapahtuma";
+    static final String SMALL_ART_AND_CULTURE = "Pienimuotoinen kaupallinen taide- ja kulttuuritoiminta";
     static final String SEASON_SALES_SHORT = "Sesonkimyyntipaikka, 1-14 päivää";
     static final String SEASON_SALES_LONG = "Sesonkimyyntipaikka, 15. päivästä alkaen";
     static final String CIRCUS = "Sirkukset ja tivolit";
@@ -81,7 +86,7 @@ public class ShortTermRentalPricing extends Pricing {
     case ART:
       // Free event
       setPriceInCents(0);
-      addInvoiceRow(InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.SMALL_ART_AND_CULTURE, 0);
+      addInvoiceRow(InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.ART, 0);
       break;
     case SMALL_ART_AND_CULTURE:
       // Free event
@@ -89,8 +94,8 @@ public class ShortTermRentalPricing extends Pricing {
       addInvoiceRow(InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.SMALL_ART_AND_CULTURE, 0);
       break;
     case BENJI:
-      // Price not defined
-      setPriceInCents(0);
+      // 320 EUR/day
+      updatePricePerUnit(ChronoUnit.DAYS, BENJI_DAILY_PRICE, InvoiceLines.BENJI);
       break;
     case BRIDGE_BANNER:
       // Non-commercial organizer: 150 EUR/week
@@ -135,8 +140,9 @@ public class ShortTermRentalPricing extends Pricing {
           InvoiceLines.KESKUSKATU_SALES_SHORT, InvoiceLines.KESKUSKATU_SALES_LONG);
       break;
     case OTHER_SHORT_TERM_RENTAL:
-      // Unknown price
+      // Handler should set the price override
       setPriceInCents(0);
+      addInvoiceRow(InvoiceUnit.PIECE, 1, 0, InvoiceLines.OTHER_SHORT_TERM_RENTAL, 0);
       break;
     case PROMOTION_OR_SALES:
       // 0.8 x 3.0 sqm: free of charge
@@ -157,8 +163,8 @@ public class ShortTermRentalPricing extends Pricing {
           InvoiceLines.SEASON_SALES_LONG);
       break;
     case STORAGE_AREA:
-      // Unknown price
-      setPriceInCents(0);
+      // 0.50 EUR/sqm/month
+      updatePriceByTimeAndArea(STORAGE_AREA_MONTHLY_PRICE, ChronoUnit.DAYS, 1, false, InvoiceLines.STORAGE_AREA, null);
       break;
     case SUMMER_THEATER:
       // 120 EUR/month
@@ -178,7 +184,8 @@ public class ShortTermRentalPricing extends Pricing {
    * application.
    */
   private void updatePricePerUnit(ChronoUnit chronoUnit, int centsPerUnit, String invoiceRowText) {
-    final int units = amountOfStartingUnits(application.getStartTime(), application.getEndTime(), chronoUnit);
+    final int units = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
+        chronoUnit);
     int priceInCents = centsPerUnit * units;
     addInvoiceRow(InvoiceUnit.fromChronoUnit(chronoUnit), units, centsPerUnit, invoiceRowText, priceInCents);
     setPriceInCents(priceInCents);
@@ -205,7 +212,8 @@ public class ShortTermRentalPricing extends Pricing {
   private void updatePriceByTimeAndArea(int priceInCents,
       ChronoUnit pricePeriod, int priceArea, boolean longTermDiscount,
       String invoiceRowText, String invoiceRowTextLongTerm) {
-    final int numTimeUnits = amountOfStartingUnits(application.getStartTime(), application.getEndTime(), pricePeriod);
+    final int numTimeUnits = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(),
+        application.getEndTime(), pricePeriod);
 
     final int numAreaUnits = (int) Math.ceil(applicationArea / priceArea);
     // How many time units are charged full price?
@@ -222,19 +230,6 @@ public class ShortTermRentalPricing extends Pricing {
       price += discountPrice;
     }
     setPriceInCents((int) price);
-  }
-
-  /*
-   * Calculate how many time units (day, month, etc) start during given time
-   * period.
-   */
-  private int amountOfStartingUnits(ZonedDateTime startTime, ZonedDateTime endTime, ChronoUnit chronoUnit) {
-    if (startTime == null || endTime == null) {
-      return 0;
-    }
-    // ChronoUnit.between returns the number of full time periods, so move the
-    // end time almost one full unit forward.
-    return (int) chronoUnit.between(startTime, endTime.plus(1, chronoUnit).minusSeconds(1));
   }
 
   private void updateUrbanFarmingPrice() {

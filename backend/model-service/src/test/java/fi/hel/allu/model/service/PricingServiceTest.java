@@ -68,10 +68,10 @@ public class PricingServiceTest {
 
   @Test
   public void testMultiSectionApplication() {
-    // Create a 4 day application with one build day, EcoCompass discount and
+    // Create a five day application with one build day, EcoCompass discount and
     // fixed locations "Kansalaistori, lohko A" and "Kansalaistori, lohko C".
-    // The expected price is (3 * (500 + 400) + 1 * (250 + 200)) * 0.7 EUR =
-    // 2205.00 EUR
+    // The expected price is (4 * (500 + 400) + 1 * (250 + 200)) * 0.7 EUR =
+    // 2835.00 EUR
     Application application = new Application();
     application.setType(ApplicationType.EVENT);
     application.setKind(ApplicationKind.OUTDOOREVENT);
@@ -96,8 +96,8 @@ public class PricingServiceTest {
     Location foobar2 = locationDao.findByApplication(application.getId()).get(0);
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
-    assertEquals(220500, application.getCalculatedPrice().intValue());
-    checkPrice(application, 220500);
+    assertEquals(283500, application.getCalculatedPrice().intValue());
+    checkPrice(application, 283500);
   }
 
   @Test
@@ -116,8 +116,8 @@ public class PricingServiceTest {
     event.setCommercial(true);
     application.setStartTime(ZonedDateTime.parse("2016-11-14T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-11-28T05:59:59+02:00"));
-    // Two week commercial -> 1500 EUR
-    checkPrice(application, 150000);
+    // Three calendar week commercial -> 2250 EUR
+    checkPrice(application, 225000);
   }
 
   @Test
@@ -127,8 +127,8 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.CIRCUS);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
-    // Thirty-three days -> 6600 EUR
-    checkPrice(application, 660000);
+    // Thirty-four days -> 6800 EUR
+    checkPrice(application, 680000);
   }
 
   @Test
@@ -185,8 +185,8 @@ public class PricingServiceTest {
     location.setAreaOverride(135.5);
     location.setApplicationId(application.getId());
     locationDao.insert(location).getId();
-    // 19 days, 135.5 sqm -> 14 * 14 * 50 + 5 * 14 * 25 = 11550 EUR
-    checkPrice(application, 1155000);
+    // 20 days, 135.5 sqm -> 14 * 14 * 50 + 6 * 14 * 25 = 11900 EUR
+    checkPrice(application, 1190000);
   }
 
   @Test
@@ -216,8 +216,8 @@ public class PricingServiceTest {
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
     application.setExtension(new ShortTermRental());
     application.setMetadataVersion(1);
-    // Two months -> 240 EUR
-    checkPrice(application, 24000);
+    // Three months -> 360 EUR
+    checkPrice(application, 36000);
   }
 
   @Test
