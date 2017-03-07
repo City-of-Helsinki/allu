@@ -362,7 +362,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'email', 'Sähköpostiosoite', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'phoneNumber', 'Puhelin', 'STRING', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'phone', 'Puhelin', 'STRING', null, null);
 
 -- Postal address
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('PostalAddress', 1);
@@ -710,7 +710,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'),  'cityDistrictId', 'Kaupunginosa', 'INTEGER', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'),  'cityDistrictOverride', 'Käsittelijän valitsema kaupunginosa', 'INTEGER', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'),  'cityDistrictIdOverride', 'Käsittelijän valitsema kaupunginosa', 'INTEGER', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'),  'paymentTariff', 'Maksuluokka', 'INTEGER', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)

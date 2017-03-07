@@ -95,6 +95,12 @@
             <artifactId>json-path</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>ui-domain</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -267,12 +273,6 @@
                             <table>attribute_meta</table>
                             <column>list_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToAttributeDataType</type>
-                        </typeMapping>
-                        <typeMapping>
-                            <!-- TODO: remove when cable info is removed -->
-                            <table>cable_info_text</table>
-                            <column>cable_info_type</column>
-                            <type>fi.hel.allu.model.querydsl.StringToDefaultTextType</type>
                         </typeMapping>
                         <typeMapping>
                             <table>default_text</table>

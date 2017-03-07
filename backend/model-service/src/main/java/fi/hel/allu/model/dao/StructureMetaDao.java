@@ -103,7 +103,7 @@ public class StructureMetaDao {
   /*
    * FindCompleteByApplicationType's implementation without the checks.
    */
-  private Optional<StructureMeta> findCompleteInternal(String typeName, int version,
+  Optional<StructureMeta> findCompleteInternal(String typeName, int version,
       Map<String, String> typeOverrides) {
     Optional<StructureMeta> meta = findStructure(typeName, version);
     if (meta.isPresent()) {
