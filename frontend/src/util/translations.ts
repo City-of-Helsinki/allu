@@ -1,4 +1,5 @@
 import {Some, Option} from './option';
+import {StringUtil} from './string.util';
 export const translations = {
   application: {
     error: {
@@ -495,12 +496,7 @@ export const translations = {
 
 const toKey = (path: string | Array<string>): Option<Array<string>> => {
   return Some(path).map(p => {
-    let pathString = '';
-    if (Array.isArray(p)) {
-      pathString = p.join('.');
-    } else {
-      pathString = p;
-    }
+    let pathString = StringUtil.toPath(p, '.');
     return pathString.split('.');
   });
 };

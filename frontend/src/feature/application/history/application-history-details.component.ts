@@ -49,6 +49,11 @@ export class ApplicationHistoryDetailsComponent implements AfterContentInit {
           this.meta.uiName(fieldChange.fieldName),
             findTranslation(['common.boolean', fieldChange.oldValue]),
             findTranslation(['common.boolean', fieldChange.newValue]));
+      case AttributeDataType.ENUMERATION:
+        return new ApplicationFieldChange(
+          this.meta.uiName(fieldChange.fieldName),
+          this.meta.uiName([fieldChange.fieldName, fieldChange.oldValue]),
+          this.meta.uiName([fieldChange.fieldName, fieldChange.newValue]));
       default:
         return new ApplicationFieldChange(
           this.meta.uiName(fieldChange.fieldName),

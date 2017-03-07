@@ -20,4 +20,14 @@ export class StringUtil {
   public static replaceNull(s: string): string {
     return !!s ? s.replace('null', '-') : s;
   }
+
+  public static toPath(p: string | string[], separator?: string): string {
+    let pathString = '';
+    if (Array.isArray(p)) {
+      pathString = p.join(separator || '.');
+    } else {
+      pathString = p;
+    }
+    return pathString;
+  }
 }
