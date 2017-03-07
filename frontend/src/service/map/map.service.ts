@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
+import 'leaflet-draw-drag';
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -83,12 +84,19 @@ export class MapState {
         marker: false
       } : false;
 
+    let edit = controlsEnabled ? {
+        selectedPathOptions: {
+          maintainColor: true,
+          moveMarkers: true
+        }
+      } : false;
+
     let drawControl = new L.Control.Draw({
       position: 'topright',
       draw: draw,
       edit: {
         featureGroup: items,
-        edit: controlsEnabled,
+        edit: edit,
         remove: controlsEnabled
       }
     });
