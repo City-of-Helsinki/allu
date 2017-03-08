@@ -273,18 +273,13 @@ public abstract class MockServices {
     Event event = new Event();
     event.setUrl("url, Model");
     event.setNature(EventNature.PUBLIC_NONFREE);
-    event.setEventStartTime(ZonedDateTime.now());
     event.setAttendees(1050);
     event.setDescription("Outdoor event description, Model");
-    event.setEventEndTime(ZonedDateTime.now());
     event.setEcoCompass(true);
     event.setFoodSales(true);
     event.setEntryFee(1234);
-    ZoneId zoneId = ZoneId.of("Europe/Helsinki");
-    ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
-    ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
-    event.setEventStartTime(zonedDateTime);
-    event.setEventEndTime(zonedDateTime2);
+    event.setBuildSeconds(60 * 60 * 24);
+    event.setTeardownSeconds(60 * 60 * 24 * 2);
     return event;
   }
 
