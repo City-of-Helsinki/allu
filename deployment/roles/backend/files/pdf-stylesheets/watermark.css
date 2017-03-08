@@ -1,0 +1,7 @@
+body {
+  background-image: url('luonnos.png');
+  background-repeat:repeat-y;
+  background-position: center 250px;
+  background-attachment:fixed;
+  background-size:100%;
+}

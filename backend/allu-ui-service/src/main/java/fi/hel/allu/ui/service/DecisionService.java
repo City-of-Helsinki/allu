@@ -117,6 +117,7 @@ public class DecisionService {
   public byte[] getDecisionPreview(ApplicationJson application) {
     DecisionJson decisionJson = new DecisionJson();
     fillJson(decisionJson, application);
+    decisionJson.setDraft(true);
     return restTemplate.postForObject(applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE),
         decisionJson, byte[].class, styleSheetName(application));
   }

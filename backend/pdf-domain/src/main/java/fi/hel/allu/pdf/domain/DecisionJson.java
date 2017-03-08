@@ -9,6 +9,8 @@ import java.util.List;
  */
 public class DecisionJson {
 
+  private boolean isDraft;
+
   private String decisionDate;
   private String decisionId;
 
@@ -63,6 +65,14 @@ public class DecisionJson {
   private List<String> attachmentNames;
 
   private String appealInstructions;
+
+  public boolean isDraft() {
+    return isDraft;
+  }
+
+  public void setDraft(boolean isDraft) {
+    this.isDraft = isDraft;
+  }
 
   public String getDecisionDate() {
     return decisionDate;
