@@ -15,6 +15,12 @@ import {ApplicationType} from '../../model/application/type/application-type';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {styleByApplicationType} from './map-draw-styles';
 import {MapPopup} from './map-popup';
+import GeoJSONOptions = L.GeoJSONOptions;
+
+const alluIcon = L.icon({
+  iconUrl: 'assets/images/marker-icon.png',
+  shadowUrl: 'assets/images/marker-shadow.png'
+});
 
 export class ShapeAdded {
   constructor(public features: L.FeatureGroup, public affectsControls: boolean = true) {}
@@ -145,15 +151,14 @@ export class MapState {
 
   private drawGeometryToLayer(geometryCollection: GeoJSON.GeometryCollection,
                               drawLayer: L.LayerGroup,
-                              style?: Object, popup?: MapPopup) {
+                              style?: GeoJSONOptions, popup?: MapPopup) {
+    style = style || {};
     if (geometryCollection.geometries.length) {
       let featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
+      style.pointToLayer = (point, latlng) => L.marker(latlng, alluIcon);
       let geoJSON = L.geoJSON(featureCollection, style);
-
-      geoJSON.eachLayer((layer) => {
-        Some(popup).do(pu => layer.bindPopup((l) => pu.content()));
-        drawLayer.addLayer(layer);
-      });
+      Some(popup).do(pu => geoJSON.bindPopup((l) => pu.content()));
+      drawLayer.addLayer(geoJSON);
     }
   }
 
