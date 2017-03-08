@@ -5,6 +5,7 @@ import fi.hel.allu.common.types.EventNature;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 public class Event extends ApplicationExtension {
@@ -25,7 +26,9 @@ public class Event extends ApplicationExtension {
   private float structureArea;
   private String structureDescription;
   private String timeExceptions;
+  @Min(value = 0)
   private long buildSeconds;
+  @Min(value = 0)
   private long teardownSeconds;
 
   @Override

@@ -6,6 +6,7 @@ import fi.hel.allu.common.types.StatusType;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
@@ -35,6 +36,7 @@ public class Application {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   @NotNull
+  @Valid
   private ApplicationExtension extension;
   private ZonedDateTime decisionTime;
   private Integer calculatedPrice;
