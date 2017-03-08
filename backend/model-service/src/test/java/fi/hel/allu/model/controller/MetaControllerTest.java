@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.StructureMetaDao;
+import fi.hel.allu.model.domain.AreaRental;
 import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
@@ -116,6 +117,13 @@ public class MetaControllerTest {
     ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.SHORT_TERM_RENTAL + "/1")).andExpect(status().isOk());
     StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
     assertExtensionAttributes(ShortTermRentalJson.class, sMetaInResult);
+  }
+
+  @Test
+  public void testCheckAreaRentalAgainstJsonClass() throws Exception {
+    ResultActions resultActions = wtc.perform(get("/meta/"+ ApplicationType.AREA_RENTAL + "/1")).andExpect(status().isOk());
+    StructureMeta sMetaInResult = wtc.parseObjectFromResult(resultActions, StructureMeta.class);
+    assertExtensionAttributes(AreaRental.class, sMetaInResult);
   }
 
   @Test

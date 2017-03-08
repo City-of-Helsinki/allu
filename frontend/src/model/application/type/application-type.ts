@@ -106,7 +106,17 @@ const commonApplicationKinds = [
 
 export const excavationAnnouncement = new ApplicationTypeStructure(ApplicationType.EXCAVATION_ANNOUNCEMENT, commonApplicationKinds);
 
-export const areaRental = new ApplicationTypeStructure(ApplicationType.AREA_RENTAL, []);
+export const areaRental = new ApplicationTypeStructure(ApplicationType.AREA_RENTAL, [
+  new ApplicationKindStructure(ApplicationKind.PROPERTY_RENOVATION),
+  new ApplicationKindStructure(ApplicationKind.CONTAINER_BARRACK),
+  new ApplicationKindStructure(ApplicationKind.PHOTO_SHOOTING),
+  new ApplicationKindStructure(ApplicationKind.SNOW_WORK),
+  new ApplicationKindStructure(ApplicationKind.RELOCATION),
+  new ApplicationKindStructure(ApplicationKind.LIFTING),
+  new ApplicationKindStructure(ApplicationKind.NEW_BUILDING_CONSTRUCTION),
+  new ApplicationKindStructure(ApplicationKind.ROLL_OFF),
+  new ApplicationKindStructure(ApplicationKind.OTHER_AREA_RENTAL)
+]);
 
 export const temporaryTrafficArrangements = new ApplicationTypeStructure(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, [
   new ApplicationKindStructure(ApplicationKind.PUBLIC_EVENT),

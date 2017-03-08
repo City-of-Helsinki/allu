@@ -185,6 +185,7 @@ public class ApplicationMapper {
       applicationJson.setExtension(createCableReportJson((CableReport) application.getExtension()));
       break;
     case AREA_RENTAL:
+      applicationJson.setExtension(createAreaRentalJson((AreaRental) application.getExtension()));
       break;
     case EXCAVATION_ANNOUNCEMENT:
       applicationJson
@@ -254,6 +255,7 @@ public class ApplicationMapper {
       applicationExtension = createCableReportModel((CableReportJson) applicationJson.getExtension());
       break;
     case AREA_RENTAL:
+      applicationExtension = createAreaRentalModel((AreaRentalJson) applicationJson.getExtension());
       break;
     case EXCAVATION_ANNOUNCEMENT:
       applicationExtension = createExcavationAnnouncementModel(
@@ -369,6 +371,32 @@ public class ApplicationMapper {
     contact.setEmail(json.getEmail());
     contact.setPhone(json.getPhone());
     return contact;
+  }
+
+  /**
+   * Map AreaRentalJson to AreaRental
+   */
+  private AreaRental createAreaRentalModel(AreaRentalJson areaRentalJson) {
+    AreaRental areaRental = new AreaRental();
+
+    areaRental.setContractor(createApplicantModel(areaRentalJson.getContractor()));
+    areaRental.setResponsiblePerson(createContactModel(areaRentalJson.getResponsiblePerson()));
+    areaRental.setAdditionalInfo(areaRentalJson.getAdditionalInfo());
+    areaRental.setTrafficArrangements(areaRentalJson.getTrafficArrangements());
+    return areaRental;
+  }
+
+  /*
+   * Map AreaRental to AreaRentalJson
+   */
+  private AreaRentalJson createAreaRentalJson(AreaRental areaRental) {
+    AreaRentalJson areaRentalJson = new AreaRentalJson();
+
+    areaRentalJson.setContractor(createApplicantJson(areaRental.getContractor()));
+    areaRentalJson.setResponsiblePerson(createContactJson(areaRental.getResponsiblePerson()));
+    areaRentalJson.setAdditionalInfo(areaRental.getAdditionalInfo());
+    areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
+    return areaRentalJson;
   }
 
   /*

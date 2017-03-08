@@ -33,6 +33,7 @@ import {TrafficArrangementComponent} from './info/traffic-arrangement/traffic-ar
 import {PlacementContractComponent} from './info/placement-contract/placement-contract.component';
 import {ApplicationHistoryModule} from './history/application-history.module';
 import {TermsModule} from './terms/terms.module';
+import {AreaRentalComponent} from './info/area-rental/area-rental.component';
 
 
 @NgModule({
@@ -74,7 +75,8 @@ import {TermsModule} from './terms/terms.module';
     DefaultTextModalComponent,
     NoteComponent,
     TrafficArrangementComponent,
-    PlacementContractComponent
+    PlacementContractComponent,
+    AreaRentalComponent
   ],
   providers: [
     ApplicationResolve

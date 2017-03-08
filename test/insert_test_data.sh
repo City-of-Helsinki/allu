@@ -86,5 +86,6 @@ try_repeat insert_data "data/joulukuusimyynti.json"
 try_repeat insert_data "data/johtoselvitys.json"
 try_repeat insert_data "data/nordenskiold_liikennejarjestely.json"
 try_repeat insert_data "data/runebergin_sijoitussopimus.json"
+try_repeat insert_data "data/eduskunta_aluevuokraus.json"
 try_repeat login admin
 try_repeat insert_default_attachment "data/hernesaari.json"

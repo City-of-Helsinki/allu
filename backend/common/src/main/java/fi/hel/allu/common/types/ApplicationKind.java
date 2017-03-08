@@ -21,7 +21,7 @@ public enum ApplicationKind {
   SEASON_SALE, // Sesonkimyynti
   CIRCUS, // Sirkus/tivolivierailu
   ART, // Taideteos
-  STORAGE_AREA, // Varastoalue
+  STORAGE_AREA, // Varastoalue, also used by AREA RENTAL!
   // cable reports - johtoselvitykset
   STREET_AND_GREEN, // Katu- ja vihertyöt
   WATER_AND_SEWAGE, // Vesi / viemäri
@@ -32,6 +32,16 @@ public enum ApplicationKind {
   YARD, // Piha
   GEOLOGICAL_SURVEY, // Pohjatutkimus
   OTHER_CABLE_REPORT, // Muut
+  // AREA RENTAL
+  PROPERTY_RENOVATION,        // kiinteistöremontti
+  CONTAINER_BARRACK,          // kontti/parakki
+  PHOTO_SHOOTING,             // kuvaus
+  SNOW_WORK,                  // lumenpudotus
+  RELOCATION,                 // muutto
+  LIFTING,                    // nostotyö
+  NEW_BUILDING_CONSTRUCTION,  // uudisrakennuksen työmaa-alue
+  ROLL_OFF,                   // vaihtolava
+  OTHER_AREA_RENTAL,          // muu
   // NOTES
   CHRISTMAS_TREE_SALES_AREA, // Joulukuusenmyyntipaikka
   CITY_CYCLING_AREA, // Kaupunkipyöräpaikka
@@ -46,6 +56,6 @@ public enum ApplicationKind {
   ELECTION_ADD_STAND, // Vaalimainosteline
   NOTE_OTHER, // Muu
   // TEMPORARY TRAFFIC ARRANGEMENTS
-  PUBLIC_EVENT, // Yleisötilaisus
+  PUBLIC_EVENT, // Yleisötilaisus, also used by AREA RENTAL!
   OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT // Muu
 }

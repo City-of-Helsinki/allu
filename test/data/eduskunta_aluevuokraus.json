@@ -1,0 +1,125 @@
+{
+  "type": "AREA_RENTAL",
+  "kind": "PROPERTY_RENOVATION",
+  "name": "Aluevuokraus",
+  "applicant": {
+    "id": null,
+    "type": "PERSON",
+    "representative": null,
+    "name": "Reima Remontoija",
+    "registryKey": "43124123",
+    "postalAddress": {
+      "streetAddress": "Remonttikatu 123",
+      "postalCode": "20200",
+      "city": "Turku"
+    },
+    "email": "reima.remontoija@reimanremontit.net",
+    "phone": "02213412"
+  },
+  "contactList": [
+    {
+      "id": null,
+      "applicantId": null,
+      "name": "Raimo Remontoija",
+      "streetAddress": "Bulvaanitie 42",
+      "postalCode": "21200",
+      "city": "Turku",
+      "email": "raimo.remontoija@bulvaaniremontit.com",
+      "phone": "0245223432"
+    }
+  ],
+  "locations": [
+    {
+      "locationKey":1,
+      "locationVersion":1,
+      "startTime":"2017-01-01T22:00:00Z",
+      "endTime":"2017-12-30T22:00:00Z",
+      "geometry":{
+        "type":"GeometryCollection",
+        "crs":{
+          "properties":{
+            "name":"EPSG:3879"
+          },
+          "type":"name"
+        },
+        "bbox":null,
+        "geometries":[
+          {
+            "type":"Polygon",
+            "coordinates":[
+              [
+                [
+                  2.5496289375E7,
+                  6673376.749999999
+                ],
+                [
+                  2.5496333375E7,
+                  6673244.249999997
+                ],
+                [
+                  2.5496343875E7,
+                  6673249.749999999
+                ],
+                [
+                  2.5496302875E7,
+                  6673383.249999999
+                ],
+                [
+                  2.5496302875E7,
+                  6673383.249999999
+                ],
+                [
+                  2.54962871875E7,
+                  6673379.374999997
+                ],
+                [
+                  2.5496289375E7,
+                  6673376.749999999
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      "area":1875.8281250381842,
+      "areaOverride":null,
+      "postalAddress":{
+      },
+      "fixedLocationIds":[
+
+      ],
+      "underpass":false
+    }
+  ],
+  "extension": {
+    "applicationType": "AREA_RENTAL",
+    "contractor": {
+      "id": null,
+      "type": "COMPANY",
+      "representative": null,
+      "name": "bulvaaniremontit.com",
+      "registryKey": "342312-1",
+      "postalAddress": {
+        "streetAddress": "Turuntie 10",
+        "postalCode": "20100",
+        "city": "Turkku"
+      },
+      "email": "suorittaja@bulvaaniremontit.com",
+      "phone": "0421431234"
+    },
+    "responsiblePerson": {
+      "id": null,
+      "applicantId": null,
+      "name": "Bo Bulvaani",
+      "streetAddress": "Salontie 1",
+      "postalCode": "20100",
+      "city": "PL 200",
+      "email": "bo.bulvaani@bulvaaniremontit.com",
+      "phone": "0232195450"
+    },
+    "additionalInfo": "Remontti valmis, kun se on valmis",
+    "trafficArrangements": "Eduskuntaan ei pääse, mene muualle"
+  },
+  "applicationTags": [
+  ]
+}

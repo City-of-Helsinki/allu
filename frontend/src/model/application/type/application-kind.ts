@@ -34,6 +34,15 @@ export enum ApplicationKind {
   YARD, // Piha
   GEOLOGICAL_SURVEY, // Pohjatutkimus
   OTHER_CABLE_REPORT, // Muut
+  PROPERTY_RENOVATION,        // kiinteistöremontti
+  CONTAINER_BARRACK,          // kontti/parakki
+  PHOTO_SHOOTING,             // kuvaus
+  SNOW_WORK,                  // lumenpudotus
+  RELOCATION,                 // muutto
+  LIFTING,                    // nostotyö
+  NEW_BUILDING_CONSTRUCTION,  // uudisrakennuksen työmaa-alue
+  ROLL_OFF,                   // vaihtolava
+  OTHER_AREA_RENTAL,          // muu
   // NOTES
   CHRISTMAS_TREE_SALES_AREA, // Joulukuusenmyyntipaikka
   CITY_CYCLING_AREA, // Kaupunkipyöräpaikka

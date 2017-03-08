@@ -8,6 +8,7 @@ import {ExcavationAnnouncement} from '../../model/application/excavation-announc
 import {Note} from '../../model/application/note/note';
 import {TrafficArrangement} from '../../model/application/traffic-arrangement/traffic-arrangement';
 import {PlacementContract} from '../../model/application/placement-contract/placement-contract';
+import {AreaRental} from '../../model/application/area-rental/area-rental';
 
 export class ApplicationTypeDataMapper {
   public static mapBackend(backendExtension: any): ApplicationExtension {
@@ -98,6 +99,14 @@ export class ApplicationTypeDataMapper {
           backendExtension.diaryNumber,
           backendExtension.additionalInfo,
           backendExtension.generalTerms,
+          backendExtension.terms
+        );
+      case ApplicationType.AREA_RENTAL:
+        return new AreaRental(
+          backendExtension.contractor,
+          backendExtension.responsiblePerson,
+          backendExtension.trafficArrangements,
+          backendExtension.additionalInfo,
           backendExtension.terms
         );
       default:

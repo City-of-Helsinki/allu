@@ -1,0 +1,95 @@
+<div materialize class="row">
+    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
+        <div class="row">
+            <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
+                       [readonly]="readonly" headerText="Hakija" formName="applicant"
+                       [showCopyToBilling]="true"></applicant>
+
+            <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
+                     [readonly]="readonly" headerText="Yhteyshenkilö" formName="contacts"
+                     [saveToRegistry]="true"></contact>
+        </div>
+
+        <div class="row">
+            <applicant [applicationForm]="applicationForm" [applicant]="application.extension.contractor"
+                       [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
+                       [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
+
+            <contact [applicationForm]="applicationForm" [contactList]="application.extension.responsiblePersonList"
+                     [readonly]="readonly" headerText="Vastuuhenkilö" formName="responsiblePerson"></contact>
+        </div>
+
+        <div class="col m12 loose">
+            <md-card>
+                <md-card-title>Aluevuokrauksen voimassaolo</md-card-title>
+                <md-card-content>
+                    <div class="row form-group">
+                        <div formGroupName="validityTimes" class="col s6">
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                                            {{'application.common.field.validityStartTimeMissing' | translation}}
+                                        </field-error>
+                                        <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                                            {{'application.common.field.validityStartBeforeEnd' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
+                            </div>
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                           materialize="pickadate"
+                                           [materializeParams]="pickadateParams"/>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                                            {{'application.common.field.validityEndTimeMissing' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+
+        <div class="col m12 loose">
+            <md-card>
+                <md-card-title>Aluevuokrauksen tiedot</md-card-title>
+                <md-card-content>
+                    <div class="row form-group">
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <textarea mdInput md-autosize formControlName="trafficArrangements"
+                                          placeholder="Suoritettavat liikennejärjestelyt"></textarea>
+                            </md-input-container>
+                        </div>
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <textarea mdInput md-autosize formControlName="additionalInfo"
+                                          placeholder="Lisätiedot"></textarea>
+                            </md-input-container>
+                        </div>
+                    </div>
+                </md-card-content>
+            </md-card>
+        </div>
+
+        <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
+
+        <div class="col s12" *ngIf="showTerms">
+            <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
+        </div>
+
+        <application-actions
+            [readonly]="readonly"
+            [applicationId]="application.id"
+            [form]="applicationForm"
+            [submitPending]="submitPending"></application-actions>
+    </form>
+</div>

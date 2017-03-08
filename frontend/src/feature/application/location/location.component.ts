@@ -27,6 +27,7 @@ import {ProgressStep} from '../progressbar/progress-step';
 import {ArrayUtil} from '../../../util/array-util';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
+import {AreaRental} from '../../../model/application/area-rental/area-rental';
 
 @Component({
   selector: 'type',
@@ -219,8 +220,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         return new TrafficArrangement();
       case ApplicationType.PLACEMENT_CONTRACT:
         return new PlacementContract();
+      case ApplicationType.AREA_RENTAL:
+        return new AreaRental();
       default:
-        throw new Error('Extension for ' + ApplicationType[type] + ' not implemented yet');
+        throw new Error('Extension for type' + type + ' not implemented yet');
     }
   }
 
