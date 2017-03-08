@@ -234,9 +234,6 @@ public class ApplicationControllerTest {
     Event event = new Event();
     event.setEcoCompass(true);
     event.setNature(EventNature.CLOSED);
-    // TODO: remove these two lines setStartTime and setEndTime, because they should get set automatically from location
-    event.setEventStartTime(newApplication.getStartTime());
-    event.setEventEndTime(newApplication.getEndTime());
     newApplication.setExtension(event);
     Geometry geometry = polygon(3879,
         ring(c(25492000, 6675000), c(25492500, 6675000), c(25492100, 6675100), c(25492000, 6675000)));

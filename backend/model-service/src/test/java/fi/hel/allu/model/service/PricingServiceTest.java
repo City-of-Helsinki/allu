@@ -81,8 +81,7 @@ public class PricingServiceTest {
     Event event = new Event();
     event.setEcoCompass(true);
     event.setNature(EventNature.PUBLIC_FREE);
-    event.setEventStartTime(application.getStartTime().plusDays(1));
-    event.setEventEndTime(application.getEndTime());
+    event.setBuildSeconds(60 * 60 * 24); // 24 hours
     application.setExtension(event);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
@@ -91,9 +90,7 @@ public class PricingServiceTest {
         .map(pair -> knownFixedLocations.get(pair).getId()).collect(Collectors.toList());
     location.setFixedLocationIds(fixedLocationIds);
     location.setApplicationId(application.getId());
-    int locationId = locationDao.insert(location).getId();
-    Location foobar = locationDao.findById(locationId).get();
-    Location foobar2 = locationDao.findByApplication(application.getId()).get(0);
+    locationDao.insert(location);
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
     assertEquals(283500, application.getCalculatedPrice().intValue());

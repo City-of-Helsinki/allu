@@ -7,16 +7,12 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
 
-import java.time.ZonedDateTime;
-
 public class Event extends ApplicationExtension {
   @NotNull
   private EventNature nature;
   @NotBlank
   private String description;
   private String url;
-  private ZonedDateTime eventStartTime;
-  private ZonedDateTime eventEndTime;
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
@@ -28,9 +24,9 @@ public class Event extends ApplicationExtension {
   private String marketingProviders;
   private float structureArea;
   private String structureDescription;
-  private ZonedDateTime structureStartTime;
-  private ZonedDateTime structureEndTime;
   private String timeExceptions;
+  private long buildSeconds;
+  private long teardownSeconds;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -68,32 +64,6 @@ public class Event extends ApplicationExtension {
 
   public void setUrl(String url) {
     this.url = url;
-  }
-
-  /**
-   * in Finnish: Tapahtuman alkuaika
-   * Note: event start time is the time event starts, but it's not necessarily the same time as reservation of land area starts. For example,
-   * event time for rock concert is: structure building time + event time (the concert itself) + structure disassembly time.
-   */
-  public ZonedDateTime getEventStartTime() {
-    return eventStartTime;
-  }
-
-  public void setEventStartTime(ZonedDateTime eventStartTime) {
-    this.eventStartTime = eventStartTime;
-  }
-
-  /**
-   * in Finnish: Tapahtuman päättymisaika
-   * Note: event end time is the time event ends, but it's not necessarily the same time as reservation of land area ends. For example,
-   * event time for rock concert is: structure building time + event time (the concert itself) + structure disassembly time.
-   */
-  public ZonedDateTime getEventEndTime() {
-    return eventEndTime;
-  }
-
-  public void setEventEndTime(ZonedDateTime eventEndTime) {
-    this.eventEndTime = eventEndTime;
   }
 
   /**
@@ -218,28 +188,6 @@ public class Event extends ApplicationExtension {
   }
 
   /**
-   * in Finnish: Rakenteiden rakennuspäivämäärä
-   */
-  public ZonedDateTime getStructureStartTime() {
-    return structureStartTime;
-  }
-
-  public void setStructureStartTime(ZonedDateTime structureStartTime) {
-    this.structureStartTime = structureStartTime;
-  }
-
-  /**
-   * in Finnish: Rakenteiden purkupäivämäärä
-   */
-  public ZonedDateTime getStructureEndTime() {
-    return structureEndTime;
-  }
-
-  public void setStructureEndTime(ZonedDateTime structureEndTime) {
-    this.structureEndTime = structureEndTime;
-  }
-
-  /**
    * in Finnish: Tapahtuma-ajan poikkeukset
    */
   public String getTimeExceptions() {
@@ -248,5 +196,31 @@ public class Event extends ApplicationExtension {
 
   public void setTimeExceptions(String timeExceptions) {
     this.timeExceptions = timeExceptions;
+  }
+
+  /**
+   * Build time in seconds. 0 if there's no build time needed.
+   *
+   * @return
+   */
+  public long getBuildSeconds() {
+    return buildSeconds;
+  }
+
+  public void setBuildSeconds(long buildSeconds) {
+    this.buildSeconds = buildSeconds;
+  }
+
+  /**
+   * Teardown time in seconds or 0 if no teardown is needed.
+   *
+   * @return
+   */
+  public long getTeardownSeconds() {
+    return teardownSeconds;
+  }
+
+  public void setTeardownSeconds(long teardownSeconds) {
+    this.teardownSeconds = teardownSeconds;
   }
 }
