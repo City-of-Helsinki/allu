@@ -42,8 +42,8 @@
   "locations": [
     {
       "id": null,
-      "startTime": "2016-12-23T22:00:00Z",
-      "endTime": "2016-12-25T22:00:00Z",
+      "startTime": "2016-12-22T22:00:00Z",
+      "endTime": "2016-12-26T22:00:00Z",
       "geometry": {
         "type": "GeometryCollection",
         "crs": {
@@ -138,8 +138,8 @@
     "marketingProviders": "Tapahtumassa ei luultavimmin ole markkinointitoimintaa",
     "structureArea": 54.0,
     "structureDescription": "Paikalle rakennetaan linna",
-    "structureStartTime": "1970-01-01T00:00:00Z",
-    "structureEndTime": "2016-07-15T10:30:20.796Z",
+    "structureStartTime": "2016-12-22T22:00:00Z",
+    "structureEndTime": "2016-12-26T22:00:00Z",
     "timeExceptions": "Pyhäpäivinä tauko"
   },
   "decisionTime": null

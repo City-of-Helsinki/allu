@@ -69,9 +69,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             <p>
               <!-- Käytetään, jos rakentamis- ja purkamispäiviä täytetty -->
               Kokonaisvuokra-aika:
-              <!-- [Rakentamisen alkupäivämäärä]-[Purkamisen loppupäivämäärä] -->
-              <xsl:value-of select="data/buildStartDate" /> &#x2013;
-              <xsl:value-of select="data/teardownEndDate" />
+              <!-- [Varauksen alkupäivämäärä]-[Varauksen loppupäivämäärä] -->
+              <xsl:value-of select="data/reservationStartDate" /> &#x2013;
+              <xsl:value-of select="data/reservationEndDate" />
             </p>
           </xsl:if>
           <p class="text-flow">
@@ -104,10 +104,10 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               </xsl:if><!-- - [Tapahtuman alkupäivämäärä-1] -->
              </p>
           </xsl:if>
-          <xsl:if test="data/teardownStartDate != ''">
+          <xsl:if test="data/teardownEndDate != ''">
             <p class="text-flow">
               Purkupäivä(t): <xsl:value-of select="data/teardownStartDate"/><!-- [Tapahtuman loppupäivämäärä+1] -->
-              <xsl:if test="data/tearDownStartDate != data/teardownEndDate">
+              <xsl:if test="data/teardownStartDate != data/teardownEndDate">
               &#8204; &#x2013; <xsl:value-of select="data/teardownEndDate"/>
               </xsl:if><!-- -[Purkamisen loppupäivämäärä] -->
             </p>

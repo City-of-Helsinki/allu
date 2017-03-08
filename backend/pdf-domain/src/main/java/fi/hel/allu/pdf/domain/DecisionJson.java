@@ -21,6 +21,10 @@ public class DecisionJson {
 
   private String siteArea;
 
+  private String reservationStartDate;
+  private String reservationEndDate;
+  private int numReservationDays;
+
   private String buildStartDate;
   private String buildEndDate;
   private String eventStartDate;
@@ -114,6 +118,30 @@ public class DecisionJson {
 
   public void setSiteArea(String siteArea) {
     this.siteArea = siteArea;
+  }
+
+  public String getReservationStartDate() {
+    return reservationStartDate;
+  }
+
+  public void setReservationStartDate(String reservationStartDate) {
+    this.reservationStartDate = reservationStartDate;
+  }
+
+  public String getReservationEndDate() {
+    return reservationEndDate;
+  }
+
+  public void setReservationEndDate(String reservationEndDate) {
+    this.reservationEndDate = reservationEndDate;
+  }
+
+  public int getNumReservationDays() {
+    return numReservationDays;
+  }
+
+  public void setNumReservationDays(int numReservationDays) {
+    this.numReservationDays = numReservationDays;
   }
 
   public String getBuildStartDate() {

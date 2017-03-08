@@ -70,12 +70,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <h1>Vuokra-aika</h1>
 
           <p class="text-flow">
-            <!-- [Tapahtuman alkupäivämäärä] -->
-            <xsl:value-of select="data/eventStartDate"/>
-            <xsl:if test="data/numEventDays > 1">
-              <!-- Käytetään, jos tapahtumapäiviä enemmän kuin 1. -->
-              <!-- -[Tapahtuman loppupäivämäärä] -->
-              &#8204; &#x2013; <xsl:value-of select="data/eventEndDate"/>
+            <!-- [Varauksen alkupäivämäärä] -->
+            <xsl:value-of select="data/reservationStartDate"/>
+            <xsl:if test="data/numReservationDays > 1">
+              <!-- Käytetään, jos varauspäiviä enemmän kuin 1. -->
+              <!-- -[Varauksen loppupäivämäärä] -->
+              &#8204; &#x2013; <xsl:value-of select="data/reservationEndDate"/>
             </xsl:if>
           </p>
 
