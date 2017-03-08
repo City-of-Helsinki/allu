@@ -138,9 +138,9 @@ public class DecisionService {
     if (attachments != null) {
       decisionJson.setAttachmentNames(attachments.stream().map(a -> a.getDescription()).collect(Collectors.toList()));
     }
-    decisionJson.setEventStartDate(formatDateWithDelta(application.getStartTime(), 0));
-    decisionJson.setEventEndDate(formatDateWithDelta(application.getEndTime(), 0));
-    decisionJson.setNumEventDays(daysBetween(application.getStartTime(), application.getEndTime()) + 1);
+    decisionJson.setReservationStartDate(formatDateWithDelta(application.getStartTime(), 0));
+    decisionJson.setReservationEndDate(formatDateWithDelta(application.getEndTime(), 0));
+    decisionJson.setNumReservationDays(daysBetween(application.getStartTime(), application.getEndTime()) + 1);
     decisionJson.setSiteAdditionalInfo("[Lisätietoja paikasta]");
     decisionJson.setDecisionDate("[päätöspvm]");
     decisionJson.setVatPercentage(99);
@@ -172,6 +172,9 @@ public class DecisionService {
   private void fillEventSpecifics(DecisionJson decisionJson, ApplicationExtensionJson extension) {
     EventJson ej = (EventJson) extension;
     if (ej != null) {
+      decisionJson.setEventStartDate(formatDateWithDelta(ej.getEventStartTime(), 0));
+      decisionJson.setEventEndDate(formatDateWithDelta(ej.getEventEndTime(), 0));
+      decisionJson.setNumEventDays(daysBetween(ej.getEventStartTime(), ej.getEventEndTime()) + 1);
       decisionJson.setBuildStartDate(formatDateWithDelta(ej.getStructureStartTime(), 0));
       decisionJson.setBuildEndDate(formatDateWithDelta(ej.getEventStartTime(), -1));
       decisionJson.setTeardownStartDate(formatDateWithDelta(ej.getEventEndTime(), 1));
@@ -235,7 +238,7 @@ public class DecisionService {
 
     StringBuilder sb = new StringBuilder();
     if (locationIds != null && !locationIds.isEmpty()) {
-      sb.append(fixedLocationAddressLine(locationIds));
+      sb.append(fixedLocationAddressLine(locationIds, application.getKind()));
     }
     if (application.getLocations() != null && application.getLocations().size() > 0) {
       if (sb.length() != 0) {
@@ -251,16 +254,17 @@ public class DecisionService {
     return sb.toString();
   }
 
-  private String fixedLocationAddressLine(List<Integer> locationIds) {
+  private String fixedLocationAddressLine(List<Integer> locationIds, ApplicationKind applicationKind) {
     // Get all defined fixed outdoor event locations from locationService:
     List<FixedLocationJson> allFixedLocations = locationService.getFixedLocationList().stream()
-        .filter(fl -> fl.getApplicationKind() == ApplicationKind.OUTDOOREVENT).collect(Collectors.toList());
+        .filter(fl -> fl.getApplicationKind() == applicationKind).collect(Collectors.toList());
     // Create lookup map id -> fixed location:
     Map<Integer, FixedLocationJson> flMap = allFixedLocations.stream()
         .collect(Collectors.toMap(FixedLocationJson::getId, Function.identity()));
     // Find all fixed locations that match locationIds and group them by area
     // name:
     Map<String, List<FixedLocationJson>> grouped = locationIds.stream().map(id -> flMap.get(id))
+        .filter(fl -> fl != null)
         .collect(Collectors.groupingBy(FixedLocationJson::getArea));
     if (grouped.isEmpty()) {
       return BAD_LOCATION.getArea();
