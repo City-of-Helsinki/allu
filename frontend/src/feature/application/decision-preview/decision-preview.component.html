@@ -1,0 +1,7 @@
+<div class="row content-main">
+    <div class="col s8 content-pdf" *ngIf="pdfLoaded">
+        <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
+            <p>Päätöksen näyttäminen ei onnistu selaimellasi. Voit ladata sen <a [href]="pdfDownloadUrl">tästä</a></p>
+        </object>
+    </div>
+</div>

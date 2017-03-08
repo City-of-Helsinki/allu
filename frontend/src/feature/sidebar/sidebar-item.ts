@@ -12,4 +12,5 @@ export type SidebarItemType =
   'HISTORY' |
   'SUPERVISION' |
   'APPLICATIONS' |
-  'PROJECTS';
+  'PROJECTS' |
+  'DECISION';

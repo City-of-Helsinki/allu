@@ -37,6 +37,12 @@
                     <div>Historia</div>
                 </a>
             </div>
+            <div *ngSwitchCase="'DECISION'">
+                <a [routerLink]="['decision-preview']" routerLinkActive="active" (click)="tabChange(item.type)">
+                    <md-icon class="md-36">pageview</md-icon>
+                    <div>Päätös</div>
+                </a>
+            </div>
             <div *ngSwitchCase="'SUPERVISION'">
                 <a [routerLink]="['supervision']" routerLinkActive="active" (click)="tabChange(item.type)">
                     <md-icon class="md-36">search</md-icon>

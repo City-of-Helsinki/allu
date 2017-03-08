@@ -34,6 +34,7 @@ import {PlacementContractComponent} from './info/placement-contract/placement-co
 import {ApplicationHistoryModule} from './history/application-history.module';
 import {TermsModule} from './terms/terms.module';
 import {AreaRentalComponent} from './info/area-rental/area-rental.component';
+import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
 
 
 @NgModule({
@@ -76,7 +77,8 @@ import {AreaRentalComponent} from './info/area-rental/area-rental.component';
     NoteComponent,
     TrafficArrangementComponent,
     PlacementContractComponent,
-    AreaRentalComponent
+    AreaRentalComponent,
+    DecisionPreviewComponent
   ],
   providers: [
     ApplicationResolve

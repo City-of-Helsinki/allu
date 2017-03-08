@@ -1,9 +1,6 @@
-import {Injectable, OnInit} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import {Injectable} from '@angular/core';
 import '../../rxjs-extensions.ts';
 
-import {Decision} from '../../model/decision/Decision';
 import {DecisionService} from './decision.service';
 
 @Injectable()
@@ -22,4 +19,10 @@ export class DecisionHub {
    * Returns observable which contains pdf eventually
    */
   public fetch = (applicationId: number) => this.decisionService.fetch(applicationId);
+
+  /**
+   * Asks decision service to fetch preview of decision pdf for given application.
+   * Returns observable which contains preview pdf
+   */
+  public preview = (applicationId: number) => this.decisionService.preview(applicationId);
 }
