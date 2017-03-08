@@ -209,9 +209,27 @@ public class ApplicationController {
   }
 
   /**
+   * Get the decision preview PDF for application
+   *
+   * @param applicationId
+   *          the application's Id
+   * @return The PDF data
+   */
+  @RequestMapping(value = "/{applicationId}/decision-preview", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<byte[]> getDecisionPreview(@PathVariable int applicationId) {
+    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
+    byte[] bytes = decisionService.getDecisionPreview(applicationJson);
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
+    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+  }
+
+  /**
    * Get the invoice rows for an application
    *
-   * @param id the application ID
+   * @param id
+   *          the application ID
    * @return the invoice rows for the application
    */
   @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)

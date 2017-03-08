@@ -107,6 +107,20 @@ public class DecisionService {
         applicationId);
   }
 
+  /**
+   * Get the decision preview PDF for given application from the model service
+   *
+   * @param applicationId
+   *          the application's ID
+   * @return PDF data
+   */
+  public byte[] getDecisionPreview(ApplicationJson application) {
+    DecisionJson decisionJson = new DecisionJson();
+    fillJson(decisionJson, application);
+    return restTemplate.postForObject(applicationProperties.getPdfServiceUrl(ApplicationProperties.PATH_PDF_GENERATE),
+        decisionJson, byte[].class, styleSheetName(application));
+  }
+
   private void fillJson(DecisionJson decisionJson, ApplicationJson application) {
     decisionJson.setEventName(application.getName());
     decisionJson.setDecisionId(application.getApplicationId());
