@@ -7,4 +7,5 @@ export interface BackendUser {
   active: boolean;
   allowedApplicationTypes: Array<string>;
   assignedRoles: Array<string>;
+  cityDistrictIds: Array<number>;
 }

@@ -42,6 +42,13 @@
                     </select>
                     <label>Roolit</label>
                 </div>
+                <div class="col s12">
+                    <select formControlName="cityDistrictIds" materialize="material_select" multiple>
+                        <option value="" selected disabled>Kaupunginosa</option>
+                        <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
+                    </select>
+                    <label>Kaupunginosat</label>
+                </div>
             </div>
         </div>
         <div class="row">

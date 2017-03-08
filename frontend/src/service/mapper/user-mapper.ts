@@ -13,7 +13,8 @@ export class UserMapper {
         backendUser.title,
         backendUser.active,
         backendUser.allowedApplicationTypes,
-        backendUser.assignedRoles
+        backendUser.assignedRoles,
+        backendUser.cityDistrictIds
         ) : undefined;
   }
 
@@ -27,7 +28,8 @@ export class UserMapper {
       title: user.title,
       active: user.isActive,
       allowedApplicationTypes: user.allowedApplicationTypes,
-      assignedRoles: user.assignedRoles
+      assignedRoles: user.assignedRoles,
+      cityDistrictIds: user.cityDistrictIds
     } : undefined;
   }
 }

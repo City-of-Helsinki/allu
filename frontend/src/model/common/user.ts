@@ -9,7 +9,8 @@ export class User {
     title: string,
     isActive: boolean,
     allowedApplicationTypes: Array<string>,
-    assignedRoles: Array<string>
+    assignedRoles: Array<string>,
+    cityDistrictIds: Array<number>
   )
   constructor(
     public id?: number,
@@ -19,6 +20,6 @@ export class User {
     public title?: string,
     public isActive?: boolean,
     public allowedApplicationTypes?: Array<string>,
-    public assignedRoles?: Array<string>) {};
-
+    public assignedRoles?: Array<string>,
+    public cityDistrictIds?: Array<number>) {};
 }

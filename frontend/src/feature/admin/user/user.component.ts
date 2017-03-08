@@ -1,13 +1,16 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Observable} from 'rxjs/Observable';
 
 import {UserHub} from '../../../service/user/user-hub';
+import {MapHub} from '../../../service/map/map-hub';
 import {translations} from '../../../util/translations';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Some} from '../../../util/option';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
+import {CityDistrict} from '../../../model/common/city-district';
 
 @Component({
   selector: 'user',
@@ -29,8 +32,13 @@ export class UserComponent implements OnInit {
     'ROLE_INVOICING',
     'ROLE_VIEW'
   ];
+  districts: Observable<Array<CityDistrict>>;
 
-  constructor(private route: ActivatedRoute, private userHub: UserHub, private fb: FormBuilder, private router: Router) {
+  constructor(private route: ActivatedRoute,
+              private userHub: UserHub,
+              private mapHub: MapHub,
+              private fb: FormBuilder,
+              private router: Router) {
     this.userForm = fb.group({
       id: undefined,
       userName: ['', Validators.required],
@@ -39,7 +47,8 @@ export class UserComponent implements OnInit {
       title: [''],
       isActive: [true],
       allowedApplicationTypes: [[]],
-      assignedRoles: [[]]
+      assignedRoles: [[]],
+      cityDistrictIds: [[]]
     });
   }
 
@@ -47,10 +56,12 @@ export class UserComponent implements OnInit {
     this.route.params.subscribe(params => {
       Some(params['userName']).do(userName => {
         this.userHub.getUser(userName).subscribe(user => {
-          this.userForm.setValue(user);
+          this.userForm.patchValue(user);
         });
       });
     });
+
+    this.districts = this.mapHub.districts();
   }
 
   save(user: UserForm): void {
@@ -81,4 +92,5 @@ interface UserForm {
   isActive: boolean;
   allowedApplicationTypes: Array<string>;
   assignedRoles: Array<string>;
+  cityDistrictIds: Array<number>;
 }
