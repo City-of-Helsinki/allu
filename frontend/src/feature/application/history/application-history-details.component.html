@@ -3,7 +3,7 @@
 </h2>
 <md-dialog-content>
     <div *ngIf="change.changeType === 'CREATED'">
-        Käyttäjä {{user.realName}} luonut hakemuksen {{change.uiChangeTime}}
+        {{user.realName}} luonut hakemuksen {{change.uiChangeTime}}
     </div>
     <table class="striped" *ngIf="change.changeType === 'STATUS_CHANGED'">
         Tila vaihdettu {{['application.status', change.newStatus] | translation}}
