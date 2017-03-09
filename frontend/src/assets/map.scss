@@ -36,11 +36,16 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
   }
 }
 
-.leaflet-marker-icon {
+img.leaflet-marker-icon {
   width: 15px !important;
   height: 20px !important;
   margin-left: -7px !important;
   margin-top: -20px !important;
+}
+
+.leaflet-marker-icon {
+  height: 13px !important;
+  width: 13px !important;
 }
 
 
