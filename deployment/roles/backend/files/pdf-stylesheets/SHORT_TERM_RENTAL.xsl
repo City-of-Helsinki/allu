@@ -13,6 +13,9 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       </xsl:attribute>
     </xsl:element>  
     <link rel="stylesheet" href="style.css" />
+    <xsl:if test="data/draft = 'true'">
+      <link rel="stylesheet" href="watermark.css" />
+    </xsl:if>
   </head>
   <body>
     <div class="body">
