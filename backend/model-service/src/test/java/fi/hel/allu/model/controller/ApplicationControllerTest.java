@@ -232,6 +232,7 @@ public class ApplicationControllerTest {
     newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setMetadataVersion(1);
     Event event = new Event();
+    event.setDescription("Eventti");
     event.setEcoCompass(true);
     event.setNature(EventNature.CLOSED);
     newApplication.setExtension(event);
