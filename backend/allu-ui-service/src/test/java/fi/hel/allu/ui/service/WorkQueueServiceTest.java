@@ -20,7 +20,16 @@ public class WorkQueueServiceTest {
 
   private static final String TEST_USER = "testuser";
   private UserJson userJson =
-      new UserJson(1, TEST_USER, "foo bar", "foo@bar.fi", "titteli", true, Collections.emptyList(), Collections.emptyList());
+      new UserJson(
+          1,
+          TEST_USER,
+          "foo bar",
+          "foo@bar.fi",
+          "titteli",
+          true,
+          Collections.emptyList(),
+          Collections.emptyList(),
+          Collections.emptyList());
   private ApplicationServiceComposer applicationServiceComposer;
   private UserService userService;
   private WorkQueueService workQueueService;

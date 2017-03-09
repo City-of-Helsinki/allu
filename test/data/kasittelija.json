@@ -11,5 +11,8 @@
     "ROLE_CREATE_APPLICATION",
     "ROLE_PROCESS_APPLICATION"
   ],
+  "cityDistrictIds":[
+    1,2,3
+  ],
   "active":true
 }

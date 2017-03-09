@@ -89,7 +89,7 @@ public class ApplicationServiceTest extends MockServices {
     Mockito.when(metaService.findMetadataForApplication(Mockito.any(), Mockito.anyInt()))
         .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
 
-    userJson = new UserJson(USER_ID, null, null, null, null, true, null, null);
+    userJson = new UserJson(USER_ID, null, null, null, null, true, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     applicationService = new ApplicationService(

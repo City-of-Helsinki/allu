@@ -22,7 +22,8 @@ public class UserMapper {
         user.getTitle(),
         user.isActive(),
         user.getAllowedApplicationTypes(),
-        user.getAssignedRoles());
+        user.getAssignedRoles(),
+        user.getCityDistrictIds());
   }
 
   public static User mapToModelUser(UserJson userJson) {
@@ -34,7 +35,8 @@ public class UserMapper {
         userJson.getTitle(),
         userJson.isActive(),
         userJson.getAllowedApplicationTypes(),
-        userJson.getAssignedRoles());
+        userJson.getAssignedRoles(),
+        userJson.getCityDistrictIds());
   }
 
   public static AlluUser mapToAlluUser(UserJson userJson) {

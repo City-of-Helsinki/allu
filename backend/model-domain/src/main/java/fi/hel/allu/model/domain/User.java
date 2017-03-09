@@ -4,7 +4,9 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Allu user data, which consists of user roles, application access rights and user specific UI configuration data.
@@ -18,6 +20,7 @@ public class User {
   private boolean isActive;
   private List<ApplicationType> allowedApplicationTypes = new ArrayList<>();
   private List<RoleType> assignedRoles = new ArrayList<>();
+  private List<Integer> cityDistrictIds = new ArrayList<>();
 
   public User() {
     // for JSON deserialization
@@ -29,16 +32,18 @@ public class User {
               String emailAddress,
               String title,
               boolean isActive,
-      List<ApplicationType> allowedApplicationTypes,
-              List<RoleType> assignedRoles) {
+              List<ApplicationType> allowedApplicationTypes,
+              List<RoleType> assignedRoles,
+              List<Integer> cityDistrictIds) {
     this.id = id;
     this.userName = userName;
     this.realName = realName;
     this.emailAddress = emailAddress;
     this.title = title;
     this.isActive = isActive;
-    this.allowedApplicationTypes = allowedApplicationTypes;
-    this.assignedRoles = assignedRoles;
+    setAllowedApplicationTypes(allowedApplicationTypes);
+    setAssignedRoles(assignedRoles);
+    setCityDistrictIds(cityDistrictIds);
   }
 
   public Integer getId() {
@@ -129,7 +134,7 @@ public class User {
   }
 
   public void setAllowedApplicationTypes(List<ApplicationType> allowedApplicationTypes) {
-    this.allowedApplicationTypes = allowedApplicationTypes;
+    this.allowedApplicationTypes = Optional.ofNullable(allowedApplicationTypes).orElse(Collections.emptyList());
   }
 
   /**
@@ -142,6 +147,19 @@ public class User {
   }
 
   public void setAssignedRoles(List<RoleType> assignedRoles) {
-    this.assignedRoles = assignedRoles;
+    this.assignedRoles = Optional.ofNullable(assignedRoles).orElse(Collections.emptyList());
+  }
+
+  /**
+   * Returns list of city district ids assigned to the user.
+   *
+   * @return  list of city district ids assigned to the user.
+   */
+  public List<Integer> getCityDistrictIds() {
+    return cityDistrictIds;
+  }
+
+  public void setCityDistrictIds(List<Integer> cityDistrictIds) {
+    this.cityDistrictIds = Optional.ofNullable(cityDistrictIds).orElse(Collections.emptyList());
   }
 }

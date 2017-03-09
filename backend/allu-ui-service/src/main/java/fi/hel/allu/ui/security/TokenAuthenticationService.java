@@ -126,7 +126,8 @@ public class TokenAuthenticationService {
             "", // using empty value as title, because title is required. However, the correct title is unknown at this point
             true,
             Collections.emptyList(),
-            Collections.singletonList(RoleType.ROLE_VIEW));
+            Collections.singletonList(RoleType.ROLE_VIEW),
+            Collections.emptyList());
         userJson = userService.addUser(userJson);
         logger.info("Automatically added new user from OAuth2 with user name {}", userJson.getUserName());
       }

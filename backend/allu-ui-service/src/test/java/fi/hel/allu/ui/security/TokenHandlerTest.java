@@ -37,7 +37,8 @@ public class TokenHandlerTest {
         "Johtaja",
         true,
         Collections.emptyList(),
-        Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN));
+        Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN),
+        Collections.emptyList());
   }
 
   @Test(expected = IllegalArgumentException.class)

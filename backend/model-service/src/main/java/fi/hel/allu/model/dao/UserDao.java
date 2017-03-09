@@ -3,7 +3,6 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
-
 import fi.hel.allu.QUser;
 import fi.hel.allu.QUserApplicationType;
 import fi.hel.allu.QUserRole;
@@ -13,7 +12,6 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.model.postgres.ExceptionResolver;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -30,6 +28,7 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QUser.user;
 import static fi.hel.allu.QUserApplicationType.userApplicationType;
+import static fi.hel.allu.QUserCityDistrict.userCityDistrict;
 import static fi.hel.allu.QUserRole.userRole;
 
 /**
@@ -50,7 +49,8 @@ public class UserDao {
       mapUsersRolesTypes(
           Collections.singletonList(user),
           getRoles(Collections.singletonList(id)),
-          getApplicationTypes(Collections.singletonList(id)));
+          getApplicationTypes(Collections.singletonList(id)),
+          getCityDistricts(Collections.singletonList(id)));
     }
     return Optional.ofNullable(user);
   }
@@ -62,7 +62,8 @@ public class UserDao {
       mapUsersRolesTypes(
           Collections.singletonList(user),
           getRoles(Collections.singletonList(user.getId())),
-          getApplicationTypes(Collections.singletonList(user.getId())));
+          getApplicationTypes(Collections.singletonList(user.getId())),
+          getCityDistricts(Collections.singletonList(user.getId())));
     }
     return Optional.ofNullable(user);
   }
@@ -71,7 +72,7 @@ public class UserDao {
   public List<User> findAll() {
     List<User> users = queryFactory.select(userBean).from(QUser.user).fetchResults().getResults();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
-    mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds));
+    mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;
   }
 
@@ -84,7 +85,7 @@ public class UserDao {
       }
       insertRoles(id, userData);
       insertApplicationTypes(id, userData);
-
+      insertCityDistricts(id, userData);
       return findById(id).get();
     } catch (DataIntegrityViolationException e) {
       if (ExceptionResolver.isUniqueConstraintViolation(e)) {
@@ -103,8 +104,10 @@ public class UserDao {
       }
       queryFactory.delete(userRole).where(userRole.userId.eq(userData.getId())).execute();
       queryFactory.delete(userApplicationType).where(userApplicationType.userId.eq(userData.getId())).execute();
+      queryFactory.delete(userCityDistrict).where(userCityDistrict.userId.eq(userData.getId())).execute();
       insertRoles(userData.getId(), userData);
       insertApplicationTypes(userData.getId(), userData);
+      insertCityDistricts(userData.getId(), userData);
     } catch (DataIntegrityViolationException e) {
       if (ExceptionResolver.isUniqueConstraintViolation(e)) {
         throw new NonUniqueException("Updating user failed. Perhaps given user name collided with another: " + userData.getUserName());
@@ -123,6 +126,15 @@ public class UserDao {
         appType -> queryFactory.insert(userApplicationType)
             .set(userApplicationType.userId, id)
             .set(userApplicationType.applicationType, appType.name()).execute());
+  }
+
+  private void insertCityDistricts(int id, User userData) {
+    userData.getCityDistrictIds().stream().forEach(
+        cityDistrictId -> queryFactory
+            .insert(userCityDistrict)
+            .set(userCityDistrict.userId, id)
+            .set(userCityDistrict.cityDistrictId, cityDistrictId)
+            .execute());
   }
 
   private Map<Integer, List<RoleType>> getRoles(List<Integer> userIds) {
@@ -150,17 +162,29 @@ public class UserDao {
     return userIdToApplicationType;
   }
 
+  private Map<Integer, List<Integer>> getCityDistricts(List<Integer> userIds) {
+    Map<Integer, List<Integer>> userIdToCityDistrict = queryFactory
+        .from(QUser.user, userCityDistrict)
+        .where(userCityDistrict.userId.eq(QUser.user.id).and(userCityDistrict.userId.in(userIds)))
+        .transform(groupBy(userCityDistrict.userId).as(list(userCityDistrict.cityDistrictId)));
+    return userIdToCityDistrict;
+  }
+
   private void mapUsersRolesTypes(
       List<User> users,
       Map<Integer, List<RoleType>> userIdToRoleType,
-      Map<Integer, List<ApplicationType>> userIdToApplicationType) {
+      Map<Integer, List<ApplicationType>> userIdToApplicationType,
+      Map<Integer, List<Integer>> userIdToCityDistrict) {
     users.forEach(user ->
       {
         List<RoleType> roles = userIdToRoleType.get(user.getId()) == null ? Collections.emptyList() : userIdToRoleType.get(user.getId());
-      List<ApplicationType> types =
+        List<ApplicationType> types =
             userIdToApplicationType.get(user.getId()) == null ? Collections.emptyList() : userIdToApplicationType.get(user.getId());
+        List<Integer> cityDistricts = userIdToCityDistrict.get(user.getId()) == null ?
+            Collections.emptyList() : userIdToCityDistrict.get(user.getId());
         user.setAssignedRoles(roles);
         user.setAllowedApplicationTypes(types);
+        user.setCityDistrictIds(cityDistricts);
       });
   }
 }

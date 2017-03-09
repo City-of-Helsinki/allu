@@ -31,6 +31,15 @@ public class UserServiceTest {
   }
 
   private User mockUser() {
-    return new User(1, "username", "realname", "email@email", "title", true, Collections.emptyList(), Collections.emptyList());
+    return new User(
+        1,
+        "username",
+        "realname",
+        "email@email",
+        "title",
+        true,
+        Collections.emptyList(),
+        Collections.emptyList(),
+        Collections.emptyList());
   }
 }

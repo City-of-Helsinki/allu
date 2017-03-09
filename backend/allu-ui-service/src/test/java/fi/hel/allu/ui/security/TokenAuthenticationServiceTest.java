@@ -57,6 +57,7 @@ public class TokenAuthenticationServiceTest {
       "notitle",
       true,
       Collections.emptyList(),
+      Collections.emptyList(),
       Collections.emptyList());
 
   @Before

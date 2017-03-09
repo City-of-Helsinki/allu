@@ -58,6 +58,12 @@ create table allu.user_application_type (
   user_id integer references allu.user(id),
   application_type text );
 
+create table allu.user_city_district (
+  id serial primary key,
+  user_id integer references allu.user(id) not null,
+  city_district_id integer references allu.city_district(id) not null
+);
+
 create table allu.application (
     id serial primary key,
     application_id text unique not null,

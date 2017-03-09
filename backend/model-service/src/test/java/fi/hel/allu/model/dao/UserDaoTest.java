@@ -6,7 +6,6 @@ import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.model.testUtils.TestCommon;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +24,9 @@ import java.util.List;
 @WebAppConfiguration
 @Transactional
 public class UserDaoTest {
+
+  private static final List<Integer> TEST_CITY_DISTRICTS = Arrays.asList(1, 2);
+
   @Autowired
   private UserDao userDao;
 
@@ -48,6 +50,7 @@ public class UserDaoTest {
     Assert.assertEquals(2, users.size());
     Assert.assertEquals(2, users.get(0).getAssignedRoles().size());
     Assert.assertEquals(1, users.get(0).getAllowedApplicationTypes().size());
+    Assert.assertEquals(TEST_CITY_DISTRICTS.size(), users.get(0).getCityDistrictIds().size());
   }
 
   @Test
@@ -74,7 +77,9 @@ public class UserDaoTest {
     Assert.assertTrue(insertedUser.getAssignedRoles().contains(RoleType.ROLE_ADMIN));
     Assert.assertTrue(insertedUser.getAssignedRoles().contains(RoleType.ROLE_VIEW));
     Assert.assertEquals(1, insertedUser.getAllowedApplicationTypes().size());
+    Assert.assertEquals(TEST_CITY_DISTRICTS.size(), insertedUser.getCityDistrictIds().size());
     Assert.assertTrue(insertedUser.getAllowedApplicationTypes().contains(ApplicationType.EVENT));
+    Assert.assertTrue(insertedUser.getCityDistrictIds().containsAll(TEST_CITY_DISTRICTS));
   }
 
   @Test(expected = NonUniqueException.class)
@@ -90,6 +95,7 @@ public class UserDaoTest {
 
     User insertedUser = userDao.insert(user);
     insertedUser.setEmailAddress("updatedemail");
+    insertedUser.setCityDistrictIds(Arrays.asList(3));
     userDao.update(insertedUser);
     User updatedUser = userDao.findById(insertedUser.getId()).get();
 
@@ -100,6 +106,7 @@ public class UserDaoTest {
     Assert.assertTrue(updatedUser.getAssignedRoles().contains(RoleType.ROLE_VIEW));
     Assert.assertEquals(1, updatedUser.getAllowedApplicationTypes().size());
     Assert.assertTrue(updatedUser.getAllowedApplicationTypes().contains(ApplicationType.EVENT));
+    Assert.assertEquals(1, updatedUser.getCityDistrictIds().size());
   }
 
   private User createDummyUser(String userName) {
@@ -107,6 +114,7 @@ public class UserDaoTest {
     user.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_VIEW));
     user.setIsActive(true);
     user.setAllowedApplicationTypes(Arrays.asList(ApplicationType.EVENT));
+    user.setCityDistrictIds(TEST_CITY_DISTRICTS);
     user.setEmailAddress("email");
     user.setRealName("realname");
     user.setTitle("title");

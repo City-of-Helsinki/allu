@@ -24,6 +24,7 @@ public class UserJson {
   private boolean isActive;
   private List<ApplicationType> allowedApplicationTypes = new ArrayList<>();
   private List<RoleType> assignedRoles = new ArrayList<>();
+  private List<Integer> cityDistrictIds;
 
   public UserJson() {
     // for JSON deserialization
@@ -37,7 +38,8 @@ public class UserJson {
       String title,
       boolean isActive,
       List<ApplicationType> allowedApplicationTypes,
-      List<RoleType> assignedRoles) {
+      List<RoleType> assignedRoles,
+      List<Integer> cityDistrictIds) {
     this.id = id;
     this.userName = userName;
     this.realName = realName;
@@ -46,6 +48,7 @@ public class UserJson {
     this.isActive = isActive;
     this.allowedApplicationTypes = allowedApplicationTypes;
     this.assignedRoles = assignedRoles;
+    this.cityDistrictIds = cityDistrictIds;
   }
 
   public Integer getId() {
@@ -145,5 +148,18 @@ public class UserJson {
 
   public void setAssignedRoles(List<RoleType> assignedRoles) {
     this.assignedRoles = assignedRoles;
+  }
+
+  /**
+   * Returns list of city district ids assigned to the user.
+   *
+   * @return  list of city district ids assigned to the user.
+   */
+  public List<Integer> getCityDistrictIds() {
+    return cityDistrictIds;
+  }
+
+  public void setCityDistrictIds(List<Integer> cityDistrictIds) {
+    this.cityDistrictIds = cityDistrictIds;
   }
 }
