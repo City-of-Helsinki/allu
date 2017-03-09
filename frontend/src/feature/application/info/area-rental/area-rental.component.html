@@ -53,6 +53,13 @@
                                 </md-input-container>
                             </div>
                         </div>
+                        <div class="col s3">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="workFinished" placeholder="Työ valmis"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"/>
+                            </md-input-container>
+                        </div>
                     </div>
                 </md-card-content>
             </md-card>

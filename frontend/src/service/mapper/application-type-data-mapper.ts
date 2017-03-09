@@ -105,6 +105,7 @@ export class ApplicationTypeDataMapper {
         return new AreaRental(
           backendExtension.contractor,
           backendExtension.responsiblePerson,
+          backendExtension.workFinished,
           backendExtension.trafficArrangements,
           backendExtension.additionalInfo,
           backendExtension.terms

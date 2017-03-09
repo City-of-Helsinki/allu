@@ -13,6 +13,7 @@ export class AreaRentalForm implements ApplicationForm {
     public contacts?: Array<Contact>,
     public contractor?: ApplicantForm,
     public responsiblePerson?: Array<Contact>,
+    public workFinished?: string,
     public trafficArrangements?: string,
     public additionalInfo?: string
   ) {}
@@ -21,6 +22,7 @@ export class AreaRentalForm implements ApplicationForm {
     let areaRental = new AreaRental();
     areaRental.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
     areaRental.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
+    areaRental.uiWorkFinished = form.workFinished;
     areaRental.trafficArrangements = form.trafficArrangements;
     areaRental.additionalInfo = form.additionalInfo;
     return areaRental;
@@ -33,6 +35,7 @@ export class AreaRentalForm implements ApplicationForm {
       undefined,
       undefined,
       undefined,
+      areaRental.uiWorkFinished,
       areaRental.trafficArrangements,
       areaRental.additionalInfo
     );
