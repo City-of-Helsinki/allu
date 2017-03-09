@@ -584,7 +584,8 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'additionalInfo', 'Lisätiedot', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'trafficArrangements', 'Suoritettavat liikennejärjestelytyöt', 'STRING', null, null);
-
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'workFinished', 'Työ valmis', 'DATETIME', null, null);
 
 ----------------
 -- Note metadata

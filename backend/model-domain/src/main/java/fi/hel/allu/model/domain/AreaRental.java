@@ -2,6 +2,8 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 
+import java.time.ZonedDateTime;
+
 /**
  * Area rental (Aluevuokraus) specific data.
  */
@@ -10,6 +12,7 @@ public class AreaRental extends ApplicationExtension {
   private Contact responsiblePerson;
   private String additionalInfo;
   private String trafficArrangements;
+  private ZonedDateTime workFinished;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -60,5 +63,16 @@ public class AreaRental extends ApplicationExtension {
 
   public void setTrafficArrangements(String trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
+  }
+
+  /**
+   * In Finnish: Työ valmis.
+   */
+  public ZonedDateTime getWorkFinished() {
+    return workFinished;
+  }
+
+  public void setWorkFinished(ZonedDateTime workFinished) {
+    this.workFinished = workFinished;
   }
 }

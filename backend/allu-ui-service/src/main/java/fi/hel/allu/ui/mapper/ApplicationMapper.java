@@ -383,6 +383,7 @@ public class ApplicationMapper {
     areaRental.setResponsiblePerson(createContactModel(areaRentalJson.getResponsiblePerson()));
     areaRental.setAdditionalInfo(areaRentalJson.getAdditionalInfo());
     areaRental.setTrafficArrangements(areaRentalJson.getTrafficArrangements());
+    areaRental.setWorkFinished(areaRentalJson.getWorkFinished());
     return areaRental;
   }
 
@@ -396,6 +397,7 @@ public class ApplicationMapper {
     areaRentalJson.setResponsiblePerson(createContactJson(areaRental.getResponsiblePerson()));
     areaRentalJson.setAdditionalInfo(areaRental.getAdditionalInfo());
     areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
+    areaRentalJson.setWorkFinished(areaRental.getWorkFinished());
     return areaRentalJson;
   }
 
