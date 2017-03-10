@@ -17,32 +17,6 @@ import {ApplicationType} from './type/application-type';
 const CENTS = 100;
 
 export class Application {
-
-  constructor()
-  constructor(
-    id: number,
-    applicationId: string,
-    project: Project,
-    handler: User,
-    status: string,
-    type: string,
-    kind: string,
-    metadataVersion: number,
-    name: string,
-    creationTime: Date,
-    startTime: Date,
-    endTime: Date,
-    applicant: Applicant,
-    contactList: Array<Contact>,
-    location: Location,
-    extension: ApplicationExtension,
-    decisionTime: Date,
-    attachmentList: Array<AttachmentInfo>,
-    calculatedPrice: number,
-    priceOverride: number,
-    priceOverrideReason: string,
-    tagList: Array<ApplicationTag>,
-    comments: Array<Comment>)
   constructor(
     public id?: number,
     public applicationId?: string,
@@ -61,6 +35,8 @@ export class Application {
     public location?: Location,
     public extension?: ApplicationExtension,
     public decisionTime?: Date,
+    public communicationType?: string,
+    public publicityType?: string,
     public attachmentList?: Array<AttachmentInfo>,
     public calculatedPrice?: number,
     public priceOverride?: number,

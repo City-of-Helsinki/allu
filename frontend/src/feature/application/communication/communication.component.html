@@ -1,0 +1,23 @@
+<form [formGroup]="communicationForm">
+    <md-card>
+        <md-card-title>Viestintä</md-card-title>
+        <md-card-content>
+            <div class="row">
+                <div class="col l4 m6 s12">
+                    <md-slide-toggle formControlName="communicationByEmail">
+                        <span>Viestintätapa: </span>
+                        <span *ngIf="communicationForm.value.communicationByEmail">Sähköposti</span>
+                        <span *ngIf="!communicationForm.value.communicationByEmail">Paperi</span>
+                    </md-slide-toggle>
+                </div>
+                <div class="col l4 m6 s12">
+                    <md-select class="input-full-width" formControlName="publicityType" placeholder="Julkisuus*">
+                        <md-option *ngFor="let type of publicityTypes" [value]="type">
+                            {{['application.publicityType', type] | translation}}
+                        </md-option>
+                    </md-select>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</form>

@@ -93,6 +93,10 @@
             <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
         </div>
 
+        <div class="col s12">
+            <communication [form]="applicationForm" [application]="application" [readonly]="readonly"></communication>
+        </div>
+
         <application-actions
             [readonly]="readonly"
             [applicationId]="application.id"

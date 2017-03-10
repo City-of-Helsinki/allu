@@ -11,6 +11,9 @@ import {ApplicationForm} from './application-form';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
+import {ApplicationType} from '../../../model/application/type/application-type';
+import {Some} from '../../../util/option';
+import {CommunicationType} from '../../../model/application/communication-type';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
 
@@ -62,6 +65,14 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
     this.submitPending = true;
     let application = this.update(form);
     application.extension.terms = form.terms;
+
+    Some(form.communication).map(c => {
+      application.communicationType = c.communicationByEmail
+        ? CommunicationType[CommunicationType.EMAIL]
+        : CommunicationType[CommunicationType.PAPER];
+
+      application.publicityType = c.publicityType;
+    });
 
     this.applicationState.save(application)
       .subscribe(

@@ -16,32 +16,37 @@ import {CommentMapper} from '../application/comment/comment-mapper';
 export class ApplicationMapper {
 
   public static mapBackend(backendApplication: BackendApplication): Application {
-    return new Application(
-      backendApplication.id,
-      backendApplication.applicationId,
-      ProjectMapper.mapBackend(backendApplication.project),
-      UserMapper.mapBackend(backendApplication.handler),
-      backendApplication.status,
-      backendApplication.type,
-      backendApplication.kind,
-      backendApplication.metadataVersion,
-      backendApplication.name,
-      TimeUtil.dateFromBackend(backendApplication.creationTime),
-      TimeUtil.dateFromBackend(backendApplication.startTime),
-      TimeUtil.dateFromBackend(backendApplication.endTime),
-      ApplicantMapper.mapBackend(backendApplication.applicant),
-      (backendApplication.contactList) ? backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact)) : undefined,
-      LocationMapper.mapBackend(backendApplication.locations[0]),
-      ApplicationTypeDataMapper.mapBackend(backendApplication.extension),
-      TimeUtil.dateFromBackend(backendApplication.decisionTime),
-      (backendApplication.attachmentList) ? backendApplication.attachmentList.map(
-        (attachment) => AttachmentInfoMapper.mapBackend(attachment)) : undefined,
-      backendApplication.calculatedPrice,
-      backendApplication.priceOverride,
-      backendApplication.priceOverrideReason,
-      ApplicationTagMapper.mapBackendList(backendApplication.applicationTags),
-      CommentMapper.mapBackendList(backendApplication.comments)
-    );
+    let application = new Application();
+    application.id = backendApplication.id;
+    application.applicationId = backendApplication.applicationId;
+    application.project = ProjectMapper.mapBackend(backendApplication.project);
+    application.handler = UserMapper.mapBackend(backendApplication.handler);
+    application.status = backendApplication.status;
+    application.type = backendApplication.type;
+    application.kind = backendApplication.kind;
+    application.metadataVersion = backendApplication.metadataVersion;
+    application.name = backendApplication.name;
+    application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
+    application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
+    application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
+    application.applicant = ApplicantMapper.mapBackend(backendApplication.applicant);
+    application.contactList = (backendApplication.contactList) ?
+      backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact))
+      : undefined;
+    application.location = LocationMapper.mapBackend(backendApplication.locations[0]);
+    application.extension = ApplicationTypeDataMapper.mapBackend(backendApplication.extension);
+    application.decisionTime = TimeUtil.dateFromBackend(backendApplication.decisionTime);
+    application.communicationType = backendApplication.communicationType;
+    application.publicityType = backendApplication.publicityType;
+    application.attachmentList = (backendApplication.attachmentList)
+      ? backendApplication.attachmentList.map((attachment) => AttachmentInfoMapper.mapBackend(attachment))
+      : undefined;
+    application.calculatedPrice = backendApplication.calculatedPrice;
+    application.priceOverride = backendApplication.priceOverride;
+    application.priceOverrideReason = backendApplication.priceOverrideReason;
+    application.applicationTags = ApplicationTagMapper.mapBackendList(backendApplication.applicationTags);
+    application.comments = CommentMapper.mapBackendList(backendApplication.comments);
+    return application;
   }
 
   public static mapFrontend(application: Application): BackendApplication {
@@ -63,6 +68,8 @@ export class ApplicationMapper {
       locations: (application.location) ? [LocationMapper.mapFrontend(application.location)] : undefined,
       extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
       decisionTime: Some(application.decisionTime).map(decisionTime => decisionTime.toISOString()).orElse(undefined),
+      communicationType: application.communicationType,
+      publicityType: application.publicityType,
       attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application
       calculatedPrice: application.calculatedPrice,
       priceOverride: application.priceOverride,

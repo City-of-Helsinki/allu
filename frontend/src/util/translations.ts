@@ -152,6 +152,12 @@ export const translations = {
         PAYMENT_BASIS_CORRECTION: 'Maksuperusteet korjattava'
       }
     },
+    publicityType: {
+      PUBLIC: 'Julkinen',
+      NON_PUBLIC: 'Ei-julkinen',
+      CONFIDENTIAL_PARTIALLY: 'Osittain salassa pidettävä',
+      CONFIDENTIAL: 'Salassa pidettävä'
+    },
     field: {
       nameMissing: 'Tapahtuman nimi puuttuu',
       nameShort: 'Tapahtuman nimi on liian lyhyt'

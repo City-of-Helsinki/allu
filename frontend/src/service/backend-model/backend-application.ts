@@ -26,6 +26,8 @@ export interface BackendApplication {
   locations: Array<BackendLocation>;
   extension: any;
   decisionTime: string;
+  communicationType?: string;
+  publicityType?: string;
   attachmentList: Array<BackendAttachmentInfo>;
   calculatedPrice: number;
   priceOverride: number;
