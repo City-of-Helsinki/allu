@@ -152,14 +152,20 @@ export class MapState {
   private drawGeometryToLayer(geometryCollection: GeoJSON.GeometryCollection,
                               drawLayer: L.LayerGroup,
                               style?: GeoJSONOptions, popup?: MapPopup) {
-    style = style || {};
     if (geometryCollection.geometries.length) {
+      style = style || {};
       let featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
       style.pointToLayer = (point, latlng) => L.marker(latlng, alluIcon);
       let geoJSON = L.geoJSON(featureCollection, style);
-      Some(popup).do(pu => geoJSON.bindPopup((l) => pu.content()));
-      drawLayer.addLayer(geoJSON);
+      this.drawGeoJSON(geoJSON, drawLayer, popup);
     }
+  }
+
+  private drawGeoJSON(geoJSON: L.GeoJSON, drawLayer: L.LayerGroup, popup?: MapPopup): void {
+    geoJSON.eachLayer(l => {
+      Some(popup).do(pu => l.bindPopup((_) => pu.content()));
+      drawLayer.addLayer(l);
+    });
   }
 
   private initMap(): void {
