@@ -1,6 +1,5 @@
 import {NgModule} from '@angular/core';
-import {FormsModule} from '@angular/forms';
-import {MdCardModule} from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {DecisionComponent} from './decision.component';
 import {DecisionActionsComponent} from './decision-actions.component';
@@ -13,8 +12,8 @@ import {ProgressBarModule} from '../application/progressbar/progressbar.module';
 @NgModule({
   imports: [
     FormsModule,
+    ReactiveFormsModule,
     AlluCommonModule,
-    MdCardModule,
     ProgressBarModule
   ],
   declarations: [
@@ -26,6 +25,9 @@ import {ProgressBarModule} from '../application/progressbar/progressbar.module';
   providers: [
     DecisionHub,
     DecisionService
+  ],
+  entryComponents: [
+    DecisionModalComponent
   ]
 })
 export class DecisionModule {}

@@ -311,9 +311,21 @@ export const translations = {
   },
   decision: {
     type: {
-      DECISION: 'Hakemus päätetty',
-      RETURNED_TO_PREPARATION: 'Hakemus palautettu valmisteluun',
-      REJECTED: 'Hakemus hylätty'
+      DECISION: {
+        title: 'Päätä hakemus',
+        confirmText: 'Päätä',
+        confirmation: 'Hakemus päätetty'
+      },
+      RETURNED_TO_PREPARATION: {
+        title: 'Palauta hakemus',
+        confirmText: 'Palauta',
+        confirmation: 'Hakemus palautettu valmisteluun'
+      },
+      REJECTED:  {
+        title: 'Hylkää hakemus',
+        confirmText: 'Hylkää',
+        confirmation: 'Hakemus hylätty'
+      }
     },
     error: {
       generatePdf: 'Pdf:n muodostaminen epäonnistui'

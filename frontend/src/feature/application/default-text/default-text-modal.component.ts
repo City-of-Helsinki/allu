@@ -11,7 +11,7 @@ import {StringUtil} from '../../../util/string.util';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {ApplicationType} from '../../../model/application/type/application-type';
 
-export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '600px'};
+export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '800px'};
 
 @Component({
   selector: 'default-text-modal',

@@ -1,30 +1,41 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {ApplicationStatusChange, translateStatus} from '../../model/application/application-status-change';
+import {Component, Input, OnInit} from '@angular/core';
+import {MdDialogRef} from '@angular/material';
+import {FormBuilder, FormGroup} from '@angular/forms';
+
+import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
-import {MaterializeAction} from 'angular2-materialize';
+
+export const DECISION_MODAL_CONFIG = {width: '800px'};
 
 @Component({
   selector: 'decision-modal',
   template: require('./decision-modal.component.html'),
   styles: [require('./decision-modal.component.scss')]
 })
-export class DecisionModalComponent {
+export class DecisionModalComponent implements OnInit {
   @Input() status: string;
-  @Input() header: string;
-  @Input() confirmText: string;
-  @Output() statusChange = new EventEmitter<ApplicationStatusChange>();
-  modalActions = new EventEmitter<string|MaterializeAction>();
+  @Input() applicationId: number;
 
-  public comment: string;
+  decisionForm: FormGroup;
+
+  constructor(public dialogRef: MdDialogRef<DecisionModalComponent>, private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.decisionForm = this.fb.group({
+      comment: ['']
+    });
+  }
 
   confirm() {
-    this.statusChange.emit(ApplicationStatusChange.withComment(undefined, ApplicationStatus[this.status], this.comment));
+    let statusChange = new ApplicationStatusChange(
+      this.applicationId,
+      ApplicationStatus[this.status],
+      this.decisionForm.value.comment);
+
+    this.dialogRef.close(statusChange);
   }
 
-  openModal() {
-    this.modalActions.emit({action: 'modal', params: ['open']});
-  }
-  closeModal() {
-    this.modalActions.emit({action: 'modal', params: ['close']});
+  cancel() {
+    this.dialogRef.close();
   }
 }
