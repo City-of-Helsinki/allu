@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -152,6 +153,20 @@ public class Location {
   }
 
   /**
+   * Get the effective area: if override is set, return the override value,
+   * otherwise return the area.
+   *
+   * @return effective area
+   */
+  @JsonIgnore
+  public Double getEffectiveArea() {
+    if (areaOverride != null) {
+      return areaOverride;
+    }
+    return area;
+  }
+
+  /**
    * Get location's street address, e.g. "Mannerheimintie 3"
    *
    * @return street address
@@ -230,9 +245,23 @@ public class Location {
   }
 
   /**
+   * Get the effective city district id
+   *
+   * @return
+   */
+  @JsonIgnore
+  public Integer getEffectiveCityDistrictId() {
+    if (cityDistrictIdOverride != null) {
+      return cityDistrictIdOverride;
+    }
+    return cityDistrictId;
+  }
+
+  /**
    * Returns the calculated payment tariff (maksuluokka) of the location.
    *
-   * @return  the calculated payment tariff (maksuluokka) of the location or <code>null</code>.
+   * @return the calculated payment tariff (maksuluokka) of the location or
+   *         <code>null</code>.
    */
   public Integer getPaymentTariff() {
     return paymentTariff;

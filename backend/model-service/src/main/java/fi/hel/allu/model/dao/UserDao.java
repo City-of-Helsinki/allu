@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.QUser;
 import fi.hel.allu.QUserApplicationType;
 import fi.hel.allu.QUserRole;
@@ -12,6 +13,7 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.model.postgres.ExceptionResolver;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
@@ -71,6 +73,31 @@ public class UserDao {
   @Transactional(readOnly = true)
   public List<User> findAll() {
     List<User> users = queryFactory.select(userBean).from(QUser.user).fetchResults().getResults();
+    List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
+    mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
+    return users;
+  }
+
+  /**
+   * Find all users that match the given role, application type, and city
+   * district id.
+   *
+   * @param roleType
+   *          required role type
+   * @param applicationType
+   *          required application type
+   * @param cityDistrictId
+   *          required city district id
+   * @return
+   */
+  @Transactional(readOnly = true)
+  public List<User> findMatching(RoleType roleType, ApplicationType applicationType, Integer cityDistrictId) {
+    List<User> users = queryFactory.select(userBean).from(QUser.user).innerJoin(userApplicationType)
+        .on(user.id.eq(userApplicationType.userId)).innerJoin(userRole).on(user.id.eq(userRole.userId))
+        .innerJoin(userCityDistrict).on(user.id.eq(userCityDistrict.userId))
+        .where(userApplicationType.applicationType.eq(applicationType.name())
+            .and(userRole.role.eq(roleType.name()).and(userCityDistrict.cityDistrictId.eq(cityDistrictId))))
+        .fetchResults().getResults();
     List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
     mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
     return users;

@@ -6,6 +6,7 @@ import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.model.testUtils.TestCommon;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -54,7 +58,50 @@ public class UserDaoTest {
   }
 
   @Test
-  public void testFindWithNoRolesOrTypes() {
+  public void TestFindMatching() {
+    // Set-up: add two users with partially overlapping roles and application
+    // types
+    User user1 = createDummyUser("User1");
+    user1.setAllowedApplicationTypes(
+        Arrays.asList(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT));
+    user1.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_INVOICING));
+    user1.setCityDistrictIds(Arrays.asList(1, 2));
+    User insertedUser1 = userDao.insert(user1);
+    User user2 = createDummyUser("User2");
+    user2.setAllowedApplicationTypes(Arrays.asList(ApplicationType.CABLE_REPORT, ApplicationType.EVENT));
+    user2.setAssignedRoles(Arrays.asList(RoleType.ROLE_ADMIN, RoleType.ROLE_DECISION));
+    user2.setCityDistrictIds(Arrays.asList(1, 3));
+    User insertedUser2 = userDao.insert(user2);
+    assertNotEquals(insertedUser1.getId(), insertedUser2.getId());
+
+    // Try different searches. First, one that should return both:
+    List<User> users = userDao.findMatching(RoleType.ROLE_ADMIN, ApplicationType.CABLE_REPORT, 1);
+    assertEquals(2, users.size());
+    assertEquals(1, users.stream().filter(u -> u.getId().equals(insertedUser1.getId())).count());
+    assertEquals(1, users.stream().filter(u -> u.getId().equals(insertedUser2.getId())).count());
+
+    // Second should only return user1:
+    users = userDao.findMatching(RoleType.ROLE_ADMIN, ApplicationType.EXCAVATION_ANNOUNCEMENT, 1);
+    assertEquals(1, users.size());
+    assertEquals(1, users.stream().filter(u -> u.getId().equals(insertedUser1.getId())).count());
+
+    // So should this
+    users = userDao.findMatching(RoleType.ROLE_ADMIN, ApplicationType.CABLE_REPORT, 2);
+    assertEquals(1, users.size());
+    assertEquals(1, users.stream().filter(u -> u.getId().equals(insertedUser1.getId())).count());
+
+    // This should only return user2:
+    users = userDao.findMatching(RoleType.ROLE_DECISION, ApplicationType.CABLE_REPORT, 1);
+    assertEquals(1, users.size());
+    assertEquals(1, users.stream().filter(u -> u.getId().equals(insertedUser2.getId())).count());
+
+    // This should match neither:
+    users = userDao.findMatching(RoleType.ROLE_DECISION, ApplicationType.EXCAVATION_ANNOUNCEMENT, 1);
+    assertEquals(0, users.size());
+  }
+
+  @Test
+  public void testInsertWithNoRolesOrTypes() {
     User user = new User();
     user.setIsActive(true);
     user.setEmailAddress("email");

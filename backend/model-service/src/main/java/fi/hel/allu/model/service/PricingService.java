@@ -96,7 +96,7 @@ public class PricingService {
       locations = locationDao.findByApplication(application.getId());
     }
     // TODO: should we handle different locations as their own invoice rows? This works anyway as long as only area rentals have multiple locations
-    double applicationArea = locations.stream().mapToDouble(l -> getLocationArea(l)).sum();
+    double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, applicationArea, isCompany(application));
     pricing.calculatePrice();
     application.setCalculatedPrice(pricing.getPriceInCents());
@@ -128,7 +128,7 @@ public class PricingService {
     buildDays += (int) Math.round((double) event.getTeardownSeconds() / (24 * 60 * 60));
     int eventDays = reservationDays - buildDays;
     double structureArea = event.getStructureArea();
-    double area = getLocationArea(location);
+    double area = location.getEffectiveArea();
 
     for(PricingConfiguration pricingConfig : pricingConfigs) {
       // Calculate price per location...
@@ -155,7 +155,7 @@ public class PricingService {
           .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
     } else {
       // Check if district is defined:
-      Integer cityDistrictId = Optional.ofNullable(location.getCityDistrictIdOverride()).orElse(location.getCityDistrictId());
+      Integer cityDistrictId = location.getEffectiveCityDistrictId();
       if (cityDistrictId != null) {
         return pricingDao.findByDisctrictAndNature(cityDistrictId, nature).map(Collections::singletonList)
             .orElse(Collections.emptyList());
@@ -165,9 +165,6 @@ public class PricingService {
     return Collections.emptyList();
   }
 
-  private double getLocationArea(Location location) {
-    return Optional.ofNullable(location.getAreaOverride()).orElse(location.getArea());
-  }
 
   private boolean isCompany(Application application) {
     if (application.getApplicantId() == null) {

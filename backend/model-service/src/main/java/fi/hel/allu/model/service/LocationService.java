@@ -1,10 +1,15 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.dao.LocationDao;
+import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,15 +27,18 @@ public class LocationService {
   private LocationDao locationDao;
   private ApplicationService applicationService;
   private ProjectService projectService;
+  private UserDao userDao;
 
   @Autowired
   public LocationService(
       LocationDao locationDao,
       ApplicationService applicationService,
-      ProjectService projectService) {
+      ProjectService projectService,
+      UserDao userDao) {
     this.locationDao = locationDao;
     this.applicationService = applicationService;
     this.projectService = projectService;
+    this.userDao = userDao;
   }
 
 
@@ -38,6 +46,9 @@ public class LocationService {
   public Location insert(Location location) {
     Location insertedLocation = locationDao.insert(location);
     Application application = findApplication(location.getApplicationId());
+    if (application.getHandler() == null) {
+      tryToAssignHandler(application, insertedLocation);
+    }
     updateProject(insertedLocation);
     // update application to get the price calculations done
     applicationService.update(application.getId(), application);
@@ -67,6 +78,21 @@ public class LocationService {
     Application application = applicationService.findById(location.getApplicationId());
     if (application.getProjectId() != null) {
       projectService.updateProjectInformation(Collections.singletonList(application.getProjectId()));
+    }
+  }
+
+  /*
+   * Try to find a user that matches the given application and location and
+   * assign the application to him/her.
+   */
+  private void tryToAssignHandler(Application application, Location location) {
+    Integer cityDistrictId = location.getEffectiveCityDistrictId();
+    ApplicationType applicationType = application.getType();
+    if (cityDistrictId != null && applicationType != null) {
+      List<User> users = userDao.findMatching(RoleType.ROLE_PROCESS_APPLICATION, applicationType, cityDistrictId);
+      if (!users.isEmpty()) {
+        application.setHandler(users.get(0).getId());
+      }
     }
   }
 }

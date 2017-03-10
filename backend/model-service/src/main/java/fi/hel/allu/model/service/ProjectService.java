@@ -7,12 +7,16 @@ import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.Project;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -257,7 +261,7 @@ public class ProjectService {
     ps.maxEndTime = application.getEndTime();
     List<Location> locations = locationDao.findByApplication(application.getId());
     List<Integer> cityDistrictIds = locations.stream()
-        .map(l -> Optional.ofNullable(l.getCityDistrictIdOverride()).orElse(l.getCityDistrictId()))
+        .map(l -> l.getEffectiveCityDistrictId())
         .filter(id -> id != null)
         .collect(Collectors.toList());
     ps.districts.addAll(cityDistrictIds);

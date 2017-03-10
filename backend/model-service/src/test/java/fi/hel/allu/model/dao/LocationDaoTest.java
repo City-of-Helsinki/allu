@@ -109,6 +109,7 @@ public class LocationDaoTest {
     locIn.setApplicationId(application.getId());
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
+    assertEquals(locOut.getArea(), locOut.getEffectiveArea());
     // Area should be close to 4 m^2:
     double diff = Math.abs(area - 4.0);
     assertTrue(diff < 0.0001);
@@ -120,6 +121,7 @@ public class LocationDaoTest {
     locIn.setApplicationId(application.getId());
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
+    assertEquals(locOut.getArea(), locOut.getEffectiveArea());
     // Area should be close to 0 m^2:
     double diff = Math.abs(area - 0.0);
     assertTrue(diff < 0.0001);
@@ -143,6 +145,7 @@ public class LocationDaoTest {
     locIn.setGeometry(geoIn);
     Location locOut = locationDao.insert(locIn);
     double area = locOut.getArea();
+    assertEquals(locOut.getArea(), locOut.getEffectiveArea());
     // Area should be close to 0 m^2:
     double diff = Math.abs(area - 0.0);
     assertTrue(diff < 0.0001);
@@ -164,6 +167,7 @@ public class LocationDaoTest {
     // Geometries should now be combined into one
     assertEquals(1, geoColl.getNumGeometries());
     double area = locOut.getArea();
+    assertEquals(locOut.getArea(), locOut.getEffectiveArea());
     // Area should be close to 10 m^2:
     double diff = Math.abs(area - 10.0);
     assertTrue(diff < 0.0001);
@@ -186,6 +190,7 @@ public class LocationDaoTest {
     // but Sq_5_5 shoud stay separate in any case.
     assertTrue(geoColl.getNumGeometries() > 1);
     double area = locOut.getArea();
+    assertEquals(locOut.getArea(), locOut.getEffectiveArea());
     // Area should be close to 10 m^2:
     double diff = Math.abs(area - 12.0);
     assertTrue(diff < 0.0001);
@@ -273,6 +278,7 @@ public class LocationDaoTest {
     // Check that the location now has a district ID:
     Integer cityDistrictId = inserted.getCityDistrictId();
     assertNotNull(cityDistrictId);
+    assertEquals(cityDistrictId, inserted.getEffectiveCityDistrictId());
 
     // Make sure the district is Herttoniemi:
     String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getId() == cityDistrictId)
