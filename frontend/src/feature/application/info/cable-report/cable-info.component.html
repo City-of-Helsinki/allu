@@ -21,7 +21,7 @@
                         <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
                             <div class="form-group-label">{{['defaultText.type', infoEntry.value.type] | translation}}</div>
 
-                            <div *ngIf="!readonly" class="col m4">
+                            <div *ngIf="!readonly" class="col m10">
                                 <md-select class="input-full-width" placeholder="Vakiotekstit">
                                     <md-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]"
                                                (onSelect)="addDefaultText(index, defaultText.text)">
