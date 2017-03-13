@@ -68,11 +68,6 @@ export class SearchComponent implements OnInit {
     this.router.navigate(['applications', application.id, 'summary']);
   }
 
-  newApplication(): void {
-    this.applicationState.application = new Application();
-    this.router.navigate(['applications/location']);
-  }
-
   sortBy(sort: Sort) {
     this.sort = sort;
     this.search();

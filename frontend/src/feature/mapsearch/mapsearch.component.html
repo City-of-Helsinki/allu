@@ -20,5 +20,15 @@
             <searchbar barType="SIMPLE" (onShowAdvanced)="showAdvancedSearch()"></searchbar>
         </div>
         <map [zoom]="true" [draw]="true" [selection]="true">Ladataan karttaa</map>
+        <div class="map-action-buttons">
+            <button md-fab color="accent" [routerLink]="['/applications/location']"
+                    mdTooltip="Uusi hakemus" mdTooltipPosition="above">
+                <md-icon>filter_none</md-icon>
+            </button>
+            <button md-fab color="accent" [routerLink]="['/projects/edit']"
+                    mdTooltip="Uusi hanke" mdTooltipPosition="above">
+                <md-icon>line_style</md-icon>
+            </button>
+        </div>
     </div>
 </md-sidenav-container>

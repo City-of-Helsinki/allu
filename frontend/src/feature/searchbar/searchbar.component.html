@@ -1,7 +1,7 @@
 <form [formGroup]="searchForm">
   <div *ngIf="barType === 'SIMPLE'" class="search-box">
     <div class="input-with-addon">
-        <button (click)="showMore()" class="input-addon-item addon-btn"><md-icon>add</md-icon></button>
+        <button (click)="showMore()" class="input-addon-item addon-btn"><md-icon>subject</md-icon></button>
         <input id="address" type="text" value="{{addressSearch}}"
                class="input-addon-field last-item"
                placeholder="Hae hankkeita osoitteella"

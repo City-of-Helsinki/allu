@@ -1,5 +1,7 @@
 @import '../../assets/colors';
 
+$over-map: 314159;
+
 :host {
   .row {
     margin-bottom: 0;
@@ -26,9 +28,23 @@ application-list {
     position: absolute;
     top: 0;
     left: 24px;
-    z-index: 314159;
+    z-index: $over-map;
     width: 25vw;
   }
+
+  .map-action-buttons {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+    z-index: $over-map;
+
+    button {
+      .material-icons {
+        color: mat-contrast($allu-accent, 800);
+      }
+    }
+  }
+
 }
 
 md-sidenav {
