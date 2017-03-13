@@ -92,14 +92,18 @@ create table allu.application_tag (
     creation_time timestamp with time zone not null
 );
 
+create table allu.location_area (
+  id serial primary key,
+  name text not null );
+
 create table allu.fixed_location (
   id serial primary key,
-  area text not null,
+  area_id integer not null references allu.location_area(id),
   section text,
   application_kind text not null,
   is_active boolean not null,
   geometry geometry(GEOMETRY, 3879),
-unique (area, section, application_kind) );
+unique (area_id, section, application_kind) );
 
 comment on table allu.fixed_location is 'Predefined Area+Section type location';
 

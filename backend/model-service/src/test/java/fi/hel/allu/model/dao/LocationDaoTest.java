@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import static fi.hel.allu.QFixedLocation.fixedLocation;
+import static fi.hel.allu.QLocationArea.locationArea;
 import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.*;
 
@@ -199,12 +200,14 @@ public class LocationDaoTest {
   @Test
   public void testFixedLocationId() {
     // Setup: add fixed location with known ID
+    int areaId = queryFactory.insert(locationArea).set(locationArea.name, "Turbofolkstraße")
+        .executeWithKey(locationArea.id);
     final List<Integer> fixedLocationIds = Arrays.asList(9876, 3325, 2344);
     long insertCount = fixedLocationIds.stream()
         .mapToLong(flId -> queryFactory.insert(fixedLocation)
-            .columns(fixedLocation.id, fixedLocation.area, fixedLocation.section, fixedLocation.applicationKind,
+            .columns(fixedLocation.id, fixedLocation.areaId, fixedLocation.section, fixedLocation.applicationKind,
                 fixedLocation.isActive)
-            .values(flId, "Narinkka " + flId, "lohko A", ApplicationKind.OUTDOOREVENT, true).execute())
+            .values(flId, areaId, "lohko A" + flId, ApplicationKind.OUTDOOREVENT, true).execute())
         .sum();
     assertEquals(fixedLocationIds.size(), insertCount);
     // Test: add location with fixedLocationId
@@ -221,15 +224,21 @@ public class LocationDaoTest {
   @Test
   public void testGetFixedLocationList() {
     // Setup: add three active rows and one passive
+    int kauppatoriId = queryFactory.insert(locationArea).set(locationArea.name, "Kauppatori")
+        .executeWithKey(locationArea.id);
+    int senaatintoriToriId = queryFactory.insert(locationArea).set(locationArea.name, "Senaatintori")
+        .executeWithKey(locationArea.id);
+    int kaivopuistoId = queryFactory.insert(locationArea).set(locationArea.name, "Kaivopuisto")
+        .executeWithKey(locationArea.id);
     long insertCount =
         queryFactory.insert(fixedLocation)
-            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko A")
+            .set(fixedLocation.areaId, kauppatoriId).set(fixedLocation.section, "lohko A")
             .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
-            .set(fixedLocation.area, "Senaatintori")
+            .set(fixedLocation.areaId, senaatintoriToriId)
             .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, true).addBatch()
-            .set(fixedLocation.area, "Kauppatori").set(fixedLocation.section, "lohko Q")
+            .set(fixedLocation.areaId, kauppatoriId).set(fixedLocation.section, "lohko Q")
             .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, false).addBatch()
-            .set(fixedLocation.area, "Kaivopuisto")
+            .set(fixedLocation.areaId, kaivopuistoId)
             .set(fixedLocation.applicationKind, ApplicationKind.SEASON_SALE).set(fixedLocation.isActive, true).addBatch()
             .execute();
     assertEquals(4, insertCount);

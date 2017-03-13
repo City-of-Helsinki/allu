@@ -10,6 +10,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -17,6 +18,7 @@ import fi.hel.allu.model.domain.CityDistrict;
 import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
@@ -34,6 +36,7 @@ import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocation.location;
+import static fi.hel.allu.QLocationArea.locationArea;
 import static fi.hel.allu.QLocationFlids.locationFlids;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
@@ -46,7 +49,6 @@ public class LocationDao {
   private SQLQueryFactory queryFactory;
 
   final QBean<Location> locationBean = bean(Location.class, location.all());
-  final QBean<FixedLocation> fixedLocationBean = bean(FixedLocation.class, fixedLocation.all());
 
   @Transactional(readOnly = true)
   public Optional<Location> findById(int id) {
@@ -126,9 +128,11 @@ public class LocationDao {
 
   @Transactional(readOnly = true)
   public List<FixedLocation> getFixedLocationList() {
+
     List<FixedLocation> fxs = queryFactory
-        .select(fixedLocationBean)
-        .from(fixedLocation)
+        .select(bean(FixedLocation.class, fixedLocation.id, locationArea.name.as("area"), fixedLocation.section,
+            fixedLocation.applicationKind, fixedLocation.geometry))
+        .from(fixedLocation).innerJoin(locationArea).on(fixedLocation.areaId.eq(locationArea.id))
         .where(fixedLocation.isActive.eq(true))
         .fetch();
 
