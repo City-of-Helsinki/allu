@@ -3,6 +3,7 @@ package fi.hel.allu.ui.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import fi.hel.allu.common.validator.NotFalse;
 import fi.hel.allu.model.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
 
@@ -17,6 +18,7 @@ import java.util.List;
 /**
  * in Finnish: Hakemuksen sijainti
  */
+@NotFalse(rules = {"startTime, startTimeBeforeEndTimeValidation, start time must be before end time"})
 public class LocationJson {
   private Integer id;
   private Integer locationKey;
@@ -216,5 +218,9 @@ public class LocationJson {
 
   public void setUnderpass(Boolean underpass) {
     this.underpass = underpass;
+  }
+
+  public boolean getStartTimeBeforeEndTimeValidation() {
+    return startTime.isBefore(endTime);
   }
 }

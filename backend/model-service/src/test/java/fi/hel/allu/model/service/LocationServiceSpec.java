@@ -61,7 +61,7 @@ public class LocationServiceSpec {
           Mockito
               .when(userDao.findMatching(Mockito.eq(RoleType.ROLE_PROCESS_APPLICATION), Mockito.any(), Mockito.any()))
               .thenReturn(Collections.singletonList(dummyUser()));
-          locationService.insert(dummyLocation());
+          locationService.insert(Collections.singletonList(dummyLocation()));
         });
 
         it("should set application handler", () -> {

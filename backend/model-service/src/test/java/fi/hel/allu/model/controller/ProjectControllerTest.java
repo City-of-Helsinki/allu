@@ -387,8 +387,7 @@ public class ProjectControllerTest {
     Location location = newLocationWithDefaults(startTime, endTime);
     location.setApplicationId(application.getId());
     location.setGeometry(geometrycollection(3879, polygon));
-    ResultActions resultActions = wtc.perform(post("/locations"), location).andExpect(status().isOk());
-    Location dbLocation = wtc.parseObjectFromResult(resultActions, Location.class);
+    wtc.perform(post("/locations"), Collections.singletonList(location)).andExpect(status().isOk());
   }
 
   private void addCityDistrictToApplication(
@@ -399,8 +398,7 @@ public class ProjectControllerTest {
     Location location = newLocationWithDefaults(startTime, endTime);
     location.setApplicationId(application.getId());
     location.setCityDistrictIdOverride(districtOverride);
-    ResultActions resultActions = wtc.perform(post("/locations"), location).andExpect(status().isOk());
-    Location dbLocation = wtc.parseObjectFromResult(resultActions, Location.class);
+    wtc.perform(post("/locations"), Collections.singletonList(location)).andExpect(status().isOk());
   }
 
   private Location newLocationWithDefaults(ZonedDateTime startTime, ZonedDateTime endTime) {

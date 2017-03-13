@@ -1,36 +1,37 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.FixedLocation;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.mockito.stubbing.Answer;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-public class LocationServiceTest extends MockServices {
+public class LocationServiceTest {
   private static Validator validator;
-  @InjectMocks
   protected LocationService locationService;
+  protected RestTemplate restTemplate;
 
   private static final int APPLICATION_ID = 12345;
 
@@ -42,21 +43,43 @@ public class LocationServiceTest extends MockServices {
 
   @Before
   public void setUp() {
-    MockitoAnnotations.initMocks(this);
-    initSaveMocks();
-    initSearchMocks();
+    restTemplate = Mockito.mock(RestTemplate.class);
+    locationService = new LocationService(Mockito.mock(ApplicationProperties.class), restTemplate);
+
+    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(), Mockito.eq(Location[].class)))
+        .thenAnswer(
+            (Answer<Location[]>) invocation -> {
+              // Use given parameter to create a response
+              Location location = createMockLocationModel((Location) (invocation.getArgumentAt(1, List.class)).get(0));
+              return new Location[] { location };
+            });
+
+    Mockito.when(restTemplate.exchange(Mockito.any(String.class), Mockito.anyObject(), Mockito.anyObject(), Mockito.eq(Location[].class)))
+        .thenAnswer(
+            (Answer<ResponseEntity>) invocation -> {
+              // Use given parameter to create a response
+              HttpEntity<List<Location>> httpEntity = invocation.getArgumentAt(2, HttpEntity.class);
+              ResponseEntity<Location[]> responseEntity = Mockito.mock(ResponseEntity.class);
+              Mockito.when(responseEntity.getBody()).thenReturn(((List<Location>) httpEntity.getBody()).toArray(new Location[0]));
+              return responseEntity;
+            });
+
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse(null));
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(FixedLocation[].class)))
+        .then(invocation -> createMockFixedLocationList());
   }
 
   @Test
   public void testValidationWithValidLocation() {
     Set<ConstraintViolation<LocationJson>> constraintViolations =
-        validator.validate(createLocationJson(1));
+        validator.validate(MockServices.createLocationJson(1));
     assertEquals(0, constraintViolations.size());
   }
 
   @Test
   public void createValidLocation() {
-    LocationJson locationJson = locationService.createLocation(APPLICATION_ID, createLocationJson(null));
+    LocationJson locationJson = locationService.createLocation(APPLICATION_ID, MockServices.createLocationJson(null));
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(102, locationJson.getId().intValue());
@@ -70,7 +93,7 @@ public class LocationServiceTest extends MockServices {
 
   @Test
   public void createLocationWithId() {
-    LocationJson locationJsonRequest = createLocationJson(1);
+    LocationJson locationJsonRequest = MockServices.createLocationJson(1);
     LocationJson locationJson = locationService.createLocation(APPLICATION_ID, locationJsonRequest);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
@@ -90,7 +113,7 @@ public class LocationServiceTest extends MockServices {
         Mockito.eq(Location.class), Mockito.anyInt())).thenAnswer(
             (Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse(
                 invocation.getArgumentAt(2, HttpEntity.class)));
-    LocationJson locationJson = createLocationJson(1);
+    LocationJson locationJson = MockServices.createLocationJson(1);
     locationJson = locationService.updateOrCreateLocation(APPLICATION_ID, locationJson);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
@@ -105,7 +128,7 @@ public class LocationServiceTest extends MockServices {
 
   @Test
   public void updateLocationWithoutId() {
-    LocationJson locationJson = createLocationJson(null);
+    LocationJson locationJson = MockServices.createLocationJson(null);
     locationJson = locationService.updateOrCreateLocation(APPLICATION_ID, locationJson);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
@@ -140,6 +163,32 @@ public class LocationServiceTest extends MockServices {
   }
 
   private ResponseEntity<Location> createMockLocationResponse(HttpEntity<Location> request) {
-    return new ResponseEntity<>(createMockLocationModel(request.getBody()), HttpStatus.OK);
+    return new ResponseEntity<>(createMockLocationModel(request == null ? null : request.getBody()), HttpStatus.OK);
+  }
+
+  private static Location createMockLocationModel(Location input) {
+    if (input != null && input.getId() != null) {
+      return input;
+    }
+    Location location = new Location();
+    location.setCity("City1, Model");
+    location.setPostalCode("33333, Model");
+    location.setStreetAddress("Street 1, Model");
+    location.setFixedLocationIds(Arrays.asList(23456, 7656));
+    location.setId(102);
+    location.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
+    return location;
+  }
+
+  private ResponseEntity<FixedLocation[]> createMockFixedLocationList() {
+    FixedLocation[] fixedLocations = new FixedLocation[2];
+    for (int i = 0; i < fixedLocations.length; ++i) {
+      FixedLocation fixedLocation = new FixedLocation();
+      fixedLocation.setId(911 + i);
+      fixedLocation.setArea("FixedLocation " + i);
+      fixedLocation.setSection("Section " + i);
+      fixedLocations[i] = fixedLocation;
+    }
+    return new ResponseEntity<>(fixedLocations, HttpStatus.OK);
   }
 }

@@ -6,7 +6,6 @@ import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.User;
 
@@ -17,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Service for handling location changes.
@@ -41,29 +41,54 @@ public class LocationService {
     this.userDao = userDao;
   }
 
-
   @Transactional
-  public Location insert(Location location) {
-    Location insertedLocation = locationDao.insert(location);
-    Application application = findApplication(location.getApplicationId());
+  public List<Location> insert(List<Location> locations) {
+    List<Location> newLocations = new ArrayList<>();
+    locations.forEach(l -> newLocations.add(locationDao.insert(l)));
+    int applicationId = getApplicationId(newLocations);
+    Application application = findApplication(applicationId);
     if (application.getHandler() == null) {
-      tryToAssignHandler(application, insertedLocation);
+      // TODO: area rental with multiple locations will get more or less "random" location
+      newLocations.forEach(insertedLocation -> tryToAssignHandler(application, insertedLocation));
     }
-    updateProject(insertedLocation);
-    // update application to get the price calculations done
-    applicationService.update(application.getId(), application);
-    return insertedLocation;
+    updateApplicationAndProject(applicationId);
+    return newLocations;
   }
 
   @Transactional
-  public Location update(int locationId, Location location) {
-    Application application = findApplication(location.getApplicationId());
-    Location updatedLocation = locationDao.update(locationId, location);
-    updateProject(updatedLocation);
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
+  public List<Location> update(List<Location> locations) {
+    List<Location> newLocations = new ArrayList<>();
+    locations.forEach(l -> newLocations.add(locationDao.update(l.getId(), l)));
+    updateApplicationAndProject(getApplicationId(newLocations));
+    return newLocations;
+  }
+
+  @Transactional
+  public Location update(Location location) {
+    return update(Collections.singletonList(location)).get(0);
+  }
+
+  @Transactional
+  public void delete(List<Integer> locationIds) {
+    int applicationId = locationDao.findApplicationId(locationIds);
+    locationIds.forEach(id -> locationDao.deleteById(id));
+    updateApplicationAndProject(applicationId);
+  }
+
+  private int getApplicationId(List<Location> locations) {
+    List<Integer> ids = locations.stream().map(l -> l.getApplicationId()).distinct().collect(Collectors.toList());
+    if (ids.size() != 1) {
+      throw new IllegalArgumentException("Given locations are related to more than one application: " + ids);
+    } else {
+      return ids.get(0);
+    }
+  }
+
+  private void updateApplicationAndProject(int applicationId) {
+    Application application = findApplication(applicationId);
+    updateProject(applicationId);
     // update application to get the price calculations done
     applicationService.update(application.getId(), application);
-    return updatedLocation;
   }
 
   private Application findApplication(int applicationId) {
@@ -74,8 +99,8 @@ public class LocationService {
     return applications.get(0);
   }
 
-  private void updateProject(Location location) {
-    Application application = applicationService.findById(location.getApplicationId());
+  private void updateProject(int applicationId) {
+    Application application = applicationService.findById(applicationId);
     if (application.getProjectId() != null) {
       projectService.updateProjectInformation(Collections.singletonList(application.getProjectId()));
     }

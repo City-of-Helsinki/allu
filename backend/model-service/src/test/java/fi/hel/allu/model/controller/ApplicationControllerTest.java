@@ -204,13 +204,13 @@ public class ApplicationControllerTest {
   public void testDeleteApplicationLocation() throws Exception {
     // Setup: create application with location
     Application app = createLocationTestApplication(testAppParams[0], "Syrjäkuja 5", "Hämärähomma", 1);
-    ResultActions ra = wtc.perform(get(String.format("/locations/applications/%d", app.getId()))).andExpect(status().isOk());
+    ResultActions ra = wtc.perform(get(String.format("/locations/application/%d", app.getId()))).andExpect(status().isOk());
     Location[] locations = wtc.parseObjectFromResult(ra, Location[].class);
     assertEquals(1, locations.length);
     // Test: delete the application's location and verify that it gets deleted.
     Integer appId = app.getId();
-    wtc.perform(delete(String.format("/locations/applications/%d", appId))).andExpect(status().isOk());
-    ra = wtc.perform(get(String.format("/locations/applications/%d", app.getId()))).andExpect(status().isOk());
+    wtc.perform(delete(String.format("/locations/application/%d", appId))).andExpect(status().isOk());
+    ra = wtc.perform(get(String.format("/locations/application/%d", app.getId()))).andExpect(status().isOk());
     locations = wtc.parseObjectFromResult(ra, Location[].class);
     assertEquals(0, locations.length);
   }

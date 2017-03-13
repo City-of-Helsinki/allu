@@ -1,9 +1,11 @@
 package fi.hel.allu.model.testUtils;
 
 import fi.hel.allu.common.types.*;
-import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.ProjectDao;
+import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
-
 import fi.hel.allu.model.service.LocationService;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Helper class for routines shared between all tests
@@ -83,6 +86,15 @@ public class TestCommon {
     return app;
   }
 
+  public Application dummyAreaRentalApplication(String name, String handler) {
+    Application app = dummyBasicApplication(name, handler);
+    app.setType(ApplicationType.AREA_RENTAL);
+    app.setKind(ApplicationKind.OTHER_AREA_RENTAL);
+    app.setApplicationId("AL1700001");
+    app.setExtension(dummyAreaRentalEvent());
+    return app;
+  }
+
   /**
    * Create a dummy outdoor applicationExtension.
    *
@@ -101,6 +113,14 @@ public class TestCommon {
     shortTermRental.setDescription("desc");
     shortTermRental.setCommercial(true);
     return shortTermRental;
+  }
+
+  public ApplicationExtension dummyAreaRentalEvent() {
+    AreaRental areaRental = new AreaRental();
+    areaRental.setContractor(new Applicant());
+    areaRental.setResponsiblePerson(new Contact());
+    areaRental.setAdditionalInfo("foobar additional info");
+    return areaRental;
   }
 
   /**
@@ -137,7 +157,7 @@ public class TestCommon {
     location.setUnderpass(false);
     location.setStartTime(startTime);
     location.setEndTime(endTime);
-    return locationService.insert(location).getId();
+    return locationService.insert(Collections.singletonList(location)).get(0).getId();
   }
 
   /**

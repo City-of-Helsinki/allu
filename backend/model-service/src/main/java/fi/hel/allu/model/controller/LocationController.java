@@ -42,23 +42,33 @@ public class LocationController {
    * @param   applicationId   Id of the application whose locations should be returned.
    * @return  List of locations of application. Never <code>null</code>.
    */
-  @RequestMapping(value = "/applications/{applicationId}", method = RequestMethod.GET)
+  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
   public ResponseEntity<List<Location>> findByApplication(@PathVariable int applicationId) {
     List<Location> locations = locationDao.findByApplication(applicationId);
     return new ResponseEntity<>(locations, HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Location> update(@PathVariable int id, @Valid @RequestBody(required = true) Location location) {
-    return new ResponseEntity<>(locationService.update(id, location), HttpStatus.OK);
+  /**
+   * Updates given locations. All locations must have the same application.
+   *
+   * @param   locations   Locations to be updated.
+   * @return  Updated locations.
+   */
+  @RequestMapping(method = RequestMethod.PUT)
+  public ResponseEntity<List<Location>> update(
+      @Valid @RequestBody List<Location> locations) {
+    return new ResponseEntity<>(locationService.update(locations), HttpStatus.OK);
   }
 
+  /**
+   * Adds new locations. All added locations must have the same application.
+   *
+   * @param   locations   Locations to be added.
+   * @return  Added locations.
+   */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Location> insert(@Valid @RequestBody(required = true) Location location) {
-    if (location.getId() != null) {
-      throw new IllegalArgumentException("Id must be null for insert");
-    }
-    return new ResponseEntity<>(locationService.insert(location), HttpStatus.OK);
+  public ResponseEntity<List<Location>> insert(@Valid @RequestBody List<Location> locations) {
+    return new ResponseEntity<>(locationService.insert(locations), HttpStatus.OK);
   }
 
   /**
@@ -66,12 +76,25 @@ public class LocationController {
    *
    * @param applicationId   id of the application.
    */
-  @RequestMapping(value = "/applications/{applicationId}", method = RequestMethod.DELETE)
+  // TODO: remove when locations are removed from the application class
+  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.DELETE)
   public ResponseEntity<Void> deleteLocation(@PathVariable int applicationId) {
     locationDao.deleteByApplication(applicationId);
+    // TODO: if this method is not removed completely, change it to make required updates to application and project too
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
+  /**
+   * Deletes given locations. All deleted locations must have the same application.
+   *
+   * @param   locations Locations to be deleted.
+   * @return  Void.
+   */
+  @RequestMapping(value = "/delete", method = RequestMethod.POST)
+  public ResponseEntity<Void> deleteLocations(@RequestBody List<Integer> locations) {
+    locationService.delete(locations);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 
   @RequestMapping(value = "/fixed-location", method = RequestMethod.GET)
   public ResponseEntity<List<FixedLocation>> getFixedLocationList() {

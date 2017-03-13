@@ -59,11 +59,6 @@ public abstract class MockServices {
         .thenAnswer((Answer<Applicant>) invocation -> createMockApplicantModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Location.class)))
-        .thenAnswer(
-            (Answer<Location>) invocation -> createMockLocationModel(invocation.getArgumentAt(1, Location.class)));
-
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Event.class)))
         .thenAnswer((Answer<Event>) invocation -> createMockOutdoorEventModel());
 
@@ -91,9 +86,6 @@ public abstract class MockServices {
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockApplicantResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse());
-
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Event.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Event>>) invocation -> createMockOutdoorEventResponse());
 
@@ -107,14 +99,11 @@ public abstract class MockServices {
         .thenAnswer((Answer<ResponseEntity<Application[]>>) invocation ->
             createMockApplicationListResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(FixedLocation[].class)))
-        .then(invocation -> createMockFixedLocationList());
-
     Mockito.when(props.getModelServiceUrl(Mockito.any(String.class))).thenAnswer((Answer<String>) invocationOnMock -> "http://localhost:85/testing");
 
   }
 
-  public LocationJson createLocationJson(Integer id) {
+  public static LocationJson createLocationJson(Integer id) {
     LocationJson locationJson = new LocationJson();
     locationJson.setId(id);
     PostalAddressJson postalAddressJsonLocation = new PostalAddressJson();
@@ -125,7 +114,7 @@ public abstract class MockServices {
     locationJson.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
     locationJson.setFixedLocationIds(Arrays.asList(12345, 5432));
     locationJson.setStartTime(ZonedDateTime.parse("2016-11-12T08:00:00+02:00[Europe/Helsinki]"));
-    locationJson.setEndTime(ZonedDateTime.parse("2016-11-12T08:00:00+02:00[Europe/Helsinki]"));
+    locationJson.setEndTime(ZonedDateTime.parse("2016-11-13T08:00:00+02:00[Europe/Helsinki]"));
     return locationJson;
   }
 
@@ -255,20 +244,6 @@ public abstract class MockServices {
     return applicant;
   }
 
-  public Location createMockLocationModel(Location input) {
-    if (input != null && input.getId() != null) {
-      return input;
-    }
-    Location location = new Location();
-    location.setCity("City1, Model");
-    location.setPostalCode("33333, Model");
-    location.setStreetAddress("Street 1, Model");
-    location.setFixedLocationIds(Arrays.asList(23456, 7656));
-    location.setId(102);
-    location.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));
-    return location;
-  }
-
   public Event createMockOutdoorEventModel() {
     Event event = new Event();
     event.setUrl("url, Model");
@@ -323,10 +298,6 @@ public abstract class MockServices {
 
   public ResponseEntity<Applicant> createMockApplicantResponse() {
     return new ResponseEntity<>(createMockApplicantModel(), HttpStatus.OK);
-  }
-
-  public ResponseEntity<Location> createMockLocationResponse() {
-    return new ResponseEntity<>(createMockLocationModel(null), HttpStatus.OK);
   }
 
   public ResponseEntity<Event> createMockOutdoorEventResponse() {
@@ -393,17 +364,4 @@ public abstract class MockServices {
     structureMeta.setAttributes(Collections.singletonList(attributeMeta));
     return new ResponseEntity<>(structureMeta, HttpStatus.OK);
   }
-
-  private ResponseEntity<FixedLocation[]> createMockFixedLocationList() {
-    FixedLocation[] fixedLocations = new FixedLocation[2];
-    for (int i = 0; i < fixedLocations.length; ++i) {
-      FixedLocation fixedLocation = new FixedLocation();
-      fixedLocation.setId(911 + i);
-      fixedLocation.setArea("FixedLocation " + i);
-      fixedLocation.setSection("Section " + i);
-      fixedLocations[i] = fixedLocation;
-    }
-    return new ResponseEntity<>(fixedLocations, HttpStatus.OK);
-  }
-
 }

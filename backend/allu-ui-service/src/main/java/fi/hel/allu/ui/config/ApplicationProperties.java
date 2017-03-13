@@ -389,17 +389,39 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for creating locations.
+   */
+  public String getLocationsCreateUrl() {
+    return getModelServiceUrl("/locations");
+  }
+
+  /**
+   * @return url for updating locations.
+   */
+  public String getLocationsUpdateUrl() {
+    return getModelServiceUrl("/locations");
+  }
+
+  /**
+   * @return url for deleting locations.
+   */
+  public String getLocationsDeleteUrl() {
+    return getModelServiceUrl("/locations/delete");
+  }
+
+  /**
    * @return url for fetching locations by their application.
    */
   public String getLocationsByApplicationIdUrl() {
-    return getModelServiceUrl("/locations/applications/{applicationId}");
+    return getModelServiceUrl("/locations/application/{applicationId}");
   }
 
   /**
    * @return url for deleting locations by their application.
    */
+  // TODO: remove when locations are removed from the application class
   public String getDeleteLocationsByApplicationIdUrl() {
-    return getModelServiceUrl("/locations/applications/{applicationId}");
+    return getModelServiceUrl("/locations/application/{applicationId}");
   }
 
   /**

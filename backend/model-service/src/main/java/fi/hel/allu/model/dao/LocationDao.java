@@ -63,14 +63,20 @@ public class LocationDao {
     return Optional.ofNullable(cont);
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   public List<Location> findByApplication(int applicationId) {
     List<Integer> locationIds = queryFactory.select(location.id).from(location).where(location.applicationId.eq(applicationId)).fetch();
     return locationIds.stream().map(id -> findById(id).get()).collect(Collectors.toList());
   }
 
+  @Transactional(readOnly = true)
+  public int findApplicationId(List<Integer> locationIds) {
+    return queryFactory.selectDistinct(location.applicationId).from(location).where(location.id.in(locationIds)).fetchOne();
+  }
+
   @Transactional
   public Location insert(Location locationData) {
+    locationData.setId(null);
     Integer maxLocationKey = queryFactory.select(SQLExpressions.max(location.locationKey))
         .from(location).where(location.applicationId.eq(locationData.getApplicationId())).fetchOne();
     locationData.setLocationKey(Optional.ofNullable(maxLocationKey).orElse(0) + 1);
@@ -92,7 +98,7 @@ public class LocationDao {
         .update(location)
         .populate(locationData,
             new ExcludingMapper(WITH_NULL_BINDINGS, Arrays.asList(location.locationKey, location.locationVersion)))
-        .where(location.id.eq(id)).execute();
+        .where(location.id.eq(id).and(location.applicationId.eq(locationData.getApplicationId()))).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }

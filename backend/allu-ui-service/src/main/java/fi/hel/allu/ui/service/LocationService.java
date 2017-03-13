@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,6 +47,7 @@ public class LocationService {
    *          Location that is going to be created
    * @return Created location
    */
+  // TODO: remove when locations are removed from the application class
   public LocationJson createLocation(int applicationId, LocationJson locationJson) {
     if (locationJson == null) {
       locationJson = new LocationJson();
@@ -53,11 +55,13 @@ public class LocationService {
     return callModelService(applicationId, locationJson);
   }
 
+  // TODO: remove when locations are removed from the application class
   private LocationJson callModelService(int applicationId, LocationJson locationJson) {
-    Location location = restTemplate.postForObject(applicationProperties
-            .getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(applicationId, locationJson),
-        Location.class);
-    return mapToLocationJson(location);
+    List<Location> location = Arrays.asList(
+        restTemplate.postForObject(applicationProperties.getModelServiceUrl(
+          ApplicationProperties.PATH_MODEL_LOCATION_CREATE), Collections.singletonList(createLocationModel(applicationId, locationJson)),
+          Location[].class));
+    return mapToLocationJson(location.get(0));
   }
 
   /**
@@ -68,23 +72,47 @@ public class LocationService {
    *          location that is going to be updated
    * @return locationJson result of the operation
    */
+  // TODO: remove when locations are removed from the application class
   public LocationJson updateOrCreateLocation(int applicationId, LocationJson locationJson) {
     if (locationJson.getId() != null && locationJson.getId() > 0) {
-      HttpEntity<Location> requestEntity = new HttpEntity<>(createLocationModel(applicationId, locationJson));
-      ResponseEntity<Location> responseEntity = restTemplate.exchange(applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_LOCATION_UPDATE), HttpMethod.PUT, requestEntity, Location.class, locationJson.getId().intValue());
-      return mapToLocationJson(responseEntity.getBody());
+      return update(applicationId, Collections.singletonList(locationJson)).get(0);
     } else {
       return createLocation(applicationId, locationJson);
     }
   }
+
 
   /**
    * Delete all locations from the given application.
    *
    * @param applicationId
    */
+  // TODO: remove when locations are removed from the application class
   public void deleteApplicationLocation(int applicationId) {
     restTemplate.delete(applicationProperties.getDeleteLocationsByApplicationIdUrl(), applicationId);
+  }
+
+
+  public List<LocationJson> update(int applicationId, List<LocationJson> locations) {
+    HttpEntity<List<Location>> requestEntity = new HttpEntity<>(createLocationModel(applicationId, locations));
+    ResponseEntity<Location[]> responseEntity = restTemplate.exchange(
+            applicationProperties.getLocationsUpdateUrl(),
+            HttpMethod.PUT,
+            requestEntity,
+            Location[].class);
+    return mapToLocationJsons(responseEntity.getBody());
+  }
+
+  public List<LocationJson> insert(int applicationId, List<LocationJson> locations) {
+    return mapToLocationJsons(
+        restTemplate.postForObject(
+            applicationProperties.getLocationsCreateUrl(),
+            createLocationModel(applicationId, locations),
+            Location[].class));
+  }
+
+  public void delete(List<Integer> locations) {
+    restTemplate.postForObject(applicationProperties.getLocationsDeleteUrl(), locations, Void.class);
   }
 
   /**
@@ -108,7 +136,7 @@ public class LocationService {
   public List<LocationJson> findLocationsByApplication(int applicationId) {
     ResponseEntity<Location[]> locationResult = restTemplate.getForEntity(
         applicationProperties.getLocationsByApplicationIdUrl(), Location[].class, applicationId);
-    return mapToLocationJsons(Arrays.asList(locationResult.getBody()));
+    return mapToLocationJsons(locationResult.getBody());
   }
 
   /**
@@ -129,6 +157,10 @@ public class LocationService {
     List<CityDistrictInfoJson> resultList = Arrays.stream(queryResult.getBody()).map(LocationService::mapToJson)
         .collect(Collectors.toList());
     return resultList;
+  }
+
+  private List<Location> createLocationModel(int applicationId, List<LocationJson> locationJsons) {
+    return locationJsons.stream().map(locationJson -> createLocationModel(applicationId, locationJson)).collect(Collectors.toList());
   }
 
   private Location createLocationModel(int applicationId, LocationJson locationJson) {
@@ -157,8 +189,8 @@ public class LocationService {
     return location;
   }
 
-  private List<LocationJson> mapToLocationJsons(List<Location> locations) {
-    return locations.stream().map(l -> mapToLocationJson(l)).collect(Collectors.toList());
+  private List<LocationJson> mapToLocationJsons(Location[] locations) {
+    return Arrays.stream(locations).map(l -> mapToLocationJson(l)).collect(Collectors.toList());
   }
 
   private LocationJson mapToLocationJson(Location location) {
