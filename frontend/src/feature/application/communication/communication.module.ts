@@ -1,7 +1,6 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MdSlideToggleModule} from '@angular/material';
-
+import {MdRadioModule} from '@angular/material';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {CommunicationComponent} from './communication.component';
 
@@ -10,7 +9,7 @@ import {CommunicationComponent} from './communication.component';
     FormsModule,
     ReactiveFormsModule,
     AlluCommonModule,
-    MdSlideToggleModule
+    MdRadioModule
   ],
   declarations: [
     CommunicationComponent

@@ -1,5 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {FormGroup, FormBuilder} from '@angular/forms';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {CommunicationType} from '../../../model/application/communication-type';
 import {PublicityType} from '../../../model/application/publicity-type';
@@ -22,10 +22,9 @@ export class CommunicationComponent implements OnInit {
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    let communicationType = this.application.communicationType || CommunicationType[CommunicationType.EMAIL];
     this.communicationForm = this.fb.group({
-      communicationByEmail: [communicationType === CommunicationType[CommunicationType.EMAIL]],
-      publicityType: [this.application.publicityType || PublicityType[PublicityType.PUBLIC]]
+      communicationType: [this.application.communicationType || CommunicationType[CommunicationType.EMAIL], Validators.required],
+      publicityType: [this.application.publicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
     });
     this.form.addControl('communication', this.communicationForm);
 
