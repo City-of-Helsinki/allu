@@ -1,0 +1,25 @@
+@import '../../../assets/variables';
+
+:host {
+  position: relative;
+  top: 10px;
+}
+
+.input-box-content > input,
+.input-box-content > select,
+.input-box-content > .select-wrapper input.select-dropdown {
+  display: block;
+  margin: 0;
+  width: 100%;
+  height: 47px !important;
+  appearance: none;
+  box-shadow: none;
+  padding: .5em .75em;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px 6px;
+}
+
+.input-box-content > .select-wrapper span.caret {
+  z-index: $over-map + 1;
+  margin-right: 5px;
+}

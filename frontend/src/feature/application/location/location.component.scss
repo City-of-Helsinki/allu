@@ -1,8 +1,17 @@
 @import '../../../assets/colors';
+@import '../../../assets/variables';
 
 :host {
   .mapcontainer {
     height: 66vh;
     position: relative;
+
+    .map-overlay {
+      position: absolute;
+      top: 10px;
+      left: 0px;
+      z-index: $over-map;
+      width: 80%;
+    }
   }
 }

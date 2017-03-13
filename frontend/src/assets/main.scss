@@ -6,12 +6,14 @@
 @import "buttons";
 @import "nav/nav";
 @import '../feature/common/auto-completion/auto-completion-list.component.theme';
+@import '../feature/common/input-box/input-box.component.theme';
 
 // Theme components
 @include angular-material-theme($allu-theme);
 @include auto-completion-list-theme($allu-theme);
 @include placeholder-text();
 @include nav-theme($allu-theme);
+@include input-box-theme($allu-theme);
 
 // Reset
 html,

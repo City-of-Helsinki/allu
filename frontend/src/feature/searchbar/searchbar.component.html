@@ -13,28 +13,28 @@
 
   <div *ngIf="barType === 'BAR'" class="row">
     <div class="col s8">
-      <md-input-container class="input-full-width">
-        <input mdInput type="text" value="{{addressSearch}}"
+      <input-box>
+        <input boxInput type="text" value="{{addressSearch}}"
                placeholder="Hae osoitteella"
                [autocompletion]="addressSearchResults"
                (onSearchChange)="onAddressSearchChange($event)"
                (onSelection)="searchAddress($event)"/>
-      </md-input-container>
+      </input-box>
     </div>
 
     <div class="col s2">
-      <md-input-container class="input-full-width">
-        <input mdInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
+      <input-box>
+        <input boxInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
                materialize="pickadate"
                [materializeParams]="pickadateParams"/>
-      </md-input-container>
+      </input-box>
     </div>
     <div class="col s2">
-      <md-input-container class="input-full-width">
-        <input mdInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
+      <input-box>
+        <input boxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
                materialize="pickadate"
                [materializeParams]="pickadateParams"/>
-      </md-input-container>
+      </input-box>
     </div>
   </div>
 

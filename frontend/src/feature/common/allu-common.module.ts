@@ -24,6 +24,7 @@ import {FileDropDirective} from './file-drop/file-drop.directive';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
+import {InputBoxComponent} from './input-box/input-box.component';
 
 @NgModule({
   imports: [
@@ -41,7 +42,8 @@ import {FileSelectDirective} from '../application/attachment/file-select.directi
     FileSelectDirective,
     FileDropDirective,
     ConfirmDialogComponent,
-    CommaSeparatedPipe
+    CommaSeparatedPipe,
+    InputBoxComponent
   ],
   exports: [
     CommonModule,
@@ -63,7 +65,8 @@ import {FileSelectDirective} from '../application/attachment/file-select.directi
     FileSelectDirective,
     FileDropDirective,
     ConfirmDialogComponent,
-    CommaSeparatedPipe
+    CommaSeparatedPipe,
+    InputBoxComponent
   ],
   entryComponents: [
     AutoCompletionListComponent,

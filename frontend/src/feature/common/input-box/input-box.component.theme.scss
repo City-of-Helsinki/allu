@@ -1,0 +1,20 @@
+@import '~@angular/material/core/theming/all-theme';
+
+@mixin input-box-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  .input-box-content > input,
+  .input-box-content > select,
+  .input-box-content > .select-wrapper input.select-dropdown {
+    background: mat-contrast($primary, 500);
+    color: mat-color($primary, 300);
+
+    &:focus {
+      border: 1px solid mat-color($allu-primary, 200);
+    }
+  }
+
+  .input-box-content > .select-wrapper span.caret {
+    color: mat-color($primary, 300);
+  }
+}

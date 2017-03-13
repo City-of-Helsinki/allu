@@ -10,39 +10,45 @@
       <md-card-title>Sijainti</md-card-title>
       <md-card-content>
         <div class="row">
-          <searchbar [addressSearch]="application.location.postalAddress.streetAddress"
-                     [startDate]="application.startTime" [endDate]="application.endTime"
-                     (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
+          <div class="mapcontainer">
+            <div class="map-overlay">
+              <searchbar [addressSearch]="application.location.postalAddress.streetAddress"
+                         [startDate]="application.startTime" [endDate]="application.endTime"
+                         (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
+            </div>
+            <map [draw]="true" [edit]="editingAllowed()" [selection]="true"
+                 [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
+          </div>
+        </div>
+        <div class="row">
+          <div *ngIf="areas.length > 0">
+            <div *ngIf="editedItemCount > 0" class="col m10">
+              <div class="input-field-info-text">
+                Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+              </div>
+            </div>
+            <div *ngIf="editedItemCount === 0">
+              <div class="col m6">
+                <md-select placeholder="Alue" class="input-full-width" [(ngModel)]="selectedArea" [disabled]="editedItemCount > 0">
+                  <md-option value="">Ei tapahtuma-aluetta</md-option>
+                  <md-option *ngFor="let area of areas" [value]="area">{{area}}</md-option>
+                </md-select>
+              </div>
+              <div class="col m2">
+                <div *ngIf="!noSections()">
+                  <select [(ngModel)]="selectedFxs" materialize="material_select" [materializeSelectOptions]="sections" multiple>
+                    <option value="" disabled>Ei lohkoa</option>
+                    <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </div>
           <div class="col m12">
             <md-input-container class="input-full-width">
               <input mdInput type="text" [(ngModel)]="application.location.info" placeholder="Lisätietoja paikasta"/>
             </md-input-container>
           </div>
-        </div>
-        <div class="row" *ngIf="areas.length > 0">
-          <div *ngIf="editedItemCount > 0" class="col m10">
-            <div class="input-field-info-text">
-              Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
-            </div>
-          </div>
-          <div *ngIf="editedItemCount === 0">
-            <div class="col m6">
-              <md-select placeholder="Alue" class="input-full-width" [(ngModel)]="selectedArea" [disabled]="editedItemCount > 0">
-                <md-option value="">Ei tapahtuma-aluetta</md-option>
-                <md-option *ngFor="let area of areas" [value]="area">{{area}}</md-option>
-              </md-select>
-            </div>
-            <div class="col m2">
-              <div *ngIf="!noSections()">
-                <select [(ngModel)]="selectedFxs" materialize="material_select" [materializeSelectOptions]="sections" multiple>
-                  <option value="" disabled>Ei lohkoa</option>
-                  <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="row">
           <div class="col m2">
             <md-input-container class="input-full-width">
               <input mdInput disabled type="number" [(ngModel)]="application.location.uiArea" placeholder="Alueen pinta-ala"/>
@@ -65,12 +71,6 @@
               <md-option value="" selected>-</md-option>
               <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
             </md-select>
-          </div>
-        </div>
-        <div class="row">
-          <div class="mapcontainer">
-            <map [draw]="true" [edit]="editingAllowed()" [selection]="true"
-                 [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
           </div>
         </div>
       </md-card-content>
