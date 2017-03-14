@@ -21,6 +21,7 @@ import java.util.Optional;
 
 import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
+import static fi.hel.allu.QLocationArea.locationArea;
 import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -47,7 +48,9 @@ public class PricingDaoTest {
   public void setUp() throws Exception {
     testCommon.deleteAllData();
     // Insert one fixed location and a pricing config for it:
-    queryFactory.insert(fixedLocation).set(fixedLocation.id, TEST_ID).set(fixedLocation.area, "Turbofolkstraße")
+    int areaId = queryFactory.insert(locationArea).set(locationArea.name, "Turbofolkstraße")
+        .executeWithKey(locationArea.id);
+    queryFactory.insert(fixedLocation).set(fixedLocation.id, TEST_ID).set(fixedLocation.areaId, areaId)
         .set(fixedLocation.section, "Z").set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT)
         .set(fixedLocation.isActive, true).execute();
     queryFactory.insert(outdoorPricing).set(outdoorPricing.fixedLocationId, TEST_ID)

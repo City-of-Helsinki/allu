@@ -4,6 +4,7 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.Configuration;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.SQLTemplates;
 import com.querydsl.sql.spatial.PostGISTemplates;
@@ -28,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.*;
 
 import static fi.hel.allu.QFixedLocation.fixedLocation;
+import static fi.hel.allu.QLocationArea.locationArea;
 
 /**
  * Utility class to generate SQL commands for inserting geometries into
@@ -72,12 +74,14 @@ public class LocationGeometryReader {
       + "BEGIN\n"
       + "   IF sectionname IS NULL OR sectionname = '' THEN\n"
       + "       SELECT COUNT(*) INTO STRICT match_count FROM\n"
-      + "           (SELECT DISTINCT area, section from allu.fixed_location) AS l WHERE\n"
-      + "           l.area LIKE check_allu_name.areaname AND l.section IS NULL;\n"
+          + "           (SELECT DISTINCT a.name as areaname, fl.section as section FROM\n"
+          + "            allu.fixed_location as fl inner join allu.location_area as a on fl.area_id=a.id) as l WHERE\n"
+          + "           l.areaname LIKE check_allu_name.areaname AND l.section IS NULL;\n"
       + "   ELSE\n"
       + "       SELECT COUNT(*) INTO STRICT match_count FROM\n"
-      + "           (SELECT DISTINCT area, section from allu.fixed_location) AS l WHERE\n"
-      + "           l.area LIKE check_allu_name.areaname AND l.section = sectionname;\n"
+          + "           (SELECT DISTINCT a.name as areaname, fl.section as section FROM\n"
+          + "            allu.fixed_location as fl inner join allu.location_area as a on fl.area_id=a.id) as l WHERE\n"
+          + "           l.areaname LIKE check_allu_name.areaname AND l.section = sectionname;\n"
       + "   END IF;\n"
       + "   IF match_count <> 1 THEN\n"
       + "       RAISE EXCEPTION 'Name % matches % areas in database', check_allu_name.areaname, match_count;\n"
@@ -210,7 +214,10 @@ public class LocationGeometryReader {
     String check = queryFactory.select(checkExpr).getSQL().getSQL();
     output.write((check + ";\n").getBytes());
     String insert = queryFactory.update(fixedLocation).set(fixedLocation.geometry, geometry)
-        .where(fixedLocation.area.like(area).and(sectionCondition)).getSQL().get(0).getSQL();
+        .where(fixedLocation.areaId
+            .eq(SQLExpressions.select(locationArea.id).from(locationArea).where(locationArea.name.like(area)))
+            .and(sectionCondition))
+        .getSQL().get(0).getSQL();
     output.write((insert + ";\n").getBytes());
   }
 
