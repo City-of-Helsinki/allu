@@ -2,12 +2,9 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.LocationDao;
-import fi.hel.allu.model.domain.CityDistrict;
-import fi.hel.allu.model.domain.CityDistrictInfo;
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.Location;
-
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.LocationService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -101,6 +98,10 @@ public class LocationController {
     return new ResponseEntity<>(locationDao.getFixedLocationList(), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
+  public ResponseEntity<List<FixedLocationArea>> getFixedLocationAreas() {
+    return new ResponseEntity<>(locationDao.getFixedLocationAreas(), HttpStatus.OK);
+  }
   /**
    * Get the list of known city districts.
    *

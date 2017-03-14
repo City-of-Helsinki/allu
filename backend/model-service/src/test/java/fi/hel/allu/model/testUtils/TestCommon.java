@@ -7,6 +7,7 @@ import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.LocationService;
+
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -213,16 +214,18 @@ public class TestCommon {
       "delete from allu.attachment",
       "delete from allu.invoice_row",
       "delete from allu.application_tag",
+      "delete from allu.location_flids",
+      "delete from allu.location_geometry",
+      "delete from allu.location",
+      "delete from allu.application_change",
       "delete from allu.application",
       "delete from allu.project",
       "delete from allu.applicant",
-      "delete from allu.location_geometry",
-      "delete from allu.location_flids",
-      "delete from allu.location",
       "delete from allu.outdoor_pricing",
       "delete from allu.fixed_location",
       "delete from allu.user_application_type",
       "delete from allu.user_role",
+      "delete from allu.user_city_district",
       "delete from allu.user",
       "delete from allu.default_text",
    };
