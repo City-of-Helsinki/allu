@@ -1,13 +1,8 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.CityDistrictInfo;
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.CityDistrictInfoJson;
-import fi.hel.allu.ui.domain.FixedLocationJson;
-import fi.hel.allu.ui.domain.LocationJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.ui.domain.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,6 +146,11 @@ public class LocationService {
     return resultList;
   }
 
+  /**
+   * Retrieve the list of defined city districts
+   *
+   * @return list of city districts
+   */
   public List<CityDistrictInfoJson> getCityDistrictList() {
     ResponseEntity<CityDistrictInfo[]> queryResult = restTemplate
         .getForEntity(applicationProperties.getCityDistrictUrl(), CityDistrictInfo[].class);
@@ -159,10 +159,23 @@ public class LocationService {
     return resultList;
   }
 
+  /**
+   * Retrieve the list of defined fixed locations areas
+   *
+   * @return list of fixed location areas
+   */
+  public List<FixedLocationAreaJson> getFixedLocationAreaList() {
+    ResponseEntity<FixedLocationArea[]> queryResult = restTemplate
+        .getForEntity(applicationProperties.getFixedLocationAreaUrl(), FixedLocationArea[].class);
+    List<FixedLocationAreaJson> resultList = Arrays.stream(queryResult.getBody())
+        .map(fla -> mapToFixedLocationAreaJson(fla)).collect(Collectors.toList());
+    return resultList;
+  }
+
   private List<Location> createLocationModel(int applicationId, List<LocationJson> locationJsons) {
     return locationJsons.stream().map(locationJson -> createLocationModel(applicationId, locationJson)).collect(Collectors.toList());
   }
-
+  
   private Location createLocationModel(int applicationId, LocationJson locationJson) {
     if (locationJson == null) { throw new NullPointerException("LocationJson should not be null"); }
     Location location = new Location();
@@ -226,6 +239,24 @@ public class LocationService {
     fixedLocationJson.setGeometry(fixedLocation.getGeometry());
 
     return fixedLocationJson;
+  }
+
+  private FixedLocationAreaJson mapToFixedLocationAreaJson(FixedLocationArea fixedLocationArea) {
+    FixedLocationAreaJson fixedLocationAreaJson = new FixedLocationAreaJson();
+    fixedLocationAreaJson.setId(fixedLocationArea.getId());
+    fixedLocationAreaJson.setName(fixedLocationArea.getName());
+    fixedLocationAreaJson.setSections(fixedLocationArea.getSections().stream()
+        .map(fls -> mapToFixedLocationSectionJson(fls)).collect(Collectors.toList()));
+    return fixedLocationAreaJson;
+  }
+
+  private FixedLocationSectionJson mapToFixedLocationSectionJson(FixedLocationSection fixedLocationSection) {
+    FixedLocationSectionJson fixedLocationSectionJson = new FixedLocationSectionJson();
+    fixedLocationSectionJson.setId(fixedLocationSection.getId());
+    fixedLocationSectionJson.setName(fixedLocationSection.getSection());
+    fixedLocationSectionJson.setApplicationKind(fixedLocationSection.getApplicationKind());
+    fixedLocationSectionJson.setGeometry(fixedLocationSection.getGeometry());
+    return fixedLocationSectionJson;
   }
 
   private static CityDistrictInfoJson mapToJson(CityDistrictInfo cityDistrictInfo) {

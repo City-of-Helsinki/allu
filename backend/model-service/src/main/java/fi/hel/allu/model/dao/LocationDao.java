@@ -4,6 +4,7 @@ import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -14,9 +15,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.domain.CityDistrict;
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
 import org.geolatte.geom.Geometry;
@@ -31,6 +30,8 @@ import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QCityDistrict.cityDistrict;
@@ -151,6 +152,28 @@ public class LocationDao {
               fx.setGeometry(gc);
               return fx;
             }).collect(Collectors.toList());
+  }
+
+  /**
+   * Get all defined fixed location areas as a list
+   *
+   * @return list of FixedLocationAreas
+   */
+  @Transactional(readOnly = true)
+  public List<FixedLocationArea> getFixedLocationAreas() {
+
+    List<FixedLocationArea> areas = queryFactory.from(locationArea, fixedLocation)
+        .where(fixedLocation.areaId.eq(locationArea.id).and(fixedLocation.isActive.eq(true)))
+        .transform(groupBy(locationArea.id).as(
+            Projections.constructor(FixedLocationArea.class, locationArea.id, locationArea.name,
+                list(bean(FixedLocationSection.class, fixedLocation.all())))))
+        .entrySet().stream().map(entry -> entry.getValue()).collect(Collectors.toList());
+
+    // Force all section geometries to be geometry collections:
+    areas.forEach(fla -> fla.getSections().forEach(fls -> fls.setGeometry(Optional.ofNullable(fls.getGeometry())
+                .map(geometry -> toGeometryCollectionIfNeeded(geometry))
+        .orElse(GeometryCollection.createEmpty()))));
+    return areas;
   }
 
   @Transactional(readOnly = true)

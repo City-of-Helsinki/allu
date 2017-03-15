@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.ui.domain.CityDistrictInfoJson;
+import fi.hel.allu.ui.domain.FixedLocationAreaJson;
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
 import fi.hel.allu.ui.service.LocationService;
@@ -87,6 +88,12 @@ public class LocationController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<FixedLocationJson>> getFixedLocationList() {
     return new ResponseEntity<>(locationService.getFixedLocationList(), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/fixed-location-areas", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<FixedLocationAreaJson>> getFixedLocationAreaList() {
+    return new ResponseEntity<>(locationService.getFixedLocationAreaList(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/city-district", method = RequestMethod.GET)

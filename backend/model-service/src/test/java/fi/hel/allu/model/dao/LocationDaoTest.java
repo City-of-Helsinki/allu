@@ -6,6 +6,7 @@ import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.FixedLocationArea;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.testUtils.TestCommon;
 
@@ -246,6 +247,37 @@ public class LocationDaoTest {
     List<FixedLocation> queryResult = locationDao.getFixedLocationList();
     assertEquals(3, queryResult.size());
     assertEquals(1, queryResult.stream().filter(fl -> fl.getArea().equals("Kauppatori")).count());
+  }
+
+  @Test
+  public void testListFixedLocationAreas() {
+    // Setup: add five sections on three areas, two of them passive
+    int kauppatoriId = queryFactory.insert(locationArea).set(locationArea.name, "Kauppatori")
+        .executeWithKey(locationArea.id);
+    int senaatintoriToriId = queryFactory.insert(locationArea).set(locationArea.name, "Senaatintori")
+        .executeWithKey(locationArea.id);
+    int kaivopuistoId = queryFactory.insert(locationArea).set(locationArea.name, "Kaivopuisto")
+        .executeWithKey(locationArea.id);
+    long insertCount = queryFactory.insert(fixedLocation).set(fixedLocation.areaId, kauppatoriId)
+        .set(fixedLocation.section, "lohko A").set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT)
+        .set(fixedLocation.isActive, true).addBatch().set(fixedLocation.areaId, kauppatoriId)
+        .set(fixedLocation.section, "lohko B").set(fixedLocation.applicationKind, ApplicationKind.BRIDGE_BANNER)
+        .set(fixedLocation.isActive, true).addBatch().set(fixedLocation.areaId, senaatintoriToriId)
+        .set(fixedLocation.applicationKind, ApplicationKind.ART).set(fixedLocation.isActive, true).addBatch()
+        .set(fixedLocation.areaId, kauppatoriId).set(fixedLocation.section, "lohko Q")
+        .set(fixedLocation.applicationKind, ApplicationKind.OUTDOOREVENT).set(fixedLocation.isActive, false).addBatch()
+        .set(fixedLocation.areaId, kaivopuistoId).set(fixedLocation.applicationKind, ApplicationKind.SEASON_SALE)
+        .set(fixedLocation.isActive, false).addBatch().execute();
+    assertEquals(5, insertCount);
+
+    // Test: read them back
+    List<FixedLocationArea> areas = locationDao.getFixedLocationAreas();
+    // Only two areas should be there (third only contains passive sections)
+    assertEquals(2, areas.size());
+    // Kauppatori should have two sections
+    assertEquals(2, areas.stream().filter(a -> a.getId() == kauppatoriId).findFirst().get().getSections().size());
+    // Senaatintori should have one section
+    assertEquals(1, areas.stream().filter(a -> a.getId() == senaatintoriToriId).findFirst().get().getSections().size());
   }
 
   // Polygon that's mostly in Herttoniemi:

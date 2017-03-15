@@ -1,10 +1,14 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.FixedLocation;
+import fi.hel.allu.model.domain.FixedLocationArea;
+import fi.hel.allu.model.domain.FixedLocationSection;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.ui.domain.FixedLocationAreaJson;
 import fi.hel.allu.ui.domain.FixedLocationJson;
 import fi.hel.allu.ui.domain.LocationJson;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -20,11 +24,15 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -66,8 +74,6 @@ public class LocationServiceTest {
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Location.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse(null));
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(FixedLocation[].class)))
-        .then(invocation -> createMockFixedLocationList());
   }
 
   @Test
@@ -157,9 +163,23 @@ public class LocationServiceTest {
 
   @Test
   public void testGetFixedLocationList() {
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(FixedLocation[].class)))
+        .then(invocation -> createMockFixedLocationList());
+
     List<FixedLocationJson> fixedLocationList = locationService.getFixedLocationList();
     assertEquals(2, fixedLocationList.size());
     assertEquals("FixedLocation 0", fixedLocationList.get(0).getArea());
+  }
+
+  @Test
+  public void testGetFixedLocationAreaList() {
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(FixedLocationArea[].class)))
+        .then(invocation -> createMockFixedLocationAreaList());
+
+    List<FixedLocationAreaJson> areaList = locationService.getFixedLocationAreaList();
+    assertEquals(2, areaList.size());
+    assertEquals("FixedLocation 0", areaList.get(0).getName());
+    assertEquals("Section 0", areaList.get(0).getSections().get(0).getName());
   }
 
   private ResponseEntity<Location> createMockLocationResponse(HttpEntity<Location> request) {
@@ -190,5 +210,20 @@ public class LocationServiceTest {
       fixedLocations[i] = fixedLocation;
     }
     return new ResponseEntity<>(fixedLocations, HttpStatus.OK);
+  }
+
+  private ResponseEntity<FixedLocationArea[]> createMockFixedLocationAreaList() {
+    FixedLocationArea[] flas = new FixedLocationArea[2];
+    for (int i = 0; i < flas.length; ++i) {
+      FixedLocationArea fixedLocationArea = new FixedLocationArea();
+      fixedLocationArea.setId(911 + i);
+      fixedLocationArea.setName("FixedLocation " + i);
+      FixedLocationSection fls = new FixedLocationSection();
+      fls.setSection("Section " + i);
+      fls.setId(9110 + i);
+      fixedLocationArea.setSections(Collections.singletonList(fls));
+      flas[i] = fixedLocationArea;
+    }
+    return new ResponseEntity<>(flas, HttpStatus.OK);
   }
 }
