@@ -1,28 +1,44 @@
-import {BackendFixedLocation} from '../backend-model/backend-fixed-location';
-import {FixedLocation} from '../../model/common/fixed-location';
+import {BackendFixedLocationArea} from '../backend-model/backend-fixed-location-area';
 import {ApplicationKind} from '../../model/application/type/application-kind';
+import {FixedLocationArea} from '../../model/common/fixed-location-area';
+import {BackendFixedLocationSection} from '../backend-model/backend-fixed-location-section';
+import {FixedLocationSection} from '../../model/common/fixed-location-section';
+import {Some} from '../../util/option';
 
 export class FixedLocationMapper {
 
-  public static mapBackend(backendFixedLocation: BackendFixedLocation): FixedLocation {
-    return (backendFixedLocation) ? new FixedLocation(
-      backendFixedLocation.id,
-      backendFixedLocation.area,
-      backendFixedLocation.section,
-      ApplicationKind[backendFixedLocation.applicationKind],
-      backendFixedLocation.geometry
-    )
-      : undefined;
+  public static mapBackend(area: BackendFixedLocationArea): FixedLocationArea {
+    return (area) ? new FixedLocationArea(
+      area.id,
+      area.name,
+      Some(area.sections).map(sections => sections.map(s => FixedLocationMapper.mapBackendSection(s))).orElse([])
+    ) : undefined;
   }
 
-  public static mapFrontend(fixedLocation: FixedLocation): BackendFixedLocation {
-    return (fixedLocation) ?
+  public static mapFrontend(area: FixedLocationArea): BackendFixedLocationArea {
+    return (area) ?
     {
-      id: fixedLocation.id,
-      area: fixedLocation.area,
-      section: fixedLocation.section,
-      applicationKind: ApplicationKind[fixedLocation.applicationKind],
-      geometry: fixedLocation.geometry
+      id: area.id,
+      name: area.name,
+      sections: Some(area.sections).map(sections => sections.map(s => FixedLocationMapper.mapFrontendSection(s))).orElse([])
     } : undefined;
+  }
+
+  private static mapBackendSection(section: BackendFixedLocationSection): FixedLocationSection {
+    return new FixedLocationSection(
+      section.id,
+      section.name,
+      ApplicationKind[section.applicationKind],
+      section.geometry
+    );
+  }
+
+  private static mapFrontendSection(section: FixedLocationSection): BackendFixedLocationSection {
+    return {
+      id: section.id,
+      name: section.name,
+      applicationKind: ApplicationKind[section.applicationKind],
+      geometry: section.geometry
+    };
   }
 }

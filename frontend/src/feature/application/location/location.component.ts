@@ -2,14 +2,12 @@ import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 import {Router} from '@angular/router';
 import '../../../rxjs-extensions.ts';
 import {Observable} from 'rxjs/Observable';
-import {FormBuilder} from '@angular/forms';
-
+import {FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {MapUtil} from '../../../service/map/map.util';
 import {SearchbarFilter} from '../../../service/searchbar-filter';
 import {MapHub} from '../../../service/map/map-hub';
-import {FixedLocation} from '../../../model/common/fixed-location';
-import {Some, Option} from '../../../util/option';
+import {Some} from '../../../util/option';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
 import {ApplicationKind, drawingAllowedForKind} from '../../../model/application/type/application-kind';
@@ -28,6 +26,10 @@ import {ArrayUtil} from '../../../util/array-util';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {AreaRental} from '../../../model/application/area-rental/area-rental';
+import {FixedLocationArea} from '../../../model/common/fixed-location-area';
+import {FixedLocationSection} from '../../../model/common/fixed-location-section';
+import {NumberUtil} from '../../../util/number.util';
+import {LocationForm} from './location-form';
 
 @Component({
   selector: 'type',
@@ -38,17 +40,18 @@ import {AreaRental} from '../../../model/application/area-rental/area-rental';
   ]
 })
 export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
-  areas = new Array<string>();
-  sections = new Array<FixedLocation>();
+  locationForm: FormGroup;
+  areaCtrl: FormControl;
+  sectionsCtrl: FormControl;
+
+  areas = new Array<FixedLocationArea>();
+  sections = new Array<FixedLocationSection>();
+  editedItemCount = 0;
   application: Application;
   progressStep: ProgressStep;
   typeSelected = false;
-  selectedFixedLocations = [];
-  editedItemCount = 0;
   districts: Observable<Array<CityDistrict>>;
-  selectedDistrict: CityDistrict;
 
-  private fixedLocations = new Array<FixedLocation>();
   private geometry: GeoJSON.GeometryCollection;
 
   constructor(
@@ -57,6 +60,24 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private router: Router,
     private mapHub: MapHub,
     private fb: FormBuilder) {
+
+    this.areaCtrl = fb.control(undefined);
+    this.areaCtrl.valueChanges.subscribe(id => this.onAreaChange(id));
+    this.sectionsCtrl = fb.control([]);
+    this.sectionsCtrl.valueChanges.subscribe(ids => this.onSectionsChange(ids));
+
+    this.locationForm = fb.group({
+      startTime: [''],
+      endTime: [''],
+      streetAddress: [''],
+      area: this.areaCtrl,
+      sections: this.sectionsCtrl,
+      info: [''],
+      areaSize: [{value: undefined, disabled: true}],
+      areaOverride: [undefined],
+      cityDistrictName: [{value: undefined, disabled: true}],
+      cityDistrictIdOverride: [undefined]
+    });
   };
 
   ngOnInit() {
@@ -70,6 +91,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
     this.districts = this.mapHub.districts();
+    this.locationForm.patchValue(LocationForm.from(this.application.location));
+    this.districtName(this.application.location.cityDistrictId)
+      .subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
   }
 
   ngOnDestroy() {
@@ -99,15 +123,23 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   searchUpdated(filter: SearchbarFilter) {
-    this.application.location.postalAddress.streetAddress = filter.search;
-    this.application.startTime = filter.startDate;
-    this.application.endTime = filter.endDate;
-    this.application.location.startTime = filter.startDate;
-    this.application.location.endTime = filter.endDate;
+    this.locationForm.patchValue({
+      startTime: filter.uiStartDate,
+      endTime: filter.uiEndDate,
+      streetAddress: filter.search
+    });
   }
 
-  save() {
-    this.application.location.fixedLocationIds = this.selectedFixedLocations;
+  onSubmit(form: LocationForm) {
+    this.application.uiStartTime = form.startTime;
+    this.application.uiEndTime = form.endTime;
+    this.application.location.uiStartTime = form.startTime;
+    this.application.location.uiEndTime = form.endTime;
+    this.application.location.postalAddress.streetAddress = form.streetAddress;
+    this.application.location.info = form.info;
+    this.application.location.fixedLocationIds = form.sections;
+    this.application.location.areaOverride = form.areaOverride;
+    this.application.location.cityDistrictIdOverride = form.cityDistrictIdOverride;
     this.application.location.geometry = this.geometry;
 
     if (this.application.id) {
@@ -121,43 +153,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  set selectedArea(area: string) {
-    this.sections = this.fixedLocations.filter(fl => fl.area === area).sort(FixedLocation.sortBySection);
-    // When only 1 section it is area's fixed location which should be selected
-    // Otherwise select none as they are sections
-    this.selectedFixedLocations = this.sections.length === 1
-      ? [this.sections[0].id]
-      : [];
-    if (!!area) {
-      this.mapHub.selectFixedLocations(this.selectedFixedLocations);
-    }
-  }
-
-  get selectedArea(): string {
-    return this.firstSection.map(section => section.area).orElse(undefined);
-  }
-
-  get firstSection(): Option<FixedLocation> {
-    return Some(this.sections)
-      .filter(sections => sections.length > 0)
-      .map(sections => sections[0]);
-  }
-
-  set selectedFxs(fixedLocations: Array<number>) {
-    this.selectedFixedLocations = fixedLocations;
-    this.mapHub.selectFixedLocations(fixedLocations);
-  }
-
-  get selectedFxs(): Array<number> {
-    return this.selectedFixedLocations;
-  }
-
-  noSections(): boolean {
-    return this.sections.every(section => !section.section);
-  }
-
   editedItemCountChanged(editedItemCount: number) {
     this.editedItemCount = editedItemCount;
+    if (editedItemCount > 0) {
+      this.areaCtrl.disable({emitEvent: false});
+    } else {
+      this.areaCtrl.enable({emitEvent: false});
+    }
   }
 
   districtName(id: number): Observable<string> {
@@ -165,7 +167,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   editingAllowed(): boolean {
-    return drawingAllowedForKind(ApplicationKind[this.application.kind]) && this.selectedFixedLocations.length === 0;
+    return drawingAllowedForKind(ApplicationKind[this.application.kind]) && this.sectionsCtrl.value.length === 0;
   }
 
   private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {
@@ -177,31 +179,47 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private loadFixedLocationsForKind(kind: ApplicationKind): void {
-    this.mapHub.fixedLocations()
+    this.mapHub.fixedLocationAreas()
       .subscribe(fixedLocations => {
         this.areas = fixedLocations
-          .filter(f => f.applicationKind === kind)
-          .map(entry => entry.area)
-          .filter((v, i, a) => a.indexOf(v) === i) // unique area names
-          .sort(ArrayUtil.naturalSort((area: string) => area));
+          .filter(f => f.hasSectionsForKind(kind))
+          .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name));
 
-        this.fixedLocations = fixedLocations.filter(f => f.applicationKind === kind);
         this.sections = [];
-
-        this.setSelections();
+        this.setInitialSelections();
       });
   }
 
-  private setSelections() {
-    this.selectedArea = Some(this.application.location)
-      .map(location => this.fixedLocations.filter(fLoc => location.fixedLocationIds.indexOf(fLoc.id) >= 0))
-      .filter(fLocs => fLocs.length > 0)
-      .map(fLocs => fLocs[0].area)
-      .orElse(undefined);
+  private setInitialSelections() {
+    Some(this.application.location)
+      .map(location => this.areas.filter(area => area.hasSectionIds(location.fixedLocationIds)))
+      .filter(areas => areas.length > 0)
+      .map(areas => areas[0].id)
+      .do(id => this.locationForm.patchValue({area: id}));
 
     Some(this.application.location).do(location => {
-      this.selectedFixedLocations = location.fixedLocationIds;
+      this.locationForm.patchValue({sections: location.fixedLocationIds});
     });
+  }
+
+  private onAreaChange(id: number): void {
+    if (NumberUtil.isDefined(id)) {
+      let area = this.areas.find(a => a.id === id);
+      let kind = ApplicationKind[this.application.kind];
+
+      this.sections = area.namedSectionsForKind(kind)
+        .sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
+
+      area.singleDefaultSectionForKind(kind)
+        .do(defaultSection => this.locationForm.patchValue({sections: [defaultSection.id]}));
+    } else {
+      this.sections = [];
+      this.locationForm.patchValue({sections: []});
+    }
+  }
+
+  private onSectionsChange(ids: Array<number>) {
+    this.mapHub.selectFixedLocationSections(ids);
   }
 
   private createEmptyExtension(type: ApplicationType): ApplicationExtension {

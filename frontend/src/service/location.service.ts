@@ -13,15 +13,15 @@ import {ErrorInfo} from './ui-state/error-info';
 import {ErrorType} from './ui-state/error-type';
 import {None, Option, Some} from '../util/option';
 import {FixedLocationMapper} from './mapper/fixed-location-mapper';
-import {FixedLocation} from '../model/common/fixed-location';
 import {PostalAddress} from '../model/common/postal-address';
 import {CityDistrict} from '../model/common/city-district';
 import {CityDistrictMapper} from './mapper/city-district-mapper';
 import {HttpStatus} from '../util/http-response';
+import {FixedLocationArea} from '../model/common/fixed-location-area';
 
 const ADDRESS_URL = '/api/address';
 const GEOCODE_URL = '/geocode/helsinki';
-const FIXED_LOCATION_URL = '/api/locations/fixed-location';
+const FIXED_LOCATION_URL = '/api/locations/fixed-location-areas';
 const CITY_DISTRICT_URL = '/api/locations/city-district';
 const SEARCH_URL = '/search';
 
@@ -43,7 +43,7 @@ export class LocationService {
       .catch(err => this.handleGeocodeError(err));
   }
 
-  public getFixedLocations(): Observable<Array<FixedLocation>> {
+  public getFixedLocations(): Observable<Array<FixedLocationArea>> {
     return this.authHttp.get(FIXED_LOCATION_URL)
       .map(response => response.json())
       .map(json => json.map(ss => FixedLocationMapper.mapBackend(ss)))

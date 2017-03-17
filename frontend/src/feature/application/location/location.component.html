@@ -4,91 +4,91 @@
                     (onKindChange)="onApplicationKindChange($event)"
                     (onSpecifierChange)="onApplicationSpecifierChange($event)"></application-type>
 </div>
-<div *ngIf="typeSelected" materialize class="row location">
-  <div class="col m12">
-    <md-card>
-      <md-card-title>Sijainti</md-card-title>
-      <md-card-content>
-        <div class="row">
-          <div class="mapcontainer">
-            <div class="map-overlay">
-              <searchbar [addressSearch]="application.location.postalAddress.streetAddress"
-                         [startDate]="application.startTime" [endDate]="application.endTime"
-                         (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
+<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)">
+  <div *ngIf="typeSelected" materialize class="row location">
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Sijainti</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="mapcontainer">
+              <div class="map-overlay">
+                <searchbar [addressSearch]="locationForm.value.streetAddress"
+                           [startDate]="application.startTime" [endDate]="application.endTime"
+                           (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
+              </div>
+              <map [draw]="true" [edit]="editingAllowed()" [selection]="true"
+                   [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
             </div>
-            <map [draw]="true" [edit]="editingAllowed()" [selection]="true"
-                 [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
           </div>
-        </div>
-        <div class="row">
-          <div *ngIf="areas.length > 0">
-            <div *ngIf="editedItemCount > 0" class="col m10">
-              <div class="input-field-info-text">
-                Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+          <div class="row">
+            <div *ngIf="areas.length > 0">
+              <div *ngIf="editedItemCount > 0" class="col m10">
+                <div class="input-field-info-text">
+                  Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
+                </div>
               </div>
-            </div>
-            <div *ngIf="editedItemCount === 0">
-              <div class="col m6">
-                <md-select placeholder="Alue" class="input-full-width" [(ngModel)]="selectedArea" [disabled]="editedItemCount > 0">
-                  <md-option value="">Ei tapahtuma-aluetta</md-option>
-                  <md-option *ngFor="let area of areas" [value]="area">{{area}}</md-option>
-                </md-select>
-              </div>
-              <div class="col m2">
-                <div *ngIf="!noSections()">
-                  <select [(ngModel)]="selectedFxs" materialize="material_select" [materializeSelectOptions]="sections" multiple>
-                    <option value="" disabled>Ei lohkoa</option>
-                    <option *ngFor="let section of sections" [value]="section.id">{{section.section}}</option>
-                  </select>
+              <div *ngIf="editedItemCount === 0">
+                <div class="col m6">
+                  <md-select placeholder="Alue" class="input-full-width" formControlName="area">
+                    <md-option value="" selected>Ei tapahtuma-aluetta</md-option>
+                    <md-option *ngFor="let area of areas" [value]="area.id">{{area.name}}</md-option>
+                  </md-select>
+                </div>
+                <div class="col m2">
+                  <div *ngIf="sections.length > 0">
+                    <select formControlName="sections" materialize="material_select" [materializeSelectOptions]="sections" multiple>
+                      <option value="" disabled selected>Ei lohkoa</option>
+                      <option *ngFor="let section of sections" [value]="section.id">{{section.name}}</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
+            <div class="col m12">
+              <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="info" placeholder="Lisätietoja paikasta"/>
+              </md-input-container>
+            </div>
+            <div class="col m2">
+              <md-input-container class="input-full-width">
+                <input mdInput type="number" formControlName="areaSize" placeholder="Alueen pinta-ala"/>
+              </md-input-container>
+            </div>
+            <div class="col m2">
+              <md-input-container class="input-full-width">
+                <input mdInput type="number" formControlName="areaOverride" placeholder="Käsittelijän syöttämä pinta-ala"/>
+              </md-input-container>
+            </div>
+            <div class="col m2">
+              <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="cityDistrictName" placeholder="Kaupunginosa"/>
+              </md-input-container>
+            </div>
+            <div class="col m2">
+              <md-select formControlName="cityDistrictIdOverride" class="input-full-width" placeholder="Käsittelijän valitsema kaupunginosa">
+                <md-option value="" selected>-</md-option>
+                <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
+              </md-select>
+            </div>
           </div>
-          <div class="col m12">
-            <md-input-container class="input-full-width">
-              <input mdInput type="text" [(ngModel)]="application.location.info" placeholder="Lisätietoja paikasta"/>
-            </md-input-container>
+        </md-card-content>
+      </md-card>
+    </div>
+    <div class="col m12">
+      <md-card>
+        <md-card-title>Tallennus</md-card-title>
+        <md-card-content>
+          <div class="row">
+            <div class="col m2">
+              <a md-raised-button type="button" color="primary" [routerLink]="['/home']">PERUUTA</a>
+            </div>
+            <div class="col m4 offset-m6">
+              <button md-raised-button type="submit" color="primary" [disabled]="!locationForm.valid">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
+            </div>
           </div>
-          <div class="col m2">
-            <md-input-container class="input-full-width">
-              <input mdInput disabled type="number" [(ngModel)]="application.location.uiArea" placeholder="Alueen pinta-ala"/>
-            </md-input-container>
-          </div>
-          <div class="col m2">
-            <md-input-container class="input-full-width">
-              <input mdInput type="number" [(ngModel)]="application.location.areaOverride"
-                     placeholder="Käsittelijän syöttämä pinta-ala"/>
-            </md-input-container>
-          </div>
-          <div class="col m2">
-            <md-input-container class="input-full-width">
-              <input mdInput disabled type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
-                     placeholder="Kaupunginosa"/>
-            </md-input-container>
-          </div>
-          <div class="col m2">
-            <md-select [(ngModel)]="application.location.cityDistrictIdOverride" class="input-full-width" placeholder="Käsittelijän valitsema kaupunginosa">
-              <md-option value="" selected>-</md-option>
-              <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
-            </md-select>
-          </div>
-        </div>
-      </md-card-content>
-    </md-card>
+        </md-card-content>
+      </md-card>
+    </div>
   </div>
-  <div class="col m12">
-    <md-card>
-      <md-card-title>Tallennus</md-card-title>
-      <md-card-content>
-        <div class="row">
-          <div class="col m2">
-            <a md-raised-button type="button" color="primary" [routerLink]="['/home']">PERUUTA</a>
-          </div>
-          <div class="col m4 offset-m6">
-            <a md-raised-button type="button" color="primary" (click)="save()">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</a>
-          </div>
-        </div>
-      </md-card-content>
-    </md-card>
-  </div>
-</div>
+</form>

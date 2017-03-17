@@ -1,7 +1,6 @@
-export interface BackendFixedLocation {
+export interface BackendFixedLocationSection {
   id: number;
-  area: string;
-  section: string;
+  name: string;
   applicationKind: string;
   geometry: GeoJSON.GeometryCollection;
 }

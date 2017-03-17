@@ -16,9 +16,13 @@ export class ArrayUtil {
   }
 
   private static toParts(full): Array<[number, string]> {
-    let parts: Array<[number, string]> = [];
-    full.replace(DIGITS, (match, numbers, text) => parts.push([numbers || Infinity, text || '']));
-    return parts;
+    if (!!full) {
+      let parts: Array<[number, string]> = [];
+      full.replace(DIGITS, (match, numbers, text) => parts.push([numbers || Infinity, text || '']));
+      return parts;
+    } else {
+      return [];
+    }
   }
 
   private static compare(left: Array<[number, string]>, right: Array<[number, string]>): number {

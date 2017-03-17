@@ -2,7 +2,6 @@ import {Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angula
 
 import {MapHub} from '../../service/map/map-hub';
 import {Application} from '../../model/application/application';
-import {FixedLocation} from '../../model/common/fixed-location';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
@@ -10,6 +9,7 @@ import {styleByApplicationType} from '../../service/map/map-draw-styles';
 import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
 import {MapPopup} from '../../service/map/map-popup';
 import {ApplicationState} from '../../service/application/application-state';
+import {FixedLocationSection} from '../../model/common/fixed-location-section';
 
 @Component({
   selector: 'map',
@@ -47,7 +47,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     this.mapHub.applications().subscribe(applications => this.drawApplications(applications));
     this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app));
-    this.mapHub.selectedFixedLocations().subscribe(fxs => this.drawFixedLocations(fxs));
+    this.mapHub.selectedFixedLocationSections().subscribe(fxs => this.drawFixedLocations(fxs));
     // Handle fetching and drawing edited application as separate case
     Some(this.applicationId).do(id => this.drawEditedApplication(this.applicationState.application));
 
@@ -111,7 +111,7 @@ export class MapComponent implements OnInit, OnDestroy {
     }
   }
 
-  private drawFixedLocations(fixedLocations: Array<FixedLocation>) {
+  private drawFixedLocations(fixedLocations: Array<FixedLocationSection>) {
     this.mapState.clearEdited();
 
     let geometries = fixedLocations.map(fl => fl.geometry);

@@ -4,6 +4,8 @@ import {Observable} from 'rxjs/Observable';
 import {MapHub} from '../../../../service/map/map-hub';
 import {Application} from '../../../../model/application/application';
 import {Location} from '../../../../model/common/location';
+import {ApplicationKind} from '../../../../model/application/type/application-kind';
+import {ArrayUtil} from '../../../../util/array-util';
 
 @Component({
   selector: 'location-details',
@@ -24,12 +26,18 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.location = this.application.location;
-    this.mapHub.fixedLocationsBy(this.location.fixedLocationIds)
-      .filter(fixedLocations => fixedLocations.length > 0)
-      .subscribe(fixedLocations => {
-        this.area = fixedLocations[0].area;
-        this.sections = fixedLocations.map(fx => fx.section).join(', ');
-      });
+    // Sections can be selected only from single area so we can
+    // get area based on its sections
+    this.mapHub.fixedLocationAreasBySectionIds(this.location.fixedLocationIds)
+      .filter(areas => areas.length > 0)
+      .map(areas => areas[0])
+      .subscribe(area => this.area = area.name);
+
+    this.mapHub.fixedLocationSectionsBy(this.location.fixedLocationIds)
+      .map(sections => sections.map(s => s.name))
+      .map(names => names.sort(ArrayUtil.naturalSort((name: string) => name)))
+      .map(names => names.join(', '))
+      .subscribe(sectionNames => this.sections = sectionNames);
   }
 
   ngAfterViewInit(): void {

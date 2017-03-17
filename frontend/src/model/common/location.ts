@@ -1,4 +1,5 @@
 import {PostalAddress} from './postal-address';
+import {TimeUtil} from '../../util/time.util';
 
 export class Location {
 
@@ -48,5 +49,21 @@ export class Location {
 
   get effectiveCityDistrictId(): number {
     return Number.isInteger(this.cityDistrictIdOverride) ? this.cityDistrictIdOverride : this.cityDistrictId;
+  }
+
+  public get uiStartTime(): string {
+    return TimeUtil.getUiDateString(this.startTime);
+  }
+
+  public set uiStartTime(dateString: string) {
+    this.startTime = TimeUtil.getDateFromUi(dateString);
+  }
+
+  public get uiEndTime(): string {
+    return TimeUtil.getUiDateString(this.endTime);
+  }
+
+  public set uiEndTime(dateString: string) {
+    this.endTime = TimeUtil.getDateFromUi(dateString);
   }
 }

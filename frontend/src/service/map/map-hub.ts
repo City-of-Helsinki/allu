@@ -12,9 +12,10 @@ import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQu
 import {SearchbarFilter} from '../searchbar-filter';
 import {LocationService} from '../location.service';
 import {UIStateHub} from '../ui-state/ui-state-hub';
-import {FixedLocation} from '../../model/common/fixed-location';
 import {CityDistrict} from '../../model/common/city-district';
 import {ArrayUtil} from '../../util/array-util';
+import {FixedLocationArea} from '../../model/common/fixed-location-area';
+import {FixedLocationSection} from '../../model/common/fixed-location-section';
 
 
 @Injectable()
@@ -26,8 +27,8 @@ export class MapHub {
   private searchBar$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
   private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
-  private fixedLocations$ = new BehaviorSubject<Array<FixedLocation>>([]);
-  private selectedFixedLocations$ = new Subject<Array<FixedLocation>>();
+  private fixedLocations$ = new BehaviorSubject<Array<FixedLocationArea>>([]);
+  private selectedFixedLocations$ = new Subject<Array<FixedLocationSection>>();
   private cityDistricts$ = new BehaviorSubject<Array<CityDistrict>>([]);
 
   constructor(private applicationService: ApplicationService,
@@ -101,24 +102,38 @@ export class MapHub {
   /**
    * Used for fetching all available areas / sections
    */
-  public fixedLocations = () => this.fixedLocations$.asObservable();
+  public fixedLocationAreas = () => this.fixedLocations$.asObservable();
 
   /**
-   * Used for fetching single area / section
+   * Fetches areas containing given sections
    */
-  public fixedLocationsBy = (ids: Array<number>) => this.fixedLocations()
+  public fixedLocationAreasBySectionIds = (ids: Array<number>) => this.fixedLocationAreas()
+    .map(areas => areas.filter(a => a.hasSectionIds(ids)));
+
+  /**
+   * Fetches all available fixed location sections
+   */
+  public fixedLocationSections = () => this.fixedLocationAreas()
+    .map(areas => areas
+      .map(area => area.sections)
+      .reduce((acc, cur) => acc.concat(cur), []));
+
+  /**
+   * Used for fetching sections by given ids
+   */
+  public fixedLocationSectionsBy = (ids: Array<number>) => this.fixedLocationSections()
     .map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0));
 
   /**
-   * Adds fixed locations with given ids as selected
+   * Adds fixed locations sections with given ids as selected
    */
-  public selectFixedLocations = (ids: Array<number>) => this.fixedLocationsBy(ids)
+  public selectFixedLocationSections = (sectionIds: Array<number>) => this.fixedLocationSectionsBy(sectionIds)
     .subscribe(fxs => this.selectedFixedLocations$.next(fxs));
 
   /**
    * Observable to provide selected fixed locations
    */
-  public selectedFixedLocations = () => this.selectedFixedLocations$.asObservable();
+  public selectedFixedLocationSections = () => this.selectedFixedLocations$.asObservable();
 
   /**
    * Used for fetching all available city districts
