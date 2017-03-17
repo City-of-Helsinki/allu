@@ -22,7 +22,7 @@ export class ApplicationResolve implements Resolve<Application> {
       .map(id => this.applicationState.load(id)
         .do(app => this.loadComments(id))
         .catch(err => this.handleError(err)))
-      .orElse(Observable.of(new Application()));
+      .orElse(this.newApplication());
   }
 
   private loadComments(id: number) {
@@ -36,5 +36,11 @@ export class ApplicationResolve implements Resolve<Application> {
     NotificationService.error(err);
     this.router.navigate(['/applications']);
     return Observable.of(new Application());
+  }
+
+  private newApplication(): Observable<Application> {
+    let app = new Application();
+    this.applicationState.application = app;
+    return Observable.of(app);
   }
 }
