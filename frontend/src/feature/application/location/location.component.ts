@@ -82,7 +82,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   ngOnInit() {
     this.application = this.applicationState.application;
-    this.geometry = this.application.location.geometry;
+    this.geometry = this.application.firstLocation.geometry;
     if (this.application.id) {
       this.typeSelected = this.application.kind !== undefined;
       this.loadFixedLocationsForKind(ApplicationKind[this.application.kind]);
@@ -91,8 +91,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
     this.districts = this.mapHub.districts();
-    this.locationForm.patchValue(LocationForm.from(this.application.location));
-    this.districtName(this.application.location.cityDistrictId)
+    this.locationForm.patchValue(LocationForm.from(this.application.firstLocation));
+    this.districtName(this.application.firstLocation.cityDistrictId)
       .subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
   }
 
@@ -133,14 +133,16 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   onSubmit(form: LocationForm) {
     this.application.uiStartTime = form.startTime;
     this.application.uiEndTime = form.endTime;
-    this.application.location.uiStartTime = form.startTime;
-    this.application.location.uiEndTime = form.endTime;
-    this.application.location.postalAddress.streetAddress = form.streetAddress;
-    this.application.location.info = form.info;
-    this.application.location.fixedLocationIds = form.sections;
-    this.application.location.areaOverride = form.areaOverride;
-    this.application.location.cityDistrictIdOverride = form.cityDistrictIdOverride;
-    this.application.location.geometry = this.geometry;
+    let location = this.application.firstLocation;
+    location.uiStartTime = form.startTime;
+    location.uiEndTime = form.endTime;
+    location.postalAddress.streetAddress = form.streetAddress;
+    location.info = form.info;
+    location.fixedLocationIds = form.sections;
+    location.areaOverride = form.areaOverride;
+    location.cityDistrictIdOverride = form.cityDistrictIdOverride;
+    location.geometry = this.geometry;
+    this.application.singleLocation = location;
 
     if (this.application.id) {
       this.applicationState.save(this.application)
@@ -191,13 +193,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private setInitialSelections() {
-    Some(this.application.location)
+    Some(this.application.firstLocation)
       .map(location => this.areas.filter(area => area.hasSectionIds(location.fixedLocationIds)))
       .filter(areas => areas.length > 0)
       .map(areas => areas[0].id)
       .do(id => this.locationForm.patchValue({area: id}));
 
-    Some(this.application.location).do(location => {
+    Some(this.application.firstLocation).do(location => {
       this.locationForm.patchValue({sections: location.fixedLocationIds});
     });
   }

@@ -111,8 +111,8 @@ export class EventDetailsComponent implements OnInit {
     event.eventEndTime = event.eventEndTime || application.endTime;
     event.applicationType = ApplicationType[ApplicationType.EVENT];
 
-    application.location.startTime = application.startTime;
-    application.location.endTime = application.endTime;
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
 
     if (application.kind === ApplicationKind[ApplicationKind.PROMOTION]) {
       event.nature = EventNature[EventNature.PROMOTION];

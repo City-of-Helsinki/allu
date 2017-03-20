@@ -116,11 +116,11 @@ export class MapState {
     }
   }
 
-  public drawGeometry(geometryCollection: GeoJSON.GeometryCollection, layerName: string,
+  public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
                       style?: Object, popup?: MapPopup) {
     let layer = this.drawnItems[layerName];
     if (layer) {
-      this.drawGeometryToLayer(geometryCollection, layer, style, popup);
+      geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, popup));
     } else {
       throw new Error('No draw layer with name ' + layerName);
     }
@@ -131,8 +131,8 @@ export class MapState {
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
   }
 
-  public drawEditableGeometry(geometryCollection: GeoJSON.GeometryCollection, style?: Object) {
-    this.drawGeometryToLayer(geometryCollection, this.editedItems, style);
+  public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: Object) {
+    this.drawGeometryToLayer(geometry, this.editedItems, style);
   }
 
   public fitEditedToView() {

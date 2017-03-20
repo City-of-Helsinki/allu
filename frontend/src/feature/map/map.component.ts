@@ -62,7 +62,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
     // Check to see if the application has a location
     if (application.hasGeometry()) {
-      this.mapState.drawGeometry(application.location.geometry, findTranslation(['application.type', application.type]));
+      this.mapState.drawGeometry(application.geometries(), findTranslation(['application.type', application.type]));
       this.mapState.centerAndZoomOnDrawn();
     }
   }
@@ -77,7 +77,6 @@ export class MapComponent implements OnInit, OnDestroy {
   private drawApplications(applications: Array<Application>) {
     this.mapState.clearDrawn();
     applications
-      .filter(app => app.location !== undefined)
       .filter(app => this.applicationShouldBeDrawn(app))
       .filter(app => app.id !== this.applicationId) // Only draw other than edited application
       .forEach(app => this.drawApplication(app));
@@ -85,7 +84,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
   private drawApplication(application: Application): void {
     this.mapState.drawGeometry(
-      application.location.geometry,
+      application.geometries(),
       findTranslation(['application.type', application.type]),
       styleByApplicationType[application.type],
       this.applicationPopup(application));
@@ -99,7 +98,7 @@ export class MapComponent implements OnInit, OnDestroy {
 
 
   private drawEditedApplication(application: Application) {
-    this.mapState.drawEditableGeometry(application.location.geometry);
+    application.geometries().forEach(g => this.mapState.drawEditableGeometry(g));
     this.updateMapControls(application);
   }
 

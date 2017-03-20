@@ -36,15 +36,14 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     application.calculatedPriceEuro = form.calculatedPrice;
     application.priceOverrideEuro = form.priceOverride;
     application.priceOverrideReason = form.priceOverrideReason;
-    application.location.area = form.area;
     application.uiStartTime = form.rentalTimes.startTime;
     application.uiEndTime = form.rentalTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = ShortTermRentalForm.to(form);
 
-    application.location.startTime = application.startTime;
-    application.location.endTime = application.endTime;
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
 
     return application;
   }

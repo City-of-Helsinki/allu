@@ -25,7 +25,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.location = this.application.location;
+    this.location = this.application.firstLocation;
     // Sections can be selected only from single area so we can
     // get area based on its sections
     this.mapHub.fixedLocationAreasBySectionIds(this.location.fixedLocationIds)

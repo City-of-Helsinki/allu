@@ -3,6 +3,18 @@ import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
 
 export class LocationMapper {
+  public static mapBackendList(backendLocations: Array<BackendLocation>): Array<Location> {
+    return (backendLocations)
+      ? backendLocations.map(loc => LocationMapper.mapBackend(loc))
+      : [];
+  }
+
+  public static mapFrontendList(locations: Array<Location>): Array<BackendLocation> {
+    return (locations)
+      ? locations.map(loc => LocationMapper.mapFrontend(loc))
+      : [];
+  }
+
   public static mapBackend(backendLocation: BackendLocation): Location {
     return (backendLocation) ?
       new Location(

@@ -9,7 +9,6 @@ export class ShortTermRentalForm implements ApplicationForm {
   constructor(
     public name?: string,
     public description?: string,
-    public area?: number,
     public rentalTimes?: TimePeriod,
     public commercial?: boolean,
     public largeSalesArea?: boolean,
@@ -23,7 +22,6 @@ export class ShortTermRentalForm implements ApplicationForm {
     return new ShortTermRentalForm(
       application.name,
       rental.description,
-      application.location.area,
       new TimePeriod(application.uiStartTime, application.uiEndTime),
       rental.commercial,
       rental.largeSalesArea,

@@ -34,7 +34,7 @@ export class ApplicationMapper {
     application.contactList = (backendApplication.contactList) ?
       backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact))
       : undefined;
-    application.location = LocationMapper.mapBackend(backendApplication.locations[0]);
+    application.locations = LocationMapper.mapBackendList(backendApplication.locations);
     application.extension = ApplicationTypeDataMapper.mapBackend(backendApplication.extension);
     application.decisionTime = TimeUtil.dateFromBackend(backendApplication.decisionTime);
     application.decisionMaker = backendApplication.decisionMaker;
@@ -68,7 +68,7 @@ export class ApplicationMapper {
       endTime: application.endTime.toISOString(),
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
-      locations: (application.location) ? [LocationMapper.mapFrontend(application.location)] : undefined,
+      locations: LocationMapper.mapFrontendList(application.locations),
       extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
       decisionTime: Some(application.decisionTime).map(decisionTime => decisionTime.toISOString()).orElse(undefined),
       decisionMaker: application.decisionMaker,

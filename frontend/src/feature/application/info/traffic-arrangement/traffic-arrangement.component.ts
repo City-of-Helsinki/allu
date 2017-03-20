@@ -40,8 +40,8 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
     application.contactList = form.contacts;
     application.extension = TrafficArrangementForm.to(form);
 
-    application.location.startTime = application.startTime;
-    application.location.endTime = application.endTime;
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
 
     return application;
   }

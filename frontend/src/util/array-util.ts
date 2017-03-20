@@ -10,6 +10,13 @@ export class ArrayUtil {
     return ArrayUtil.naturalSort((item: T) => findTranslation(prefix.concat([valueFn(item)])));
   }
 
+  static first<T>(array: Array<T>): T {
+    if (array && array.length > 0) {
+      return array[0];
+    } else {
+      return undefined;
+    }
+  }
 
   private static naturalCompare(left, right): number {
     return ArrayUtil.compare(ArrayUtil.toParts(left), ArrayUtil.toParts(right));

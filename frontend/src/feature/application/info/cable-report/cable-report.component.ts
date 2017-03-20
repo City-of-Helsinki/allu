@@ -54,8 +54,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     application.contactList = form.orderer;
     application.extension = CableReportForm.to(form, application.extension.specifiers);
 
-    application.location.startTime = application.startTime;
-    application.location.endTime = application.endTime;
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
 
     return application;
   }

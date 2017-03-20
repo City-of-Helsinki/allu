@@ -36,8 +36,8 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.contactList = form.contacts;
     application.extension = NoteForm.to(form);
 
-    application.location.startTime = application.startTime;
-    application.location.endTime = application.endTime;
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
 
     return application;
   }

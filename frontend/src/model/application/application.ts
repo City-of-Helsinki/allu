@@ -2,7 +2,6 @@ import {Applicant} from './applicant';
 import {Contact} from './contact';
 import {Location} from '../common/location';
 import {ApplicationExtension} from './type/application-extension';
-import {StructureMeta} from './meta/structure-meta';
 import {AttachmentInfo} from './attachment/attachment-info';
 import {TimeUtil} from '../../util/time.util';
 import {User} from '../common/user';
@@ -16,6 +15,7 @@ import {ApplicationType} from './type/application-type';
 import {PublicityType} from './publicity-type';
 import {DistributionEntry} from '../common/distribution-entry';
 import {DistributionType} from '../common/distribution-type';
+import {ArrayUtil} from '../../util/array-util';
 
 const CENTS = 100;
 
@@ -35,7 +35,7 @@ export class Application {
     public endTime?: Date,
     public applicant?: Applicant,
     public contactList?: Array<Contact>,
-    public location?: Location,
+    public locations?: Array<Location>,
     public extension?: ApplicationExtension,
     public decisionTime?: Date,
     public decisionMaker?: string,
@@ -49,7 +49,7 @@ export class Application {
     public priceOverrideReason?: string,
     public applicationTags?: Array<ApplicationTag>,
     public comments?: Array<Comment>) {
-    this.location = location || new Location();
+    this.locations = locations || [new Location()];
     this.contactList = contactList || [new Contact()];
     this.attachmentList = attachmentList || [];
     this.applicationTags = applicationTags || [];
@@ -82,18 +82,36 @@ export class Application {
     this.endTime = TimeUtil.getDateFromUi(dateString);
   }
 
+  public get singleLocation(): Location {
+    if (this.locations.length <= 1) {
+      return ArrayUtil.first(this.locations);
+    } else {
+      throw new Error('Expected single location but application has ' + this.locations.length + ' locations');
+    }
+  }
+
+  public set singleLocation(location: Location) {
+    this.locations = [location];
+  }
+
+  public get firstLocation(): Location {
+    return ArrayUtil.first(this.locations);
+  }
+
   public hasGeometry(): boolean {
     return this.geometryCount() > 0;
   }
 
   public geometryCount(): number {
-    return Some(this.location)
-      .map(loc => loc.geometry)
-      .map(g => g.geometries.length).orElse(0);
+    return this.locations.reduce((acc, cur) => acc + cur.geometryCount(), 0);
+  }
+
+  public geometries(): Array<GeoJSON.GeometryCollection> {
+    return this.locations.map(l => l.geometry);
   }
 
   public hasFixedGeometry(): boolean {
-    return Some(this.location).map(loc => loc.fixedLocationIds.length > 0).orElse(false);
+    return this.locations.some(l => l.hasFixedGeometry());
   }
 
   public belongsToProject(projectId: number): boolean {

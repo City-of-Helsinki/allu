@@ -34,19 +34,19 @@
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" [ngModel]="application.location.areaOverride" [readonly]="readonly"
+                                <input mdInput type="text" [ngModel]="application.firstLocation.areaOverride" [readonly]="readonly"
                                        placeholder="Käsittelijän syöttämä pinta-ala" />
                             </md-input-container>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" value="{{districtName(application.location.cityDistrictId) | async}}"
+                                <input mdInput type="text" value="{{districtName(application.firstLocation.cityDistrictId) | async}}"
                                        [readonly]="readonly" placeholder="Kaupunginosa"/>
                             </md-input-container>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" value="{{districtName(application.location.cityDistrictIdOverride) | async}}"
+                                <input mdInput type="text" value="{{districtName(application.firstLocation.cityDistrictIdOverride) | async}}"
                                        [readonly]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
                             </md-input-container>
                         </div>

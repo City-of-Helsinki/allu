@@ -1,5 +1,6 @@
 import {PostalAddress} from './postal-address';
 import {TimeUtil} from '../../util/time.util';
+import {Some} from '../../util/option';
 
 export class Location {
 
@@ -65,5 +66,36 @@ export class Location {
 
   public set uiEndTime(dateString: string) {
     this.endTime = TimeUtil.getDateFromUi(dateString);
+  }
+
+  public geometryCount(): number {
+    return Some(this.geometry)
+      .map(g => g.geometries.length)
+      .orElse(0);
+  }
+
+  public hasFixedGeometry(): boolean {
+    return this.fixedLocationIds.length > 0;
+  }
+
+  public copyAsNew(): Location {
+    let loc = new Location();
+    loc.id = undefined;
+    loc.locationKey = undefined;
+    loc.locationVersion = undefined;
+    loc.startTime = this.startTime;
+    loc.endTime = this.endTime;
+    loc.geometry = this.geometry;
+    loc.area = this.area;
+    loc.areaOverride = this.areaOverride;
+    loc.postalAddress = this.postalAddress;
+    loc.fixedLocationIds = this.fixedLocationIds;
+    loc.cityDistrictId = this.cityDistrictId;
+    loc.cityDistrictIdOverride = this.cityDistrictIdOverride;
+    loc.paymentTariff = this.paymentTariff;
+    loc.paymentTariffOverride = this.paymentTariffOverride;
+    loc.underpass = this.underpass;
+    loc.info = this.info;
+    return loc;
   }
 }

@@ -40,8 +40,8 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     application.contactList = form.contacts;
     application.extension = AreaRentalForm.to(form);
 
-    application.location.startTime = application.startTime;
-    application.location.endTime = application.endTime;
+    application.firstLocation.startTime = application.startTime;
+    application.firstLocation.endTime = application.endTime;
 
     return application;
   }

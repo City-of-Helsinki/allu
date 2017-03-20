@@ -9,8 +9,8 @@
                 </div>
                 <div class="col s6 info-field">
                     <label>Sijainti</label>
-                    <div *ngIf="!application.location.postalAddress.streetAddress">-</div>
-                    <div>{{application.location.postalAddress.streetAddress}}</div>
+                    <div *ngIf="!application.firstLocation.postalAddress.streetAddress">-</div>
+                    <div>{{application.firstLocation.postalAddress.streetAddress}}</div>
                 </div>
                 <div class="col s6 info-field">
                     <label>Tapahtuman nimi</label>
