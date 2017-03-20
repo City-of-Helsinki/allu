@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -220,6 +221,7 @@ public class LocationJson {
     this.underpass = underpass;
   }
 
+  @JsonIgnore
   public boolean getStartTimeBeforeEndTimeValidation() {
     return startTime.isBefore(endTime);
   }

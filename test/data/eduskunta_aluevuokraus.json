@@ -32,23 +32,23 @@
   ],
   "locations": [
     {
-      "locationKey":1,
-      "locationVersion":1,
-      "startTime":"2017-01-01T22:00:00Z",
-      "endTime":"2017-12-30T22:00:00Z",
-      "geometry":{
-        "type":"GeometryCollection",
-        "crs":{
-          "properties":{
-            "name":"EPSG:3879"
+      "locationKey": 1,
+      "locationVersion": 1,
+      "startTime": "2017-01-01T22:00:00Z",
+      "endTime": "2017-12-30T22:00:00Z",
+      "geometry": {
+        "type": "GeometryCollection",
+        "crs": {
+          "properties": {
+            "name": "EPSG:3879"
           },
-          "type":"name"
+          "type": "name"
         },
-        "bbox":null,
-        "geometries":[
+        "bbox": null,
+        "geometries": [
           {
-            "type":"Polygon",
-            "coordinates":[
+            "type": "Polygon",
+            "coordinates": [
               [
                 [
                   2.5496289375E7,
@@ -83,14 +83,108 @@
           }
         ]
       },
-      "area":1875.8281250381842,
-      "areaOverride":null,
-      "postalAddress":{
+      "area": 1875.8281250381842,
+      "areaOverride": null,
+      "postalAddress": {
       },
-      "fixedLocationIds":[
-
+      "fixedLocationIds": [
       ],
-      "underpass":false
+      "underpass": false
+    },
+    {
+      "locationKey": 2,
+      "locationVersion": 1,
+      "startTime": "2017-03-31T21:00:00Z",
+      "endTime": "2017-04-29T21:00:00Z",
+      "geometry": {
+        "type": "GeometryCollection",
+        "crs": {
+          "properties": {
+            "name": "EPSG:3879"
+          },
+          "type": "name"
+        },
+        "bbox": null,
+        "geometries": [
+          {
+            "type": "Polygon",
+            "crs": null,
+            "coordinates": [
+              [
+                [
+                  2.54963136875E7,
+                  6673153.749999998
+                ],
+                [
+                  2.54963121875E7,
+                  6673164.999999999
+                ],
+                [
+                  2.54963156875E7,
+                  6673180.500000001
+                ],
+                [
+                  2.54963246875E7,
+                  6673190.999999999
+                ],
+                [
+                  2.54963384375E7,
+                  6673197.749999999
+                ],
+                [
+                  2.54963564375E7,
+                  6673195.750000002
+                ],
+                [
+                  2.54963669375E7,
+                  6673187.249999999
+                ],
+                [
+                  2.54963776875E7,
+                  6673194.499999999
+                ],
+                [
+                  2.54963586875E7,
+                  6673205.999999998
+                ],
+                [
+                  2.54963456875E7,
+                  6673207.75
+                ],
+                [
+                  2.54963291875E7,
+                  6673203.5
+                ],
+                [
+                  2.54963179375E7,
+                  6673197.25
+                ],
+                [
+                  2.54963081875E7,
+                  6673182.499999997
+                ],
+                [
+                  2.54963046875E7,
+                  6673166.249999999
+                ],
+                [
+                  2.54963136875E7,
+                  6673153.749999998
+                ]
+              ]
+            ]
+          }
+        ]
+      },
+      "area": 848.6249999612337,
+      "areaOverride": null,
+      "postalAddress": {
+        "streetAddress": null,
+        "postalCode": null,
+        "city": null
+      },
+      "fixedLocationIds": [],
+      "underpass": false
     }
   ],
   "extension": {

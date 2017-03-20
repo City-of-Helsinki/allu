@@ -18,7 +18,6 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -129,11 +128,9 @@ public class ApplicationService {
         applicationMapper.createApplicationModel(newApplication),
         Application.class);
 
-    List<LocationJson> newLocations = newApplication.getLocations();
     List<LocationJson> locations = Collections.emptyList();
-    if (newLocations != null) {
-      locations = newApplication.getLocations().stream()
-          .map(l -> locationService.createLocation(applicationModel.getId(), l)).collect(Collectors.toList());
+    if (newApplication.getLocations() != null) {
+      locations = locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
     }
 
     ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
@@ -154,10 +151,9 @@ public class ApplicationService {
     List<LocationJson> locationJsons = null;
     if (applicationJson.getLocations() != null) {
       // TODO: deleting all existing locations and creating them from scratch cannot be done, because deleting is not ok for "korvaava hakemus"
-      // TODO: creation, modification and deletes (c/sh)ould be done without the application so that they are handled separately
-//      locationService.deleteApplicationLocation(applicationId);
-      locationJsons =
-          applicationJson.getLocations().stream().map(l -> locationService.updateOrCreateLocation(applicationId, l)).collect(Collectors.toList());
+      // TODO: fix this when adding support for location versioning
+      locationService.deleteApplicationLocation(applicationId);
+      locationJsons = locationService.createLocations(applicationId, applicationJson.getLocations());
       applicationJson.setLocations(locationJsons);
     } else {
       locationService.deleteApplicationLocation(applicationId);

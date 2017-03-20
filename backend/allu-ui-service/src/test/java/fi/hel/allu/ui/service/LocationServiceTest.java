@@ -58,7 +58,8 @@ public class LocationServiceTest {
         .thenAnswer(
             (Answer<Location[]>) invocation -> {
               // Use given parameter to create a response
-              Location location = createMockLocationModel((Location) (invocation.getArgumentAt(1, List.class)).get(0));
+              Location location = (Location) invocation.getArgumentAt(1, List.class).get(0);
+              location.setId(102);
               return new Location[] { location };
             });
 
@@ -85,14 +86,15 @@ public class LocationServiceTest {
 
   @Test
   public void createValidLocation() {
-    LocationJson locationJson = locationService.createLocation(APPLICATION_ID, MockServices.createLocationJson(null));
+    LocationJson locationJson =
+        locationService.createLocations(APPLICATION_ID, Collections.singletonList(MockServices.createLocationJson(null))).get(0);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(102, locationJson.getId().intValue());
     assertNotNull(locationJson.getPostalAddress());
-    assertEquals("City1, Model", locationJson.getPostalAddress().getCity());
-    assertEquals("33333, Model", locationJson.getPostalAddress().getPostalCode());
-    assertEquals("Street 1, Model", locationJson.getPostalAddress().getStreetAddress());
+    assertEquals("city, Json", locationJson.getPostalAddress().getCity());
+    assertEquals("33333, Json", locationJson.getPostalAddress().getPostalCode());
+    assertEquals("address, Json", locationJson.getPostalAddress().getStreetAddress());
     assertNotNull(locationJson.getGeometry());
     assertEquals(3879, locationJson.getGeometry().getSRID());
   }
@@ -100,10 +102,10 @@ public class LocationServiceTest {
   @Test
   public void createLocationWithId() {
     LocationJson locationJsonRequest = MockServices.createLocationJson(1);
-    LocationJson locationJson = locationService.createLocation(APPLICATION_ID, locationJsonRequest);
+    LocationJson locationJson = locationService.createLocations(APPLICATION_ID, Collections.singletonList(locationJsonRequest)).get(0);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
-    assertEquals(1, locationJson.getId().intValue());
+    assertEquals(102, locationJson.getId().intValue());
     assertNotNull(locationJson.getPostalAddress());
     assertEquals("city, Json", locationJson.getPostalAddress().getCity());
     assertEquals("33333, Json", locationJson.getPostalAddress().getPostalCode());
@@ -120,10 +122,10 @@ public class LocationServiceTest {
             (Answer<ResponseEntity<Location>>) invocation -> createMockLocationResponse(
                 invocation.getArgumentAt(2, HttpEntity.class)));
     LocationJson locationJson = MockServices.createLocationJson(1);
-    locationJson = locationService.updateOrCreateLocation(APPLICATION_ID, locationJson);
+    locationJson = locationService.createLocations(APPLICATION_ID, Collections.singletonList(locationJson)).get(0);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
-    assertEquals(1, locationJson.getId().intValue());
+    assertEquals(102, locationJson.getId().intValue());
     assertNotNull(locationJson.getPostalAddress());
     assertEquals("city, Json", locationJson.getPostalAddress().getCity());
     assertEquals("33333, Json", locationJson.getPostalAddress().getPostalCode());
@@ -135,14 +137,14 @@ public class LocationServiceTest {
   @Test
   public void updateLocationWithoutId() {
     LocationJson locationJson = MockServices.createLocationJson(null);
-    locationJson = locationService.updateOrCreateLocation(APPLICATION_ID, locationJson);
+    locationJson = locationService.createLocations(APPLICATION_ID, Collections.singletonList(locationJson)).get(0);
     assertNotNull(locationJson);
     assertNotNull(locationJson.getId());
     assertEquals(102, locationJson.getId().intValue());
     assertNotNull(locationJson.getPostalAddress());
-    assertEquals("City1, Model", locationJson.getPostalAddress().getCity());
-    assertEquals("33333, Model", locationJson.getPostalAddress().getPostalCode());
-    assertEquals("Street 1, Model", locationJson.getPostalAddress().getStreetAddress());
+    assertEquals("city, Json", locationJson.getPostalAddress().getCity());
+    assertEquals("33333, Json", locationJson.getPostalAddress().getPostalCode());
+    assertEquals("address, Json", locationJson.getPostalAddress().getStreetAddress());
     assertNotNull(locationJson.getGeometry());
     assertEquals(3879, locationJson.getGeometry().getSRID());
   }

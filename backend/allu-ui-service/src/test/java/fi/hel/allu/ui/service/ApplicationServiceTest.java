@@ -72,8 +72,8 @@ public class ApplicationServiceTest extends MockServices {
     initSearchMocks();
     userService = Mockito.mock(UserService.class);
 
-    Mockito.when(locationService.createLocation(Mockito.anyInt(), Mockito.anyObject())).thenAnswer((Answer<LocationJson>) invocation ->
-        createLocationJson(102));
+    Mockito.when(locationService.createLocations(Mockito.anyInt(), Mockito.anyObject())).thenAnswer((Answer<List<LocationJson>>) invocation ->
+        Collections.singletonList(createLocationJson(102)));
     Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
         createApplicantJson(103, 201));
 

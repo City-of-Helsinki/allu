@@ -3,7 +3,6 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,47 +34,22 @@ public class LocationService {
 
 
   /**
-   * Create a new location. If the given location object is null, empty location
-   * is created.
+   * Create new locations.
    *
-   * @param locationJson
-   *          Location that is going to be created
-   * @return Created location
+   * @param locationJsons  Locations to be created.
+   * @return Created locations.
    */
-  // TODO: remove when locations are removed from the application class
-  public LocationJson createLocation(int applicationId, LocationJson locationJson) {
-    if (locationJson == null) {
-      locationJson = new LocationJson();
-    }
-    return callModelService(applicationId, locationJson);
-  }
-
-  // TODO: remove when locations are removed from the application class
-  private LocationJson callModelService(int applicationId, LocationJson locationJson) {
-    List<Location> location = Arrays.asList(
-        restTemplate.postForObject(applicationProperties.getModelServiceUrl(
-          ApplicationProperties.PATH_MODEL_LOCATION_CREATE), Collections.singletonList(createLocationModel(applicationId, locationJson)),
-          Location[].class));
-    return mapToLocationJson(location.get(0));
-  }
-
-  /**
-   * Update the given location. Location is updated if the id is given.
-   * Otherwise, new location is created.
-   *
-   * @param locationJson
-   *          location that is going to be updated
-   * @return locationJson result of the operation
-   */
-  // TODO: remove when locations are removed from the application class
-  public LocationJson updateOrCreateLocation(int applicationId, LocationJson locationJson) {
-    if (locationJson.getId() != null && locationJson.getId() > 0) {
-      return update(applicationId, Collections.singletonList(locationJson)).get(0);
+  public List<LocationJson> createLocations(int applicationId, List<LocationJson> locationJsons) {
+    if (locationJsons != null) {
+      locationJsons.stream().forEach(l -> l.setId(null));
+      Location[] createdLocations = restTemplate.postForObject(applicationProperties.getModelServiceUrl(
+          ApplicationProperties.PATH_MODEL_LOCATION_CREATE), createLocationModel(applicationId, locationJsons),
+          Location[].class);
+      return mapToLocationJsons(createdLocations);
     } else {
-      return createLocation(applicationId, locationJson);
+      return Collections.emptyList();
     }
   }
-
 
   /**
    * Delete all locations from the given application.
@@ -175,7 +149,7 @@ public class LocationService {
   private List<Location> createLocationModel(int applicationId, List<LocationJson> locationJsons) {
     return locationJsons.stream().map(locationJson -> createLocationModel(applicationId, locationJson)).collect(Collectors.toList());
   }
-  
+
   private Location createLocationModel(int applicationId, LocationJson locationJson) {
     if (locationJson == null) { throw new NullPointerException("LocationJson should not be null"); }
     Location location = new Location();

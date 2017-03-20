@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.validator.NotFalse;
 
@@ -68,6 +69,7 @@ public class DistributionEntryJson {
     this.postalAddress = postalAddress;
   }
 
+  @JsonIgnore
   public boolean getHasRecipientValidation() {
     if (DistributionType.EMAIL.equals(distributionType)) {
       return email != null;
