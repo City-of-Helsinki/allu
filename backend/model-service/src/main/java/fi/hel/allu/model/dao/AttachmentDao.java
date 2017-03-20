@@ -77,7 +77,7 @@ public class AttachmentDao {
             attachment.creationTime,
             defaultAttachment.id,
             defaultAttachment.deleted,
-            defaultAttachment.fixedLocation)
+            defaultAttachment.locationAreaId)
         .from(attachment)
         .leftJoin(defaultAttachment).on(attachment.id.eq(defaultAttachment.attachmentId))
         .where(attachment.id.eq(attachmentId).and(defaultAttachment.deleted.eq(false)))
@@ -101,7 +101,7 @@ public class AttachmentDao {
           result.get(attachment.creationTime),
           defaultAttachmentId,
           applicationTypes,
-          result.get(defaultAttachment.fixedLocation)
+          result.get(defaultAttachment.locationAreaId)
       );
     }
 
@@ -167,7 +167,7 @@ public class AttachmentDao {
     int defaultAttachmentId = queryFactory.insert(defaultAttachment)
         .set(defaultAttachment.attachmentId, id)
         .set(defaultAttachment.deleted, false)
-        .set(defaultAttachment.fixedLocation, info.getFixedLocationId())
+        .set(defaultAttachment.locationAreaId, info.getFixedLocationAreaId())
         .executeWithKey(defaultAttachment.id);
     updateDefaultAttachmentApplicationTypes(defaultAttachmentId, info.getApplicationTypes());
     return findDefaultById(id).get();
@@ -242,7 +242,7 @@ public class AttachmentDao {
     info.setId(id);
     update(id, info);
     long changed = queryFactory.update(defaultAttachment)
-        .set(defaultAttachment.fixedLocation, info.getFixedLocationId())
+        .set(defaultAttachment.locationAreaId, info.getFixedLocationAreaId())
         .where(defaultAttachment.attachmentId.eq(id))
         .execute();
     if (changed == 0) {
@@ -307,51 +307,6 @@ public class AttachmentDao {
       throw new QueryException("Failed to insert record");
     }
     return id;
-  }
-
-  private DefaultAttachmentInfo findByIdCommon(int attachmentId) {
-    Tuple result = queryFactory
-        .select(
-            attachment.id,
-            attachment.userId,
-            attachment.type,
-            attachment.name,
-            attachment.description,
-            attachment.size,
-            attachment.creationTime,
-            defaultAttachment.id,
-            defaultAttachment.deleted,
-            defaultAttachment.fixedLocation)
-        .from(attachment)
-        .leftJoin(defaultAttachment).on(attachment.id.eq(defaultAttachment.attachmentId))
-        .where(attachment.id.eq(attachmentId))
-        .fetchOne();
-
-    if (result != null) {
-      Integer defaultAttachmentId = result.get(defaultAttachment.id);
-      List<ApplicationType> applicationTypes = null;
-      if (defaultAttachmentId != null) {
-        applicationTypes = queryFactory
-            .select(defaultAttachmentApplicationType.applicationType)
-            .from(defaultAttachmentApplicationType)
-            .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).fetch();
-      }
-
-      return new DefaultAttachmentInfo(
-          result.get(attachment.id),
-          result.get(attachment.userId),
-          result.get(attachment.type),
-          result.get(attachment.name),
-          result.get(attachment.description),
-          result.get(attachment.size),
-          result.get(attachment.creationTime),
-          defaultAttachmentId,
-          applicationTypes,
-          result.get(defaultAttachment.fixedLocation)
-      );
-    } else {
-      return null;
-    }
   }
 
   private void updateDefaultAttachmentApplicationTypes(int defaultAttachmentId, List<ApplicationType> applicationTypes) {

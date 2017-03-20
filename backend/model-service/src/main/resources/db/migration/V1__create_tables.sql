@@ -183,7 +183,7 @@ create table allu.default_attachment (
     id serial primary key,
     attachment_id integer not null unique references allu.attachment(id),
     deleted boolean not null,
-    fixed_location integer references allu.fixed_location(id)
+    location_area_id integer references allu.location_area(id)
 );
 
 create table allu.default_attachment_application_type (

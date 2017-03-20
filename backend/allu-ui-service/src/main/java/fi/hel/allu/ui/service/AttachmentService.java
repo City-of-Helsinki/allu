@@ -255,7 +255,7 @@ public class AttachmentService {
       DefaultAttachmentInfoJson defaultAttachmentInfoJson = (DefaultAttachmentInfoJson) attachmentInfoJson;
       result.setDefaultAttachmentId(defaultAttachmentInfoJson.getDefaultAttachmentId());
       result.setApplicationTypes(defaultAttachmentInfoJson.getApplicationTypes());
-      result.setFixedLocationId(defaultAttachmentInfoJson.getFixedLocationId());
+      result.setFixedLocationAreaId(defaultAttachmentInfoJson.getFixedLocationId());
     }
     return result;
   }
@@ -274,7 +274,7 @@ public class AttachmentService {
       DefaultAttachmentInfo defaultAttachmentInfo = (DefaultAttachmentInfo) attachmentInfo;
       result.setDefaultAttachmentId(defaultAttachmentInfo.getDefaultAttachmentId());
       result.setApplicationTypes(defaultAttachmentInfo.getApplicationTypes());
-      result.setFixedLocationId(defaultAttachmentInfo.getFixedLocationId());
+      result.setFixedLocationId(defaultAttachmentInfo.getFixedLocationAreaId());
     }
     return result;
   }

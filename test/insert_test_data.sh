@@ -56,7 +56,7 @@ function insert_project_data() {
 
 function insert_default_attachment() {
   echo Inserting default attachment data from $1
-  CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: multipart/form-data\" --header \"Authorization: Bearer $AUTH_KEY\" -F 'meta=[{\"type\":\"DEFAULT\",\"name\":\"Testivakioliite\",\"applicationTypes\":[\"EVENT\"]}];type=application/json' -F \"file=@$1\" http://$TARGET_HOST/api/admin/attachments &> /dev/null"
+  CURRENT_REQUEST="curl -f --silent -X POST --header \"Content-Type: multipart/form-data\" --header \"Authorization: Bearer $AUTH_KEY\" -F 'meta=[{\"type\":\"DEFAULT\",\"name\":\"Testivakioliite\",\"applicationTypes\":[\"EVENT\"],\"fixedLocationId\":1}];type=application/json' -F \"file=@$1\" http://$TARGET_HOST/api/admin/attachments &> /dev/null"
   eval $CURRENT_REQUEST
 }
 function search_and_ignore() {

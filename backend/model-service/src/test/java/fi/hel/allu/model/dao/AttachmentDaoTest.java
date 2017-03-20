@@ -193,11 +193,11 @@ public class AttachmentDaoTest {
     DefaultAttachmentInfo dai = newDefaultInfo();
     byte[] data = generateTestData(3243);
     DefaultAttachmentInfo inserted = attachmentDao.insertDefault(dai, data);
-    inserted.setFixedLocationId(2);
+    inserted.setFixedLocationAreaId(2);
     DefaultAttachmentInfo updated = attachmentDao.updateDefault(inserted.getId(), inserted);
     Assert.assertEquals(data.length, updated.getSize().longValue());
     Assert.assertEquals(1, updated.getApplicationTypes().size());
-    Assert.assertEquals(2, (int) updated.getFixedLocationId());
+    Assert.assertEquals(2, (int) updated.getFixedLocationAreaId());
   }
 
   /**
@@ -294,7 +294,7 @@ public class AttachmentDaoTest {
     info.setName("Test_attachment.pdf");
     info.setDescription("Test attachment");
     info.setApplicationTypes(Collections.singletonList(ApplicationType.EVENT));
-    info.setFixedLocationId(1);
+    info.setFixedLocationAreaId(1);
     return info;
   }
 

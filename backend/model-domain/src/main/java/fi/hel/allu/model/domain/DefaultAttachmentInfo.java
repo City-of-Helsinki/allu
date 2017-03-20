@@ -12,7 +12,7 @@ import java.util.List;
 public class DefaultAttachmentInfo extends AttachmentInfo {
   private Integer defaultAttachmentId;
   private List<ApplicationType> applicationTypes;
-  private Integer fixedLocationId;
+  private Integer fixedLocationAreaId;
 
   public DefaultAttachmentInfo() {
   }
@@ -27,11 +27,11 @@ public class DefaultAttachmentInfo extends AttachmentInfo {
       ZonedDateTime creationTime,
       Integer defaultAttachmentId,
       List<ApplicationType> applicationTypes,
-      Integer fixedLocationId) {
+      Integer fixedLocationAreaId) {
     super(id, userId, type, name, description, size, creationTime);
     this.defaultAttachmentId = defaultAttachmentId;
     this.applicationTypes = applicationTypes;
-    this.fixedLocationId = fixedLocationId;
+    this.fixedLocationAreaId = fixedLocationAreaId;
   }
 
   /**
@@ -61,15 +61,15 @@ public class DefaultAttachmentInfo extends AttachmentInfo {
   }
 
   /**
-   * Returns id of the fixed location related to the default attachment.
+   * Returns id of the fixed location area related to the default attachment.
    *
-   * @return  id of the fixed location related to the default attachment. May be <code>null</code>.
+   * @return  id of the fixed location area related to the default attachment. May be <code>null</code>.
    */
-  public Integer getFixedLocationId() {
-    return fixedLocationId;
+  public Integer getFixedLocationAreaId() {
+    return fixedLocationAreaId;
   }
 
-  public void setFixedLocationId(Integer fixedLocationId) {
-    this.fixedLocationId = fixedLocationId;
+  public void setFixedLocationAreaId(Integer fixedLocationAreaId) {
+    this.fixedLocationAreaId = fixedLocationAreaId;
   }
 }
