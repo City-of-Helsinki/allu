@@ -10,7 +10,7 @@ import {ResponseContentType} from '@angular/http';
 import {ErrorHandler} from '../error/error-handler.service';
 
 const DECISION_URL = '/api/applications/:appId/decision';
-const DECISION_PREVIEW_URL = '/api/applications/{id}/decision-preview';
+const DECISION_PREVIEW_URL = '/api/applications/:appId/decision-preview';
 
 @Injectable()
 export class DecisionService {
