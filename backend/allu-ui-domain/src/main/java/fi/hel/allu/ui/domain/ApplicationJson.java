@@ -1,8 +1,6 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.types.*;
 
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -45,7 +43,15 @@ public class ApplicationJson {
   @NotNull(message = "{application.extension}")
   @Valid
   private ApplicationExtensionJson extension;
+  @NotNull
+  private DistributionType decisionDistributionType;
+  @NotNull
+  private PublicityType decisionPublicityType;
   private ZonedDateTime decisionTime;
+  @Valid
+  private UserJson decisionMaker;
+  @Valid
+  private List<DistributionEntryJson> decisionDistributionList;
   @Valid
   private List<AttachmentInfoJson> attachmentList;
   @Valid
@@ -249,8 +255,35 @@ public class ApplicationJson {
   }
 
   /**
+   * The distribution type of the decision. Used for sending decision to applicant.
    *
-   * in Finnish: Päätöksen aikaleima
+   * @return  The distribution type of the decision. Used for sending decision to applicant.
+   */
+  public DistributionType getDecisionDistributionType() {
+    return decisionDistributionType;
+  }
+
+  public void setDecisionDistributionType(DistributionType decisionDistributionType) {
+    this.decisionDistributionType = decisionDistributionType;
+  }
+
+  /**
+   * Publicity of the decision.
+   *
+   * @return  Publicity of the decision.
+   */
+  public PublicityType getDecisionPublicityType() {
+    return decisionPublicityType;
+  }
+
+  public void setDecisionPublicityType(PublicityType decisionPublicityType) {
+    this.decisionPublicityType = decisionPublicityType;
+  }
+
+  /**
+   * The time decision was made.
+   *
+   * @return  The time decision was made.
    */
   public ZonedDateTime getDecisionTime() {
     return decisionTime;
@@ -258,6 +291,32 @@ public class ApplicationJson {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
+  }
+
+  /**
+   * The user who made the decision.
+   *
+   * @return  The user who made the decision.
+   */
+  public UserJson getDecisionMaker() {
+    return decisionMaker;
+  }
+
+  public void setDecisionMaker(UserJson decisionMaker) {
+    this.decisionMaker = decisionMaker;
+  }
+
+  /**
+   * The distribution list of the decision.
+   *
+   * @return  The distribution list of the decision.
+   */
+  public List<DistributionEntryJson> getDecisionDistributionList() {
+    return decisionDistributionList;
+  }
+
+  public void setDecisionDistributionList(List<DistributionEntryJson> decisionDistributionList) {
+    this.decisionDistributionList = decisionDistributionList;
   }
 
   /**

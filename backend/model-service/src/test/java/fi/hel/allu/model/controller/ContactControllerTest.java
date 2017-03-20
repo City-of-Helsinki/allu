@@ -6,10 +6,7 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.domain.Applicant;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Contact;
-import fi.hel.allu.model.domain.Event;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 
 import org.junit.Before;

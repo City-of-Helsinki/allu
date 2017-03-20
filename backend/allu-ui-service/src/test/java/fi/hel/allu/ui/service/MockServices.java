@@ -190,6 +190,8 @@ public abstract class MockServices {
     applicationJson.setStartTime(ZonedDateTime.now());
     applicationJson.setEndTime(ZonedDateTime.now().plusDays(1));
     applicationJson.setDecisionTime(ZonedDateTime.now());
+    applicationJson.setDecisionDistributionType(DistributionType.EMAIL);
+    applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
     applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setHandler(UserMapper.mapToUserJson(createMockUser()));
     applicationJson.setApplicant(createApplicantJson(null, null));

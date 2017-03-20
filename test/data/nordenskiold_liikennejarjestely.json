@@ -2,6 +2,8 @@
   "type": "TEMPORARY_TRAFFIC_ARRANGEMENTS",
   "kind": "OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT",
   "name": "Liikennejärjestely",
+  "decisionPublicityType": "PUBLIC",
+  "decisionDistributionType": "EMAIL",
   "applicant": {
     "id": null,
     "type": "PERSON",

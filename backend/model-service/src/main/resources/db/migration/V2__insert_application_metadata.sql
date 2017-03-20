@@ -359,6 +359,26 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'CANCELLED', 'Peruttu', 'ENUM_VALUE');
 
+
+-- DistributionType
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('DistributionType', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'EMAIL', 'Sähköpostijakelu', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PAPER', 'Postijakelu', 'ENUM_VALUE');
+
+-- PublicityType
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('PublicityType', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PUBLIC', 'Julkinen', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'NON_PUBLIC', 'Ei-Julkinen', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'CONFIDENTIAL_PARTIALLY', 'Osittain salassa pidettävä', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'CONFIDENTIAL', 'Salassa pidettävä', 'ENUM_VALUE');
+
+
 ------------------------
 -- Common metadata
 ------------------------
@@ -773,6 +793,23 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'creationTime', 'Luontipäivämäärä', 'DATETIME', null, null);
 
+
+---------------------
+-- Distribution Entry
+---------------------
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('DistributionEntry', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Jakelun tunniste', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'applicationId', 'Hakemuksen tunniste', 'INTEGER', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'distributionType', 'Jakelutapa', 'ENUMERATION', null,
+        (select id from allu.structure_meta where type_name = 'DistributionType' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'name', 'Vastaanottajan nimi', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'email', 'Vastaanottajan sähköposti', 'STRING', null, null);
+
 -----------
 -- Comments
 -----------
@@ -840,7 +877,19 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'extension', 'Hakemuksen laajenne', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'ApplicationExtension' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'decisionDistributionType', 'Jakelutapa', 'ENUMERATION', null,
+            (select id from allu.structure_meta where type_name = 'DistributionType' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'),  'decisionPublicityType', 'Julkisuus', 'ENUMERATION', null,
+            (select id from allu.structure_meta where type_name = 'PublicityType' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'decisionTime', 'Päätöksen aikaleima', 'DATETIME', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'decisionMaker', 'Päättäjä', 'STRUCTURE', null,
+            (select id from allu.structure_meta where type_name = 'User' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'decisionDistributionList', 'Päätöksen vastaanottajat', 'LIST', 'STRUCTURE',
+            (select id from allu.structure_meta where type_name = 'DistributionEntry' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'attachmentList', 'Hakemuksen liitteet', 'LIST', 'STRUCTURE',
             (select id from allu.structure_meta where type_name = 'Attachment' and version = 1));

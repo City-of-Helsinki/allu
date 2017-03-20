@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.ui.domain.*;
 import org.junit.Test;
@@ -75,6 +76,13 @@ public class StructureMetaDaoTest {
     Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("Attachment", 1, Collections.emptyMap());
     assertTrue(meta.isPresent());
     assertStructureAttributes(AttachmentInfoJson.class, meta.get());
+  }
+
+  @Test
+  public void testFindDistributionEntryMeta() {
+    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("DistributionEntry", 1, Collections.emptyMap());
+    assertTrue(meta.isPresent());
+    assertStructureAttributes(DistributionEntry.class, meta.get());
   }
 
   @Test
@@ -159,6 +167,20 @@ public class StructureMetaDaoTest {
     Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("StatusType", 1, Collections.emptyMap());
     assertTrue(meta.isPresent());
     assertEnumAttributes(StatusType.class, meta.get());
+  }
+
+  @Test
+  public void testDistributionTypeEnumMeta() {
+    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("DistributionType", 1, Collections.emptyMap());
+    assertTrue(meta.isPresent());
+    assertEnumAttributes(DistributionType.class, meta.get());
+  }
+
+  @Test
+  public void testPublicityTypeEnumMeta() {
+    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("PublicityType", 1, Collections.emptyMap());
+    assertTrue(meta.isPresent());
+    assertEnumAttributes(PublicityType.class, meta.get());
   }
 
   private void assertStructureAttributes(Class extensionJsonClass, StructureMeta sMeta) {

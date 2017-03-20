@@ -53,6 +53,8 @@
     }
   ],
   "name": "Ylijäämäkuusien alennusmyynti",
+  "decisionPublicityType": "PUBLIC",
+  "decisionDistributionType": "EMAIL",
   "contactList": [
     {
       "postalCode": null,

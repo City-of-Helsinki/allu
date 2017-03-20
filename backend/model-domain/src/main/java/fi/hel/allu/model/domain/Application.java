@@ -1,15 +1,12 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
-
+import fi.hel.allu.common.types.*;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -38,7 +35,11 @@ public class Application {
   @NotNull
   @Valid
   private ApplicationExtension extension;
+  private DistributionType decisionDistributionType = DistributionType.EMAIL;
+  private PublicityType decisionPublicityType = PublicityType.PUBLIC;
   private ZonedDateTime decisionTime;
+  private Integer decisionMaker;
+  private List<DistributionEntry> decisionDistributionList = new ArrayList<>();
   private Integer calculatedPrice;
   private Integer priceOverride;
   private String priceOverrideReason;
@@ -221,7 +222,36 @@ public class Application {
   }
 
   /**
+   * The distribution type of the decision. Used for sending decision to applicant.
+   *
+   * @return  The distribution type of the decision. Used for sending decision to applicant.
+   */
+  public DistributionType getDecisionDistributionType() {
+    return decisionDistributionType;
+  }
+
+  public void setDecisionDistributionType(DistributionType decisionDistributionType) {
+    this.decisionDistributionType = decisionDistributionType;
+  }
+
+  /**
+   * Publicity of the decision.
+   *
+   * @return  Publicity of the decision.
+   */
+  public PublicityType getDecisionPublicityType() {
+    return decisionPublicityType;
+  }
+
+  public void setDecisionPublicityType(PublicityType decisionPublicityType) {
+    this.decisionPublicityType = decisionPublicityType;
+  }
+
+  /**
    * in Finnish: Päätöksen aikaleima
+   * The time decision was made.
+   *
+   * @return  The time decision was made.
    */
   public ZonedDateTime getDecisionTime() {
     return decisionTime;
@@ -229,6 +259,32 @@ public class Application {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
+  }
+
+  /**
+   * The user who made the decision.
+   *
+   * @return  The user who made the decision.
+   */
+  public Integer getDecisionMaker() {
+    return decisionMaker;
+  }
+
+  public void setDecisionMaker(Integer decisionMaker) {
+    this.decisionMaker = decisionMaker;
+  }
+
+  /**
+   * The distribution list of the decision.
+   *
+   * @return  The distribution list of the decision.
+   */
+  public List<DistributionEntry> getDecisionDistributionList() {
+    return decisionDistributionList;
+  }
+
+  public void setDecisionDistributionList(List<DistributionEntry> decisionDistributionList) {
+    this.decisionDistributionList = decisionDistributionList;
   }
 
   /**

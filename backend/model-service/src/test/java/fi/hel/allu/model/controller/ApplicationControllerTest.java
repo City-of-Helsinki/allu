@@ -120,10 +120,12 @@ public class ApplicationControllerTest {
     Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
     // Test: try to update the application
     appInResult.setStatus(StatusType.HANDLING);
+    appInResult.setName("updatedname");
     ResultActions resultActions = wtc.perform(put(String.format("/applications/%d", appInResult.getId())), appInResult)
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
-    assertEquals(StatusType.HANDLING, updateResult.getStatus());
+    assertEquals(StatusType.PENDING, updateResult.getStatus());
+    assertEquals(appInResult.getName(), updateResult.getName());
   }
 
   @Test

@@ -79,10 +79,22 @@ create table allu.application (
     start_time timestamp with time zone,
     end_time timestamp with time zone,
     extension text not null,
+    decision_distribution_type text not null,
+    decision_publicity_type text not null,
     decision_time timestamp with time zone,
+    decision_maker integer references allu.user,
     calculated_price integer,
     price_override integer,
     price_override_reason text );
+
+create table allu.distribution_entry (
+  id serial primary key,
+  application_id integer references allu.application(id) not null,
+  distribution_type text not null,
+  name text,
+  email text
+  -- TODO: add this when postal address is modeled as separate table: postal_address_id integer references postal_address(id)
+);
 
 create table allu.application_tag (
     id serial primary key,

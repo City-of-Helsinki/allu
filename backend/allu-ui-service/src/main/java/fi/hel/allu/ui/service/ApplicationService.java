@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
@@ -186,6 +187,23 @@ public class ApplicationService {
     restTemplate.put(applicationProperties.getApplicationHandlerRemoveUrl(), applicationIds);
   }
 
+  Application changeApplicationStatus(int applicationId, StatusType statusType) {
+    HttpEntity<Integer> requestEntity;
+    if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType)) {
+      UserJson currentUser = userService.getCurrentUser();
+      requestEntity = new HttpEntity<>(currentUser.getId());
+    } else {
+      requestEntity = new HttpEntity<>((Integer) null);
+    }
+
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getApplicationStatusUpdateUrl(statusType),
+        HttpMethod.PUT,
+        requestEntity,
+        Application.class,
+        applicationId);
+    return responseEntity.getBody();
+  }
 
   private void mapLocationQueryToSearchCriteria(LocationQueryJson query, LocationSearchCriteria lsc) {
     lsc.setIntersects(query.getIntersectingGeometry());

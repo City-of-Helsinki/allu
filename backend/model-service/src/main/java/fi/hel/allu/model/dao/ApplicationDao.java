@@ -1,6 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -10,9 +11,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,32 +33,41 @@ import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_
 @Repository
 public class ApplicationDao {
 
+  /** Fields that won't be updated in regular updates */
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
+      Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime, application.metadataVersion);
+
   private SQLQueryFactory queryFactory;
   private ApplicationSequenceDao applicationSequenceDao;
   private StructureMetaDao structureMetaDao;
+  DistributionEntryDao distributionEntryDao;
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
 
   @Autowired
-  public ApplicationDao(SQLQueryFactory queryFactory, ApplicationSequenceDao applicationSequenceDao,
+  public ApplicationDao(
+      SQLQueryFactory queryFactory,
+      ApplicationSequenceDao applicationSequenceDao,
+      DistributionEntryDao distributionEntryDao,
       StructureMetaDao structureMetaDao) {
     this.queryFactory = queryFactory;
     this.applicationSequenceDao = applicationSequenceDao;
+    this.distributionEntryDao = distributionEntryDao;
     this.structureMetaDao = structureMetaDao;
   }
 
   @Transactional(readOnly = true)
   public List<Application> findByIds(List<Integer> ids) {
     List<Application> appl = queryFactory.select(applicationBean).from(application).where(application.id.in(ids)).fetch();
-    return populateTags(appl);
+    return populateDependencies(appl);
   }
 
   @Transactional(readOnly = true)
   public List<Application> findByProject(int projectId) {
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(application.projectId.eq(projectId)).fetch();
-    return populateTags(applications);
+    return populateDependencies(applications);
   }
 
   @Transactional(readOnly = true)
@@ -75,7 +83,7 @@ public class ApplicationDao {
       condition = condition.and(application.startTime.before(lsc.getBefore()));
     }
     List<Application> applications = queryFactory.select(applicationBean).from(application).where(condition).fetch();
-    return populateTags(applications);
+    return populateDependencies(applications);
   }
 
   @Transactional
@@ -88,6 +96,7 @@ public class ApplicationDao {
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
+    insertDistributionEntries(id, appl.getDecisionDistributionList());
     Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     return populateTags(application);
@@ -122,6 +131,50 @@ public class ApplicationDao {
   }
 
   /**
+   * Update application's decision.
+   *
+   * @param applicationId   Id of the application to be updated.
+   * @param status          New status.
+   * @return  Updated application.
+   */
+  @Transactional
+  public Application updateDecision(int applicationId, StatusType status, int userId) {
+    int updated = (int) queryFactory
+        .update(application)
+        .set(application.decisionMaker, userId)
+        .set(application.status, status)
+        .set(application.decisionTime, ZonedDateTime.now())
+        .where(application.id.eq(applicationId))
+        .execute();
+    if (updated != 1) {
+      throw new NoSuchEntityException("Attempted to update decision status of non-existent application", Integer.toString(applicationId));
+    }
+    return findByIds(Collections.singletonList(applicationId)).get(0);
+  }
+
+  /**
+   * Update application status.
+   *
+   * @param applicationId   Application to be updated
+   * @param status          New status (cannot change status to either decision state).
+   * @return  Updated application.
+   */
+  public Application updateStatus(int applicationId, StatusType status) {
+    if (StatusType.DECISION.equals(status) || StatusType.REJECTED.equals(status)) {
+      throw new IllegalArgumentException("Cannot set status to any decision state. Use updateDecision()");
+    }
+    int updated = (int) queryFactory
+        .update(application)
+        .set(application.status, status)
+        .where(application.id.eq(applicationId))
+        .execute();
+    if (updated != 1) {
+      throw new NoSuchEntityException("Attempted to update status of non-existent application", Integer.toString(applicationId));
+    }
+    return findByIds(Collections.singletonList(applicationId)).get(0);
+  }
+
+  /**
    * Updates project of the given applications.
    *
    * @param   projectId     New project set to the applications. May be <code>null</code>.
@@ -148,11 +201,13 @@ public class ApplicationDao {
     long changed = queryFactory.update(application)
         .populate(appl,
             new ExcludingMapper(WITH_NULL_BINDINGS,
-                Arrays.asList(application.creationTime, application.metadataVersion)))
+                UPDATE_READ_ONLY_FIELDS))
         .where(application.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
+    distributionEntryDao.deleteByApplication(id);
+    insertDistributionEntries(id, appl.getDecisionDistributionList());
     Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     return populateTags(application);
@@ -164,7 +219,16 @@ public class ApplicationDao {
     return ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType).name() + seqValue;
   }
 
-  private List<Application> populateTags(List<Application> applications) {
+  private void insertDistributionEntries(Integer id, List<DistributionEntry> decisionDistributionList) {
+    if (decisionDistributionList != null) {
+      // make sure id is not set and nothing is updated in wrong application
+      decisionDistributionList.forEach(dEntry -> { dEntry.setId(null); dEntry.setApplicationId(id); });
+      distributionEntryDao.insert(decisionDistributionList);
+    }
+  }
+
+  private List<Application> populateDependencies(List<Application> applications) {
+    applications.forEach(a -> a.setDecisionDistributionList(distributionEntryDao.findByApplicationId(a.getId())));
     applications.forEach(a -> populateTags(a));
     return applications;
   }

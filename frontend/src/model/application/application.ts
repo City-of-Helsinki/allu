@@ -13,6 +13,7 @@ import {ApplicationTagType} from './tag/application-tag-type';
 import {Comment} from './comment/comment';
 import {NumberUtil} from '../../util/number.util';
 import {ApplicationType} from './type/application-type';
+import {PublicityType} from './publicity-type';
 
 const CENTS = 100;
 
@@ -34,7 +35,11 @@ export class Application {
     public contactList?: Array<Contact>,
     public location?: Location,
     public extension?: ApplicationExtension,
+    public decisionDistributionType?: string,                       // TODO: Eero, fix this when adding other distribution stuff
+    public decisionPublicityType?: PublicityType,
     public decisionTime?: Date,
+    public decisionMaker?: string,                                  // TODO: Eero, fix this when adding other distribution stuff
+    // public decisionDistributionList?: Array<DistributionEntry>,  // TODO: Eero, fix this when adding other distribution stuff
     public communicationType?: string,
     public publicityType?: string,
     public attachmentList?: Array<AttachmentInfo>,
@@ -48,6 +53,8 @@ export class Application {
     this.attachmentList = attachmentList || [];
     this.applicationTags = applicationTags || [];
     this.comments = comments || [];
+    this.decisionDistributionType = 'EMAIL';                        // TODO: Eero, fix this when adding other distribution stuff
+    this.decisionPublicityType = PublicityType.PUBLIC;              // TODO: Eero, fix this when adding other distribution stuff
   }
 
   /*

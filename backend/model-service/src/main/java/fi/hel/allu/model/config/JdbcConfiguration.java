@@ -54,6 +54,8 @@ public class JdbcConfiguration {
     configuration.register(new StringToApplicationTagType());
     configuration.register(new StringToCommentType());
     configuration.register(new StringToChangeType());
+    configuration.register(new StringToDistributionType());
+    configuration.register(new StringToPublicityType());
     return configuration;
   }
 

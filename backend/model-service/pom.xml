@@ -178,6 +178,11 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>application</table>
+                            <column>decision_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>location</table>
                             <column>start_time</column>
                             <type>java.time.ZonedDateTime</type>
@@ -258,6 +263,21 @@
                             <table>application</table>
                             <column>extension</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationExtension</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
+                            <column>decision_distribution_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToDistributionType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
+                            <column>decision_publicity_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToPublicityType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>distribution_entry</table>
+                            <column>distribution_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToDistributionType</type>
                         </typeMapping>
                         <typeMapping>
                             <table>fixed_location</table>

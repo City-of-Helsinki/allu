@@ -19,6 +19,8 @@
     }
   ],
   "name": "Tervasaaren tohinat",
+  "decisionPublicityType": "PUBLIC",
+  "decisionDistributionType": "EMAIL",
   "creationTime": "2016-07-15T05:08:10.514Z",
   "applicant": {
     "type": "COMPANY",

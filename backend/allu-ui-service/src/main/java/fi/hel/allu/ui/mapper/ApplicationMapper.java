@@ -58,6 +58,12 @@ public class ApplicationMapper {
     if (applicationJson.getExtension() != null) {
       applicationDomain.setExtension(createExtensionModel(applicationJson));
     }
+    applicationDomain.setDecisionDistributionType(applicationJson.getDecisionDistributionType());
+    applicationDomain.setDecisionPublicityType(applicationJson.getDecisionPublicityType());
+    if (applicationJson.getDecisionDistributionList() != null) {
+      applicationDomain.setDecisionDistributionList(applicationJson.getDecisionDistributionList().stream()
+          .map(dEntry -> createDistributionEntryModel(dEntry)).collect(Collectors.toList()));
+    }
     applicationDomain.setCalculatedPrice(applicationJson.getCalculatedPrice());
     applicationDomain.setPriceOverride(applicationJson.getPriceOverride());
     applicationDomain.setPriceOverrideReason(applicationJson.getPriceOverrideReason());
@@ -122,6 +128,12 @@ public class ApplicationMapper {
     applicationJson.setDecisionTime(application.getDecisionTime());
     if (application.getExtension() != null) {
       mapModelToJson(applicationJson, application);
+    }
+    applicationJson.setDecisionDistributionType(application.getDecisionDistributionType());
+    applicationJson.setDecisionPublicityType(application.getDecisionPublicityType());
+    if (application.getDecisionDistributionList() != null) {
+      applicationJson.setDecisionDistributionList(application.getDecisionDistributionList().stream()
+          .map(dEntry -> createDistributionEntryJson(dEntry)).collect(Collectors.toList()));
     }
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setPriceOverride(application.getPriceOverride());
@@ -622,5 +634,23 @@ public class ApplicationMapper {
     } else {
       return null;
     }
+  }
+
+  private DistributionEntryJson createDistributionEntryJson(DistributionEntry distributionEntry) {
+    DistributionEntryJson distributionEntryJson = new DistributionEntryJson();
+    distributionEntryJson.setDistributionType(distributionEntry.getDistributionType());
+    distributionEntryJson.setName(distributionEntry.getName());
+    distributionEntryJson.setEmail(distributionEntry.getEmail());
+    // TODO: add this when postal address is modeled as separate table: distributionEntryJson.setPostalAddress(distributionEntry.getPostalAddress);
+    return distributionEntryJson;
+  }
+
+  private DistributionEntry createDistributionEntryModel(DistributionEntryJson distributionEntryJson) {
+    DistributionEntry distributionEntry = new DistributionEntry();
+    distributionEntry.setDistributionType(distributionEntryJson.getDistributionType());
+    distributionEntry.setName(distributionEntryJson.getName());
+    distributionEntry.setEmail(distributionEntryJson.getEmail());
+    // TODO: add this when postal address is modeled as separate table: distributionEntry.setPostalAddress(distributionEntryJson.getPostalAddress);
+    return distributionEntry;
   }
 }

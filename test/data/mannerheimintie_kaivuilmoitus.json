@@ -6,6 +6,8 @@
   "type": "EXCAVATION_ANNOUNCEMENT",
   "kind": "HEATING_COOLING",
   "name": "Manskun lämpö ja puhallus",
+  "decisionPublicityType": "PUBLIC",
+  "decisionDistributionType": "EMAIL",
   "creationTime": "2016-07-15T10:36:09.721Z",
   "applicant": {
     "type": "COMPANY",

@@ -157,7 +157,7 @@ public class ApplicationServiceComposer {
 
   public ApplicationJson changeStatus(int applicationId, StatusType newStatus) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
-    Application application = applicationService.findApplicationById(applicationId);
+    Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     logger.debug("found application {}, current status {}, handler {}",
         applicationJson.getId(), applicationJson.getStatus(), applicationJson.getHandler());

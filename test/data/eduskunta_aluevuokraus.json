@@ -2,6 +2,8 @@
   "type": "AREA_RENTAL",
   "kind": "PROPERTY_RENOVATION",
   "name": "Aluevuokraus",
+  "decisionPublicityType": "PUBLIC",
+  "decisionDistributionType": "EMAIL",
   "applicant": {
     "id": null,
     "type": "PERSON",

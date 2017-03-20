@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.config;
 
+import fi.hel.allu.common.types.StatusType;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -303,6 +304,10 @@ public class ApplicationProperties {
    */
   public String getApplicationHandlerRemoveUrl() {
     return getModelServiceUrl("/applications/handler/remove");
+  }
+
+  public String getApplicationStatusUpdateUrl(StatusType statusType) {
+    return getModelServiceUrl("/applications/{id}/status/" + statusType.toString().toLowerCase());
   }
 
   /**

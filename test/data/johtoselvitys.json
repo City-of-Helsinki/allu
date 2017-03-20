@@ -112,5 +112,7 @@
       }
     }
   ],
-  "name": "Johtoselvitys"
+  "name": "Johtoselvitys",
+  "decisionPublicityType": "PUBLIC",
+  "decisionDistributionType": "EMAIL"
 }

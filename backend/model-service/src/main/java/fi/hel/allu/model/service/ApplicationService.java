@@ -1,12 +1,12 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoiceRowDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -126,4 +126,20 @@ public class ApplicationService {
     return result;
   }
 
+  /**
+   * Change application status.
+   *
+   * @param applicationId   Id of the application to be changed.
+   * @param statusType      New status
+   * @param userId          User making the status change. May be <code>null</code>, but required for decision making.
+   * @return  Updated application.
+   */
+  @Transactional
+  public Application changeApplicationStatus(int applicationId, StatusType statusType, Integer userId) {
+    if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType)) {
+      return applicationDao.updateDecision(applicationId, statusType, userId);
+    } else {
+      return applicationDao.updateStatus(applicationId, statusType);
+    }
+  }
 }

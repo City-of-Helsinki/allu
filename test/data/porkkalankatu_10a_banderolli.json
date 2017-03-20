@@ -12,6 +12,8 @@
   "type": "SHORT_TERM_RENTAL",
   "kind": "BRIDGE_BANNER",
   "name": "Siltamainos Porkkalassa",
+  "decisionPublicityType": "PUBLIC",
+  "decisionDistributionType": "EMAIL",
   "creationTime": "2016-07-15T10:36:09.721Z",
   "applicant": {
     "type": "COMPANY",

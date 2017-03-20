@@ -2,12 +2,15 @@ package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.types.ApplicationTagType;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ApplicationTag;
+import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.testUtils.TestCommon;
-
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -33,6 +36,17 @@ public class ApplicationDaoTest {
   private TestCommon testCommon;
   @Autowired
   private ApplicationDao applicationDao;
+  @Autowired
+  private DistributionEntryDao distributionEntryDao;
+
+  DistributionEntry testDistributionEntry;
+
+  @Before
+  public void init() {
+    testDistributionEntry = new DistributionEntry();
+    testDistributionEntry.setDistributionType(DistributionType.PAPER);
+    testDistributionEntry.setEmail("foobar@foo.fi");
+  }
 
   @Test
   public void testCreateApplicationIdString() {
@@ -40,7 +54,8 @@ public class ApplicationDaoTest {
     Mockito.when(applicationSequenceDaoMock.getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.TP)).thenReturn(1600001L);
     StructureMetaDao structureMetaDaoMock = Mockito.mock(StructureMetaDao.class);
     Mockito.when(structureMetaDaoMock.getLatestMetadataVersion()).thenReturn(1);
-    ApplicationDao applicationDao = new ApplicationDao(null, applicationSequenceDaoMock, structureMetaDaoMock);
+    ApplicationDao applicationDao =
+        new ApplicationDao(null, applicationSequenceDaoMock, distributionEntryDao, structureMetaDaoMock);
     Assert.assertEquals("TP1600001", applicationDao.createApplicationId(ApplicationType.EVENT));
   }
 
@@ -53,12 +68,14 @@ public class ApplicationDaoTest {
     application.setPriceOverride(OVERRIDE_PRICE);
     application.setPriceOverrideReason(OVERRIDE_REASON);
     application.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
+    application.setDecisionDistributionList(Collections.singletonList(testDistributionEntry));
     Application applOut = applicationDao.insert(application);
 
     assertEquals(application.getName(), applOut.getName());
     assertEquals(OVERRIDE_PRICE, applOut.getPriceOverride().intValue());
     assertEquals(OVERRIDE_REASON, applOut.getPriceOverrideReason());
     assertNotEquals(application.getCreationTime(), applOut.getCreationTime());
+    assertEquals(1, applOut.getDecisionDistributionList().size());
   }
 
   @Test
@@ -67,10 +84,30 @@ public class ApplicationDaoTest {
     Application applOut = applicationDao.insert(application);
     applOut.setName("Updated application");
     applOut.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
+    applOut.setDecisionDistributionList(Collections.singletonList(testDistributionEntry));
     Application updated = applicationDao.update(applOut.getId(), applOut);
 
     assertEquals("Updated application", updated.getName());
     assertNotEquals(applOut.getCreationTime(), updated.getCreationTime());
+    assertEquals(1, updated.getDecisionDistributionList().size());
+  }
+
+  @Test
+  public void testUpdateStatus() {
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application applOut = applicationDao.insert(application);
+    Application updated = applicationDao.updateStatus(applOut.getId(), StatusType.CANCELLED);
+    assertEquals(StatusType.CANCELLED, updated.getStatus());
+  }
+
+  @Test
+  public void testDecisionStatus() {
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application applOut = applicationDao.insert(application);
+    Application updated = applicationDao.updateDecision(applOut.getId(), StatusType.REJECTED, application.getHandler());
+    assertEquals(StatusType.REJECTED, updated.getStatus());
+    assertEquals(application.getHandler(), updated.getDecisionMaker());
+    assertNotNull(updated.getDecisionTime());
   }
 
   @Test
