@@ -82,15 +82,18 @@ export class ApplicationState {
   }
 
   saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
-    let result = new Subject<Array<AttachmentInfo>>();
+    if (attachments.length === 0) {
+      return this.loadAttachments(applicationId);
+    } else {
+      let result = new Subject<Array<AttachmentInfo>>();
+      this.attachmentHub.upload(applicationId, attachments)
+        .subscribe(
+          items => result.next(items),
+          error => result.error(error),
+          () => result.complete());
 
-    this.attachmentHub.upload(applicationId, attachments)
-      .subscribe(
-        items => result.next(items),
-        error => result.error(error),
-        () => result.complete());
-
-    return result.switchMap(saved => this.loadAttachments(applicationId));
+      return result.switchMap(saved => this.loadAttachments(applicationId));
+    }
   }
 
   removeAttachment(attachmentId: number, index?: number): Observable<HttpResponse> {
@@ -138,21 +141,28 @@ export class ApplicationState {
 
   save(application: Application): Observable<Application> {
     return this.applicationHub.save(application)
-      .switchMap(app => this.savePendingAttachments(app));
+      .switchMap(app => this.savePending(app))
+      .switchMap(app => this.saved(app));
+  }
+
+  private savePending(application: Application) {
+    return this.savePendingAttachments(application);
   }
 
   private savePendingAttachments(application: Application): Observable<Application> {
     let result = new Subject<Application>();
+
     this.saveAttachments(application.id, this._pendingAttachments)
-      .subscribe(items => { /* Nothing to do with saved items */ },
+      .subscribe(
+        items => { /* Nothing to do with saved items */ },
         error => result.error(error),
         () => {
-          this.saved(application).subscribe(app => result.next(app));
+          result.next(application);
           result.complete();
           this._pendingAttachments = [];
         });
 
-    return result;
+    return result.asObservable();
   }
 
   private saved(application: Application): Observable<Application> {

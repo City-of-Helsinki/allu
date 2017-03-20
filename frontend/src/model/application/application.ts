@@ -14,6 +14,8 @@ import {Comment} from './comment/comment';
 import {NumberUtil} from '../../util/number.util';
 import {ApplicationType} from './type/application-type';
 import {PublicityType} from './publicity-type';
+import {DistributionEntry} from '../common/distribution-entry';
+import {DistributionType} from '../common/distribution-type';
 
 const CENTS = 100;
 
@@ -35,12 +37,11 @@ export class Application {
     public contactList?: Array<Contact>,
     public location?: Location,
     public extension?: ApplicationExtension,
-    public decisionDistributionType?: string,                       // TODO: Eero, fix this when adding other distribution stuff
-    public decisionPublicityType?: PublicityType,
     public decisionTime?: Date,
-    public decisionMaker?: string,                                  // TODO: Eero, fix this when adding other distribution stuff
-    // public decisionDistributionList?: Array<DistributionEntry>,  // TODO: Eero, fix this when adding other distribution stuff
-    public communicationType?: string,
+    public decisionMaker?: string,
+    public decisionDistributionType?: string,
+    public decisionPublicityType?: string,
+    public decisionDistributionList?: Array<DistributionEntry>,
     public publicityType?: string,
     public attachmentList?: Array<AttachmentInfo>,
     public calculatedPrice?: number,
@@ -53,8 +54,9 @@ export class Application {
     this.attachmentList = attachmentList || [];
     this.applicationTags = applicationTags || [];
     this.comments = comments || [];
-    this.decisionDistributionType = 'EMAIL';                        // TODO: Eero, fix this when adding other distribution stuff
-    this.decisionPublicityType = PublicityType.PUBLIC;              // TODO: Eero, fix this when adding other distribution stuff
+    this.decisionDistributionType = decisionDistributionType || DistributionType[DistributionType.EMAIL];
+    this.decisionPublicityType = decisionPublicityType || PublicityType[PublicityType.PUBLIC];
+    this.decisionDistributionList = decisionDistributionList || [];
   }
 
   /*

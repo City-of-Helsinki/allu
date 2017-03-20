@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import '../../rxjs-extensions.ts';
-
 import {DecisionService} from './decision.service';
 
 @Injectable()

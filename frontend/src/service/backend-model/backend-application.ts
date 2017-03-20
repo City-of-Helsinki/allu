@@ -7,6 +7,7 @@ import {BackendAttachmentInfo} from './backend-attachment-info';
 import {BackendUser} from './backend-user';
 import {BackendApplicationTag} from '../mapper/application-tag-mapper';
 import {BackendComment} from '../application/comment/comment-mapper';
+import {BackendDistributionEntry} from './backend-distribution-entry';
 
 export interface BackendApplication {
   id: number;
@@ -26,8 +27,10 @@ export interface BackendApplication {
   locations: Array<BackendLocation>;
   extension: any;
   decisionTime: string;
-  communicationType?: string;
-  publicityType?: string;
+  decisionMaker: string;
+  decisionDistributionType?: string;
+  decisionPublicityType?: string;
+  decisionDistributionList?: Array<BackendDistributionEntry>;
   attachmentList: Array<BackendAttachmentInfo>;
   calculatedPrice: number;
   priceOverride: number;

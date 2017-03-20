@@ -12,6 +12,7 @@ import {TimeUtil} from '../../util/time.util';
 import {Some} from '../../util/option';
 import {ApplicationTagMapper} from './application-tag-mapper';
 import {CommentMapper} from '../application/comment/comment-mapper';
+import {DistributionMapper} from './distribution-mapper';
 
 export class ApplicationMapper {
 
@@ -36,8 +37,10 @@ export class ApplicationMapper {
     application.location = LocationMapper.mapBackend(backendApplication.locations[0]);
     application.extension = ApplicationTypeDataMapper.mapBackend(backendApplication.extension);
     application.decisionTime = TimeUtil.dateFromBackend(backendApplication.decisionTime);
-    application.communicationType = backendApplication.communicationType;
-    application.publicityType = backendApplication.publicityType;
+    application.decisionMaker = backendApplication.decisionMaker;
+    application.decisionDistributionType = backendApplication.decisionDistributionType;
+    application.decisionPublicityType = backendApplication.decisionPublicityType;
+    application.decisionDistributionList = DistributionMapper.mapBackendList(backendApplication.decisionDistributionList);
     application.attachmentList = (backendApplication.attachmentList)
       ? backendApplication.attachmentList.map((attachment) => AttachmentInfoMapper.mapBackend(attachment))
       : undefined;
@@ -68,8 +71,10 @@ export class ApplicationMapper {
       locations: (application.location) ? [LocationMapper.mapFrontend(application.location)] : undefined,
       extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
       decisionTime: Some(application.decisionTime).map(decisionTime => decisionTime.toISOString()).orElse(undefined),
-      communicationType: application.communicationType,
-      publicityType: application.publicityType,
+      decisionMaker: application.decisionMaker,
+      decisionDistributionType: application.decisionDistributionType,
+      decisionPublicityType: application.decisionPublicityType,
+      decisionDistributionList: DistributionMapper.mapFrontendList(application.decisionDistributionList),
       attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application
       calculatedPrice: application.calculatedPrice,
       priceOverride: application.priceOverride,

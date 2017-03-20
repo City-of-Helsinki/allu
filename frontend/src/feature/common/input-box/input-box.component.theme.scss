@@ -2,6 +2,7 @@
 
 @mixin input-box-theme($theme) {
   $primary: map-get($theme, primary);
+  $warn: map-get($theme, warn);
 
   .input-box-content > input,
   .input-box-content > select,
@@ -11,6 +12,11 @@
 
     &:focus {
       border: 1px solid mat-color($allu-primary, 200);
+    }
+
+    &.ng-touched.ng-dirty.ng-invalid {
+      border-color: mat-color($warn, 300);
+      color: mat-color($warn, 300);
     }
   }
 

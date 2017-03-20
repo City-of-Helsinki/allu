@@ -46,7 +46,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   }
 
   protected update(form: CableReportForm): Application {
-    let application = this.application;
+    let application = super.update(form);
     application.name = 'Johtoselvitys'; // Cable reports have no name so set default
     application.uiStartTime = form.reportTimes.startTime;
     application.uiEndTime = form.reportTimes.endTime;

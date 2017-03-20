@@ -4,7 +4,7 @@
         <md-card-content>
             <div class="row">
                 <div class="col l4 m6 s12">
-                    <md-radio-group formControlName="communicationType">
+                    <md-radio-group formControlName="distributionType">
                         <md-radio-button value="EMAIL">Sähköposti</md-radio-button>
                         <md-radio-button value="PAPER">Paperi</md-radio-button>
                     </md-radio-group>
@@ -17,6 +17,11 @@
                             {{['application.publicityType', type] | translation}}
                         </md-option>
                     </md-select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="s12">
+                    <distribution-list [form]="communicationForm" [readonly]="readonly"></distribution-list>
                 </div>
             </div>
         </md-card-content>

@@ -1,9 +1,9 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
-import {CommunicationType} from '../../../model/application/communication-type';
 import {PublicityType} from '../../../model/application/publicity-type';
 import {EnumUtil} from '../../../util/enum.util';
+import {DistributionType} from '../../../model/common/distribution-type';
 
 @Component({
   selector: 'communication',
@@ -23,7 +23,7 @@ export class CommunicationComponent implements OnInit {
 
   ngOnInit(): void {
     this.communicationForm = this.fb.group({
-      communicationType: [this.application.communicationType || CommunicationType[CommunicationType.EMAIL], Validators.required],
+      distributionType: [this.application.decisionDistributionType || DistributionType[DistributionType.EMAIL], Validators.required],
       publicityType: [this.application.publicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
     });
     this.form.addControl('communication', this.communicationForm);

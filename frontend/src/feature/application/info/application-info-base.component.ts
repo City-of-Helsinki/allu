@@ -2,7 +2,6 @@ import {OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
-
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {UrlUtil} from '../../../util/url.util';
@@ -11,9 +10,9 @@ import {ApplicationForm} from './application-form';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
-import {ApplicationType} from '../../../model/application/type/application-type';
 import {Some} from '../../../util/option';
-import {CommunicationType} from '../../../model/application/communication-type';
+import {DistributionType} from '../../../model/common/distribution-type';
+import {DistributionEntryForm} from '../distribution-list/distribution-entry-form';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
 
@@ -66,14 +65,6 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
     let application = this.update(form);
     application.extension.terms = form.terms;
 
-    Some(form.communication).map(c => {
-      application.communicationType = c.communicationByEmail
-        ? CommunicationType[CommunicationType.EMAIL]
-        : CommunicationType[CommunicationType.PAPER];
-
-      application.publicityType = c.publicityType;
-    });
-
     this.applicationState.save(application)
       .subscribe(
         app => {
@@ -89,5 +80,17 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
   /**
    * Updates application based on given form and returns updated application
    */
-  protected abstract update(form: ApplicationForm): Application;
+  protected update(form: ApplicationForm): Application {
+    let application = this.application;
+
+    Some(form.communication).map(c => {
+      application.decisionDistributionType = c.communicationByEmail
+        ? DistributionType[DistributionType.EMAIL]
+        : DistributionType[DistributionType.PAPER];
+
+      application.publicityType = c.publicityType;
+      application.decisionDistributionList = c.distributionRows.map(distribution => DistributionEntryForm.to(distribution));
+    });
+    return application;
+  };
 }

@@ -3,13 +3,15 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MdRadioModule} from '@angular/material';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {CommunicationComponent} from './communication.component';
+import {MailingListModule} from '../distribution-list/distribution-list.module';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     AlluCommonModule,
-    MdRadioModule
+    MdRadioModule,
+    MailingListModule
   ],
   declarations: [
     CommunicationComponent

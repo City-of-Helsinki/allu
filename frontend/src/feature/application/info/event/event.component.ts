@@ -35,7 +35,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   }
 
   protected update(form: EventForm): Application {
-    let application = this.application;
+    let application = super.update(form);
 
     application.name = form.event.name;
     application.uiStartTime = form.event.structureTimes.startTime || form.event.eventTimes.startTime;

@@ -32,7 +32,7 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
   }
 
   protected update(form: TrafficArrangementForm): Application {
-    let application = this.application;
+    let application = super.update(form);
     application.name = 'Liikennejärjestely'; // Traffic arrangements have no name so set default
     application.uiStartTime = form.validityTimes.startTime;
     application.uiEndTime = form.validityTimes.endTime;

@@ -32,7 +32,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
   }
 
   protected update(form: AreaRentalForm): Application {
-    let application = this.application;
+    let application = super.update(form);
     application.name = 'Aluevuokraus'; // Area rentals have no name so set default
     application.uiStartTime = form.validityTimes.startTime;
     application.uiEndTime = form.validityTimes.endTime;

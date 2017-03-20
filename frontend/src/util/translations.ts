@@ -327,6 +327,17 @@ export const translations = {
         confirmation: 'Hakemus hylätty'
       }
     },
+    distribution: {
+      type: {
+        EMAIL: 'Sähköposti',
+        PAPER: 'Paperi'
+      },
+      error: {
+        fetch: 'Jakelutietojen hakeminen epäonnistui',
+        save: 'Jakelutietojen päivittäminen epäonnistui',
+        remove: 'Jakelutietojen poistaminen'
+      }
+    },
     error: {
       generatePdf: 'Pdf:n muodostaminen epäonnistui'
     }
@@ -368,6 +379,7 @@ export const translations = {
   },
   common: {
     field: {
+      nameMissing: 'Nimi puuttuu',
       emailInvalid: 'Virheellinen sähköpostiosoite',
       postalCode: 'Tarkista postinumero'
     },

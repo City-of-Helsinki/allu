@@ -31,7 +31,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   }
 
   protected update(form: ShortTermRentalForm): Application {
-    let application = this.application;
+    let application = super.update(form);
     application.name = form.name;
     application.calculatedPriceEuro = form.calculatedPrice;
     application.priceOverrideEuro = form.priceOverride;

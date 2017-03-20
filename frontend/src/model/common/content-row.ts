@@ -1,7 +1,5 @@
 export class ContentRow<T extends {id?: number}> {
-  constructor(content: T)
-  constructor(content: T, selected: boolean)
-  constructor(public content: T, public selected?: boolean) {
+  constructor(public content: T, public selected?: boolean, public edited?: boolean) {
     this.selected = !!selected;
   }
 

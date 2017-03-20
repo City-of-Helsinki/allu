@@ -28,7 +28,7 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
   }
 
   protected update(form: NoteForm) {
-    let application = this.application;
+    let application = super.update(form);
     application.name = form.name;
     application.uiStartTime = form.validityTimes.startTime;
     application.uiEndTime = form.validityTimes.endTime;

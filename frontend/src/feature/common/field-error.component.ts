@@ -7,7 +7,7 @@ const validatedAlways = [
 
 @Component({
   selector: 'field-error',
-  template: '<span *ngIf="showError()"><ng-content></ng-content></span>',
+  template: '<span *ngIf="showError()" class="has-error"><ng-content></ng-content></span>',
   styles: [require('./field-error.component.scss')]
 })
 export class FieldErrorComponent {

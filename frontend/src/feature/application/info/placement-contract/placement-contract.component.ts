@@ -32,7 +32,7 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
   }
 
   protected update(form: PlacementContractForm): Application {
-    let application = this.application;
+    let application = super.update(form);
     application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
     application.uiStartTime = form.validityTimes.startTime;
     application.uiEndTime = form.validityTimes.endTime;
