@@ -118,20 +118,14 @@ public class ApplicationServiceTest extends MockServices {
 
   @Test
   public void testCreateWithValidApplication() {
-    ApplicationJson response = applicationService.createApplication(createMockApplicationJson(null));
+    Application response = applicationService.createApplication(createMockApplicationJson(null));
 
     assertNotNull(response);
     assertEquals(1, response.getId().intValue());
-    assertNotNull(response.getApplicant());
-    assertNotNull(response.getLocations());
-    assertEquals(1, response.getLocations().size());
-    assertEquals(102, response.getLocations().get(0).getId().intValue());
-    assertNotNull(response.getApplicant());
-    assertEquals(103, response.getApplicant().getId().intValue());
-    assertNotNull(response.getLocations().get(0).getGeometry());
+    assertEquals(103, (int) response.getApplicantId());
     assertNotNull(response.getExtension());
     assertNotNull(response.getDecisionTime());
-    assertEquals(1050, ((EventJson) response.getExtension()).getAttendees());
+    assertNotNull(response.getExtension());
   }
 
 

@@ -51,7 +51,7 @@ public class LocationService {
       // TODO: area rental with multiple locations will get more or less "random" location
       newLocations.forEach(insertedLocation -> tryToAssignHandler(application, insertedLocation));
     }
-    updateApplicationAndProject(applicationId);
+    updateApplicationAndProject(application);
     return newLocations;
   }
 
@@ -86,7 +86,11 @@ public class LocationService {
 
   private void updateApplicationAndProject(int applicationId) {
     Application application = findApplication(applicationId);
-    updateProject(applicationId);
+    updateApplicationAndProject(application);
+  }
+
+  private void updateApplicationAndProject(Application application) {
+    updateProject(application.getId());
     // update application to get the price calculations done
     applicationService.update(application.getId(), application);
   }

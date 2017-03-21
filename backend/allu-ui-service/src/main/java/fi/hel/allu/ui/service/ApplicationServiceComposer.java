@@ -70,10 +70,11 @@ public class ApplicationServiceComposer {
    * @return Transfer object that contains list of created applications and their identifiers
    */
   public ApplicationJson createApplication(ApplicationJson applicationJson) {
-    ApplicationJson createdApplication = applicationService.createApplication(applicationJson);
+    Application createdApplication = applicationService.createApplication(applicationJson);
+    ApplicationJson createdApplicationJson = applicationJsonService.getFullyPopulatedApplication(createdApplication);
     applicationHistoryService.addApplicationCreated(createdApplication.getId());
-    searchService.insertApplication(createdApplication);
-    return createdApplication;
+    searchService.insertApplication(createdApplicationJson);
+    return createdApplicationJson;
   }
 
   /**

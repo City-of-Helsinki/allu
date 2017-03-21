@@ -111,11 +111,10 @@ public class ApplicationService {
   /**
    * Create applications by calling backend service.
    *
-   * @param newApplication
-   *          Application to be added to backend.
+   * @param newApplication  Application to be added to backend.
    * @return Application with possibly updated information from backend.
    */
-  ApplicationJson createApplication(ApplicationJson newApplication) {
+  Application createApplication(ApplicationJson newApplication) {
     newApplication.setApplicant(applicantService.createApplicant(newApplication.getApplicant()));
     List<ContactJson> contacts = newApplication.getContactList();
     setContactApplicant(contacts, newApplication.getApplicant());
@@ -133,11 +132,10 @@ public class ApplicationService {
       locations = locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
     }
 
-    ApplicationJson applicationJson = applicationMapper.mapApplicationToJson(applicationModel);
-    applicationJson.setContactList(contactService.setContactsForApplication(applicationJson.getId(), contacts));
-    applicationJson.setApplicant(newApplication.getApplicant());
-    applicationJson.setLocations(locations);
-    return applicationJson;
+    contactService.setContactsForApplication(applicationModel.getId(), contacts);
+
+    // need to fetch fresh Application from model, because at least setting location may change both handler and application start and end times
+    return findApplicationById(applicationModel.getId());
   }
 
   /**
