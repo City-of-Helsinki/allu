@@ -48,6 +48,14 @@ export class Location {
     return this.area ? Math.ceil(this.area) : undefined;
   }
 
+  get effectiveArea(): number {
+    return Number.isInteger(this.areaOverride) ? this.areaOverride : this.area;
+  }
+
+  get effectiveUiArea(): number {
+    return this.effectiveArea ? Math.ceil(this.effectiveArea) : undefined;
+  }
+
   get effectiveCityDistrictId(): number {
     return Number.isInteger(this.cityDistrictIdOverride) ? this.cityDistrictIdOverride : this.cityDistrictId;
   }

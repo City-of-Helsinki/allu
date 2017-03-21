@@ -16,6 +16,7 @@ import {CityDistrict} from '../../model/common/city-district';
 import {ArrayUtil} from '../../util/array-util';
 import {FixedLocationArea} from '../../model/common/fixed-location-area';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
+import {Location} from '../../model/common/location';
 
 
 @Injectable()
@@ -24,6 +25,8 @@ export class MapHub {
   private search$ = new Subject<string>();
   private applicationSelection$ = new Subject<Application>();
   private applications$ = new Subject<Array<Application>>();
+  private editedLocation$ = new Subject<Location>();
+  private locationsToDraw$ = new BehaviorSubject<Array<Location>>([]);
   private searchBar$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
   private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
@@ -82,6 +85,18 @@ export class MapHub {
    */
   public selectApplication = (application: Application) => this.applicationSelection$.next(application);
   public applicationSelection = () => this.applicationSelection$.asObservable();
+
+  /**
+   * Used to notify that new location is selected (used when handling multiple locations per application)
+   */
+  public editLocation = (location: Location) => this.editedLocation$.next(location);
+  public editedLocation = () => this.editedLocation$.asObservable();
+
+  /**
+   * Used to notify that specific locations should be drawn onto map (used when handling multiple locations per application)
+   */
+  public drawLocations = (locations: Array<Location>) => this.locationsToDraw$.next(locations);
+  public locationsToDraw = () => this.locationsToDraw$.asObservable();
 
   /**
    * Used to notify changes in address search bar

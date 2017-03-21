@@ -32,6 +32,7 @@ import {ApplicationState} from '../../service/application/application-state';
 import {Oauth2Component} from '../oauth2/oauth2.component';
 import {ErrorHandler} from '../../service/error/error-handler.service';
 import {DefaultTextService} from '../../service/application/default-text.service';
+import {LocationState} from '../../service/application/location-state';
 
 
 @NgModule({
@@ -70,6 +71,7 @@ import {DefaultTextService} from '../../service/application/default-text.service
     UIStateHub,
     AuthGuard,
     ApplicationState,
+    LocationState,
     ErrorHandler,
     DefaultTextService,
     { provide: APP_BASE_HREF,  useValue: '/' },

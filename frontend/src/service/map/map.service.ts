@@ -31,6 +31,7 @@ export class MapState {
   private mapLayers: any;
   private drawControl: L.Control.Draw;
   private drawnItems: {[key: string]: L.FeatureGroup} = {};
+  private focusedItems: L.FeatureGroup;
   private editedItems: L.FeatureGroup;
   private shapes$ = new Subject<ShapeAdded>();
   private mapView$: BehaviorSubject<GeoJSON.GeometryObject>;
@@ -55,6 +56,10 @@ export class MapState {
 
   public clearEdited() {
     Some(this.editedItems).do(edited => edited.clearLayers());
+  }
+
+  public clearFocused() {
+    Some(this.focusedItems).do(layer => layer.clearLayers());
   }
 
   public panToCoordinates(coordinates: Geocoordinates) {
@@ -126,6 +131,10 @@ export class MapState {
     }
   }
 
+  public drawFocused(geometries: Array<GeoJSON.GeometryCollection>, style?: Object): void {
+    geometries.forEach(g => this.drawGeometryToLayer(g, this.focusedItems, style));
+  }
+
   public drawFixedLocations(geometries: Array<GeoJSON.GeometryCollection>, style?: Object) {
     geometries.forEach(geometry => this.drawEditableGeometry(geometry, style));
     this.shapes$.next(new ShapeAdded(this.editedItems, false));
@@ -173,6 +182,8 @@ export class MapState {
       .map(type => findTranslation(['application.type', type]))
       .forEach(type => this.drawnItems[type] = L.featureGroup());
 
+    this.focusedItems = L.featureGroup();
+
     this.map = this.createMap();
     this.mapView$ = new BehaviorSubject(this.getCurrentMapView());
 
@@ -201,6 +212,7 @@ export class MapState {
 
     this.editedItems = editedItems;
     L.control.layers(this.mapLayers, this.drawnItems).addTo(this.map);
+    this.focusedItems.addTo(this.map);
 
     L.control.zoom({
       position: 'topright',

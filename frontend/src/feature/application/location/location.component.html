@@ -1,11 +1,11 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
-<div class="row location">
+<div class="row">
   <application-type (onTypeChange)="onApplicationTypeChange($event)"
                     (onKindChange)="onApplicationKindChange($event)"
                     (onSpecifierChange)="onApplicationSpecifierChange($event)"></application-type>
 </div>
-<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)">
-  <div *ngIf="typeSelected" materialize class="row location">
+<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" [hidden]="!typeSelected">
+  <div class="row">
     <div class="col m12">
       <md-card>
         <md-card-title>Sijainti</md-card-title>
@@ -13,11 +13,10 @@
           <div class="row">
             <div class="mapcontainer">
               <div class="map-overlay">
-                <searchbar [addressSearch]="locationForm.value.streetAddress"
-                           [startDate]="application.startTime" [endDate]="application.endTime"
+                <searchbar [filter]="searchbarFilter" [datesRequired]="true"
                            (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
               </div>
-              <map [draw]="true" [edit]="editingAllowed()" [selection]="true"
+              <map [draw]="true" [edit]="editingAllowed" [selection]="true"
                    [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
             </div>
           </div>
@@ -71,10 +70,21 @@
                 <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
               </md-select>
             </div>
+            <div class="col m12" *ngIf="multipleLocations">
+              <button md-raised-button type="button" color="primary" [disabled]="!locationForm.valid" (click)="store(locationForm.value)">TALLENNA</button>
+              <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
+            </div>
           </div>
         </md-card-content>
       </md-card>
     </div>
+  </div>
+  <div class="row" *ngIf="multipleLocations">
+    <div class="col m12">
+      <stored-locations></stored-locations>
+    </div>
+  </div>
+  <div class="row">
     <div class="col m12">
       <md-card>
         <md-card-title>Tallennus</md-card-title>
@@ -84,7 +94,7 @@
               <a md-raised-button type="button" color="primary" [routerLink]="['/home']">PERUUTA</a>
             </div>
             <div class="col m4 offset-m6">
-              <button md-raised-button type="submit" color="primary" [disabled]="!locationForm.valid">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
+              <button md-raised-button type="submit" color="primary" [disabled]="!submitAllowed">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>
             </div>
           </div>
         </md-card-content>

@@ -9,6 +9,7 @@ import {SearchBarModule} from '../../searchbar/searchbar.module';
 import {MapModule} from '../../map/map.module';
 import {ProgressBarModule} from '../progressbar/progressbar.module';
 import {TypeModule} from '../type/type.module';
+import {StoredLocationsComponent} from './stored-locations.component';
 
 @NgModule({
   imports: [
@@ -23,7 +24,8 @@ import {TypeModule} from '../type/type.module';
     TypeModule
   ],
   declarations: [
-    LocationComponent
+    LocationComponent,
+    StoredLocationsComponent
   ],
   providers: [
   ]

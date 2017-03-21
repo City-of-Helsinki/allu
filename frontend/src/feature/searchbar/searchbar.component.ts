@@ -1,5 +1,5 @@
 import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
-import {FormGroup, FormBuilder} from '@angular/forms';
+import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 import {Subject} from 'rxjs/Subject';
 
@@ -8,6 +8,7 @@ import {MapHub} from '../../service/map/map-hub';
 import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
 import {MaterializeUtil} from '../../util/materialize.util';
 import {PostalAddress} from '../../model/common/postal-address';
+import {Observable} from 'rxjs';
 
 enum BarType {
   SIMPLE,
@@ -23,10 +24,8 @@ enum BarType {
   ]
 })
 export class SearchbarComponent implements OnInit, OnDestroy {
-
-  @Input() addressSearch: string;
-  @Input() startDate: Date;
-  @Input() endDate: Date;
+  @Input() filter: Observable<SearchbarFilter> = Observable.empty();
+  @Input() datesRequired: boolean = false;
   @Input() barType: string = BarType[BarType.BAR];
 
   @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
@@ -43,18 +42,21 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   private notFound: boolean;
 
   constructor(private fb: FormBuilder, private mapHub: MapHub) {
-    this.searchForm = this.fb.group({
-      address: '',
-      startDate: '',
-      endDate: ''
-    });
   }
 
   ngOnInit(): void {
-    this.searchForm.patchValue({
-      address: this.addressSearch,
-      startDate: TimeUtil.getUiDateString(this.startDate),
-      endDate: TimeUtil.getUiDateString(this.endDate)
+    this.searchForm = this.fb.group({
+      address: [''],
+      startDate: this.datesRequired ? ['', Validators.required] : [''],
+      endDate: this.datesRequired ? ['', Validators.required] : ['']
+    });
+
+    this.filter.subscribe(filter => {
+      this.searchForm.patchValue({
+        address: filter.search,
+        startDate: TimeUtil.getUiDateString(filter.startDate),
+        endDate: TimeUtil.getUiDateString(filter.endDate)
+      });
     });
 
     this.coordinateSubscription = this.mapHub.coordinates()

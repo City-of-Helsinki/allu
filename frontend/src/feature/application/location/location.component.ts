@@ -30,6 +30,9 @@ import {FixedLocationArea} from '../../../model/common/fixed-location-area';
 import {FixedLocationSection} from '../../../model/common/fixed-location-section';
 import {NumberUtil} from '../../../util/number.util';
 import {LocationForm} from './location-form';
+import {LocationState} from '../../../service/application/location-state';
+import {Location} from '../../../model/common/location';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Component({
   selector: 'type',
@@ -51,11 +54,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   progressStep: ProgressStep;
   typeSelected = false;
   districts: Observable<Array<CityDistrict>>;
-
-  private geometry: GeoJSON.GeometryCollection;
+  searchbarFilter$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
+  multipleLocations: boolean = false;
 
   constructor(
     private applicationState: ApplicationState,
+    private locationState: LocationState,
     private mapService: MapUtil,
     private router: Router,
     private mapHub: MapHub,
@@ -67,22 +71,30 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.sectionsCtrl.valueChanges.subscribe(ids => this.onSectionsChange(ids));
 
     this.locationForm = fb.group({
-      startTime: [''],
-      endTime: [''],
-      streetAddress: [''],
+      id: [undefined],
+      locationKey: [undefined],
+      locationVersion: [undefined],
+      startTime: ['', Validators.required],
+      endTime: ['', Validators.required],
+      geometry: [undefined],
       area: this.areaCtrl,
       sections: this.sectionsCtrl,
-      info: [''],
       areaSize: [{value: undefined, disabled: true}],
       areaOverride: [undefined],
+      streetAddress: [''],
+      postalCode: [undefined],
+      city: [''],
+      cityDistrictId: [undefined],
       cityDistrictName: [{value: undefined, disabled: true}],
-      cityDistrictIdOverride: [undefined]
+      cityDistrictIdOverride: [undefined],
+      info: ['']
     });
   };
 
   ngOnInit() {
     this.application = this.applicationState.application;
-    this.geometry = this.application.firstLocation.geometry;
+    this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
+
     if (this.application.id) {
       this.typeSelected = this.application.kind !== undefined;
       this.loadFixedLocationsForKind(ApplicationKind[this.application.kind]);
@@ -91,9 +103,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
     this.districts = this.mapHub.districts();
-    this.locationForm.patchValue(LocationForm.from(this.application.firstLocation));
-    this.districtName(this.application.firstLocation.cityDistrictId)
-      .subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
+
+    this.initForm();
+    this.mapHub.editedLocation().subscribe(loc => this.editLocation(loc));
   }
 
   ngOnDestroy() {
@@ -103,9 +115,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHub.selectApplication(this.application);
   }
 
+  get searchbarFilter() {
+    return this.searchbarFilter$.asObservable();
+  }
+
   onApplicationTypeChange(type: ApplicationType) {
     this.application.type = ApplicationType[type];
     this.application.extension = this.createExtension(type);
+    this.multipleLocations = type === ApplicationType.AREA_RENTAL;
   }
 
   onApplicationKindChange(kind: ApplicationKind) {
@@ -130,19 +147,20 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     });
   }
 
+  store(form: LocationForm): void {
+    this.locationState.storeLocation(LocationForm.to(form));
+    this.resetForm();
+  }
+
+  cancel(): void {
+    this.locationState.cancelEditing();
+    this.resetForm();
+  }
+
   onSubmit(form: LocationForm) {
-    this.application.uiStartTime = form.startTime;
-    this.application.uiEndTime = form.endTime;
-    let location = this.application.firstLocation;
-    location.uiStartTime = form.startTime;
-    location.uiEndTime = form.endTime;
-    location.postalAddress.streetAddress = form.streetAddress;
-    location.info = form.info;
-    location.fixedLocationIds = form.sections;
-    location.areaOverride = form.areaOverride;
-    location.cityDistrictIdOverride = form.cityDistrictIdOverride;
-    location.geometry = this.geometry;
-    this.application.singleLocation = location;
+    this.locationState.storeLocation(LocationForm.to(form));
+    this.application.locations = this.locationState.locationsSnapshot;
+    this.application.updateDatesFromLocations();
 
     if (this.application.id) {
       this.applicationState.save(this.application)
@@ -168,15 +186,27 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.mapHub.districtById(id).map(d => d.name);
   }
 
-  editingAllowed(): boolean {
+  get editingAllowed(): boolean {
     return drawingAllowedForKind(ApplicationKind[this.application.kind]) && this.sectionsCtrl.value.length === 0;
+  }
+
+  get submitAllowed(): boolean {
+    // Nothing is currently edited or location is edited but its values are valid
+    return this.locationState.editIndex === undefined || this.locationForm.valid;
+  }
+
+  private editLocation(loc: Location): void {
+    if (!!loc) {
+      this.locationForm.patchValue(LocationForm.from(loc));
+      this.searchbarFilter$.next(this.createFilter(loc));
+    }
   }
 
   private shapeAdded(shape: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>) {
     if (shape.features.length) {
-      this.geometry = this.mapService.featureCollectionToGeometryCollection(shape);
+      this.locationForm.patchValue({geometry: this.mapService.featureCollectionToGeometryCollection(shape)});
     } else {
-      this.geometry = undefined;
+      this.locationForm.patchValue({geometry: undefined});
     }
   }
 
@@ -224,6 +254,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mapHub.selectFixedLocationSections(ids);
   }
 
+  private initForm(): void {
+    this.locationState.initLocations(this.application.locations);
+
+    if (this.application.firstLocation) {
+      let formValues = LocationForm.from(this.application.firstLocation);
+      this.locationForm.patchValue(formValues);
+      this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
+      this.searchbarFilter$.next(this.createFilter(this.application.firstLocation));
+      this.locationState.editLocation(0);
+    }
+  }
+
   private createEmptyExtension(type: ApplicationType): ApplicationExtension {
     switch (type) {
       case ApplicationType.CABLE_REPORT:
@@ -254,5 +296,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         ext.applicationType = ApplicationType[applicationType];
         return ext;
       }).orElse(undefined);
+  }
+
+  private createFilter(location: Location): SearchbarFilter {
+    return new SearchbarFilter(
+      location.postalAddress.streetAddress,
+      location.startTime,
+      location.endTime
+    );
+  }
+
+  private resetForm(): void {
+    this.locationForm.reset(LocationForm.from(new Location()));
+    this.searchbarFilter$.next(new SearchbarFilter());
   }
 }

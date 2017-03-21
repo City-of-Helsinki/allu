@@ -10,6 +10,8 @@ import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
 import {MapPopup} from '../../service/map/map-popup';
 import {ApplicationState} from '../../service/application/application-state';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
+import {Subscription} from 'rxjs/Subscription';
+import {Location} from '../../model/common/location';
 
 @Component({
   selector: 'map',
@@ -28,6 +30,7 @@ export class MapComponent implements OnInit, OnDestroy {
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
   private mapState: MapState;
+  private subscriptions: Array<Subscription> = [];
 
   constructor(
     private mapService: MapService,
@@ -37,17 +40,8 @@ export class MapComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.mapState = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
+    this.initSubscriptions();
 
-    this.mapState.shapes.subscribe(shapes => this.addShape(shapes));
-    this.mapState.mapView.subscribe(view => this.mapHub.addMapView(view));
-
-    this.mapHub.coordinates()
-      .subscribe((optCoords) =>
-        optCoords.map(coordinates => this.mapState.panToCoordinates(coordinates)));
-
-    this.mapHub.applications().subscribe(applications => this.drawApplications(applications));
-    this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app));
-    this.mapHub.selectedFixedLocationSections().subscribe(fxs => this.drawFixedLocations(fxs));
     // Handle fetching and drawing edited application as separate case
     Some(this.applicationId).do(id => this.drawEditedApplication(this.applicationState.application));
 
@@ -55,6 +49,7 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.subscriptions.forEach(s => s.unsubscribe());
   }
 
   applicationSelected(application: Application) {
@@ -96,17 +91,31 @@ export class MapComponent implements OnInit, OnDestroy {
     return isSelectedApplication || allAreDrawn || application.belongsToProject(this.projectId);
   }
 
+  private drawFocusedLocations(locations: Array<Location>): void {
+    this.mapState.clearFocused();
+    let geometries = locations.map(loc => loc.geometry).filter(geometry => !!geometry);
+    this.mapState.drawFocused(geometries);
+  }
+
+  private drawEditedLocation(location: Location): void {
+    this.mapState.clearEdited();
+    if (location) {
+      this.mapState.drawEditableGeometry(location.geometry);
+    }
+  }
+
 
   private drawEditedApplication(application: Application) {
     application.geometries().forEach(g => this.mapState.drawEditableGeometry(g));
-    this.updateMapControls(application);
+    this.updateMapControls(application.locations);
   }
 
-  private updateMapControls(application: Application) {
-    if (application.hasFixedGeometry()) {
+  private updateMapControls(locations: Array<Location>) {
+    if (locations.some(loc => loc.hasFixedGeometry())) {
       this.mapState.setDynamicControls(false);
     } else {
-      this.editedItemCountChanged.emit(application.geometryCount());
+      let geometryCount = locations.reduce((cur, acc) => cur + acc.geometryCount(), 0);
+      this.editedItemCountChanged.emit(geometryCount);
     }
   }
 
@@ -140,5 +149,21 @@ export class MapComponent implements OnInit, OnDestroy {
       application.uiStartTime + ' - ' + application.uiEndTime
     ];
     return new MapPopup(header, contentRows);
+  }
+
+  private initSubscriptions(): void {
+    let coordinateSubscription = this.mapHub.coordinates().subscribe((optCoords) =>
+      optCoords.map(coordinates => this.mapState.panToCoordinates(coordinates)));
+
+    this.subscriptions = [
+      this.mapState.shapes.subscribe(shapes => this.addShape(shapes)),
+      this.mapState.mapView.subscribe(view => this.mapHub.addMapView(view)),
+      coordinateSubscription,
+      this.mapHub.applications().subscribe(applications => this.drawApplications(applications)),
+      this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app)),
+      this.mapHub.selectedFixedLocationSections().subscribe(fxs => this.drawFixedLocations(fxs)),
+      this.mapHub.editedLocation().subscribe(loc => this.drawEditedLocation(loc)),
+      this.mapHub.locationsToDraw().subscribe(locs => this.drawFocusedLocations(locs))
+    ];
   }
 }

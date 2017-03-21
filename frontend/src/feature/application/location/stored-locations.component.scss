@@ -1,0 +1,5 @@
+@import '../../../assets/colors';
+
+tr.selected {
+  background: mat-color($allu-primary, 100) !important;
+}

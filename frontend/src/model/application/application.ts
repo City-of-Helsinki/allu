@@ -49,7 +49,7 @@ export class Application {
     public priceOverrideReason?: string,
     public applicationTags?: Array<ApplicationTag>,
     public comments?: Array<Comment>) {
-    this.locations = locations || [new Location()];
+    this.locations = locations || [];
     this.contactList = contactList || [new Contact()];
     this.attachmentList = attachmentList || [];
     this.applicationTags = applicationTags || [];
@@ -80,6 +80,11 @@ export class Application {
 
   public set uiEndTime(dateString: string) {
     this.endTime = TimeUtil.getDateFromUi(dateString);
+  }
+
+  public updateDatesFromLocations(): void {
+    this.startTime = TimeUtil.minimum(... this.locations.map(l => l.startTime));
+    this.endTime = TimeUtil.maximum(... this.locations.map(l => l.endTime));
   }
 
   public get singleLocation(): Location {

@@ -11,11 +11,11 @@
         </div>
 
         <div class="row">
-            <applicant [applicationForm]="applicationForm" [applicant]="application.extension.contractor"
+            <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.contractor"
                        [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
                        [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
 
-            <contact [applicationForm]="applicationForm" [contactList]="application.extension.responsiblePersonList"
+            <contact [applicationForm]="applicationForm" [contactList]="application.extension?.responsiblePersonList"
                      [readonly]="readonly" headerText="Vastuuhenkilö" formName="responsiblePerson"></contact>
         </div>
 

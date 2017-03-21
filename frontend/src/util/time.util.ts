@@ -46,6 +46,17 @@ export class TimeUtil {
     return dateTime ? momentLib(dateTime, HISTORY_DATE_TIME_FORMAT).format(HISTORY_DATE_FORMAT).toString() : undefined;
   }
 
+  public static minimum(...dates: Date[]) {
+    let moments: Array<momentLib.Moment> = dates.map(date => momentLib(date));
+    return momentLib.min(... moments).toDate();
+  }
+
+  public static maximum(...dates: Date[]) {
+    let moments: Array<momentLib.Moment> = dates.map(date => momentLib(date));
+    return momentLib.max(... moments).toDate();
+  }
+
+
   /**
    * Returns end of given day i.e. any date 1.1.2001 would be converted to 1.1.2001 23:59.
    *
