@@ -5,7 +5,7 @@ export interface ApplicationForm {
 }
 
 export interface CommunicationForm {
-  communicationByEmail?: boolean;
+  distributionType?: string;
   publicityType?: string;
   distributionRows?: Array<DistributionEntryForm>;
 }

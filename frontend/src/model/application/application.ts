@@ -42,7 +42,6 @@ export class Application {
     public decisionDistributionType?: string,
     public decisionPublicityType?: string,
     public decisionDistributionList?: Array<DistributionEntry>,
-    public publicityType?: string,
     public attachmentList?: Array<AttachmentInfo>,
     public calculatedPrice?: number,
     public priceOverride?: number,

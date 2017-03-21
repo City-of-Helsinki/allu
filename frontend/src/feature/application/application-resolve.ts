@@ -22,7 +22,7 @@ export class ApplicationResolve implements Resolve<Application> {
       .map(id => this.applicationState.load(id)
         .do(app => this.loadComments(id))
         .catch(err => this.handleError(err)))
-      .orElse(this.newApplication());
+      .orElse(this.newOrCopy());
   }
 
   private loadComments(id: number) {
@@ -38,9 +38,12 @@ export class ApplicationResolve implements Resolve<Application> {
     return Observable.of(new Application());
   }
 
-  private newApplication(): Observable<Application> {
-    let app = new Application();
-    this.applicationState.application = app;
-    return Observable.of(app);
+  private newOrCopy(): Observable<Application> {
+    if (this.applicationState.isCopy) {
+      this.applicationState.isCopy = false;
+    } else {
+      this.applicationState.application = new Application();
+    }
+    return Observable.of(this.applicationState.application);
   }
 }

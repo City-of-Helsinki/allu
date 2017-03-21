@@ -24,7 +24,7 @@ export class CommunicationComponent implements OnInit {
   ngOnInit(): void {
     this.communicationForm = this.fb.group({
       distributionType: [this.application.decisionDistributionType || DistributionType[DistributionType.EMAIL], Validators.required],
-      publicityType: [this.application.publicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
+      publicityType: [this.application.decisionPublicityType || PublicityType[PublicityType.PUBLIC], Validators.required]
     });
     this.form.addControl('communication', this.communicationForm);
 

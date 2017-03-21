@@ -30,7 +30,7 @@ export class DecisionService {
 
   public fetch(applicationId: number): Observable<Decision> {
     console.log('Fetching pdf for application ' + applicationId);
-    let url = DECISION_URL.replace('{:appId', String(applicationId));
+    let url = DECISION_URL.replace(':appId', String(applicationId));
 
     return this.authHttp.get(url, {responseType: ResponseContentType.Blob})
       .map(response => response.blob())

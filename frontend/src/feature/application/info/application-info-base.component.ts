@@ -84,11 +84,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
     let application = this.application;
 
     Some(form.communication).map(c => {
-      application.decisionDistributionType = c.communicationByEmail
-        ? DistributionType[DistributionType.EMAIL]
-        : DistributionType[DistributionType.PAPER];
-
-      application.publicityType = c.publicityType;
+      application.decisionDistributionType = c.distributionType;
+      application.decisionPublicityType = c.publicityType;
       application.decisionDistributionList = c.distributionRows.map(distribution => DistributionEntryForm.to(distribution));
     });
     return application;

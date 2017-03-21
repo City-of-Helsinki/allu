@@ -18,6 +18,7 @@ import {HttpResponse, HttpStatus} from '../../util/http-response';
 @Injectable()
 export class ApplicationState {
   public relatedProject: number;
+  public isCopy = false;
 
   private application$ = new BehaviorSubject<Application>(new Application());
   private _pendingAttachments: Array<AttachmentInfo> = [];
@@ -38,6 +39,11 @@ export class ApplicationState {
 
   set application(value: Application) {
     this.application$.next(value);
+  }
+
+  set applicationCopy(app: Application) {
+    this.application = app;
+    this.isCopy = true;
   }
 
   get applicationChanges(): Observable<Application> {

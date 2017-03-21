@@ -46,7 +46,7 @@ export class ApplicationActionsComponent implements OnInit {
     application.id = undefined;
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
-    this.applicationState.application = application;
+    this.applicationState.applicationCopy = application;
     this.router.navigate(['/applications/edit']);
   }
 
