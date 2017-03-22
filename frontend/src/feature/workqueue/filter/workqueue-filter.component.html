@@ -10,7 +10,7 @@
                     <option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</option>
                 </select>
             </div>
-            <div class="col s2">
+            <div class="col s2" [hidden]="tab==='OWN'">
                 <select formControlName="handler" materialize="material_select"
                         multiple [materializeSelectOptions]="queryForm.value.handler">
                     <option value="" selected disabled>Hakemuksen käsittelijä</option>

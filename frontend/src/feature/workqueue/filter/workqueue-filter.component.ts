@@ -79,7 +79,6 @@ export class WorkQueueFilterComponent implements OnInit {
     tagControl.setValue(tags);
 
     CurrentUser.userName().do(userName => this.setHandlers([userName]));
-    this.queryForm.get(HANDLER_FIELD).disable();
   }
 
   private waitingTabSelected(): void {
