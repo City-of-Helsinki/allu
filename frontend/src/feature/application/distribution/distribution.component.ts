@@ -6,11 +6,11 @@ import {EnumUtil} from '../../../util/enum.util';
 import {DistributionType} from '../../../model/common/distribution-type';
 
 @Component({
-  selector: 'communication',
-  template: require('./communication.component.html'),
+  selector: 'distribution',
+  template: require('./distribution.component.html'),
   styles: []
 })
-export class CommunicationComponent implements OnInit {
+export class DistributionComponent implements OnInit {
 
   @Input() form: FormGroup;
   @Input() application: Application;

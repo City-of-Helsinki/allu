@@ -35,7 +35,7 @@ import {ApplicationHistoryModule} from './history/application-history.module';
 import {TermsModule} from './terms/terms.module';
 import {AreaRentalComponent} from './info/area-rental/area-rental.component';
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
-import {CommunicationModule} from './communication/communication.module';
+import {DistributionModule} from './distribution/distribution.module';
 
 
 @NgModule({
@@ -59,7 +59,7 @@ import {CommunicationModule} from './communication/communication.module';
     AttachmentModule,
     ApplicationHistoryModule,
     TermsModule,
-    CommunicationModule
+    DistributionModule
   ],
   declarations: [
     ApplicationComponent,

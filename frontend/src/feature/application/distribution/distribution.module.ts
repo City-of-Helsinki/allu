@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MdRadioModule} from '@angular/material';
 import {AlluCommonModule} from '../../common/allu-common.module';
-import {CommunicationComponent} from './communication.component';
+import {DistributionComponent} from './distribution.component';
 import {MailingListModule} from '../distribution-list/distribution-list.module';
 
 @NgModule({
@@ -14,12 +14,12 @@ import {MailingListModule} from '../distribution-list/distribution-list.module';
     MailingListModule
   ],
   declarations: [
-    CommunicationComponent
+    DistributionComponent
   ],
   providers: [
   ],
   exports: [
-    CommunicationComponent
+    DistributionComponent
   ]
 })
-export class CommunicationModule {}
+export class DistributionModule {}
