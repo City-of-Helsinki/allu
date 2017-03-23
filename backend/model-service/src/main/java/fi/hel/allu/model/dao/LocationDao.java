@@ -11,13 +11,12 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
-
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
-
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
@@ -40,6 +39,7 @@ import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationArea.locationArea;
 import static fi.hel.allu.QLocationFlids.locationFlids;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
+import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
@@ -48,13 +48,22 @@ public class LocationDao {
 
   @Autowired
   private SQLQueryFactory queryFactory;
+  @Autowired
+  PostalAddressDao postalAddressDao;
 
   final QBean<Location> locationBean = bean(Location.class, location.all());
+  final QBean<PostalAddress> postalAddressBean = bean(PostalAddress.class, postalAddress.all());
 
   @Transactional(readOnly = true)
   public Optional<Location> findById(int id) {
-    Location cont = queryFactory.select(locationBean).from(location).where(location.id.eq(id)).fetchOne();
-    if (cont != null) {
+    Tuple locationPostalAddress = queryFactory
+        .select(locationBean, postalAddressBean)
+        .from(location)
+        .leftJoin(postalAddress).on(location.postalAddressId.eq(postalAddress.id))
+        .where(location.id.eq(id)).fetchOne();
+    Location cont = null;
+    if (locationPostalAddress != null) {
+      cont = PostalAddressUtil.mapPostalAddress(locationPostalAddress).get(0, Location.class);
       List<Geometry> geometries = queryFactory.select(locationGeometry.geometry).from(locationGeometry)
           .where(locationGeometry.locationId.eq(cont.getId())).fetch();
       GeometryCollection collection = toGeometryCollection(geometries);
@@ -84,7 +93,8 @@ public class LocationDao {
         .from(location).where(location.applicationId.eq(locationData.getApplicationId())).fetchOne();
     locationData.setLocationKey(Optional.ofNullable(maxLocationKey).orElse(0) + 1);
     locationData.setLocationVersion(1);
-    Integer id = queryFactory.insert(location).populate(locationData).executeWithKey(location.id);
+    Integer id = queryFactory.insert(location)
+        .populate(locationData).set(location.postalAddressId, postalAddressDao.insertIfNotNull(locationData)).executeWithKey(location.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
@@ -97,13 +107,22 @@ public class LocationDao {
   @Transactional
   public Location update(int id, Location locationData) {
     locationData.setId(id);
-    long changed = queryFactory
+    Optional<Location> currentLocationOpt = findById(id);
+    if (!currentLocationOpt.isPresent()) {
+      throw new NoSuchEntityException("Attempted to update non-existent location", Integer.toString(id));
+    }
+    Location currentLocation = currentLocationOpt.get();
+    Integer deletedPostalAddressId = postalAddressDao.mapAndUpdatePostalAddress(currentLocation, locationData);
+    Integer postalAddressId = Optional.ofNullable(currentLocation.getPostalAddress()).map(pAddress -> pAddress.getId()).orElse(null);
+
+    queryFactory
         .update(location)
-        .populate(locationData,
-            new ExcludingMapper(WITH_NULL_BINDINGS, Arrays.asList(location.locationKey, location.locationVersion)))
+        .populate(locationData, new ExcludingMapper(WITH_NULL_BINDINGS, Arrays.asList(location.locationKey, location.locationVersion)))
+        .set(location.postalAddressId, postalAddressId)
         .where(location.id.eq(id).and(location.applicationId.eq(locationData.getApplicationId()))).execute();
-    if (changed == 0) {
-      throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
+
+    if (deletedPostalAddressId != null) {
+      postalAddressDao.delete(Collections.singletonList(deletedPostalAddressId));
     }
     queryFactory.delete(locationGeometry).where(locationGeometry.locationId.eq(id)).execute();
     setGeometry(id, locationData.getGeometry());
@@ -122,6 +141,9 @@ public class LocationDao {
     queryFactory.delete(locationGeometry).where(locationGeometry.locationId.eq(locationId)).execute();
     queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(locationId)).execute();
     queryFactory.delete(location).where(location.id.eq(locationId)).execute();
+    if (deletedLocation.getPostalAddress() != null) {
+      postalAddressDao.delete(Collections.singletonList(deletedLocation.getPostalAddress().getId()));
+    }
     updateApplicationDate(deletedLocation.getApplicationId());
   }
 

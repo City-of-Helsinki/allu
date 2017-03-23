@@ -2,7 +2,6 @@ package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.ui.domain.*;
 import org.junit.Test;
@@ -82,7 +81,7 @@ public class StructureMetaDaoTest {
   public void testFindDistributionEntryMeta() {
     Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("DistributionEntry", 1, Collections.emptyMap());
     assertTrue(meta.isPresent());
-    assertStructureAttributes(DistributionEntry.class, meta.get());
+    assertStructureAttributes(DistributionEntryJson.class, meta.get());
   }
 
   @Test

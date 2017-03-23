@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.geolatte.geom.Geometry;
@@ -64,9 +65,9 @@ public class LocationControllerTest {
     Assert.assertEquals(2, locations.size());
     // check some random data
     Assert.assertTrue(locations.stream()
-        .map(l -> l.getPostalCode())
+        .map(l -> l.getPostalAddress().getPostalCode())
         .collect(Collectors.toSet())
-        .containsAll(Arrays.asList(location1.getPostalCode(), location2.getPostalCode())));
+        .containsAll(Arrays.asList(location1.getPostalAddress().getPostalCode(), location2.getPostalAddress().getPostalCode())));
   }
 
   @Test
@@ -85,7 +86,7 @@ public class LocationControllerTest {
 
     // Now check Kuoppakuja 2 got there.
     wtc.perform(get(String.format("/locations/%d", result.getId()))).andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.streetAddress", is("Kuoppakuja 2")));
+        .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.postalAddress.streetAddress", is("Kuoppakuja 2")));
   }
 
   @Test
@@ -100,14 +101,13 @@ public class LocationControllerTest {
 
     Location newLocation = new Location();
     newLocation.setApplicationId(application.getId());
-    newLocation.setStreetAddress("Ikuisen Vapun Aukio 3");
-    newLocation.setCity("Hellsing");
+    newLocation.setPostalAddress(new PostalAddress("Ikuisen Vapun Aukio 3", null, "Hellsing"));
     newLocation.setId(result.getId());
     newLocation.setUnderpass(false);
     newLocation.setStartTime(ZonedDateTime.now());
     newLocation.setEndTime(ZonedDateTime.now());
     wtc.perform(put(String.format("/locations", result.getId())), Collections.singletonList(newLocation)).andExpect(status().isOk())
-        .andExpect(jsonPath("$.[0].id", is(result.getId()))).andExpect(jsonPath("$.[0].city", is("Hellsing")));
+        .andExpect(jsonPath("$.[0].id", is(result.getId()))).andExpect(jsonPath("$.[0].postalAddress.city", is("Hellsing")));
   }
 
   @Test
@@ -116,11 +116,11 @@ public class LocationControllerTest {
     Location location2 = createDummyLocation("Kuoppakuja 2", "07770", "Hellsinki", makeGeometry(), null);
     List<Location> locations = addLocationsAndGetResult(Arrays.asList(location1, location2));
     Location updatedLocation = locations.get(0);
-    updatedLocation.setPostalCode("updated");
-    Set<String> expectedPostalCodes = locations.stream().map(l -> l.getPostalCode()).collect(Collectors.toSet());
+    updatedLocation.getPostalAddress().setPostalCode("updated");
+    Set<String> expectedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
     wtc.perform(put(String.format("/locations")), locations).andExpect(status().isOk());
     List<Location> updatedLocations = getLocationsByApplicationId(application.getId());
-    Set<String> updatedPostalCodes = locations.stream().map(l -> l.getPostalCode()).collect(Collectors.toSet());
+    Set<String> updatedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
     Assert.assertTrue(updatedPostalCodes.containsAll(expectedPostalCodes));
   }
 
@@ -128,8 +128,7 @@ public class LocationControllerTest {
   @Test
   public void updateNonexistent() throws Exception {
     Location location = new Location();
-    location.setStreetAddress("Ikuisen Vapun Aukio 3");
-    location.setCity("Hellsing");
+    location.setPostalAddress(new PostalAddress("Ikuisen Vapun Aukio 3", null, "Hellsing"));
     location.setId(999);
     location.setApplicationId(123);
     wtc.perform(put(String.format("/locations")), Collections.singletonList(location)).andExpect(status().isNotFound());
@@ -171,9 +170,7 @@ public class LocationControllerTest {
   private Location createDummyLocation(String streetAddress, String postalCode, String city, Geometry geometry, Integer id) {
     Location location = new Location();
     location.setApplicationId(application.getId());
-    location.setStreetAddress(streetAddress);
-    location.setPostalCode(postalCode);
-    location.setCity(city);
+    location.setPostalAddress(new PostalAddress(streetAddress, postalCode, city));
     location.setGeometry(geometry);
     location.setId(id);
     location.setUnderpass(false);

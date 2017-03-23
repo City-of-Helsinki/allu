@@ -5,13 +5,13 @@ import fi.hel.allu.common.types.DistributionType;
 /**
  * Items stored in distribution list. Each item describes a single distribution target, which will receive application decision.
  */
-public class DistributionEntry {
+public class DistributionEntry implements PostalAddressItem {
   private Integer id;
   private Integer applicationId;
   private DistributionType distributionType;
   private String name;
   private String email;
-  // TODO: add this when postal address is modeled as separate table: private PostalAddress postalAddressJson;
+  private PostalAddress postalAddress;
 
   /**
    * Database id.
@@ -76,5 +76,15 @@ public class DistributionEntry {
 
   public void setEmail(String email) {
     this.email = email;
+  }
+
+  @Override
+  public PostalAddress getPostalAddress() {
+    return postalAddress;
+  }
+
+  @Override
+  public void setPostalAddress(PostalAddress postalAddress) {
+    this.postalAddress = postalAddress;
   }
 }

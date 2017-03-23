@@ -1,9 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.FixedLocationArea;
-import fi.hel.allu.model.domain.FixedLocationSection;
-import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.FixedLocationAreaJson;
 import fi.hel.allu.ui.domain.FixedLocationJson;
@@ -193,9 +190,7 @@ public class LocationServiceTest {
       return input;
     }
     Location location = new Location();
-    location.setCity("City1, Model");
-    location.setPostalCode("33333, Model");
-    location.setStreetAddress("Street 1, Model");
+    location.setPostalAddress(new PostalAddress("Street 1, Model", "33333, Model", "City1, Model"));
     location.setFixedLocationIds(Arrays.asList(23456, 7656));
     location.setId(102);
     location.setGeometry(geometrycollection(3879, ring(c(0, 0), c(0, 1), c(1, 1), c(1, 0), c(0, 0))));

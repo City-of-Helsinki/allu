@@ -10,6 +10,7 @@ public class ContactJson {
   private Integer applicantId;
   @NotBlank(message = "{contact.name.notblank}")
   private String name;
+  // TODO: refactor as PostalAddressJson
   private String streetAddress;
   private String postalCode;
   private String city;

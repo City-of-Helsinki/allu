@@ -12,7 +12,7 @@ import org.geolatte.geom.Geometry;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-public class Location {
+public class Location implements PostalAddressItem {
   private Integer id;
   private Integer applicationId;
   private Integer locationKey;
@@ -24,9 +24,7 @@ public class Location {
   private Geometry geometry;
   private Double area;
   private Double areaOverride;
-  private String streetAddress;
-  private String postalCode;
-  private String city;
+  private PostalAddress postalAddress;
   private List<Integer> fixedLocationIds;
   private Integer cityDistrictId;
   private Integer cityDistrictIdOverride;
@@ -167,42 +165,18 @@ public class Location {
   }
 
   /**
-   * Get location's street address, e.g. "Mannerheimintie 3"
+   * Returns the postal address of the location.
    *
-   * @return street address
+   * @return  the postal address of the location. May be <code>null</code>.
    */
-  public String getStreetAddress() {
-    return streetAddress;
+  @Override
+  public PostalAddress getPostalAddress() {
+    return postalAddress;
   }
 
-  public void setStreetAddress(String streetAddress) {
-    this.streetAddress = streetAddress;
-  }
-
-  /**
-   * Get the location's postal (zip) code.
-   *
-   * @return the postal code.
-   */
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
-  }
-
-  /**
-   * Get the city for the location.
-   *
-   * @return city name.
-   */
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
+  @Override
+  public void setPostalAddress(PostalAddress postalAddress) {
+    this.postalAddress = postalAddress;
   }
 
   /**

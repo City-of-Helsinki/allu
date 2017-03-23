@@ -5,15 +5,13 @@ import org.hibernate.validator.constraints.NotBlank;
 /**
  * in Finnish: Yhteyshenkilö
  */
-public class Contact {
+public class Contact implements PostalAddressItem {
 
   private Integer id;
   private Integer applicantId;
   @NotBlank
   private String name;
-  private String streetAddress;
-  private String postalCode;
-  private String city;
+  private PostalAddress postalAddress;
   private String email;
   private String phone;
 
@@ -51,36 +49,18 @@ public class Contact {
   }
 
   /**
-   * In Finnish: katuosoite
+   * Returns the postal address of the contant.
+   *
+   * @return  the postal address of the contact.
    */
-  public String getStreetAddress() {
-    return streetAddress;
+  @Override
+  public PostalAddress getPostalAddress() {
+    return postalAddress;
   }
 
-  public void setStreetAddress(String streetAddress) {
-    this.streetAddress = streetAddress;
-  }
-
-  /**
-   * In Finnish: postinumero
-   */
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
-  }
-
-  /**
-   * In Finnish: kaupunki
-   */
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
+  @Override
+  public void setPostalAddress(PostalAddress postalAddress) {
+    this.postalAddress = postalAddress;
   }
 
   /**

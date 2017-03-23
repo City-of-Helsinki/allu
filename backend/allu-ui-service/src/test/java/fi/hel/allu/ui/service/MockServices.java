@@ -221,9 +221,7 @@ public abstract class MockServices {
 
   public Applicant createMockPersonModel() {
     Applicant person = new Applicant();
-    person.setCity("Person city, Model");
-    person.setPostalCode("postalcode, Model");
-    person.setStreetAddress("street address 2, Model");
+    person.setPostalAddress(new PostalAddress("street address 2, Model", "postalcode, Model", "Person city, Model"));
     person.setRegistryKey("343232, Model");
     person.setPhone("43244323, Model");
     person.setName("Mock person, Model");

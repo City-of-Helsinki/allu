@@ -1,21 +1,24 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLBindings;
-import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 import com.querydsl.sql.dml.SQLInsertClause;
 import com.querydsl.sql.dml.SQLUpdateClause;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.PostalAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +26,7 @@ import java.util.stream.Collectors;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplicationContact.applicationContact;
 import static fi.hel.allu.QContact.contact;
+import static fi.hel.allu.QPostalAddress.postalAddress;
 
 @Repository
 public class ContactDao {
@@ -31,27 +35,52 @@ public class ContactDao {
 
   @Autowired
   private SQLQueryFactory queryFactory;
+  @Autowired
+  PostalAddressDao postalAddressDao;
 
   final QBean<Contact> contactBean = bean(Contact.class, contact.all());
+  final QBean<PostalAddress> postalAddressBean = bean(PostalAddress.class, postalAddress.all());
 
   @Transactional(readOnly = true)
   public Optional<Contact> findById(int id) {
-    Contact cont = queryFactory.select(contactBean).from(contact).where(contact.id.eq(id)).fetchOne();
-    return Optional.ofNullable(cont);
+    Tuple contactPostalAddress = queryFactory
+        .select(contactBean, postalAddressBean)
+        .from(contact)
+        .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
+        .where(contact.id.eq(id)).fetchOne();
+    Contact foundContact = null;
+    if (contactPostalAddress != null) {
+      foundContact = PostalAddressUtil.mapPostalAddress(contactPostalAddress).get(0, Contact.class);
+    }
+    return Optional.ofNullable(foundContact);
   }
 
   @Transactional(readOnly = true)
   public List<Contact> findByApplicant(int applicantId) {
-    return queryFactory.select(contactBean).from(contact).where(contact.applicantId.eq(applicantId)).fetch();
+    List<Tuple> contactPostalAddress = queryFactory
+        .select(contactBean, postalAddressBean)
+        .from(contact)
+        .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
+        .where(contact.applicantId.eq(applicantId)).fetch();
+    List<Contact> contacts = contactPostalAddress.stream()
+            .map(cpa -> PostalAddressUtil.mapPostalAddress(cpa).get(0, Contact.class))
+            .collect(Collectors.toList());
+    return contacts;
   }
 
   @Transactional(readOnly = true)
   public List<Contact> findByApplication(int applicationId) {
-    SQLQuery<Contact> query = queryFactory.select(contactBean).from(contact).innerJoin(applicationContact)
-        .on(contact.id.eq(applicationContact.contactId)).where(applicationContact.applicationId.eq(applicationId))
-        .orderBy(applicationContact.position.asc());
-    logger.debug(String.format("Executing query \"%s\"", query.getSQL().getSQL()));
-    return query.fetch();
+    List<Tuple> contactPostalAddress = queryFactory
+        .select(contactBean, postalAddressBean)
+        .from(contact)
+        .innerJoin(applicationContact).on(contact.id.eq(applicationContact.contactId))
+        .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
+        .where(applicationContact.applicationId.eq(applicationId))
+        .orderBy(applicationContact.position.asc()).fetch();
+    List<Contact> contacts = contactPostalAddress.stream()
+        .map(cpa -> PostalAddressUtil.mapPostalAddress(cpa).get(0, Contact.class))
+        .collect(Collectors.toList());
+    return contacts;
   }
 
   @Transactional
@@ -71,27 +100,35 @@ public class ContactDao {
     return findByApplication(applicationId);
   }
 
-  private Contact storeContact(Contact contactItem) {
-    if (contactItem.getId() != null) {
-      return update(contactItem.getId(), contactItem);
-    } else {
-      return insert(contactItem);
-    }
-  }
-
   @Transactional
   public Contact insert(Contact contactData) {
-    Integer id = queryFactory.insert(contact).populate(contactData).executeWithKey(contact.id);
+    Integer id = queryFactory
+        .insert(contact)
+        .populate(contactData).set(contact.postalAddressId, postalAddressDao.insertIfNotNull(contactData))
+        .executeWithKey(contact.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
+
     return findById(id).get();
   }
 
   @Transactional
   public Contact update(int id, Contact contactData) {
     contactData.setId(id);
-    SQLUpdateClause query = queryFactory.update(contact).populate(contactData, DefaultMapper.WITH_NULL_BINDINGS)
+    Optional<Contact> currentContactOpt = findById(id);
+    if (!currentContactOpt.isPresent()) {
+      throw new NoSuchEntityException("Attempted to update non-existent contact", Integer.toString(id));
+    }
+
+    Contact currectContact = currentContactOpt.get();
+    Integer deletedPostalAddressId = postalAddressDao.mapAndUpdatePostalAddress(currectContact, contactData);
+    Integer postalAddressId = Optional.ofNullable(currectContact.getPostalAddress()).map(pAddress -> pAddress.getId()).orElse(null);
+
+    SQLUpdateClause query = queryFactory
+        .update(contact)
+        .populate(contactData, DefaultMapper.WITH_NULL_BINDINGS)
+        .set(contact.postalAddressId, postalAddressId)
         .where(contact.id.eq(id));
     for (SQLBindings sql : query.getSQL()) {
       logger.debug(sql.getSQL());
@@ -100,7 +137,18 @@ public class ContactDao {
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update the record", Integer.toString(id));
     }
+    if (deletedPostalAddressId != null) {
+      postalAddressDao.delete(Collections.singletonList(deletedPostalAddressId));
+    }
+
     return findById(id).get();
   }
 
+  private Contact storeContact(Contact contactItem) {
+    if (contactItem.getId() != null) {
+      return update(contactItem.getId(), contactItem);
+    } else {
+      return insert(contactItem);
+    }
+  }
 }

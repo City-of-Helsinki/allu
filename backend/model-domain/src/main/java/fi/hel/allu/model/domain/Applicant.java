@@ -10,15 +10,13 @@ import javax.validation.constraints.NotNull;
  *
  * <p>An applicant is either person, organization or a company.
  */
-public class Applicant {
+public class Applicant implements PostalAddressItem {
   private Integer id;
   @NotNull
   private ApplicantType type;
   @NotBlank
   private String name;
-  private String streetAddress;
-  private String postalCode;
-  private String city;
+  private PostalAddress postalAddress;
   private String email;
   private String phone;
   private String registryKey;
@@ -58,42 +56,18 @@ public class Applicant {
   }
 
   /**
-   * Street address of the applicant person, company or organization.
+   * Returns the postal address of the applicant.
    *
-   * @return  Street address of the applicant person, company or organization.
+   * @return  the postal address of the applicant.
    */
-  public String getStreetAddress() {
-    return streetAddress;
+  @Override
+  public PostalAddress getPostalAddress() {
+    return postalAddress;
   }
 
-  public void setStreetAddress(String streetAddress) {
-    this.streetAddress = streetAddress;
-  }
-
-  /**
-   * Postal code of the applicant person, company or organization.
-   *
-   * @return  Postal code of the applicant person, company or organization.
-   */
-  public String getPostalCode() {
-    return postalCode;
-  }
-
-  public void setPostalCode(String postalCode) {
-    this.postalCode = postalCode;
-  }
-
-  /**
-   * City of the applicant person, company or organization.
-   *
-   * @return  City of the applicant person, company or organization.
-   */
-  public String getCity() {
-    return city;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
+  @Override
+  public void setPostalAddress(PostalAddress postalAddress) {
+    this.postalAddress = postalAddress;
   }
 
   /**

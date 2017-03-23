@@ -1,11 +1,15 @@
+create table allu.postal_address (
+    id serial primary key,
+    street_address text,
+    postal_code text,
+    city text );
+
 create table allu.applicant (
     id serial primary key,
+    postal_address_id integer references allu.postal_address(id),
     type text not null,
     name text not null,
     registry_key text,
-    street_address text,
-    postal_code text,
-    city text,
     email text,
     phone text );
 
@@ -33,10 +37,8 @@ create table allu.project (
 create table allu.contact (
     id serial primary key,
     applicant_id integer not null references allu.applicant(id),
+    postal_address_id integer references allu.postal_address(id),
     name text not null,
-    street_address text,
-    postal_code text,
-    city text,
     email text,
     phone text );
 
@@ -90,10 +92,10 @@ create table allu.application (
 create table allu.distribution_entry (
   id serial primary key,
   application_id integer references allu.application(id) not null,
+  postal_address_id integer references allu.postal_address(id),
   distribution_type text not null,
   name text,
   email text
-  -- TODO: add this when postal address is modeled as separate table: postal_address_id integer references postal_address(id)
 );
 
 create table allu.application_tag (
@@ -126,9 +128,7 @@ create table allu.location (
   location_version integer not null,        -- version of the location with same location_key. If area changes, it will be stored as new version
   start_time timestamp with time zone not null,
   end_time timestamp with time zone not null,
-  street_address text,
-  postal_code text,
-  city text,
+  postal_address_id integer references allu.postal_address(id),
   area double precision,
   area_override double precision,
   city_district_id integer references allu.city_district(id),

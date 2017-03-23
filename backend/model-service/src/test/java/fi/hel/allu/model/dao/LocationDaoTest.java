@@ -4,10 +4,7 @@ import com.querydsl.sql.SQLQueryFactory;
 
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.FixedLocation;
-import fi.hel.allu.model.domain.FixedLocationArea;
-import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
 
 import org.geolatte.geom.Geometry;
@@ -45,6 +42,9 @@ public class LocationDaoTest {
 
   @Autowired
   ApplicationDao applicationDao;
+
+  @Autowired
+  PostalAddressDao postalAddressDao;
 
   @Autowired
   TestCommon testCommon;
@@ -289,7 +289,7 @@ public class LocationDaoTest {
   @Test
   public void testFindDistrictOnInsert() {
     Location location = newLocationWithDefaults();
-    location.setStreetAddress("Testiosoite 1");
+    location.setPostalAddress(new PostalAddress("Testiosoite 1", null, null));
     location.setGeometry(geometrycollection(3879, herttoniemi_polygon));
     location.setApplicationId(application.getId());
     Location inserted = locationDao.insert(location);
@@ -308,7 +308,7 @@ public class LocationDaoTest {
   public void testFindDistrictOnUpdate() {
 
     Location location = newLocationWithDefaults();
-    location.setStreetAddress("Testiosoite 1");
+    location.setPostalAddress(new PostalAddress("Testiosoite 1", null, null));
     location.setApplicationId(application.getId());
     Location inserted = locationDao.insert(location);
     assertNull(inserted.getCityDistrictId());
@@ -325,6 +325,34 @@ public class LocationDaoTest {
     String districtName = locationDao.getCityDistrictList().stream().filter(d -> d.getId() == cityDistrictId)
         .map(d -> d.getName()).findFirst().orElse("NOT FOUND");
     assertEquals("43 HERTTONIEMI", districtName);
+  }
+
+  @Test
+  public void testLocationWithPostalAddress() {
+
+    String streetAddress = "Testiosoite 1";
+    String postalCode = "12312";
+    String city = "testcity";
+    Location location = newLocationWithDefaults();
+    location.setPostalAddress(new PostalAddress(streetAddress, postalCode, city));
+    location.setApplicationId(application.getId());
+    Location inserted = locationDao.insert(location);
+    assertEquals(streetAddress, inserted.getPostalAddress().getStreetAddress());
+    assertEquals(postalCode, inserted.getPostalAddress().getPostalCode());
+    assertEquals(city, inserted.getPostalAddress().getCity());
+
+    // test updating postal address
+    inserted.getPostalAddress().setStreetAddress("updated");
+    Location updated = locationDao.update(inserted.getId(), inserted);
+    assertEquals("updated", updated.getPostalAddress().getStreetAddress());
+    assertEquals(inserted.getPostalAddress().getId(), updated.getPostalAddress().getId());
+
+    // test deleting postal address
+    updated.setPostalAddress(null);
+    updated = locationDao.update(inserted.getId(), updated);
+    assertNull(updated.getPostalAddress());
+
+    assertFalse(postalAddressDao.findById(inserted.getPostalAddress().getId()).isPresent());
   }
 
   private Location newLocationWithDefaults() {

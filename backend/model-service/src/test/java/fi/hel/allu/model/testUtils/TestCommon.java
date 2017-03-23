@@ -171,7 +171,7 @@ public class TestCommon {
       ZonedDateTime endTime) {
     Location location = new Location();
     location.setGeometry(geometry);
-    location.setStreetAddress(streetAddress);
+    location.setPostalAddress(new PostalAddress(streetAddress, null, null));
     location.setApplicationId(applicationId);
     location.setUnderpass(false);
     location.setStartTime(startTime);

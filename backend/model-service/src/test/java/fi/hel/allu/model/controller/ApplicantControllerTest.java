@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.types.ApplicantType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Applicant;
+import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.junit.Before;
 import org.junit.Test;
@@ -84,19 +85,19 @@ public class ApplicantControllerTest {
     Applicant result = addApplicantAndGetResult("Timofei Tsurunenko", "timofei@tsurunen.org", null);
 
     Applicant newPerson = new Applicant();
+    newPerson.setPostalAddress(new PostalAddress(null, null, "Imatra"));
     newPerson.setName("Timpe");
-    newPerson.setCity("Imatra");
     newPerson.setType(ApplicantType.PERSON);
     wtc.perform(put(String.format("/applicants/%d", result.getId())), newPerson).andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.city", is("Imatra")));
+        .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.postalAddress.city", is("Imatra")));
 
   }
 
   @Test
   public void updateNonexistent() throws Exception {
     Applicant person = new Applicant();
+    person.setPostalAddress(new PostalAddress(null, null, "Imatra"));
     person.setName("Timpe");
-    person.setCity("Imatra");
     person.setType(ApplicantType.PERSON);
     wtc.perform(put(String.format("/applicants/27312")), person).andExpect(status().isNotFound());
   }

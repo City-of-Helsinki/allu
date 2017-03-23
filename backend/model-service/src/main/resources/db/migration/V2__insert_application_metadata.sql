@@ -809,6 +809,9 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'),  'name', 'Vastaanottajan nimi', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'),  'email', 'Vastaanottajan sähköposti', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'postalAddress', 'Vastaanottajan osoitetiedot', 'STRUCTURE', null,
+        (select id from allu.structure_meta where type_name = 'PostalAddress' and version = 1));
 
 -----------
 -- Comments

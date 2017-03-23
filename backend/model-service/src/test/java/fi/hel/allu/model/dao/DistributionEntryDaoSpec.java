@@ -4,6 +4,7 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.DistributionEntry;
+import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.Assert;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import org.springframework.transaction.TransactionStatus;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static com.greghaskins.spectrum.Spectrum.*;
 
@@ -27,12 +29,15 @@ public class DistributionEntryDaoSpec {
   @Autowired
   DistributionEntryDao distributionEntryDao;
   @Autowired
+  PostalAddressDao postalAddressDao;
+  @Autowired
   private TestCommon testCommon;
   @Autowired
   private PlatformTransactionManager transactionManager;
 
   private ZonedDateTime testTime = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
   private DistributionEntry testDistributionEntry = new DistributionEntry();
+  private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
   private DistributionEntry insertedDistributionEntry;
   private int applicationId;
 
@@ -66,6 +71,29 @@ public class DistributionEntryDaoSpec {
         distributionEntryDao.deleteByApplication(testDistributionEntry.getApplicationId());
         List<DistributionEntry> distributionEntries = distributionEntryDao.findById(Collections.singletonList(insertedDistributionEntry.getId()));
         Assert.assertEquals(0, distributionEntries.size());
+      });
+    });
+    describe("Distribution entry with postal address", () -> {
+      beforeEach(() -> {
+        testDistributionEntry.setPostalAddress(testPostalAddress);
+        insertedDistributionEntry = distributionEntryDao.insert(Collections.singletonList(testDistributionEntry)).get(0);
+      });
+      it("should return postal address from insert", () -> {
+        Assert.assertEquals(testPostalAddress.getCity(), insertedDistributionEntry.getPostalAddress().getCity());
+      });
+      it("should find entries with postal address by id", () -> {
+        List<DistributionEntry> distributionEntries = distributionEntryDao.findById(Collections.singletonList(insertedDistributionEntry.getId()));
+        Assert.assertEquals(1, distributionEntries.size());
+        DistributionEntry distributionEntry = distributionEntries.get(0);
+        Assert.assertEquals(testPostalAddress.getCity(), distributionEntry.getPostalAddress().getCity());
+      });
+      it("should delete entries with postal address by application id", () -> {
+        distributionEntryDao.deleteByApplication(testDistributionEntry.getApplicationId());
+        List<DistributionEntry> distributionEntries =
+            distributionEntryDao.findById(Collections.singletonList(insertedDistributionEntry.getId()));
+        Optional<PostalAddress> postalAddress = postalAddressDao.findById(insertedDistributionEntry.getPostalAddress().getId());
+        Assert.assertEquals(0, distributionEntries.size());
+        Assert.assertFalse(postalAddress.isPresent());
       });
     });
   }

@@ -327,14 +327,7 @@ public class ApplicationMapper {
     applicantJson.setRegistryKey(applicant.getRegistryKey());
     applicantJson.setPhone(applicant.getPhone());
     applicantJson.setEmail(applicant.getEmail());
-    PostalAddressJson postalAddressJson = null;
-    if (applicant.getStreetAddress() != null || applicant.getCity() != null || applicant.getPostalCode() != null) {
-      postalAddressJson = new PostalAddressJson();
-      postalAddressJson.setStreetAddress(applicant.getStreetAddress());
-      postalAddressJson.setCity(applicant.getCity());
-      postalAddressJson.setPostalCode(applicant.getPostalCode());
-    }
-    applicantJson.setPostalAddress(postalAddressJson);
+    applicantJson.setPostalAddress(createPostalAddressJson(applicant.getPostalAddress()));
   }
 
   public Applicant createApplicantModel(ApplicantJson applicantJson) {
@@ -345,11 +338,7 @@ public class ApplicationMapper {
     applicantModel.setRegistryKey(applicantJson.getRegistryKey());
     applicantModel.setPhone(applicantJson.getPhone());
     applicantModel.setEmail(applicantJson.getEmail());
-    if (applicantJson.getPostalAddress() != null) {
-      applicantModel.setStreetAddress(applicantJson.getPostalAddress().getStreetAddress());
-      applicantModel.setCity(applicantJson.getPostalAddress().getCity());
-      applicantModel.setPostalCode(applicantJson.getPostalAddress().getPostalCode());
-    }
+    applicantModel.setPostalAddress(createPostalAddressModel(applicantJson.getPostalAddress()));
     return applicantModel;
   }
 
@@ -364,9 +353,12 @@ public class ApplicationMapper {
     json.setId(c.getId());
     json.setApplicantId(c.getApplicantId());
     json.setName(c.getName());
-    json.setStreetAddress(c.getStreetAddress());
-    json.setPostalCode(c.getPostalCode());
-    json.setCity(c.getCity());
+    if (c.getPostalAddress() != null) {
+      // TODO: refactor when contact starts using PostalAddressJson
+      json.setStreetAddress(c.getPostalAddress().getStreetAddress());
+      json.setPostalCode(c.getPostalAddress().getPostalCode());
+      json.setCity(c.getPostalAddress().getCity());
+    }
     json.setEmail(c.getEmail());
     json.setPhone(c.getPhone());
     return json;
@@ -377,12 +369,33 @@ public class ApplicationMapper {
     contact.setId(json.getId());
     contact.setApplicantId(json.getApplicantId());
     contact.setName(json.getName());
-    contact.setStreetAddress(json.getStreetAddress());
-    contact.setPostalCode(json.getPostalCode());
-    contact.setCity(json.getCity());
+    if (json.getStreetAddress() != null || json.getPostalCode() != null || json.getCity() != null) {
+      // TODO: refactor when contact starts using PostalAddressJson
+      contact.setPostalAddress(new PostalAddress(json.getStreetAddress(), json.getPostalCode(), json.getCity()));
+    }
     contact.setEmail(json.getEmail());
     contact.setPhone(json.getPhone());
     return contact;
+  }
+
+  private PostalAddressJson createPostalAddressJson(PostalAddress postalAddress) {
+    if (postalAddress != null) {
+      PostalAddressJson postalAddressJson = new PostalAddressJson();
+      postalAddressJson.setStreetAddress(postalAddress.getStreetAddress());
+      postalAddressJson.setPostalCode(postalAddress.getPostalCode());
+      postalAddressJson.setCity(postalAddress.getCity());
+      return postalAddressJson;
+    } else {
+      return null;
+    }
+  }
+
+  private PostalAddress createPostalAddressModel(PostalAddressJson postalAddressJson) {
+    if (postalAddressJson != null) {
+      return new PostalAddress(postalAddressJson.getStreetAddress(), postalAddressJson.getPostalCode(), postalAddressJson.getCity());
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -641,7 +654,7 @@ public class ApplicationMapper {
     distributionEntryJson.setDistributionType(distributionEntry.getDistributionType());
     distributionEntryJson.setName(distributionEntry.getName());
     distributionEntryJson.setEmail(distributionEntry.getEmail());
-    // TODO: add this when postal address is modeled as separate table: distributionEntryJson.setPostalAddress(distributionEntry.getPostalAddress);
+    distributionEntryJson.setPostalAddress(createPostalAddressJson(distributionEntry.getPostalAddress()));
     return distributionEntryJson;
   }
 
@@ -650,7 +663,7 @@ public class ApplicationMapper {
     distributionEntry.setDistributionType(distributionEntryJson.getDistributionType());
     distributionEntry.setName(distributionEntryJson.getName());
     distributionEntry.setEmail(distributionEntryJson.getEmail());
-    // TODO: add this when postal address is modeled as separate table: distributionEntry.setPostalAddress(distributionEntryJson.getPostalAddress);
+    distributionEntry.setPostalAddress(createPostalAddressModel(distributionEntryJson.getPostalAddress()));
     return distributionEntry;
   }
 }
