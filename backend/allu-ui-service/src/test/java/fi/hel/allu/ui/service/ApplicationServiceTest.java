@@ -137,6 +137,9 @@ public class ApplicationServiceTest extends MockServices {
                 HttpStatus.CREATED));
 
     ApplicationJson applicationJson = createMockApplicationJson(1);
+    ApplicantJson applicantJson = new ApplicantJson();
+    applicantJson.setId(1);
+    applicationJson.setApplicant(applicantJson);
     applicationService.updateApplication(1, applicationJson);
     assertNotNull(applicationJson);
     assertEquals(1, applicationJson.getId().intValue());
