@@ -14,7 +14,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplicant.applicant;
@@ -44,8 +46,21 @@ public class ApplicantDao {
     return Optional.ofNullable(appl);
   }
 
+  @Transactional(readOnly = true)
+  public List<Applicant> findAll() {
+    List<Tuple> applicantPostalAddress = queryFactory
+        .select(applicantBean, postalAddressBean)
+        .from(applicant)
+        .leftJoin(postalAddress).on(applicant.postalAddressId.eq(postalAddress.id)).fetch();
+
+    return applicantPostalAddress.stream()
+        .map(apa -> PostalAddressUtil.mapPostalAddress(apa).get(0, Applicant.class))
+        .collect(Collectors.toList());
+  }
+
   @Transactional
   public Applicant insert(Applicant applicantData) {
+    applicantData.setId(null);
     Integer id = queryFactory
         .insert(applicant)
         .populate(applicantData).set(applicant.postalAddressId, postalAddressDao.insertIfNotNull(applicantData))

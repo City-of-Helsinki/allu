@@ -71,9 +71,8 @@ public class ContactController {
    *          The ID of the applicant
    * @return All contact items for the given applicant
    */
-  @RequestMapping(method = RequestMethod.GET, params = "applicantId")
-  public ResponseEntity<List<Contact>> findByApplicant(
-      @RequestParam(value = "applicantId") final int applicantId) {
+  @RequestMapping(value = "/applicant/{applicantId}", method = RequestMethod.GET)
+  public ResponseEntity<List<Contact>> findByApplicant(@PathVariable int applicantId) {
     List<Contact> contacts = contactDao.findByApplicant(applicantId);
     return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
@@ -81,13 +80,11 @@ public class ContactController {
   /**
    * Get the contact list for an application
    *
-   * @param applicationId
-   *          The application's ID
+   * @param applicationId The application's ID
    * @return List of the application's contacts in preference order
    */
-  @RequestMapping(method = RequestMethod.GET, params = "applicationId")
-  public ResponseEntity<List<Contact>> findByApplication(
-      @RequestParam(value = "applicationId") final int applicationId) {
+  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
+  public ResponseEntity<List<Contact>> findByApplication(@PathVariable int applicationId) {
     List<Contact> contacts = contactDao.findByApplication(applicationId);
     return new ResponseEntity<>(contacts, HttpStatus.OK);
   }

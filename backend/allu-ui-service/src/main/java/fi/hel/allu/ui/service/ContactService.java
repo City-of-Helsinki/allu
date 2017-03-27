@@ -4,9 +4,6 @@ import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -22,8 +19,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class ContactService {
-  @SuppressWarnings("unused")
-  private static final Logger logger = LoggerFactory.getLogger(ContactService.class);
 
   private ApplicationProperties applicationProperties;
 
@@ -39,6 +34,45 @@ public class ContactService {
     this.applicationMapper = applicationMapper;
   }
 
+  public ContactJson findById(int id) {
+    ResponseEntity<Contact> locationResult = restTemplate.getForEntity(
+        applicationProperties.getContactByIdUrl(),
+        Contact.class,
+        id);
+    return applicationMapper.createContactJson(locationResult.getBody());
+  }
+
+  public List<ContactJson> findByApplicant(int applicantId) {
+    ResponseEntity<Contact[]> locationResult = restTemplate.getForEntity(
+        applicationProperties.getContactsByApplicantUrl(),
+        Contact[].class,
+        applicantId);
+    List<ContactJson> results =
+        Arrays.stream(locationResult.getBody()).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
+    return results;
+  }
+
+  public ContactJson createContact(ContactJson contactJson) {
+    // TODO: update ElasticSearch
+    Contact contact = restTemplate.postForObject(
+        applicationProperties.getContactCreateUrl(),
+        applicationMapper.createContactModel(contactJson),
+        Contact.class);
+    return applicationMapper.createContactJson(contact);
+  }
+
+  public ContactJson updateContact(int id, ContactJson contactJson) {
+    // TODO: update ElasticSearch
+    HttpEntity<Contact> requestEntity = new HttpEntity<>(applicationMapper.createContactModel(contactJson));
+    ResponseEntity<Contact> response = restTemplate.exchange(
+        applicationProperties.getContactUpdateUrl(),
+        HttpMethod.PUT,
+        requestEntity,
+        Contact.class,
+        id);
+    return applicationMapper.createContactJson(response.getBody());
+  }
+
 
   /**
    * Find contacts for an application
@@ -49,7 +83,7 @@ public class ContactService {
    */
   public List<ContactJson> findContactsForApplication(int applicationId) {
     ResponseEntity<Contact[]> locationResult = restTemplate.getForEntity(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_CONTACT_FIND_BY_APPLICATION), Contact[].class,
+        applicationProperties.getContactsByApplicationUrl(), Contact[].class,
         applicationId);
     List<ContactJson> results = Arrays.stream(locationResult.getBody()).map(c -> applicationMapper.createContactJson(c))
         .collect(Collectors.toList());
@@ -61,8 +95,10 @@ public class ContactService {
     Optional.ofNullable(contacts)
         .ifPresent(l -> l.forEach(c -> modelData.add(applicationMapper.createContactModel(c))));
     ResponseEntity<Contact[]> locationResult = restTemplate.exchange(
-        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_CONTACT_FIND_BY_APPLICATION),
-        HttpMethod.PUT, new HttpEntity<>(modelData), Contact[].class, applicationId);
+        applicationProperties.getContactsUpdateApplicationUrl(),
+        HttpMethod.PUT,
+        new HttpEntity<>(modelData),
+        Contact[].class, applicationId);
 
     List<ContactJson> results = Arrays.stream(locationResult.getBody()).map(c -> applicationMapper.createContactJson(c))
         .collect(Collectors.toList());

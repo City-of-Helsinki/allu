@@ -78,46 +78,6 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_APPLICATION_FIND_ATTACHMENTS_BY_APPLICATION = "/applications/{applicationId}/attachments";
 
   /**
-   * Model-service path to create a new applicant
-   */
-  public static final String PATH_MODEL_APPLICANT_CREATE = "/applicants";
-
-  /**
-   * Model-service path to create a new applicant
-   */
-  public static final String PATH_MODEL_APPLICANT_UPDATE = "/applicants/{applicantId}";
-
-  /**
-   * Model-service path to find applicant by identifier
-   */
-  public static final String PATH_MODEL_APPLICANT_FIND_BY_ID = "/applicants/{applicantId}";
-
-  /**
-   * Model-service path to create a new contact
-   */
-  public static final String PATH_MODEL_CONTACT_CREATE = "/contacts";
-
-  /**
-   * Model-service path to update contact
-   */
-  public static final String PATH_MODEL_CONTACT_UPDATE = "/contacts/{contactId}";
-
-  /**
-   * Model-service path to find contact by identifier
-   */
-  public static final String PATH_MODEL_CONTACT_FIND_BY_ID = "/contacts/{contactId}";
-
-  /**
-   * Model-service path to find contacts by applicant identifier
-   */
-  public static final String PATH_MODEL_CONTACT_FIND_BY_APPLICANT = "/contacts?applicantId={applicantId}";
-
-  /**
-   * Model-service path to find contacts by application identifier
-   */
-  public static final String PATH_MODEL_CONTACT_FIND_BY_APPLICATION = "/contacts?applicationId={applicationId}";
-
-  /**
    * Model-service path to create a new location
    */
   public static final String PATH_MODEL_LOCATION_CREATE = "/locations";
@@ -610,6 +570,76 @@ public class ApplicationProperties {
    */
   public String getAddApplicationHistoryUrl() {
     return getModelServiceUrl("/applications/{applicationId}/history");
+  }
+
+  /**
+   * @return URL for getting an applicant by id.
+   */
+  public String getApplicantByIdUrl() {
+    return getModelServiceUrl("/applicants/{id}");
+  }
+
+  /**
+   * @return URL for getting all applicants.
+   */
+  public String getApplicantsUrl() {
+    return getModelServiceUrl("/applicants");
+  }
+
+  /**
+   * @return URL for creating an applicant.
+   */
+  public String getApplicantCreateUrl() {
+    return getModelServiceUrl("/applicants");
+  }
+
+  /**
+   * @return URL for updating an applicant.
+   */
+  public String getApplicantUpdateUrl() {
+    return getModelServiceUrl("/applicants/{id}");
+  }
+
+  /**
+   * @return URL for getting a contact by id.
+   */
+  public String getContactByIdUrl() {
+    return getModelServiceUrl("/contacts/{id}");
+  }
+
+  /**
+   * @return URL for getting a contact by applicant.
+   */
+  public String getContactsByApplicantUrl() {
+    return getModelServiceUrl("/contacts/applicant/{applicationId}");
+  }
+
+  /**
+   * @return URL for creating contact.
+   */
+  public String getContactCreateUrl() {
+    return getModelServiceUrl("/contacts");
+  }
+
+  /**
+   * @return URL for updating a contact by id.
+   */
+  public String getContactUpdateUrl() {
+    return getModelServiceUrl("/contacts/{id}");
+  }
+
+  /**
+   * Model-service path to find contacts by application identifier
+   */
+  public String getContactsByApplicationUrl() {
+    return getModelServiceUrl("/contacts/application/{applicationId}");
+  }
+
+  /**
+   * Model-service path to find contacts by application identifier
+   */
+  public String getContactsUpdateApplicationUrl() {
+    return getModelServiceUrl("/contacts?applicationId={applicationId}");
   }
 
   /**

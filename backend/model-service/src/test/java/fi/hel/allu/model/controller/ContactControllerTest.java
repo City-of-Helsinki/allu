@@ -159,13 +159,13 @@ public class ContactControllerTest {
       wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
     }
     // Now get all contacts for applicant 1 and make sure there's enough:
-    ResultActions resultActions = wtc.perform(get(String.format("/contacts?applicantId=%d", applicantId1)))
+    ResultActions resultActions = wtc.perform(get(String.format("/contacts/applicant/%d", applicantId1)))
         .andExpect(status().isOk());
     Contact[] contacts = wtc.parseObjectFromResult(resultActions, Contact[].class);
     assertEquals(10, contacts.length);
 
     // Try also with nonexistent applicant:
-    resultActions = wtc.perform(get(String.format("/contacts?applicantId=%d", applicantId1 + applicantId2 + 123)))
+    resultActions = wtc.perform(get(String.format("/contacts/applicant/%d", applicantId1 + applicantId2 + 123)))
         .andExpect(status().isOk());
     contacts = wtc.parseObjectFromResult(resultActions, Contact[].class);
     assertEquals(0, contacts.length);
@@ -203,7 +203,7 @@ public class ContactControllerTest {
     }
 
     // Then get the contacts via find API:
-    resultActions = wtc.perform(get(String.format("/contacts?applicationId=%d", applId))).andExpect(status().isOk());
+    resultActions = wtc.perform(get(String.format("/contacts/application/%d", applId))).andExpect(status().isOk());
     Contact[] found = wtc.parseObjectFromResult(resultActions, Contact[].class);
 
     // Verify that find returned the same objects

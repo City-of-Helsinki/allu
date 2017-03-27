@@ -1,21 +1,16 @@
 package fi.hel.allu.model.controller;
 
-import java.util.Optional;
-
-import javax.validation.Valid;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.domain.Applicant;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/applicants")
@@ -25,11 +20,16 @@ public class ApplicantController {
   private ApplicantDao applicantDao;
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
-  public ResponseEntity<Applicant> applicant(@PathVariable int id) {
+  public ResponseEntity<Applicant> findApplicant(@PathVariable int id) {
     Optional<Applicant> applicant = applicantDao.findById(id);
     Applicant applicantValue = applicant
         .orElseThrow(() -> new NoSuchEntityException("Applicant not found", Integer.toString(id)));
     return new ResponseEntity<>(applicantValue, HttpStatus.OK);
+  }
+
+  @RequestMapping(method = RequestMethod.GET)
+  public ResponseEntity<List<Applicant>> findAllApplicants() {
+    return new ResponseEntity<>(applicantDao.findAll(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
@@ -41,9 +41,6 @@ public class ApplicantController {
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Applicant> addApplicant(@Valid @RequestBody(required = true) Applicant applicant) {
-    if (applicant.getId() != null) {
-      throw new IllegalArgumentException("Id must be null for insert");
-    }
     return new ResponseEntity<>(applicantDao.insert(applicant), HttpStatus.OK);
   }
 }

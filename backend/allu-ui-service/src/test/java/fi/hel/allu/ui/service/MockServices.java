@@ -46,7 +46,7 @@ public abstract class MockServices {
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Applicant.class)))
-        .thenAnswer((Answer<Applicant>) invocation -> createMockPersonModel());
+        .thenAnswer((Answer<Applicant>) invocation -> createMockApplicantModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Project.class)))
@@ -54,9 +54,6 @@ public abstract class MockServices {
 
     Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(HttpEntity.class), Mockito.eq(Project.class), Mockito.anyInt()))
       .thenAnswer((Answer<ResponseEntity<Project>>) invocation -> new ResponseEntity<>(createMockProjectModel(), HttpStatus.CREATED));
-    Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Applicant.class)))
-        .thenAnswer((Answer<Applicant>) invocation -> createMockApplicantModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Event.class)))

@@ -60,8 +60,8 @@ public class ApplicantControllerTest {
 
   @Test
   public void addPersonWithId() throws Exception {
-    // add person with id. Should fail:
-    addPersonApplicant("Paavo Ruotsalainen", "ei-oo", 239).andExpect(status().isBadRequest());
+    // add person with id. Should not fail, ignores id and creates new applicant:
+    addPersonApplicant("Paavo Ruotsalainen", "ei-oo", 239).andExpect(status().isOk());
   }
 
   @Test
@@ -72,6 +72,16 @@ public class ApplicantControllerTest {
     // Now check Jaakko got there.
     wtc.perform(get(String.format("/applicants/%d", result.getId()))).andExpect(status().isOk())
         .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.name", is("Jaakko Jokkela")));
+  }
+
+  @Test
+  public void getPersons() throws Exception {
+    // Setup: add person
+    Applicant result = addApplicantAndGetResult("Jaakko Jokkela", "jaska193@mbnet.fi", null);
+
+    // Now check Jaakko got there.
+    wtc.perform(get("/applicants")).andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id", is(result.getId()))).andExpect(jsonPath("$[0].name", is("Jaakko Jokkela")));
   }
 
   @Test

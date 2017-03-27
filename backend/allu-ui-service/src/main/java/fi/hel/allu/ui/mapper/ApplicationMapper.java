@@ -320,7 +320,8 @@ public class ApplicationMapper {
     return flatList;
   }
 
-  public void mapApplicantToJson(ApplicantJson applicantJson, Applicant applicant) {
+  public ApplicantJson createApplicantJson(Applicant applicant) {
+    ApplicantJson applicantJson = new ApplicantJson();
     applicantJson.setId(applicant.getId());
     applicantJson.setType(applicant.getType());
     applicantJson.setName(applicant.getName());
@@ -328,6 +329,7 @@ public class ApplicationMapper {
     applicantJson.setPhone(applicant.getPhone());
     applicantJson.setEmail(applicant.getEmail());
     applicantJson.setPostalAddress(createPostalAddressJson(applicant.getPostalAddress()));
+    return applicantJson;
   }
 
   public Applicant createApplicantModel(ApplicantJson applicantJson) {
@@ -604,12 +606,6 @@ public class ApplicationMapper {
     trafficArrangement.setAdditionalInfo(trafficArrangementJson.getAdditionalInfo());
     trafficArrangement.setTrafficArrangements(trafficArrangementJson.getTrafficArrangements());
     return trafficArrangement;
-  }
-
-  private ApplicantJson createApplicantJson(Applicant applicant) {
-    ApplicantJson applicantJson = new ApplicantJson();
-    mapApplicantToJson(applicantJson, applicant);
-    return applicantJson;
   }
 
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {

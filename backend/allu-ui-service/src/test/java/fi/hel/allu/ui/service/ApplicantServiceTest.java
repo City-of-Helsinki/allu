@@ -2,7 +2,6 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.ui.domain.ApplicantJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
-
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,12 +11,10 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
 import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 public class ApplicantServiceTest extends MockServices {
   private static Validator validator;
@@ -57,24 +54,7 @@ public class ApplicantServiceTest extends MockServices {
     ApplicantJson applicantJson = applicantService.createApplicant(createApplicantJson(1, null));
     assertNotNull(applicantJson);
     assertNotNull(applicantJson.getId());
-    assertEquals(1, applicantJson.getId().intValue());
-  }
-
-  @Test
-  public void updateValidApplicant() {
-    ApplicantJson applicantJson = createApplicantJson(1, 1);
-    applicantService.updateApplicant(applicantJson);
-    assertNotNull(applicantJson);
-    assertNotNull(applicantJson.getId());
-    assertEquals(1, applicantJson.getId().intValue());
-  }
-
-  @Test
-  public void updateApplicantWithoutId() {
-    ApplicantJson applicantJson = createApplicantJson(null, 1);
-    applicantService.updateApplicant(applicantJson);
-    assertNotNull(applicantJson);
-    assertNull(applicantJson.getId());
+    assertEquals(103, applicantJson.getId().intValue());
   }
 
   @Test

@@ -145,7 +145,7 @@ public class ApplicationService {
    * @return Updated application
    */
   ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
-    applicantService.updateApplicant(applicationJson.getApplicant());
+    applicantService.updateApplicant(applicationJson.getApplicant().getId(), applicationJson.getApplicant());
     List<LocationJson> locationJsons = null;
     if (applicationJson.getLocations() != null) {
       // TODO: deleting all existing locations and creating them from scratch cannot be done, because deleting is not ok for "korvaava hakemus"
