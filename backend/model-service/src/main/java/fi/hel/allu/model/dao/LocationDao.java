@@ -11,12 +11,14 @@ import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.QCityDistrict;
 import fi.hel.allu.QLocationGeometry;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 import org.geolatte.geom.Geometry;
 import org.geolatte.geom.GeometryCollection;
 import org.slf4j.Logger;
@@ -104,9 +106,8 @@ public class LocationDao {
     return findById(id).get();
   }
 
-  @Transactional
-  public Location update(int id, Location locationData) {
-    locationData.setId(id);
+  private Location update(Location locationData) {
+    int id = locationData.getId();
     Optional<Location> currentLocationOpt = findById(id);
     if (!currentLocationOpt.isPresent()) {
       throw new NoSuchEntityException("Attempted to update non-existent location", Integer.toString(id));
@@ -128,7 +129,6 @@ public class LocationDao {
     setGeometry(id, locationData.getGeometry());
     queryFactory.delete(locationFlids).where(locationFlids.locationId.eq(id)).execute();
     setFixedLocationIds(id, locationData.getFixedLocationIds());
-    updateApplicationDate(locationData.getApplicationId());
     return findById(id).get();
   }
 
@@ -153,6 +153,68 @@ public class LocationDao {
     locationIds.forEach(locationId -> {
       deleteById(locationId);
     });
+  }
+
+  /**
+   * Update application's locations. Goes through the given locations and
+   * detects which of them already belong to the application. Those are updated.
+   * Locations that don't belong to application are inserted. Locations that
+   * were in the application but are not provided are removed.
+   *
+   * @param applicationId the application's ID
+   * @param locations new list of locations for the application.
+   * @return the application's locations after the update.
+   */
+  @Transactional
+  public List<Location> updateApplicationLocations(int applicationId, List<Location> locations) {
+    // Make sure all new locations have an id (map null to -1, since it's not a
+    // valid Database ID).
+    locations.stream().filter(l -> l.getId() == null).forEach(l -> l.setId(-1));
+    locations.sort((l1, l2) -> l1.getId().compareTo(l2.getId()));
+    // Read existing location IDs
+    List<Integer> oldLocationIds = queryFactory.select(location.id).from(location)
+        .where(location.applicationId.eq(applicationId)).orderBy(location.id.asc()).fetch();
+
+    // walk through the sorted lists and compare IDs.
+    Iterator<Integer> oldIter = oldLocationIds.iterator();
+    Iterator<Location> newIter = locations.iterator();
+    while (oldIter.hasNext() && newIter.hasNext()) {
+      Integer oldId = oldIter.next();
+      Location newLocation = newIter.next();
+
+      while (!oldId.equals(newLocation.getId())) {
+        if (oldId < newLocation.getId()) {
+          // Not in new list, remove
+          deleteById(oldId);
+          if (!oldIter.hasNext())
+            break;
+          oldId = oldIter.next();
+        } else {
+          // ID not in old list, add
+          insert(newLocation);
+          if (!newIter.hasNext())
+            break;
+          newLocation = newIter.next();
+        }
+      }
+      if (oldId.equals(newLocation.getId())) {
+        // ID in both lists, update
+        update(newLocation);
+      }
+    }
+    // Handle possible tails
+    while (oldIter.hasNext()) {
+      // remove
+      Integer oldId = oldIter.next();
+      deleteById(oldId);
+    }
+    while (newIter.hasNext()) {
+      // add
+      Location newLocation = newIter.next();
+      insert(newLocation);
+    }
+    updateApplicationDate(applicationId);
+    return findByApplication(applicationId);
   }
 
   @Transactional(readOnly = true)

@@ -46,15 +46,17 @@ public class LocationController {
   }
 
   /**
-   * Updates given locations. All locations must have the same application.
+   * Updates locations for the given application.
    *
-   * @param   locations   Locations to be updated.
-   * @return  Updated locations.
+   * @param applicationId Id of the application whose locations should be
+   *          updated.
+   * @param locations Locations to be updated.
+   * @return Updated locations.
    */
-  @RequestMapping(method = RequestMethod.PUT)
-  public ResponseEntity<List<Location>> update(
+  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.PUT)
+  public ResponseEntity<List<Location>> updateApplicationLocations(@PathVariable int applicationId,
       @Valid @RequestBody List<Location> locations) {
-    return new ResponseEntity<>(locationService.update(locations), HttpStatus.OK);
+    return new ResponseEntity<>(locationService.updateApplicationLocations(applicationId, locations), HttpStatus.OK);
   }
 
   /**

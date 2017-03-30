@@ -56,16 +56,10 @@ public class LocationService {
   }
 
   @Transactional
-  public List<Location> update(List<Location> locations) {
-    List<Location> newLocations = new ArrayList<>();
-    locations.forEach(l -> newLocations.add(locationDao.update(l.getId(), l)));
+  public List<Location> updateApplicationLocations(int applicationId, List<Location> locations) {
+    List<Location> newLocations = locationDao.updateApplicationLocations(applicationId, locations);
     updateApplicationAndProject(getApplicationId(newLocations));
     return newLocations;
-  }
-
-  @Transactional
-  public Location update(Location location) {
-    return update(Collections.singletonList(location)).get(0);
   }
 
   @Transactional

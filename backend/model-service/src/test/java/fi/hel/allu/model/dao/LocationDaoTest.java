@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -96,11 +97,59 @@ public class LocationDaoTest {
     int loc1Version = locOut1.getLocationVersion();
     locOut1.setLocationKey(null);
     locOut1.setLocationVersion(null);
-    Location locOut2 = locationDao.update(locOut1.getId(), locOut1);
+    Location locOut2 = locationDao.updateApplicationLocations(application.getId(), Collections.singletonList(locOut1))
+        .get(0);
     assertEquals(loc1Key, (int) locOut2.getLocationKey());
     assertEquals(loc1Version, (int) locOut2.getLocationVersion());
   }
 
+  @Test
+  public void testApplicationLocationsUpdateCreatesLocations() {
+    Location locIn = newLocationWithDefaults();
+    locIn.setApplicationId(application.getId());
+    locIn.setGeometry(geometrycollection(3879, Sq_0_0));
+    List<Location> newLocations = locationDao.updateApplicationLocations(application.getId(),
+        Collections.singletonList(locIn));
+    assertEquals(1, newLocations.size());
+    assertEquals(locIn.getGeometry(), newLocations.get(0).getGeometry());
+  }
+
+  @Test
+  public void testApplicationLocationAddRemoveUpdate() {
+    // Set-up: add two locations to application
+    Location locIn = newLocationWithDefaults();
+    locIn.setApplicationId(application.getId());
+    locIn.setGeometry(geometrycollection(3879, Sq_0_0));
+    Location location1 = locationDao.insert(locIn);
+    locIn.setGeometry(geometrycollection(3879, Sq_1_1));
+    Location location2 = locationDao.insert(locIn);
+    // Test: update one of the locations, remove one, and add a new one.
+    location1.setGeometry(geometrycollection(3879, Sq_2_2));
+    Location location3 = newLocationWithDefaults();
+    location3.setApplicationId(application.getId());
+    location3.setGeometry(geometrycollection(3879, Sq_5_5));
+    List<Location> newLocations = locationDao.updateApplicationLocations(application.getId(),
+        Arrays.asList(location1, location3));
+    // location2 should be gone, location3 inserted
+    assertEquals(2, newLocations.size());
+    assertEquals(1, newLocations.stream().filter(l -> l.getId().equals(location1.getId())).count());
+    assertEquals(0, newLocations.stream().filter(l -> l.getId().equals(location2.getId())).count());
+    assertEquals(1, newLocations.stream().filter(l -> l.getGeometry().equals(location3.getGeometry())).count());
+  }
+
+  @Test
+  public void testApplicationLocationsUpdateRemovesLocations() {
+    // Set-up: add two locations to application
+    Location locIn = newLocationWithDefaults();
+    locIn.setApplicationId(application.getId());
+    locIn.setGeometry(geometrycollection(3879, Sq_0_0));
+    locationDao.insert(locIn);
+    locIn.setGeometry(geometrycollection(3879, Sq_1_1));
+    locationDao.insert(locIn);
+    // Test: update with empty list, should remove all locations
+    List<Location> newLocations = locationDao.updateApplicationLocations(application.getId(), Collections.emptyList());
+    assertEquals(0, newLocations.size());
+  }
 
   @Test
   public void testArea() {
@@ -314,7 +363,7 @@ public class LocationDaoTest {
     assertNull(inserted.getCityDistrictId());
 
     inserted.setGeometry(geometrycollection(3879, herttoniemi_polygon));
-    inserted = locationDao.update(inserted.getId(), inserted);
+    inserted = locationDao.updateApplicationLocations(application.getId(), Collections.singletonList(inserted)).get(0);
 
     // Check that the location now has a district ID:
     Integer cityDistrictId = inserted.getCityDistrictId();
@@ -343,13 +392,14 @@ public class LocationDaoTest {
 
     // test updating postal address
     inserted.getPostalAddress().setStreetAddress("updated");
-    Location updated = locationDao.update(inserted.getId(), inserted);
+    Location updated = locationDao.updateApplicationLocations(application.getId(), Collections.singletonList(inserted))
+        .get(0);
     assertEquals("updated", updated.getPostalAddress().getStreetAddress());
     assertEquals(inserted.getPostalAddress().getId(), updated.getPostalAddress().getId());
 
     // test deleting postal address
     updated.setPostalAddress(null);
-    updated = locationDao.update(inserted.getId(), updated);
+    updated = locationDao.updateApplicationLocations(application.getId(), Collections.singletonList(updated)).get(0);
     assertNull(updated.getPostalAddress());
 
     assertFalse(postalAddressDao.findById(inserted.getPostalAddress().getId()).isPresent());

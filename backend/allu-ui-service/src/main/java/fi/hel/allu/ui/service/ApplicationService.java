@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -27,7 +27,6 @@ public class ApplicationService {
   private ApplicantService applicantService;
   private ApplicationMapper applicationMapper;
   private ContactService contactService;
-  private MetaService metaService;
   private UserService userService;
 
   @Autowired
@@ -38,7 +37,6 @@ public class ApplicationService {
       ApplicantService applicantService,
       ApplicationMapper applicationMapper,
       ContactService contactService,
-      MetaService metaService,
       UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
@@ -46,7 +44,6 @@ public class ApplicationService {
     this.applicantService = applicantService;
     this.applicationMapper = applicationMapper;
     this.contactService = contactService;
-    this.metaService = metaService;
     this.userService = userService;
   }
 
@@ -127,9 +124,8 @@ public class ApplicationService {
         applicationMapper.createApplicationModel(newApplication),
         Application.class);
 
-    List<LocationJson> locations = Collections.emptyList();
     if (newApplication.getLocations() != null) {
-      locations = locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
+      locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
     }
 
     contactService.setContactsForApplication(applicationModel.getId(), contacts);
@@ -148,10 +144,7 @@ public class ApplicationService {
     applicantService.updateApplicant(applicationJson.getApplicant().getId(), applicationJson.getApplicant());
     List<LocationJson> locationJsons = null;
     if (applicationJson.getLocations() != null) {
-      // TODO: deleting all existing locations and creating them from scratch cannot be done, because deleting is not ok for "korvaava hakemus"
-      // TODO: fix this when adding support for location versioning
-      locationService.deleteApplicationLocation(applicationId);
-      locationJsons = locationService.createLocations(applicationId, applicationJson.getLocations());
+      locationJsons = locationService.updateApplicationLocations(applicationId, applicationJson.getLocations());
       applicationJson.setLocations(locationJsons);
     } else {
       locationService.deleteApplicationLocation(applicationId);

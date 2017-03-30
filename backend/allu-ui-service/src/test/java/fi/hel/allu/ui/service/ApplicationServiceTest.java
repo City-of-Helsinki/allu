@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -27,13 +28,16 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -48,8 +52,6 @@ public class ApplicationServiceTest extends MockServices {
   protected ApplicationMapper applicationMapper;
   @Mock
   protected ContactService contactService;
-  @Mock
-  protected MetaService metaService;
   @Mock
   protected UserService userService;
 
@@ -84,16 +86,11 @@ public class ApplicationServiceTest extends MockServices {
     Mockito.when(contactService.findContactsForApplication(Mockito.anyInt()))
         .thenAnswer((Answer<List<ContactJson>>) invocation -> createContactList());
 
-    Mockito.when(metaService.findMetadataForApplication(Mockito.any()))
-        .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
-    Mockito.when(metaService.findMetadataForApplication(Mockito.any(), Mockito.anyInt()))
-        .thenAnswer((Answer<StructureMetaJson>) invocation -> createMockStructureMetadataJson());
-
     userJson = new UserJson(USER_ID, null, null, null, null, true, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     applicationService = new ApplicationService(
-        props, restTemplate, locationService, applicantService, applicationMapper, contactService, metaService, userService);
+        props, restTemplate, locationService, applicantService, applicationMapper, contactService, userService);
   }
 
   @Test

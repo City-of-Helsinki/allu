@@ -6,6 +6,7 @@ import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.geolatte.geom.Geometry;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,13 +20,20 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -106,7 +114,8 @@ public class LocationControllerTest {
     newLocation.setUnderpass(false);
     newLocation.setStartTime(ZonedDateTime.now());
     newLocation.setEndTime(ZonedDateTime.now());
-    wtc.perform(put(String.format("/locations", result.getId())), Collections.singletonList(newLocation)).andExpect(status().isOk())
+    wtc.perform(put(String.format("/locations/application/%d", application.getId())),
+        Collections.singletonList(newLocation)).andExpect(status().isOk())
         .andExpect(jsonPath("$.[0].id", is(result.getId()))).andExpect(jsonPath("$.[0].postalAddress.city", is("Hellsing")));
   }
 
@@ -118,20 +127,11 @@ public class LocationControllerTest {
     Location updatedLocation = locations.get(0);
     updatedLocation.getPostalAddress().setPostalCode("updated");
     Set<String> expectedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
-    wtc.perform(put(String.format("/locations")), locations).andExpect(status().isOk());
+    wtc.perform(put(String.format("/locations/application/%d", application.getId())), locations)
+        .andExpect(status().isOk());
     List<Location> updatedLocations = getLocationsByApplicationId(application.getId());
     Set<String> updatedPostalCodes = locations.stream().map(l -> l.getPostalAddress().getPostalCode()).collect(Collectors.toSet());
     Assert.assertTrue(updatedPostalCodes.containsAll(expectedPostalCodes));
-  }
-
-
-  @Test
-  public void updateNonexistent() throws Exception {
-    Location location = new Location();
-    location.setPostalAddress(new PostalAddress("Ikuisen Vapun Aukio 3", null, "Hellsing"));
-    location.setId(999);
-    location.setApplicationId(123);
-    wtc.perform(put(String.format("/locations")), Collections.singletonList(location)).andExpect(status().isNotFound());
   }
 
   @Test

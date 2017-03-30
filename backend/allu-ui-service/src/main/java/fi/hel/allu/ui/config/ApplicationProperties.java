@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.config;
 
 import fi.hel.allu.common.types.StatusType;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -361,10 +362,10 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return url for updating locations.
+   * @return url for updating application's locations.
    */
-  public String getLocationsUpdateUrl() {
-    return getModelServiceUrl("/locations");
+  public String getUpdateApplicationLocationsUrl() {
+    return getModelServiceUrl("/locations/application/{applicationId}");
   }
 
   /**
