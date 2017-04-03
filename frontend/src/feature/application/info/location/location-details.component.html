@@ -34,19 +34,19 @@
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" [ngModel]="application.firstLocation.areaOverride" [readonly]="readonly"
+                                <input mdInput type="text" [ngModel]="location.areaOverride" [readonly]="readonly"
                                        placeholder="Käsittelijän syöttämä pinta-ala" />
                             </md-input-container>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" value="{{districtName(application.firstLocation.cityDistrictId) | async}}"
+                                <input mdInput type="text" [ngModel]="districtName(location.cityDistrictId) | async"
                                        [readonly]="readonly" placeholder="Kaupunginosa"/>
                             </md-input-container>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" value="{{districtName(application.firstLocation.cityDistrictIdOverride) | async}}"
+                                <input mdInput type="text" [ngModel]="districtName(location.cityDistrictIdOverride) | async"
                                        [readonly]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
                             </md-input-container>
                         </div>
@@ -59,6 +59,11 @@
                     <div class="mapcontainer">
                         <map [selection]="true" [applicationId]="application.id" [showOnlyApplicationArea]="true"></map>
                     </div>
+                </div>
+            </div>
+            <div class="row" *ngIf="multipleLocations">
+                <div class="col m12">
+                    <stored-locations [readonly]="true"></stored-locations>
                 </div>
             </div>
         </md-card-content>

@@ -17,7 +17,7 @@
             <tr *ngFor="let location of locations | async; let i = index"
                 [class.selected]="i===locationState.editIndex" class="clickable row-highlight"
                 (click)="editLocation(i)">
-                <th><button type="button" md-icon-button (click)="remove()"><md-icon>clear</md-icon></button></th>
+                <th><button type="button" *ngIf="!readonly" md-icon-button (click)="remove()"><md-icon>clear</md-icon></button></th>
                 <td>{{location.locationKey}}</td>
                 <td>{{location.uiStartTime}}</td>
                 <td>{{location.uiEndTime}}</td>

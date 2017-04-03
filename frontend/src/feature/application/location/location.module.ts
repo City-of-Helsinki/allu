@@ -28,6 +28,9 @@ import {StoredLocationsComponent} from './stored-locations.component';
     StoredLocationsComponent
   ],
   providers: [
+  ],
+  exports: [
+    StoredLocationsComponent
   ]
 })
 export class LocationModule {

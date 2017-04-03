@@ -1,4 +1,4 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnInit, OnDestroy, Input} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {MapHub} from '../../../service/map/map-hub';
 import {LocationState} from '../../../service/application/location-state';
@@ -13,6 +13,8 @@ import {Location} from '../../../model/common/location';
   ]
 })
 export class StoredLocationsComponent implements OnInit, OnDestroy {
+
+  @Input() readonly: boolean = false;
 
   locations: Observable<Array<Location>>;
 
