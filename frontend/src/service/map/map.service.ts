@@ -13,7 +13,7 @@ import {translations, findTranslation} from '../../util/translations';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {Geocoordinates} from '../../model/common/geocoordinates';
-import {styleByApplicationType} from './map-draw-styles';
+import {styleByApplicationType, pathStyle} from './map-draw-styles';
 import {MapPopup} from './map-popup';
 import GeoJSONOptions = L.GeoJSONOptions;
 
@@ -79,28 +79,23 @@ export class MapState {
 
     let draw = controlsEnabled ? {
         polygon: {
-          shapeOptions: styleByApplicationType.DEFAULT,
+          shapeOptions: pathStyle.DEFAULT_DRAW,
           allowIntersection: false,
           showArea: true
         },
         circle: {
-          shapeOptions: styleByApplicationType.DEFAULT
+          shapeOptions: pathStyle.DEFAULT_DRAW
         },
         rectangle: {
-          shapeOptions: styleByApplicationType.DEFAULT
+          shapeOptions: pathStyle.DEFAULT_DRAW
         },
         polyline: {
-          shapeOptions: styleByApplicationType.DEFAULT
+          shapeOptions: pathStyle.DEFAULT_DRAW
         },
         marker: false
       } : false;
 
-    let edit = controlsEnabled ? {
-        selectedPathOptions: {
-          maintainColor: true,
-          moveMarkers: true
-        }
-      } : false;
+    let edit = controlsEnabled ? { selectedPathOptions: pathStyle.DEFAULT_EDIT } : false;
 
     let drawControl = new L.Control.Draw({
       position: 'topright',

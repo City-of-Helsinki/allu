@@ -5,7 +5,7 @@ import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
-import {styleByApplicationType} from '../../service/map/map-draw-styles';
+import {styleByApplicationType, pathStyle} from '../../service/map/map-draw-styles';
 import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
 import {MapPopup} from '../../service/map/map-popup';
 import {ApplicationState} from '../../service/application/application-state';
@@ -35,15 +35,11 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private mapService: MapService,
     private mapHub: MapHub,
-    private applicationState: ApplicationState,
     private projectHub: ProjectHub) {}
 
   ngOnInit() {
     this.mapState = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
     this.initSubscriptions();
-
-    // Handle fetching and drawing edited application as separate case
-    Some(this.applicationId).do(id => this.drawEditedApplication(this.applicationState.application));
 
     Some(this.projectId).do(id => this.drawProject(id));
   }
@@ -100,14 +96,9 @@ export class MapComponent implements OnInit, OnDestroy {
   private drawEditedLocation(location: Location): void {
     this.mapState.clearEdited();
     if (location) {
-      this.mapState.drawEditableGeometry(location.geometry);
+      this.mapState.drawEditableGeometry(location.geometry, pathStyle.DEFAULT);
+      this.updateMapControls([location]);
     }
-  }
-
-
-  private drawEditedApplication(application: Application) {
-    application.geometries().forEach(g => this.mapState.drawEditableGeometry(g));
-    this.updateMapControls(application.locations);
   }
 
   private updateMapControls(locations: Array<Location>) {

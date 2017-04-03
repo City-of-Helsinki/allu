@@ -11,11 +11,13 @@ export class LocationState {
   private locations$ = new BehaviorSubject<Array<Location>>([]);
   private _editIndex: number;
 
-  constructor(private mapHub: MapHub) {}
+  constructor(private mapHub: MapHub) {
+    this.locations.subscribe(locations => this.notifyOnChange(locations));
+  }
 
   initLocations(locations: Array<Location>): void {
+    this._editIndex = 0;
     this.locations$.next(locations);
-    this.notifyOnChange();
   }
 
   get locations(): Observable<Array<Location>> {
@@ -40,9 +42,9 @@ export class LocationState {
       } else {
         next = current.concat(location);
       }
+
+      this.clearEdited();
       this.locations$.next(next);
-      this._editIndex = undefined;
-      this.notifyOnChange();
     }
   }
 
@@ -50,22 +52,25 @@ export class LocationState {
     let current = this.locations$.getValue();
     current.splice(index, 1);
     this.locations$.next(current);
-    this.notifyOnChange();
   }
 
   editLocation(index: number): void {
     this._editIndex = index;
-    this.notifyOnChange();
+    this.locations$.next(this.locations$.getValue().slice());
   }
 
   cancelEditing(): void {
-    this._editIndex = undefined;
-    this.mapHub.editLocation(undefined);
-    this.notifyOnChange();
+    this.clearEdited();
+    this.locations$.next(this.locations$.getValue().slice());
   }
 
-  notifyOnChange(): void {
-    let otherLocations = this.locations$.getValue().slice(); // Copy array elements
+  private clearEdited(): void {
+    this._editIndex = undefined;
+    this.mapHub.editLocation(undefined);
+  }
+
+  private notifyOnChange(locations: Array<Location>): void {
+    let otherLocations = locations.slice(); // Copy array elements
     let editedLocation = Some(this._editIndex)
       .map(index => otherLocations.splice(index, 1)[0]) // Splice returns removed value
       .orElse(undefined);

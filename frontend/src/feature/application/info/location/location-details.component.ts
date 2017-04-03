@@ -42,6 +42,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.mapHub.selectApplication(this.application);
+    this.mapHub.drawLocations(this.application.locations);
   }
 
   districtName(id: number): Observable<string> {

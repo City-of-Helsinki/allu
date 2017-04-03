@@ -25,7 +25,7 @@ export class MapHub {
   private search$ = new Subject<string>();
   private applicationSelection$ = new Subject<Application>();
   private applications$ = new Subject<Array<Application>>();
-  private editedLocation$ = new Subject<Location>();
+  private editedLocation$ = new BehaviorSubject<Location>(undefined);
   private locationsToDraw$ = new BehaviorSubject<Array<Location>>([]);
   private searchBar$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
   private mapView$ = new Subject<GeoJSON.GeometryObject>();

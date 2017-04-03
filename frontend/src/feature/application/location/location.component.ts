@@ -66,9 +66,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private fb: FormBuilder) {
 
     this.areaCtrl = fb.control(undefined);
-    this.areaCtrl.valueChanges.subscribe(id => this.onAreaChange(id));
     this.sectionsCtrl = fb.control([]);
-    this.sectionsCtrl.valueChanges.subscribe(ids => this.onSectionsChange(ids));
 
     this.locationForm = fb.group({
       id: [undefined],
@@ -106,6 +104,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
     this.initForm();
     this.mapHub.editedLocation().subscribe(loc => this.editLocation(loc));
+
+    this.areaCtrl.valueChanges.subscribe(id => this.onAreaChange(id));
+    this.sectionsCtrl.valueChanges
+      .distinctUntilChanged(ArrayUtil.numberArrayEqual)
+      .subscribe(ids => this.onSectionsChange(ids));
   }
 
   ngOnDestroy() {
@@ -229,9 +232,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .map(areas => areas[0].id)
       .do(id => this.locationForm.patchValue({area: id}));
 
-    Some(this.application.firstLocation).do(location => {
-      this.locationForm.patchValue({sections: location.fixedLocationIds});
-    });
+    Some(this.application.firstLocation)
+      .filter(location => location.fixedLocationIds.length > 0)
+      .do(location => this.sectionsCtrl.patchValue({sections: location.fixedLocationIds}));
   }
 
   private onAreaChange(id: number): void {
@@ -243,7 +246,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         .sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
 
       area.singleDefaultSectionForKind(kind)
-        .do(defaultSection => this.locationForm.patchValue({sections: [defaultSection.id]}));
+        .do(defaultSection => this.sectionsCtrl.patchValue({sections: [defaultSection.id]}));
     } else {
       this.sections = [];
       this.locationForm.patchValue({sections: []});
@@ -262,7 +265,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       this.locationForm.patchValue(formValues);
       this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
       this.searchbarFilter$.next(this.createFilter(this.application.firstLocation));
-      this.locationState.editLocation(0);
     }
   }
 

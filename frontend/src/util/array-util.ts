@@ -18,8 +18,24 @@ export class ArrayUtil {
     }
   }
 
+  static numberArrayEqual(left: Array<number>, right: Array<number>): boolean {
+    return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;
+  }
+
+  private static compareNumeric(left: Array<number>, right: Array<number>): number {
+    while (left.length && right.length) {
+      let leftHead = left.shift();
+      let rightHead = right.shift();
+      let result = leftHead - rightHead;
+      if (result) {
+        return result; // We got difference between values since result <> 0
+      }
+    }
+    return left.length - right.length;
+  }
+
   private static naturalCompare(left, right): number {
-    return ArrayUtil.compare(ArrayUtil.toParts(left), ArrayUtil.toParts(right));
+    return ArrayUtil.compareParts(ArrayUtil.toParts(left), ArrayUtil.toParts(right));
   }
 
   private static toParts(full): Array<[number, string]> {
@@ -32,7 +48,7 @@ export class ArrayUtil {
     }
   }
 
-  private static compare(left: Array<[number, string]>, right: Array<[number, string]>): number {
+  private static compareParts(left: Array<[number, string]>, right: Array<[number, string]>): number {
     while (left.length && right.length) {
       let leftHead = left.shift();
       let rightHead = right.shift();
