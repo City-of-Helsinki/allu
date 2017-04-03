@@ -18,9 +18,12 @@ import java.io.IOException;
 @Component
 public class ElasticSearchMappingConfig {
 
-  public static final String APPLICATION_INDEX_NAME = "allu";
+  public static final String APPLICATION_INDEX_NAME = "applications";
+  public static final String CUSTOMER_INDEX_NAME = "customers";
+
   public static final String APPLICATION_TYPE_NAME = "application";
   public static final String PROJECT_TYPE_NAME = "project";
+  public static final String APPLICANT_TYPE_NAME = "applicant";
 
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
   private Client client;
@@ -40,12 +43,19 @@ public class ElasticSearchMappingConfig {
     } catch (IndexAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + APPLICATION_INDEX_NAME  + " not created, because it exists already.");
     }
+    try {
+      CreateIndexRequestBuilder createIndexRequestBuilder =
+          client.admin().indices().prepareCreate(CUSTOMER_INDEX_NAME).setSettings(getIndexSettingsForCustomer());
+      createIndexRequestBuilder.addMapping(APPLICANT_TYPE_NAME, getMappingBuilderForApplicant());
+      createIndexRequestBuilder.execute().actionGet();
+    } catch (IndexAlreadyExistsException e) {
+      logger.info("ElasticSearch mapping for index " + CUSTOMER_INDEX_NAME  + " not created, because it exists already.");
+    }
   }
 
   public XContentBuilder getMappingBuilderForApplication() {
     try {
-      XContentBuilder mappingBuilder = null;
-      mappingBuilder = XContentFactory.jsonBuilder()
+      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
           .startObject()
             .startObject("properties")
               .startObject("creationTime")
@@ -69,5 +79,54 @@ public class ElasticSearchMappingConfig {
   public XContentBuilder getMappingBuilderForProject() {
     // as long applications have "close enough" mapping, projects can use the same mapping
     return getMappingBuilderForApplication();
+  }
+
+  public XContentBuilder getIndexSettingsForCustomer() {
+    try {
+      XContentBuilder settingsBuilder = null;
+      settingsBuilder = XContentFactory.jsonBuilder()
+          .startObject()
+            .startObject("analysis")
+              .startObject("filter")
+                .startObject("autocomplete_filter")
+                  .field("type", "edge_ngram")
+                  .field("min_gram", "1")
+                  .field("max_gram", "20")
+                .endObject()
+              .endObject()
+              .startObject("analyzer")
+                .startObject("autocomplete")
+                  .field("type", "custom")
+                  .field("tokenizer", "standard")
+                  .array("filter", "lowercase", "autocomplete_filter")
+                .endObject()
+              .endObject()
+            .endObject()
+          .endObject();
+      logger.debug("customer index settings {}", settingsBuilder.string());
+      return settingsBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+    }
+  }
+
+  public XContentBuilder getMappingBuilderForApplicant() {
+    try {
+      XContentBuilder mappingBuilder = null;
+      mappingBuilder = XContentFactory.jsonBuilder()
+          .startObject()
+            .startObject("properties")
+              .startObject("name")
+                // autocomplete analyzer for name field of applicant
+                .field("type", "string")
+                .field("analyzer", "autocomplete")
+                .field("search_analyzer", "standard")
+              .endObject()
+            .endObject()
+          .endObject();
+      return mappingBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+    }
   }
 }

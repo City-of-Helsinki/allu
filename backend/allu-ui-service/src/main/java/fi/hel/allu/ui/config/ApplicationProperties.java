@@ -581,6 +581,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for getting applicant by ids.
+   */
+  public String getApplicantsByIdUrl() {
+    return getModelServiceUrl("/applicants/find");
+  }
+
+  /**
    * @return URL for getting all applicants.
    */
   public String getApplicantsUrl() {
@@ -599,6 +606,48 @@ public class ApplicationProperties {
    */
   public String getApplicantUpdateUrl() {
     return getModelServiceUrl("/applicants/{id}");
+  }
+
+  /**
+   * @return URL for finding application ids of the applications having given applicant.
+   */
+  public String getApplicantApplicationsUrl() {
+    return getModelServiceUrl("/applicants/applications/{id}");
+  }
+
+  /**
+   * @return url to send applicant search queries.
+   */
+  public String getApplicantSearchUrl() {
+    return getSearchServiceUrl("/applicants/search");
+  }
+
+  /**
+   * @return url to send applicant search queries with partial words.
+   */
+  public String getApplicantSearchPartialUrl() {
+    return getSearchServiceUrl("/applicants/search/{fieldName}");
+  }
+
+  /**
+   * @return url to send multiple applicant search index updates.
+   */
+  public String getApplicantsSearchUpdateUrl() {
+    return getSearchServiceUrl("/applicants/update");
+  }
+
+  /**
+   * @return url to update applications to have the given applicant in search index.
+   */
+  public String getApplicantApplicationsSearchUpdateUrl() {
+    return getSearchServiceUrl("/applicants/{id}/applications");
+  }
+
+  /**
+   * @return url to add applicant to search index.
+   */
+  public String getApplicantSearchCreateUrl() {
+    return getSearchServiceUrl("/applicants");
   }
 
   /**

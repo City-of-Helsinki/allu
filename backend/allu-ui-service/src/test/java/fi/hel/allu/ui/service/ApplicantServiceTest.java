@@ -5,6 +5,7 @@ import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.validation.ConstraintViolation;
@@ -31,7 +32,7 @@ public class ApplicantServiceTest extends MockServices {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
-    applicantService = new ApplicantService(props, restTemplate, new ApplicationMapper());
+    applicantService = new ApplicantService(props, restTemplate, new ApplicationMapper(), Mockito.mock(SearchService.class));
   }
 
   @Test

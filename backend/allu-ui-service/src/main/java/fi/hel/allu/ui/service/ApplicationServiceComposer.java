@@ -151,7 +151,7 @@ public class ApplicationServiceComposer {
     if (!queryParameters.getQueryParameters().isEmpty()) {
       List<Integer> ids = searchService.searchApplication(QueryParameterMapper.mapToQueryParameters(queryParameters));
       resultList = getFullyPopulatedApplications(ids);
-      orderByIdList(ids, resultList);
+      SearchService.orderByIdList(ids, resultList, (applicationJson) -> applicationJson.getId());
     }
     return resultList;
   }
@@ -183,21 +183,6 @@ public class ApplicationServiceComposer {
   private List<ApplicationJson> getFullyPopulatedApplications(List<Integer> ids) {
     List<Application> foundApplications = applicationService.findApplicationsById(ids);
     return foundApplications.stream().map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
-  }
-
-  /**
-   * Orders given application list by the order of id list.
-   *
-   * @param ids               Order of applications.
-   * @param applicationList   Applications to be ordered.
-   */
-  private void orderByIdList(List<Integer> ids, List<ApplicationJson> applicationList) {
-    // use the application order returned by search service
-    Map<Integer, Integer> idToOrder = new HashMap<>();
-    for (int i = 0; i < ids.size(); ++i) {
-      idToOrder.put(ids.get(i), i);
-    }
-    Collections.sort(applicationList, Comparator.comparingInt(application -> idToOrder.get(application.getId())));
   }
 
   /**

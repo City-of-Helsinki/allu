@@ -53,7 +53,7 @@ public class ContactService {
   }
 
   public ContactJson createContact(ContactJson contactJson) {
-    // TODO: update ElasticSearch
+    // TODO: update ElasticSearch (only customer registry)
     Contact contact = restTemplate.postForObject(
         applicationProperties.getContactCreateUrl(),
         applicationMapper.createContactModel(contactJson),
@@ -62,7 +62,7 @@ public class ContactService {
   }
 
   public ContactJson updateContact(int id, ContactJson contactJson) {
-    // TODO: update ElasticSearch
+    // TODO: update ElasticSearch (both customer registry and related applications)
     HttpEntity<Contact> requestEntity = new HttpEntity<>(applicationMapper.createContactModel(contactJson));
     ResponseEntity<Contact> response = restTemplate.exchange(
         applicationProperties.getContactUpdateUrl(),

@@ -47,6 +47,19 @@ public class ApplicantDao {
   }
 
   @Transactional(readOnly = true)
+  public List<Applicant> findByIds(List<Integer> ids) {
+    List<Tuple> applicantPostalAddress = queryFactory
+        .select(applicantBean, postalAddressBean)
+        .from(applicant)
+        .leftJoin(postalAddress).on(applicant.postalAddressId.eq(postalAddress.id))
+        .where(applicant.id.in(ids)).fetch();
+
+    return applicantPostalAddress.stream()
+        .map(apa -> PostalAddressUtil.mapPostalAddress(apa).get(0, Applicant.class))
+        .collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
   public List<Applicant> findAll() {
     List<Tuple> applicantPostalAddress = queryFactory
         .select(applicantBean, postalAddressBean)

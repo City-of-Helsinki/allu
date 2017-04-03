@@ -4,9 +4,7 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.GenericSearchService;
-import fi.hel.allu.search.service.ProjectSearchService;
 import org.elasticsearch.client.Client;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,24 +25,30 @@ public class ProjectSearchServiceTest {
 
   @Autowired
   private Client client;
-  private ProjectSearchService projectSearchService;
-  private GenericSearchService genericSearchService;
-  private ApplicationSearchService applicationSearchService;
+  private GenericSearchService projectSearchService;
+  private GenericSearchService applicationSearchService;
 
   private static final String projectName = "testiname";
 
   @Before
   public void setUp() throws Exception {
     ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-    genericSearchService = new GenericSearchService(elasticSearchMappingConfig, client);
-    projectSearchService = new ProjectSearchService(genericSearchService, client);
-    applicationSearchService = new ApplicationSearchService(genericSearchService, client);
+    projectSearchService = new GenericSearchService(
+        elasticSearchMappingConfig,
+        client,
+        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
+        ElasticSearchMappingConfig.PROJECT_TYPE_NAME);
+    applicationSearchService = new GenericSearchService(
+        elasticSearchMappingConfig,
+        client,
+        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
+        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
   }
 
   @Test
   public void testInsertProject() {
     ProjectES projectES = createProject(1, 2);
-    projectSearchService.insertProject(projectES);
+    projectSearchService.insert(projectES.getId().toString(), projectES);
   }
 
   @Test
@@ -52,8 +56,8 @@ public class ProjectSearchServiceTest {
     ProjectES projectES = createProject(1, 2);
     ApplicationES applicationES = ApplicationSearchTest.createApplication(123);
     // insert both project and application to catch possible property type mismatches: project first and then application
-    projectSearchService.insertProject(projectES);
-    applicationSearchService.insertApplication(applicationES);
+    projectSearchService.insert(projectES.getId().toString(), projectES);
+    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
   }
 
   @Test
@@ -61,14 +65,14 @@ public class ProjectSearchServiceTest {
     ProjectES projectES = createProject(1, 2);
     ApplicationES applicationES = ApplicationSearchTest.createApplication(123);
     // insert both project and application to catch possible property type mismatches: : application first and then project
-    applicationSearchService.insertApplication(applicationES);
-    projectSearchService.insertProject(projectES);
+    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    projectSearchService.insert(projectES.getId().toString(), projectES);
   }
 
   @Test
   public void testFindByField() {
     ProjectES projectES = createProject(1, 2);
-    projectSearchService.insertProject(projectES);
+    projectSearchService.insert(projectES.getId().toString(), projectES);
     QueryParameters params = SearchTestUtil.createQueryParameters("name", projectName);
     projectSearchService.refreshIndex();
     List<Integer> appList = projectSearchService.findByField(params);

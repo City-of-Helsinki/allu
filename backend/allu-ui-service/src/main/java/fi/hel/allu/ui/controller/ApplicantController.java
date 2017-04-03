@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.ApplicantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +34,20 @@ public class ApplicantController {
     return new ResponseEntity<>(applicantService.findAllApplicants(), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ApplicantJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
+    return new ResponseEntity<>(applicantService.search(queryParameters), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/search/{fieldName}", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ApplicantJson>> search(
+      @PathVariable String fieldName,
+      @RequestBody String searchString) {
+    return new ResponseEntity<>(applicantService.searchPartial(fieldName, searchString), HttpStatus.OK);
+  }
+
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<ApplicantJson> create(@Valid @RequestBody(required = true) ApplicantJson applicant) {
@@ -46,5 +61,4 @@ public class ApplicantController {
   }
 
   // TODO: delete/hide applicant                      DELETE /applicants/{id} ?
-  // TODO: search incrementally applicants by name    POST /customers/applicants/search
 }

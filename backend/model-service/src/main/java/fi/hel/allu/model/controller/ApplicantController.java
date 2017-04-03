@@ -2,6 +2,7 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Applicant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ public class ApplicantController {
 
   @Autowired
   private ApplicantDao applicantDao;
+  @Autowired
+  private ApplicationDao applicationDao;
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Applicant> findApplicant(@PathVariable int id) {
@@ -25,6 +28,22 @@ public class ApplicantController {
     Applicant applicantValue = applicant
         .orElseThrow(() -> new NoSuchEntityException("Applicant not found", Integer.toString(id)));
     return new ResponseEntity<>(applicantValue, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  public ResponseEntity<List<Applicant>> findApplicants(@RequestBody List<Integer> ids) {
+    return new ResponseEntity<>(applicantDao.findByIds(ids), HttpStatus.OK);
+  }
+
+  /**
+   * Returns application ids of the applications having given applicant.
+   *
+   * @param id    id of the applicant whose related applications are returned.
+   * @return  List of application ids. Never <code>null</code>.
+   */
+  @RequestMapping(value = "/applications/{id}", method = RequestMethod.GET)
+  public ResponseEntity<List<Integer>> findApplicationsByApplicant(@PathVariable int id) {
+    return new ResponseEntity<>(applicationDao.findByApplicant(id), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.GET)

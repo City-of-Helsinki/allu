@@ -86,6 +86,20 @@ public class ApplicationDao {
     return populateDependencies(applications);
   }
 
+  /**
+   * Finds applications related to the given applicant.
+   *
+   * @param id    Id of the applicant whose applications are fetched.
+   * @return List of related application ids. Never <code>null</code>.
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> findByApplicant(int id) {
+    return queryFactory
+        .select(application.id)
+        .from(application)
+        .where(application.applicantId.eq(id)).fetch();
+  }
+
   @Transactional
   public Application insert(Application appl) {
     appl.setApplicationId(createApplicationId(appl.getType()));

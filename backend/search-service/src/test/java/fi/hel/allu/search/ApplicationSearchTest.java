@@ -5,7 +5,6 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
-import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.GenericSearchService;
 import org.elasticsearch.client.Client;
 import org.junit.Before;
@@ -32,15 +31,17 @@ public class ApplicationSearchTest {
 
   @Autowired
   private Client client;
-  private ApplicationSearchService applicationSearchService;
   private GenericSearchService genericSearchService;
 
 
   @Before
   public void setUp() throws Exception {
     ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-    genericSearchService = new GenericSearchService(elasticSearchMappingConfig, client);
-    applicationSearchService = new ApplicationSearchService(genericSearchService, client);
+    genericSearchService = new GenericSearchService(
+        elasticSearchMappingConfig,
+        client,
+        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
+        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
   }
 
   @Test
@@ -53,20 +54,20 @@ public class ApplicationSearchTest {
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     applicationES.setApplicationTypeData(createApplicationTypeData());
 
-    applicationSearchService.insertApplication(applicationES);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
   }
 
   @Test
   public void testFindByField() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insertApplication(applicationES);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", "testi");
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    genericSearchService.refreshIndex();
+    List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());
-    applicationSearchService.deleteApplication("1");
+    genericSearchService.delete("1");
   }
 
   @Test
@@ -77,9 +78,9 @@ public class ApplicationSearchTest {
     applicationES2.setName("a");
     ApplicationES applicationES3 = createApplication(3);
     applicationES3.setName("b");
-    applicationSearchService.insertApplication(applicationES1);
-    applicationSearchService.insertApplication(applicationES2);
-    applicationSearchService.insertApplication(applicationES3);
+    genericSearchService.insert(applicationES1.getId().toString(), applicationES1);
+    genericSearchService.insert(applicationES2.getId().toString(), applicationES2);
+    genericSearchService.insert(applicationES3.getId().toString(), applicationES3);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter("handler.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
@@ -87,16 +88,16 @@ public class ApplicationSearchTest {
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
     params.setSort(new QueryParameters.Sort("name", QueryParameters.Sort.Direction.ASC));
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    genericSearchService.refreshIndex();
+    List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(3, appList.size());
     assertEquals(2, appList.get(0).intValue());
     assertEquals(3, appList.get(1).intValue());
     assertEquals(1, appList.get(2).intValue());
-    applicationSearchService.deleteApplication("1");
-    applicationSearchService.deleteApplication("2");
-    applicationSearchService.deleteApplication("3");
+    genericSearchService.delete("1");
+    genericSearchService.delete("2");
+    genericSearchService.delete("3");
   }
 
   @Test
@@ -109,9 +110,9 @@ public class ApplicationSearchTest {
     applicationES2.setStatus(new StatusTypeES(StatusType.HANDLING));
     applicationES3.setStatus(new StatusTypeES(StatusType.DECISION));
 
-    applicationSearchService.insertApplication(applicationES1);
-    applicationSearchService.insertApplication(applicationES2);
-    applicationSearchService.insertApplication(applicationES3);
+    genericSearchService.insert(applicationES1.getId().toString(), applicationES1);
+    genericSearchService.insert(applicationES2.getId().toString(), applicationES2);
+    genericSearchService.insert(applicationES3.getId().toString(), applicationES3);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter(
@@ -120,71 +121,71 @@ public class ApplicationSearchTest {
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
     params.setSort(new QueryParameters.Sort("status.ordinal", QueryParameters.Sort.Direction.ASC));
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    genericSearchService.refreshIndex();
+    List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(3, appList.size());
     // results should be sorted by the enumeration order of StatusType
     assertEquals(2, appList.get(0).intValue());
     assertEquals(3, appList.get(1).intValue());
     assertEquals(1, appList.get(2).intValue());
-    applicationSearchService.deleteApplication("1");
-    applicationSearchService.deleteApplication("2");
-    applicationSearchService.deleteApplication("3");
+    genericSearchService.delete("1");
+    genericSearchService.delete("2");
+    genericSearchService.delete("3");
   }
 
   @Test
   public void testFindByContact() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insertApplication(applicationES);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
 
     QueryParameters params = SearchTestUtil.createQueryParameters("contacts.name", "kontakti");
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    genericSearchService.refreshIndex();
+    List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());
-    applicationSearchService.deleteApplication("1");
+    genericSearchService.delete("1");
   }
 
   @Test
   public void testFindByMultipleHandlers() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insertApplication(applicationES);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter("handler.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    genericSearchService.refreshIndex();
+    List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());
-    applicationSearchService.deleteApplication("1");
+    genericSearchService.delete("1");
   }
 
   @Test
   public void testFindByMultipleStatuses() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insertApplication(applicationES);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter("status.value", Arrays.asList(StatusType.PENDING.name(), StatusType.CANCELLED.name()));
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    genericSearchService.refreshIndex();
+    List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());
-    applicationSearchService.deleteApplication("1");
+    genericSearchService.delete("1");
   }
 
   @Test
   public void testFindByDateField() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insertApplication(applicationES);
-    applicationSearchService.refreshIndex();
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
+    genericSearchService.refreshIndex();
 
     QueryParameters params = new QueryParameters();
     ZonedDateTime testStartTime = ZonedDateTime.parse("2016-07-05T06:10:10.000Z");
@@ -193,7 +194,7 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());
 
@@ -203,28 +204,28 @@ public class ApplicationSearchTest {
     parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    appList = applicationSearchService.findByField(params);
+    appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(0, appList.size());
 
-    applicationSearchService.deleteApplication("1");
+    genericSearchService.delete("1");
   }
 
   @Test
   public void testUpdateApplication() {
     ApplicationES applicationES = createApplication(100);
-    applicationSearchService.insertApplication(applicationES);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
 
     final String newName = "Päivitetty testi";
     applicationES.setName(newName);
 
-    applicationSearchService.updateApplications(Collections.singletonList(applicationES));
-    applicationSearchService.refreshIndex();
+    genericSearchService.update(Collections.singletonMap(applicationES.getId().toString(), applicationES));
+    genericSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", newName);
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = genericSearchService.findByField(params);
     assertEquals(1, appList.size());
-    applicationSearchService.deleteApplication("100");
+    genericSearchService.delete("100");
   }
 
   public static ApplicationES createApplication(Integer id) {

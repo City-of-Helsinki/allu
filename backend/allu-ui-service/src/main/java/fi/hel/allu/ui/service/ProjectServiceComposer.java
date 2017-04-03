@@ -46,7 +46,7 @@ public class ProjectServiceComposer {
     List<ProjectJson> resultList = Collections.emptyList();
     List<Integer> ids = searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters));
     resultList = projectService.findByIds(ids);
-    orderByIdList(ids, resultList);
+    SearchService.orderByIdList(ids, resultList, (projectJson) -> projectJson.getId());
     return resultList;
   }
 
@@ -134,20 +134,5 @@ public class ProjectServiceComposer {
 
   public void updateParentForProjects(Integer parentProject, List<Integer> ids) {
     ids.forEach(id -> updateProjectParent(id, parentProject));
-  }
-
-  /**
-   * Orders given projects list by the order of id list.
-   *
-   * @param ids           Order of projects.
-   * @param projectList   Projects to be ordered.
-   */
-  private void orderByIdList(List<Integer> ids, List<ProjectJson> projectList) {
-    // use the project order returned by search service
-    Map<Integer, Integer> idToOrder = new HashMap<>();
-    for (int i = 0; i < ids.size(); ++i) {
-      idToOrder.put(ids.get(i), i);
-    }
-    Collections.sort(projectList, Comparator.comparingInt(projectJson -> idToOrder.get(projectJson.getId())));
   }
 }

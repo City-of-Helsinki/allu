@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -46,6 +47,34 @@ public class ApplicationDaoTest {
     testDistributionEntry = new DistributionEntry();
     testDistributionEntry.setDistributionType(DistributionType.PAPER);
     testDistributionEntry.setEmail("foobar@foo.fi");
+  }
+/*
+  describe("Applicant dao with applications", () -> {
+    beforeEach(() -> {
+      insertedApplicant = applicantDao.insert(testApplicant);
+      insertedApplicationId = testCommon.insertApplication("dummy application", "foo handler");
+    });
+    it("should not find applications by applicant id", () -> {
+      List<Integer> applicationIds = applicantDao.findRelatedApplications(insertedApplicant.getId());
+      assertTrue(applicationIds.isEmpty());
+    });
+    it("should find applications by applicant id", () -> {
+      Application application = applicationDao.findByIds(Collections.singletonList(insertedApplicationId)).get(0);
+      application.setApplicantId(insertedApplicant.getId());
+      applicationDao.update(insertedApplicationId, application);
+      List<Integer> applicationIds = applicantDao.findRelatedApplications(insertedApplicant.getId());
+      assertEquals(1, applicationIds.size());
+      assertEquals(insertedApplicationId, (int) applicationIds.get(0));
+    });
+  });
+*/
+  @Test
+  public void testFindApplicationsByApplicant() {
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Application insertedApplication = applicationDao.insert(application);
+    List<Integer> applicationIds = applicationDao.findByApplicant(insertedApplication.getApplicantId());
+    assertEquals(1, applicationIds.size());
+    assertEquals(insertedApplication.getId(), applicationIds.get(0));
   }
 
   @Test

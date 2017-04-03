@@ -380,6 +380,14 @@ public class ApplicationMapper {
     return contact;
   }
 
+  public ApplicantES createApplicantES(ApplicantJson applicantJson) {
+    if (applicantJson != null) {
+      return new ApplicantES(applicantJson.getId(), applicantJson.getName(), applicantJson.getRegistryKey());
+    } else {
+      return null;
+    }
+  }
+
   private PostalAddressJson createPostalAddressJson(PostalAddress postalAddress) {
     if (postalAddress != null) {
       PostalAddressJson postalAddressJson = new PostalAddressJson();
@@ -632,14 +640,6 @@ public class ApplicationMapper {
       return contacts.stream()
           .map(c -> new ContactES(c.getName()))
           .collect(Collectors.toList());
-    } else {
-      return null;
-    }
-  }
-
-  private ApplicantES createApplicantES(ApplicantJson applicantJson) {
-    if (applicantJson != null) {
-      return new ApplicantES(applicantJson.getName());
     } else {
       return null;
     }

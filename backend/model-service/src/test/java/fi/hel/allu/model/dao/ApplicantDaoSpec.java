@@ -14,6 +14,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +31,8 @@ public class ApplicantDaoSpec {
   @Autowired
   PostalAddressDao postalAddressDao;
   @Autowired
+  ApplicationDao applicationDao;
+  @Autowired
   private TestCommon testCommon;
   @Autowired
   private PlatformTransactionManager transactionManager;
@@ -37,7 +40,6 @@ public class ApplicantDaoSpec {
   private Applicant testApplicant;
   private Applicant insertedApplicant;
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
-//  private int applicationId;
 
   private TransactionStatus transaction;
 
@@ -66,6 +68,13 @@ public class ApplicantDaoSpec {
       });
       it("should find applicants by id", () -> {
         List<Applicant> applicants = applicantDao.findAll();
+        assertFalse(applicants.isEmpty());
+        Applicant applicant = applicants.get(0);
+        assertEquals(testApplicant.getName(), applicant.getName());
+        assertEquals(testApplicant.getPhone(), applicant.getPhone());
+      });
+      it("should find applicants by ids", () -> {
+        List<Applicant> applicants = applicantDao.findByIds(Collections.singletonList(insertedApplicant.getId()));
         assertFalse(applicants.isEmpty());
         Applicant applicant = applicants.get(0);
         assertEquals(testApplicant.getName(), applicant.getName());
