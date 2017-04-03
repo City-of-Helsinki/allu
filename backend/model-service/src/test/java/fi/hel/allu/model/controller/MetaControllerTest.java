@@ -9,6 +9,7 @@ import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import fi.hel.allu.ui.domain.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,7 +73,7 @@ public class MetaControllerTest {
     List<String> applicationAttributes =
         Arrays.stream(ApplicationJson.class.getDeclaredFields()).map(df -> df.getName()).map(name -> "/" + name).collect(Collectors.toList());
     HashSet<String> metaAttributes =
-        sMetaInResult.getAttributes().stream().map(a -> a.getName()).collect(Collectors.toCollection(HashSet::new));
+        sMetaInResult.getAttributes().stream().map(a -> attributeName(a)).collect(Collectors.toCollection(HashSet::new));
     applicationAttributes.remove("/metadataVersion");
     applicationAttributes.forEach(aa -> assertTrue("metadata is missing:" + aa, metaAttributes.contains(aa))); //
   }
@@ -156,7 +157,23 @@ public class MetaControllerTest {
     List<String> jsonAttributes =
         Arrays.stream(extensionJsonClass.getDeclaredFields()).map(df -> df.getName()).map(name -> "/extension/" + name).collect(Collectors.toList());
     HashSet<String> metaAttributes =
-        sMeta.getAttributes().stream().map(a -> a.getName()).filter(name -> name.startsWith("/extension")).collect(Collectors.toCollection(HashSet::new));
+        sMeta.getAttributes().stream().map(a -> attributeName(a)).filter(name -> name.startsWith("/extension"))
+            .collect(Collectors.toCollection(HashSet::new));
     jsonAttributes.forEach(a -> assertTrue("metadata is missing: " + a, metaAttributes.contains(a)));
   }
+
+  /*
+   * List-type attributes have "/*" at the end. For verification, it needs to be
+   * stripped away:
+   */
+  private String attributeName(AttributeMeta attribute) {
+    if (attribute.getDataType() == AttributeDataType.LIST) {
+      String metaName = attribute.getName();
+      assertTrue("List metadata name doesn't end with /*: " + metaName, metaName.endsWith("/*"));
+      return metaName.substring(0, metaName.length() - 2);
+    } else {
+      return attribute.getName();
+    }
+  }
+
 }
