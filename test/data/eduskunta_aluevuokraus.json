@@ -214,7 +214,8 @@
       "phone": "0232195450"
     },
     "additionalInfo": "Remontti valmis, kun se on valmis",
-    "trafficArrangements": "Eduskuntaan ei pääse, mene muualle"
+    "trafficArrangements": "Eduskuntaan ei pääse, mene muualle",
+    "trafficArrangementImpedimentType": "INSIGNIFICANT_IMPEDIMENT"
   },
   "applicationTags": [
   ]

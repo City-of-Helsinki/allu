@@ -7,6 +7,7 @@ import {
   MdCardModule,
   MdIconModule,
   MdButtonModule,
+  MdButtonToggleModule,
   MdInputModule,
   MdSelectModule,
   MdCheckboxModule
@@ -53,6 +54,7 @@ import {InputBoxComponent} from './input-box/input-box.component';
     MdCardModule,
     MdIconModule,
     MdButtonModule,
+    MdButtonToggleModule,
     MdInputModule,
     MdSelectModule,
     MdCheckboxModule,

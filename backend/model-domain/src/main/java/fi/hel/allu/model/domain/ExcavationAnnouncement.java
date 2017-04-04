@@ -1,6 +1,7 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.TrafficArrangementImpedimentType;
 
 import java.time.ZonedDateTime;
 
@@ -26,6 +27,8 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   private Integer cableReportId;
   private String additionalInfo;
   private String trafficArrangements;
+  private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
+
 
   @Override
   public ApplicationType getApplicationType() {
@@ -233,5 +236,16 @@ public class ExcavationAnnouncement extends ApplicationExtension {
 
   public void setTrafficArrangements(String trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
+  }
+
+  /**
+   * In Finnish: Liikennejärjestelyn haitta.
+   */
+  public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
+    return trafficArrangementImpedimentType;
+  }
+
+  public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
+    this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
   }
 }

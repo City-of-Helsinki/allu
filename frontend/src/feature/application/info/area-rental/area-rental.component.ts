@@ -54,6 +54,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       workFinished: [''],
       trafficArrangements: [''],
+      trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']
     });
   }

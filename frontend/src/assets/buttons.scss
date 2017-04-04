@@ -1,0 +1,21 @@
+@import '~@angular/material/core/theming/all-theme';
+
+@mixin button-toggle-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  .mat-button-toggle-checked {
+    background: mat-color($primary, 500);
+
+    & label {
+      color: mat-contrast($primary, 500);
+    }
+  }
+
+  .mat-button-toggle-disabled.mat-button-toggle-checked {
+    background: mat-color($primary, 300);
+
+    & label {
+      color: mat-contrast($primary, 500);
+    }
+  }
+}

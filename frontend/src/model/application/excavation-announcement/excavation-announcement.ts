@@ -26,6 +26,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     cableReportId: number,
     additionalInfo: string,
     trafficArrangements: string,
+    trafficArrangementImpedimentType: string,
     terms: string
   )
   constructor(
@@ -48,6 +49,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public cableReportId?: number,
     public additionalInfo?: string,
     public trafficArrangements?: string,
+    public trafficArrangementImpedimentType?: string,
     public terms?: string
   ) {
     super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], specifiers, terms);

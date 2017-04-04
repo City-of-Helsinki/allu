@@ -418,6 +418,7 @@ public class ApplicationMapper {
     areaRental.setResponsiblePerson(createContactModel(areaRentalJson.getResponsiblePerson()));
     areaRental.setAdditionalInfo(areaRentalJson.getAdditionalInfo());
     areaRental.setTrafficArrangements(areaRentalJson.getTrafficArrangements());
+    areaRental.setTrafficArrangementImpedimentType(areaRentalJson.getTrafficArrangementImpedimentType());
     areaRental.setWorkFinished(areaRentalJson.getWorkFinished());
     return areaRental;
   }
@@ -432,6 +433,7 @@ public class ApplicationMapper {
     areaRentalJson.setResponsiblePerson(createContactJson(areaRental.getResponsiblePerson()));
     areaRentalJson.setAdditionalInfo(areaRental.getAdditionalInfo());
     areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
+    areaRentalJson.setTrafficArrangementImpedimentType(areaRental.getTrafficArrangementImpedimentType());
     areaRentalJson.setWorkFinished(areaRental.getWorkFinished());
     return areaRentalJson;
   }
@@ -501,6 +503,7 @@ public class ApplicationMapper {
     json.setWinterTimeOperation(model.getWinterTimeOperation());
     json.setWorkFinished(model.getWorkFinished());
     json.setTrafficArrangements(model.getTrafficArrangements());
+    json.setTrafficArrangementImpedimentType(model.getTrafficArrangementImpedimentType());
     json.setPksCard(model.getPksCard());
     json.setConstructionWork(model.getConstructionWork());
     json.setMaintenanceWork(model.getMaintenanceWork());
@@ -528,6 +531,7 @@ public class ApplicationMapper {
     excavationAnnouncement.setWinterTimeOperation(excavationAnnouncementJson.getWinterTimeOperation());
     excavationAnnouncement.setWorkFinished(excavationAnnouncementJson.getWorkFinished());
     excavationAnnouncement.setTrafficArrangements(excavationAnnouncementJson.getTrafficArrangements());
+    excavationAnnouncement.setTrafficArrangementImpedimentType(excavationAnnouncementJson.getTrafficArrangementImpedimentType());
     excavationAnnouncement.setPksCard(excavationAnnouncementJson.getPksCard());
     excavationAnnouncement.setConstructionWork(excavationAnnouncementJson.getConstructionWork());
     excavationAnnouncement.setMaintenanceWork(excavationAnnouncementJson.getMaintenanceWork());
@@ -602,6 +606,7 @@ public class ApplicationMapper {
     trafficArrangementJson.setWorkFinished(trafficArrangement.getWorkFinished());
     trafficArrangementJson.setAdditionalInfo(trafficArrangement.getAdditionalInfo());
     trafficArrangementJson.setTrafficArrangements(trafficArrangement.getTrafficArrangements());
+    trafficArrangementJson.setTrafficArrangementImpedimentType(trafficArrangement.getTrafficArrangementImpedimentType());
     return trafficArrangementJson;
   }
 
@@ -613,6 +618,7 @@ public class ApplicationMapper {
     trafficArrangement.setWorkFinished(trafficArrangementJson.getWorkFinished());
     trafficArrangement.setAdditionalInfo(trafficArrangementJson.getAdditionalInfo());
     trafficArrangement.setTrafficArrangements(trafficArrangementJson.getTrafficArrangements());
+    trafficArrangement.setTrafficArrangementImpedimentType(trafficArrangementJson.getTrafficArrangementImpedimentType());
     return trafficArrangement;
   }
 

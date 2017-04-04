@@ -101,7 +101,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       cableReportIdentifier: [''], // to store identifier showed to user
       cableReportId: [undefined],
       additionalInfo: [''],
-      trafficArrangements: ['']
+      trafficArrangements: [''],
+      trafficArrangementImpedimentType: ['', Validators.required]
     });
   }
 }

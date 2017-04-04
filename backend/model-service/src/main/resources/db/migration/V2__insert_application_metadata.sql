@@ -378,6 +378,14 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'CONFIDENTIAL', 'Salassa pidettävä', 'ENUM_VALUE');
 
+-- TrafficArrangementImpedimentType
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('TrafficArrangementImpedimentType', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'SIGNIFICANT_IMPEDIMENT', 'Merkittävä haitta', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'IMPEDIMENT_FOR_HEAVY_TRAFFIC', 'Haittaa raskasta liikennettä', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'INSIGNIFICANT_IMPEDIMENT', 'Vähäinen haitta', 'ENUM_VALUE');
 
 ------------------------
 -- Common metadata
@@ -589,6 +597,9 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'additionalInfo', 'Lisätiedot', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'trafficArrangements', 'Suoritettavat liikennejärjestelytyöt', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'trafficArrangementImpedimentType', 'Liikennejärjestelyn haitta', 'ENUMERATION', null,
+    (select id from allu.structure_meta where type_name = 'TrafficArrangementImpedimentType' and version = 1));
 
 -----------------------
 -- Area rental metadata
@@ -606,6 +617,9 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'trafficArrangements', 'Suoritettavat liikennejärjestelytyöt', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'workFinished', 'Työ valmis', 'DATETIME', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'trafficArrangementImpedimentType', 'Liikennejärjestelyn haitta', 'ENUMERATION', null,
+    (select id from allu.structure_meta where type_name = 'TrafficArrangementImpedimentType' and version = 1));
 
 ----------------
 -- Note metadata
@@ -642,6 +656,9 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'additionalInfo', 'Lisätiedot', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'trafficArrangements', 'Suoritettavat liikennejärjestelytyöt', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'trafficArrangementImpedimentType', 'Liikennejärjestelyn haitta', 'ENUMERATION', null,
+    (select id from allu.structure_meta where type_name = 'TrafficArrangementImpedimentType' and version = 1));
 
 ------------------------------------------
 -- Placement contract metadata

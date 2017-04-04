@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.TrafficArrangementImpedimentType;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;
@@ -17,6 +18,8 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
   private ZonedDateTime workFinished;
   private String additionalInfo;
   private String trafficArrangements;
+  @NotNull(message = "{application.trafficarrangements.trafficArrangementImpedimentType}")
+  private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -90,5 +93,16 @@ public class TrafficArrangementJson extends ApplicationExtensionJson {
 
   public void setTrafficArrangements(String trafficArrangements) {
     this.trafficArrangements = trafficArrangements;
+  }
+
+  /**
+   * In Finnish: Liikennejärjestelyn haitta.
+   */
+  public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
+    return trafficArrangementImpedimentType;
+  }
+
+  public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
+    this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
   }
 }

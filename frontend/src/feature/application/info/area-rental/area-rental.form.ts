@@ -15,6 +15,7 @@ export class AreaRentalForm implements ApplicationForm {
     public responsiblePerson?: Array<Contact>,
     public workFinished?: string,
     public trafficArrangements?: string,
+    public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string
   ) {}
 
@@ -24,6 +25,7 @@ export class AreaRentalForm implements ApplicationForm {
     areaRental.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
     areaRental.uiWorkFinished = form.workFinished;
     areaRental.trafficArrangements = form.trafficArrangements;
+    areaRental.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     areaRental.additionalInfo = form.additionalInfo;
     return areaRental;
   }
@@ -37,6 +39,7 @@ export class AreaRentalForm implements ApplicationForm {
       undefined,
       areaRental.uiWorkFinished,
       areaRental.trafficArrangements,
+      areaRental.trafficArrangementImpedimentType,
       areaRental.additionalInfo
     );
   }

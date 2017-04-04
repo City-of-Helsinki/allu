@@ -157,6 +157,7 @@
     "guaranteeEndTime": "2019-03-31T22:00:00Z",
     "additionalInfo": "Automaagisesti tehty kaivuilmoitus",
     "traffixArrangements": "Mannerheimintie kokonaan poikki. Koittakaa selvitä!",
+    "trafficArrangementImpedimentType": "SIGNIFICANT_IMPEDIMENT",
     "pksCard": true
   }
 }

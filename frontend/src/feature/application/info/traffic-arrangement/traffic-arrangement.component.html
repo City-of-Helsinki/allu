@@ -87,6 +87,19 @@
                             </md-input-container>
                         </div>
                         <div class="col m12">
+                            <md-button-toggle-group formControlName="trafficArrangementImpedimentType">
+                                <md-button-toggle value="SIGNIFICANT_IMPEDIMENT">
+                                    Merkittävä haitta
+                                </md-button-toggle>
+                                <md-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
+                                    Haittaa raskasta liikennettä
+                                </md-button-toggle>
+                                <md-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
+                                    Vähäinen haitta
+                                </md-button-toggle>
+                            </md-button-toggle-group>
+                        </div>
+                        <div class="col m12">
                             <md-input-container class="input-full-width">
                                 <textarea mdInput md-autosize formControlName="additionalInfo"
                                           placeholder="Lisätiedot"></textarea>

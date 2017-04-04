@@ -76,6 +76,7 @@ export class ApplicationTypeDataMapper {
           backendExtension.cableReportId,
           backendExtension.additionalInfo,
           backendExtension.trafficArrangements,
+          backendExtension.trafficArrangementImpedimentType,
           backendExtension.terms
         );
       case ApplicationType.NOTE:
@@ -88,6 +89,7 @@ export class ApplicationTypeDataMapper {
           backendExtension.pksCard,
           backendExtension.workFinished,
           backendExtension.trafficArrangements,
+          backendExtension.trafficArrangementImpedimentType,
           backendExtension.additionalInfo,
           backendExtension.terms
         );
@@ -107,6 +109,7 @@ export class ApplicationTypeDataMapper {
           backendExtension.responsiblePerson,
           backendExtension.workFinished,
           backendExtension.trafficArrangements,
+          backendExtension.trafficArrangementImpedimentType,
           backendExtension.additionalInfo,
           backendExtension.terms
         );

@@ -11,6 +11,7 @@ export class AreaRental extends ApplicationExtension {
     responsiblePerson: Contact,
     workFinished: Date,
     trafficArrangements: string,
+    trafficArrangementImpedimentType: string,
     additionalInfo: string,
     terms: string
   )
@@ -19,6 +20,7 @@ export class AreaRental extends ApplicationExtension {
     public responsiblePerson?: Contact,
     public workFinished?: Date,
     public trafficArrangements?: string,
+    public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string,
     public terms?: string
   ) {

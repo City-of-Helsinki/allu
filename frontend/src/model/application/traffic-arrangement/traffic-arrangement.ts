@@ -13,6 +13,7 @@ export class TrafficArrangement extends ApplicationExtension {
     pksCard: boolean,
     workFinished: Date,
     trafficArrangements: string,
+    trafficArrangementImpedimentType: string,
     additionalInfo: string,
     terms: string
   )
@@ -23,6 +24,7 @@ export class TrafficArrangement extends ApplicationExtension {
     public pksCard?: boolean,
     public workFinished?: Date,
     public trafficArrangements?: string,
+    public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string,
     public terms?: string
   ) {

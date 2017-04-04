@@ -16,6 +16,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     public pksCard?: boolean,
     public workFinished?: string,
     public trafficArrangements?: string,
+    public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string,
     public specifiers?: Array<string>
   ) {}
@@ -27,6 +28,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     arrangement.pksCard = form.pksCard;
     arrangement.uiWorkFinished = form.workFinished;
     arrangement.trafficArrangements = form.trafficArrangements;
+    arrangement.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     arrangement.additionalInfo = form.additionalInfo;
     arrangement.specifiers = form.specifiers;
     return arrangement;
@@ -42,6 +44,7 @@ export class TrafficArrangementForm implements ApplicationForm {
       arrangement.pksCard,
       arrangement.uiWorkFinished,
       arrangement.trafficArrangements,
+      arrangement.trafficArrangementImpedimentType,
       arrangement.additionalInfo,
       arrangement.specifiers
     );

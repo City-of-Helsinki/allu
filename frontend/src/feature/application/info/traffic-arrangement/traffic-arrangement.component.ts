@@ -55,6 +55,7 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
       pksCard: [false],
       workFinished: [''],
       trafficArrangements: [''],
+      trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']
     });
   }
