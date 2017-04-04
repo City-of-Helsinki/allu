@@ -1,4 +1,4 @@
-import {ComponentFixture, TestBed, async} from '@angular/core/testing';
+import {ComponentFixture, TestBed, async, fakeAsync} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormGroup, FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {MdCardModule} from '@angular/material';
@@ -6,9 +6,14 @@ import {MdCardModule} from '@angular/material';
 import {ApplicantComponent} from '../../../../../src/feature/application/info/applicant/applicant.component';
 import {Applicant} from '../../../../../src/model/application/applicant';
 import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
+import {ApplicantHub} from '../../../../../src/service/applicant/applicant-hub';
 
 const headerText = 'HeaderTextTest';
 const formName = 'FormNameTest';
+
+class ApplicantHubMock {
+  searchApplicantsByField(fieldName: string, term: string) {}
+}
 
 describe('ApplicantComponent', () => {
   let comp: ApplicantComponent;
@@ -45,7 +50,8 @@ describe('ApplicantComponent', () => {
       imports: [AlluCommonModule, ReactiveFormsModule, MdCardModule],
       declarations: [ApplicantComponent],
       providers: [
-        {provide: FormBuilder, useValue: new FormBuilder()}
+        {provide: FormBuilder, useValue: new FormBuilder()},
+        {provide: ApplicantHub, useClass: ApplicantHubMock}
       ]
     }).compileComponents();
   }));
@@ -103,6 +109,24 @@ describe('ApplicantComponent', () => {
       expect(page.applicantCityInput.disabled).toBeTruthy();
       expect(page.applicantPhoneInput.disabled).toBeTruthy();
       expect(page.applicantEmailInput.disabled).toBeTruthy();
+    });
+  });
+
+  it('should fill fields from autocomplete', () => {
+    let applicant = new Applicant();
+    applicant.name = 'NameTest';
+    applicant.registryKey = '12345';
+    applicant.postalAddress.streetAddress = 'streetAddressTest';
+    applicant.postalAddress.postalCode = 'postalCodeTest';
+    applicant.postalAddress.city = 'cityTest';
+    applicant.phone = 'phoneTest';
+    applicant.email = 'emailTest';
+
+    let nameElement = fixture.debugElement.query(By.css('[formControlName="name"]'));
+    nameElement.triggerEventHandler('onSelection', applicant);
+    fixture.detectChanges();
+    fixture.whenStable().then(result => {
+      // TODO: fix the test to check field values
     });
   });
 });
