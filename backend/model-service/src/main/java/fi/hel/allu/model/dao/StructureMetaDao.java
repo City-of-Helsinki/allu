@@ -134,23 +134,34 @@ public class StructureMetaDao {
       int metadataVersion, List<AttributeMeta> attributeList) {
     List<AttributeMeta> attributes = queryFactory.select(attributeMetaBean).from(attributeMeta)
         .where(attributeMeta.structureMetaId.eq(structureTypeId)).fetch();
-    for (AttributeMeta attribute : attributes) {
-      attribute.setName(prefix + attribute.getName());
-      attributeList.add(attribute);
-      if (attribute.getDataType() == AttributeDataType.STRUCTURE
-          || attribute.getDataType() == AttributeDataType.ENUMERATION) {
-        // Structure or enum, so recurse deeper
-        int childStructureId = attribute.getStructureAttribute();
-        String childStructureName = attribute.getName();
-        if (typeOverrides.containsKey(childStructureName)) {
-          // Type override defined, find its type id
-          String overrideType = typeOverrides.get(attribute.getName());
-          childStructureId = findStructure(overrideType, metadataVersion).map(s -> s.getId())
-              .orElseThrow(() -> new NoSuchEntityException("No metadata for type", overrideType));
-        }
-        recurseAttributes(childStructureId, typeOverrides, childStructureName + "/", metadataVersion, attributeList);
-      }
-    }
+    attributes.forEach(a -> doAttribute(a, typeOverrides, prefix, metadataVersion, attributeList));
   }
 
+  /*
+   * Handle single attribute in a structure. If attribute is a list, its name is
+   * appended with "/*". If the attribute's data type (or list's element type)
+   * is a structural type, recurse.
+   */
+  private void doAttribute(AttributeMeta attribute, Map<String, String> typeOverrides, String prefix,
+      int metadataVersion, List<AttributeMeta> attributeList) {
+    String attributeFullName = prefix + attribute.getName();
+    AttributeDataType dataType = attribute.getDataType();
+    if (dataType == AttributeDataType.LIST) {
+      dataType = attribute.getListType();
+      attributeFullName = attributeFullName + "/*";
+    }
+    attribute.setName(attributeFullName);
+    attributeList.add(attribute);
+    if (dataType == AttributeDataType.STRUCTURE || dataType == AttributeDataType.ENUMERATION) {
+      // Structure or enum, so recurse deeper
+      int childStructureId = attribute.getStructureAttribute();
+      if (typeOverrides.containsKey(attributeFullName)) {
+        // Type override defined, find its type id
+        String overrideType = typeOverrides.get(attributeFullName);
+        childStructureId = findStructure(overrideType, metadataVersion).map(s -> s.getId())
+            .orElseThrow(() -> new NoSuchEntityException("No metadata for type", overrideType));
+      }
+      recurseAttributes(childStructureId, typeOverrides, attributeFullName + "/", metadataVersion, attributeList);
+    }
+  }
 }

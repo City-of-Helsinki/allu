@@ -2,8 +2,11 @@ package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.meta.AttributeDataType;
+import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.ui.domain.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -185,14 +188,30 @@ public class StructureMetaDaoTest {
   private void assertStructureAttributes(Class extensionJsonClass, StructureMeta sMeta) {
     List<String> jsonAttributes =
         Arrays.stream(extensionJsonClass.getDeclaredFields()).map(df -> df.getName()).map(name -> "/" + name).collect(Collectors.toList());
-    HashSet<String> metaAttributes = sMeta.getAttributes().stream().map(a -> a.getName()).collect(Collectors.toCollection(HashSet::new));
+    HashSet<String> metaAttributes = sMeta.getAttributes().stream().map(a -> attributeName(a))
+        .collect(Collectors.toCollection(HashSet::new));
     jsonAttributes.forEach(a -> assertTrue("metadata is missing: " + a, metaAttributes.contains(a)));
   }
 
   private void assertEnumAttributes(Class extensionJsonClass, StructureMeta sMeta) {
     List<String> jsonAttributes =
         Arrays.stream(extensionJsonClass.getEnumConstants()).map(name -> "/" + name).collect(Collectors.toList());
-    HashSet<String> metaAttributes = sMeta.getAttributes().stream().map(a -> a.getName()).collect(Collectors.toCollection(HashSet::new));
+    HashSet<String> metaAttributes = sMeta.getAttributes().stream().map(a -> attributeName(a))
+        .collect(Collectors.toCollection(HashSet::new));
     jsonAttributes.forEach(a -> assertTrue("metadata is missing: " + a, metaAttributes.contains(a)));
+  }
+
+  /*
+   * List-type attributes have "/*" at the end. For verification, it needs to be
+   * stripped away:
+   */
+  private String attributeName(AttributeMeta attribute) {
+    if (attribute.getDataType() == AttributeDataType.LIST) {
+      String metaName = attribute.getName();
+      assertTrue("List metadata name doesn't end with /*: " + metaName, metaName.endsWith("/*"));
+      return metaName.substring(0, metaName.length() - 2);
+    } else {
+      return attribute.getName();
+    }
   }
 }
