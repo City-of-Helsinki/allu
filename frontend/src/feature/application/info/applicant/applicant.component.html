@@ -24,7 +24,10 @@
                     <div class="col m8">
                         <md-input-container class="input-full-width">
                             <input mdInput type="text" formControlName="name"
-                                   placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"/>
+                                   placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
+                                   [autocompletion]="nameSearchResults"
+                                   (onSearchChange)="onNameSearchChange($event)"
+                                   (onSelection)="applicantSelected($event)"/>
                             <md-hint>
                                 <field-error [form]="applicantForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>
                                 <field-error [form]="applicantForm" field="name" hasError="minlength">{{'applicant.field.nameShort' | translation}}</field-error>

@@ -7,6 +7,8 @@ import {ApplicantType} from '../../../../model/application/applicant/applicant-t
 import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 import {Applicant} from '../../../../model/application/applicant';
 import {Some} from '../../../../util/option';
+import {Subject} from 'rxjs/Subject';
+import {ApplicantHub} from '../../../../service/applicant/applicant-hub';
 
 @Component({
   selector: 'applicant',
@@ -28,8 +30,10 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
   applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
+  nameSearch = new Subject<Array<Applicant>>();
+  nameSearchResults = this.nameSearch.asObservable();
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private applicantHub: ApplicantHub) {
     this.applicantForm = this.fb.group({
       id: undefined,
       type: [undefined, Validators.required],
@@ -59,6 +63,16 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.applicationForm.removeControl(this.formName);
+  }
+
+  onNameSearchChange(term: string): void {
+    this.applicantHub.searchApplicantsByField('name', term)
+      .debounceTime(300)
+      .subscribe(applicants => this.nameSearch.next(applicants));
+  }
+
+  applicantSelected(applicant: Applicant): void {
+    this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant));
   }
 
   private initForm() {

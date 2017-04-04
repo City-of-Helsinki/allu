@@ -294,6 +294,9 @@ export const translations = {
       registryKeyShort: 'Tunniste on liian lyhyt',
       emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt'
+    },
+    error: {
+      fetch: 'Hakijan hakeminen epäonnistui'
     }
   },
   contact: {
