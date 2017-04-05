@@ -10,9 +10,10 @@ export class ArrayUtil {
     return ArrayUtil.naturalSort((item: T) => findTranslation(prefix.concat([valueFn(item)])));
   }
 
-  static first<T>(array: Array<T>): T {
-    if (array && array.length > 0) {
-      return array[0];
+  static first<T>(array: Array<T>, filterFn?: (item: T) => boolean): T {
+    if (array) {
+      let filter = filterFn || ((item: T) => true);
+      return array.filter(filter)[0];
     } else {
       return undefined;
     }

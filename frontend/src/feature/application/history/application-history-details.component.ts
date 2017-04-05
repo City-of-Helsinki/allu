@@ -10,11 +10,14 @@ import {AttributeDataType} from '../../../model/application/meta/attribute-data-
 import {TimeUtil} from '../../../util/time.util';
 import {findTranslation} from '../../../util/translations';
 import {StringUtil} from '../../../util/string.util';
+import {Some} from '../../../util/option';
 
 @Component({
   selector: 'application-history-details',
   template: require('./application-history-details.component.html'),
-  styles: []
+  styles: [
+    require('./application-history-details.component.scss')
+  ]
 })
 export class ApplicationHistoryDetailsComponent implements AfterContentInit {
 
@@ -52,13 +55,20 @@ export class ApplicationHistoryDetailsComponent implements AfterContentInit {
       case AttributeDataType.ENUMERATION:
         return new ApplicationFieldChange(
           this.meta.uiName(fieldChange.fieldName),
-          this.meta.uiName([fieldChange.fieldName, fieldChange.oldValue]),
-          this.meta.uiName([fieldChange.fieldName, fieldChange.newValue]));
+          this.formatNonEmpty(fieldChange.fieldName, fieldChange.oldValue),
+          this.formatNonEmpty(fieldChange.fieldName, fieldChange.newValue));
       default:
         return new ApplicationFieldChange(
           this.meta.uiName(fieldChange.fieldName),
             StringUtil.replaceNull(fieldChange.oldValue),
             StringUtil.replaceNull(fieldChange.newValue));
     }
+  }
+
+  private formatNonEmpty(path: string, value: string) {
+    return Some(value)
+      .filter(v => !StringUtil.isEmpty(v))
+      .map(v => this.meta.uiName(path, v))
+      .orElse('');
   }
 }

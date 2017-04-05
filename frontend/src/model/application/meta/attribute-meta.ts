@@ -1,5 +1,3 @@
-import {StructureMeta} from './structure-meta';
-
 export class AttributeMeta {
   constructor(
     public name: string,
