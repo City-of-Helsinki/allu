@@ -186,8 +186,8 @@ public class ObjectComparer {
       // compare by id
       Map<String, JsonNode> sourceMap = new HashMap<>();
       Map<String, JsonNode> targetMap = new HashMap<>();
-      source.forEach(e -> sourceMap.put(e.get(ID).asText(), e));
-      target.forEach(e -> targetMap.put(e.get(ID).asText(), e));
+      source.forEach(e -> safePut(sourceMap, e.get(ID).asText(), e));
+      target.forEach(e -> safePut(targetMap, e.get(ID).asText(), e));
       compareMaps(keyName, sourceMap, targetMap, diff);
     } else {
       // compare by index
@@ -202,6 +202,15 @@ public class ObjectComparer {
       for (int i = numCommon; i < target.size(); ++i) {
         wasAdded(keyName + SLASH + i, target.get(i), diff);
       }
+    }
+  }
+
+  /*
+   * Add (key,value) to map but throw if key was already there
+   */
+  <K, V> void safePut(Map<K, V> map, K key, V value) {
+    if (map.put(key, value) != null) {
+      throw new IllegalArgumentException("The key " + key.toString() + " was added twice!");
     }
   }
 

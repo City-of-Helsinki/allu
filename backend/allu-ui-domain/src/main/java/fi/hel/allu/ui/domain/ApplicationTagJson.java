@@ -1,8 +1,12 @@
 package fi.hel.allu.ui.domain;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonProperty.Access;
+
 import fi.hel.allu.common.types.ApplicationTagType;
 
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 
 /**
@@ -15,6 +19,15 @@ public class ApplicationTagJson {
   private ApplicationTagType type;
   @NotNull
   private ZonedDateTime creationTime;
+
+  /**
+   * Add a fake "id" field during serialization so that comparison of tag lists
+   * in allu-ui-service's ObjectComparer compares by ID.
+   */
+  @JsonProperty(access = Access.READ_ONLY)
+  public int getId() {
+    return type.ordinal();
+  }
 
   public ApplicationTagJson() {
     // JSON serialization
