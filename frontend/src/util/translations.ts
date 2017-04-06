@@ -500,6 +500,10 @@ export const translations = {
     selectionTitle: {
       DEFAULT: 'Vakioliitteet',
       DEFAULT_IMAGE: 'Tyyppikuvat'
+    },
+    error: {
+      defaultAttachmentByArea: 'Vakioliitteen automaattinen lisääminen alueen perusteella epäonnistui. ' +
+      'Voit lisätä vakioliitteen Liitteet-välilehdeltä'
     }
   },
   comment: {

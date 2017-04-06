@@ -11,6 +11,7 @@
                 <th></th>
                 <th>Nimi</th>
                 <th>Hakemustyypit</th>
+                <th>Alueet</th>
             </tr>
             </thead>
             <tbody>
@@ -20,6 +21,7 @@
                 </td>
                 <td>{{row.content.name}}</td>
                 <td>{{translateArray('application.type', row.content.applicationTypes) | commaSeparated}}</td>
+                <td>{{areaName(row.content.fixedLocationId) | async}}</td>
             </tr>
             </tbody>
         </table>

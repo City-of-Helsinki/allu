@@ -45,9 +45,16 @@ export class AttachmentHub {
   /**
    * Fetches default attachment infos which are for given application- and attachment type
    */
-  defaultAttachmentInfosBy = (applicationType: ApplicationType, attachmentType: AttachmentType) =>
+  defaultAttachmentInfosBy = (applicationType: ApplicationType, attachmentType?: AttachmentType) =>
     this.attachmentService.getDefaultAttachmentInfosByType(applicationType)
-      .map(attachments => attachments.filter(attachment => AttachmentType[attachment.type] === attachmentType));
+      .map(attachments => this.filterByAttachmentType(attachments, attachmentType));
+
+  /**
+   * Fetches default attachment infos which are for given application type and area
+   */
+  defaultAttachmentInfosByArea = (applicationType: ApplicationType, areaId: number) =>
+    this.defaultAttachmentInfosBy(applicationType)
+      .map(attachments => attachments.filter((a: DefaultAttachmentInfo) => a.fixedLocationId === areaId));
 
   /**
    * Saves given default attachment
@@ -58,4 +65,10 @@ export class AttachmentHub {
    * Removes given default attachment by id
    */
   removeDefaultAttachment = (id: number) => this.attachmentService.removeDefaultAttachment(id);
+
+  private filterByAttachmentType(attachments: Array<AttachmentInfo>, attachmentType?: AttachmentType) {
+    return attachmentType === undefined
+      ? attachments
+      : attachments.filter(a => AttachmentType[a.type] === attachmentType);
+  }
 }

@@ -21,7 +21,7 @@ export class ApplicationState {
   public isCopy = false;
 
   private application$ = new BehaviorSubject<Application>(new Application());
-  private _pendingAttachments: Array<AttachmentInfo> = [];
+  private pendingAttachments$ = new BehaviorSubject<Array<AttachmentInfo>>([]);
   private attachments$ = new BehaviorSubject<Array<AttachmentInfo>>([]);
   private comments$ = new BehaviorSubject<Array<Comment>>([]);
   private tabChange$ = new Subject<SidebarItemType>();
@@ -33,12 +33,25 @@ export class ApplicationState {
               private commentHub: CommentHub) {
   }
 
+  reset(): void {
+    this.application$.next(new Application());
+    this.pendingAttachments$.next([]);
+    this.attachments$.next([]);
+    this.comments$.next([]);
+    this.relatedProject = undefined;
+    this.isCopy = false;
+  }
+
   get application(): Application {
     return this.application$.getValue();
   }
 
   set application(value: Application) {
     this.application$.next(value);
+  }
+
+  get isNew(): boolean {
+    return this.application.id === undefined;
   }
 
   set applicationCopy(app: Application) {
@@ -64,8 +77,22 @@ export class ApplicationState {
     return this.attachments$.asObservable();
   }
 
-  get pendingAttachments(): Array<AttachmentInfo> {
-    return this._pendingAttachments;
+  get pendingAttachments(): Observable<Array<AttachmentInfo>> {
+    return this.pendingAttachments$.asObservable();
+  }
+
+  get allAttachmentsSnapshot(): Array<AttachmentInfo> {
+    let pending = this.pendingAttachments$.getValue();
+    let saved = this.attachments$.getValue();
+    return pending.concat(saved);
+  }
+
+  get allAttachments(): Observable<Array<AttachmentInfo>> {
+    return Observable.combineLatest(
+      this.attachments,
+      this.pendingAttachments,
+      (saved, pending) => saved.concat(pending)
+    );
   }
 
   get comments(): Observable<Array<Comment>> {
@@ -77,7 +104,8 @@ export class ApplicationState {
   }
 
   addAttachment(attachment: AttachmentInfo) {
-    this._pendingAttachments.push(attachment);
+    let current = this.pendingAttachments$.getValue();
+    this.pendingAttachments$.next(current.concat(attachment));
   }
 
   saveAttachment(applicationId: number, attachment: AttachmentInfo): Observable<AttachmentInfo> {
@@ -107,7 +135,8 @@ export class ApplicationState {
       return this.attachmentHub.remove(this.application.id, attachmentId)
         .do(response => this.loadAttachments(this.application.id).subscribe());
     } else {
-      Some(index).do(i => this._pendingAttachments.splice(i, 1));
+      let pending = this.pendingAttachments$.getValue();
+      Some(index).do(i => this.pendingAttachments$.next(pending.splice(i, 1)));
       return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
     }
   }
@@ -158,14 +187,14 @@ export class ApplicationState {
   private savePendingAttachments(application: Application): Observable<Application> {
     let result = new Subject<Application>();
 
-    this.saveAttachments(application.id, this._pendingAttachments)
+    this.saveAttachments(application.id, this.pendingAttachments$.getValue())
       .subscribe(
         items => { /* Nothing to do with saved items */ },
         error => result.error(error),
         () => {
           result.next(application);
           result.complete();
-          this._pendingAttachments = [];
+          this.pendingAttachments$.next([]);
         });
 
     return result.asObservable();

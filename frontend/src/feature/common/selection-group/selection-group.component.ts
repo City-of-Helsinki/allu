@@ -18,7 +18,9 @@ const ID_FIELD = 'id';
 @Component({
   selector: 'selection-group',
   template: '<ng-content></ng-content>',
-  styles: [],
+  styles: [
+    require('./selection-group.component.scss')
+  ],
   providers: [SELECTION_GROUP_VALUE_ACCESSOR, SelectionEventService]
 })
 export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor, AfterContentInit {

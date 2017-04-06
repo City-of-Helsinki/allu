@@ -12,15 +12,22 @@
                 </div>
             </div>
             <div class="row">
-                <h1>
-                    Hakemustyypit
-                </h1>
                 <div class="col m12">
                     <selection-group formControlName="applicationTypes">
+                        <span class="label-small">Hakemustyypit</span>
                         <selection-item *ngFor="let type of applicationTypes"
                                         [item]="type"
                                         itemLabel="{{['application.type', type] | translation}}"></selection-item>
                     </selection-group>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col m6">
+                    <md-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
+                        <md-option *ngFor="let area of areas | async" [value]="area.id">
+                            {{area.name}}
+                        </md-option>
+                    </md-select>
                 </div>
             </div>
             <div class="row">

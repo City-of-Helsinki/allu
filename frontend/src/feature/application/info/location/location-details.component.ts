@@ -33,9 +33,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     // Sections can be selected only from single area so we can
     // get area based on its sections
-    this.mapHub.fixedLocationAreasBySectionIds(this.location.fixedLocationIds)
-      .filter(areas => areas.length > 0)
-      .map(areas => areas[0])
+    this.mapHub.fixedLocationAreaBySectionIds(this.location.fixedLocationIds)
       .subscribe(area => this.area = area.name);
 
     this.mapHub.fixedLocationSectionsBy(this.location.fixedLocationIds)

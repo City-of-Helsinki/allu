@@ -10,6 +10,11 @@ import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {SidebarItem} from '../../sidebar/sidebar-item';
 import {ProgressStep, stepFrom} from '../progressbar/progress-step';
 import {ApplicationStatus} from '../../../model/application/application-status';
+import {AttachmentHub} from '../attachment/attachment-hub';
+import {MapHub} from '../../../service/map/map-hub';
+import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {findTranslation} from '../../../util/translations';
 
 
 @Component({
@@ -26,7 +31,11 @@ export class ApplicationComponent implements OnInit {
   readonly: boolean;
   sidebarItems: Array<SidebarItem> = [];
 
-  constructor(private route: ActivatedRoute, private router: Router, private applicationState: ApplicationState) {
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private applicationState: ApplicationState,
+              private attachmentHub: AttachmentHub,
+              private mapHub: MapHub) {
   }
 
   ngOnInit(): void {
@@ -35,12 +44,15 @@ export class ApplicationComponent implements OnInit {
 
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
       this.readonly = summary;
-
       this.progressStep = stepFrom(ApplicationStatus[this.application.status], summary);
+
+      this.defaultAttachmentsForArea(this.application.typeEnum).subscribe(
+        attachments => attachments.forEach(a => this.applicationState.addAttachment(a)),
+        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
+
       this.sidebar(summary).subscribe(
         items => this.sidebarItems = items,
-        err => console.log('Failed to load sidebar statistics')
-      );
+        err => console.log('Failed to load sidebar statistics'));
     });
   }
 
@@ -63,8 +75,11 @@ export class ApplicationComponent implements OnInit {
   }
 
   private attachmentCount(): Observable<number> {
-    return this.applicationState.attachments
-      .map(attachments => attachments.length + this.applicationState.pendingAttachments.length);
+    return Observable.combineLatest(
+      this.applicationState.attachments,
+      this.applicationState.pendingAttachments,
+      (saved, pending) => saved.length + pending.length
+    );
   }
 
   private commentCount(): Observable<number> {
@@ -86,5 +101,14 @@ export class ApplicationComponent implements OnInit {
       }
       return sidebar;
     };
+  }
+
+  private defaultAttachmentsForArea(applicationType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
+    if (this.applicationState.isNew) {
+      return this.mapHub.fixedLocationAreaBySectionIds(this.application.firstLocation.fixedLocationIds)
+        .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(applicationType, area.id));
+    } else {
+      return Observable.of([]);
+    }
   }
 }

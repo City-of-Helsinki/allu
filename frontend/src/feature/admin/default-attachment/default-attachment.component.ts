@@ -10,8 +10,9 @@ import {CityDistrict} from '../../../model/common/city-district';
 import {MapHub} from '../../../service/map/map-hub';
 import {AttachmentHub} from '../../application/attachment/attachment-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
-import {AttachmentType} from '../../../model/application/attachment/attachment-type';
 import {MaterializeUtil} from '../../../util/materialize.util';
+import {ArrayUtil} from '../../../util/array-util';
+import {FixedLocationArea} from '../../../model/common/fixed-location-area';
 
 @Component({
   selector: 'default-attachment',
@@ -25,6 +26,8 @@ export class DefaultAttachmentComponent implements OnInit {
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   hasFileOverDropzone = false;
   attachmentType: string;
+  areas = this.mapHub.fixedLocationAreas()
+    .map(areas => areas.sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name)));
 
   private file: File;
 
@@ -38,7 +41,8 @@ export class DefaultAttachmentComponent implements OnInit {
       description: [''],
       district: [],
       defaultAttachmentId: [],
-      applicationTypes: []
+      applicationTypes: [],
+      fixedLocationId: []
     });
   }
 

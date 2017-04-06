@@ -42,7 +42,7 @@ export class ApplicationResolve implements Resolve<Application> {
     if (this.applicationState.isCopy) {
       this.applicationState.isCopy = false;
     } else {
-      this.applicationState.application = new Application();
+      this.applicationState.reset();
     }
     return Observable.of(this.applicationState.application);
   }

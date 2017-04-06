@@ -9,6 +9,8 @@ import {translateArray} from '../../../util/translations';
 import {ContentRow} from '../../../model/common/content-row';
 import {MaterializeUtil} from '../../../util/materialize.util';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
+import {NumberUtil} from '../../../util/number.util';
+import {MapHub} from '../../../service/map/map-hub';
 
 @Component({
   selector: 'default-attachments',
@@ -20,7 +22,10 @@ export class DefaultAttachmentsComponent implements OnInit {
   attachmentRows: Array<ContentRow<DefaultAttachmentInfo>>;
   attachmentType: string;
 
-  constructor(private router: Router, private route: ActivatedRoute, private attachmentHub: AttachmentHub) {
+  constructor(private router: Router,
+              private route: ActivatedRoute,
+              private attachmentHub: AttachmentHub,
+              private mapHub: MapHub) {
   }
 
   ngOnInit(): void {
@@ -43,6 +48,12 @@ export class DefaultAttachmentsComponent implements OnInit {
     if (col) {
       this.router.navigate([row.id], {relativeTo: this.route});
     }
+  }
+
+  areaName(id: number): Observable<string> {
+    return NumberUtil.isDefined(id)
+      ? this.mapHub.fixedLocationAreaById(id).map(area => area.name)
+      : Observable.empty();
   }
 
   private loadAttachmentInfos(): void {

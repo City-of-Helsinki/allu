@@ -11,6 +11,7 @@ import {MdDialog} from '@angular/material';
 import {TimeUtil} from '../../../util/time.util';
 import {Some} from '../../../util/option';
 import {isCommon, AttachmentType} from '../../../model/application/attachment/attachment-type';
+import {NumberUtil} from '../../../util/number.util';
 
 const toastTime = 4000;
 
@@ -34,10 +35,10 @@ export class AttachmentsComponent implements OnInit {
               private dialog: MdDialog) {}
 
   ngOnInit() {
-    this.setApplication(this.applicationState.application);
-    this.applicationState.attachments
+    this.application = this.applicationState.application;
+    this.applicationState.allAttachments
       .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
-      .subscribe(attachments => this.setAttachments(attachments));
+      .subscribe(sorted => this.setAttachments(sorted));
   }
 
   addNewAttachment(attachment?: AttachmentInfo): void {
@@ -103,14 +104,6 @@ export class AttachmentsComponent implements OnInit {
         },
         error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' poistaminen epäonnistui', toastTime));
 
-  }
-
-  private setApplication(app: Application) {
-    this.application = app;
-    // Only new applications can have pending attachments
-    if (!app.id) {
-      this.setAttachments(this.applicationState.pendingAttachments);
-    }
   }
 
   private setAttachments(attachments: Array<AttachmentInfo>): void {

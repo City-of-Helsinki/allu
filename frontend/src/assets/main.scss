@@ -371,6 +371,17 @@ ul.card-list {
   width: 100%;
 }
 
+.label-small {
+  position: relative;
+  display: block;
+  left: -2px;
+  text-align: left;
+  transform-origin: left top;
+  color: mat-color($allu-primary, 300);
+  transform: scale(0.75);
+  flex-grow: 1;
+}
+
 .select-wrapper input.select-dropdown,
 .mat-select-trigger {
   height: 2.5rem !important;

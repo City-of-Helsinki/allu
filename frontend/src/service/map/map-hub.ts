@@ -119,11 +119,23 @@ export class MapHub {
    */
   public fixedLocationAreas = () => this.fixedLocations$.asObservable();
 
+  public fixedLocationAreasByIds = (ids: Array<number>) => this.fixedLocationAreas()
+    .map(areas => areas.filter(a => ids.indexOf(a.id) >= 0));
+
+  /**
+   * Used for fetching fixed location area by id
+   */
+  public fixedLocationAreaById = (id: number) => this.fixedLocationAreas()
+    .map(areas => areas.find(a => a.id === id))
+    .filter(area => !!area);
+
   /**
    * Fetches areas containing given sections
    */
-  public fixedLocationAreasBySectionIds = (ids: Array<number>) => this.fixedLocationAreas()
-    .map(areas => areas.filter(a => a.hasSectionIds(ids)));
+  public fixedLocationAreaBySectionIds = (ids: Array<number>) => this.fixedLocationAreas()
+    .map(areas => areas.filter(a => a.hasSectionIds(ids)))
+    .filter(areas => areas.length > 0)
+    .map(areas => areas[0]);
 
   /**
    * Fetches all available fixed location sections
