@@ -65,7 +65,7 @@ export class Location {
   }
 
   public set uiStartTime(dateString: string) {
-    this.startTime = TimeUtil.getDateFromUi(dateString);
+    this.startTime = TimeUtil.getStartDateFromUi(dateString);
   }
 
   public get uiEndTime(): string {
@@ -73,7 +73,7 @@ export class Location {
   }
 
   public set uiEndTime(dateString: string) {
-    this.endTime = TimeUtil.getDateFromUi(dateString);
+    this.endTime = TimeUtil.getEndDateFromUi(dateString);
   }
 
   public geometryCount(): number {

@@ -1,4 +1,5 @@
 import * as momentLib from 'moment';
+import {UnitOfTime} from 'moment';
 
 // jQuery pickadate configuration: http://amsul.ca/pickadate.js/date/
 export const PICKADATE_PARAMETERS = [
@@ -36,6 +37,14 @@ export class TimeUtil {
 
   public static getDateFromUi(dateString: string): Date {
     return dateString ? momentLib(dateString, 'DD.MM.YYYY').toDate() : undefined;
+  }
+
+  public static getStartDateFromUi(dateString: string): Date {
+    return dateString ? momentLib(dateString, 'DD.MM.YYYY').startOf('day').toDate() : undefined;
+  }
+
+  public static getEndDateFromUi(dateString: string): Date {
+    return dateString ? momentLib(dateString, 'DD.MM.YYYY').endOf('day').toDate() : undefined;
   }
 
   public static dateFromBackend(dateString: string): Date {
