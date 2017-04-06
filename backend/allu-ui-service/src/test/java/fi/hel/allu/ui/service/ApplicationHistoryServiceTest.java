@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.ApplicationTagType;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.ApplicationChange;
@@ -7,6 +8,7 @@ import fi.hel.allu.model.domain.ApplicationFieldChange;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationChangeJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ApplicationTagJson;
 import fi.hel.allu.ui.domain.UserJson;
 
 import org.junit.Before;
@@ -19,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -56,6 +59,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Mockito.when(mockUserJson.getId()).thenReturn(MOCK_USER_ID);
     applicationHistoryService = new ApplicationHistoryService(mockApplicationProperties, mockRestTemplate,
         mockUserService);
+    applicationHistoryService.setupPattern();
   }
 
   @Test
@@ -127,6 +131,32 @@ public class ApplicationHistoryServiceTest extends MockServices {
     assertNotNull(capturedChange);
     assertEquals(ChangeType.CREATED, capturedChange.getChangeType());
   }
+
+  /* Make sure that applicationTag id is skipped from changes */
+  @Test
+  public void testSkipApplicationTagId() {
+    final int APPLICATION_ID = 432;
+    setupChangeCapture(APPLICATION_ID);
+
+    ApplicationJson oldApplication = createMockApplicationJson(APPLICATION_ID);
+    oldApplication.setApplicationTags(Arrays.asList(new ApplicationTagJson(11, ApplicationTagType.DEPOSIT_PAID, ZonedDateTime.now())));
+    ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
+    newApplication.setApplicationTags(
+        Arrays.asList(new ApplicationTagJson(12, ApplicationTagType.DEPOSIT_PAID, ZonedDateTime.now().plusDays(1))));
+    applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
+
+    assertNotNull(capturedChange);
+    assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
+    assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
+    List<ApplicationFieldChange> fieldChanges = capturedChange.getFieldChanges();
+    List<ApplicationFieldChange> tagChanges = fieldChanges.stream()
+        .filter(chg -> chg.getFieldName().startsWith("/applicationTags/")).collect(Collectors.toList());
+    assertEquals(2, tagChanges.size());
+    assertEquals(0, tagChanges.stream().filter(c -> c.getFieldName().endsWith("/id")).count());
+  }
+
+  // TODO: add tests to verify that ApplicationJson contains fields
+  // "/applicationTags/*/id" and "/extension/infoEntries/*/id"
 
   /*
    * Setup Mockito to store ApplicationChange to capturedChange when

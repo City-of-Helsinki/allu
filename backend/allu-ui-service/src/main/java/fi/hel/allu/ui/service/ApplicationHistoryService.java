@@ -14,9 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +31,10 @@ public class ApplicationHistoryService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
+  private Pattern skipFieldPattern;
+
+  // regex to control which change fields should be skipped.
+  private static final String SKIP_FIELDS_RE = "(/applicationTags/[^/]+/id)|(/extension/infoEntries/[^/]+/id)";
 
   @Autowired
   public ApplicationHistoryService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
@@ -35,6 +42,11 @@ public class ApplicationHistoryService {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
+  }
+
+  @PostConstruct
+  public void setupPattern() {
+    skipFieldPattern = Pattern.compile(SKIP_FIELDS_RE);
   }
 
   /**
@@ -62,7 +74,9 @@ public class ApplicationHistoryService {
    */
   public void addFieldChanges(Integer applicationId, ApplicationJson oldApplication, ApplicationJson newApplication) {
     ObjectComparer comparer = new ObjectComparer();
+
     List<ApplicationFieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()
+        .filter(diff -> !skipFieldPattern.matcher(diff.keyName).matches())
         .map(diff -> new ApplicationFieldChange(diff.keyName, diff.oldValue, diff.newValue))
         .collect(Collectors.toList());
     if (!fieldChanges.isEmpty()) {
