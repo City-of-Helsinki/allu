@@ -1,6 +1,6 @@
 <div class="row">
     <div class=" col s12">
-        <table class="bordered responsive-table">
+        <table class="responsive-table">
             <thead>
             <tr>
                 <th>
@@ -20,31 +20,50 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let row of applicationRows" class="row-highlight" (click)="goToSummary($event.target.cellIndex, row.application)">
-                <td>
-                    <md-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></md-checkbox>
-                </td>
-                <td class="clickable">{{row.application.handler?.realName}}</td>
-                <td class="clickable">
-                    {{row.application.project?.name}} <br>
-                    <span>{{row.application.project?.id}}</span>
-                </td>
-                <td class="clickable">{{row.application.applicationId}}</td>
-                <td class="clickable">{{translations.application.type[row.application.type]}}</td>
-                <td class="clickable">{{translations.application.status[row.application.status]}}</td>
-                <td class="clickable">
-                    {{row.application.applicant.name}}<br>
-                </td>
-                <td class="clickable">{{row.application.firstLocation?.postalAddress?.streetAddress}}</td>
-                <td class="clickable">{{districtName(row.application.firstLocation.effectiveCityDistrictId) | async}}</td>
-                <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>
-                <td class="clickable">{{row.application.extension.uiStartTime}}</td>
-                <td class="clickable">
+            <ng-container *ngFor="let row of applicationRows; let i=index;">
+                <tr [class.bottom-row]="row.application.applicationTags.length === 0"
+                    [class.row-highlight]="i===hoveredRowIndex" (click)="goToSummary($event.target.cellIndex, row.application)"
+                    (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
+                    <td>
+                        <md-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></md-checkbox>
+                    </td>
+                    <td class="clickable">{{row.application.handler?.realName}}</td>
+                    <td class="clickable">
+                        {{row.application.project?.name}} <br>
+                        <span>{{row.application.project?.id}}</span>
+                    </td>
+                    <td class="clickable">{{row.application.applicationId}}</td>
+                    <td class="clickable">{{translations.application.type[row.application.type]}}</td>
+                    <td class="clickable status-text">{{translations.application.status[row.application.status]}}</td>
+                    <td class="clickable">
+                        {{row.application.applicant.name}}<br>
+                    </td>
+                    <td class="clickable">{{row.application.firstLocation?.postalAddress?.streetAddress}}</td>
+                    <td class="clickable">{{districtName(row.application.firstLocation.effectiveCityDistrictId) | async}}</td>
+                    <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>
+                    <td class="clickable">{{row.application.extension.uiStartTime}}</td>
+                    <td class="clickable">
                     <span *ngIf="row.application.comments.length">
                         <button md-raised-button type="button" color="primary" (click)="showComments(row.application.id)">NÄYTÄ</button>
                     </span>
-                </td>
-            </tr>
+                    </td>
+                </tr>
+                <tr *ngIf="row.application.applicationTags.length"
+                    class="bottom-row clickable" [class.row-highlight]="i===hoveredRowIndex"
+                    (click)="goToSummary($event.target.cellIndex, row.application)"
+                    (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
+                    <td></td>
+                    <td colspan="1" class="row-title">Tunnisteet</td>
+                    <td colspan="10">
+                        <md-chip-list>
+                            <md-chip *ngFor="let tag of row.application.applicationTags" [selected]="tagSelected(tag.type)"
+                                     class="accent-chip slim-chip" color="accent">
+                                {{['application.tag.type', tag.type] | translation}}
+                            </md-chip>
+                        </md-chip-list>
+                    </td>
+                </tr>
+            </ng-container>
             </tbody>
         </table>
     </div>

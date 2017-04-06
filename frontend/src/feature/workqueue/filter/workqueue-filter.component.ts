@@ -1,4 +1,4 @@
-import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
+import {Component, OnInit, Input, Output} from '@angular/core';
 import {FormGroup, FormBuilder} from '@angular/forms';
 import '../../../rxjs-extensions.ts';
 
@@ -14,6 +14,7 @@ import {Observable} from 'rxjs';
 import {CityDistrict} from '../../../model/common/city-district';
 import {MapHub} from '../../../service/map/map-hub';
 import {WorkQueueTab} from '../workqueue-tab';
+import {WorkQueueHub} from '../workqueue-search/workqueue-hub';
 
 const HANDLER_FIELD = 'handler';
 const TAGS_FIELD = 'tags';
@@ -30,7 +31,6 @@ const STATUS_FIELD = 'status';
 export class WorkQueueFilterComponent implements OnInit {
   queryForm: FormGroup;
   @Input() handlers: Array<User>;
-  @Output() onQueryChange = new EventEmitter<ApplicationSearchQuery>();
   pickadateParams = PICKADATE_PARAMETERS;
   districts: Observable<Array<CityDistrict>>;
   applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
@@ -38,7 +38,7 @@ export class WorkQueueFilterComponent implements OnInit {
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
   tab: string;
 
-  constructor(fb: FormBuilder, private mapHub: MapHub) {
+  constructor(fb: FormBuilder, private mapHub: MapHub, private workQueueHub: WorkQueueHub) {
     this.queryForm = fb.group({
       type: undefined,
       handler: undefined,
@@ -53,7 +53,7 @@ export class WorkQueueFilterComponent implements OnInit {
   ngOnInit(): void {
     this.queryForm.valueChanges
       .distinctUntilChanged()
-      .subscribe(query => this.onQueryChange.emit(ApplicationSearchQuery.from(query)));
+      .subscribe(query => this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(query)));
 
     this.districts = this.mapHub.districts();
   }
@@ -84,7 +84,7 @@ export class WorkQueueFilterComponent implements OnInit {
   private waitingTabSelected(): void {
     let tags = this.queryForm.get(TAGS_FIELD);
     tags.setValue([ApplicationTagType[ApplicationTagType.WAITING]]);
-    this.onQueryChange.emit(ApplicationSearchQuery.from(this.queryForm.value));
+    this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(this.queryForm.value));
   }
 
   private commonTabSelected(): void {
@@ -98,6 +98,6 @@ export class WorkQueueFilterComponent implements OnInit {
   private setHandlers(handlers: Array<string>): void {
     let control = this.queryForm.get(HANDLER_FIELD);
     control.setValue(handlers);
-    this.onQueryChange.emit(ApplicationSearchQuery.from(this.queryForm.value));
+    this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(this.queryForm.value));
   }
 }

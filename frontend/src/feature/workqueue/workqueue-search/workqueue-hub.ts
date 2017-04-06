@@ -2,9 +2,12 @@
 import {Injectable} from '@angular/core';
 import {WorkQueueService} from './workqueue.service';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
+import {Observable, Subject} from 'rxjs';
 
 @Injectable()
 export class WorkQueueHub {
+  private searchQuery$ = new Subject<ApplicationSearchQuery>();
+
   constructor(private workQueueService: WorkQueueService) {}
 
   /**
@@ -12,4 +15,10 @@ export class WorkQueueHub {
    */
   public searchApplicationsSharedByGroup =
     (searchQuery: ApplicationSearchQuery) => this.workQueueService.searchApplicationsSharedByGroup(searchQuery);
+
+  public addSearchQuery = (searchQuery: ApplicationSearchQuery) => this.searchQuery$.next(searchQuery);
+
+  get searchQuery(): Observable<ApplicationSearchQuery> {
+    return this.searchQuery$.asObservable();
+  }
 }

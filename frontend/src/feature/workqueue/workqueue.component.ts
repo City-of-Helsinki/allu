@@ -1,6 +1,6 @@
 import {Component, OnInit, OnDestroy, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {ConnectableObservable} from 'rxjs';
+import {ConnectableObservable, Subscription} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {MdTabChangeEvent} from '@angular/material/tabs';
 import {MdDialog, MdDialogRef, MdDialogConfig} from '@angular/material';
@@ -46,6 +46,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypes = EnumUtil.enumValues(ApplicationType);
   private handlers: Array<User>;
+  private searchQuerySub: Subscription;
 
   constructor(private applicationHub: ApplicationHub,
               private workqueueHub: WorkQueueHub,
@@ -62,9 +63,12 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
       .publish();
 
     this.userHub.getActiveUsers().subscribe(users => this.handlers = users);
+    this.searchQuerySub = this.workqueueHub.searchQuery.subscribe(query => this.queryChanged(query));
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() {
+    this.searchQuerySub.unsubscribe();
+  }
 
   queryChanged(query: ApplicationSearchQuery) {
     this.applicationQuery.next(query.withSort(this.sort));

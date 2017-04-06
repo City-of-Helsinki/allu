@@ -13,6 +13,8 @@ import {User} from '../../../model/common/user';
 import {translations} from '../../../util/translations';
 import {MapHub} from '../../../service/map/map-hub';
 import {CommentsModalComponent} from '../../application/comment/comments-modal.component';
+import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
+import {WorkQueueHub} from '../workqueue-search/workqueue-hub';
 
 
 @Component({
@@ -28,11 +30,17 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   allSelected = false;
   sort = new Sort(undefined, undefined);
   translations = translations;
+  hoveredRowIndex = undefined;
+  selectedTags: Array<string> = [];
 
   private applicationSubscription: Subscription;
+  private searchSubscription: Subscription;
   private dialogRef: MdDialogRef<CommentsModalComponent>;
 
-  constructor(private router: Router, private mapHub: MapHub, private dialog: MdDialog) {}
+  constructor(private router: Router,
+              private mapHub: MapHub,
+              private dialog: MdDialog,
+              private workQueueHub: WorkQueueHub) {}
 
   ngOnInit(): void {
     this.applicationSubscription = this.applications.connect();
@@ -42,10 +50,14 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
         this.allSelected = false;
         this.applicationRows = applicationRows;
       });
+
+     this.searchSubscription = this.workQueueHub.searchQuery
+       .subscribe(query => this.selectedTags = query.tags);
   }
 
   ngOnDestroy(): void {
     this.applicationSubscription.unsubscribe();
+    this.searchSubscription.unsubscribe();
   }
 
   checkAll() {
@@ -79,6 +91,18 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   districtName(id: number): Observable<string> {
     return id !== undefined ? this.mapHub.districtById(id).map(d => d.name) : Observable.empty();
+  }
+
+  tagSelected(tagName: string): boolean {
+    return this.selectedTags.indexOf(tagName) >= 0;
+  }
+
+  onMouseEnter(index: number): void {
+    this.hoveredRowIndex = index;
+  }
+
+  onMouseLeave(index: number): void {
+    this.hoveredRowIndex = undefined;
   }
 
   private toApplicationRows(applications: Array<Application>): Array<ApplicationRow> {

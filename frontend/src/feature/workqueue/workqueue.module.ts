@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule, FormsModule} from '@angular/forms';
-import {MdButtonToggleModule} from '@angular/material';
+import {MdButtonToggleModule, MdChipsModule} from '@angular/material';
 
 import {WorkQueueComponent} from './workqueue.component';
 import {AlluCommonModule} from '../common/allu-common.module';
@@ -18,6 +18,7 @@ import {CommentsModalComponent} from '../application/comment/comments-modal.comp
     FormsModule,
     AlluCommonModule,
     MdButtonToggleModule,
+    MdChipsModule,
     SelectionGroupModule
   ],
   declarations: [

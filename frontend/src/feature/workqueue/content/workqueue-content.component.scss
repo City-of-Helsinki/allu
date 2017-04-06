@@ -1,0 +1,30 @@
+@import '../../../assets/colors';
+
+tr.row-highlight {
+  background-color: mat-color($allu-primary, 100) !important;
+}
+
+td {
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+}
+
+tr.bottom-row {
+  border-bottom: 1px solid #d0d0d0;
+}
+
+.status-text {
+  font-weight: bold;
+  color: mat-color($allu-primary, 500);
+}
+
+.row-title {
+  font-weight: bold;
+}
+
+.mat-chip.slim-chip {
+  margin: 0px 2px;
+  line-height: 1.43;
+  font-size: 14px;
+}
