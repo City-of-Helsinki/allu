@@ -658,6 +658,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for getting contacts by ids.
+   */
+  public String getContactsByIdUrl() {
+    return getModelServiceUrl("/contacts/find");
+  }
+
+  /**
    * @return URL for getting a contact by applicant.
    */
   public String getContactsByApplicantUrl() {
@@ -686,10 +693,45 @@ public class ApplicationProperties {
   }
 
   /**
+   * Model-service path to find all contacts of applications having given contact.
+   */
+  public String getContactsRelatedByApplicationUrl() {
+    return getModelServiceUrl("/contacts/{id}/application/related");
+  }
+
+  /**
    * Model-service path to find contacts by application identifier
    */
   public String getContactsUpdateApplicationUrl() {
     return getModelServiceUrl("/contacts?applicationId={applicationId}");
+  }
+
+  /**
+   * @return url to find contact from search index.
+   */
+  public String getContactSearchUrl() {
+    return getSearchServiceUrl("/contacts/search");
+  }
+
+  /**
+   * @return url to add contact to search index.
+   */
+  public String getContactSearchCreateUrl() {
+    return getSearchServiceUrl("/contacts");
+  }
+
+  /**
+   * @return url to send multiple contact search index updates.
+   */
+  public String getContactSearchUpdateUrl() {
+    return getSearchServiceUrl("/contacts/update");
+  }
+
+  /**
+   * @return url to update contacts of multiple applications in search index.
+   */
+  public String getContactApplicationsSearchUpdateUrl() {
+    return getSearchServiceUrl("/contacts/applications");
   }
 
   /**

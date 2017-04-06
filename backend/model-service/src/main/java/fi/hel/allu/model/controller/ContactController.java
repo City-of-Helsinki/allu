@@ -2,6 +2,7 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.validator.ValidList;
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.domain.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -19,6 +21,8 @@ public class ContactController {
 
   @Autowired
   private ContactDao contactDao;
+  @Autowired
+  private ApplicationDao applicationDao;
 
   /**
    * Find contact item by id
@@ -33,6 +37,50 @@ public class ContactController {
     Contact contactValue = contact
         .orElseThrow(() -> new NoSuchEntityException("Contact not found", Integer.toString(id)));
     return new ResponseEntity<>(contactValue, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/find", method = RequestMethod.POST)
+  public ResponseEntity<List<Contact>> findContacts(@RequestBody List<Integer> ids) {
+    return new ResponseEntity<>(contactDao.findByIds(ids), HttpStatus.OK);
+  }
+
+
+  /**
+   * Get all contacts for an applicant
+   *
+   * @param applicantId
+   *          The ID of the applicant
+   * @return All contact items for the given applicant
+   */
+  @RequestMapping(value = "/applicant/{applicantId}", method = RequestMethod.GET)
+  public ResponseEntity<List<Contact>> findByApplicant(@PathVariable int applicantId) {
+    List<Contact> contacts = contactDao.findByApplicant(applicantId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  }
+
+  /**
+   * Find all contacts of applications having given contact.
+   *
+   * @param id  of the contact whose related applications with contacts are fetched.
+   * @return  all contacts of applications having given contact. The id of application is the map key and value contains all contacts
+   *          of the application.
+   */
+  @RequestMapping(value = "/{id}/application/related", method = RequestMethod.GET)
+  public ResponseEntity<Map<Integer, List<Contact>>> findRelatedApplicationsWithContacts(@PathVariable int id) {
+    Map<Integer, List<Contact>> applicationIdToContacts = applicationDao.findRelatedApplicationsWithContacts(id);
+    return new ResponseEntity<>(applicationIdToContacts, HttpStatus.OK);
+  }
+
+  /**
+   * Get the contact list for an application
+   *
+   * @param applicationId The application's ID
+   * @return List of the application's contacts in preference order
+   */
+  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
+  public ResponseEntity<List<Contact>> findByApplication(@PathVariable int applicationId) {
+    List<Contact> contacts = contactDao.findByApplication(applicationId);
+    return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
 
   /**
@@ -62,31 +110,6 @@ public class ContactController {
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Contact> update(@PathVariable int id, @Valid @RequestBody(required = true) Contact contact) {
     return new ResponseEntity<>(contactDao.update(id, contact), HttpStatus.OK);
-  }
-
-  /**
-   * Get all contacts for an applicant
-   *
-   * @param applicantId
-   *          The ID of the applicant
-   * @return All contact items for the given applicant
-   */
-  @RequestMapping(value = "/applicant/{applicantId}", method = RequestMethod.GET)
-  public ResponseEntity<List<Contact>> findByApplicant(@PathVariable int applicantId) {
-    List<Contact> contacts = contactDao.findByApplicant(applicantId);
-    return new ResponseEntity<>(contacts, HttpStatus.OK);
-  }
-
-  /**
-   * Get the contact list for an application
-   *
-   * @param applicationId The application's ID
-   * @return List of the application's contacts in preference order
-   */
-  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
-  public ResponseEntity<List<Contact>> findByApplication(@PathVariable int applicationId) {
-    List<Contact> contacts = contactDao.findByApplication(applicationId);
-    return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
 
   /**

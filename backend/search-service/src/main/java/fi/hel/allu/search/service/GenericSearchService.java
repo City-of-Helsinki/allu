@@ -158,6 +158,8 @@ public class GenericSearchService {
 
   /**
    * Search index with the given query parameters.
+   * <p>Supports also partial searching. Note that partial search requires special ElasticSearch mapping for the field
+   * (see {{@link ElasticSearchMappingConfig}}.
    *
    * @param queryParameters   Query parameters.
    * @return List of ids found from search index. The list is ordered as specified by the query parameters.

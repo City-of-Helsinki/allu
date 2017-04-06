@@ -1,33 +1,36 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
-
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
+import static com.querydsl.sql.SQLExpressions.select;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QApplicationContact.applicationContact;
 import static fi.hel.allu.QApplicationTag.applicationTag;
+import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
+import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
@@ -73,7 +76,7 @@ public class ApplicationDao {
   @Transactional(readOnly = true)
   public List<Application> findByLocation(LocationSearchCriteria lsc) {
     BooleanExpression condition =
-        application.id.in(SQLExpressions.select(location.applicationId)
+        application.id.in(select(location.applicationId)
         .from(locationGeometry).join(location).on(locationGeometry.locationId.eq(location.id))
             .where(locationGeometry.geometry.intersects(lsc.getIntersects())));
     if (lsc.getAfter() != null) {
@@ -98,6 +101,30 @@ public class ApplicationDao {
         .select(application.id)
         .from(application)
         .where(application.applicantId.eq(id)).fetch();
+  }
+
+  /**
+   * Find all contacts of applications having given contact.
+   *
+   * @param contactId   Contact id to be searched.
+   * @return  all contacts of applications having given contact. The id of application is the map key and value contains all contacts
+   *          of the application.
+   */
+  @Transactional(readOnly = true)
+  public Map<Integer, List<Contact>> findRelatedApplicationsWithContacts(int contactId) {
+    SubQueryExpression<Integer> sq = select(applicationContact.applicationId).from(applicationContact).where(applicationContact.contactId.eq(contactId));
+    // create expression list to allow mapping of all contact fields and postal address joined from another table
+    List<Expression> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
+    mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));
+    Map<Integer, List<Contact>> applicationIdToContacts = queryFactory
+        .select(bean(applicationContact.applicationId), bean(Contact.class, contact.all()))
+        .from(applicationContact)
+        .join(contact).on(applicationContact.contactId.eq(contact.id))
+        .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
+        .where(applicationContact.applicationId.in(sq))
+        .transform(groupBy(applicationContact.applicationId).as(list(bean(Contact.class, mappedExpressions.toArray(new Expression[0])))));
+
+    return applicationIdToContacts;
   }
 
   @Transactional

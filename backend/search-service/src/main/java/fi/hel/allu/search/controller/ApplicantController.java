@@ -85,6 +85,7 @@ public class ApplicantController {
     return new ResponseEntity<>(applicantSearchService.findByField(queryParameters), HttpStatus.OK);
   }
 
+  // TODO: this method is not required, because partial searches may be done with QueryParameters too. Remove later
   @RequestMapping(value = "/search/{fieldName}", method = RequestMethod.POST)
   public ResponseEntity<List<Integer>> search(
       @PathVariable String fieldName,

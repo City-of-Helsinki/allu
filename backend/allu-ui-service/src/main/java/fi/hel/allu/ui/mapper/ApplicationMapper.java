@@ -388,6 +388,16 @@ public class ApplicationMapper {
     }
   }
 
+  public List<ContactES> createContactES(List<ContactJson> contacts) {
+    if (contacts != null) {
+      return contacts.stream()
+          .map(c -> new ContactES(c.getId(), c.getName()))
+          .collect(Collectors.toList());
+    } else {
+      return null;
+    }
+  }
+
   private PostalAddressJson createPostalAddressJson(PostalAddress postalAddress) {
     if (postalAddress != null) {
       PostalAddressJson postalAddressJson = new PostalAddressJson();
@@ -639,16 +649,6 @@ public class ApplicationMapper {
 
   private Integer getCityDistrictId(LocationJson locationJson) {
     return Optional.ofNullable(locationJson.getCityDistrictIdOverride()).orElse(locationJson.getCityDistrictId());
-  }
-
-  private List<ContactES> createContactES(List<ContactJson> contacts) {
-    if (contacts != null) {
-      return contacts.stream()
-          .map(c -> new ContactES(c.getName()))
-          .collect(Collectors.toList());
-    } else {
-      return null;
-    }
   }
 
   private DistributionEntryJson createDistributionEntryJson(DistributionEntry distributionEntry) {

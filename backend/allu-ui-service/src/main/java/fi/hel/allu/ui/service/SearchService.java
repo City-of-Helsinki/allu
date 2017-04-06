@@ -4,6 +4,7 @@ import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicantJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.ProjectMapper;
@@ -116,6 +117,31 @@ public class SearchService {
   }
 
   /**
+   * Insert contact to search index.
+   *
+   * @param contactJson Applicant to be indexed.
+   */
+  public void insertContact(ContactJson contactJson) {
+    restTemplate.postForObject(
+        applicationProperties.getContactSearchCreateUrl(),
+        new ContactES(contactJson.getId(), contactJson.getName()),
+        Void.class);
+  }
+
+  /**
+   * Update multiple contacts to search index.
+   *
+   * @param contactJsons Contacts to be updated.
+   */
+  public void updateContacts(List<ContactJson> contactJsons) {
+    List<ContactES> contacts = applicationMapper.createContactES(contactJsons);
+    restTemplate.put(
+        applicationProperties.getContactSearchUpdateUrl(),
+        contacts);
+  }
+
+
+  /**
    * Find applications by given fields.
    *
    * @param queryParameters list of query parameters
@@ -152,12 +178,27 @@ public class SearchService {
     return Arrays.asList(searchResult.getBody());
   }
 
+  /**
+   * Find contacts by given fields.
+   *
+   * @param queryParameters list of query parameters
+   * @return List of ids of found contacts.
+   */
+  public List<Integer> searchContact(QueryParameters queryParameters) {
+    return search(applicationProperties.getContactSearchUrl(), queryParameters);
+  }
 
   public void updateApplicantOfApplications(ApplicantJson updatedApplicant, List<Integer> applicationIds) {
     restTemplate.put(
         applicationProperties.getApplicantApplicationsSearchUpdateUrl(),
         applicationIds,
         updatedApplicant.getId());
+  }
+
+  public void updateContactsOfApplications(Map<Integer, List<ContactES>> applicationIdToContacts) {
+    restTemplate.put(
+        applicationProperties.getContactApplicationsSearchUpdateUrl(),
+        applicationIdToContacts);
   }
 
   /**

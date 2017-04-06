@@ -5,9 +5,7 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.DistributionEntry;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,6 +22,7 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -38,6 +37,8 @@ public class ApplicationDaoTest {
   @Autowired
   private ApplicationDao applicationDao;
   @Autowired
+  private ContactDao contactDao;
+  @Autowired
   private DistributionEntryDao distributionEntryDao;
 
   DistributionEntry testDistributionEntry;
@@ -48,26 +49,44 @@ public class ApplicationDaoTest {
     testDistributionEntry.setDistributionType(DistributionType.PAPER);
     testDistributionEntry.setEmail("foobar@foo.fi");
   }
-/*
-  describe("Applicant dao with applications", () -> {
-    beforeEach(() -> {
-      insertedApplicant = applicantDao.insert(testApplicant);
-      insertedApplicationId = testCommon.insertApplication("dummy application", "foo handler");
-    });
-    it("should not find applications by applicant id", () -> {
-      List<Integer> applicationIds = applicantDao.findRelatedApplications(insertedApplicant.getId());
-      assertTrue(applicationIds.isEmpty());
-    });
-    it("should find applications by applicant id", () -> {
-      Application application = applicationDao.findByIds(Collections.singletonList(insertedApplicationId)).get(0);
-      application.setApplicantId(insertedApplicant.getId());
-      applicationDao.update(insertedApplicationId, application);
-      List<Integer> applicationIds = applicantDao.findRelatedApplications(insertedApplicant.getId());
-      assertEquals(1, applicationIds.size());
-      assertEquals(insertedApplicationId, (int) applicationIds.get(0));
-    });
-  });
-*/
+
+  @Test
+  public void testFindApplicationsWithContacts() {
+    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Contact contact = new Contact();
+    final String testContactName = "kontakti ihminen";
+    final String testEmail = "test@emai.fi";
+    final String testPhone = "124214";
+    contact.setName(testContactName);
+    contact.setEmail(testEmail);
+    contact.setPhone(testPhone);
+    contact.setApplicantId(application.getApplicantId());
+    // retrieve contacts with no postal address first
+    Contact insertedContact = contactDao.insert(contact);
+    Application insertedApplication = applicationDao.insert(application);
+    contactDao.setApplicationContacts(insertedApplication.getId(), Collections.singletonList(insertedContact));
+    Map<Integer, List<Contact>> applicationToContacts = applicationDao.findRelatedApplicationsWithContacts(insertedContact.getId());
+    assertEquals(1, applicationToContacts.size());
+    assertNotNull(applicationToContacts.get(insertedApplication.getId()));
+    List<Contact> contacts = applicationToContacts.get(insertedApplication.getId());
+    assertEquals(1, contacts.size());
+    assertEquals(testContactName, contacts.get(0).getName());
+    assertEquals(testEmail, contacts.get(0).getEmail());
+    assertEquals(testPhone, contacts.get(0).getPhone());
+
+    // make sure postal address retrieval also works
+    PostalAddress testPostalAddress = new PostalAddress("katu 1", "12345", "testikaupunki");
+    insertedContact.setPostalAddress(testPostalAddress);
+    insertedContact = contactDao.update(insertedContact.getId(), insertedContact);
+
+    applicationToContacts = applicationDao.findRelatedApplicationsWithContacts(insertedContact.getId());
+    assertNotNull(applicationToContacts.get(insertedApplication.getId()));
+    contacts = applicationToContacts.get(insertedApplication.getId());
+    assertEquals(testPostalAddress.getStreetAddress(), contacts.get(0).getPostalAddress().getStreetAddress());
+    assertEquals(testPostalAddress.getPostalCode(), contacts.get(0).getPostalAddress().getPostalCode());
+    assertEquals(testPostalAddress.getCity(), contacts.get(0).getPostalAddress().getCity());
+  }
+
   @Test
   public void testFindApplicationsByApplicant() {
     Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");

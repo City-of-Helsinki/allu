@@ -24,6 +24,7 @@ public class ElasticSearchMappingConfig {
   public static final String APPLICATION_TYPE_NAME = "application";
   public static final String PROJECT_TYPE_NAME = "project";
   public static final String APPLICANT_TYPE_NAME = "applicant";
+  public static final String CONTACT_TYPE_NAME = "contact";
 
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
   private Client client;
@@ -47,6 +48,7 @@ public class ElasticSearchMappingConfig {
       CreateIndexRequestBuilder createIndexRequestBuilder =
           client.admin().indices().prepareCreate(CUSTOMER_INDEX_NAME).setSettings(getIndexSettingsForCustomer());
       createIndexRequestBuilder.addMapping(APPLICANT_TYPE_NAME, getMappingBuilderForApplicant());
+      createIndexRequestBuilder.addMapping(CONTACT_TYPE_NAME, getMappingBuilderForContact());
       createIndexRequestBuilder.execute().actionGet();
     } catch (IndexAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + CUSTOMER_INDEX_NAME  + " not created, because it exists already.");
@@ -128,5 +130,10 @@ public class ElasticSearchMappingConfig {
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
     }
+  }
+
+  public XContentBuilder getMappingBuilderForContact() {
+    // mapping for applicant and contact was equal at the time of writing
+    return getMappingBuilderForApplicant();
   }
 }

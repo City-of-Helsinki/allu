@@ -8,6 +8,8 @@ public class ApplicantES {
   private String name;
   private String registryKey;
 
+  // TODO: add ApplicantType as indexed value too
+
   public ApplicantES() {
     // JSON serialization
   }

@@ -68,6 +68,12 @@ public class ContactDaoSpec {
         assertContact(findContact.get());
         assertPostalAddress(findContact.get());
       });
+      it("should find contacts by multiple ids", () -> {
+        List<Contact> findContacts = contactDao.findByIds(Collections.singletonList(insertedContact.getId()));
+        Assert.assertFalse(findContacts.isEmpty());
+        assertContact(findContacts.get(0));
+        assertPostalAddress(findContacts.get(0));
+      });
       it("should find contacts by applicant id", () -> {
         List<Contact> contacts = contactDao.findByApplicant(insertedContact.getApplicantId());
         Assert.assertEquals(1, contacts.size());

@@ -2,6 +2,8 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLBindings;
 import com.querydsl.sql.SQLQueryFactory;
@@ -18,9 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
@@ -55,6 +55,19 @@ public class ContactDao {
     return Optional.ofNullable(foundContact);
   }
 
+  @Transactional
+  public List<Contact> findByIds(List<Integer> ids) {
+    List<Expression> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
+    mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));
+    List<Contact> contacts = queryFactory
+        .select(Projections.bean(Contact.class, mappedExpressions.toArray(new Expression[0])))
+        .from(contact)
+        .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
+        .where(contact.id.in(ids))
+        .fetch();
+    return contacts;
+  }
+
   @Transactional(readOnly = true)
   public List<Contact> findByApplicant(int applicantId) {
     List<Tuple> contactPostalAddress = queryFactory
@@ -87,8 +100,6 @@ public class ContactDao {
   public List<Contact> setApplicationContacts(int applicationId, List<Contact> contacts) {
     // remove old contact links, then add new ones.
     queryFactory.delete(applicationContact).where(applicationContact.applicationId.eq(applicationId)).execute();
-    // Update/insert the contacts first...
-    contacts = contacts.stream().map(c -> storeContact(c)).collect(Collectors.toList());
     // ... then create the link records
     SQLInsertClause insertClause = queryFactory.insert(applicationContact);
     int pos = 0;
@@ -142,13 +153,5 @@ public class ContactDao {
     }
 
     return findById(id).get();
-  }
-
-  private Contact storeContact(Contact contactItem) {
-    if (contactItem.getId() != null) {
-      return update(contactItem.getId(), contactItem);
-    } else {
-      return insert(contactItem);
-    }
   }
 }
