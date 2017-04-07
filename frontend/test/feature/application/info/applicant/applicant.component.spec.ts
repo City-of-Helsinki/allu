@@ -6,7 +6,7 @@ import {MdCardModule} from '@angular/material';
 import {ApplicantComponent} from '../../../../../src/feature/application/info/applicant/applicant.component';
 import {Applicant} from '../../../../../src/model/application/applicant';
 import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
-import {ApplicantHub} from '../../../../../src/service/applicant/applicant-hub';
+import {CustomerHub} from '../../../../../src/service/customer/customer-hub';
 
 const headerText = 'HeaderTextTest';
 const formName = 'FormNameTest';
@@ -51,7 +51,7 @@ describe('ApplicantComponent', () => {
       declarations: [ApplicantComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: ApplicantHub, useClass: ApplicantHubMock}
+        {provide: CustomerHub, useClass: ApplicantHubMock}
       ]
     }).compileComponents();
   }));

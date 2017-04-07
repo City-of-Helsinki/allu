@@ -10,7 +10,7 @@ const APPLICANTS_URL = '/api/applicants';
 const APPLICANTS_SEARCH_URL = APPLICANTS_URL + '/search/:fieldName';
 
 @Injectable()
-export class ApplicantService {
+export class CustomerService {
 
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
   }

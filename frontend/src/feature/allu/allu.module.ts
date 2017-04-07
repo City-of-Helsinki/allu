@@ -33,8 +33,8 @@ import {Oauth2Component} from '../oauth2/oauth2.component';
 import {ErrorHandler} from '../../service/error/error-handler.service';
 import {DefaultTextService} from '../../service/application/default-text.service';
 import {LocationState} from '../../service/application/location-state';
-import {ApplicantHub} from '../../service/applicant/applicant-hub';
-import {ApplicantService} from '../../service/applicant/applicant.service';
+import {CustomerHub} from '../../service/customer/customer-hub';
+import {CustomerService} from '../../service/customer/customer.service';
 
 
 @NgModule({
@@ -68,8 +68,8 @@ import {ApplicantService} from '../../service/applicant/applicant.service';
     ApplicationHub,
     UserService,
     LocationService,
-    ApplicantService,
-    ApplicantHub,
+    CustomerService,
+    CustomerHub,
     UserHub,
     MapHub,
     UIStateHub,

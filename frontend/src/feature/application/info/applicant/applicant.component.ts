@@ -8,7 +8,7 @@ import {emailValidator, postalCodeValidator} from '../../../../util/complex-vali
 import {Applicant} from '../../../../model/application/applicant';
 import {Some} from '../../../../util/option';
 import {Subject} from 'rxjs/Subject';
-import {ApplicantHub} from '../../../../service/applicant/applicant-hub';
+import {CustomerHub} from '../../../../service/customer/customer-hub';
 
 @Component({
   selector: 'applicant',
@@ -33,7 +33,7 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   nameSearch = new Subject<Array<Applicant>>();
   nameSearchResults = this.nameSearch.asObservable();
 
-  constructor(private fb: FormBuilder, private applicantHub: ApplicantHub) {
+  constructor(private fb: FormBuilder, private applicantHub: CustomerHub) {
     this.applicantForm = this.fb.group({
       id: undefined,
       type: [undefined, Validators.required],
