@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.ui.service.AlluMailService;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.AttachmentService;
 import fi.hel.allu.ui.service.DecisionService;
@@ -33,6 +34,9 @@ public class ApplicationController {
 
   @Autowired
   private DecisionService decisionService;
+
+  @Autowired
+  private AlluMailService alluMailService;
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
@@ -206,6 +210,21 @@ public class ApplicationController {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+  }
+
+  /**
+   * Send the decision PDF for application as email
+   *
+   * @param applicationId the application's Id
+   */
+  @RequestMapping(value = "/{applicationId}/decision/send", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<Void> sendDecision(@PathVariable int applicationId,
+      @RequestBody EmailDetailsJson emailDetails) {
+    String subject = "Aluevarauspäätös"; // TODO: add application's application ID
+
+    alluMailService.sendDecision(applicationId, emailDetails.getRecipients(), subject, emailDetails.getMessageBody());
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 
   /**

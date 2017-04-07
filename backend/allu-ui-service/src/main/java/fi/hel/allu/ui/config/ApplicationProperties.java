@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ApplicationProperties {
 
@@ -24,6 +26,8 @@ public class ApplicationProperties {
   private String oauth2ClientId;
   private String oauth2RedirectUri;
   private String oauth2Certificate;
+  private List<String> emailAllowedAddresses;
+  private String emailSenderAddress;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
@@ -39,7 +43,9 @@ public class ApplicationProperties {
                                @Value("${oauth2.url.token}") @NotEmpty String oauth2TokenUrl,
                                @Value("${oauth2.clientid}") @NotEmpty String oauth2ClientId,
                                @Value("${oauth2.redirect.uri}") @NotEmpty String oauth2RedirectUri,
-                               @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate) {
+                               @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate,
+                               @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
+                               @Value("${email.sender.address}") @NotEmpty String emailSenderAddress) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -54,6 +60,8 @@ public class ApplicationProperties {
     this.oauth2ClientId = oauth2ClientId;
     this.oauth2RedirectUri = oauth2RedirectUri;
     this.oauth2Certificate = oauth2Certificate;
+    this.emailAllowedAddresses = emailAllowedAddresses;
+    this.emailSenderAddress = emailSenderAddress;
   }
 
   public static final String PATH_PREFIX = "http://";
@@ -793,5 +801,21 @@ public class ApplicationProperties {
    */
   private String modelServiceBaseUrl() {
     return PATH_PREFIX + modelServiceHost + ":" + modelServicePort;
+  }
+
+  /**
+   * @return  list of allowed email recipients.
+   */
+  public List<String> getEmailAllowedAddresses() {
+    return emailAllowedAddresses;
+  }
+
+  /**
+   * Get the address that should be used when sending email from the system
+   *
+   * @return sender address
+   */
+  public String getEmailSenderAddress() {
+    return emailSenderAddress;
   }
 }

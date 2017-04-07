@@ -5,3 +5,6 @@ saerch_service_host: localhost
 search_service_port: 9020
 
 oauth2_redirect_uri: http://185.26.49.172/oauth2/
+
+mail_server_host: smtp.gmail.com
+mail_server_port: 587
