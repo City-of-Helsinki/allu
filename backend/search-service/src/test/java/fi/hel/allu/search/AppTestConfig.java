@@ -13,6 +13,7 @@ import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 @Configuration
 @EnableAutoConfiguration
 public class AppTestConfig {
+
   @Bean
   public Client client() throws UnknownHostException {
     Settings settings = Settings.settingsBuilder()

@@ -126,6 +126,27 @@ public class ApplicantSearchServiceTest {
   }
 
   @Test
+  public void testFindByFieldSorted() {
+    ApplicantES applicantES1 = createApplicant("zyzzy baabeli", 1);
+    ApplicantES applicantES2 = createApplicant("baabeli aapeli", 2);
+    ApplicantES applicantES3 = createApplicant("aapeli baabeli", 3);
+    ApplicantES applicantES4 = createApplicant("ei löydy", 4);
+    applicantSearchService.insert(applicantES1.getId().toString(), applicantES1);
+    applicantSearchService.insert(applicantES2.getId().toString(), applicantES2);
+    applicantSearchService.insert(applicantES3.getId().toString(), applicantES3);
+    applicantSearchService.insert(applicantES4.getId().toString(), applicantES4);
+
+    applicantSearchService.refreshIndex();
+
+    QueryParameters params = SearchTestUtil.createQueryParameters("name", "baabeli");
+    params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
+
+    List<Integer> appList = applicantSearchService.findByField(params);
+    assertEquals(3, appList.size());
+    assertEquals(Arrays.asList(3, 2, 1), appList);
+  }
+
+    @Test
   public void testUpdateApplicationApplicantPartially() throws IOException {
     ApplicationES applicationES = ApplicationSearchTest.createApplication(100);
     ApplicantES applicantES = createApplicant(TEST_NAME, 123);

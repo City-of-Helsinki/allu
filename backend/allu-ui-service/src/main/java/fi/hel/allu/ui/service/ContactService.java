@@ -73,7 +73,7 @@ public class ContactService {
   }
 
   /**
-   * Find applicants by given fields.
+   * Find contacts by given fields.
    *
    * @param queryParameters list of query parameters
    * @return List of found application with details

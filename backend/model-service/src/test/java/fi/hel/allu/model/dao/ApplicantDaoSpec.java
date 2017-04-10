@@ -29,10 +29,6 @@ public class ApplicantDaoSpec {
   @Autowired
   ApplicantDao applicantDao;
   @Autowired
-  PostalAddressDao postalAddressDao;
-  @Autowired
-  ApplicationDao applicationDao;
-  @Autowired
   private TestCommon testCommon;
   @Autowired
   private PlatformTransactionManager transactionManager;

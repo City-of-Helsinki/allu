@@ -14,6 +14,7 @@ import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_I
 import static fi.hel.allu.search.config.ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME;
 
 public class SearchTestUtil {
+
   public static ElasticSearchMappingConfig searchIndexSetup(Client client) {
     ElasticSearchMappingConfig elasticSearchMappingConfig = new ElasticSearchMappingConfig(client);
 

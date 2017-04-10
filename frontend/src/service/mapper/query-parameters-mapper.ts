@@ -11,6 +11,15 @@ const enumFields = [
   'type'
 ];
 
+const alphaSortFields = [
+  'name',
+  'applicant.name',
+  'contacts.name',
+  'handler.userName',
+  'applicationId',
+  'ownerName'
+];
+
 const START_TIME_FIELD = 'startTime';
 const END_TIME_FIELD = 'endTime';
 
@@ -146,6 +155,8 @@ export class QueryParametersMapper {
   private static getBackendSortField(field: string): string {
     if (enumFields.indexOf(field) > -1) {
       return field + '.ordinal';
+    } else if (alphaSortFields.indexOf(field) > -1) {
+      return field + '.alphasort';
     } else {
       return field;
     }

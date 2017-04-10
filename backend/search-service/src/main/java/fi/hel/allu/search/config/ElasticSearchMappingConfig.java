@@ -4,6 +4,8 @@ import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
+import org.elasticsearch.common.xcontent.XContentParser;
+import org.elasticsearch.common.xcontent.json.JsonXContent;
 import org.elasticsearch.indices.IndexAlreadyExistsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +28,10 @@ public class ElasticSearchMappingConfig {
   public static final String APPLICANT_TYPE_NAME = "applicant";
   public static final String CONTACT_TYPE_NAME = "contact";
 
+  private static final String ANALYZER_CASE_INSENSITIVE_SORT = "case_insensitive_sort";
+  private static final String ANALYZER_AUTOCOMPLETE = "autocomplete";
+  private static final String FILTER_AUTOCOMPLETE = "autocomplete_filter";
+
   private static final Logger logger = LoggerFactory.getLogger(ElasticSearchMappingConfig.class);
   private Client client;
 
@@ -37,9 +43,9 @@ public class ElasticSearchMappingConfig {
   public void initializeIndex() {
     try {
       CreateIndexRequestBuilder createIndexRequestBuilder =
-          client.admin().indices().prepareCreate(APPLICATION_INDEX_NAME);
+          client.admin().indices().prepareCreate(APPLICATION_INDEX_NAME).setSettings(getIndexSettingsForApplication());
+      createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultApplicationsIndex());
       createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
-      createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
       createIndexRequestBuilder.execute().actionGet();
     } catch (IndexAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + APPLICATION_INDEX_NAME  + " not created, because it exists already.");
@@ -47,14 +53,47 @@ public class ElasticSearchMappingConfig {
     try {
       CreateIndexRequestBuilder createIndexRequestBuilder =
           client.admin().indices().prepareCreate(CUSTOMER_INDEX_NAME).setSettings(getIndexSettingsForCustomer());
-      createIndexRequestBuilder.addMapping(APPLICANT_TYPE_NAME, getMappingBuilderForApplicant());
-      createIndexRequestBuilder.addMapping(CONTACT_TYPE_NAME, getMappingBuilderForContact());
+      createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultCustomersIndex());
       createIndexRequestBuilder.execute().actionGet();
     } catch (IndexAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + CUSTOMER_INDEX_NAME  + " not created, because it exists already.");
     }
   }
 
+  /**
+   * Default mappings for applications index that's applicable to all types.
+   *
+   * @return
+   */
+  public XContentBuilder getMappingBuilderForDefaultApplicationsIndex() {
+    try {
+    XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+        .startObject()
+          .startObject("_default_")
+            .startObject("properties")
+              .startObject("name") // alphabetical sorting for all name-properties in the index
+                .field("type", "string")
+                .field("fields").copyCurrentStructure(parser(alphasort()))
+              .endObject()
+              .startObject("startTime")
+                .field("type", "date")
+              .endObject()
+              .startObject("endTime")
+                .field("type", "date")
+              .endObject()
+        .endObject()
+          .endObject()
+        .endObject();
+      logger.debug("Default applications index mapping: " + mappingBuilder.string());
+      return mappingBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+    }
+  }
+
+  /**
+   * @return  Application specific type mappings for applications index.
+   */
   public XContentBuilder getMappingBuilderForApplication() {
     try {
       XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
@@ -63,48 +102,94 @@ public class ElasticSearchMappingConfig {
               .startObject("creationTime")
                 .field("type", "date")
               .endObject()
-              .startObject("startTime")
-                .field("type", "date")
+              .field("applicationId").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
+              .startObject("handler") // alphabetical sorting for handler.userName
+                .startObject("properties")
+                  .startObject("userName")
+                    .field("type", "string")
+                    .field("fields").copyCurrentStructure(parser(alphasort()))
+                  .endObject()
+                .endObject()
               .endObject()
-              .startObject("endTime")
-                .field("type", "date")
+              .startObject("applicant") // alphabetical sorting for applicant.name
+                .startObject("properties")
+                  .startObject("name")
+                    .field("type", "string")
+                    .field("fields").copyCurrentStructure(parser(alphasort()))
+                  .endObject()
+                .endObject()
               .endObject()
             .endObject()
             .field("date_detection", "false")
           .endObject();
+      logger.debug("Applications mapping: " + mappingBuilder.string());
       return mappingBuilder;
     } catch (IOException e) {
       throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
     }
   }
 
+  /**
+   * @return  Project specific type mappings for applications index.
+   */
   public XContentBuilder getMappingBuilderForProject() {
-    // as long applications have "close enough" mapping, projects can use the same mapping
-    return getMappingBuilderForApplication();
-  }
-
-  public XContentBuilder getIndexSettingsForCustomer() {
     try {
-      XContentBuilder settingsBuilder = null;
-      settingsBuilder = XContentFactory.jsonBuilder()
+      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
           .startObject()
-            .startObject("analysis")
-              .startObject("filter")
-                .startObject("autocomplete_filter")
-                  .field("type", "edge_ngram")
-                  .field("min_gram", "1")
-                  .field("max_gram", "20")
-                .endObject()
-              .endObject()
-              .startObject("analyzer")
-                .startObject("autocomplete")
-                  .field("type", "custom")
-                  .field("tokenizer", "standard")
-                  .array("filter", "lowercase", "autocomplete_filter")
-                .endObject()
+            .startObject("properties")
+              .startObject("ownerName")
+                .field("type", "string")
+                .field("fields").copyCurrentStructure(parser(alphasort()))
               .endObject()
             .endObject()
           .endObject();
+      logger.debug("Applications mapping: " + mappingBuilder.string());
+      return mappingBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+    }
+  }
+
+  /**
+   * @return  Applications index settings.
+   */
+  public XContentBuilder getIndexSettingsForApplication() {
+    try {
+      XContentBuilder settingsBuilder = commonIndexSettings();
+      logger.debug("application index settings {}", settingsBuilder.string());
+      return settingsBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+    }
+  }
+
+  /**
+   * @return  Default mappings for customers index that's applicable to all types.
+   */
+  public XContentBuilder getMappingBuilderForDefaultCustomersIndex() {
+    try {
+      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+          .startObject()
+            .startObject("_default_")
+              .startObject("properties")
+                // alphabetical sorting with autocomplete for all name-properties in the index
+                .field("name").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
+              .endObject()
+            .endObject()
+          .endObject();
+      logger.debug("Default customers index mapping: " + mappingBuilder.string());
+      return mappingBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+    }
+  }
+
+  /**
+   * @return  Customers index settings.
+   */
+  public XContentBuilder getIndexSettingsForCustomer() {
+    try {
+      XContentBuilder settingsBuilder = commonIndexSettings();
       logger.debug("customer index settings {}", settingsBuilder.string());
       return settingsBuilder;
     } catch (IOException e) {
@@ -112,28 +197,76 @@ public class ElasticSearchMappingConfig {
     }
   }
 
-  public XContentBuilder getMappingBuilderForApplicant() {
-    try {
-      XContentBuilder mappingBuilder = null;
-      mappingBuilder = XContentFactory.jsonBuilder()
-          .startObject()
-            .startObject("properties")
-              .startObject("name")
-                // autocomplete analyzer for name field of applicant
-                .field("type", "string")
-                .field("analyzer", "autocomplete")
-                .field("search_analyzer", "standard")
-              .endObject()
-            .endObject()
-          .endObject();
-      return mappingBuilder;
-    } catch (IOException e) {
-      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
-    }
+  private XContentParser parser(XContentBuilder xContentBuilder) throws IOException {
+    return JsonXContent.jsonXContent.createParser(xContentBuilder.string());
   }
 
-  public XContentBuilder getMappingBuilderForContact() {
-    // mapping for applicant and contact was equal at the time of writing
-    return getMappingBuilderForApplicant();
+  private XContentBuilder autocompleteSettingsFilter() throws IOException {
+    XContentBuilder builder =  XContentFactory.jsonBuilder()
+        .startObject()
+          .field("type", "edge_ngram")
+          .field("min_gram", "1")
+          .field("max_gram", "20")
+        .endObject();
+    return builder;
+  }
+
+  private XContentBuilder autocompleteSettingsAnalyzer() throws IOException {
+    XContentBuilder builder = XContentFactory.jsonBuilder()
+        .startObject()
+        .field("type", "custom")
+        .field("tokenizer", "standard")
+        .array("filter", "lowercase", FILTER_AUTOCOMPLETE)
+        .endObject();
+    return builder;
+  }
+
+  /**
+   * ElasticSearch analyzer settings for mapping with autocomplete and alphabetical sorting.
+   */
+  private XContentBuilder autocompleteWithAlphaSortingMappingAnalyzer() throws IOException {
+    XContentBuilder builder =  XContentFactory.jsonBuilder()
+        .startObject()
+          .field("type", "string")
+          .field("analyzer", ANALYZER_AUTOCOMPLETE)
+          .field("search_analyzer", "standard")
+          .field("fields").copyCurrentStructure(parser(alphasort()))
+        .endObject();
+    return builder;
+  }
+
+  private XContentBuilder caseInsensitiveSortAnalyzer() throws IOException {
+    XContentBuilder builder =  XContentFactory.jsonBuilder()
+        .startObject()
+          .field("tokenizer", "keyword")
+          .array("filter", "lowercase")
+        .endObject();
+    return builder;
+  }
+
+  private XContentBuilder alphasort() throws IOException {
+    return XContentFactory.jsonBuilder()
+        .startObject()
+          .field("alphasort")
+            .startObject()
+              .field("type", "string")
+              .field("analyzer", ANALYZER_CASE_INSENSITIVE_SORT)
+            .endObject()
+        .endObject();
+  }
+
+  private XContentBuilder commonIndexSettings() throws IOException {
+    return XContentFactory.jsonBuilder()
+        .startObject()
+          .startObject("analysis")
+            .startObject("filter")
+              .field(FILTER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsFilter()))
+            .endObject()
+            .startObject("analyzer")
+              .field(ANALYZER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsAnalyzer()))
+              .field(ANALYZER_CASE_INSENSITIVE_SORT).copyCurrentStructure(parser(caseInsensitiveSortAnalyzer()))
+            .endObject()
+          .endObject()
+        .endObject();
   }
 }
