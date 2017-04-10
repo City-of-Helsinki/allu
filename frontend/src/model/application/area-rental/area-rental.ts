@@ -3,6 +3,7 @@ import {ApplicationType} from '../type/application-type';
 import {Applicant} from '../applicant';
 import {Contact} from '../contact';
 import {TimeUtil} from '../../../util/time.util';
+import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
 
 export class AreaRental extends ApplicationExtension {
   constructor()
@@ -25,6 +26,8 @@ export class AreaRental extends ApplicationExtension {
     public terms?: string
   ) {
     super(ApplicationType[ApplicationType.AREA_RENTAL], [], terms);
+    this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
+      || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }
 
   get responsiblePersonList(): Array<Contact> {

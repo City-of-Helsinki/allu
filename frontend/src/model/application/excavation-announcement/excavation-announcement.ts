@@ -3,6 +3,7 @@ import {ApplicationType} from '../type/application-type';
 import {Applicant} from '../applicant';
 import {Contact} from '../contact';
 import {TimeUtil} from '../../../util/time.util';
+import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
 
 export class ExcavationAnnouncement extends ApplicationExtension {
   constructor()
@@ -53,6 +54,8 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public terms?: string
   ) {
     super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], specifiers, terms);
+    this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
+      || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }
 
   get uiWinterTimeOperation(): string {

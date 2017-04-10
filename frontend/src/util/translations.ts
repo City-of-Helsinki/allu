@@ -158,6 +158,12 @@ export const translations = {
       CONFIDENTIAL_PARTIALLY: 'Osittain salassa pidettävä',
       CONFIDENTIAL: 'Salassa pidettävä'
     },
+    trafficArrangementImpedimentType: {
+      NO_IMPEDIMENT: 'Ei haittaa',
+      SIGNIFICANT_IMPEDIMENT: 'Merkittävä haitta',
+      IMPEDIMENT_FOR_HEAVY_TRAFFIC: 'Haittaa raskasta liikennettä',
+      INSIGNIFICANT_IMPEDIMENT: 'Vähäinen haitta'
+    },
     field: {
       nameMissing: 'Tapahtuman nimi puuttuu',
       nameShort: 'Tapahtuman nimi on liian lyhyt'
