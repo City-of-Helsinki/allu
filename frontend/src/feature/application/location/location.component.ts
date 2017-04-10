@@ -246,7 +246,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
         .sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
 
       area.singleDefaultSectionForKind(kind)
-        .do(defaultSection => this.sectionsCtrl.patchValue({sections: [defaultSection.id]}));
+        .do(defaultSection => this.sectionsCtrl.patchValue([defaultSection.id]));
     } else {
       this.sections = [];
       this.locationForm.patchValue({sections: []});
