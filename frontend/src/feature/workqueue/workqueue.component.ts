@@ -1,9 +1,9 @@
-import {Component, OnInit, OnDestroy, ViewContainerRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {ConnectableObservable, Subscription} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {MdTabChangeEvent} from '@angular/material/tabs';
-import {MdDialog, MdDialogRef, MdDialogConfig} from '@angular/material';
+import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
@@ -20,9 +20,7 @@ import {User} from '../../model/common/user';
 import {UserHub} from '../../service/user/user-hub';
 import {DialogCloseReason} from '../common/dialog-close-value';
 import {WorkQueueHub} from './workqueue-search/workqueue-hub';
-import {} from 'rxjs';
 import {WorkQueueTab} from './workqueue-tab';
-import {ApplicationTagType} from '../../model/application/tag/application-tag-type';
 import {NotificationService} from '../../service/notification/notification.service';
 
 @Component({

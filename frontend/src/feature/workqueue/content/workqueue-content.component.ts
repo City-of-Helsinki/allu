@@ -1,19 +1,16 @@
-import {Component, OnInit, OnDestroy, Input, Output, EventEmitter} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ConnectableObservable} from 'rxjs';
 import {Subscription} from 'rxjs/Subscription';
 import '../../../rxjs-extensions.ts';
-import {MdDialogRef, MdDialog} from '@angular/material';
+import {MdDialog, MdDialogRef} from '@angular/material';
 
 import {Application} from '../../../model/application/application';
-import {Sort, Direction} from '../../../model/common/sort';
-import {User} from '../../../model/common/user';
+import {Sort} from '../../../model/common/sort';
 import {translations} from '../../../util/translations';
 import {MapHub} from '../../../service/map/map-hub';
 import {CommentsModalComponent} from '../../application/comment/comments-modal.component';
-import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
 import {WorkQueueHub} from '../workqueue-search/workqueue-hub';
 
 

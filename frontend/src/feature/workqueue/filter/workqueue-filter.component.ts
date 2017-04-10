@@ -84,6 +84,7 @@ export class WorkQueueFilterComponent implements OnInit {
   private waitingTabSelected(): void {
     let tags = this.queryForm.get(TAGS_FIELD);
     tags.setValue([ApplicationTagType[ApplicationTagType.WAITING]]);
+    this.setHandlers([]);
     this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(this.queryForm.value));
   }
 
