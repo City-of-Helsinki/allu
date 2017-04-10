@@ -7,7 +7,6 @@ import fi.hel.allu.ui.domain.ApplicationJson;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -28,7 +27,9 @@ public class DecisionServiceTest {
   private RestTemplate restTemplate;
   @Mock
   private ApplicationProperties applicationProperties;
-  @InjectMocks
+  @Mock
+  private LocationService locationService;
+
   private DecisionService decisionService;
 
 
@@ -37,6 +38,8 @@ public class DecisionServiceTest {
     MockitoAnnotations.initMocks(this);
     Mockito.when(applicationProperties.getPdfServiceUrl(Mockito.anyString())).thenReturn("PdfServiceUrl");
     Mockito.when(applicationProperties.getModelServiceUrl(Mockito.anyString())).thenReturn("ModelServiceUrl");
+
+    decisionService = new DecisionService(applicationProperties, restTemplate, locationService);
   }
 
   @Test(expected = IllegalArgumentException.class)
@@ -107,4 +110,5 @@ public class DecisionServiceTest {
 
     assertArrayEquals(mockData, decision);
   }
+
 }
