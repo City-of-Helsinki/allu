@@ -17,8 +17,9 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -35,6 +36,13 @@ public class ApplicationHistoryService {
 
   // regex to control which change fields should be skipped.
   private static final String SKIP_FIELDS_RE = "(/applicationTags/[^/]+/id)|(/extension/infoEntries/[^/]+/id)";
+
+  /* List of mappings for abbreviated history keys */
+  private static final Map<Pattern, String> ABBREV_MAP = new HashMap<>();
+
+  static {
+    ABBREV_MAP.put(Pattern.compile("/locations/([^/]*)/geometry/.*"), "/locations/$1/geometry");
+  }
 
   @Autowired
   public ApplicationHistoryService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
@@ -75,16 +83,37 @@ public class ApplicationHistoryService {
   public void addFieldChanges(Integer applicationId, ApplicationJson oldApplication, ApplicationJson newApplication) {
     ObjectComparer comparer = new ObjectComparer();
 
+    Set<String> abbreviated = new HashSet<>();
+
     List<ApplicationFieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()
         .filter(diff -> !skipFieldPattern.matcher(diff.keyName).matches())
+        .filter(diff -> !shouldAbbreviate(diff.keyName, abbreviated))
         .map(diff -> new ApplicationFieldChange(diff.keyName, diff.oldValue, diff.newValue))
         .collect(Collectors.toList());
+
+    abbreviated.forEach(fieldName -> fieldChanges.add(new ApplicationFieldChange(fieldName, "..", "..")));
+
     if (!fieldChanges.isEmpty()) {
       ApplicationChange change = new ApplicationChange();
       change.setChangeType(ChangeType.CONTENTS_CHANGED);
       change.setFieldChanges(fieldChanges);
       addChangeItem(applicationId, change);
     }
+  }
+
+  /*
+   * Test if given key name should be abbreviated. If yes, store the matching
+   * abbreviation and return true, else just return false.
+   */
+  private boolean shouldAbbreviate(String keyName, Set<String> abbreviated) {
+    for (Entry<Pattern, String> entry : ABBREV_MAP.entrySet()) {
+      Matcher m = entry.getKey().matcher(keyName);
+      if (m.matches()) {
+        abbreviated.add(m.replaceAll(entry.getValue()));
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
