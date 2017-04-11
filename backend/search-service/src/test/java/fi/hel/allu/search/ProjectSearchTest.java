@@ -21,7 +21,7 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppTestConfig.class)
-public class ProjectSearchServiceTest {
+public class ProjectSearchTest {
 
   @Autowired
   private Client client;

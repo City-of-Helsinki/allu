@@ -119,6 +119,14 @@ public class ElasticSearchMappingConfig {
                   .endObject()
                 .endObject()
               .endObject()
+              .startObject("locations") // alphabetical sorting for locations.address
+                .startObject("properties")
+                  .startObject("streetAddress")
+                    .field("type", "string")
+                    .field("fields").copyCurrentStructure(parser(alphasort()))
+                  .endObject()
+                .endObject()
+              .endObject()
             .endObject()
             .field("date_detection", "false")
           .endObject();

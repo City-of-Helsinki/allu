@@ -121,18 +121,25 @@ public class ApplicationSearchTest {
     applicationES1.setHandler(new UserES(USERNAME + " " + 1, "not used"));
     applicationES1.setApplicant(new ApplicantES());
     applicationES1.getApplicant().setName(USERNAME + " " + 1);
+    applicationES1.setLocations(Arrays.asList(
+        new LocationES("AEnsimmäinen osoite 9", "00100", "Sinki", 1),
+        new LocationES("Zviimonen 777", "00100", "Sinki", 5)));
 
     ApplicationES applicationES2 = createApplication(2);
     applicationES2.setName(USERNAME + " " + 2);
     applicationES2.setHandler(new UserES(USERNAME + " " + 2, "not used"));
     applicationES2.setApplicant(new ApplicantES());
     applicationES2.getApplicant().setName(USERNAME + " " + 2);
+    applicationES2.setLocations(Collections.singletonList(new LocationES("bToinen osoite 1", "00100", "Sinki", 2)));
 
     ApplicationES applicationES3 = createApplication(3);
     applicationES3.setName(USERNAME + " " + 3);
     applicationES3.setHandler(new UserES(USERNAME + " " + 3, "not used"));
     applicationES3.setApplicant(new ApplicantES());
     applicationES3.getApplicant().setName(USERNAME + " " + 3);
+    applicationES3.setLocations(Arrays.asList(
+        new LocationES("Zviimonen 777", "00100", "Sinki", 3),
+        new LocationES("Ckolmas osoite 5", "00100", "Sinki", 4)));
 
     genericSearchService.insert(applicationES1.getId().toString(), applicationES1);
     genericSearchService.insert(applicationES2.getId().toString(), applicationES2);
@@ -157,6 +164,16 @@ public class ApplicationSearchTest {
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
     params.setSort(new QueryParameters.Sort("applicant.name.alphasort", QueryParameters.Sort.Direction.ASC));
+    appList = genericSearchService.findByField(params);
+    assertEquals(3, appList.size());
+    assertEquals(Arrays.asList(1, 2, 3), appList);
+
+    params.setSort(new QueryParameters.Sort("locations.streetAddress.alphasort", QueryParameters.Sort.Direction.ASC));
+    appList = genericSearchService.findByField(params);
+    assertEquals(3, appList.size());
+    assertEquals(Arrays.asList(1, 2, 3), appList);
+
+    params.setSort(new QueryParameters.Sort("locations.cityDistrictId", QueryParameters.Sort.Direction.ASC));
     appList = genericSearchService.findByField(params);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);

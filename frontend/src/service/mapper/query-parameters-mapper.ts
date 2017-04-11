@@ -16,6 +16,7 @@ const alphaSortFields = [
   'applicant.name',
   'contacts.name',
   'handler.userName',
+  'locations.streetAddress',
   'applicationId',
   'ownerName'
 ];
