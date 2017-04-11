@@ -27,9 +27,8 @@ export class AttachmentHub {
 
   /**
    * Retrieves attachment in downloadable format
-   * and converts to file with given filename
    */
-  download = (attachmentId: number, name: string) => this.attachmentService.download(attachmentId, name);
+  download = (attachmentId: number) => this.attachmentService.download(attachmentId);
 
 
   /**

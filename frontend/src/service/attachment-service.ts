@@ -32,11 +32,11 @@ export class AttachmentService {
       .map(response => HttpUtil.extractHttpResponse(response));
   }
 
-  download(attachmentId: number, name: string): Observable<File> {
+  download(attachmentId: number): Observable<Blob> {
     let url = downloadUrl.replace(':attachmentId', String(attachmentId));
     let options = {responseType: ResponseContentType.Blob };
     return this.authHttp.get(url, options)
-      .map(response => new File([response.blob()], name));
+      .map(response => response.blob());
   }
 
   getDefaultAttachmentInfo(id: number): Observable<DefaultAttachmentInfo> {

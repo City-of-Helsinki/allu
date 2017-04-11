@@ -14,7 +14,7 @@ export class DefaultAttachmentInfoMapper {
       backendAttachmentInfo.size,
       new Date(backendAttachmentInfo.creationTime),
       backendAttachmentInfo.handlerName,
-      new File(['empty'], 'empty'), // Default attachment info needs to contain some file so dummy file is used
+      new Blob(['empty'], {}), // Default attachment info needs to contain some file so dummy file is used
       backendAttachmentInfo.defaultAttachmentId,
       backendAttachmentInfo.applicationTypes,
       backendAttachmentInfo.fixedLocationId);

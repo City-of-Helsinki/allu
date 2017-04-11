@@ -29,7 +29,7 @@ export class DefaultAttachmentComponent implements OnInit {
   areas = this.mapHub.fixedLocationAreas()
     .map(areas => areas.sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name)));
 
-  private file: File;
+  private file: Blob;
 
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
               private mapHub: MapHub, private attachmentHub: AttachmentHub) {
@@ -99,7 +99,7 @@ export class DefaultAttachmentComponent implements OnInit {
   }
 
   download(): void {
-    filesaverLib.saveAs(this.file);
+    filesaverLib.saveAs(this.file, this.attachmentForm.value.name);
   }
 
   private loadDefaultAttachment(id: number): Observable<DefaultAttachmentInfo> {
@@ -110,7 +110,7 @@ export class DefaultAttachmentComponent implements OnInit {
     this.attachmentForm.patchValue(DefaultAttachmentInfo.toForm(attachment));
 
     if (attachment.id) {
-      this.attachmentHub.download(attachment.id, this.attachmentForm.value.name)
+      this.attachmentHub.download(attachment.id)
         .subscribe(file => this.file = file);
     }
   }

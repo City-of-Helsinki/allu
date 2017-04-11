@@ -20,7 +20,7 @@ export class DefaultAttachmentsComponent implements OnInit {
   @Input() selectedAttachments: Array<DefaultAttachmentInfo> = [];
   @Output() add = new EventEmitter<DefaultAttachmentInfo>();
   @Output() remove = new EventEmitter<DefaultAttachmentInfo>();
-  defaultAttachments: Array<DefaultAttachmentInfo>;
+  defaultAttachments: Array<DefaultAttachmentInfo> = [];
 
   constructor(private attachmentHub: AttachmentHub) {}
 
@@ -32,7 +32,7 @@ export class DefaultAttachmentsComponent implements OnInit {
 
   onSelect(event: SelectionEvent): void {
     let da = event.item;
-    da.file = new File(['empty'], 'empty');
+    da.file = new Blob(['empty']);
 
     if (event.selected) {
       this.add.emit(da);
@@ -42,7 +42,7 @@ export class DefaultAttachmentsComponent implements OnInit {
   }
 
   download(attachment: DefaultAttachmentInfo) {
-    this.attachmentHub.download(attachment.id, attachment.name)
-      .subscribe(file => filesaverLib.saveAs(file));
+    this.attachmentHub.download(attachment.id)
+      .subscribe(file => filesaverLib.saveAs(file, attachment.name));
   }
 }

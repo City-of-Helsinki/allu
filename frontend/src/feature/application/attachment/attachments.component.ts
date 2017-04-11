@@ -89,8 +89,8 @@ export class AttachmentsComponent implements OnInit {
   }
 
   download(attachment: AttachmentInfo) {
-    this.attachmentHub.download(attachment.id, attachment.name)
-      .subscribe(file => filesaverLib.saveAs(file));
+    this.attachmentHub.download(attachment.id)
+      .subscribe(file => filesaverLib.saveAs(file, attachment.name));
   }
 
   fileOverDropzone(hasFileOverDropzone: boolean) {
