@@ -18,7 +18,7 @@ export class StringUtil {
   }
 
   public static replaceNull(s: string): string {
-    return !!s ? s.replace('null', '-') : s;
+    return !!s ? s.replace('null', '') : s;
   }
 
   public static toPath(p: string | string[], separator?: string): string {

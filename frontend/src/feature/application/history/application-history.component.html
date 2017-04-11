@@ -13,7 +13,7 @@
             </thead>
             <tbody>
                 <tr *ngFor="let change of history | async" (click)="showDetails(change)" class="clickable row-highlight">
-                    <td>{{change.uiChangeTime}}</td>
+                    <td class="no-wrap">{{change.uiChangeTime}}</td>
                     <td>
                         <span>{{['history.change.type', change.changeType] | translation}}</span>
                         <span *ngIf="change.newStatus">{{['application.status', change.newStatus] | translation}}</span>
@@ -21,7 +21,7 @@
                             {{meta.uiName(fieldChange.fieldName) | commaSeparated: last}}
                         </span>
                     </td>
-                    <td>{{handlers.get(change.userId)?.realName}}</td>
+                    <td class="no-wrap">{{handlers.get(change.userId)?.realName}}</td>
                 </tr>
             </tbody>
         </table>

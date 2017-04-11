@@ -16,7 +16,9 @@ import {findTranslation} from '../../../util/translations';
 @Component({
   selector: 'application-history',
   template: require('./application-history.component.html'),
-  styles: []
+  styles: [
+    require('./application-history.component.scss')
+  ]
 })
 export class ApplicationHistoryComponent implements OnInit {
 
