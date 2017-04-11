@@ -32,7 +32,8 @@ public class ApplicantServiceTest extends MockServices {
     MockitoAnnotations.initMocks(this);
     initSaveMocks();
     initSearchMocks();
-    applicantService = new ApplicantService(props, restTemplate, new ApplicationMapper(), Mockito.mock(SearchService.class));
+    applicantService = new ApplicantService(
+        props, restTemplate, new ApplicationMapper(), Mockito.mock(SearchService.class), Mockito.mock(ContactService.class));
   }
 
   @Test

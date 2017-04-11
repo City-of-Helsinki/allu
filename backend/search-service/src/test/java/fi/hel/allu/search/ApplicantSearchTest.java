@@ -159,7 +159,7 @@ public class ApplicantSearchTest {
     applicantES.setRegistryKey(updatedKey);
     applicationES.setApplicant(applicantES);
 
-    applicationSearchService.update(Collections.singletonMap(applicationES.getId().toString(), Collections.singletonMap("applicant", applicantES)));
+    applicationSearchService.bulkUpdate(Collections.singletonMap(applicationES.getId().toString(), Collections.singletonMap("applicant", applicantES)));
     applicationSearchService.refreshIndex();
 
     // should find by updated name

@@ -62,10 +62,11 @@ public class ApplicationDaoTest {
     contact.setPhone(testPhone);
     contact.setApplicantId(application.getApplicantId());
     // retrieve contacts with no postal address first
-    Contact insertedContact = contactDao.insert(contact);
+    Contact insertedContact = contactDao.insert(Collections.singletonList(contact)).get(0);
     Application insertedApplication = applicationDao.insert(application);
     contactDao.setApplicationContacts(insertedApplication.getId(), Collections.singletonList(insertedContact));
-    Map<Integer, List<Contact>> applicationToContacts = applicationDao.findRelatedApplicationsWithContacts(insertedContact.getId());
+    Map<Integer, List<Contact>> applicationToContacts =
+        applicationDao.findRelatedApplicationsWithContacts(Collections.singletonList(insertedContact.getId()));
     assertEquals(1, applicationToContacts.size());
     assertNotNull(applicationToContacts.get(insertedApplication.getId()));
     List<Contact> contacts = applicationToContacts.get(insertedApplication.getId());
@@ -77,9 +78,9 @@ public class ApplicationDaoTest {
     // make sure postal address retrieval also works
     PostalAddress testPostalAddress = new PostalAddress("katu 1", "12345", "testikaupunki");
     insertedContact.setPostalAddress(testPostalAddress);
-    insertedContact = contactDao.update(insertedContact.getId(), insertedContact);
+    insertedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
 
-    applicationToContacts = applicationDao.findRelatedApplicationsWithContacts(insertedContact.getId());
+    applicationToContacts = applicationDao.findRelatedApplicationsWithContacts(Collections.singletonList(insertedContact.getId()));
     assertNotNull(applicationToContacts.get(insertedApplication.getId()));
     contacts = applicationToContacts.get(insertedApplication.getId());
     assertEquals(testPostalAddress.getStreetAddress(), contacts.get(0).getPostalAddress().getStreetAddress());

@@ -690,7 +690,7 @@ public class ApplicationProperties {
    * @return URL for updating a contact by id.
    */
   public String getContactUpdateUrl() {
-    return getModelServiceUrl("/contacts/{id}");
+    return getModelServiceUrl("/contacts");
   }
 
   /**
@@ -704,7 +704,7 @@ public class ApplicationProperties {
    * Model-service path to find all contacts of applications having given contact.
    */
   public String getContactsRelatedByApplicationUrl() {
-    return getModelServiceUrl("/contacts/{id}/application/related");
+    return getModelServiceUrl("/contacts/application/related");
   }
 
   /**

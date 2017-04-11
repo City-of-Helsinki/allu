@@ -15,6 +15,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -57,7 +58,7 @@ public class ContactDaoSpec {
     afterEach(() -> transactionManager.rollback(transaction));
 
     describe("Contact dao", () -> {
-      beforeEach(() -> insertedContact = contactDao.insert(testContact));
+      beforeEach(() -> insertedContact = contactDao.insert(Collections.singletonList(testContact)).get(0));
       it("should return updated object from insert", () -> {
         assertContact(insertedContact);
         assertPostalAddress(insertedContact);
@@ -90,25 +91,32 @@ public class ContactDaoSpec {
       it("should update contacts", () -> {
         insertedContact.setName("updated");
         testContact.setName("updated");
-        Contact updatedContact = contactDao.update(insertedContact.getId(), insertedContact);
+        Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
         assertContact(updatedContact);
         assertPostalAddress(updatedContact);
       });
       it("should update contact mail address", () -> {
         insertedContact.getPostalAddress().setCity("updated");
         testPostalAddress.setCity("updated");
-        Contact updatedContact = contactDao.update(insertedContact.getId(), insertedContact);
+        Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
         assertContact(updatedContact);
         assertPostalAddress(updatedContact);
       });
       it("should delete contact mail address", () -> {
         int postalAddressId = insertedContact.getPostalAddress().getId();
         insertedContact.setPostalAddress(null);
-        Contact updatedContact = contactDao.update(insertedContact.getId(), insertedContact);
+        Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
         assertContact(updatedContact);
         Assert.assertNull(updatedContact.getPostalAddress());
         Optional<PostalAddress> postalAddress = postalAddressDao.findById(postalAddressId);
         Assert.assertFalse(postalAddress.isPresent());
+      });
+    });
+    describe("Contact dao bulk insert", () -> {
+      it("should insert bulk ok", () -> {
+        List<Contact> contacts = contactDao.insert(Arrays.asList(testContact, testContact, testContact));
+        Assert.assertEquals(3, contacts.size());
+        contacts.forEach(c -> assertContact(c));
       });
     });
   }

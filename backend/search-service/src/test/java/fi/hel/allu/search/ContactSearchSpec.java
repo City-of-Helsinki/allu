@@ -12,7 +12,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.greghaskins.spectrum.Spectrum.*;
 import static org.junit.Assert.assertEquals;
@@ -92,6 +94,21 @@ public class ContactSearchSpec {
       });
       afterEach(() -> {
         contactSearchService.delete(Integer.toString(testContact.getId()));
+      });
+    });
+    describe("Bulk insert contacts", () -> {
+      it("should bulk insert contacts", () -> {
+        Map<String, Object> idToContact = new HashMap<>();
+        idToContact.put("1", new ContactES(1, "alpha one searchstr"));
+        idToContact.put("2", new ContactES(2, "beta two searchstr"));
+        idToContact.put("3", new ContactES(3, "gamma three searchstr"));
+        contactSearchService.bulkInsert(idToContact);
+        contactSearchService.refreshIndex();
+        QueryParameters params = SearchTestUtil.createQueryParameters("name", "searchstr");
+        params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
+        List<Integer> contacts = contactSearchService.findByField(params);
+        assertEquals(3, contacts.size());
+        assertEquals(Arrays.asList(1, 2, 3), contacts);
       });
     });
   }

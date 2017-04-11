@@ -41,7 +41,7 @@ public class ApplicationController {
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody(required = true) List<ApplicationES> applicationESs) {
     Map<String, Object> idToApplication = applicationESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    applicationSearchService.update(idToApplication);
+    applicationSearchService.bulkUpdate(idToApplication);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

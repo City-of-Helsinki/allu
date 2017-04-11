@@ -28,30 +28,11 @@ public class ContactController {
     return new ResponseEntity<>(contactService.findById(id), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applicant/{applicantId}", method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ContactJson>> findByApplicant(@PathVariable int applicantId) {
-    return new ResponseEntity<>(contactService.findByApplicant(applicantId), HttpStatus.OK);
-  }
-
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ContactJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
     return new ResponseEntity<>(contactService.search(queryParameters), HttpStatus.OK);
   }
 
-  @RequestMapping(method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
-  public ResponseEntity<ContactJson> create(@Valid @RequestBody(required = true) ContactJson contactJson) {
-    return new ResponseEntity<>(contactService.createContact(contactJson), HttpStatus.OK);
-  }
-
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
-  public ResponseEntity<ContactJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ContactJson contactJson) {
-    return new ResponseEntity<>(contactService.updateContact(id, contactJson), HttpStatus.OK);
-  }
-
   // TODO: delete/hide contact        DELETE /contacts/{id} ?
-  // TODO: search incementally contacts by name       POST /customers/contacts/search
 }

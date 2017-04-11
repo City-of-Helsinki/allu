@@ -1,8 +1,11 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicantWithContactsJson;
+import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.ApplicantService;
+import fi.hel.allu.ui.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,8 @@ public class ApplicantController {
 
   @Autowired
   ApplicantService applicantService;
+  @Autowired
+  ContactService contactService;
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
@@ -32,6 +37,12 @@ public class ApplicantController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ApplicantJson>> findAll() {
     return new ResponseEntity<>(applicantService.findAllApplicants(), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/applicant/{id}/contacts", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ContactJson>> findByApplicant(@PathVariable int id) {
+    return new ResponseEntity<>(contactService.findByApplicant(id), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
@@ -59,6 +70,20 @@ public class ApplicantController {
   public ResponseEntity<ApplicantJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicantJson applicant) {
     return new ResponseEntity<>(applicantService.updateApplicant(id, applicant), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/withcontacts", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
+  public ResponseEntity<ApplicantWithContactsJson> createWithContacts(@Valid @RequestBody ApplicantWithContactsJson applicantWithContactsJson) {
+    return new ResponseEntity<>(applicantService.createApplicantWithContacts(applicantWithContactsJson), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/withcontacts", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
+  public ResponseEntity<ApplicantWithContactsJson> updateWithContacts(
+      @Valid @RequestBody ApplicantWithContactsJson applicantWithContactsJson) {
+    return new ResponseEntity<>(applicantService.updateApplicantWithContacts(applicantWithContactsJson), HttpStatus.OK);
+  }
+
 
   // TODO: delete/hide applicant                      DELETE /applicants/{id} ?
 }

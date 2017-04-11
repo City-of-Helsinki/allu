@@ -8,17 +8,18 @@ import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
+import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkProcessor;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
+import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.action.update.UpdateRequest;
-import org.elasticsearch.action.update.UpdateResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -38,8 +39,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Generic ElasticSearch functionality for different kinds of searches.
@@ -88,60 +89,30 @@ public class GenericSearchService {
   }
 
   /**
-   * Update search index with given objects. This method can be used for partial updating existing object. If the value of <code>Map</code>
+   * Bulk insert objects to search index.
+   *
+   * @param idToIndexedObject   A map having object id as key and indexed object as value.
+   */
+  public void bulkInsert(Map<String, Object> idToIndexedObject) {
+    List<IndexRequest> indexRequests =
+        idToIndexedObject.entrySet().stream().map(entry -> createRequest(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+
+    executeBulk(indexRequests);
+  }
+
+  /**
+   * Bulk update of the search index. This method can be used for partial updating existing object. If the value of <code>Map</code>
    * is a <code>Map</code>, the key of the value map is used as name of nested document to update. For example, if you want to update
    * application.applicant with new applicant, you can provide a following parameter (pseudocode)
    * <code> Map<applicationId, Map<"applicant", applicantObject>> </></code>.
    *
-   * @param idToIndexedObjects  Map having id as value and indexed object update as value.
+   * @param idToUpdatedObject Map having id of the updated object as key and object that will be updated to search index as JSON.
    */
-  public void update(Map<String, Object> idToIndexedObjects) {
-    // TODO: change to use bulk update
-    idToIndexedObjects.entrySet().forEach(entry -> update(entry.getKey(), entry.getValue()));
-  }
+  public void bulkUpdate(Map<String, Object> idToUpdatedObject) {
+    List<UpdateRequest> updateRequests =
+        idToUpdatedObject.entrySet().stream().map(entry -> updateRequest(entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
-  /**
-   * Bulk update of the search index.
-   *
-   * @param idToUpdateDate Map having id of the updated object as key and object that will be updated to search index as JSON.
-   */
-  public void bulkUpdate(Map<String, Object> idToUpdateDate) {
-    final BulkProcessor bp = BulkProcessor.builder(
-        client,
-        new BulkProcessor.Listener() {
-          @Override
-          public void beforeBulk(long executionId, BulkRequest request) {
-          }
-
-          @Override
-          public void afterBulk(long executionId, BulkRequest request, Throwable t) {
-            logger.error("Bulk operation failed", t);
-          }
-
-          @Override
-          public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
-            logger.debug("Bulk execution completed [" + executionId + "]. Took (ms): " + response.getTookInMillis() + ". Failures: "
-                + response.hasFailures() + ". Count: " + response.getItems().length);
-          }
-        })
-        .setConcurrentRequests(1)           // at most 1 concurrent request
-        .setBulkActions(1000)               // maximum of 1000 updates per request
-        .setBulkSize(new ByteSizeValue(-1)) // no byte size limit for bulk
-        .build();
-    try {
-      for (Map.Entry<String, Object> entry : idToUpdateDate.entrySet()) {
-        bp.add(new UpdateRequest(indexName, indexTypeName, entry.getKey()).doc(objectMapper.writeValueAsBytes(entry.getValue())));
-      }
-    } catch (Exception e) {
-      // this should never happen
-      throw new SearchException(e);
-    } finally {
-      try {
-        bp.awaitClose(10, TimeUnit.MINUTES);
-      } catch (InterruptedException e) {
-        throw new SearchException(e);
-      }
-    }
+    executeBulk(updateRequests);
   }
 
   /**
@@ -265,25 +236,32 @@ public class GenericSearchService {
     client.admin().indices().prepareRefresh(indexName).execute().actionGet();
   }
 
-
-  private void update(String id, Object indexedObject) {
+  private UpdateRequest updateRequest(String id, Object indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
-      logger.debug("Updating object in search index: {}", objectMapper.writeValueAsString(indexedObject));
+      logger.debug("Creating update request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
       UpdateRequest updateRequest = new UpdateRequest();
       updateRequest.index(indexName);
       updateRequest.type(indexTypeName);
       updateRequest.id(id);
       updateRequest.doc(json);
-      UpdateResponse updateResponse = client.update(updateRequest).get();
-      if (updateResponse == null) {
-        throw new SearchException("Unable to update record of type " + indexTypeName + " with id " + id);
-      }
+      return updateRequest;
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
-    } catch (InterruptedException e) {
-      throw new SearchException(e);
-    } catch (ExecutionException e) {
+    }
+  }
+
+  private IndexRequest createRequest(String id, Object indexedObject) {
+    try {
+      byte[] json = objectMapper.writeValueAsBytes(indexedObject);
+      logger.debug("Creating create request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
+      IndexRequest indexRequest = new IndexRequest();
+      indexRequest.index(indexName);
+      indexRequest.type(indexTypeName);
+      indexRequest.id(id);
+      indexRequest.source(json);
+      return indexRequest;
+    } catch (JsonProcessingException e) {
       throw new SearchException(e);
     }
   }
@@ -327,6 +305,38 @@ public class GenericSearchService {
       return qb;
     } else {
       throw new UnsupportedOperationException("Unknown query value type: " + queryParameter.getFieldValue().getClass().toString());
+    }
+  }
+
+  private void executeBulk(List<? extends ActionRequest<?>> requests) {
+    final BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessorListener())
+        .setConcurrentRequests(1)           // at most 1 concurrent request
+        .setBulkActions(1000)               // maximum of 1000 updates per request
+        .setBulkSize(new ByteSizeValue(-1)) // no byte size limit for bulk
+        .build();
+
+    requests.forEach(req -> bp.add(req));
+    try {
+      bp.awaitClose(10, TimeUnit.MINUTES);
+    } catch (InterruptedException e) {
+      throw new SearchException(e);
+    }
+  }
+
+  private class BulkProcessorListener implements BulkProcessor.Listener {
+    @Override
+    public void beforeBulk(long executionId, BulkRequest request) {
+    }
+
+    @Override
+    public void afterBulk(long executionId, BulkRequest request, Throwable t) {
+      logger.error("Bulk operation failed", t);
+    }
+
+    @Override
+    public void afterBulk(long executionId, BulkRequest request, BulkResponse response) {
+      logger.debug("Bulk execution completed [" + executionId + "]. Took (ms): " + response.getTookInMillis() + ". Failures: "
+          + response.hasFailures() + ". Count: " + response.getItems().length);
     }
   }
 }

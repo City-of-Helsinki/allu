@@ -52,7 +52,7 @@ public class ApplicantController {
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<ApplicantES> applicantESs) {
     Map<String, Object> idToApplicant = applicantESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    applicantSearchService.update(idToApplicant);
+    applicantSearchService.bulkUpdate(idToApplicant);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

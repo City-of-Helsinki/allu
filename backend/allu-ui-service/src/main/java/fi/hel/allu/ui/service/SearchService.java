@@ -121,10 +121,10 @@ public class SearchService {
    *
    * @param contactJson Applicant to be indexed.
    */
-  public void insertContact(ContactJson contactJson) {
+  public void insertContacts(List<ContactJson> contactJson) {
     restTemplate.postForObject(
         applicationProperties.getContactSearchCreateUrl(),
-        new ContactES(contactJson.getId(), contactJson.getName()),
+        contactJson.stream().map(cJson -> new ContactES(cJson.getId(), cJson.getName())).collect(Collectors.toList()),
         Void.class);
   }
 

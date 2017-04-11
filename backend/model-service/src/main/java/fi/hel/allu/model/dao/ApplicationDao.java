@@ -106,13 +106,13 @@ public class ApplicationDao {
   /**
    * Find all contacts of applications having given contact.
    *
-   * @param contactId   Contact id to be searched.
+   * @param ids Contact ids to be searched.
    * @return  all contacts of applications having given contact. The id of application is the map key and value contains all contacts
    *          of the application.
    */
   @Transactional(readOnly = true)
-  public Map<Integer, List<Contact>> findRelatedApplicationsWithContacts(int contactId) {
-    SubQueryExpression<Integer> sq = select(applicationContact.applicationId).from(applicationContact).where(applicationContact.contactId.eq(contactId));
+  public Map<Integer, List<Contact>> findRelatedApplicationsWithContacts(List<Integer> ids) {
+    SubQueryExpression<Integer> sq = select(applicationContact.applicationId).from(applicationContact).where(applicationContact.contactId.in(ids));
     // create expression list to allow mapping of all contact fields and postal address joined from another table
     List<Expression> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
     mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));

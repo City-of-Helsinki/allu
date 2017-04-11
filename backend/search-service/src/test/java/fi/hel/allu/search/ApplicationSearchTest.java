@@ -298,7 +298,7 @@ public class ApplicationSearchTest {
     final String newName = "Päivitetty testi";
     applicationES.setName(newName);
 
-    genericSearchService.update(Collections.singletonMap(applicationES.getId().toString(), applicationES));
+    genericSearchService.bulkUpdate(Collections.singletonMap(applicationES.getId().toString(), applicationES));
     genericSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", newName);

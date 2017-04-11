@@ -42,15 +42,16 @@ public class ContactController {
   }
 
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Void> create(@RequestBody ContactES contactES) {
-    contactSearchService.insert(contactES.getId().toString(), contactES);
+  public ResponseEntity<Void> create(@RequestBody List<ContactES> contactES) {
+    Map<String, Object> idToContact = contactES.stream().collect(Collectors.toMap(c -> Integer.toString(c.getId()), c -> c));
+    contactSearchService.bulkInsert(idToContact);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<ContactES> contactESs) {
     Map<String, Object> idToContact = contactESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    contactSearchService.update(idToContact);
+    contactSearchService.bulkUpdate(idToContact);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

@@ -1,6 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
@@ -112,29 +111,25 @@ public class ContactDao {
   }
 
   @Transactional
-  public Contact insert(Contact contactData) {
-    Integer id = queryFactory
-        .insert(contact)
-        .populate(contactData).set(contact.postalAddressId, postalAddressDao.insertIfNotNull(contactData))
-        .executeWithKey(contact.id);
-    if (id == null) {
-      throw new QueryException("Failed to insert record");
-    }
-
-    return findById(id).get();
+  public List<Contact> insert(List<Contact> contacts) {
+    SQLInsertClause inserts = queryFactory.insert(contact);
+    contacts.forEach(c -> inserts.populate(c).set(contact.postalAddressId, postalAddressDao.insertIfNotNull(c)).addBatch());
+    List<Integer> ids = inserts.executeWithKeys(contact.id);
+    return findByIds(ids);
   }
 
   @Transactional
-  public Contact update(int id, Contact contactData) {
-    contactData.setId(id);
-    Optional<Contact> currentContactOpt = findById(id);
-    if (!currentContactOpt.isPresent()) {
-      throw new NoSuchEntityException("Attempted to update non-existent contact", Integer.toString(id));
-    }
+  public List<Contact> update(List<Contact> contacts) {
+    return contacts.stream().map(c -> update(c.getId(), c)).collect(Collectors.toList());
+  }
 
-    Contact currectContact = currentContactOpt.get();
-    Integer deletedPostalAddressId = postalAddressDao.mapAndUpdatePostalAddress(currectContact, contactData);
-    Integer postalAddressId = Optional.ofNullable(currectContact.getPostalAddress()).map(pAddress -> pAddress.getId()).orElse(null);
+  private Contact update(int id, Contact contactData) {
+    contactData.setId(id);
+    Contact currentContact = findById(id).orElseThrow(
+        () -> new NoSuchEntityException("Attempted to update non-existent contact", Integer.toString(id)));
+
+    Integer deletedPostalAddressId = postalAddressDao.mapAndUpdatePostalAddress(currentContact, contactData);
+    Integer postalAddressId = Optional.ofNullable(currentContact.getPostalAddress()).map(pAddress -> pAddress.getId()).orElse(null);
 
     SQLUpdateClause query = queryFactory
         .update(contact)

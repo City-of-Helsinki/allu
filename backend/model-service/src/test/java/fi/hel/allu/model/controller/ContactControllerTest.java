@@ -19,6 +19,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -73,7 +75,7 @@ public class ContactControllerTest {
   @Test
   public void addContact() throws Exception {
     Contact contact = createDummyContact();
-    wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
+    wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
   }
 
   @Test
@@ -110,8 +112,8 @@ public class ContactControllerTest {
     // First add contact:
     Contact contact = createDummyContact();
     contact.setName("Lino Levy");
-    ResultActions result = wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
-    Contact inserted = wtc.parseObjectFromResult(result, Contact.class);
+    ResultActions result = wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
+    Contact inserted = wtc.parseObjectFromResult(result, Contact[].class)[0];
     int id = inserted.getId();
     // Read back, check that name matches
     wtc.perform(get(String.format("/contacts/%d", id))).andExpect(status().isOk()).andExpect(jsonPath("$.id", is(id)))
@@ -128,19 +130,21 @@ public class ContactControllerTest {
     // First add contact:
     Contact contact = createDummyContact();
     contact.setName("Lino Levy");
-    ResultActions result = wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
-    Contact inserted = wtc.parseObjectFromResult(result, Contact.class);
+    ResultActions result = wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
+    Contact inserted = wtc.parseObjectFromResult(result, Contact[].class)[0];
     int id = inserted.getId();
     // Then, change it:
     contact.setEmail("postmaster@mastposter.com");
-    wtc.perform(put(String.format("/contacts/%d", id)), contact).andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(id))).andExpect(jsonPath("$.email", is(contact.getEmail())));
+    contact.setId(id);
+    wtc.perform(put(String.format("/contacts")), Collections.singletonList(contact)).andExpect(status().isOk())
+        .andExpect(jsonPath("$[0].id", is(id))).andExpect(jsonPath("$[0].email", is(contact.getEmail())));
   }
 
   @Test
   public void updateNonexistent() throws Exception {
     Contact contact = createDummyContact();
-    wtc.perform(put("/contacts/314159"), contact).andExpect(status().isNotFound());
+    contact.setId(314159);
+    wtc.perform(put("/contacts"), Collections.singletonList(contact)).andExpect(status().isNotFound());
   }
 
   @Test
@@ -149,14 +153,14 @@ public class ContactControllerTest {
     for (int i = 0; i < 10; ++i) {
       Contact contact = createDummyContact();
       contact.setName(String.format("Dummy contact %d", i));
-      wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
+      wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
     }
     // Add a few contacts for applicant 2
     for (int i = 0; i < 4; ++i) {
       Contact contact = createDummyContact();
       contact.setApplicantId(applicantId2);
       contact.setName(String.format("Dummier contact %d", i));
-      wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
+      wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
     }
     // Now get all contacts for applicant 1 and make sure there's enough:
     ResultActions resultActions = wtc.perform(get(String.format("/contacts/applicant/%d", applicantId1)))
@@ -178,8 +182,8 @@ public class ContactControllerTest {
     for (int i = 0; i < contactsToInsert.length; ++i) {
       Contact contact = createDummyContact();
       contact.setName(String.format("Dummy contact %d", i));
-      ResultActions result = wtc.perform(post("/contacts"), contact).andExpect(status().isOk());
-      contactsToInsert[i] = wtc.parseObjectFromResult(result, Contact.class);
+      ResultActions result = wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
+      contactsToInsert[i] = wtc.parseObjectFromResult(result, Contact[].class)[0];
     }
 
     Application appl = new Application();

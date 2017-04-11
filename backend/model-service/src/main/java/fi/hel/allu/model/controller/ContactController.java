@@ -61,13 +61,13 @@ public class ContactController {
   /**
    * Find all contacts of applications having given contact.
    *
-   * @param id  of the contact whose related applications with contacts are fetched.
+   * @param ids  of the contacts whose related applications with contacts are fetched.
    * @return  all contacts of applications having given contact. The id of application is the map key and value contains all contacts
    *          of the application.
    */
-  @RequestMapping(value = "/{id}/application/related", method = RequestMethod.GET)
-  public ResponseEntity<Map<Integer, List<Contact>>> findRelatedApplicationsWithContacts(@PathVariable int id) {
-    Map<Integer, List<Contact>> applicationIdToContacts = applicationDao.findRelatedApplicationsWithContacts(id);
+  @RequestMapping(value = "/application/related", method = RequestMethod.POST)
+  public ResponseEntity<Map<Integer, List<Contact>>> findRelatedApplicationsWithContacts(@RequestBody List<Integer> ids) {
+    Map<Integer, List<Contact>> applicationIdToContacts = applicationDao.findRelatedApplicationsWithContacts(ids);
     return new ResponseEntity<>(applicationIdToContacts, HttpStatus.OK);
   }
 
@@ -84,32 +84,25 @@ public class ContactController {
   }
 
   /**
-   * Insert contact item
+   * Insert contact items.
    *
-   * @param contact
-   *          The contents of the contact item
-   * @return The inserted contact item
+   * @param contacts  The contacts to be inserted.
+   * @return The inserted contacts.
    */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Contact> insert(@Valid @RequestBody(required = true) Contact contact) {
-    if (contact.getId() != null) {
-      throw new IllegalArgumentException("Id must be null for insert");
-    }
-    return new ResponseEntity<>(contactDao.insert(contact), HttpStatus.OK);
+  public ResponseEntity<List<Contact>> insert(@Valid @RequestBody(required = true) List<Contact> contacts) {
+    return new ResponseEntity<>(contactDao.insert(contacts), HttpStatus.OK);
   }
 
   /**
    * Update a contact item
    *
-   * @param id
-   *          The ID of the contact item to update
-   * @param contact
-   *          The new contents of the contact item
+   * @param contacts  The new contents of the contact item
    * @return The contact item after insertion
    */
-  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-  public ResponseEntity<Contact> update(@PathVariable int id, @Valid @RequestBody(required = true) Contact contact) {
-    return new ResponseEntity<>(contactDao.update(id, contact), HttpStatus.OK);
+  @RequestMapping(method = RequestMethod.PUT)
+  public ResponseEntity<List<Contact>> update(@Valid @RequestBody List<Contact> contacts) {
+    return new ResponseEntity<>(contactDao.update(contacts), HttpStatus.OK);
   }
 
   /**

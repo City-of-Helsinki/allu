@@ -46,14 +46,14 @@ public class ProjectController {
       @PathVariable String id,
       @RequestBody(required = true) ProjectES projectES) {
     projectES.setId(Integer.parseInt(id));
-    projectSearchService.update(Collections.singletonMap(projectES.getId().toString(), projectES));
+    projectSearchService.bulkUpdate(Collections.singletonMap(projectES.getId().toString(), projectES));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody(required = true) List<ProjectES> projectESs) {
     Map<String, Object> idToProject = projectESs.stream().collect(Collectors.toMap(p -> p.getId().toString(), p -> p));
-    projectSearchService.update(idToProject);
+    projectSearchService.bulkUpdate(idToProject);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

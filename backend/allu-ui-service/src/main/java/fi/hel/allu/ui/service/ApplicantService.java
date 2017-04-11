@@ -3,6 +3,8 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.model.domain.Applicant;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.ApplicantWithContactsJson;
+import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.QueryParametersJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
@@ -13,9 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,17 +25,20 @@ public class ApplicantService {
   private RestTemplate restTemplate;
   private ApplicationMapper applicationMapper;
   private SearchService searchService;
+  private ContactService contactService;
 
   @Autowired
   public ApplicantService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
       ApplicationMapper applicationMapper,
-      SearchService searchService) {
+      SearchService searchService,
+      ContactService contactService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
     this.searchService = searchService;
+    this.contactService = contactService;
   }
 
 
@@ -53,6 +56,31 @@ public class ApplicantService {
     ApplicantJson createdApplicant = applicationMapper.createApplicantJson(applicantModel);
     searchService.insertApplicant(createdApplicant);
     return createdApplicant;
+  }
+
+  /**
+   * Create a new applicant with contacts. Applicant id must null to create a new applicant.
+   *
+   * @param applicantWithContactsJson Applicant with conctacts to be created.
+   * @return Created applicant with contacts.
+   */
+  public ApplicantWithContactsJson createApplicantWithContacts(ApplicantWithContactsJson applicantWithContactsJson) {
+    if (applicantWithContactsJson.getApplicant() == null) {
+      throw new IllegalArgumentException("Applicant cannot be null when creating a new applicant!");
+    }
+    ApplicantJson applicantJson = createApplicant(applicantWithContactsJson.getApplicant());
+    ApplicantWithContactsJson createdApplicantWithContacts = new ApplicantWithContactsJson();
+    createdApplicantWithContacts.setApplicant(applicantJson);
+
+    if (applicantWithContactsJson.getContacts() != null) {
+      List<ContactJson> newContacts = applicantWithContactsJson.getContacts();
+      newContacts.forEach(c -> c.setApplicantId(applicantJson.getId()));
+      List<ContactJson> contacts = contactService.createContacts(applicantWithContactsJson.getContacts());
+      searchService.insertContacts(contacts);
+      createdApplicantWithContacts.setContacts(contacts);
+    }
+
+    return createdApplicantWithContacts;
   }
 
   /**
@@ -81,6 +109,32 @@ public class ApplicantService {
     }
 
     return updatedApplicant;
+  }
+
+  public ApplicantWithContactsJson updateApplicantWithContacts(ApplicantWithContactsJson applicantWithContactsJson) {
+    ApplicantWithContactsJson updatedApplicantWithContactsJson = new ApplicantWithContactsJson();
+    if (applicantWithContactsJson.getApplicant() != null) {
+      ApplicantJson updatedApplicant = applicantWithContactsJson.getApplicant();
+      updatedApplicantWithContactsJson.setApplicant(updateApplicant(updatedApplicant.getId(), updatedApplicant));
+    }
+    if (applicantWithContactsJson.getContacts() != null) {
+      Map<Boolean, List<ContactJson>> newOldContacts =
+          applicantWithContactsJson.getContacts().stream().collect(Collectors.partitioningBy(c -> c.getId() != null));
+      ArrayList<ContactJson> allContacts = new ArrayList<>();
+      if (!newOldContacts.get(false).isEmpty()) {
+        List<ContactJson> newContacts = contactService.createContacts(newOldContacts.get(false));
+        searchService.insertContacts(newContacts);
+        allContacts.addAll(newContacts);
+      }
+      if (!newOldContacts.get(true).isEmpty()) {
+        List<ContactJson> oldContacts = contactService.updateContacts(newOldContacts.get(true));
+        searchService.updateContacts(oldContacts);
+        allContacts.addAll(oldContacts);
+      }
+      updatedApplicantWithContactsJson.setContacts(allContacts);
+    }
+
+    return updatedApplicantWithContactsJson;
   }
 
   public ApplicantJson findApplicantById(int applicantId) {
