@@ -1,10 +1,13 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.*;
+import fi.hel.allu.model.domain.util.TimeUtil;
+
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -179,7 +182,7 @@ public class Application {
    * @return  time reservation of a land area begins.
    */
   public ZonedDateTime getStartTime() {
-    return startTime;
+    return TimeUtil.homeTime(startTime);
   }
 
   public void setStartTime(ZonedDateTime startTime) {
@@ -192,7 +195,7 @@ public class Application {
    * @return  time reservation of a land area ends.
    */
   public ZonedDateTime getEndTime() {
-    return endTime;
+    return TimeUtil.homeTime(endTime);
   }
 
   public void setEndTime(ZonedDateTime endTime) {
