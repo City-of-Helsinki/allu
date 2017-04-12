@@ -112,9 +112,11 @@ public class ApplicationService {
    * @return Application with possibly updated information from backend.
    */
   Application createApplication(ApplicationJson newApplication) {
-    newApplication.setApplicant(applicantService.createApplicant(newApplication.getApplicant()));
+    if (newApplication.getApplicant().getId() == null) {
+      // if given applicant is new, create it and set it to the application
+      newApplication.setApplicant(applicantService.createApplicant(newApplication.getApplicant()));
+    }
     List<ContactJson> contacts = newApplication.getContactList();
-    setContactApplicant(contacts, newApplication.getApplicant());
     if (newApplication.getApplicationTags() != null) {
       UserJson currentUser = userService.getCurrentUser();
       newApplication.getApplicationTags().forEach(t -> updateTag(currentUser, t));
@@ -128,7 +130,7 @@ public class ApplicationService {
       locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
     }
 
-    contactService.setContactsForApplication(applicationModel.getId(), contacts);
+    contactService.setContactsForApplication(applicationModel.getId(), newApplication.getApplicant().getId(), contacts);
 
     // need to fetch fresh Application from model, because at least setting location may change both handler and application start and end times
     return findApplicationById(applicationModel.getId());
@@ -141,7 +143,10 @@ public class ApplicationService {
    * @return Updated application
    */
   ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
-    applicantService.updateApplicant(applicationJson.getApplicant().getId(), applicationJson.getApplicant());
+    if (applicationJson.getApplicant().getId() == null) {
+      // if given applicant is new, create it and set it to the application
+      applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
+    }
     List<LocationJson> locationJsons = null;
     if (applicationJson.getLocations() != null) {
       locationJsons = locationService.updateApplicationLocations(applicationId, applicationJson.getLocations());
@@ -149,8 +154,8 @@ public class ApplicationService {
     } else {
       locationService.deleteApplicationLocation(applicationId);
     }
-    List<ContactJson> contacts = contactService.setContactsForApplication(applicationId,
-        applicationJson.getContactList());
+    List<ContactJson> contacts =
+        contactService.setContactsForApplication(applicationId, applicationJson.getApplicant().getId(), applicationJson.getContactList());
     if (applicationJson.getApplicationTags() != null) {
       UserJson currentUser = userService.getCurrentUser();
       applicationJson.getApplicationTags().forEach(t -> updateTag(currentUser, t));
@@ -196,18 +201,6 @@ public class ApplicationService {
     lsc.setIntersects(query.getIntersectingGeometry());
     lsc.setAfter(query.getAfter());
     lsc.setBefore(query.getBefore());
-  }
-
-  private void setContactApplicant(List<ContactJson> contacts, ApplicantJson applicant) {
-    if (contacts == null) {
-      return;
-    }
-    Integer applicantId = applicant.getId();
-    for (ContactJson cj : contacts) {
-      if (cj.getApplicantId() == null) {
-        cj.setApplicantId(applicantId);
-      }
-    }
   }
 
   private void updateTag(UserJson currentUser, ApplicationTagJson tag) {

@@ -116,8 +116,8 @@ public class ContactService {
     return updatedContactJsons;
   }
 
-  public List<ContactJson> setContactsForApplication(int applicationId, List<ContactJson> contacts) {
-
+  public List<ContactJson> setContactsForApplication(int applicationId, int applicantId, List<ContactJson> contacts) {
+    contacts.forEach(c -> c.setApplicantId(applicantId));
     // create new contacts (the ones with missing id)
     Map<Boolean, List<ContactJson>> newOldContacts = contacts.stream().collect(Collectors.partitioningBy(c -> c.getId() != null));
     List<ContactJson> allContacts = new ArrayList<>(newOldContacts.get(true));
