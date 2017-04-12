@@ -1,6 +1,6 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
-import {Applicant} from '../applicant';
+import {Applicant} from '../applicant/applicant';
 import {Contact} from '../contact';
 import {TimeUtil} from '../../../util/time.util';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';

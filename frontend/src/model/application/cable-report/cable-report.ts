@@ -1,6 +1,6 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {CableInfoEntry} from './cable-info-entry';
-import {Applicant} from '../applicant';
+import {Applicant} from '../applicant/applicant';
 import {Contact} from '../contact';
 import {ApplicationType} from '../type/application-type';
 

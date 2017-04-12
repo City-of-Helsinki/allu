@@ -301,8 +301,15 @@ export const translations = {
       emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt'
     },
+    action: {
+      save: 'Hakija tallennettu',
+      removeFromRegistry: 'Hakija poistettu rekisteristä'
+    },
     error: {
-      fetch: 'Hakijan hakeminen epäonnistui'
+      fetch: 'Hakijan hakeminen epäonnistui',
+      fetchContacts: 'Asiakkaan yhteyshenkilöiden hakeminen epäonnistui',
+      save: 'Hakijan tallentaminen epäonnistui',
+      remove: 'Hakijan poistaminen rekisteristä epäonnistui'
     }
   },
   contact: {
@@ -311,6 +318,9 @@ export const translations = {
       nameShort: 'Nimi on liian lyhyt',
       emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt'
+    },
+    error: {
+      remove: 'Yhteyshenkilön poistaminen epäonnistui'
     }
   },
   geolocation: {

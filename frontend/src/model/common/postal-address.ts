@@ -23,4 +23,12 @@ export class PostalAddress {
   get uiStreetAddress(): string {
     return this.streetAddress ? this.streetAddress.replace(/\b0+/g, '') : undefined;
   }
+
+  get uiAddress(): string {
+    let uiAddress = '';
+    uiAddress += this.streetAddress ? this.streetAddress : '';
+    uiAddress += this.postalCode ? ' ' + this.postalCode : '';
+    uiAddress += this.city ? ' ' + this.city : '';
+    return uiAddress;
+  }
 }

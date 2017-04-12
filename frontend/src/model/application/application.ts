@@ -1,4 +1,4 @@
-import {Applicant} from './applicant';
+import {Applicant} from './applicant/applicant';
 import {Contact} from './contact';
 import {Location} from '../common/location';
 import {ApplicationExtension} from './type/application-extension';

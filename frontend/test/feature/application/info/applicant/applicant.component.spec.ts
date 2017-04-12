@@ -4,7 +4,7 @@ import {FormGroup, FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {MdCardModule} from '@angular/material';
 
 import {ApplicantComponent} from '../../../../../src/feature/application/info/applicant/applicant.component';
-import {Applicant} from '../../../../../src/model/application/applicant';
+import {Applicant} from '../../../../../src/model/application/applicant/applicant';
 import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
 import {CustomerHub} from '../../../../../src/service/customer/customer-hub';
 

@@ -39,7 +39,7 @@ public class ApplicantController {
     return new ResponseEntity<>(applicantService.findAllApplicants(), HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/applicant/{id}/contacts", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/contacts", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ContactJson>> findByApplicant(@PathVariable int id) {
     return new ResponseEntity<>(contactService.findByApplicant(id), HttpStatus.OK);

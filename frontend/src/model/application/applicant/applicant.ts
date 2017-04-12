@@ -1,5 +1,5 @@
 
-import {PostalAddress} from '../common/postal-address';
+import {PostalAddress} from '../../common/postal-address';
 
 export class Applicant {
 

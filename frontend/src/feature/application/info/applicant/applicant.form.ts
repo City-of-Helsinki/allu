@@ -1,4 +1,4 @@
-import {Applicant} from '../../../../model/application/applicant';
+import {Applicant} from '../../../../model/application/applicant/applicant';
 import {PostalAddress} from '../../../../model/common/postal-address';
 
 export class ApplicantForm {

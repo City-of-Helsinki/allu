@@ -35,6 +35,7 @@ import {DefaultTextService} from '../../service/application/default-text.service
 import {LocationState} from '../../service/application/location-state';
 import {CustomerHub} from '../../service/customer/customer-hub';
 import {CustomerService} from '../../service/customer/customer.service';
+import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 
 
 @NgModule({
@@ -56,7 +57,8 @@ import {CustomerService} from '../../service/customer/customer.service';
     DecisionModule,
     SearchModule,
     AdminModule,
-    SidebarModule
+    SidebarModule,
+    CustomerRegistryModule
   ],
   declarations: [
     AlluComponent,

@@ -1,0 +1,29 @@
+import {NgModule} from '@angular/core';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {AlluCommonModule} from '../common/allu-common.module';
+import {RouterModule} from '@angular/router';
+import {customerRegistryRoutes} from './customer-registry.routing';
+import {CustomerListComponent} from './customer-list.component';
+import {CustomerComponent} from './customer.component';
+import {CustomerRegistryComponent} from './customer-registry.component';
+import {InvoicingAddressComponent} from './invoicing-address.component';
+import {CustomerContactsComponent} from './customer-contacts.component';
+
+@NgModule({
+  imports: [
+    RouterModule.forChild(customerRegistryRoutes),
+    FormsModule,
+    ReactiveFormsModule,
+    AlluCommonModule
+  ],
+  declarations: [
+    CustomerRegistryComponent,
+    CustomerListComponent,
+    CustomerComponent,
+    InvoicingAddressComponent,
+    CustomerContactsComponent
+  ],
+  exports: [
+  ]
+})
+export class CustomerRegistryModule {}

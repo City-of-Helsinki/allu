@@ -5,7 +5,7 @@ import {ApplicantForm} from './applicant.form';
 import {EnumUtil} from '../../../../util/enum.util';
 import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
 import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
-import {Applicant} from '../../../../model/application/applicant';
+import {Applicant} from '../../../../model/application/applicant/applicant';
 import {Some} from '../../../../util/option';
 import {Subject} from 'rxjs/Subject';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
