@@ -12,8 +12,9 @@ import {ErrorType} from '../ui-state/error-type';
 import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
 import {ProjectSearchQuery} from '../../model/project/project-search-query';
-import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
+import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
+import {ProjectQueryParametersMapper} from '../mapper/query/project-query-parameters-mapper';
 
 @Injectable()
 export class ProjectService {
@@ -30,7 +31,7 @@ export class ProjectService {
 
     return this.authHttp.post(
       searchUrl,
-      JSON.stringify(QueryParametersMapper.mapProjectQueryFrontend(searchQuery)))
+      JSON.stringify(ProjectQueryParametersMapper.mapFrontend(searchQuery)))
       .map(response => response.json())
       .map(json => json.map(project => ProjectMapper.mapBackend(project)))
       .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.PROJECT_SEARCH_FAILED, HttpUtil.extractMessage(err))));

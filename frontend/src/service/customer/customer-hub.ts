@@ -3,6 +3,7 @@ import {CustomerService} from './customer.service';
 import {ApplicantWithContacts} from '../../model/application/applicant/applicant-with-contacts';
 import {Applicant} from '../../model/application/applicant/applicant';
 import {Contact} from '../../model/application/contact';
+import {CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
 
 @Injectable()
 export class CustomerHub {
@@ -10,9 +11,9 @@ export class CustomerHub {
   constructor(private customerService: CustomerService) {}
 
   /**
-   * Fetches applicants by field and given search term
+   * Searches applicants by given search query
    */
-  public searchApplicantsByField = (fieldName: string, term: string) => this.customerService.searchApplicantsByField(fieldName, term);
+  public searchApplicantsBy = (searchQuery: CustomerSearchQuery) => this.customerService.searchApplicantsBy(searchQuery);
 
   /**
    * Fetches all applicants

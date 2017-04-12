@@ -26,7 +26,7 @@
                             <input mdInput type="text" formControlName="name"
                                    placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
                                    [autocompletion]="nameSearchResults"
-                                   (onSearchChange)="onNameSearchChange($event)"
+                                   (onSearchChange)="onNameSearchChange(applicantForm.value.type, $event)"
                                    (onSelection)="applicantSelected($event)"/>
                             <md-hint>
                                 <field-error [form]="applicantForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>

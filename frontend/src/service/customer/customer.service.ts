@@ -12,9 +12,10 @@ import {NumberUtil} from '../../util/number.util';
 import {Some} from '../../util/option';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {HttpUtil} from '../../util/http.util';
+import {CustomerQueryParametersMapper, CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
 
 const APPLICANTS_URL = '/api/applicants';
-const APPLICANTS_SEARCH_URL = APPLICANTS_URL + '/search/:fieldName';
+const APPLICANTS_SEARCH_URL = APPLICANTS_URL + '/search';
 const CONTACTS_FOR_APPLICANT_URL = APPLICANTS_URL + '/:applicantId/contacts';
 const WITH_CONTACTS = '/withcontacts';
 const CONTACTS_URL = '/api/contacts';
@@ -25,9 +26,8 @@ export class CustomerService {
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
   }
 
-  public searchApplicantsByField(fieldName: string, term: string): Observable<Array<Applicant>> {
-    let url = APPLICANTS_SEARCH_URL.replace(':fieldName', String(fieldName));
-    return this.authHttp.post(url, term)
+  public searchApplicantsBy(searchQuery: CustomerSearchQuery): Observable<Array<Applicant>> {
+    return this.authHttp.post(APPLICANTS_SEARCH_URL, JSON.stringify(CustomerQueryParametersMapper.mapFrontend(searchQuery)))
       .map(response => response.json())
       .map(applicants => applicants.map(a => ApplicantMapper.mapBackend(a)))
       .catch(error => this.errorHandler.handle(error, findTranslation('applicant.error.fetch')));

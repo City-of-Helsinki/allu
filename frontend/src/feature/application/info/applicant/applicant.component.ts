@@ -65,8 +65,8 @@ export class ApplicantComponent implements OnInit, OnDestroy {
     this.applicationForm.removeControl(this.formName);
   }
 
-  onNameSearchChange(term: string): void {
-    this.applicantHub.searchApplicantsByField('name', term)
+  onNameSearchChange(applicantType: string, term: string): void {
+    this.applicantHub.searchApplicantsBy({name: term, type: applicantType})
       .debounceTime(300)
       .subscribe(applicants => this.nameSearch.next(applicants));
   }

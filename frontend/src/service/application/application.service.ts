@@ -10,9 +10,9 @@ import {ApplicationLocationQueryMapper} from './../mapper/application-location-q
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
-import {QueryParametersMapper} from '../mapper/query-parameters-mapper';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
+import {ApplicationQueryParametersMapper} from '../mapper/query/application-query-parameters-mapper';
 
 
 @Injectable()
@@ -58,7 +58,7 @@ export class ApplicationService {
 
     return this.authHttp.post(
       searchUrl,
-      JSON.stringify(QueryParametersMapper.mapApplicationQueryFrontend(searchQuery)))
+      JSON.stringify(ApplicationQueryParametersMapper.mapFrontend(searchQuery)))
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));

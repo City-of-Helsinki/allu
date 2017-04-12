@@ -382,7 +382,7 @@ public class ApplicationMapper {
 
   public ApplicantES createApplicantES(ApplicantJson applicantJson) {
     if (applicantJson != null) {
-      return new ApplicantES(applicantJson.getId(), applicantJson.getName(), applicantJson.getRegistryKey());
+      return new ApplicantES(applicantJson.getId(), applicantJson.getName(), applicantJson.getRegistryKey(), applicantJson.getType());
     } else {
       return null;
     }
