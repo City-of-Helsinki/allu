@@ -111,13 +111,15 @@ public class ApplicantService {
     return updatedApplicant;
   }
 
-  public ApplicantWithContactsJson updateApplicantWithContacts(ApplicantWithContactsJson applicantWithContactsJson) {
+  public ApplicantWithContactsJson updateApplicantWithContacts(int applicantId, ApplicantWithContactsJson applicantWithContactsJson) {
     ApplicantWithContactsJson updatedApplicantWithContactsJson = new ApplicantWithContactsJson();
     if (applicantWithContactsJson.getApplicant() != null) {
       ApplicantJson updatedApplicant = applicantWithContactsJson.getApplicant();
+      updatedApplicant.setId(applicantId);
       updatedApplicantWithContactsJson.setApplicant(updateApplicant(updatedApplicant.getId(), updatedApplicant));
     }
     if (applicantWithContactsJson.getContacts() != null) {
+      applicantWithContactsJson.getContacts().forEach(c -> c.setApplicantId(applicantId));
       Map<Boolean, List<ContactJson>> newOldContacts =
           applicantWithContactsJson.getContacts().stream().collect(Collectors.partitioningBy(c -> c.getId() != null));
       ArrayList<ContactJson> allContacts = new ArrayList<>();

@@ -80,8 +80,9 @@ public class ApplicantController {
   @RequestMapping(value = "/{id}/withcontacts", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION','ROLE_DECISION')")
   public ResponseEntity<ApplicantWithContactsJson> updateWithContacts(
+      @PathVariable int id,
       @Valid @RequestBody ApplicantWithContactsJson applicantWithContactsJson) {
-    return new ResponseEntity<>(applicantService.updateApplicantWithContacts(applicantWithContactsJson), HttpStatus.OK);
+    return new ResponseEntity<>(applicantService.updateApplicantWithContacts(id, applicantWithContactsJson), HttpStatus.OK);
   }
 
 
