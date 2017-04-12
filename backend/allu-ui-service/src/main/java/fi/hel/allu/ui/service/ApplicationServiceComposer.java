@@ -5,12 +5,14 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -103,14 +105,15 @@ public class ApplicationServiceComposer {
    * @return Updated application
    */
   private ApplicationJson updateApplicationNoTracking(int applicationId, ApplicationJson applicationJson) {
-    ApplicationJson updatedApplication = applicationService.updateApplication(applicationId, applicationJson);
-    if (updatedApplication.getProject() != null) {
+    Application updatedApplication = applicationService.updateApplication(applicationId, applicationJson);
+    ApplicationJson updatedApplicationJson = applicationJsonService.getFullyPopulatedApplication(updatedApplication);
+    if (updatedApplicationJson.getProject() != null) {
       List<ProjectJson> updatedProjects = projectService
-          .updateProjectInformation(Collections.singletonList(updatedApplication.getProject().getId()));
+          .updateProjectInformation(Collections.singletonList(updatedApplicationJson.getProject().getId()));
       searchService.updateProjects(updatedProjects);
     }
-    searchService.updateApplications(Collections.singletonList(updatedApplication));
-    return updatedApplication;
+    searchService.updateApplications(Collections.singletonList(updatedApplicationJson));
+    return updatedApplicationJson;
   }
 
   /**

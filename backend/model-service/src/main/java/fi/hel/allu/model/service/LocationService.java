@@ -50,6 +50,10 @@ public class LocationService {
     if (application.getHandler() == null) {
       // TODO: area rental with multiple locations will get more or less "random" location
       newLocations.forEach(insertedLocation -> tryToAssignHandler(application, insertedLocation));
+      if (application.getHandler() != null) {
+        // New handler was assigned, set it
+        applicationService.updateHandler(application.getHandler(), Collections.singletonList(application.getId()));
+      }
     }
     updateApplicationAndProject(application);
     return newLocations;
