@@ -84,10 +84,14 @@ public class ApplicationServiceComposerTest {
   @Test
   public void testUpdateApplication() {
     ApplicationJson applicationJson = new ApplicationJson();
+    Application updatedApplication = new Application();
+    updatedApplication.setProjectId(projectJson.getId());
     ApplicationJson updatedApplicationJson = new ApplicationJson();
     updatedApplicationJson.setProject(projectJson);
     Mockito.when(projectJson.getId()).thenReturn(projectId);
-    Mockito.when(applicationService.updateApplication(applicationId, applicationJson)).thenReturn(updatedApplicationJson);
+    Mockito.when(applicationService.updateApplication(applicationId, applicationJson)).thenReturn(updatedApplication);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(updatedApplication))
+        .thenReturn(updatedApplicationJson);
     Mockito.when(projectService.updateProjectInformation(Collections.singletonList(projectId))).thenReturn(Collections.singletonList(projectJson));
 
     Assert.assertEquals(updatedApplicationJson, applicationServiceComposer.updateApplication(applicationId, applicationJson));

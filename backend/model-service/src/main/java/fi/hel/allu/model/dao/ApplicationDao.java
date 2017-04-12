@@ -8,11 +8,13 @@ import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +40,8 @@ public class ApplicationDao {
 
   /** Fields that won't be updated in regular updates */
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
-      Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime, application.metadataVersion);
+      Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
+          application.metadataVersion, application.handler);
 
   private SQLQueryFactory queryFactory;
   private ApplicationSequenceDao applicationSequenceDao;

@@ -142,20 +142,21 @@ public class ApplicationService {
    * @param applicationJson application that is going to be updated
    * @return Updated application
    */
-  ApplicationJson updateApplication(int applicationId, ApplicationJson applicationJson) {
+  Application updateApplication(int applicationId, ApplicationJson applicationJson) {
     if (applicationJson.getApplicant().getId() == null) {
       // if given applicant is new, create it and set it to the application
       applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
     }
-    List<LocationJson> locationJsons = null;
+
     if (applicationJson.getLocations() != null) {
-      locationJsons = locationService.updateApplicationLocations(applicationId, applicationJson.getLocations());
+      List<LocationJson> locationJsons = locationService.updateApplicationLocations(applicationId,
+          applicationJson.getLocations());
       applicationJson.setLocations(locationJsons);
     } else {
       locationService.deleteApplicationLocation(applicationId);
     }
-    List<ContactJson> contacts =
-        contactService.setContactsForApplication(applicationId, applicationJson.getApplicant().getId(), applicationJson.getContactList());
+    contactService.setContactsForApplication(applicationId, applicationJson.getApplicant().getId(),
+        applicationJson.getContactList());
     if (applicationJson.getApplicationTags() != null) {
       UserJson currentUser = userService.getCurrentUser();
       applicationJson.getApplicationTags().forEach(t -> updateTag(currentUser, t));
@@ -163,12 +164,8 @@ public class ApplicationService {
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
         HttpMethod.PUT, requestEntity, Application.class, applicationId);
-    ApplicationJson resultJson = applicationMapper.mapApplicationToJson(responseEntity.getBody());
 
-    resultJson.setContactList(contacts);
-    resultJson.setApplicant(applicationJson.getApplicant());
-    resultJson.setLocations(locationJsons);
-    return resultJson;
+    return responseEntity.getBody();
   }
 
   void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
