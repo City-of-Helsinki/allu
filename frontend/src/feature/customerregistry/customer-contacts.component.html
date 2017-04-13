@@ -1,7 +1,7 @@
 <div [formGroup]="contactsForm" materialize>
     <div formArrayName="contacts">
         <div *ngFor="let contact of contactsForm.controls.contacts.controls; let index=index" class="col m6 loose">
-            <div [formGroupName]="index" class="no-border">
+            <div [formGroupName]="index" class="no-border" *ngIf="contact.value.active">
                 <md-card>
                     <md-card-title>Yhteyshenkilö</md-card-title>
                     <md-card-content>
@@ -55,7 +55,7 @@
                         </div>
                         <div class="row form-group">
                             <div class="col m12">
-                                <button md-raised-button type="button" color="primary" (click)="removeContact(index, contact)">POISTA</button>
+                                <button md-raised-button type="button" color="primary" (click)="removeContact(index, contact.value)">POISTA</button>
                             </div>
                         </div>
                     </md-card-content>

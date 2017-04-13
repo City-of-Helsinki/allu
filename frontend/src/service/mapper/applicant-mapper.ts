@@ -23,7 +23,8 @@ export class ApplicantMapper {
         backendApplicant.registryKey,
         postalAddress,
         backendApplicant.email,
-        backendApplicant.phone);
+        backendApplicant.phone,
+        backendApplicant.active);
     } else {
       return undefined;
     }
@@ -42,7 +43,8 @@ export class ApplicantMapper {
           postalCode: applicant.postalAddress.postalCode,
           city: applicant.postalAddress.city } : undefined,
       email: applicant.email,
-      phone: applicant.phone
+      phone: applicant.phone,
+      active: applicant.active
     } : undefined;
 
   }

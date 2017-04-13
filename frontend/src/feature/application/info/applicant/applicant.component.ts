@@ -49,7 +49,8 @@ export class ApplicantComponent implements OnInit, OnDestroy {
       }),
       email: ['', emailValidator],
       phone: ['', Validators.minLength(2)],
-      propertyDeveloper: [false]
+      propertyDeveloper: [false],
+      active: [true]
     });
   }
 

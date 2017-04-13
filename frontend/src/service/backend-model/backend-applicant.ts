@@ -9,4 +9,5 @@ export interface BackendApplicant {
   postalAddress: BackendPostalAddress;
   email: string;
   phone: string;
+  active: boolean;
 }

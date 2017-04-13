@@ -8,6 +8,7 @@ import {emailValidator, postalCodeValidator} from '../../util/complex-validator'
 import {CustomerHub} from '../../service/customer/customer-hub';
 import {NumberUtil} from '../../util/number.util';
 import {NotificationService} from '../../service/notification/notification.service';
+import {findTranslation} from '../../util/translations';
 
 @Component({
   selector: 'customer-contacts',
@@ -36,7 +37,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
     this.route.params
       .map(p => p['id'])
       .filter(id => NumberUtil.isDefined(id))
-      .switchMap(id => this.customerHub.findApplicantContacts(id))
+      .switchMap(id => this.customerHub.findApplicantActiveContacts(id))
       .subscribe(contacts => contacts.forEach(c => this.addContact(c)));
   }
 
@@ -50,12 +51,13 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
 
   private removeContact(index: number, contact: Contact): void {
     if (NumberUtil.isDefined(contact.id)) {
-      this.customerHub.removeContact(contact.id).subscribe(
-        result => this.contacts.removeAt(index),
-        error => NotificationService.error(error));
+      let contactCtrl = this.contacts.at(index);
+      contactCtrl.patchValue({active: false});
+      contactCtrl.markAsDirty();
     } else {
       this.contacts.removeAt(index);
     }
+    NotificationService.message(findTranslation('contact.action.remove') + ' ' + contact.name);
   }
 
   private createContact(contact: Contact): FormGroup {
@@ -67,7 +69,8 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
       postalCode: [contact.postalCode, postalCodeValidator],
       city: [contact.city],
       email: [contact.email, emailValidator],
-      phone: [contact.phone, Validators.minLength(2)]
+      phone: [contact.phone, Validators.minLength(2)],
+      active: [contact.active]
     });
   }
 }

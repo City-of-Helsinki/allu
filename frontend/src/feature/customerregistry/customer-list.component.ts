@@ -24,12 +24,13 @@ export class CustomerListComponent implements OnInit {
   constructor(private router: Router, private customerHub: CustomerHub, private fb: FormBuilder) {
     this.searchForm = this.fb.group({
       name: [''],
-      type: ['']
+      type: [''],
+      active: [true]
     });
   }
 
   ngOnInit(): void {
-    this.customers = this.customerHub.fetchAllApplicants();
+    this.customers = this.customerHub.searchApplicantsBy(this.searchForm.value);
   }
 
   newCustomer(): void {
@@ -41,11 +42,6 @@ export class CustomerListComponent implements OnInit {
   }
 
   search(): void {
-    let value = this.searchForm.value;
-    if (StringUtil.isEmpty(value.name) && StringUtil.isEmpty(value.type)) {
-      this.customers = this.customerHub.fetchAllApplicants();
-    } else {
-      this.customers = this.customerHub.searchApplicantsBy(this.searchForm.value);
-    }
+    this.customers = this.customerHub.searchApplicantsBy(this.searchForm.value);
   }
 }

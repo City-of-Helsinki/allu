@@ -105,7 +105,7 @@
                         <button type="button" md-raised-button color="primary" (click)="newContact()">UUSI YHTEYSHENKILÖ</button>
                         <button type="button" md-raised-button color="primary"
                                 *ngIf="customerForm.value.id"
-                                (click)="removeFromRegistry()">POISTA REKISTERISTÄ</button>
+                                (click)="removeFromRegistry(customerWithContactsForm.value)">POISTA REKISTERISTÄ</button>
                     </div>
                 </div>
             </md-card>

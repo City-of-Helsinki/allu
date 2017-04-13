@@ -73,6 +73,15 @@ export class QueryParametersMapper {
     }
   }
 
+  public static mapBooleanParameter(
+    queryParameters: Array<BackendQueryParameter>,
+    parameterName: string,
+    parameterValue: boolean): void {
+    if (parameterValue !== undefined) {
+      queryParameters.push(QueryParametersMapper.createBooleanParameter(parameterName, parameterValue));
+    }
+  }
+
   public static removeExtraWhitespace(str: string): string {
     let retVal = undefined;
     if (str) {
@@ -120,6 +129,16 @@ export class QueryParametersMapper {
       startDateValue: undefined,
       endDateValue: undefined
     };
+  }
+
+  private static createBooleanParameter(parameterName: string, parameterValue: boolean) {
+      return {
+        fieldName: QueryParametersMapper.getBackendValueField(parameterName),
+        fieldValue: Some(parameterValue).map(val => val.toString()).orElse(undefined),
+        fieldMultiValue: undefined,
+        startDateValue: undefined,
+        endDateValue: undefined
+      };
   }
 
   private static getBackendSortField(field: string): string {

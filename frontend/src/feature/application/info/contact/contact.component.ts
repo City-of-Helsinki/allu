@@ -61,7 +61,8 @@ export class ContactComponent implements OnInit, OnDestroy {
       postalCode: [contact.postalCode, postalCodeValidator],
       city: [contact.city],
       email: [contact.email, emailValidator],
-      phone: [contact.phone, Validators.minLength(2)]
+      phone: [contact.phone, Validators.minLength(2)],
+      active: [contact.active]
     });
   }
 }

@@ -12,7 +12,9 @@ export class ContactMapper {
       backendContact.postalCode,
       backendContact.city,
       backendContact.email,
-      backendContact.phone) : undefined;
+      backendContact.phone,
+      backendContact.active
+    ) : undefined;
   }
 
   public static mapFrontend(contact: Contact): BackendContact {
@@ -25,7 +27,8 @@ export class ContactMapper {
       postalCode: contact.postalCode,
       city: contact.city,
       email: contact.email,
-      phone: contact.phone
+      phone: contact.phone,
+      active: contact.active
     } : undefined;
   }
 }

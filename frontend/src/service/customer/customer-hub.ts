@@ -31,15 +31,9 @@ export class CustomerHub {
   public saveApplicantWithContacts = (applicantId: number, applicant: Applicant, contacts: Array<Contact>) =>
     this.customerService.saveApplicantWithContacts(applicantId, applicant, contacts);
 
-  public removeApplicant = (applicantId: number) => this.customerService.removeApplicant(applicantId);
-
   /**
    * Fetches all contacts of given applicant
    */
-  public findApplicantContacts = (applicantId: number) => this.customerService.findApplicantContacts(applicantId);
-
-  /**
-   * Removes contact by id
-   */
-  public removeContact = (contactId: number) => this.customerService.removeContact(contactId);
+  public findApplicantActiveContacts = (applicantId: number) => this.customerService.findApplicantContacts(applicantId)
+    .map(contacts => contacts.filter(c => c.active));
 }

@@ -321,6 +321,9 @@ export const translations = {
     },
     error: {
       remove: 'Yhteyshenkilön poistaminen epäonnistui'
+    },
+    action: {
+      remove: 'Yhteyshenkilö poistettu'
     }
   },
   geolocation: {

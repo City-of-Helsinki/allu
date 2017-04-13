@@ -8,4 +8,5 @@ export interface BackendContact {
   city: string;
   email: string;
   phone: string;
+  active: boolean;
 }

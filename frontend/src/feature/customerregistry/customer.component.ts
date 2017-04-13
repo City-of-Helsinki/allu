@@ -7,11 +7,12 @@ import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {emailValidator, postalCodeValidator} from '../../util/complex-validator';
 import {ApplicantForm} from '../application/info/applicant/applicant.form';
 import {Contact} from '../../model/application/contact';
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {CustomerHub} from '../../service/customer/customer-hub';
 import {Applicant} from '../../model/application/applicant/applicant';
 import {NotificationService} from '../../service/notification/notification.service';
 import {findTranslation} from '../../util/translations';
+import {ApplicantWithContacts} from '../../model/application/applicant/applicant-with-contacts';
 
 @Component({
   selector: 'customer',
@@ -40,7 +41,8 @@ export class CustomerComponent implements OnInit {
         city: ['']
       }),
       email: ['', emailValidator],
-      phone: ['', Validators.minLength(2)]
+      phone: ['', Validators.minLength(2)],
+      active: [true]
     });
 
     this.customerWithContactsForm = this.fb.group({
@@ -60,8 +62,11 @@ export class CustomerComponent implements OnInit {
     this.contactSubject.next(new Contact());
   }
 
-  removeFromRegistry(): void {
-    this.customerHub.removeApplicant(this.customerForm.value.id).subscribe(
+  removeFromRegistry(formValues: CustomerWithContactsForm): void {
+    let customerId = formValues.customer.id;
+    let customer = ApplicantForm.toApplicant(formValues.customer);
+    customer.active = false;
+    this.save(customerId, customer, this.contactChanges()).subscribe(
       applicant => this.notifyAndNavigateToCustomers(findTranslation('applicant.action.removeFromRegistry')),
       error => NotificationService.error(error)
     );
@@ -69,7 +74,7 @@ export class CustomerComponent implements OnInit {
 
   onSubmit(formValues: CustomerWithContactsForm): void {
     let customerId = formValues.customer.id;
-    this.customerHub.saveApplicantWithContacts(customerId, this.customerChanges(), this.contactChanges()).subscribe(
+    this.save(customerId, this.customerChanges(), this.contactChanges()).subscribe(
         applicant => this.notifyAndNavigateToCustomers(findTranslation('applicant.action.save')),
         error => NotificationService.error(error)
     );
@@ -77,6 +82,10 @@ export class CustomerComponent implements OnInit {
 
   validWithChanges(): boolean {
     return this.customerWithContactsForm.valid && this.customerWithContactsForm.dirty;
+  }
+
+  private save(customerId: number, customer: Applicant, contacts: Array<Contact>): Observable<ApplicantWithContacts> {
+    return this.customerHub.saveApplicantWithContacts(customerId, customer, contacts);
   }
 
   private notifyAndNavigateToCustomers(message: string): void {

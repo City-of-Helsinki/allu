@@ -65,28 +65,6 @@ export class CustomerService {
      .catch(error => this.errorHandler.handle(error, findTranslation('applicant.error.save')));
   }
 
-  removeApplicant(applicantId: number): Observable<HttpResponse> {
-    console.log('Removing applicant',  applicantId);
-    return Observable.of(new HttpResponse(HttpStatus.OK));
-     /*
-     TODO: Enable when backend has support
-     let url = APPLICANTS_URL + '/' + applicantId;
-     return this.authHttp.delete(url)
-     .map(response => HttpUtil.extractHttpResponse(response))
-     .catch(error => this.errorHandler.handle(error, findTranslation('applicant.error.remove')));*/
-  }
-
-  public removeContact(contactId: number): Observable<HttpResponse> {
-    console.log('Removing contact', contactId);
-    return Observable.of(new HttpResponse(HttpStatus.OK));
-    /*
-    TODO: Enable when backend has support
-    let url = CONTACTS_URL + '/' + contactId;
-    return this.authHttp.delete(url)
-      .map(response => HttpUtil.extractHttpResponse(response))
-      .catch(error => this.errorHandler.handle(error, findTranslation('contact.error.remove')));*/
-  }
-
   private updateApplicant(applicantId: number, applicant: ApplicantWithContacts): Observable<ApplicantWithContacts> {
     let url = APPLICANTS_URL + '/' + applicantId + WITH_CONTACTS;
     return this.authHttp.put(url, JSON.stringify(ApplicantMapper.mapFrontendWithContacts(applicant)))

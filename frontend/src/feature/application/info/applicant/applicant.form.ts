@@ -12,7 +12,8 @@ export class ApplicantForm {
     public country?: string,
     public postalAddress?: PostalAddress,
     public email?: string,
-    public phone?: string
+    public phone?: string,
+    public active = true
   ) {}
 
   static fromApplicant(applicant: Applicant): ApplicantForm {
@@ -25,7 +26,8 @@ export class ApplicantForm {
       'Suomi',
       applicant.postalAddress,
       applicant.email,
-      applicant.phone
+      applicant.phone,
+      applicant.active
     );
   }
 
@@ -39,6 +41,7 @@ export class ApplicantForm {
     applicant.postalAddress = form.postalAddress;
     applicant.email = form.email;
     applicant.phone = form.phone;
+    applicant.active = form.active;
     return applicant;
   }
 }
