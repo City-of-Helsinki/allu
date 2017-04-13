@@ -154,7 +154,8 @@ public class ContactService {
     Map<Integer, List<ContactES>> applicationIdToContactJsons = applicationIdToContacts.getBody().entrySet().stream().collect(
         Collectors.toMap(
             entry -> entry.getKey(),
-            entry -> entry.getValue().stream().map(contact -> new ContactES(contact.getId(), contact.getName())).collect(Collectors.toList())));
+            entry -> entry.getValue().stream().map(
+                contact -> new ContactES(contact.getId(), contact.getName(), contact.isActive())).collect(Collectors.toList())));
     return applicationIdToContactJsons;
   }
 

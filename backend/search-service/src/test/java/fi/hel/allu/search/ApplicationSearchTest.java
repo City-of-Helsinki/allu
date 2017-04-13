@@ -337,8 +337,8 @@ public class ApplicationSearchTest {
 
   public static List<ContactES> createContacts() {
     ArrayList<ContactES> contacts = new ArrayList<>();
-    contacts.add(new ContactES(1, "kontakti ihminen"));
-    contacts.add(new ContactES(2, "toinen contact"));
+    contacts.add(new ContactES(1, "kontakti ihminen", true));
+    contacts.add(new ContactES(2, "toinen contact", true));
     return contacts;
   }
 

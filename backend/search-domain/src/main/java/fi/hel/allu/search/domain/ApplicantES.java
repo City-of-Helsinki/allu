@@ -10,18 +10,18 @@ public class ApplicantES {
   private String name;
   private String registryKey;
   private ApplicantType type;
-
-  // TODO: add ApplicantType as indexed value too
+  private boolean isActive;
 
   public ApplicantES() {
     // JSON serialization
   }
 
-  public ApplicantES(Integer id, String name, String registryKey, ApplicantType type) {
+  public ApplicantES(Integer id, String name, String registryKey, ApplicantType type, boolean isActive) {
     this.id = id;
     this.name = name;
     this.registryKey = registryKey;
     this.type = type;
+    this.isActive = isActive;
   }
 
   /**
@@ -68,5 +68,16 @@ public class ApplicantES {
 
   public void setType(ApplicantType type) {
     this.type = type;
+  }
+
+  /*
+   * @return  True, if the user is active i.e. has not been marked as deleted.
+   */
+  public boolean isActive() {
+    return isActive;
+  }
+
+  public void setActive(boolean active) {
+    isActive = active;
   }
 }

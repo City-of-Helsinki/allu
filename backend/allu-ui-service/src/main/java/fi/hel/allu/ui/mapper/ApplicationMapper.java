@@ -329,6 +329,7 @@ public class ApplicationMapper {
     applicantJson.setPhone(applicant.getPhone());
     applicantJson.setEmail(applicant.getEmail());
     applicantJson.setPostalAddress(createPostalAddressJson(applicant.getPostalAddress()));
+    applicantJson.setActive(applicant.isActive());
     return applicantJson;
   }
 
@@ -341,6 +342,7 @@ public class ApplicationMapper {
     applicantModel.setPhone(applicantJson.getPhone());
     applicantModel.setEmail(applicantJson.getEmail());
     applicantModel.setPostalAddress(createPostalAddressModel(applicantJson.getPostalAddress()));
+    applicantModel.setActive(applicantJson.isActive());
     return applicantModel;
   }
 
@@ -363,6 +365,7 @@ public class ApplicationMapper {
     }
     json.setEmail(c.getEmail());
     json.setPhone(c.getPhone());
+    json.setActive(c.isActive());
     return json;
   }
 
@@ -377,12 +380,14 @@ public class ApplicationMapper {
     }
     contact.setEmail(json.getEmail());
     contact.setPhone(json.getPhone());
+    contact.setIsActive(json.isActive());
     return contact;
   }
 
   public ApplicantES createApplicantES(ApplicantJson applicantJson) {
     if (applicantJson != null) {
-      return new ApplicantES(applicantJson.getId(), applicantJson.getName(), applicantJson.getRegistryKey(), applicantJson.getType());
+      return new ApplicantES(
+          applicantJson.getId(), applicantJson.getName(), applicantJson.getRegistryKey(), applicantJson.getType(), applicantJson.isActive());
     } else {
       return null;
     }
@@ -391,7 +396,7 @@ public class ApplicationMapper {
   public List<ContactES> createContactES(List<ContactJson> contacts) {
     if (contacts != null) {
       return contacts.stream()
-          .map(c -> new ContactES(c.getId(), c.getName()))
+          .map(c -> new ContactES(c.getId(), c.getName(), c.isActive()))
           .collect(Collectors.toList());
     } else {
       return null;

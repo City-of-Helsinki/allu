@@ -6,14 +6,16 @@ package fi.hel.allu.search.domain;
 public class ContactES {
   private Integer id;
   private String name;
+  private boolean isActive;
 
   public ContactES() {
     // for JSON serialization
   }
 
-  public ContactES(Integer id, String name) {
+  public ContactES(Integer id, String name, boolean isActive) {
     this.id = id;
     this.name = name;
+    this.isActive = isActive;
   }
 
   /**
@@ -38,5 +40,16 @@ public class ContactES {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  /**
+   * @return  True, if the user is active i.e. has not been marked as deleted.
+   */
+  public boolean isActive() {
+    return isActive;
+  }
+
+  public void setActive(boolean active) {
+    isActive = active;
   }
 }

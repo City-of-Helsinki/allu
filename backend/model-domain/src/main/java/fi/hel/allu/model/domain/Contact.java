@@ -14,6 +14,7 @@ public class Contact implements PostalAddressItem {
   private PostalAddress postalAddress;
   private String email;
   private String phone;
+  private boolean isActive = true;
 
   /**
    * in Finnish: Yhteyshenkilön tunniste
@@ -85,4 +86,19 @@ public class Contact implements PostalAddressItem {
     this.phone = phone;
   }
 
+  /**
+   * @return  True, if the user is active i.e. has not been marked as deleted.
+   */
+  public boolean isActive() {
+    return isActive;
+  }
+
+  public void setIsActive(boolean active) {
+    isActive = active;
+  }
+
+  public void setActive(boolean active) {
+    // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
+    setIsActive(active);
+  }
 }

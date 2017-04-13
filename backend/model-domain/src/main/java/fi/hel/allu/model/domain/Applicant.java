@@ -20,6 +20,7 @@ public class Applicant implements PostalAddressItem {
   private String email;
   private String phone;
   private String registryKey;
+  private boolean isActive = true;
 
   public Integer getId() {
     return id;
@@ -107,5 +108,21 @@ public class Applicant implements PostalAddressItem {
 
   public void setRegistryKey(String registryKey) {
     this.registryKey = registryKey;
+  }
+
+  /**
+   * @return  True, if the user is active i.e. has not been marked as deleted.
+   */
+  public boolean isActive() {
+    return isActive;
+  }
+
+  public void setIsActive(boolean active) {
+    isActive = active;
+  }
+
+  public void setActive(boolean active) {
+    // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
+    setIsActive(active);
   }
 }

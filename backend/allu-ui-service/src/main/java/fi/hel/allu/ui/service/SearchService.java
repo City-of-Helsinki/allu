@@ -124,7 +124,7 @@ public class SearchService {
   public void insertContacts(List<ContactJson> contactJson) {
     restTemplate.postForObject(
         applicationProperties.getContactSearchCreateUrl(),
-        contactJson.stream().map(cJson -> new ContactES(cJson.getId(), cJson.getName())).collect(Collectors.toList()),
+        contactJson.stream().map(cJson -> new ContactES(cJson.getId(), cJson.getName(), cJson.isActive())).collect(Collectors.toList()),
         Void.class);
   }
 

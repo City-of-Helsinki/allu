@@ -16,7 +16,7 @@ public class ContactJson {
   private String city;
   private String email;
   private String phone;
-
+  private boolean isActive;
 
   /**
    * in Finnish: Yhteyshenkilön tunniste
@@ -106,4 +106,14 @@ public class ContactJson {
     this.phone = phone;
   }
 
+  /*
+   * @return  True, if the user is active i.e. has not been marked as deleted.
+   */
+  public boolean isActive() {
+    return isActive;
+  }
+
+  public void setActive(boolean active) {
+    isActive = active;
+  }
 }

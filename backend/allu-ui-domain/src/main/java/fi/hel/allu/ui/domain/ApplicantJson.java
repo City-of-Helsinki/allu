@@ -18,6 +18,7 @@ public class ApplicantJson {
   private String email;
   private String phone;
   private String registryKey;
+  private boolean isActive;
 
   /**
    * in Finnish: Tietokantatunniste
@@ -94,5 +95,16 @@ public class ApplicantJson {
 
   public void setRegistryKey(String registryKey) {
     this.registryKey = registryKey;
+  }
+
+  /*
+   * @return  True, if the user is active i.e. has not been marked as deleted.
+   */
+  public boolean isActive() {
+    return isActive;
+  }
+
+  public void setActive(boolean active) {
+    isActive = active;
   }
 }

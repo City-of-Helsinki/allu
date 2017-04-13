@@ -27,7 +27,7 @@ public class ContactSearchSpec {
   private Client client;
 
   private GenericSearchService contactSearchService;
-  private ContactES testContact = new ContactES(1, "testable name");
+  private ContactES testContact = new ContactES(1, "testable name", true);
 
   {
     beforeAll(() -> {
@@ -70,9 +70,9 @@ public class ContactSearchSpec {
     });
     describe("search and sort conctacts", () -> {
       beforeEach(() -> {
-        ContactES contact1 = new ContactES(1, "alpha one searchstr");
-        ContactES contact2 = new ContactES(2, "beta two searchstr");
-        ContactES contact3 = new ContactES(3, "gamma three searchstr");
+        ContactES contact1 = new ContactES(1, "alpha one searchstr", true);
+        ContactES contact2 = new ContactES(2, "beta two searchstr", true);
+        ContactES contact3 = new ContactES(3, "gamma three searchstr", true);
         contactSearchService.insert(Integer.toString(contact1.getId()), contact1);
         contactSearchService.insert(Integer.toString(contact2.getId()), contact2);
         contactSearchService.insert(Integer.toString(contact3.getId()), contact3);
@@ -99,9 +99,9 @@ public class ContactSearchSpec {
     describe("Bulk insert contacts", () -> {
       it("should bulk insert contacts", () -> {
         Map<String, Object> idToContact = new HashMap<>();
-        idToContact.put("1", new ContactES(1, "alpha one searchstr"));
-        idToContact.put("2", new ContactES(2, "beta two searchstr"));
-        idToContact.put("3", new ContactES(3, "gamma three searchstr"));
+        idToContact.put("1", new ContactES(1, "alpha one searchstr", true));
+        idToContact.put("2", new ContactES(2, "beta two searchstr", true));
+        idToContact.put("3", new ContactES(3, "gamma three searchstr", true));
         contactSearchService.bulkInsert(idToContact);
         contactSearchService.refreshIndex();
         QueryParameters params = SearchTestUtil.createQueryParameters("name", "searchstr");

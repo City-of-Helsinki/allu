@@ -11,7 +11,8 @@ create table allu.applicant (
     name text not null,
     registry_key text,
     email text,
-    phone text );
+    phone text,
+    is_active boolean not null );
 
 create table allu.city_district (
   id serial primary key,
@@ -40,7 +41,8 @@ create table allu.contact (
     postal_address_id integer references allu.postal_address(id),
     name text not null,
     email text,
-    phone text );
+    phone text,
+    is_active boolean not null );
 
 create table allu.user (
   id serial primary key,

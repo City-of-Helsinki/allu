@@ -409,6 +409,9 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'email', 'Sähköpostiosoite', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'phone', 'Puhelin', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'isActive', 'Kontakti käytössä', 'BOOLEAN', null, null);
+
 
 -- Postal address
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('PostalAddress', 1);
@@ -437,6 +440,8 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'phone', 'Hakijan puhelinnumero', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'registryKey', 'Henkilö-/Y-tunnus', 'STRING', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'isActive', 'Hakija käytössä', 'BOOLEAN', null, null);
 
 
 ------------------------
