@@ -26,6 +26,11 @@ export class CustomerHub {
   public findApplicantById = (id: number) => this.customerService.findApplicantById(id);
 
   /**
+   * Fetches contact by given id
+   */
+  public findContactById = (id: number) => this.customerService.findContactById(id);
+
+  /**
    * Saves applicant with his / hers contacts
    */
   public saveApplicantWithContacts = (applicantId: number, applicant: Applicant, contacts: Array<Contact>) =>

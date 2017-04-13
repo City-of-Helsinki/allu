@@ -1,5 +1,7 @@
 import {Applicant} from '../../../../model/application/applicant/applicant';
 import {PostalAddress} from '../../../../model/common/postal-address';
+import {FormBuilder, Validators} from '@angular/forms';
+import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 
 export class ApplicantForm {
 
@@ -43,5 +45,26 @@ export class ApplicantForm {
     applicant.phone = form.phone;
     applicant.active = form.active;
     return applicant;
+  }
+
+  static initialForm(fb: FormBuilder): any {
+    return fb.group({
+      id: undefined,
+      type: [undefined, Validators.required],
+      representative: [undefined],
+      detailsId: undefined,
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      registryKey: ['', [Validators.required, Validators.minLength(2)]],
+      country: ['Suomi'],
+      postalAddress: fb.group({
+        streetAddress: [''],
+        postalCode: ['', postalCodeValidator],
+        city: ['']
+      }),
+      email: ['', emailValidator],
+      phone: ['', Validators.minLength(2)],
+      propertyDeveloper: [false],
+      active: [true]
+    });
   }
 }

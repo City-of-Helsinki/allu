@@ -9,6 +9,12 @@ import {Applicant} from '../../../../model/application/applicant/applicant';
 import {Some} from '../../../../util/option';
 import {Subject} from 'rxjs/Subject';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
+import {NotificationService} from '../../../../service/notification/notification.service';
+import {NumberUtil} from '../../../../util/number.util';
+import {MdDialog, MdDialogRef} from '@angular/material';
+import {ApplicantModalComponent} from '../../../customerregistry/applicant/applicant-modal.component';
+
+const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name'];
 
 @Component({
   selector: 'applicant',
@@ -33,25 +39,10 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   nameSearch = new Subject<Array<Applicant>>();
   nameSearchResults = this.nameSearch.asObservable();
 
-  constructor(private fb: FormBuilder, private applicantHub: CustomerHub) {
-    this.applicantForm = this.fb.group({
-      id: undefined,
-      type: [undefined, Validators.required],
-      representative: [undefined],
-      detailsId: undefined,
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      registryKey: ['', [Validators.required, Validators.minLength(2)]],
-      country: ['Suomi'],
-      postalAddress: this.fb.group({
-        streetAddress: [''],
-        postalCode: ['', postalCodeValidator],
-        city: ['']
-      }),
-      email: ['', emailValidator],
-      phone: ['', Validators.minLength(2)],
-      propertyDeveloper: [false],
-      active: [true]
-    });
+  private dialogRef: MdDialogRef<ApplicantModalComponent>;
+
+  constructor(private fb: FormBuilder, private dialog: MdDialog, private customerHub: CustomerHub) {
+    this.applicantForm = ApplicantForm.initialForm(this.fb);
   }
 
   ngOnInit(): void {
@@ -67,13 +58,27 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   }
 
   onNameSearchChange(applicantType: string, term: string): void {
-    this.applicantHub.searchApplicantsBy({name: term, type: applicantType})
+    this.resetFormIfExisting();
+    this.customerHub.searchApplicantsBy({name: term, type: applicantType})
       .debounceTime(300)
       .subscribe(applicants => this.nameSearch.next(applicants));
   }
 
   applicantSelected(applicant: Applicant): void {
     this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant));
+    this.disableApplicantEdit();
+  }
+
+  canBeEdited(): boolean {
+    return NumberUtil.isDefined(this.applicantForm.value.id) && !this.readonly;
+  }
+
+  edit(): void {
+    this.dialogRef = this.dialog.open(ApplicantModalComponent, {disableClose: false, width: '800px'});
+    this.dialogRef.componentInstance.applicantId = this.applicantForm.value.id;
+    this.dialogRef.afterClosed()
+      .filter(applicant => !!applicant)
+      .subscribe(applicant => this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant)));
   }
 
   private initForm() {
@@ -81,11 +86,30 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
     Some(this.applicant)
       .map(applicant => ApplicantForm.fromApplicant(applicant))
-      .do(applicant => this.applicantForm.patchValue(applicant));
+      .do(applicant => {
+        this.applicantForm.patchValue(applicant);
+        this.disableApplicantEdit();
+      });
 
     this.applicantForm.patchValue({
       propertyDeveloper: this.propertyDeveloper,
       representative: this.representative
     });
+  }
+
+  /**
+   * Resets form values if form contained existing applicant
+   */
+  private resetFormIfExisting(): void {
+    if (NumberUtil.isDefined(this.applicantForm.value.id)) {
+      this.applicantForm.reset({name: this.applicantForm.value.name, type: this.applicantForm.value.type});
+      this.applicantForm.enable();
+    }
+  }
+
+  private disableApplicantEdit(): void {
+    Object.keys(this.applicantForm.controls)
+      .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
+      .forEach(key => this.applicantForm.get(key).disable());
   }
 }

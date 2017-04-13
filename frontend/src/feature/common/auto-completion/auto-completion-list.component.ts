@@ -14,6 +14,7 @@ export class AutoCompletionListComponent implements OnInit {
   @Input() idField: any;
   @Input() nameField: string;
   @Input() sortBy: (a, b) => number;
+  @Input() selectedIndex: number;
 
   @Output() onSelection = new EventEmitter<any>();
   sortedEntries = [];

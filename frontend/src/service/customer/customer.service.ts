@@ -48,6 +48,14 @@ export class CustomerService {
       .catch(error => this.errorHandler.handle(error, findTranslation('applicant.error.fetch')));
   }
 
+  public findContactById(id: number): Observable<Contact> {
+    let url = CONTACTS_URL + '/' + id;
+    return this.authHttp.get(url)
+      .map(response => response.json())
+      .map(contact => ContactMapper.mapBackend(contact))
+      .catch(error => this.errorHandler.handle(error, findTranslation('contact.error.fetch')));
+  }
+
   public findApplicantContacts(applicantId: number): Observable<Array<Contact>> {
     let url = CONTACTS_FOR_APPLICANT_URL.replace(':applicantId', String(applicantId));
     return this.authHttp.get(url)
@@ -58,7 +66,6 @@ export class CustomerService {
 
   public saveApplicantWithContacts(applicantId: number, applicant: Applicant, contacts: Array<Contact>): Observable<ApplicantWithContacts> {
      let applicantWithContacts = new ApplicantWithContacts(applicant, contacts);
-     console.log('saving', applicantWithContacts);
      return Some(applicantId)
      .map(id => this.updateApplicant(id, applicantWithContacts))
      .orElse(this.createApplicant(applicantWithContacts))

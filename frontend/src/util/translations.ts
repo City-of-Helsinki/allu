@@ -320,10 +320,12 @@ export const translations = {
       phoneShort: 'Puhelinnumero on liian lyhyt'
     },
     error: {
-      remove: 'Yhteyshenkilön poistaminen epäonnistui'
+      remove: 'Yhteyshenkilön poistaminen epäonnistui',
+      fetch: 'Yhteyshenkilön hakeminen epäonnistui'
     },
     action: {
-      remove: 'Yhteyshenkilö poistettu'
+      remove: 'Yhteyshenkilö poistettu',
+      save: 'Yhteyshenkilö tallennettu'
     }
   },
   geolocation: {

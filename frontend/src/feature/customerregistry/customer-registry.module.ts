@@ -8,6 +8,8 @@ import {CustomerComponent} from './customer.component';
 import {CustomerRegistryComponent} from './customer-registry.component';
 import {InvoicingAddressComponent} from './invoicing-address.component';
 import {CustomerContactsComponent} from './customer-contacts.component';
+import {ApplicantModalComponent} from './applicant/applicant-modal.component';
+import {ContactModalComponent} from './contact/contact-modal.component';
 
 @NgModule({
   imports: [
@@ -21,9 +23,18 @@ import {CustomerContactsComponent} from './customer-contacts.component';
     CustomerListComponent,
     CustomerComponent,
     InvoicingAddressComponent,
-    CustomerContactsComponent
+    CustomerContactsComponent,
+    ApplicantModalComponent,
+    ApplicantModalComponent,
+    ContactModalComponent
   ],
   exports: [
+    ApplicantModalComponent,
+    ContactModalComponent
+  ],
+  entryComponents: [
+    ApplicantModalComponent,
+    ContactModalComponent
   ]
 })
 export class CustomerRegistryModule {}

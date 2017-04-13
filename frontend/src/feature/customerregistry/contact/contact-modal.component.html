@@ -1,0 +1,57 @@
+<h1 md-dialog-title>Yhteyshenkilö</h1>
+<form [formGroup]="contactForm" (ngSubmit)="onSubmit(contactForm.value)">
+    <div md-dialog-content>
+        <div class="row form-group">
+            <div class="col m6">
+                <md-input-container class="input-full-width">
+                    <input mdInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
+                    <md-hint>
+                        <field-error [form]="contact" field="name" hasError="required">{{'contact.field.nameMissing' | translation}}</field-error>
+                    </md-hint>
+                </md-input-container>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col m6">
+                <md-input-container class="input-full-width">
+                    <input mdInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+                </md-input-container>
+            </div>
+            <div class="col m3">
+                <md-input-container class="input-full-width">
+                    <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                    <md-hint>
+                        <field-error [form]="contact" field="postalCode" hasError="pattern">{{'common.field.postalCode' | translation}}</field-error>
+                    </md-hint>
+                </md-input-container>
+            </div>
+            <div class="col m3">
+                <md-input-container class="input-full-width">
+                    <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+                </md-input-container>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col m4">
+                <md-input-container class="input-full-width">
+                    <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                    <md-hint>
+                        <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
+                    </md-hint>
+                </md-input-container>
+            </div>
+            <div class="col m8">
+                <md-input-container class="input-full-width">
+                    <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                    <md-hint>
+                        <field-error [form]="contact" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
+                    </md-hint>
+                </md-input-container>
+            </div>
+        </div>
+    </div>
+    <div md-dialog-actions>
+        <button type="submit" md-raised-button color="primary" [disabled]="!contactForm.valid">TALLENNA</button>
+        <button type="button" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    </div>
+</form>

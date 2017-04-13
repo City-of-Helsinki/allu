@@ -11,7 +11,8 @@
       color: mat-color($primary, 500);
     }
 
-    .autocompletion-dropdown-entry:hover {
+    .autocompletion-dropdown-entry:hover,
+    .autocompletion-dropdown-entry.selected {
       background-color: mat-color($primary, 200);
     }
   }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NumberUtil} from '../../util/number.util';
 import {ApplicantType} from '../../model/application/applicant/applicant-type';

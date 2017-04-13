@@ -1,7 +1,10 @@
 <form [formGroup]="applicantForm">
     <div class="col m6 loose">
         <md-card>
-            <md-card-title>{{headerText}}</md-card-title>
+            <md-card-title>
+                {{headerText}}
+                <button md-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()"><md-icon>mode_edit</md-icon></button>
+            </md-card-title>
             <md-card-content>
                 <div class="row form-group">
                     <div class="col m6">

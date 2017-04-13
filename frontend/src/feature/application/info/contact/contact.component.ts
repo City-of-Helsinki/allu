@@ -4,6 +4,9 @@ import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
 import {Contact} from '../../../../model/application/contact';
 import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 import {Some} from '../../../../util/option';
+import {NumberUtil} from '../../../../util/number.util';
+import {MdDialog, MdDialogRef} from '@angular/material';
+import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
 
 @Component({
   selector: 'contact',
@@ -23,7 +26,9 @@ export class ContactComponent implements OnInit, OnDestroy {
   contactsForm: FormGroup;
   contacts: FormArray;
 
-  constructor(private fb: FormBuilder) {}
+  private dialogRef: MdDialogRef<ContactModalComponent>;
+
+  constructor(private fb: FormBuilder, private dialog: MdDialog) {}
 
   ngOnInit(): void {
     this.contacts = this.fb.array([]);
@@ -44,25 +49,23 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.applicationForm.removeControl(this.formName);
   }
 
-  private addContact(contact: Contact): void {
-    this.contacts.push(this.createContact(contact));
+  canBeEdited(contact: Contact): boolean {
+    return NumberUtil.isDefined(contact.id) && !this.readonly;
+  }
+
+  edit(id: number, index: number): void {
+    this.dialogRef = this.dialog.open(ContactModalComponent, {disableClose: false, width: '800px'});
+    this.dialogRef.componentInstance.contactId = id;
+    this.dialogRef.afterClosed()
+      .filter(contact => !!contact)
+      .subscribe(contact => this.contacts.at(index).patchValue(contact));
+  }
+
+  private addContact(contact: Contact = new Contact()): void {
+    this.contacts.push(Contact.formGroup(this.fb, contact));
   }
 
   private removeContact(index: number): void {
     this.contacts.removeAt(index);
-  }
-
-  private createContact(contact: Contact): FormGroup {
-    return this.fb.group({
-      id: contact.id,
-      applicantId: contact.applicantId,
-      name: [contact.name, [Validators.required, Validators.minLength(2)]],
-      streetAddress: [contact.streetAddress],
-      postalCode: [contact.postalCode, postalCodeValidator],
-      city: [contact.city],
-      email: [contact.email, emailValidator],
-      phone: [contact.phone, Validators.minLength(2)],
-      active: [contact.active]
-    });
   }
 }

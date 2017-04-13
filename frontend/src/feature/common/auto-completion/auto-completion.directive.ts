@@ -8,6 +8,8 @@ import {Observable} from 'rxjs/Observable';
 import {AutoCompletionListComponent} from './auto-completion-list.component';
 import {Some} from '../../../util/option';
 
+const KEY_TAB = 'Tab';
+
 @Directive({
   selector: '[autocompletion]'
 })
@@ -63,6 +65,16 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
 
   @HostListener('keyup', ['$event']) onKeyUp(event: any) {
     this.searchTerm.next(event.target.value);
+  }
+
+  @HostListener('keydown', ['$event']) onKeyDown(event: any) {
+    switch (event.code) {
+      case KEY_TAB:
+        this.hideDropdown(event);
+        break;
+      default:
+        break;
+    }
   }
 
   showDropdown() {
