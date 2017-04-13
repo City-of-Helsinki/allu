@@ -16,7 +16,8 @@
       "city": "Helsinki"
     },
     "email": "seppo.sijoittaja@sijoitussopimus.com",
-    "phone": "040095634"
+    "phone": "040095634",
+    "active": true
   },
   "contactList": [
     {
@@ -27,7 +28,8 @@
       "postalCode": "00300",
       "city": "Helsinki",
       "email": "petri.placement@placementcontract.fi",
-      "phone": "031234567"
+      "phone": "031234567",
+      "active": true
     }
   ],
   "locations": [

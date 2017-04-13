@@ -16,7 +16,8 @@
       "city": "Turku"
     },
     "email": "reima.remontoija@reimanremontit.net",
-    "phone": "02213412"
+    "phone": "02213412",
+    "active": true
   },
   "contactList": [
     {
@@ -27,7 +28,8 @@
       "postalCode": "21200",
       "city": "Turku",
       "email": "raimo.remontoija@bulvaaniremontit.com",
-      "phone": "0245223432"
+      "phone": "0245223432",
+      "active": true
     }
   ],
   "locations": [

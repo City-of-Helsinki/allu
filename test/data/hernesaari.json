@@ -40,7 +40,8 @@
       "city": "Vantaa"
     },
     "email": "hernari@hernerokka.fi",
-    "phone": "03-1234567"
+    "phone": "03-1234567",
+    "active": true
   },
   "contactList": [
     {
@@ -51,7 +52,8 @@
       "postalCode": "33000",
       "city": "Tampere",
       "email": "heikki@hernerokka.fi",
-      "phone": "03-12121212"
+      "phone": "03-12121212",
+      "active": true
     }
   ],
   "locations": [

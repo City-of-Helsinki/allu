@@ -34,7 +34,8 @@
       "city": "Helsinki"
     },
     "email": "info@tervaajat.fi",
-    "phone": "09-1234567"
+    "phone": "09-1234567",
+    "active": true
   },
   "contactList": [
     {
@@ -45,7 +46,8 @@
       "postalCode": "00300",
       "city": "Helsinki",
       "email": "tervaaja@tervaajat.fi",
-      "phone": "09-9876543"
+      "phone": "09-9876543",
+      "active": true
     }
   ],
   "locations": [

@@ -27,7 +27,8 @@
       "city": "Vantaa"
     },
     "email": "hernari@hernerokka.fi",
-    "phone": "03-1234567"
+    "phone": "03-1234567",
+    "active": true
   },
   "contactList": [
     {
@@ -38,7 +39,8 @@
       "postalCode": "00110",
       "city": "Helsinki",
       "email": "porkka@porkkala.fi",
-      "phone": "03-12121212"
+      "phone": "03-12121212",
+      "active": true
     }
   ],
   "locations": [

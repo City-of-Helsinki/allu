@@ -64,7 +64,8 @@
       "name": "Pekka Pihi",
       "id": null,
       "streetAddress": "121282-123X",
-      "email": null
+      "email": null,
+      "active": true
     }
   ],
   "extension": {
@@ -85,6 +86,7 @@
       "city": "LAIHIA"
     },
     "id": null,
-    "name": "Nuukailun Puolesta Ry"
+    "name": "Nuukailun Puolesta Ry",
+    "active": true
   }
 }

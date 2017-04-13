@@ -11,7 +11,8 @@
     "phone": "",
     "registryKey": "123",
     "representative": null,
-    "type": "COMPANY"
+    "type": "COMPANY",
+    "active": true
   },
   "kind": "STREET_AND_GREEN",
   "contactList": [
@@ -23,7 +24,8 @@
       "postalCode": null,
       "streetAddress": null,
       "city": null,
-      "phone": null
+      "phone": null,
+      "active": true
     }
   ],
   "type": "CABLE_REPORT",

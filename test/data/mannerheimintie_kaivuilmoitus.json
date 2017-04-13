@@ -21,7 +21,8 @@
       "city": "Helsinki"
     },
     "email": "pena@puhallus.fi",
-    "phone": "0441212121"
+    "phone": "0441212121",
+    "active": true
   },
   "contactList": [
     {
@@ -32,7 +33,8 @@
       "postalCode": "00110",
       "city": "Helsinki",
       "email": "pena@puhallus.fi",
-      "phone": "0441212121"
+      "phone": "0441212121",
+      "active": true
     }
   ],
   "locations": [

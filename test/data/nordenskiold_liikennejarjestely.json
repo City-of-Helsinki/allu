@@ -16,7 +16,8 @@
       "city": "Tampere"
     },
     "email": "lasse.liikennejarjestelija@liikennejarjestely.com",
-    "phone": "040098765"
+    "phone": "040098765",
+    "active": true
   },
   "contactList": [
     {
@@ -27,7 +28,8 @@
       "postalCode": "30100",
       "city": "Tampere",
       "email": "lasse.kumminkaima@liikennejarjestely.com",
-      "phone": "031234567"
+      "phone": "031234567",
+      "active": true
     }
   ],
   "locations": [
