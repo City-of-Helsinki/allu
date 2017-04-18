@@ -10,6 +10,7 @@ import {InvoicingAddressComponent} from './invoicing-address.component';
 import {CustomerContactsComponent} from './customer-contacts.component';
 import {ApplicantModalComponent} from './applicant/applicant-modal.component';
 import {ContactModalComponent} from './contact/contact-modal.component';
+import {ApplicantEvents} from './applicant/applicant-events';
 
 @NgModule({
   imports: [
@@ -27,6 +28,9 @@ import {ContactModalComponent} from './contact/contact-modal.component';
     ApplicantModalComponent,
     ApplicantModalComponent,
     ContactModalComponent
+  ],
+  providers: [
+    ApplicantEvents
   ],
   exports: [
     ApplicantModalComponent,

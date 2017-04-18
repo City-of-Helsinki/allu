@@ -1,18 +1,17 @@
-import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {ApplicantForm} from './applicant.form';
 import {EnumUtil} from '../../../../util/enum.util';
 import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
-import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 import {Applicant} from '../../../../model/application/applicant/applicant';
 import {Some} from '../../../../util/option';
 import {Subject} from 'rxjs/Subject';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
-import {NotificationService} from '../../../../service/notification/notification.service';
 import {NumberUtil} from '../../../../util/number.util';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {ApplicantModalComponent} from '../../../customerregistry/applicant/applicant-modal.component';
+import {ApplicantEvents} from '../../../customerregistry/applicant/applicant-events';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name'];
 
@@ -41,7 +40,10 @@ export class ApplicantComponent implements OnInit, OnDestroy {
 
   private dialogRef: MdDialogRef<ApplicantModalComponent>;
 
-  constructor(private fb: FormBuilder, private dialog: MdDialog, private customerHub: CustomerHub) {
+  constructor(private fb: FormBuilder,
+              private dialog: MdDialog,
+              private customerHub: CustomerHub,
+              private applicantEvents: ApplicantEvents) {
     this.applicantForm = ApplicantForm.initialForm(this.fb);
   }
 
@@ -67,6 +69,7 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   applicantSelected(applicant: Applicant): void {
     this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant));
     this.disableApplicantEdit();
+    this.applicantEvents.emitApplicantChange(applicant);
   }
 
   canBeEdited(): boolean {
@@ -89,6 +92,7 @@ export class ApplicantComponent implements OnInit, OnDestroy {
       .do(applicant => {
         this.applicantForm.patchValue(applicant);
         this.disableApplicantEdit();
+        this.applicantEvents.emitApplicantChange(applicant);
       });
 
     this.applicantForm.patchValue({
@@ -102,8 +106,13 @@ export class ApplicantComponent implements OnInit, OnDestroy {
    */
   private resetFormIfExisting(): void {
     if (NumberUtil.isDefined(this.applicantForm.value.id)) {
-      this.applicantForm.reset({name: this.applicantForm.value.name, type: this.applicantForm.value.type});
+      this.applicantForm.reset({
+        name: this.applicantForm.value.name,
+        type: this.applicantForm.value.type,
+        active: true
+      });
       this.applicantForm.enable();
+      this.applicantEvents.emitApplicantChange(new Applicant());
     }
   }
 

@@ -7,6 +7,12 @@ import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
+import {ApplicantEvents} from '../../../customerregistry/applicant/applicant-events';
+import {Observable, Subject, Subscription} from 'rxjs';
+import {Applicant} from '../../../../model/application/applicant/applicant';
+import {CustomerHub} from '../../../../service/customer/customer-hub';
+
+const ALWAYS_ENABLED_FIELDS = ['id', 'name'];
 
 @Component({
   selector: 'contact',
@@ -16,6 +22,7 @@ import {ContactModalComponent} from '../../../customerregistry/contact/contact-m
 })
 export class ContactComponent implements OnInit, OnDestroy {
   @Input() applicationForm: FormGroup;
+  @Input() applicantId: number;
   @Input() contactList: Array<Contact> = [];
   @Input() readonly: boolean;
   @Input() headerText = 'Yhteyshenkilö';
@@ -25,17 +32,20 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   contactsForm: FormGroup;
   contacts: FormArray;
+  availableContacts: Observable<Array<Contact>>;
+  nameSearch = new Subject<Array<Contact>>();
+  nameSearchResults = this.nameSearch.asObservable();
 
   private dialogRef: MdDialogRef<ContactModalComponent>;
+  private applicantSubscription: Subscription;
 
-  constructor(private fb: FormBuilder, private dialog: MdDialog) {}
+  constructor(private fb: FormBuilder,
+              private dialog: MdDialog,
+              private customerHub: CustomerHub,
+              private applicantEvents: ApplicantEvents) {}
 
   ngOnInit(): void {
-    this.contacts = this.fb.array([]);
-    this.contactsForm = this.fb.group({
-      contacts: this.contacts
-    });
-    this.applicationForm.addControl(this.formName, this.contacts);
+    this.initContacts();
 
     this.contactList = Some(this.contactList).orElse([new Contact()]);
     this.contactList.forEach(contact => this.addContact(contact));
@@ -43,10 +53,30 @@ export class ContactComponent implements OnInit, OnDestroy {
     if (this.readonly) {
       this.contactsForm.disable();
     }
+
+    this.availableContacts = Some(this.applicantId)
+      .map(id => this.customerHub.findApplicantActiveContacts(id))
+      .orElse(Observable.of([]));
+
+    this.applicantSubscription = this.applicantEvents.applicantChange.subscribe(a => this.onApplicantChange(a));
   }
 
   ngOnDestroy(): void {
     this.applicationForm.removeControl(this.formName);
+    this.applicantSubscription.unsubscribe();
+  }
+
+  onNameSearchChange(term: string, index: number): void {
+    this.resetContactIfExisting(index);
+    this.availableContacts
+      .debounceTime(300)
+      .map(contacts => contacts.filter(c => c.name.indexOf(term) >= 0))
+      .subscribe(contacts => this.nameSearch.next(contacts));
+  }
+
+  contactSelected(contact: Contact, index: number): void {
+    this.contacts.at(index).patchValue(contact);
+    this.disableContactEdit(index);
   }
 
   canBeEdited(contact: Contact): boolean {
@@ -63,9 +93,55 @@ export class ContactComponent implements OnInit, OnDestroy {
 
   private addContact(contact: Contact = new Contact()): void {
     this.contacts.push(Contact.formGroup(this.fb, contact));
+    if (NumberUtil.isDefined(contact.id)) {
+      this.disableContactEdit(this.contacts.length - 1);
+    }
   }
 
-  private removeContact(index: number): void {
+  private remove(index: number): void {
     this.contacts.removeAt(index);
+  }
+
+  private onApplicantChange(applicant: Applicant) {
+    this.resetContacts();
+    if (NumberUtil.isDefined(applicant.id)) {
+      this.availableContacts = this.customerHub.findApplicantActiveContacts(applicant.id);
+    }
+  }
+
+  private initContacts(): void {
+    this.contacts = this.fb.array([]);
+    this.contactsForm = this.fb.group({
+      contacts: this.contacts
+    });
+    this.applicationForm.addControl('contacts', this.contacts);
+  }
+
+  private resetContacts(): void {
+    this.contacts.reset();
+    while (this.contacts.length > 1) {
+      this.contacts.removeAt(1);
+    }
+  }
+
+  /**
+   * Resets form values if form contained existing contact
+   */
+  private resetContactIfExisting(index: number): void {
+    let contactCtrl = this.contacts.at(index);
+    if (NumberUtil.isDefined(contactCtrl.value.id)) {
+      contactCtrl.reset({
+        name: contactCtrl.value.name,
+        active: true
+      });
+      contactCtrl.enable();
+    }
+  }
+
+  private disableContactEdit(index: number): void {
+    let contactCtrl = <FormGroup>this.contacts.at(index);
+    Object.keys(contactCtrl.controls)
+      .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
+      .forEach(key => contactCtrl.get(key).disable());
   }
 }
