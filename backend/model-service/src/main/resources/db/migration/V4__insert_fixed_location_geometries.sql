@@ -219,6 +219,12 @@ set geometry = 'SRID=3879;GEOMETRYCOLLECTION(POINT(25498238.512710657 6674846.76
 where fixed_location.area_id = (select location_area.id
 from allu.location_area location_area
 where location_area.name like '2a %') and fixed_location.section is null;
+select check_allu_name('37a %',null);
+update allu.fixed_location
+set geometry = 'SRID=3879;GEOMETRYCOLLECTION(POINT(25502806.133593373 6673919.973278738))'
+where fixed_location.area_id = (select location_area.id
+from allu.location_area location_area
+where location_area.name like '37a %') and fixed_location.section is null;
 select check_allu_name('33b %',null);
 update allu.fixed_location
 set geometry = 'SRID=3879;GEOMETRYCOLLECTION(POINT(25507809.58196409 6677121.197268954))'
@@ -233,7 +239,7 @@ from allu.location_area location_area
 where location_area.name like '33a %') and fixed_location.section is null;
 select check_allu_name('35a %',null);
 update allu.fixed_location
-set geometry = 'SRID=3879;GEOMETRYCOLLECTION(POINT(25502806.133593373 6673919.973278738),POINT(25506670.084875654 6676933.159316255))'
+set geometry = 'SRID=3879;GEOMETRYCOLLECTION(POINT(25506670.084875654 6676933.159316255))'
 where fixed_location.area_id = (select location_area.id
 from allu.location_area location_area
 where location_area.name like '35a %') and fixed_location.section is null;
