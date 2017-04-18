@@ -35,7 +35,7 @@ public class ApplicationHistoryService {
   private Pattern skipFieldPattern;
 
   // regex to control which change fields should be skipped.
-  private static final String SKIP_FIELDS_RE = "(/applicationTags/[^/]+/id)|(/extension/infoEntries/[^/]+/id)";
+  private static final String SKIP_FIELDS_RE = "(/applicationTags/[^/]+/id)|(/extension/infoEntries/[^/]+/id)|(/handler/.*)";
 
   /* List of mappings for abbreviated history keys */
   private static final Map<Pattern, String> ABBREV_MAP = new HashMap<>();

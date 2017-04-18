@@ -1,8 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.ApplicationTagType;
-import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.domain.ApplicationChange;
 import fi.hel.allu.model.domain.ApplicationFieldChange;
 import fi.hel.allu.ui.config.ApplicationProperties;
@@ -20,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -153,6 +152,31 @@ public class ApplicationHistoryServiceTest extends MockServices {
         .filter(chg -> chg.getFieldName().startsWith("/applicationTags/")).collect(Collectors.toList());
     assertEquals(2, tagChanges.size());
     assertEquals(0, tagChanges.stream().filter(c -> c.getFieldName().endsWith("/id")).count());
+  }
+
+  /* Make sure that handler changes are not generated */
+  @Test
+  public void testNoHandlerChanges() {
+    final int APPLICATION_ID = 432;
+    setupChangeCapture(APPLICATION_ID);
+
+    ApplicationJson oldApplication = createMockApplicationJson(APPLICATION_ID);
+    oldApplication.setHandler(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "perustaja", true,
+        Collections.singletonList(ApplicationType.AREA_RENTAL), Collections.singletonList(RoleType.ROLE_DECISION),
+        Collections.singletonList(1)));
+    ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
+    newApplication.setHandler(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "romuttaja", true,
+        Collections.singletonList(ApplicationType.CABLE_REPORT),
+        Collections.singletonList(RoleType.ROLE_CREATE_APPLICATION), Collections.singletonList(2)));
+    applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
+
+    assertNotNull(capturedChange);
+    assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
+    assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
+    List<ApplicationFieldChange> fieldChanges = capturedChange.getFieldChanges();
+    List<ApplicationFieldChange> tagChanges = fieldChanges.stream()
+        .filter(chg -> chg.getFieldName().startsWith("/handler/")).collect(Collectors.toList());
+    assertEquals(0, tagChanges.size());
   }
 
   // TODO: add tests to verify that ApplicationJson contains fields
