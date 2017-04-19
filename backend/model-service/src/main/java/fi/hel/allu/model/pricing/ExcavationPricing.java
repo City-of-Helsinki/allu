@@ -1,0 +1,59 @@
+package fi.hel.allu.model.pricing;
+
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.InvoiceUnit;
+
+import java.time.temporal.ChronoUnit;
+
+public class ExcavationPricing extends Pricing {
+
+  private int priceInCents;
+  private final Application application;
+
+  private static final String HANDLING_FEE_TEXT = "Käsittelymaksu";
+  private static final String AREA_FEE_TEXT = "Alueenkäyttömaksu, maksuluokka %d";
+
+  private static final double SMALL_AREA_LIMIT = 60.0;
+  private static final double LARGE_AREA_LIMIT = 120.0;
+  private static final int HANDLING_FEE = 18000;
+  private static final int SMALL_AREA_DAILY_FEE = 5000;
+  private static final int MEDIUM_AREA_DAILY_FEE = 6500;
+  private static final int LARGE_AREA_DAILY_FEE = 8000;
+
+  public ExcavationPricing(Application application) {
+    this.priceInCents = 0;
+    this.application = application;
+    this.priceInCents = HANDLING_FEE;
+    addInvoiceRow(InvoiceUnit.PIECE, 1, HANDLING_FEE, HANDLING_FEE_TEXT, HANDLING_FEE);
+  }
+
+  public int getPriceInCents() {
+    return priceInCents;
+  }
+
+  private void setPriceInCents(int priceInCents) {
+    this.priceInCents = priceInCents;
+  }
+
+  public void addLocationPrice(double locationArea, int paymentClass) {
+    int dailyFee;
+    if (locationArea < SMALL_AREA_LIMIT) {
+      dailyFee = SMALL_AREA_DAILY_FEE;
+    } else if (locationArea > LARGE_AREA_LIMIT) {
+      dailyFee = LARGE_AREA_DAILY_FEE;
+    } else {
+      dailyFee = MEDIUM_AREA_DAILY_FEE;
+    }
+    // Factor in the payment class.
+    if (paymentClass == 2) {
+      dailyFee /= 2;
+    } else if (paymentClass == 3) {
+      dailyFee /= 4;
+    }
+    int days = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
+        ChronoUnit.DAYS);
+    int totalPrice = days * dailyFee;
+    addInvoiceRow(InvoiceUnit.DAY, days, dailyFee, String.format(AREA_FEE_TEXT, paymentClass), totalPrice);
+    setPriceInCents(totalPrice + getPriceInCents());
+  }
+}

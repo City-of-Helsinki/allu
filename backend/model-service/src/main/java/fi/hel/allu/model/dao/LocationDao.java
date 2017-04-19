@@ -406,4 +406,22 @@ public class LocationDao {
           .execute();
     }
   }
+
+  /**
+   * Get the payment class for a location
+   *
+   * @param id location's DB id
+   * @return the payment class (1, 2, or 3)
+   */
+  public int getPaymentClass(Integer id) {
+    // TODO: Get a proper payment class. Currently just finds the city
+    // district's district ID and map it to 1..3 using modulo.
+    Integer districtId = queryFactory.select(cityDistrict.districtId).from(location).leftJoin(cityDistrict)
+        .on(location.cityDistrictId.eq(cityDistrict.id)).where(location.id.eq(id)).fetchOne();
+    if (districtId == null) {
+      return 1;
+    }
+    // map 1->1, 2->2, 3->3, 4->1, etc
+    return ((districtId - 1) % 3) + 1;
+  }
 }

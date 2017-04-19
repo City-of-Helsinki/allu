@@ -11,10 +11,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.pricing.CalendarUtil;
-import fi.hel.allu.model.pricing.EventPricing;
-import fi.hel.allu.model.pricing.PricingConfiguration;
-import fi.hel.allu.model.pricing.ShortTermRentalPricing;
+import fi.hel.allu.model.pricing.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -68,6 +65,8 @@ public class PricingService {
       updateShortTermRentalPrice(application, invoiceRows);
     } else if (application.getKind() == ApplicationKind.OUTDOOREVENT) {
       updateOutdoorEventPrice(application, invoiceRows);
+    } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
+      updateExcavationAnnouncementPrice(application, invoiceRows);
     }
   }
 
@@ -99,6 +98,22 @@ public class PricingService {
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, applicationArea, isCompany(application));
     pricing.calculatePrice();
+    application.setCalculatedPrice(pricing.getPriceInCents());
+    invoiceRows.addAll(pricing.getInvoiceRows());
+  }
+
+  /*
+   * Calculate price for excavation announcement
+   */
+  private void updateExcavationAnnouncementPrice(Application application, List<InvoiceRow> invoiceRows) {
+    ExcavationPricing pricing = new ExcavationPricing(application);
+    List<Location> locations = Collections.emptyList();
+    if (application.getId() != null) {
+      locations = locationDao.findByApplication(application.getId());
+    }
+    for (Location l : locations) {
+      pricing.addLocationPrice(l.getArea(), locationDao.getPaymentClass(l.getId()));
+    }
     application.setCalculatedPrice(pricing.getPriceInCents());
     invoiceRows.addAll(pricing.getInvoiceRows());
   }
