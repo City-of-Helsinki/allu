@@ -4,7 +4,7 @@ export enum Direction {
 }
 
 export class Sort {
-  constructor(public field: string, public direction: Direction) {
+  constructor(public field?: string, public direction?: Direction) {
     this.field = field;
     this.direction = direction;
   }

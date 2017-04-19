@@ -7,7 +7,7 @@
     <div class="col s3">
         <input-box>
             <select boxInput type="text" formControlName="type">
-                <option value="" selected disabled hidden>Asiakkaan tyyppi</option>
+                <option value="" selected>Asiakkaan tyyppi</option>
                 <option *ngFor="let type of applicantTypes" value="{{type}}">
                     {{['applicant.type', type, 'name'] | translation}}
                 </option>
@@ -26,7 +26,7 @@
         <table class="striped responsive-table">
             <thead>
             <tr>
-                <th>Nimi</th>
+                <th sortBy="name" (onSortChange)="sortBy($event)">Nimi</th>
                 <th>Tyyppi</th>
                 <th>Tunniste</th>
                 <th>Sähköposti</th>

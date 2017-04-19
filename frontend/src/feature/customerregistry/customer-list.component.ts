@@ -7,6 +7,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicantType} from '../../model/application/applicant/applicant-type';
 import {StringUtil} from '../../util/string.util';
+import {Sort} from '../../model/common/sort';
 
 @Component({
   selector: 'customer-list',
@@ -25,7 +26,8 @@ export class CustomerListComponent implements OnInit {
     this.searchForm = this.fb.group({
       name: [''],
       type: [''],
-      active: [true]
+      active: [true],
+      sort: [new Sort()]
     });
   }
 
@@ -43,5 +45,10 @@ export class CustomerListComponent implements OnInit {
 
   search(): void {
     this.customers = this.customerHub.searchApplicantsBy(this.searchForm.value);
+  }
+
+  sortBy(sort: Sort) {
+    this.searchForm.patchValue({sort: sort});
+    this.search();
   }
 }
