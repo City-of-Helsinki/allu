@@ -1,6 +1,6 @@
 <div [formGroup]="contactsForm">
     <div formArrayName="contacts" class="col m6 loose no-border">
-        <div *ngFor="let contact of contactsForm.controls.contacts.controls; let index=index">
+        <div *ngFor="let contact of contacts.controls; let index=index">
             <div [formGroupName]="index" class="no-border">
                 <md-card>
                     <md-card-title>
@@ -11,7 +11,7 @@
                             <md-icon>mode_edit</md-icon>
                         </button>
                         <button md-icon-button type="button"
-                                *ngIf="index > 0"
+                                *ngIf="canBeRemoved()"
                                 (click)="remove(index)">
                             <md-icon>clear</md-icon>
                         </button>

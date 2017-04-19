@@ -83,6 +83,10 @@ export class ContactComponent implements OnInit, OnDestroy {
     return NumberUtil.isDefined(contact.id) && !this.readonly;
   }
 
+  canBeRemoved(): boolean {
+    return this.contacts.length > 1 && !this.readonly;
+  }
+
   edit(id: number, index: number): void {
     this.dialogRef = this.dialog.open(ContactModalComponent, {disableClose: false, width: '800px'});
     this.dialogRef.componentInstance.contactId = id;

@@ -45,6 +45,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
 
     this.tabChanges = this.applicationState.tabChange.subscribe(tab => {
       if (!this.readonly) {
+        this.applicationForm.enable();
         this.applicationState.application = this.update(this.applicationForm.value);
       }
     });
