@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {ConnectableObservable, Subscription} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {MdTabChangeEvent} from '@angular/material/tabs';
+import {MdTabChangeEvent} from '@angular/material';
 import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
 import '../../rxjs-extensions.ts';
 

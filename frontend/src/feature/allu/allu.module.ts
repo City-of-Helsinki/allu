@@ -5,7 +5,6 @@ import {Http, HttpModule} from '@angular/http';
 import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MaterialModule} from '@angular/material';
 
 import {ApplicationModule} from '../application/application.module';
 import {ApplicationService} from '../../service/application/application.service';
@@ -36,6 +35,7 @@ import {LocationState} from '../../service/application/location-state';
 import {CustomerHub} from '../../service/customer/customer-hub';
 import {CustomerService} from '../../service/customer/customer.service';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 
 @NgModule({
@@ -44,8 +44,7 @@ import {CustomerRegistryModule} from '../customerregistry/customer-registry.modu
     HttpModule,
     FormsModule,
     RouterModule.forRoot(rootRoutes),
-    // Material
-    MaterialModule,
+    BrowserAnimationsModule,
     // App modules
     ApplicationModule,
     ProjectModule,

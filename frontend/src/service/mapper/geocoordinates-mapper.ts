@@ -1,6 +1,6 @@
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import {BackendGeocoordinates} from '../backend-model/backend-geocoordinates';
-import {MapUtil} from '../map/map.util.ts';
+import {MapUtil} from '../map/map.util';
 
 
 export class GeocoordinatesMapper {

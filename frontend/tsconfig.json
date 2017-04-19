@@ -15,7 +15,13 @@
     "noImplicitAny": false,
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "typeRoots": [
+      "node_modules/@types"
+    ],
+    "types": [
+      "core-js"
+    ]
   },
   "exclude": [
     "node_modules",

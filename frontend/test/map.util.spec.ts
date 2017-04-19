@@ -1,4 +1,5 @@
-import {MapUtil} from '../src/service/map/map.util.ts';
+import {MapUtil} from '../src/service/map/map.util';
+import {DirectGeometryObject} from 'geojson';
 
 describe('MapService', () => {
   it('should project wgs84 to epsg:3879 correctly', () => {
@@ -40,7 +41,8 @@ describe('MapService', () => {
 
     let featureCollection = mapService.geometryCollectionToFeatureCollection(originalGeometryCollection);
     let geometryCollection = mapService.featureCollectionToGeometryCollection(featureCollection);
-    let processedCoordinates = geometryCollection.geometries[0].coordinates[0];
+    let processedGeometries = <DirectGeometryObject>geometryCollection.geometries[0];
+    let processedCoordinates = <number[][]>processedGeometries.coordinates[0];
 
     // compare converted coordinates after rounding them a little bit
     expect(coordinates.length).toBe(processedCoordinates.length);
@@ -50,7 +52,7 @@ describe('MapService', () => {
     }
 
     // have to clear coordinates before comparing structures, because coordinate conversion never returns exactly the same values
-    geometryCollection.geometries[0].coordinates[0] = [];
+    processedGeometries.coordinates[0] = [];
     originalGeometryCollection.geometries[0].coordinates[0] = [];
     let roundedOriginalGeoJSON = JSON.stringify(originalGeometryCollection);
     let processedGeoJSON = JSON.stringify(geometryCollection);

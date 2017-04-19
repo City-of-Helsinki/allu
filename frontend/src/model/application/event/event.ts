@@ -1,5 +1,5 @@
 import {ApplicationExtension} from '../type/application-extension';
-import {TimeUtil} from '../../../util/time.util.ts';
+import {TimeUtil} from '../../../util/time.util';
 
 export class Event extends ApplicationExtension {
   constructor()
