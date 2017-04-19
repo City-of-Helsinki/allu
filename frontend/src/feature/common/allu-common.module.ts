@@ -26,13 +26,15 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
 import {InputBoxComponent} from './input-box/input-box.component';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
     MdToolbarModule,
     MdButtonModule,
     CommonModule,
-    MaterializeModule
+    MaterializeModule,
+    BrowserAnimationsModule
   ],
   declarations: [
     AutoCompletionDirective,
