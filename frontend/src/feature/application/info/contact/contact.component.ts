@@ -18,7 +18,9 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name'];
   selector: 'contact',
   viewProviders: [],
   template: require('./contact.component.html'),
-  styles: []
+  styles: [
+    require('./contact.component.scss')
+  ]
 })
 export class ContactComponent implements OnInit, OnDestroy {
   @Input() applicationForm: FormGroup;

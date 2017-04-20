@@ -18,13 +18,6 @@
                         </small>
                     </div>
                     <div class="col m6">
-                        <md-select class="input-full-width" formControlName="country" placeholder="Maa">
-                            <md-option value="Suomi">Suomi</md-option>
-                        </md-select>
-                    </div>
-                </div>
-                <div class="row form-group">
-                    <div class="col m8">
                         <md-input-container class="input-full-width">
                             <input mdInput type="text" formControlName="name"
                                    placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
@@ -37,7 +30,9 @@
                             </md-hint>
                         </md-input-container>
                     </div>
-                    <div class="col m4">
+                </div>
+                <div class="row form-group">
+                    <div class="col m6">
                         <md-input-container class="input-full-width">
                             <input mdInput type="text" formControlName="registryKey"
                                    placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'id'] | translation}}*"/>
@@ -46,6 +41,11 @@
                                 <field-error [form]="applicantForm" field="registryKey" hasError="minlength">{{'applicant.field.registryKeyShort' | translation}}</field-error>
                             </md-hint>
                         </md-input-container>
+                    </div>
+                    <div class="col m6">
+                        <md-select class="input-full-width" formControlName="country" placeholder="Maa">
+                            <md-option value="Suomi">Suomi</md-option>
+                        </md-select>
                     </div>
                 </div>
                 <div formGroupName="postalAddress" class="row form-group">

@@ -1,6 +1,6 @@
 <div [formGroup]="contactsForm">
-    <div formArrayName="contacts" class="col m6 loose no-border">
-        <div *ngFor="let contact of contacts.controls; let index=index">
+    <div formArrayName="contacts">
+        <div *ngFor="let contact of contacts.controls; let index=index" class="col m6 loose contact-card">
             <div [formGroupName]="index" class="no-border">
                 <md-card>
                     <md-card-title>
