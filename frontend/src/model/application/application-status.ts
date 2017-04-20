@@ -9,5 +9,3 @@ export enum ApplicationStatus {
   FINISHED,
   CANCELLED
 }
-
-

@@ -8,7 +8,8 @@ export const translations = {
       handlerChangeFailed: 'Hakemuksen käsittelijän vaihto epäonnistui',
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui',
-      toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui'
+      toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',
+      toDecisionmaking: 'Hakemuksen siirtäminen odottamaan päätöstä epäonnistui'
     },
     action: {
       saved: 'Hakemus tallennettu'
@@ -25,7 +26,8 @@ export const translations = {
       CANCELLED: 'Peruttu'
     },
     statusChange: {
-      HANDLING: 'Hakemus siirretty käsittelyyn'
+      HANDLING: 'Hakemus siirretty käsittelyyn',
+      DECISIONMAKING: 'Hakemus siirretty odottamaan päätöstä'
     },
     type: {
       EVENT: 'Tapahtuma',

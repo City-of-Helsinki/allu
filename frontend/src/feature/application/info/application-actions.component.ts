@@ -50,6 +50,10 @@ export class ApplicationActionsComponent implements OnInit {
     this.router.navigate(['/applications/edit']);
   }
 
+  legalChange(newStatus: string): boolean {
+    return ApplicationStatusChange.legalChange(this.applicationState.application.status, newStatus);
+  }
+
   moveToHandling(): void {
     this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.HANDLING)).
       subscribe(app => {
@@ -58,5 +62,15 @@ export class ApplicationActionsComponent implements OnInit {
         this.router.navigate(['/applications', this.applicationId, 'edit']);
     },
     err => NotificationService.errorMessage(findTranslation('application.error.toHandling')));
+  }
+
+  moveToDecisionmaking(): void {
+    this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.DECISIONMAKING)).
+    subscribe(app => {
+        MaterializeUtil.toast(findTranslation('application.statusChange.DECISIONMAKING'));
+        this.applicationState.application = app;
+        this.router.navigate(['/decision', this.applicationId]);
+      },
+      err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
   }
 }

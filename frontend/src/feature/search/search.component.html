@@ -81,9 +81,9 @@
         <tr>
           <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
           <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">Nimi</th>
-          <th>Hanke</th>
           <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
           <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
+          <th>Hanke</th>
           <th sortBy="applicant.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
           <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">Katuosoite</th>
           <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">Kaupunginosa</th>
@@ -96,15 +96,13 @@
             (click)="goToSummary(application)">
           <td>{{application.handler?.realName}}</td>
           <td>{{application.name}}</td>
+          <td>{{ translations.application.type[application.type] }}</td>
+          <td>{{ translations.application.status[application.status] }}</td>
           <td>
             {{application.project?.name}} <br>
             <span>{{application.project?.id}}</span>
           </td>
-          <td>{{ translations.application.type[application.type] }}</td>
-          <td>{{ translations.application.status[application.status] }}</td>
-          <td>
-            {{application.applicant.name}}<br>
-          </td>
+          <td>{{application.applicant.name}}</td>
           <td>{{application.firstLocation.postalAddress.streetAddress}}</td>
           <td>{{districtName(application.firstLocation.effectiveCityDistrictId) | async}}</td>
           <td>{{ application.creationTime | date:format }}</td>

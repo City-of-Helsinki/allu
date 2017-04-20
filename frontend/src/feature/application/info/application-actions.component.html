@@ -16,8 +16,10 @@
                     </div>
                     <div *ngIf="readonly">
                         <button md-raised-button type="button" color="primary" [routerLink]="['/']">ETUSIVULLE</button>
-                        <button *ngIf="showHandling" md-raised-button type="button" color="primary" (click)="moveToHandling()">KÄSITTELYYN</button>
-                        <button *ngIf="showDecision" md-raised-button type="button" color="primary" [routerLink]="['/decision', applicationId]">PÄÄTTÄMISEEN</button>
+                        <button *ngIf="showHandling && legalChange('HANDLING')"
+                                md-raised-button type="button" color="primary" (click)="moveToHandling()">KÄSITTELYYN</button>
+                        <button *ngIf="showDecision && legalChange('DECISIONMAKING')"
+                                md-raised-button type="button" color="primary" (click)="moveToDecisionmaking()">PÄÄTTÄMISEEN</button>
                     </div>
                 </div>
             </div>

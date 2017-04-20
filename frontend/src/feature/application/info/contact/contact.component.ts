@@ -68,11 +68,11 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.applicantSubscription.unsubscribe();
   }
 
-  onNameSearchChange(term: string, index: number): void {
+  onNameSearchChange(term: string = '', index: number): void {
     this.resetContactIfExisting(index);
     this.availableContacts
       .debounceTime(300)
-      .map(contacts => contacts.filter(c => c.name.indexOf(term) >= 0))
+      .map(contacts => contacts.filter(c => c.nameLowercase.indexOf(term.toLowerCase()) >= 0))
       .subscribe(contacts => this.nameSearch.next(contacts));
   }
 
