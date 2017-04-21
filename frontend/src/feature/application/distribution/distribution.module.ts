@@ -3,23 +3,24 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MdRadioModule} from '@angular/material';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {DistributionComponent} from './distribution.component';
-import {MailingListModule} from '../distribution-list/distribution-list.module';
+import {DistributionListComponent} from './distribution-list/distribution-list.component';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     AlluCommonModule,
-    MdRadioModule,
-    MailingListModule
+    MdRadioModule
   ],
   declarations: [
-    DistributionComponent
+    DistributionComponent,
+    DistributionListComponent
   ],
   providers: [
   ],
   exports: [
-    DistributionComponent
+    DistributionComponent,
+    DistributionListComponent
   ]
 })
 export class DistributionModule {}

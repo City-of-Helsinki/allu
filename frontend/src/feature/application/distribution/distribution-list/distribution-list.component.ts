@@ -1,12 +1,10 @@
-import {Component, OnInit, Input, OnDestroy} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormArray, FormControl} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
-import {EnumUtil} from '../../../util/enum.util';
-import {DistributionEntry} from '../../../model/common/distribution-entry';
-import {DistributionType} from '../../../model/common/distribution-type';
-import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
-import {ApplicationState} from '../../../service/application/application-state';
-import {Some} from '../../../util/option';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+
+import {DistributionType} from '../../../../model/common/distribution-type';
+import {EnumUtil} from '../../../../util/enum.util';
+import {DistributionEntry} from '../../../../model/common/distribution-entry';
+import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 
 @Component({
   selector: 'distribution-list',
@@ -18,19 +16,19 @@ import {Some} from '../../../util/option';
 export class DistributionListComponent implements OnInit {
   @Input() form: FormGroup;
   @Input() readonly: boolean;
+  @Input() distributionList: Array<DistributionEntry> = [];
 
   distributionRows: FormArray;
   distributionTypes = EnumUtil.enumValues(DistributionType);
 
-  constructor(private fb: FormBuilder,
-              private applicationState: ApplicationState) {
+  constructor(private fb: FormBuilder) {
     this.distributionRows = fb.array([]);
   }
 
   ngOnInit(): void {
     this.form.addControl('distributionRows', this.distributionRows);
 
-    this.applicationState.application.decisionDistributionList
+    this.distributionList
       .map(d => this.createDistribution(d))
       .forEach(row => this.distributionRows.push(row));
 

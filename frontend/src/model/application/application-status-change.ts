@@ -1,4 +1,3 @@
-import {translations} from '../../util/translations';
 import {ApplicationStatus} from './application-status';
 
 // TODO: Might not contain all allowed changes yet
@@ -14,19 +13,11 @@ const legalChanges = [
   {currentStatus: ApplicationStatus.DECISION, newStatus: [ApplicationStatus.FINISHED]}
 ];
 
-export function translateStatus(status: ApplicationStatus) {
-  return translations.application.status[ApplicationStatus[status]];
-}
-
 export class ApplicationStatusChange {
   constructor(public id: number, public status: ApplicationStatus, public comment?: string) {}
 
   public static of(id: number, status: ApplicationStatus): ApplicationStatusChange {
     return new ApplicationStatusChange(id, status, undefined);
-  }
-
-  public static withComment(id: number, status: ApplicationStatus, comment: string): ApplicationStatusChange {
-    return new ApplicationStatusChange(id, status, comment);
   }
 
   public static legalChange(currentStatus: string, newStatus: string): boolean {

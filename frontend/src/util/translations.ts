@@ -365,7 +365,8 @@ export const translations = {
       }
     },
     error: {
-      generatePdf: 'Pdf:n muodostaminen epäonnistui'
+      generatePdf: 'Pdf:n muodostaminen epäonnistui',
+      send: 'Päätöksen lähettäminen sähköpostijakeluna epäonnistui'
     }
   },
   user: {

@@ -8,13 +8,15 @@ import {ApplicationBasicInfoComponent} from '../decision/application.basic-info.
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DecisionService} from '../../service/decision/decision.service';
 import {ProgressBarModule} from '../application/progressbar/progressbar.module';
+import {DistributionModule} from '../application/distribution/distribution.module';
 
 @NgModule({
   imports: [
     FormsModule,
     ReactiveFormsModule,
     AlluCommonModule,
-    ProgressBarModule
+    ProgressBarModule,
+    DistributionModule
   ],
   declarations: [
     DecisionComponent,

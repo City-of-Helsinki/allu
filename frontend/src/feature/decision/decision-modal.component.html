@@ -4,10 +4,19 @@
 <div md-dialog-content>
     <form [formGroup]="decisionForm">
         <div class="row">
-            <div class="col s12">
+            <div class="col s12" *ngIf="status !== 'DECISION'">
                 <md-input-container class="input-full-width">
                     <textarea mdInput md-autosize formControlName="comment" placeholder="Perustelut"></textarea>
                 </md-input-container>
+            </div>
+            <div class="col s12">
+                <md-input-container class="input-full-width">
+                    <textarea mdInput md-autosize formControlName="emailMessage" placeholder="Sähköpostiviesti"></textarea>
+                </md-input-container>
+            </div>
+            <div class="col s12">
+                <h2>Päätöksen jakelu</h2>
+                <distribution-list [form]="decisionForm" [distributionList]="distributionList"></distribution-list>
             </div>
         </div>
     </form>

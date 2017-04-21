@@ -21,7 +21,8 @@
             </div>
             <div class="row">
                 <div class="s12">
-                    <distribution-list [form]="communicationForm" [readonly]="readonly"></distribution-list>
+                    <distribution-list [form]="communicationForm" [distributionList]="application.decisionDistributionList"
+                                       [readonly]="readonly"></distribution-list>
                 </div>
             </div>
         </md-card-content>

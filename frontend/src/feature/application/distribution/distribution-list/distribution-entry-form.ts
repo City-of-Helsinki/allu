@@ -1,6 +1,6 @@
-import {PostalAddress} from '../../../model/common/postal-address';
-import {DistributionEntry} from '../../../model/common/distribution-entry';
-import {Some} from '../../../util/option';
+import {DistributionEntry} from '../../../../model/common/distribution-entry';
+import {PostalAddress} from '../../../../model/common/postal-address';
+import {Some} from '../../../../util/option';
 
 export class DistributionEntryForm {
   constructor(

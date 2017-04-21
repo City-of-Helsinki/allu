@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import '../../rxjs-extensions.ts';
 import {DecisionService} from './decision.service';
+import {DecisionDetails} from '../../model/decision/decision-details';
 
 @Injectable()
 export class DecisionHub {
@@ -24,4 +25,12 @@ export class DecisionHub {
    * Returns observable which contains preview pdf
    */
   public preview = (applicationId: number) => this.decisionService.preview(applicationId);
+
+  /**
+   * Sends decision to its recepients based on distribution
+   * @param applicationId application id of decision
+   * @param decisionDetails containing message and distribution
+   */
+  public sendDecision = (applicationId: number, decisionDetails: DecisionDetails) =>
+    this.decisionService.sendDecision(applicationId, decisionDetails);
 }

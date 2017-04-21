@@ -4,6 +4,10 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
+import {DistributionEntry} from '../../model/common/distribution-entry';
+import {DecisionConfirmation} from '../../model/decision/decision-confirmation';
+import {DecisionDetails} from '../../model/decision/decision-details';
+import {DistributionEntryForm} from '../application/distribution/distribution-list/distribution-entry-form';
 
 export const DECISION_MODAL_CONFIG = {width: '800px'};
 
@@ -15,14 +19,17 @@ export const DECISION_MODAL_CONFIG = {width: '800px'};
 export class DecisionModalComponent implements OnInit {
   @Input() status: string;
   @Input() applicationId: number;
+  @Input() distributionList: Array<DistributionEntry> = [];
 
   decisionForm: FormGroup;
 
-  constructor(public dialogRef: MdDialogRef<DecisionModalComponent>, private fb: FormBuilder) {}
+  constructor(public dialogRef: MdDialogRef<DecisionModalComponent>,
+              private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.decisionForm = this.fb.group({
-      comment: ['']
+      comment: [''],
+      emailMessage: ['']
     });
   }
 
@@ -32,10 +39,19 @@ export class DecisionModalComponent implements OnInit {
       ApplicationStatus[this.status],
       this.decisionForm.value.comment);
 
-    this.dialogRef.close(statusChange);
+    let decisionDetails = new DecisionDetails(
+      this.decisionDistribution(),
+      this.decisionForm.value.emailMessage);
+
+    this.dialogRef.close(new DecisionConfirmation(statusChange, decisionDetails));
   }
 
   cancel() {
     this.dialogRef.close();
+  }
+
+  private decisionDistribution(): Array<DistributionEntry> {
+    return this.decisionForm.value.distributionRows
+      .map(d => DistributionEntryForm.to(d));
   }
 }

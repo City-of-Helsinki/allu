@@ -1,4 +1,4 @@
-import {DistributionEntryForm} from '../distribution-list/distribution-entry-form';
+import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 export interface ApplicationForm {
   terms?: string;
   communication?: CommunicationForm;

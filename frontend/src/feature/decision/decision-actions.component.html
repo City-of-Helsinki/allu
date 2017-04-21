@@ -1,7 +1,7 @@
 <div class="row" *ngFor="let error of errors | async">{{error}}</div>
 <div class="action-row">
     <div class="action-item">
-        <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="accept()">Hyväksy</button>
+        <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
     </div>
     <div class="action-item">
         <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('RETURNED_TO_PREPARATION')">Palauta</button>

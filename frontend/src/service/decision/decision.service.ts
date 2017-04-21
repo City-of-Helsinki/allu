@@ -8,9 +8,15 @@ import {ErrorType} from '../ui-state/error-type';
 import '../../rxjs-extensions.ts';
 import {ResponseContentType} from '@angular/http';
 import {ErrorHandler} from '../error/error-handler.service';
+import {DecisionDetails} from '../../model/decision/decision-details';
+import {HttpResponse} from '../../util/http-response';
+import {HttpUtil} from '../../util/http.util';
+import {findTranslation} from '../../util/translations';
+import {DecisionDetailsMapper} from '../mapper/decision-details-mapper';
 
 const DECISION_URL = '/api/applications/:appId/decision';
 const DECISION_PREVIEW_URL = '/api/applications/:appId/decision-preview';
+const DECISION_DISTRIBUTION_URL = '/api/applications/:appId/decision/send';
 
 @Injectable()
 export class DecisionService {
@@ -44,5 +50,12 @@ export class DecisionService {
     return this.authHttp.get(url, {responseType: ResponseContentType.Blob})
       .map(response => response.blob())
       .map(pdf => new Decision(applicationId, pdf));
+  }
+
+  public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<HttpResponse> {
+    let url = DECISION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
+    return this.authHttp.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails)))
+      .map(response => HttpUtil.extractHttpResponse(response))
+      .catch(error => this.errorHandler.handle(error, findTranslation('decision.error.send')));
   }
 }

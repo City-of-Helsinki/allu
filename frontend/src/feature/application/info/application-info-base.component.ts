@@ -12,7 +12,7 @@ import {NotificationService} from '../../../service/notification/notification.se
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
 import {DistributionType} from '../../../model/common/distribution-type';
-import {DistributionEntryForm} from '../distribution-list/distribution-entry-form';
+import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
 
