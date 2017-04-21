@@ -7,6 +7,8 @@ import {CableInfoEntry} from '../../../../model/application/cable-report/cable-i
 import {Application} from '../../../../model/application/application';
 import {StringUtil} from '../../../../util/string.util';
 import {ApplicationForm} from '../application-form';
+import {TimeUtil} from '../../../../util/time.util';
+import {ApplicationStatus} from '../../../../model/application/application-status';
 
 export class CableReportForm implements ApplicationForm {
   constructor(
@@ -46,7 +48,7 @@ export class CableReportForm implements ApplicationForm {
   static from(application: Application): CableReportForm {
     let cableReport = <CableReport>application.extension || new CableReport();
     return new CableReportForm(
-      cableReport.uiValidityTime,
+      this.validityTime(ApplicationStatus[application.status], cableReport),
       cableReport.cableSurveyRequired,
       cableReport.mapUpdated,
       cableReport.constructionWork,
@@ -62,6 +64,14 @@ export class CableReportForm implements ApplicationForm {
       new CableInfoForm(cableReport.mapExtractCount, cableReport.infoEntries),
       cableReport.specifiers
     );
+  }
+
+  private static validityTime(status: ApplicationStatus, cableReport: CableReport): string {
+    if (status >= ApplicationStatus.DECISION) {
+      return cableReport.uiValidityTime;
+    } else {
+      return TimeUtil.add(new Date(), 1, 'months');
+    }
   }
 }
 

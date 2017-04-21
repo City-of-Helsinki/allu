@@ -6,7 +6,7 @@ import {Project} from '../../../model/project/project';
 import {ProjectHub} from '../../../service/project/project-hub';
 import {Some} from '../../../util/option';
 import {Application} from '../../../model/application/application';
-import {UI_DATE_FORMAT, TimeUtil} from '../../../util/time.util';
+import {UI_PIPE_DATE_FORMAT, TimeUtil} from '../../../util/time.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {translations} from '../../../util/translations';
 import {ProjectState} from '../../../service/project/project-state';
@@ -25,7 +25,7 @@ export class ProjectSummaryComponent implements OnInit {
   history: Observable<Array<string>>; // TODO: history
   isActive: boolean;
   districts: Observable<Array<string>>;
-  dateFormat = UI_DATE_FORMAT;
+  dateFormat = UI_PIPE_DATE_FORMAT;
   translations = translations;
 
   constructor(private projectState: ProjectState) {}

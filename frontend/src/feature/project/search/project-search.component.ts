@@ -6,7 +6,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {Project} from '../../../model/project/project';
 import {translations} from '../../../util/translations';
 import {PICKADATE_PARAMETERS} from '../../../util/time.util';
-import {UI_DATE_FORMAT} from '../../../util/time.util';
+import {UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {ProjectHub} from '../../../service/project/project-hub';
 import {Sort} from '../../../model/common/sort';
@@ -26,7 +26,7 @@ export class ProjectSearchComponent implements OnInit {
   districts: Observable<Array<CityDistrict>>;
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
-  private format = UI_DATE_FORMAT;
+  private format = UI_PIPE_DATE_FORMAT;
   private selections = [];
 
   constructor(private projectHub: ProjectHub,

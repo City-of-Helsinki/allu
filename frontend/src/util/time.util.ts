@@ -18,7 +18,8 @@ export const PICKADATE_PARAMETERS = [
 
 export const MIN_DATE: Date = new Date(0);
 export const MAX_DATE: Date = new Date('2099-12-31T23:59:59');
-export const UI_DATE_FORMAT: string = 'dd.MM.yyyy'; // Used by angular date pipe
+export const UI_PIPE_DATE_FORMAT: string = 'dd.MM.yyyy'; // Used by angular date pipe
+export const UI_DATE_FORMAT: string = 'DD.MM.YYYY';
 export const UI_DATE_TIME_FORMAT: string = 'DD.MM.YYYY HH:mm';
 const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
@@ -28,7 +29,7 @@ const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
  */
 export class TimeUtil {
   public static getUiDateString(time: Date): string {
-    return time ? momentLib(time).format('DD.MM.YYYY').toString() : undefined;
+    return time ? momentLib(time).format(UI_DATE_FORMAT).toString() : undefined;
   }
 
   public static getUiDateTimeString(time: Date): string {
@@ -36,15 +37,15 @@ export class TimeUtil {
   }
 
   public static getDateFromUi(dateString: string): Date {
-    return dateString ? momentLib(dateString, 'DD.MM.YYYY').toDate() : undefined;
+    return dateString ? momentLib(dateString, UI_DATE_FORMAT).toDate() : undefined;
   }
 
   public static getStartDateFromUi(dateString: string): Date {
-    return dateString ? momentLib(dateString, 'DD.MM.YYYY').startOf('day').toDate() : undefined;
+    return dateString ? momentLib(dateString, UI_DATE_FORMAT).startOf('day').toDate() : undefined;
   }
 
   public static getEndDateFromUi(dateString: string): Date {
-    return dateString ? momentLib(dateString, 'DD.MM.YYYY').endOf('day').toDate() : undefined;
+    return dateString ? momentLib(dateString, UI_DATE_FORMAT).endOf('day').toDate() : undefined;
   }
 
   public static dateFromBackend(dateString: string): Date {
@@ -65,6 +66,9 @@ export class TimeUtil {
     return momentLib.max(... moments).toDate();
   }
 
+  public static add(baseDate: Date = new Date(), amount: number, unit: UnitOfTime): string {
+    return momentLib(baseDate).add(amount, unit).format(UI_DATE_FORMAT);
+  }
 
   /**
    * Returns end of given day i.e. any date 1.1.2001 would be converted to 1.1.2001 23:59.
@@ -106,11 +110,7 @@ export class TimeUtil {
     }
   }
 
-  public static dateToMoment(date: Date): any {
-    return date ? momentLib(date) : undefined;
-  }
-
   private static toMoment(dateString: string): any {
-    return dateString ? momentLib(dateString, 'DD.MM.YYYY') : undefined;
+    return dateString ? momentLib(dateString, UI_DATE_FORMAT) : undefined;
   }
 }

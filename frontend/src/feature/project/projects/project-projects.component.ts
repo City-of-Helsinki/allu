@@ -6,7 +6,7 @@ import {Subject} from 'rxjs/Subject';
 import {ProjectHub} from '../../../service/project/project-hub';
 import {Project} from '../../../model/project/project';
 import {Some} from '../../../util/option';
-import {UI_DATE_FORMAT} from '../../../util/time.util';
+import {UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
 import {ContentRow} from '../../../model/common/content-row';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {Sort} from '../../../model/common/sort';
@@ -27,7 +27,7 @@ export class ProjectProjectsComponent implements OnInit {
   matchingProjects: Observable<Array<Project>>;
   allSelected = false;
   sort: Sort = new Sort(undefined, undefined);
-  dateFormat = UI_DATE_FORMAT;
+  dateFormat = UI_PIPE_DATE_FORMAT;
 
   private projectRows: Array<ContentRow<Project>> = [];
 

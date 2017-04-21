@@ -10,7 +10,7 @@ import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQue
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {ContentRow} from '../../../model/common/content-row';
 import {Sort} from '../../../model/common/sort';
-import {UI_DATE_FORMAT} from '../../../util/time.util';
+import {UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
 import {ProjectState} from '../../../service/project/project-state';
 import {NotificationService} from '../../../service/notification/notification.service';
 
@@ -28,7 +28,7 @@ export class ProjectApplicationsComponent implements OnInit {
   matchingApplications: Observable<Array<Application>>;
   allSelected = false;
   sort: Sort = new Sort(undefined, undefined);
-  dateFormat = UI_DATE_FORMAT;
+  dateFormat = UI_PIPE_DATE_FORMAT;
 
   constructor(private route: ActivatedRoute, private router: Router,
               private projectHub: ProjectHub, private applicationHub: ApplicationHub,

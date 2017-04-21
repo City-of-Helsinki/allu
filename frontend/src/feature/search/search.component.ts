@@ -6,7 +6,7 @@ import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {translations} from '../../util/translations';
 import {ApplicationStatus} from '../../model/application/application-status';
-import {PICKADATE_PARAMETERS, UI_DATE_FORMAT} from '../../util/time.util';
+import {PICKADATE_PARAMETERS, UI_PIPE_DATE_FORMAT} from '../../util/time.util';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {ApplicationHub} from '../../service/application/application-hub';
@@ -33,7 +33,7 @@ export class SearchComponent implements OnInit {
   districts: Observable<Array<CityDistrict>>;
   private translations = translations;
   private pickadateParams = PICKADATE_PARAMETERS;
-  private format = UI_DATE_FORMAT;
+  private format = UI_PIPE_DATE_FORMAT;
   private applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
   private applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
   private selections = [];

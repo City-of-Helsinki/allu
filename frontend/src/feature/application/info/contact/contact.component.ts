@@ -1,8 +1,7 @@
-import {Component, Input, OnInit, OnDestroy} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormArray} from '@angular/forms';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {Contact} from '../../../../model/application/contact';
-import {emailValidator, postalCodeValidator} from '../../../../util/complex-validator';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MdDialog, MdDialogRef} from '@angular/material';

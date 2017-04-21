@@ -30,8 +30,6 @@ export class CableReport extends ApplicationExtension {
   }
 
   get uiValidityTime(): string {
-    let validityTime = this.validityTime
-      || TimeUtil.dateToMoment(new Date()).add(1, 'months').toDate();
-    return TimeUtil.getUiDateString(validityTime);
+    return TimeUtil.getUiDateString(this.validityTime);
   }
 }
