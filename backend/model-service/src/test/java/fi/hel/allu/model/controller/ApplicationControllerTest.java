@@ -1,9 +1,6 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.LocationService;
@@ -150,6 +147,24 @@ public class ApplicationControllerTest {
         .andExpect(status().isOk());
     Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
     assertNull(updateResult.getHandler());
+  }
+
+  @Test
+  public void testReplaceDistributionList() throws Exception {
+    Application appInResult = insertApplication(testCommon.dummyOutdoorApplication("Test Application", "Handler"));
+    final String testEmail = "testi@testi.fi";
+    DistributionEntry distributionEntry = new DistributionEntry();
+    distributionEntry.setEmail(testEmail);
+    distributionEntry.setDistributionType(DistributionType.EMAIL);
+    wtc.perform(post(
+        String.format("/applications/%d/decision-distribution-list", appInResult.getId())),
+        Collections.singletonList(distributionEntry))
+        .andExpect(status().isOk());
+    ResultActions resultActions = wtc.perform(get(String.format("/applications/%d", appInResult.getId())))
+        .andExpect(status().isOk());
+    Application updateResult = wtc.parseObjectFromResult(resultActions, Application.class);
+    assertEquals(1, updateResult.getDecisionDistributionList().size());
+    assertEquals(testEmail, updateResult.getDecisionDistributionList().get(0).getEmail());
   }
 
   @Test

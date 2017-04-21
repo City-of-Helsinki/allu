@@ -2,6 +2,7 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
@@ -18,6 +19,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ApplicationService {
@@ -103,6 +105,22 @@ public class ApplicationService {
     ResponseEntity<InvoiceRow[]> restResult = restTemplate.getForEntity(applicationProperties.getInvoiceRowsUrl(),
         InvoiceRow[].class, id);
     return Arrays.asList(restResult.getBody());
+  }
+
+  /**
+   * Replaces distribution list of the given application.
+   *
+   * @param id                      Id of the application.
+   * @param distributionEntryJsons  New distribution list for the application.
+   */
+  public void replaceDistributionList(int id, List<DistributionEntryJson> distributionEntryJsons) {
+    List<DistributionEntry> distributionEntries =
+        distributionEntryJsons.stream().map(entry -> applicationMapper.createDistributionEntryModel(entry)).collect(Collectors.toList());
+    restTemplate.postForEntity(
+        applicationProperties.getApplicationReplaceDistributionListUrl(),
+        distributionEntries,
+        Void.class,
+        id);
   }
 
   /**

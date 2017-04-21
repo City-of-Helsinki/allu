@@ -68,6 +68,13 @@ public class DistributionEntryDao {
     }
   }
 
+  @Transactional
+  public void replaceEntries(int applicationId, List<DistributionEntry> dEntries) {
+    dEntries.forEach(entry -> entry.setApplicationId(applicationId));
+    deleteByApplication(applicationId);
+    insert(dEntries);
+  }
+
   private List<DistributionEntry> findByPredicate(Predicate predicate) {
     List<Tuple> dEntryPostalAddress = queryFactory
         .select(distributionEntryBean, postalAddressBean)

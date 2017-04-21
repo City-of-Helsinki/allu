@@ -22,6 +22,7 @@ import javax.validation.Valid;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/applications")
@@ -150,7 +151,8 @@ public class ApplicationController {
   /**
    * Delete attachment
    *
-   * @param id  attachment ID
+   * @param applicationId   Id of the application whose attachment will be deleted.
+   * @param attachmentId    Id of the attachment to be deleted.
    * @return
    */
   @RequestMapping(value = "/{applicationId}/attachments/{attachmentId}", method = RequestMethod.DELETE)
@@ -213,17 +215,21 @@ public class ApplicationController {
   }
 
   /**
-   * Send the decision PDF for application as email
+   * Send the decision PDF for application as email to an updated distribution list.
    *
-   * @param applicationId the application's Id
+   * @param applicationId       the application's Id.
+   * @param decisionDetailsJson Details of the decision.
    */
   @RequestMapping(value = "/{applicationId}/decision/send", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<Void> sendDecision(@PathVariable int applicationId,
-      @RequestBody EmailDetailsJson emailDetails) {
+  public ResponseEntity<Void> sendDecision(
+      @PathVariable int applicationId,
+      @RequestBody DecisionDetailsJson decisionDetailsJson) {
     String subject = "Aluevarauspäätös"; // TODO: add application's application ID
-
-    alluMailService.sendDecision(applicationId, emailDetails.getRecipients(), subject, emailDetails.getMessageBody());
+    applicationServiceComposer.replaceDistributionList(applicationId, decisionDetailsJson.getDecisionDistributionList());
+    List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
+        .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
+    alluMailService.sendDecision(applicationId, emailRecipients, subject, decisionDetailsJson.getMessageBody());
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

@@ -66,6 +66,19 @@ public class ApplicationServiceComposer {
   }
 
   /**
+   * Replaces distribution list of an application.
+   *
+   * @param applicationId           Application whose distribution list is replaced.
+   * @param distributionEntryJsons  Replacing distribution list.
+   */
+  public void replaceDistributionList(int applicationId, List<DistributionEntryJson> distributionEntryJsons) {
+    ApplicationJson oldApplication = findApplicationById(applicationId);
+    applicationService.replaceDistributionList(applicationId, distributionEntryJsons);
+    ApplicationJson updatedApplication = findApplicationById(applicationId);
+    applicationHistoryService.addFieldChanges(applicationId, oldApplication, updatedApplication);
+  }
+
+  /**
    * Create applications by calling backend service.
    *
    * @param applicationJson Application that are going to be created

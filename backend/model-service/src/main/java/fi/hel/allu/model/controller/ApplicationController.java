@@ -32,15 +32,22 @@ public class ApplicationController {
 
   private HistoryDao historyDao;
 
+  private DistributionEntryDao distributionEntryDao;
+
   @Autowired
-  public ApplicationController(ApplicationService applicationService, AttachmentDao attachmentDao,
+  public ApplicationController(
+      ApplicationService applicationService,
+      AttachmentDao attachmentDao,
       DecisionDao decisionDao,
-      InvoiceRowDao invoiceRowDao, HistoryDao historyDao) {
+      InvoiceRowDao invoiceRowDao,
+      HistoryDao historyDao,
+      DistributionEntryDao distributionEntryDao) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
     this.invoiceRowDao = invoiceRowDao;
     this.historyDao = historyDao;
+    this.distributionEntryDao = distributionEntryDao;
   }
 
   /**
@@ -202,6 +209,14 @@ public class ApplicationController {
   @RequestMapping(value = "{id}/history", method = RequestMethod.POST)
   public ResponseEntity<Void> addChange(@PathVariable int id, @RequestBody ApplicationChange change) {
     historyDao.addApplicationChange(id, change);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/decision-distribution-list", method = RequestMethod.POST)
+  public ResponseEntity<Void> replaceDecisionDistributionList(
+      @PathVariable int id,
+      @RequestBody List<DistributionEntry> distributionEntries) {
+    distributionEntryDao.replaceEntries(id, distributionEntries);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 }

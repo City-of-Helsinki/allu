@@ -403,6 +403,15 @@ public class ApplicationMapper {
     }
   }
 
+  public DistributionEntry createDistributionEntryModel(DistributionEntryJson distributionEntryJson) {
+    DistributionEntry distributionEntry = new DistributionEntry();
+    distributionEntry.setDistributionType(distributionEntryJson.getDistributionType());
+    distributionEntry.setName(distributionEntryJson.getName());
+    distributionEntry.setEmail(distributionEntryJson.getEmail());
+    distributionEntry.setPostalAddress(createPostalAddressModel(distributionEntryJson.getPostalAddress()));
+    return distributionEntry;
+  }
+
   private PostalAddressJson createPostalAddressJson(PostalAddress postalAddress) {
     if (postalAddress != null) {
       PostalAddressJson postalAddressJson = new PostalAddressJson();
@@ -663,14 +672,5 @@ public class ApplicationMapper {
     distributionEntryJson.setEmail(distributionEntry.getEmail());
     distributionEntryJson.setPostalAddress(createPostalAddressJson(distributionEntry.getPostalAddress()));
     return distributionEntryJson;
-  }
-
-  private DistributionEntry createDistributionEntryModel(DistributionEntryJson distributionEntryJson) {
-    DistributionEntry distributionEntry = new DistributionEntry();
-    distributionEntry.setDistributionType(distributionEntryJson.getDistributionType());
-    distributionEntry.setName(distributionEntryJson.getName());
-    distributionEntry.setEmail(distributionEntryJson.getEmail());
-    distributionEntry.setPostalAddress(createPostalAddressModel(distributionEntryJson.getPostalAddress()));
-    return distributionEntry;
   }
 }

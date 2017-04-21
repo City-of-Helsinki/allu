@@ -280,6 +280,14 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to replace distribution list of application.
+   */
+  public String getApplicationReplaceDistributionListUrl() {
+    return getModelServiceUrl("/applications/{id}/decision-distribution-list");
+  }
+
+
+  /**
    * @return url to create users to model service.
    */
   public String getUserCreateUrl() {
