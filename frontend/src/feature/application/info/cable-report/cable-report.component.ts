@@ -8,6 +8,8 @@ import {ApplicantForm} from '../applicant/applicant.form';
 import {CableReportForm} from './cable-report.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {TimeUtil} from '../../../../util/time.util';
+import {CableReport} from '../../../../model/application/cable-report/cable-report';
 
 
 @Component({
@@ -31,6 +33,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
 
   protected initForm() {
     this.applicationForm = this.fb.group({
+      validityTime: [{value: undefined, disabled: true}],
       cableSurveyRequired: [false],
       mapUpdated: [false],
       constructionWork: [{value: false, disabled: this.readonly}],
@@ -52,7 +55,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     application.uiEndTime = form.reportTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.company);
     application.contactList = form.orderer;
-    application.extension = CableReportForm.to(form, application.extension.specifiers);
+    let extension = <CableReport>application.extension;
+    application.extension = CableReportForm.to(form, extension.validityTime, extension.specifiers);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

@@ -10,6 +10,7 @@ import {ApplicationForm} from '../application-form';
 
 export class CableReportForm implements ApplicationForm {
   constructor(
+    public validityTime?: string,
     public cableSurveyRequired?: boolean,
     public mapUpdated?: boolean,
     public constructionWork?: boolean,
@@ -26,8 +27,9 @@ export class CableReportForm implements ApplicationForm {
     public specifiers?: Array<string>
   ) {}
 
-  static to(form: CableReportForm, specifiers: Array<string>): CableReport {
+  static to(form: CableReportForm, validityTime: Date, specifiers: Array<string>): CableReport {
     let cableReport = new CableReport();
+    cableReport.validityTime = validityTime;
     cableReport.cableSurveyRequired = form.cableSurveyRequired;
     cableReport.mapUpdated = form.mapUpdated;
     cableReport.constructionWork = form.constructionWork;
@@ -44,6 +46,7 @@ export class CableReportForm implements ApplicationForm {
   static from(application: Application): CableReportForm {
     let cableReport = <CableReport>application.extension || new CableReport();
     return new CableReportForm(
+      cableReport.uiValidityTime,
       cableReport.cableSurveyRequired,
       cableReport.mapUpdated,
       cableReport.constructionWork,

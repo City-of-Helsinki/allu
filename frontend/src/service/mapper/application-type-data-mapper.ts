@@ -42,6 +42,7 @@ export class ApplicationTypeDataMapper {
       case ApplicationType.CABLE_REPORT:
         return new CableReport(
           backendExtension.specifiers,
+          TimeUtil.dateFromBackend(backendExtension.validityTime),
           backendExtension.cableSurveyRequired,
           backendExtension.mapUpdated,
           backendExtension.constructionWork,

@@ -3,26 +3,12 @@ import {CableInfoEntry} from './cable-info-entry';
 import {Applicant} from '../applicant/applicant';
 import {Contact} from '../contact';
 import {ApplicationType} from '../type/application-type';
+import {TimeUtil} from '../../../util/time.util';
 
 export class CableReport extends ApplicationExtension {
-  constructor()
-  constructor(
-    specifiers: Array<string>,
-    cableSurveyRequired: boolean,
-    mapUpdated: boolean,
-    constructionWork: boolean,
-    maintenanceWork: boolean,
-    emergencyWork: boolean,
-    propertyConnectivity: boolean,
-    cableReportId: string,
-    workDescription: string,
-    owner: Applicant,
-    contact: Contact,
-    mapExtractCount: number,
-    infoEntries: Array<CableInfoEntry>
-  )
   constructor(
     public specifiers?: Array<string>,
+    public validityTime?: Date,
     public cableSurveyRequired?: boolean,
     public mapUpdated?: boolean,
     public constructionWork?: boolean,
@@ -41,5 +27,11 @@ export class CableReport extends ApplicationExtension {
 
   get contactList(): Array<Contact> {
     return this.contact ? [this.contact] : undefined;
+  }
+
+  get uiValidityTime(): string {
+    let validityTime = this.validityTime
+      || TimeUtil.dateToMoment(new Date()).add(1, 'months').toDate();
+    return TimeUtil.getUiDateString(validityTime);
   }
 }

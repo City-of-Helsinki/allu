@@ -106,6 +106,10 @@ export class TimeUtil {
     }
   }
 
+  public static dateToMoment(date: Date): any {
+    return date ? momentLib(date) : undefined;
+  }
+
   private static toMoment(dateString: string): any {
     return dateString ? momentLib(dateString, 'DD.MM.YYYY') : undefined;
   }
