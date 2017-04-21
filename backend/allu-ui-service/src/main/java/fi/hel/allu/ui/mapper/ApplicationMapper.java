@@ -483,6 +483,7 @@ public class ApplicationMapper {
     cableReport.setMaintenanceWork(cableReportJson.getMaintenanceWork());
     cableReport.setEmergencyWork(cableReportJson.getEmergencyWork());
     cableReport.setPropertyConnectivity(cableReportJson.getPropertyConnectivity());
+    cableReport.setValidityTime(cableReportJson.getValidityTime());
     return cableReport;
   }
 
@@ -507,6 +508,7 @@ public class ApplicationMapper {
     cableReportJson.setMaintenanceWork(cableReport.getMaintenanceWork());
     cableReportJson.setEmergencyWork(cableReport.getEmergencyWork());
     cableReportJson.setPropertyConnectivity(cableReport.getPropertyConnectivity());
+    cableReportJson.setValidityTime(cableReport.getValidityTime());
     return cableReportJson;
   }
 

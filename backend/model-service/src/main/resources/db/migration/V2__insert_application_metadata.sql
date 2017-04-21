@@ -553,6 +553,8 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'emergencyWork', 'Hätätyö', 'BOOLEAN', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'propertyConnectivity', 'Kiinteistöliitos', 'BOOLEAN', null, null);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'validityTime', 'Voimassaoloaika', 'DATETIME', null, null);
 
 -----------------------------------
 -- Excavation announcement metadata

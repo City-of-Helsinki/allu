@@ -1,5 +1,6 @@
 package fi.hel.allu.pdf.domain;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -65,6 +66,8 @@ public class DecisionJson {
   private List<String> attachmentNames;
 
   private String appealInstructions;
+
+  private ZonedDateTime cableReportValidityTime;
 
   public boolean isDraft() {
     return isDraft;
@@ -392,5 +395,16 @@ public class DecisionJson {
 
   public void setAppealInstructions(String appealInstructions) {
     this.appealInstructions = appealInstructions;
+  }
+
+  /**
+   * @return  The validity time of cable report.
+   */
+  public ZonedDateTime getCableReportValidityTime() {
+    return cableReportValidityTime;
+  }
+
+  public void setCableReportValidityTime(ZonedDateTime cableReportValidityTime) {
+    this.cableReportValidityTime = cableReportValidityTime;
   }
 }

@@ -5,7 +5,6 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +38,7 @@ public class DecisionService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private LocationService locationService;
+  private ApplicationServiceComposer applicationServiceComposer;
   private final ZoneId zoneId;
   private final Locale locale;
   private final DateTimeFormatter dateTimeFormatter;
@@ -49,11 +49,15 @@ public class DecisionService {
   }
 
   @Autowired
-  public DecisionService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
-      LocationService locationService) {
+  public DecisionService(
+      ApplicationProperties applicationProperties,
+      RestTemplate restTemplate,
+      LocationService locationService,
+      ApplicationServiceComposer applicationServiceComposer) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
+    this.applicationServiceComposer = applicationServiceComposer;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
@@ -110,8 +114,7 @@ public class DecisionService {
   /**
    * Get the decision preview PDF for given application from the model service
    *
-   * @param applicationId
-   *          the application's ID
+   * @param application the application data whose PDF preview is created.
    * @return PDF data
    */
   public byte[] getDecisionPreview(ApplicationJson application) {
@@ -140,6 +143,9 @@ public class DecisionService {
       break;
     case SHORT_TERM_RENTAL:
       fillShortTermRentalSpecifics(decisionJson, application.getExtension());
+      break;
+    case CABLE_REPORT:
+      fillCableReportSpecifics(decisionJson, application);
       break;
     default:
       break;
@@ -207,6 +213,15 @@ public class DecisionService {
       decisionJson.setHasEkokompassi(ej.isEcoCompass());
       decisionJson.setEventNature(eventNature(ej.getNature()));
       decisionJson.setPriceReason(ej.getNoPriceReason());
+    }
+  }
+
+  private void fillCableReportSpecifics(DecisionJson decisionJson, ApplicationJson applicationJson) {
+    CableReportJson cableReportJson = (CableReportJson) applicationJson.getExtension();
+    if (cableReportJson != null) {
+      cableReportJson.setValidityTime(ZonedDateTime.now().plusMonths(1));
+      decisionJson.setCableReportValidityTime(cableReportJson.getValidityTime());
+      applicationServiceComposer.updateApplication(applicationJson.getId(), applicationJson);
     }
   }
 

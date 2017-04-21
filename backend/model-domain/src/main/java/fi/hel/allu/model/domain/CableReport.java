@@ -2,6 +2,7 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 public class CableReport extends ApplicationExtension {
@@ -18,6 +19,7 @@ public class CableReport extends ApplicationExtension {
   private Boolean maintenanceWork;
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
+  private ZonedDateTime validityTime;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -166,5 +168,18 @@ public class CableReport extends ApplicationExtension {
 
   public void setPropertyConnectivity(Boolean propertyConnectivity) {
     this.propertyConnectivity = propertyConnectivity;
+  }
+
+  /**
+   * In Finnish: Johtoselvityksen voimassaoloaika
+   *
+   * @return  The validity time of the cable report.
+   */
+  public ZonedDateTime getValidityTime() {
+    return validityTime;
+  }
+
+  public void setValidityTime(ZonedDateTime validityTime) {
+    this.validityTime = validityTime;
   }
 }
