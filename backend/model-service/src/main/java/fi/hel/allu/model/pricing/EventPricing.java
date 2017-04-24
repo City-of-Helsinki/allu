@@ -69,7 +69,8 @@ public class EventPricing extends Pricing {
   /**
    * Get the calculated price in cents.
    */
-  public int getPrice() {
+  @Override
+  public int getPriceInCents() {
     return Math.round(fullPrice / 100 * paymentPercentage / 100);
   }
 

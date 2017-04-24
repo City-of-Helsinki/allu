@@ -8,7 +8,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 public class ShortTermRentalPricing extends Pricing {
-  private int priceInCents;
 
   private final Application application;
   private final double applicationArea;
@@ -70,16 +69,8 @@ public class ShortTermRentalPricing extends Pricing {
     this.application = application;
     this.applicationArea = applicationArea;
     this.applicantIsCompany = applicantIsCompany;
-    this.priceInCents = 0;
   }
 
-  public int getPriceInCents() {
-    return priceInCents;
-  }
-
-  private void setPriceInCents(int priceInCents) {
-    this.priceInCents = priceInCents;
-  }
 
   public void calculatePrice() {
     switch (application.getKind()) {

@@ -7,7 +7,6 @@ import java.time.temporal.ChronoUnit;
 
 public class ExcavationPricing extends Pricing {
 
-  private int priceInCents;
   private final Application application;
 
   private static final String HANDLING_FEE_TEXT = "Käsittelymaksu";
@@ -21,20 +20,13 @@ public class ExcavationPricing extends Pricing {
   private static final int LARGE_AREA_DAILY_FEE = 8000;
 
   public ExcavationPricing(Application application) {
-    this.priceInCents = 0;
     this.application = application;
-    this.priceInCents = HANDLING_FEE;
+    setPriceInCents(HANDLING_FEE);
     addInvoiceRow(InvoiceUnit.PIECE, 1, HANDLING_FEE, HANDLING_FEE_TEXT, HANDLING_FEE);
   }
 
-  public int getPriceInCents() {
-    return priceInCents;
-  }
 
-  private void setPriceInCents(int priceInCents) {
-    this.priceInCents = priceInCents;
-  }
-
+  @Override
   public void addLocationPrice(double locationArea, int paymentClass) {
     int dailyFee;
     if (locationArea < SMALL_AREA_LIMIT) {
