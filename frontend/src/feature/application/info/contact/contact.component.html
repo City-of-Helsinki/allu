@@ -20,11 +20,15 @@
                         <div class="row form-group">
                             <div class="col m6">
                                 <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"
-                                           [autocompletion]="nameSearchResults"
-                                           [minTermLength]="0"
-                                           (onSearchChange)="onNameSearchChange($event, index)"
-                                           (onSelection)="contactSelected($event, index)"/>
+                                    <input mdInput type="text" formControlName="name"
+                                           placeholder="Yhteyshenkilön nimi*"
+                                           [mdAutocomplete]="nameSearch" (keyup)="resetContactIfExisting(index)"/>
+                                    <md-autocomplete #nameSearch="mdAutocomplete">
+                                        <md-option *ngFor="let contact of matchingContacts | async"
+                                                   [value]="contact.name" (click)="contactSelected(contact, index)">
+                                            {{ contact.name }}
+                                        </md-option>
+                                    </md-autocomplete>
                                     <md-hint>
                                         <field-error [form]="contact" field="name" hasError="required">{{'contact.field.nameMissing' | translation}}</field-error>
                                     </md-hint>

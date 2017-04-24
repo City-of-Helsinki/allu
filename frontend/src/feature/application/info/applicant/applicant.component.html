@@ -21,9 +21,13 @@
                         <md-input-container class="input-full-width">
                             <input mdInput type="text" formControlName="name"
                                    placeholder="{{['applicant.type', applicantForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
-                                   [autocompletion]="nameSearchResults"
-                                   (onSearchChange)="onNameSearchChange(applicantForm.value.type, $event)"
-                                   (onSelection)="applicantSelected($event)"/>
+                                   [mdAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
+                            <md-autocomplete #nameSearch="mdAutocomplete">
+                                <md-option *ngFor="let applicant of matchingApplicants | async"
+                                           [value]="applicant.name" (click)="applicantSelected(applicant)">
+                                    {{ applicant.name }}
+                                </md-option>
+                            </md-autocomplete>
                             <md-hint>
                                 <field-error [form]="applicantForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>
                                 <field-error [form]="applicantForm" field="name" hasError="minlength">{{'applicant.field.nameShort' | translation}}</field-error>
@@ -103,3 +107,8 @@
         </md-card>
     </div>
 </form>
+<contact [applicationForm]="applicationForm" [applicantId]="applicant?.id"
+         [contactList]="contactList" [applicantEvents]="applicantEvents"
+         [readonly]="readonly" [addNew]="true"
+         [headerText]="contactHeaderText" [formName]="contactFormName"
+></contact>

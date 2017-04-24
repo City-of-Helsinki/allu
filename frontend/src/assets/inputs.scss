@@ -107,3 +107,11 @@ md-input-container.ng-invalid.ng-touched .mat-input-underline{
 md-input-container.ng-invalid.ng-touched .mat-input-underline .mat-focused {
   background-color: mat-color($allu-warn, 500);
 }
+
+.mat-autocomplete-panel {
+  .mat-option:hover:not(.mat-option-disabled),
+  .mat-option.mat-active:not(.mat-option-disabled),
+  .mat-option:focus:not(.mat-option-disabled) {
+    background-color: mat-color($allu-primary, 200);
+  }
+}

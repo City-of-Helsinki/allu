@@ -4,29 +4,25 @@
             <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
                        [readonly]="readonly" headerText="Hakija" formName="applicant"
                        [showCopyToBilling]="true" [showPropertyDeveloper]="true"
-                       [propertyDeveloper]="!!application.extension.propertyDeveloper"></applicant>
-
-            <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
-                     [readonly]="readonly" headerText="Yhteyshenkilö" formName="contacts"
-                     [saveToRegistry]="true"></contact>
+                       [propertyDeveloper]="!!application.extension.propertyDeveloper"
+                       [contactList]="application.contactList"
+                       contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
         </div>
 
         <div class="row" *ngIf="applicationForm.value.applicant?.propertyDeveloper">
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.propertyDeveloper"
                        [readonly]="readonly" headerText="Rakennuttaja" formName="propertyDeveloper"
-                       [showCopyToBilling]="true"></applicant>
-
-            <contact [applicationForm]="applicationForm" [contactList]="application.extension?.propertyDeveloperContactList"
-                     [readonly]="readonly" headerText="Yhteyshenkilö" formName="propertyDeveloperContact"></contact>
+                       [showCopyToBilling]="true"
+                       [contactList]="application.extension?.propertyDeveloperContactList"
+                       contactHeaderText="Yhteyshenkilö" contactFormName="propertyDeveloperContact"></applicant>
         </div>
 
         <div class="row">
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.contractor"
                        [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
-                       [showCopyToBilling]="true" [showRepresentative]="true"></applicant>
-
-            <contact [applicationForm]="applicationForm" [contactList]="application.extension?.responsiblePersonList"
-                     [readonly]="readonly" headerText="Vastuuhenkilö" formName="responsiblePerson"></contact>
+                       [showCopyToBilling]="true" [showRepresentative]="true"
+                       [contactList]="application.extension?.responsiblePersonList"
+                       contactHeaderText="Vastuuhenkilö" contactFormName="responsiblePerson"></applicant>
         </div>
 
         <div class="col m6 loose">

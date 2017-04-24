@@ -2,11 +2,9 @@
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
         <div class="row">
             <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                       [readonly]="readonly" headerText="Hakija" formName="applicant"></applicant>
-
-            <contact [applicationForm]="applicationForm" [contactList]="application.contactList"
-                     [readonly]="readonly" headerText="Yhteyshenkilö" formName="contacts"
-                     [saveToRegistry]="true"></contact>
+                       [readonly]="readonly" headerText="Hakija" formName="applicant"
+                       [contactList]="application.contactList"
+                       contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
         </div>
 
         <div class="col m12 loose">

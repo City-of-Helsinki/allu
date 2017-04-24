@@ -26,7 +26,7 @@ export class ApplicantForm {
       applicant.name,
       applicant.registryKey,
       'Suomi',
-      applicant.postalAddress,
+      applicant.postalAddress || new PostalAddress(),
       applicant.email,
       applicant.phone,
       applicant.active
