@@ -37,7 +37,7 @@ export class ApplicationActionsComponent implements OnInit {
   ngOnInit(): void {
     this.applicationState.applicationChanges.subscribe(app => {
       this.showDecision = ApplicationType[app.type] !== ApplicationType.NOTE;
-      this.showHandling = ApplicationStatus[app.status] !== ApplicationStatus.HANDLING;
+      this.showHandling = ApplicationStatus[app.status] < ApplicationStatus.HANDLING;
     });
   }
 
@@ -50,10 +50,6 @@ export class ApplicationActionsComponent implements OnInit {
     this.router.navigate(['/applications/edit']);
   }
 
-  legalChange(newStatus: string): boolean {
-    return ApplicationStatusChange.legalChange(this.applicationState.application.status, newStatus);
-  }
-
   moveToHandling(): void {
     this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.HANDLING)).
       subscribe(app => {
@@ -64,13 +60,17 @@ export class ApplicationActionsComponent implements OnInit {
     err => NotificationService.errorMessage(findTranslation('application.error.toHandling')));
   }
 
-  moveToDecisionmaking(): void {
-    this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.DECISIONMAKING)).
-    subscribe(app => {
-        MaterializeUtil.toast(findTranslation('application.statusChange.DECISIONMAKING'));
-        this.applicationState.application = app;
-        this.router.navigate(['/decision', this.applicationId]);
-      },
-      err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
+  toDecisionmaking(): void {
+    if (ApplicationStatus[this.applicationState.application.status] === ApplicationStatus.PENDING) {
+      this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.DECISIONMAKING)).
+      subscribe(app => {
+          MaterializeUtil.toast(findTranslation('application.statusChange.DECISIONMAKING'));
+          this.applicationState.application = app;
+          this.router.navigate(['/decision', this.applicationId]);
+        },
+        err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
+    } else {
+      this.router.navigate(['/decision', this.applicationId]);
+    }
   }
 }
