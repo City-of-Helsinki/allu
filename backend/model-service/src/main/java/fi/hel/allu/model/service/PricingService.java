@@ -67,6 +67,8 @@ public class PricingService {
       updateOutdoorEventPrice(application, invoiceRows);
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       updateExcavationAnnouncementPrice(application, invoiceRows);
+    } else if (application.getType() == ApplicationType.AREA_RENTAL) {
+      updateAreaRentalPrice(application, invoiceRows);
     }
   }
 
@@ -103,10 +105,23 @@ public class PricingService {
   }
 
   /*
+   * Calculate price for area rental
+   */
+  private void updateAreaRentalPrice(Application application, List<InvoiceRow> invoiceRows) {
+    updatePrice(application, invoiceRows, new AreaRentalPricing(application));
+  }
+
+  /*
    * Calculate price for excavation announcement
    */
   private void updateExcavationAnnouncementPrice(Application application, List<InvoiceRow> invoiceRows) {
-    ExcavationPricing pricing = new ExcavationPricing(application);
+    updatePrice(application, invoiceRows, new ExcavationPricing(application));
+  }
+
+  /*
+   * Calculate price using the common addLocationPrice
+   */
+  private void updatePrice(Application application, List<InvoiceRow> invoiceRows, Pricing pricing) {
     List<Location> locations = Collections.emptyList();
     if (application.getId() != null) {
       locations = locationDao.findByApplication(application.getId());
@@ -155,7 +170,7 @@ public class PricingService {
     pricing.applyDiscounts(event.isEcoCompass(), event.getNoPriceReason(),
         event.isHeavyStructure(), event.isSalesActivity());
     // ... and get the final price
-    return pricing.getPrice();
+    return pricing.getPriceInCents();
   }
 
   /*

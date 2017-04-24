@@ -22,23 +22,24 @@ public class EventPricingTest {
     EventPricing bill = new EventPricing();
     // Calculate a bill for 5-day event with two build days and some structures + area:
     bill.accumulatePrice(bc, 5, 2, 30.5, 300);
-    assertEquals(360000, bill.getPrice()); // The price should be 3600 EUR
+    assertEquals(360000, bill.getPriceInCents()); // The price should be 3600
+                                                  // EUR
     // Verify that EcoCompass gives 30% discount
     bill.applyDiscounts(true, null, false, false);
-    assertEquals(252000, bill.getPrice());
-    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPrice());
+    assertEquals(252000, bill.getPriceInCents());
+    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPriceInCents());
     // Verify that 100% discount works:
     bill.applyDiscounts(false, "SportsEvent", false, false);
-    assertEquals(0, bill.getPrice());
+    assertEquals(0, bill.getPriceInCents());
     // Verify that sports event with heavy structures gets only 50% discount:
     bill.applyDiscounts(false, "SportsEvent", true, false);
-    assertEquals(180000, bill.getPrice());
+    assertEquals(180000, bill.getPriceInCents());
     // Verify that commercial activities also gives 50%:
     bill.applyDiscounts(false, "SportsEvent", false, true);
-    assertEquals(180000, bill.getPrice());
+    assertEquals(180000, bill.getPriceInCents());
     // Commercial activities and heavy structures --> no discount:
     bill.applyDiscounts(false, "SportsEvent", true, true);
-    assertEquals(360000, bill.getPrice());
+    assertEquals(360000, bill.getPriceInCents());
   }
 
   @Test
@@ -51,8 +52,9 @@ public class EventPricingTest {
     // area (i.e., 14 days with base price, 6 days with discount price and 4
     // days with build price)
     bill.accumulatePrice(bc, 20, 4, 20, 5000.0);
-    assertEquals(3562500L, bill.getPrice()); // The price should be 35625 EUR
-    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPrice());
+    assertEquals(3562500L, bill.getPriceInCents()); // The price should be 35625
+                                                  // EUR
+    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPriceInCents());
   }
 
   @Test
@@ -65,8 +67,9 @@ public class EventPricingTest {
     // Price for 25-day event with three build days, 455 sqm structures and 1000
     // sqm area:
     bill.accumulatePrice(bc, 25, 3, 455.0, 1000.0);
-    assertEquals(997500, bill.getPrice()); // The price should be 9975 EUR
-    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPrice());
+    assertEquals(997500, bill.getPriceInCents()); // The price should be 9975
+                                                  // EUR
+    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPriceInCents());
   }
 
   @Test(expected = IllegalStateException.class)
