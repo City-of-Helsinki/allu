@@ -145,6 +145,11 @@ export class MapState {
       .do(bounds => this.map.fitBounds(bounds));
   }
 
+  public polygonFromCircle(center: L.LatLng, radius: number): L.Polygon {
+    let poly = this.mapUtil.polygonFromCircle(this.latLngToLayerPoint(center), radius);
+    return L.polygon(poly.map(pnt => this.layerPointToLatLng(pnt)));
+  }
+
   get shapes(): Observable<ShapeAdded> {
     return this.shapes$.asObservable();
   }
@@ -278,6 +283,14 @@ export class MapState {
         allLayers.addLayer(currentLayer);
         return allLayers;
       }, L.featureGroup());
+  }
+
+  private latLngToLayerPoint(latLng: L.LatLng): L.Point {
+    return this.map.latLngToLayerPoint(latLng);
+  }
+
+  private layerPointToLatLng(point: L.Point): L.LatLng {
+    return this.map.layerPointToLatLng(point);
   }
 }
 

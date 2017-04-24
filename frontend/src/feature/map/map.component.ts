@@ -12,6 +12,8 @@ import {ApplicationState} from '../../service/application/application-state';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Subscription} from 'rxjs/Subscription';
 import {Location} from '../../model/common/location';
+import {Circle} from 'leaflet';
+import {MapUtil} from '../../service/map/map.util';
 
 @Component({
   selector: 'map',
@@ -124,12 +126,26 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private addShape(shapeAdded: ShapeAdded) {
-    let shape = <GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>shapeAdded.features.toGeoJSON();
+    let shape = this.featuresToGeoJSON(shapeAdded.features);
     this.mapHub.addShape(shape);
 
     if (shapeAdded.affectsControls) {
       this.editedItemCountChanged.emit(shape.features.length);
     }
+  }
+
+  private featuresToGeoJSON(featureGroup: L.FeatureGroup): GeoJSON.FeatureCollection<GeoJSON.GeometryObject> {
+    let features = L.featureGroup();
+    featureGroup.eachLayer(l => {
+      if (l instanceof Circle) {
+        // Convert circle to polygon since GeoJSON does not support circle
+        features.addLayer(this.mapState.polygonFromCircle(l.getLatLng(), l.getRadius()));
+      } else {
+        features.addLayer(l);
+      }
+    });
+
+    return <GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>features.toGeoJSON();
   }
 
   private applicationPopup(application: Application): MapPopup {

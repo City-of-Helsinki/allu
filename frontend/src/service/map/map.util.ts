@@ -2,6 +2,8 @@ import {Injectable} from '@angular/core';
 import 'leaflet';
 import 'proj4leaflet';
 
+const VERTICES_DEFAULT = 64;
+
 @Injectable()
 export class MapUtil {
 
@@ -52,6 +54,19 @@ export class MapUtil {
 
   public polygonFromBounds(bounds: L.LatLngBounds): L.Rectangle {
     return L.rectangle(bounds);
+  }
+
+  public polygonFromCircle(center: L.Point, radius: number, vertices: number = VERTICES_DEFAULT): Array<L.Point> {
+    let points = [];
+    let angle = 0.0;
+    for (let i = 0; i < vertices - 1; ++i) {
+      angle -= (Math.PI * 2 / vertices);
+      points.push(L.point(
+        center.x + (radius * Math.cos(angle)),
+        center.y + (radius * Math.sin(angle))
+      ));
+    }
+    return points;
   }
 
   constructor() {
