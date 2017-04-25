@@ -4,6 +4,7 @@ import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.CableReportJson;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -124,7 +125,7 @@ public class DecisionServiceTest {
     // - PDF creation was executed with the right stylesheet name :
     Mockito.verify(restTemplate).postForObject(eq("PdfServiceUrl"), Mockito.anyObject(),
         eq(byte[].class),
-        eq("CABLE_REPORT"));
+        eq("DUMMY")); // FIXME: "CABLE_REPORT" not implemented yet.
     // - Validity time was stored to model:
     final ArgumentCaptor<ApplicationJson> msgCaptor = ArgumentCaptor.forClass(ApplicationJson.class);
     Mockito.verify(applicationServiceComposer).updateApplication(eq(123), msgCaptor.capture());

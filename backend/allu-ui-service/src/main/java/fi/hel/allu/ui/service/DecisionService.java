@@ -1,10 +1,12 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationKind;
+import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -357,6 +359,13 @@ public class DecisionService {
 
   // Get the stylesheet name to use for given application.
   private String styleSheetName(ApplicationJson application) {
-    return application.getType().name();
+    /*
+     * FIXME: only EVENT and SHORT_TERM_RENTAL are supported. For others, use
+     * "DUMMY"
+     */
+    if (application.getType() == ApplicationType.EVENT || application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
+      return application.getType().name();
+    }
+    return "DUMMY";
   }
 }
