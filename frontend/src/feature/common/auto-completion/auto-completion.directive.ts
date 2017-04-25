@@ -82,9 +82,9 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
       this.dropdownEl.style.display = 'inline-block';
   }
 
-  hideDropdown = (event?: any): void => {
+  hideDropdown(event?: any): void {
     Some(this.dropdownEl).do(el => el.style.display = 'none');
-  };
+  }
 
   private initDropdown() {
     let factory = this.resolver.resolveComponentFactory(AutoCompletionListComponent);
