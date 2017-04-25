@@ -174,7 +174,8 @@ export const translations = {
       field: {
         validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
         validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
-        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
+        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta',
+        priceOverrideGreaterThanOrEqual: 'Hinta ei voi olla negatiivinen'
       }
     },
     event: {

@@ -53,6 +53,9 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
         endTime: ['', Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       workFinished: [''],
+      calculatedPrice: [0],
+      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
+      priceOverrideReason: [''],
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']

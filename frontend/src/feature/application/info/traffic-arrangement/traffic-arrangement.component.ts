@@ -54,6 +54,9 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       pksCard: [false],
       workFinished: [''],
+      calculatedPrice: [0],
+      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
+      priceOverrideReason: [''],
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']

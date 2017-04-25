@@ -14,6 +14,9 @@ export class PlacementContractForm implements ApplicationForm {
     public representative?: ApplicantForm,
     public contact?: Array<Contact>,
     public diaryNumber?: string,
+    public calculatedPrice?: number,
+    public priceOverride?: number,
+    public priceOverrideReason?: string,
     public additionalInfo?: string,
     public generalTerms?: string
   ) {}
@@ -37,6 +40,9 @@ export class PlacementContractForm implements ApplicationForm {
       undefined,
       undefined,
       contract.diaryNumber,
+      application.calculatedPriceEuro,
+      application.priceOverrideEuro,
+      application.priceOverrideReason,
       contract.additionalInfo,
       contract.generalTerms);
   }

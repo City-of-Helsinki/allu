@@ -149,74 +149,7 @@
     </div>
 
     <div class="col m12 loose">
-        <md-card>
-            <md-card-title>Hinnoitteluperusteet</md-card-title>
-            <md-card-content>
-                <div class="row form-group">
-                    <div *ngIf="application.kind==='OUTDOOREVENT'">
-                        <div class="col m6">
-                            <div class="col m12">
-                                <md-select formControlName="nature" placeholder="Tapahtuman luonne*" class="input-full-width">
-                                    <md-option *ngFor="let nature of eventNatures" [value]="nature" (onSelect)="eventNatureChange(nature)">
-                                        {{['application.event.nature', nature] | translation}}
-                                    </md-option>
-                                </md-select>
-                                <field-error [form]="eventForm" field="nature" hasError="required">
-                                    {{translations.application.event.field.natureMissing}}
-                                </field-error>
-                            </div>
-                            <div class="col m12 input-field-checkbox" *ngIf="eventForm.value.nature === 'PUBLIC_FREE'">
-                                <md-checkbox formControlName="noPrice" (change)="noPriceChange($event.checked)">
-                                    Korvauksetta
-                                </md-checkbox>
-                            </div>
-                            <div class="col m12" *ngIf="eventForm.value.noPrice">
-                                <md-select formControlName="noPriceReason" placeholder="Peruste korvauksettomuudelle" class="input-full-width">
-                                    <md-option *ngFor="let reason of noPriceReasons" [value]="reason">
-                                        {{['application.event.noPriceReason', reason] | translation}}
-                                    </md-option>
-                                </md-select>
-                            </div>
-                        </div>
-                        <div class="col m6 no-padding">
-                            <div class="col m12">
-                                <md-checkbox formControlName="ecoCompass">Hakijalla Ekokompassi tapahtuma -sertifikaatti (-30 %)</md-checkbox>
-                            </div>
-                            <div class="col m12" *ngIf="eventForm.value.noPrice">
-                                <md-checkbox formControlName="salesActivity">Tapahtuma sisältää kaupallista toimintaa (+50%)</md-checkbox>
-                            </div>
-                            <div class="col m12" *ngIf="eventForm.value.noPrice">
-                                <md-checkbox formControlName="heavyStructure">Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (+50 %)</md-checkbox>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col m12">
-                        <div class="col m3">
-                            <md-input-container class="input-full-width">
-                                <input mdInput readonly type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
-                            </md-input-container>
-                        </div>
-                    </div>
-                    <div class="col m12">
-                        <div class="col m3">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
-                                <md-hint>
-                                    <field-error [form]="eventForm" field="priceOverride" hasError="greaterThanOrEqual">
-                                        {{translations.application.event.field.priceOverrideGreaterThanOrEqual}}
-                                    </field-error>
-                                </md-hint>
-                            </md-input-container>
-                        </div>
-                        <div class="col m3">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
-                            </md-input-container>
-                        </div>
-                    </div>
-                </div>
-            </md-card-content>
-        </md-card>
+        <pricing-info [form]="eventForm" [kind]="application.kind"></pricing-info>
     </div>
 
     <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>

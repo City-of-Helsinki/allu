@@ -74,6 +74,10 @@
             </md-card>
         </div>
 
+        <div class="col m12 loose">
+            <pricing-info [form]="applicationForm"></pricing-info>
+        </div>
+
         <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
 
         <div class="col s12" *ngIf="showTerms">

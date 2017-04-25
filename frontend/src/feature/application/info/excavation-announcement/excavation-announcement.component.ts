@@ -98,6 +98,9 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
         endTime: ['']
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       guaranteeEndTime: [''],
+      calculatedPrice: [0],
+      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
+      priceOverrideReason: [''],
       cableReportIdentifier: [''], // to store identifier showed to user
       cableReportId: [undefined],
       additionalInfo: [''],

@@ -89,6 +89,9 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
       application.decisionPublicityType = c.publicityType;
       application.decisionDistributionList = c.distributionRows.map(distribution => DistributionEntryForm.to(distribution));
     });
+    application.calculatedPriceEuro = form.calculatedPrice;
+    application.priceOverrideEuro = form.priceOverride;
+    application.priceOverrideReason = form.priceOverrideReason;
     return application;
   };
 }

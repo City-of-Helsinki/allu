@@ -36,6 +36,7 @@ import {TermsModule} from './terms/terms.module';
 import {AreaRentalComponent} from './info/area-rental/area-rental.component';
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
 import {DistributionModule} from './distribution/distribution.module';
+import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
 
 
 @NgModule({
@@ -80,7 +81,8 @@ import {DistributionModule} from './distribution/distribution.module';
     TrafficArrangementComponent,
     PlacementContractComponent,
     AreaRentalComponent,
-    DecisionPreviewComponent
+    DecisionPreviewComponent,
+    PricingInfoComponent
   ],
   providers: [
     ApplicationResolve

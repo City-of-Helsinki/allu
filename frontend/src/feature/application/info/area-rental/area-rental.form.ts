@@ -14,6 +14,9 @@ export class AreaRentalForm implements ApplicationForm {
     public contractor?: ApplicantForm,
     public responsiblePerson?: Array<Contact>,
     public workFinished?: string,
+    public calculatedPrice?: number,
+    public priceOverride?: number,
+    public priceOverrideReason?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string
@@ -38,6 +41,9 @@ export class AreaRentalForm implements ApplicationForm {
       undefined,
       undefined,
       areaRental.uiWorkFinished,
+      application.calculatedPriceEuro,
+      application.priceOverrideEuro,
+      application.priceOverrideReason,
       areaRental.trafficArrangements,
       areaRental.trafficArrangementImpedimentType,
       areaRental.additionalInfo

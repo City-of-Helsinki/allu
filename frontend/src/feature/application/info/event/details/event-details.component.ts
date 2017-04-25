@@ -31,8 +31,6 @@ export class EventDetailsComponent implements OnInit {
   eventForm: FormGroup;
   applicationId: number;
   billingTypes = EnumUtil.enumValues(BillingType);
-  eventNatures = EnumUtil.enumValues(EventNature).filter(nature => nature !== 'PROMOTION');
-  noPriceReasons = EnumUtil.enumValues(NoPriceReason);
   translations = translations;
   pickadateParams = PICKADATE_PARAMETERS;
 
@@ -50,23 +48,6 @@ export class EventDetailsComponent implements OnInit {
 
     if (this.readonly) {
       this.eventForm.disable();
-    }
-  }
-
-  eventNatureChange(nature: string): void {
-    if (EventNature.PUBLIC_FREE !== EventNature[nature]) {
-      this.eventForm.patchValue({noPrice: false});
-      this.noPriceChange(true);
-    }
-  }
-
-  noPriceChange(noPrice: boolean): void {
-    if (noPrice) {
-      this.eventForm.patchValue({
-        salesActivity: false,
-        heavyStructure: false,
-        noPriceReason: undefined
-      });
     }
   }
 
