@@ -10,6 +10,7 @@ import {AttachmentsComponent} from './attachment/attachments.component';
 import {CommentsComponent} from './comment/comments.component';
 import {ApplicationHistoryComponent} from './history/application-history.component';
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
+import {InvoicingComponent} from './invoicing/invoicing.component';
 
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
@@ -17,7 +18,8 @@ export const applicationTabs: Routes = [
   { path: 'attachments', component: AttachmentsComponent, canActivate: [AuthGuard] },
   { path: 'comments', component: CommentsComponent, canActivate: [AuthGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
-  { path: 'decision-preview', component: DecisionPreviewComponent, canActivate: [AuthGuard] }
+  { path: 'decision-preview', component: DecisionPreviewComponent, canActivate: [AuthGuard] },
+  { path: 'invoicing', component: InvoicingComponent, canActivate: [AuthGuard] }
 ];
 
 export const applicationRoutes: Routes = [

@@ -544,6 +544,22 @@ export const translations = {
       remove: 'Kommentin poistaminen epäonnistui'
     }
   },
+  invoice: {
+    unit: {
+      PIECE: 'kpl',
+      SQUARE_METER: 'm2',
+      HOUR: 't',
+      DAY: 'pv',
+      WEEK: 'vk',
+      MONTH: 'kk',
+      YEAR: 'v'
+    },
+    row: {
+      error: {
+        fetch: 'Laskurivien hakeminen epäonnistui'
+      }
+    }
+  },
   workqueue: {
     tab: {
       OWN: 'Omat',

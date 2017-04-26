@@ -37,6 +37,7 @@ import {AreaRentalComponent} from './info/area-rental/area-rental.component';
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
 import {DistributionModule} from './distribution/distribution.module';
 import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
+import {InvoicingModule} from './invoicing/invoicing.module';
 
 
 @NgModule({
@@ -60,7 +61,8 @@ import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
     AttachmentModule,
     ApplicationHistoryModule,
     TermsModule,
-    DistributionModule
+    DistributionModule,
+    InvoicingModule
   ],
   declarations: [
     ApplicationComponent,

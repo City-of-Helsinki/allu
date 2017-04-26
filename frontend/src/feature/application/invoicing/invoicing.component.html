@@ -1,0 +1,16 @@
+<div class="row">
+    <div class="col m12">
+        <invoicing-address [parentForm]="invoicingForm"></invoicing-address>
+    </div>
+</div>
+<div class="row">
+    <div class="col m12">
+        <invoice-rows [parentForm]="invoicingForm" [applicationId]="applicationId"></invoice-rows>
+    </div>
+</div>
+<div class="row">
+    <div class="col m12">
+        <invoice-comments [applicationId]="applicationId"></invoice-comments>
+    </div>
+</div>
+

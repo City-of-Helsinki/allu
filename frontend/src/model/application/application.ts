@@ -17,8 +17,6 @@ import {DistributionEntry} from '../common/distribution-entry';
 import {DistributionType} from '../common/distribution-type';
 import {ArrayUtil} from '../../util/array-util';
 
-const CENTS = 100;
-
 export class Application {
   constructor(
     public id?: number,
@@ -148,10 +146,10 @@ export class Application {
   }
 
   private toEuros(priceInCents: number): number {
-    return NumberUtil.isDefined(priceInCents) ? priceInCents / CENTS : undefined;
+    return NumberUtil.toEuros(priceInCents);
   }
 
   private toCents(priceInEuros: number): number {
-    return NumberUtil.isDefined(priceInEuros) ? priceInEuros * CENTS : undefined;
+    return NumberUtil.toCents(priceInEuros);
   }
 }

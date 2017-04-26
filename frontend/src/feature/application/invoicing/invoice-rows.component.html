@@ -1,0 +1,27 @@
+<form [formGroup]="parentForm">
+    <md-card>
+        <md-card-title>Laskurivit</md-card-title>
+        <md-card-content>
+            <div formArrayName="invoiceRows">
+                <div *ngFor="let row of invoiceRows.controls; let i=index" class="row">
+                    <md-card class="slim-card" [formGroupName]="i">
+                        <md-card-content>
+                            <div class="invoice-row">
+                                <div class="row-controls">
+                                    <button md-icon-button><md-icon>edit</md-icon></button>
+                                    <button md-icon-button><md-icon class="angle-45">send</md-icon></button>
+                                </div>
+                                <div class="row-header">{{row.value.rowText}}</div>
+                                <div class="row-content">
+                                    <div class="row-field-md">{{row.value.quantity}} {{['invoice.unit', row.value.unit] | translation}}</div>
+                                    <div class="row-field-md">á {{row.value.unitPrice}} €</div>
+                                    <div class="row-field-md row-field-highlight">{{row.value.netPrice}} €</div>
+                                </div>
+                            </div>
+                        </md-card-content>
+                    </md-card>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</form>

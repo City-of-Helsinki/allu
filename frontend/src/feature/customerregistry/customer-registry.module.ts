@@ -30,7 +30,8 @@ import {ContactModalComponent} from './contact/contact-modal.component';
   ],
   exports: [
     ApplicantModalComponent,
-    ContactModalComponent
+    ContactModalComponent,
+    InvoicingAddressComponent
   ],
   entryComponents: [
     ApplicantModalComponent,

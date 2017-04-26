@@ -98,6 +98,7 @@ export class ApplicationComponent implements OnInit {
         sidebar.push({type: 'COMMENTS', count: commentCount});
         sidebar.push({type: 'HISTORY'});
         sidebar.push({type: 'DECISION'});
+        sidebar.push({type: 'INVOICING'});
       }
       return sidebar;
     };

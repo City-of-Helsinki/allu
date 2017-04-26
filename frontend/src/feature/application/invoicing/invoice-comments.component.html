@@ -1,0 +1,15 @@
+<md-card>
+    <md-card-title>Kommentit</md-card-title>
+    <md-card-content>
+        <div class="comment-entry" *ngFor="let comment of comments | async">
+            <div class="comment-header">
+                <span>{{comment.user.realName}}</span>
+                <span>{{comment.uiCreateTime}}</span>
+                <span>{{comment.uiUpdateTime}}</span>
+            </div>
+            <div class="comment-content">
+                {{comment.text}}
+            </div>
+        </div>
+    </md-card-content>
+</md-card>
