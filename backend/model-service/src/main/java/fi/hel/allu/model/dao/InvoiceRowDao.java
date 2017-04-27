@@ -42,7 +42,7 @@ public class InvoiceRowDao {
    */
   @Transactional
   public void setInvoiceRows(int applicationId, List<InvoiceRow> rows) {
-    queryFactory.delete(invoiceRow).where(invoiceRow.applicationId.eq(applicationId));
+    queryFactory.delete(invoiceRow).where(invoiceRow.applicationId.eq(applicationId)).execute();
     if (!rows.isEmpty()) {
       SQLInsertClause insert = queryFactory.insert(invoiceRow);
       for (int row = 0; row < rows.size(); ++row) {
