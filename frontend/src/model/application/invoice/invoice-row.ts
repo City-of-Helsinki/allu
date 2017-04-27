@@ -2,6 +2,8 @@ import {InvoiceUnit} from './invoice-unit';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {NumberUtil} from '../../../util/number.util';
 
+export const DEFAULT_FEE_CENTS = 50000;
+
 export class InvoiceRow {
   constructor(
     public unit?: InvoiceUnit,
@@ -9,23 +11,27 @@ export class InvoiceRow {
     public rowText?: string,
     public unitPrice?: number,
     public netPrice?: number
-  ) {}
+  ) {
+    quantity = quantity || InvoiceUnit.PIECE;
+  }
 
   get unitPriceEuro(): number {
     return NumberUtil.toEuros(this.unitPrice);
+  }
+
+  set unitPriceEuro(euros: number) {
+    this.unitPrice = NumberUtil.toCents(euros);
   }
 
   get netPriceEuro(): number {
     return NumberUtil.toEuros(this.netPrice);
   }
 
-  public static formGroup(fb: FormBuilder, row: InvoiceRow = new InvoiceRow()): FormGroup {
-    return fb.group({
-      unit: [InvoiceUnit[row.unit], Validators.required],
-      quantity: [row.quantity, Validators.required],
-      rowText: [row.rowText],
-      unitPrice: [row.unitPriceEuro, Validators.required],
-      netPrice: [row.netPriceEuro, Validators.required]
-    });
+  set netPriceEuro(euros: number) {
+    this.netPrice =  NumberUtil.toCents(euros);
+  }
+
+  updateNetPrice(): void {
+    this.netPrice = this.unitPrice * this.quantity;
   }
 }

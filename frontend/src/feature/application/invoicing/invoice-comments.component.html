@@ -4,8 +4,7 @@
         <div class="comment-entry" *ngFor="let comment of comments | async">
             <div class="comment-header">
                 <span>{{comment.user.realName}}</span>
-                <span>{{comment.uiCreateTime}}</span>
-                <span>{{comment.uiUpdateTime}}</span>
+                <span>{{comment.uiCreateTime}} - Päivitetty {{comment.uiUpdateTime}}</span>
             </div>
             <div class="comment-content">
                 {{comment.text}}

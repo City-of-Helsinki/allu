@@ -547,14 +547,27 @@ export const translations = {
   invoice: {
     unit: {
       PIECE: 'kpl',
-      SQUARE_METER: 'm2',
+      SQUARE_METER: 'm²',
       HOUR: 't',
       DAY: 'pv',
       WEEK: 'vk',
       MONTH: 'kk',
       YEAR: 'v'
     },
+    negligencePaymentType: {
+      START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',
+      AREA_UNCLEAN: 'Alue epäsiisti',
+      ACTIONS_AGAINST_TRAFFIC_ARRANGEMENT: 'Liikennejärjestelypäätöksen vastainen toiminta',
+      UNAUTHORIZED_PARKING: 'Auton luvaton pysäköinti alueella',
+      LATE_NOTIFICATION_OF_COMPLETION: 'Valmistumisilmoitus tullut myöhässä',
+      LATE_NOTIFICATION_OF_OPERATION_STATE: 'Toiminnallinen tila ilmoitettu myöhässä',
+      LATE_REQUEST_OF_EXSTRA_TIME: 'Lisäaikaa haettu myöhässä',
+      OTHER: 'Muu syy'
+    },
     row: {
+      action: {
+        accepted: 'Laskurivi hyväksytty laskutukseen'
+      },
       error: {
         fetch: 'Laskurivien hakeminen epäonnistui'
       }
