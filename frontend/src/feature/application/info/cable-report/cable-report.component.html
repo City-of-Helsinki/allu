@@ -1,9 +1,9 @@
 <div materialize class="row">
     <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm.value)">
         <applicant [applicationForm]="applicationForm"  [applicant]="application.applicant"
-                   [readonly]="readonly" headerText="Kaivajayritys/Toimija" formName="company"
+                   [readonly]="readonly" headerText="Johtoselvityksen tilaaja" formName="orderer"
                    [contactList]="application.contactList"
-                   contactHeaderText="Johtoselvityksen tilaaja" contactFormName="orderer"></applicant>
+                   contactHeaderText="Yhteyshenkilö" contactFormName="ordererContacts"></applicant>
 
         <div class="col m12 loose">
             <md-card>
@@ -74,7 +74,7 @@
             <applicant [applicationForm]="applicationForm" [applicant]="application.extension.owner"
                        [readonly]="readonly" headerText="Omistaja" formName="owner"
                        [contactList]="application.extension.contactList"
-                       contactHeaderText="Yhteyshenkilö" contactFormName="contact"></applicant>
+                       contactHeaderText="Yhteyshenkilö" contactFormName="ownerContact"></applicant>
         </div>
 
         <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="readonly"></cable-info>

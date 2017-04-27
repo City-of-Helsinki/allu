@@ -36,8 +36,9 @@ export class ApplicationActionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.applicationState.applicationChanges.subscribe(app => {
-      this.showDecision = ApplicationType[app.type] !== ApplicationType.NOTE;
-      this.showHandling = ApplicationStatus[app.status] < ApplicationStatus.HANDLING;
+      let status = ApplicationStatus[app.status];
+      this.showDecision = (ApplicationType[app.type] !== ApplicationType.NOTE) && (status >= ApplicationStatus.HANDLING);
+      this.showHandling = status < ApplicationStatus.HANDLING;
     });
   }
 
@@ -61,7 +62,7 @@ export class ApplicationActionsComponent implements OnInit {
   }
 
   toDecisionmaking(): void {
-    if (ApplicationStatus[this.applicationState.application.status] === ApplicationStatus.PENDING) {
+    if (ApplicationStatus[this.applicationState.application.status] === ApplicationStatus.HANDLING) {
       this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.DECISIONMAKING)).
       subscribe(app => {
           MaterializeUtil.toast(findTranslation('application.statusChange.DECISIONMAKING'));

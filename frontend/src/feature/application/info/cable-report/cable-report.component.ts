@@ -53,8 +53,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     application.name = 'Johtoselvitys'; // Cable reports have no name so set default
     application.uiStartTime = form.reportTimes.startTime;
     application.uiEndTime = form.reportTimes.endTime;
-    application.applicant = ApplicantForm.toApplicant(form.company);
-    application.contactList = form.orderer;
+    application.applicant = ApplicantForm.toApplicant(form.orderer);
+    application.contactList = form.ordererContacts;
     let extension = <CableReport>application.extension;
     application.extension = CableReportForm.to(form, extension.validityTime, extension.specifiers);
 

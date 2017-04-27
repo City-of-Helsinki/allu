@@ -21,10 +21,10 @@ export class CableReportForm implements ApplicationForm {
     public propertyConnectivity?: boolean,
     public reportTimes?: TimePeriod,
     public workDescription?: string,
-    public company?: ApplicantForm,
-    public orderer?: Array<Contact>,
+    public orderer?: ApplicantForm,
+    public ordererContacts?: Array<Contact>,
     public owner?: ApplicantForm,
-    public contact?: Array<Contact>,
+    public ownerContact?: Array<Contact>,
     public cableInfo?: CableInfoForm,
     public specifiers?: Array<string>
   ) {}
@@ -40,7 +40,7 @@ export class CableReportForm implements ApplicationForm {
     cableReport.propertyConnectivity = form.propertyConnectivity;
     cableReport.workDescription = form.workDescription;
     cableReport.owner = Some(form.owner).filter(owner => !!owner.name).map(owner => ApplicantForm.toApplicant(owner)).orElse(undefined);
-    cableReport.contact = Some(form.contact).filter(c => c.length > 0).map(c => c[0]).orElse(undefined);
+    cableReport.contact = Some(form.ownerContact).filter(c => c.length > 0).map(c => c[0]).orElse(undefined);
     cableReport.specifiers = specifiers;
     return CableInfoForm.to(form.cableInfo, cableReport);
   }

@@ -1,5 +1,5 @@
 import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {SidebarItemType, SidebarItem} from './sidebar-item';
+import {SidebarItemType, SidebarItem, itemPaths} from './sidebar-item';
 import {ApplicationState} from '../../service/application/application-state';
 
 @Component({
@@ -11,6 +11,7 @@ import {ApplicationState} from '../../service/application/application-state';
 })
 export class SidebarComponent {
   @Input() items: Array<SidebarItem> = [{type: 'BASIC_INFO'}];
+  itemPaths = itemPaths;
 
   constructor(private applicationState: ApplicationState) {}
 

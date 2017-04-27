@@ -7,7 +7,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import {SidebarItem} from '../../sidebar/sidebar-item';
+import {SidebarItem, SidebarItemType, visibleFor, visibleItemsByApplicationType} from '../../sidebar/sidebar-item';
 import {ProgressStep, stepFrom} from '../progressbar/progress-step';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {AttachmentHub} from '../attachment/attachment-hub';
@@ -15,7 +15,7 @@ import {MapHub} from '../../../service/map/map-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
-
+import {Option, Some} from '../../../util/option';
 
 @Component({
   selector: 'application',
@@ -95,10 +95,10 @@ export class ApplicationComponent implements OnInit {
       ];
 
       if (summary) {
-        sidebar.push({type: 'COMMENTS', count: commentCount});
-        sidebar.push({type: 'HISTORY'});
-        sidebar.push({type: 'DECISION'});
-        sidebar.push({type: 'INVOICING'});
+        this.sidebarItem('COMMENTS', commentCount).do(item => sidebar.push(item));
+        this.sidebarItem('HISTORY').do(item => sidebar.push(item));
+        this.sidebarItem('DECISION').do(item => sidebar.push(item));
+        this.sidebarItem('INVOICING').do(item => sidebar.push(item));
       }
       return sidebar;
     };
@@ -111,5 +111,11 @@ export class ApplicationComponent implements OnInit {
     } else {
       return Observable.of([]);
     }
+  }
+
+  private sidebarItem(type: SidebarItemType, count?: number): Option<SidebarItem> {
+    return Some(visibleFor(this.application.type, type))
+      .filter(visible => visible)
+      .map(visible => { return {type: type, count: count}; });
   }
 }

@@ -1,66 +1,48 @@
 <div class="sidebar">
-    <div class="sidebar-item" *ngFor="let item of items" routerLinkActive="active">
+    <a class="sidebar-item" *ngFor="let item of items"
+       [routerLink]="itemPaths[item.type]" routerLinkActive="active"
+       (click)="tabChange(item.type)">
         <div [ngSwitch]="item.type">
             <div *ngSwitchCase="'BASIC_INFO'">
-                <a [routerLink]="['info']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">list</md-icon>
-                    <div>Perustiedot</div>
-                </a>
+                <md-icon class="md-36">list</md-icon>
+                <div>Perustiedot</div>
             </div>
             <div *ngSwitchCase="'ATTACHMENTS'">
-                <a [routerLink]="['attachments']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">attach_file</md-icon>
-                    <div>Liitteet ({{item.count}})</div>
-                </a>
+                <md-icon class="md-36">attach_file</md-icon>
+                <div>Liitteet ({{item.count}})</div>
             </div>
             <div *ngSwitchCase="'INVOICING'">
-                <a [routerLink]="['invoicing']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">euro_symbol</md-icon>
-                    <div>Laskutus</div>
-                </a>
+                <md-icon class="md-36">euro_symbol</md-icon>
+                <div>Laskutus</div>
             </div>
             <div *ngSwitchCase="'COMMENTS'">
-                <a [routerLink]="['comments']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">chat_bubble_outline</md-icon>
-                    <div>Kommentit ({{item.count}})</div>
-                </a>
+                <md-icon class="md-36">chat_bubble_outline</md-icon>
+                <div>Kommentit ({{item.count}})</div>
             </div>
             <div *ngSwitchCase="'EMAIL'">
-                <a [routerLink]="['email']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">email</md-icon>
-                    <div>Sähköposti</div>
-                </a>
+                <md-icon class="md-36">email</md-icon>
+                <div>Sähköposti</div>
             </div>
             <div *ngSwitchCase="'HISTORY'">
-                <a [routerLink]="['history']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">history</md-icon>
-                    <div>Historia</div>
-                </a>
+                <md-icon class="md-36">history</md-icon>
+                <div>Historia</div>
             </div>
             <div *ngSwitchCase="'DECISION'">
-                <a [routerLink]="['decision-preview']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">pageview</md-icon>
-                    <div>Päätös</div>
-                </a>
+                <md-icon class="md-36">pageview</md-icon>
+                <div>Päätös</div>
             </div>
             <div *ngSwitchCase="'SUPERVISION'">
-                <a [routerLink]="['supervision']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">search</md-icon>
-                    <div>Valvonta</div>
-                </a>
+                <md-icon class="md-36">search</md-icon>
+                <div>Valvonta</div>
             </div>
             <div *ngSwitchCase="'APPLICATIONS'">
-                <a [routerLink]="['applications']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">filter_none</md-icon>
-                    <div>Hakemukset ({{item.count}})</div>
-                </a>
+                <md-icon class="md-36">filter_none</md-icon>
+                <div>Hakemukset ({{item.count}})</div>
             </div>
             <div *ngSwitchCase="'PROJECTS'">
-                <a [routerLink]="['projects']" routerLinkActive="active" (click)="tabChange(item.type)">
-                    <md-icon class="md-36">line_style</md-icon>
-                    <div>Hankkeet ({{item.count}})</div>
-                </a>
+                <md-icon class="md-36">line_style</md-icon>
+                <div>Hankkeet ({{item.count}})</div>
             </div>
         </div>
-    </div>
+    </a>
 </div>
