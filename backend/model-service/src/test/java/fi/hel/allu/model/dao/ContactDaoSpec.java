@@ -1,39 +1,36 @@
 package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.domain.PostalAddressItem;
-import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.greghaskins.spectrum.Spectrum.*;
+import static com.greghaskins.spectrum.Spectrum.beforeEach;
+import static com.greghaskins.spectrum.Spectrum.describe;
+import static com.greghaskins.spectrum.Spectrum.it;
 
 @RunWith(Spectrum.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
-public class ContactDaoSpec {
+public class ContactDaoSpec extends SpeccyTestBase {
   @Autowired
   ContactDao contactDao;
   @Autowired
   PostalAddressDao postalAddressDao;
-  @Autowired
-  private TestCommon testCommon;
-  @Autowired
-  private PlatformTransactionManager transactionManager;
 
   private Contact testContact = new Contact();
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
@@ -41,13 +38,10 @@ public class ContactDaoSpec {
   private int applicantId;
   private int applicationId;
 
-  private TransactionStatus transaction;
-
   {
-    beforeAll(() -> new TestContextManager(getClass()).prepareTestInstance(this));
-    // manual transaction handling before and after tests, because Spectrum does not support the @Transactional
+    // manual transaction handling done in SpeccyTestBase
     beforeEach(() -> {
-      transaction = testCommon.createTransactionStatus();
+      testCommon.deleteAllData();
       applicantId = testCommon.insertPerson();
       applicationId = testCommon.insertApplication("test app", "käsittelijä");
       testContact.setApplicantId(applicantId);
@@ -55,7 +49,6 @@ public class ContactDaoSpec {
       testContact.setName("test name");
       testContact.setPostalAddress(testPostalAddress);
     });
-    afterEach(() -> transactionManager.rollback(transaction));
 
     describe("Contact dao", () -> {
       beforeEach(() -> insertedContact = contactDao.insert(Collections.singletonList(testContact)).get(0));

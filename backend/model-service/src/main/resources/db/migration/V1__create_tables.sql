@@ -202,13 +202,14 @@ create table allu.application_contact (
 
 create table allu.invoice_row (
     id serial primary key,
-    application_id integer references allu.application(id),
-    row_number integer,
-    unit text,
-    quantity double precision,
-    row_text text,
-    unit_price integer,
-    net_price integer );
+    application_id integer references allu.application(id) not null,
+    row_number integer not null,
+    manually_set boolean not null,
+    unit text not null,
+    quantity double precision not null,
+    row_text text not null,
+    unit_price integer not null,
+    net_price integer not null);
 
 create table allu.structure_meta (
     id serial primary key,

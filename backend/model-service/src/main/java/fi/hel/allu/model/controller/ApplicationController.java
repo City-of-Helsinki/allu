@@ -185,9 +185,23 @@ public class ApplicationController {
    * @param id the application ID
    * @return the invoice rows for the application
    */
-  @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.GET)
   public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
     return new ResponseEntity<>(invoiceRowDao.getInvoiceRows(id), HttpStatus.OK);
+  }
+
+  /**
+   * Set the invoice rows for an application
+   *
+   * @param id the application ID
+   * @param invoiceRows invoice rows for the application. Only the rows that are
+   *          marked as manually set will be stored.
+   * @return the invoice rows for the application
+   */
+  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.PUT)
+  public ResponseEntity<List<InvoiceRow>> setManualInvoiceRows(@PathVariable int id,
+      @RequestBody List<InvoiceRow> invoiceRows) {
+    return new ResponseEntity<>(applicationService.setManualInvoiceRows(id, invoiceRows), HttpStatus.OK);
   }
 
   /**
@@ -196,7 +210,7 @@ public class ApplicationController {
    * @param id the application's database ID
    * @return list of changes for the application
    */
-  @RequestMapping(value = "{id}/history", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
   public ResponseEntity<List<ApplicationChange>> getChanges(@PathVariable int id) {
     return new ResponseEntity<>(historyDao.getApplicationHistory(id), HttpStatus.OK);
   }
@@ -206,7 +220,7 @@ public class ApplicationController {
    * @param id The application's database ID
    * @param change the change item to add
    */
-  @RequestMapping(value = "{id}/history", method = RequestMethod.POST)
+  @RequestMapping(value = "/{id}/history", method = RequestMethod.POST)
   public ResponseEntity<Void> addChange(@PathVariable int id, @RequestBody ApplicationChange change) {
     historyDao.addApplicationChange(id, change);
     return new ResponseEntity<>(HttpStatus.OK);

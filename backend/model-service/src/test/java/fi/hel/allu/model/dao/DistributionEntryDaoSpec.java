@@ -1,39 +1,36 @@
 package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.PostalAddress;
-import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.greghaskins.spectrum.Spectrum.*;
+import static com.greghaskins.spectrum.Spectrum.beforeEach;
+import static com.greghaskins.spectrum.Spectrum.describe;
+import static com.greghaskins.spectrum.Spectrum.it;
 
 @RunWith(Spectrum.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
-public class DistributionEntryDaoSpec {
+public class DistributionEntryDaoSpec extends SpeccyTestBase {
   @Autowired
   DistributionEntryDao distributionEntryDao;
   @Autowired
   PostalAddressDao postalAddressDao;
-  @Autowired
-  private TestCommon testCommon;
-  @Autowired
-  private PlatformTransactionManager transactionManager;
 
   private ZonedDateTime testTime = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
   private DistributionEntry testDistributionEntry = new DistributionEntry();
@@ -41,18 +38,14 @@ public class DistributionEntryDaoSpec {
   private DistributionEntry insertedDistributionEntry;
   private int applicationId;
 
-  private TransactionStatus transaction;
-
   {
-    beforeAll(() -> new TestContextManager(getClass()).prepareTestInstance(this));
-    // manual transaction handling before and after tests, because Spectrum does not support the @Transactional
+    // manual transaction handling done in parent class
     beforeEach(() -> {
-      transaction = testCommon.createTransactionStatus();
+      testCommon.deleteAllData();
       applicationId = testCommon.insertApplication("test application", "dummy handler");
       testDistributionEntry.setApplicationId(applicationId);
       testDistributionEntry.setDistributionType(DistributionType.EMAIL);
     });
-    afterEach(() -> transactionManager.rollback(transaction));
 
     describe("Distribution entry dao", () -> {
       beforeEach(() -> insertedDistributionEntry = distributionEntryDao.insert(Collections.singletonList(testDistributionEntry)).get(0));

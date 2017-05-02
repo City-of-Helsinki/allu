@@ -1,22 +1,23 @@
 package fi.hel.allu.model.controller;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.testUtils.TestCommon;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionStatus;
 
-import static com.greghaskins.spectrum.Spectrum.*;
+import static com.greghaskins.spectrum.Spectrum.beforeEach;
+import static com.greghaskins.spectrum.Spectrum.describe;
+import static com.greghaskins.spectrum.Spectrum.it;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -24,30 +25,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(Spectrum.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
 @WebAppConfiguration
-public class ApplicationStatusControllerSpec {
+public class ApplicationStatusControllerSpec extends SpeccyTestBase {
 
-  @Autowired
-  TestCommon testCommon;
-  @Autowired
-  private PlatformTransactionManager transactionManager;
   @Autowired
   WebTestCommon wtc;
 
-  private TransactionStatus transaction;
   Application testApplication;
 
   {
 
-    beforeAll(() -> new TestContextManager(getClass()).prepareTestInstance(this));
     beforeEach(() -> {
-      transaction = testCommon.createTransactionStatus();
       wtc.setup();
 
       Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
       ResultActions resultActions = wtc.perform(post("/applications"), newApplication).andExpect(status().isOk());
       testApplication = wtc.parseObjectFromResult(resultActions, Application.class);
     });
-    afterEach(() -> transactionManager.rollback(transaction));
 
     describe("Application status update", () -> {
       it("Updates decision status", () -> {

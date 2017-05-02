@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.model.testUtils.TestCommon;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -46,6 +47,7 @@ public class AttachmentDaoTest {
 
   @Before
   public void setup() throws Exception {
+    testCommon.deleteAllData();
     newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
     application = applicationDao.insert(newApplication);
     // dummy will be used as a no-match info in some tests:

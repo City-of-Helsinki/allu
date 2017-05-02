@@ -246,4 +246,15 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals(1, result.size());
     assertEquals("Row row row your boat", result.get(0).getRowText());
   }
+
+  @Test
+  public void testSetInvoiceRows() {
+    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
+        Mockito.eq(InvoiceRow[].class), Mockito.eq(99)))
+        .then(invocation -> new ResponseEntity<>(new InvoiceRow[] {}, HttpStatus.OK));
+
+    applicationService.setInvoiceRows(99, Collections.emptyList());
+    Mockito.verify(restTemplate).exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
+        Mockito.eq(InvoiceRow[].class), Mockito.eq(99));
+  }
 }

@@ -108,6 +108,21 @@ public class ApplicationService {
   }
 
   /**
+   * Set the manual invoice rows for an application
+   *
+   * @param id             the application ID
+   * @param invoiceRows    the invoice rows to store. Only rows that are marked as
+   *                       manually set will be used
+   * @return the new invoice rows for the application
+   */
+  public List<InvoiceRow> setInvoiceRows(int id, List<InvoiceRow> invoiceRows) {
+    HttpEntity<List<InvoiceRow>> requestEntity = new HttpEntity<>(invoiceRows);
+    ResponseEntity<InvoiceRow[]> restResult = restTemplate.exchange(applicationProperties.setInvoiceRowsUrl(),
+        HttpMethod.PUT, requestEntity, InvoiceRow[].class, id);
+    return Arrays.asList(restResult.getBody());
+  }
+
+  /**
    * Replaces distribution list of the given application.
    *
    * @param id                      Id of the application.

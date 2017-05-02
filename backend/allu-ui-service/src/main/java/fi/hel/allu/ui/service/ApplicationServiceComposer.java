@@ -9,8 +9,12 @@ import fi.hel.allu.ui.mapper.QueryParameterMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -209,6 +213,18 @@ public class ApplicationServiceComposer {
    */
   public List<InvoiceRow> getInvoiceRows(int id) {
     return applicationService.getInvoiceRows(id);
+  }
+
+  /**
+   * Set the manual invoice rows for an application
+   *
+   * @param id             the application ID
+   * @param invoiceRows    the invoice rows to store. Only rows that are marked as
+   *                       manually set will be used
+   * @return the new invoice rows for the application
+   */
+  public List<InvoiceRow> setInvoiceRows(int id, List<InvoiceRow> invoiceRows) {
+    return applicationService.setInvoiceRows(id, invoiceRows);
   }
 
   /**

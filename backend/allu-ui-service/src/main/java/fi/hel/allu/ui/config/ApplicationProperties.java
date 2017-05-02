@@ -520,6 +520,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for setting the invoice rows for an application
+   */
+  public String setInvoiceRowsUrl() {
+    return getModelServiceUrl("/applications/{id}/invoice-rows");
+  }
+
+  /**
    * @return url for deleting attachment from application.
    */
   public String getAddAttachmentUrl() {

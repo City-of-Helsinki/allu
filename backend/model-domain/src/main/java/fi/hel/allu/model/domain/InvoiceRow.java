@@ -1,11 +1,26 @@
 package fi.hel.allu.model.domain;
 
 public class InvoiceRow {
+  private boolean manuallySet;
   private InvoiceUnit unit;
   private double quantity;
   private String rowText;
   private int unitPrice;
   private int netPrice;
+
+  /**
+   * Was the row manually set? Manually set rows don't get overridden when
+   * pricing is recalculated.
+   *
+   * @return true if row was manually set
+   */
+  public boolean getManuallySet() {
+    return manuallySet;
+  }
+
+  public void setManuallySet(boolean manuallySet) {
+    this.manuallySet = manuallySet;
+  }
 
   /**
    * Get the unit for the row

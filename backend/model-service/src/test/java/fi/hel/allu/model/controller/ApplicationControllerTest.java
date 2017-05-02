@@ -175,6 +175,7 @@ public class ApplicationControllerTest {
 
   @Test
   public void testFindIntersecting() throws Exception {
+    testCommon.deleteAllData();
     createLocationTestApplications();
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     lsc.setIntersects(bigArea);

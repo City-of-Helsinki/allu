@@ -7,13 +7,16 @@ import fi.hel.allu.model.dao.InvoiceRowDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -82,8 +85,9 @@ public class ApplicationService {
   public Application update(int id, Application application) {
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
+    invoiceRowDao.setInvoiceRows(id, invoiceRows, false);
+    application.setCalculatedPrice(invoiceRowDao.getTotalPrice(id));
     Application result = applicationDao.update(id, application);
-    invoiceRowDao.setInvoiceRows(result.getId(), invoiceRows);
     return result;
   }
 
@@ -122,7 +126,7 @@ public class ApplicationService {
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
     Application result = applicationDao.insert(application);
-    invoiceRowDao.setInvoiceRows(result.getId(), invoiceRows);
+    invoiceRowDao.setInvoiceRows(result.getId(), invoiceRows, false);
     return result;
   }
 
@@ -141,5 +145,22 @@ public class ApplicationService {
     } else {
       return applicationDao.updateStatus(applicationId, statusType);
     }
+  }
+
+  /**
+   * Set the manually set invoice rows for application.
+   *
+   * @param applicartionId  application's database id
+   * @param invoiceRows     Invoice rows to set (only the ones marked as manually
+   *                        set are used)
+   * @return Application's invoice rows after operation
+   */
+  public List<InvoiceRow> setManualInvoiceRows(int applicationId, List<InvoiceRow> invoiceRows) {
+    invoiceRowDao.setInvoiceRows(applicationId,
+        invoiceRows.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()), true);
+    Application application = findById(applicationId);
+    application.setCalculatedPrice(invoiceRowDao.getTotalPrice(applicationId));
+    applicationDao.update(applicationId, application);
+    return invoiceRowDao.getInvoiceRows(applicationId);
   }
 }

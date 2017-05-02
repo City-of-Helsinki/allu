@@ -11,10 +11,6 @@ import fi.hel.allu.model.service.LocationService;
 import org.geolatte.geom.Geometry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.PlatformTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.sql.SQLException;
 import java.time.ZonedDateTime;
@@ -41,20 +37,6 @@ public class TestCommon {
   private ProjectDao projectDao;
   @Autowired
   private UserDao userDao;
-  @Autowired
-  private PlatformTransactionManager transactionManager;
-
-  /**
-   * Create transaction status for transaction manager
-   *
-   * @return TransactionStatus
-   */
-  public TransactionStatus createTransactionStatus() {
-    DefaultTransactionDefinition transactionDefinition = new DefaultTransactionDefinition();
-    transactionDefinition.setName("DefaultTransaction");
-    transactionDefinition.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-    return transactionManager.getTransaction(transactionDefinition);
-  }
 
   public void deleteAllData() throws SQLException {
     sqlRunner.runSql(DELETE_ALL_DATA);

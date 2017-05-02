@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ApplicationServiceTest {
@@ -43,7 +44,8 @@ public class ApplicationServiceTest {
     applicationService.insert(newApp);
     Mockito.verify(pricingService).updatePrice(Mockito.eq(newApp), Mockito.anyListOf(InvoiceRow.class));
     Mockito.verify(applicationDao).insert(Mockito.eq(newApp));
-    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class));
+    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class),
+        Mockito.eq(false));
   }
 
   @Test
@@ -57,6 +59,27 @@ public class ApplicationServiceTest {
     applicationService.update(123, application);
     Mockito.verify(pricingService).updatePrice(Mockito.eq(application), Mockito.anyListOf(InvoiceRow.class));
     Mockito.verify(applicationDao).update(Mockito.eq(123), Mockito.eq(application));
-    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class));
+    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(123), Mockito.anyListOf(InvoiceRow.class),
+        Mockito.eq(false));
   }
+
+  @Test
+  public void testSetInvoiceLinesChangesPrice() {
+    final int TOTAL_PRICE = 999;
+    final int APP_ID = 123;
+    Application application = Mockito.mock(Application.class);
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
+    Mockito.when(invoiceRowDao.getTotalPrice(APP_ID)).thenReturn(TOTAL_PRICE);
+
+    applicationService.setManualInvoiceRows(APP_ID, Arrays.asList(new InvoiceRow()));
+
+    // Should have set new manually set rows
+    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(APP_ID), Mockito.anyListOf(InvoiceRow.class),
+        Mockito.eq(true));
+    // Should have set new calculated price
+    Mockito.verify(application).setCalculatedPrice(TOTAL_PRICE);
+    // Should have updated the application
+    Mockito.verify(applicationDao).update(APP_ID, application);
+  }
+
 }

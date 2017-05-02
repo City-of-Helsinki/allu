@@ -257,10 +257,24 @@ public class ApplicationController {
    *          the application ID
    * @return the invoice rows for the application
    */
-  @RequestMapping(value = "{id}/invoice-rows", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
     return new ResponseEntity<>(applicationServiceComposer.getInvoiceRows(id), HttpStatus.OK);
   }
 
+  /**
+   * Set the manual invoice rows for an application
+   *
+   * @param id the application ID
+   * @param invoiceRows the invoice rows to store. Only rows that are marked as
+   *          manually set will be used
+   * @return the new invoice rows for the application
+   */
+  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<InvoiceRow>> setInvoiceRows(@PathVariable int id,
+      @Valid @RequestBody List<InvoiceRow> invoiceRows) {
+    return new ResponseEntity<>(applicationServiceComposer.setInvoiceRows(id, invoiceRows), HttpStatus.OK);
+  }
 }
