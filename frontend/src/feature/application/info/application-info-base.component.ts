@@ -61,10 +61,14 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
    */
   protected abstract initForm();
 
-  onSubmit(form: ApplicationForm) {
+  onSubmit(form: FormGroup) {
     this.submitPending = true;
-    let application = this.update(form);
-    application.extension.terms = form.terms;
+    // Enable so that all fields user should not edit are saved also
+    // eg. representative, contractor, representative etc.
+    form.enable();
+    let value = form.value;
+    let application = this.update(value);
+    application.extension.terms = value.terms;
 
     this.applicationState.save(application)
       .subscribe(
