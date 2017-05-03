@@ -9,6 +9,7 @@ import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
 import {InvoiceService} from '../../../service/application/invoice/invoice.service';
 import {InvoiceCommentsComponent} from './invoice-comments.component';
 import {InvoiceRowModalComponent} from './invoice-row-modal.component';
+import {InvoicingInfoComponent} from './invoicing-info/invoicing-info.component';
 
 @NgModule({
   imports: [
@@ -19,6 +20,7 @@ import {InvoiceRowModalComponent} from './invoice-row-modal.component';
   ],
   declarations: [
     InvoicingComponent,
+    InvoicingInfoComponent,
     InvoiceRowsComponent,
     InvoiceCommentsComponent,
     InvoiceRowModalComponent

@@ -564,6 +564,10 @@ export const translations = {
       LATE_REQUEST_OF_EXSTRA_TIME: 'Lisäaikaa haettu myöhässä',
       OTHER: 'Muu syy'
     },
+    partition: {
+      NONE: 'Ei ositusta',
+      SIX_MONTHS: '6kk'
+    },
     row: {
       action: {
         accepted: 'Laskurivi hyväksytty laskutukseen'

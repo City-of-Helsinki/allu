@@ -1,0 +1,132 @@
+<form [formGroup]="invoicingInfoForm">
+    <md-card>
+        <md-card-title>
+            Laskutustiedot
+            <button md-icon-button type="button" (click)="edit()"><md-icon>mode_edit</md-icon></button>
+        </md-card-title>
+        <md-card-content>
+            <div class="row">
+                <div class="col m6" formGroupName="invoicingAddress">
+                    <div class="row form-group">
+                        <div class="col m6">
+                            <md-select class="input-full-width" formControlName="type" placeholder="Valitse laskutettavan tyyppi*">
+                                <md-option *ngFor="let type of applicantTypes" [value]="type">
+                                    {{['applicant.type', type, 'name'] | translation}}
+                                </md-option>
+                            </md-select>
+                            <small>
+                                <field-error [form]="invoicingAddressForm" field="type" hasError="required">{{'applicant.field.typeMissing' | translation}}</field-error>
+                            </small>
+                        </div>
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="name"
+                                       placeholder="{{['applicant.type', invoicingInfoForm.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingAddressForm" field="name" hasError="required">{{'applicant.field.nameMissing' | translation}}</field-error>
+                                    <field-error [form]="invoicingAddressForm" field="name" hasError="minlength">{{'applicant.field.nameShort' | translation}}</field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="registryKey"
+                                       placeholder="{{['applicant.type', invoicingInfoForm.value.type || 'DEFAULT', 'id'] | translation}}*"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingAddressForm" field="registryKey" hasError="required">{{'applicant.field.registryKeyMissing' | translation}}</field-error>
+                                    <field-error [form]="invoicingAddressForm" field="registryKey" hasError="minlength">{{'applicant.field.registryKeyShort' | translation}}</field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col m6">
+                            <md-select class="input-full-width" formControlName="country" placeholder="Maa">
+                                <md-option value="Suomi">Suomi</md-option>
+                            </md-select>
+                        </div>
+                    </div>
+                    <div formGroupName="postalAddress" class="row form-group">
+                        <div class="col m6">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingAddressForm.get('postalAddress')" field="postalCode" hasError="pattern">
+                                        {{'common.field.postalCode' | translation}}
+                                    </field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col m3">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m4">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingAddressForm" field="phone" hasError="minLength">{{'applicant.field.phoneShort' | translation}}</field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col m8">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingAddressForm" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m12">
+                            <md-checkbox formControlName="noInvoicing">Ei laskuteta</md-checkbox>
+                        </div>
+                    </div>
+                </div>
+                <div class="col m4">
+                    <div class="row form-group">
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="workId" placeholder="Työnumero*"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="invoiceReference" placeholder="Laskutusviite*"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="number" formControlName="deposit" placeholder="Vakuus"/>
+                                <div mdSuffix>€</div>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="row form-group">
+                        <div class="col m12">
+                            <md-select class="input-full-width" formControlName="partition" placeholder="Laskun ositus">
+                                <md-option selected value="">{{'invoice.partition.NONE' | translation}}</md-option>
+                                <md-option *ngFor="let partition of invoicePartitions" [value]="partition">
+                                    {{['invoice.partition', partition] | translation}}
+                                </md-option>
+                            </md-select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </md-card-content>
+    </md-card>
+</form>

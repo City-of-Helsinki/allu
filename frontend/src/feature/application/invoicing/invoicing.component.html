@@ -1,13 +1,21 @@
-<div class="row">
-    <div class="col m12">
-        <invoicing-address [parentForm]="invoicingForm"></invoicing-address>
+<form [formGroup]="invoicingForm" (ngSubmit)="onSubmit(invoicingForm.value)">
+    <div class="row">
+        <div class="col m12">
+            <invoicing-info [parentForm]="invoicingForm"></invoicing-info>
+        </div>
     </div>
-</div>
-<div class="row">
-    <div class="col m12">
-        <invoice-rows [parentForm]="invoicingForm" [applicationId]="applicationId"></invoice-rows>
+    <div class="row">
+        <div class="col m12">
+            <invoice-rows [parentForm]="invoicingForm" [applicationId]="applicationId"></invoice-rows>
+        </div>
     </div>
-</div>
+    <div class="row">
+        <div class="col m12">
+            <button type="submit" md-raised-button color="primary" [disabled]="!invoicingForm.valid">TALLENNA</button>
+            <button type="submit" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+        </div>
+    </div>
+</form>
 <div class="row">
     <div class="col m12">
         <invoice-comments [applicationId]="applicationId"></invoice-comments>
