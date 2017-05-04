@@ -30,4 +30,8 @@ export class StringUtil {
     }
     return pathString;
   }
+
+  public static toUppercase(s: string): string {
+    return s ? s.toLocaleUpperCase() : s;
+  }
 }

@@ -561,19 +561,31 @@ export const translations = {
       UNAUTHORIZED_PARKING: 'Auton luvaton pysäköinti alueella',
       LATE_NOTIFICATION_OF_COMPLETION: 'Valmistumisilmoitus tullut myöhässä',
       LATE_NOTIFICATION_OF_OPERATION_STATE: 'Toiminnallinen tila ilmoitettu myöhässä',
-      LATE_REQUEST_OF_EXSTRA_TIME: 'Lisäaikaa haettu myöhässä',
+      LATE_REQUEST_OF_EXTRA_TIME: 'Lisäaikaa haettu myöhässä',
       OTHER: 'Muu syy'
     },
     partition: {
       NONE: 'Ei ositusta',
       SIX_MONTHS: '6kk'
     },
+    action: {
+      save: 'Lasku tallennettu',
+      cancel: 'Laskun muutokset peruttu'
+    },
+    error: {
+      save: 'Laskun tallentaminen epäonnistui'
+    },
+    field: {
+      workIdMissing: 'Työnumero puuttuu',
+      invoiceReferenceMissing: 'Laskutusviite puuttuu'
+    },
     row: {
       action: {
         accepted: 'Laskurivi hyväksytty laskutukseen'
       },
       error: {
-        fetch: 'Laskurivien hakeminen epäonnistui'
+        fetch: 'Laskurivien hakeminen epäonnistui',
+        save: 'Laskurivien tallentaminen epäonnistui'
       }
     }
   },

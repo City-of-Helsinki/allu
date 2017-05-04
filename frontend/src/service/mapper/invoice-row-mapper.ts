@@ -4,13 +4,22 @@ import {InvoiceUnit} from '../../model/application/invoice/invoice-unit';
 import {Some} from '../../util/option';
 export class InvoiceRowMapper {
 
+  public static mapBackendArray(rows: Array<BackendInvoiceRow> = []): Array<InvoiceRow> {
+    return rows.map(this.mapBackend);
+  }
+
+  public static mapFrontendArray(rows: Array<InvoiceRow>): Array<BackendInvoiceRow> {
+    return rows.map(this.mapFrontEnd);
+  }
+
   public static mapBackend(backendInvoiceRow: BackendInvoiceRow): InvoiceRow {
     return new InvoiceRow(
       Some(backendInvoiceRow.unit).map(unit => InvoiceUnit[unit]).orElse(InvoiceUnit.PIECE),
       backendInvoiceRow.quantity,
       backendInvoiceRow.rowText,
       backendInvoiceRow.unitPrice,
-      backendInvoiceRow.netPrice
+      backendInvoiceRow.netPrice,
+      backendInvoiceRow.manuallySet
     );
   }
 
@@ -20,7 +29,8 @@ export class InvoiceRowMapper {
       quantity: invoiceRow.quantity,
       rowText: invoiceRow.rowText,
       unitPrice: invoiceRow.unitPrice,
-      netPrice: invoiceRow.netPrice
+      netPrice: invoiceRow.netPrice,
+      manuallySet: invoiceRow.manuallySet
     };
   }
 }

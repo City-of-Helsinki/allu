@@ -20,7 +20,15 @@ export class InvoiceService {
     let url = INVOICE_ROWS_URL.replace(':appId', String(applicationId));
     return this.authHttp.get(url)
       .map(response => response.json())
-      .map(rows => rows.map(row => InvoiceRowMapper.mapBackend(row)))
+      .map(rows => InvoiceRowMapper.mapBackendArray(rows))
       .catch(error => this.errorHandler.handle(error, findTranslation('invoice.row.error.fetch')));
+  }
+
+  saveInvoiceRows(applicationId: number, rows: Array<InvoiceRow>): Observable<Array<InvoiceRow>> {
+    let url = INVOICE_ROWS_URL.replace(':appId', String(applicationId));
+    return this.authHttp.put(url, JSON.stringify(InvoiceRowMapper.mapFrontendArray(rows)))
+      .map(response => response.json())
+      .map(savedRows => InvoiceRowMapper.mapBackendArray(savedRows))
+      .catch(error => this.errorHandler.handle(error, findTranslation('invoice.row.error.save')));
   }
 }

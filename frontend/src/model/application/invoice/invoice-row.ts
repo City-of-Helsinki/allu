@@ -9,7 +9,8 @@ export class InvoiceRow {
     public quantity?: number,
     public rowText?: string,
     public unitPrice?: number,
-    public netPrice?: number
+    public netPrice?: number,
+    public manuallySet?: boolean
   ) {
     quantity = quantity || InvoiceUnit.PIECE;
   }

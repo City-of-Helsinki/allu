@@ -4,4 +4,5 @@ export interface BackendInvoiceRow {
   rowText: string;
   unitPrice: number;
   netPrice: number;
+  manuallySet: boolean;
 }

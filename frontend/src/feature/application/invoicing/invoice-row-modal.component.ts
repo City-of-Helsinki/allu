@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../../util/enum.util';
@@ -8,6 +8,8 @@ import {Subscription} from 'rxjs/Subscription';
 import {findTranslation} from '../../../util/translations';
 import {InvoiceUnit} from '../../../model/application/invoice/invoice-unit';
 import {DEFAULT_FEE_CENTS, InvoiceRow} from '../../../model/application/invoice/invoice-row';
+import {Observable} from 'rxjs/Observable';
+import {StringUtil} from '../../../util/string.util';
 
 @Component({
   selector: 'invoice-row-modal',
@@ -18,44 +20,40 @@ import {DEFAULT_FEE_CENTS, InvoiceRow} from '../../../model/application/invoice/
 })
 export class InvoiceRowModalComponent implements OnInit, OnDestroy {
 
-  invoiceRowForm: FormGroup;
-  negligencePaymentTypes = EnumUtil.enumValues(NegligencePaymentType);
-  invoiceUnits = EnumUtil.enumValues(InvoiceUnit);
-  negligencePaymentTypeCtrl: FormControl;
+  @Input() invoiceRow: InvoiceRow = new InvoiceRow(InvoiceUnit.DAY);
 
-  private negligencePaymentSubscription: Subscription;
+  invoiceRowForm: FormGroup;
+  negligencePaymentTypes = EnumUtil.enumValues(NegligencePaymentType)
+    .map(t => findTranslation(['invoice.negligencePaymentType', t]));
+  invoiceUnits = EnumUtil.enumValues(InvoiceUnit);
+  rowTextCtrl: FormControl;
+  matchingRowTexts: Observable<Array<string>>;
 
   constructor(public dialogRef: MdDialogRef<InvoiceRowModalComponent>, private fb: FormBuilder) {
-    this.invoiceRowForm = InvoiceRowForm.formGroup(fb, new InvoiceRow(InvoiceUnit.DAY));
-    this.negligencePaymentTypeCtrl = fb.control({});
-    this.invoiceRowForm.addControl('negligencePaymentType', this.negligencePaymentTypeCtrl);
   }
 
   ngOnInit(): void {
-    this.negligencePaymentSubscription = this.negligencePaymentTypeCtrl.valueChanges
-      .subscribe(type => this.onNegligencePaymentTypeChange(type));
+    this.invoiceRowForm = InvoiceRowForm.formGroup(this.fb, this.invoiceRow);
+    this.rowTextCtrl = <FormControl>this.invoiceRowForm.get('rowText');
+
+    this.matchingRowTexts = this.rowTextCtrl.valueChanges
+      .debounceTime(300)
+      .map(text => StringUtil.toUppercase(text))
+      .map(text => this.negligencePaymentTypes.filter(types => StringUtil.toUppercase(types).indexOf(text) >= 0));
   }
 
   ngOnDestroy(): void {
-    this.negligencePaymentSubscription.unsubscribe();
   }
 
   onSubmit(form: InvoiceRowForm): void {
     let row = InvoiceRowForm.toInvoiceRow(form);
     row.unitPrice = DEFAULT_FEE_CENTS;
     row.updateNetPrice();
+    row.manuallySet = true;
     this.dialogRef.close(row);
   }
 
   cancel(): void {
     this.dialogRef.close(undefined);
-  }
-
-  private onNegligencePaymentTypeChange(type: string): void {
-    if (NegligencePaymentType.OTHER === NegligencePaymentType[type]) {
-      this.invoiceRowForm.patchValue({rowText: ''}, {emitEvent: true});
-    } else {
-      this.invoiceRowForm.patchValue({rowText: findTranslation(['invoice.negligencePaymentType', type])}, {emitEvent: true});
-    }
   }
 }

@@ -97,6 +97,11 @@
                         <div class="col m12">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="workId" placeholder="Työnumero*"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingInfoForm" field="workId" hasError="required">
+                                        {{'invoice.field.workIdMissing' | translation}}
+                                    </field-error>
+                                </md-hint>
                             </md-input-container>
                         </div>
                     </div>
@@ -104,6 +109,11 @@
                         <div class="col m12">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="invoiceReference" placeholder="Laskutusviite*"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingInfoForm" field="invoiceReference" hasError="required">
+                                        {{'invoice.field.invoiceReferenceMissing' | translation}}
+                                    </field-error>
+                                </md-hint>
                             </md-input-container>
                         </div>
                     </div>

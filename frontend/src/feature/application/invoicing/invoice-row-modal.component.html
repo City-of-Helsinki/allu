@@ -3,17 +3,14 @@
     <div md-dialog-content>
         <div class="row form-group">
             <div class="col m12">
-                <md-select class="input-full-width" formControlName="negligencePaymentType" placeholder="Valitse laiminlyöntimaksu*">
-                    <md-option *ngFor="let type of negligencePaymentTypes" [value]="type">
-                        {{['invoice.negligencePaymentType', type] | translation}}
-                    </md-option>
-                </md-select>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col m12" *ngIf="invoiceRowForm.value.negligencePaymentType === 'OTHER'">
                 <md-input-container class="input-full-width">
-                    <input mdInput type="text" formControlName="rowText" placeholder="Perustelu*"/>
+                    <input mdInput type="text" formControlName="rowText"
+                           placeholder="Laiminlyöntimaksu*" [mdAutocomplete]="rowText"/>
+                    <md-autocomplete #rowText="mdAutocomplete">
+                        <md-option *ngFor="let rowText of matchingRowTexts | async" [value]="rowText">
+                            {{rowText}}
+                        </md-option>
+                    </md-autocomplete>
                 </md-input-container>
             </div>
         </div>

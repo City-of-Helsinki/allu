@@ -10,13 +10,13 @@
                     Ei hyväksymättömiä laskurivejä
                 </div>
                 <div formArrayName="pendingInvoiceRows">
-                    <div *ngFor="let row of pendingInvoiceRows.controls; let i=index" class="row">
-                        <md-card class="slim-card" [formGroupName]="i">
+                    <div *ngFor="let row of pendingInvoiceRows.controls; let i=index;" class="row">
+                        <md-card class="slim-card">
                             <md-card-content>
                                 <div class="invoice-row">
                                     <div class="row-controls">
-                                        <button md-icon-button><md-icon>edit</md-icon></button>
                                         <button md-icon-button (click)="acceptRow(i)"><md-icon class="angle-45">send</md-icon></button>
+                                        <button md-icon-button *ngIf="row.value.manuallySet" (click)="editRow(i)"><md-icon>edit</md-icon></button>
                                     </div>
                                     <div class="row-header">{{row.value.rowText}}</div>
                                     <div class="row-content">
@@ -43,7 +43,7 @@
                 </div>
                 <div formArrayName="acceptedInvoiceRows">
                     <div *ngFor="let row of acceptedInvoiceRows.controls; let i=index" class="row">
-                        <md-card class="slim-card" [formGroupName]="i">
+                        <md-card class="slim-card">
                             <md-card-content>
                                 <div class="invoice-row">
                                     <div class="row-controls">

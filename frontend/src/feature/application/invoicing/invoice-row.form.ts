@@ -8,7 +8,8 @@ export class InvoiceRowForm {
     public quantity?: number,
     public rowText?: string,
     public unitPrice?: number,
-    public netPrice?: number
+    public netPrice?: number,
+    public manuallySet?: boolean
   ) {}
 
   public static formGroup(fb: FormBuilder, row: InvoiceRow = new InvoiceRow()): FormGroup {
@@ -17,7 +18,8 @@ export class InvoiceRowForm {
       quantity: [row.quantity, Validators.required],
       rowText: [row.rowText, Validators.required],
       unitPrice: [row.unitPriceEuro],
-      netPrice: [row.netPriceEuro]
+      netPrice: [row.netPriceEuro],
+      manuallySet: [row.manuallySet]
     });
   }
 
@@ -30,6 +32,18 @@ export class InvoiceRowForm {
 
     row.unitPriceEuro = form.unitPrice;
     row.netPriceEuro = form.netPrice;
+    row.manuallySet = form.manuallySet;
     return row;
+  }
+
+  public static toFormValue(row: InvoiceRow): InvoiceRowForm {
+    return new InvoiceRowForm(
+      InvoiceUnit[row.unit],
+      row.quantity,
+      row.rowText,
+      row.unitPriceEuro,
+      row.netPriceEuro,
+      row.manuallySet
+    );
   }
 }
