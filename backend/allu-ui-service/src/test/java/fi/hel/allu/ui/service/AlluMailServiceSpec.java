@@ -2,21 +2,25 @@ package fi.hel.allu.ui.service;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.ui.config.ApplicationProperties;
 
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.mail.javamail.JavaMailSender;
 
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 
 import java.util.Arrays;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
-import static com.greghaskins.spectrum.Spectrum.beforeEach;
-import static com.greghaskins.spectrum.Spectrum.describe;
-import static com.greghaskins.spectrum.Spectrum.it;
+import static com.greghaskins.spectrum.Spectrum.*;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 @RunWith(Spectrum.class)
@@ -38,7 +42,7 @@ public class AlluMailServiceSpec {
         alluMailService = new AlluMailService(applicationProperties, decisionService, javaMailSender);
       });
 
-      MimeMessage mockMimeMessage = Mockito.mock(MimeMessage.class);
+      final Supplier<MimeMessage> mockMimeMessage = let(()->Mockito.mock(MimeMessage.class));
 
       describe("Send email", () -> {
         beforeEach(() -> {
@@ -47,7 +51,7 @@ public class AlluMailServiceSpec {
           alluMailService.setupEmailPattern();
           Mockito.when(applicationProperties.getEmailSenderAddress())
               .thenReturn("Allu Aluevaraus <noreply@allu.invalid>");
-          Mockito.when(javaMailSender.createMimeMessage()).thenReturn(mockMimeMessage);
+          Mockito.when(javaMailSender.createMimeMessage()).thenReturn(mockMimeMessage.get());
           Mockito.when(decisionService.getDecision(Mockito.anyInt()))
               .thenReturn("BODY".getBytes());
         });
@@ -55,7 +59,7 @@ public class AlluMailServiceSpec {
         it("Should fail with forbidden email", () -> {
           try {
             alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "potsmasher@masher.xx"), "Cheep Cialis",
-                "Body");
+                "Body", Stream.empty());
             fail("Did not throw!");
           } catch (IllegalArgumentException e) {
             // this was expected
@@ -65,9 +69,21 @@ public class AlluMailServiceSpec {
         });
 
         it("Should accept allowed emails", () -> {
-          alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"),
-              "Cheep Cialis", "Body");
+          alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"), "Cheep Cialis",
+              "Body", Stream.empty());
           Mockito.verify(javaMailSender).send(Mockito.any(MimeMessage.class));
+        });
+
+        it("Should add all attachments", () -> {
+          alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"),
+              "iPhone 5 only $1!!", "BUY NOW!",
+              Stream.of(new Attachment("eka", "EKA".getBytes()), new Attachment("toka", "TOKA".getBytes())));
+          ArgumentCaptor<Multipart> contentCaptor = ArgumentCaptor.forClass(Multipart.class);
+          Mockito.verify(mockMimeMessage.get()).setContent(contentCaptor.capture());
+          // body, decision, and two attachments -> four parts:
+          assertEquals(4, contentCaptor.getValue().getCount());
+          assertEquals("eka", contentCaptor.getValue().getBodyPart(2).getFileName());
+          assertEquals("toka", contentCaptor.getValue().getBodyPart(3).getFileName());
         });
       });
     });
