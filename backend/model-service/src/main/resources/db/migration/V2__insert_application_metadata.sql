@@ -309,6 +309,10 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'REJECT', 'Hylkääjän kommentti', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'INTERNAL', 'Sisäinen kommentti', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PROPOSE_APPROVAL', 'Ehdota hyväksymistä', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PROPOSE_REJECT', 'Ehdota hylkäystä', 'ENUM_VALUE');
 
 -- EventNature
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('EventNature', 1);

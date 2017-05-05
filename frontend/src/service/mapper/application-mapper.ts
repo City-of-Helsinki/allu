@@ -13,6 +13,8 @@ import {Some} from '../../util/option';
 import {ApplicationTagMapper} from './application-tag-mapper';
 import {CommentMapper} from '../application/comment/comment-mapper';
 import {DistributionMapper} from './distribution-mapper';
+import {StatusChangeComment} from '../../model/application/status-change-comment';
+import {CommentType} from '../../model/application/comment/comment-type';
 
 export class ApplicationMapper {
 
@@ -83,9 +85,10 @@ export class ApplicationMapper {
     };
   }
 
-  public static mapComment(comment: string) {
-    return {
-      comment: comment
-    };
+  public static mapComment(comment: StatusChangeComment) {
+    return comment ? {
+      type: comment.type ? CommentType[comment.type] : undefined,
+      comment: comment.comment
+    } : undefined;
   }
 }

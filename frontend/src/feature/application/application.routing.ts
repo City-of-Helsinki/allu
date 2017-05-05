@@ -11,6 +11,7 @@ import {CommentsComponent} from './comment/comments.component';
 import {ApplicationHistoryComponent} from './history/application-history.component';
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
 import {InvoicingComponent} from './invoicing/invoicing.component';
+import {DecisionComponent} from '../decision/decision.component';
 
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
@@ -34,6 +35,7 @@ export const applicationRoutes: Routes = [
     children: [
     { path: 'location', component: LocationComponent, canActivate: [AuthGuard] },
     { path: 'edit', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs },
-    { path: 'summary', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs }
+    { path: 'summary', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs },
+    { path: 'decision', component: DecisionComponent, canActivate: [AuthGuard]}
   ]}
 ];

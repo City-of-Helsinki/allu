@@ -354,6 +354,10 @@ export const translations = {
         confirmation: 'Hakemus hylätty'
       }
     },
+    proposal: {
+      PROPOSE_APPROVAL: 'Ehdota hyväksymistä',
+      PROPOSE_REJECTED: 'Ehdota hylkäystä'
+    },
     distribution: {
       type: {
         EMAIL: 'Sähköposti',
@@ -536,7 +540,9 @@ export const translations = {
       INTERNAL: 'Sisäinen kommentti',
       INVOICING: 'Laskutuksen kommentti',
       RETURN: 'Valmisteluun palauttajan kommentti',
-      REJECT: 'Hylkääjän kommentti'
+      REJECT: 'Hylkääjän kommentti',
+      PROPOSE_APPROVAL: 'Ehdotettu hyväksyttäväksi',
+      PROPOSE_REJECT: 'Ehdotettu hylättäväksi'
     },
     error: {
       fetch: 'Kommenttien hakeminen epäonnistui',

@@ -5,6 +5,7 @@ import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.CommentJson;
 
+import fi.hel.allu.ui.domain.StatusCommentJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,19 @@ public class CommentService {
    */
   public CommentJson addReturnComment(int applicationId, String text) {
     return addCommentUnchecked(applicationId, newCommentJson(CommentType.RETURN, text));
+  }
+
+  /**
+   * Add a "Propose approval or Propose reject" comment to an application
+   *
+   * @param applicationId
+   *          the application's ID
+   * @param comment
+   *          comments for decision
+   * @return the added comment
+   */
+  public CommentJson addDecisionProposalComment(int applicationId, StatusCommentJson comment) {
+    return addCommentUnchecked(applicationId, newCommentJson(comment.getType(), comment.getComment()));
   }
 
   /**

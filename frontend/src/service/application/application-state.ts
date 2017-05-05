@@ -14,6 +14,7 @@ import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
+import {ApplicationStatusChange} from '../../model/application/application-status-change';
 
 @Injectable()
 export class ApplicationState {
@@ -178,6 +179,12 @@ export class ApplicationState {
     return this.applicationHub.save(application)
       .switchMap(app => this.savePending(app))
       .switchMap(app => this.saved(app));
+  }
+
+  changeStatus(statusChange: ApplicationStatusChange): Observable<Application> {
+    statusChange.id = statusChange.id || this.application.id;
+    return this.applicationHub.changeStatus(statusChange)
+      .do(application => this.application = application);
   }
 
   private savePending(application: Application) {

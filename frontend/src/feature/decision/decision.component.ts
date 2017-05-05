@@ -1,13 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
-
-import {ApplicationHub} from '../../service/application/application-hub';
 import {Application} from '../../model/application/application';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {Decision} from '../../model/decision/Decision';
-import {ProgressStep} from '../application/progressbar/progress-step';
-import {NotificationService} from '../../service/notification/notification.service';
+import {stepFrom} from '../application/progressbar/progress-step';
+import {ApplicationStatus} from '../../model/application/application-status';
+import {ApplicationState} from '../../service/application/application-state';
 
 @Component({
   selector: 'decision',
@@ -17,29 +15,19 @@ import {NotificationService} from '../../service/notification/notification.servi
 export class DecisionComponent implements OnInit {
   application: Application;
   private progressStep: number;
-  private id: number;
   private pdfUrl: SafeResourceUrl;
   private pdfDownloadUrl: SafeUrl;
   private pdfLoaded: boolean;
 
   constructor(
     private sanitizer: DomSanitizer,
-    private applicationHub: ApplicationHub,
-    private decisionHub: DecisionHub,
-    private route: ActivatedRoute) {
-    this.progressStep = ProgressStep.DECISION;
-  }
+    private applicationState: ApplicationState,
+    private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    this.route.params.subscribe(params => {
-      this.id = Number(params['id']);
-
-      this.applicationHub.getApplication(this.id).subscribe(
-        application => this.application = application,
-        err => NotificationService.error(err));
-
-      this.decisionHub.generate(this.id).subscribe(decision => this.providePdf(decision));
-    });
+    this.application = this.applicationState.application;
+    this.progressStep = stepFrom(ApplicationStatus[this.application.status]);
+    this.decisionHub.generate(this.application.id).subscribe(decision => this.providePdf(decision));
   }
 
   private providePdf(decision: Decision): void {

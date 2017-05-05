@@ -1,0 +1,24 @@
+<ul>
+    <li *ngFor="let proposal of proposals | async">
+        <md-card>
+            <md-card-title>
+                {{['comment.type', proposal.type] | translation}}
+            </md-card-title>
+            <md-card-content>
+                <div class="row">
+                    <div class="col m12">
+                        <div class="save-info">
+                            <span>{{proposal.user.realName}} {{proposal.uiCreateTime}}</span>
+                            <span *ngIf="proposal.updateTime">- Päivitetty {{proposal.uiUpdateTime}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col m12">
+                        {{proposal.text}}
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </li>
+</ul>

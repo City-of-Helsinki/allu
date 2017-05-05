@@ -62,16 +62,6 @@ export class ApplicationActionsComponent implements OnInit {
   }
 
   toDecisionmaking(): void {
-    if (ApplicationStatus[this.applicationState.application.status] === ApplicationStatus.HANDLING) {
-      this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.DECISIONMAKING)).
-      subscribe(app => {
-          MaterializeUtil.toast(findTranslation('application.statusChange.DECISIONMAKING'));
-          this.applicationState.application = app;
-          this.router.navigate(['/decision', this.applicationId]);
-        },
-        err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
-    } else {
-      this.router.navigate(['/decision', this.applicationId]);
-    }
+    this.router.navigate(['/applications', this.applicationId, 'decision']);
   }
 }

@@ -8,6 +8,7 @@ import {DistributionEntry} from '../../model/common/distribution-entry';
 import {DecisionConfirmation} from '../../model/decision/decision-confirmation';
 import {DecisionDetails} from '../../model/decision/decision-details';
 import {DistributionEntryForm} from '../application/distribution/distribution-list/distribution-entry-form';
+import {StatusChangeComment} from '../../model/application/status-change-comment';
 
 export const DECISION_MODAL_CONFIG = {width: '800px'};
 
@@ -34,10 +35,12 @@ export class DecisionModalComponent implements OnInit {
   }
 
   confirm() {
+    let applicationStatus = ApplicationStatus[this.status];
     let statusChange = new ApplicationStatusChange(
       this.applicationId,
-      ApplicationStatus[this.status],
-      this.decisionForm.value.comment);
+      applicationStatus,
+      StatusChangeComment.fromStatus(applicationStatus, this.decisionForm.value.comment)
+    );
 
     let decisionDetails = new DecisionDetails(
       this.decisionDistribution(),

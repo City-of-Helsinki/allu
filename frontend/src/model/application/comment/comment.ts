@@ -1,5 +1,6 @@
 import {User} from '../../common/user';
 import {TimeUtil} from '../../../util/time.util';
+import {CommentType} from './comment-type';
 
 export class Comment {
   constructor()
@@ -37,5 +38,9 @@ export class Comment {
 
   get uiUpdateTime(): string {
     return TimeUtil.getUiDateTimeString(this.updateTime);
+  }
+
+  set commentTypeEnum(type: CommentType) {
+    this.type = CommentType[type];
   }
 }

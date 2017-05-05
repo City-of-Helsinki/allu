@@ -1,12 +1,27 @@
 <div class="row" *ngFor="let error of errors | async">{{error}}</div>
-<div class="action-row">
-    <div class="action-item">
-        <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
+<div [ngSwitch]="application.status">
+    <div class="action-row" *ngSwitchCase="'HANDLING'">
+        <div class="action-item">
+            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decisionProposal('PROPOSE_APPROVAL')">
+                {{'decision.proposal.PROPOSE_APPROVAL' | translation}}
+            </button>
+        </div>
+        <div class="action-item">
+            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decisionProposal('PROPOSE_REJECT')">
+                {{'decision.proposal.PROPOSE_REJECTED' | translation}}
+            </button>
+        </div>
     </div>
-    <div class="action-item">
-        <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('RETURNED_TO_PREPARATION')">Palauta</button>
+    <div class="action-row" *ngSwitchCase="'DECISIONMAKING'">
+        <div class="action-item">
+            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
+        </div>
+        <div class="action-item">
+            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('RETURNED_TO_PREPARATION')">Palauta</button>
+        </div>
+        <div class="action-item">
+            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('REJECTED')">Hylkää</button>
+        </div>
     </div>
-    <div class="action-item">
-        <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('REJECTED')">Hylkää</button>
-    </div>
+    <div class="action-row" *ngSwitchDefault></div>
 </div>

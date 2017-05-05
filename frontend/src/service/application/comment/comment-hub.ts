@@ -3,9 +3,11 @@ import '../../../rxjs-extensions.ts';
 
 import {Comment} from '../../../model/application/comment/comment';
 import {CommentService} from './comment.service';
+import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class CommentHub {
+  latestComments: Subject<Array<Comment>>;
 
   constructor(private commentService: CommentService) {}
 

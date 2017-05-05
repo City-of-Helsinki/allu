@@ -9,6 +9,8 @@ import {DecisionHub} from '../../service/decision/decision-hub';
 import {DecisionService} from '../../service/decision/decision.service';
 import {ProgressBarModule} from '../application/progressbar/progressbar.module';
 import {DistributionModule} from '../application/distribution/distribution.module';
+import {DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
+import {DecisionProposalComponent} from './proposal/decision-proposal.component';
 
 @NgModule({
   imports: [
@@ -22,14 +24,17 @@ import {DistributionModule} from '../application/distribution/distribution.modul
     DecisionComponent,
     DecisionActionsComponent,
     DecisionModalComponent,
-    ApplicationBasicInfoComponent
+    ApplicationBasicInfoComponent,
+    DecisionProposalModalComponent,
+    DecisionProposalComponent
   ],
   providers: [
     DecisionHub,
     DecisionService
   ],
   entryComponents: [
-    DecisionModalComponent
+    DecisionModalComponent,
+    DecisionProposalModalComponent
   ]
 })
 export class DecisionModule {}

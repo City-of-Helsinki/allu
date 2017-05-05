@@ -14,6 +14,11 @@ import {Observable} from 'rxjs';
 import {HttpResponse} from '../../util/http-response';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DecisionDetails} from '../../model/decision/decision-details';
+import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
+import {Comment} from '../../model/application/comment/comment';
+import {ApplicationState} from '../../service/application/application-state';
+import {StatusChangeComment} from '../../model/application/status-change-comment';
+import {CommentType} from '../../model/application/comment/comment-type';
 
 @Component({
   selector: 'decision-actions',
@@ -23,10 +28,18 @@ import {DecisionDetails} from '../../model/decision/decision-details';
 export class DecisionActionsComponent {
   @Input() application: Application;
 
-  constructor(private applicationHub: ApplicationHub,
+  constructor(private applicationState: ApplicationState,
               private decisionHub: DecisionHub,
               private router: Router,
               private dialog: MdDialog) {}
+
+  public decisionProposal(proposalType: string): void {
+    let dialogRef = this.dialog.open(DecisionProposalModalComponent, DECISION_PROPOSAL_MODAL_CONFIG);
+    let component = dialogRef.componentInstance;
+    component.proposal = proposalType;
+    dialogRef.afterClosed()
+      .subscribe(proposal => this.proposalConfirmed(proposal));
+  }
 
   public decision(status: string): void {
     let dialogRef = this.dialog.open(DecisionModalComponent, DECISION_MODAL_CONFIG);
@@ -48,15 +61,30 @@ export class DecisionActionsComponent {
     }
   }
 
+  private proposalConfirmed(comment: StatusChangeComment) {
+    if (comment) {
+      this.applicationState.changeStatus(new ApplicationStatusChange(this.application.id, ApplicationStatus.DECISIONMAKING, comment))
+        .subscribe(app => {
+          this.applicationState.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
+          NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
+          this.application = app;
+        }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
+    }
+  }
+
   private changeStatus(statusChange: ApplicationStatusChange): Observable<Application> {
     statusChange.id = this.application.id;
-    return this.applicationHub.changeStatus(statusChange)
+    return this.applicationState.changeStatus(statusChange)
       .do(application => this.statusChanged(application));
   }
 
   private statusChanged(application: Application): void {
     this.application = application;
     NotificationService.message(findTranslation(['decision.type', this.application.status, 'confirmation']));
+  }
+
+  private storeProposal(proposal: Comment): Observable<Comment> {
+    return this.applicationState.saveComment(this.application.id, proposal);
   }
 
   private sendDecision(applicationId: number, decisionDetails: DecisionDetails): Observable<HttpResponse> {
