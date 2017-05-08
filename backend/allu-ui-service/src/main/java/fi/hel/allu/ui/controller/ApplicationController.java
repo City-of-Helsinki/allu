@@ -3,7 +3,6 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.*;
-import fi.hel.allu.ui.service.AlluMailService;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.AttachmentService;
 import fi.hel.allu.ui.service.DecisionService;
@@ -22,7 +21,6 @@ import javax.validation.Valid;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/applications")
@@ -35,9 +33,6 @@ public class ApplicationController {
 
   @Autowired
   private DecisionService decisionService;
-
-  @Autowired
-  private AlluMailService alluMailService;
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
@@ -225,11 +220,7 @@ public class ApplicationController {
   public ResponseEntity<Void> sendDecision(
       @PathVariable int applicationId,
       @RequestBody DecisionDetailsJson decisionDetailsJson) {
-    String subject = "Aluevarauspäätös"; // TODO: add application's application ID
-    applicationServiceComposer.replaceDistributionList(applicationId, decisionDetailsJson.getDecisionDistributionList());
-    List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
-        .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
-    alluMailService.sendDecision(applicationId, emailRecipients, subject, decisionDetailsJson.getMessageBody());
+    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

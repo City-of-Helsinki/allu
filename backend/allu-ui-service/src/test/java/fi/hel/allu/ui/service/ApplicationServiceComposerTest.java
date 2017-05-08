@@ -1,21 +1,23 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.domain.QueryParameterJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.ui.domain.*;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Stream;
+
+import static org.junit.Assert.assertEquals;
 
 public class ApplicationServiceComposerTest {
 
@@ -25,6 +27,8 @@ public class ApplicationServiceComposerTest {
   private SearchService searchService;
   private ApplicationJsonService applicationJsonService;
   private ApplicationHistoryService applicationHistoryService;
+  private AttachmentService attachmentService;
+  private AlluMailService alluMailService;
 
   private static final int applicationId = 1;
   private static final int projectId = 12;
@@ -39,13 +43,15 @@ public class ApplicationServiceComposerTest {
     searchService = Mockito.mock(SearchService.class);
     applicationJsonService = Mockito.mock(ApplicationJsonService.class);
     applicationHistoryService = Mockito.mock(ApplicationHistoryService.class);
+    attachmentService = Mockito.mock(AttachmentService.class);
+    alluMailService = Mockito.mock(AlluMailService.class);
 
     applicationServiceComposer = new ApplicationServiceComposer(
         applicationService,
         projectService,
         searchService,
         applicationJsonService,
-        applicationHistoryService
+        applicationHistoryService, attachmentService, alluMailService
     );
   }
 
@@ -98,5 +104,46 @@ public class ApplicationServiceComposerTest {
 
     Mockito.verify(projectService, Mockito.times(1)).updateProjectInformation(Collections.singletonList(projectId));
     Mockito.verify(searchService, Mockito.times(1)).updateApplications(Collections.singletonList(updatedApplicationJson));
+  }
+
+  @SuppressWarnings("unchecked")
+  @Test
+  public void testSendDecision() {
+    final int ATTACHMENT_ID_1 = 111;
+    final int ATTACHMENT_ID_2 = 222;
+
+    ApplicationJson applicationJson = Mockito.mock(ApplicationJson.class);
+    Mockito.when(applicationJsonService.getFullyPopulatedApplication(Mockito.any(Application.class)))
+        .thenReturn(applicationJson);
+    Mockito.when(applicationJson.getApplicationId()).thenReturn("HK_BLEU");
+    List<DistributionEntryJson> distribution = Collections
+        .singletonList(emailDistribution("Pekka Pekanpekka", "pekkapekanpekka@pekanpekka.org"));
+    Mockito.when(applicationJson.getDecisionDistributionList()).thenReturn(distribution);
+    Mockito.when(applicationJson.getAttachmentList())
+        .thenReturn(Arrays.asList(attachment("eka", ATTACHMENT_ID_1), attachment("toka", ATTACHMENT_ID_2)));
+    DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
+    decisionDetailsJson.setDecisionDistributionList(distribution);
+
+    applicationServiceComposer.sendDecision(applicationId, decisionDetailsJson);
+
+    ArgumentCaptor<Stream> streamCaptor = ArgumentCaptor.forClass(Stream.class);
+    Mockito.verify(alluMailService).sendDecision(Mockito.eq(applicationId), Mockito.anyList(), Mockito.anyString(),
+        Mockito.anyString(), streamCaptor.capture());
+    assertEquals(2, streamCaptor.getValue().count());
+  }
+
+  private DistributionEntryJson emailDistribution(String name, String email) {
+    DistributionEntryJson distributionEntryJson = new DistributionEntryJson();
+    distributionEntryJson.setDistributionType(DistributionType.EMAIL);
+    distributionEntryJson.setName(name);
+    distributionEntryJson.setEmail(email);
+    return distributionEntryJson;
+  }
+
+  private AttachmentInfoJson attachment(String name, int id) {
+    AttachmentInfoJson attachmentInfoJson = new AttachmentInfoJson();
+    attachmentInfoJson.setName(name);
+    attachmentInfoJson.setId(id);
+    return attachmentInfoJson;
   }
 }

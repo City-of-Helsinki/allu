@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.*;
@@ -9,15 +10,13 @@ import fi.hel.allu.ui.mapper.QueryParameterMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for composing different application related services together. The main purpose of this class is to avoid circular references
@@ -33,6 +32,8 @@ public class ApplicationServiceComposer {
   private SearchService searchService;
   private ApplicationJsonService applicationJsonService;
   private ApplicationHistoryService applicationHistoryService;
+  private AttachmentService attachmentService;
+  private AlluMailService alluMailService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -40,12 +41,16 @@ public class ApplicationServiceComposer {
       ProjectService projectService,
       SearchService searchService,
       ApplicationJsonService applicationJsonService,
-      ApplicationHistoryService applicationHistoryService) {
+      ApplicationHistoryService applicationHistoryService,
+      AttachmentService attachmentService,
+      @Lazy AlluMailService alluMailService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
     this.applicationJsonService = applicationJsonService;
     this.applicationHistoryService = applicationHistoryService;
+    this.attachmentService = attachmentService;
+    this.alluMailService = alluMailService;
   }
 
   /**
@@ -67,19 +72,6 @@ public class ApplicationServiceComposer {
   public List<ApplicationJson> findApplicationByLocation(LocationQueryJson query) {
     return applicationService.findApplicationByLocation(query)
         .stream().map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
-  }
-
-  /**
-   * Replaces distribution list of an application.
-   *
-   * @param applicationId           Application whose distribution list is replaced.
-   * @param distributionEntryJsons  Replacing distribution list.
-   */
-  public void replaceDistributionList(int applicationId, List<DistributionEntryJson> distributionEntryJsons) {
-    ApplicationJson oldApplication = findApplicationById(applicationId);
-    applicationService.replaceDistributionList(applicationId, distributionEntryJsons);
-    ApplicationJson updatedApplication = findApplicationById(applicationId);
-    applicationHistoryService.addFieldChanges(applicationId, oldApplication, updatedApplication);
   }
 
   /**
@@ -237,4 +229,43 @@ public class ApplicationServiceComposer {
   public List<ApplicationChangeJson> getChanges(Integer applicationId) {
     return applicationHistoryService.getChanges(applicationId);
   }
+
+  /**
+   * Send the decision PDF for application as email to an updated distribution
+   * list.
+   *
+   * @param applicationId        the application's Id.
+   * @param decisionDetailsJson  details about the decision
+   */
+  public void sendDecision(int applicationId, DecisionDetailsJson decisionDetailsJson)
+  {
+    ApplicationJson application = replaceDistributionList(applicationId,
+        decisionDetailsJson.getDecisionDistributionList());
+    String subject = "Aluevarauspäätös " + application.getApplicationId();
+    List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
+        .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
+    Stream<Attachment> attachments = application.getAttachmentList().stream()
+        .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())));
+    alluMailService.sendDecision(applicationId, emailRecipients, subject, decisionDetailsJson.getMessageBody(),
+        attachments);
+  }
+
+  /*
+   * Replaces distribution list of an application.
+   *
+   * @param applicationId Application whose distribution list is replaced.
+   *
+   * @param distributionEntryJsons Replacing distribution list.
+   *
+   * @return The updated application
+   */
+  private ApplicationJson replaceDistributionList(int applicationId,
+      List<DistributionEntryJson> distributionEntryJsons) {
+    ApplicationJson oldApplication = findApplicationById(applicationId);
+    applicationService.replaceDistributionList(applicationId, distributionEntryJsons);
+    ApplicationJson updatedApplication = findApplicationById(applicationId);
+    applicationHistoryService.addFieldChanges(applicationId, oldApplication, updatedApplication);
+    return updatedApplication;
+  }
+
 }

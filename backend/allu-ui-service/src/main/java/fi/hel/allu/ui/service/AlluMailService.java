@@ -12,10 +12,10 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for sending mail from allu
@@ -54,7 +54,8 @@ public class AlluMailService {
    * @param recipients list of e-mail addresses
    * @return
    */
-  public void sendDecision(int applicationId, List<String> recipients, String subject, String body) {
+  public void sendDecision(int applicationId, List<String> recipients, String subject, String body,
+      Stream<Attachment> attachments) {
     if (emailAcceptPattern != null) {
       List<String> forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
           .collect(Collectors.toList());
@@ -67,8 +68,10 @@ public class AlluMailService {
     message.setSubject(subject);
     message.setTo(recipients);
     message.setFrom(applicationProperties.getEmailSenderAddress());
+
     message.setAttachments(
-        Collections.singletonList(new Attachment(DECISION_PDF_NAME, decisionService.getDecision(applicationId))));
+        Stream.concat(Stream.of(new Attachment(DECISION_PDF_NAME, decisionService.getDecision(applicationId))),
+            attachments).collect(Collectors.toList()));
     try {
       mailService.send(message);
     } catch (MessagingException e) {
