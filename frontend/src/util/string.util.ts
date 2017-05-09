@@ -34,4 +34,12 @@ export class StringUtil {
   public static toUppercase(s: string): string {
     return s ? s.toLocaleUpperCase() : s;
   }
+
+  public static capitalize(s: string): string {
+    if (s && s.length) {
+      return s.charAt(0).toLocaleUpperCase() + s.slice(1);
+    } else {
+      return s;
+    }
+  }
 }

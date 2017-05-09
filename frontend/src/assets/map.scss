@@ -48,4 +48,13 @@ img.leaflet-marker-icon {
   width: 13px !important;
 }
 
+/* Change cursor when mousing over clickable layer */
+.leaflet-clickable {
+  cursor: pointer;
+}
+/* Change cursor when over entire map */
+.leaflet-container {
+  cursor: default;
+}
+
 

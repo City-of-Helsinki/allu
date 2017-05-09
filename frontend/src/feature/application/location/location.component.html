@@ -16,7 +16,7 @@
                 <searchbar [filter]="searchbarFilter" [datesRequired]="true"
                            (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
               </div>
-              <map [draw]="true" [edit]="editingAllowed" [selection]="true"
+              <map [zoom]="true" [draw]="true" [edit]="editingAllowed" [selection]="true"
                    [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
             </div>
           </div>

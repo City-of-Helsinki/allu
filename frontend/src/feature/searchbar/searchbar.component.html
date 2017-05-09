@@ -1,25 +1,35 @@
 <form [formGroup]="searchForm">
   <div *ngIf="barType === 'SIMPLE'" class="search-box">
     <div class="input-with-addon">
-        <button (click)="showMore()" class="input-addon-item addon-btn"><md-icon>subject</md-icon></button>
-        <input id="address" type="text" formControlName="address"
-               class="input-addon-field last-item"
-               placeholder="Hae hankkeita osoitteella"
-               [autocompletion]="addressSearchResults"
-               (onSearchChange)="onAddressSearchChange($event)"
-               (onSelection)="searchAddress($event)"/>
+      <button type="button" (click)="showMore()" class="input-addon-item addon-btn"><md-icon>subject</md-icon></button>
+      <input type="text" formControlName="address"
+             class="input-addon-field last-item"
+             placeholder="Hae osoitteella"
+             (keyup.enter)="addressSelected(searchForm.value.address)"
+             [mdAutocomplete]="addressSearch"/>
+      <md-autocomplete #addressSearch="mdAutocomplete">
+        <md-option *ngFor="let address of matchingAddresses | async"
+                   [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
+          {{ address.uiStreetAddress }}
+        </md-option>
+      </md-autocomplete>
     </div>
   </div>
 
   <div *ngIf="barType === 'BAR'" class="row">
     <div class="col s8">
-      <input-box>
-        <input boxInput type="text" formControlName="address"
-               placeholder="Hae osoitteella"
-               [autocompletion]="addressSearchResults"
-               (onSearchChange)="onAddressSearchChange($event)"
-               (onSelection)="searchAddress($event)"/>
-      </input-box>
+        <input-box>
+          <input type="text" formControlName="address"
+                 placeholder="Hae osoitteella"
+                 (keyup.enter)="addressSelected(searchForm.value.address)"
+                 [mdAutocomplete]="addressSearch"/>
+        </input-box>
+        <md-autocomplete #addressSearch="mdAutocomplete">
+          <md-option *ngFor="let address of matchingAddresses | async"
+                     [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
+            {{ address.uiStreetAddress }}
+          </md-option>
+        </md-autocomplete>
     </div>
 
     <div class="col s2">
@@ -47,11 +57,17 @@
   <div *ngIf="barType === 'ADVANCED'">
     <div class="col s12">
       <md-input-container class="input-full-width">
-        <input mdInput type="text" value="{{addressSearch}}"
+        <input mdInput type="text" formControlName="address"
+               class="input-addon-field last-item"
                placeholder="Hae osoitteella"
-               [autocompletion]="addressSearchResults"
-               (onSearchChange)="onAddressSearchChange($event)"
-               (onSelection)="searchAddress($event)"/>
+               (keyup.enter)="addressSelected(searchForm.value.address)"
+               [mdAutocomplete]="addressSearch"/>
+        <md-autocomplete #addressSearch="mdAutocomplete">
+          <md-option *ngFor="let address of matchingAddresses | async"
+                     [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
+            {{ address.uiStreetAddress }}
+          </md-option>
+        </md-autocomplete>
       </md-input-container>
     </div>
 
