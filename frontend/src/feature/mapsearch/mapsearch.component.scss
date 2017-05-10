@@ -57,10 +57,10 @@ md-sidenav {
 .btn-right {
   display:inline-block;
   padding: .5em .75em;
-  border: 1px solid #dcdcdc;
+  border: 0px;
   flex: 0;
   border-radius: 6px 0 0 6px;
-  background-color: mat-color($allu-accent, 500);
+  background: mat-color($allu-accent, 500) linear-gradient(to bottom, mat-color($allu-accent, A100), mat-color($allu-accent, A700));
   min-width: 60px;
   width: 60px;
   height: 60px;

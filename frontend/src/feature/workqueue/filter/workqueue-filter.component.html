@@ -3,33 +3,26 @@
     <form [formGroup]="queryForm">
         <div class="row">
             <div class="col s2">
-                <select formControlName="type" materialize="material_select"
-                        multiple [materializeSelectOptions]="queryForm.value.type">
-                    <option *ngIf="tab!=='COMMON'" value="" selected disabled>Hakemuksen tyyppi</option>
-                    <option *ngIf="tab==='COMMON'" value="" selected disabled>Yhteiset hakemustyypit</option>
-                    <option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</option>
-                </select>
+                <md-select formControlName="type" [multiple]="true" placeholder="Hakemuksen tyyppi" class="input-full-width" selected="1">
+                    <md-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</md-option>
+                    <md-option *ngIf="tab==='COMMON'" value="common">Yhteiset hakemustyypit</md-option>
+                </md-select>
             </div>
             <div class="col s2" [hidden]="tab==='OWN'">
-                <select formControlName="handler" materialize="material_select"
-                        multiple [materializeSelectOptions]="queryForm.value.handler">
-                    <option value="" selected disabled>Hakemuksen käsittelijä</option>
-                    <option *ngFor="let handler of handlers" [value]="handler.userName">{{handler.realName}}</option>
-                </select>
+                <md-select formControlName="handler" [multiple]="true" placeholder="Hakemuksen käsittelijä" class="input-full-width">
+                    <md-option *ngFor="let handler of handlers" [value]="handler.userName">{{handler.realName}}</md-option>
+                </md-select>
             </div>
             <div class="col s2">
-                <select formControlName="status" materialize="material_select"
-                        multiple [materializeSelectOptions]="queryForm.value.status">
-                    <option *ngIf="tab!=='COMMON'" value="" selected disabled>Hakemuksen tila</option>
-                    <option *ngIf="tab==='COMMON'" value="" selected disabled>Yhteiset tilat</option>
-                    <option *ngFor="let status of applicationStatuses" [value]="status">{{['application.status', status] | translation}}</option>
-                </select>
+                <md-select formControlName="status" [multiple]="true" placeholder="Hakemuksen tila" class="input-full-width">
+                    <md-option *ngFor="let status of applicationStatuses" [value]="status">{{['application.status', status] | translation}}</md-option>
+                    <md-option *ngIf="tab==='COMMON'" value="common">Yhteiset tilat</md-option>
+                </md-select>
             </div>
             <div class="col s2">
-                <select formControlName="districts" materialize="material_select" multiple>
-                    <option value="" selected disabled>Kaupunginosa</option>
-                    <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
-                </select>
+                <md-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
+                    <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
+                </md-select>
             </div>
             <div class="col s2">
                 <md-input-container class="input-full-width">

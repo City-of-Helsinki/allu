@@ -28,6 +28,10 @@
   border-radius: 6px 6px;
 }
 
+.input-box-content .input-raised {
+  box-shadow: 0 2px 4px 0 #757575;
+}
+
 .input-box-content > .select-wrapper span.caret {
   z-index: $over-map + 1;
   margin-right: 5px;

@@ -28,7 +28,7 @@
         <div class="row no-left-pad">
             <div class="col s12">
                 <md-input-container class="input-full-width" *ngIf="edit">
-                    <textarea mdInput md-autosize [(ngModel)]="comment.text" id="commentText" placeholder="Kommentit"></textarea>
+                    <textarea mdInput mdTextareaAutosize [(ngModel)]="comment.text" id="commentText" placeholder="Kommentit"></textarea>
                 </md-input-container>
 
                 <p *ngIf="!edit" class="text-multiline">{{comment.text}}</p>

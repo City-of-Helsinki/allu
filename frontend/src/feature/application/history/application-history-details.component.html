@@ -5,10 +5,10 @@
     <div *ngIf="change.changeType === 'CREATED'">
         {{user.realName}} luonut hakemuksen {{change.uiChangeTime}}
     </div>
-    <table class="striped" *ngIf="change.changeType === 'STATUS_CHANGED'">
+    <table class="bordered" *ngIf="change.changeType === 'STATUS_CHANGED'">
         Tila vaihdettu {{['application.status', change.newStatus] | translation}}
     </table>
-    <table class="striped" *ngIf="change.changeType === 'CONTENTS_CHANGED'">
+    <table class="bordered" *ngIf="change.changeType === 'CONTENTS_CHANGED'">
         <thead>
         <tr>
             <th>Kenttä</th>

@@ -18,7 +18,9 @@ import {NotificationService} from '../../../service/notification/notification.se
 @Component({
   selector: 'project-edit',
   template: require('./project-edit.component.html'),
-  styles: []
+  styles: [
+    require('./project-edit.component.scss')
+  ]
 })
 export class ProjectEditComponent {
   projectInfoForm: FormGroup;

@@ -17,7 +17,9 @@ import {ApplicantWithContacts} from '../../model/application/applicant/applicant
 @Component({
   selector: 'customer',
   template: require('./customer.component.html'),
-  styles: []
+  styles: [
+    require('./customer.component.scss')
+  ]
 })
 export class CustomerComponent implements OnInit {
   applicantTypes = EnumUtil.enumValues(ApplicantType);

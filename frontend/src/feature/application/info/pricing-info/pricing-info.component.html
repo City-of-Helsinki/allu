@@ -2,12 +2,13 @@
     <md-card>
         <md-card-title>Hinnoitteluperusteet</md-card-title>
         <md-card-content>
-            <div class="row form-group">
-                <div *ngIf="kind==='OUTDOOREVENT'">
-                    <div class="col m6 no-padding">
+            <div class="row form-group" *ngIf="kind==='OUTDOOREVENT'">
+                <div class="col m6 no-padding">
+                    <div class="row row-slim">
                         <div class="col m12">
-                            <md-select formControlName="nature" placeholder="Tapahtuman luonne*" class="input-full-width">
-                                <md-option *ngFor="let nature of eventNatures" [value]="nature" (onSelect)="eventNatureChange(nature)">
+                            <md-select formControlName="nature" placeholder="Tapahtuman luonne*" class="input-full-width"
+                                       (change)="eventNatureChange($event.value)">
+                                <md-option *ngFor="let nature of eventNatures" [value]="nature">
                                     {{['application.event.nature', nature] | translation}}
                                 </md-option>
                             </md-select>
@@ -15,10 +16,21 @@
                                 {{'application.event.field.natureMissing' | translation}}
                             </field-error>
                         </div>
-                        <div class="col m12 input-field-checkbox" *ngIf="form.value.nature === 'PUBLIC_FREE'">
-                            <md-checkbox formControlName="noPrice" (change)="noPriceChange($event.checked)">
-                                Korvauksetta
-                            </md-checkbox>
+                        <div class="row">
+                            <div class="col m12 input-field-checkbox">
+                                <md-checkbox formControlName="ecoCompass">Hakijalla Ekokompassi tapahtuma -sertifikaatti (-30 %)</md-checkbox>
+                            </div>
+                            <div class="col m12 input-field-checkbox" [hidden]="form.value.nature !== 'PUBLIC_FREE'">
+                                <md-checkbox formControlName="noPrice" (change)="noPriceChange($event.checked)">
+                                    Korvauksetta
+                                </md-checkbox>
+                            </div>
+                            <div class="col m12 input-field-checkbox" *ngIf="form.value.noPrice">
+                                <md-checkbox formControlName="salesActivity">Tapahtuma sisältää kaupallista toimintaa (+50%)</md-checkbox>
+                            </div>
+                            <div class="col m12 input-field-checkbox" *ngIf="form.value.noPrice">
+                                <md-checkbox formControlName="heavyStructure">Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (+50 %)</md-checkbox>
+                            </div>
                         </div>
                         <div class="col m12" *ngIf="form.value.noPrice">
                             <md-select formControlName="noPriceReason" placeholder="Peruste korvauksettomuudelle" class="input-full-width">
@@ -28,21 +40,10 @@
                             </md-select>
                         </div>
                     </div>
-                    <div class="col m6 no-padding">
-                        <div class="col m12">
-                            <md-checkbox formControlName="ecoCompass">Hakijalla Ekokompassi tapahtuma -sertifikaatti (-30 %)</md-checkbox>
-                        </div>
-                        <div class="col m12" *ngIf="form.value.noPrice">
-                            <md-checkbox formControlName="salesActivity">Tapahtuma sisältää kaupallista toimintaa (+50%)</md-checkbox>
-                        </div>
-                        <div class="col m12" *ngIf="form.value.noPrice">
-                            <md-checkbox formControlName="heavyStructure">Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (+50 %)</md-checkbox>
-                        </div>
-                    </div>
                 </div>
             </div>
-            <div class="row form-group">
-                <div *ngIf="kind==='BRIDGE_BANNER'" class="col m6 no-padding">
+            <div class="row form-group" *ngIf="kind==='BRIDGE_BANNER'">
+                <div class="col m6 no-padding">
                     <div class="col m12">
                         <md-checkbox formControlName="commercial">Kaupallinen</md-checkbox>
                     </div>
@@ -59,8 +60,6 @@
                         <input mdInput type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
                     </md-input-container>
                 </div>
-            </div>
-            <div class="row form-group">
                 <div class="col m3">
                     <md-input-container class="input-full-width">
                         <input mdInput type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>

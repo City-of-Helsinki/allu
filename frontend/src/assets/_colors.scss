@@ -73,7 +73,7 @@ $allu-orange: (
 );
 
 $allu-primary: mat-palette($allu-blue);
-$allu-accent:  mat-palette($allu-orange, A200, A100, A400);
+$allu-accent:  mat-palette($allu-orange);
 $allu-warn:    mat-palette($mat-red);
 $allu-theme:   mat-light-theme($allu-primary, $allu-accent, $allu-warn);
 

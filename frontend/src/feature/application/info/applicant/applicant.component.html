@@ -1,6 +1,6 @@
 <form [formGroup]="applicantForm">
-    <div class="col m6 loose">
-        <md-card>
+    <div class="col m6">
+        <md-card class="applicant-card">
             <md-card-title>
                 {{headerText}}
                 <button md-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()"><md-icon>mode_edit</md-icon></button>

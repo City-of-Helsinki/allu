@@ -20,7 +20,9 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'representative'];
   selector: 'applicant',
   viewProviders: [],
   template: require('./applicant.component.html'),
-  styles: []
+  styles: [
+    require('./applicant.component.scss')
+  ]
 })
 export class ApplicantComponent implements OnInit, OnDestroy {
   @Input() applicationForm: FormGroup;

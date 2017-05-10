@@ -1,18 +1,20 @@
-<div materialize class="row">
-    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+    <div class="row">
         <applicant [applicationForm]="applicationForm"  [applicant]="application.applicant"
                    [readonly]="readonly" headerText="Johtoselvityksen tilaaja" formName="orderer"
                    [contactList]="application.contactList"
                    contactHeaderText="Yhteyshenkilö" contactFormName="ordererContacts"></applicant>
+    </div>
 
-        <div class="col m12 loose">
+    <div class="row">
+        <div class="col m12">
             <md-card>
                 <md-card-title>Johtoselvityksen tiedot</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
                         <div class="col m12">
                             <md-input-container class="input-full-width">
-                                <textarea mdInput md-autosize formControlName="workDescription" placeholder="Työn kuvaus"></textarea>
+                                <textarea mdInput mdTextareaAutosize formControlName="workDescription" placeholder="Työn kuvaus"></textarea>
                             </md-input-container>
                         </div>
                     </div>
@@ -69,26 +71,41 @@
                 </md-card-content>
             </md-card>
         </div>
+    </div>
 
-        <div *ngIf="applicationForm.value.cableSurveyRequired">
-            <applicant [applicationForm]="applicationForm" [applicant]="application.extension.owner"
-                       [readonly]="readonly" headerText="Omistaja" formName="owner"
-                       [contactList]="application.extension.contactList"
-                       contactHeaderText="Yhteyshenkilö" contactFormName="ownerContact"></applicant>
+    <div class="row" *ngIf="applicationForm.value.cableSurveyRequired">
+        <applicant [applicationForm]="applicationForm" [applicant]="application.extension.owner"
+                   [readonly]="readonly" headerText="Omistaja" formName="owner"
+                   [contactList]="application.extension.contactList"
+                   contactHeaderText="Yhteyshenkilö" contactFormName="ownerContact"></applicant>
+    </div>
+
+    <div class="row">
+        <div class="col m12">
+            <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="readonly"></cable-info>
         </div>
+    </div>
 
-        <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="readonly"></cable-info>
 
-        <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
+    <div class="row" *ngIf="readonly">
+        <div class="col m12">
+            <location-details [application]="application" [readonly]="readonly"></location-details>
+        </div>
+    </div>
 
-        <div class="col s12">
+    <div class="row">
+        <div class="col m12">
             <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
         </div>
+    </div>
 
-        <application-actions
-            [readonly]="readonly"
-            [applicationId]="application.id"
-            [form]="applicationForm"
-            [submitPending]="submitPending"></application-actions>
-    </form>
-</div>
+    <div class="row">
+        <div class="col m12">
+            <application-actions
+                [readonly]="readonly"
+                [applicationId]="application.id"
+                [form]="applicationForm"
+                [submitPending]="submitPending"></application-actions>
+        </div>
+    </div>
+</form>

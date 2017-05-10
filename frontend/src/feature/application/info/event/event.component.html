@@ -1,23 +1,31 @@
-<div materialize class="row">
-  <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+  <div class="row">
     <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
                [readonly]="readonly" [showCopyToBilling]="true" [showRepresentative]="true"
                [contactList]="application.contactList" [addNew]="true"></applicant>
+  </div>
 
-    <event-details [applicationForm]="applicationForm" [application]="application" [readonly]="readonly"></event-details>
+  <event-details [applicationForm]="applicationForm" [application]="application" [readonly]="readonly"></event-details>
 
-    <div class="col s12" *ngIf="showTerms">
+  <div class="row" *ngIf="showTerms">
+    <div class="col s12" >
       <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
     </div>
+  </div>
 
+  <div class="row">
     <div class="col s12">
       <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
     </div>
+  </div>
 
-    <application-actions
-        [readonly]="readonly"
-        [applicationId]="application.id"
-        [form]="applicationForm"
-        [submitPending]="submitPending"></application-actions>
-  </form>
-</div>
+  <div class="row">
+    <div class="col s12">
+      <application-actions
+          [readonly]="readonly"
+          [applicationId]="application.id"
+          [form]="applicationForm"
+          [submitPending]="submitPending"></application-actions>
+    </div>
+  </div>
+</form>

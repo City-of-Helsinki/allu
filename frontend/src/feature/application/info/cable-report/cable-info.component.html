@@ -1,48 +1,46 @@
-<div class="col m12 loose">
-    <md-card>
-        <md-card-title>Johtotiedot</md-card-title>
-        <md-card-content>
-            <div [formGroup]="cableInfoForm">
-                <div class="row form-group">
-                    <div class="col m4">
-                        <select formControlName="selectedCableInfoTypes" materialize="material_select" multiple>
-                            <option value="" disabled selected>Valitse tyyppi*</option>
-                            <option *ngFor="let type of cableInfoTypes" value="{{type}}">{{['defaultText.type', type] | translation}}</option>
-                        </select>
-                    </div>
-                    <div class="col m2">
-                        <md-input-container class="input-full-width">
-                            <input mdInput type="number" formControlName="mapExtractCount" placeholder="Karttaotteiden määrä"/>
-                        </md-input-container>
-                    </div>
+<md-card>
+    <md-card-title>Johtotiedot</md-card-title>
+    <md-card-content>
+        <div [formGroup]="cableInfoForm">
+            <div class="row form-group">
+                <div class="col m4">
+                    <md-select formControlName="selectedCableInfoTypes" [multiple]="true"
+                               placeholder="Valitse tyyppi*" class="input-full-width">
+                        <md-option *ngFor="let type of cableInfoTypes" value="{{type}}">{{['defaultText.type', type] | translation}}</md-option>
+                    </md-select>
                 </div>
-                <div formArrayName="cableInfoEntries" class="row form-group">
-                    <div class="col m8" *ngFor="let infoEntry of cableInfoForm.controls.cableInfoEntries.controls; let index=index">
-                        <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
-                            <div class="form-group-label">{{['defaultText.type', infoEntry.value.type] | translation}}</div>
+                <div class="col m2">
+                    <md-input-container class="input-full-width">
+                        <input mdInput type="number" formControlName="mapExtractCount" placeholder="Karttaotteiden määrä"/>
+                    </md-input-container>
+                </div>
+            </div>
+            <div formArrayName="cableInfoEntries" class="row form-group">
+                <div class="col m8" *ngFor="let infoEntry of cableInfoForm.controls.cableInfoEntries.controls; let index=index">
+                    <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
+                        <div class="form-group-label">{{['defaultText.type', infoEntry.value.type] | translation}}</div>
 
-                            <div *ngIf="!readonly" class="col m10">
-                                <md-select class="input-full-width" placeholder="Vakiotekstit">
-                                    <md-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]"
-                                               (onSelect)="addDefaultText(index, defaultText.text)">
-                                        {{defaultText.text}}
-                                    </md-option>
-                                </md-select>
-                            </div>
-                            <div *ngIf="!readonly" class="col m2">
-                                <button md-raised-button type="button" color="primary"
-                                        (click)="editDefaultTexts(infoEntry.value.type)">MUOKKAA</button>
-                            </div>
+                        <div *ngIf="!readonly" class="col m10">
+                            <md-select class="input-full-width" placeholder="Vakiotekstit">
+                                <md-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]"
+                                           (onSelect)="addDefaultText(index, defaultText.text)">
+                                    {{defaultText.text}}
+                                </md-option>
+                            </md-select>
+                        </div>
+                        <div *ngIf="!readonly" class="col m2">
+                            <button md-raised-button type="button" color="primary"
+                                    (click)="editDefaultTexts(infoEntry.value.type)">MUOKKAA</button>
+                        </div>
 
-                            <div class="col m12">
-                                <md-input-container class="input-full-width">
-                                    <textarea mdInput md-autosize formControlName="additionalInfo" placeholder="Lisätietoja"></textarea>
-                                </md-input-container>
-                            </div>
+                        <div class="col m12">
+                            <md-input-container class="input-full-width">
+                                <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" placeholder="Lisätietoja"></textarea>
+                            </md-input-container>
                         </div>
                     </div>
                 </div>
             </div>
-        </md-card-content>
-    </md-card>
-</div>
+        </div>
+    </md-card-content>
+</md-card>

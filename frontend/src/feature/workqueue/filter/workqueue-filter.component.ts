@@ -20,6 +20,7 @@ const HANDLER_FIELD = 'handler';
 const TAGS_FIELD = 'tags';
 const TYPE_FIELD = 'type';
 const STATUS_FIELD = 'status';
+const COMMON_MULTISELECT_VALUE = ['common'];
 
 @Component({
   selector: 'workqueue-filter',
@@ -90,7 +91,7 @@ export class WorkQueueFilterComponent implements OnInit {
 
   private commonTabSelected(): void {
     this.tagTypes = EnumUtil.enumValues(ApplicationTagType);
-    this.queryForm.patchValue({tags: []});
+    this.queryForm.patchValue({tags: [], type: COMMON_MULTISELECT_VALUE, status: COMMON_MULTISELECT_VALUE});
     this.setHandlers([]);
     this.queryForm.get(TYPE_FIELD).disable();
     this.queryForm.get(STATUS_FIELD).disable();

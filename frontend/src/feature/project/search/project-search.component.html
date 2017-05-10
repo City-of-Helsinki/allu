@@ -1,4 +1,4 @@
-<div>
+<div class="main-content">
     <div class="search-bar">
         <h1>HAKU</h1>
         <form [formGroup]="queryForm">
@@ -14,10 +14,9 @@
                     </md-input-container>
                 </div>
                 <div class="col m2">
-                    <select formControlName="districts" materialize="material_select" multiple>
-                        <option value="" disabled selected>Kaupunginosa</option>
-                        <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
-                    </select>
+                    <md-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
+                        <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
+                    </md-select>
                 </div>
                 <div class="col m1">
                     <md-input-container class="input-full-width">

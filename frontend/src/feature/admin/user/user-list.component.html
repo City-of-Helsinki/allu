@@ -1,36 +1,38 @@
-<div class="row">
-    <div class="col s12 loose">
-        <button md-raised-button type="button" color="primary" (click)="newUser()">Lisää uusi käyttäjä</button>
-    </div>
-    <div class=" col s12">
-        <table class="striped responsive-table">
-            <thead>
-            <tr>
-                <th>Käyttäjänimi</th>
-                <th>Nimi</th>
-                <th>Sähköposti</th>
-                <th>Roolit</th>
-                <th>Hakemustyypit</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr *ngFor="let user of users | async" class="clickable row-highlight"
-                (click)="onSelect(user)">
-                <td>{{user.userName}}</td>
-                <td>{{user.realName}}</td>
-                <td>{{user.emailAddress}}</td>
-                <td>
+<div class="main-content">
+    <div class="row">
+        <div class="col s12 loose">
+            <button md-raised-button type="button" color="primary" (click)="newUser()">Lisää uusi käyttäjä</button>
+        </div>
+        <div class=" col s12">
+            <table class="bordered responsive-table">
+                <thead>
+                <tr>
+                    <th>Käyttäjänimi</th>
+                    <th>Nimi</th>
+                    <th>Sähköposti</th>
+                    <th>Roolit</th>
+                    <th>Hakemustyypit</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let user of users | async" class="clickable row-highlight"
+                    (click)="onSelect(user)">
+                    <td>{{user.userName}}</td>
+                    <td>{{user.realName}}</td>
+                    <td>{{user.emailAddress}}</td>
+                    <td>
                     <span *ngFor="let role of user.assignedRoles; let last=last">
                         {{translations.user.role[role] | commaSeparated: last}}
                     </span>
-                </td>
-                <td>
+                    </td>
+                    <td>
                     <span *ngFor="let applicationType of user.allowedApplicationTypes; let last=last">
                         {{translations.application.type[applicationType] | commaSeparated: last}}
                     </span>
-                </td>
-            </tr>
-            </tbody>
-        </table>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

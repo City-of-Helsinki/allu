@@ -20,10 +20,11 @@
                             </md-select>
                         </div>
                         <div class="col m12 type-select" *ngIf="showSpecifierSelection()">
-                            <select formControlName="specifiers" materialize="material_select" multiple [materializeSelectOptions]="selectableSpecifiers">
-                                <option value="" disabled selected>Työn tarkenne</option>
-                                <option *ngFor="let specifier of selectableSpecifiers" [value]="specifier">{{['application.specifier', specifier] | translation}}</option>
-                            </select>
+                            <md-select formControlName="specifiers" [multiple]="true" placeholder="Työn tarkenne" class="input-full-width">
+                                <md-option *ngFor="let specifier of selectableSpecifiers" [value]="specifier">
+                                    {{['application.specifier', specifier] | translation}}
+                                </md-option>
+                            </md-select>
                         </div>
                     </div>
                 </form>

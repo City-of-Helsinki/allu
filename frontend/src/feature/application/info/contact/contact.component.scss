@@ -1,3 +1,17 @@
-.col.contact-card:first-of-type {
-  padding-bottom: 65px;
+.col.contact-card {
+  padding-bottom: 20px;
+}
+
+.col.contact-card:not(:first-of-type) {
+  padding-top: 20px;
+}
+
+.col.contact-card:first-of-type:not(last-of-type) {
+  height: 384px;
+}
+
+/* Makes last cards (2 cards per row) to have no bottom padding */
+.col.contact-card:last-of-type:not(:first-of-type),
+.col.contact-card:nth-last-of-type(2):nth-of-type(even) {
+  padding-bottom: 0;
 }

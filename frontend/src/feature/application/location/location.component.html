@@ -1,9 +1,7 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
-<div class="row">
-  <application-type (onTypeChange)="onApplicationTypeChange($event)"
-                    (onKindChange)="onApplicationKindChange($event)"
-                    (onSpecifierChange)="onApplicationSpecifierChange($event)"></application-type>
-</div>
+<application-type (onTypeChange)="onApplicationTypeChange($event)"
+                  (onKindChange)="onApplicationKindChange($event)"
+                  (onSpecifierChange)="onApplicationSpecifierChange($event)"></application-type>
 <form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" [hidden]="!typeSelected">
   <div class="row">
     <div class="col m12">
@@ -36,18 +34,12 @@
                 </div>
                 <div class="col m2">
                   <div *ngIf="sections.length > 0">
-                    <select formControlName="sections" materialize="material_select" [materializeSelectOptions]="sections" multiple>
-                      <option value="" disabled selected>Ei lohkoa</option>
+                    <md-select formControlName="sections" [multiple]="true" placeholder="Lohko">
                       <option *ngFor="let section of sections" [value]="section.id">{{section.name}}</option>
-                    </select>
+                    </md-select>
                   </div>
                 </div>
               </div>
-            </div>
-            <div class="col m12">
-              <md-input-container class="input-full-width">
-                <input mdInput type="text" formControlName="info" placeholder="Lisätietoja paikasta"/>
-              </md-input-container>
             </div>
             <div class="col m2">
               <md-input-container class="input-full-width">
@@ -70,18 +62,23 @@
                 <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
               </md-select>
             </div>
+            <div class="col m8">
+              <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="info" placeholder="Lisätietoja paikasta"/>
+              </md-input-container>
+            </div>
             <div class="col m12" *ngIf="multipleLocations">
               <button md-raised-button type="button" color="primary" [disabled]="!locationForm.valid" (click)="store(locationForm.value)">TALLENNA</button>
               <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
             </div>
           </div>
+          <div class="row" *ngIf="multipleLocations">
+            <div class="col m12">
+              <stored-locations></stored-locations>
+            </div>
+          </div>
         </md-card-content>
       </md-card>
-    </div>
-  </div>
-  <div class="row" *ngIf="multipleLocations">
-    <div class="col m12">
-      <stored-locations></stored-locations>
     </div>
   </div>
   <div class="row">

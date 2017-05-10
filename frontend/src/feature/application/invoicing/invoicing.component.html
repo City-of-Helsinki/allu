@@ -9,8 +9,8 @@
             <invoice-rows [parentForm]="invoicingForm" [applicationId]="applicationId"></invoice-rows>
         </div>
     </div>
-    <div class="row">
-        <div class="col m12" *ngIf="invoicingForm.dirty">
+    <div class="row" *ngIf="invoicingForm.dirty">
+        <div class="col m12">
             <button type="submit" md-raised-button color="primary" [disabled]="!invoicingForm.valid">TALLENNA</button>
             <button type="button" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
         </div>

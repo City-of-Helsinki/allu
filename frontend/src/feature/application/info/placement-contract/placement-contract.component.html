@@ -1,97 +1,111 @@
-<div materialize class="row">
-    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
-        <div class="row">
-            <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                       [readonly]="readonly" headerText="Hakija" formName="applicant"
-                       [showCopyToBilling]="true" [showRepresentative]="true"
-                       [representative]="application.extension.representative"
-                       [contactList]="application.contactList"
-                       contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
-        </div>
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+    <div class="row">
+        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
+                   [readonly]="readonly" headerText="Hakija" formName="applicant"
+                   [showCopyToBilling]="true" [showRepresentative]="true"
+                   [representative]="application.extension.representative"
+                   [contactList]="application.contactList"
+                   contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
+    </div>
 
-        <div class="row" *ngIf="applicationForm.value.applicant?.representative">
-            <applicant [applicationForm]="applicationForm" [applicant]="application.extension.representative"
-                       [readonly]="readonly" headerText="Asiamies" formName="representative"
-                       [contactList]="application.extension.representativeContactList"
-                       contactHeaderText="Yhteyshenkilö" contactFormName="contact"></applicant>
-        </div>
+    <div class="row" *ngIf="applicationForm.value.applicant?.representative">
+        <applicant [applicationForm]="applicationForm" [applicant]="application.extension.representative"
+                   [readonly]="readonly" headerText="Asiamies" formName="representative"
+                   [contactList]="application.extension.representativeContactList"
+                   contactHeaderText="Yhteyshenkilö" contactFormName="contact"></applicant>
+    </div>
 
-        <div class="col m12 loose">
-            <md-card>
-                <md-card-title>Sijoitussopimuksen tiedot</md-card-title>
-                <md-card-content>
-                    <div class="row form-group">
-                        <div class="col m6">
+    <div class="row">
+        <div class="col m12">
+        <md-card>
+            <md-card-title>Sijoitussopimuksen tiedot</md-card-title>
+            <md-card-content>
+                <div class="row form-group">
+                    <div class="col m6">
+                        <md-input-container class="input-full-width">
+                            <input mdInput type="text" formControlName="diaryNumber" placeholder="Diaarinumero"/>
+                        </md-input-container>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div formGroupName="validityTimes">
+                        <div class="col s3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="diaryNumber" placeholder="Diaarinumero"/>
+                                <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"/>
+                                <md-hint>
+                                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                                        {{'application.common.field.validityStartTimeMissing' | translation}}
+                                    </field-error>
+                                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                                        {{'application.common.field.validityStartBeforeEnd' | translation}}
+                                    </field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col s3">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"/>
+                                <md-hint>
+                                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                                        {{'application.common.field.validityEndTimeMissing' | translation}}
+                                    </field-error>
+                                </md-hint>
                             </md-input-container>
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <div formGroupName="validityTimes">
-                            <div class="col s3">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
-                                    <md-hint>
-                                        <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                                            {{'application.common.field.validityStartTimeMissing' | translation}}
-                                        </field-error>
-                                        <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                                            {{'application.common.field.validityStartBeforeEnd' | translation}}
-                                        </field-error>
-                                    </md-hint>
-                                </md-input-container>
-                            </div>
-                            <div class="col s3">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
-                                    <md-hint>
-                                        <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                                            {{'application.common.field.validityEndTimeMissing' | translation}}
-                                        </field-error>
-                                    </md-hint>
-                                </md-input-container>
-                            </div>
-                        </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col m12">
+                        <md-input-container class="input-full-width">
+                            <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" placeholder="Työn kuvaus"></textarea>
+                        </md-input-container>
                     </div>
-                    <div class="row form-group">
-                        <div class="col m12">
-                            <md-input-container class="input-full-width">
-                                <textarea mdInput md-autosize formControlName="additionalInfo" placeholder="Työn kuvaus"></textarea>
-                            </md-input-container>
-                        </div>
-                        <div class="col m12">
-                            <md-input-container class="input-full-width">
-                                <textarea mdInput md-autosize formControlName="generalTerms" placeholder="Yleiset ehdot"></textarea>
-                            </md-input-container>
-                        </div>
+                    <div class="col m12">
+                        <md-input-container class="input-full-width">
+                            <textarea mdInput mdTextareaAutosize formControlName="generalTerms" placeholder="Yleiset ehdot"></textarea>
+                        </md-input-container>
                     </div>
-                </md-card-content>
-            </md-card>
-        </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+    </div>
 
-        <div class="col m12 loose">
+    <div class="row">
+        <div class="col m12">
             <pricing-info [form]="applicationForm"></pricing-info>
         </div>
+    </div>
 
-        <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
+    <div class="row" *ngIf="readonly">
+        <div class="col m12">
+            <location-details [application]="application" [readonly]="readonly"></location-details>
+        </div>
+    </div>
 
-        <div class="col s12" *ngIf="showTerms">
+    <div class="row" *ngIf="showTerms">
+        <div class="col s12">
             <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
         </div>
+    </div>
 
+    <div class="row">
         <div class="col s12">
             <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
         </div>
+    </div>
 
-        <application-actions
-            [readonly]="readonly"
-            [applicationId]="application.id"
-            [form]="applicationForm"
-            [submitPending]="submitPending"></application-actions>
-    </form>
-</div>
+    <div class="row">
+        <div class="col s12">
+            <application-actions
+                [readonly]="readonly"
+                [applicationId]="application.id"
+                [form]="applicationForm"
+                [submitPending]="submitPending"></application-actions>
+        </div>
+    </div>
+</form>

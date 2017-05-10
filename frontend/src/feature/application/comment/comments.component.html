@@ -3,12 +3,12 @@
     <span><button md-mini-fab type="button" color="primary" (click)="addNew()"><md-icon>add</md-icon></button></span>
 </h1>
 
-<div class="row">
-    <ul>
-        <li *ngFor="let comment of comments; let i = index;">
-            <div class="col s11 loose">
+<ul>
+    <li *ngFor="let comment of comments; let i = index;">
+        <div class="row">
+            <div class="col s12">
                 <comment [comment]="comment" (onSave)="save(i, $event)" (onRemove)="remove(i, $event)"></comment>
             </div>
-        </li>
-    </ul>
-</div>
+        </div>
+    </li>
+</ul>

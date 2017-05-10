@@ -77,31 +77,14 @@ button:focus {
   background: transparent;
 }
 
-.on-map {
-  position: absolute;
-  z-index: 100;
-}
-
-.map-button {
-  height: 35px;
-  text-align: center;
-  width: 35px;
+.main-content {
+  margin: 0 24px;
 }
 
 .select-wrapper {
   .dropdown-content {
     z-index: 9999;
   }
-}
-
-.row  {
-  .loose {
-    margin: 10px 0px;
-  }
-}
-
-.row.loose {
-  margin-top: 10px;
 }
 
 .clickable {
@@ -187,11 +170,8 @@ label.mat-checkbox-layout,
   font-weight: bold;
 }
 
-.row .input-field-checkbox {
-  min-height: 3rem;
-  height: 3rem;
-  margin-top: 26px;
-  margin-bottom: 5px;
+.input-field-checkbox {
+  margin: 10px 0;
 }
 
 .row.no-left-pad .col {
@@ -199,6 +179,10 @@ label.mat-checkbox-layout,
   label {
     left: 0;
   }
+}
+
+.row.row-slim {
+  margin-bottom: 0px;
 }
 
 md-card {
@@ -261,9 +245,13 @@ md-card-content {
 }
 
 ul.card-list {
-  padding: 10px;
+  padding: 0 10px;
   display: flex;
   flex-direction: column;
+
+  li {
+    margin: 0 0 20px 0;
+  }
 }
 
 .slim-card {

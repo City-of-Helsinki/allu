@@ -1,61 +1,58 @@
-<div class="row">
-    <div class="col m6">
-    <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
-        <h5>Käyttäjän tiedot</h5>
-        <div class="row">
-            <div class="col m12">
-                <div class="col s12">
-                    <md-input-container class="input-full-width">
-                        <input mdInput type="text" formControlName="userName" placeholder="Käyttäjänimi"/>
-                    </md-input-container>
+<div class="main-content">
+    <div class="row">
+        <div class="col m6">
+            <form [formGroup]="userForm" (ngSubmit)="save(userForm.value)">
+                <h5>Käyttäjän tiedot</h5>
+                <div class="row">
+                    <div class="col m12">
+                        <div class="col s12">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="userName" placeholder="Käyttäjänimi"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col s12">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="realName" placeholder="Nimi"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col s12">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col s12">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="title" placeholder="Tehtävänimike"/>
+                            </md-input-container>
+                        </div>
+                        <div class="col s12 checkbox-height">
+                            <md-checkbox formControlName="isActive">Aktiivinen</md-checkbox>
+                        </div>
+                        <div class="col s12">
+                            <md-select formControlName="allowedApplicationTypes" [multiple]="true"
+                                       placeholder="Sallitut hakemustyypit" class="input-full-width">
+                                <md-option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</md-option>
+                            </md-select>
+                        </div>
+                        <div class="col s12">
+                            <md-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit" class="input-full-width">
+                                <md-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole()">{{translations.user.role['ROLE_ADMIN']}}</md-option>
+                                <md-option *ngFor="let role of roles" [value]="role">{{translations.user.role[role]}}</md-option>
+                            </md-select>
+                        </div>
+                        <div class="col s12">
+                            <md-select formControlName="cityDistrictIds" [multiple]="true" placeholder="Kaupunginosat" class="input-full-width">
+                                <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
+                            </md-select>
+                        </div>
+                    </div>
                 </div>
-                <div class="input-field col s12">
-                    <md-input-container class="input-full-width">
-                        <input mdInput type="text" formControlName="realName" placeholder="Nimi"/>
-                    </md-input-container>
+                <div class="row">
+                    <div class="col m12">
+                        <button md-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna</button>
+                    </div>
                 </div>
-                <div class="input-field col s12">
-                    <md-input-container class="input-full-width">
-                        <input mdInput type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
-                    </md-input-container>
-                </div>
-                <div class="input-field col s12">
-                    <md-input-container class="input-full-width">
-                        <input mdInput type="text" formControlName="title" placeholder="Tehtävänimike"/>
-                    </md-input-container>
-                </div>
-                <div class="input-field col s12 checkbox-height">
-                    <md-checkbox formControlName="isActive">Aktiivinen</md-checkbox>
-                </div>
-                <div class="input-field col s12">
-                    <select formControlName="allowedApplicationTypes" materialize="material_select" multiple>
-                        <option value="" selected disabled>Sallitut hakemustyypit</option>
-                        <option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</option>
-                    </select>
-                    <label>Sallitut hakemustyypit</label>
-                </div>
-                <div class="input-field col s12">
-                    <select formControlName="assignedRoles" materialize="material_select" multiple>
-                        <option value="" selected disabled>Roolit</option>
-                        <option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole()">{{translations.user.role['ROLE_ADMIN']}}</option>
-                        <option *ngFor="let role of roles" [value]="role">{{translations.user.role[role]}}</option>
-                    </select>
-                    <label>Roolit</label>
-                </div>
-                <div class="col s12">
-                    <select formControlName="cityDistrictIds" materialize="material_select" multiple>
-                        <option value="" selected disabled>Kaupunginosa</option>
-                        <option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</option>
-                    </select>
-                    <label>Kaupunginosat</label>
-                </div>
-            </div>
+            </form>
         </div>
-        <div class="row">
-            <div class="col m12">
-                <button md-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna</button>
-            </div>
-        </div>
-    </form>
     </div>
 </div>

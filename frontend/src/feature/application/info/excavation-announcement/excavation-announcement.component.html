@@ -1,197 +1,218 @@
-<div materialize class="row">
-    <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
-        <div class="row">
-            <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                       [readonly]="readonly" headerText="Hakija" formName="applicant"
-                       [showCopyToBilling]="true" [showPropertyDeveloper]="true"
-                       [propertyDeveloper]="!!application.extension.propertyDeveloper"
-                       [contactList]="application.contactList"
-                       contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
-        </div>
 
-        <div class="row" *ngIf="applicationForm.value.applicant?.propertyDeveloper">
-            <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.propertyDeveloper"
-                       [readonly]="readonly" headerText="Rakennuttaja" formName="propertyDeveloper"
-                       [showCopyToBilling]="true"
-                       [contactList]="application.extension?.propertyDeveloperContactList"
-                       contactHeaderText="Yhteyshenkilö" contactFormName="propertyDeveloperContact"></applicant>
-        </div>
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+    <div class="row">
+        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
+                   [readonly]="readonly" headerText="Hakija" formName="applicant"
+                   [showCopyToBilling]="true" [showPropertyDeveloper]="true"
+                   [propertyDeveloper]="!!application.extension.propertyDeveloper"
+                   [contactList]="application.contactList"
+                   contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
+    </div>
 
-        <div class="row">
-            <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.contractor"
-                       [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
-                       [showCopyToBilling]="true" [showRepresentative]="true"
-                       [contactList]="application.extension?.responsiblePersonList"
-                       contactHeaderText="Vastuuhenkilö" contactFormName="responsiblePerson"></applicant>
-        </div>
+    <div class="row" *ngIf="applicationForm.value.applicant?.propertyDeveloper">
+        <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.propertyDeveloper"
+                   [readonly]="readonly" headerText="Rakennuttaja" formName="propertyDeveloper"
+                   [showCopyToBilling]="true"
+                   [contactList]="application.extension?.propertyDeveloperContactList"
+                   contactHeaderText="Yhteyshenkilö" contactFormName="propertyDeveloperContact"></applicant>
+    </div>
 
-        <div class="col m6 loose">
-            <md-card>
-                <md-card-title>Kaivuilmoituksen voimassaolo</md-card-title>
-                <md-card-content>
-                    <div class="row form-group">
-                        <div formGroupName="validityTimes">
-                            <div class="col s6">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
-                                    <md-hint>
-                                        <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                                            {{'application.excavationAnnouncement.field.validityStartTime' | translation}}
-                                        </field-error>
-                                        <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                                            {{'application.excavationAnnouncement.field.validityStartBeforeEnd' | translation}}
-                                        </field-error>
-                                    </md-hint>
-                                </md-input-container>
-                            </div>
-                            <div class="col s6">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
-                                    <md-hint>
-                                        <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                                            {{'application.excavationAnnouncement.field.validityEndTime' | translation}}
-                                        </field-error>
-                                    </md-hint>
-                                </md-input-container>
-                            </div>
-                        </div>
-                        <div formGroupName="unauthorizedWork">
-                            <div class="col s6">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
-                                    <md-hint>
-                                        <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
-                                            {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
-                                        </field-error>
-                                    </md-hint>
-                                </md-input-container>
-                            </div>
-                            <div class="col s6">
-                                <md-input-container class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
-                                </md-input-container>
-                            </div>
-                        </div>
+    <div class="row">
+        <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.contractor"
+                   [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
+                   [showCopyToBilling]="true" [showRepresentative]="true"
+                   [contactList]="application.extension?.responsiblePersonList"
+                   contactHeaderText="Vastuuhenkilö" contactFormName="responsiblePerson"></applicant>
+    </div>
+
+    <div class="row">
+        <div class="col m6">
+        <md-card>
+            <md-card-title>Kaivuilmoituksen voimassaolo</md-card-title>
+            <md-card-content>
+                <div class="row form-group">
+                    <div formGroupName="validityTimes">
                         <div class="col s6">
                             <md-input-container class="input-full-width">
-                                <input mdInput readonly type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"/>
+                                <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"/>
+                                <md-hint>
+                                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                                        {{'application.excavationAnnouncement.field.validityStartTime' | translation}}
+                                    </field-error>
+                                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                                        {{'application.excavationAnnouncement.field.validityStartBeforeEnd' | translation}}
+                                    </field-error>
+                                </md-hint>
                             </md-input-container>
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
-                                <input mdInput readonly type="text" formControlName="summerTimeOperation" placeholder="Kesätyön toiminn. kunto"/>
-                            </md-input-container>
-                        </div>
-                        <div class="col s6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
-                            </md-input-container>
-                        </div>
-                        <div class="col s6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
+                                <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"/>
+                                <md-hint>
+                                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                                        {{'application.excavationAnnouncement.field.validityEndTime' | translation}}
+                                    </field-error>
+                                </md-hint>
                             </md-input-container>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
-        </div>
+                    <div formGroupName="unauthorizedWork">
+                        <div class="col s6">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"/>
+                                <md-hint>
+                                    <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
+                                        {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
+                                    </field-error>
+                                </md-hint>
+                            </md-input-container>
+                        </div>
+                        <div class="col s6">
+                            <md-input-container class="input-full-width">
+                                <input mdInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
+                                       materialize="pickadate"
+                                       [materializeParams]="pickadateParams"/>
+                            </md-input-container>
+                        </div>
+                    </div>
+                    <div class="col s6">
+                        <md-input-container class="input-full-width">
+                            <input mdInput readonly type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col s6">
+                        <md-input-container class="input-full-width">
+                            <input mdInput readonly type="text" formControlName="summerTimeOperation" placeholder="Kesätyön toiminn. kunto"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col s6">
+                        <md-input-container class="input-full-width">
+                            <input mdInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
+                        </md-input-container>
+                    </div>
+                    <div class="col s6">
+                        <md-input-container class="input-full-width">
+                            <input mdInput readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
+                        </md-input-container>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+    </div>
 
-        <div class="col m12 loose">
-            <md-card>
-                <md-card-title>Kaivuilmoituksen tiedot</md-card-title>
-                <md-card-content>
-                    <div class="row form-group">
-                        <div class="col m6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="cableReportIdentifier" placeholder="Johtoselvitys"
-                                       [readonly]="readonly"
-                                       [autocompletion]="matchingApplications"
-                                       nameField="applicationId"
-                                       (onSearchChange)="onIdentifierSearchChange($event)"
-                                       (onSelection)="setCableReport($event)"/>
-                            </md-input-container>
-                            <input type="hidden" formControlName="cableReportId">
-                        </div>
+    <div class="row">
+        <div class="col m12">
+        <md-card>
+            <md-card-title>Kaivuilmoituksen tiedot</md-card-title>
+            <md-card-content>
+                <div class="row form-group">
+                    <div class="col m6">
+                        <md-input-container class="input-full-width">
+                            <input mdInput type="text" formControlName="cableReportIdentifier" placeholder="Johtoselvitys"
+                                   [readonly]="readonly"
+                                   [autocompletion]="matchingApplications"
+                                   nameField="applicationId"
+                                   (onSearchChange)="onIdentifierSearchChange($event)"
+                                   (onSelection)="setCableReport($event)"/>
+                        </md-input-container>
+                        <input type="hidden" formControlName="cableReportId">
                     </div>
-                    <div class="row form-group">
-                        <div class="col m2">
-                            <md-checkbox formControlName="pksCard">Pks-kortti</md-checkbox>
-                        </div>
-                        <div class="col m2">
-                            <md-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</md-checkbox>
-                        </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col m2">
+                        <md-checkbox formControlName="pksCard">Pks-kortti</md-checkbox>
                     </div>
-                    <div class="row form-group">
-                        <div class="col m2">
-                            <md-checkbox formControlName="constructionWork">Rakentaminen</md-checkbox>
-                        </div>
-                        <div class="col m2">
-                            <md-checkbox formControlName="maintenanceWork">Kunnossapito</md-checkbox>
-                        </div>
-                        <div class="col m2">
-                            <md-checkbox formControlName="emergencyWork">Hätätyö</md-checkbox>
-                        </div>
+                    <div class="col m2">
+                        <md-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</md-checkbox>
                     </div>
-                    <div class="row form-group">
-                        <div class="col m12">
-                            <md-input-container class="input-full-width">
-                                <textarea mdInput md-autosize formControlName="trafficArrangements"
+                </div>
+                <div class="row form-group">
+                    <div class="col m2">
+                        <md-checkbox formControlName="constructionWork">Rakentaminen</md-checkbox>
+                    </div>
+                    <div class="col m2">
+                        <md-checkbox formControlName="maintenanceWork">Kunnossapito</md-checkbox>
+                    </div>
+                    <div class="col m2">
+                        <md-checkbox formControlName="emergencyWork">Hätätyö</md-checkbox>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col m12">
+                        <md-input-container class="input-full-width">
+                                <textarea mdInput mdTextareaAutosize formControlName="trafficArrangements"
                                           placeholder="Suoritettavat liikennejärjestelyt"></textarea>
-                            </md-input-container>
-                        </div>
-                        <div class="col m12">
-                            <md-button-toggle-group formControlName="trafficArrangementImpedimentType">
-                                <md-button-toggle value="NO_IMPEDIMENT">
-                                    {{'application.trafficArrangementImpedimentType.NO_IMPEDIMENT' | translation}}
-                                </md-button-toggle>
-                                <md-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
-                                    {{'application.trafficArrangementImpedimentType.INSIGNIFICANT_IMPEDIMENT' | translation}}
-                                </md-button-toggle>
-                                <md-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
-                                    {{'application.trafficArrangementImpedimentType.IMPEDIMENT_FOR_HEAVY_TRAFFIC' | translation}}
-                                </md-button-toggle>
-                                <md-button-toggle value="SIGNIFICANT_IMPEDIMENT">
-                                    {{'application.trafficArrangementImpedimentType.SIGNIFICANT_IMPEDIMENT' | translation}}
-                                </md-button-toggle>
-                            </md-button-toggle-group>
-                        </div>
-                        <div class="col m12">
-                            <md-input-container class="input-full-width">
-                                <textarea mdInput md-autosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
-                            </md-input-container>
-                        </div>
+                        </md-input-container>
                     </div>
-                </md-card-content>
-            </md-card>
-        </div>
+                </div>
+                <div class="row">
+                    <div class="col m12">
+                        <md-button-toggle-group formControlName="trafficArrangementImpedimentType">
+                            <md-button-toggle value="NO_IMPEDIMENT">
+                                {{'application.trafficArrangementImpedimentType.NO_IMPEDIMENT' | translation}}
+                            </md-button-toggle>
+                            <md-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
+                                {{'application.trafficArrangementImpedimentType.INSIGNIFICANT_IMPEDIMENT' | translation}}
+                            </md-button-toggle>
+                            <md-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
+                                {{'application.trafficArrangementImpedimentType.IMPEDIMENT_FOR_HEAVY_TRAFFIC' | translation}}
+                            </md-button-toggle>
+                            <md-button-toggle value="SIGNIFICANT_IMPEDIMENT">
+                                {{'application.trafficArrangementImpedimentType.SIGNIFICANT_IMPEDIMENT' | translation}}
+                            </md-button-toggle>
+                        </md-button-toggle-group>
+                    </div>
+                </div>
+                <div class="row form-group">
+                    <div class="col m12">
+                        <md-input-container class="input-full-width">
+                            <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
+                        </md-input-container>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+    </div>
 
-        <div class="col m12 loose">
+    <div class="row">
+        <div class="col m12">
             <pricing-info [form]="applicationForm"></pricing-info>
         </div>
+    </div>
 
-        <location-details *ngIf="readonly" [application]="application" [readonly]="readonly"></location-details>
+    <div class="row" *ngIf="readonly">
+        <div class="col m12">
+            <location-details [application]="application" [readonly]="readonly"></location-details>
+        </div>
+    </div>
 
-        <div class="col s12" *ngIf="showTerms">
+    <div class="row" *ngIf="showTerms">
+        <div class="col s12">
             <terms [form]="applicationForm" [applicationType]="application.typeEnum" [terms]="application.extension.terms" [readonly]="readonly"></terms>
         </div>
+    </div>
 
+    <div class="row">
         <div class="col s12">
             <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
         </div>
+    </div>
 
-        <application-actions
-            [readonly]="readonly"
-            [applicationId]="application.id"
-            [form]="applicationForm"
-            [submitPending]="submitPending"></application-actions>
-    </form>
-</div>
+    <div class="row">
+        <div class="col s12">
+            <application-actions
+                [readonly]="readonly"
+                [applicationId]="application.id"
+                [form]="applicationForm"
+                [submitPending]="submitPending"></application-actions>
+        </div>
+    </div>
+</form>

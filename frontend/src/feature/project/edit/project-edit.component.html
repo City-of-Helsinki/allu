@@ -1,147 +1,149 @@
-<div class="row">
+<div class="main-content">
     <form [formGroup]="projectInfoForm" id="projectInfoForm" (ngSubmit)="onSubmit(projectInfoForm.value)">
-        <div class="col m6 loose">
+        <div class="row">
+            <div class="col m6">
+                <md-card>
+                    <md-card-title>Hankkeen perustiedot</md-card-title>
+                    <md-card-content>
+                        <div class="row form-group">
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="ownerName" [readonly]="readonly" placeholder="Hankkeen omistaja"/>
+                                    <md-hint>
+                                        <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{translations.project.field.ownerNameMissing}}</field-error>
+                                    </md-hint>
+                                </md-input-container>
+
+                            </div>
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="contactName" [readonly]="readonly" placeholder="Yhteyshenkilö"/>
+                                    <md-hint>
+                                        <field-error [form]="projectInfoForm" field="contactName" hasError="required">{{translations.project.field.contactNameMissing}}</field-error>
+                                    </md-hint>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="email" [readonly]="readonly" placeholder="Sähköposti"/>
+                                    <md-hint>
+                                        <field-error [form]="projectInfoForm" field="email" hasError="required">{{translations.common.field.emailInvalid}}</field-error>
+                                    </md-hint>
+                                </md-input-container>
+                            </div>
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="phone" [readonly]="readonly" placeholder="Puhelinnumero"/>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="name" [readonly]="readonly" placeholder="Hankkeen nimi"/>
+                                    <md-hint>
+                                        <field-error [form]="projectInfoForm" field="name" hasError="required">{{translations.project.field.nameMissing}}</field-error>
+                                    </md-hint>
+                                </md-input-container>
+                            </div>
+                            <div class="col m6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="customerReference" [readonly]="readonly" placeholder="Asiakkaan viite/työnumero"/>
+                                </md-input-container>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col m12">
+                                <md-input-container class="input-full-width">
+                                    <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" [readonly]="readonly" placeholder="Lisätietoja"></textarea>
+                                </md-input-container>
+                            </div>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        <div class="col m12">
             <md-card>
-                <md-card-title>Hankkeen perustiedot</md-card-title>
+                <md-card-title>Liittyvät hakemukset</md-card-title>
                 <md-card-content>
                     <div class="row form-group">
-                        <div class="col m6">
+                        <div class="col m3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="ownerName" [readonly]="readonly" placeholder="Hankkeen omistaja"/>
-                                <md-hint>
-                                    <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{translations.project.field.ownerNameMissing}}</field-error>
-                                </md-hint>
-                            </md-input-container>
-
-                        </div>
-                        <div class="col m6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="contactName" [readonly]="readonly" placeholder="Yhteyshenkilö"/>
-                                <md-hint>
-                                    <field-error [form]="projectInfoForm" field="contactName" hasError="required">{{translations.project.field.contactNameMissing}}</field-error>
-                                </md-hint>
+                                <input mdInput type="text" [readonly]="readonly"
+                                       [autocompletion]="matchingApplications"
+                                       nameField="applicationId"
+                                       (onSearchChange)="onIdentifierSearchChange($event)"
+                                       (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
                             </md-input-container>
                         </div>
                     </div>
-                    <div class="row form-group">
-                        <div class="col m6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="email" [readonly]="readonly" placeholder="Sähköposti"/>
-                                <md-hint>
-                                    <field-error [form]="projectInfoForm" field="email" hasError="required">{{translations.common.field.emailInvalid}}</field-error>
-                                </md-hint>
-                            </md-input-container>
-                        </div>
-                        <div class="col m6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="phone" [readonly]="readonly" placeholder="Puhelinnumero"/>
-                            </md-input-container>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col m6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="name" [readonly]="readonly" placeholder="Hankkeen nimi"/>
-                                <md-hint>
-                                    <field-error [form]="projectInfoForm" field="name" hasError="required">{{translations.project.field.nameMissing}}</field-error>
-                                </md-hint>
-                            </md-input-container>
-                        </div>
-                        <div class="col m6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="customerReference" [readonly]="readonly" placeholder="Asiakkaan viite/työnumero"/>
-                            </md-input-container>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col m12">
-                            <md-input-container class="input-full-width">
-                                <textarea mdInput md-autosize formControlName="additionalInfo" [readonly]="readonly" placeholder="Lisätietoja"></textarea>
-                            </md-input-container>
+                    <div class="row">
+                        <div class="row">
+                            <div class=" col s12">
+                                <table class="bordered responsive-table">
+                                    <thead>
+                                    <tr>
+                                        <th></th>
+                                        <th>Käsittelijä</th>
+                                        <th>Tunnus</th>
+                                        <th>Tyyppi</th>
+                                        <th>Tila</th>
+                                        <th>Hakija</th>
+                                        <th>Kaupunginosa</th>
+                                        <th>Aloitus</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let application of applications" class="clickable row-highlight">
+                                        <td (click)="remove(application.id)"><i class="material-icons">remove</i></td>
+                                        <td>{{application.handler?.realName}}</td>
+                                        <td>
+                                            {{application.name}} <br>
+                                            <span>{{application.id}}</span>
+                                        </td>
+                                        <td>{{ translations.application.type[application.type] }}</td>
+                                        <td>{{ translations.application.status[application.status] }}</td>
+                                        <td>{{application.applicant.name}}<br></td>
+                                        <td>ei tuettuna</td>
+                                        <td>{{ application.startTime | date:format }}</td>
+                                        <td></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </md-card-content>
             </md-card>
         </div>
-    </form>
-</div>
+    </div>
 
-<div class="row">
-    <div class="col m12">
-        <md-card>
-            <md-card-title>Liittyvät hakemukset</md-card-title>
-            <md-card-content>
-                <div class="row form-group">
-                    <div class="col m3">
-                        <md-input-container class="input-full-width">
-                            <input mdInput type="text" [readonly]="readonly"
-                                   [autocompletion]="matchingApplications"
-                                   nameField="applicationId"
-                                   (onSearchChange)="onIdentifierSearchChange($event)"
-                                   (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
-                        </md-input-container>
-                    </div>
-                </div>
-                <div class="row">
+    <div class="row">
+        <div class="col m12">
+            <md-card>
+                <md-card-title>Tallennus</md-card-title>
+                <md-card-content>
                     <div class="row">
-                        <div class=" col s12">
-                            <table class="striped responsive-table">
-                                <thead>
-                                <tr>
-                                    <th></th>
-                                    <th>Käsittelijä</th>
-                                    <th>Tunnus</th>
-                                    <th>Tyyppi</th>
-                                    <th>Tila</th>
-                                    <th>Hakija</th>
-                                    <th>Kaupunginosa</th>
-                                    <th>Aloitus</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr *ngFor="let application of applications" class="clickable row-highlight">
-                                    <td (click)="remove(application.id)"><i class="material-icons">remove</i></td>
-                                    <td>{{application.handler?.realName}}</td>
-                                    <td>
-                                        {{application.name}} <br>
-                                        <span>{{application.id}}</span>
-                                    </td>
-                                    <td>{{ translations.application.type[application.type] }}</td>
-                                    <td>{{ translations.application.status[application.status] }}</td>
-                                    <td>{{application.applicant.name}}<br></td>
-                                    <td>ei tuettuna</td>
-                                    <td>{{ application.startTime | date:format }}</td>
-                                    <td></td>
-                                </tr>
-                                </tbody>
-                            </table>
+                        <div class="col m2">
+                            <button type="submit" form="projectInfoForm" [disabled]="!projectInfoForm.valid"
+                                    md-raised-button color="primary">TALLENNA</button>
+                        </div>
+                        <div class="col m2">
+                            <button *ngIf="!projectInfoForm.value.id" md-raised-button type="button" color="primary"
+                                    [routerLink]="['/projectSearch']">PERUUTA</button>
+
+                            <button *ngIf="projectInfoForm.value.id" md-raised-button type="button" color="primary"
+                                    [routerLink]="['/projects', projectInfoForm.value.id]">PERUUTA</button>
                         </div>
                     </div>
-                </div>
-            </md-card-content>
-        </md-card>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col m12">
-        <md-card>
-            <md-card-title>Tallennus</md-card-title>
-            <md-card-content>
-                <div class="row">
-                    <div class="col m2">
-                        <button type="submit" form="projectInfoForm" [disabled]="!projectInfoForm.valid"
-                                md-raised-button color="primary">TALLENNA</button>
-                    </div>
-                    <div class="col m2">
-                        <button *ngIf="!projectInfoForm.value.id" md-raised-button type="button" color="primary"
-                                [routerLink]="['/projectSearch']">PERUUTA</button>
-
-                        <button *ngIf="projectInfoForm.value.id" md-raised-button type="button" color="primary"
-                                [routerLink]="['/projects', projectInfoForm.value.id]">PERUUTA</button>
-                    </div>
-                </div>
-            </md-card-content>
-        </md-card>
+                </md-card-content>
+            </md-card>
+        </div>
     </div>
 </div>
