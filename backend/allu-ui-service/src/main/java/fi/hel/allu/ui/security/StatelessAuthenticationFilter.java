@@ -49,9 +49,12 @@ public class StatelessAuthenticationFilter extends GenericFilterBean {
       // Let fail later
       authentication = null;
     }
-    SecurityContextHolder.getContext().setAuthentication(authentication);
-    filterChain.doFilter(request, response);
-    SecurityContextHolder.getContext().setAuthentication(null);
+    try {
+      SecurityContextHolder.getContext().setAuthentication(authentication);
+      filterChain.doFilter(request, response);
+    } finally {
+      SecurityContextHolder.getContext().setAuthentication(null);
+    }
   }
 
   private void setUnauthorizedResponse(HttpServletRequest httpRequest, ServletResponse response) throws IOException {
