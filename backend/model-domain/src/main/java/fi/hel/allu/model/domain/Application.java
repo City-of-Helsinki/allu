@@ -35,6 +35,7 @@ public class Application {
   private ZonedDateTime creationTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
+  private ZonedDateTime recurringEndTime;
   @NotNull
   @Valid
   private ApplicationExtension extension;
@@ -200,6 +201,23 @@ public class Application {
 
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
+  }
+
+  /**
+   * The last moment the recurring application is active. Application may recur for certain time every year. For example, an area might
+   * be used for storing snow every year and such application should be created as a recurring application instead of creating and
+   * application for each year separately.
+   * <p>
+   * Application with start time as 1.12.2016 and end time 31.1.2017 having recurring end time 31.1.2020 is active until 31.1.2020.
+   *
+   * @return  The last year recurring application is active.
+   */
+  public ZonedDateTime getRecurringEndTime() {
+    return recurringEndTime;
+  }
+
+  public void setRecurringEndTime(ZonedDateTime recurringEndTime) {
+    this.recurringEndTime = recurringEndTime;
   }
 
   /**

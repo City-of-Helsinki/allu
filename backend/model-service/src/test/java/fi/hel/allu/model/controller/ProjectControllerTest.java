@@ -365,6 +365,9 @@ public class ProjectControllerTest {
     shortTermRental.setDescription("desc");
 
     Application application = new Application();
+    application.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
+    application.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
+    application.setRecurringEndTime(application.getEndTime());
     application.setApplicantId(applicant.getId());
     application.setExtension(shortTermRental);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);

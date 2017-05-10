@@ -1,7 +1,9 @@
 package fi.hel.allu.ui.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hel.allu.common.types.*;
 
+import fi.hel.allu.common.validator.NotFalse;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;
@@ -13,6 +15,7 @@ import java.util.List;
 /**
  * in Finnish: Hakemus
  */
+@NotFalse(rules = {"recurringEndTime, lessThanYearActivity, Recurring applications start and end time duration has to be less than a year"})
 public class ApplicationJson {
 
   private Integer id;
@@ -32,7 +35,7 @@ public class ApplicationJson {
   private ZonedDateTime creationTime;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
-
+  private ZonedDateTime recurringEndTime;
   @NotNull(message = "{application.applicant}")
   @Valid
   private ApplicantJson applicant;
@@ -211,6 +214,23 @@ public class ApplicationJson {
   }
 
   /**
+   * The last moment the recurring application is active. Application may recur for certain time every year. For example, an area might
+   * be used for storing snow every year and such application should be created as a recurring application instead of creating and
+   * application for each year separately.
+   * <p>
+   * Application with start time as 1.12.2016 and end time 31.1.2017 having recurring end time 31.1.2020 is active until 31.1.2020.
+   *
+   * @return  The last year recurring application is active.
+   */
+  public ZonedDateTime getRecurringEndTime() {
+    return recurringEndTime;
+  }
+
+  public void setRecurringEndTime(ZonedDateTime recurringEndTime) {
+    this.recurringEndTime = recurringEndTime;
+  }
+
+  /**
    * in Finnish: Hakemuksen hakija
    */
   public ApplicantJson getApplicant() {
@@ -378,5 +398,13 @@ public class ApplicationJson {
 
   public void setPriceOverrideReason(String priceOverrideReason) {
     this.priceOverrideReason = priceOverrideReason;
+  }
+
+  @JsonIgnore
+  public boolean getLessThanYearActivity() {
+    if (recurringEndTime != null && startTime != null && endTime != null) {
+      return startTime.plusYears(1).isAfter(endTime);
+    }
+    return true;
   }
 }

@@ -179,7 +179,22 @@
                         </typeMapping>
                         <typeMapping>
                             <table>application</table>
+                            <column>recurring_end_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>application</table>
                             <column>decision_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>recurring_period</table>
+                            <column>period_start_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>recurring_period</table>
+                            <column>period_end_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>

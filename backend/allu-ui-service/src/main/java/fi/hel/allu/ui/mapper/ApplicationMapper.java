@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 
+import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.domain.*;
@@ -14,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
@@ -44,6 +46,7 @@ public class ApplicationMapper {
     applicationDomain.setCreationTime(applicationJson.getCreationTime());
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
+    applicationDomain.setRecurringEndTime(applicationJson.getRecurringEndTime());
     applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
@@ -83,6 +86,13 @@ public class ApplicationMapper {
     applicationES.setCreationTime(applicationJson.getCreationTime());
     applicationES.setStartTime(applicationJson.getStartTime());
     applicationES.setEndTime(applicationJson.getEndTime());
+    if (applicationJson.getStartTime() != null && applicationJson.getEndTime() != null) {
+      ZonedDateTime recurringEndTime =
+          applicationJson.getRecurringEndTime() == null ? applicationJson.getEndTime() : applicationJson.getRecurringEndTime();
+      RecurringApplication recurringApplication =
+          new RecurringApplication(applicationJson.getStartTime(), applicationJson.getEndTime(), recurringEndTime);
+      applicationES.setRecurringApplication(recurringApplication);
+    }
     applicationES.setHandler(
         applicationJson.getHandler() != null ?
             new UserES(applicationJson.getHandler().getUserName(), applicationJson.getHandler().getRealName()) : null);
@@ -124,6 +134,7 @@ public class ApplicationMapper {
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setStartTime(application.getStartTime());
     applicationJson.setEndTime(application.getEndTime());
+    applicationJson.setRecurringEndTime(application.getRecurringEndTime());
     applicationJson.setName(application.getName());
     applicationJson.setDecisionTime(application.getDecisionTime());
     if (application.getExtension() != null) {

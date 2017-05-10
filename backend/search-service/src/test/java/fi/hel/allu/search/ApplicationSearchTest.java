@@ -3,6 +3,7 @@ package fi.hel.allu.search;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.search.service.GenericSearchService;
@@ -305,6 +306,200 @@ public class ApplicationSearchTest {
     List<Integer> appList = genericSearchService.findByField(params);
     assertEquals(1, appList.size());
     genericSearchService.delete("100");
+  }
+
+  @Test
+  public void testRecurringApplicationWithinOneCalendarYear() {
+    ApplicationES applicationES = createApplication(100);
+    RecurringApplication recurringApplication = new RecurringApplication(
+        ZonedDateTime.parse("2016-07-05T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-08-05T06:23:04.000Z"),
+        RecurringApplication.MAX_END_TIME);
+    applicationES.setRecurringApplication(recurringApplication);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
+    genericSearchService.refreshIndex();
+
+
+    // test period completely outside recurring period, before recurring period
+    List<Integer> appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
+    ));
+    assertEquals(0, appList.size());
+    // test period completely outside recurring period, after recurring period
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-08-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-09-11T06:23:04.000Z")
+    ));
+    assertEquals(0, appList.size());
+    // test period completely within recurring period
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-07-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    // test period partially within recurring period
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-05-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+
+    // test period partially within recurring period (beginning of test period) and that overlaps with two calendar years.
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-07-04T06:23:04.000Z"),
+        ZonedDateTime.parse("2017-07-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+
+    // test period partially within recurring period (end of test period) and that overlaps with two calendar years
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2015-12-04T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+
+    genericSearchService.delete("100");
+  }
+
+  @Test
+  public void testRecurringApplicationWithinTwoCalendarYears() {
+    ApplicationES applicationES = createApplication(100);
+    RecurringApplication recurringApplication = new RecurringApplication(
+        ZonedDateTime.parse("2015-11-05T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
+        RecurringApplication.MAX_END_TIME);
+    applicationES.setRecurringApplication(recurringApplication);
+    genericSearchService.insert(applicationES.getId().toString(), applicationES);
+    genericSearchService.refreshIndex();
+
+    // test period completely outside recurring period
+    List<Integer> appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
+    ));
+    assertEquals(0, appList.size());
+    // test period completely within recurring period, in the first period
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2015-11-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2015-11-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    // test period completely within recurring period, in the second period
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-01-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-02-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    // test period longer than one year, match in the end of long period
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2010-05-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    // test period longer than one year, match in the beginning of long period
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-03-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2018-07-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2018-03-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2020-07-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+
+    genericSearchService.delete("100");
+  }
+
+  @Test
+  public void testRecurringApplicationBeginEndYears() {
+    int withEndYearAppId = 100;
+    ApplicationES applicationESWithEndYear = createApplication(withEndYearAppId);
+    RecurringApplication recurringApplication = new RecurringApplication(
+        ZonedDateTime.parse("2015-11-05T06:23:04.000Z"),
+        ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
+        ZonedDateTime.parse("2020-04-05T10:23:04.000Z"));
+    applicationESWithEndYear.setRecurringApplication(recurringApplication);
+    genericSearchService.insert(applicationESWithEndYear.getId().toString(), applicationESWithEndYear);
+    genericSearchService.refreshIndex();
+
+    // find within period, but before begin year
+    List<Integer> appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2013-03-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2014-03-11T06:23:04.000Z")
+    ));
+    assertEquals(0, appList.size());
+    // find outside period, on initial year
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2014-03-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2015-03-11T06:07:08.000Z")
+    ));
+    assertEquals(0, appList.size());
+    // find within period, but after end year
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2021-03-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2021-03-11T06:23:04.000Z")
+    ));
+    assertEquals(0, appList.size());
+    // find within period, after initial year
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2019-03-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2019-03-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    // find within period, on the final year
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2020-03-10T06:23:04.000Z"),
+        ZonedDateTime.parse("2020-03-11T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    // find outside period, on the final year
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2020-04-06T06:23:04.000Z"),
+        ZonedDateTime.parse("2020-04-07T06:23:04.000Z")
+    ));
+    assertEquals(0, appList.size());
+    // find within period, no end time
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2016-04-04T06:23:04.000Z"),
+        null
+    ));
+    assertEquals(1, appList.size());
+    // find within recurring period, no end time
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2017-05-04T06:23:04.000Z"),
+        null
+    ));
+    assertEquals(1, appList.size());
+    // find outside recurring period, no end time
+    appList = genericSearchService.findByField(createRecurringQuery(
+        ZonedDateTime.parse("2021-01-04T06:23:04.000Z"),
+        null
+    ));
+    assertEquals(0, appList.size());
+
+    // find within period, no start time
+    appList = genericSearchService.findByField(createRecurringQuery(
+        null,
+        ZonedDateTime.parse("2015-12-04T06:23:04.000Z")
+    ));
+    assertEquals(1, appList.size());
+    // find outside recurring period, no start time
+    appList = genericSearchService.findByField(createRecurringQuery(
+        null,
+        ZonedDateTime.parse("2015-05-04T06:23:04.000Z")
+    ));
+    assertEquals(0, appList.size());
+
+    genericSearchService.delete("100");
+  }
+
+  public static QueryParameters createRecurringQuery(ZonedDateTime begin, ZonedDateTime end) {
+    QueryParameter recurringQP = new QueryParameter(QueryParameter.FIELD_NAME_RECURRING_APPLICATION, begin, end);
+    QueryParameters params = new QueryParameters();
+    params.setQueryParameters(Collections.singletonList(recurringQP));
+    return params;
   }
 
   public static ApplicationES createApplication(Integer id) {

@@ -19,6 +19,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
@@ -191,6 +192,9 @@ public class ContactControllerTest {
     appl.setKind(ApplicationKind.OUTDOOREVENT);
     appl.setMetadataVersion(1);
     appl.setName("Dummy apllication");
+    appl.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
+    appl.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
+    appl.setRecurringEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
     Event evt = new Event();
     evt.setDescription("Dummy event");
     appl.setExtension(evt);

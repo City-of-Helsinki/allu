@@ -68,9 +68,7 @@ export class QueryParametersMapper {
     parameterName: string,
     startDate: Date,
     endDate: Date): void {
-    if (startDate && endDate) {
       queryParameters.push(QueryParametersMapper.createDateParameter(parameterName, startDate, endDate));
-    }
   }
 
   public static mapBooleanParameter(
@@ -96,8 +94,8 @@ export class QueryParametersMapper {
       fieldName: QueryParametersMapper.getBackendValueField(parameterName),
       fieldValue: undefined,
       fieldMultiValue: undefined,
-      startDateValue: startDate.toISOString(),
-      endDateValue: endDate.toISOString()
+      startDateValue: !!startDate ? startDate.toISOString() : undefined,
+      endDateValue: !!endDate ? endDate.toISOString() : undefined
     };
   }
 

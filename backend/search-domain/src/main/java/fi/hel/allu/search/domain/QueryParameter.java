@@ -13,6 +13,8 @@ public class QueryParameter {
   public static final String FIELD_NAME_APPLICATION_TYPE = "type.value";
   /** Application status search field name in Elastic Search */
   public static final String FIELD_NAME_STATUS = "status.value";
+  /** Recurring application search. Add this field to enable the search. */
+  public static final String FIELD_NAME_RECURRING_APPLICATION = "recurringApplication";
 
   private String fieldName;
   private String fieldValue;

@@ -77,6 +77,7 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.OUTDOOREVENT);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T09:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-07T09:00:00+02:00"));
+    application.setRecurringEndTime(application.getEndTime());
     application.setMetadataVersion(1);
     Event event = new Event();
     event.setEcoCompass(true);
@@ -175,6 +176,7 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.KESKUSKATU_SALES);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-22T05:59:59+02:00"));
+    application.setRecurringEndTime(application.getEndTime());
     application.setMetadataVersion(1);
     application.setExtension(new ShortTermRental());
     application = applicationDao.insert(application);
@@ -224,6 +226,7 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.URBAN_FARMING);
     application.setStartTime(ZonedDateTime.parse("2017-05-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2019-09-10T23:59:59+02:00"));
+    application.setRecurringEndTime(application.getEndTime());
     application.setExtension(new ShortTermRental());
     application.setMetadataVersion(1);
     application = applicationDao.insert(application);

@@ -49,7 +49,10 @@ public class TestCommon {
     Application app = new Application();
     app.setApplicantId(personId);
     app.setProjectId(projectId);
-    app.setCreationTime(ZonedDateTime.now());
+    app.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
+    app.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
+    app.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
+    app.setRecurringEndTime(app.getEndTime());
     app.setMetadataVersion(1);
     app.setDecisionTime(ZonedDateTime.now());
     app.setName(name);

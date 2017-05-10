@@ -26,8 +26,7 @@ export class ApplicationQueryParametersMapper {
     QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationTags', query.tags);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'type', query.type);
     QueryParametersMapper.mapParameter(queryParameters, '_all', query.freeText);
-    QueryParametersMapper.mapDateParameter(queryParameters, START_TIME_FIELD, MIN_DATE, query.endTime);
-    QueryParametersMapper.mapDateParameter(queryParameters, END_TIME_FIELD, query.startTime, MAX_DATE);
+    QueryParametersMapper.mapDateParameter(queryParameters, 'recurringApplication', query.startTime, query.endTime);
     Some(query.projectId).do(projectId => QueryParametersMapper.mapParameter(queryParameters, 'projectId', projectId.toString()));
     return queryParameters;
   }

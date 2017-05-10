@@ -8,6 +8,7 @@ import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.common.util.RecurringApplication;
 import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -35,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -291,12 +293,16 @@ public class GenericSearchService {
   }
 
   private QueryBuilder createQueryBuilder(QueryParameter queryParameter) {
-    if (queryParameter.getFieldValue() != null) {
+    if (QueryParameter.FIELD_NAME_RECURRING_APPLICATION.equals(queryParameter.getFieldName())) {
+      // very special handling for recurring applications
+      return createRecurringQueryBuilder(queryParameter);
+    } else if (queryParameter.getFieldValue() != null) {
       return QueryBuilders.matchQuery(
           queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(MatchQueryBuilder.Operator.AND);
     } else if (queryParameter.getStartDateValue() != null && queryParameter.getEndDateValue() != null) {
-      return QueryBuilders.rangeQuery(queryParameter.getFieldName()).from(queryParameter.getStartDateValue().toInstant().toEpochMilli()).to(
-          queryParameter.getEndDateValue().toInstant().toEpochMilli());
+      return QueryBuilders.rangeQuery(queryParameter.getFieldName())
+          .gte(queryParameter.getStartDateValue().toInstant().toEpochMilli())
+          .lte(queryParameter.getEndDateValue().toInstant().toEpochMilli());
     } else if (queryParameter.getFieldMultiValue() != null) {
       BoolQueryBuilder qb = QueryBuilders.boolQuery();
       for (String searchTerm : queryParameter.getFieldMultiValue()) {
@@ -306,6 +312,69 @@ public class GenericSearchService {
     } else {
       throw new UnsupportedOperationException("Unknown query value type: " + queryParameter.getFieldValue().getClass().toString());
     }
+  }
+
+  /**
+   * Create recurring query, with the following conditions.
+   * period1: search start time <= application end time AND search end time >= application start time
+   * OR
+   * period2: search start time <= application end time AND search end time >= application start time
+   *
+   * The period1 and period2 are calculated from given search period. If search period overlaps with one or more calendar years, the search
+   * period is divided into two periods: period1 and period2.
+   */
+  private QueryBuilder createRecurringQueryBuilder(QueryParameter queryParameter) {
+    ZonedDateTime startDate =
+        queryParameter.getStartDateValue() == null ? RecurringApplication.BEGINNING_1972_DATE : queryParameter.getStartDateValue();
+    ZonedDateTime endDate = queryParameter.getEndDateValue() == null ? RecurringApplication.MAX_END_TIME : queryParameter.getEndDateValue();
+    RecurringApplication recurringApplication = new RecurringApplication(startDate, endDate, endDate);
+
+    // in case any period start or end is set to zero, the search period is adjusted to 1 because otherwise range searches always include
+    // results with 0 time (i.e. range search 0 <= x <= max is true vs. 1 <= x <= max is false, where x is 0). Non-existent periods
+    // (meaning period2, in case indexed period is within one calendar year) are  indexed with 0 in start and end period
+    long startPeriod1 = getRangeSearchCompliantPeriodLimit(recurringApplication.getPeriod1Start());
+    long endPeriod1 = getRangeSearchCompliantPeriodLimit(recurringApplication.getPeriod1End());
+    long startPeriod2 = getRangeSearchCompliantPeriodLimit(recurringApplication.getPeriod2Start());
+    long endPeriod2 = getRangeSearchCompliantPeriodLimit(recurringApplication.getPeriod2End());
+
+    BoolQueryBuilder qbPeriod1_1 = QueryBuilders.boolQuery();
+    qbPeriod1_1 = qbPeriod1_1.must(QueryBuilders.rangeQuery("recurringApplication.period1Start").lte(endPeriod1));
+    qbPeriod1_1 = qbPeriod1_1.must(QueryBuilders.rangeQuery("recurringApplication.period1End").gte(startPeriod1));
+
+    BoolQueryBuilder qbPeriod1_2 = QueryBuilders.boolQuery();
+    qbPeriod1_2 = qbPeriod1_2.must(QueryBuilders.rangeQuery("recurringApplication.period1Start").lte(endPeriod2));
+    qbPeriod1_2 = qbPeriod1_2.must(QueryBuilders.rangeQuery("recurringApplication.period1End").gte(startPeriod2));
+
+    BoolQueryBuilder qbPeriod2_1 = QueryBuilders.boolQuery();
+    qbPeriod2_1 = qbPeriod2_1.must(QueryBuilders.rangeQuery("recurringApplication.period2Start").lte(endPeriod1));
+    qbPeriod2_1 = qbPeriod2_1.must(QueryBuilders.rangeQuery("recurringApplication.period2End").gte(startPeriod1));
+
+    BoolQueryBuilder qbPeriod2_2 = QueryBuilders.boolQuery();
+    qbPeriod2_2 = qbPeriod2_2.must(QueryBuilders.rangeQuery("recurringApplication.period2Start").lte(endPeriod2));
+    qbPeriod2_2 = qbPeriod2_2.must(QueryBuilders.rangeQuery("recurringApplication.period2End").gte(startPeriod2));
+
+    BoolQueryBuilder qbRecurring1 = QueryBuilders.boolQuery();
+    qbRecurring1 = qbRecurring1.should(qbPeriod1_1);
+    qbRecurring1 = qbRecurring1.should(qbPeriod1_2);
+    qbRecurring1.minimumNumberShouldMatch(1);
+
+    BoolQueryBuilder qbRecurring2 = QueryBuilders.boolQuery();
+    qbRecurring2 = qbRecurring2.should(qbPeriod2_1);
+    qbRecurring2 = qbRecurring2.should(qbPeriod2_2);
+    qbRecurring2.minimumNumberShouldMatch(1);
+
+    BoolQueryBuilder qbCombined = QueryBuilders.boolQuery();
+    qbCombined = qbCombined.must(QueryBuilders.rangeQuery("recurringApplication.startTime").lte(recurringApplication.getEndTime()));
+    qbCombined = qbCombined.must(QueryBuilders.rangeQuery("recurringApplication.endTime").gte(recurringApplication.getStartTime()));
+    qbCombined = qbCombined.should(qbRecurring1);
+    qbCombined = qbCombined.should(qbRecurring2);
+    qbCombined.minimumNumberShouldMatch(1);
+
+    return qbCombined;
+  }
+
+  private long getRangeSearchCompliantPeriodLimit(long startOrEnd) {
+    return (startOrEnd == 0) ? 1 : startOrEnd;
   }
 
   private void executeBulk(List<? extends ActionRequest<?>> requests) {

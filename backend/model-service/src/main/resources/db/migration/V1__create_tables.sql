@@ -82,6 +82,7 @@ create table allu.application (
     creation_time timestamp with time zone,
     start_time timestamp with time zone,
     end_time timestamp with time zone,
+    recurring_end_time timestamp with time zone,
     extension text not null,
     decision_distribution_type text not null,
     decision_publicity_type text not null,
@@ -89,7 +90,15 @@ create table allu.application (
     decision_maker integer references allu.user,
     calculated_price integer,
     price_override integer,
-    price_override_reason text );
+    price_override_reason text
+);
+
+create table allu.recurring_period (
+  id serial primary key,
+  application_id integer references allu.application(id) not null,
+  period_start_time timestamp with time zone not null, -- start time in year 1972
+  period_end_time timestamp with time zone not null    -- end time in year 1972
+);
 
 create table allu.distribution_entry (
   id serial primary key,

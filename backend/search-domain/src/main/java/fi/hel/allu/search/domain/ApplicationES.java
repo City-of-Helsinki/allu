@@ -1,6 +1,7 @@
 package fi.hel.allu.search.domain;
 
 
+import fi.hel.allu.common.util.RecurringApplication;
 import org.hibernate.validator.constraints.NotBlank;
 
 import java.time.ZonedDateTime;
@@ -26,9 +27,10 @@ public class ApplicationES {
   private List<ESFlatValue> applicationTypeData;
   private Integer projectId;
   private ZonedDateTime decisionTime;
-  List<ContactES> contacts;
-  List<LocationES> locations;
-  ApplicantES applicant;
+  private List<ContactES> contacts;
+  private List<LocationES> locations;
+  private ApplicantES applicant;
+  private RecurringApplication recurringApplication;
 
   public Integer getId() {
     return id;
@@ -157,4 +159,13 @@ public class ApplicationES {
   public void setApplicant(ApplicantES applicantES) {
     this.applicant = applicantES;
   }
+
+  public RecurringApplication getRecurringApplication() {
+    return recurringApplication;
+  }
+
+  public void setRecurringApplication(RecurringApplication recurringApplication) {
+    this.recurringApplication = recurringApplication;
+  }
+
 }

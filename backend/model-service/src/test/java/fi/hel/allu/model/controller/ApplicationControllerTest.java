@@ -248,6 +248,7 @@ public class ApplicationControllerTest {
     // TODO: remove these two lines setStartTime and setEndTime, because they should get set automatically from location
     newApplication.setStartTime(ZonedDateTime.parse("2017-02-01T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
+    newApplication.setRecurringEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setMetadataVersion(1);
     Event event = new Event();
     event.setDescription("Eventti");
@@ -271,6 +272,124 @@ public class ApplicationControllerTest {
     assertEquals(expectedPrice, (int) application.getCalculatedPrice());
   }
 
+  @Test
+  public void testRecurringWithinCalendarYear() throws Exception {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
+    newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
+    newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-08-03T10:15:30+02:00"));
+    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
+    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
+    insertApplicationWithGeometry(
+        newApplication,
+        geometryCollection,
+        "katu 1",
+        newApplication.getStartTime(),
+        newApplication.getEndTime());
+
+    LocationSearchCriteria lsc = new LocationSearchCriteria();
+    // test period completely outside recurring period, before recurring period
+    lsc.setIntersects(geometry);
+    lsc.setAfter(ZonedDateTime.parse("2015-01-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-05-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 0);
+    // test period completely outside recurring period, after recurring period
+    lsc = new LocationSearchCriteria();
+    lsc.setIntersects(geometry);
+    lsc.setAfter(ZonedDateTime.parse("2015-09-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-10-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 0);
+    // test period completely within recurring period
+    lsc.setAfter(ZonedDateTime.parse("2015-07-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-07-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period partially within recurring period
+    lsc.setAfter(ZonedDateTime.parse("2015-08-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-09-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period partially within recurring period (beginning of test period) and that overlaps with two calendar years.
+    lsc.setAfter(ZonedDateTime.parse("2014-01-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-06-04T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period partially within recurring period (end of test period) and that overlaps with two calendar years
+    lsc.setAfter(ZonedDateTime.parse("2015-08-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2017-06-04T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period within recurring period, year after first year
+    lsc.setAfter(ZonedDateTime.parse("2016-07-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2016-07-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period partially within recurring period, year after first year
+    lsc.setAfter(ZonedDateTime.parse("2016-07-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2016-07-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test open period, no end defined
+    lsc.setAfter(ZonedDateTime.parse("2015-04-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(null);
+    testRecurring(lsc, 1);
+    lsc.setAfter(ZonedDateTime.parse("2016-04-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(null);
+    testRecurring(lsc, 1);
+    lsc.setAfter(ZonedDateTime.parse("2020-10-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(null);
+    testRecurring(lsc, 0);
+    // test open period, no begin defined
+    lsc.setAfter(null);
+    lsc.setBefore(ZonedDateTime.parse("2015-04-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 0);
+    lsc.setAfter(null);
+    lsc.setBefore(ZonedDateTime.parse("2015-07-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    lsc.setAfter(null);
+    lsc.setBefore(ZonedDateTime.parse("2030-04-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+  }
+
+  @Test
+  public void testRecurringWithinTwoCalendarYears() throws Exception {
+
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
+    newApplication.setEndTime(ZonedDateTime.parse("2016-03-03T10:15:30+02:00"));
+    newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-03-03T10:15:30+02:00"));
+    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
+    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
+    insertApplicationWithGeometry(
+        newApplication,
+        geometryCollection,
+        "katu 1",
+        newApplication.getStartTime(),
+        newApplication.getEndTime());
+
+    LocationSearchCriteria lsc = new LocationSearchCriteria();
+    lsc.setIntersects(geometry);
+    // test period completely outside recurring period
+    lsc.setAfter(ZonedDateTime.parse("2015-01-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-05-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 0);
+    // test period completely within recurring period, in the first period
+    lsc.setAfter(ZonedDateTime.parse("2015-06-04T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-07-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period completely within recurring period, in the second period
+    lsc.setAfter(ZonedDateTime.parse("2016-01-04T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2016-02-03T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period longer than one year, match in the end of long period
+    lsc.setAfter(ZonedDateTime.parse("2012-01-04T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-06-04T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+    // test period longer than one year, match in the beginning of long period
+    lsc.setAfter(ZonedDateTime.parse("2020-03-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2025-03-02T08:00:00+02:00[Europe/Helsinki]"));
+    testRecurring(lsc, 1);
+  }
+
+  private void testRecurring(LocationSearchCriteria lsc, int matchCount) throws Exception {
+    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
+    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    assertEquals(matchCount, results.length);
+  }
 
   private static Geometry bigArea = polygon(3879, ring(c(25490000, 6670000), c(25500000, 6670000), c(25500000, 6675000),
       c(25490000, 6675000), c(25490000, 6670000)));
