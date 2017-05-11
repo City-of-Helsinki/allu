@@ -11,7 +11,7 @@ import {NotificationService} from '../../service/notification/notification.servi
 import {DecisionModalComponent, DECISION_MODAL_CONFIG} from './decision-modal.component';
 import {DecisionConfirmation} from '../../model/decision/decision-confirmation';
 import {Observable} from 'rxjs';
-import {HttpResponse} from '../../util/http-response';
+import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DecisionDetails} from '../../model/decision/decision-details';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
@@ -83,11 +83,11 @@ export class DecisionActionsComponent {
     NotificationService.message(findTranslation(['decision.type', this.application.status, 'confirmation']));
   }
 
-  private storeProposal(proposal: Comment): Observable<Comment> {
-    return this.applicationState.saveComment(this.application.id, proposal);
-  }
-
   private sendDecision(applicationId: number, decisionDetails: DecisionDetails): Observable<HttpResponse> {
-    return this.decisionHub.sendDecision(applicationId, decisionDetails);
+    if (decisionDetails.hasEmails()) {
+      return this.decisionHub.sendDecision(applicationId, decisionDetails);
+    } else {
+      return Observable.of(new HttpResponse(HttpStatus.OK));
+    }
   }
 }

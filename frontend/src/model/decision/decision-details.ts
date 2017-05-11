@@ -4,4 +4,10 @@ export class DecisionDetails {
     public decisionDistributionList: Array<DistributionEntry> = [],
     public messageBody?: string
   ) {}
+
+  hasEmails(): boolean {
+    return this.decisionDistributionList
+      .filter(entry => entry.email)
+      .length > 0;
+  }
 }
