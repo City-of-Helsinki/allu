@@ -32,7 +32,6 @@
             <md-option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</md-option>
           </md-select>
         </div>
-
         <div class="col m4 s6">
           <md-input-container class="input-full-width">
             <input mdInput type="text" formControlName="address" placeholder="Osoite"/>

@@ -115,14 +115,16 @@
                 <div class="row form-group">
                     <div class="col m6">
                         <md-input-container class="input-full-width">
-                            <input mdInput type="text" formControlName="cableReportIdentifier" placeholder="Johtoselvitys"
-                                   [readonly]="readonly"
-                                   [autocompletion]="matchingApplications"
-                                   nameField="applicationId"
-                                   (onSearchChange)="onIdentifierSearchChange($event)"
-                                   (onSelection)="setCableReport($event)"/>
+                            <input mdInput type="text" formControlName="cableReportIdentifier"
+                                   placeholder="Johtoselvitys"
+                                   [mdAutocomplete]="cableReportSearch"/>
+                            <md-autocomplete #cableReportSearch="mdAutocomplete">
+                                <md-option *ngFor="let application of matchingApplications | async"
+                                           [value]="application.applicationId" (click)="setCableReport(application)">
+                                    {{ application.applicationId }}
+                                </md-option>
+                            </md-autocomplete>
                         </md-input-container>
-                        <input type="hidden" formControlName="cableReportId">
                     </div>
                 </div>
                 <div class="row form-group">

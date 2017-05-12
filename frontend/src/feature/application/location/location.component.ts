@@ -48,7 +48,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   sectionsCtrl: FormControl;
 
   areas = new Array<FixedLocationArea>();
-  sections = new Array<FixedLocationSection>();
+  areaSections = new Array<FixedLocationSection>();
   editedItemCount = 0;
   application: Application;
   progressStep: ProgressStep;
@@ -220,7 +220,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           .filter(f => f.hasSectionsForKind(kind))
           .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name));
 
-        this.sections = [];
+        this.areaSections = [];
         this.setInitialSelections();
       });
   }
@@ -242,13 +242,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       let area = this.areas.find(a => a.id === id);
       let kind = ApplicationKind[this.application.kind];
 
-      this.sections = area.namedSectionsForKind(kind)
+      this.areaSections = area.namedSectionsForKind(kind)
         .sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
 
       area.singleDefaultSectionForKind(kind)
         .do(defaultSection => this.sectionsCtrl.patchValue([defaultSection.id]));
     } else {
-      this.sections = [];
+      this.areaSections = [];
       this.locationForm.patchValue({sections: []});
     }
   }

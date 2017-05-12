@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
@@ -20,7 +20,7 @@ import {ApplicationType} from '../../../../model/application/type/application-ty
   selector: 'cable-info',
   template: require('./cable-info.component.html')
 })
-export class CableInfoComponent {
+export class CableInfoComponent implements OnInit {
   @Input() parentForm: FormGroup;
   @Input() readonly: boolean;
   @Input() cableReport: CableReport;

@@ -6,30 +6,6 @@ import {TimeUtil} from '../../../util/time.util';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
 
 export class ExcavationAnnouncement extends ApplicationExtension {
-  constructor()
-  constructor(
-    specifiers: Array<string>,
-    contractor: Applicant,
-    responsiblePerson: Contact,
-    propertyDeveloper: Applicant,
-    propertyDeveloperContact: Contact,
-    pksCard: boolean,
-    constructionWork: boolean,
-    maintenanceWork: boolean,
-    emergencyWork: boolean,
-    propertyConnectivity: boolean,
-    winterTimeOperation: Date,
-    summerTimeOperation: Date,
-    workFinished: Date,
-    unauthorizedWorkStartTime: Date,
-    unauthorizedWorkEndTime: Date,
-    guaranteeEndTime: Date,
-    cableReportId: number,
-    additionalInfo: string,
-    trafficArrangements: string,
-    trafficArrangementImpedimentType: string,
-    terms: string
-  )
   constructor(
     public specifiers?: Array<string>,
     public contractor?: Applicant,

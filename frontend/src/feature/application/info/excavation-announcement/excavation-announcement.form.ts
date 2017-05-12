@@ -31,7 +31,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public cableReportId?: number,
     public additionalInfo?: string,
     public trafficArrangements?: string,
-    public trafficArrangementImpedimentType?: string) {}
+    public trafficArrangementImpedimentType?: string,
+    public specifiers?: Array<string>) {}
 
   static to(form: ExcavationAnnouncementForm, specifiers: Array<string>): ExcavationAnnouncement {
     let ea = new ExcavationAnnouncement();
@@ -85,7 +86,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.cableReportId,
       excavation.additionalInfo,
       excavation.trafficArrangements,
-      excavation.trafficArrangementImpedimentType
+      excavation.trafficArrangementImpedimentType,
+      excavation.specifiers
     );
   }
 }

@@ -156,6 +156,7 @@ input:-webkit-autofill:active {
 
   .form-group-label {
     font-weight: bold;
+    margin-bottom: 5px;
   }
 }
 
@@ -378,11 +379,6 @@ ul.card-list {
   color: mat-color($allu-primary, 300);
   transform: scale(0.75);
   flex-grow: 1;
-}
-
-.select-wrapper input.select-dropdown,
-.mat-select-trigger {
-  height: 2.5rem !important;
 }
 
 .flex-container {

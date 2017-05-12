@@ -19,28 +19,26 @@
             </div>
           </div>
           <div class="row">
-            <div *ngIf="areas.length > 0">
-              <div *ngIf="editedItemCount > 0" class="col m10">
+            <ng-container *ngIf="areas.length > 0">
+              <div *ngIf="editedItemCount > 0" class="col m6">
                 <div class="input-field-info-text">
                   Kiinteää aluetta ei voi valita, mikäli kartalle on piirretty
                 </div>
               </div>
-              <div *ngIf="editedItemCount === 0">
-                <div class="col m6">
-                  <md-select placeholder="Alue" class="input-full-width" formControlName="area">
-                    <md-option value="" selected>Ei tapahtuma-aluetta</md-option>
-                    <md-option *ngFor="let area of areas" [value]="area.id">{{area.name}}</md-option>
+              <div class="col m6" *ngIf="editedItemCount === 0">
+                <md-select placeholder="Alue" class="input-full-width" formControlName="area">
+                  <md-option value="" selected>Ei tapahtuma-aluetta</md-option>
+                  <md-option *ngFor="let area of areas" [value]="area.id">{{area.name}}</md-option>
+                </md-select>
+              </div>
+              <div class="col m2">
+                <div *ngIf="areaSections.length">
+                  <md-select formControlName="sections" class="input-full-width" [multiple]="true" placeholder="Lohko">
+                    <md-option *ngFor="let section of areaSections" [value]="section.id">{{section.name}}</md-option>
                   </md-select>
                 </div>
-                <div class="col m2">
-                  <div *ngIf="sections.length > 0">
-                    <md-select formControlName="sections" [multiple]="true" placeholder="Lohko">
-                      <option *ngFor="let section of sections" [value]="section.id">{{section.name}}</option>
-                    </md-select>
-                  </div>
-                </div>
               </div>
-            </div>
+            </ng-container>
             <div class="col m2">
               <md-input-container class="input-full-width">
                 <input mdInput type="number" formControlName="areaSize" placeholder="Alueen pinta-ala"/>

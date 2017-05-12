@@ -37,19 +37,19 @@
                                 </div>
                             </div>
                             <div class="row form-group">
-                                <div class="col m4">
-                                    <md-input-container class="input-full-width">
-                                        <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
-                                        <md-hint>
-                                            <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
-                                        </md-hint>
-                                    </md-input-container>
-                                </div>
                                 <div class="col m8">
                                     <md-input-container class="input-full-width">
                                         <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                                         <md-hint>
                                             <field-error [form]="contact" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
+                                        </md-hint>
+                                    </md-input-container>
+                                </div>
+                                <div class="col m4">
+                                    <md-input-container class="input-full-width">
+                                        <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                                        <md-hint>
+                                            <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
                                         </md-hint>
                                     </md-input-container>
                                 </div>
