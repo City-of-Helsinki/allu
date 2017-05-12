@@ -6,6 +6,10 @@ export class NumberUtil {
     return !!num || (num === 0);
   }
 
+  static isBetween(val: number, min: number, max: number): boolean {
+    return NumberUtil.isDefined(val) && (min <= val) && (val <= max);
+  }
+
   static toEuros(cents: number): number {
     return NumberUtil.isDefined(cents) ? cents / CENTS : undefined;
   }

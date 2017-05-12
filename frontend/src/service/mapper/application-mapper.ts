@@ -5,11 +5,9 @@ import {ApplicantMapper} from './applicant-mapper';
 import {ContactMapper} from './contact-mapper';
 import {LocationMapper} from './location-mapper';
 import {ApplicationTypeDataMapper} from './application-type-data-mapper';
-import {StructureMetaMapper} from './structure-meta-mapper';
 import {AttachmentInfoMapper} from './attachment-info-mapper';
 import {UserMapper} from './user-mapper';
 import {TimeUtil} from '../../util/time.util';
-import {Some} from '../../util/option';
 import {ApplicationTagMapper} from './application-tag-mapper';
 import {CommentMapper} from '../application/comment/comment-mapper';
 import {DistributionMapper} from './distribution-mapper';
@@ -32,6 +30,7 @@ export class ApplicationMapper {
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
     application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
     application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
+    application.recurringEndTime = TimeUtil.dateFromBackend(backendApplication.recurringEndTime);
     application.applicant = ApplicantMapper.mapBackend(backendApplication.applicant);
     application.contactList = (backendApplication.contactList) ?
       backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact))
@@ -65,14 +64,15 @@ export class ApplicationMapper {
       kind: application.kind,
       metadataVersion: application.metadataVersion,
       name: application.name,
-      creationTime: (application.creationTime) ? application.creationTime.toISOString() : undefined,
-      startTime: application.startTime.toISOString(),
-      endTime: application.endTime.toISOString(),
+      creationTime: TimeUtil.dateToBackend(application.creationTime),
+      startTime: TimeUtil.dateToBackend(application.startTime),
+      endTime: TimeUtil.dateToBackend(application.endTime),
+      recurringEndTime: TimeUtil.dateToBackend(application.recurringEndTime),
       applicant: ApplicantMapper.mapFrontend(application.applicant),
       contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
       locations: LocationMapper.mapFrontendList(application.locations),
       extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
-      decisionTime: Some(application.decisionTime).map(decisionTime => decisionTime.toISOString()).orElse(undefined),
+      decisionTime: TimeUtil.dateToBackend(application.decisionTime),
       decisionMaker: application.decisionMaker,
       decisionDistributionType: application.decisionDistributionType,
       decisionPublicityType: application.decisionPublicityType,

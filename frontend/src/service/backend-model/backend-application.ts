@@ -22,6 +22,7 @@ export interface BackendApplication {
   creationTime: string;
   startTime: string;
   endTime: string;
+  recurringEndTime: string;
   applicant: BackendApplicant;
   contactList: Array<BackendContact>;
   locations: Array<BackendLocation>;

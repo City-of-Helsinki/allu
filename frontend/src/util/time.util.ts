@@ -16,8 +16,10 @@ export const PICKADATE_PARAMETERS = [
     showWeekdaysFull: true // a bit counter intuitive way to get right abbreviations to be shown in calendar
   }];
 
-export const MIN_DATE: Date = new Date(0);
-export const MAX_DATE: Date = new Date('2099-12-31T23:59:59');
+export const MIN_YEAR = 1972;
+export const MAX_YEAR = 9999;
+export const MIN_DATE: Date = new Date('1972-01-01T00:00:00');
+export const MAX_DATE: Date = new Date('9999-12-31T23:59:59');
 export const UI_PIPE_DATE_FORMAT: string = 'dd.MM.yyyy'; // Used by angular date pipe
 export const UI_DATE_FORMAT: string = 'DD.MM.YYYY';
 export const UI_DATE_TIME_FORMAT: string = 'DD.MM.YYYY HH:mm';
@@ -48,8 +50,25 @@ export class TimeUtil {
     return dateString ? momentLib(dateString, UI_DATE_FORMAT).endOf('day').toDate() : undefined;
   }
 
+  public static yearFromDate(date: Date): number {
+    return date ? momentLib(date).year() : undefined;
+  }
+
+  public static dateWithYear(date: Date, year: number): Date {
+    if (date && year) {
+      let baseDate = momentLib(date);
+      return baseDate.year(year).toDate();
+    } else {
+      return undefined;
+    }
+  }
+
   public static dateFromBackend(dateString: string): Date {
     return dateString ? momentLib(dateString).toDate() : undefined;
+  }
+
+  public static dateToBackend(date: Date): string {
+    return date ? date.toISOString() : undefined;
   }
 
   public static formatHistoryDateTimeString(dateTime: string): string {

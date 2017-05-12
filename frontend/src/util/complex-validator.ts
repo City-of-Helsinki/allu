@@ -1,6 +1,7 @@
-import {FormGroup, FormControl, AbstractControl, Validators} from '@angular/forms';
+import {AbstractControl, FormGroup, Validators} from '@angular/forms';
 import {Some} from './option';
 import {TimeUtil} from './time.util';
+import {NumberUtil} from './number.util';
 
 /**
  * Implements more complex validations than angular2 provides out of the box
@@ -21,6 +22,19 @@ export class ComplexValidator {
       return undefined;
     };
 
+    return validationFn;
+  }
+
+  static betweenOrEmpty(min, max) {
+    let validationFn = (fc: AbstractControl) => {
+      if (fc.dirty && NumberUtil.isDefined(fc.value)) {
+        let val = Number(fc.value);
+        if (!NumberUtil.isBetween(val, min, max)) {
+          return { between: {val} };
+        }
+      }
+      return undefined;
+    };
     return validationFn;
   }
 

@@ -38,6 +38,7 @@ import {DecisionPreviewComponent} from './decision-preview/decision-preview.comp
 import {DistributionModule} from './distribution/distribution.module';
 import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
 import {InvoicingModule} from './invoicing/invoicing.module';
+import {RecurringComponent} from './info/recurring/recurring.component';
 
 
 @NgModule({
@@ -84,7 +85,8 @@ import {InvoicingModule} from './invoicing/invoicing.module';
     PlacementContractComponent,
     AreaRentalComponent,
     DecisionPreviewComponent,
-    PricingInfoComponent
+    PricingInfoComponent,
+    RecurringComponent
   ],
   providers: [
     ApplicationResolve

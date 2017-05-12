@@ -31,6 +31,7 @@ export class Application {
     public creationTime?: Date,
     public startTime?: Date,
     public endTime?: Date,
+    public recurringEndTime?: Date,
     public applicant?: Applicant,
     public contactList?: Array<Contact>,
     public locations?: Array<Location>,
@@ -77,6 +78,14 @@ export class Application {
 
   public set uiEndTime(dateString: string) {
     this.endTime = TimeUtil.getEndDateFromUi(dateString);
+  }
+
+  public get recurringEndYear() {
+    return TimeUtil.yearFromDate(this.recurringEndTime);
+  }
+
+  public set recurringEndYear(year: number) {
+    this.recurringEndTime = TimeUtil.dateWithYear(this.endTime, year);
   }
 
   public updateDatesFromLocations(): void {

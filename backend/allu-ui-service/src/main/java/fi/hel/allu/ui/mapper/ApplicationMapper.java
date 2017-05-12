@@ -596,14 +596,12 @@ public class ApplicationMapper {
   private NoteJson createNoteJson(Note note) {
     NoteJson noteJson = new NoteJson();
     noteJson.setDescription(note.getDescription());
-    noteJson.setReoccurring(note.getReoccurring());
     return noteJson;
   }
 
   private Note createNoteModel(NoteJson noteJson) {
     Note note = new Note();
     note.setDescription(noteJson.getDescription());
-    note.setReoccurring(noteJson.getReoccurring());
     return note;
   }
 

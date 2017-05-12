@@ -5,6 +5,7 @@
 @import "inputs";
 @import "buttons";
 @import "nav/nav";
+@import "radio-buttons";
 @import '../feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../feature/common/input-box/input-box.component.theme';
 
@@ -156,6 +157,10 @@ input:-webkit-autofill:active {
   .form-group-label {
     font-weight: bold;
   }
+}
+
+.error-overflow .mat-input-subscript-wrapper {
+  overflow: visible;
 }
 
 label.mat-checkbox-layout,
@@ -321,7 +326,12 @@ ul.card-list {
 }
 
 .text-faint {
-  color: mat-contrast($allu-primary, 100);
+  color: $black-50-opacity;
+}
+
+.text-match-label {
+  color: $black-50-opacity;
+  font-size: 0.8rem;
 }
 
 .allu-chip {

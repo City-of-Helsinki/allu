@@ -81,7 +81,7 @@ export class ApplicationTypeDataMapper {
           backendExtension.terms
         );
       case ApplicationType.NOTE:
-        return new Note(backendExtension.reoccurring, backendExtension.description);
+        return new Note(backendExtension.description);
       case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
         return new TrafficArrangement(
           backendExtension.specifiers,

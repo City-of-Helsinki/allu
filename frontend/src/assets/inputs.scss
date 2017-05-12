@@ -12,6 +12,11 @@ input[type="text"]:focus {
   outline: none;
 }
 
+input.mat-input-element.year-input {
+  width: 75px;
+  text-align: center;
+}
+
 .input-with-addon.input,
 .input-with-addon.button {
   border: none;

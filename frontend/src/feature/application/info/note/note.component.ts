@@ -7,6 +7,7 @@ import {ApplicationState} from '../../../../service/application/application-stat
 import {NoteForm} from './note.form';
 import {ApplicantForm} from '../applicant/applicant.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
 
 @Component({
   selector: 'note',
@@ -32,6 +33,7 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.name = form.name;
     application.uiStartTime = form.validityTimes.startTime;
     application.uiEndTime = form.validityTimes.endTime;
+    application.recurringEndYear = form.recurringEndYear;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = NoteForm.to(form);
@@ -49,8 +51,8 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
         startTime: ['', Validators.required],
         endTime: ['']
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
-      reoccurring: [false],
-      description: ['']
+      description: [''],
+      recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
     });
   }
 }

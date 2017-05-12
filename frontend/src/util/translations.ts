@@ -168,7 +168,8 @@ export const translations = {
     },
     field: {
       nameMissing: 'Tapahtuman nimi puuttuu',
-      nameShort: 'Tapahtuman nimi on liian lyhyt'
+      nameShort: 'Tapahtuman nimi on liian lyhyt',
+      recurringEndYearNotBetween: 'Virheellinen toistuvuuden päättymisvuosi'
     },
     common: {
       field: {

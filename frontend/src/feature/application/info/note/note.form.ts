@@ -9,14 +9,15 @@ export class NoteForm implements ApplicationForm {
   constructor(
     public name: string,
     public validityTimes: TimePeriod,
-    public reoccurring?: boolean,
+    public recurringEndYear?: number,
     public description?: string,
+
     public applicant?: ApplicantForm,
     public contacts?: Array<Contact>
   ) {}
 
   static to(form: NoteForm): Note {
-    return new Note(form.reoccurring, form.description);
+    return new Note(form.description);
   }
 
   static from(application: Application): NoteForm {
@@ -24,7 +25,7 @@ export class NoteForm implements ApplicationForm {
     return new NoteForm(
       application.name,
       new TimePeriod(application.uiStartTime, application.uiEndTime),
-      note.reoccurring,
+      application.recurringEndYear,
       note.description
     );
   }

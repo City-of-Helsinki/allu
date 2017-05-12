@@ -7,25 +7,11 @@ import fi.hel.allu.common.types.ApplicationType;
  */
 public class NoteJson extends ApplicationExtensionJson {
 
-  private Boolean reoccurring;
   private String description;
 
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.NOTE;
-  }
-
-  /**
-   * Is this a reoccurring note?
-   * 
-   * @return true if the note is reoccurring
-   */
-  public Boolean getReoccurring() {
-    return reoccurring;
-  }
-
-  public void setReoccurring(Boolean reoccurring) {
-    this.reoccurring = reoccurring;
   }
 
   /**

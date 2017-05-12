@@ -10,7 +10,7 @@ import {
   MdButtonToggleModule,
   MdInputModule,
   MdSelectModule,
-  MdCheckboxModule, MdAutocompleteModule
+  MdCheckboxModule, MdAutocompleteModule, MdRadioModule
 } from '@angular/material';
 import 'materialize-css';
 import 'angular2-materialize';
@@ -32,6 +32,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
   imports: [
     MdToolbarModule,
     MdButtonModule,
+    MdRadioModule,
     CommonModule,
     MaterializeModule,
     BrowserAnimationsModule
@@ -60,6 +61,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MdInputModule,
     MdSelectModule,
     MdCheckboxModule,
+    MdRadioModule,
     MdAutocompleteModule,
     MaterializeModule,
     AutoCompletionDirective,
