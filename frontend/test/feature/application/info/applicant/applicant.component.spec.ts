@@ -8,11 +8,12 @@ import {Applicant} from '../../../../../src/model/application/applicant/applican
 import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
 import {CustomerHub} from '../../../../../src/service/customer/customer-hub';
 import {ContactComponent} from '../../../../../src/feature/application/info/contact/contact.component';
+import {CustomerInfoComponent} from '../../../../../src/feature/customerregistry/applicant/customer-info.component';
 
 const headerText = 'HeaderTextTest';
 const formName = 'FormNameTest';
 
-class ApplicantHubMock {
+class CustomerHubMock {
   searchApplicantsByField(fieldName: string, term: string) {}
 }
 
@@ -49,10 +50,10 @@ describe('ApplicantComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, ReactiveFormsModule, MdCardModule],
-      declarations: [ApplicantComponent, ContactComponent],
+      declarations: [ApplicantComponent, ContactComponent, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerHub, useClass: ApplicantHubMock},
+        {provide: CustomerHub, useClass: CustomerHubMock}
       ]
     }).compileComponents();
   }));
@@ -110,24 +111,6 @@ describe('ApplicantComponent', () => {
       expect(page.applicantCityInput.disabled).toBeTruthy();
       expect(page.applicantPhoneInput.disabled).toBeTruthy();
       expect(page.applicantEmailInput.disabled).toBeTruthy();
-    });
-  });
-
-  it('should fill fields from autocomplete', () => {
-    let applicant = new Applicant();
-    applicant.name = 'NameTest';
-    applicant.registryKey = '12345';
-    applicant.postalAddress.streetAddress = 'streetAddressTest';
-    applicant.postalAddress.postalCode = 'postalCodeTest';
-    applicant.postalAddress.city = 'cityTest';
-    applicant.phone = 'phoneTest';
-    applicant.email = 'emailTest';
-
-    let nameElement = fixture.debugElement.query(By.css('[formControlName="name"]'));
-    nameElement.triggerEventHandler('onSelection', applicant);
-    fixture.detectChanges();
-    fixture.whenStable().then(result => {
-      // TODO: fix the test to check field values
     });
   });
 });

@@ -1,0 +1,38 @@
+<div class="main-content">
+    <form [formGroup]="customerWithContactsForm" (ngSubmit)="onSubmit(customerWithContactsForm.value)">
+        <div class="row" formGroupName="customer">
+            <div class="col m6">
+                <md-card>
+                    <md-card-title>Asiakastiedot</md-card-title>
+                    <md-card-content>
+                        <customer-info [form]="customerForm"></customer-info>
+                    </md-card-content>
+                </md-card>
+            </div>
+            <div class="col m6">
+                <invoicing-address [parentForm]="customerWithContactsForm"></invoicing-address>
+            </div>
+        </div>
+        <div class="row">
+            <customer-contacts [parentForm]="customerWithContactsForm" [onAddContact]="contactSubject.asObservable()"></customer-contacts>
+        </div>
+        <div class="row">
+            <div class="col m12">
+                <md-card>
+                    <div class="row">
+                        <div class="col m4">
+                            <button type="submit" md-raised-button color="primary" [disabled]="!validWithChanges()">TALLENNA</button>
+                            <button type="button" md-raised-button color="primary" [routerLink]="['/customers']">PERUUTA</button>
+                        </div>
+                        <div class="col m8">
+                            <button type="button" md-raised-button color="primary" (click)="newContact()">UUSI YHTEYSHENKILÖ</button>
+                            <button type="button" md-raised-button color="primary"
+                                    *ngIf="customerForm.value.id"
+                                    (click)="removeFromRegistry(customerWithContactsForm.value)">POISTA REKISTERISTÄ</button>
+                        </div>
+                    </div>
+                </md-card>
+            </div>
+        </div>
+    </form>
+</div>

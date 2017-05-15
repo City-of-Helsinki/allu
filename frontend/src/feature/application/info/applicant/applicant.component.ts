@@ -1,13 +1,10 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {ApplicantForm} from './applicant.form';
-import {EnumUtil} from '../../../../util/enum.util';
-import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
 import {Applicant} from '../../../../model/application/applicant/applicant';
 import {Some} from '../../../../util/option';
 import {Subject} from 'rxjs/Subject';
-import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {NumberUtil} from '../../../../util/number.util';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {ApplicantModalComponent} from '../../../customerregistry/applicant/applicant-modal.component';
@@ -40,21 +37,14 @@ export class ApplicantComponent implements OnInit, OnDestroy {
   @Input() representative = false;
   @Input() addNew = false;
 
-  applicantTypes = EnumUtil.enumValues(ApplicantType);
   applicantForm: FormGroup;
-  matchingApplicants: Observable<Array<Applicant>>;
+  applicantEvents$ = new Subject<Applicant>();
 
-  private typeControl: FormControl;
-  private nameControl: FormControl;
-  private applicantEvents$ = new Subject<Applicant>();
   private dialogRef: MdDialogRef<ApplicantModalComponent>;
 
-  constructor(private fb: FormBuilder,
-              private dialog: MdDialog,
-              private customerHub: CustomerHub) {
+  constructor(private fb: FormBuilder, private dialog: MdDialog) {
     this.applicantForm = ApplicantForm.initialForm(this.fb);
-    this.typeControl = <FormControl>this.applicantForm.get('type');
-    this.nameControl = <FormControl>this.applicantForm.get('name');
+    this.applicantForm.addControl('propertyDeveloper', this.fb.control(false));
   }
 
   ngOnInit(): void {
@@ -63,23 +53,10 @@ export class ApplicantComponent implements OnInit, OnDestroy {
     if (this.readonly) {
       this.applicantForm.disable();
     }
-    this.matchingApplicants = this.nameControl.valueChanges
-      .debounceTime(300)
-      .switchMap(name => this.onNameSearchChange(name));
   }
 
   ngOnDestroy(): void {
     this.applicationForm.removeControl(this.formName);
-  }
-
-  onNameSearchChange(term: string): Observable<Array<Applicant>> {
-    return this.customerHub.searchApplicantsBy({name: term, type: this.typeControl.value});
-  }
-
-  applicantSelected(applicant: Applicant): void {
-    this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant));
-    this.disableApplicantEdit();
-    this.applicantEvents$.next(applicant);
   }
 
   canBeEdited(): boolean {
@@ -94,19 +71,11 @@ export class ApplicantComponent implements OnInit, OnDestroy {
       .subscribe(applicant => this.applicantForm.patchValue(ApplicantForm.fromApplicant(applicant)));
   }
 
-  /**
-   * Resets form values if form contained existing applicant
-   */
-  resetFormIfExisting(): void {
-    if (NumberUtil.isDefined(this.applicantForm.value.id)) {
-      this.applicantForm.reset({
-        name: this.applicantForm.value.name,
-        type: this.applicantForm.value.type,
-        active: true
-      });
-      this.applicantForm.enable();
-      this.applicantEvents$.next(new Applicant());
+  onCustomerChange(customer: Applicant): void {
+    if (NumberUtil.isDefined(customer.id)) {
+      this.disableApplicantEdit();
     }
+    this.applicantEvents$.next(customer);
   }
 
   get applicantEvents(): Observable<Applicant> {

@@ -39,6 +39,7 @@ import {DistributionModule} from './distribution/distribution.module';
 import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
 import {InvoicingModule} from './invoicing/invoicing.module';
 import {RecurringComponent} from './info/recurring/recurring.component';
+import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import {RecurringComponent} from './info/recurring/recurring.component';
     ApplicationHistoryModule,
     TermsModule,
     DistributionModule,
-    InvoicingModule
+    InvoicingModule,
+    CustomerRegistryModule
   ],
   declarations: [
     ApplicationComponent,

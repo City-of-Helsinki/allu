@@ -1,9 +1,9 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {postalCodeValidator} from '../../util/complex-validator';
-import {Some} from '../../util/option';
-import {ApplicantType} from '../../model/application/applicant/applicant-type';
-import {EnumUtil} from '../../util/enum.util';
+import {postalCodeValidator} from '../../../util/complex-validator';
+import {Some} from '../../../util/option';
+import {ApplicantType} from '../../../model/application/applicant/applicant-type';
+import {EnumUtil} from '../../../util/enum.util';
 
 @Component({
   selector: 'invoicing-address',

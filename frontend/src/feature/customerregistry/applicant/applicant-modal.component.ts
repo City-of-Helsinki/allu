@@ -19,7 +19,6 @@ export class ApplicantModalComponent implements OnInit {
   @Input() applicantId: number;
 
   applicantForm: FormGroup;
-  applicantTypes = EnumUtil.enumValues(ApplicantType);
 
   constructor(public dialogRef: MdDialogRef<ApplicantModalComponent>,
               private fb: FormBuilder,

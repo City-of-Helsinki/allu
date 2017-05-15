@@ -3,12 +3,12 @@ import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subscription} from 'rxjs';
 
-import {Contact} from '../../model/application/contact';
-import {emailValidator, postalCodeValidator} from '../../util/complex-validator';
-import {CustomerHub} from '../../service/customer/customer-hub';
-import {NumberUtil} from '../../util/number.util';
-import {NotificationService} from '../../service/notification/notification.service';
-import {findTranslation} from '../../util/translations';
+import {Contact} from '../../../model/application/contact';
+import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
+import {CustomerHub} from '../../../service/customer/customer-hub';
+import {NumberUtil} from '../../../util/number.util';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {findTranslation} from '../../../util/translations';
 
 @Component({
   selector: 'customer-contacts',

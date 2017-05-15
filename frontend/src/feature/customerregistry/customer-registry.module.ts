@@ -4,12 +4,13 @@ import {AlluCommonModule} from '../common/allu-common.module';
 import {RouterModule} from '@angular/router';
 import {customerRegistryRoutes} from './customer-registry.routing';
 import {CustomerListComponent} from './customer-list.component';
-import {CustomerComponent} from './customer.component';
+import {CustomerComponent} from './applicant/customer.component';
 import {CustomerRegistryComponent} from './customer-registry.component';
-import {InvoicingAddressComponent} from './invoicing-address.component';
-import {CustomerContactsComponent} from './customer-contacts.component';
+import {InvoicingAddressComponent} from './invoicing-address/invoicing-address.component';
+import {CustomerContactsComponent} from './contact/customer-contacts.component';
 import {ApplicantModalComponent} from './applicant/applicant-modal.component';
 import {ContactModalComponent} from './contact/contact-modal.component';
+import {CustomerInfoComponent} from './applicant/customer-info.component';
 
 @NgModule({
   imports: [
@@ -22,6 +23,7 @@ import {ContactModalComponent} from './contact/contact-modal.component';
     CustomerRegistryComponent,
     CustomerListComponent,
     CustomerComponent,
+    CustomerInfoComponent,
     InvoicingAddressComponent,
     CustomerContactsComponent,
     ApplicantModalComponent,
@@ -31,7 +33,8 @@ import {ContactModalComponent} from './contact/contact-modal.component';
   exports: [
     ApplicantModalComponent,
     ContactModalComponent,
-    InvoicingAddressComponent
+    InvoicingAddressComponent,
+    CustomerInfoComponent
   ],
   entryComponents: [
     ApplicantModalComponent,

@@ -62,9 +62,7 @@ export class ApplicantForm {
         city: ['']
       }),
       email: ['', emailValidator],
-      phone: ['', Validators.minLength(2)],
-      propertyDeveloper: [false],
-      active: [true]
+      phone: ['', Validators.minLength(2)]
     });
   }
 }
