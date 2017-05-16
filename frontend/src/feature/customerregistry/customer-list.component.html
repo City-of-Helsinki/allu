@@ -2,12 +2,12 @@
     <div [formGroup]="searchForm" class="row">
         <div class="col s3">
             <input-box>
-                <input boxInput type="text" formControlName="name" placeholder="Asiakkaan nimi"/>
+                <input inputBoxInput type="text" formControlName="name" placeholder="Asiakkaan nimi"/>
             </input-box>
         </div>
         <div class="col s3">
             <input-box>
-                <select boxInput type="text" formControlName="type">
+                <select inputBoxInput formControlName="type">
                     <option value="" selected>Asiakkaan tyyppi</option>
                     <option *ngFor="let type of applicantTypes" value="{{type}}">
                         {{['applicant.type', type, 'name'] | translation}}

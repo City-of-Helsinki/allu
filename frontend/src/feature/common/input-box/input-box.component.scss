@@ -14,8 +14,13 @@ input[type="text"] {
   box-shadow: none;
   border: none;
 }
+
 input[type="text"]:focus {
   outline: none;
+}
+
+select {
+  display: block;
 }
 
 .input-box-content {
@@ -46,6 +51,10 @@ input[type="text"]:focus {
 
   &:first-child {
     border-radius: 6px 0 0 6px;
+  }
+
+  &:first-child:last-child {
+    border-radius: 6px 6px 6px 6px;
   }
 }
 

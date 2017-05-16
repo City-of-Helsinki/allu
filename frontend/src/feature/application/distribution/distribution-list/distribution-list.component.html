@@ -37,7 +37,7 @@
                 <td>
                     <div *ngIf="!distribution.value.edit">{{distribution.value.name}}</div>
                     <input-box *ngIf="distribution.value.edit">
-                        <input boxInput type="text" formControlName="name" placeholder="Nimi*"/>
+                        <input inputBoxInput type="text" formControlName="name" placeholder="Nimi*"/>
                         <field-error [form]="distributionRows.controls[i]" field="name" hasError="required">
                             {{'common.field.nameMissing' | translation}}
                         </field-error>
@@ -46,7 +46,7 @@
                 <td>
                     <div *ngIf="!distribution.value.edit">{{['decision.distribution.type', distribution.value.type] | translation}}</div>
                     <input-box *ngIf="distribution.value.edit">
-                        <select boxInput type="text" formControlName="type">
+                        <select inputBoxInput type="text" formControlName="type">
                             <option *ngFor="let type of distributionTypes" value="{{type}}">
                                 {{['decision.distribution.type', type] | translation}}
                             </option>
@@ -57,7 +57,7 @@
                     <div *ngIf="!distribution.value.edit">{{distribution.value.email}}</div>
                     <div class="table-flex-field" *ngIf="distribution.value.edit">
                         <input-box>
-                            <input boxInput type="text" placeholder="Sähköposti*" formControlName="email" />
+                            <input inputBoxInput type="text" placeholder="Sähköposti*" formControlName="email" />
                             <field-error [form]="distributionRows.controls[i]" field="email" hasError="pattern">
                                 {{'common.field.emailInvalid' | translation}}
                             </field-error>
@@ -72,16 +72,16 @@
                     </div>
                     <div class="table-flex-field" *ngIf="distribution.value.edit">
                         <input-box>
-                            <input boxInput type="text" placeholder="Katuosoite*" formControlName="streetAddress" />
+                            <input inputBoxInput type="text" placeholder="Katuosoite*" formControlName="streetAddress" />
                         </input-box>
                         <input-box>
-                            <input boxInput type="text" placeholder="Postinumero" formControlName="postalCode" />
+                            <input inputBoxInput type="text" placeholder="Postinumero" formControlName="postalCode" />
                             <field-error [form]="distributionRows.controls[i]" field="postalCode" hasError="pattern">
                                 {{'common.field.postalCode' | translation}}
                             </field-error>
                         </input-box>
                         <input-box>
-                            <input boxInput type="text" placeholder="Postitoimipaikka" formControlName="city" />
+                            <input inputBoxInput type="text" placeholder="Postitoimipaikka" formControlName="city" />
                         </input-box>
                     </div>
                 </td>

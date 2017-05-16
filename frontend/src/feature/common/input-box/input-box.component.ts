@@ -1,7 +1,7 @@
 import {AfterContentInit, Component, ContentChild, Directive, ElementRef, Input, ViewEncapsulation} from '@angular/core';
 
 @Directive({
-  selector: 'input[inputBoxInput]',
+  selector: 'input[inputBoxInput], select[inputBoxInput]',
   host: {
     '(blur)': '_onBlur()',
     '(focus)': '_onFocus()'
