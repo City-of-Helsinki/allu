@@ -14,7 +14,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     public contractor?: ApplicantForm,
     public responsiblePerson?: Array<Contact>,
     public pksCard?: boolean,
-    public workFinished?: string,
+    public workFinished?: Date,
     public calculatedPrice?: number,
     public priceOverride?: number,
     public priceOverrideReason?: string,
@@ -29,7 +29,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     arrangement.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
     arrangement.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
     arrangement.pksCard = form.pksCard;
-    arrangement.uiWorkFinished = form.workFinished;
+    arrangement.workFinished = form.workFinished;
     arrangement.trafficArrangements = form.trafficArrangements;
     arrangement.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     arrangement.additionalInfo = form.additionalInfo;
@@ -39,13 +39,13 @@ export class TrafficArrangementForm implements ApplicationForm {
 
   static from(application: Application, arrangement: TrafficArrangement) {
     return new TrafficArrangementForm(
-      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
       undefined,
       undefined,
       undefined,
       arrangement.pksCard,
-      arrangement.uiWorkFinished,
+      arrangement.workFinished,
       application.calculatedPriceEuro,
       application.priceOverrideEuro,
       application.priceOverrideReason,

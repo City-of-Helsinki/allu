@@ -37,7 +37,7 @@
             <td class="clickable">{{row.application.firstLocation?.postalAddress?.streetAddress}}</td>
             <td class="clickable">{{districtName(row.application.firstLocation.effectiveCityDistrictId) | async}}</td>
             <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>
-            <td class="clickable">{{row.application.extension.uiStartTime}}</td>
+            <td class="clickable">{{row.application.uiStartTime}}</td>
             <td class="clickable">
                     <span *ngIf="row.application.comments.length">
                         <button md-raised-button type="button" color="primary" (click)="showComments(row.application.id)">NÄYTÄ</button>

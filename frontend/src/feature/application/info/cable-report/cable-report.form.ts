@@ -12,7 +12,7 @@ import {ApplicationStatus} from '../../../../model/application/application-statu
 
 export class CableReportForm implements ApplicationForm {
   constructor(
-    public validityTime?: string,
+    public validityTime?: Date,
     public cableSurveyRequired?: boolean,
     public mapUpdated?: boolean,
     public constructionWork?: boolean,
@@ -55,7 +55,7 @@ export class CableReportForm implements ApplicationForm {
       cableReport.maintenanceWork,
       cableReport.emergencyWork,
       cableReport.propertyConnectivity,
-      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
       undefined, // these are added by subcomponents (application and contact)
       undefined,
@@ -66,9 +66,9 @@ export class CableReportForm implements ApplicationForm {
     );
   }
 
-  private static validityTime(status: ApplicationStatus, cableReport: CableReport): string {
+  private static validityTime(status: ApplicationStatus, cableReport: CableReport): Date {
     if (status >= ApplicationStatus.DECISION) {
-      return cableReport.uiValidityTime;
+      return cableReport.validityTime;
     } else {
       return TimeUtil.add(new Date(), 1, 'months');
     }

@@ -25,8 +25,8 @@
                         <div class="col s6">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="startTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
                                         {{'application.trafficArrangement.field.validityStartTimeMissing' | translation}}
@@ -36,31 +36,34 @@
                                     </field-error>
                                 </md-hint>
                             </md-input-container>
+                            <md-datepicker #startTimePicker></md-datepicker>
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="endTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                                         {{'application.trafficArrangement.field.validityEndTimeMissing' | translation}}
                                     </field-error>
                                 </md-hint>
                             </md-input-container>
+                            <md-datepicker #endTimePicker></md-datepicker>
                         </div>
                     </div>
                     <div class="col s3">
                         <md-input-container class="input-full-width">
                             <input mdInput type="text" formControlName="workFinished" placeholder="Työ valmis"
-                                   materialize="pickadate"
-                                   [materializeParams]="pickadateParams"/>
+                                   [mdDatepicker]="workFinishedPicker"/>
+                            <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="workFinishedPicker"></button>
                             <md-hint>
                                 <field-error [form]="applicationForm" field="workFinished" hasError="required">
                                     {{'application.trafficArrangement.field.workFinished' | translation}}
                                 </field-error>
                             </md-hint>
                         </md-input-container>
+                        <md-datepicker #workFinishedPicker></md-datepicker>
                     </div>
                 </div>
             </md-card-content>

@@ -4,15 +4,19 @@
   $primary: map-get($theme, primary);
   $warn: map-get($theme, warn);
 
+  .input-box-content {
+    background: mat-contrast($primary, 500);
+  }
+
+  .input-box-focused > .input-box-content {
+    border: 1px solid mat-color($allu-primary, 200);
+  }
+
   .input-box-content > input,
   .input-box-content > select,
   .input-box-content > .select-wrapper input.select-dropdown {
     background: mat-contrast($primary, 500);
     color: mat-color($primary, 300);
-
-    &:focus {
-      border: 1px solid mat-color($allu-primary, 200);
-    }
 
     &.ng-touched.ng-dirty.ng-invalid {
       border-color: mat-color($warn, 300);

@@ -22,7 +22,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     return new ShortTermRentalForm(
       application.name,
       rental.description,
-      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      new TimePeriod(application.startTime, application.endTime),
       rental.commercial,
       rental.largeSalesArea,
       application.calculatedPriceEuro,

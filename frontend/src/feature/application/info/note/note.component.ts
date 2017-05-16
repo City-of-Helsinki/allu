@@ -31,8 +31,8 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
   protected update(form: NoteForm) {
     let application = super.update(form);
     application.name = form.name;
-    application.uiStartTime = form.validityTimes.startTime;
-    application.uiEndTime = form.validityTimes.endTime;
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
     application.recurringEndYear = form.recurringEndYear;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
@@ -48,8 +48,8 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     this.applicationForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
       validityTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['']
+        startTime: [undefined, Validators.required],
+        endTime: [undefined]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       description: [''],
       recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]

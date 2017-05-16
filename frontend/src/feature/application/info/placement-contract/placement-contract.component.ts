@@ -34,8 +34,8 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
   protected update(form: PlacementContractForm): Application {
     let application = super.update(form);
     application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
-    application.uiStartTime = form.validityTimes.startTime;
-    application.uiEndTime = form.validityTimes.endTime;
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = PlacementContractForm.to(form, application.extension.specifiers);
@@ -49,8 +49,8 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
   protected initForm() {
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['', Validators.required]
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       diaryNumber: [''],
       calculatedPrice: [0],

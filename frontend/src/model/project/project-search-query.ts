@@ -31,8 +31,8 @@ export class ProjectSearchQuery implements SearchQuery {
   static fromForm(form: ProjectSearchQueryForm, sort?: Sort): ProjectSearchQuery {
     let query = new ProjectSearchQuery();
     query.id = form.id;
-    query.uiStartTime = form.startTime;
-    query.uiEndTime = form.endTime;
+    query.startTime = form.startTime;
+    query.endTime = form.endTime;
     query.ownerName = form.ownerName;
     query.onlyActive = form.onlyActive;
     query.districts = form.districts;
@@ -50,8 +50,8 @@ export class ProjectSearchQuery implements SearchQuery {
 
 interface ProjectSearchQueryForm {
   id: number;
-  startTime: string;
-  endTime: string;
+  startTime: Date;
+  endTime: Date;
   ownerName: string;
   onlyActive: boolean;
   districts: Array<string>;

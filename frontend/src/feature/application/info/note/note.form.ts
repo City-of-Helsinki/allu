@@ -24,7 +24,7 @@ export class NoteForm implements ApplicationForm {
     let note = <Note>application.extension || new Note();
     return new NoteForm(
       application.name,
-      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      new TimePeriod(application.startTime, application.endTime),
       application.recurringEndYear,
       note.description
     );

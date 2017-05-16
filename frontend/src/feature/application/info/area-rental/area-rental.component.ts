@@ -34,8 +34,8 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
   protected update(form: AreaRentalForm): Application {
     let application = super.update(form);
     application.name = 'Aluevuokraus'; // Area rentals have no name so set default
-    application.uiStartTime = form.validityTimes.startTime;
-    application.uiEndTime = form.validityTimes.endTime;
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = AreaRentalForm.to(form);
@@ -49,10 +49,10 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
   protected initForm() {
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['', Validators.required]
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
-      workFinished: [''],
+      workFinished: [undefined],
       calculatedPrice: [0],
       priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       priceOverrideReason: [''],

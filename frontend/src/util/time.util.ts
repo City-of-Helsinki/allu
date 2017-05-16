@@ -1,21 +1,6 @@
 import * as momentLib from 'moment';
 import {UnitOfTime} from 'moment';
 
-// jQuery pickadate configuration: http://amsul.ca/pickadate.js/date/
-export const PICKADATE_PARAMETERS = [
-  {
-    selectMonths: true,
-    selectYears: 15,
-    firstDay: 'Ma',
-    format: 'dd.mm.yyyy',
-    monthsFull: ['Tammikuu', 'Helmikuu', 'Maaliskuu', 'Huhtikuu', 'Toukokuu', 'Kesäkuu',
-      'Heinäkuu', 'Elokuu', 'Syyskuu', 'Lokakuu', 'Marraskuu', 'Joulukuu'],
-    monthsShort: ['Tammi', 'Helmi', 'Maalis', 'Huhti', 'Touko', 'Kesä', 'Heinä', 'Elo', 'Syys', 'Loka', 'Marras', 'Joulu'],
-    weekdaysFull: ['Su', 'Ma', 'Ti', 'Ke', 'To', 'Pe', 'La'],
-    showMonthsShort: false,
-    showWeekdaysFull: true // a bit counter intuitive way to get right abbreviations to be shown in calendar
-  }];
-
 export const MIN_YEAR = 1972;
 export const MAX_YEAR = 9999;
 export const MIN_DATE: Date = new Date('1972-01-01T00:00:00');
@@ -39,7 +24,8 @@ export class TimeUtil {
   }
 
   public static getDateFromUi(dateString: string): Date {
-    return dateString ? momentLib(dateString, UI_DATE_FORMAT).toDate() : undefined;
+    let m = this.toMoment(dateString);
+    return m ? m.toDate() : undefined;
   }
 
   public static getStartDateFromUi(dateString: string): Date {
@@ -85,8 +71,8 @@ export class TimeUtil {
     return momentLib.max(... moments).toDate();
   }
 
-  public static add(baseDate: Date = new Date(), amount: number, unit: UnitOfTime): string {
-    return momentLib(baseDate).add(amount, unit).format(UI_DATE_FORMAT);
+  public static add(baseDate: Date = new Date(), amount: number, unit: UnitOfTime): Date {
+    return momentLib(baseDate).add(amount, unit).toDate();
   }
 
   /**
@@ -129,7 +115,12 @@ export class TimeUtil {
     }
   }
 
-  private static toMoment(dateString: string): any {
-    return dateString ? momentLib(dateString, UI_DATE_FORMAT) : undefined;
+  private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
+    if (dateString) {
+      let m = momentLib(dateString, format);
+      return m.isValid() ? m : undefined;
+    } else {
+      return undefined;
+    };
   }
 }

@@ -38,8 +38,8 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     let application = super.update(form);
 
     application.name = form.event.name;
-    application.uiStartTime = form.event.structureTimes.startTime || form.event.eventTimes.startTime;
-    application.uiEndTime = form.event.structureTimes.endTime || form.event.eventTimes.endTime;
+    application.startTime = form.event.structureTimes.startTime || form.event.eventTimes.startTime;
+    application.endTime = form.event.structureTimes.endTime || form.event.eventTimes.endTime;
     application.calculatedPriceEuro = form.event.calculatedPrice;
     application.priceOverrideEuro = form.event.priceOverride;
     application.priceOverrideReason = form.event.priceOverrideReason;

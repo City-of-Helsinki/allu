@@ -35,7 +35,7 @@ export class AreaRentalForm implements ApplicationForm {
 
   static from(application: Application, areaRental: AreaRental) {
     return new AreaRentalForm(
-      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
       undefined,
       undefined,

@@ -1,12 +1,11 @@
-import {Component, OnInit, Input, Output} from '@angular/core';
-import {FormGroup, FormBuilder} from '@angular/forms';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import '../../../rxjs-extensions.ts';
 
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {User} from '../../../model/common/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
@@ -32,7 +31,6 @@ const COMMON_MULTISELECT_VALUE = ['common'];
 export class WorkQueueFilterComponent implements OnInit {
   queryForm: FormGroup;
   @Input() handlers: Array<User>;
-  pickadateParams = PICKADATE_PARAMETERS;
   districts: Observable<Array<CityDistrict>>;
   applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
   applicationTypes = EnumUtil.enumValues(ApplicationType);

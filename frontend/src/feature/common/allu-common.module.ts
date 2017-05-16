@@ -1,16 +1,20 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {
-  MdToolbarModule,
-  MdTabsModule,
-  MdDialogModule,
-  MdCardModule,
-  MdIconModule,
+  MdAutocompleteModule,
   MdButtonModule,
   MdButtonToggleModule,
+  MdCardModule,
+  MdCheckboxModule,
+  MdDatepickerModule,
+  MdDialogModule,
+  MdIconModule,
   MdInputModule,
+  MdNativeDateModule,
+  MdRadioModule,
   MdSelectModule,
-  MdCheckboxModule, MdAutocompleteModule, MdRadioModule
+  MdTabsModule,
+  MdToolbarModule
 } from '@angular/material';
 import 'materialize-css';
 import 'angular2-materialize';
@@ -25,7 +29,7 @@ import {FileDropDirective} from './file-drop/file-drop.directive';
 import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component';
 import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
-import {InputBoxComponent} from './input-box/input-box.component';
+import {InputBoxComponent, InputBoxInputDirective} from './input-box/input-box.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -47,7 +51,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     FileDropDirective,
     ConfirmDialogComponent,
     CommaSeparatedPipe,
-    InputBoxComponent
+    InputBoxComponent,
+    InputBoxInputDirective
   ],
   exports: [
     CommonModule,
@@ -63,6 +68,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MdCheckboxModule,
     MdRadioModule,
     MdAutocompleteModule,
+    MdDatepickerModule,
+    MdNativeDateModule,
     MaterializeModule,
     AutoCompletionDirective,
     AutoCompletionListComponent,
@@ -73,7 +80,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     FileDropDirective,
     ConfirmDialogComponent,
     CommaSeparatedPipe,
-    InputBoxComponent
+    InputBoxComponent,
+    InputBoxInputDirective
   ],
   entryComponents: [
     AutoCompletionListComponent,

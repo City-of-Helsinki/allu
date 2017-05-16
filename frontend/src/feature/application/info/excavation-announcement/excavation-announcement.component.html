@@ -35,8 +35,8 @@
                         <div class="col s6">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="startTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
                                         {{'application.excavationAnnouncement.field.validityStartTime' | translation}}
@@ -46,39 +46,43 @@
                                     </field-error>
                                 </md-hint>
                             </md-input-container>
+                            <md-datepicker #startTimePicker></md-datepicker>
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="endTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                                         {{'application.excavationAnnouncement.field.validityEndTime' | translation}}
                                     </field-error>
                                 </md-hint>
                             </md-input-container>
+                            <md-datepicker #endTimePicker></md-datepicker>
                         </div>
                     </div>
                     <div formGroupName="unauthorizedWork">
                         <div class="col s6">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="unauthorizedStartTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="unauthorizedStartTimePicker"></button>
                                 <md-hint>
                                     <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
                                         {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
                                     </field-error>
                                 </md-hint>
                             </md-input-container>
+                            <md-datepicker #unauthorizedStartTimePicker></md-datepicker>
                         </div>
                         <div class="col s6">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="unauthorizedEndTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="unauthorizedEndTimePicker"></button>
                             </md-input-container>
+                            <md-datepicker #unauthorizedEndTimePicker></md-datepicker>
                         </div>
                     </div>
                     <div class="col s6">

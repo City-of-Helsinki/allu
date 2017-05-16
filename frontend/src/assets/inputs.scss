@@ -130,3 +130,7 @@ md-input-container.ng-invalid.ng-touched .mat-input-underline .mat-focused {
     background-color: mat-color($allu-primary, 200);
   }
 }
+
+td.mat-calendar-body-cell:hover {
+  cursor: pointer;
+}

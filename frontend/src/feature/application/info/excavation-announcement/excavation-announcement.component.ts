@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
-import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../../../model/application/application';
@@ -66,8 +65,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   protected update(form: ExcavationAnnouncementForm): Application {
     let application = super.update(form);
     application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
-    application.uiStartTime = form.validityTimes.startTime;
-    application.uiEndTime = form.validityTimes.endTime;
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = ExcavationAnnouncementForm.to(form, application.extension.specifiers);
@@ -82,22 +81,22 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.cableReportIdentifierCtrl = this.fb.control(undefined);
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['', Validators.required]
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       pksCard: [false],
       constructionWork: [{value: false, disabled: this.readonly}],
       maintenanceWork: [{value: false, disabled: this.readonly}],
       emergencyWork: [{value: false, disabled: this.readonly}],
       propertyConnectivity: [{value: false, disabled: this.readonly}],
-      winterTimeOperation: [''],
-      summerTimeOperation: [''],
-      workFinished: [''],
+      winterTimeOperation: [undefined],
+      summerTimeOperation: [undefined],
+      workFinished: [undefined],
       unauthorizedWork: this.fb.group({
-        startTime: [''],
-        endTime: ['']
+        startTime: [undefined],
+        endTime: [undefined]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
-      guaranteeEndTime: [''],
+      guaranteeEndTime: [undefined],
       calculatedPrice: [0],
       priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       priceOverrideReason: [''],

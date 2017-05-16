@@ -18,8 +18,8 @@
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="startTime" placeholder="Tapahtuman alkupäivämäärä*"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
+                                           [mdDatepicker]="startTimePicker"/>
+                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
                                     <md-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
                                             {{translations.application.event.field.eventStartTimeMissing}}
@@ -29,19 +29,20 @@
                                         </field-error>
                                     </md-hint>
                                 </md-input-container>
-
+                                <md-datepicker #startTimePicker></md-datepicker>
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="endTime" placeholder="Tapahtuman loppupäivämäärä*"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
+                                           [mdDatepicker]="endTimePicker"/>
+                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
                                     <md-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
                                             {{translations.application.event.field.eventEndTimeMissing}}
                                         </field-error>
                                     </md-hint>
                                 </md-input-container>
+                                <md-datepicker #endTimePicker></md-datepicker>
                             </div>
                         </div>
                         <div class="col m12">
@@ -133,21 +134,23 @@
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="startTime" placeholder="Rakennuspäivämäärä"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
+                                           [mdDatepicker]="structureStartTimePicker"/>
+                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="structureStartTimePicker"></button>
                                     <md-hint>
                                         <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
                                             {{translations.application.event.field.startBeforeEnd}}
                                         </field-error>
                                     </md-hint>
                                 </md-input-container>
+                                <md-datepicker #structureStartTimePicker></md-datepicker>
                             </div>
                             <div class="col m3">
                                 <md-input-container class="input-full-width">
                                     <input mdInput type="text" formControlName="endTime" placeholder="Purkupäivämäärä"
-                                           materialize="pickadate"
-                                           [materializeParams]="pickadateParams"/>
+                                           [mdDatepicker]="structureEndTimePicker"/>
+                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="structureEndTimePicker"></button>
                                 </md-input-container>
+                                <md-datepicker #structureEndTimePicker></md-datepicker>
                             </div>
                         </div>
                     </div>

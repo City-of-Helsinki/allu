@@ -50,8 +50,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.uiWinterTimeOperation = form.winterTimeOperation;
     ea.uiSummerTimeOperation = form.summerTimeOperation;
     ea.uiWorkFinished = form.workFinished;
-    ea.uiUnauthorizedWorkStartTime = form.unauthorizedWork.startTime;
-    ea.uiUnauthorizedWorkEndTime = form.unauthorizedWork.endTime;
+    ea.unauthorizedWorkStartTime = form.unauthorizedWork.startTime;
+    ea.unauthorizedWorkEndTime = form.unauthorizedWork.endTime;
     ea.uiGuaranteeEndTime = form.guaranteeEndTime;
     ea.cableReportId = form.cableReportId;
     ea.additionalInfo = form.additionalInfo;
@@ -63,7 +63,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
 
   static from(application: Application, excavation: ExcavationAnnouncement) {
     return new ExcavationAnnouncementForm(
-      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
       undefined,
       undefined,
@@ -78,7 +78,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.uiWinterTimeOperation,
       excavation.uiSummerTimeOperation,
       excavation.uiWorkFinished,
-      new TimePeriod(excavation.uiUnauthorizedWorkStartTime, excavation.uiUnauthorizedWorkEndTime),
+      new TimePeriod(excavation.unauthorizedWorkStartTime, excavation.unauthorizedWorkEndTime),
       excavation.uiGuaranteeEndTime,
       application.calculatedPriceEuro,
       application.priceOverrideEuro,

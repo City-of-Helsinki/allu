@@ -27,16 +27,18 @@
             <div class="col s2">
                 <md-input-container class="input-full-width">
                     <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
-                           materialize="pickadate"
-                           [materializeParams]="pickadateParams"/>
+                           [mdDatepicker]="startTimePicker"/>
+                    <button type="button" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
                 </md-input-container>
+                <md-datepicker #startTimePicker></md-datepicker>
             </div>
             <div class="col s2">
                 <md-input-container class="input-full-width">
                     <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
-                           materialize="pickadate"
-                           [materializeParams]="pickadateParams"/>
+                           [mdDatepicker]="endTimePicker"/>
+                    <button type="button" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
                 </md-input-container>
+                <md-datepicker #endTimePicker></md-datepicker>
             </div>
             <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
                 <div class="item-bar-content">

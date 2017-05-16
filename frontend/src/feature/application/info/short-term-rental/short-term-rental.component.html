@@ -34,8 +34,8 @@
                         <div class="col m3">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="startTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
                                         {{'application.shortTermRental.field.rentalStartTimeMissing' | translation}}
@@ -45,18 +45,20 @@
                                     </field-error>
                                 </md-hint>
                             </md-input-container>
+                            <md-datepicker #startTimePicker></md-datepicker>
                         </div>
                         <div class="col m3">
                             <md-input-container class="input-full-width">
                                 <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
+                                       [mdDatepicker]="endTimePicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
                                         {{'application.shortTermRental.field.rentalEndTimeMissing' | translation}}
                                     </field-error>
                                 </md-hint>
                             </md-input-container>
+                            <md-datepicker #endTimePicker></md-datepicker>
                         </div>
                     </div>
                     <div class="col m6">

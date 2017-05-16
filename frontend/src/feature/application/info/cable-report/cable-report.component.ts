@@ -41,8 +41,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
       emergencyWork: [{value: false, disabled: this.readonly}],
       propertyConnectivity: [{value: false, disabled: this.readonly}],
       reportTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['', Validators.required]
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       workDescription: ['']
     });
@@ -51,8 +51,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   protected update(form: CableReportForm): Application {
     let application = super.update(form);
     application.name = 'Johtoselvitys'; // Cable reports have no name so set default
-    application.uiStartTime = form.reportTimes.startTime;
-    application.uiEndTime = form.reportTimes.endTime;
+    application.startTime = form.reportTimes.startTime;
+    application.endTime = form.reportTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.orderer);
     application.contactList = form.ordererContacts;
     let extension = <CableReport>application.extension;

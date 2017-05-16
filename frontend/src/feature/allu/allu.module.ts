@@ -2,7 +2,7 @@ import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {APP_BASE_HREF} from '@angular/common';
 import {Http, HttpModule} from '@angular/http';
-import {AuthHttp, AuthConfig} from 'angular2-jwt/angular2-jwt';
+import {AuthConfig, AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {FormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
 
@@ -36,6 +36,8 @@ import {CustomerHub} from '../../service/customer/customer-hub';
 import {CustomerService} from '../../service/customer/customer.service';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {DateAdapter} from '@angular/material';
+import {AlluDateAdapter} from '../../util/allu-date-adapter';
 
 
 @NgModule({
@@ -92,7 +94,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
       }), http);
     },
       deps: [Http]
-    }
+    },
+    { provide: DateAdapter, useClass: AlluDateAdapter }
   ]
 })
 export class AlluModule {}

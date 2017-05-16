@@ -36,7 +36,7 @@ export class EventDetailsForm {
       event.nature,
       event.description,
       event.url,
-      new TimePeriod(event.uiStartTime, event.uiEndTime),
+      new TimePeriod(event.eventStartTime, event.eventEndTime),
       event.timeExceptions,
       event.attendees,
       event.entryFee,
@@ -50,7 +50,7 @@ export class EventDetailsForm {
       event.marketingProviders,
       event.structureArea,
       event.structureDescription,
-      new TimePeriod(event.uiStructureStartTime, event.uiStructureEndTime),
+      new TimePeriod(event.structureStartTime, event.structureEndTime),
       application.calculatedPriceEuro,
       application.priceOverrideEuro,
       application.priceOverrideReason);
@@ -62,8 +62,8 @@ export class EventDetailsForm {
     event.description = form.description;
     event.url = form.url;
     event.applicationType = ApplicationType[type];
-    event.uiStartTime = form.eventTimes.startTime;
-    event.uiEndTime = form.eventTimes.endTime;
+    event.eventStartTime = form.eventTimes.startTime;
+    event.eventEndTime = form.eventTimes.endTime;
     event.timeExceptions = form.timeExceptions;
     event.attendees = form.attendees;
     event.entryFee = form.entryFee;
@@ -76,8 +76,8 @@ export class EventDetailsForm {
     event.marketingProviders = form.marketingProviders;
     event.structureArea = form.structureArea;
     event.structureDescription = form.structureDescription;
-    event.uiStructureStartTime = form.structureTimes.startTime;
-    event.uiStructureEndTime = form.structureTimes.endTime;
+    event.structureStartTime = form.structureTimes.startTime;
+    event.structureEndTime = form.structureTimes.endTime;
     return event;
   }
 }

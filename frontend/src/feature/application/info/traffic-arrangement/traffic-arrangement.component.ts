@@ -34,8 +34,8 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
   protected update(form: TrafficArrangementForm): Application {
     let application = super.update(form);
     application.name = 'Liikennejärjestely'; // Traffic arrangements have no name so set default
-    application.uiStartTime = form.validityTimes.startTime;
-    application.uiEndTime = form.validityTimes.endTime;
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = TrafficArrangementForm.to(form);
@@ -49,11 +49,11 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
   protected initForm() {
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['', Validators.required]
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       pksCard: [false],
-      workFinished: [''],
+      workFinished: [undefined],
       calculatedPrice: [0],
       priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       priceOverrideReason: [''],

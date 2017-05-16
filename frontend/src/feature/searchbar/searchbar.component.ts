@@ -1,12 +1,10 @@
-import {Component, Input, OnInit, OnDestroy, Output, EventEmitter} from '@angular/core';
-import {FormGroup, FormBuilder, Validators, FormControl} from '@angular/forms';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
-import {Subject} from 'rxjs/Subject';
 
 import {SearchbarFilter} from '../../service/searchbar-filter';
 import {MapHub} from '../../service/map/map-hub';
-import {TimeUtil, PICKADATE_PARAMETERS} from '../../util/time.util';
-import {MaterializeUtil} from '../../util/materialize.util';
+import {TimeUtil} from '../../util/time.util';
 import {PostalAddress} from '../../model/common/postal-address';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification/notification.service';
@@ -39,7 +37,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   matchingAddresses: Observable<Array<PostalAddress>>;
 
   private coordinateSubscription: Subscription;
-  private pickadateParams = PICKADATE_PARAMETERS;
   private notFound: boolean;
 
   constructor(private fb: FormBuilder, private mapHub: MapHub) {

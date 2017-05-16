@@ -16,50 +16,53 @@
 
     <div class="row">
         <div class="col m12">
-        <md-card>
-            <md-card-title>Aluevuokrauksen voimassaolo</md-card-title>
-            <md-card-content>
-                <div class="row form-group">
-                    <div formGroupName="validityTimes" class="col s6">
-                        <div class="col s6">
-                            <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
-                                <md-hint>
-                                    <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                                        {{'application.common.field.validityStartTimeMissing' | translation}}
-                                    </field-error>
-                                    <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
-                                        {{'application.common.field.validityStartBeforeEnd' | translation}}
-                                    </field-error>
-                                </md-hint>
-                            </md-input-container>
+            <md-card>
+                <md-card-title>Aluevuokrauksen voimassaolo</md-card-title>
+                <md-card-content>
+                    <div class="row form-group">
+                        <div formGroupName="validityTimes" class="col s6">
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                           [mdDatepicker]="startTimePicker"/>
+                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
+                                            {{'application.common.field.validityStartTimeMissing' | translation}}
+                                        </field-error>
+                                        <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
+                                            {{'application.common.field.validityStartBeforeEnd' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
+                                <md-datepicker #startTimePicker></md-datepicker>
+                            </div>
+                            <div class="col s6">
+                                <md-input-container class="input-full-width">
+                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                           [mdDatepicker]="endTimePicker"/>
+                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
+                                    <md-hint>
+                                        <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
+                                            {{'application.common.field.validityEndTimeMissing' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-input-container>
+                                <md-datepicker #endTimePicker></md-datepicker>
+                            </div>
                         </div>
-                        <div class="col s6">
+                        <div class="col s3">
                             <md-input-container class="input-full-width">
-                                <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                       materialize="pickadate"
-                                       [materializeParams]="pickadateParams"/>
-                                <md-hint>
-                                    <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                                        {{'application.common.field.validityEndTimeMissing' | translation}}
-                                    </field-error>
-                                </md-hint>
+                                <input mdInput type="text" formControlName="workFinished" placeholder="Työ valmis"
+                                       [mdDatepicker]="workFinishedPicker"/>
+                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="workFinishedPicker"></button>
                             </md-input-container>
+                            <md-datepicker #workFinishedPicker></md-datepicker>
                         </div>
                     </div>
-                    <div class="col s3">
-                        <md-input-container class="input-full-width">
-                            <input mdInput type="text" formControlName="workFinished" placeholder="Työ valmis"
-                                   materialize="pickadate"
-                                   [materializeParams]="pickadateParams"/>
-                        </md-input-container>
-                    </div>
-                </div>
-            </md-card-content>
-        </md-card>
-    </div>
+                </md-card-content>
+            </md-card>
+        </div>
     </div>
 
     <div class="row">

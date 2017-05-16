@@ -1,22 +1,17 @@
-import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
-import {FormGroup, FormBuilder, Validators} from '@angular/forms';
-import moment = require('moment/moment');
-
-import {StructureMeta} from '../../../../../model/application/meta/structure-meta';
-import {ApplicationHub} from '../../../../../service/application/application-hub';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Event} from '../../../../../model/application/event/event';
 import {EventDetailsForm} from './event-details.form';
 import {translations} from '../../../../../util/translations';
-import {PICKADATE_PARAMETERS} from '../../../../../util/time.util';
 import {ComplexValidator} from '../../../../../util/complex-validator';
 import {EnumUtil} from '../../../../../util/enum.util';
 import {BillingType} from '../../../../../model/application/billing-type';
 import {EventNature} from '../../../../../model/application/event/event-nature';
-import {NoPriceReason} from '../../../../../model/application/no-price-reason';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
 import {ApplicationState} from '../../../../../service/application/application-state';
 import {Application} from '../../../../../model/application/application';
 import {ApplicationKind} from '../../../../../model/application/type/application-kind';
+import moment = require('moment/moment');
 
 @Component({
   selector: 'event-details',
@@ -32,7 +27,6 @@ export class EventDetailsComponent implements OnInit {
   applicationId: number;
   billingTypes = EnumUtil.enumValues(BillingType);
   translations = translations;
-  pickadateParams = PICKADATE_PARAMETERS;
 
   constructor(private applicationState: ApplicationState, private fb: FormBuilder) {
   }
@@ -58,8 +52,8 @@ export class EventDetailsComponent implements OnInit {
       description: ['', Validators.required],
       url: [''],
       eventTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['', Validators.required]
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       timeExceptions: [''],
       attendees: [0, ComplexValidator.greaterThanOrEqual(0)],
@@ -78,8 +72,8 @@ export class EventDetailsComponent implements OnInit {
       structureArea: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       structureDescription: [''],
       structureTimes: this.fb.group({
-        startTime: [''],
-        endTime: ['']
+        startTime: [undefined],
+        endTime: [undefined]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
     });
 

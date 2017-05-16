@@ -1,8 +1,5 @@
-import {BackendQueryParameters, BackendQueryParameter, BackendQuerySort} from '../../backend-model/backend-query-parameters';
-import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
-import {MAX_DATE, MIN_DATE} from '../../../util/time.util';
+import {BackendQueryParameter, BackendQuerySort} from '../../backend-model/backend-query-parameters';
 import {Direction} from '../../../model/common/sort';
-import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {Some} from '../../../util/option';
 import {SearchQuery} from '../../../model/common/search-query';
 
@@ -67,8 +64,10 @@ export class QueryParametersMapper {
     queryParameters: Array<BackendQueryParameter>,
     parameterName: string,
     startDate: Date,
-    endDate: Date): void {
-      queryParameters.push(QueryParametersMapper.createDateParameter(parameterName, startDate, endDate));
+    endDate: Date,
+    open: boolean = false): void {
+    Some(QueryParametersMapper.createDateParameter(parameterName, startDate, endDate, open))
+      .do(param => queryParameters.push(param));
   }
 
   public static mapBooleanParameter(
@@ -89,14 +88,21 @@ export class QueryParametersMapper {
     return retVal;
   }
 
-  public static createDateParameter(parameterName: string, startDate: Date, endDate: Date): any {
-    return {
-      fieldName: QueryParametersMapper.getBackendValueField(parameterName),
-      fieldValue: undefined,
-      fieldMultiValue: undefined,
-      startDateValue: !!startDate ? startDate.toISOString() : undefined,
-      endDateValue: !!endDate ? endDate.toISOString() : undefined
-    };
+  public static createDateParameter(parameterName: string, startDate: Date, endDate: Date, open: boolean = false): any {
+    /**
+     * Open allows other date parameter to be undefined, otherwise require both to be defined
+     */
+    if (open || (startDate && endDate)) {
+      return {
+        fieldName: QueryParametersMapper.getBackendValueField(parameterName),
+        fieldValue: undefined,
+        fieldMultiValue: undefined,
+        startDateValue: !!startDate ? startDate.toISOString() : undefined,
+        endDateValue: !!endDate ? endDate.toISOString() : undefined
+      };
+    } else {
+      return undefined;
+    }
   }
 
   private static createArrayParameter(parameterName: string, parameterValue: Array<string>) {

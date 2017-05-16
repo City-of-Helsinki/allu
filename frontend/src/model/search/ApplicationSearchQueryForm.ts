@@ -8,7 +8,7 @@ export interface ApplicationSearchQueryForm {
   applicant?: string;
   contact?: string;
   freeText?: string;
-  startTime?: string;
-  endTime?: string;
+  startTime?: Date;
+  endTime?: Date;
   tags?: Array<string>;
 }

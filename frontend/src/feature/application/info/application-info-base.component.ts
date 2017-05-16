@@ -1,17 +1,15 @@
-import {OnInit, OnDestroy} from '@angular/core';
+import {OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {UrlUtil} from '../../../util/url.util';
-import {PICKADATE_PARAMETERS} from '../../../util/time.util';
 import {ApplicationForm} from './application-form';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
-import {DistributionType} from '../../../model/common/distribution-type';
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
@@ -19,7 +17,6 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
   application: Application;
   applicationForm: FormGroup;
   readonly: boolean;
-  pickadateParams = PICKADATE_PARAMETERS;
   submitPending = false;
   showTerms = false;
 

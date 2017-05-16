@@ -1,7 +1,6 @@
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {BackendQueryParameter, BackendQueryParameters} from '../../backend-model/backend-query-parameters';
-import {END_TIME_FIELD, QueryParametersMapper, START_TIME_FIELD} from './query-parameters-mapper';
-import {MAX_DATE, MIN_DATE} from '../../../util/time.util';
+import {QueryParametersMapper} from './query-parameters-mapper';
 import {Some} from '../../../util/option';
 
 export class ApplicationQueryParametersMapper {
@@ -26,7 +25,7 @@ export class ApplicationQueryParametersMapper {
     QueryParametersMapper.mapArrayParameter(queryParameters, 'applicationTags', query.tags);
     QueryParametersMapper.mapArrayParameter(queryParameters, 'type', query.type);
     QueryParametersMapper.mapParameter(queryParameters, '_all', query.freeText);
-    QueryParametersMapper.mapDateParameter(queryParameters, 'recurringApplication', query.startTime, query.endTime);
+    QueryParametersMapper.mapDateParameter(queryParameters, 'recurringApplication', query.startTime, query.endTime, true);
     Some(query.projectId).do(projectId => QueryParametersMapper.mapParameter(queryParameters, 'projectId', projectId.toString()));
     return queryParameters;
   }

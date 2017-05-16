@@ -34,7 +34,7 @@ export class PlacementContractForm implements ApplicationForm {
 
   static from(application: Application, contract: PlacementContract) {
     return new PlacementContractForm(
-      new TimePeriod(application.uiStartTime, application.uiEndTime),
+      new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
       undefined,
       undefined,

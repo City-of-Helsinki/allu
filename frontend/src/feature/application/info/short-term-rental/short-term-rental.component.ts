@@ -33,8 +33,8 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   protected update(form: ShortTermRentalForm): Application {
     let application = super.update(form);
     application.name = form.name;
-    application.uiStartTime = form.rentalTimes.startTime;
-    application.uiEndTime = form.rentalTimes.endTime;
+    application.startTime = form.rentalTimes.startTime;
+    application.endTime = form.rentalTimes.endTime;
     application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.contactList = form.contacts;
     application.extension = ShortTermRentalForm.to(form);
@@ -57,8 +57,8 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
       priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       priceOverrideReason: [''],
       rentalTimes: this.fb.group({
-        startTime: ['', Validators.required],
-        endTime: ['', Validators.required]
+        startTime: [undefined, Validators.required],
+        endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
     });
   }

@@ -59,7 +59,7 @@
     "@angular/forms": "4.0.2",
     "@angular/animations": "4.0.2",
     "@angular/router": "4.0.2",
-    "@angular/material": "2.0.0-beta.3",
+    "@angular/material": "2.0.0-beta.5",
     "core-js": "2.4.1",
     "@types/core-js": "0.9.36",
     "ng2-file-upload": "1.2.1",
