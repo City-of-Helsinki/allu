@@ -1,3 +1,4 @@
+
 <table class="responsive-table">
     <thead>
     <tr>
@@ -20,7 +21,7 @@
     <tbody>
     <ng-container *ngFor="let row of applicationRows; let i=index;">
         <tr [class.bottom-row]="row.application.applicationTags.length === 0"
-            [class.row-highlight]="i===hoveredRowIndex" (click)="goToSummary($event.target.cellIndex, row.application)"
+            [class.row-highlight]="i===hoveredRowIndex" (click)="goToApplication($event.target.cellIndex, row.application)"
             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
             <td>
                 <md-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></md-checkbox>

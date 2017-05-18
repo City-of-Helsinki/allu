@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import '../../../rxjs-extensions.ts';
 
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
@@ -15,10 +15,6 @@ import {MapHub} from '../../../service/map/map-hub';
 import {WorkQueueTab} from '../workqueue-tab';
 import {WorkQueueHub} from '../workqueue-search/workqueue-hub';
 
-const HANDLER_FIELD = 'handler';
-const TAGS_FIELD = 'tags';
-const TYPE_FIELD = 'type';
-const STATUS_FIELD = 'status';
 const COMMON_MULTISELECT_VALUE = ['common'];
 
 @Component({
@@ -37,15 +33,25 @@ export class WorkQueueFilterComponent implements OnInit {
   tagTypes = EnumUtil.enumValues(ApplicationTagType);
   tab: string;
 
+  private typeCtrl: FormControl;
+  private handlerCtrl: FormControl;
+  private statusCtrl: FormControl;
+  private tagsCtrl: FormControl;
+
+
   constructor(fb: FormBuilder, private mapHub: MapHub, private workQueueHub: WorkQueueHub) {
+    this.typeCtrl = fb.control(undefined);
+    this.handlerCtrl = fb.control(undefined);
+    this.statusCtrl = fb.control(undefined);
+    this.tagsCtrl = fb.control([]);
     this.queryForm = fb.group({
-      type: undefined,
-      handler: undefined,
-      status: undefined,
+      type: this.typeCtrl,
+      handler: this.handlerCtrl,
+      status: this.statusCtrl,
       districts: undefined,
       startTime: undefined,
       endTime: undefined,
-      tags: [[]]
+      tags: this.tagsCtrl
     });
   }
 
@@ -55,11 +61,15 @@ export class WorkQueueFilterComponent implements OnInit {
       .subscribe(query => this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(query)));
 
     this.districts = this.mapHub.districts();
+    this.selectedTab = WorkQueueTab.OWN;
   }
 
   @Input() set selectedTab(tab: WorkQueueTab) {
-    this.queryForm.enable();
     this.tab = WorkQueueTab[tab];
+    this.queryForm.enable();
+    this.typeCtrl.reset();
+    this.statusCtrl.reset();
+
     if (WorkQueueTab.OWN === tab) {
       this.ownTabSelected();
     } else if (WorkQueueTab.WAITING === tab) {
@@ -73,31 +83,21 @@ export class WorkQueueFilterComponent implements OnInit {
     // initiate search with the set username filter
     this.tagTypes = EnumUtil.enumValues(ApplicationTagType).filter(tagType => tagType !== ApplicationTagType[ApplicationTagType.WAITING]);
     // remove waiting tag filter if such was selected
-    let tagControl = this.queryForm.get(TAGS_FIELD);
-    let tags = this.queryForm.value.tags.filter(tag => tag !== ApplicationTagType[ApplicationTagType.WAITING]);
-    tagControl.setValue(tags);
-
-    CurrentUser.userName().do(userName => this.setHandlers([userName]));
+    let tags = this.tagsCtrl.value.filter(tag => tag !== ApplicationTagType[ApplicationTagType.WAITING]);
+    this.tagsCtrl.setValue(tags);
+    CurrentUser.userName().do(userName => this.handlerCtrl.patchValue([userName]));
   }
 
   private waitingTabSelected(): void {
-    let tags = this.queryForm.get(TAGS_FIELD);
-    tags.setValue([ApplicationTagType[ApplicationTagType.WAITING]]);
-    this.setHandlers([]);
-    this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(this.queryForm.value));
+    this.tagsCtrl.patchValue([ApplicationTagType[ApplicationTagType.WAITING]]);
+    this.handlerCtrl.patchValue([]);
   }
 
   private commonTabSelected(): void {
     this.tagTypes = EnumUtil.enumValues(ApplicationTagType);
     this.queryForm.patchValue({tags: [], type: COMMON_MULTISELECT_VALUE, status: COMMON_MULTISELECT_VALUE});
-    this.setHandlers([]);
-    this.queryForm.get(TYPE_FIELD).disable();
-    this.queryForm.get(STATUS_FIELD).disable();
-  }
-
-  private setHandlers(handlers: Array<string>): void {
-    let control = this.queryForm.get(HANDLER_FIELD);
-    control.setValue(handlers);
-    this.workQueueHub.addSearchQuery(ApplicationSearchQuery.from(this.queryForm.value));
+    this.handlerCtrl.patchValue([]);
+    this.typeCtrl.disable();
+    this.statusCtrl.disable();
   }
 }

@@ -1,7 +1,7 @@
 <div class="search-bar">
     <h1>TYÖJONO</h1>
     <form [formGroup]="queryForm">
-        <div class="row">
+        <div class="row row-slim">
             <div class="col s2">
                 <md-select formControlName="type" [multiple]="true" placeholder="Hakemuksen tyyppi" class="input-full-width" selected="1">
                     <md-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</md-option>

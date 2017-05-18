@@ -12,6 +12,7 @@ import {translations} from '../../../util/translations';
 import {MapHub} from '../../../service/map/map-hub';
 import {CommentsModalComponent} from '../../application/comment/comments-modal.component';
 import {WorkQueueHub} from '../workqueue-search/workqueue-hub';
+import {ApplicationStatus} from '../../../model/application/application-status';
 
 
 @Component({
@@ -74,10 +75,10 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.onSortChange.emit(this.sort);
   }
 
-  goToSummary(col: number, application: Application): void {
+  goToApplication(col: number, application: Application): void {
     // undefined and 0 should not trigger navigation
     if (col) {
-      this.router.navigate(['applications', application.id, 'summary']);
+      this.router.navigate(this.getNavigation(application));
     }
   }
 
@@ -118,6 +119,14 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
         .filter(row => row.selected)
         .map(row => row.application.id)
     );
+  }
+
+  private getNavigation(application: Application): Array<any> {
+    if (ApplicationStatus[application.status] >= ApplicationStatus.DECISION) {
+      return ['applications', application.id, 'decision'];
+    } else {
+      return ['applications', application.id, 'summary'];
+    }
   }
 }
 
