@@ -45,6 +45,10 @@ module.exports = {
      */
     root: helpers.root('src'),
 
+    alias: {
+        filesaver: 'file-saver/FileSaver.js',
+        finnishSsn: 'finnish-ssn/dist/finnish-ssn.min.js'
+    }
   },
 
   /**
