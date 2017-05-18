@@ -36,7 +36,8 @@
     "typings/browser.d.ts",
     "src/typings/leaflet-proj/index.d.ts",
     "src/typings/file-saver/index.d.ts",
-    "src/typings/leaflet-draw-drag/index.d.ts"
+    "src/typings/leaflet-draw-drag/index.d.ts",
+    "src/typings/finnish-ssn/index.d.ts"
   ],
   "awesomeTypescriptLoaderOptions": {
     "resolveGlobs": true,

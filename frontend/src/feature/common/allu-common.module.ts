@@ -22,7 +22,7 @@ import {MaterializeModule} from 'angular2-materialize';
 
 import {AutoCompletionDirective} from './auto-completion/auto-completion.directive';
 import {AutoCompletionListComponent} from './auto-completion/auto-completion-list.component';
-import {FieldErrorComponent} from './field-error.component';
+import {FieldErrorComponent} from './field-error/field-error.component';
 import {TranslationPipe} from '../../pipe/translation.pipe';
 import {SortByDirective} from './sort/sort-by.directive';
 import {FileDropDirective} from './file-drop/file-drop.directive';
@@ -31,6 +31,7 @@ import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
 import {InputBoxComponent, InputBoxInputDirective} from './input-box/input-box.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {InputWarningDirective} from './validation/input-warning.directive';
 
 @NgModule({
   imports: [
@@ -52,7 +53,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     ConfirmDialogComponent,
     CommaSeparatedPipe,
     InputBoxComponent,
-    InputBoxInputDirective
+    InputBoxInputDirective,
+    InputWarningDirective
   ],
   exports: [
     CommonModule,
@@ -81,7 +83,8 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     ConfirmDialogComponent,
     CommaSeparatedPipe,
     InputBoxComponent,
-    InputBoxInputDirective
+    InputBoxInputDirective,
+    InputWarningDirective
   ],
   entryComponents: [
     AutoCompletionListComponent,

@@ -36,12 +36,13 @@
             </md-input-container>
         </div>
         <div class="col m4">
-            <md-input-container class="input-full-width">
+            <md-input-container class="input-full-width" [inputWarning]="registryKeyControl">
                 <input mdInput type="text" formControlName="registryKey"
                        placeholder="{{['applicant.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"/>
                 <md-hint>
                     <field-error [form]="form" field="registryKey" hasError="required">{{'applicant.field.registryKeyMissing' | translation}}</field-error>
                     <field-error [form]="form" field="registryKey" hasError="minlength">{{'applicant.field.registryKeyShort' | translation}}</field-error>
+                    <field-error [form]="form" field="registryKey" hasError="invalidSsn">{{'applicant.field.invalidSsn' | translation}}</field-error>
                 </md-hint>
             </md-input-container>
         </div>

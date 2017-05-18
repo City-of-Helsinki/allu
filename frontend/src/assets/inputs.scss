@@ -109,18 +109,6 @@ input.mat-input-element.year-input {
   .mat-select-placeholder {
     color: mat-color($allu-primary, 300);
   }
-
-  input.ng-invalid.ng-touched + .mat-input-placeholder {
-    color: mat-color($allu-warn, 500);
-  }
-}
-
-md-input-container.ng-invalid.ng-touched .mat-input-underline{
-  border-color: mat-color($allu-warn, 500);
-}
-
-md-input-container.ng-invalid.ng-touched .mat-input-underline .mat-focused {
-  background-color: mat-color($allu-warn, 500);
 }
 
 .mat-autocomplete-panel {
@@ -133,4 +121,17 @@ md-input-container.ng-invalid.ng-touched .mat-input-underline .mat-focused {
 
 td.mat-calendar-body-cell:hover {
   cursor: pointer;
+}
+
+.form-group .has-warning.ng-dirty:not(.ng-invalid) label.mat-input-placeholder,
+.form-group .has-warning.ng-touched:not(.ng-invalid) label.mat-input-placeholder {
+  color: mat-color($allu-accent, 700);
+}
+
+.form-group .has-warning:not(.ng-invalid) .mat-input-underline {
+  border-color: mat-color($allu-accent, 700);
+}
+
+.form-group .has-warning:not(.ng-invalid) .mat-input-ripple {
+  background-color: mat-color($allu-accent, 700);
 }

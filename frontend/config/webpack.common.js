@@ -75,7 +75,8 @@ module.exports = {
       leafletdrawcss: 'leaflet-draw/dist/leaflet.draw.css',
       materializecss: helpers.root('src/assets/materialize/materialize.css'),
       materialize: helpers.root('src/assets/materialize/materialize.min.js'),
-      filesaver: 'file-saver/FileSaver.js'
+      filesaver: 'file-saver/FileSaver.js',
+      finnishSsn: 'finnish-ssn/dist/finnish-ssn.min.js'
     }
 
   },

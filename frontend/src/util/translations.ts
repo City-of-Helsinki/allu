@@ -303,7 +303,8 @@ export const translations = {
       registryKeyMissing: 'Tunniste puuttuu',
       registryKeyShort: 'Tunniste on liian lyhyt',
       emailInvalid: 'Virheellinen sähköpostiosoite',
-      phoneShort: 'Puhelinnumero on liian lyhyt'
+      phoneShort: 'Puhelinnumero on liian lyhyt',
+      invalidSsn: 'Virheellinen henkilötunnus'
     },
     action: {
       save: 'Hakija tallennettu',

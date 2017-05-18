@@ -1,0 +1,23 @@
+import {Directive, Input, OnInit} from '@angular/core';
+import {AbstractControlWarn} from '../../../util/complex-validator';
+@Directive({
+  selector: 'md-input-container[inputWarning]',
+  host: {
+    '[class.has-warning]': 'warning'
+  }
+})
+export class InputWarningDirective implements OnInit {
+  @Input('inputWarning') control: AbstractControlWarn;
+
+  constructor() {}
+
+  ngOnInit(): void {
+    if (!this.control) {
+      throw new Error('Input warning requires control as input');
+    }
+  }
+
+  get warning(): boolean {
+    return !!this.control.warnings;
+  }
+}

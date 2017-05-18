@@ -1,7 +1,8 @@
-import {AbstractControl, FormGroup, Validators} from '@angular/forms';
+import {AbstractControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
 import {Some} from './option';
 import {TimeUtil} from './time.util';
 import {NumberUtil} from './number.util';
+import * as finnishSsn from 'finnishSsn';
 
 /**
  * Implements more complex validations than angular2 provides out of the box
@@ -11,7 +12,7 @@ import {NumberUtil} from './number.util';
 export class ComplexValidator {
   constructor(public validator: (validated: AbstractControl) => ValidationResult) {}
 
-  static greaterThanOrEqual(value: number) {
+  static greaterThanOrEqual(value: number): ValidatorFn {
     let validationFn = (fc: AbstractControl) => {
       // Need to use dirty here since input[type="number"] does not set touched unless arrows are clicked
       if (fc.dirty) {
@@ -30,12 +31,27 @@ export class ComplexValidator {
       if (fc.dirty && NumberUtil.isDefined(fc.value)) {
         let val = Number(fc.value);
         if (!NumberUtil.isBetween(val, min, max)) {
-          return { between: {val} };
+          return {between: {val}};
         }
       }
       return undefined;
     };
     return validationFn;
+  }
+
+  /**
+   * Validator which adds warning to field if it fails validation
+   * @returns always a valid result (undefined) so form field is not invalidated
+   */
+  static invalidSsnWarning(fc: AbstractControlWarn) {
+    let ssn = fc.value;
+    fc.warnings = fc.warnings || {};
+    if (fc.dirty && !finnishSsn.validate(ssn)) {
+      fc.warnings.invalidSsn = {ssn};
+    } else {
+      fc.warnings.invalidSsn = undefined;
+    }
+    return undefined;
   }
 
   static startBeforeEnd(startField: string, endField: string) {
@@ -65,6 +81,10 @@ export class ComplexValidator {
 
 interface ValidationResult {
   [key: string]: boolean;
+}
+
+export interface AbstractControlWarn extends AbstractControl {
+  warnings: { [key: string]: any; };
 }
 
 export const emailValidator = Validators.pattern('.+@.+\\..+');

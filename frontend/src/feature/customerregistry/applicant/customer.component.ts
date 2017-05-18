@@ -1,10 +1,9 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {NumberUtil} from '../../../util/number.util';
 import {ApplicantType} from '../../../model/application/applicant/applicant-type';
 import {EnumUtil} from '../../../util/enum.util';
-import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ApplicantForm} from '../../application/info/applicant/applicant.form';
 import {Contact} from '../../../model/application/contact';
 import {Observable, Subject} from 'rxjs';
@@ -13,6 +12,8 @@ import {Applicant} from '../../../model/application/applicant/applicant';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {ApplicantWithContacts} from '../../../model/application/applicant/applicant-with-contacts';
+import {Subscription} from 'rxjs/Subscription';
+import {ComplexValidator} from '../../../util/complex-validator';
 
 @Component({
   selector: 'customer',
@@ -32,6 +33,7 @@ export class CustomerComponent implements OnInit {
               private customerHub: CustomerHub,
               private fb: FormBuilder) {
     this.customerForm = ApplicantForm.initialForm(this.fb);
+
     this.customerWithContactsForm = this.fb.group({
       customer: this.customerForm
     });
