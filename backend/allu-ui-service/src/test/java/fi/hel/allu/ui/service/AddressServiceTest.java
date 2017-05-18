@@ -23,9 +23,9 @@ public class AddressServiceTest {
 
   private static final String wfsGeocodeXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
       "<wfs:FeatureCollection xmlns=\"http://www.opengis.net/wfs\" xmlns:wfs=\"http://www.opengis.net/wfs\" " +
-      "xmlns:gml=\"http://www.opengis.net/gml\" xmlns:helsinki=\"http://www.hel.fi/hel\" " +
+      "xmlns:gml=\"http://www.opengis.net/gml\" xmlns:helsinki=\"https://www.hel.fi/hel\" " +
       "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
-      "xsi:schemaLocation=\"http://www.hel.fi/hel http://kartta.hel.fi/ws/geoserver/helsinki/wfs?service=WFS&amp;version=1.0.0&amp;request=DescribeFeatureType&amp;typeName=helsinki%3AHelsinki_osoiteluettelo " +
+      "xsi:schemaLocation=\"https://www.hel.fi/hel https://kartta.hel.fi/ws/geoserver/helsinki/wfs?service=WFS&amp;version=1.0.0&amp;request=DescribeFeatureType&amp;typeName=helsinki%3AHelsinki_osoiteluettelo " +
       "http://www.opengis.net/wfs http://kartta.hel.fi/ws/geoserver/schemas/wfs/1.0.0/WFS-basic.xsd\">" +
       "<gml:boundedBy><gml:null>unknown</gml:null></gml:boundedBy>" +
       "<gml:featureMember><helsinki:Helsinki_osoiteluettelo fid=\"Helsinki_osoiteluettelo.fid-2b4d8300_1569d8621e5_6dc0\">" +
