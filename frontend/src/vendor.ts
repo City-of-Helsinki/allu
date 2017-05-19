@@ -25,6 +25,9 @@ import 'materializecss';
 // Leaflet.Draw CSS
 import 'leafletdrawcss';
 
+// Leaflet grouped layer control CSS
+import 'leafletgroupedlayercontrolcss';
+
 if ('production' === ENV) {
   // Production
 

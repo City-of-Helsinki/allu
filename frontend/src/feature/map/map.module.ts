@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {MapComponent} from './map.component';
 import {MapUtil} from '../../service/map/map.util';
 import {MapService} from '../../service/map/map.service';
+import {MapLayerService} from '../../service/map/map-layer.service';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import {MapService} from '../../service/map/map.service';
   ],
   providers: [
     MapUtil,
-    MapService
+    MapService,
+    MapLayerService
   ]
 })
 export class MapModule {}

@@ -3,18 +3,18 @@ import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
 import 'leaflet-draw-drag';
+import 'leaflet-groupedlayercontrol';
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
 
 import {MapUtil} from './map.util';
 import {Some} from '../../util/option';
-import {translations, findTranslation} from '../../util/translations';
-import {EnumUtil} from '../../util/enum.util';
-import {ApplicationType} from '../../model/application/type/application-type';
+import {translations} from '../../util/translations';
 import {Geocoordinates} from '../../model/common/geocoordinates';
-import {styleByApplicationType, pathStyle} from './map-draw-styles';
+import {pathStyle} from './map-draw-styles';
 import {MapPopup} from './map-popup';
+import {MapLayerService} from './map-layer.service';
 import GeoJSONOptions = L.GeoJSONOptions;
 
 const alluIcon = L.icon({
@@ -26,9 +26,17 @@ export class ShapeAdded {
   constructor(public features: L.FeatureGroup, public affectsControls: boolean = true) {}
 }
 
+export interface MapStateConfig {
+  draw: boolean;
+  edit: boolean;
+  zoom: boolean;
+  selection: boolean;
+  showOnlyApplicationArea;
+}
+
 export class MapState {
   private map: L.Map;
-  private mapLayers: any;
+  private mapOverlayLayers: any;
   private drawControl: L.Control.Draw;
   private drawnItems: {[key: string]: L.FeatureGroup} = {};
   private focusedItems: L.FeatureGroup;
@@ -38,13 +46,9 @@ export class MapState {
 
   constructor(
     private mapUtil: MapUtil,
-    private draw: boolean = false,
-    private edit: boolean = false,
-    private zoom: boolean = false,
-    private selection: boolean = false,
-    private showOnlyApplicationArea: boolean = false
+    private mapLayerSerice: MapLayerService,
+    private config: MapStateConfig
   ) {
-    this.mapLayers = this.createBaseLayers();
     this.initMap();
   }
 
@@ -108,7 +112,7 @@ export class MapState {
     });
     this.setLocalizations();
 
-    if (this.draw) {
+    if (this.config.draw) {
       // remove old control
       Some(this.drawControl).do(control => this.map.removeControl(control));
       this.map.addControl(drawControl);
@@ -178,18 +182,52 @@ export class MapState {
   }
 
   private initMap(): void {
-    EnumUtil.enumValues(ApplicationType)
-      .map(type => findTranslation(['application.type', type]))
-      .forEach(type => this.drawnItems[type] = L.featureGroup());
-
-    this.focusedItems = L.featureGroup();
-
     this.map = this.createMap();
     this.mapView$ = new BehaviorSubject(this.getCurrentMapView());
 
     let editedItems = L.featureGroup();
     editedItems.addTo(this.map);
+    this.editedItems = editedItems;
 
+    this.setupEventHandling(editedItems);
+    this.setupLayers();
+
+    L.control.zoom({
+      position: 'topright',
+      zoomInTitle: translations.map.zoomIn,
+      zoomOutTitle: translations.map.zoomOut
+    }).addTo(this.map);
+    L.control.scale().addTo(this.map);
+    L.Icon.Default['imagePath'] = '/assets/images/';
+    this.setDynamicControls(true, editedItems);
+  }
+
+  private createMap(): L.Map {
+    let mapOption = {
+      zoomControl: false,
+      center: L.latLng(60.1708763, 24.9424988), // Helsinki railway station
+      scrollWheelZoom: this.config.zoom,
+      zoom: 6,
+      minZoom: 3,
+      maxZoom: 13,
+      maxBounds:
+        L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
+      layers: this.createLayers(),
+      crs: this.mapUtil.getEPSG3879(),
+      continuousWorld: true,
+      worldCopyJump: false
+    };
+    return L.map('map', mapOption);
+  }
+
+  private createLayers(): Array<L.Layer> {
+    // Default selected layers and overlays
+    this.mapOverlayLayers = this.mapLayerSerice.overlays;
+    this.drawnItems = this.mapLayerSerice.applicationLayers;
+    return [this.mapOverlayLayers.kaupunkikartta].concat(this.applicationLayers());
+  }
+
+  private setupEventHandling(editedItems: L.FeatureGroup): void {
     let self = this;
     this.map.on('draw:created', function (e: any) {
       editedItems.addLayer(e.layer);
@@ -205,66 +243,21 @@ export class MapState {
     });
 
     this.map.on('moveend', (e: any) => {
-      if (!self.showOnlyApplicationArea) {
-        this.mapView$.next(this.getCurrentMapView());
+      if (!self.config.showOnlyApplicationArea) {
+        self.mapView$.next(self.getCurrentMapView());
       }
     });
+  }
 
-    this.editedItems = editedItems;
-    L.control.layers(this.mapLayers, this.drawnItems).addTo(this.map);
+  private setupLayers(): void {
+    let groupedOverlays = {
+      Karttatasot: this.mapLayerSerice.overlays,
+      Hakemustyypit: this.drawnItems
+    };
+    this.focusedItems = L.featureGroup();
+
+    L.control.groupedLayers(undefined, groupedOverlays).addTo(this.map);
     this.focusedItems.addTo(this.map);
-
-    L.control.zoom({
-      position: 'topright',
-      zoomInTitle: translations.map.zoomIn,
-      zoomOutTitle: translations.map.zoomOut
-    }).addTo(this.map);
-    L.control.scale().addTo(this.map);
-    L.Icon.Default['imagePath'] = '/assets/images/';
-    this.setDynamicControls(true, editedItems);
-  }
-
-  private createBaseLayers(): any {
-    return {
-      kaupunkikartta: L.tileLayer.wms('/wms?',
-        {layers: 'helsinki_kaupunkikartta', format: 'image/png'}),
-      ortoilmakuva: L.tileLayer.wms('/wms?',
-        {layers: 'helsinki_ortoilmakuva', format: 'image/png'}),
-      kiinteistokartta: L.tileLayer.wms('/wms?',
-        {layers: 'helsinki_kiinteistokartta', format: 'image/png'}),
-      ajantasaasemakaava: L.tileLayer.wms('/wms?',
-        {layers: 'helsinki_ajantasaasemakaava', format: 'image/png'}),
-      opaskartta: L.tileLayer.wms('/wms?',
-        {layers: 'helsinki_opaskartta', format: 'image/png'}),
-      kaupunginosajako: L.tileLayer.wms('/wms?',
-        {layers: 'helsinki_kaupunginosajako', format: 'image/png'})
-      // working URL for accessing Helsinki maps directly (requires authentication)
-      // testi: new L.tileLayer.wms('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
-      //   {layers: 'helsinki:Kaupunkikartta'}),
-      // TMS works, but unfortunately seems to use somehow invalid CRS. Thus, WMS is used. Left here for possible future use
-      // testi: new L.TileLayer('http://10.176.127.67:8080/tms/1.0.0/helsinki_kaupunkikartta/EPSG_3879/{z}/{x}/{y}.png',
-      //   { tms: true }),
-    };
-  }
-
-  private createMap(): L.Map {
-    // Default selected layers and overlays
-    let layers = [this.mapLayers.kaupunkikartta].concat(this.drawLayers().getLayers());
-    let mapOption = {
-      zoomControl: false,
-      center: L.latLng(60.1708763, 24.9424988), // Helsinki railway station
-      scrollWheelZoom: this.zoom,
-      zoom: 6,
-      minZoom: 3,
-      maxZoom: 13,
-      maxBounds:
-        L.latLngBounds(L.latLng(59.9084989595170114, 24.4555930248625906), L.latLng(60.4122137731072542, 25.2903558783246289)),
-      layers: layers,
-      crs: this.mapUtil.getEPSG3879(),
-      continuousWorld: true,
-      worldCopyJump: false
-    };
-    return L.map('map', mapOption);
   }
 
   private getCurrentMapView(): GeoJSON.GeometryObject {
@@ -277,12 +270,16 @@ export class MapState {
   }
 
   private drawLayers(): L.FeatureGroup {
-    return Object.keys(this.drawnItems)
-      .map(key => this.drawnItems[key])
+    return this.applicationLayers()
       .reduce((allLayers, currentLayer) => {
         allLayers.addLayer(currentLayer);
         return allLayers;
       }, L.featureGroup());
+  }
+
+  private applicationLayers(): Array<L.FeatureGroup> {
+    return Object.keys(this.drawnItems)
+      .map(key => this.drawnItems[key]);
   }
 
   private latLngToLayerPoint(latLng: L.LatLng): L.Point {
@@ -297,22 +294,22 @@ export class MapState {
 @Injectable()
 export class MapService {
 
-  constructor(private mapUtil: MapUtil) {}
+  constructor(private mapUtil: MapUtil, private mapLayerService: MapLayerService) {}
 
   public create(
-    draw?: boolean,
-    edit?: boolean,
-    zoom?: boolean,
-    selection?: boolean,
-    showOnlyApplicationArea?: boolean
+    draw: boolean = false,
+    edit: boolean = false,
+    zoom: boolean = false,
+    selection: boolean = false,
+    showOnlyApplicationArea: boolean = false
   ) {
-    return new MapState(
-      this.mapUtil,
-      draw,
-      edit,
-      zoom,
-      selection,
-      showOnlyApplicationArea
-    );
+    let config: MapStateConfig = {
+      draw: draw,
+      edit: edit,
+      zoom: zoom,
+      selection: selection,
+      showOnlyApplicationArea: showOnlyApplicationArea
+    };
+    return new MapState(this.mapUtil, this.mapLayerService, config);
   }
 }
