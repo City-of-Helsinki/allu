@@ -3,33 +3,37 @@
         <md-card-title>Hakemuksen perustiedot</md-card-title>
         <md-card-content>
             <div class="row">
-                <div class="col s6 info-field">
-                    <label>Hakemustyyppi</label>
-                    <div>{{translations.application.type[application.type]}}</div>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Hakemuksen tyyppi</md-card-subtitle>
+                    <div>{{['application.type', application.type] | translation}}</div>
                 </div>
-                <div class="col s6 info-field">
-                    <label>Sijainti</label>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Hakemus saapunut</md-card-subtitle>
+                    <div>{{application.uiApplicationCreationTime}}</div>
+                </div>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Hakemuksen laji</md-card-subtitle>
+                    <div>{{['application.kind', application.kind] | translation}}</div>
+                </div>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Arvioitu aloitus</md-card-subtitle>
+                    <div>{{application.startTime | date:format }}</div>
+                </div>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Hakemuksen nimi</md-card-subtitle>
+                    <div>{{application.name}}</div>
+                </div>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Arvioitu päättyminen</md-card-subtitle>
+                    <div>{{application.endTime | date:format }}</div>
+                </div>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Sijainti</md-card-subtitle>
                     <div *ngIf="!application.firstLocation.postalAddress.streetAddress">-</div>
                     <div>{{application.firstLocation.postalAddress.streetAddress}}</div>
                 </div>
-                <div class="col s6 info-field">
-                    <label>Tapahtuman nimi</label>
-                    <div>{{application.name}}</div>
-                </div>
-                <div class="col s6 info-field">
-                    <label>Arvioitu aloitus</label>
-                    <div>{{application.startTime | date:format }}</div>
-                </div>
-                <div class="col s6 info-field">
-                    <label>Arvioitu päättyminen</label>
-                    <div>{{application.endTime | date:format }}</div>
-                </div>
-                <div class="col s6 info-field">
-                    <label>Hakemus saapunut</label>
-                    <div>{{application.uiApplicationCreationTime}}</div>
-                </div>
-                <div class="col s6 info-field">
-                    <label>Käsittelijä</label>
+                <div class="col l6 m12 info-field">
+                    <md-card-subtitle class="card-subtitle-slim">Käsittelijä</md-card-subtitle>
                     <div *ngIf="!application.handler">-</div>
                     <div>{{application.handler?.realName}}</div>
                 </div>

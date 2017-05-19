@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdCardModule, MdToolbarModule, MdProgressBarModule, MdDialogModule, MdSlideToggleModule} from '@angular/material';
+import {MdCardModule, MdToolbarModule, MdDialogModule, MdSlideToggleModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -50,7 +50,6 @@ import {CustomerRegistryModule} from '../customerregistry/customer-registry.modu
     ReactiveFormsModule,
     MdCardModule,
     MdToolbarModule,
-    MdProgressBarModule,
     MdDialogModule,
     MdSlideToggleModule,
     MapModule,

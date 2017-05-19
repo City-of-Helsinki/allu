@@ -14,7 +14,8 @@ import {
   MdRadioModule,
   MdSelectModule,
   MdTabsModule,
-  MdToolbarModule
+  MdToolbarModule,
+  MdProgressBarModule
 } from '@angular/material';
 import 'materialize-css';
 import 'angular2-materialize';
@@ -72,6 +73,7 @@ import {InputWarningDirective} from './validation/input-warning.directive';
     MdAutocompleteModule,
     MdDatepickerModule,
     MdNativeDateModule,
+    MdProgressBarModule,
     MaterializeModule,
     AutoCompletionDirective,
     AutoCompletionListComponent,

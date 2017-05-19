@@ -11,10 +11,10 @@
         </object>
         <decision-actions [application]="application"></decision-actions>
     </div>
-    <div class="col s8" *ngIf="!pdfLoaded">
-        <div class="progress">
-            <div class="indeterminate"></div>
-        </div>
-        <div class="center">Ladataan päätöstä</div>
+    <div class="col s8 content-placeholder" *ngIf="!pdfLoaded">
+        <div class="pdf-header"></div>
+        <md-progress-bar mode="indeterminate"></md-progress-bar>
+        <img src="assets/images/decision-placeholder.png" alt="Decision placeholder"/>
+        <decision-actions [application]="application"></decision-actions>
     </div>
 </div>

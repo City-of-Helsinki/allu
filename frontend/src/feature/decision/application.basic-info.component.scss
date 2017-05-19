@@ -1,11 +1,9 @@
 @import '../../assets/colors';
 
-label {
-  font-size: 14px;
-  font-weight: 500;
-  color: $allu-text-black;
+.info-field {
+  margin-bottom: 15px;
 }
 
-.info-field {
-  padding-top: 5px;
+.mat-card-subtitle.card-subtitle-slim {
+  margin-bottom: 2px;
 }
