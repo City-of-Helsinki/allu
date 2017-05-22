@@ -18,7 +18,7 @@
             <div formArrayName="cableInfoEntries" class="row form-group">
                 <div class="col m8" *ngFor="let infoEntry of cableInfoForm.controls.cableInfoEntries.controls; let index=index">
                     <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
-                        <div class="form-group-label">{{['defaultText.type', infoEntry.value.type] | translation}}</div>
+                        <md-card-subtitle>{{['defaultText.type', infoEntry.value.type] | translation}}</md-card-subtitle>
 
                         <div *ngIf="!readonly" class="col m10">
                             <md-select class="input-full-width" placeholder="Vakiotekstit" (change)="addDefaultText(index, $event.value)">

@@ -1,0 +1,37 @@
+@import '~@angular/material/theming';
+
+@mixin card-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  .mat-card-title,
+  .mat-card-subtitle {
+    color: mat-color($primary, 500);
+  }
+}
+
+md-card {
+  background: $allu-card-background;
+}
+
+md-card-content {
+  label.info-label {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 500;
+    color: $allu-text-black;
+    padding-top: 9px;
+  }
+
+  .info-field {
+    padding-top: 3px;
+  }
+
+  .col.info-field-group {
+    padding-left: 0;
+  }
+
+  .input-field-info-text {
+    height: 3rem;
+  }
+}
+

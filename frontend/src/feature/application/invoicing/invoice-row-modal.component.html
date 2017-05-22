@@ -11,6 +11,11 @@
                             {{rowText}}
                         </md-option>
                     </md-autocomplete>
+                    <md-error>
+                        <field-error [form]="invoiceRowForm" field="rowText" hasError="required">
+                            {{'invoice.row.field.rowTextMissing' | translation}}
+                        </field-error>
+                    </md-error>
                 </md-input-container>
             </div>
         </div>
@@ -19,6 +24,11 @@
                 <md-input-container class="input-full-width">
                     <input mdInput type="number" formControlName="quantity" placeholder="Kesto*"/>
                     <div mdSuffix>pv</div>
+                    <md-error>
+                        <field-error [form]="invoiceRowForm" field="quantity" hasError="required">
+                            {{'invoice.row.field.quantityMissing' | translation}}
+                        </field-error>
+                    </md-error>
                 </md-input-container>
             </div>
         </div>

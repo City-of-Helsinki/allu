@@ -588,6 +588,10 @@ export const translations = {
       invoiceReferenceMissing: 'Laskutusviite puuttuu'
     },
     row: {
+      field: {
+        rowTextMissing: 'Laiminlyöntimaksu puuttuu',
+        quantityMissing: 'Kesto puuttuu'
+      },
       action: {
         accepted: 'Laskurivi hyväksytty laskutukseen'
       },

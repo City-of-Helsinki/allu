@@ -1,12 +1,9 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {CustomerHub} from '../../../service/customer/customer-hub';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {ApplicantForm} from '../../application/info/applicant/applicant.form';
 import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
-import {ApplicantType} from '../../../model/application/applicant/applicant-type';
-import {EnumUtil} from '../../../util/enum.util';
 import {Contact} from '../../../model/application/contact';
 import {ArrayUtil} from '../../../util/array-util';
 

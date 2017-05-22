@@ -85,29 +85,49 @@ input.mat-input-element.year-input {
 
 .mat-select-placeholder.mat-floating-placeholder {
   color: mat-color($allu-primary, 300);
-  top: -0.75em !important;
+  top: -0.9em !important;
 }
 
-@mixin placeholder-text() {
+@mixin placeholder-text($theme) {
+  $primary: map-get($theme, primary);
+
   ::-webkit-input-placeholder {
-    color: mat-color($allu-primary, 300);
+    color: mat-color($primary, 300);
   }
 
   :-moz-placeholder { /* Firefox 18- */
-    color: mat-color($allu-primary, 300);
+    color: mat-color($primary, 300);
   }
 
   ::-moz-placeholder {  /* Firefox 19+ */
-    color: mat-color($allu-primary, 300);
+    color: mat-color($primary, 300);
   }
 
   :-ms-input-placeholder {
-    color: mat-color($allu-primary, 300);
+    color: mat-color($primary, 300);
   }
 
   .mat-input-placeholder,
   .mat-select-placeholder {
-    color: mat-color($allu-primary, 300);
+    color: mat-color($primary, 300);
+  }
+}
+
+@mixin disabled-text($theme) {
+  $primary: map-get($theme, primary);
+
+  .mat-select-disabled .mat-select-value,
+  .mat-input-element:disabled,
+  label.mat-checkbox-layout {
+    color: mat-color($primary, 300) !important;
+  }
+
+  .mat-checkbox-disabled.mat-checkbox-checked .mat-checkbox-background {
+    background-color: mat-color($primary, 200) !important;
+  }
+
+  .mat-checkbox-disabled:not(.mat-checkbox-checked) .mat-checkbox-frame {
+    border-color: mat-color($primary, 200) !important;
   }
 }
 

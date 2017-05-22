@@ -6,16 +6,22 @@
 @import "buttons";
 @import "nav/nav";
 @import "radio-buttons";
+@import "card";
+@import "table";
 @import '../feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../feature/common/input-box/input-box.component.theme';
 
 // Theme components
 @include angular-material-theme($allu-theme);
 @include auto-completion-list-theme($allu-theme);
-@include placeholder-text();
+@include placeholder-text($allu-theme);
+// @include disabled-text($allu-theme); TODO: Enable when colorings are decided
 @include nav-theme($allu-theme);
 @include input-box-theme($allu-theme);
 @include button-toggle-theme($allu-theme);
+@include modal-theme($allu-theme);
+@include card-theme($allu-theme);
+@include table-theme($allu-theme);
 
 // Reset
 html,
@@ -86,6 +92,11 @@ button:focus {
   margin: 0 24px;
 }
 
+h1.content-header {
+  font-size: 24px;
+  color: mat-color($allu-primary, 500);
+}
+
 .select-wrapper {
   .dropdown-content {
     z-index: 9999;
@@ -94,11 +105,6 @@ button:focus {
 
 .clickable {
   cursor: pointer;
-}
-
-
-.ng-valid[required], .ng-valid.required  {
-  border-left: 5px solid #42A948; /* green */
 }
 
 i.icon-middle {
@@ -193,32 +199,6 @@ label.mat-checkbox-layout,
 
 .row.row-slim {
   margin-bottom: 0px;
-}
-
-md-card {
-  background: $allu-card-background;
-}
-
-md-card-content {
-  label.info-label {
-    display: inline-block;
-    font-size: 14px;
-    font-weight: 500;
-    color: $allu-text-black;
-    padding-top: 9px;
-  }
-
-  .info-field {
-    padding-top: 3px;
-  }
-
-  .col.info-field-group {
-    padding-left: 0;
-  }
-
-  .input-field-info-text {
-    height: 3rem;
-  }
 }
 
 .button-group {

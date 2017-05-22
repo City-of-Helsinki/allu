@@ -1,13 +1,9 @@
 @import '~@angular/material/theming';
 
-@mixin modal-theme($theme) {
+@mixin table-theme($theme) {
   $primary: map-get($theme, primary);
 
-  h1.mat-dialog-title {
+  th {
     color: mat-color($primary, 500);
   }
-}
-
-.mat-dialog-actions button {
-  margin: 0 5px;
 }

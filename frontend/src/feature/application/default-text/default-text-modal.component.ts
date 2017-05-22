@@ -10,6 +10,7 @@ import {Some} from '../../../util/option';
 import {StringUtil} from '../../../util/string.util';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {ApplicationType} from '../../../model/application/type/application-type';
+import {NumberUtil} from '../../../util/number.util';
 
 export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '800px'};
 
@@ -53,12 +54,15 @@ export class DefaultTextModalComponent implements OnInit {
   }
 
   remove(index, text: DefaultText) {
-    Some(text.id)
-      .do(id => this.applicationHub.removeDefaultText(id)
+    if (NumberUtil.isDefined(text.id)) {
+      this.applicationHub.removeDefaultText(text.id)
         .subscribe(
           result => this.defaultTexts.removeAt(index),
           error => NotificationService.error(error)
-        ));
+        );
+    } else {
+      this.defaultTexts.removeAt(index);
+    }
   }
 
   createEntry(defaultText: DefaultText): FormGroup {
