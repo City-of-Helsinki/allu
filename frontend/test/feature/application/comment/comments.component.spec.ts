@@ -80,7 +80,7 @@ describe('CommentsComponent', () => {
   });
 
   it('should show header', () => {
-    let title = fixture.debugElement.query(By.css('h1 :first-child')).nativeElement;
+    let title = fixture.debugElement.query(By.css('h1.content-header')).nativeElement;
     expect(title.textContent).toEqual('Kommentit');
   });
 

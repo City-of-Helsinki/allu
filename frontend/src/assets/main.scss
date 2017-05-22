@@ -14,8 +14,8 @@
 // Theme components
 @include angular-material-theme($allu-theme);
 @include auto-completion-list-theme($allu-theme);
-@include placeholder-text($allu-theme);
-// @include disabled-text($allu-theme); TODO: Enable when colorings are decided
+@include placeholder-theme($allu-theme);
+@include checkbox-theme($allu-theme);
 @include nav-theme($allu-theme);
 @include input-box-theme($allu-theme);
 @include button-toggle-theme($allu-theme);
@@ -173,14 +173,6 @@ input:-webkit-autofill:active {
 .error-overflow .mat-input-subscript-wrapper {
   overflow: visible;
 }
-
-label.mat-checkbox-layout,
-.mat-input-element:disabled,
-.mat-select-disabled .mat-select-value,
-.select-wrapper input.select-dropdown:disabled {
-  color: $black-50-opacity;
-}
-
 
 .input-field-label {
   font-weight: bold;

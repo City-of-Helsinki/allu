@@ -358,7 +358,7 @@ export const translations = {
     },
     proposal: {
       PROPOSE_APPROVAL: 'Ehdota hyväksymistä',
-      PROPOSE_REJECTED: 'Ehdota hylkäystä'
+      PROPOSE_REJECT: 'Ehdota hylkäystä'
     },
     distribution: {
       type: {
