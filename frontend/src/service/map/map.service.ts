@@ -4,6 +4,7 @@ import 'leaflet-draw';
 import 'proj4leaflet';
 import 'leaflet-draw-drag';
 import 'leaflet-groupedlayercontrol';
+import 'leaflet-measure-path';
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -141,6 +142,7 @@ export class MapState {
 
   public drawEditableGeometry(geometry: GeoJSON.GeometryCollection, style?: Object) {
     this.drawGeometryToLayer(geometry, this.editedItems, style);
+    this.editedItems.eachLayer((l: any) => l.showMeasurements(translations.map.measure));
   }
 
   public fitEditedToView() {
@@ -175,7 +177,7 @@ export class MapState {
   }
 
   private drawGeoJSON(geoJSON: L.GeoJSON, drawLayer: L.LayerGroup, popup?: MapPopup): void {
-    geoJSON.eachLayer(l => {
+    geoJSON.eachLayer((l: any) => {
       Some(popup).do(pu => l.bindPopup((_) => pu.content()));
       drawLayer.addLayer(l);
     });
@@ -232,6 +234,7 @@ export class MapState {
     this.map.on('draw:created', function (e: any) {
       editedItems.addLayer(e.layer);
       self.shapes$.next(new ShapeAdded(editedItems));
+      e.layer.showMeasurements(translations.map.measure);
     });
 
     this.map.on('draw:edited', function (e: any) {

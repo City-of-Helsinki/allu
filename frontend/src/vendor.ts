@@ -28,6 +28,8 @@ import 'leafletdrawcss';
 // Leaflet grouped layer control CSS
 import 'leafletgroupedlayercontrolcss';
 
+import 'leafletmeasurepathcss';
+
 if ('production' === ENV) {
   // Production
 

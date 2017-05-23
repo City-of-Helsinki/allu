@@ -66,7 +66,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
 
     this.matchingAddresses = this.addressControl.valueChanges
       .debounceTime(300)
-      .filter(searchTerm => searchTerm.length >= 3)
+      .filter(searchTerm => !!searchTerm && searchTerm.length >= 3)
       .switchMap(searchTerm => this.mapHub.addressSearch(searchTerm))
       .map(matching => matching.sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress)));
   }

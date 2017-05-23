@@ -518,6 +518,13 @@ export const translations = {
           }
         }
       }
+    },
+    measure: {
+      lang: {
+        totalLength: 'Kokonaispituus',
+        totalArea: 'Kokonaispinta-ala (arvio)',
+        segmentLength: 'Sivun pituus'
+      }
     }
   },
   attachment: {

@@ -74,6 +74,7 @@ module.exports = {
       leafletcss: 'leaflet/dist/leaflet.css',
       leafletdrawcss: 'leaflet-draw/dist/leaflet.draw.css',
       leafletgroupedlayercontrolcss: 'leaflet-groupedlayercontrol/dist/leaflet.groupedlayercontrol.min.css',
+      leafletmeasurepathcss: 'leaflet-measure-path/leaflet-measure-path.css',
       materializecss: helpers.root('src/assets/materialize/materialize.css'),
       materialize: helpers.root('src/assets/materialize/materialize.min.js'),
       filesaver: 'file-saver/FileSaver.js',
