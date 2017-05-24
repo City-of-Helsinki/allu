@@ -13,14 +13,10 @@ services:
       abstract: Working WMS url is http://localhost:8080/service?
     srs: ['EPSG:3879']
 
-# known to work WMS request (just in case troubleshooting is required later on)
-# http://10.176.127.67:8080/service?&SERVICE=WMS&REQUEST=GetMap&VERSION=1.1.1&LAYERS=helsinki_kaupunkikartta&STYLES=&FORMAT=image%2Fpng&TRANSPARENT=false&HEIGHT=256&WIDTH=256&SRS=EPSG%3A3879&BBOX=25505536,6666863.999998973,25509632,6670959.999998968
-
-
 layers:
   - name: helsinki_karttasarja
     title: Helsinki Karttasarja
-    sources: [hki_kaupunkikartta_cache]
+    sources: [hki_karttasarja_cache]
   - name: helsinki_ortoilmakuva
     title: Helsinki Ortoilmakuva
     sources: [hki_ortoilmakuva_cache]
