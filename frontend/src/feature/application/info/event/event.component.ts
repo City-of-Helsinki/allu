@@ -1,10 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder} from '@angular/forms';
-
 import {Application} from '../../../../model/application/application';
-import {ApplicationHub} from '../../../../service/application/application-hub';
-import {ApplicantForm} from '../applicant/applicant.form';
 import {EventDetailsForm} from './details/event-details.form';
 import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
@@ -44,9 +41,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     application.priceOverrideEuro = form.event.priceOverride;
     application.priceOverrideReason = form.event.priceOverrideReason;
     application.type = ApplicationType[ApplicationType.EVENT];
-    application.applicant = ApplicantForm.toApplicant(form.applicant);
     application.extension = EventDetailsForm.toEvent(form.event, ApplicationType.EVENT);
-    application.contactList = form.contacts;
     return application;
   }
 }

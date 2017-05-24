@@ -1,14 +1,14 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
-import {Applicant} from '../applicant/applicant';
-import {Contact} from '../contact';
+import {Contact} from '../../customer/contact';
 import {TimeUtil} from '../../../util/time.util';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
+import {Customer} from '../../customer/customer';
 
 export class AreaRental extends ApplicationExtension {
   constructor()
   constructor(
-    contractor: Applicant,
+    contractor: Customer,
     responsiblePerson: Contact,
     workFinished: Date,
     trafficArrangements: string,
@@ -17,7 +17,7 @@ export class AreaRental extends ApplicationExtension {
     terms: string
   )
   constructor(
-    public contractor?: Applicant,
+    public contractor?: Customer,
     public responsiblePerson?: Contact,
     public workFinished?: Date,
     public trafficArrangements?: string,

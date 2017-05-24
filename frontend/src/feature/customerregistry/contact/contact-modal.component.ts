@@ -4,7 +4,7 @@ import {CustomerHub} from '../../../service/customer/customer-hub';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
-import {Contact} from '../../../model/application/contact';
+import {Contact} from '../../../model/customer/contact';
 import {ArrayUtil} from '../../../util/array-util';
 
 @Component({
@@ -31,7 +31,7 @@ export class ContactModalComponent implements OnInit {
   }
 
   onSubmit(contact: Contact) {
-    this.customerHub.saveApplicantWithContacts(contact.applicantId, undefined, [contact])
+    this.customerHub.saveCustomerWithContacts(contact.customerId, undefined, [contact])
       .subscribe(
         saved => {
           NotificationService.message(findTranslation('contact.action.save'));

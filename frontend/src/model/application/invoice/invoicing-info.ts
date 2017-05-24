@@ -1,12 +1,12 @@
 import {PostalAddress} from '../../common/postal-address';
-import {ApplicantType} from '../applicant/applicant-type';
+import {CustomerType} from '../../customer/customer-type';
 import {InvoicePartition} from './ivoice-partition';
 import {TimeUtil} from '../../../util/time.util';
 
 export class InvoicingInfo {
   constructor(
     public id?: number,
-    public type?: ApplicantType,
+    public type?: CustomerType,
     public name?: string,
     public registryKey?: string,
     public postalAddress?: PostalAddress,

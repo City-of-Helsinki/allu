@@ -2,11 +2,11 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,8 +130,8 @@ public class DecisionService {
   private void fillJson(DecisionJson decisionJson, ApplicationJson application) {
     decisionJson.setEventName(application.getName());
     decisionJson.setDecisionId(application.getApplicationId());
-    decisionJson.setApplicantAddressLines(applicantAddressLines(application));
-    decisionJson.setApplicantContactLines(applicantContactLines(application));
+    decisionJson.setCustomerAddressLines(customerAddressLines(application));
+    decisionJson.setCustomerContactLines(customerContactLines(application));
     decisionJson.setSiteAddressLine(siteAddressLine(application));
     if (application.getLocations() != null) {
       decisionJson.setSiteArea(String.format("%.0f", Math.ceil(application.getLocations().stream().mapToDouble(l -> l.getArea()).sum())));
@@ -235,28 +235,39 @@ public class DecisionService {
         .format(dateTimeFormatter);
   }
 
-  private List<String> applicantAddressLines(ApplicationJson applicationJson) {
-    // return lines in format {"[Applicant name], [SSID]", "[address, Postal
+  private List<String> customerAddressLines(ApplicationJson applicationJson) {
+    // return lines in format {"[Customer name], [SSID]", "[address, Postal
     // code + city]",
     // "[email, phone]"}
-    ApplicantJson applicant = applicationJson.getApplicant();
-    if (applicant == null) {
-      return Collections.emptyList();
-    }
-    return Arrays.asList(
-        String.format("%s, %s", applicant.getName(), applicant.getRegistryKey()),
-        postalAddress(applicant.getPostalAddress()),
-        String.format("%s, %s", applicant.getEmail(), applicant.getPhone()));
+    // TODO: perhaps this should work with other than APPLICANT roles too?
+    Optional<CustomerWithContactsJson> cwcOpt =
+        applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
+
+    final List<String> addressLines = new ArrayList();
+    cwcOpt.ifPresent(cwc -> {
+      addressLines.addAll(
+          Arrays.asList(
+              String.format("%s, %s", cwc.getCustomer().getName(), cwc.getCustomer().getRegistryKey()),
+              postalAddress(cwc.getCustomer().getPostalAddress()),
+              String.format("%s, %s", cwc.getCustomer().getEmail(), cwc.getCustomer().getPhone())));
+    });
+    return addressLines;
   }
 
-  private List<String> applicantContactLines(ApplicationJson application) {
+  private List<String> customerContactLines(ApplicationJson application) {
     // returns {"[Yhteyshenkilön nimi]", "[Sähköpostiosoite, puhelin]"}
-    if (application.getContactList() == null) {
-      return Collections.emptyList();
-    }
-    return application.getContactList().stream()
-        .flatMap(c -> Stream.of(c.getName(), String.format("%s, %s", c.getEmail(), c.getPhone())))
-        .collect(Collectors.toList());
+
+    Optional<CustomerWithContactsJson> cwcOpt =
+        application.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
+    final List<String> contactLines = new ArrayList<>();
+    cwcOpt.ifPresent(cwc -> {
+      contactLines.addAll(
+          cwc.getContacts().stream()
+          .flatMap(c ->
+              Stream.of(cwc.getCustomer().getName(), String.format("%s, %s", cwc.getCustomer().getEmail(), cwc.getCustomer().getPhone())))
+          .collect(Collectors.toList()));
+    });
+    return contactLines;
   }
 
   private String siteAddressLine(ApplicationJson application) {

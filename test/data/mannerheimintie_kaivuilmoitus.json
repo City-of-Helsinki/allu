@@ -9,32 +9,35 @@
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
   "creationTime": "2016-07-15T10:36:09.721Z",
-  "applicant": {
-    "type": "COMPANY",
-    "person": null,
-    "id": null,
-    "name": "Penan putki ja puhallus",
-    "registryKey": "1212121-6",
-    "postalAddress": {
-      "streetAddress": "Mannerheimintie 1",
-      "postalCode": "00100",
-      "city": "Helsinki"
-    },
-    "email": "pena@puhallus.fi",
-    "phone": "0441212121",
-    "active": true
-  },
-  "contactList": [
+  "customersWithContacts":[
     {
-      "id": null,
-      "applicantId": null,
-      "name": "Pena Puhallus",
-      "streetAddress": "Porkkalantie 1",
-      "postalCode": "00110",
-      "city": "Helsinki",
-      "email": "pena@puhallus.fi",
-      "phone": "0441212121",
-      "active": true
+      "roleType": "APPLICANT",
+      "customer": {
+        "type": "COMPANY",
+        "person": null,
+        "id": null,
+        "name": "Penan putki ja puhallus",
+        "registryKey": "1212121-6",
+        "postalAddress": {
+          "streetAddress": "Mannerheimintie 1",
+          "postalCode": "00100",
+          "city": "Helsinki"
+        },
+        "email": "pena@puhallus.fi",
+        "phone": "0441212121",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Pena Puhallus",
+        "streetAddress": "Porkkalantie 1",
+        "postalCode": "00110",
+        "city": "Helsinki",
+        "email": "pena@puhallus.fi",
+        "phone": "0441212121",
+        "active": true
+      }]
     }
   ],
   "locations": [

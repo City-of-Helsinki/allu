@@ -47,7 +47,7 @@ public class ApplicationServiceTest extends MockServices {
   @Mock
   protected LocationService locationService;
   @Mock
-  protected ApplicantService applicantService;
+  protected CustomerService customerService;
   @Autowired
   protected ApplicationMapper applicationMapper;
   @Mock
@@ -76,21 +76,19 @@ public class ApplicationServiceTest extends MockServices {
 
     Mockito.when(locationService.createLocations(Mockito.anyInt(), Mockito.anyObject())).thenAnswer((Answer<List<LocationJson>>) invocation ->
         Collections.singletonList(createLocationJson(102)));
-    Mockito.when(applicantService.createApplicant(Mockito.anyObject())).thenAnswer((Answer<ApplicantJson>) invocation ->
-        createApplicantJson(103, 201));
+    Mockito.when(customerService.createCustomer(Mockito.anyObject())).thenAnswer((Answer<CustomerJson>) invocation ->
+        createCustomerJson(103));
 
     Mockito.when(locationService.findLocationById(Mockito.anyInt())).thenAnswer((Answer<LocationJson>) invocation ->
         createLocationJson(102));
-    Mockito.when(applicantService.findApplicantById(Mockito.anyInt())).thenAnswer((Answer<ApplicantJson>) invocation ->
-        createApplicantJson(103, 201));
-    Mockito.when(contactService.findContactsForApplication(Mockito.anyInt()))
-        .thenAnswer((Answer<List<ContactJson>>) invocation -> createContactList());
+    Mockito.when(customerService.findCustomerById(Mockito.anyInt())).thenAnswer((Answer<CustomerJson>) invocation ->
+        createCustomerJson(103));
 
     userJson = new UserJson(USER_ID, null, null, null, null, true, null, null, null);
     Mockito.when(userService.getCurrentUser()).thenReturn(userJson);
 
     applicationService = new ApplicationService(
-        props, restTemplate, locationService, applicantService, applicationMapper, contactService, userService);
+        props, restTemplate, locationService, customerService, applicationMapper, contactService, userService);
   }
 
   @Test
@@ -119,7 +117,7 @@ public class ApplicationServiceTest extends MockServices {
 
     assertNotNull(response);
     assertEquals(1, response.getId().intValue());
-    assertEquals(103, (int) response.getApplicantId());
+    assertEquals(103, (int) response.getCustomersWithContacts().get(0).getCustomer().getId());
     assertNotNull(response.getExtension());
     assertNotNull(response.getDecisionTime());
     assertNotNull(response.getExtension());
@@ -134,9 +132,6 @@ public class ApplicationServiceTest extends MockServices {
                 HttpStatus.CREATED));
 
     ApplicationJson applicationJson = createMockApplicationJson(1);
-    ApplicantJson applicantJson = new ApplicantJson();
-    applicantJson.setId(1);
-    applicationJson.setApplicant(applicantJson);
     applicationService.updateApplication(1, applicationJson);
     assertNotNull(applicationJson);
     assertEquals(1, applicationJson.getId().intValue());
@@ -200,11 +195,11 @@ public class ApplicationServiceTest extends MockServices {
 
     assertNotNull(response);
     assertNotNull(response.getProjectId());
-    assertNotNull(response.getApplicantId());
+    assertNotNull(response.getCustomersWithContacts().get(0).getCustomer().getId());
     assertNotNull(response.getExtension());
     assertEquals(100, (long) response.getProjectId());
-    assertNotNull(response.getApplicantId());
-    assertEquals(103, (long) response.getApplicantId());
+    assertNotNull(response.getCustomersWithContacts().get(0).getCustomer().getId());
+    assertEquals(103, (long) response.getCustomersWithContacts().get(0).getCustomer().getId());
   }
 
   @Test
@@ -223,14 +218,14 @@ public class ApplicationServiceTest extends MockServices {
     assertEquals(2, response.size());
 
     assertNotNull(response.get(0).getProjectId());
-    assertNotNull(response.get(0).getApplicantId());
+    assertNotNull(response.get(0).getCustomersWithContacts().get(0).getCustomer().getId());
     assertNotNull(response.get(0).getExtension());
     assertEquals(100, (long) response.get(0).getProjectId());
-    assertNotNull(response.get(0).getApplicantId());
-    assertEquals(103, (long) response.get(0).getApplicantId());
+    assertNotNull(response.get(0).getCustomersWithContacts().get(0).getCustomer().getId());
+    assertEquals(103, (long) response.get(0).getCustomersWithContacts().get(0).getCustomer().getId());
     assertNotNull(response.get(1));
     assertNotNull(response.get(1).getProjectId());
-    assertNotNull(response.get(1).getApplicantId());
+    assertNotNull(response.get(1).getCustomersWithContacts().get(0).getCustomer().getId());
     assertEquals("MockName2", response.get(1).getName());
   }
 

@@ -5,6 +5,7 @@ import fi.hel.allu.common.types.*;
 
 import fi.hel.allu.common.validator.NotFalse;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -36,11 +37,8 @@ public class ApplicationJson {
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
   private ZonedDateTime recurringEndTime;
-  @NotNull(message = "{application.applicant}")
-  @Valid
-  private ApplicantJson applicant;
-  @Valid
-  private List<ContactJson> contactList;
+  @NotEmpty(message = "{application.customersWithContacts}")
+  private List<CustomerWithContactsJson> customersWithContacts;
   @Valid
   private List<LocationJson> locations;
   @NotNull(message = "{application.extension}")
@@ -231,25 +229,14 @@ public class ApplicationJson {
   }
 
   /**
-   * in Finnish: Hakemuksen hakija
+   * in Finnish: Hakemuksen asiakkuus ja kontaktitiedot
    */
-  public ApplicantJson getApplicant() {
-    return applicant;
+  public List<CustomerWithContactsJson> getCustomersWithContacts() {
+    return customersWithContacts;
   }
 
-  public void setApplicant(ApplicantJson applicant) {
-    this.applicant = applicant;
-  }
-
-  /**
-   * in Finnish: Hakemuksen yhteyshenkilöt
-   */
-  public List<ContactJson> getContactList() {
-    return contactList;
-  }
-
-  public void setContactList(List<ContactJson> contactList) {
-    this.contactList = contactList;
+  public void setCustomersWithContacts(List<CustomerWithContactsJson> customersWithContacts) {
+    this.customersWithContacts = customersWithContacts;
   }
 
   /**
@@ -275,9 +262,9 @@ public class ApplicationJson {
   }
 
   /**
-   * The distribution type of the decision. Used for sending decision to applicant.
+   * The distribution type of the decision. Used for sending decision to customer.
    *
-   * @return  The distribution type of the decision. Used for sending decision to applicant.
+   * @return  The distribution type of the decision. Used for sending decision to customer.
    */
   public DistributionType getDecisionDistributionType() {
     return decisionDistributionType;

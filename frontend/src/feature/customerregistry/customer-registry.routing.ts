@@ -1,7 +1,7 @@
 import {Routes} from '@angular/router';
 import {AuthGuard} from '../login/auth-guard.service';
 import {CustomerListComponent} from './customer-list.component';
-import {CustomerComponent} from './applicant/customer.component';
+import {CustomerComponent} from './customer/customer.component';
 import {CustomerRegistryComponent} from './customer-registry.component';
 
 export const customerRegistryRoutes: Routes = [

@@ -2,6 +2,7 @@ package fi.hel.allu.search;
 
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
@@ -120,8 +121,12 @@ public class ApplicationSearchTest {
 
     applicationES1.setName(USERNAME + " " + 1);
     applicationES1.setHandler(new UserES(USERNAME + " " + 1, "not used"));
-    applicationES1.setApplicant(new ApplicantES());
-    applicationES1.getApplicant().setName(USERNAME + " " + 1);
+    CustomerES customerES = new CustomerES();
+    customerES.setName(USERNAME + " " + 1);
+    RoleTypedCustomerES roleTypedCustomerES =
+        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
+    applicationES1.setCustomers(roleTypedCustomerES);
+
     applicationES1.setLocations(Arrays.asList(
         new LocationES("AEnsimmäinen osoite 9", "00100", "Sinki", 1),
         new LocationES("Zviimonen 777", "00100", "Sinki", 5)));
@@ -129,15 +134,21 @@ public class ApplicationSearchTest {
     ApplicationES applicationES2 = createApplication(2);
     applicationES2.setName(USERNAME + " " + 2);
     applicationES2.setHandler(new UserES(USERNAME + " " + 2, "not used"));
-    applicationES2.setApplicant(new ApplicantES());
-    applicationES2.getApplicant().setName(USERNAME + " " + 2);
+    customerES = new CustomerES();
+    customerES.setName(USERNAME + " " + 2);
+    roleTypedCustomerES =
+        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
+    applicationES2.setCustomers(roleTypedCustomerES);
     applicationES2.setLocations(Collections.singletonList(new LocationES("bToinen osoite 1", "00100", "Sinki", 2)));
 
     ApplicationES applicationES3 = createApplication(3);
     applicationES3.setName(USERNAME + " " + 3);
     applicationES3.setHandler(new UserES(USERNAME + " " + 3, "not used"));
-    applicationES3.setApplicant(new ApplicantES());
-    applicationES3.getApplicant().setName(USERNAME + " " + 3);
+    customerES = new CustomerES();
+    customerES.setName(USERNAME + " " + 3);
+    roleTypedCustomerES =
+        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
+    applicationES3.setCustomers(roleTypedCustomerES);
     applicationES3.setLocations(Arrays.asList(
         new LocationES("Zviimonen 777", "00100", "Sinki", 3),
         new LocationES("Ckolmas osoite 5", "00100", "Sinki", 4)));
@@ -150,9 +161,9 @@ public class ApplicationSearchTest {
     QueryParameters params = new QueryParameters();
     QueryParameter nameParameter = new QueryParameter("name", USERNAME);
     QueryParameter handlerNameParameter = new QueryParameter("handler.userName", Arrays.asList(USERNAME));
-    QueryParameter applicantNameParameter = new QueryParameter("applicant.name", Arrays.asList(USERNAME));
+    QueryParameter customerNameParameter = new QueryParameter("customers.applicant.customer.name", Arrays.asList(USERNAME));
 
-    List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, handlerNameParameter, applicantNameParameter));
+    List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, handlerNameParameter, customerNameParameter));
     params.setQueryParameters(parameterList);
     params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
     List<Integer> appList = genericSearchService.findByField(params);
@@ -164,7 +175,7 @@ public class ApplicationSearchTest {
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    params.setSort(new QueryParameters.Sort("applicant.name.alphasort", QueryParameters.Sort.Direction.ASC));
+    params.setSort(new QueryParameters.Sort("customers.applicant.customer.name.alphasort", QueryParameters.Sort.Direction.ASC));
     appList = genericSearchService.findByField(params);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
@@ -217,9 +228,14 @@ public class ApplicationSearchTest {
   @Test
   public void testFindByContact() {
     ApplicationES applicationES = createApplication(1);
+    CustomerES customerES = new CustomerES();
+    RoleTypedCustomerES roleTypedCustomerES =
+        new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT,
+            SearchTestUtil.createCustomerWithContacts(customerES, createContacts())));
+    applicationES.setCustomers(roleTypedCustomerES);
     genericSearchService.insert(applicationES.getId().toString(), applicationES);
 
-    QueryParameters params = SearchTestUtil.createQueryParameters("contacts.name", "kontakti");
+    QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "kontakti");
     genericSearchService.refreshIndex();
     List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
@@ -512,7 +528,6 @@ public class ApplicationSearchTest {
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     ZonedDateTime dateTime = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
     applicationES.setCreationTime(dateTime);
-    applicationES.setContacts(createContacts());
 
     applicationES.setApplicationTypeData(createApplicationTypeData());
     return applicationES;

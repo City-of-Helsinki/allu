@@ -1,0 +1,29 @@
+<form [formGroup]="customerForm">
+    <div class="col m6">
+        <md-card class="customer-card">
+            <md-card-title>
+                {{['customer.role', customerWithContacts.uiRoleType, 'title'] | translation}}
+                <button md-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()"><md-icon>mode_edit</md-icon></button>
+            </md-card-title>
+            <md-card-content>
+                <customer-info [form]="customerForm" [allowSearch]="true"
+                               (customerChange)="onCustomerChange($event)"></customer-info>
+                <div *ngIf="!readonly" class="row form-group">
+                    <div class="col m6" *ngIf="showCopyToBilling">
+                        <md-checkbox>Kopioi tiedot laskutusosoitteeksi</md-checkbox>
+                    </div>
+                    <div class="col m6 height-fix-bottom" *ngIf="showRepresentative">
+                        <md-checkbox formControlName="representative">Asiaa hoitaa asiamies</md-checkbox>
+                    </div>
+                    <div class="col m6 height-fix-bottom" *ngIf="showPropertyDeveloper">
+                        <md-checkbox formControlName="propertyDeveloper">Hakemuksella on rakennuttaja</md-checkbox>
+                    </div>
+                </div>
+            </md-card-content>
+        </md-card>
+    </div>
+</form>
+<contact [parentForm]="customerWithContactsForm" [customerId]="customerWithContacts.customerId"
+         [contactList]="customerWithContacts.contacts" [customerRoleType]="customerWithContacts.uiRoleType"
+         [customerEvents]="customerEvents" [readonly]="readonly" [addNew]="true"
+></contact>

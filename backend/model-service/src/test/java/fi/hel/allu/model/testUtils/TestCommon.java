@@ -1,7 +1,7 @@
 package fi.hel.allu.model.testUtils;
 
 import fi.hel.allu.common.types.*;
-import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.dao.UserDao;
@@ -32,7 +32,7 @@ public class TestCommon {
   @Autowired
   private LocationService locationService;
   @Autowired
-  private ApplicantDao applicantDao;
+  private CustomerDao customerDao;
   @Autowired
   private ProjectDao projectDao;
   @Autowired
@@ -43,11 +43,12 @@ public class TestCommon {
   }
 
   private Application dummyBasicApplication(String name, String handler) {
-    Integer personId = insertPerson();
+    Customer person = insertPerson();
     Integer projectId = insertProject();
     User user = insertUser(handler);
     Application app = new Application();
-    app.setApplicantId(personId);
+    app.setCustomersWithContacts(
+        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, person, Collections.emptyList())));
     app.setProjectId(projectId);
     app.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
     app.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
@@ -63,7 +64,7 @@ public class TestCommon {
   /**
    * Create a dummy application for insertion into database.
    *
-   * Creates dummy project, person, and applicant in DB and prepares an
+   * Creates dummy project, person, and customer in DB and prepares an
    * Application that uses them.
    *
    * @param name
@@ -121,7 +122,7 @@ public class TestCommon {
 
   public ApplicationExtension dummyAreaRentalEvent() {
     AreaRental areaRental = new AreaRental();
-    areaRental.setContractor(new Applicant());
+    areaRental.setContractor(new Customer());
     areaRental.setResponsiblePerson(new Contact());
     areaRental.setAdditionalInfo("foobar additional info");
     return areaRental;
@@ -169,14 +170,14 @@ public class TestCommon {
    *
    * @return the person's ID
    */
-  public Integer insertPerson() {
-    Applicant personApplicant = new Applicant();
-    personApplicant.setName("Pentti");
-    personApplicant.setType(ApplicantType.PERSON);
-    personApplicant.setRegistryKey("121212-xxxx");
-    personApplicant.setEmail("pena@dev.null");
-    Applicant insertedPerson = applicantDao.insert(personApplicant);
-    return insertedPerson.getId();
+  public Customer insertPerson() {
+    Customer personCustomer = new Customer();
+    personCustomer.setName("Pentti");
+    personCustomer.setType(CustomerType.PERSON);
+    personCustomer.setRegistryKey("121212-xxxx");
+    personCustomer.setEmail("pena@dev.null");
+    Customer insertedPerson = customerDao.insert(personCustomer);
+    return insertedPerson;
   }
 
   /**
@@ -209,7 +210,6 @@ public class TestCommon {
 
   private static final String[] DELETE_ALL_DATA = new String[] {
       "delete from allu.decision",
-      "delete from allu.application_contact",
       "delete from allu.contact",
       "delete from allu.default_attachment_application_type",
       "delete from allu.default_attachment",
@@ -225,7 +225,7 @@ public class TestCommon {
       "delete from allu.distribution_entry",
       "delete from allu.application",
       "delete from allu.project",
-      "delete from allu.applicant",
+      "delete from allu.customer",
       "delete from allu.outdoor_pricing",
       "delete from allu.fixed_location",
       "delete from allu.user_application_type",

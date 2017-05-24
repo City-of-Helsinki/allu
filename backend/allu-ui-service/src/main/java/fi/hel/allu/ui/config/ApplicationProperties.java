@@ -597,80 +597,73 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return URL for getting an applicant by id.
+   * @return URL for getting an customer by id.
    */
-  public String getApplicantByIdUrl() {
-    return getModelServiceUrl("/applicants/{id}");
+  public String getCustomerByIdUrl() {
+    return getModelServiceUrl("/customers/{id}");
   }
 
   /**
-   * @return URL for getting applicant by ids.
+   * @return URL for getting customers by ids.
    */
-  public String getApplicantsByIdUrl() {
-    return getModelServiceUrl("/applicants/find");
+  public String getCustomersByIdUrl() {
+    return getModelServiceUrl("/customers/find");
   }
 
   /**
-   * @return URL for getting all applicants.
+   * @return URL for getting all customers.
    */
-  public String getApplicantsUrl() {
-    return getModelServiceUrl("/applicants");
+  public String getCustomersUrl() {
+    return getModelServiceUrl("/customers");
   }
 
   /**
-   * @return URL for creating an applicant.
+   * @return URL for creating a customer..
    */
-  public String getApplicantCreateUrl() {
-    return getModelServiceUrl("/applicants");
+  public String getCustomerCreateUrl() {
+    return getModelServiceUrl("/customers");
   }
 
   /**
-   * @return URL for updating an applicant.
+   * @return URL for updating a customer.
    */
-  public String getApplicantUpdateUrl() {
-    return getModelServiceUrl("/applicants/{id}");
+  public String getCustomerUpdateUrl() {
+    return getModelServiceUrl("/customers/{id}");
   }
 
   /**
-   * @return URL for finding application ids of the applications having given applicant.
+   * @return URL for finding application ids of the applications having given customer.
    */
-  public String getApplicantApplicationsUrl() {
-    return getModelServiceUrl("/applicants/applications/{id}");
+  public String getCustomerApplicationsUrl() {
+    return getModelServiceUrl("/customers/applications/{id}");
   }
 
   /**
-   * @return url to send applicant search queries.
+   * @return url to send customer search queries.
    */
-  public String getApplicantSearchUrl() {
-    return getSearchServiceUrl("/applicants/search");
+  public String getCustomerSearchUrl() {
+    return getSearchServiceUrl("/customers/search");
   }
 
   /**
-   * @return url to send applicant search queries with partial words.
+   * @return url to send multiple customer search index updates.
    */
-  public String getApplicantSearchPartialUrl() {
-    return getSearchServiceUrl("/applicants/search/{fieldName}");
+  public String getCustomersSearchUpdateUrl() {
+    return getSearchServiceUrl("/customers/update");
   }
 
   /**
-   * @return url to send multiple applicant search index updates.
+   * @return url to update applications to have the given customer in search index.
    */
-  public String getApplicantsSearchUpdateUrl() {
-    return getSearchServiceUrl("/applicants/update");
+  public String getCustomerApplicationsSearchUpdateUrl() {
+    return getSearchServiceUrl("/customers/{id}/applications");
   }
 
   /**
-   * @return url to update applications to have the given applicant in search index.
+   * @return url to add customer to search index.
    */
-  public String getApplicantApplicationsSearchUpdateUrl() {
-    return getSearchServiceUrl("/applicants/{id}/applications");
-  }
-
-  /**
-   * @return url to add applicant to search index.
-   */
-  public String getApplicantSearchCreateUrl() {
-    return getSearchServiceUrl("/applicants");
+  public String getCustomerSearchCreateUrl() {
+    return getSearchServiceUrl("/customers");
   }
 
   /**
@@ -688,10 +681,10 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return URL for getting a contact by applicant.
+   * @return URL for getting a contact by customer.
    */
-  public String getContactsByApplicantUrl() {
-    return getModelServiceUrl("/contacts/applicant/{applicationId}");
+  public String getContactsByCustomerUrl() {
+    return getModelServiceUrl("/contacts/customer/{customerId}");
   }
 
   /**
@@ -706,13 +699,6 @@ public class ApplicationProperties {
    */
   public String getContactUpdateUrl() {
     return getModelServiceUrl("/contacts");
-  }
-
-  /**
-   * Model-service path to find contacts by application identifier
-   */
-  public String getContactsByApplicationUrl() {
-    return getModelServiceUrl("/contacts/application/{applicationId}");
   }
 
   /**

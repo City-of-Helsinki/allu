@@ -1,9 +1,11 @@
 package fi.hel.allu.search.controller;
 
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
+import fi.hel.allu.search.domain.ApplicationWithContactsES;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,12 +57,11 @@ public class ContactController {
   }
 
   @RequestMapping(value = "/applications", method = RequestMethod.PUT)
-  public ResponseEntity<Void> updateContactsOfApplications(@RequestBody Map<Integer, List<ContactES>> idToContactList) {
-    Map<String, Object> idToContactUpdate = idToContactList.entrySet().stream()
-        .collect(Collectors.toMap(
-            entry -> Integer.toString(entry.getKey()),
-            entry -> Collections.singletonMap("contacts", entry.getValue())));
-    applicationSearchService.bulkUpdate(idToContactUpdate);
+  public ResponseEntity<Void> updateContactsOfApplications(@RequestBody List<ApplicationWithContactsES> applicationWithContacts) {
+    Map<String, Object> contactsUpdateStructure =
+        CustomersIndexUtil.getContactsUpdateStructure(applicationWithContacts).entrySet().stream().collect(
+            Collectors.toMap(cus -> cus.getKey(), cus -> cus.getValue())); // rather silly way to cast Map<String, Map> to Map<String, Object>
+    applicationSearchService.bulkUpdate(contactsUpdateStructure);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

@@ -1,6 +1,6 @@
 import {PostalAddress} from './postal-address';
 
-export interface ApplicantDetails {
+export interface CustomerDetails {
   id?: number;
   name?: string;
   registryKey?: string;

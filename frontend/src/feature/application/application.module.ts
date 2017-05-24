@@ -14,7 +14,7 @@ import {EventComponent} from './info/event/event.component';
 import {LoadingComponent} from '../loading/loading.component';
 import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
-import {ApplicantComponent} from './info/applicant/applicant.component';
+import {CustomerComponent} from './info/customer/customer.component';
 import {ContactComponent} from './info/contact/contact.component';
 import {EventDetailsComponent} from './info/event/details/event-details.component';
 import {LocationDetailsComponent} from './info/location/location-details.component';
@@ -40,7 +40,6 @@ import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
 import {InvoicingModule} from './invoicing/invoicing.module';
 import {RecurringComponent} from './info/recurring/recurring.component';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
-
 
 @NgModule({
   imports: [
@@ -76,7 +75,7 @@ import {CustomerRegistryModule} from '../customerregistry/customer-registry.modu
     ExcavationAnnouncementComponent,
     ApplicationActionsComponent,
     LoadingComponent,
-    ApplicantComponent,
+    CustomerComponent,
     ContactComponent,
     EventDetailsComponent,
     LocationDetailsComponent,

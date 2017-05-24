@@ -2,12 +2,11 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.domain.util.TimeUtil;
-
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,8 @@ public class Application {
   private String applicationId;
   private Integer projectId;
   private Integer handler;
-  @NotNull
-  private Integer applicantId;
+  @NotEmpty
+  private List<CustomerWithContacts> customersWithContacts;
   private StatusType status;
   @NotNull
   private ApplicationType type;
@@ -221,14 +220,14 @@ public class Application {
   }
 
   /**
-   * in Finnish: Hakemukseen liittyvän hakijan tunniste
+   * in Finnish: Hakemukseen liittyvien asiakkaiden ja kontaktien tunnisteet.
    */
-  public Integer getApplicantId() {
-    return applicantId;
+  public List<CustomerWithContacts> getCustomersWithContacts() {
+    return this.customersWithContacts;
   }
 
-  public void setApplicantId(Integer applicantId) {
-    this.applicantId = applicantId;
+  public void setCustomersWithContacts(List<CustomerWithContacts> customersWithContacts) {
+    this.customersWithContacts = customersWithContacts;
   }
 
   /**
@@ -243,9 +242,9 @@ public class Application {
   }
 
   /**
-   * The distribution type of the decision. Used for sending decision to applicant.
+   * The distribution type of the decision. Used for sending decision to customer.
    *
-   * @return  The distribution type of the decision. Used for sending decision to applicant.
+   * @return  The distribution type of the decision. Used for sending decision to customer.
    */
   public DistributionType getDecisionDistributionType() {
     return decisionDistributionType;

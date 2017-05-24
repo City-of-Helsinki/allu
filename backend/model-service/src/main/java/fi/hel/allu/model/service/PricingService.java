@@ -1,10 +1,10 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.types.ApplicantType;
+import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.EventNature;
-import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
 import fi.hel.allu.model.domain.Application;
@@ -34,7 +34,7 @@ public class PricingService {
 
   private PricingDao pricingDao;
   private LocationDao locationDao;
-  private ApplicantDao applicantDao;
+  private CustomerDao customerDao;
 
   private static final Location EMPTY_LOCATION;
 
@@ -44,10 +44,10 @@ public class PricingService {
   }
 
   @Autowired
-  public PricingService(PricingDao pricingDao, LocationDao locationDao, ApplicantDao applicantDao) {
+  public PricingService(PricingDao pricingDao, LocationDao locationDao, CustomerDao customerDao) {
     this.pricingDao = pricingDao;
     this.locationDao = locationDao;
-    this.applicantDao = applicantDao;
+    this.customerDao = customerDao;
   }
 
   /**
@@ -197,10 +197,10 @@ public class PricingService {
 
 
   private boolean isCompany(Application application) {
-    if (application.getApplicantId() == null) {
+    if (application.getCustomersWithContacts().isEmpty()) {
       return false;
     }
-    return applicantDao.findById(application.getApplicantId()).filter(a -> a.getType() == ApplicantType.COMPANY)
-        .isPresent();
+    return customerDao.findByIds(application.getCustomersWithContacts().stream().map(cwc -> cwc.getCustomer().getId()).collect(Collectors.toList()))
+        .stream().filter(a -> a.getType() == CustomerType.COMPANY).findFirst().isPresent();
   }
 }

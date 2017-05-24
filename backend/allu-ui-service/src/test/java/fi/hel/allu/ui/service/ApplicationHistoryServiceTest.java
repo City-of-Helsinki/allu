@@ -86,10 +86,11 @@ public class ApplicationHistoryServiceTest extends MockServices {
     setupChangeCapture(APPLICATION_ID);
 
     ApplicationJson oldApplication = createMockApplicationJson(APPLICATION_ID);
-    oldApplication.getApplicant().setEmail(null);
+    oldApplication.getProject().setAdditionalInfo(null);
+
     ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
     newApplication.setName("Changed Name");
-    newApplication.getApplicant().setEmail("new.email@company.org");
+    newApplication.getProject().setAdditionalInfo("new.email@company.org");
     applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
 
     assertNotNull(capturedChange);
@@ -100,9 +101,9 @@ public class ApplicationHistoryServiceTest extends MockServices {
     assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name")).count());
     assertEquals("Changed Name", fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name"))
         .map(fc -> fc.getNewValue()).findFirst().orElse(null));
-    assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/applicant/email")).count());
+    assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/project/additionalInfo")).count());
     assertEquals("new.email@company.org",
-        fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/applicant/email")).map(fc -> fc.getNewValue())
+        fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/project/additionalInfo")).map(fc -> fc.getNewValue())
             .findFirst().orElse(null));
   }
 

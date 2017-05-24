@@ -1,18 +1,17 @@
 import {TimePeriod} from '../time-period';
-import {ApplicantForm} from '../applicant/applicant.form';
-import {Contact} from '../../../../model/application/contact';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {Application} from '../../../../model/application/application';
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {ApplicationForm} from '../application-form';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {ArrayUtil} from '../../../../util/array-util';
 
 export class TrafficArrangementForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
-    public applicant?: ApplicantForm,
-    public contacts?: Array<Contact>,
-    public contractor?: ApplicantForm,
-    public responsiblePerson?: Array<Contact>,
+    public applicant?: CustomerWithContactsForm,
+    public contractor?: CustomerWithContactsForm,
     public pksCard?: boolean,
     public workFinished?: Date,
     public calculatedPrice?: number,
@@ -26,8 +25,10 @@ export class TrafficArrangementForm implements ApplicationForm {
 
   static to(form: TrafficArrangementForm): TrafficArrangement {
     let arrangement = new TrafficArrangement();
-    arrangement.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
-    arrangement.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
+    Some(form.contractor).do(ta => {
+      arrangement.contractor = CustomerForm.toCustomer(ta.customer);
+      arrangement.responsiblePerson = ArrayUtil.first(ta.contacts);
+    });
     arrangement.pksCard = form.pksCard;
     arrangement.workFinished = form.workFinished;
     arrangement.trafficArrangements = form.trafficArrangements;
@@ -41,8 +42,6 @@ export class TrafficArrangementForm implements ApplicationForm {
     return new TrafficArrangementForm(
       new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
-      undefined,
-      undefined,
       undefined,
       arrangement.pksCard,
       arrangement.workFinished,

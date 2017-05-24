@@ -239,12 +239,13 @@ public class ApplicationControllerTest {
   @Test
   public void testCalculateEventApplicationPrice() throws Exception {
     // Setup: create application with location and enough information for calculating price
-    Integer eventApplicant = testCommon.insertPerson();
+    Customer eventCustomer = testCommon.insertPerson();
     Application newApplication = new Application();
     newApplication.setType(ApplicationType.EVENT);
     newApplication.setKind(ApplicationKind.OUTDOOREVENT);
     newApplication.setName("test outdoor event");
-    newApplication.setApplicantId(eventApplicant);
+    newApplication.setCustomersWithContacts(
+        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, eventCustomer, Collections.emptyList())));
     // TODO: remove these two lines setStartTime and setEndTime, because they should get set automatically from location
     newApplication.setStartTime(ZonedDateTime.parse("2017-02-01T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
@@ -436,6 +437,7 @@ public class ApplicationControllerTest {
 
   // Helper to insert an application. Returns the result application.
   private Application insertApplication(Application appIn) throws Exception {
+    ControllerHelper.addDummyCustomer(wtc, appIn);
     ResultActions resultActions = wtc.perform(post("/applications"), appIn).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Application.class);
   }

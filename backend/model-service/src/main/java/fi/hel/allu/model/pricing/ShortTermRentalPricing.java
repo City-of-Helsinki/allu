@@ -11,7 +11,7 @@ public class ShortTermRentalPricing extends Pricing {
 
   private final Application application;
   private final double applicationArea;
-  private final boolean applicantIsCompany;
+  private final boolean customerIsCompany;
 
   // Various price constants for short term rental
   private static final int BENJI_DAILY_PRICE = 32000; // 320 EUR/day
@@ -64,11 +64,11 @@ public class ShortTermRentalPricing extends Pricing {
     static final String CIRCUS = "Sirkukset ja tivolit";
   }
 
-  public ShortTermRentalPricing(Application application, double applicationArea, boolean applicantIsCompany) {
+  public ShortTermRentalPricing(Application application, double applicationArea, boolean customerIsCompany) {
     super();
     this.application = application;
     this.applicationArea = applicationArea;
-    this.applicantIsCompany = applicantIsCompany;
+    this.customerIsCompany = customerIsCompany;
   }
 
 
@@ -104,7 +104,7 @@ public class ShortTermRentalPricing extends Pricing {
     case DOG_TRAINING_EVENT:
       // Associations: 50 EUR/event
       // Companies: 100 EUR/event
-      if (applicantIsCompany) {
+      if (customerIsCompany) {
         setPriceInCents(DOG_TRAINING_EVENT_COMPANY_PRICE);
         addInvoiceRow(InvoiceUnit.PIECE, 1, DOG_TRAINING_EVENT_COMPANY_PRICE, InvoiceLines.DOG_TRAINING_EVENT_COM,
             DOG_TRAINING_EVENT_COMPANY_PRICE);
@@ -117,7 +117,7 @@ public class ShortTermRentalPricing extends Pricing {
     case DOG_TRAINING_FIELD:
       // Associations: 100 EUR/year
       // Companies: 200 EUR/year
-      if (applicantIsCompany) {
+      if (customerIsCompany) {
         updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_COMPANY, InvoiceLines.DOG_TRAINING_FIELD_COM);
       } else {
         updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_ASSOCIATION,

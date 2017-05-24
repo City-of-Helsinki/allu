@@ -1,18 +1,17 @@
 import {TimePeriod} from '../time-period';
-import {ApplicantForm} from '../applicant/applicant.form';
-import {Contact} from '../../../../model/application/contact';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {Application} from '../../../../model/application/application';
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
 import {ApplicationForm} from '../application-form';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {ArrayUtil} from '../../../../util/array-util';
 
 export class PlacementContractForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
-    public applicant?: ApplicantForm,
-    public contacts?: Array<Contact>,
-    public representative?: ApplicantForm,
-    public contact?: Array<Contact>,
+    public applicant?: CustomerWithContactsForm,
+    public representative?: CustomerWithContactsForm,
     public diaryNumber?: string,
     public calculatedPrice?: number,
     public priceOverride?: number,
@@ -22,22 +21,22 @@ export class PlacementContractForm implements ApplicationForm {
   ) {}
 
   static to(form: PlacementContractForm, specifiers: Array<string>): PlacementContract {
-    let pc = new PlacementContract();
-    pc.representative = Some(form.representative).map(representative => ApplicantForm.toApplicant(representative)).orElse(undefined);
-    pc.contact = Some(form.contact).filter(contacts => contacts.length > 0).map(c => c[0]).orElse(undefined);
-    pc.diaryNumber = form.diaryNumber;
-    pc.additionalInfo = form.additionalInfo;
-    pc.generalTerms = form.generalTerms;
-    pc.specifiers = specifiers;
-    return pc;
+    let placementContract = new PlacementContract();
+    Some(form.representative).do(pc => {
+      placementContract.representative = CustomerForm.toCustomer(pc.customer);
+      placementContract.contact = ArrayUtil.first(pc.contacts);
+    });
+    placementContract.diaryNumber = form.diaryNumber;
+    placementContract.additionalInfo = form.additionalInfo;
+    placementContract.generalTerms = form.generalTerms;
+    placementContract.specifiers = specifiers;
+    return placementContract;
   }
 
   static from(application: Application, contract: PlacementContract) {
     return new PlacementContractForm(
       new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
-      undefined,
-      undefined,
       undefined,
       contract.diaryNumber,
       application.calculatedPriceEuro,

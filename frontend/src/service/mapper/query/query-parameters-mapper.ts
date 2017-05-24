@@ -10,7 +10,7 @@ export const enumFields = [
 
 export const alphaSortFields = [
   'name',
-  'applicant.name',
+  'customer.name',
   'contacts.name',
   'handler.userName',
   'locations.streetAddress',

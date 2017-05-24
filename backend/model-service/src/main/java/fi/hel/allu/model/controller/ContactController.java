@@ -1,9 +1,9 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.validator.ValidList;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ContactDao;
+import fi.hel.allu.model.domain.ApplicationWithContacts;
 import fi.hel.allu.model.domain.Contact;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -46,15 +45,14 @@ public class ContactController {
 
 
   /**
-   * Get all contacts for an applicant
+   * Get all contacts for a customer.
    *
-   * @param applicantId
-   *          The ID of the applicant
-   * @return All contact items for the given applicant
+   * @param customerId  The ID of the customer.
+   * @return All contact items for the given customer.
    */
-  @RequestMapping(value = "/applicant/{applicantId}", method = RequestMethod.GET)
-  public ResponseEntity<List<Contact>> findByApplicant(@PathVariable int applicantId) {
-    List<Contact> contacts = contactDao.findByApplicant(applicantId);
+  @RequestMapping(value = "/customer/{customerId}", method = RequestMethod.GET)
+  public ResponseEntity<List<Contact>> findByCustomer(@PathVariable int customerId) {
+    List<Contact> contacts = contactDao.findByCustomer(customerId);
     return new ResponseEntity<>(contacts, HttpStatus.OK);
   }
 
@@ -62,25 +60,13 @@ public class ContactController {
    * Find all contacts of applications having given contact.
    *
    * @param ids  of the contacts whose related applications with contacts are fetched.
-   * @return  all contacts of applications having given contact. The id of application is the map key and value contains all contacts
-   *          of the application.
+   * @return  all contacts of applications having given contact. It's worth noticing that the same application may appear more than once
+   *          in the result list. This happens, if contact appears in application under several customer roles.
    */
   @RequestMapping(value = "/application/related", method = RequestMethod.POST)
-  public ResponseEntity<Map<Integer, List<Contact>>> findRelatedApplicationsWithContacts(@RequestBody List<Integer> ids) {
-    Map<Integer, List<Contact>> applicationIdToContacts = applicationDao.findRelatedApplicationsWithContacts(ids);
-    return new ResponseEntity<>(applicationIdToContacts, HttpStatus.OK);
-  }
-
-  /**
-   * Get the contact list for an application
-   *
-   * @param applicationId The application's ID
-   * @return List of the application's contacts in preference order
-   */
-  @RequestMapping(value = "/application/{applicationId}", method = RequestMethod.GET)
-  public ResponseEntity<List<Contact>> findByApplication(@PathVariable int applicationId) {
-    List<Contact> contacts = contactDao.findByApplication(applicationId);
-    return new ResponseEntity<>(contacts, HttpStatus.OK);
+  public ResponseEntity<List<ApplicationWithContacts>> findRelatedApplicationsWithContacts(@RequestBody List<Integer> ids) {
+    List<ApplicationWithContacts> applicationsWithContacts = applicationDao.findRelatedApplicationsWithContacts(ids);
+    return new ResponseEntity<>(applicationsWithContacts, HttpStatus.OK);
   }
 
   /**
@@ -103,20 +89,5 @@ public class ContactController {
   @RequestMapping(method = RequestMethod.PUT)
   public ResponseEntity<List<Contact>> update(@Valid @RequestBody List<Contact> contacts) {
     return new ResponseEntity<>(contactDao.update(contacts), HttpStatus.OK);
-  }
-
-  /**
-   * Set application's contact list
-   *
-   * @param applicationId
-   *          The application's ID
-   * @param contacts
-   *          List of contacts in preference order
-   * @return The application's contact list after the insert/update
-   */
-  @RequestMapping(method = RequestMethod.PUT, params = "applicationId")
-  public ResponseEntity<List<Contact>> setApplicationContacts(
-      @RequestParam(value = "applicationId") final int applicationId, @Valid @RequestBody ValidList<Contact> contacts) {
-    return new ResponseEntity<>(contactDao.setApplicationContacts(applicationId, contacts), HttpStatus.OK);
   }
 }

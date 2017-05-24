@@ -1,0 +1,67 @@
+import {PostalAddress} from '../../../model/common/postal-address';
+import {FormBuilder, Validators} from '@angular/forms';
+import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
+import {Customer} from '../../../model/customer/customer';
+
+export class CustomerForm {
+  constructor(
+    public id?: number,
+    public type?: string,
+    public representative?: boolean,
+    public name?: string,
+    public registryKey?: string,
+    public country?: string,
+    public postalAddress?: PostalAddress,
+    public email?: string,
+    public phone?: string,
+    public active = true
+  ) {}
+
+  static fromCustomer(customer: Customer): CustomerForm {
+    return new CustomerForm(
+      customer.id,
+      customer.type,
+      customer.representative,
+      customer.name,
+      customer.registryKey,
+      'Suomi',
+      customer.postalAddress || new PostalAddress(),
+      customer.email,
+      customer.phone,
+      customer.active
+    );
+  }
+
+  static toCustomer(form: CustomerForm): Customer {
+    let customer = new Customer();
+    customer.id = form.id;
+    customer.type = form.type;
+    customer.representative = form.representative;
+    customer.name = form.name;
+    customer.registryKey = form.registryKey;
+    customer.postalAddress = form.postalAddress;
+    customer.email = form.email;
+    customer.phone = form.phone;
+    customer.active = form.active;
+    return customer;
+  }
+
+  static initialForm(fb: FormBuilder): any {
+    return fb.group({
+      id: undefined,
+      type: [undefined, Validators.required],
+      representative: [undefined],
+      detailsId: undefined,
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      registryKey: ['', [Validators.required, Validators.minLength(2)]],
+      country: ['Suomi'],
+      postalAddress: fb.group({
+        streetAddress: [''],
+        postalCode: ['', postalCodeValidator],
+        city: ['']
+      }),
+      email: ['', emailValidator],
+      phone: ['', Validators.minLength(2)]
+    });
+  }
+}

@@ -16,8 +16,10 @@ export class ApplicationQueryParametersMapper {
     let queryParameters: Array<BackendQueryParameter> = [];
     QueryParametersMapper.mapParameter(
       queryParameters, 'locations.streetAddress', QueryParametersMapper.removeExtraWhitespace(query.address));
-    QueryParametersMapper.mapParameter(queryParameters, 'applicant.name', QueryParametersMapper.removeExtraWhitespace(query.applicant));
-    QueryParametersMapper.mapParameter(queryParameters, 'contacts.name', QueryParametersMapper.removeExtraWhitespace(query.contact));
+    QueryParametersMapper.mapParameter(queryParameters, 'customers.applicant.customer.name',
+      QueryParametersMapper.removeExtraWhitespace(query.applicant));
+    QueryParametersMapper.mapParameter(queryParameters, 'customers.applicant.contacts.name',
+      QueryParametersMapper.removeExtraWhitespace(query.contact));
     QueryParametersMapper.mapArrayParameter(queryParameters, 'handler.userName', query.handler);
     QueryParametersMapper.mapParameter(queryParameters, 'applicationId', QueryParametersMapper.removeExtraWhitespace(query.applicationId));
     QueryParametersMapper.mapArrayParameter(queryParameters, 'status', query.status);

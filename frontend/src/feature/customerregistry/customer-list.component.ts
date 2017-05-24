@@ -1,13 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs';
-import {Applicant} from '../../model/application/applicant/applicant';
 import {Router} from '@angular/router';
 import {CustomerHub} from '../../service/customer/customer-hub';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../util/enum.util';
-import {ApplicantType} from '../../model/application/applicant/applicant-type';
-import {StringUtil} from '../../util/string.util';
+import {CustomerType} from '../../model/customer/customer-type';
 import {Sort} from '../../model/common/sort';
+import {Customer} from '../../model/customer/customer';
 
 @Component({
   selector: 'customer-list',
@@ -18,9 +17,9 @@ import {Sort} from '../../model/common/sort';
 })
 export class CustomerListComponent implements OnInit {
 
-  customers: Observable<Array<Applicant>>;
+  customers: Observable<Array<Customer>>;
   searchForm: FormGroup;
-  applicantTypes = EnumUtil.enumValues(ApplicantType);
+  customerTypes = EnumUtil.enumValues(CustomerType);
 
   constructor(private router: Router, private customerHub: CustomerHub, private fb: FormBuilder) {
     this.searchForm = this.fb.group({
@@ -32,19 +31,19 @@ export class CustomerListComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.customers = this.customerHub.searchApplicantsBy(this.searchForm.value);
+    this.customers = this.customerHub.searchCustomersBy(this.searchForm.value);
   }
 
   newCustomer(): void {
     this.router.navigate(['customers/new']);
   }
 
-  onSelect(customer: Applicant): void {
+  onSelect(customer: Customer): void {
     this.router.navigate(['customers', customer.id]);
   }
 
   search(): void {
-    this.customers = this.customerHub.searchApplicantsBy(this.searchForm.value);
+    this.customers = this.customerHub.searchCustomersBy(this.searchForm.value);
   }
 
   sortBy(sort: Sort) {

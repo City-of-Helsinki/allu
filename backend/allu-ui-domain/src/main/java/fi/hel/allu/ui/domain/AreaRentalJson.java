@@ -11,7 +11,7 @@ import java.time.ZonedDateTime;
  */
 public class AreaRentalJson extends ApplicationExtensionJson {
   @NotNull(message = "{application.arearental.contractor}")
-  private ApplicantJson contractor;
+  private CustomerJson contractor;
   @NotNull(message = "{application.arearental.responsiblePerson}")
   private ContactJson responsiblePerson;
   private String additionalInfo;
@@ -29,11 +29,11 @@ public class AreaRentalJson extends ApplicationExtensionJson {
    * In Finnish: Työn suorittaja (yritys yleensä).
    * The company that does the actual work instead of the party that acts as customer.
    */
-  public ApplicantJson getContractor() {
+  public CustomerJson getContractor() {
     return contractor;
   }
 
-  public void setContractor(ApplicantJson contractor) {
+  public void setContractor(CustomerJson contractor) {
     this.contractor = contractor;
   }
 

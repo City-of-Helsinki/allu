@@ -45,8 +45,8 @@ public abstract class MockServices {
         .thenAnswer((Answer<Application>) invocation -> createMockApplicationModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
-        Mockito.eq(Applicant.class)))
-        .thenAnswer((Answer<Applicant>) invocation -> createMockApplicantModel());
+        Mockito.eq(Customer.class)))
+        .thenAnswer((Answer<Customer>) invocation -> createMockCustomerModel());
 
     Mockito.when(restTemplate.postForObject(Mockito.any(String.class), Mockito.anyObject(),
         Mockito.eq(Project.class)))
@@ -77,11 +77,11 @@ public abstract class MockServices {
             restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(AttachmentInfo[].class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<AttachmentInfo[]>>) invocation -> createMockAttachmentInfoListResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockPersonResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Customer.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<Customer>>) invocation -> createMockPersonResponse());
 
-    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Applicant.class), Mockito.anyInt()))
-        .thenAnswer((Answer<ResponseEntity<Applicant>>) invocation -> createMockApplicantResponse());
+    Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Customer.class), Mockito.anyInt()))
+        .thenAnswer((Answer<ResponseEntity<Customer>>) invocation -> createMockCustomerResponse());
 
     Mockito.when(restTemplate.getForEntity(Mockito.any(String.class), Mockito.eq(Event.class), Mockito.anyInt()))
         .thenAnswer((Answer<ResponseEntity<Event>>) invocation -> createMockOutdoorEventResponse());
@@ -115,13 +115,21 @@ public abstract class MockServices {
     return locationJson;
   }
 
-  public ApplicantJson createApplicantJson(Integer id, Integer typeId) {
-    ApplicantJson applicantJson = new ApplicantJson();
-    applicantJson.setId(id);
-    applicantJson.setType(ApplicantType.COMPANY);
-    applicantJson.setName("noname");
-    applicantJson.setRegistryKey("444444");
-    return applicantJson;
+  public CustomerJson createCustomerJson(Integer id) {
+    CustomerJson customerJson = new CustomerJson();
+    customerJson.setId(id);
+    customerJson.setType(CustomerType.COMPANY);
+    customerJson.setName("noname");
+    customerJson.setRegistryKey("444444");
+    return customerJson;
+  }
+
+  public CustomerWithContactsJson createCustomersWithContacts(Integer customerId) {
+    CustomerJson customer = createCustomerJson(customerId);
+    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
+    customerWithContactsJson.setCustomer(customer);
+    customerWithContactsJson.setRoleType(CustomerRoleType.APPLICANT);
+    return customerWithContactsJson;
   }
 
   public ProjectJson createProjectJson(Integer id) {
@@ -191,7 +199,7 @@ public abstract class MockServices {
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
     applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setHandler(UserMapper.mapToUserJson(createMockUser()));
-    applicationJson.setApplicant(createApplicantJson(null, null));
+    applicationJson.setCustomersWithContacts(Collections.singletonList(createCustomersWithContacts(null)));
     applicationJson.setLocations(Collections.singletonList(createLocationJson(null)));
     applicationJson.setProject(createProjectJson(null));
     applicationJson.setExtension(createOutdoorEventJson());
@@ -208,7 +216,10 @@ public abstract class MockServices {
     application.setHandler(createMockUser().getId());
     application.setType(ApplicationType.EVENT);
     application.setKind(ApplicationKind.OUTDOOREVENT);
-    application.setApplicantId(103);
+    Customer customer = new Customer();
+    customer.setId(103);
+    application.setCustomersWithContacts(
+        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
     application.setStatus(StatusType.PENDING);
     application.setExtension(createMockOutdoorEventModel());
     application.setMetadataVersion(1);
@@ -216,8 +227,8 @@ public abstract class MockServices {
   }
 
 
-  public Applicant createMockPersonModel() {
-    Applicant person = new Applicant();
+  public Customer createMockPersonModel() {
+    Customer person = new Customer();
     person.setPostalAddress(new PostalAddress("street address 2, Model", "postalcode, Model", "Person city, Model"));
     person.setRegistryKey("343232, Model");
     person.setPhone("43244323, Model");
@@ -234,11 +245,11 @@ public abstract class MockServices {
     return project;
   }
 
-  public Applicant createMockApplicantModel() {
-    Applicant applicant = new Applicant();
-    applicant.setId(103);
-    applicant.setType(ApplicantType.PERSON);
-    return applicant;
+  public Customer createMockCustomerModel() {
+    Customer customer = new Customer();
+    customer.setId(103);
+    customer.setType(CustomerType.PERSON);
+    return customer;
   }
 
   public Event createMockOutdoorEventModel() {
@@ -285,7 +296,7 @@ public abstract class MockServices {
     return esFlatValues;
   }
 
-  public ResponseEntity<Applicant> createMockPersonResponse() {
+  public ResponseEntity<Customer> createMockPersonResponse() {
     return new ResponseEntity<>(createMockPersonModel(), HttpStatus.OK);
   }
 
@@ -293,8 +304,8 @@ public abstract class MockServices {
     return new ResponseEntity<>(createMockProjectModel(), HttpStatus.OK);
   }
 
-  public ResponseEntity<Applicant> createMockApplicantResponse() {
-    return new ResponseEntity<>(createMockApplicantModel(), HttpStatus.OK);
+  public ResponseEntity<Customer> createMockCustomerResponse() {
+    return new ResponseEntity<>(createMockCustomerModel(), HttpStatus.OK);
   }
 
   public ResponseEntity<Event> createMockOutdoorEventResponse() {
@@ -330,7 +341,10 @@ public abstract class MockServices {
     applicationModel.setStatus(StatusType.HANDLING);
     applicationModel.setProjectId(4321);
     applicationModel.setName("MockName2");
-    applicationModel.setApplicantId(655);
+    Customer customer = new Customer();
+    customer.setId(655);
+    applicationModel.setCustomersWithContacts(
+        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
     applicationModel.setExtension(createMockOutdoorEventModel());
     applicationModel.setMetadataVersion(1);
     applicationModelArray[1] = applicationModel;

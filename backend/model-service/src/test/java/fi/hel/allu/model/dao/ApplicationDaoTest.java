@@ -1,9 +1,6 @@
 package fi.hel.allu.model.dao;
 
-import fi.hel.allu.common.types.ApplicationTagType;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.DistributionType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
@@ -19,10 +16,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -57,19 +51,21 @@ public class ApplicationDaoTest {
     final String testContactName = "kontakti ihminen";
     final String testEmail = "test@emai.fi";
     final String testPhone = "124214";
+    Customer customer = application.getCustomersWithContacts().get(0).getCustomer();
     contact.setName(testContactName);
     contact.setEmail(testEmail);
     contact.setPhone(testPhone);
-    contact.setApplicantId(application.getApplicantId());
+    contact.setCustomerId(customer.getId());
     // retrieve contacts with no postal address first
     Contact insertedContact = contactDao.insert(Collections.singletonList(contact)).get(0);
+    CustomerWithContacts customerWithContacts = new CustomerWithContacts(CustomerRoleType.CONTRACTOR, customer, Collections.singletonList(insertedContact));
+    application.setCustomersWithContacts(Collections.singletonList(customerWithContacts));
     Application insertedApplication = applicationDao.insert(application);
-    contactDao.setApplicationContacts(insertedApplication.getId(), Collections.singletonList(insertedContact));
-    Map<Integer, List<Contact>> applicationToContacts =
+    List<ApplicationWithContacts> applicationsWithContacts =
         applicationDao.findRelatedApplicationsWithContacts(Collections.singletonList(insertedContact.getId()));
-    assertEquals(1, applicationToContacts.size());
-    assertNotNull(applicationToContacts.get(insertedApplication.getId()));
-    List<Contact> contacts = applicationToContacts.get(insertedApplication.getId());
+    assertEquals(1, applicationsWithContacts.size());
+    assertEquals((int) insertedApplication.getId(), applicationsWithContacts.get(0).getApplicationId());
+    List<Contact> contacts = applicationsWithContacts.get(0).getContacts();
     assertEquals(1, contacts.size());
     assertEquals(testContactName, contacts.get(0).getName());
     assertEquals(testEmail, contacts.get(0).getEmail());
@@ -80,21 +76,28 @@ public class ApplicationDaoTest {
     insertedContact.setPostalAddress(testPostalAddress);
     insertedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
 
-    applicationToContacts = applicationDao.findRelatedApplicationsWithContacts(Collections.singletonList(insertedContact.getId()));
-    assertNotNull(applicationToContacts.get(insertedApplication.getId()));
-    contacts = applicationToContacts.get(insertedApplication.getId());
+    applicationsWithContacts = applicationDao.findRelatedApplicationsWithContacts(Collections.singletonList(insertedContact.getId()));
+    assertEquals(1, applicationsWithContacts.size());
+    contacts = applicationsWithContacts.get(0).getContacts();
     assertEquals(testPostalAddress.getStreetAddress(), contacts.get(0).getPostalAddress().getStreetAddress());
     assertEquals(testPostalAddress.getPostalCode(), contacts.get(0).getPostalAddress().getPostalCode());
     assertEquals(testPostalAddress.getCity(), contacts.get(0).getPostalAddress().getCity());
   }
 
   @Test
-  public void testFindApplicationsByApplicant() {
-    Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
-    Application insertedApplication = applicationDao.insert(application);
-    List<Integer> applicationIds = applicationDao.findByApplicant(insertedApplication.getApplicantId());
-    assertEquals(1, applicationIds.size());
-    assertEquals(insertedApplication.getId(), applicationIds.get(0));
+  public void testFindApplicationsByCustomer() {
+    Application application1 = testCommon.dummyOutdoorApplication("Test Application 1", "Test Handler 1");
+    Application application2 = testCommon.dummyOutdoorApplication("Test Application 2", "Test Handler 2");
+    application2.setCustomersWithContacts(application1.getCustomersWithContacts());
+    Application insertedApplication1 = applicationDao.insert(application1);
+    Application insertedApplication2 = applicationDao.insert(application2);
+    Map<Integer, List<CustomerRoleType>> applicationsWithCrt = applicationDao.findByCustomer(
+        insertedApplication1.getCustomersWithContacts().get(0).getCustomer().getId());
+    assertEquals(2, applicationsWithCrt.size());
+    assertTrue(Arrays.asList(insertedApplication1.getId(), insertedApplication2.getId()).containsAll(applicationsWithCrt.keySet()));
+    assertEquals(
+        2,
+        applicationsWithCrt.values().stream().flatMap(crtList -> crtList.stream()).filter(crt -> CustomerRoleType.APPLICANT.equals(crt)).count());
   }
 
   @Test
@@ -103,8 +106,12 @@ public class ApplicationDaoTest {
     Mockito.when(applicationSequenceDaoMock.getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.TP)).thenReturn(1600001L);
     StructureMetaDao structureMetaDaoMock = Mockito.mock(StructureMetaDao.class);
     Mockito.when(structureMetaDaoMock.getLatestMetadataVersion()).thenReturn(1);
-    ApplicationDao applicationDao =
-        new ApplicationDao(null, applicationSequenceDaoMock, distributionEntryDao, structureMetaDaoMock);
+    ApplicationDao applicationDao = new ApplicationDao(
+        null,
+        applicationSequenceDaoMock,
+        distributionEntryDao,
+        structureMetaDaoMock,
+        Mockito.mock(CustomerDao.class));
     Assert.assertEquals("TP1600001", applicationDao.createApplicationId(ApplicationType.EVENT));
   }
 

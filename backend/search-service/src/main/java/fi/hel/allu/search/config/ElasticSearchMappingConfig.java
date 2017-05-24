@@ -25,7 +25,7 @@ public class ElasticSearchMappingConfig {
 
   public static final String APPLICATION_TYPE_NAME = "application";
   public static final String PROJECT_TYPE_NAME = "project";
-  public static final String APPLICANT_TYPE_NAME = "applicant";
+  public static final String CUSTOMER_TYPE_NAME = "customer";
   public static final String CONTACT_TYPE_NAME = "contact";
 
   private static final String ANALYZER_CASE_INSENSITIVE_SORT = "case_insensitive_sort";
@@ -111,11 +111,19 @@ public class ElasticSearchMappingConfig {
                   .endObject()
                 .endObject()
               .endObject()
-              .startObject("applicant") // alphabetical sorting for applicant.name
+              .startObject("customers") // alphabetical sorting for applicant name i.e. customers.applicant.customer.name
                 .startObject("properties")
-                  .startObject("name")
-                    .field("type", "string")
-                    .field("fields").copyCurrentStructure(parser(alphasort()))
+                  .startObject("applicant")
+                    .startObject("properties")
+                      .startObject("customer")
+                        .startObject("properties")
+                          .startObject("name")
+                            .field("type", "string")
+                            .field("fields").copyCurrentStructure(parser(alphasort()))
+                          .endObject()
+                        .endObject()
+                      .endObject()
+                    .endObject()
                   .endObject()
                 .endObject()
               .endObject()

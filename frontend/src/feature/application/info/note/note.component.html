@@ -1,9 +1,6 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
     <div class="row">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                   [readonly]="readonly" headerText="Hakija" formName="applicant"
-                   [contactList]="application.contactList"
-                   contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant" [readonly]="readonly"></customer>
     </div>
 
     <div class="row">
@@ -16,8 +13,12 @@
                         <md-input-container class="input-full-width">
                             <input mdInput type="text" formControlName="name" placeholder="Muistiinpanon nimi*"/>
                             <md-hint>
-                                <field-error [form]="eventForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
-                                <field-error [form]="eventForm" field="name" hasError="minlength">{{'application.field.nameShort' | translation}}</field-error>
+                                <field-error [form]="applicationForm" field="name" hasError="required">
+                                    {{'application.field.nameMissing' | translation}}
+                                </field-error>
+                                <field-error [form]="applicationForm" field="name" hasError="minlength">
+                                    {{'application.field.nameShort' | translation}}
+                                </field-error>
                             </md-hint>
                         </md-input-container>
                     </div>

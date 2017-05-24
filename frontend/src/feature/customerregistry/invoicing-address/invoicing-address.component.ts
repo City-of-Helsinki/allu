@@ -2,7 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {postalCodeValidator} from '../../../util/complex-validator';
 import {Some} from '../../../util/option';
-import {ApplicantType} from '../../../model/application/applicant/applicant-type';
+import {CustomerType} from '../../../model/customer/customer-type';
 import {EnumUtil} from '../../../util/enum.util';
 
 @Component({
@@ -14,7 +14,7 @@ export class InvoicingAddressComponent implements OnInit {
   @Input() parentForm: FormGroup;
 
   invoicingAddressForm: FormGroup;
-  applicantTypes = EnumUtil.enumValues(ApplicantType);
+  customerTypes = EnumUtil.enumValues(CustomerType);
 
   constructor(private fb: FormBuilder) {
     this.invoicingAddressForm = this.fb.group({

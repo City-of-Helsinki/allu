@@ -1,13 +1,12 @@
 import {BackendProject} from './backend-project';
-import {BackendApplicant} from './backend-applicant';
 import {BackendContact} from './backend-contact';
 import {BackendLocation} from './backend-location';
-import {BackendStructureMeta} from './backend-structure-meta';
 import {BackendAttachmentInfo} from './backend-attachment-info';
 import {BackendUser} from './backend-user';
 import {BackendApplicationTag} from '../mapper/application-tag-mapper';
 import {BackendComment} from '../application/comment/comment-mapper';
 import {BackendDistributionEntry} from './backend-distribution-entry';
+import {BackendCustomerWithContacts} from './backend-customer-with-contacts';
 
 export interface BackendApplication {
   id: number;
@@ -23,8 +22,7 @@ export interface BackendApplication {
   startTime: string;
   endTime: string;
   recurringEndTime: string;
-  applicant: BackendApplicant;
-  contactList: Array<BackendContact>;
+  customersWithContacts: Array<BackendCustomerWithContacts>;
   locations: Array<BackendLocation>;
   extension: any;
   decisionTime: string;

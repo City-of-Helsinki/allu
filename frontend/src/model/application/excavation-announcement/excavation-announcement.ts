@@ -1,16 +1,16 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
-import {Applicant} from '../applicant/applicant';
-import {Contact} from '../contact';
+import {Contact} from '../../customer/contact';
 import {TimeUtil} from '../../../util/time.util';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
+import {Customer} from '../../customer/customer';
 
 export class ExcavationAnnouncement extends ApplicationExtension {
   constructor(
     public specifiers?: Array<string>,
-    public contractor?: Applicant,
+    public contractor?: Customer,
     public responsiblePerson?: Contact,
-    public propertyDeveloper?: Applicant,
+    public propertyDeveloper?: Customer,
     public propertyDeveloperContact?: Contact,
     public pksCard?: boolean,
     public constructionWork?: boolean,

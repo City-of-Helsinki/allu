@@ -1,33 +1,36 @@
 {
-  "applicant": {
-    "postalAddress": {
-      "streetAddress": "",
-      "city": "",
-      "postalCode": ""
-    },
-    "id": null,
-    "name": "Kallen Kaivuri",
-    "email": "",
-    "phone": "",
-    "registryKey": "123",
-    "representative": null,
-    "type": "COMPANY",
-    "active": true
-  },
-  "kind": "STREET_AND_GREEN",
-  "contactList": [
+  "customersWithContacts":[
     {
-      "email": null,
-      "name": "Kalle",
-      "applicantId": null,
-      "id": null,
-      "postalCode": null,
-      "streetAddress": null,
-      "city": null,
-      "phone": null,
-      "active": true
+      "roleType": "APPLICANT",
+      "customer": {
+        "postalAddress": {
+          "streetAddress": "",
+          "city": "",
+          "postalCode": ""
+        },
+        "id": null,
+        "name": "Kallen Kaivuri",
+        "email": "",
+        "phone": "",
+        "registryKey": "123",
+        "representative": null,
+        "type": "COMPANY",
+        "active": true
+      },
+      "contacts": [{
+        "email": null,
+        "name": "Kalle",
+        "applicantId": null,
+        "id": null,
+        "postalCode": null,
+        "streetAddress": null,
+        "city": null,
+        "phone": null,
+        "active": true
+      }]
     }
   ],
+  "kind": "STREET_AND_GREEN",
   "type": "CABLE_REPORT",
   "extension": {
     "owner": {

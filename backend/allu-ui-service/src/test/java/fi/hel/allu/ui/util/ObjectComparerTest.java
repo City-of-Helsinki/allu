@@ -2,6 +2,7 @@ package fi.hel.allu.ui.util;
 
 import fi.hel.allu.common.types.ApplicationTagType;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.common.types.RoleType;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.util.ObjectComparer.Difference;
@@ -55,24 +56,33 @@ public class ObjectComparerTest {
   public void testComplex() {
     ApplicationJson app1 = new ApplicationJson();
     app1.setEndTime(ZonedDateTime.parse("2017-02-03T10:15:30+02:00[Europe/Helsinki]"));
-    app1.setApplicant(new ApplicantJson());
-    app1.getApplicant().setEmail("hakija@jossain.org");
-    app1.getApplicant().setPostalAddress(new PostalAddressJson());
-    app1.getApplicant().getPostalAddress().setCity("Siti");
-    app1.getApplicant().setId(99);
+    CustomerJson customerJson = new CustomerJson();
+    customerJson.setEmail("hakija@jossain.org");
+    customerJson.setPostalAddress(new PostalAddressJson());
+    customerJson.getPostalAddress().setCity("Siti");
+    customerJson.setId(99);
+    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
+    customerWithContactsJson.setRoleType(CustomerRoleType.APPLICANT);
+    customerWithContactsJson.setCustomer(customerJson);
+    app1.setCustomersWithContacts(Collections.singletonList(customerWithContactsJson));
+
     ApplicationJson app2 = new ApplicationJson();
-    app2.setApplicant(new ApplicantJson());
     app2.setEndTime(ZonedDateTime.parse("2017-02-03T10:25:30+02:00[Europe/Helsinki]"));
-    app2.getApplicant().setEmail("jokumuu@jossainmuualla.org");
-    app2.getApplicant().setPostalAddress(new PostalAddressJson());
-    app2.getApplicant().getPostalAddress().setCity("Villits");
+    customerJson = new CustomerJson();
+    customerJson.setEmail("jokumuu@jossainmuualla.org");
+    customerJson.setPostalAddress(new PostalAddressJson());
+    customerJson.getPostalAddress().setCity("Villits");
+    customerWithContactsJson = new CustomerWithContactsJson();
+    customerWithContactsJson.setRoleType(CustomerRoleType.APPLICANT);
+    customerWithContactsJson.setCustomer(customerJson);
+    app2.setCustomersWithContacts(Collections.singletonList(customerWithContactsJson));
+
     List<Difference> diff = comparer.compare(app1, app2);
     assertEquals(4, diff.size());
-    assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/applicant/email")).count());
-    assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/applicant/id")).count());
+    assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/customersWithContacts/0/customer/email")).count());
+    assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/customersWithContacts/0/customer/id")).count());
     assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/endTime")).count());
-    Difference cityDiff = diff.stream().filter(d -> d.keyName.equals("/applicant/postalAddress/city")).findFirst()
-        .orElse(null);
+    Difference cityDiff = diff.stream().filter(d -> d.keyName.equals("/customersWithContacts/0/customer/postalAddress/city")).findFirst().orElse(null);
     assertNotNull(cityDiff);
     assertEquals("Siti", cityDiff.oldValue);
     assertEquals("Villits", cityDiff.newValue);
@@ -92,10 +102,10 @@ public class ObjectComparerTest {
 
   @Test
   public void testEmptyStringEqualsNull() {
-    ApplicantJson app1 = new ApplicantJson();
+    CustomerJson app1 = new CustomerJson();
     app1.setName("");
     app1.setPhone(null);
-    ApplicantJson app2 = new ApplicantJson();
+    CustomerJson app2 = new CustomerJson();
     app2.setName(null);
     app2.setPhone("");
     List<Difference> diff = comparer.compare(app1, app2);

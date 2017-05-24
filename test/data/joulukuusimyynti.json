@@ -55,38 +55,41 @@
   "name": "Ylijäämäkuusien alennusmyynti",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
-  "contactList": [
-    {
-      "postalCode": null,
-      "applicantId": null,
-      "city": null,
-      "phone": null,
-      "name": "Pekka Pihi",
-      "id": null,
-      "streetAddress": "121282-123X",
-      "email": null,
-      "active": true
-    }
-  ],
   "extension": {
     "specifiers": [],
     "description": "Joulusta ylijääneiden kuusien alennusmyynti hintatietoisille.",
     "reoccurring": true,
     "applicationType": "NOTE"
   },
-  "applicant": {
-    "phone": "",
-    "registryKey": "123456",
-    "type": "ASSOCIATION",
-    "email": "nuupury@laihia.org",
-    "representative": null,
-    "postalAddress": {
-      "streetAddress": "Pihitie 3",
-      "postalCode": "66400",
-      "city": "LAIHIA"
-    },
-    "id": null,
-    "name": "Nuukailun Puolesta Ry",
-    "active": true
-  }
+  "customersWithContacts":[
+    {
+      "roleType": "APPLICANT",
+      "customer": {
+        "phone": "",
+        "registryKey": "123456",
+        "type": "ASSOCIATION",
+        "email": "nuupury@laihia.org",
+        "representative": null,
+        "postalAddress": {
+          "streetAddress": "Pihitie 3",
+          "postalCode": "66400",
+          "city": "LAIHIA"
+        },
+        "id": null,
+        "name": "Nuukailun Puolesta Ry",
+        "active": true
+      },
+      "contacts": [{
+        "postalCode": null,
+        "applicantId": null,
+        "city": null,
+        "phone": null,
+        "name": "Pekka Pihi",
+        "id": null,
+        "streetAddress": "121282-123X",
+        "email": null,
+        "active": true
+      }]
+    }
+  ]
 }

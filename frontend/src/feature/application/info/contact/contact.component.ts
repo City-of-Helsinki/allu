@@ -1,16 +1,17 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
-import {Contact} from '../../../../model/application/contact';
+import {Contact} from '../../../../model/customer/contact';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
-import {Observable, Subject, Subscription} from 'rxjs';
-import {Applicant} from '../../../../model/application/applicant/applicant';
+import {Observable, Subscription} from 'rxjs';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
+import {Customer} from '../../../../model/customer/customer';
+import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 
-const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'applicantId'];
+const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId'];
 
 @Component({
   selector: 'contact',
@@ -21,23 +22,23 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'applicantId'];
   ]
 })
 export class ContactComponent implements OnInit, OnDestroy {
-  @Input() applicationForm: FormGroup;
-  @Input() applicantId: number;
+  @Input() parentForm: FormGroup;
+  @Input() customerId: number;
+  @Input() customerRoleType: string;
   @Input() contactList: Array<Contact> = [];
   @Input() readonly: boolean;
   @Input() headerText = 'Yhteyshenkilö';
   @Input() formName = 'contacts';
   @Input() addNew = false;
   @Input() saveToRegistry = false;
-  @Input() applicantEvents: Observable<Applicant>;
+  @Input() customerEvents: Observable<Customer>;
 
-  contactsForm: FormGroup;
   contacts: FormArray;
   availableContacts: Observable<Array<Contact>>;
   matchingContacts: Observable<Array<Contact>>;
 
   private dialogRef: MdDialogRef<ContactModalComponent>;
-  private applicantSubscription: Subscription;
+  private customerSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
               private dialog: MdDialog,
@@ -50,19 +51,18 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.contactList.forEach(contact => this.addContact(contact));
 
     if (this.readonly) {
-      this.contactsForm.disable();
+      this.contacts.disable();
     }
 
-    this.availableContacts = Some(this.applicantId)
-      .map(id => this.customerHub.findApplicantActiveContacts(id))
+    this.availableContacts = Some(this.customerId)
+      .map(id => this.customerHub.findCustomerActiveContacts(id))
       .orElse(Observable.of([]));
 
-    this.applicantSubscription = this.applicantEvents.subscribe(a => this.onApplicantChange(a));
+    this.customerSubscription = this.customerEvents.subscribe(a => this.onCustomerChange(a));
   }
 
   ngOnDestroy(): void {
-    this.applicationForm.removeControl(this.formName);
-    this.applicantSubscription.unsubscribe();
+    this.customerSubscription.unsubscribe();
   }
 
   contactSelected(contact: Contact, index: number): void {
@@ -127,19 +127,15 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.contacts.removeAt(index);
   }
 
-  private onApplicantChange(applicant: Applicant) {
+  private onCustomerChange(customer: Customer) {
     this.resetContacts();
-    if (NumberUtil.isDefined(applicant.id)) {
-      this.availableContacts = this.customerHub.findApplicantActiveContacts(applicant.id);
+    if (NumberUtil.isDefined(customer.id)) {
+      this.availableContacts = this.customerHub.findCustomerActiveContacts(customer.id);
     }
   }
 
   private initContacts(): void {
-    this.contacts = this.fb.array([]);
-    this.contactsForm = this.fb.group({
-      contacts: this.contacts
-    });
-    this.applicationForm.addControl(this.formName, this.contacts);
+    this.contacts = <FormArray>this.parentForm.get('contacts');
   }
 
   private resetContacts(): void {

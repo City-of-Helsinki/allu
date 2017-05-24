@@ -1,10 +1,9 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.CableReportJson;
-
+import fi.hel.allu.ui.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +18,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertNotNull;
@@ -50,8 +51,10 @@ public class DecisionServiceTest {
 
   @Test(expected = IllegalArgumentException.class)
   public void testGenerateWithEmptyApplication() throws IOException {
+    ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
     // Call the method under test
-    decisionService.generateDecision(123, new ApplicationJson());
+    decisionService.generateDecision(123, applicationJson);
   }
 
   @Test
@@ -65,6 +68,7 @@ public class DecisionServiceTest {
         eq(String.class), Mockito.anyInt())).thenReturn(mockResponse);
 
     ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
     applicationJson.setType(ApplicationType.SHORT_TERM_RENTAL);
     // Call the method under test
     decisionService.generateDecision(123, applicationJson);
@@ -90,6 +94,7 @@ public class DecisionServiceTest {
         eq(String.class), Mockito.anyInt())).thenReturn(mockResponse);
 
     ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
     applicationJson.setType(ApplicationType.EVENT);
     // Call the method under test
     decisionService.generateDecision(123, applicationJson);
@@ -115,6 +120,7 @@ public class DecisionServiceTest {
         eq(String.class), Mockito.anyInt())).thenReturn(mockResponse);
 
     ApplicationJson applicationJson = new ApplicationJson();
+    applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
     applicationJson.setType(ApplicationType.CABLE_REPORT);
     applicationJson.setExtension(new CableReportJson());
     applicationJson.setId(123);
@@ -150,4 +156,15 @@ public class DecisionServiceTest {
     assertArrayEquals(mockData, decision);
   }
 
+  private List<CustomerWithContactsJson> createDummyCustomersWithContactsJson() {
+    CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
+    customerWithContactsJson.setCustomer(new CustomerJson());
+    PostalAddressJson postalAddressJson = new PostalAddressJson();
+    postalAddressJson.setCity("Siti");
+    postalAddressJson.setPostalCode("11111");
+    postalAddressJson.setStreetAddress("striitti 1");
+    customerWithContactsJson.getCustomer().setPostalAddress(postalAddressJson);
+    customerWithContactsJson.setRoleType(CustomerRoleType.APPLICANT);
+    return Collections.singletonList(customerWithContactsJson);
+  }
 }

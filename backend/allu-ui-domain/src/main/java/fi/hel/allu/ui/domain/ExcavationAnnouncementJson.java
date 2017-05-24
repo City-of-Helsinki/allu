@@ -11,10 +11,10 @@ import java.time.ZonedDateTime;
  */
 public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   @NotNull(message = "{application.excavationAnnouncement.contractor}")
-  private ApplicantJson contractor;
+  private CustomerJson contractor;
   @NotNull(message = "{application.excavationAnnouncement.responsiblePerson}")
   private ContactJson responsiblePerson;
-  private ApplicantJson propertyDeveloper;
+  private CustomerJson propertyDeveloper;
   private ContactJson propertyDeveloperContact;
   private Boolean pksCard;
   private Boolean constructionWork;
@@ -42,11 +42,11 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
    * In Finnish: Työn suorittaja (yritys yleensä).
    * The company that does the actual work instead of the party that acts as customer.
    */
-  public ApplicantJson getContractor() {
+  public CustomerJson getContractor() {
     return contractor;
   }
 
-  public void setContractor(ApplicantJson contractor) {
+  public void setContractor(CustomerJson contractor) {
     this.contractor = contractor;
   }
 
@@ -66,11 +66,11 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
    * In Finnish: Rakennuttaja
    * The person ordering the construction work.
    */
-  public ApplicantJson getPropertyDeveloper() {
+  public CustomerJson getPropertyDeveloper() {
     return propertyDeveloper;
   }
 
-  public void setPropertyDeveloper(ApplicantJson propertyDeveloper) {
+  public void setPropertyDeveloper(CustomerJson propertyDeveloper) {
     this.propertyDeveloper = propertyDeveloper;
   }
 

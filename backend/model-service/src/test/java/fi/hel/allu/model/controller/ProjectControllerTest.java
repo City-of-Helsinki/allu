@@ -1,6 +1,7 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.ApplicantType;
+import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
@@ -171,11 +172,11 @@ public class ProjectControllerTest {
 
   @Test
   public void testUpdateProjectApplications() throws Exception {
-    Applicant applicant = addPersonApplicantToDatabase("nimi", "nimi@foo.fi");
+    Customer customer = addPersonCustomerToDatabase("nimi", "nimi@foo.fi");
     ZonedDateTime startTime = ZonedDateTime.parse("2016-11-11T08:00:00+02:00[Europe/Helsinki]");
     ZonedDateTime endTime = ZonedDateTime.parse("2016-11-20T08:00:00+02:00[Europe/Helsinki]");
     // TODO: fix this test
-    Application newApplication = createApplication(applicant);
+    Application newApplication = createApplication(customer);
     Application addedApplication = addApplicationToDatabase(newApplication);
     addCityDistrictToApplication(addedApplication, KLUUVI_CITY_DISTRICT_ID, startTime, endTime);
 
@@ -214,10 +215,10 @@ public class ProjectControllerTest {
 
   @Test
   public void testUpdateProjectWithParentAndApplications() throws Exception {
-    Applicant applicant = addPersonApplicantToDatabase("nimi", "nimi@foo.fi");
+    Customer customer = addPersonCustomerToDatabase("nimi", "nimi@foo.fi");
     ZonedDateTime startTime = ZonedDateTime.parse("2016-11-11T08:00:00+02:00[Europe/Helsinki]");
     ZonedDateTime endTime = ZonedDateTime.parse("2016-11-20T08:00:00+02:00[Europe/Helsinki]");
-    Application newApplication1 = createApplication(applicant);
+    Application newApplication1 = createApplication(customer);
     Application addedApplication1 = addApplicationToDatabase(newApplication1);
     addCityDistrictToApplication(addedApplication1, KLUUVI_CITY_DISTRICT_ID, startTime, endTime);
 
@@ -242,7 +243,7 @@ public class ProjectControllerTest {
     assertEquals(endTime, updatedParentProject.getEndTime().withZoneSameInstant(zoneId));
 
     // add application to the parent project
-    Application parentApplication = createApplication(applicant);
+    Application parentApplication = createApplication(customer);
     Application addedParentApplication = addApplicationToDatabase(parentApplication);
     // Polygon that's mostly in Herttoniemi:
     DSL.Polygon2DToken herttoniemi_polygon = polygon(
@@ -264,7 +265,7 @@ public class ProjectControllerTest {
     assertEquals(endTime.plusDays(1), projectParent.getEndTime().withZoneSameInstant(zoneId));
 
     // add another application to child
-    Application newApplication2 = createApplication(applicant);
+    Application newApplication2 = createApplication(customer);
     Application addedApplication2 = addApplicationToDatabase(newApplication2);
     addCityDistrictToApplication(addedApplication2, KRUUNUNHAKA_CITY_DISTRICT_ID, startTime.minusDays(2), endTime.minusDays(1));
     wtc.perform(
@@ -351,16 +352,16 @@ public class ProjectControllerTest {
   }
 
   // Helper to add person
-  private Applicant addPersonApplicantToDatabase(String name, String email) throws Exception {
-    Applicant applicant = new Applicant();
-    applicant.setName(name);
-    applicant.setType(ApplicantType.PERSON);
-    applicant.setEmail(email);
-    ResultActions resultActions = wtc.perform(post("/applicants"), applicant).andExpect(status().isOk());
-    return wtc.parseObjectFromResult(resultActions, Applicant.class);
+  private Customer addPersonCustomerToDatabase(String name, String email) throws Exception {
+    Customer customer = new Customer();
+    customer.setName(name);
+    customer.setType(CustomerType.PERSON);
+    customer.setEmail(email);
+    ResultActions resultActions = wtc.perform(post("/customers"), customer).andExpect(status().isOk());
+    return wtc.parseObjectFromResult(resultActions, Customer.class);
   }
 
-  private Application createApplication(Applicant applicant) {
+  private Application createApplication(Customer customer) {
     ShortTermRental shortTermRental = new ShortTermRental();
     shortTermRental.setDescription("desc");
 
@@ -368,7 +369,8 @@ public class ProjectControllerTest {
     application.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
     application.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
     application.setRecurringEndTime(application.getEndTime());
-    application.setApplicantId(applicant.getId());
+    application.setCustomersWithContacts(
+        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
     application.setExtension(shortTermRental);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
     application.setKind(ApplicationKind.OTHER_SHORT_TERM_RENTAL);

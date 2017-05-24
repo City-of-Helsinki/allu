@@ -22,32 +22,35 @@
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
   "creationTime": "2016-07-15T05:08:10.514Z",
-  "applicant": {
-    "type": "COMPANY",
-    "person": null,
-    "id": null,
-    "name": "Tervaajat Oy",
-    "registryKey": "1234567-1",
-    "postalAddress": {
-      "streetAddress": "Tervatie 1",
-      "postalCode": "00300",
-      "city": "Helsinki"
-    },
-    "email": "info@tervaajat.fi",
-    "phone": "09-1234567",
-    "active": true
-  },
-  "contactList": [
+  "customersWithContacts":[
     {
-      "id": null,
-      "applicantId": null,
-      "name": "Terva Miettinen",
-      "streetAddress": "Tervatie 1",
-      "postalCode": "00300",
-      "city": "Helsinki",
-      "email": "tervaaja@tervaajat.fi",
-      "phone": "09-9876543",
-      "active": true
+      "roleType": "APPLICANT",
+      "customer": {
+        "type": "COMPANY",
+        "person": null,
+        "id": null,
+        "name": "Tervaajat Oy",
+        "registryKey": "1234567-1",
+        "postalAddress": {
+          "streetAddress": "Tervatie 1",
+          "postalCode": "00300",
+          "city": "Helsinki"
+        },
+        "email": "info@tervaajat.fi",
+        "phone": "09-1234567",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Terva Miettinen",
+        "streetAddress": "Tervatie 1",
+        "postalCode": "00300",
+        "city": "Helsinki",
+        "email": "tervaaja@tervaajat.fi",
+        "phone": "09-9876543",
+        "active": true
+      }]
     }
   ],
   "locations": [

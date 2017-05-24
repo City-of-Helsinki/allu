@@ -3,7 +3,7 @@ import {FormArray, FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {Observable, Subscription} from 'rxjs';
 
-import {Contact} from '../../../model/application/contact';
+import {Contact} from '../../../model/customer/contact';
 import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
 import {CustomerHub} from '../../../service/customer/customer-hub';
 import {NumberUtil} from '../../../util/number.util';
@@ -37,7 +37,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
     this.route.params
       .map(p => p['id'])
       .filter(id => NumberUtil.isDefined(id))
-      .switchMap(id => this.customerHub.findApplicantActiveContacts(id))
+      .switchMap(id => this.customerHub.findCustomerActiveContacts(id))
       .subscribe(contacts => contacts.forEach(c => this.addContact(c)));
   }
 
@@ -63,7 +63,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   private createContact(contact: Contact): FormGroup {
     return this.fb.group({
       id: [contact.id],
-      applicantId: [contact.applicantId],
+      customerId: [contact.customerId],
       name: [contact.name, [Validators.required, Validators.minLength(2)]],
       streetAddress: [contact.streetAddress],
       postalCode: [contact.postalCode, postalCodeValidator],

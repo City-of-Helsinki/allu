@@ -60,10 +60,10 @@ public class StructureMetaDaoTest {
   }
 
   @Test
-  public void testFindApplicantMeta() {
-    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("Applicant", 1, Collections.emptyMap());
+  public void testFindCustomerMeta() {
+    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("Customer", 1, Collections.emptyMap());
     assertTrue(meta.isPresent());
-    assertStructureAttributes(ApplicantJson.class, meta.get());
+    assertStructureAttributes(CustomerJson.class, meta.get());
   }
 
   @Test

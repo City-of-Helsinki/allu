@@ -1,5 +1,3 @@
-import {Applicant} from './applicant/applicant';
-import {Contact} from './contact';
 import {Location} from '../common/location';
 import {ApplicationExtension} from './type/application-extension';
 import {AttachmentInfo} from './attachment/attachment-info';
@@ -16,6 +14,8 @@ import {PublicityType} from './publicity-type';
 import {DistributionEntry} from '../common/distribution-entry';
 import {DistributionType} from '../common/distribution-type';
 import {ArrayUtil} from '../../util/array-util';
+import {CustomerWithContacts} from '../customer/customer-with-contacts';
+import {CustomerRoleType} from '../customer/customer-role-type';
 
 export class Application {
   constructor(
@@ -32,8 +32,7 @@ export class Application {
     public startTime?: Date,
     public endTime?: Date,
     public recurringEndTime?: Date,
-    public applicant?: Applicant,
-    public contactList?: Array<Contact>,
+    public customersWithContacts?: Array<CustomerWithContacts>,
     public locations?: Array<Location>,
     public extension?: ApplicationExtension,
     public decisionTime?: Date,
@@ -48,7 +47,7 @@ export class Application {
     public applicationTags?: Array<ApplicationTag>,
     public comments?: Array<Comment>) {
     this.locations = locations || [];
-    this.contactList = contactList || [new Contact()];
+    this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];
     this.applicationTags = applicationTags || [];
     this.comments = comments || [];
@@ -64,36 +63,31 @@ export class Application {
     return TimeUtil.getUiDateString(this.creationTime);
   }
 
-  public get uiStartTime(): string {
+  get uiStartTime(): string {
     return TimeUtil.getUiDateString(this.startTime);
   }
 
-  public set uiStartTime(dateString: string) {
+  set uiStartTime(dateString: string) {
     this.startTime = TimeUtil.getStartDateFromUi(dateString);
   }
 
-  public get uiEndTime(): string {
+  get uiEndTime(): string {
     return TimeUtil.getUiDateString(this.endTime);
   }
 
-  public set uiEndTime(dateString: string) {
+  set uiEndTime(dateString: string) {
     this.endTime = TimeUtil.getEndDateFromUi(dateString);
   }
 
-  public get recurringEndYear() {
+  get recurringEndYear() {
     return TimeUtil.yearFromDate(this.recurringEndTime);
   }
 
-  public set recurringEndYear(year: number) {
+  set recurringEndYear(year: number) {
     this.recurringEndTime = TimeUtil.dateWithYear(this.endTime, year);
   }
 
-  public updateDatesFromLocations(): void {
-    this.startTime = TimeUtil.minimum(... this.locations.map(l => l.startTime));
-    this.endTime = TimeUtil.maximum(... this.locations.map(l => l.endTime));
-  }
-
-  public get singleLocation(): Location {
+  get singleLocation(): Location {
     if (this.locations.length <= 1) {
       return ArrayUtil.first(this.locations);
     } else {
@@ -101,32 +95,12 @@ export class Application {
     }
   }
 
-  public set singleLocation(location: Location) {
+  set singleLocation(location: Location) {
     this.locations = [location];
   }
 
-  public get firstLocation(): Location {
+  get firstLocation(): Location {
     return ArrayUtil.first(this.locations);
-  }
-
-  public hasGeometry(): boolean {
-    return this.geometryCount() > 0;
-  }
-
-  public geometryCount(): number {
-    return this.locations.reduce((acc, cur) => acc + cur.geometryCount(), 0);
-  }
-
-  public geometries(): Array<GeoJSON.GeometryCollection> {
-    return this.locations.map(l => l.geometry);
-  }
-
-  public hasFixedGeometry(): boolean {
-    return this.locations.some(l => l.hasFixedGeometry());
-  }
-
-  public belongsToProject(projectId: number): boolean {
-    return Some(this.project).map(p => p.id === projectId).orElse(false);
   }
 
   get calculatedPriceEuro(): number {
@@ -154,11 +128,77 @@ export class Application {
     return ApplicationType[this.type];
   }
 
+  get applicant(): CustomerWithContacts {
+    return this.customerWithContactsByRole(CustomerRoleType.APPLICANT);
+  }
+
+  get contractor(): CustomerWithContacts {
+    // Ugly hack to fetch contractor from extension until it is moved to application
+    // TODO: fetch from customersWithContacts list when backend support is available
+    let extension: any = this.extension;
+    return new CustomerWithContacts(CustomerRoleType.CONTRACTOR, extension.contractor, [extension.responsiblePerson]);
+  }
+
+  get propertyDeveloper(): CustomerWithContacts {
+    // Ugly hack to fetch property developer from extension until it is moved to application
+    // TODO: fetch from customersWithContacts list when backend support is available
+    let extension: any = this.extension;
+    return new CustomerWithContacts(CustomerRoleType.CONTRACTOR, extension.propertyDeveloper, [extension.propertyDeveloperContact]);
+  }
+
+  get representative(): CustomerWithContacts {
+    // Ugly hack to fetch representative from extension until it is moved to application
+    // TODO: fetch from customersWithContacts list when backend support is available
+    let extension: any = this.extension;
+    return new CustomerWithContacts(CustomerRoleType.CONTRACTOR, extension.representative, [extension.contact]);
+  }
+
+  public addCustomerWithContacts(cwc: CustomerWithContacts): void {
+    this.assertUniqueCustomerRole(cwc.roleType);
+    this.customersWithContacts.push(cwc);
+  }
+
+  public customerWithContactsByRole(roleType: CustomerRoleType): CustomerWithContacts {
+    return Some(this.customersWithContacts.find(cwc => cwc.roleType === roleType))
+      .orElse(new CustomerWithContacts(roleType));
+  }
+
+  public hasGeometry(): boolean {
+    return this.geometryCount() > 0;
+  }
+
+  public geometryCount(): number {
+    return this.locations.reduce((acc, cur) => acc + cur.geometryCount(), 0);
+  }
+
+  public updateDatesFromLocations(): void {
+    this.startTime = TimeUtil.minimum(... this.locations.map(l => l.startTime));
+    this.endTime = TimeUtil.maximum(... this.locations.map(l => l.endTime));
+  }
+
+  public geometries(): Array<GeoJSON.GeometryCollection> {
+    return this.locations.map(l => l.geometry);
+  }
+
+  public hasFixedGeometry(): boolean {
+    return this.locations.some(l => l.hasFixedGeometry());
+  }
+
+  public belongsToProject(projectId: number): boolean {
+    return Some(this.project).map(p => p.id === projectId).orElse(false);
+  }
+
   private toEuros(priceInCents: number): number {
     return NumberUtil.toEuros(priceInCents);
   }
 
   private toCents(priceInEuros: number): number {
     return NumberUtil.toCents(priceInEuros);
+  }
+
+  private assertUniqueCustomerRole(roleType: CustomerRoleType): void {
+    if (this.customersWithContacts.map(cwc => cwc.roleType).indexOf(roleType) >= 0) {
+      throw new Error('Tried to customer with existing role type to application ' + CustomerRoleType[roleType]);
+    }
   }
 }

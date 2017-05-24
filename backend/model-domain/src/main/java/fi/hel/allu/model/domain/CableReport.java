@@ -10,7 +10,7 @@ public class CableReport extends ApplicationExtension {
   private Boolean cableSurveyRequired;
   private String cableReportId;
   private String workDescription;
-  private Applicant owner;
+  private Customer owner;
   private Contact contact;
   private Integer mapExtractCount;
   private List<CableInfoEntry> infoEntries;
@@ -68,11 +68,11 @@ public class CableReport extends ApplicationExtension {
    *
    * @return the owner
    */
-  public Applicant getOwner() {
+  public Customer getOwner() {
     return owner;
   }
 
-  public void setOwner(Applicant owner) {
+  public void setOwner(Customer owner) {
     this.owner = owner;
   }
 

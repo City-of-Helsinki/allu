@@ -1,7 +1,7 @@
 
 export interface BackendContact {
   id: number;
-  applicantId: number;
+  customerId: number;
   name: string;
   streetAddress: string;
   postalCode: string;

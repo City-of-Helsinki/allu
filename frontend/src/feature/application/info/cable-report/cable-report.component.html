@@ -1,9 +1,7 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
     <div class="row">
-        <applicant [applicationForm]="applicationForm"  [applicant]="application.applicant"
-                   [readonly]="readonly" headerText="Johtoselvityksen tilaaja" formName="orderer"
-                   [contactList]="application.contactList"
-                   contactHeaderText="Yhteyshenkilö" contactFormName="ordererContacts"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+                  [readonly]="readonly"></customer>
     </div>
 
     <div class="row">
@@ -78,10 +76,7 @@
     </div>
 
     <div class="row" *ngIf="applicationForm.value.cableSurveyRequired">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.extension.owner"
-                   [readonly]="readonly" headerText="Omistaja" formName="owner"
-                   [contactList]="application.extension.contactList"
-                   contactHeaderText="Yhteyshenkilö" contactFormName="ownerContact"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor" [readonly]="readonly"></customer>
     </div>
 
     <div class="row">

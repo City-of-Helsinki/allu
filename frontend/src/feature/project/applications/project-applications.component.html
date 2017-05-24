@@ -30,7 +30,7 @@
                     <th>Tunnus</th>
                     <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
                     <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
-                    <th sortBy="applicant.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
+                    <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
                     <th>Kaupunginosa</th>
                     <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
                 </tr>
@@ -47,7 +47,7 @@
                     </td>
                     <td>{{['application.type', row.content.type] | translation}}</td>
                     <td>{{['application.status', row.content.status] | translation}}</td>
-                    <td>{{row.content.applicant.name}}<br></td>
+                    <td>{{row.content.applicant.customer.name}}<br></td>
                     <td>ei tuettuna</td>
                     <td>{{ row.content.startTime | date:dateFormat }}</td>
                 </tr>

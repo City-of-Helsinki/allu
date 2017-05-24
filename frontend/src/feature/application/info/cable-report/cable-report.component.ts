@@ -4,13 +4,10 @@ import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicantForm} from '../applicant/applicant.form';
 import {CableReportForm} from './cable-report.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {TimeUtil} from '../../../../util/time.util';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
-
 
 @Component({
   selector: 'cable-report',
@@ -53,8 +50,6 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     application.name = 'Johtoselvitys'; // Cable reports have no name so set default
     application.startTime = form.reportTimes.startTime;
     application.endTime = form.reportTimes.endTime;
-    application.applicant = ApplicantForm.toApplicant(form.orderer);
-    application.contactList = form.ordererContacts;
     let extension = <CableReport>application.extension;
     application.extension = CableReportForm.to(form, extension.validityTime, extension.specifiers);
 

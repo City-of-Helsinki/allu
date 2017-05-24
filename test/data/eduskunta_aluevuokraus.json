@@ -4,32 +4,35 @@
   "name": "Aluevuokraus",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
-  "applicant": {
-    "id": null,
-    "type": "PERSON",
-    "representative": null,
-    "name": "Reima Remontoija",
-    "registryKey": "43124123",
-    "postalAddress": {
-      "streetAddress": "Remonttikatu 123",
-      "postalCode": "20200",
-      "city": "Turku"
-    },
-    "email": "reima.remontoija@reimanremontit.net",
-    "phone": "02213412",
-    "active": true
-  },
-  "contactList": [
+  "customersWithContacts":[
     {
-      "id": null,
-      "applicantId": null,
-      "name": "Raimo Remontoija",
-      "streetAddress": "Bulvaanitie 42",
-      "postalCode": "21200",
-      "city": "Turku",
-      "email": "raimo.remontoija@bulvaaniremontit.com",
-      "phone": "0245223432",
-      "active": true
+      "roleType": "APPLICANT",
+      "customer": {
+        "id": null,
+        "type": "PERSON",
+        "representative": null,
+        "name": "Reima Remontoija",
+        "registryKey": "43124123",
+        "postalAddress": {
+          "streetAddress": "Remonttikatu 123",
+          "postalCode": "20200",
+          "city": "Turku"
+        },
+        "email": "reima.remontoija@reimanremontit.net",
+        "phone": "02213412",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Raimo Remontoija",
+        "streetAddress": "Bulvaanitie 42",
+        "postalCode": "21200",
+        "city": "Turku",
+        "email": "raimo.remontoija@bulvaaniremontit.com",
+        "phone": "0245223432",
+        "active": true
+      }]
     }
   ],
   "locations": [

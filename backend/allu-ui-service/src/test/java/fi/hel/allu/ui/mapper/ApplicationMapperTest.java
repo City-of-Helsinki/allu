@@ -6,11 +6,13 @@ import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
 import fi.hel.allu.ui.domain.ApplicationExtensionJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.CustomerWithContactsJson;
 import fi.hel.allu.ui.domain.UserJson;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -34,6 +36,7 @@ public class ApplicationMapperTest {
     applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
     applicationJson.setExtension(eventJson);
     applicationJson.setHandler(userJson);
+    applicationJson.setCustomersWithContacts(Collections.singletonList(new CustomerWithContactsJson()));
 
     ApplicationES applicationES = applicationMapper.createApplicationESModel(applicationJson);
     List<ESFlatValue> applicationTypeData = applicationES.getApplicationTypeData();

@@ -1,17 +1,12 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
     <div class="row">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                   [readonly]="readonly" headerText="Hakija" formName="applicant"
-                   [showCopyToBilling]="true" [contactList]="application.contactList"
-                   contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+                  [readonly]="readonly" [showCopyToBilling]="true"></customer>
     </div>
 
     <div class="row">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.contractor"
-                   [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
-                   [showCopyToBilling]="true" [showRepresentative]="true"
-                   [contactList]="application.extension?.responsiblePersonList"
-                   contactHeaderText="Vastuuhenkilö" contactFormName="responsiblePerson"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
+                   [readonly]="readonly" [showCopyToBilling]="true" [showRepresentative]="true"></customer>
     </div>
 
     <div class="row">

@@ -1,10 +1,10 @@
-<div [formGroup]="contactsForm">
+<div [formGroup]="parentForm">
     <div formArrayName="contacts">
         <div *ngFor="let contact of contacts.controls; let index=index" class="col m6 contact-card">
             <div [formGroupName]="index" class="no-border">
                 <md-card>
                     <md-card-title>
-                        {{headerText}}
+                        {{['contact.role', customerRoleType, 'title'] | translation}}
                         <button md-icon-button type="button"
                                 *ngIf="canBeEdited(contact.value)"
                                 (click)="edit(contact.value.id, index)">

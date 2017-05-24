@@ -1,7 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
+import {CustomerType} from '../../../../model/customer/customer-type';
 import {EnumUtil} from '../../../../util/enum.util';
 import {InvoicingInfoForm} from './invoicing-info.form';
 import {InvoicePartition} from '../../../../model/application/invoice/ivoice-partition';
@@ -15,13 +15,13 @@ export class InvoicingInfoComponent implements OnInit {
 
   @Input() parentForm: FormGroup;
 
-  applicantTypes = EnumUtil.enumValues(ApplicantType);
+  customerTypes = EnumUtil.enumValues(CustomerType);
   invoicePartitions = EnumUtil.enumValues(InvoicePartition);
   invoicingInfoForm: FormGroup;
   invoicingAddressForm: FormGroup;
 
   constructor(private fb: FormBuilder) {
-    // TODO: Get invoicing info if already invoiced / otherwise get invoicing address from applicant
+    // TODO: Get invoicing info if already invoiced / otherwise get invoicing address from customer
     this.invoicingInfoForm = InvoicingInfoForm.initialForm(fb);
     this.invoicingAddressForm = <FormGroup>this.invoicingInfoForm.get('invoicingAddress');
   }

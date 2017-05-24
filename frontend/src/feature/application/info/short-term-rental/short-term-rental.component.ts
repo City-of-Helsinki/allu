@@ -3,12 +3,13 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
-import {ApplicantForm} from '../applicant/applicant.form';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {ShortTermRentalForm} from './short-term-rental.form';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 @Component({
   selector: 'short-term-rental',
@@ -35,8 +36,6 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
     application.name = form.name;
     application.startTime = form.rentalTimes.startTime;
     application.endTime = form.rentalTimes.endTime;
-    application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.contactList = form.contacts;
     application.extension = ShortTermRentalForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

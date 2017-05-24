@@ -1,11 +1,8 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.types.ApplicantType;
-import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.dao.ApplicantDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
@@ -43,7 +40,7 @@ public class PricingServiceTest {
   private LocationDao locationDao;
 
   @Autowired
-  private ApplicantDao applicantDao;
+  private CustomerDao customerDao;
 
   @SuppressWarnings("serial")
   private static class Pair<A, B> extends AbstractMap.SimpleImmutableEntry<A, B> {
@@ -84,6 +81,7 @@ public class PricingServiceTest {
     event.setNature(EventNature.PUBLIC_FREE);
     event.setBuildSeconds(60 * 60 * 24); // 24 hours
     application.setExtension(event);
+    addDummyCustomer(application, CustomerType.PERSON);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
     List<Integer> fixedLocationIds = Arrays.asList(makePair("Kansalaistori", "A"), makePair("Kansalaistori", "C"))
@@ -108,6 +106,7 @@ public class PricingServiceTest {
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T23:00:00+02:00"));
     application.setExtension(event);
+    addDummyCustomer(application, CustomerType.PERSON);
     // Five weeks non-commercial -> 750 EUR
     checkPrice(application, 75000);
 
@@ -125,6 +124,7 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.CIRCUS);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
+    addDummyCustomer(application, CustomerType.PERSON);
     // Thirty-four days -> 6800 EUR
     checkPrice(application, 680000);
   }
@@ -136,15 +136,11 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.DOG_TRAINING_EVENT);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
-    Applicant applicant = new Applicant();
-    applicant.setName("Hakija");
-    applicant.setType(ApplicantType.ASSOCIATION);
-    application.setApplicantId(applicantDao.insert(applicant).getId());
+    addDummyCustomer(application, CustomerType.ASSOCIATION);
     // association -> 50 EUR /applicationExtension
     checkPrice(application, 5000);
 
-    applicant.setType(ApplicantType.COMPANY);
-    application.setApplicantId(applicantDao.insert(applicant).getId());
+    addDummyCustomer(application, CustomerType.COMPANY);
     // Company -> 100 EUR /applicationExtension
     checkPrice(application, 10000);
   }
@@ -156,15 +152,11 @@ public class PricingServiceTest {
     application.setKind(ApplicationKind.DOG_TRAINING_FIELD);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-10T05:59:59+02:00"));
-    Applicant applicant = new Applicant();
-    applicant.setName("Hakija");
-    applicant.setType(ApplicantType.ASSOCIATION);
-    application.setApplicantId(applicantDao.insert(applicant).getId());
+    addDummyCustomer(application, CustomerType.PERSON);
     // association -> 100 EUR /year -> 300 EUR total
     checkPrice(application, 30000);
 
-    applicant.setType(ApplicantType.COMPANY);
-    application.setApplicantId(applicantDao.insert(applicant).getId());
+    addDummyCustomer(application, CustomerType.COMPANY);
     // Company -> 200 EUR /year -> 600 EUR total
     checkPrice(application, 60000);
   }
@@ -179,6 +171,7 @@ public class PricingServiceTest {
     application.setRecurringEndTime(application.getEndTime());
     application.setMetadataVersion(1);
     application.setExtension(new ShortTermRental());
+    addDummyCustomer(application, CustomerType.PERSON);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
     location.setAreaOverride(135.5);
@@ -198,6 +191,7 @@ public class PricingServiceTest {
     application.setExtension(event);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
+    addDummyCustomer(application, CustomerType.PERSON);
     // Large area, price for three years = 150 EUR * 3 = 450 EUR
     checkPrice(application, 45000);
 
@@ -215,6 +209,7 @@ public class PricingServiceTest {
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
     application.setExtension(new ShortTermRental());
     application.setMetadataVersion(1);
+    addDummyCustomer(application, CustomerType.PERSON);
     // Three months -> 360 EUR
     checkPrice(application, 36000);
   }
@@ -229,6 +224,7 @@ public class PricingServiceTest {
     application.setRecurringEndTime(application.getEndTime());
     application.setExtension(new ShortTermRental());
     application.setMetadataVersion(1);
+    addDummyCustomer(application, CustomerType.PERSON);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
     location.setAreaOverride(222.2);
@@ -262,6 +258,14 @@ public class PricingServiceTest {
    location.setStartTime(ZonedDateTime.now());
    location.setEndTime(ZonedDateTime.now());
    return location;
+ }
+
+ private void addDummyCustomer(Application application, CustomerType customerType) {
+   Customer customer = new Customer();
+   customer.setName("Hakija");
+   customer.setType(customerType);
+   application.setCustomersWithContacts(
+       Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customerDao.insert(customer), Collections.emptyList())));
  }
 }
 

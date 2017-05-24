@@ -1,8 +1,7 @@
 import {BackendApplication} from '../backend-model/backend-application';
 import {Application} from '../../model/application/application';
 import {ProjectMapper} from './project-mapper';
-import {ApplicantMapper} from './applicant-mapper';
-import {ContactMapper} from './contact-mapper';
+import {CustomerMapper} from './customer-mapper';
 import {LocationMapper} from './location-mapper';
 import {ApplicationTypeDataMapper} from './application-type-data-mapper';
 import {AttachmentInfoMapper} from './attachment-info-mapper';
@@ -31,10 +30,7 @@ export class ApplicationMapper {
     application.startTime = TimeUtil.dateFromBackend(backendApplication.startTime);
     application.endTime = TimeUtil.dateFromBackend(backendApplication.endTime);
     application.recurringEndTime = TimeUtil.dateFromBackend(backendApplication.recurringEndTime);
-    application.applicant = ApplicantMapper.mapBackend(backendApplication.applicant);
-    application.contactList = (backendApplication.contactList) ?
-      backendApplication.contactList.map((contact) => ContactMapper.mapBackend(contact))
-      : undefined;
+    application.customersWithContacts = CustomerMapper.mapBackendCustomersWithContacts(backendApplication.customersWithContacts);
     application.locations = LocationMapper.mapBackendList(backendApplication.locations);
     application.extension = ApplicationTypeDataMapper.mapBackend(backendApplication.extension);
     application.decisionTime = TimeUtil.dateFromBackend(backendApplication.decisionTime);
@@ -68,8 +64,7 @@ export class ApplicationMapper {
       startTime: TimeUtil.dateToBackend(application.startTime),
       endTime: TimeUtil.dateToBackend(application.endTime),
       recurringEndTime: TimeUtil.dateToBackend(application.recurringEndTime),
-      applicant: ApplicantMapper.mapFrontend(application.applicant),
-      contactList: (application.contactList) ? application.contactList.map((contact) => ContactMapper.mapFrontend(contact)) : undefined,
+      customersWithContacts: CustomerMapper.mapFrontendCustomersWithContacts(application.customersWithContacts),
       locations: LocationMapper.mapFrontendList(application.locations),
       extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
       decisionTime: TimeUtil.dateToBackend(application.decisionTime),

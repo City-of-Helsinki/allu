@@ -9,8 +9,8 @@
             <input-box>
                 <select inputBoxInput formControlName="type">
                     <option value="" selected>Asiakkaan tyyppi</option>
-                    <option *ngFor="let type of applicantTypes" value="{{type}}">
-                        {{['applicant.type', type, 'name'] | translation}}
+                    <option *ngFor="let type of customerTypes" value="{{type}}">
+                        {{['customer.type', type, 'name'] | translation}}
                     </option>
                 </select>
             </input-box>
@@ -38,7 +38,7 @@
                 <tbody>
                 <tr *ngFor="let customer of customers | async" class="clickable row-highlight" (click)="onSelect(customer)">
                     <td>{{customer.name}}</td>
-                    <td>{{['applicant.type', customer.type, 'name'] | translation}}</td>
+                    <td>{{['customer.type', customer.type, 'name'] | translation}}</td>
                     <td>{{customer.registryKey}}</td>
                     <td>{{customer.email}}</td>
                     <td>{{customer.phone}}</td>

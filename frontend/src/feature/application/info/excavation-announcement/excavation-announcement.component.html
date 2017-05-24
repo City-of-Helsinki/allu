@@ -1,28 +1,19 @@
 
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
     <div class="row">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                   [readonly]="readonly" headerText="Hakija" formName="applicant"
-                   [showCopyToBilling]="true" [showPropertyDeveloper]="true"
-                   [propertyDeveloper]="!!application.extension.propertyDeveloper"
-                   [contactList]="application.contactList"
-                   contactHeaderText="Yhteyshenkilö" contactFormName="contacts"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+                   [readonly]="readonly" [showCopyToBilling]="true" [showPropertyDeveloper]="true"
+                   [propertyDeveloper]="!!application.propertyDeveloper"></customer>
     </div>
 
     <div class="row" *ngIf="applicationForm.value.applicant?.propertyDeveloper">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.propertyDeveloper"
-                   [readonly]="readonly" headerText="Rakennuttaja" formName="propertyDeveloper"
-                   [showCopyToBilling]="true"
-                   [contactList]="application.extension?.propertyDeveloperContactList"
-                   contactHeaderText="Yhteyshenkilö" contactFormName="propertyDeveloperContact"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.propertyDeveloper"
+                   [readonly]="readonly" [showCopyToBilling]="true"></customer>
     </div>
 
     <div class="row">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.extension?.contractor"
-                   [readonly]="readonly" headerText="Työn suorittaja" formName="contractor"
-                   [showCopyToBilling]="true" [showRepresentative]="true"
-                   [contactList]="application.extension?.responsiblePersonList"
-                   contactHeaderText="Vastuuhenkilö" contactFormName="responsiblePerson"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
+                   [readonly]="readonly" [showCopyToBilling]="true" [showRepresentative]="true"></customer>
     </div>
 
     <div class="row">

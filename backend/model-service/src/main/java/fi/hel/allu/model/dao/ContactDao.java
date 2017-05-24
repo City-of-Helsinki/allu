@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplicationContact.applicationContact;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 
@@ -68,46 +67,16 @@ public class ContactDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Contact> findByApplicant(int applicantId) {
+  public List<Contact> findByCustomer(int customerId) {
     List<Tuple> contactPostalAddress = queryFactory
         .select(contactBean, postalAddressBean)
         .from(contact)
         .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
-        .where(contact.applicantId.eq(applicantId)).fetch();
+        .where(contact.customerId.eq(customerId)).fetch();
     List<Contact> contacts = contactPostalAddress.stream()
             .map(cpa -> PostalAddressUtil.mapPostalAddress(cpa).get(0, Contact.class))
             .collect(Collectors.toList());
     return contacts;
-  }
-
-  @Transactional(readOnly = true)
-  public List<Contact> findByApplication(int applicationId) {
-    List<Tuple> contactPostalAddress = queryFactory
-        .select(contactBean, postalAddressBean)
-        .from(contact)
-        .innerJoin(applicationContact).on(contact.id.eq(applicationContact.contactId))
-        .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
-        .where(applicationContact.applicationId.eq(applicationId))
-        .orderBy(applicationContact.position.asc()).fetch();
-    List<Contact> contacts = contactPostalAddress.stream()
-        .map(cpa -> PostalAddressUtil.mapPostalAddress(cpa).get(0, Contact.class))
-        .collect(Collectors.toList());
-    return contacts;
-  }
-
-  @Transactional
-  public List<Contact> setApplicationContacts(int applicationId, List<Contact> contacts) {
-    // remove old contact links, then add new ones.
-    queryFactory.delete(applicationContact).where(applicationContact.applicationId.eq(applicationId)).execute();
-    // ... then create the link records
-    SQLInsertClause insertClause = queryFactory.insert(applicationContact);
-    int pos = 0;
-    for (Contact contact : contacts) {
-      insertClause.columns(applicationContact.applicationId, applicationContact.contactId, applicationContact.position)
-          .values(applicationId, contact.getId(), pos++).addBatch();
-    }
-    insertClause.execute();
-    return findByApplication(applicationId);
   }
 
   @Transactional

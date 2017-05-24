@@ -27,9 +27,8 @@ public class ApplicationES {
   private List<ESFlatValue> applicationTypeData;
   private Integer projectId;
   private ZonedDateTime decisionTime;
-  private List<ContactES> contacts;
   private List<LocationES> locations;
-  private ApplicantES applicant;
+  private RoleTypedCustomerES customers;
   private RecurringApplication recurringApplication;
 
   public Integer getId() {
@@ -136,14 +135,6 @@ public class ApplicationES {
     this.decisionTime = decisionTime;
   }
 
-  public List<ContactES> getContacts() {
-    return contacts;
-  }
-
-  public void setContacts(List<ContactES> contacts) {
-    this.contacts = contacts;
-  }
-
   public List<LocationES> getLocations() {
     return locations;
   }
@@ -152,12 +143,12 @@ public class ApplicationES {
     this.locations = locations;
   }
 
-  public ApplicantES getApplicant() {
-    return applicant;
+  public RoleTypedCustomerES getCustomers() {
+    return customers;
   }
 
-  public void setApplicant(ApplicantES applicantES) {
-    this.applicant = applicantES;
+  public void setCustomers(RoleTypedCustomerES customers) {
+    this.customers = customers;
   }
 
   public RecurringApplication getRecurringApplication() {

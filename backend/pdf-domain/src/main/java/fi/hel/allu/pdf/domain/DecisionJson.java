@@ -15,9 +15,9 @@ public class DecisionJson {
   private String decisionDate;
   private String decisionId;
 
-  private List<String> applicantAddressLines;
+  private List<String> customerAddressLines;
 
-  private List<String> applicantContactLines;
+  private List<String> customerContactLines;
 
   private String siteAddressLine;
   private String siteAdditionalInfo;
@@ -93,20 +93,20 @@ public class DecisionJson {
     this.decisionId = decisionId;
   }
 
-  public List<String> getApplicantAddressLines() {
-    return applicantAddressLines;
+  public List<String> getCustomerAddressLines() {
+    return customerAddressLines;
   }
 
-  public void setApplicantAddressLines(List<String> applicantAddressLines) {
-    this.applicantAddressLines = applicantAddressLines;
+  public void setCustomerAddressLines(List<String> customerAddressLines) {
+    this.customerAddressLines = customerAddressLines;
   }
 
-  public List<String> getApplicantContactLines() {
-    return applicantContactLines;
+  public List<String> getCustomerContactLines() {
+    return customerContactLines;
   }
 
-  public void setApplicantContactLines(List<String> applicantContactLines) {
-    this.applicantContactLines = applicantContactLines;
+  public void setCustomerContactLines(List<String> customerContactLines) {
+    this.customerContactLines = customerContactLines;
   }
 
   public String getSiteAddressLine() {

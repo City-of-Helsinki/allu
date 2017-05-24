@@ -4,32 +4,35 @@
   "name": "Sijoitussopimus",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
-  "applicant": {
-    "id": null,
-    "type": "PERSON",
-    "representative": null,
-    "name": "Seppo Sijoittaja",
-    "registryKey": "123",
-    "postalAddress": {
-      "streetAddress": "Sijoitusosoite 13",
-      "postalCode": "00200",
-      "city": "Helsinki"
-    },
-    "email": "seppo.sijoittaja@sijoitussopimus.com",
-    "phone": "040095634",
-    "active": true
-  },
-  "contactList": [
+  "customersWithContacts":[
     {
-      "id": null,
-      "applicantId": null,
-      "name": "Petri Placement",
-      "streetAddress": "321",
-      "postalCode": "00300",
-      "city": "Helsinki",
-      "email": "petri.placement@placementcontract.fi",
-      "phone": "031234567",
-      "active": true
+      "roleType": "APPLICANT",
+      "customer": {
+        "id": null,
+        "type": "PERSON",
+        "representative": null,
+        "name": "Seppo Sijoittaja",
+        "registryKey": "123",
+        "postalAddress": {
+          "streetAddress": "Sijoitusosoite 13",
+          "postalCode": "00200",
+          "city": "Helsinki"
+        },
+        "email": "seppo.sijoittaja@sijoitussopimus.com",
+        "phone": "040095634",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Petri Placement",
+        "streetAddress": "321",
+        "postalCode": "00300",
+        "city": "Helsinki",
+        "email": "petri.placement@placementcontract.fi",
+        "phone": "031234567",
+        "active": true
+      }]
     }
   ],
   "locations": [

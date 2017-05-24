@@ -9,9 +9,9 @@ import java.time.ZonedDateTime;
  * Excavation announcement (Kaivuilmoitus) specific data.
  */
 public class ExcavationAnnouncement extends ApplicationExtension {
-  private Applicant contractor;
+  private Customer contractor;
   private Contact responsiblePerson;
-  private Applicant propertyDeveloper;
+  private Customer propertyDeveloper;
   private Contact propertyDeveloperContact;
   private Boolean pksCard;
   private Boolean constructionWork;
@@ -39,11 +39,11 @@ public class ExcavationAnnouncement extends ApplicationExtension {
    * In Finnish: Työn suorittaja (yritys yleensä).
    * The company that does the actual work instead of the party that acts as customer.
    */
-  public Applicant getContractor() {
+  public Customer getContractor() {
     return contractor;
   }
 
-  public void setContractor(Applicant contractor) {
+  public void setContractor(Customer contractor) {
     this.contractor = contractor;
   }
 
@@ -63,11 +63,11 @@ public class ExcavationAnnouncement extends ApplicationExtension {
    * In Finnish: Rakennuttaja
    * The person ordering the construction work.
    */
-  public Applicant getPropertyDeveloper() {
+  public Customer getPropertyDeveloper() {
     return propertyDeveloper;
   }
 
-  public void setPropertyDeveloper(Applicant propertyDeveloper) {
+  public void setPropertyDeveloper(Customer propertyDeveloper) {
     this.propertyDeveloper = propertyDeveloper;
   }
 

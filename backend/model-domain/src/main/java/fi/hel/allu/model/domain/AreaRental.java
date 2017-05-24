@@ -9,7 +9,7 @@ import java.time.ZonedDateTime;
  * Area rental (Aluevuokraus) specific data.
  */
 public class AreaRental extends ApplicationExtension {
-  private Applicant contractor;
+  private Customer contractor;
   private Contact responsiblePerson;
   private String additionalInfo;
   private String trafficArrangements;
@@ -25,11 +25,11 @@ public class AreaRental extends ApplicationExtension {
    * In Finnish: Työn suorittaja (yritys yleensä).
    * The company that does the actual work instead of the party that acts as customer.
    */
-  public Applicant getContractor() {
+  public Customer getContractor() {
     return contractor;
   }
 
-  public void setContractor(Applicant contractor) {
+  public void setContractor(Customer contractor) {
     this.contractor = contractor;
   }
 

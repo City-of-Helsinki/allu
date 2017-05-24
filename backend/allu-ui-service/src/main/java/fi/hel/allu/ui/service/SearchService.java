@@ -1,8 +1,9 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicantJson;
+import fi.hel.allu.ui.domain.CustomerJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.ProjectJson;
@@ -93,33 +94,33 @@ public class SearchService {
   }
 
   /**
-   * Insert applicants to search index.
+   * Insert customers to search index.
    *
-   * @param applicantJson Applicant to be indexed.
+   * @param customerJson Customer to be indexed.
    */
-  public void insertApplicant(ApplicantJson applicantJson) {
+  public void insertCustomer(CustomerJson customerJson) {
     restTemplate.postForObject(
-        applicationProperties.getApplicantSearchCreateUrl(),
-        applicationMapper.createApplicantES(applicantJson),
+        applicationProperties.getCustomerSearchCreateUrl(),
+        applicationMapper.createCustomerES(customerJson),
         Void.class);
   }
 
   /**
-   * Update multiple applicants to search index.
+   * Update multiple customers to search index.
    *
-   * @param applicantJsons Applicants to be updated.
+   * @param customerJsons Customers to be updated.
    */
-  public void updateApplicants(List<ApplicantJson> applicantJsons) {
-    List<ApplicantES> applicants = applicantJsons.stream().map(a -> applicationMapper.createApplicantES(a)).collect(Collectors.toList());
+  public void updateCustomers(List<CustomerJson> customerJsons) {
+    List<CustomerES> customers = customerJsons.stream().map(a -> applicationMapper.createCustomerES(a)).collect(Collectors.toList());
     restTemplate.put(
-        applicationProperties.getApplicantsSearchUpdateUrl(),
-        applicants);
+        applicationProperties.getCustomersSearchUpdateUrl(),
+        customers);
   }
 
   /**
    * Insert contact to search index.
    *
-   * @param contactJson Applicant to be indexed.
+   * @param contactJson Customer to be indexed.
    */
   public void insertContacts(List<ContactJson> contactJson) {
     restTemplate.postForObject(
@@ -162,20 +163,13 @@ public class SearchService {
   }
 
   /**
-   * Find applicants by given fields.
+   * Find customers by given fields.
    *
    * @param queryParameters list of query parameters
-   * @return List of ids of found applicants.
+   * @return List of ids of found customers.
    */
-  public List<Integer> searchApplicant(QueryParameters queryParameters) {
-    return search(applicationProperties.getApplicantSearchUrl(), queryParameters);
-  }
-
-  public List<Integer> searchApplicantPartial(String fieldName, String searchString) {
-    ResponseEntity<Integer[]> searchResult = restTemplate.postForEntity(
-        applicationProperties.getApplicantSearchPartialUrl(), searchString, Integer[].class, fieldName);
-
-    return Arrays.asList(searchResult.getBody());
+  public List<Integer> searchCustomer(QueryParameters queryParameters) {
+    return search(applicationProperties.getCustomerSearchUrl(), queryParameters);
   }
 
   /**
@@ -188,17 +182,20 @@ public class SearchService {
     return search(applicationProperties.getContactSearchUrl(), queryParameters);
   }
 
-  public void updateApplicantOfApplications(ApplicantJson updatedApplicant, List<Integer> applicationIds) {
+  public void updateCustomerOfApplications(
+      CustomerJson updatedCustomer, Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleType) {
     restTemplate.put(
-        applicationProperties.getApplicantApplicationsSearchUpdateUrl(),
-        applicationIds,
-        updatedApplicant.getId());
+        applicationProperties.getCustomerApplicationsSearchUpdateUrl(),
+        applicationIdToCustomerRoleType,
+        updatedCustomer.getId());
   }
 
-  public void updateContactsOfApplications(Map<Integer, List<ContactES>> applicationIdToContacts) {
-    restTemplate.put(
-        applicationProperties.getContactApplicationsSearchUpdateUrl(),
-        applicationIdToContacts);
+  public void updateContactsOfApplications(List<ApplicationWithContactsES> applicationWithContactsESs) {
+    if (!applicationWithContactsESs.isEmpty()) {
+      restTemplate.put(
+          applicationProperties.getContactApplicationsSearchUpdateUrl(),
+          applicationWithContactsESs);
+    }
   }
 
   /**

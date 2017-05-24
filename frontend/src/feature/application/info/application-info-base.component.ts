@@ -11,6 +11,9 @@ import {NotificationService} from '../../../service/notification/notification.se
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
+import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
+import {Customer} from '../../../model/customer/customer';
+import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
 
@@ -84,6 +87,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
    */
   protected update(form: ApplicationForm): Application {
     let application = this.application;
+    application.customersWithContacts = this.getCustomers(form);
 
     Some(form.communication).map(c => {
       application.decisionDistributionType = c.distributionType;
@@ -95,4 +99,16 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
     application.priceOverrideReason = form.priceOverrideReason;
     return application;
   };
+
+  private getCustomers(form: ApplicationForm): Array<CustomerWithContacts> {
+    let customers = [];
+    Some(form.applicant).do(applicant => customers.push(CustomerWithContactsForm.toCustomerWithContacts(applicant)));
+    /*
+    * TODO: Enable when all customers are stored in application.customersWithContacts
+    Some(form.contractor).do(contractor => customers.push(CustomerWithContactsForm.toCustomerWithContacts(contractor)));
+    Some(form.propertyDeveloper).do(pd => customers.push(CustomerWithContactsForm.toCustomerWithContacts(pd)));
+    Some(form.representative).do(representative => customers.push(CustomerWithContactsForm.toCustomerWithContacts(representative)));
+    */
+    return customers;
+  }
 }

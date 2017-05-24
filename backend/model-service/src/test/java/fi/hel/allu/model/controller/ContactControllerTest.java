@@ -1,14 +1,12 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.ApplicantType;
-import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.dao.ApplicantDao;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.testUtils.WebTestCommon;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,14 +17,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZonedDateTime;
 import java.util.Collections;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,33 +35,33 @@ public class ContactControllerTest {
   private WebTestCommon wtc;
 
   @Autowired
-  private ApplicantDao applicantDao;
+  private CustomerDao customerDao;
   @Autowired
   private ApplicationDao applicationDao;
 
-  private Integer applicantId1;
-  private Integer applicantId2;
+  private Integer customerId1;
+  private Integer customerId2;
 
   @Before
   public void setup() throws Exception {
     wtc.setup();
-    Applicant applicant = new Applicant();
-    applicant.setType(ApplicantType.PERSON);
-    applicant.setName("Test person 1");
-    applicant.setRegistryKey("12345676-89");
-    applicant = applicantDao.insert(applicant);
-    applicantId1 = applicant.getId();
-    applicant = new Applicant();
-    applicant.setType(ApplicantType.PERSON);
-    applicant.setName("Test person 2");
-    applicant.setRegistryKey("99999999-999");
-    applicant = applicantDao.insert(applicant);
-    applicantId2 = applicant.getId();
+    Customer customer = new Customer();
+    customer.setType(CustomerType.PERSON);
+    customer.setName("Test person 1");
+    customer.setRegistryKey("12345676-89");
+    customer = customerDao.insert(customer);
+    customerId1 = customer.getId();
+    customer = new Customer();
+    customer.setType(CustomerType.PERSON);
+    customer.setName("Test person 2");
+    customer.setRegistryKey("99999999-999");
+    customer = customerDao.insert(customer);
+    customerId2 = customer.getId();
   }
 
   private Contact createDummyContact() {
     Contact contact = new Contact();
-    contact.setApplicantId(applicantId1);
+    contact.setCustomerId(customerId1);
     contact.setName("Pho Soup");
     contact.setEmail("phosoup@soppa.org");
     contact.setPhone("555-SOUP");
@@ -90,14 +85,14 @@ public class ContactControllerTest {
   @Test
   public void addContactWithBadOrganization() throws Exception {
     Contact contact = createDummyContact();
-    contact.setApplicantId(applicantId1 + 100);
+    contact.setCustomerId(customerId1 + 100);
     wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
   }
 
   @Test
   public void addContactWithoutOrganization() throws Exception {
     Contact contact = createDummyContact();
-    contact.setApplicantId(null);
+    contact.setCustomerId(null);
     wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
   }
 
@@ -149,75 +144,30 @@ public class ContactControllerTest {
   }
 
   @Test
-  public void findApplicantContacts() throws Exception {
-    // Add a few contacts for applicant 1
+  public void findCustomerContacts() throws Exception {
+    // Add a few contacts for customer 1
     for (int i = 0; i < 10; ++i) {
       Contact contact = createDummyContact();
       contact.setName(String.format("Dummy contact %d", i));
       wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
     }
-    // Add a few contacts for applicant 2
+    // Add a few contacts for customer 2
     for (int i = 0; i < 4; ++i) {
       Contact contact = createDummyContact();
-      contact.setApplicantId(applicantId2);
+      contact.setCustomerId(customerId2);
       contact.setName(String.format("Dummier contact %d", i));
       wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
     }
-    // Now get all contacts for applicant 1 and make sure there's enough:
-    ResultActions resultActions = wtc.perform(get(String.format("/contacts/applicant/%d", applicantId1)))
+    // Now get all contacts for customer 1 and make sure there's enough:
+    ResultActions resultActions = wtc.perform(get(String.format("/contacts/customer/%d", customerId1)))
         .andExpect(status().isOk());
     Contact[] contacts = wtc.parseObjectFromResult(resultActions, Contact[].class);
     assertEquals(10, contacts.length);
 
-    // Try also with nonexistent applicant:
-    resultActions = wtc.perform(get(String.format("/contacts/applicant/%d", applicantId1 + applicantId2 + 123)))
+    // Try also with nonexistent customer:
+    resultActions = wtc.perform(get(String.format("/contacts/customer/%d", customerId1 + customerId2 + 123)))
         .andExpect(status().isOk());
     contacts = wtc.parseObjectFromResult(resultActions, Contact[].class);
     assertEquals(0, contacts.length);
-  }
-
-  @Test
-  public void testApplicationContacts() throws Exception {
-    // Add a few contacts
-    Contact[] contactsToInsert = new Contact[5];
-    for (int i = 0; i < contactsToInsert.length; ++i) {
-      Contact contact = createDummyContact();
-      contact.setName(String.format("Dummy contact %d", i));
-      ResultActions result = wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isOk());
-      contactsToInsert[i] = wtc.parseObjectFromResult(result, Contact[].class)[0];
-    }
-
-    Application appl = new Application();
-    appl.setType(ApplicationType.EVENT);
-    appl.setKind(ApplicationKind.OUTDOOREVENT);
-    appl.setMetadataVersion(1);
-    appl.setName("Dummy apllication");
-    appl.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
-    appl.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
-    appl.setRecurringEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
-    Event evt = new Event();
-    evt.setDescription("Dummy event");
-    appl.setExtension(evt);
-    int applId = applicationDao.insert(appl).getId();
-
-    ResultActions resultActions = wtc
-        .perform(put(String.format("/contacts?applicationId=%d", applId)), contactsToInsert).andExpect(status().isOk());
-    Contact[] inserted = wtc.parseObjectFromResult(resultActions, Contact[].class);
-
-    // Verify that insertion returns the same objects
-    assertEquals(inserted.length, contactsToInsert.length);
-    for (int i = 0; i < inserted.length; ++i) {
-      assertEquals(inserted[i].getName(), contactsToInsert[i].getName());
-    }
-
-    // Then get the contacts via find API:
-    resultActions = wtc.perform(get(String.format("/contacts/application/%d", applId))).andExpect(status().isOk());
-    Contact[] found = wtc.parseObjectFromResult(resultActions, Contact[].class);
-
-    // Verify that find returned the same objects
-    assertEquals(found.length, contactsToInsert.length);
-    for (int i = 0; i < found.length; ++i) {
-      assertEquals(found[i].getName(), contactsToInsert[i].getName());
-    }
   }
 }

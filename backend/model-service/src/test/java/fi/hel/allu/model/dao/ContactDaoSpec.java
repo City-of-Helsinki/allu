@@ -35,16 +35,16 @@ public class ContactDaoSpec extends SpeccyTestBase {
   private Contact testContact = new Contact();
   private PostalAddress testPostalAddress = new PostalAddress("foostreet", "001100", "Sometown");
   private Contact insertedContact;
-  private int applicantId;
+  private int customerId;
   private int applicationId;
 
   {
     // manual transaction handling done in SpeccyTestBase
     beforeEach(() -> {
       testCommon.deleteAllData();
-      applicantId = testCommon.insertPerson();
+      customerId = testCommon.insertPerson().getId();
       applicationId = testCommon.insertApplication("test app", "käsittelijä");
-      testContact.setApplicantId(applicantId);
+      testContact.setCustomerId(customerId);
       testContact.setEmail("test@email.fi");
       testContact.setName("test name");
       testContact.setPostalAddress(testPostalAddress);
@@ -68,15 +68,8 @@ public class ContactDaoSpec extends SpeccyTestBase {
         assertContact(findContacts.get(0));
         assertPostalAddress(findContacts.get(0));
       });
-      it("should find contacts by applicant id", () -> {
-        List<Contact> contacts = contactDao.findByApplicant(insertedContact.getApplicantId());
-        Assert.assertEquals(1, contacts.size());
-        assertContact(contacts.get(0));
-        assertPostalAddress(contacts.get(0));
-      });
-      it("should find contacts by application id", () -> {
-        contactDao.setApplicationContacts(applicationId, Collections.singletonList(insertedContact));
-        List<Contact> contacts = contactDao.findByApplication(applicationId);
+      it("should find contacts by customer id", () -> {
+        List<Contact> contacts = contactDao.findByCustomer(insertedContact.getCustomerId());
         Assert.assertEquals(1, contacts.size());
         assertContact(contacts.get(0));
         assertPostalAddress(contacts.get(0));
@@ -115,7 +108,7 @@ public class ContactDaoSpec extends SpeccyTestBase {
   }
 
   private void assertContact(Contact assertedContact) {
-    Assert.assertEquals(testContact.getApplicantId(), assertedContact.getApplicantId());
+    Assert.assertEquals(testContact.getCustomerId(), assertedContact.getCustomerId());
     Assert.assertEquals(testContact.getEmail(), assertedContact.getEmail());
     Assert.assertEquals(testContact.getPhone(), assertedContact.getPhone());
   }

@@ -1,8 +1,7 @@
 package fi.hel.allu.search;
 
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.domain.*;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.IndexNotFoundException;
@@ -46,5 +45,17 @@ public class SearchTestUtil {
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
     return params;
+  }
+
+  public static CustomerWithContactsES createCustomerWithContacts(CustomerES customerES) {
+    CustomerWithContactsES cwcES = new CustomerWithContactsES();
+    cwcES.setCustomer(customerES);
+    return cwcES;
+  }
+
+  public static CustomerWithContactsES createCustomerWithContacts(CustomerES customerES, List<ContactES> contacts) {
+    CustomerWithContactsES cwcES = createCustomerWithContacts(customerES);
+    cwcES.setContacts(contacts);
+    return cwcES;
   }
 }

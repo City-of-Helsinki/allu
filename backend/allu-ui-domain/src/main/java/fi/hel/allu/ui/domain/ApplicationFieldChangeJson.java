@@ -18,7 +18,7 @@ public class ApplicationFieldChangeJson {
   }
 
   /**
-   * Get the field name. This should be a xpath, like "/applicant/firstName"
+   * Get the field name. This should be a xpath, like "/customer/firstName"
    *
    * @return the field name
    */

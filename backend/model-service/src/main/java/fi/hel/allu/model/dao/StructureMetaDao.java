@@ -49,7 +49,7 @@ public class StructureMetaDao {
    * each STRUCTURE type attribute it can find and puts all their attributes
    * into the result set, too. All found attributes are returned as a flat list,
    * so to prevent name clashes, the attribute names consist also of the path
-   * into the attribute, for example "/applicant/postalAddress/streetAddress".
+   * into the attribute, for example "/customer/postalAddress/streetAddress".
    *
    * The recursion can be guided by giving a set of path overrides that can used
    * to, for example, recurse into "EVENT" while handling the attribute
@@ -61,7 +61,7 @@ public class StructureMetaDao {
    *          The name of the application type to parse
    * @param version
    *          Metadata version to use
-   * @param pathOverrides
+   * @param typeOverrides
    *          Mapping of attributePath -> typeName to override the static types
    * @return Structure meta information
    */
@@ -79,7 +79,7 @@ public class StructureMetaDao {
    * each STRUCTURE type attribute it can find and puts all their attributes
    * into the result set, too. All found attributes are returned as a flat list,
    * so to prevent name clashes, the attribute names consist also of the path
-   * into the attribute, for example "/applicant/postalAddress/streetAddress".
+   * into the attribute, for example "/customer/postalAddress/streetAddress".
    *
    * The recursion can be guided by giving a set of path overrides that can used
    * to, for example, recurse into "EVENT" while handling the attribute

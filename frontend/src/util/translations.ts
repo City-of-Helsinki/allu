@@ -263,7 +263,7 @@ export const translations = {
       searchFailed: 'Projektien hakeminen epäonnistui'
     }
   },
-  applicant: {
+  customer: {
     type: {
       COMPANY: {
         name: 'Yritys',
@@ -296,6 +296,20 @@ export const translations = {
         id: 'Y-tunnus'
       }
     },
+    role: {
+      APPLICANT: {
+        title: 'Hakija'
+      },
+      PROPERTY_DEVELOPER: {
+        title: 'Rakennuttaja'
+      },
+      CONTRACTOR: {
+        title: 'Työn suorittaja'
+      },
+      REPRESENTATIVE: {
+        title: 'Asiamies'
+      }
+    },
     field: {
       typeMissing: 'Tyyppi puuttuu',
       nameMissing: 'Nimi puuttuu',
@@ -318,6 +332,20 @@ export const translations = {
     }
   },
   contact: {
+    role: {
+      APPLICANT: {
+        title: 'Yhteyshenkilö'
+      },
+      PROPERTY_DEVELOPER: {
+        title: 'Yhteyshenkilö'
+      },
+      CONTRACTOR: {
+        title: 'Vastuuhenkilö'
+      },
+      REPRESENTATIVE: {
+        title: 'Yhteyshenkilö'
+      }
+    },
     field: {
       nameMissing: 'Nimi puuttuu',
       nameShort: 'Nimi on liian lyhyt',

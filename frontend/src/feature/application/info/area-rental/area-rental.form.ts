@@ -1,18 +1,18 @@
 import {TimePeriod} from '../time-period';
-import {ApplicantForm} from '../applicant/applicant.form';
-import {Contact} from '../../../../model/application/contact';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
+import {Contact} from '../../../../model/customer/contact';
 import {Some} from '../../../../util/option';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
 import {AreaRental} from '../../../../model/application/area-rental/area-rental';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {ArrayUtil} from '../../../../util/array-util';
 
 export class AreaRentalForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
-    public applicant?: ApplicantForm,
-    public contacts?: Array<Contact>,
-    public contractor?: ApplicantForm,
-    public responsiblePerson?: Array<Contact>,
+    public applicant?: CustomerWithContactsForm,
+    public contractor?: CustomerWithContactsForm,
     public workFinished?: string,
     public calculatedPrice?: number,
     public priceOverride?: number,
@@ -24,8 +24,11 @@ export class AreaRentalForm implements ApplicationForm {
 
   static to(form: AreaRentalForm): AreaRental {
     let areaRental = new AreaRental();
-    areaRental.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
-    areaRental.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
+    Some(form.contractor).do(c => {
+      areaRental.contractor = CustomerForm.toCustomer(c.customer);
+      areaRental.responsiblePerson = ArrayUtil.first(c.contacts);
+    });
+
     areaRental.uiWorkFinished = form.workFinished;
     areaRental.trafficArrangements = form.trafficArrangements;
     areaRental.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
@@ -37,8 +40,6 @@ export class AreaRentalForm implements ApplicationForm {
     return new AreaRentalForm(
       new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
-      undefined,
-      undefined,
       undefined,
       areaRental.uiWorkFinished,
       application.calculatedPriceEuro,

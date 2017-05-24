@@ -4,32 +4,35 @@
   "name": "Liikennejärjestely",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
-  "applicant": {
-    "id": null,
-    "type": "PERSON",
-    "representative": null,
-    "name": "Lasse Liikennejärjestelijä",
-    "registryKey": "123",
-    "postalAddress": {
-      "streetAddress": "Kotiosoite 1",
-      "postalCode": "33440",
-      "city": "Tampere"
-    },
-    "email": "lasse.liikennejarjestelija@liikennejarjestely.com",
-    "phone": "040098765",
-    "active": true
-  },
-  "contactList": [
+  "customersWithContacts":[
     {
-      "id": null,
-      "applicantId": null,
-      "name": "Lasse Kumminkaima",
-      "streetAddress": "321",
-      "postalCode": "30100",
-      "city": "Tampere",
-      "email": "lasse.kumminkaima@liikennejarjestely.com",
-      "phone": "031234567",
-      "active": true
+      "roleType": "APPLICANT",
+      "customer": {
+        "id": null,
+        "type": "PERSON",
+        "representative": null,
+        "name": "Lasse Liikennejärjestelijä",
+        "registryKey": "123",
+        "postalAddress": {
+          "streetAddress": "Kotiosoite 1",
+          "postalCode": "33440",
+          "city": "Tampere"
+        },
+        "email": "lasse.liikennejarjestelija@liikennejarjestely.com",
+        "phone": "040098765",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Lasse Kumminkaima",
+        "streetAddress": "321",
+        "postalCode": "30100",
+        "city": "Tampere",
+        "email": "lasse.kumminkaima@liikennejarjestely.com",
+        "phone": "031234567",
+        "active": true
+      }]
     }
   ],
   "locations": [

@@ -6,7 +6,7 @@ import {Observable} from 'rxjs/Observable';
 import {Application} from '../../../../model/application/application';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicantForm} from '../applicant/applicant.form';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {ExcavationAnnouncementForm} from './excavation-announcement.form';
 import {ApplicationSearchQuery} from '../../../../model/search/ApplicationSearchQuery';
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
@@ -16,6 +16,7 @@ import {ApplicationState} from '../../../../service/application/application-stat
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {NumberUtil} from '../../../../util/number.util';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 
 @Component({
@@ -40,7 +41,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   ngOnInit(): any {
     super.ngOnInit();
     let excavation = <ExcavationAnnouncement>this.application.extension || new ExcavationAnnouncement();
-    this.applicationForm.patchValue(ExcavationAnnouncementForm.from(this.application, excavation));
+    let form = ExcavationAnnouncementForm.from(this.application, excavation);
+    this.applicationForm.patchValue(form);
     this.patchRelatedCableReport(excavation);
 
     this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges
@@ -67,8 +69,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;
-    application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.contactList = form.contacts;
     application.extension = ExcavationAnnouncementForm.to(form, application.extension.specifiers);
 
     application.singleLocation.startTime = application.startTime;

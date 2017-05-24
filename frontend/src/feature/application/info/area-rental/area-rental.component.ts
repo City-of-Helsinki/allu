@@ -4,11 +4,12 @@ import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicantForm} from '../applicant/applicant.form';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {AreaRental} from '../../../../model/application/area-rental/area-rental';
 import {AreaRentalForm} from './area-rental.form';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 
 @Component({
@@ -36,8 +37,6 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
     application.name = 'Aluevuokraus'; // Area rentals have no name so set default
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;
-    application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.contactList = form.contacts;
     application.extension = AreaRentalForm.to(form);
 
     application.firstLocation.startTime = application.startTime;

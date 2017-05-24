@@ -1,0 +1,10 @@
+<h1 md-dialog-title>Asiakastiedot</h1>
+<form [formGroup]="customerForm" (ngSubmit)="onSubmit(customerForm.value)">
+    <div md-dialog-content>
+        <customer-info [form]="customerForm"></customer-info>
+    </div>
+    <div md-dialog-actions>
+        <button type="submit" md-raised-button color="primary" [disabled]="!customerForm.valid">TALLENNA</button>
+        <button type="button" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    </div>
+</form>

@@ -1,6 +1,6 @@
 import {TimePeriod} from '../time-period';
-import {ApplicantForm} from '../applicant/applicant.form';
-import {Contact} from '../../../../model/application/contact';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
+import {Contact} from '../../../../model/customer/contact';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {Some} from '../../../../util/option';
 import {CableInfoEntry} from '../../../../model/application/cable-report/cable-info-entry';
@@ -9,6 +9,8 @@ import {StringUtil} from '../../../../util/string.util';
 import {ApplicationForm} from '../application-form';
 import {TimeUtil} from '../../../../util/time.util';
 import {ApplicationStatus} from '../../../../model/application/application-status';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {ArrayUtil} from '../../../../util/array-util';
 
 export class CableReportForm implements ApplicationForm {
   constructor(
@@ -21,10 +23,8 @@ export class CableReportForm implements ApplicationForm {
     public propertyConnectivity?: boolean,
     public reportTimes?: TimePeriod,
     public workDescription?: string,
-    public orderer?: ApplicantForm,
-    public ordererContacts?: Array<Contact>,
-    public owner?: ApplicantForm,
-    public ownerContact?: Array<Contact>,
+    public applicant?: CustomerWithContactsForm,
+    public contractor?: CustomerWithContactsForm,
     public cableInfo?: CableInfoForm,
     public specifiers?: Array<string>
   ) {}
@@ -39,8 +39,12 @@ export class CableReportForm implements ApplicationForm {
     cableReport.emergencyWork = form.emergencyWork;
     cableReport.propertyConnectivity = form.propertyConnectivity;
     cableReport.workDescription = form.workDescription;
-    cableReport.owner = Some(form.owner).filter(owner => !!owner.name).map(owner => ApplicantForm.toApplicant(owner)).orElse(undefined);
-    cableReport.contact = Some(form.ownerContact).filter(c => c.length > 0).map(c => c[0]).orElse(undefined);
+
+    Some(form.contractor).do(c => {
+      // TODO: rename cable report owner and contact to match new specifications
+      cableReport.owner = CustomerForm.toCustomer(c.customer);
+      cableReport.contact = ArrayUtil.first(c.contacts);
+    });
     cableReport.specifiers = specifiers;
     return CableInfoForm.to(form.cableInfo, cableReport);
   }
@@ -58,8 +62,6 @@ export class CableReportForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
       undefined, // these are added by subcomponents (application and contact)
-      undefined,
-      undefined,
       undefined,
       new CableInfoForm(cableReport.mapExtractCount, cableReport.infoEntries),
       cableReport.specifiers

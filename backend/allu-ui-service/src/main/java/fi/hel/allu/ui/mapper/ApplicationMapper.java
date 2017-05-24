@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 
+import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
@@ -47,7 +45,7 @@ public class ApplicationMapper {
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
     applicationDomain.setRecurringEndTime(applicationJson.getRecurringEndTime());
-    applicationDomain.setApplicantId(applicationJson.getApplicant().getId());
+    applicationDomain.setCustomersWithContacts(createCustomerWithContactsModel(applicationJson.getCustomersWithContacts()));
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
     applicationDomain.setKind(applicationJson.getKind());
@@ -105,17 +103,25 @@ public class ApplicationMapper {
     applicationES.setDecisionTime(applicationJson.getDecisionTime());
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
     applicationES.setLocations(createLocationES(applicationJson.getLocations()));
-    applicationES.setContacts(createContactES(applicationJson.getContactList()));
-    applicationES.setApplicant(createApplicantES(applicationJson.getApplicant()));
+    Map<CustomerRoleType, CustomerWithContactsES> roleToCwcES =
+        applicationJson.getCustomersWithContacts().stream().collect(Collectors.toMap(cwc -> cwc.getRoleType(), cwc -> createCustomerWithContactsES(cwc)));
+    applicationES.setCustomers(new RoleTypedCustomerES(roleToCwcES));
     if (applicationJson.getProject() != null) {
       applicationES.setProjectId(applicationJson.getProject().getId());
     }
     return applicationES;
   }
 
+  private CustomerWithContactsES createCustomerWithContactsES(CustomerWithContactsJson customerWithContactsJson) {
+    CustomerWithContactsES customerWithContactsES = new CustomerWithContactsES();
+    customerWithContactsES.setCustomer(createCustomerES(customerWithContactsJson.getCustomer()));
+    customerWithContactsES.setContacts(createContactES(customerWithContactsJson.getContacts()));
+    return customerWithContactsES;
+  }
+
   /**
    * Transfer the information from the given model-domain object to given ui-domain object. Does not handle references to other objects like
-   * applicant.
+   * customer.
    *
    * @param application
    */
@@ -149,6 +155,7 @@ public class ApplicationMapper {
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setPriceOverride(application.getPriceOverride());
     applicationJson.setPriceOverrideReason(application.getPriceOverrideReason());
+    applicationJson.setCustomersWithContacts(createCustomerWithContactsJson(application.getCustomersWithContacts()));
 
     return applicationJson;
   }
@@ -331,30 +338,30 @@ public class ApplicationMapper {
     return flatList;
   }
 
-  public ApplicantJson createApplicantJson(Applicant applicant) {
-    ApplicantJson applicantJson = new ApplicantJson();
-    applicantJson.setId(applicant.getId());
-    applicantJson.setType(applicant.getType());
-    applicantJson.setName(applicant.getName());
-    applicantJson.setRegistryKey(applicant.getRegistryKey());
-    applicantJson.setPhone(applicant.getPhone());
-    applicantJson.setEmail(applicant.getEmail());
-    applicantJson.setPostalAddress(createPostalAddressJson(applicant.getPostalAddress()));
-    applicantJson.setActive(applicant.isActive());
-    return applicantJson;
+  public CustomerJson createCustomerJson(Customer customer) {
+    CustomerJson customerJson = new CustomerJson();
+    customerJson.setId(customer.getId());
+    customerJson.setType(customer.getType());
+    customerJson.setName(customer.getName());
+    customerJson.setRegistryKey(customer.getRegistryKey());
+    customerJson.setPhone(customer.getPhone());
+    customerJson.setEmail(customer.getEmail());
+    customerJson.setPostalAddress(createPostalAddressJson(customer.getPostalAddress()));
+    customerJson.setActive(customer.isActive());
+    return customerJson;
   }
 
-  public Applicant createApplicantModel(ApplicantJson applicantJson) {
-    Applicant applicantModel = new Applicant();
-    applicantModel.setId(applicantJson.getId());
-    applicantModel.setType(applicantJson.getType());
-    applicantModel.setName(applicantJson.getName());
-    applicantModel.setRegistryKey(applicantJson.getRegistryKey());
-    applicantModel.setPhone(applicantJson.getPhone());
-    applicantModel.setEmail(applicantJson.getEmail());
-    applicantModel.setPostalAddress(createPostalAddressModel(applicantJson.getPostalAddress()));
-    applicantModel.setActive(applicantJson.isActive());
-    return applicantModel;
+  public Customer createCustomerModel(CustomerJson customerJson) {
+    Customer customerModel = new Customer();
+    customerModel.setId(customerJson.getId());
+    customerModel.setType(customerJson.getType());
+    customerModel.setName(customerJson.getName());
+    customerModel.setRegistryKey(customerJson.getRegistryKey());
+    customerModel.setPhone(customerJson.getPhone());
+    customerModel.setEmail(customerJson.getEmail());
+    customerModel.setPostalAddress(createPostalAddressModel(customerJson.getPostalAddress()));
+    customerModel.setActive(customerJson.isActive());
+    return customerModel;
   }
 
   /**
@@ -366,7 +373,7 @@ public class ApplicationMapper {
   public ContactJson createContactJson(Contact c) {
     ContactJson json = new ContactJson();
     json.setId(c.getId());
-    json.setApplicantId(c.getApplicantId());
+    json.setCustomerId(c.getCustomerId());
     json.setName(c.getName());
     if (c.getPostalAddress() != null) {
       // TODO: refactor when contact starts using PostalAddressJson
@@ -383,7 +390,7 @@ public class ApplicationMapper {
   public Contact createContactModel(ContactJson json) {
     Contact contact = new Contact();
     contact.setId(json.getId());
-    contact.setApplicantId(json.getApplicantId());
+    contact.setCustomerId(json.getCustomerId());
     contact.setName(json.getName());
     if (json.getStreetAddress() != null || json.getPostalCode() != null || json.getCity() != null) {
       // TODO: refactor when contact starts using PostalAddressJson
@@ -395,10 +402,10 @@ public class ApplicationMapper {
     return contact;
   }
 
-  public ApplicantES createApplicantES(ApplicantJson applicantJson) {
-    if (applicantJson != null) {
-      return new ApplicantES(
-          applicantJson.getId(), applicantJson.getName(), applicantJson.getRegistryKey(), applicantJson.getType(), applicantJson.isActive());
+  public CustomerES createCustomerES(CustomerJson customerJson) {
+    if (customerJson != null) {
+      return new CustomerES(
+          customerJson.getId(), customerJson.getName(), customerJson.getRegistryKey(), customerJson.getType(), customerJson.isActive());
     } else {
       return null;
     }
@@ -449,7 +456,7 @@ public class ApplicationMapper {
   private AreaRental createAreaRentalModel(AreaRentalJson areaRentalJson) {
     AreaRental areaRental = new AreaRental();
 
-    areaRental.setContractor(createApplicantModel(areaRentalJson.getContractor()));
+    areaRental.setContractor(createCustomerModel(areaRentalJson.getContractor()));
     areaRental.setResponsiblePerson(createContactModel(areaRentalJson.getResponsiblePerson()));
     areaRental.setAdditionalInfo(areaRentalJson.getAdditionalInfo());
     areaRental.setTrafficArrangements(areaRentalJson.getTrafficArrangements());
@@ -464,7 +471,7 @@ public class ApplicationMapper {
   private AreaRentalJson createAreaRentalJson(AreaRental areaRental) {
     AreaRentalJson areaRentalJson = new AreaRentalJson();
 
-    areaRentalJson.setContractor(createApplicantJson(areaRental.getContractor()));
+    areaRentalJson.setContractor(createCustomerJson(areaRental.getContractor()));
     areaRentalJson.setResponsiblePerson(createContactJson(areaRental.getResponsiblePerson()));
     areaRentalJson.setAdditionalInfo(areaRental.getAdditionalInfo());
     areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
@@ -481,7 +488,7 @@ public class ApplicationMapper {
     cableReport.setCableReportId(cableReportJson.getCableReportId());
     cableReport.setWorkDescription(cableReportJson.getWorkDescription());
     Optional.ofNullable(cableReportJson.getOwner())
-        .ifPresent(owner -> cableReport.setOwner(createApplicantModel(owner)));
+        .ifPresent(owner -> cableReport.setOwner(createCustomerModel(owner)));
     Optional.ofNullable(cableReportJson.getContact())
         .ifPresent(contact -> cableReport.setContact(createContactModel(contact)));
     cableReport.setMapExtractCount(cableReportJson.getMapExtractCount());
@@ -506,7 +513,7 @@ public class ApplicationMapper {
     cableReportJson.setCableReportId(cableReport.getCableReportId());
     cableReportJson.setWorkDescription(cableReport.getWorkDescription());
     Optional.ofNullable(cableReport.getOwner())
-        .ifPresent(owner -> cableReportJson.setOwner(createApplicantJson(owner)));
+        .ifPresent(owner -> cableReportJson.setOwner(createCustomerJson(owner)));
     Optional.ofNullable(cableReport.getContact())
         .ifPresent(contact -> cableReportJson.setContact(createContactJson(contact)));
     cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
@@ -527,11 +534,11 @@ public class ApplicationMapper {
     ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
     json.setAdditionalInfo(model.getAdditionalInfo());
     json.setCableReportId(model.getCableReportId());
-    json.setContractor(createApplicantJson(model.getContractor()));
+    json.setContractor(createCustomerJson(model.getContractor()));
     json.setGuaranteeEndTime(model.getGuaranteeEndTime());
     json.setResponsiblePerson(createContactJson(model.getResponsiblePerson()));
     Optional.ofNullable(model.getPropertyDeveloper())
-        .map(developer -> createApplicantJson(developer))
+        .map(developer -> createCustomerJson(developer))
         .ifPresent(developer -> json.setPropertyDeveloper(developer));
     Optional.ofNullable(model.getPropertyDeveloperContact())
         .map(contact -> createContactJson(contact))
@@ -555,11 +562,11 @@ public class ApplicationMapper {
     ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
     excavationAnnouncement.setAdditionalInfo(excavationAnnouncementJson.getAdditionalInfo());
     excavationAnnouncement.setCableReportId(excavationAnnouncementJson.getCableReportId());
-    excavationAnnouncement.setContractor(createApplicantModel(excavationAnnouncementJson.getContractor()));
+    excavationAnnouncement.setContractor(createCustomerModel(excavationAnnouncementJson.getContractor()));
     excavationAnnouncement.setGuaranteeEndTime(excavationAnnouncementJson.getGuaranteeEndTime());
     excavationAnnouncement.setResponsiblePerson(createContactModel(excavationAnnouncementJson.getResponsiblePerson()));
     Optional.ofNullable(excavationAnnouncementJson.getPropertyDeveloper())
-        .map(developer -> createApplicantModel(developer))
+        .map(developer -> createCustomerModel(developer))
         .ifPresent(developer -> excavationAnnouncement.setPropertyDeveloper(developer));
     Optional.ofNullable(excavationAnnouncementJson.getPropertyDeveloperContact())
         .map(contact -> createContactModel(contact))
@@ -608,7 +615,7 @@ public class ApplicationMapper {
   private ApplicationExtensionJson createPlacementContractJson(PlacementContract placementContract) {
     PlacementContractJson placementContractJson = new PlacementContractJson();
     Optional.ofNullable(placementContract.getRepresentative())
-            .map(representative -> createApplicantJson(representative))
+            .map(representative -> createCustomerJson(representative))
             .ifPresent(representative -> placementContractJson.setRepresentative(representative));
     Optional.ofNullable(placementContract.getContact())
             .map(contact -> createContactJson(contact))
@@ -622,7 +629,7 @@ public class ApplicationMapper {
   private ApplicationExtension createPlacementContractModel(PlacementContractJson placementContractJson) {
     PlacementContract placementContract = new PlacementContract();
     Optional.ofNullable(placementContractJson.getRepresentative())
-            .map(representative -> createApplicantModel(representative))
+            .map(representative -> createCustomerModel(representative))
             .ifPresent(representative -> placementContract.setRepresentative(representative));
     Optional.ofNullable(placementContractJson.getContact())
             .map(contact -> createContactModel(contact))
@@ -635,7 +642,7 @@ public class ApplicationMapper {
 
   private TrafficArrangementJson createTrafficArrangementJson(TrafficArrangement trafficArrangement) {
     TrafficArrangementJson trafficArrangementJson = new TrafficArrangementJson();
-    trafficArrangementJson.setContractor(createApplicantJson(trafficArrangement.getContractor()));
+    trafficArrangementJson.setContractor(createCustomerJson(trafficArrangement.getContractor()));
     trafficArrangementJson.setResponsiblePerson(createContactJson(trafficArrangement.getResponsiblePerson()));
     trafficArrangementJson.setPksCard(trafficArrangement.getPksCard());
     trafficArrangementJson.setWorkFinished(trafficArrangement.getWorkFinished());
@@ -647,7 +654,7 @@ public class ApplicationMapper {
 
   private TrafficArrangement createTrafficArrangementModel(TrafficArrangementJson trafficArrangementJson) {
     TrafficArrangement trafficArrangement = new TrafficArrangement();
-    trafficArrangement.setContractor(createApplicantModel(trafficArrangementJson.getContractor()));
+    trafficArrangement.setContractor(createCustomerModel(trafficArrangementJson.getContractor()));
     trafficArrangement.setResponsiblePerson(createContactModel(trafficArrangementJson.getResponsiblePerson()));
     trafficArrangement.setPksCard(trafficArrangementJson.getPksCard());
     trafficArrangement.setWorkFinished(trafficArrangementJson.getWorkFinished());
@@ -684,4 +691,28 @@ public class ApplicationMapper {
     distributionEntryJson.setPostalAddress(createPostalAddressJson(distributionEntry.getPostalAddress()));
     return distributionEntryJson;
   }
+
+  private List<CustomerWithContactsJson> createCustomerWithContactsJson(List<CustomerWithContacts> customersWithContacts) {
+    List<CustomerWithContactsJson> customerWithContactsJsons = new ArrayList<>();
+    customersWithContacts.forEach(cwc -> {
+      CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
+      customerWithContactsJson.setContacts(cwc.getContacts().stream().map(c -> createContactJson(c)).collect(Collectors.toList()));
+      customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer()));
+      customerWithContactsJson.setRoleType(cwc.getRoleType());
+      customerWithContactsJsons.add(customerWithContactsJson);
+    });
+    return customerWithContactsJsons;
+  }
+
+  private List<CustomerWithContacts> createCustomerWithContactsModel(List<CustomerWithContactsJson> customersWithContactsJson) {
+    List<CustomerWithContacts> customerWithContacts = new ArrayList<>();
+    customersWithContactsJson.forEach(cwcJson -> {
+      customerWithContacts.add(new CustomerWithContacts(
+          cwcJson.getRoleType(),
+          createCustomerModel(cwcJson.getCustomer()),
+          cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList())));
+    });
+    return customerWithContacts;
+  }
+
 }

@@ -10,7 +10,7 @@
         <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
         <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
         <th>Hanke</th>
-        <th sortBy="applicant.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
+        <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
         <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">Katuosoite</th>
         <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">Kaupunginosa</th>
         <th>Saapunut</th>
@@ -34,7 +34,7 @@
                 {{row.application.project?.name}} <br>
                 <span>{{row.application.project?.id}}</span>
             </td>
-            <td class="clickable">{{row.application.applicant.name}}</td>
+            <td class="clickable">{{row.application.applicant.customer.name}}</td>
             <td class="clickable">{{row.application.firstLocation?.postalAddress?.streetAddress}}</td>
             <td class="clickable">{{districtName(row.application.firstLocation.effectiveCityDistrictId) | async}}</td>
             <td class="clickable">{{row.application.uiApplicationCreationTime}}</td>

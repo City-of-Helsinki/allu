@@ -4,7 +4,7 @@ create table allu.postal_address (
     postal_code text,
     city text );
 
-create table allu.applicant (
+create table allu.customer (
     id serial primary key,
     postal_address_id integer references allu.postal_address(id),
     type text not null,
@@ -37,7 +37,7 @@ create table allu.project (
 
 create table allu.contact (
     id serial primary key,
-    applicant_id integer not null references allu.applicant(id),
+    customer_id integer not null references allu.customer(id),
     postal_address_id integer references allu.postal_address(id),
     name text not null,
     email text,
@@ -74,7 +74,6 @@ create table allu.application (
     project_id integer references allu.project(id),
     name text,
     handler integer references allu.user,
-    applicant_id integer references allu.applicant(id),
     status text,   -- TODO: enum
     type text not null,
     kind text not null,
@@ -92,6 +91,17 @@ create table allu.application (
     price_override integer,
     price_override_reason text
 );
+
+create table allu.application_customer (
+  id serial primary key,
+  customer_id integer references allu.customer(id) not null,
+  application_id integer references allu.application(id) not null,
+  customer_role_type text not null);
+
+create table allu.application_customer_contact (
+  id serial primary key,
+  application_customer_id integer references allu.application_customer(id) not null,
+  contact_id integer references allu.contact(id) not null);
 
 create table allu.recurring_period (
   id serial primary key,
@@ -202,12 +212,6 @@ create table allu.default_attachment_application_type (
   default_attachment_id integer not null references allu.default_attachment(id),
   application_type text not null
 );
-
-create table allu.application_contact (
-    id serial primary key,
-    position integer,
-    application_id integer references allu.application(id),
-    contact_id integer references allu.contact(id) );
 
 create table allu.invoice_row (
     id serial primary key,

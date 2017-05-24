@@ -1,14 +1,13 @@
 import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
-
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicantForm} from '../applicant/applicant.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 
 @Component({
@@ -36,8 +35,6 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
     application.name = 'Liikennejärjestely'; // Traffic arrangements have no name so set default
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;
-    application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.contactList = form.contacts;
     application.extension = TrafficArrangementForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

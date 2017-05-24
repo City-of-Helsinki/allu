@@ -1,7 +1,7 @@
 package fi.hel.allu.model.pricing;
 
 public enum DiscountReason {
-  EKOKOMPASSI(30), // Applicant has "Ekokompassi"
+  EKOKOMPASSI(30), // Customer has "Ekokompassi"
   URHEILUTAPAHTUMA(50), // Open to public but with heavy
                         // structures or attendance fee
   YLEISHYODYLLINEN(100), // Charity or citizen organization's common-good event

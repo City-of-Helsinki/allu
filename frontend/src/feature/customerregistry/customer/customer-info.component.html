@@ -1,0 +1,90 @@
+<form [formGroup]="form">
+    <div class="row form-group">
+        <div class="col m6">
+            <md-select class="input-full-width" formControlName="type" placeholder="Valitse tyyppi*">
+                <md-option *ngFor="let type of customerTypes" [value]="type">
+                    {{['customer.type', type, 'name'] | translation}}
+                </md-option>
+            </md-select>
+            <small>
+                <field-error [form]="form" field="type" hasError="required">{{'customer.field.typeMissing' | translation}}</field-error>
+            </small>
+        </div>
+        <div class="col m6">
+            <md-select class="input-full-width" formControlName="country" placeholder="Maa">
+                <md-option value="Suomi">Suomi</md-option>
+            </md-select>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col m6">
+            <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="name"
+                       placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
+                       [mdAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
+                <md-autocomplete #nameSearch="mdAutocomplete">
+                    <md-option *ngFor="let customer of matchingCustomers | async"
+                               [value]="customer.name" (click)="customerSelected(customer)">
+                        {{ customer.name }}
+                    </md-option>
+                </md-autocomplete>
+
+                <md-hint>
+                    <field-error [form]="form" field="name" hasError="required">{{'customer.field.nameMissing' | translation}}</field-error>
+                    <field-error [form]="form" field="name" hasError="minlength">{{'customer.field.nameShort' | translation}}</field-error>
+                </md-hint>
+            </md-input-container>
+        </div>
+        <div class="col m6">
+            <md-input-container class="input-full-width" [inputWarning]="registryKeyControl">
+                <input mdInput type="text" formControlName="registryKey"
+                       placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"/>
+                <md-hint>
+                    <field-error [form]="form" field="registryKey" hasError="required">{{'customer.field.registryKeyMissing' | translation}}</field-error>
+                    <field-error [form]="form" field="registryKey" hasError="minlength">{{'customer.field.registryKeyShort' | translation}}</field-error>
+                    <field-error [form]="form" field="registryKey" hasError="invalidSsn">{{'customer.field.invalidSsn' | translation}}</field-error>
+                </md-hint>
+            </md-input-container>
+        </div>
+    </div>
+    <div formGroupName="postalAddress" class="row form-group">
+        <div class="col m6">
+            <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
+            </md-input-container>
+        </div>
+        <div class="col m3">
+            <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                <md-hint>
+                    <field-error [form]="form.get('postalAddress')" field="postalCode" hasError="pattern">
+                        {{'common.field.postalCode' | translation}}
+                    </field-error>
+                </md-hint>
+            </md-input-container>
+        </div>
+        <div class="col m3">
+            <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+            </md-input-container>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col m6">
+            <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                <md-hint>
+                    <field-error [form]="form" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
+                </md-hint>
+            </md-input-container>
+        </div>
+        <div class="col m6">
+            <md-input-container class="input-full-width">
+                <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                <md-hint>
+                    <field-error [form]="form" field="phone" hasError="minLength">{{'customer.field.phoneShort' | translation}}</field-error>
+                </md-hint>
+            </md-input-container>
+        </div>
+    </div>
+</form>

@@ -26,7 +26,7 @@ public class ApplicationService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private LocationService locationService;
-  private ApplicantService applicantService;
+  private CustomerService customerService;
   private ApplicationMapper applicationMapper;
   private ContactService contactService;
   private UserService userService;
@@ -36,14 +36,14 @@ public class ApplicationService {
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
       LocationService locationService,
-      ApplicantService applicantService,
+      CustomerService customerService,
       ApplicationMapper applicationMapper,
       ContactService contactService,
       UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
-    this.applicantService = applicantService;
+    this.customerService = customerService;
     this.applicationMapper = applicationMapper;
     this.contactService = contactService;
     this.userService = userService;
@@ -145,11 +145,8 @@ public class ApplicationService {
    * @return Application with possibly updated information from backend.
    */
   Application createApplication(ApplicationJson newApplication) {
-    if (newApplication.getApplicant().getId() == null) {
-      // if given applicant is new, create it and set it to the application
-      newApplication.setApplicant(applicantService.createApplicant(newApplication.getApplicant()));
-    }
-    List<ContactJson> contacts = newApplication.getContactList();
+    newApplication.setCustomersWithContacts(
+        newApplication.getCustomersWithContacts().stream().map(cwc -> createMissingCustomerWithContacts(cwc)).collect(Collectors.toList()));
     if (newApplication.getApplicationTags() != null) {
       UserJson currentUser = userService.getCurrentUser();
       newApplication.getApplicationTags().forEach(t -> updateTag(currentUser, t));
@@ -163,10 +160,20 @@ public class ApplicationService {
       locationService.createLocations(applicationModel.getId(), newApplication.getLocations());
     }
 
-    contactService.setContactsForApplication(applicationModel.getId(), newApplication.getApplicant().getId(), contacts);
-
     // need to fetch fresh Application from model, because at least setting location may change both handler and application start and end times
     return findApplicationById(applicationModel.getId());
+  }
+
+  private CustomerWithContactsJson createMissingCustomerWithContacts(CustomerWithContactsJson customerWithContactsJson) {
+    CustomerWithContactsJson cwcJson = new CustomerWithContactsJson();
+    cwcJson.setRoleType(customerWithContactsJson.getRoleType());
+    if (customerWithContactsJson.getCustomer().getId() == null) {
+      cwcJson.setCustomer(customerService.createCustomer(customerWithContactsJson.getCustomer()));
+    } else {
+      cwcJson.setCustomer(customerWithContactsJson.getCustomer());
+    }
+    cwcJson.setContacts(contactService.createMissingContacts(cwcJson.getCustomer().getId(), customerWithContactsJson.getContacts()));
+    return cwcJson;
   }
 
   /**
@@ -176,10 +183,8 @@ public class ApplicationService {
    * @return Updated application
    */
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
-    if (applicationJson.getApplicant().getId() == null) {
-      // if given applicant is new, create it and set it to the application
-      applicationJson.setApplicant(applicantService.createApplicant(applicationJson.getApplicant()));
-    }
+    applicationJson.setCustomersWithContacts(
+        applicationJson.getCustomersWithContacts().stream().map(cwc -> createMissingCustomerWithContacts(cwc)).collect(Collectors.toList()));
 
     if (applicationJson.getLocations() != null) {
       List<LocationJson> locationJsons = locationService.updateApplicationLocations(applicationId,
@@ -188,8 +193,6 @@ public class ApplicationService {
     } else {
       locationService.deleteApplicationLocation(applicationId);
     }
-    contactService.setContactsForApplication(applicationId, applicationJson.getApplicant().getId(),
-        applicationJson.getContactList());
     if (applicationJson.getApplicationTags() != null) {
       UserJson currentUser = userService.getCurrentUser();
       applicationJson.getApplicationTags().forEach(t -> updateTag(currentUser, t));

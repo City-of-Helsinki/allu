@@ -5,9 +5,9 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {NoteForm} from './note.form';
-import {ApplicantForm} from '../applicant/applicant.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 @Component({
   selector: 'note',
@@ -34,8 +34,6 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;
     application.recurringEndYear = form.recurringEndYear;
-    application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.contactList = form.contacts;
     application.extension = NoteForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

@@ -1,7 +1,7 @@
 import {PostalAddress} from '../../../../model/common/postal-address';
 import {FormBuilder, Validators} from '@angular/forms';
 import {InvoicingInfo} from '../../../../model/application/invoice/invoicing-info';
-import {ApplicantType} from '../../../../model/application/applicant/applicant-type';
+import {CustomerType} from '../../../../model/customer/customer-type';
 import {InvoicePartition} from '../../../../model/application/invoice/ivoice-partition';
 import {InvoicingAddressForm} from '../../../customerregistry/invoicing-address/invoicing-address.form';
 
@@ -55,7 +55,7 @@ export class InvoicingInfoForm {
   private static addressFromInvoicingInfo(info: InvoicingInfo): InvoicingAddressForm {
     return new InvoicingAddressForm(
       undefined,
-      info.type ? ApplicantType[info.type] : undefined,
+      info.type ? CustomerType[info.type] : undefined,
       info.name,
       info.registryKey,
       'Suomi',
@@ -66,7 +66,7 @@ export class InvoicingInfoForm {
   }
 
   private static addressToInvoicingInfo(form: InvoicingAddressForm, info: InvoicingInfo): void {
-    info.type = form.type ? ApplicantType[form.type] : undefined;
+    info.type = form.type ? CustomerType[form.type] : undefined;
     info.name = form.name;
     info.registryKey = form.registryKey;
     info.postalAddress = form.postalAddress;

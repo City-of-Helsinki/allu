@@ -4,11 +4,11 @@ import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicantForm} from '../applicant/applicant.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
 import {PlacementContractForm} from './placement-contract.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 
 @Component({
@@ -36,8 +36,6 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
     application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;
-    application.applicant = ApplicantForm.toApplicant(form.applicant);
-    application.contactList = form.contacts;
     application.extension = PlacementContractForm.to(form, application.extension.specifiers);
 
     application.singleLocation.startTime = application.startTime;

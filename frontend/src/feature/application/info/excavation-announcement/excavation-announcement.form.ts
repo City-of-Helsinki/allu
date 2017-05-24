@@ -1,20 +1,18 @@
 import {TimePeriod} from '../time-period';
-import {ApplicantForm} from '../applicant/applicant.form';
-import {Contact} from '../../../../model/application/contact';
+import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {ArrayUtil} from '../../../../util/array-util';
 
 export class ExcavationAnnouncementForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
-    public applicant?: ApplicantForm,
-    public contacts?: Array<Contact>,
-    public contractor?: ApplicantForm,
-    public responsiblePerson?: Array<Contact>,
-    public propertyDeveloper?: ApplicantForm,
-    public propertyDeveloperContact?: Array<Contact>,
+    public applicant?: CustomerWithContactsForm,
+    public contractor?: CustomerWithContactsForm,
+    public propertyDeveloper?: CustomerWithContactsForm,
     public pksCard?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
@@ -36,12 +34,16 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
 
   static to(form: ExcavationAnnouncementForm, specifiers: Array<string>): ExcavationAnnouncement {
     let ea = new ExcavationAnnouncement();
-    ea.contractor = Some(form.contractor).map(contractor => ApplicantForm.toApplicant(contractor)).orElse(undefined);
-    ea.responsiblePerson = Some(form.responsiblePerson).filter(persons => persons.length > 0).map(c => c[0]).orElse(undefined);
-    ea.propertyDeveloper = Some(form.propertyDeveloper).map(developer => ApplicantForm.toApplicant(developer)).orElse(undefined);
-    ea.propertyDeveloperContact = Some(form.propertyDeveloperContact)
-      .filter(contacts => contacts.length > 0)
-      .map(c => c[0]).orElse(undefined);
+    Some(form.contractor).do(c => {
+      ea.contractor = CustomerForm.toCustomer(c.customer);
+      ea.responsiblePerson = ArrayUtil.first(c.contacts);
+    });
+
+    Some(form.propertyDeveloper).do(pd => {
+      ea.propertyDeveloper = CustomerForm.toCustomer(pd.customer);
+      ea.propertyDeveloperContact = ArrayUtil.first(pd.contacts);
+    });
+
     ea.pksCard = form.pksCard;
     ea.constructionWork = form.constructionWork;
     ea.maintenanceWork = form.maintenanceWork;
@@ -65,9 +67,6 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     return new ExcavationAnnouncementForm(
       new TimePeriod(application.startTime, application.endTime),
       undefined, // these are added by subcomponents (application and contact)
-      undefined,
-      undefined,
-      undefined,
       undefined,
       undefined,
       excavation.pksCard,

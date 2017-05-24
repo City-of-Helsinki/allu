@@ -1,8 +1,8 @@
 --------------------
 -- Enumeration types
 --------------------
--- ApplicantType
-INSERT INTO allu.structure_meta (type_name, version) VALUES ('ApplicantType', 1);
+-- CustomerType
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('CustomerType', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'PERSON', 'Yksityishenkilö', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
@@ -13,6 +13,17 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'PROPERTY', 'Kiinteistö', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'OTHER', 'Muu', 'ENUM_VALUE');
+
+-- CustomerRoleType
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('CustomerRoleType', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'APPLICANT', 'Hakija', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PROPERTY_DEVELOPER', 'Rakennuttaja', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'CONTRACTOR', 'Työn suorittaja / urakoitsija', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'REPRESENTATIVE', 'Asiamies', 'ENUM_VALUE');
 
 -- ApplicationKind
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('ApplicationKind', 1);
@@ -400,7 +411,7 @@ INSERT INTO allu.structure_meta (type_name, version) VALUES ('Contact', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Yhteyshenkilön tunniste', 'INTEGER', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'),  'applicantId', 'Yhteyshenkilön hakijan tunniste', 'INTEGER', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'),  'customerId', 'Yhteyshenkilön asiakkuuden tunniste', 'INTEGER', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'name', 'Yhteyshenkilön nimi', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
@@ -426,13 +437,13 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'city', 'Kaupunki', 'STRING', null, null);
 
--- Applicant
-INSERT INTO allu.structure_meta (type_name, version) VALUES ('Applicant', 1);
+-- Customer
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('Customer', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Hakijan tunniste', 'INTEGER', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'type', 'Hakijan tyyppi', 'ENUMERATION', null,
-            (select id from allu.structure_meta where type_name = 'ApplicantType' and version = 1));
+            (select id from allu.structure_meta where type_name = 'CustomerType' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'name', 'Hakijan nimi', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
@@ -447,6 +458,18 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'isActive', 'Hakija käytössä', 'BOOLEAN', null, null);
 
+-- CustomerWithContacts
+
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('CustomerWithContacts', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'type', 'Asiakkuuden tyyppi', 'ENUMERATION', null,
+        (select id from allu.structure_meta where type_name = 'CustomerRoleType' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'customer', 'Asiakas', 'STRUCTURE', null,
+            (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
+    VALUES (currval('allu.structure_meta_id_seq'), 'contactList', 'Asiakkaan yhteyshenkilöt', 'LIST', 'STRUCTURE',
+            (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
 
 ------------------------
 -- Event metadata
@@ -538,7 +561,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'workDescription', 'Työn kuvaus', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'owner', 'Omistaja', 'STRUCTURE', null,
-            (select id from allu.structure_meta where type_name = 'Applicant' and version = 1));
+            (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'contact', 'Yhteyshenkilö', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
@@ -570,13 +593,13 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
             (select id from allu.structure_meta where type_name = 'ApplicationSpecifier' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'contractor', 'Työn suorittaja', 'STRUCTURE', null,
-            (select id from allu.structure_meta where type_name = 'Applicant' and version = 1));
+            (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'responsiblePerson', 'Vastuuhenkilö', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'propertyDeveloper', 'Rakennuttaja', 'STRUCTURE', null,
-            (select id from allu.structure_meta where type_name = 'Applicant' and version = 1));
+            (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'propertyDeveloperContact', 'Rakennuttajan yhteyshenkilö', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
@@ -618,7 +641,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('AREA_RENTAL', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'contractor', 'Työn suorittaja', 'STRUCTURE', null,
-        (select id from allu.structure_meta where type_name = 'Applicant' and version = 1));
+        (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'responsiblePerson', 'Vastuuhenkilö', 'STRUCTURE', null,
         (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
@@ -655,7 +678,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
             (select id from allu.structure_meta where type_name = 'ApplicationSpecifier' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'contractor', 'Työn suorittaja', 'STRUCTURE', null,
-            (select id from allu.structure_meta where type_name = 'Applicant' and version = 1));
+            (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'responsiblePerson', 'Vastuuhenkilö', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
@@ -681,7 +704,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
             (select id from allu.structure_meta where type_name = 'ApplicationSpecifier' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'representative', 'Asiamies', 'STRUCTURE', null,
-            (select id from allu.structure_meta where type_name = 'Applicant' and version = 1));
+            (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'contact', 'Yhteyshenkilö', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
@@ -898,11 +921,8 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'recurringEndTime', 'Hakemuksen toistuvuus loppuu', 'DATETIME', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'applicant', 'Hakija', 'STRUCTURE', null,
-            (select id from allu.structure_meta where type_name = 'Applicant' and version = 1));
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'contactList', 'Hakemuksen yhteyshenkilöt', 'LIST', 'STRUCTURE',
-            (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
+    VALUES (currval('allu.structure_meta_id_seq'), 'customersWithContacts', 'Asiakas- ja yhteystiedot', 'LIST', 'STRUCTURE',
+        (select id from allu.structure_meta where type_name = 'CustomerWithContacts' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'locations', 'Hakemuksen sijainti', 'LIST', 'STRUCTURE',
             (select id from allu.structure_meta where type_name = 'Location' and version = 1));

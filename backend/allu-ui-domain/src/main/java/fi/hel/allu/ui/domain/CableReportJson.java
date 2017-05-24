@@ -10,7 +10,7 @@ public class CableReportJson extends ApplicationExtensionJson {
   private Boolean cableSurveyRequired;
   private String cableReportId;
   private String workDescription;
-  private ApplicantJson owner;
+  private CustomerJson owner;
   private ContactJson contact;
   private Integer mapExtractCount;
   private List<CableInfoEntryJson> infoEntries;
@@ -68,11 +68,11 @@ public class CableReportJson extends ApplicationExtensionJson {
    *
    * @return the owner
    */
-  public ApplicantJson getOwner() {
+  public CustomerJson getOwner() {
     return owner;
   }
 
-  public void setOwner(ApplicantJson owner) {
+  public void setOwner(CustomerJson owner) {
     this.owner = owner;
   }
 

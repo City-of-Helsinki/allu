@@ -28,32 +28,35 @@
     }
   ],
   "creationTime": "2016-07-15T10:36:09.721Z",
-  "applicant": {
-    "type": "COMPANY",
-    "person": null,
-    "id": null,
-    "name": "Hakija Inc.",
-    "registryKey": "7654321-6",
-    "postalAddress": {
-      "streetAddress": "Hernarikatu 10",
-      "postalCode": "00430",
-      "city": "Vantaa"
-    },
-    "email": "hernari@hernerokka.fi",
-    "phone": "03-1234567",
-    "active": true
-  },
-  "contactList": [
+  "customersWithContacts":[
     {
-      "id": null,
-      "applicantId": null,
-      "name": "Heikki Herne",
-      "streetAddress": "Hernikka 1",
-      "postalCode": "33000",
-      "city": "Tampere",
-      "email": "heikki@hernerokka.fi",
-      "phone": "03-12121212",
-      "active": true
+      "roleType": "APPLICANT",
+      "customer": {
+        "type": "COMPANY",
+        "person": null,
+        "id": null,
+        "name": "Hakija Inc.",
+        "registryKey": "7654321-6",
+        "postalAddress": {
+          "streetAddress": "Hernarikatu 10",
+          "postalCode": "00430",
+          "city": "Vantaa"
+        },
+        "email": "hernari@hernerokka.fi",
+        "phone": "03-1234567",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Heikki Herne",
+        "streetAddress": "Hernikka 1",
+        "postalCode": "33000",
+        "city": "Tampere",
+        "email": "heikki@hernerokka.fi",
+        "phone": "03-12121212",
+        "active": true
+      }]
     }
   ],
   "locations": [

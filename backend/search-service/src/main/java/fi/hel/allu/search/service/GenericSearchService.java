@@ -105,8 +105,8 @@ public class GenericSearchService {
   /**
    * Bulk update of the search index. This method can be used for partial updating existing object. If the value of <code>Map</code>
    * is a <code>Map</code>, the key of the value map is used as name of nested document to update. For example, if you want to update
-   * application.applicant with new applicant, you can provide a following parameter (pseudocode)
-   * <code> Map<applicationId, Map<"applicant", applicantObject>> </></code>.
+   * application.customer with new customer, you can provide a following parameter (pseudocode)
+   * <code> Map<applicationId, Map<"customer", customerObject>> </></code>.
    *
    * @param idToUpdatedObject Map having id of the updated object as key and object that will be updated to search index as JSON.
    */
@@ -159,26 +159,6 @@ public class GenericSearchService {
 
       logger.debug("Searching index {} with the following query:\n {}", indexName, srBuilder.toString());
 
-      SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
-      return iterateIntSearchResponse(response);
-    } catch (IOException e) {
-      throw new SearchException(e);
-    }
-  }
-
-  /**
-   * Partial search against given field. Note that partial search requires special ElasticSearch mapping for the field
-   * (see {{@link ElasticSearchMappingConfig}}.
-   *
-   * @param field         Field matched against search string.
-   * @param searchString  String to be searched.
-   */
-  public List<Integer> findPartial(String field, String searchString) {
-
-    try {
-      QueryBuilder qb = QueryBuilders.matchQuery(field, searchString);
-      SearchRequestBuilder srBuilder = client.prepareSearch(indexName).setTypes(indexTypeName).setQuery(qb);
-      logger.debug("Partial searching with the following query:\n {}", srBuilder.toString());
       SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
       return iterateIntSearchResponse(response);
     } catch (IOException e) {

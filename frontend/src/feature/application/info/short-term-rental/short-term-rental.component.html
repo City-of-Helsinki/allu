@@ -1,8 +1,7 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
     <div class="row">
-        <applicant [applicationForm]="applicationForm" [applicant]="application.applicant"
-                   [readonly]=readonly [showCopyToBilling]="true" [showRepresentative]="true"
-                   [contactList]="application.contactList"></applicant>
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+                   [readonly]=readonly [showCopyToBilling]="true" [showRepresentative]="true"></customer>
     </div>
 
     <div class="row">

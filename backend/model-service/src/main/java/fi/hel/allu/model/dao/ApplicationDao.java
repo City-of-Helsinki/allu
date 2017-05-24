@@ -8,8 +8,10 @@ import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQueryFactory;
+import com.querydsl.sql.dml.SQLInsertClause;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
@@ -19,9 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -29,7 +31,8 @@ import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
 import static com.querydsl.sql.SQLExpressions.selectDistinct;
 import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QApplicationContact.applicationContact;
+import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
+import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
 import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QLocation.location;
@@ -49,7 +52,8 @@ public class ApplicationDao {
   private SQLQueryFactory queryFactory;
   private ApplicationSequenceDao applicationSequenceDao;
   private StructureMetaDao structureMetaDao;
-  DistributionEntryDao distributionEntryDao;
+  private DistributionEntryDao distributionEntryDao;
+  private CustomerDao customerDao;
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
@@ -59,11 +63,13 @@ public class ApplicationDao {
       SQLQueryFactory queryFactory,
       ApplicationSequenceDao applicationSequenceDao,
       DistributionEntryDao distributionEntryDao,
-      StructureMetaDao structureMetaDao) {
+      StructureMetaDao structureMetaDao,
+      CustomerDao customerDao) {
     this.queryFactory = queryFactory;
     this.applicationSequenceDao = applicationSequenceDao;
     this.distributionEntryDao = distributionEntryDao;
     this.structureMetaDao = structureMetaDao;
+    this.customerDao = customerDao;
   }
 
   @Transactional(readOnly = true)
@@ -128,42 +134,55 @@ public class ApplicationDao {
   }
 
   /**
-   * Finds applications related to the given applicant.
+   * Finds applications related to the given customer with the role customer has within the application.
    *
-   * @param id    Id of the applicant whose applications are fetched.
-   * @return List of related application ids. Never <code>null</code>.
+   * @param id    Id of the customer whose applications are fetched.
+   * @return List of related application ids and roles of the customer within the application. Never <code>null</code>.
    */
   @Transactional(readOnly = true)
-  public List<Integer> findByApplicant(int id) {
+  public Map<Integer, List<CustomerRoleType>> findByCustomer(int id) {
     return queryFactory
-        .select(application.id)
-        .from(application)
-        .where(application.applicantId.eq(id)).fetch();
+        .select(applicationCustomer.applicationId, applicationCustomer.customerRoleType)
+        .from(applicationCustomer)
+        .where(applicationCustomer.customerId.eq(id))
+        .transform(groupBy(applicationCustomer.applicationId).as(list(applicationCustomer.customerRoleType)));
   }
+
 
   /**
    * Find all contacts of applications having given contact.
    *
    * @param ids Contact ids to be searched.
-   * @return  all contacts of applications having given contact. The id of application is the map key and value contains all contacts
-   *          of the application.
+   * @return  all contacts of applications having given contacts.
    */
   @Transactional(readOnly = true)
-  public Map<Integer, List<Contact>> findRelatedApplicationsWithContacts(List<Integer> ids) {
-    SubQueryExpression<Integer> sq = select(applicationContact.applicationId).from(applicationContact).where(applicationContact.contactId.in(ids));
-    // create expression list to allow mapping of all contact fields and postal address joined from another table
+  public List<ApplicationWithContacts> findRelatedApplicationsWithContacts(List<Integer> ids) {
+    // find all application_customer rows, which have link to search contacts through application_customer_contact
+    SubQueryExpression<Integer> sq =
+        select(applicationCustomer.id)
+            .from(applicationCustomer)
+            .join(applicationCustomerContact).on(applicationCustomer.id.eq(applicationCustomerContact.applicationCustomerId))
+            .where(applicationCustomerContact.contactId.in(ids));
+
     List<Expression> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
     mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));
-    Map<Integer, List<Contact>> applicationIdToContacts = queryFactory
-        .select(bean(applicationContact.applicationId), bean(Contact.class, contact.all()))
-        .from(applicationContact)
-        .join(contact).on(applicationContact.contactId.eq(contact.id))
+    // find all application_customer rows with all their contacts (there's normally more distinct contacts in this set than what were
+    // searched originally in the sub query's in condition)
+    Map<List<?>, List<Contact>> appIdRoleToContacts = queryFactory
+        .select(applicationCustomer.applicationId, applicationCustomer.customerRoleType, bean(Contact.class, contact.all()))
+        .from(applicationCustomerContact)
+        .join(applicationCustomer).on(applicationCustomerContact.applicationCustomerId.eq(applicationCustomer.id))
+        .join(contact).on(applicationCustomerContact.contactId.eq(contact.id))
         .leftJoin(postalAddress).on(contact.postalAddressId.eq(postalAddress.id))
-        .where(applicationContact.applicationId.in(sq))
-        .transform(groupBy(applicationContact.applicationId).as(list(bean(Contact.class, mappedExpressions.toArray(new Expression[0])))));
+        .where(applicationCustomer.id.in(sq))
+        .transform(groupBy(applicationCustomer.applicationId, applicationCustomer.customerRoleType)
+            .as(list(bean(Contact.class, mappedExpressions.toArray(new Expression[0])))));
 
-    return applicationIdToContacts;
+    return appIdRoleToContacts.entrySet().stream()
+        .map(entry -> new ApplicationWithContacts((Integer) entry.getKey().get(0), (CustomerRoleType) entry.getKey().get(1), entry.getValue()))
+        .collect(Collectors.toList());
   }
+
 
   @Transactional
   public Application insert(Application appl) {
@@ -176,9 +195,10 @@ public class ApplicationDao {
       throw new QueryException("Failed to insert record");
     }
     insertDistributionEntries(id, appl.getDecisionDistributionList());
+    replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
-    insertOrUpdateRecurringPeriods(application);
+    replaceRecurringPeriods(application);
     return populateTags(application);
   }
 
@@ -272,8 +292,8 @@ public class ApplicationDao {
     return updated;
   }
 
-  /*
-   * Update application. All other fields are taken from appl, but creationTime is not updated.
+  /**
+   * Update application. All other fields are taken from appl, but {@link #UPDATE_READ_ONLY_FIELDS}
    */
   @Transactional
   public Application update(int id, Application appl) {
@@ -288,9 +308,10 @@ public class ApplicationDao {
     }
     distributionEntryDao.deleteByApplication(id);
     insertDistributionEntries(id, appl.getDecisionDistributionList());
+    replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
     Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
-    insertOrUpdateRecurringPeriods(application);
+    replaceRecurringPeriods(application);
     return populateTags(application);
   }
 
@@ -311,6 +332,7 @@ public class ApplicationDao {
   private List<Application> populateDependencies(List<Application> applications) {
     applications.forEach(a -> a.setDecisionDistributionList(distributionEntryDao.findByApplicationId(a.getId())));
     applications.forEach(a -> populateTags(a));
+    applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
     return applications;
   }
 
@@ -333,7 +355,7 @@ public class ApplicationDao {
     }
   }
 
-  private void insertOrUpdateRecurringPeriods(Application application) {
+  private void replaceRecurringPeriods(Application application) {
     queryFactory.delete(recurringPeriod).where(recurringPeriod.applicationId.eq(application.getId())).execute();
     if (hasValidRecurringEndTime(application)) {
       RecurringApplication recurringApplication =
@@ -353,14 +375,38 @@ public class ApplicationDao {
     }
   }
 
+  private List<CustomerWithContacts> replaceCustomersWithContacts(Integer applicationId, List<CustomerWithContacts> customerWithContacts) {
+    List<Integer> applicationCustomers =
+        queryFactory.select(applicationCustomer.id).from(applicationCustomer).where(applicationCustomer.applicationId.eq(applicationId)).fetch();
+    queryFactory.delete(applicationCustomerContact).where(applicationCustomerContact.applicationCustomerId.in(applicationCustomers)).execute();
+    queryFactory.delete(applicationCustomer).where(applicationCustomer.id.in(applicationCustomers)).execute();
+    customerWithContacts.stream().forEach(cwc -> insertCustomerWithContact(applicationId, cwc));
+    return customerDao.findByApplicationWithContacts(applicationId);
+  }
+
+  private void insertCustomerWithContact(int applicationId, CustomerWithContacts cwc) {
+    Integer applicationCustomerId = queryFactory.insert(applicationCustomer)
+        .set(applicationCustomer.applicationId, applicationId)
+        .set(applicationCustomer.customerId, cwc.getCustomer().getId())
+        .set(applicationCustomer.customerRoleType, cwc.getRoleType())
+        .executeWithKey(applicationCustomer.id);
+
+    SQLInsertClause inserts = queryFactory.insert(applicationCustomerContact);
+    List<Integer> contactIds = new ArrayList<>();
+    if (!cwc.getContacts().isEmpty()) {
+      cwc.getContacts().forEach(
+          c -> inserts.populate(bean(applicationCustomerContact, applicationCustomerContact.all()))
+              .set(applicationCustomerContact.contactId, c.getId())
+              .set(applicationCustomerContact.applicationCustomerId, applicationCustomerId)
+              .addBatch());
+      contactIds = inserts.executeWithKeys(contact.id);
+    }
+  }
+
   private boolean hasValidRecurringEndTime(Application application) {
     return application.getEndTime() != null &&
         application.getRecurringEndTime() != null &&
         application.getEndTime().isBefore(application.getRecurringEndTime());
-  }
-
-  public static void main(String ...argv) {
-    System.out.println(ZoneId.systemDefault());
   }
 
   private BooleanExpression andExpression(BooleanExpression existingExpression, BooleanExpression addedExpression) {

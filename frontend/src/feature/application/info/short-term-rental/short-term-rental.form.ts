@@ -1,9 +1,8 @@
-import {ApplicantForm} from '../applicant/applicant.form';
-import {Contact} from '../../../../model/application/contact';
 import {TimePeriod} from '../time-period';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 export class ShortTermRentalForm implements ApplicationForm {
   constructor(
@@ -15,8 +14,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     public calculatedPrice?: number,
     public priceOverride?: number,
     public priceOverrideReason?: string,
-    public applicant?: ApplicantForm,
-    public contacts?: Array<Contact>) {}
+    public applicant?: CustomerWithContactsForm) {}
 
   static from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
     return new ShortTermRentalForm(

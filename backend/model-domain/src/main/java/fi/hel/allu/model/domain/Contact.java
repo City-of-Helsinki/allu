@@ -8,7 +8,7 @@ import org.hibernate.validator.constraints.NotBlank;
 public class Contact implements PostalAddressItem {
 
   private Integer id;
-  private Integer applicantId;
+  private Integer customerId;
   @NotBlank
   private String name;
   private PostalAddress postalAddress;
@@ -30,12 +30,12 @@ public class Contact implements PostalAddressItem {
   /**
    * in Finnish: Yhteyshenkilön hakijan tunniste
    */
-  public Integer getApplicantId() {
-    return applicantId;
+  public Integer getCustomerId() {
+    return customerId;
   }
 
-  public void setApplicantId(Integer applicantId) {
-    this.applicantId = applicantId;
+  public void setCustomerId(Integer customerId) {
+    this.customerId = customerId;
   }
 
   /**

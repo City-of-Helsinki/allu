@@ -1,6 +1,8 @@
 package fi.hel.allu.ui.service;
 
+import fi.hel.allu.model.domain.ApplicationWithContacts;
 import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.search.domain.ApplicationWithContactsES;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ContactJson;
@@ -46,29 +48,13 @@ public class ContactService {
     return applicationMapper.createContactJson(locationResult.getBody());
   }
 
-  public List<ContactJson> findByApplicant(int applicantId) {
+  public List<ContactJson> findByCustomer(int customerId) {
     ResponseEntity<Contact[]> contactResult = restTemplate.getForEntity(
-        applicationProperties.getContactsByApplicantUrl(),
+        applicationProperties.getContactsByCustomerUrl(),
         Contact[].class,
-        applicantId);
+        customerId);
     List<ContactJson> results =
         Arrays.stream(contactResult.getBody()).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
-    return results;
-  }
-
-  /**
-   * Find contacts for an application
-   *
-   * @param applicationId
-   *          The application's ID
-   * @return List of contact items
-   */
-  public List<ContactJson> findContactsForApplication(int applicationId) {
-    ResponseEntity<Contact[]> contactResult = restTemplate.getForEntity(
-        applicationProperties.getContactsByApplicationUrl(), Contact[].class,
-        applicationId);
-    List<ContactJson> results = Arrays.stream(contactResult.getBody()).map(c -> applicationMapper.createContactJson(c))
-        .collect(Collectors.toList());
     return results;
   }
 
@@ -110,14 +96,14 @@ public class ContactService {
     List<ContactJson> updatedContactJsons =
         Arrays.stream(response.getBody()).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
     searchService.updateContacts(updatedContactJsons);
-    Map<Integer, List<ContactES>> applicationIdToContacts =
+    List<ApplicationWithContactsES> applicationWithContactsESs =
         findRelatedApplicationsWithContacts(updatedContactJsons.stream().map(cJson -> cJson.getId()).collect(Collectors.toList()));
-    searchService.updateContactsOfApplications(applicationIdToContacts);
+    searchService.updateContactsOfApplications(applicationWithContactsESs);
     return updatedContactJsons;
   }
 
-  public List<ContactJson> setContactsForApplication(int applicationId, int applicantId, List<ContactJson> contacts) {
-    contacts.forEach(c -> c.setApplicantId(applicantId));
+  public List<ContactJson> createMissingContacts(int customerId, List<ContactJson> contacts) {
+    contacts.forEach(c -> c.setCustomerId(customerId));
     // create new contacts (the ones with missing id)
     Map<Boolean, List<ContactJson>> newOldContacts = contacts.stream().collect(Collectors.partitioningBy(c -> c.getId() != null));
     List<ContactJson> allContacts = new ArrayList<>(newOldContacts.get(true));
@@ -126,12 +112,6 @@ public class ContactService {
       allContacts.addAll(addedContacts);
     }
 
-    List<Contact> contactsModel = allContacts.stream().map(cJson -> applicationMapper.createContactModel(cJson)).collect(Collectors.toList());
-    restTemplate.put(
-        applicationProperties.getContactsUpdateApplicationUrl(),
-        contactsModel,
-        applicationId);
-
     return allContacts;
   }
 
@@ -139,24 +119,28 @@ public class ContactService {
    * Find all contacts of applications having given contacts.
    *
    * @param   contactIds of the contacts whose related applications with contacts are fetched.
-   * @return  all contacts of applications having given contact. The id of application is the map key and value contains all contacts
-   *          of the application.
+   * @return  all contacts of applications having given contact.
    */
-  private Map<Integer, List<ContactES>> findRelatedApplicationsWithContacts(List<Integer> contactIds) {
-    ParameterizedTypeReference<Map<Integer, List<Contact>>> typeRef = new ParameterizedTypeReference<Map<Integer, List<Contact>>>() {};
+  private List<ApplicationWithContactsES> findRelatedApplicationsWithContacts(List<Integer> contactIds) {
+    ParameterizedTypeReference<List<ApplicationWithContacts>> typeRef = new ParameterizedTypeReference<List<ApplicationWithContacts>>() {};
     HttpEntity<List<Integer>> requestEntity = new HttpEntity<>(contactIds);
-    ResponseEntity<Map<Integer, List<Contact>>> applicationIdToContacts = restTemplate.exchange(
+    ResponseEntity<List<ApplicationWithContacts>> applicationWithContacts = restTemplate.exchange(
         applicationProperties.getContactsRelatedByApplicationUrl(),
         HttpMethod.POST,
         requestEntity,
         typeRef);
+    List<ApplicationWithContactsES> applicationWithContactsESs = applicationWithContacts.getBody().stream()
+        .map(atc -> new ApplicationWithContactsES(atc.getApplicationId(), atc.getCustomerRoleType(), mapContacts(atc.getContacts())))
+        .collect(Collectors.toList());
+    return applicationWithContactsESs;
+  }
 
-    Map<Integer, List<ContactES>> applicationIdToContactJsons = applicationIdToContacts.getBody().entrySet().stream().collect(
-        Collectors.toMap(
-            entry -> entry.getKey(),
-            entry -> entry.getValue().stream().map(
-                contact -> new ContactES(contact.getId(), contact.getName(), contact.isActive())).collect(Collectors.toList())));
-    return applicationIdToContactJsons;
+  private List<ContactES> mapContacts(List<Contact> contacts) {
+    return contacts.stream().map(c -> mapContact(c)).collect(Collectors.toList());
+  }
+
+  private ContactES mapContact(Contact contact) {
+    return new ContactES(contact.getId(), contact.getName(), contact.isActive());
   }
 
   private List<ContactJson> getContactsById(List<Integer> contactIds) {

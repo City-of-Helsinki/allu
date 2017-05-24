@@ -1,7 +1,7 @@
 import {FormBuilder, Validators} from '@angular/forms';
 import {PostalAddress} from '../../../model/common/postal-address';
-import {InvoicingAddress} from '../../../model/application/applicant/invoicing-address';
-import {ApplicantType} from '../../../model/application/applicant/applicant-type';
+import {InvoicingAddress} from '../../../model/customer/invoicing-address';
+import {CustomerType} from '../../../model/customer/customer-type';
 import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
 
 export class InvoicingAddressForm {
@@ -21,7 +21,7 @@ export class InvoicingAddressForm {
   static fromInvoicingAddress(invoicingAddress: InvoicingAddress): InvoicingAddressForm {
     return new InvoicingAddressForm(
       invoicingAddress.id,
-      invoicingAddress.type ? ApplicantType[invoicingAddress.type] : undefined,
+      invoicingAddress.type ? CustomerType[invoicingAddress.type] : undefined,
       invoicingAddress.name,
       invoicingAddress.registryKey,
       'Suomi',
@@ -35,7 +35,7 @@ export class InvoicingAddressForm {
   static toInvoicingAddress(form: InvoicingAddressForm): InvoicingAddress {
     let address = new InvoicingAddress();
     address.id = form.id;
-    address.type = form.type ? ApplicantType[form.type] : undefined;
+    address.type = form.type ? CustomerType[form.type] : undefined;
     address.name = form.name;
     address.registryKey = form.registryKey;
     address.postalAddress = form.postalAddress;

@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
 import {CustomerService} from './customer.service';
-import {ApplicantWithContacts} from '../../model/application/applicant/applicant-with-contacts';
-import {Applicant} from '../../model/application/applicant/applicant';
-import {Contact} from '../../model/application/contact';
+import {Contact} from '../../model/customer/contact';
 import {CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
+import {Customer} from '../../model/customer/customer';
 
 @Injectable()
 export class CustomerHub {
@@ -11,19 +10,19 @@ export class CustomerHub {
   constructor(private customerService: CustomerService) {}
 
   /**
-   * Searches applicants by given search query
+   * Searches customers by given search query
    */
-  public searchApplicantsBy = (searchQuery: CustomerSearchQuery) => this.customerService.searchApplicantsBy(searchQuery);
+  public searchCustomersBy = (searchQuery: CustomerSearchQuery) => this.customerService.searchCustomersBy(searchQuery);
 
   /**
-   * Fetches all applicants
+   * Fetches all customers
    */
-  public fetchAllApplicants = () => this.customerService.fetchAllApplicants();
+  public fetchAllCustomers = () => this.customerService.fetchAllCustomers();
 
   /**
-   * Fetches applicant by given id
+   * Fetches customer by given id
    */
-  public findApplicantById = (id: number) => this.customerService.findApplicantById(id);
+  public findCustomerById = (id: number) => this.customerService.findCustomerById(id);
 
   /**
    * Fetches contact by given id
@@ -31,14 +30,14 @@ export class CustomerHub {
   public findContactById = (id: number) => this.customerService.findContactById(id);
 
   /**
-   * Saves applicant with his / hers contacts
+   * Saves customer with his / hers contacts
    */
-  public saveApplicantWithContacts = (applicantId: number, applicant: Applicant, contacts: Array<Contact>) =>
-    this.customerService.saveApplicantWithContacts(applicantId, applicant, contacts);
+  public saveCustomerWithContacts = (customerId: number, customer: Customer, contacts: Array<Contact>) =>
+    this.customerService.saveCustomerWithContacts(customerId, customer, contacts);
 
   /**
-   * Fetches all contacts of given applicant
+   * Fetches all contacts of given customer
    */
-  public findApplicantActiveContacts = (applicantId: number) => this.customerService.findApplicantContacts(applicantId)
+  public findCustomerActiveContacts = (customerId: number) => this.customerService.findCustomerContacts(customerId)
     .map(contacts => contacts.filter(c => c.active));
 }
