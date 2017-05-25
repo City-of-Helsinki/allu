@@ -4,7 +4,7 @@ import {findTranslation} from '../../util/translations';
 
 const OVERLAYS: L.Control.LayersObject = {
   kaupunkikartta: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_kaupunkikartta', format: 'image/png'}),
+    {layers: 'helsinki_karttasarja', format: 'image/png'}),
   ortoilmakuva: L.tileLayer.wms('/wms?',
     {layers: 'helsinki_ortoilmakuva', format: 'image/png'}),
   kiinteistokartta: L.tileLayer.wms('/wms?',

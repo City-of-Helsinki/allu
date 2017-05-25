@@ -6,14 +6,13 @@ import {Some} from '../../util/option';
 import {findTranslation} from '../../util/translations';
 import {ProjectHub} from '../../service/project/project-hub';
 import {styleByApplicationType, pathStyle} from '../../service/map/map-draw-styles';
-import {MapService, ShapeAdded, MapState} from '../../service/map/map.service';
+import {MapService} from '../../service/map/map.service';
 import {MapPopup} from '../../service/map/map-popup';
-import {ApplicationState} from '../../service/application/application-state';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Subscription} from 'rxjs/Subscription';
 import {Location} from '../../model/common/location';
 import {Circle} from 'leaflet';
-import {MapUtil} from '../../service/map/map.util';
+import {MapState, ShapeAdded} from '../../service/map/map-state';
 
 @Component({
   selector: 'map',
@@ -42,8 +41,8 @@ export class MapComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.mapState = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
     this.initSubscriptions();
-
     Some(this.projectId).do(id => this.drawProject(id));
+    this.mapState.selectDefaultLayer();
   }
 
   ngOnDestroy() {
