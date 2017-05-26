@@ -270,9 +270,9 @@ public abstract class MockServices {
     ApplicationES applicationES = new ApplicationES();
     ZoneId zoneId = ZoneId.of("Europe/Helsinki");
     ZonedDateTime zonedDateTime = ZonedDateTime.of(2015, 11, 30, 23, 45, 59, 1234, zoneId);
-    applicationES.setCreationTime(zonedDateTime);
+    applicationES.setCreationTime(zonedDateTime.toInstant().toEpochMilli());
     ZonedDateTime zonedDateTime2 = ZonedDateTime.of(2016, 10, 30, 23, 45, 59, 1234, zoneId);
-    applicationES.setDecisionTime(zonedDateTime2);
+    applicationES.setDecisionTime(zonedDateTime2.toInstant().toEpochMilli());
     applicationES.setName("Mock name, ES");
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     User user = createMockUser();

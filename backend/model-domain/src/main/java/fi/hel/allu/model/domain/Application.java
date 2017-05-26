@@ -1,7 +1,7 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.*;
-import fi.hel.allu.model.domain.util.TimeUtil;
+import fi.hel.allu.common.util.TimeUtil;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 

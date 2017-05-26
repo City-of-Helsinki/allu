@@ -4,7 +4,6 @@ package fi.hel.allu.search.domain;
 import fi.hel.allu.common.util.RecurringApplication;
 import org.hibernate.validator.constraints.NotBlank;
 
-import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -21,12 +20,12 @@ public class ApplicationES {
   private ApplicationTypeES type;
   private List<String> applicationTags;
   private String name;
-  private ZonedDateTime creationTime;
-  private ZonedDateTime startTime;
-  private ZonedDateTime endTime;
+  private Long creationTime;
+  private Long startTime;
+  private Long endTime;
   private List<ESFlatValue> applicationTypeData;
   private Integer projectId;
-  private ZonedDateTime decisionTime;
+  private Long decisionTime;
   private List<LocationES> locations;
   private RoleTypedCustomerES customers;
   private RecurringApplication recurringApplication;
@@ -87,27 +86,27 @@ public class ApplicationES {
     this.name = name;
   }
 
-  public ZonedDateTime getCreationTime() {
+  public Long getCreationTime() {
     return creationTime;
   }
 
-  public void setCreationTime(ZonedDateTime creationTime) {
+  public void setCreationTime(Long creationTime) {
     this.creationTime = creationTime;
   }
 
-  public ZonedDateTime getStartTime() {
+  public Long getStartTime() {
     return startTime;
   }
 
-  public void setStartTime(ZonedDateTime startTime) {
+  public void setStartTime(Long startTime) {
     this.startTime = startTime;
   }
 
-  public ZonedDateTime getEndTime() {
+  public Long getEndTime() {
     return endTime;
   }
 
-  public void setEndTime(ZonedDateTime endTime) {
+  public void setEndTime(Long endTime) {
     this.endTime = endTime;
   }
 
@@ -127,11 +126,11 @@ public class ApplicationES {
     this.projectId = projectId;
   }
 
-  public ZonedDateTime getDecisionTime() {
+  public Long getDecisionTime() {
     return decisionTime;
   }
 
-  public void setDecisionTime(ZonedDateTime decisionTime) {
+  public void setDecisionTime(Long decisionTime) {
     this.decisionTime = decisionTime;
   }
 

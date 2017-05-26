@@ -75,13 +75,7 @@ public class ElasticSearchMappingConfig {
                 .field("type", "string")
                 .field("fields").copyCurrentStructure(parser(alphasort()))
               .endObject()
-              .startObject("startTime")
-                .field("type", "date")
-              .endObject()
-              .startObject("endTime")
-                .field("type", "date")
-              .endObject()
-        .endObject()
+            .endObject()
           .endObject()
         .endObject();
       logger.debug("Default applications index mapping: " + mappingBuilder.string());
@@ -99,9 +93,6 @@ public class ElasticSearchMappingConfig {
       XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
           .startObject()
             .startObject("properties")
-              .startObject("creationTime")
-                .field("type", "date")
-              .endObject()
               .field("applicationId").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
               .startObject("handler") // alphabetical sorting for handler.userName
                 .startObject("properties")

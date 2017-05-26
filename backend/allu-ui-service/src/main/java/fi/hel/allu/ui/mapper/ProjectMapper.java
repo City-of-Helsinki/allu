@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.mapper;
 
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.ui.domain.ProjectJson;
@@ -54,8 +55,8 @@ public class ProjectMapper {
     ProjectES projectES = new ProjectES();
     projectES.setId(projectJson.getId());
     projectES.setName(projectJson.getName());
-    projectES.setStartTime(projectJson.getStartTime());
-    projectES.setEndTime(projectJson.getEndTime());
+    projectES.setStartTime(TimeUtil.dateToMillis(projectJson.getStartTime()));
+    projectES.setEndTime(TimeUtil.dateToMillis(projectJson.getEndTime()));
     projectES.setCityDistricts(projectJson.getCityDistricts());
     projectES.setOwnerName(projectJson.getOwnerName());
     projectES.setContactName(projectJson.getContactName());

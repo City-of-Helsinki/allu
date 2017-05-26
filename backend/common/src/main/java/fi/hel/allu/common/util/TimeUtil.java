@@ -21,4 +21,24 @@ public class TimeUtil {
     Instant i = Instant.ofEpochMilli( millis  );
     return ZonedDateTime.ofInstant(i, HelsinkiZoneId);
   }
+
+  /**
+   * Returns date converted to milliseconds since epoch.
+   *
+   * @param date  Date to be converted or <code>null</code>.
+   * @return  Date in milliseconds or <code>null</code> in case given date was <code>null</code>.
+   */
+  public static Long dateToMillis(ZonedDateTime date) {
+    return date == null ? null : date.toInstant().toEpochMilli();
+  }
+
+  /**
+   * Move the given time to home timezone, keeping the same instant.
+   *
+   * @param zonedDateTime
+   * @return the same time instant in home time zone.
+   */
+  public static ZonedDateTime homeTime(ZonedDateTime zonedDateTime) {
+    return zonedDateTime == null ? null : zonedDateTime.withZoneSameInstant(HelsinkiZoneId);
+  }
 }

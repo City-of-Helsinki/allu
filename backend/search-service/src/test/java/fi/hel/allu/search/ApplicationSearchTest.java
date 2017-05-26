@@ -527,7 +527,7 @@ public class ApplicationSearchTest {
     applicationES.setName("Mock testi");
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     ZonedDateTime dateTime = ZonedDateTime.parse("2016-07-05T06:23:04.000Z");
-    applicationES.setCreationTime(dateTime);
+    applicationES.setCreationTime(dateTime.toInstant().toEpochMilli());
 
     applicationES.setApplicationTypeData(createApplicationTypeData());
     return applicationES;

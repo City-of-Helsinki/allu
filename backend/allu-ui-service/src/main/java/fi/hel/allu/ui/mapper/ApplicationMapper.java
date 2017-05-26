@@ -8,6 +8,7 @@ import com.github.wnameless.json.flattener.JsonFlattener;
 
 import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.common.util.RecurringApplication;
+import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.domain.*;
@@ -81,9 +82,9 @@ public class ApplicationMapper {
     applicationES.setId(applicationJson.getId());
     applicationES.setApplicationId(applicationJson.getApplicationId());
     applicationES.setName(applicationJson.getName());
-    applicationES.setCreationTime(applicationJson.getCreationTime());
-    applicationES.setStartTime(applicationJson.getStartTime());
-    applicationES.setEndTime(applicationJson.getEndTime());
+    applicationES.setCreationTime(TimeUtil.dateToMillis(applicationJson.getCreationTime()));
+    applicationES.setStartTime(TimeUtil.dateToMillis(applicationJson.getStartTime()));
+    applicationES.setEndTime(TimeUtil.dateToMillis(applicationJson.getEndTime()));
     if (applicationJson.getStartTime() != null && applicationJson.getEndTime() != null) {
       ZonedDateTime recurringEndTime =
           applicationJson.getRecurringEndTime() == null ? applicationJson.getEndTime() : applicationJson.getRecurringEndTime();
@@ -100,7 +101,7 @@ public class ApplicationMapper {
           applicationJson.getApplicationTags().stream().map(tag -> tag.getType().toString()).collect(Collectors.toList()));
     }
     applicationES.setStatus(new StatusTypeES(applicationJson.getStatus()));
-    applicationES.setDecisionTime(applicationJson.getDecisionTime());
+    applicationES.setDecisionTime(TimeUtil.dateToMillis(applicationJson.getDecisionTime()));
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
     applicationES.setLocations(createLocationES(applicationJson.getLocations()));
     Map<CustomerRoleType, CustomerWithContactsES> roleToCwcES =
