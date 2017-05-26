@@ -165,10 +165,13 @@ public class ApplicationHistoryServiceTest extends MockServices {
     oldApplication.setHandler(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "perustaja", true,
         Collections.singletonList(ApplicationType.AREA_RENTAL), Collections.singletonList(RoleType.ROLE_DECISION),
         Collections.singletonList(1)));
+    oldApplication.setName("Old application");
     ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
     newApplication.setHandler(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "romuttaja", true,
         Collections.singletonList(ApplicationType.CABLE_REPORT),
         Collections.singletonList(RoleType.ROLE_CREATE_APPLICATION), Collections.singletonList(2)));
+    newApplication.setName("New application");
+
     applicationHistoryService.addFieldChanges(APPLICATION_ID, oldApplication, newApplication);
 
     assertNotNull(capturedChange);
