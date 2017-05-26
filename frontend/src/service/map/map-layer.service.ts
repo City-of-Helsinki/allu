@@ -4,17 +4,17 @@ import {findTranslation} from '../../util/translations';
 
 const OVERLAYS: L.Control.LayersObject = {
   kaupunkikartta: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_karttasarja', format: 'image/png'}),
+    {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true}),
   ortoilmakuva: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_ortoilmakuva', format: 'image/png'}),
+    {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true}),
   kiinteistokartta: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_kiinteistokartta', format: 'image/png'}),
+    {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true}),
   ajantasaasemakaava: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_ajantasaasemakaava', format: 'image/png'}),
+    {layers: 'helsinki_ajantasaasemakaava', format: 'image/png', transparent: true}),
   opaskartta: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_opaskartta', format: 'image/png'}),
+    {layers: 'helsinki_opaskartta', format: 'image/png', transparent: true}),
   kaupunginosajako: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_kaupunginosajako', format: 'image/png'})
+    {layers: 'helsinki_kaupunginosajako', format: 'image/png', transparent: true})
   // working URL for accessing Helsinki maps directly (requires authentication)
   // testi: new L.tileLayer.wms('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
   //   {layers: 'helsinki:Kaupunkikartta'}),

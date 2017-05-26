@@ -1,16 +1,16 @@
 export const styleByApplicationType = {
-  EXCAVATION_ANNOUNCEMENT: {color: '#3293C9'},
-  AREA_RENTAL: {color: '#4949EA'},
-  TEMPORARY_TRAFFIC_ARRANGEMENTS: {color: '#EF9841'},
-  CABLE_REPORT: {color: '#3CC684'},
-  PLACEMENT_CONTRACT: {color: '#E2E260'},
-  EVENT: {color: '#E5515C'},
-  SHORT_TERM_RENTAL: {color: '#DC6AE5'},
-  NOTE: {color: '#28DDD3'}
+  EXCAVATION_ANNOUNCEMENT: {color: '#6db6ff', opacity: 1, fillOpacity: 0.4},
+  AREA_RENTAL: {color: '#006ddb', opacity: 1, fillOpacity: 0.4},
+  TEMPORARY_TRAFFIC_ARRANGEMENTS: {color: '#db6d00', opacity: 1, fillOpacity: 0.4},
+  CABLE_REPORT: {color: '#009292', opacity: 1, fillOpacity: 0.4},
+  PLACEMENT_CONTRACT: {color: '#ff6db6', opacity: 1, fillOpacity: 0.4},
+  EVENT: {color: '#920000', opacity: 1, fillOpacity: 0.4},
+  SHORT_TERM_RENTAL: {color: '#490092', opacity: 1, fillOpacity: 0.4},
+  NOTE: {color: '#24ff24', opacity: 1, fillOpacity: 0.4}
 };
 
 export const pathStyle = {
-  DEFAULT: {color: '#F23555'},
-  DEFAULT_DRAW: {color: '#F23555', dashArray: '8,6'},
-  DEFAULT_EDIT: {color: '#F23555', dashArray: '8,6', moveMarkers: true}
+  DEFAULT: {color: '#F23555', opacity: 1, fillOpacity: 0.4},
+  DEFAULT_DRAW: {color: '#F23555', dashArray: '8,6', opacity: 1, fillOpacity: 0.4},
+  DEFAULT_EDIT: {color: '#F23555', dashArray: '8,6', moveMarkers: true, opacity: 1, fillOpacity: 0.4}
 };
