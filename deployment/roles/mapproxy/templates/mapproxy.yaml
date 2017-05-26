@@ -115,6 +115,7 @@ sources:
     req:
        url: http://{{ geoserver_username }}:{{ geoserver_password }}@kartta.hel.fi/ws/geoserver/helsinki/ows?
        layers: helsinki:Kaupunginosajako
+       transparent: true
 
 
 grids:
