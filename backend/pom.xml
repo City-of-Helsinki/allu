@@ -40,6 +40,7 @@
         <module>search-service</module>
         <module>pdf-service</module>
         <module>scheduler-service</module>
+        <module>sap-interface</module>
     </modules>
 
     <build>
