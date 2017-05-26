@@ -145,7 +145,8 @@ public class GenericSearchService {
         qb.must(createQueryBuilder(param));
       }
 
-      SearchRequestBuilder srBuilder = client.prepareSearch(indexName).setTypes(indexTypeName).setQuery(qb);
+      // TODO: paging to search results. Before paging is implemented, the maximum number of results is configured below (100)
+      SearchRequestBuilder srBuilder = client.prepareSearch(indexName).setSize(100).setTypes(indexTypeName).setQuery(qb);
 
       if (queryParameters.getSort() != null) {
         SortBuilder sb = SortBuilders.fieldSort(queryParameters.getSort().field);
