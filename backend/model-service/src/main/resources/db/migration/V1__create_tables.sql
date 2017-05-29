@@ -278,6 +278,12 @@ create table allu.application_field_change (
     old_value text,
     new_value text);
 
+create table allu.application_reminder (
+    id serial primary key,
+    application_id integer references allu.application(id) not null,
+    reminder_trigger timestamp with time zone not null
+);
+
 create SEQUENCE allu.KP_application_type_sequence START 1600001;
 create SEQUENCE allu.AL_application_type_sequence START 1600001;
 create SEQUENCE allu.LJ_application_type_sequence START 1600001;

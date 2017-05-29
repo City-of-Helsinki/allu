@@ -233,4 +233,25 @@ public class ApplicationController {
     distributionEntryDao.replaceEntries(id, distributionEntries);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  /**
+   * Get list of applications about to end
+   *
+   * @param specifiers List of application specifiers
+   */
+  @RequestMapping(value = "/deadline-check", method = RequestMethod.POST)
+  public ResponseEntity<List<Application>> deadlineCheck(@RequestBody @Valid DeadlineCheckParams checkParams) {
+    return new ResponseEntity<>(applicationService.deadLineCheck(checkParams), HttpStatus.OK);
+  }
+
+  /**
+   * Mark the given applications having a reminder sent
+   *
+   * @param applicationIds list of application IDs
+   */
+  @RequestMapping(value = "/reminder-sent", method = RequestMethod.POST)
+  public ResponseEntity<Void> markReminderSent(@RequestBody List<Integer> applicationIds) {
+    applicationService.markReminderSent(applicationIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

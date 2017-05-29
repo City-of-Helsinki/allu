@@ -1,0 +1,14 @@
+Hyvä asiakkaamme
+
+Hakemuksen/luvan ${applicationId} voimassaolo on päättymässä.
+
+Hakemuksenne merkitty päättymispäivä on ${endDate}.
+Mikäli hakemuksenne on edelleen ajankohtainen, pyydämme teitä ottamaan
+yhteyttä Helsingin kaupungin rakennusvirastoon puh. (09) 310 39000 ja
+hakemaan työllenne jatkoaikaa.
+
+Tämän sähköpostin lähettäjä on tekninen osoite.
+
+Terveisin
+
+Helsingin kaupunki, rakennusvirasto

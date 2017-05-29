@@ -7,8 +7,10 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
+
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerRoleType;
@@ -17,6 +19,7 @@ import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,6 +36,7 @@ import static com.querydsl.sql.SQLExpressions.selectDistinct;
 import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
+import static fi.hel.allu.QApplicationReminder.applicationReminder;
 import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QLocation.location;
@@ -148,6 +152,75 @@ public class ApplicationDao {
         .transform(groupBy(applicationCustomer.applicationId).as(list(applicationCustomer.customerRoleType)));
   }
 
+
+  /**
+   * Find applications that are about to end
+   * <p>
+   * This method returns IDs of all the applications that are about to end
+   * within the given number of days. It can also filter these applications and
+   * only return applications that have some of the given specifiers set.
+   *
+   * @param endsAfter         Applications must end after this time
+   * @param endsBefore        Applications must end before this time
+   * @param applicationTypes  Selector for application types. If this list is given
+   *                          and not empty, the applications must also be of a type
+   *                          that's included in the given specifiers.
+   * @param statusTypes       Selector for application status. If this list is given
+   *                          and not empty, the results are also filtered by application
+   *                          status: applications must be in a status that's included in
+   *                          the list.
+   * @return List of application identifiers.
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> findByEndTime(ZonedDateTime endsAfter, ZonedDateTime endsBefore,
+      List<ApplicationType> applicationTypes, List<StatusType> statusTypes) {
+    BooleanExpression whereCondition = application.endTime.between(endsAfter, endsBefore);
+    if (applicationTypes != null && ! applicationTypes.isEmpty()) {
+      whereCondition = whereCondition.and(application.type.in(applicationTypes));
+    }
+    if (statusTypes != null && ! statusTypes.isEmpty()) {
+      whereCondition = whereCondition.and(application.status.in(statusTypes));
+    }
+    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition).fetch();
+    return applications;
+  }
+
+  /**
+   * Given a list of application ids, filter out those for which a reminder has
+   * already been sent
+   *
+   * @param  applications   list of application IDs to check
+   * @return those application IDs that don't have a reminder sent
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> excludeSentReminders(List<Integer> applications) {
+    final Set<Integer> sentReminders = new HashSet<>(
+        queryFactory.select(applicationReminder.applicationId).from(applicationReminder).join(application)
+            .on(applicationReminder.applicationId.eq(application.id)).where(applicationReminder.applicationId
+                .in(applications).and(applicationReminder.reminderTrigger.eq(application.endTime)))
+            .fetch());
+    return applications.stream().filter(i -> !sentReminders.contains(i)).collect(Collectors.toList());
+  }
+
+  /**
+   * Mark the given applications to have a reminder set. For every given
+   * application ID, an entry with application's ID and current end date is
+   * added to applicationReminder table. Existing reminder entries for these
+   * applications are removed.
+   *
+   * @param  applications   list of application IDs
+   * @return number of inserted applicationReminder entries
+   */
+  @Transactional
+  public long markReminderSent(List<Integer> applications) {
+    queryFactory.delete(applicationReminder).where(applicationReminder.applicationId.in(applications)).execute();
+    long inserted = queryFactory.insert(applicationReminder)
+        .columns(applicationReminder.applicationId, applicationReminder.reminderTrigger)
+        .select(SQLExpressions
+            .select(application.id, application.endTime).from(application).where(application.id.in(applications)))
+        .execute();
+    return inserted;
+  }
 
   /**
    * Find all contacts of applications having given contact.
@@ -424,4 +497,5 @@ public class ApplicationDao {
     return recurringPeriod.periodStartTime.before(TimeUtil.millisToZonedDateTime(periodEnd))
         .and(recurringPeriod.periodEndTime.after(TimeUtil.millisToZonedDateTime(periodStart)));
   }
+
 }

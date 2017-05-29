@@ -5,11 +5,11 @@ import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoiceRowDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.DeadlineCheckParams;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -155,6 +155,7 @@ public class ApplicationService {
    *                        set are used)
    * @return Application's invoice rows after operation
    */
+  @Transactional
   public List<InvoiceRow> setManualInvoiceRows(int applicationId, List<InvoiceRow> invoiceRows) {
     invoiceRowDao.setInvoiceRows(applicationId,
         invoiceRows.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()), true);
@@ -162,5 +163,35 @@ public class ApplicationService {
     application.setCalculatedPrice(invoiceRowDao.getTotalPrice(applicationId));
     applicationDao.update(applicationId, application);
     return invoiceRowDao.getInvoiceRows(applicationId);
+  }
+
+  /**
+   * Find applications that are ending in the given time range and don't already
+   * have a notification sent
+   *
+   * @param checkParams  search parameters: end time range and application
+   *                     specifiers
+   * @return list of matching applications
+   */
+  @Transactional(readOnly = true)
+  public List<Application> deadLineCheck(DeadlineCheckParams checkParams) {
+    List<Integer> candidates = applicationDao.findByEndTime(checkParams.getEndsAfter(), checkParams.getEndsBefore(),
+        checkParams.getTypeSelector(), checkParams.getStatusSelector());
+    candidates = applicationDao.excludeSentReminders(candidates);
+    return findByIds(candidates);
+  }
+
+  /**
+   * Mark the given applications to have a reminder set. For every given
+   * application ID, an entry with application's ID and current end date is
+   * added to applicationReminder table. Existing reminder entries for these
+   * applications are removed.
+   *
+   * @param applications list of application IDs
+   * @return number of inserted applicationReminder entries
+   */
+  @Transactional
+  public long markReminderSent(List<Integer> applications) {
+    return applicationDao.markReminderSent(applications);
   }
 }

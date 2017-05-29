@@ -4,6 +4,7 @@ import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -192,6 +193,106 @@ public class ApplicationDaoTest {
         .filter(tag -> tag.getType().equals(ApplicationTagType.COMPENSATION_CLARIFICATION)).findFirst().isPresent());
     assertTrue(application.getApplicationTags().stream()
         .filter(tag -> tag.getType().equals(ApplicationTagType.DEPOSIT_PAID)).findFirst().isPresent());
+  }
+
+  @Test
+  public void testfindByEndTimeNoSpecifiers() {
+    // Insert three applications that end in different times in future, remember
+    // their ids:
+    List<Integer> applicationIds = new ArrayList<>();
+    Application application = testCommon.dummyOutdoorApplication("Test application", "Test handler");
+    ZonedDateTime time0 = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
+    application.setEndTime(time0.plusDays(100));
+    applicationIds.add(applicationDao.insert(application).getId());
+    application.setEndTime(time0.plusDays(30));
+    applicationIds.add(applicationDao.insert(application).getId());
+    application.setEndTime(time0.plusDays(10));
+    applicationIds.add(applicationDao.insert(application).getId());
+
+    // Find all that end within two weeks -- should return only the last
+    List<Integer> matches = applicationDao.findByEndTime(time0, time0.plusDays(14), Collections.emptyList(),
+        Collections.emptyList());
+    assertEquals(1, matches.size());
+    assertEquals(applicationIds.get(2), matches.get(0));
+  }
+
+  @Test
+  public void testFindByEndTimeWithSpecifiers() {
+    // Insert three applications that end in different times in future, remember
+    // their ids, set different statuses for all:
+    List<Integer> applicationIds = new ArrayList<>();
+    Application application = testCommon.dummyOutdoorApplication("Test outdoor application", "Test handler EINS");
+    ZonedDateTime time0 = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
+    application.setEndTime(time0.plusDays(100));
+    applicationIds.add(applicationDao.insert(application).getId());
+    application = testCommon.dummyAreaRentalApplication("Test area rental", "Test handler ZWEI");
+    application.setEndTime(time0.plusDays(30));
+    applicationIds.add(applicationDao.insert(application).getId());
+    application = testCommon.dummyBridgeBannerApplication("Test bridge banner", "Test handler DREI");
+    application.setEndTime(time0.plusDays(10));
+    applicationIds.add(applicationDao.insert(application).getId());
+    applicationDao.updateStatus(applicationIds.get(0), StatusType.HANDLING);
+    applicationDao.updateStatus(applicationIds.get(1), StatusType.FINISHED);
+    applicationDao.updateStatus(applicationIds.get(2), StatusType.PRE_RESERVED);
+
+    // Test filters for application type ands status
+    final List<ApplicationType> TYPE_LIST = Arrays.asList(ApplicationType.SHORT_TERM_RENTAL, ApplicationType.EVENT,
+        ApplicationType.PLACEMENT_CONTRACT);
+    final List<StatusType> STATUS_LIST = Arrays.asList(StatusType.DECISIONMAKING, StatusType.HANDLING,
+        StatusType.CANCELLED, StatusType.FINISHED);
+
+    // Find all that end within one year, matching application type
+    // specifiers
+    // -- should return only the first and last
+    List<Integer> matches = applicationDao.findByEndTime(time0, time0.plusYears(1),
+        TYPE_LIST,
+        Collections.emptyList());
+    assertEquals(2, matches.size());
+    assertTrue(matches.contains(applicationIds.get(0)));
+    assertTrue(matches.contains(applicationIds.get(2)));
+
+    // Excluding sent reminders - shouldn't exclude any
+    final List<Integer> filtered = applicationDao.excludeSentReminders(matches);
+    assertEquals(2, filtered.size());
+    matches.forEach(id -> assertTrue(filtered.contains(id)));
+
+    // Mark the returned applications as "reminder sent" and filter -- should
+    // now return empty list
+    applicationDao.markReminderSent(matches);
+    final List<Integer> filtered2 = applicationDao.excludeSentReminders(matches);
+    assertTrue(filtered2.isEmpty());
+
+    // Find all that end within one year, matching application statuses
+    // -- should return only the first and second
+    matches = applicationDao.findByEndTime(time0, time0.plusYears(1), Collections.emptyList(),
+        STATUS_LIST);
+    assertEquals(2, matches.size());
+    assertTrue(matches.contains(applicationIds.get(0)));
+    assertTrue(matches.contains(applicationIds.get(1)));
+
+    // Finally, test with both type and status selectors.
+    // -- should return only the first application
+    matches = applicationDao.findByEndTime(time0, time0.plusYears(1), TYPE_LIST, STATUS_LIST);
+    assertEquals(1, matches.size());
+    assertTrue(matches.contains(applicationIds.get(0)));
+  }
+
+  @Test
+  public void testMarkReminderSent() {
+    // Insert three applications that end in different times in future, remember
+    // their ids:
+    List<Integer> applicationIds = new ArrayList<>();
+    Application application = testCommon.dummyOutdoorApplication("Test application", "Test handler");
+    ZonedDateTime time0 = ZonedDateTime.parse("2015-12-03T10:15:30+02:00");
+    application.setEndTime(time0.plusDays(100));
+    applicationIds.add(applicationDao.insert(application).getId());
+    application.setEndTime(time0.plusDays(30));
+    applicationIds.add(applicationDao.insert(application).getId());
+    application.setEndTime(time0.plusDays(10));
+    applicationIds.add(applicationDao.insert(application).getId());
+    applicationIds.add(applicationDao.insert(application).getId());
+    long inserted = applicationDao.markReminderSent(applicationIds);
+    assertEquals(applicationIds.size(), inserted);
   }
 
   private ApplicationTag createApplicationTag(ApplicationTagType applicationTagType) {
