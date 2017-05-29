@@ -17,10 +17,8 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class EventComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(private fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationState: ApplicationState) {
-    super(route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
+    super(fb, route, applicationState);
   };
 
   ngOnInit(): any {

@@ -6,8 +6,6 @@ import fi.hel.allu.common.types.ApplicationType;
  * Placement contract (sijoitussopimus) specific data.
  */
 public class PlacementContract extends ApplicationExtension {
-  private Customer representative;
-  private Contact contact;
   private String diaryNumber;
   private String additionalInfo;
   private String generalTerms;
@@ -15,30 +13,6 @@ public class PlacementContract extends ApplicationExtension {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.PLACEMENT_CONTRACT;
-  }
-
-  /**
-   * In Finnish: Asiamies
-   * @return the representative who takes care of the application.
-   */
-  public Customer getRepresentative() {
-    return representative;
-  }
-
-  public void setRepresentative(Customer representative) {
-    this.representative = representative;
-  }
-
-  /**
-   * In Finnish: Yhteyshenkilö
-   * @return the contact person of the application.
-   */
-  public Contact getContact() {
-    return contact;
-  }
-
-  public void setContact(Contact contact) {
-    this.contact = contact;
   }
 
   /**

@@ -33,6 +33,35 @@
         "phone": "0245223432",
         "active": true
       }]
+    },
+    {
+      "roleType": "CONTRACTOR",
+      "customer": {
+        "id": null,
+        "type": "COMPANY",
+        "representative": null,
+        "name": "bulvaaniremontit.com",
+        "registryKey": "342312-1",
+        "postalAddress": {
+          "streetAddress": "Turuntie 10",
+          "postalCode": "20100",
+          "city": "Turkku"
+        },
+        "email": "suorittaja@bulvaaniremontit.com",
+        "phone": "0421431234",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Bo Bulvaani",
+        "streetAddress": "Salontie 1",
+        "postalCode": "20100",
+        "city": "PL 200",
+        "email": "bo.bulvaani@bulvaaniremontit.com",
+        "phone": "0232195450",
+        "active": true
+      }]
     }
   ],
   "locations": [
@@ -194,30 +223,6 @@
   ],
   "extension": {
     "applicationType": "AREA_RENTAL",
-    "contractor": {
-      "id": null,
-      "type": "COMPANY",
-      "representative": null,
-      "name": "bulvaaniremontit.com",
-      "registryKey": "342312-1",
-      "postalAddress": {
-        "streetAddress": "Turuntie 10",
-        "postalCode": "20100",
-        "city": "Turkku"
-      },
-      "email": "suorittaja@bulvaaniremontit.com",
-      "phone": "0421431234"
-    },
-    "responsiblePerson": {
-      "id": null,
-      "applicantId": null,
-      "name": "Bo Bulvaani",
-      "streetAddress": "Salontie 1",
-      "postalCode": "20100",
-      "city": "PL 200",
-      "email": "bo.bulvaani@bulvaaniremontit.com",
-      "phone": "0232195450"
-    },
     "additionalInfo": "Remontti valmis, kun se on valmis",
     "trafficArrangements": "Eduskuntaan ei pääse, mene muualle",
     "trafficArrangementImpedimentType": "INSIGNIFICANT_IMPEDIMENT"

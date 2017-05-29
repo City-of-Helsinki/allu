@@ -11,7 +11,6 @@ import {Observable} from 'rxjs';
 import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
-import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'representative'];
 
@@ -27,12 +26,9 @@ export class CustomerComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() customerWithContacts: CustomerWithContacts;
   @Input() readonly: boolean;
-  @Input() showCopyToBilling = false;
   @Input() showRepresentative = false;
   @Input() showPropertyDeveloper = false;
-  @Input() propertyDeveloper = false;
-  @Input() representative = false;
-  @Input() addNew = false;
+  @Input() showCopyToBilling = false;
 
   customerWithContactsForm: FormGroup;
   customerForm: FormGroup;
@@ -78,6 +74,18 @@ export class CustomerComponent implements OnInit, OnDestroy {
     this.customerEvents$.next(customer);
   }
 
+  onRepresentativeChange(checked: boolean): void {
+    this.parentForm.patchValue({
+      hasRepresentative: checked
+    });
+  }
+
+  onPropertyDeveloperChange(checked: boolean): void {
+    this.parentForm.patchValue({
+      hasPropertyDeveloper: checked
+    });
+  }
+
   get customerEvents(): Observable<Customer> {
     return this.customerEvents$.asObservable();
   }
@@ -86,21 +94,16 @@ export class CustomerComponent implements OnInit, OnDestroy {
     let roleType = this.customerWithContacts.roleType;
     this.customerWithContactsForm = CustomerWithContactsForm.initialForm(this.fb, roleType);
     this.customerForm = <FormGroup>this.customerWithContactsForm.get('customer');
-    this.customerForm.addControl('propertyDeveloper', this.fb.control(false));
     this.parentForm.addControl(CustomerWithContactsForm.formName(roleType), this.customerWithContactsForm);
 
     Some(this.customerWithContacts)
+      .filter(cwc => NumberUtil.isDefined(cwc.customerId))
       .map(cwc => CustomerForm.fromCustomer(cwc.customer))
       .do(customer => {
         this.customerForm.patchValue(customer);
         this.disableCustomerEdit();
         this.customerEvents$.next(customer);
       });
-
-    this.customerForm.patchValue({
-      propertyDeveloper: this.propertyDeveloper,
-      representative: this.representative
-    });
   }
 
   private disableCustomerEdit(): void {

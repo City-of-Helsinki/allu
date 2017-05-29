@@ -1,16 +1,11 @@
 import {TimePeriod} from '../time-period';
-import {CustomerForm} from '../../../customerregistry/customer/customer.form';
-import {Contact} from '../../../../model/customer/contact';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
-import {Some} from '../../../../util/option';
 import {CableInfoEntry} from '../../../../model/application/cable-report/cable-info-entry';
 import {Application} from '../../../../model/application/application';
 import {StringUtil} from '../../../../util/string.util';
 import {ApplicationForm} from '../application-form';
 import {TimeUtil} from '../../../../util/time.util';
 import {ApplicationStatus} from '../../../../model/application/application-status';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
-import {ArrayUtil} from '../../../../util/array-util';
 
 export class CableReportForm implements ApplicationForm {
   constructor(
@@ -23,8 +18,6 @@ export class CableReportForm implements ApplicationForm {
     public propertyConnectivity?: boolean,
     public reportTimes?: TimePeriod,
     public workDescription?: string,
-    public applicant?: CustomerWithContactsForm,
-    public contractor?: CustomerWithContactsForm,
     public cableInfo?: CableInfoForm,
     public specifiers?: Array<string>
   ) {}
@@ -39,12 +32,6 @@ export class CableReportForm implements ApplicationForm {
     cableReport.emergencyWork = form.emergencyWork;
     cableReport.propertyConnectivity = form.propertyConnectivity;
     cableReport.workDescription = form.workDescription;
-
-    Some(form.contractor).do(c => {
-      // TODO: rename cable report owner and contact to match new specifications
-      cableReport.owner = CustomerForm.toCustomer(c.customer);
-      cableReport.contact = ArrayUtil.first(c.contacts);
-    });
     cableReport.specifiers = specifiers;
     return CableInfoForm.to(form.cableInfo, cableReport);
   }
@@ -61,8 +48,6 @@ export class CableReportForm implements ApplicationForm {
       cableReport.propertyConnectivity,
       new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
-      undefined, // these are added by subcomponents (application and contact)
-      undefined,
       new CableInfoForm(cableReport.mapExtractCount, cableReport.infoEntries),
       cableReport.specifiers
     );

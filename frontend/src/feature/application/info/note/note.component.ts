@@ -7,7 +7,6 @@ import {ApplicationState} from '../../../../service/application/application-stat
 import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 @Component({
   selector: 'note',
@@ -17,10 +16,8 @@ import {CustomerWithContactsForm} from '../../../customerregistry/customer/custo
 })
 export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(route: ActivatedRoute,
-              applicationState: ApplicationState,
-              private fb: FormBuilder) {
-    super(route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
+    super(fb, route, applicationState);
   };
 
   ngOnInit(): any {

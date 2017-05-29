@@ -3,7 +3,6 @@ import {BackendPostalAddress} from './backend-postal-address';
 export interface BackendCustomer {
   id: number;
   type: string;
-  representative: boolean;
   name: string;
   registryKey: string;
   postalAddress: BackendPostalAddress;

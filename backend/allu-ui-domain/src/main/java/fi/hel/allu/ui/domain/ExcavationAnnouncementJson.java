@@ -10,12 +10,6 @@ import java.time.ZonedDateTime;
  * Excavation announcement (Kaivuilmoitus) specific data.
  */
 public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
-  @NotNull(message = "{application.excavationAnnouncement.contractor}")
-  private CustomerJson contractor;
-  @NotNull(message = "{application.excavationAnnouncement.responsiblePerson}")
-  private ContactJson responsiblePerson;
-  private CustomerJson propertyDeveloper;
-  private ContactJson propertyDeveloperContact;
   private Boolean pksCard;
   private Boolean constructionWork;
   private Boolean maintenanceWork;
@@ -36,54 +30,6 @@ public class ExcavationAnnouncementJson extends ApplicationExtensionJson {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.EXCAVATION_ANNOUNCEMENT;
-  }
-
-  /**
-   * In Finnish: Työn suorittaja (yritys yleensä).
-   * The company that does the actual work instead of the party that acts as customer.
-   */
-  public CustomerJson getContractor() {
-    return contractor;
-  }
-
-  public void setContractor(CustomerJson contractor) {
-    this.contractor = contractor;
-  }
-
-  /**
-   * In Finnish: vastuuhenkilö
-   * The person responsible of the actual work.
-   */
-  public ContactJson getResponsiblePerson() {
-    return responsiblePerson;
-  }
-
-  public void setResponsiblePerson(ContactJson responsiblePerson) {
-    this.responsiblePerson = responsiblePerson;
-  }
-
-  /**
-   * In Finnish: Rakennuttaja
-   * The person ordering the construction work.
-   */
-  public CustomerJson getPropertyDeveloper() {
-    return propertyDeveloper;
-  }
-
-  public void setPropertyDeveloper(CustomerJson propertyDeveloper) {
-    this.propertyDeveloper = propertyDeveloper;
-  }
-
-  /**
-   * In Finnish: Rakennuttajan yhteyshenkilö
-   * The contact person of the property developer.
-   */
-  public ContactJson getPropertyDeveloperContact() {
-    return propertyDeveloperContact;
-  }
-
-  public void setPropertyDeveloperContact(ContactJson propertyDeveloperContact) {
-    this.propertyDeveloperContact = propertyDeveloperContact;
   }
 
   /**

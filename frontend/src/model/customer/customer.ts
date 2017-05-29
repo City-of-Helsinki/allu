@@ -4,7 +4,6 @@ export class Customer {
   constructor(
     public id?: number,
     public type?: string,
-    public representative?: boolean,
     public name?: string,
     public registryKey?: string,
     public postalAddress?: PostalAddress,

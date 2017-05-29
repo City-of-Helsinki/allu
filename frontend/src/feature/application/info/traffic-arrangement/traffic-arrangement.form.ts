@@ -10,8 +10,6 @@ import {ArrayUtil} from '../../../../util/array-util';
 export class TrafficArrangementForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
-    public applicant?: CustomerWithContactsForm,
-    public contractor?: CustomerWithContactsForm,
     public pksCard?: boolean,
     public workFinished?: Date,
     public calculatedPrice?: number,
@@ -25,10 +23,6 @@ export class TrafficArrangementForm implements ApplicationForm {
 
   static to(form: TrafficArrangementForm): TrafficArrangement {
     let arrangement = new TrafficArrangement();
-    Some(form.contractor).do(ta => {
-      arrangement.contractor = CustomerForm.toCustomer(ta.customer);
-      arrangement.responsiblePerson = ArrayUtil.first(ta.contacts);
-    });
     arrangement.pksCard = form.pksCard;
     arrangement.workFinished = form.workFinished;
     arrangement.trafficArrangements = form.trafficArrangements;
@@ -41,8 +35,6 @@ export class TrafficArrangementForm implements ApplicationForm {
   static from(application: Application, arrangement: TrafficArrangement) {
     return new TrafficArrangementForm(
       new TimePeriod(application.startTime, application.endTime),
-      undefined, // these are added by subcomponents (application and contact)
-      undefined,
       arrangement.pksCard,
       arrangement.workFinished,
       application.calculatedPriceEuro,

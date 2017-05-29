@@ -16,10 +16,8 @@ import {CableReport} from '../../../../model/application/cable-report/cable-repo
   styles: []
 })
 export class CableReportComponent extends ApplicationInfoBaseComponent implements OnInit {
-  constructor(private fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationState: ApplicationState) {
-    super(route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
+    super(fb, route, applicationState);
   };
 
   ngOnInit(): any {

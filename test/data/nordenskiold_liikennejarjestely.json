@@ -33,6 +33,35 @@
         "phone": "031234567",
         "active": true
       }]
+    },
+    {
+      "roleType": "CONTRACTOR",
+      "customer": {
+        "id": null,
+        "type": "COMPANY",
+        "representative": null,
+        "name": "Liikennejärjestelyt.com",
+        "registryKey": "43124123-1",
+        "postalAddress": {
+          "streetAddress": "Tampereentie 1",
+          "postalCode": "32312",
+          "city": "Hämeenlinna"
+        },
+        "email": "suorittaja@liikennejarjestelyt.com",
+        "phone": "0421431234",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Väinö Vastuuton",
+        "streetAddress": "234124",
+        "postalCode": "03042",
+        "city": "PL 100",
+        "email": "vaino.vastuuton@vastuuttomuus.net",
+        "phone": "03123352",
+        "active": true
+      }]
     }
   ],
   "locations": [
@@ -102,30 +131,6 @@
   ],
   "extension": {
     "applicationType": "TEMPORARY_TRAFFIC_ARRANGEMENTS",
-    "contractor": {
-      "id": null,
-      "type": "COMPANY",
-      "representative": null,
-      "name": "Liikennejärjestelyt.com",
-      "registryKey": "43124123-1",
-      "postalAddress": {
-        "streetAddress": "Tampereentie 1",
-        "postalCode": "32312",
-        "city": "Hämeenlinna"
-      },
-      "email": "suorittaja@liikennejarjestelyt.com",
-      "phone": "0421431234"
-    },
-    "responsiblePerson": {
-      "id": null,
-      "applicantId": null,
-      "name": "Väinö Vastuuton",
-      "streetAddress": "234124",
-      "postalCode": "03042",
-      "city": "PL 100",
-      "email": "vaino.vastuuton@vastuuttomuus.net",
-      "phone": "03123352"
-    },
     "pksCard": true,
     "workFinished": "2017-03-31T21:00:00.000Z",
     "trafficArrangements": "Nordenskiöldin aukio muutetaan suureksi liikenneympyräksi",

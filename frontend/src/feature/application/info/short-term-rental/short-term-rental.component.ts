@@ -3,13 +3,11 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
-import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {ShortTermRentalForm} from './short-term-rental.form';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 @Component({
   selector: 'short-term-rental',
@@ -19,10 +17,8 @@ import {CustomerWithContactsForm} from '../../../customerregistry/customer/custo
 })
 export class ShortTermRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(private fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationState: ApplicationState) {
-    super(route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
+    super(fb, route, applicationState);
   };
 
   ngOnInit(): any {

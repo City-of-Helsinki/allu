@@ -1,6 +1,6 @@
-import {OnDestroy, OnInit} from '@angular/core';
+import {OnDestroy, OnInit, AfterViewInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
-import {FormGroup} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
@@ -12,10 +12,9 @@ import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
-import {Customer} from '../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 
-export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy {
+export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterViewInit {
 
   application: Application;
   applicationForm: FormGroup;
@@ -25,22 +24,26 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
 
   private appChanges: Subscription;
   private tabChanges: Subscription;
+  private hasPropertyDeveloperCtrl: FormControl;
+  private hasRepresentativeCtrl: FormControl;
 
-  constructor(protected route: ActivatedRoute,
+  constructor(protected fb: FormBuilder,
+              protected route: ActivatedRoute,
               protected applicationState: ApplicationState) {}
 
   ngOnInit(): void {
     this.initForm();
-    this.appChanges = this.applicationState.applicationChanges.subscribe(app => {
-      this.application = app;
-      this.showTerms = app.status === ApplicationStatus[ApplicationStatus.HANDLING];
-    });
+    this.hasPropertyDeveloperCtrl = this.fb.control(false);
+    this.hasRepresentativeCtrl = this.fb.control(false);
+    this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
+    this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
+
+    this.appChanges = this.applicationState.applicationChanges.subscribe(app => this.onApplicationChange(app));
 
     UrlUtil.urlPathContains(this.route.parent, 'summary')
       .filter(contains => contains)
       .forEach(summary => {
         this.readonly = summary;
-        this.applicationForm.disable();
       });
 
     this.tabChanges = this.applicationState.tabChange.subscribe(tab => {
@@ -49,6 +52,12 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
         this.applicationState.application = this.update(this.applicationForm.value);
       }
     });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.readonly) {
+      this.applicationForm.disable();
+    }
   }
 
   ngOnDestroy(): any {
@@ -82,6 +91,14 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
         });
   }
 
+  get hasPropertyDeveloper(): boolean {
+    return this.hasPropertyDeveloperCtrl.value;
+  }
+
+  get hasRepresentative(): boolean {
+    return this.hasRepresentativeCtrl.value;
+  }
+
   /**
    * Updates application based on given form and returns updated application
    */
@@ -103,12 +120,18 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy 
   private getCustomers(form: ApplicationForm): Array<CustomerWithContacts> {
     let customers = [];
     Some(form.applicant).do(applicant => customers.push(CustomerWithContactsForm.toCustomerWithContacts(applicant)));
-    /*
-    * TODO: Enable when all customers are stored in application.customersWithContacts
     Some(form.contractor).do(contractor => customers.push(CustomerWithContactsForm.toCustomerWithContacts(contractor)));
     Some(form.propertyDeveloper).do(pd => customers.push(CustomerWithContactsForm.toCustomerWithContacts(pd)));
     Some(form.representative).do(representative => customers.push(CustomerWithContactsForm.toCustomerWithContacts(representative)));
-    */
     return customers;
+  }
+
+  private onApplicationChange(app: Application): void {
+    this.application = app;
+    this.showTerms = app.status === ApplicationStatus[ApplicationStatus.HANDLING];
+    this.applicationForm.patchValue({
+      hasPropertyDeveloper: app.propertyDeveloper.customerId,
+      hasRepresentative: app.representative.customerId
+    });
   }
 }

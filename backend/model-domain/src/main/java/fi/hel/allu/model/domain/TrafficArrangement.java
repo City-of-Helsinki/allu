@@ -9,8 +9,6 @@ import java.time.ZonedDateTime;
  * Traffic arrangement (väliaikainen liikennejärjestely) specific data.
  */
 public class TrafficArrangement extends ApplicationExtension {
-  private Customer contractor;
-  private Contact responsiblePerson;
   private Boolean pksCard;
   private ZonedDateTime workFinished;
   private String additionalInfo;
@@ -20,30 +18,6 @@ public class TrafficArrangement extends ApplicationExtension {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS;
-  }
-
-  /**
-   * In Finnish: Työn suorittaja (yritys yleensä).
-   * The company that does the actual work instead of the party that acts as customer.
-   */
-  public Customer getContractor() {
-    return contractor;
-  }
-
-  public void setContractor(Customer contractor) {
-    this.contractor = contractor;
-  }
-
-  /**
-   * In Finnish: vastuuhenkilö
-   * The person responsible of the actual work.
-   */
-  public Contact getResponsiblePerson() {
-    return responsiblePerson;
-  }
-
-  public void setResponsiblePerson(Contact responsiblePerson) {
-    this.responsiblePerson = responsiblePerson;
   }
 
   /**

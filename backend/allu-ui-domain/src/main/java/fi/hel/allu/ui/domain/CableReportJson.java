@@ -10,8 +10,6 @@ public class CableReportJson extends ApplicationExtensionJson {
   private Boolean cableSurveyRequired;
   private String cableReportId;
   private String workDescription;
-  private CustomerJson owner;
-  private ContactJson contact;
   private Integer mapExtractCount;
   private List<CableInfoEntryJson> infoEntries;
   private Boolean mapUpdated;
@@ -61,32 +59,6 @@ public class CableReportJson extends ApplicationExtensionJson {
 
   public void setWorkDescription(String workDescription) {
     this.workDescription = workDescription;
-  }
-
-  /**
-   * Get the cable report owner (in Finnish: "Omistaja")
-   *
-   * @return the owner
-   */
-  public CustomerJson getOwner() {
-    return owner;
-  }
-
-  public void setOwner(CustomerJson owner) {
-    this.owner = owner;
-  }
-
-  /**
-   * Get the cable report contact (in Finnish: "Yhteyshenkilö")
-   *
-   * @return the contact
-   */
-  public ContactJson getContact() {
-    return contact;
-  }
-
-  public void setContact(ContactJson contact) {
-    this.contact = contact;
   }
 
   /**

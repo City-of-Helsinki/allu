@@ -4,12 +4,10 @@ import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {AreaRental} from '../../../../model/application/area-rental/area-rental';
 import {AreaRentalForm} from './area-rental.form';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 
 @Component({
@@ -20,10 +18,8 @@ import {CustomerWithContactsForm} from '../../../customerregistry/customer/custo
 })
 export class AreaRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(private fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationState: ApplicationState) {
-    super(route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
+    super(fb, route, applicationState);
   };
 
   ngOnInit(): any {

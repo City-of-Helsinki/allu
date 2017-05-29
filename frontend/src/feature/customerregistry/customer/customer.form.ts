@@ -7,7 +7,6 @@ export class CustomerForm {
   constructor(
     public id?: number,
     public type?: string,
-    public representative?: boolean,
     public name?: string,
     public registryKey?: string,
     public country?: string,
@@ -21,7 +20,6 @@ export class CustomerForm {
     return new CustomerForm(
       customer.id,
       customer.type,
-      customer.representative,
       customer.name,
       customer.registryKey,
       'Suomi',
@@ -36,7 +34,6 @@ export class CustomerForm {
     let customer = new Customer();
     customer.id = form.id;
     customer.type = form.type;
-    customer.representative = form.representative;
     customer.name = form.name;
     customer.registryKey = form.registryKey;
     customer.postalAddress = form.postalAddress;

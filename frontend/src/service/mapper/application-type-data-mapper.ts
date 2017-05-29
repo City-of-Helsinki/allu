@@ -51,18 +51,12 @@ export class ApplicationTypeDataMapper {
           backendExtension.propertyConnectivity,
           backendExtension.cableReportId,
           backendExtension.workDescription,
-          backendExtension.owner,
-          backendExtension.contact,
           backendExtension.mapExtractCount,
           backendExtension.infoEntries
         );
       case ApplicationType.EXCAVATION_ANNOUNCEMENT:
         return new ExcavationAnnouncement(
           backendExtension.specifiers,
-          backendExtension.contractor,
-          backendExtension.responsiblePerson,
-          backendExtension.propertyDeveloper,
-          backendExtension.propertyDeveloperContact,
           backendExtension.pksCard,
           backendExtension.constructionWork,
           backendExtension.maintenanceWork,
@@ -85,8 +79,6 @@ export class ApplicationTypeDataMapper {
       case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
         return new TrafficArrangement(
           backendExtension.specifiers,
-          backendExtension.contractor,
-          backendExtension.responsiblePerson,
           backendExtension.pksCard,
           TimeUtil.dateFromBackend(backendExtension.workFinished),
           backendExtension.trafficArrangements,
@@ -97,8 +89,6 @@ export class ApplicationTypeDataMapper {
       case ApplicationType.PLACEMENT_CONTRACT:
         return new PlacementContract(
           backendExtension.specifiers,
-          backendExtension.representative,
-          backendExtension.contact,
           backendExtension.diaryNumber,
           backendExtension.additionalInfo,
           backendExtension.generalTerms,
@@ -106,8 +96,6 @@ export class ApplicationTypeDataMapper {
         );
       case ApplicationType.AREA_RENTAL:
         return new AreaRental(
-          backendExtension.contractor,
-          backendExtension.responsiblePerson,
           TimeUtil.dateFromBackend(backendExtension.workFinished),
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,

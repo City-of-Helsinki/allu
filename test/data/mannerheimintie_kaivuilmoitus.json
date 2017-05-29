@@ -38,6 +38,33 @@
         "phone": "0441212121",
         "active": true
       }]
+    },
+    {
+      "roleType": "CONTRACTOR",
+      "customer": {
+        "type": "COMPANY",
+        "person": null,
+        "id": null,
+        "name": "Maken kaivu",
+        "registryKey": "1313131-6",
+        "postalAddress": {
+          "streetAddress": "Kaivokuja 5",
+          "postalCode": "00100",
+          "city": "Helsinki"
+        },
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Make Morottaja",
+        "streetAddress": "Kaivokuja 6",
+        "postalCode": "00111",
+        "city": "Helsinki",
+        "email": "make@kaivu.fi",
+        "phone": "04431313131",
+        "active": true
+      }]
     }
   ],
   "locations": [
@@ -137,28 +164,6 @@
   ],
   "extension": {
     "applicationType": "EXCAVATION_ANNOUNCEMENT",
-    "contractor": {
-      "type": "COMPANY",
-      "person": null,
-      "id": null,
-      "name": "Maken kaivu",
-      "registryKey": "1313131-6",
-      "postalAddress": {
-        "streetAddress": "Kaivokuja 5",
-        "postalCode": "00100",
-        "city": "Helsinki"
-      }
-    },
-    "responsiblePerson": {
-      "id": null,
-      "applicantId": null,
-      "name": "Make Morottaja",
-      "streetAddress": "Kaivokuja 6",
-      "postalCode": "00111",
-      "city": "Helsinki",
-      "email": "make@kaivu.fi",
-      "phone": "04431313131"
-    },
     "guaranteeEndTime": "2019-03-31T22:00:00Z",
     "additionalInfo": "Automaagisesti tehty kaivuilmoitus",
     "traffixArrangements": "Mannerheimintie kokonaan poikki. Koittakaa selvitä!",

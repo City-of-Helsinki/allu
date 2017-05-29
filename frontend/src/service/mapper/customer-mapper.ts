@@ -19,7 +19,6 @@ export class CustomerMapper {
       return new Customer(
         backendCustomer.id,
         backendCustomer.type,
-        backendCustomer.representative,
         backendCustomer.name,
         backendCustomer.registryKey,
         postalAddress,
@@ -36,7 +35,6 @@ export class CustomerMapper {
     {
       id: customer.id,
       type: customer.type,
-      representative: customer.representative,
       name: customer.name,
       registryKey: customer.registryKey,
       postalAddress: (customer.postalAddress) ?

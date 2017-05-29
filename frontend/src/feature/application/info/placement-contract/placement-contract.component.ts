@@ -8,7 +8,6 @@ import {ApplicationState} from '../../../../service/application/application-stat
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
 import {PlacementContractForm} from './placement-contract.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 
 @Component({
@@ -19,10 +18,8 @@ import {CustomerWithContactsForm} from '../../../customerregistry/customer/custo
 })
 export class PlacementContractComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(private fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationState: ApplicationState) {
-    super(route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
+    super(fb, route, applicationState);
   };
 
   ngOnInit(): any {

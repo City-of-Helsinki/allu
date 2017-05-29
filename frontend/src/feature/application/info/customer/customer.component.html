@@ -8,15 +8,21 @@
             <md-card-content>
                 <customer-info [form]="customerForm" [allowSearch]="true"
                                (customerChange)="onCustomerChange($event)"></customer-info>
-                <div *ngIf="!readonly" class="row form-group">
-                    <div class="col m6" *ngIf="showCopyToBilling">
+                <div class="row form-group">
+                    <div class="col m6" *ngIf="showCopyToBilling && !readonly">
                         <md-checkbox>Kopioi tiedot laskutusosoitteeksi</md-checkbox>
                     </div>
                     <div class="col m6 height-fix-bottom" *ngIf="showRepresentative">
-                        <md-checkbox formControlName="representative">Asiaa hoitaa asiamies</md-checkbox>
+                        <md-checkbox [checked]="parentForm.value.hasRepresentative" [disabled]="readonly"
+                                     (change)="onRepresentativeChange($event.checked)">
+                            Asiaa hoitaa asiamies
+                        </md-checkbox>
                     </div>
                     <div class="col m6 height-fix-bottom" *ngIf="showPropertyDeveloper">
-                        <md-checkbox formControlName="propertyDeveloper">Hakemuksella on rakennuttaja</md-checkbox>
+                        <md-checkbox [checked]="parentForm.value.hasPropertyDeveloper" [disabled]="readonly"
+                                     (change)="onPropertyDeveloperChange($event.checked)">
+                            Hakemuksella on rakennuttaja
+                        </md-checkbox>
                     </div>
                 </div>
             </md-card-content>
@@ -25,5 +31,5 @@
 </form>
 <contact [parentForm]="customerWithContactsForm" [customerId]="customerWithContacts.customerId"
          [contactList]="customerWithContacts.contacts" [customerRoleType]="customerWithContacts.uiRoleType"
-         [customerEvents]="customerEvents" [readonly]="readonly" [addNew]="true"
+         [customerEvents]="customerEvents" [readonly]="readonly"
 ></contact>

@@ -457,8 +457,6 @@ public class ApplicationMapper {
   private AreaRental createAreaRentalModel(AreaRentalJson areaRentalJson) {
     AreaRental areaRental = new AreaRental();
 
-    areaRental.setContractor(createCustomerModel(areaRentalJson.getContractor()));
-    areaRental.setResponsiblePerson(createContactModel(areaRentalJson.getResponsiblePerson()));
     areaRental.setAdditionalInfo(areaRentalJson.getAdditionalInfo());
     areaRental.setTrafficArrangements(areaRentalJson.getTrafficArrangements());
     areaRental.setTrafficArrangementImpedimentType(areaRentalJson.getTrafficArrangementImpedimentType());
@@ -472,8 +470,6 @@ public class ApplicationMapper {
   private AreaRentalJson createAreaRentalJson(AreaRental areaRental) {
     AreaRentalJson areaRentalJson = new AreaRentalJson();
 
-    areaRentalJson.setContractor(createCustomerJson(areaRental.getContractor()));
-    areaRentalJson.setResponsiblePerson(createContactJson(areaRental.getResponsiblePerson()));
     areaRentalJson.setAdditionalInfo(areaRental.getAdditionalInfo());
     areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
     areaRentalJson.setTrafficArrangementImpedimentType(areaRental.getTrafficArrangementImpedimentType());
@@ -488,10 +484,6 @@ public class ApplicationMapper {
     CableReport cableReport = new CableReport();
     cableReport.setCableReportId(cableReportJson.getCableReportId());
     cableReport.setWorkDescription(cableReportJson.getWorkDescription());
-    Optional.ofNullable(cableReportJson.getOwner())
-        .ifPresent(owner -> cableReport.setOwner(createCustomerModel(owner)));
-    Optional.ofNullable(cableReportJson.getContact())
-        .ifPresent(contact -> cableReport.setContact(createContactModel(contact)));
     cableReport.setMapExtractCount(cableReportJson.getMapExtractCount());
     cableReport.setCableSurveyRequired(cableReportJson.getCableSurveyRequired());
     List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
@@ -513,10 +505,6 @@ public class ApplicationMapper {
     CableReportJson cableReportJson = new CableReportJson();
     cableReportJson.setCableReportId(cableReport.getCableReportId());
     cableReportJson.setWorkDescription(cableReport.getWorkDescription());
-    Optional.ofNullable(cableReport.getOwner())
-        .ifPresent(owner -> cableReportJson.setOwner(createCustomerJson(owner)));
-    Optional.ofNullable(cableReport.getContact())
-        .ifPresent(contact -> cableReportJson.setContact(createContactJson(contact)));
     cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
     cableReportJson.setCableSurveyRequired(cableReport.isCableSurveyRequired());
     List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
@@ -535,15 +523,7 @@ public class ApplicationMapper {
     ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
     json.setAdditionalInfo(model.getAdditionalInfo());
     json.setCableReportId(model.getCableReportId());
-    json.setContractor(createCustomerJson(model.getContractor()));
     json.setGuaranteeEndTime(model.getGuaranteeEndTime());
-    json.setResponsiblePerson(createContactJson(model.getResponsiblePerson()));
-    Optional.ofNullable(model.getPropertyDeveloper())
-        .map(developer -> createCustomerJson(developer))
-        .ifPresent(developer -> json.setPropertyDeveloper(developer));
-    Optional.ofNullable(model.getPropertyDeveloperContact())
-        .map(contact -> createContactJson(contact))
-        .ifPresent(contact -> json.setPropertyDeveloperContact(contact));
     json.setSummerTimeOperation(model.getSummerTimeOperation());
     json.setWinterTimeOperation(model.getWinterTimeOperation());
     json.setWorkFinished(model.getWorkFinished());
@@ -563,15 +543,7 @@ public class ApplicationMapper {
     ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
     excavationAnnouncement.setAdditionalInfo(excavationAnnouncementJson.getAdditionalInfo());
     excavationAnnouncement.setCableReportId(excavationAnnouncementJson.getCableReportId());
-    excavationAnnouncement.setContractor(createCustomerModel(excavationAnnouncementJson.getContractor()));
     excavationAnnouncement.setGuaranteeEndTime(excavationAnnouncementJson.getGuaranteeEndTime());
-    excavationAnnouncement.setResponsiblePerson(createContactModel(excavationAnnouncementJson.getResponsiblePerson()));
-    Optional.ofNullable(excavationAnnouncementJson.getPropertyDeveloper())
-        .map(developer -> createCustomerModel(developer))
-        .ifPresent(developer -> excavationAnnouncement.setPropertyDeveloper(developer));
-    Optional.ofNullable(excavationAnnouncementJson.getPropertyDeveloperContact())
-        .map(contact -> createContactModel(contact))
-        .ifPresent(contact -> excavationAnnouncement.setPropertyDeveloperContact(contact));
     excavationAnnouncement.setSummerTimeOperation(excavationAnnouncementJson.getSummerTimeOperation());
     excavationAnnouncement.setWinterTimeOperation(excavationAnnouncementJson.getWinterTimeOperation());
     excavationAnnouncement.setWorkFinished(excavationAnnouncementJson.getWorkFinished());
@@ -615,12 +587,6 @@ public class ApplicationMapper {
 
   private ApplicationExtensionJson createPlacementContractJson(PlacementContract placementContract) {
     PlacementContractJson placementContractJson = new PlacementContractJson();
-    Optional.ofNullable(placementContract.getRepresentative())
-            .map(representative -> createCustomerJson(representative))
-            .ifPresent(representative -> placementContractJson.setRepresentative(representative));
-    Optional.ofNullable(placementContract.getContact())
-            .map(contact -> createContactJson(contact))
-            .ifPresent(contact -> placementContractJson.setContact(contact));
     placementContractJson.setDiaryNumber(placementContract.getDiaryNumber());
     placementContractJson.setAdditionalInfo(placementContract.getAdditionalInfo());
     placementContractJson.setGeneralTerms(placementContract.getGeneralTerms());
@@ -629,12 +595,6 @@ public class ApplicationMapper {
 
   private ApplicationExtension createPlacementContractModel(PlacementContractJson placementContractJson) {
     PlacementContract placementContract = new PlacementContract();
-    Optional.ofNullable(placementContractJson.getRepresentative())
-            .map(representative -> createCustomerModel(representative))
-            .ifPresent(representative -> placementContract.setRepresentative(representative));
-    Optional.ofNullable(placementContractJson.getContact())
-            .map(contact -> createContactModel(contact))
-            .ifPresent(contact -> placementContract.setContact(contact));
     placementContract.setDiaryNumber(placementContractJson.getDiaryNumber());
     placementContract.setAdditionalInfo(placementContractJson.getAdditionalInfo());
     placementContract.setGeneralTerms(placementContractJson.getGeneralTerms());
@@ -643,8 +603,6 @@ public class ApplicationMapper {
 
   private TrafficArrangementJson createTrafficArrangementJson(TrafficArrangement trafficArrangement) {
     TrafficArrangementJson trafficArrangementJson = new TrafficArrangementJson();
-    trafficArrangementJson.setContractor(createCustomerJson(trafficArrangement.getContractor()));
-    trafficArrangementJson.setResponsiblePerson(createContactJson(trafficArrangement.getResponsiblePerson()));
     trafficArrangementJson.setPksCard(trafficArrangement.getPksCard());
     trafficArrangementJson.setWorkFinished(trafficArrangement.getWorkFinished());
     trafficArrangementJson.setAdditionalInfo(trafficArrangement.getAdditionalInfo());
@@ -655,8 +613,6 @@ public class ApplicationMapper {
 
   private TrafficArrangement createTrafficArrangementModel(TrafficArrangementJson trafficArrangementJson) {
     TrafficArrangement trafficArrangement = new TrafficArrangement();
-    trafficArrangement.setContractor(createCustomerModel(trafficArrangementJson.getContractor()));
-    trafficArrangement.setResponsiblePerson(createContactModel(trafficArrangementJson.getResponsiblePerson()));
     trafficArrangement.setPksCard(trafficArrangementJson.getPksCard());
     trafficArrangement.setWorkFinished(trafficArrangementJson.getWorkFinished());
     trafficArrangement.setAdditionalInfo(trafficArrangementJson.getAdditionalInfo());

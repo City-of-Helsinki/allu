@@ -10,10 +10,6 @@ import java.time.ZonedDateTime;
  * Area rental (aluevuokraus) specific data.
  */
 public class AreaRentalJson extends ApplicationExtensionJson {
-  @NotNull(message = "{application.arearental.contractor}")
-  private CustomerJson contractor;
-  @NotNull(message = "{application.arearental.responsiblePerson}")
-  private ContactJson responsiblePerson;
   private String additionalInfo;
   private String trafficArrangements;
   private ZonedDateTime workFinished;
@@ -23,30 +19,6 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.AREA_RENTAL;
-  }
-
-  /**
-   * In Finnish: Työn suorittaja (yritys yleensä).
-   * The company that does the actual work instead of the party that acts as customer.
-   */
-  public CustomerJson getContractor() {
-    return contractor;
-  }
-
-  public void setContractor(CustomerJson contractor) {
-    this.contractor = contractor;
-  }
-
-  /**
-   * In Finnish: vastuuhenkilö
-   * The person responsible of the actual work.
-   */
-  public ContactJson getResponsiblePerson() {
-    return responsiblePerson;
-  }
-
-  public void setResponsiblePerson(ContactJson responsiblePerson) {
-    this.responsiblePerson = responsiblePerson;
   }
 
   /**

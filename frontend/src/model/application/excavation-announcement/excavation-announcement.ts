@@ -1,17 +1,11 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
-import {Contact} from '../../customer/contact';
 import {TimeUtil} from '../../../util/time.util';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
-import {Customer} from '../../customer/customer';
 
 export class ExcavationAnnouncement extends ApplicationExtension {
   constructor(
     public specifiers?: Array<string>,
-    public contractor?: Customer,
-    public responsiblePerson?: Contact,
-    public propertyDeveloper?: Customer,
-    public propertyDeveloperContact?: Contact,
     public pksCard?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
@@ -80,13 +74,5 @@ export class ExcavationAnnouncement extends ApplicationExtension {
 
   set uiGuaranteeEndTime(dateString: string) {
     this.guaranteeEndTime = TimeUtil.getDateFromUi(dateString);
-  }
-
-  get responsiblePersonList(): Array<Contact> {
-    return this.responsiblePerson ? [this.responsiblePerson] : undefined;
-  }
-
-  get propertyDeveloperContactList(): Array<Contact> {
-    return this.propertyDeveloperContact ? [this.propertyDeveloperContact] : undefined;
   }
 }

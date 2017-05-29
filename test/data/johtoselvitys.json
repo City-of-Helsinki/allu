@@ -28,36 +28,41 @@
         "phone": null,
         "active": true
       }]
+    },
+    {
+      "roleType": "PROPERTY_DEVELOPER",
+      "customer": {
+        "registryKey": "234",
+        "phone": "",
+        "representative": null,
+        "type": "COMPANY",
+        "id": null,
+        "postalAddress": {
+          "city": "",
+          "streetAddress": "",
+          "postalCode": ""
+        },
+        "email": "",
+        "name": "Ollin Ojitus",
+        "active": true
+      },
+      "contacts": [{
+        "email": null,
+        "name": "Olli",
+        "applicantId": null,
+        "id": null,
+        "postalCode": null,
+        "streetAddress": null,
+        "city": null,
+        "phone": null,
+        "active": true
+      }]
     }
   ],
   "kind": "STREET_AND_GREEN",
   "type": "CABLE_REPORT",
   "extension": {
-    "owner": {
-      "registryKey": "234",
-      "phone": "",
-      "representative": null,
-      "type": "COMPANY",
-      "id": null,
-      "postalAddress": {
-        "city": "",
-        "streetAddress": "",
-        "postalCode": ""
-      },
-      "email": "",
-      "name": "Ollin Ojitus"
-    },
     "mapExtractCount": 0,
-    "contact": {
-      "email": null,
-      "name": "Olli",
-      "applicantId": null,
-      "id": null,
-      "postalCode": null,
-      "streetAddress": null,
-      "city": null,
-      "phone": null
-    },
     "specifiers": [],
     "cableSurveyRequired": true,
     "applicationType": "CABLE_REPORT",

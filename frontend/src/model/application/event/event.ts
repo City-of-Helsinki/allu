@@ -2,28 +2,6 @@ import {ApplicationExtension} from '../type/application-extension';
 import {TimeUtil} from '../../../util/time.util';
 
 export class Event extends ApplicationExtension {
-  constructor()
-  constructor(nature: string,
-              description: string,
-              url: string,
-              applicationType: string,
-              eventStartTime: Date,
-              eventEndTime: Date,
-              timeExceptions: string,
-              attendees: number,
-              entryFee: number,
-              noPriceReason: string,
-              salesActivity: boolean,
-              heavyStructure: boolean,
-              ecoCompass: boolean,
-              foodSales: boolean,
-              foodProviders: string,
-              marketingProviders: string,
-              structureArea: number,
-              structureDescription: string,
-              structureStartTime: Date,
-              structureEndTime: Date,
-              terms: string)
   constructor(public nature?: string,
               public description?: string,
               public url?: string,

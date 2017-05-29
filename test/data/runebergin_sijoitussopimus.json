@@ -33,6 +33,35 @@
         "phone": "031234567",
         "active": true
       }]
+    },
+    {
+      "roleType": "REPRESENTATIVE",
+      "customer": {
+        "id": null,
+        "type": "COMPANY",
+        "representative": null,
+        "name": "sijotusfirmaoyab.com",
+        "registryKey": "45432-1",
+        "postalAddress": {
+          "streetAddress": "Kouvolankatu 1",
+          "postalCode": "50022",
+          "city": "Kouvola"
+        },
+        "email": "sijoittaja@sijoitusfirmaoyab.com",
+        "phone": "0421457564",
+        "active": true
+      },
+      "contacts": [{
+        "id": null,
+        "applicantId": null,
+        "name": "Simo Sijoittaja",
+        "streetAddress": "Kouvolantie 4",
+        "postalCode": "50321",
+        "city": "Kouvola",
+        "email": "simo.sijoittaja@sijoitusfirmaoyab.com",
+        "phone": "03123352",
+        "active": true
+      }]
     }
   ],
   "locations": [
@@ -94,30 +123,6 @@
   ],
   "extension": {
     "applicationType": "PLACEMENT_CONTRACT",
-    "representative": {
-      "id": null,
-      "type": "COMPANY",
-      "representative": null,
-      "name": "sijotusfirmaoyab.com",
-      "registryKey": "45432-1",
-      "postalAddress": {
-        "streetAddress": "Kouvolankatu 1",
-        "postalCode": "50022",
-        "city": "Kouvola"
-      },
-      "email": "sijoittaja@sijoitusfirmaoyab.com",
-      "phone": "0421457564"
-    },
-    "contact": {
-      "id": null,
-      "applicantId": null,
-      "name": "Simo Sijoittaja",
-      "streetAddress": "Kouvolantie 4",
-      "postalCode": "50321",
-      "city": "Kouvola",
-      "email": "simo.sijoittaja@sijoitusfirmaoyab.com",
-      "phone": "03123352"
-    },
     "diaryNumber": "290117/AB",
     "additionalInfo": "Lisätietoja ei juuri ole, mutta sijoitettava on",
     "generalTerms": "Ei saa rikkoa puistoa!"

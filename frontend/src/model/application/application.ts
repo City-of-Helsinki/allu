@@ -133,29 +133,15 @@ export class Application {
   }
 
   get contractor(): CustomerWithContacts {
-    // Ugly hack to fetch contractor from extension until it is moved to application
-    // TODO: fetch from customersWithContacts list when backend support is available
-    let extension: any = this.extension;
-    return new CustomerWithContacts(CustomerRoleType.CONTRACTOR, extension.contractor, [extension.responsiblePerson]);
+    return this.customerWithContactsByRole(CustomerRoleType.CONTRACTOR);
   }
 
   get propertyDeveloper(): CustomerWithContacts {
-    // Ugly hack to fetch property developer from extension until it is moved to application
-    // TODO: fetch from customersWithContacts list when backend support is available
-    let extension: any = this.extension;
-    return new CustomerWithContacts(CustomerRoleType.CONTRACTOR, extension.propertyDeveloper, [extension.propertyDeveloperContact]);
+    return this.customerWithContactsByRole(CustomerRoleType.PROPERTY_DEVELOPER);
   }
 
   get representative(): CustomerWithContacts {
-    // Ugly hack to fetch representative from extension until it is moved to application
-    // TODO: fetch from customersWithContacts list when backend support is available
-    let extension: any = this.extension;
-    return new CustomerWithContacts(CustomerRoleType.CONTRACTOR, extension.representative, [extension.contact]);
-  }
-
-  public addCustomerWithContacts(cwc: CustomerWithContacts): void {
-    this.assertUniqueCustomerRole(cwc.roleType);
-    this.customersWithContacts.push(cwc);
+    return this.customerWithContactsByRole(CustomerRoleType.REPRESENTATIVE);
   }
 
   public customerWithContactsByRole(roleType: CustomerRoleType): CustomerWithContacts {

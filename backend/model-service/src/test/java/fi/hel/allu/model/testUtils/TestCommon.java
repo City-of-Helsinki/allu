@@ -122,8 +122,6 @@ public class TestCommon {
 
   public ApplicationExtension dummyAreaRentalEvent() {
     AreaRental areaRental = new AreaRental();
-    areaRental.setContractor(new Customer());
-    areaRental.setResponsiblePerson(new Contact());
     areaRental.setAdditionalInfo("foobar additional info");
     return areaRental;
   }

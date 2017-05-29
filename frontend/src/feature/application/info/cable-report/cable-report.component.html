@@ -1,6 +1,21 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
     <div class="row">
         <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+                  [readonly]="readonly" [showPropertyDeveloper]="true"></customer>
+    </div>
+
+    <div class="row" *ngIf="hasPropertyDeveloper">
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.propertyDeveloper"
+                  [readonly]="readonly" [showCopyToBilling]="true"></customer>
+    </div>
+
+    <div class="row">
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
+                  [readonly]="readonly" [showRepresentative]="true"></customer>
+    </div>
+
+    <div class="row" *ngIf="hasRepresentative">
+        <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
                   [readonly]="readonly"></customer>
     </div>
 
@@ -73,10 +88,6 @@
                 </md-card-content>
             </md-card>
         </div>
-    </div>
-
-    <div class="row" *ngIf="applicationForm.value.cableSurveyRequired">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor" [readonly]="readonly"></customer>
     </div>
 
     <div class="row">

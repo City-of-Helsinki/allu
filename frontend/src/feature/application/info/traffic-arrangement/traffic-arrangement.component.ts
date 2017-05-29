@@ -7,7 +7,6 @@ import {ApplicationState} from '../../../../service/application/application-stat
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 
 @Component({
@@ -18,10 +17,8 @@ import {CustomerWithContactsForm} from '../../../customerregistry/customer/custo
 })
 export class TrafficArrangementComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(private fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationState: ApplicationState) {
-    super(route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
+    super(fb, route, applicationState);
   };
 
   ngOnInit(): any {

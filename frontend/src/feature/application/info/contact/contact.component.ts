@@ -9,7 +9,6 @@ import {ContactModalComponent} from '../../../customerregistry/contact/contact-m
 import {Observable, Subscription} from 'rxjs';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {Customer} from '../../../../model/customer/customer';
-import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId'];
 
@@ -27,10 +26,6 @@ export class ContactComponent implements OnInit, OnDestroy {
   @Input() customerRoleType: string;
   @Input() contactList: Array<Contact> = [];
   @Input() readonly: boolean;
-  @Input() headerText = 'Yhteyshenkilö';
-  @Input() formName = 'contacts';
-  @Input() addNew = false;
-  @Input() saveToRegistry = false;
   @Input() customerEvents: Observable<Customer>;
 
   contacts: FormArray;
@@ -96,8 +91,8 @@ export class ContactComponent implements OnInit, OnDestroy {
         name: contactCtrl.value.name,
         active: true
       });
-      contactCtrl.enable();
     }
+    contactCtrl.enable();
   }
 
   private addContact(contact: Contact = new Contact()): void {
@@ -143,6 +138,7 @@ export class ContactComponent implements OnInit, OnDestroy {
     while (this.contacts.length > 1) {
       this.contacts.removeAt(1);
     }
+    this.contacts.enable();
   }
 
   private disableContactEdit(index: number): void {

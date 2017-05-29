@@ -1,4 +1,4 @@
-import {async, ComponentFixture, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MdCardModule} from '@angular/material';
@@ -16,6 +16,7 @@ const headerText = 'Hakija';
 
 class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}
+  findCustomerActiveContacts(customerId: number) {};
 }
 
 describe('CustomerComponent', () => {
@@ -76,8 +77,9 @@ describe('CustomerComponent', () => {
     });
   });
 
-  it('should fill the form with input customer', () => {
+  it('should fill the form with input customer', fakeAsync(() => {
     let customer = new Customer();
+    customer.id = 1;
     customer.name = 'NameTest';
     customer.registryKey = '12345';
     customer.postalAddress.streetAddress = 'streetAddressTest';
@@ -87,8 +89,11 @@ describe('CustomerComponent', () => {
     customer.email = 'emailTest';
 
     comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT, customer);
+    comp.readonly = false;
+    comp.ngOnInit();
     fixture.detectChanges();
     fixture.whenStable().then(result => {
+      expect(page.registryKeyInput.value).toEqual(customer.registryKey);
       expect(page.customerNameInput.value).toEqual(customer.name);
       expect(page.registryKeyInput.value).toEqual(customer.registryKey);
       expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
@@ -97,7 +102,7 @@ describe('CustomerComponent', () => {
       expect(page.customerPhoneInput.value).toEqual(customer.phone);
       expect(page.customerEmailInput.value).toEqual(customer.email);
     });
-  });
+  }));
 
   it('should disable fields if readonly', () => {
     comp.readonly = true;

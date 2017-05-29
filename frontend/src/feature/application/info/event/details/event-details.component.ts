@@ -39,10 +39,6 @@ export class EventDetailsComponent implements OnInit {
 
     let event = this.event(application);
     this.eventForm.patchValue(EventDetailsForm.fromEvent(application, event));
-
-    if (this.readonly) {
-      this.eventForm.disable();
-    }
   }
 
   private initForm(): void {
