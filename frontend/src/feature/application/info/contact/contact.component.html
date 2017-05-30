@@ -5,12 +5,12 @@
                 <md-card>
                     <md-card-title>
                         {{['contact.role', customerRoleType, 'title'] | translation}}
-                        <button md-icon-button type="button"
+                        <button md-icon-button type="button" class="align-with-text"
                                 *ngIf="canBeEdited(contact.value)"
                                 (click)="edit(contact.value.id, index)">
                             <md-icon>mode_edit</md-icon>
                         </button>
-                        <button md-icon-button type="button"
+                        <button md-icon-button type="button" class="align-with-text"
                                 *ngIf="canBeRemoved()"
                                 (click)="remove(index)">
                             <md-icon>clear</md-icon>
@@ -71,12 +71,6 @@
                                         <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
                                     </md-hint>
                                 </md-input-container>
-                            </div>
-                        </div>
-                        <div *ngIf="!readonly" class="row form-group">
-                            <div class="col m12">
-                                <button md-raised-button type="button" color="primary"
-                                        (click)="addContact()">UUSI YHTEYSHENKILÖ</button>
                             </div>
                         </div>
                     </md-card-content>

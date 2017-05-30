@@ -3,7 +3,12 @@
         <md-card class="customer-card">
             <md-card-title>
                 {{['customer.role', customerWithContacts.uiRoleType, 'title'] | translation}}
-                <button md-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()"><md-icon>mode_edit</md-icon></button>
+                <button md-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()" class="align-with-text">
+                    <md-icon>mode_edit</md-icon>
+                </button>
+                <button md-icon-button type="button" *ngIf="!readonly" (click)="contacts.addContact()" class="align-with-text">
+                    <md-icon>group_add</md-icon>
+                </button>
             </md-card-title>
             <md-card-content>
                 <customer-info [form]="customerForm" [allowSearch]="true"
@@ -29,7 +34,7 @@
         </md-card>
     </div>
 </form>
-<contact [parentForm]="customerWithContactsForm" [customerId]="customerWithContacts.customerId"
+<contact #contacts [parentForm]="customerWithContactsForm" [customerId]="customerWithContacts.customerId"
          [contactList]="customerWithContacts.contacts" [customerRoleType]="customerWithContacts.uiRoleType"
-         [customerEvents]="customerEvents" [readonly]="readonly"
-></contact>
+         [readonly]="readonly" [contactRequired]="contactRequired">
+</contact>

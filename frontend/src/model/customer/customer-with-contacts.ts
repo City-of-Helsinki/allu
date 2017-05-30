@@ -7,7 +7,7 @@ export class CustomerWithContacts {
   constructor(
     public roleType?: CustomerRoleType,
     public customer: Customer = new Customer(),
-    public contacts: Array<Contact> = [new Contact()]) {
+    public contacts: Array<Contact> = []) {
   }
 
   get customerId(): number {

@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {Contact} from '../../../../model/customer/contact';
@@ -6,9 +6,8 @@ import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
-import {Customer} from '../../../../model/customer/customer';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId'];
 
@@ -20,20 +19,19 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId'];
     require('./contact.component.scss')
   ]
 })
-export class ContactComponent implements OnInit, OnDestroy {
+export class ContactComponent implements OnInit {
   @Input() parentForm: FormGroup;
   @Input() customerId: number;
   @Input() customerRoleType: string;
   @Input() contactList: Array<Contact> = [];
   @Input() readonly: boolean;
-  @Input() customerEvents: Observable<Customer>;
+  @Input() contactRequired = false;
 
   contacts: FormArray;
   availableContacts: Observable<Array<Contact>>;
   matchingContacts: Observable<Array<Contact>>;
 
   private dialogRef: MdDialogRef<ContactModalComponent>;
-  private customerSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
               private dialog: MdDialog,
@@ -42,9 +40,6 @@ export class ContactComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initContacts();
 
-    this.contactList = Some(this.contactList).orElse([new Contact()]);
-    this.contactList.forEach(contact => this.addContact(contact));
-
     if (this.readonly) {
       this.contacts.disable();
     }
@@ -52,12 +47,6 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.availableContacts = Some(this.customerId)
       .map(id => this.customerHub.findCustomerActiveContacts(id))
       .orElse(Observable.of([]));
-
-    this.customerSubscription = this.customerEvents.subscribe(a => this.onCustomerChange(a));
-  }
-
-  ngOnDestroy(): void {
-    this.customerSubscription.unsubscribe();
   }
 
   contactSelected(contact: Contact, index: number): void {
@@ -70,7 +59,9 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   canBeRemoved(): boolean {
-    return this.contacts.length > 1 && !this.readonly;
+    const contactCanBeRemoved = !this.contactRequired || (this.contacts.length > 1);
+    const canBeEdited = !this.readonly;
+    return contactCanBeRemoved && canBeEdited;
   }
 
   edit(id: number, index: number): void {
@@ -93,6 +84,13 @@ export class ContactComponent implements OnInit, OnDestroy {
       });
     }
     contactCtrl.enable();
+  }
+
+  onCustomerChange(customerId: number) {
+    this.resetContacts();
+    if (NumberUtil.isDefined(customerId)) {
+      this.availableContacts = this.customerHub.findCustomerActiveContacts(customerId);
+    }
   }
 
   private addContact(contact: Contact = new Contact()): void {
@@ -122,15 +120,12 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.contacts.removeAt(index);
   }
 
-  private onCustomerChange(customer: Customer) {
-    this.resetContacts();
-    if (NumberUtil.isDefined(customer.id)) {
-      this.availableContacts = this.customerHub.findCustomerActiveContacts(customer.id);
-    }
-  }
-
   private initContacts(): void {
     this.contacts = <FormArray>this.parentForm.get('contacts');
+    const defaultContactList = this.contactRequired ? [new Contact()] : [];
+    this.contactList = Some(this.contactList).orElse(defaultContactList);
+    this.contactList.forEach(contact => this.addContact(contact));
+
   }
 
   private resetContacts(): void {

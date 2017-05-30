@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild, AfterViewInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
@@ -11,6 +11,7 @@ import {Observable} from 'rxjs';
 import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {ContactComponent} from '../contact/contact.component';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'representative'];
 
@@ -29,10 +30,12 @@ export class CustomerComponent implements OnInit, OnDestroy {
   @Input() showRepresentative = false;
   @Input() showPropertyDeveloper = false;
   @Input() showCopyToBilling = false;
+  @Input() contactRequired = false;
+
+  @ViewChild('contacts') contacts: ContactComponent;
 
   customerWithContactsForm: FormGroup;
   customerForm: FormGroup;
-  customerEvents$ = new Subject<Customer>();
 
   private dialogRef: MdDialogRef<CustomerModalComponent>;
 
@@ -71,7 +74,8 @@ export class CustomerComponent implements OnInit, OnDestroy {
     if (NumberUtil.isDefined(customer.id)) {
       this.disableCustomerEdit();
     }
-    this.customerEvents$.next(customer);
+
+    this.contacts.onCustomerChange(customer.id);
   }
 
   onRepresentativeChange(checked: boolean): void {
@@ -86,10 +90,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
     });
   }
 
-  get customerEvents(): Observable<Customer> {
-    return this.customerEvents$.asObservable();
-  }
-
   private initForm() {
     let roleType = this.customerWithContacts.roleType;
     this.customerWithContactsForm = CustomerWithContactsForm.initialForm(this.fb, roleType);
@@ -102,7 +102,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
       .do(customer => {
         this.customerForm.patchValue(customer);
         this.disableCustomerEdit();
-        this.customerEvents$.next(customer);
       });
   }
 
