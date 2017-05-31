@@ -1,4 +1,4 @@
-<div [formGroup]="contactsForm">
+<div [formGroup]="parentForm">
     <div formArrayName="contacts">
         <ng-container *ngFor="let contact of contacts.controls; let index=index">
             <div class="col m6 loose" *ngIf="contact.value.active">

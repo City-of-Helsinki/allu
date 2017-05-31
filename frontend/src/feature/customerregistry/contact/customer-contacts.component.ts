@@ -19,7 +19,6 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() onAddContact: Observable<Contact> = Observable.empty();
 
-  contactsForm: FormGroup;
   contacts: FormArray;
 
   private contactSubscription: Subscription;
@@ -27,11 +26,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private customerHub: CustomerHub) {}
 
   ngOnInit(): void {
-    this.contacts = this.fb.array([]);
-    this.contactsForm = this.fb.group({
-      contacts: this.contacts
-    });
-    this.parentForm.addControl('contacts', this.contacts);
+    this.contacts = <FormArray>this.parentForm.get('contacts');
     this.contactSubscription = this.onAddContact.subscribe(c => this.addContact(c));
 
     this.route.params
@@ -57,7 +52,7 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
     } else {
       this.contacts.removeAt(index);
     }
-    NotificationService.message(findTranslation('contact.action.remove') + ' ' + contact.name);
+    NotificationService.message(findTranslation('contact.action.remove'));
   }
 
   private createContact(contact: Contact): FormGroup {

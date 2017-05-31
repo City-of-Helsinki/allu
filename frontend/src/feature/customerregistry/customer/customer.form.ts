@@ -58,7 +58,8 @@ export class CustomerForm {
         city: ['']
       }),
       email: ['', emailValidator],
-      phone: ['', Validators.minLength(2)]
+      phone: ['', Validators.minLength(2)],
+      active: [true]
     });
   }
 }

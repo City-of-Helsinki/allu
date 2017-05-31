@@ -6,7 +6,7 @@ import {Some} from '../../util/option';
 export class CustomerWithContacts {
   constructor(
     public roleType?: CustomerRoleType,
-    public customer: Customer = new Customer(),
+    public customer?: Customer,
     public contacts: Array<Contact> = []) {
   }
 
