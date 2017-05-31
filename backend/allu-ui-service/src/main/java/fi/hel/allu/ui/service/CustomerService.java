@@ -56,6 +56,8 @@ public class CustomerService {
         applicationMapper.createCustomerModel(customerJson),
         Customer.class);
     CustomerJson createdCustomer = applicationMapper.createCustomerJson(customerModel);
+    // all created customers will be set active
+    createdCustomer.setActive(true);
     searchService.insertCustomer(createdCustomer);
     return createdCustomer;
   }
@@ -74,10 +76,10 @@ public class CustomerService {
     CustomerWithContactsJson createdCustomerWithContacts = new CustomerWithContactsJson();
     createdCustomerWithContacts.setCustomer(customerJson);
 
-    if (customerWithContactsJson.getContacts() != null) {
+    if (customerWithContactsJson.getContacts() != null && !customerWithContactsJson.getContacts().isEmpty()) {
       List<ContactJson> newContacts = customerWithContactsJson.getContacts();
       newContacts.forEach(c -> c.setCustomerId(customerJson.getId()));
-      List<ContactJson> contacts = contactService.createContacts(customerWithContactsJson.getContacts());
+      List<ContactJson> contacts = contactService.createContacts(newContacts);
       searchService.insertContacts(contacts);
       createdCustomerWithContacts.setContacts(contacts);
     }
