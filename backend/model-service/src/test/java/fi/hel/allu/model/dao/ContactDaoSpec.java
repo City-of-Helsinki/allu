@@ -19,9 +19,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.greghaskins.spectrum.Spectrum.beforeEach;
-import static com.greghaskins.spectrum.Spectrum.describe;
-import static com.greghaskins.spectrum.Spectrum.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
+import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
+import static com.greghaskins.spectrum.dsl.specification.Specification.context;
+import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 
 @RunWith(Spectrum.class)
 @SpringApplicationConfiguration(classes = ModelApplication.class)
@@ -51,58 +52,78 @@ public class ContactDaoSpec extends SpeccyTestBase {
     });
 
     describe("Contact dao", () -> {
-      beforeEach(() -> insertedContact = contactDao.insert(Collections.singletonList(testContact)).get(0));
-      it("should return updated object from insert", () -> {
-        assertContact(insertedContact);
-        assertPostalAddress(insertedContact);
+
+      describe("insert", () -> {
+        it("should return updated object from single insert", () -> {
+          insertedContact = contactDao.insert(Collections.singletonList(testContact)).get(0);
+          assertContact(insertedContact);
+          assertPostalAddress(insertedContact);
+        });
+
+        it("should return multiple contacts from bulk insert", () -> {
+          List<Contact> contacts = contactDao.insert(Arrays.asList(testContact, testContact, testContact));
+          Assert.assertEquals(3, contacts.size());
+          contacts.forEach(c -> assertContact(c));
+        });
       });
-      it("should find contacts by id", () -> {
-        Optional<Contact> findContact = contactDao.findById(insertedContact.getId());
-        Assert.assertTrue(findContact.isPresent());
-        assertContact(findContact.get());
-        assertPostalAddress(findContact.get());
+
+      context("when finding contacts", () -> {
+        beforeEach(() -> insertedContact = contactDao.insert(Collections.singletonList(testContact)).get(0));
+
+        describe("findById", () -> {
+          it("should find contact by id", () -> {
+            Optional<Contact> findContact = contactDao.findById(insertedContact.getId());
+            Assert.assertTrue(findContact.isPresent());
+            assertContact(findContact.get());
+            assertPostalAddress(findContact.get());
+          });
+        });
+        describe("findByIds", () -> {
+          it("should find contacts by multiple ids", () -> {
+            List<Contact> findContacts = contactDao.findByIds(Collections.singletonList(insertedContact.getId()));
+            Assert.assertFalse(findContacts.isEmpty());
+            assertContact(findContacts.get(0));
+            assertPostalAddress(findContacts.get(0));
+          });
+        });
+        describe("findByCustomer", () -> {
+          it("should find contact by customer id", () -> {
+            List<Contact> contacts = contactDao.findByCustomer(insertedContact.getCustomerId());
+            Assert.assertEquals(1, contacts.size());
+            assertContact(contacts.get(0));
+            assertPostalAddress(contacts.get(0));
+          });
+        });
       });
-      it("should find contacts by multiple ids", () -> {
-        List<Contact> findContacts = contactDao.findByIds(Collections.singletonList(insertedContact.getId()));
-        Assert.assertFalse(findContacts.isEmpty());
-        assertContact(findContacts.get(0));
-        assertPostalAddress(findContacts.get(0));
-      });
-      it("should find contacts by customer id", () -> {
-        List<Contact> contacts = contactDao.findByCustomer(insertedContact.getCustomerId());
-        Assert.assertEquals(1, contacts.size());
-        assertContact(contacts.get(0));
-        assertPostalAddress(contacts.get(0));
-      });
-      it("should update contacts", () -> {
-        insertedContact.setName("updated");
-        testContact.setName("updated");
-        Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
-        assertContact(updatedContact);
-        assertPostalAddress(updatedContact);
-      });
-      it("should update contact mail address", () -> {
-        insertedContact.getPostalAddress().setCity("updated");
-        testPostalAddress.setCity("updated");
-        Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
-        assertContact(updatedContact);
-        assertPostalAddress(updatedContact);
-      });
-      it("should delete contact mail address", () -> {
-        int postalAddressId = insertedContact.getPostalAddress().getId();
-        insertedContact.setPostalAddress(null);
-        Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
-        assertContact(updatedContact);
-        Assert.assertNull(updatedContact.getPostalAddress());
-        Optional<PostalAddress> postalAddress = postalAddressDao.findById(postalAddressId);
-        Assert.assertFalse(postalAddress.isPresent());
-      });
-    });
-    describe("Contact dao bulk insert", () -> {
-      it("should insert bulk ok", () -> {
-        List<Contact> contacts = contactDao.insert(Arrays.asList(testContact, testContact, testContact));
-        Assert.assertEquals(3, contacts.size());
-        contacts.forEach(c -> assertContact(c));
+
+      describe("update", () -> {
+        beforeEach(() -> insertedContact = contactDao.insert(Collections.singletonList(testContact)).get(0));
+
+        it("should update contact", () -> {
+          insertedContact.setName("updated");
+          testContact.setName("updated");
+          Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
+          assertContact(updatedContact);
+          assertPostalAddress(updatedContact);
+        });
+        it("should update contact mail address", () -> {
+          insertedContact.getPostalAddress().setCity("updated");
+          testPostalAddress.setCity("updated");
+          Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
+          assertContact(updatedContact);
+          assertPostalAddress(updatedContact);
+        });
+        context("with address set to null", () -> {
+          it("should delete contact mail address", () -> {
+            int postalAddressId = insertedContact.getPostalAddress().getId();
+            insertedContact.setPostalAddress(null);
+            Contact updatedContact = contactDao.update(Collections.singletonList(insertedContact)).get(0);
+            assertContact(updatedContact);
+            Assert.assertNull(updatedContact.getPostalAddress());
+            Optional<PostalAddress> postalAddress = postalAddressDao.findById(postalAddressId);
+            Assert.assertFalse(postalAddress.isPresent());
+          });
+        });
       });
     });
   }

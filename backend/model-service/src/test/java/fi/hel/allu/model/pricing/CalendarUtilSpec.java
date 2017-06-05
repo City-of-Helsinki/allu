@@ -7,8 +7,9 @@ import org.junit.runner.RunWith;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 
-import static com.greghaskins.spectrum.Spectrum.describe;
-import static com.greghaskins.spectrum.Spectrum.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.context;
+import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
+import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
@@ -19,10 +20,10 @@ public class CalendarUtilSpec {
     describe("Time length calculations", () -> {
 
       describe("Special cases", () -> {
-        it("should throw for end before start", () -> {
+        it("should throw IllegalArgumentException when end is before start", () -> {
           try {
             long days = CalendarUtil.startingUnitsBetween(ZonedDateTime.parse("2017-02-28T00:00:00+02:00"),
-                ZonedDateTime.parse("2017-02-27T23:59:59+02:00"), ChronoUnit.DAYS);
+                    ZonedDateTime.parse("2017-02-27T23:59:59+02:00"), ChronoUnit.DAYS);
             fail("Did not throw, set days=" + days);
           } catch (IllegalArgumentException e) {
           } catch (Exception e) {

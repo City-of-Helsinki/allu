@@ -17,7 +17,13 @@ import java.io.ByteArrayInputStream;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static com.greghaskins.spectrum.Spectrum.*;
+import static com.greghaskins.spectrum.dsl.specification.Specification.beforeAll;
+import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
+import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
+import static com.greghaskins.spectrum.dsl.specification.Specification.context;
+import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.let;
+import static com.greghaskins.spectrum.dsl.specification.Specification.xdescribe;
 
 @RunWith(Spectrum.class)
 public class MailServiceSpec {
@@ -44,7 +50,7 @@ public class MailServiceSpec {
   }
 
   {
-    describe("MailService using mocks", () -> {
+    describe("MailService send using mocks", () -> {
       final ArgumentCaptor<MimeMessage> msgCaptor = ArgumentCaptor.forClass(MimeMessage.class);
       beforeEach(() -> {
         mailSender = Mockito.mock(JavaMailSenderImpl.class);
@@ -57,7 +63,7 @@ public class MailServiceSpec {
         mailMessage.setTo(Collections.singletonList("test@to.fi"));
         mailMessage.setBody("Test body");
       });
-      describe("Plain text body", () -> {
+      context("with plain text body", () -> {
         beforeEach(() -> {
           mailService.send(mailMessage);
           Mockito.verify(mailSender).send(msgCaptor.capture());
@@ -83,7 +89,7 @@ public class MailServiceSpec {
           Assert.assertEquals("Test body", getEmailBody(mimeMessage));
         });
       });
-      describe("FreeMarker template in the body", () -> {
+      context("with FreeMarker template in the body", () -> {
         it("should populate FreeMarker template with values", () -> {
           mailMessage.setBody("This value comes from model: ${testkey}");
           Map<String, Object> model = Collections.singletonMap("testkey", "testvalue");
@@ -100,7 +106,7 @@ public class MailServiceSpec {
           Assert.assertEquals("No template", body);
         });
       });
-      describe("Attachments in email", () -> {
+      context("with Attachments in email", () -> {
         it("should handle attachments correctly", () -> {
           mailMessage.setAttachments(Collections.singletonList(new MailMessage.Attachment("somename", "somebytes".getBytes())));
           mailService.send(mailMessage);
@@ -111,7 +117,7 @@ public class MailServiceSpec {
       });
     });
 
-    xdescribe("MailService using gmail", () -> {
+    xdescribe("MailService send using gmail", () -> {
       beforeAll(() -> {
         mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.gmail.com");

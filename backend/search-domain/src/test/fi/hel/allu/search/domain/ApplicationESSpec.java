@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 
 import java.time.ZonedDateTime;
 
-import static com.greghaskins.spectrum.Spectrum.describe;
-import static com.greghaskins.spectrum.Spectrum.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
+import static com.greghaskins.spectrum.dsl.specification.Specification.it;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Spectrum.class)

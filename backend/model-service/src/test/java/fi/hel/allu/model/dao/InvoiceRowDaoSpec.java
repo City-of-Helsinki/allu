@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.greghaskins.spectrum.Spectrum.*;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -33,100 +33,119 @@ public class InvoiceRowDaoSpec extends SpeccyTestBase {
   private InvoiceRowDao invoiceRowDao;
 
   {
-    describe("InvoiceDAO spec", () -> {
+    describe("InvoiceDAO", () -> {
       beforeEach(() -> {
         testCommon.deleteAllData();
       });
 
-      it("Should get empty rows for empty DB", () -> {
-        List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(123);
-        assertEquals(0, rows.size());
+      context("when DB is empty", ()-> {
+          describe("getInvoiceRows", () -> {
+            it("should get empty rows", () -> {
+              List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(123);
+              assertEquals(0, rows.size());
+            });
+        });
       });
 
-      it("Setting rows for nonexistent application should throw", () -> {
-        try {
-          invoiceRowDao.setInvoiceRows(123, generateTestRows(12, "Fail"), true);
-          fail("Exception not thrown!");
-        } catch (RuntimeException e) {
-        }
-      });
-
-      describe("When applications exist", () -> {
-        final Supplier<Integer> appId1 = let(() -> testCommon.insertApplication("Hakemus", "Käsittelijä"));
-        final Supplier<Integer> appId2 = let(() -> testCommon.insertApplication("Ansökning", "Handläggare"));
-
-        it("Setting shouldn't throw",
-            () -> invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(15, "test"), true));
-
-        it("Setting empty list should pass",
-            () -> invoiceRowDao.setInvoiceRows(appId2.get(), Collections.emptyList(), false));
-
-        describe("Set two rows for two separate applications", () -> {
-          final int NUM_1ST_ROWS = 12;
-          final int NUM_2ND_ROWS = 23;
-          beforeEach(() -> {
-            invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(NUM_1ST_ROWS, "First rows"), true);
-            invoiceRowDao.setInvoiceRows(appId2.get(), generateTestRows(NUM_2ND_ROWS, "Second rows"), true);
-          });
-
-          describe("Read rows back and check", () -> {
-
-            final Supplier<List<InvoiceRow>> first = let(() -> invoiceRowDao.getInvoiceRows(appId1.get()));
-            final Supplier<List<InvoiceRow>> second = let(() -> invoiceRowDao.getInvoiceRows(appId2.get()));
-
-            it("Returns right number of rows", () -> {
-              assertEquals(NUM_1ST_ROWS, first.get().size());
-              assertEquals(NUM_2ND_ROWS, second.get().size());
-            });
-
-            it("Returns the right rows", () -> {
-              checkTestRows(first.get(), "First rows");
-              checkTestRows(second.get(), "Second rows");
-            });
+      context("when application does not exist", () -> {
+        describe("setInvoiceRows", () -> {
+          it("should throw error", () -> {
+            try {
+              invoiceRowDao.setInvoiceRows(123, generateTestRows(12, "Fail"), true);
+              fail("Exception not thrown!");
+            } catch (RuntimeException e) {
+            }
           });
         });
 
-        describe("Set both manual and calculated rows", () -> {
-          final int NUM_MANUAL_ROWS = 12;
-          final int NUM_CALCULATED_ROWS = 23;
-          final String MANUAL_ROW_PREFIX = "Manual rows";
-          final String CALCULATED_ROW_PREFIX = "Calculated rows";
+        context("when application exists", ()-> {
+          final Supplier<Integer> appId1 = let(() -> testCommon.insertApplication("Hakemus", "Käsittelijä"));
+          final Supplier<Integer> appId2 = let(() -> testCommon.insertApplication("Ansökning", "Handläggare"));
 
-          beforeEach(() -> {
-            invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(NUM_MANUAL_ROWS, MANUAL_ROW_PREFIX), true);
-            invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(NUM_CALCULATED_ROWS, CALCULATED_ROW_PREFIX),
-                false);
+          describe("setInvoiceRows", () -> {
+            it("shouldn't throw error with valid rows",
+                    () -> invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(15, "test"), true));
+
+            it("shouldn't throw error with empty list",
+                    () -> invoiceRowDao.setInvoiceRows(appId2.get(), Collections.emptyList(), false));
           });
 
-          it("Should return both manual and calculated rows", () -> {
-            final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
-            assertEquals(NUM_MANUAL_ROWS+NUM_CALCULATED_ROWS, rows.size());
-            checkTestRows(rows.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()),
-                MANUAL_ROW_PREFIX);
-            checkTestRows(rows.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
-                CALCULATED_ROW_PREFIX);
+          context("when setting two rows for two separate applications", () -> {
+            final int NUM_1ST_ROWS = 12;
+            final int NUM_2ND_ROWS = 23;
+            beforeEach(() -> {
+              invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(NUM_1ST_ROWS, "First rows"), true);
+              invoiceRowDao.setInvoiceRows(appId2.get(), generateTestRows(NUM_2ND_ROWS, "Second rows"), true);
+            });
+
+            describe("getInvoiceRows", () -> {
+
+              final Supplier<List<InvoiceRow>> first = let(() -> invoiceRowDao.getInvoiceRows(appId1.get()));
+              final Supplier<List<InvoiceRow>> second = let(() -> invoiceRowDao.getInvoiceRows(appId2.get()));
+
+              it("Returns right number of rows", () -> {
+                assertEquals(NUM_1ST_ROWS, first.get().size());
+                assertEquals(NUM_2ND_ROWS, second.get().size());
+              });
+
+              it("Returns the right rows", () -> {
+                checkTestRows(first.get(), "First rows");
+                checkTestRows(second.get(), "Second rows");
+              });
+            });
           });
 
-          it("Clearing manual rows should leave the calculated in place", () -> {
-            invoiceRowDao.setInvoiceRows(appId1.get(), Collections.emptyList(), true);
-            final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
-            assertEquals(NUM_CALCULATED_ROWS, rows.size());
-            checkTestRows(rows.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
-                CALCULATED_ROW_PREFIX);
-          });
+          context("when setting both manual and calculated rows", () -> {
+            final int NUM_MANUAL_ROWS = 12;
+            final int NUM_CALCULATED_ROWS = 23;
+            final String MANUAL_ROW_PREFIX = "Manual rows";
+            final String CALCULATED_ROW_PREFIX = "Calculated rows";
 
-          it("Clearing calculcated rows should leave the manual in place", () -> {
-            invoiceRowDao.setInvoiceRows(appId1.get(), Collections.emptyList(), false);
-            final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
-            assertEquals(NUM_MANUAL_ROWS, rows.size());
-            checkTestRows(rows.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
-                MANUAL_ROW_PREFIX);
-          });
+            beforeEach(() -> {
+              invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(NUM_MANUAL_ROWS, MANUAL_ROW_PREFIX), true);
+              invoiceRowDao.setInvoiceRows(appId1.get(), generateTestRows(NUM_CALCULATED_ROWS, CALCULATED_ROW_PREFIX),
+                      false);
+            });
 
-          it("Should calculate the correct total price for the application", () -> {
-            final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
-            final int expectedPrice = rows.stream().mapToInt(r -> r.getNetPrice()).sum();
-            assertEquals(expectedPrice, invoiceRowDao.getTotalPrice(appId1.get()));
+            describe("getInvoiceRows", ()-> {
+              it("Should return both manual and calculated rows", () -> {
+                final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
+                assertEquals(NUM_MANUAL_ROWS+NUM_CALCULATED_ROWS, rows.size());
+                checkTestRows(rows.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()),
+                        MANUAL_ROW_PREFIX);
+                checkTestRows(rows.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
+                        CALCULATED_ROW_PREFIX);
+              });
+
+              context("when clearing manual rows", ()-> {
+                it("should leave the calculated rows in place", () -> {
+                  invoiceRowDao.setInvoiceRows(appId1.get(), Collections.emptyList(), true);
+                  final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
+                  assertEquals(NUM_CALCULATED_ROWS, rows.size());
+                  checkTestRows(rows.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
+                          CALCULATED_ROW_PREFIX);
+                });
+              });
+
+              context("when clearing calculated rows", ()-> {
+                it("should leave the manual rows in place", () -> {
+                  invoiceRowDao.setInvoiceRows(appId1.get(), Collections.emptyList(), false);
+                  final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
+                  assertEquals(NUM_MANUAL_ROWS, rows.size());
+                  checkTestRows(rows.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
+                          MANUAL_ROW_PREFIX);
+                });
+              });
+            });
+
+            describe("getTotalPrice", ()-> {
+              it("Should calculate the correct total price for the application", () -> {
+                final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
+                final int expectedPrice = rows.stream().mapToInt(r -> r.getNetPrice()).sum();
+                assertEquals(expectedPrice, invoiceRowDao.getTotalPrice(appId1.get()));
+              });
+            });
+
           });
         });
       });

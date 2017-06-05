@@ -20,9 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import static com.greghaskins.spectrum.Spectrum.beforeEach;
-import static com.greghaskins.spectrum.Spectrum.describe;
-import static com.greghaskins.spectrum.Spectrum.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.*;
@@ -50,46 +48,50 @@ public class ApplicantReminderServiceSpec {
         when(applicationProperties.getMarkReminderSentUrl()).thenReturn(MARK_REMINDER_SENT_URL);
       });
 
-      describe("No applications expiring", () -> {
-        beforeEach(() -> {
-          when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
-              .thenReturn(new Application[0]);
-          applicantReminderService.sendReminders();
+      describe("sendReminders", ()-> {
+
+        context("with no applications expiring", () -> {
+          beforeEach(() -> {
+            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
+                    .thenReturn(new Application[0]);
+            applicantReminderService.sendReminders();
+          });
+          it("should not send any email", () -> {
+            verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString());
+          });
+          it("should not mark any reminders as sent", () -> {
+            verify(restTemplate, never()).postForObject(eq(MARK_REMINDER_SENT_URL), any(), eq(Void.class));
+          });
         });
-        it("should not send any email", () -> {
-          verify(alluMailService, never()).sendEmail(anyListOf(String.class), anyString(), anyString());
+
+        context("with one application expiring", () -> {
+          final Integer APP_ID = 123;
+          final String EMAIL = "ee-mail@mail.ee";
+          final Application[] expiring = new Application[] { dummyApplication(APP_ID, EMAIL) };
+
+          beforeEach(() -> {
+            when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
+                    .thenReturn(expiring);
+            applicantReminderService.sendReminders();
+          });
+          it("should send email to the applicant", () -> {
+            ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+            verify(alluMailService, times(1)).sendEmail(captor.capture(), anyString(), anyString());
+            List<String> captured = captor.<List<String>> getValue();
+            assertEquals(1, captured.size());
+            assertEquals(EMAIL, captured.get(0));
+          });
+          it("should mark reminder as sent for the application", () -> {
+            ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
+            verify(restTemplate, times(1)).postForObject(eq(MARK_REMINDER_SENT_URL), captor.capture(), eq(Void.class));
+            List<Integer> captured = captor.<List<Integer>> getValue();
+            assertEquals(1, captured.size());
+            assertEquals(APP_ID, captured.get(0));
+          });
         });
-        it("should not mark any reminders as sent", () -> {
-          verify(restTemplate, never()).postForObject(eq(MARK_REMINDER_SENT_URL), any(), eq(Void.class));
-        });
+
       });
 
-      describe("One application expiring", () -> {
-        final Integer APP_ID = 123;
-        final String EMAIL = "ee-mail@mail.ee";
-        final Application[] expiring = new Application[] { dummyApplication(APP_ID, EMAIL) };
-
-        beforeEach(() -> {
-          when(restTemplate.postForObject(eq(DEADLINE_CHECK_URL), anyObject(), eq(Application[].class)))
-              .thenReturn(expiring);
-          applicantReminderService.sendReminders();
-        });
-        it("should send email to the applicant", () -> {
-          ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-          verify(alluMailService, times(1)).sendEmail(captor.capture(), anyString(), anyString());
-          List<String> captured = captor.<List<String>> getValue();
-          assertEquals(1, captured.size());
-          assertEquals(EMAIL, captured.get(0));
-        });
-        it("should mark reminder as sent for the application", () -> {
-          ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-          verify(restTemplate, times(1)).postForObject(eq(MARK_REMINDER_SENT_URL), captor.capture(), eq(Void.class));
-          List<Integer> captured = captor.<List<Integer>> getValue();
-          assertEquals(1, captured.size());
-          assertEquals(APP_ID, captured.get(0));
-        });
-
-      });
     });
   }
 

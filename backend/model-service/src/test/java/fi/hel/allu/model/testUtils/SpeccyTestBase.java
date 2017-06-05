@@ -11,7 +11,10 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import static com.greghaskins.spectrum.Spectrum.*;
+import static com.greghaskins.spectrum.dsl.specification.Specification.afterAll;
+import static com.greghaskins.spectrum.dsl.specification.Specification.afterEach;
+import static com.greghaskins.spectrum.dsl.specification.Specification.beforeAll;
+import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
 
 /**
  * Base class for spec tests, takes care of @Autowired and transactions
