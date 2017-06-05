@@ -12,5 +12,5 @@ export const styleByApplicationType = {
 export const pathStyle = {
   DEFAULT: {color: '#F23555', opacity: 1, fillOpacity: 0.4},
   DEFAULT_DRAW: {color: '#F23555', dashArray: '8,6', opacity: 1, fillOpacity: 0.4},
-  DEFAULT_EDIT: {color: '#F23555', dashArray: '8,6', moveMarkers: true, opacity: 1, fillOpacity: 0.4}
+  DEFAULT_EDIT: {color: '#F23555', dashArray: '8,6', moveMarkers: false, opacity: 1, fillOpacity: 0.4}
 };

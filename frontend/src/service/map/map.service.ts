@@ -1,10 +1,4 @@
 import {Injectable} from '@angular/core';
-import 'leaflet';
-import 'leaflet-draw';
-import 'proj4leaflet';
-import 'leaflet-draw-drag';
-import 'leaflet-groupedlayercontrol';
-import 'leaflet-measure-path';
 
 import {MapUtil} from './map.util';
 import {MapLayerService} from './map-layer.service';

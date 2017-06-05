@@ -1,9 +1,9 @@
 import 'leaflet';
 import 'leaflet-draw';
 import 'proj4leaflet';
-import 'leaflet-draw-drag';
 import 'leaflet-groupedlayercontrol';
 import 'leaflet-measure-path';
+
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Observable} from 'rxjs/Observable';
@@ -15,6 +15,7 @@ import {Geocoordinates} from '../../model/common/geocoordinates';
 import {pathStyle} from './map-draw-styles';
 import {MapPopup} from './map-popup';
 import {MapLayerService} from './map-layer.service';
+import '../../js/leaflet/draw-transform';
 import GeoJSONOptions = L.GeoJSONOptions;
 
 const alluIcon = L.icon({
@@ -237,19 +238,14 @@ export class MapState {
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {
     let self = this;
-    this.map.on('draw:created', function (e: any) {
+    this.map.on('draw:created', (e: any) => {
       editedItems.addLayer(e.layer);
       self.shapes$.next(new ShapeAdded(editedItems));
       e.layer.showMeasurements(translations.map.measure);
     });
 
-    this.map.on('draw:edited', function (e: any) {
-      self.shapes$.next(new ShapeAdded(editedItems));
-    });
-
-    this.map.on('draw:deleted', function (e: any) {
-      self.shapes$.next(new ShapeAdded(editedItems));
-    });
+    this.map.on('draw:edited', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
+    this.map.on('draw:deleted', (e: any) => self.shapes$.next(new ShapeAdded(editedItems)));
 
     this.map.on('moveend', (e: any) => {
       if (!self.config.showOnlyApplicationArea) {
