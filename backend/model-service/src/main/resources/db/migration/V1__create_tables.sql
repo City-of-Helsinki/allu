@@ -21,6 +21,11 @@ create table allu.city_district (
   geometry geometry(GEOMETRY, 3879),
   zone_id integer);
 
+create table allu.payment_class (
+  id serial primary key,
+  payment_class int not null,
+  geometry geometry(GEOMETRY, 3879) not null );
+
 create table allu.project (
     id serial primary key,
     parent_id integer references allu.project(id),

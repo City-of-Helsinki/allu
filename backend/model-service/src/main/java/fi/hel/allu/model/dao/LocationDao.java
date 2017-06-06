@@ -41,6 +41,7 @@ import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationArea.locationArea;
 import static fi.hel.allu.QLocationFlids.locationFlids;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
+import static fi.hel.allu.QPaymentClass.paymentClass1;
 import static fi.hel.allu.QPostalAddress.postalAddress;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
@@ -414,14 +415,11 @@ public class LocationDao {
    * @return the payment class (1, 2, or 3)
    */
   public int getPaymentClass(Integer id) {
-    // TODO: Get a proper payment class. Currently just finds the city
-    // district's district ID and map it to 1..3 using modulo.
-    Integer districtId = queryFactory.select(cityDistrict.districtId).from(location).leftJoin(cityDistrict)
-        .on(location.cityDistrictId.eq(cityDistrict.id)).where(location.id.eq(id)).fetchOne();
-    if (districtId == null) {
-      return 1;
-    }
-    // map 1->1, 2->2, 3->3, 4->1, etc
-    return ((districtId - 1) % 3) + 1;
+    Integer paymentClass = queryFactory.select(paymentClass1.paymentClass).from(paymentClass1)
+        .where(paymentClass1.geometry.intersects(
+            SQLExpressions.select(locationGeometry.geometry).from(locationGeometry)
+                .where(locationGeometry.locationId.eq(id))))
+        .orderBy(paymentClass1.paymentClass.asc()).fetchFirst();
+    return Optional.ofNullable(paymentClass).orElse(3); // Payment class undefined -> default to lowest
   }
 }
