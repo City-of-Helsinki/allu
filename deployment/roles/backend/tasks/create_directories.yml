@@ -1,13 +1,13 @@
 - name: create backend service directories under allu home
-  file: path=/home/allu/{{ item }}
+  file: path=/home/allu/services/{{ item }}
         state=directory
         owner=allu
         group=allu
         mode="u=rwx,g=r,o=r"
   with_items: "{{ allu_service_list }}"
 
-- name: create logging directories under different services
-  file: path=/home/allu/{{ item }}/logs
+- name: create logging directories for different services
+  file: path=/home/allu/logs/{{ item }}
         state=directory
         owner=allu
         group=allu

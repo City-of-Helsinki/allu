@@ -1,7 +1,6 @@
 - include: firewall.yml
-- include: apt_get.yml
+- include: cleanup.yml
 - include: create_directories.yml
 - include: copy_files.yml
-- include: configure_systemd.yml
-- include: wkhtmltopdf.yml
 - include: copy_stylesheets.yml
+- include: docker.yml

@@ -1,3 +1,0 @@
-- name: install wkhtmltopdf from tar package
-  unarchive: src=wkhtmltox-0.12.3_linux-generic-amd64.tar.xz dest=/usr/local creates=/usr/local/wkhtmltox/bin/wkhtmltopdf
-  become: yes

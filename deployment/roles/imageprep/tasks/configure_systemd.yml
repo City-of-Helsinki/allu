@@ -1,0 +1,7 @@
+- name: enable Docker to make it run in system start-up
+  service: name=docker enabled=yes
+  become: yes
+
+- name: start Docker services
+  service: name=docker state=restarted
+  become: yes

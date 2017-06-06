@@ -3,6 +3,3 @@ allu_service_list:
   - model-service
   - search-service
   - pdf-service
-
-deployment_dir_root: /home/allu
-deployment_dir_allu_ui_service: "{{ deployment_dir_root }}/allu-ui-service"

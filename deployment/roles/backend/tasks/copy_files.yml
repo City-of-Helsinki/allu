@@ -1,42 +1,20 @@
 
-# NOTE! Downloading Artifactory files to local host is done for each deployment target host, which may slow down the deployment process
-# at some point. However, this was the easiest way to avoid connection problems from target host to Artfictory
-
-- name: create temporary download directory name
-  set_fact: download_directory_name=/tmp/ansible_artifactory_deployment_{{ ansible_date_time.epoch }}
-
-- name: create local temporary directory for copying Artifactory files
-  local_action: file path={{ download_directory_name }} state=directory mode="u=rwx,g=r,o=r"
-
-- name: download Artifactory JARs to deployment (local) host
-  local_action: get_url
-    url=http://185.26.51.92:8081/artifactory/libs-snapshot-local/fi/hel/allu/{{ item }}/1.0-SNAPSHOT/{{ item }}-1.0-SNAPSHOT.jar
-    dest={{ download_directory_name }}/{{ item }}.jar mode="u=rx,g=,o="
-  with_items: "{{ allu_service_list }}"
-
-- name: copy JAR files from localhost to target host
-  copy: src={{ download_directory_name }}/{{ item }}.jar dest=/home/allu/{{ item }}/{{ item }}.jar
-  with_items: "{{ allu_service_list }}"
-
-- name: remove local temporary directory for copying Artifactory files
-  local_action: file path={{ download_directory_name }} state=absent mode="u=rwx,g=r,o=r"
-
 - name: copy Spring-Boot configuration files
-  template: src={{ item }}.properties dest=/home/allu/{{ item }}/{{ item }}.properties
+  template: src={{ item }}.properties dest=/home/allu/services/{{ item }}/{{ item }}.properties
             owner=allu
             group=allu
             mode="u=rwx,g=rx,o=rx"
   with_items: "{{ allu_service_list }}"
 
 - name: copy logging configuration files
-  template: src=included-logback.xml dest=/home/allu/{{ item }}/included-logback.xml
+  template: src=included-logback.xml dest=/home/allu/services/{{ item }}/included-logback.xml
             owner=allu
             group=allu
             mode="u=rwx,g=rx,o=rx"
   with_items: "{{ allu_service_list }}"
 
 - name: add service runner scripts
-  template: src=run_service.sh dest=/home/allu/{{ item }}/run_{{ item }}.sh
+  template: src=run_service.sh dest=/home/allu/services/{{ item }}/run_{{ item }}.sh
             owner=allu
             group=allu
             mode="u=rwx,g=rx,o=rx"

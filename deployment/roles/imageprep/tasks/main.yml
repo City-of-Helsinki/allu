@@ -10,3 +10,6 @@
 
 - include: sshsetup.yml
 
+- include: apt_install.yml
+
+- include: configure_systemd.yml

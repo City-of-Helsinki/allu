@@ -1,4 +1,4 @@
 - name: copy pdf-service stylesheets
-  copy: src=pdf-stylesheets/ dest=/home/allu/pdf-service/stylesheets
+  copy: src=pdf-stylesheets/ dest=/home/allu/services/pdf-service/stylesheets
         directory_mode=0755 mode=0644 owner=allu group=allu
   become: yes
