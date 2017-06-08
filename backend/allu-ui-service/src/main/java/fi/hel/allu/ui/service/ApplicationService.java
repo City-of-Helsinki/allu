@@ -204,6 +204,15 @@ public class ApplicationService {
     return responseEntity.getBody();
   }
 
+  /**
+   * Delete a note from model-service's database.
+   *
+   * @param applicationId note application's database ID
+   */
+  void deleteNote(int applicationId) {
+    restTemplate.delete(applicationProperties.getNoteDeleteUrl(), applicationId);
+  }
+
   void updateApplicationHandler(int updatedHandler, List<Integer> applicationIds) {
     restTemplate.put(applicationProperties.getApplicationHandlerUpdateUrl(), applicationIds, updatedHandler);
   }

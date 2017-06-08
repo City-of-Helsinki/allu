@@ -1,0 +1,133 @@
+package fi.hel.allu.model.dao;
+
+import com.greghaskins.spectrum.Spectrum;
+import com.greghaskins.spectrum.Variable;
+
+import fi.hel.allu.common.types.AttachmentType;
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
+import fi.hel.allu.model.testUtils.TestCommon;
+
+import org.geolatte.geom.builder.DSL.Polygon2DToken;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static org.geolatte.geom.builder.DSL.*;
+import static org.junit.Assert.*;
+
+@RunWith(Spectrum.class)
+@SpringApplicationConfiguration(classes = ModelApplication.class)
+@WebAppConfiguration
+public class ApplicationDaoSpec extends SpeccyTestBase {
+
+  @Autowired
+  private TestCommon testCommon;
+  @Autowired
+  private ApplicationDao applicationDao;
+  @Autowired
+  private AttachmentDao attachmentDao;
+  @Autowired
+  private LocationDao locationDao;
+
+  private Application application;
+  private AttachmentInfo attachmentInfo;
+  private List<Location> applicationLocations;
+
+  {
+    describe("ApplicationDao.deleteNote", () -> {
+      context("Application is not note", () -> {
+        beforeEach(() -> {
+          application = applicationDao.insert(testCommon.dummyOutdoorApplication("name", "handler"));
+          assertNotNull(application.getId());
+        });
+        it("Can't be deleted", () -> {
+          assertThrows(IllegalArgumentException.class).when(() -> {
+            applicationDao.deleteNote(application.getId());
+          });
+        });
+      });
+      context("Application is NOTE", () -> {
+        beforeEach(() -> {
+          application = applicationDao.insert(testCommon.dummyNoteApplication("name", "handler"));
+          assertNotNull(application.getId());
+        });
+        it("Can be deleted", () -> {
+          applicationDao.deleteNote(application.getId());
+        });
+
+        context("Has attachment", () -> {
+          beforeEach(() -> {
+            attachmentInfo = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_CUSTOMER, "Test.dat",
+                "Test attachment", (long) 123, ZonedDateTime.parse("2017-07-03T10:15:30+03:00[Europe/Helsinki]"));
+            attachmentInfo = attachmentDao.insert(application.getId(), attachmentInfo, new byte[123]);
+            assertNotNull(attachmentInfo.getId());
+            assertTrue(attachmentDao.findById(attachmentInfo.getId()).isPresent());
+          } );
+
+          it("Deletion deletes attachments", () -> {
+            applicationDao.deleteNote(application.getId());
+            assertFalse(attachmentDao.findById(attachmentInfo.getId()).isPresent());
+          });
+
+          context("Other attachments exist", () -> {
+            final Variable<Integer> otherApplicationId = new Variable<>();
+            final Variable<Integer> otherAttachmentId = new Variable<>();
+
+            beforeEach(() -> {
+              otherApplicationId.set(testCommon.insertApplication("Other", "Other handler"));
+              AttachmentInfo ai = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_HANDLER, "TestToo.dat",
+                  "Test attachment, too", (long) 123,
+                  ZonedDateTime.parse("2017-02-15T16:43:12+02:00[Europe/Helsinki]"));
+              otherAttachmentId.set(attachmentDao.insert(otherApplicationId.get(), ai, new byte[123]).getId());
+            });
+
+            it("Deletion leaves other attachment", () -> {
+              applicationDao.deleteNote(application.getId());
+              assertTrue(attachmentDao.findById(otherAttachmentId.get()).isPresent());
+            });
+          });
+        });
+
+        context("Has locations", () -> {
+          beforeEach(() -> {
+            applicationLocations = locationDao.updateApplicationLocations(application.getId(),
+                dummyLocations(application.getId()));
+            applicationLocations.forEach(al -> assertEquals(application.getId(), al.getApplicationId()));
+          });
+          it("Deletion deletes locations", () -> {
+            applicationDao.deleteNote(application.getId());
+            applicationLocations.forEach(al -> assertNull(locationDao.findById(al.getId()).orElse(null)));
+          });
+        });
+      });
+    });
+  }
+
+  private List<Location> dummyLocations(Integer applicationId) {
+    List<Location> locations = new ArrayList<>();
+    Arrays.asList(Sq_0_0, Sq_1_1).forEach(sq -> {
+      Location l = new Location();
+      l.setGeometry(geometrycollection(3879, sq));
+      l.setApplicationId(applicationId);
+      l.setStartTime(ZonedDateTime.parse("2017-06-03T10:00:30+03:00[Europe/Helsinki]"));
+      l.setEndTime(ZonedDateTime.parse("2017-06-09T17:00:30+03:00[Europe/Helsinki]"));
+      l.setUnderpass(false);
+      locations.add(l);
+    });
+    return locations;
+  }
+
+  private static final Polygon2DToken Sq_0_0 = polygon(ring(c(0, 0), c(0, 2), c(2, 2), c(2, 0), c(0, 0)));
+  private static final Polygon2DToken Sq_1_1 = polygon(ring(c(1, 1), c(1, 3), c(3, 3), c(3, 1), c(1, 1)));
+}

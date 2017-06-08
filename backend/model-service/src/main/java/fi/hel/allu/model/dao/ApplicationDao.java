@@ -33,12 +33,16 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
 import static com.querydsl.sql.SQLExpressions.selectDistinct;
+import static com.querydsl.sql.SQLExpressions.union;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QApplicationAttachment.applicationAttachment;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
 import static fi.hel.allu.QApplicationReminder.applicationReminder;
 import static fi.hel.allu.QApplicationTag.applicationTag;
+import static fi.hel.allu.QAttachment.attachment;
 import static fi.hel.allu.QContact.contact;
+import static fi.hel.allu.QDefaultAttachment.defaultAttachment;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
 import static fi.hel.allu.QPostalAddress.postalAddress;
@@ -237,7 +241,7 @@ public class ApplicationDao {
             .join(applicationCustomerContact).on(applicationCustomer.id.eq(applicationCustomerContact.applicationCustomerId))
             .where(applicationCustomerContact.contactId.in(ids));
 
-    List<Expression> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
+    List<Expression<?>> mappedExpressions = new ArrayList<>(Arrays.asList(contact.all()));
     mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));
     // find all application_customer rows with all their contacts (there's normally more distinct contacts in this set than what were
     // searched originally in the sub query's in condition)
@@ -276,12 +280,38 @@ public class ApplicationDao {
   }
 
   /**
+   * Delete note-type application and its related data
+   *
+   * @param id application's database ID.
+   */
+  @SuppressWarnings("unchecked")
+  @Transactional
+  public void deleteNote(int id) {
+    ApplicationType applicationType = queryFactory.select(application.type).from(application)
+        .where(application.id.eq(id)).fetchOne();
+    if (ApplicationType.NOTE != applicationType) {
+      throw new IllegalArgumentException("Trying to delete non-note application");
+    }
+    queryFactory.delete(application).where(application.id.eq(id)).execute();
+    /*
+     * After removing the application, some attachments might be unreferenced,
+     * so we need a cleanup action for them (attachment doesn't reference
+     * application directly, so ON DELETE CASCADE can't be used to automatically
+     * clean it up):
+     */
+    queryFactory.delete(attachment)
+        .where(attachment.id.notIn(
+            union(select(applicationAttachment.attachmentId).from(applicationAttachment),
+                select(defaultAttachment.attachmentId).from(defaultAttachment))))
+        .execute();
+  }
+
+  /**
    * Updates handler of given applications.
    *
-   * @param   handler       New handler set to the applications.
-   * @param   applications  Applications whose handler is updated.
-   *
-   * @return  Number of updated applications.
+   * @param handler New handler set to the applications.
+   * @param applications Applications whose handler is updated.
+   * @return Number of updated applications.
    */
   @Transactional
   public int updateHandler(int handler, List<Integer> applications) {

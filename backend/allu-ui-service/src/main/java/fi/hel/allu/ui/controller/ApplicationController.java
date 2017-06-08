@@ -47,6 +47,18 @@ public class ApplicationController {
     return new ResponseEntity<>(applicationServiceComposer.updateApplication(id, applicationJson), HttpStatus.OK);
   }
 
+  /**
+   * Delete a note from database.
+   *
+   * @param applicationId note application's database ID
+   */
+  @RequestMapping(value = "/note/{id}", method = RequestMethod.DELETE)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<Void> deleteNote(@PathVariable int id) {
+    applicationServiceComposer.deleteNote(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   @RequestMapping(value = "/handler/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
   public ResponseEntity<Void> updateApplicationHandler(@PathVariable int id, @RequestBody(required = true) List<Integer> applicationsIds) {

@@ -100,24 +100,24 @@ create table allu.application (
 create table allu.application_customer (
   id serial primary key,
   customer_id integer references allu.customer(id) not null,
-  application_id integer references allu.application(id) not null,
+  application_id integer references allu.application(id) on delete cascade not null,
   customer_role_type text not null);
 
 create table allu.application_customer_contact (
   id serial primary key,
-  application_customer_id integer references allu.application_customer(id) not null,
+  application_customer_id integer references allu.application_customer(id) on delete cascade not null,
   contact_id integer references allu.contact(id) not null);
 
 create table allu.recurring_period (
   id serial primary key,
-  application_id integer references allu.application(id) not null,
+  application_id integer references allu.application(id) on delete cascade not null,
   period_start_time timestamp with time zone not null, -- start time in year 1972
   period_end_time timestamp with time zone not null    -- end time in year 1972
 );
 
 create table allu.distribution_entry (
   id serial primary key,
-  application_id integer references allu.application(id) not null,
+  application_id integer references allu.application(id) on delete cascade not null,
   postal_address_id integer references allu.postal_address(id),
   distribution_type text not null,
   name text,
@@ -126,7 +126,7 @@ create table allu.distribution_entry (
 
 create table allu.application_tag (
     id serial primary key,
-    application_id integer not null references allu.application(id),
+    application_id integer not null references allu.application(id) on delete cascade,
     added_by integer references allu.user(id),
     type text not null,
     creation_time timestamp with time zone not null
@@ -149,7 +149,7 @@ comment on table allu.fixed_location is 'Predefined Area+Section type location';
 
 create table allu.location (
   id serial primary key,
-  application_id integer not null references allu.application(id),
+  application_id integer not null references allu.application(id) on delete cascade,
   location_key integer not null,            -- human readable name for location. Each location has names from 1 to number of locations
   location_version integer not null,        -- version of the location with same location_key. If area changes, it will be stored as new version
   start_time timestamp with time zone not null,
@@ -166,13 +166,13 @@ create table allu.location (
 
 create table allu.location_flids (
   id serial primary key,
-  location_id integer references allu.location(id),
+  location_id integer references allu.location(id) on delete cascade,
   fixed_location_id integer references allu.fixed_location(id) );
 
 create table allu.location_geometry (
   id serial primary key,
   geometry geometry(GEOMETRY, 3879),
-  location_id integer references allu.location(id) );
+  location_id integer references allu.location(id) on delete cascade );
 
 create table allu.outdoor_pricing (
   id serial primary key,
@@ -201,7 +201,7 @@ create table allu.attachment (
 
 create table allu.application_attachment (
   id serial primary key,
-  application_id integer not null references allu.application(id),
+  application_id integer not null references allu.application(id) on delete cascade,
   attachment_id integer not null references allu.attachment(id)
 );
 
@@ -220,7 +220,7 @@ create table allu.default_attachment_application_type (
 
 create table allu.invoice_row (
     id serial primary key,
-    application_id integer references allu.application(id) not null,
+    application_id integer not null references allu.application(id) on delete cascade,
     row_number integer not null,
     manually_set boolean not null,
     unit text not null,
@@ -247,7 +247,7 @@ create table allu.attribute_meta (
 
 create table allu.decision (
     id serial primary key,
-    application_id integer references allu.application(id),
+    application_id integer references allu.application(id) on delete cascade,
     creation_time timestamp with time zone,
     data bytea,
     decision_time timestamp with time zone,
@@ -261,7 +261,7 @@ create table allu.default_text (
 
 create table allu.application_comment (
     id serial primary key,
-    application_id integer references allu.application(id) not null,
+    application_id integer not null references allu.application(id) on delete cascade,
     user_id integer references allu.user(id) not null,
     type text not null,
     text text not null,
@@ -270,7 +270,7 @@ create table allu.application_comment (
 
 create table allu.application_change (
     id serial primary key,
-    application_id integer references allu.application(id) not null,
+    application_id integer not null references allu.application(id) on delete cascade,
     user_id integer references allu.user(id) not null,
     change_type text not null,   -- change type
     new_status text,      -- new status if applicable
@@ -278,14 +278,14 @@ create table allu.application_change (
 
 create table allu.application_field_change (
     id serial primary key,
-    application_change_id integer references allu.application_change(id) not null,
+    application_change_id integer not null references allu.application_change(id) on delete cascade,
     field_name text not null,
     old_value text,
     new_value text);
 
 create table allu.application_reminder (
     id serial primary key,
-    application_id integer references allu.application(id) not null,
+    application_id integer not null references allu.application(id) on delete cascade,
     reminder_trigger timestamp with time zone not null
 );
 

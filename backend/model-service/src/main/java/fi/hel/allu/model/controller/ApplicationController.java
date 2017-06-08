@@ -134,10 +134,20 @@ public class ApplicationController {
   }
 
   /**
+   * Delete note and its related data
+   *
+   * @param id application's database ID.
+   */
+  @RequestMapping(value = "/note/{id}", method = RequestMethod.DELETE)
+  public ResponseEntity<Void> deleteNote(@PathVariable int id) {
+    applicationService.deleteNote(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
    * Find attachments for an application
    *
-   * @param id
-   *          The application id
+   * @param id The application id
    * @return list of attachments
    */
   @RequestMapping(value = "/{id}/attachments", method = RequestMethod.GET)

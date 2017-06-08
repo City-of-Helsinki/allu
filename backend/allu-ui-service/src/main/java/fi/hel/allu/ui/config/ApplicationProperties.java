@@ -192,6 +192,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to delete a note in model service.
+   */
+  public String getNoteDeleteUrl() {
+    return getModelServiceUrl("/applications/note/{id}");
+  }
+
+  /**
    * @return url to send application search queries.
    */
   public String getApplicationSearchUrl() {
@@ -210,6 +217,13 @@ public class ApplicationProperties {
    */
   public String getApplicationSearchCreateUrl() {
     return getSearchServiceUrl("/applications");
+  }
+
+  /**
+   * @return url to delete note from search index.,
+   */
+  public String getNoteSearchRemoveUrl() {
+    return getSearchServiceUrl("/applications/{id}");
   }
 
   /**
