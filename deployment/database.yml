@@ -1,6 +1,5 @@
 - name: install Allu database
   hosts: dbservers
   remote_user: allu
-  become: yes
   roles:
     - database

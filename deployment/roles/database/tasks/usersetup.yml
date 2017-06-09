@@ -1,0 +1,7 @@
+- name: create postgres group to system
+  group: name=postgres state=present
+  become: yes
+
+- name: add postgres user to system
+  user: name=postgres uid=999 group=postgres shell=/bin/bash
+  become: yes

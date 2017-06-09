@@ -1,12 +1,7 @@
 # setup all databases for different services
 
-- include: create_database.yml
+- include: configure_database.yml
   vars:
     database_name: model_service
     database_user: model_service
     database_password: "{{ database_password_model_service }}"
-
-- name: add postgis extension to model_service database
-  postgresql_ext: name=postgis db=model_service
-  become: yes
-  become_user: postgres

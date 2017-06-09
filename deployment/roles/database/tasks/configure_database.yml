@@ -1,0 +1,32 @@
+- name: Change database user {{ database_name }}'s password and user rights
+  postgresql_user:
+    login_host=localhost
+    name={{ database_user }}
+    password={{ database_password }}
+    state=present
+    role_attr_flags=NOCREATEDB,NOSUPERUSER,LOGIN
+  become: yes
+  become_user: postgres
+
+- name: drop all public access rights to {{ database_name }} database
+  postgresql_privs:
+    login_host=localhost
+    database={{ database_name }}
+    state=absent
+    roles=PUBLIC
+    privs=ALL
+    type=database
+  become: yes
+  become_user: postgres
+
+- name: add all access rights to {{ database_name }} database for {{ database_user }} user
+  postgresql_privs:
+    host=localhost
+    database={{ database_name }}
+    roles={{ database_user }}
+    state=present
+    privs=ALL
+    type=database
+    grant_option=yes
+  become: yes
+  become_user: postgres
