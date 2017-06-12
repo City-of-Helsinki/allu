@@ -3,12 +3,13 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.CustomerJson;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.ContactJson;
+import fi.hel.allu.ui.domain.CustomerJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.ProjectMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,15 @@ public class SearchService {
     restTemplate.put(
         applicationProperties.getApplicationsSearchUpdateUrl(),
         applications);
+  }
+
+  /**
+   * Delete a note from search-service's database.
+   *
+   * @param applicationId note application's database ID
+   */
+  public void deleteNote(int applicationId) {
+    restTemplate.delete(applicationProperties.getNoteSearchRemoveUrl(), applicationId);
   }
 
   /**

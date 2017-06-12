@@ -1,8 +1,8 @@
 package fi.hel.allu.model.testUtils;
 
 import fi.hel.allu.common.types.*;
-import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ApplicationDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
@@ -100,6 +100,14 @@ public class TestCommon {
     return app;
   }
 
+  public Application dummyNoteApplication(String name, String handler) {
+    Application app = dummyBasicApplication(name, handler);
+    app.setType(ApplicationType.NOTE);
+    app.setKind(ApplicationKind.STATEMENT);
+    app.setApplicationId("MP1700001");
+    app.setExtension(dummyNote());
+    return app;
+  }
   /**
    * Create a dummy outdoor applicationExtension.
    *
@@ -124,6 +132,12 @@ public class TestCommon {
     AreaRental areaRental = new AreaRental();
     areaRental.setAdditionalInfo("foobar additional info");
     return areaRental;
+  }
+
+  public ApplicationExtension dummyNote() {
+    Note note = new Note();
+    note.setDescription("Dummy note");
+    return note;
   }
 
   /**

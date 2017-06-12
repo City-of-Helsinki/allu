@@ -105,6 +105,16 @@ public class ApplicationServiceComposer {
   }
 
   /**
+   * Delete a note from model-service's and search-service's database.
+   *
+   * @param applicationId note application's database ID
+   */
+  public void deleteNote(int applicationId) {
+    applicationService.deleteNote(applicationId);
+    searchService.deleteNote(applicationId);
+  }
+
+  /**
    * Update the given application by calling back-end service, don't track the
    * changes in application history. To make sure application changes are
    * tracked properly, the caller should handle them.

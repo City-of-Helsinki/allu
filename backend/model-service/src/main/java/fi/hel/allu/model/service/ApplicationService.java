@@ -131,6 +131,15 @@ public class ApplicationService {
   }
 
   /**
+   * Delete note and its related data
+   *
+   * @param id application's database ID.
+   */
+  public void deleteNote(int id) {
+    applicationDao.deleteNote(id);
+  }
+
+  /**
    * Change application status.
    *
    * @param applicationId   Id of the application to be changed.

@@ -1,5 +1,7 @@
 package fi.hel.allu.model.testUtils;
 
+import com.greghaskins.spectrum.Block;
+
 import fi.hel.allu.model.ModelApplication;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,9 @@ import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.afterAll;
-import static com.greghaskins.spectrum.dsl.specification.Specification.afterEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeAll;
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
+import java.util.Arrays;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 
 /**
  * Base class for spec tests, takes care of @Autowired and transactions
@@ -59,4 +60,41 @@ public class SpeccyTestBase {
     return transactionManager.getTransaction(transactionDefinition);
   }
 
+  /**
+   * Assertion checker. Knows some assertion and makes sure it holds when a
+   * given code bloce is executed.
+   */
+  protected static abstract class AssertChecker {
+    public abstract void when(Block block) throws AssertionError;
+  }
+
+  /**
+   * Asserts that the given code block throws one of the given throwables. For
+   * example:
+   * <p>
+   * <code>
+   * assertThrows(() -> { throw new RuntimeException(); }, IllegalArgumentException.class, RuntimeException.class);
+   * </code>
+   *
+   * @param expected List of throwables. Code block must throw one of these.
+   */
+
+  @SafeVarargs
+  protected static AssertChecker assertThrows(Class<? extends Throwable>... expected)
+  {
+    return new AssertChecker() {
+      @Override
+      public void when(Block block) throws AssertionError {
+        try {
+          block.run();
+        } catch (Throwable t) {
+          if (!Arrays.stream(expected).filter(ex -> ex.isAssignableFrom(t.getClass())).findAny().isPresent()) {
+            throw new AssertionError("Unexpected throwable: " + t, t);
+          }
+          return;
+        }
+        throw new AssertionError("Did not throw!");
+      }
+    };
+  }
 }
