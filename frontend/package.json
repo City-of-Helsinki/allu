@@ -79,6 +79,8 @@
     "leaflet-path-transform": "1.0.3",
     "leaflet-groupedlayercontrol": "0.6.0",
     "leaflet-measure-path": "1.3.1",
+    "@turf/intersect": "4.4.0",
+    "@mapbox/leaflet-pip": "1.1.0",
     "node-sass": "3.10.1",
     "proj4leaflet": "1.0.1",
     "reflect-metadata": "0.1.2",

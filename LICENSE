@@ -3,6 +3,10 @@ Drag feature functionality for Leaflet.draw
 Copyright (c) 2015 Alexander Milevski
 
 The MIT License (MIT)
+Method for interpolating L.Circle into a set of points, for example for use in GeoJSON
+Copyright (c) 2014 Alexander Milevski
+
+The MIT License (MIT)
 Copyright (c) 2016 Helsinki city
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files

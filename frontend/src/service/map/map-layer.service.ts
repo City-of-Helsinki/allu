@@ -24,16 +24,23 @@ const OVERLAYS: L.Control.LayersObject = {
 };
 
 export class MapLayerService {
+  _applicationLayers: {[key: string]: L.FeatureGroup} = {};
+
+  constructor() {
+    EnumUtil.enumValues(ApplicationType)
+      .map(type => findTranslation(['application.type', type]))
+      .forEach(type => this._applicationLayers[type] = L.featureGroup());
+  }
+
   get overlays(): L.Control.LayersObject {
     return OVERLAYS;
   }
 
   get applicationLayers(): {[key: string]: L.FeatureGroup} {
-    let applicationLayers: {[key: string]: L.FeatureGroup} = {};
-    EnumUtil.enumValues(ApplicationType)
-      .map(type => findTranslation(['application.type', type]))
-      .forEach(type => applicationLayers[type] = L.featureGroup());
-    return applicationLayers;
+    return this._applicationLayers;
   }
 
+  get applicationLayerArray(): Array<L.FeatureGroup> {
+    return Object.keys(this._applicationLayers).map(k => this._applicationLayers[k]);
+  }
 }

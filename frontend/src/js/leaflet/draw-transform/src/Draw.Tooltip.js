@@ -1,13 +1,14 @@
 L.Draw.Tooltip = L.Draw.Tooltip.include({
-
-  visibility: 'inherit',
+  visible: true,
 
   hide: function() {
-    this._updateVisibility('hidden');
+    this._updateVisibility(false);
+    return this;
   },
 
   show: function() {
-    this._updateVisibility('inherit');
+    this._updateVisibility(true);
+    return this;
   },
 
   /**
@@ -18,17 +19,21 @@ L.Draw.Tooltip = L.Draw.Tooltip.include({
       tooltipContainer = this._container;
 
     if (this._container) {
-      tooltipContainer.style.visibility = this.visibility;
+      tooltipContainer.style.visibility = this._visibilityStyle();
       L.DomUtil.setPosition(tooltipContainer, pos);
     }
 
     return this;
   },
 
-  _updateVisibility: function(visibility) {
-    this.visibility = visibility;
+  _updateVisibility: function(isVisible) {
+    this.visible = isVisible;
     if (this._container) {
-      this._container.style.visibility = visibility;
+      this._container.style.visibility = this._visibilityStyle();
     }
+  },
+
+  _visibilityStyle: function() {
+    return this.visible ? 'inherit' : 'hidden';
   },
 });

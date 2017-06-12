@@ -64,8 +64,7 @@ L.Edit.SimpleShape.include( /** @lends L.Edit.SimpleShape.prototype */ {
     }
     this._shape.dragging.enable();
     this._shape
-      .on('dragstart', this._onStartEditFeature, this)
-      .on('dragend', this._onStopTransformFeature, this);
+      .on('dragstart', this._onStartEditFeature, this);
   },
 
   /**
@@ -74,8 +73,7 @@ L.Edit.SimpleShape.include( /** @lends L.Edit.SimpleShape.prototype */ {
   _disableDragging: function() {
     this._shape.dragging.disable();
     this._shape
-      .off('dragstart', this._onStartTransformFeature, this)
-      .off('dragend', this._onStopTransformFeature, this);
+      .off('dragstart', this._onStartTransformFeature, this);
   },
 
   _enableTransform: function(options = Options.DEFAULT_TRANSFORM_OPTIONS) {
@@ -143,7 +141,16 @@ L.Edit.SimpleShape.include( /** @lends L.Edit.SimpleShape.prototype */ {
     if (L.EditToolbar.Edit.MOVE_MARKERS) {
       this._moveMarker = this._createMarker(this._getShapeCenter(), this.options.moveIcon);
     }
-  }
+  },
+
+  __fireEdit: L.Edit.SimpleShape.prototype._fireEdit,
+
+  _fireEdit: function () {
+    this.__fireEdit();
+    this._shape._map.fire(L.Draw.Event.EDITVERTEX, { layers: this._markerGroup, poly: this._shape });
+  },
+
+
 
 });
 

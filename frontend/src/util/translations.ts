@@ -453,6 +453,7 @@ export const translations = {
   map: {
     zoomIn: 'Lähennä',
     zoomOut: 'Loitonna',
+    areasIntersect: 'Alue leikkaa toisen alueen',
     draw: {
       toolbar: {
         actions: {

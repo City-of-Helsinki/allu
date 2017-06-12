@@ -15,8 +15,10 @@ import {Geocoordinates} from '../../model/common/geocoordinates';
 import {pathStyle} from './map-draw-styles';
 import {MapPopup} from './map-popup';
 import {MapLayerService} from './map-layer.service';
-import '../../js/leaflet/draw-transform';
 import GeoJSONOptions = L.GeoJSONOptions;
+import '../../js/leaflet/draw-transform';
+import '../../js/leaflet/draw-intersect';
+import {NotificationService} from '../notification/notification.service';
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -105,6 +107,7 @@ export class MapState {
     let drawControl = new L.Control.Draw({
       position: 'topright',
       draw: draw,
+      intersectLayers: this.mapLayerService.applicationLayerArray,
       edit: {
         featureGroup: items,
         edit: edit,
@@ -233,7 +236,7 @@ export class MapState {
     // Default selected layers and overlays
     this.mapOverlayLayers = this.mapLayerService.overlays;
     this.drawnItems = this.mapLayerService.applicationLayers;
-    return [this.mapOverlayLayers.kaupunkikartta].concat(this.applicationLayers());
+    return [this.mapOverlayLayers.kaupunkikartta].concat(this.mapLayerService.applicationLayerArray);
   }
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {
@@ -251,6 +254,10 @@ export class MapState {
       if (!self.config.showOnlyApplicationArea) {
         self.mapView$.next(self.getCurrentMapView());
       }
+    });
+
+    this.map.on(L.Draw.Event.INTERSECTS, (e: any) => {
+      NotificationService.errorMessage(translations.map.areasIntersect, 2000);
     });
   }
 
@@ -275,16 +282,11 @@ export class MapState {
   }
 
   private drawLayers(): L.FeatureGroup {
-    return this.applicationLayers()
+    return this.mapLayerService.applicationLayerArray
       .reduce((allLayers, currentLayer) => {
         allLayers.addLayer(currentLayer);
         return allLayers;
       }, L.featureGroup());
-  }
-
-  private applicationLayers(): Array<L.FeatureGroup> {
-    return Object.keys(this.drawnItems)
-      .map(key => this.drawnItems[key]);
   }
 
   private latLngToLayerPoint(latLng: L.LatLng): L.Point {

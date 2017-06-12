@@ -115,8 +115,7 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
     }
     this._poly.dragging.enable();
     this._poly
-      .on('dragstart', this._onStartTransformFeature, this)
-      .on('dragend', this._onStopTransformFeature, this);
+      .on('dragstart', this._onStartTransformFeature, this);
   },
 
   /**
@@ -125,8 +124,7 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
   _disableDragging: function() {
     this._poly.dragging.disable();
     this._poly
-      .off('dragstart', this._onStartTransformFeature, this)
-      .off('dragend', this._onStopTransformFeature, this);
+      .off('dragstart', this._onStartTransformFeature, this);
   },
 
   _enableTransform: function(options = Options.DEFAULT_TRANSFORM_OPTIONS) {
@@ -199,7 +197,6 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
     }
   },
 
-
   _onVertexDrag: function(evt) {
     this._updateMeasurements();
   },
@@ -255,8 +252,7 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
       this._markerGroup.addLayer(this._moveMarker);
       this._updateMoveMarker();
     }
-  }
-
+  },
 });
 
 /**
