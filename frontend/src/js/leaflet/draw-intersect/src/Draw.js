@@ -12,7 +12,7 @@ L.Control.Draw.include({
     return this._onAdd(map);
   },
 
-  _onRemove: L.Control.Draw.prototype.onAdd,
+  _onRemove: L.Control.Draw.prototype.onRemove,
 
   onRemove: function() {
     this._disableIntersectChecking();

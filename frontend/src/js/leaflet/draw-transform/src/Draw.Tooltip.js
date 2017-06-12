@@ -15,10 +15,10 @@ L.Draw.Tooltip = L.Draw.Tooltip.include({
    * Override to use visible flag
    */
   updatePosition: function (latlng) {
-    var pos = this._map.latLngToLayerPoint(latlng),
-      tooltipContainer = this._container;
+    const pos = this._map.latLngToLayerPoint(latlng);
+    const tooltipContainer = this._container;
 
-    if (this._container) {
+    if (tooltipContainer) {
       tooltipContainer.style.visibility = this._visibilityStyle();
       L.DomUtil.setPosition(tooltipContainer, pos);
     }
