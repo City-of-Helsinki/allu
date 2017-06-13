@@ -53,7 +53,7 @@ public class ApplicantReminderService {
    * Send reminders about applications about to end to their applicants
    */
   public void sendReminders() {
-
+    logger.info("ApplicantReminder: sending reminders");
     DeadlineCheckParams checkParams = new DeadlineCheckParams(APPLICATION_TYPES, STATUS_TYPES,
         ZonedDateTime.now(), ZonedDateTime.now().plusDays(DAYS_BEFORE));
     List<Application> apps = Arrays.asList(restTemplate
