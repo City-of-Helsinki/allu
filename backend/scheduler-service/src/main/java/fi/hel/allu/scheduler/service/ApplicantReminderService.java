@@ -14,9 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -36,7 +38,7 @@ public class ApplicantReminderService {
   private static final int DAYS_BEFORE = 14;
 
   private static final String MAIL_SUBJECT = "Muistutus luvasta %s";
-  private static final String MAIL_TEMPLATE = "templates/mail-template.txt";
+  private static final String MAIL_TEMPLATE = "/templates/mail-template.txt";
   private RestTemplate restTemplate;
   private ApplicationProperties applicationProperties;
   private AlluMailService alluMailService;
@@ -84,11 +86,17 @@ public class ApplicantReminderService {
   }
 
   private String readMailTemplate() throws IOException {
+    StringBuilder result = new StringBuilder();
     // Get file from resources folder
-    ClassLoader classLoader = getClass().getClassLoader();
-    File file = new File(classLoader.getResource(MAIL_TEMPLATE).getFile());
+    try (InputStream stream = getClass().getResourceAsStream(MAIL_TEMPLATE)) {
+      BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+      String line;
 
-    return new String(Files.readAllBytes(file.toPath()));
+      while ((line = reader.readLine()) != null) {
+        result.append(line).append('\n');
+      }
+    }
+    return result.toString();
   }
 
   private Map<String, String> mailVariables(Application application) {
