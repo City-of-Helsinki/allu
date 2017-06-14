@@ -1,26 +1,27 @@
 package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
-
 import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
-
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
-@SpringApplicationConfiguration(classes = ModelApplication.class)
+@SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 public class CustomerDaoSpec extends SpeccyTestBase {
 

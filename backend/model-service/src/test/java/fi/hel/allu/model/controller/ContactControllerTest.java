@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ModelApplication.class)
+@SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 @Transactional
 public class ContactControllerTest {
@@ -75,32 +75,24 @@ public class ContactControllerTest {
   }
 
   @Test
-  public void addContactWithId() throws Exception {
-    // add contact with id. Should fail:
-    Contact contact = createDummyContact();
-    contact.setId(123);
-    wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
-  }
-
-  @Test
   public void addContactWithBadOrganization() throws Exception {
     Contact contact = createDummyContact();
     contact.setCustomerId(customerId1 + 100);
-    wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
+    wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isBadRequest());
   }
 
   @Test
   public void addContactWithoutOrganization() throws Exception {
     Contact contact = createDummyContact();
     contact.setCustomerId(null);
-    wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
+    wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isBadRequest());
   }
 
   @Test
   public void addContactWithoutName() throws Exception {
     Contact contact = createDummyContact();
     contact.setName(null);
-    wtc.perform(post("/contacts"), contact).andExpect(status().isBadRequest());
+    wtc.perform(post("/contacts"), Collections.singletonList(contact)).andExpect(status().isBadRequest());
   }
 
   @Test

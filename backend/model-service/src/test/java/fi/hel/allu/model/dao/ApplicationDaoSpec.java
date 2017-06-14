@@ -2,7 +2,6 @@ package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
 import com.greghaskins.spectrum.Variable;
-
 import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
@@ -10,11 +9,10 @@ import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.TestCommon;
-
-import org.geolatte.geom.builder.DSL.Polygon2DToken;
+import org.geolatte.geom.builder.DSL.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.ZonedDateTime;
@@ -27,7 +25,7 @@ import static org.geolatte.geom.builder.DSL.*;
 import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
-@SpringApplicationConfiguration(classes = ModelApplication.class)
+@SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 public class ApplicationDaoSpec extends SpeccyTestBase {
 

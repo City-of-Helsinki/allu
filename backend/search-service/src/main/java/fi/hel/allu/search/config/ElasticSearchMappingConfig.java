@@ -1,18 +1,22 @@
 package fi.hel.allu.search.config;
 
+import org.elasticsearch.ResourceAlreadyExistsException;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequestBuilder;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.xcontent.NamedXContentRegistry;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
 import org.elasticsearch.common.xcontent.XContentParser;
 import org.elasticsearch.common.xcontent.json.JsonXContent;
-import org.elasticsearch.indices.IndexAlreadyExistsException;
+import org.elasticsearch.search.SearchModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.util.Collections;
 
 /**
  * Component for building ElasticSearch mapping configuration i.e. the "schema".
@@ -46,8 +50,9 @@ public class ElasticSearchMappingConfig {
           client.admin().indices().prepareCreate(APPLICATION_INDEX_NAME).setSettings(getIndexSettingsForApplication());
       createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultApplicationsIndex());
       createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
+      createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
       createIndexRequestBuilder.execute().actionGet();
-    } catch (IndexAlreadyExistsException e) {
+    } catch (ResourceAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + APPLICATION_INDEX_NAME  + " not created, because it exists already.");
     }
     try {
@@ -55,7 +60,7 @@ public class ElasticSearchMappingConfig {
           client.admin().indices().prepareCreate(CUSTOMER_INDEX_NAME).setSettings(getIndexSettingsForCustomer());
       createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultCustomersIndex());
       createIndexRequestBuilder.execute().actionGet();
-    } catch (IndexAlreadyExistsException e) {
+    } catch (ResourceAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + CUSTOMER_INDEX_NAME  + " not created, because it exists already.");
     }
   }
@@ -72,7 +77,7 @@ public class ElasticSearchMappingConfig {
           .startObject("_default_")
             .startObject("properties")
               .startObject("name") // alphabetical sorting for all name-properties in the index
-                .field("type", "string")
+                .field("type", "text")
                 .field("fields").copyCurrentStructure(parser(alphasort()))
               .endObject()
             .endObject()
@@ -97,7 +102,7 @@ public class ElasticSearchMappingConfig {
               .startObject("handler") // alphabetical sorting for handler.userName
                 .startObject("properties")
                   .startObject("userName")
-                    .field("type", "string")
+                    .field("type", "text")
                     .field("fields").copyCurrentStructure(parser(alphasort()))
                   .endObject()
                 .endObject()
@@ -109,7 +114,7 @@ public class ElasticSearchMappingConfig {
                       .startObject("customer")
                         .startObject("properties")
                           .startObject("name")
-                            .field("type", "string")
+                            .field("type", "text")
                             .field("fields").copyCurrentStructure(parser(alphasort()))
                           .endObject()
                         .endObject()
@@ -121,7 +126,7 @@ public class ElasticSearchMappingConfig {
               .startObject("locations") // alphabetical sorting for locations.address
                 .startObject("properties")
                   .startObject("streetAddress")
-                    .field("type", "string")
+                    .field("type", "text")
                     .field("fields").copyCurrentStructure(parser(alphasort()))
                   .endObject()
                 .endObject()
@@ -145,7 +150,7 @@ public class ElasticSearchMappingConfig {
           .startObject()
             .startObject("properties")
               .startObject("ownerName")
-                .field("type", "string")
+                .field("type", "text")
                 .field("fields").copyCurrentStructure(parser(alphasort()))
               .endObject()
             .endObject()
@@ -205,7 +210,8 @@ public class ElasticSearchMappingConfig {
   }
 
   private XContentParser parser(XContentBuilder xContentBuilder) throws IOException {
-    return JsonXContent.jsonXContent.createParser(xContentBuilder.string());
+    SearchModule searchModule = new SearchModule(Settings.EMPTY, false, Collections.emptyList());
+    return JsonXContent.jsonXContent.createParser(new NamedXContentRegistry(searchModule.getNamedXContents()), xContentBuilder.string());
   }
 
   private XContentBuilder autocompleteSettingsFilter() throws IOException {
@@ -234,7 +240,7 @@ public class ElasticSearchMappingConfig {
   private XContentBuilder autocompleteWithAlphaSortingMappingAnalyzer() throws IOException {
     XContentBuilder builder =  XContentFactory.jsonBuilder()
         .startObject()
-          .field("type", "string")
+          .field("type", "text")
           .field("analyzer", ANALYZER_AUTOCOMPLETE)
           .field("search_analyzer", "standard")
           .field("fields").copyCurrentStructure(parser(alphasort()))
@@ -245,8 +251,9 @@ public class ElasticSearchMappingConfig {
   private XContentBuilder caseInsensitiveSortAnalyzer() throws IOException {
     XContentBuilder builder =  XContentFactory.jsonBuilder()
         .startObject()
-          .field("tokenizer", "keyword")
-          .array("filter", "lowercase")
+          .field("type", "custom")
+          .array("char_filter")
+          .array("filter", "lowercase", "asciifolding")
         .endObject();
     return builder;
   }
@@ -256,8 +263,8 @@ public class ElasticSearchMappingConfig {
         .startObject()
           .field("alphasort")
             .startObject()
-              .field("type", "string")
-              .field("analyzer", ANALYZER_CASE_INSENSITIVE_SORT)
+              .field("type", "keyword")
+              .field("normalizer", ANALYZER_CASE_INSENSITIVE_SORT)
             .endObject()
         .endObject();
   }
@@ -271,8 +278,10 @@ public class ElasticSearchMappingConfig {
             .endObject()
             .startObject("analyzer")
               .field(ANALYZER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsAnalyzer()))
-              .field(ANALYZER_CASE_INSENSITIVE_SORT).copyCurrentStructure(parser(caseInsensitiveSortAnalyzer()))
             .endObject()
+          .startObject("normalizer")
+            .field(ANALYZER_CASE_INSENSITIVE_SORT).copyCurrentStructure(parser(caseInsensitiveSortAnalyzer()))
+          .endObject()
           .endObject()
         .endObject();
   }

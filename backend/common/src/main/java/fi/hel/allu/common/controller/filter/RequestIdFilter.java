@@ -2,7 +2,7 @@ package fi.hel.allu.common.controller.filter;
 
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.MDC;
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;

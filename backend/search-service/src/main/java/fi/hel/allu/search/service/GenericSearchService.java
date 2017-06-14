@@ -5,11 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import fi.hel.allu.common.exception.SearchException;
+import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.common.util.RecurringApplication;
-import org.elasticsearch.action.ActionRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -20,13 +19,13 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
-import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.ByteSizeValue;
 import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
+import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
 import org.elasticsearch.search.sort.SortBuilder;
@@ -82,7 +81,7 @@ public class GenericSearchService {
       logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
       IndexResponse response =
           client.prepareIndex(indexName, indexTypeName, id).setSource(json).get();
-      if (!response.isCreated()) {
+      if (response.status() != RestStatus.CREATED) {
         throw new SearchException("Unable to insert record to " + indexTypeName + " with id " + id);
       }
     } catch (JsonProcessingException e) {
@@ -111,7 +110,7 @@ public class GenericSearchService {
    * @param idToUpdatedObject Map having id of the updated object as key and object that will be updated to search index as JSON.
    */
   public void bulkUpdate(Map<String, Object> idToUpdatedObject) {
-    List<UpdateRequest> updateRequests =
+    List<IndexRequest> updateRequests =
         idToUpdatedObject.entrySet().stream().map(entry -> updateRequest(entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
     executeBulk(updateRequests);
@@ -124,7 +123,7 @@ public class GenericSearchService {
    */
   public void delete(String id) {
     DeleteResponse response = client.prepareDelete(indexName, indexTypeName, id).get();
-    if (response == null || !response.isFound()) {
+    if (response == null || response.status() != RestStatus.OK) {
       throw new SearchException("Unable to delete record, id = " + id);
     }
   }
@@ -219,15 +218,15 @@ public class GenericSearchService {
     client.admin().indices().prepareRefresh(indexName).execute().actionGet();
   }
 
-  private UpdateRequest updateRequest(String id, Object indexedObject) {
+  private IndexRequest updateRequest(String id, Object indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       logger.debug("Creating update request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
-      UpdateRequest updateRequest = new UpdateRequest();
+      IndexRequest updateRequest = new IndexRequest();
       updateRequest.index(indexName);
       updateRequest.type(indexTypeName);
       updateRequest.id(id);
-      updateRequest.doc(json);
+      updateRequest.source(json);
       return updateRequest;
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
@@ -279,7 +278,7 @@ public class GenericSearchService {
       return createRecurringQueryBuilder(queryParameter);
     } else if (queryParameter.getFieldValue() != null) {
       return QueryBuilders.matchQuery(
-          queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(MatchQueryBuilder.Operator.AND);
+          queryParameter.getFieldName(), queryParameter.getFieldValue()).operator(Operator.AND);
     } else if (queryParameter.getStartDateValue() != null && queryParameter.getEndDateValue() != null) {
       return QueryBuilders.rangeQuery(queryParameter.getFieldName())
           .gte(queryParameter.getStartDateValue().toInstant().toEpochMilli())
@@ -358,7 +357,7 @@ public class GenericSearchService {
     return (startOrEnd == 0) ? 1 : startOrEnd;
   }
 
-  private void executeBulk(List<? extends ActionRequest<?>> requests) {
+  private void executeBulk(List<IndexRequest> requests) {
     final BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessorListener())
         .setConcurrentRequests(1)           // at most 1 concurrent request
         .setBulkActions(1000)               // maximum of 1000 updates per request

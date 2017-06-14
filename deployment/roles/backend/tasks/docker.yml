@@ -57,6 +57,7 @@
   docker_container:
     name: allu_backend_container
     image: allu_backend
+    restart_policy: always
     volumes:
       - /home/allu:/servicehome:rw
     published_ports:

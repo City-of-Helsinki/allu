@@ -81,6 +81,7 @@ public class ContactDao {
 
   @Transactional
   public List<Contact> insert(List<Contact> contacts) {
+    contacts.forEach(c -> c.setId(null));
     SQLInsertClause inserts = queryFactory.insert(contact);
     contacts.forEach(c -> inserts.populate(c).set(contact.postalAddressId, postalAddressDao.insertIfNotNull(c)).addBatch());
     List<Integer> ids = inserts.executeWithKeys(contact.id);

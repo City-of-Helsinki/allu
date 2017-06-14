@@ -1,9 +1,9 @@
 package fi.hel.allu.search.config;
 
 import org.elasticsearch.client.Client;
-import org.elasticsearch.client.transport.TransportClient;
 import org.elasticsearch.common.settings.Settings;
 import org.elasticsearch.common.transport.InetSocketTransportAddress;
+import org.elasticsearch.transport.client.PreBuiltTransportClient;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -17,7 +17,6 @@ import java.net.UnknownHostException;
 @EnableAutoConfiguration
 public class AppConfig {
 
-
   @Value("${elasticsearch.host:localhost}")
   @NotEmpty
   private String elasticsearchHost;
@@ -27,10 +26,9 @@ public class AppConfig {
 
   @Bean
   public Client client() throws UnknownHostException {
-    Settings settings = Settings.settingsBuilder().put("cluster.name", "allu-cluster").build();
-    Client client = TransportClient.builder().settings(settings).build()
-        .addTransportAddress(new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHost),
-            elasticsearchPort));
+    Settings settings = Settings.builder().put("cluster.name", "allu-cluster").build();
+    Client client = new PreBuiltTransportClient(settings).addTransportAddress(
+        new InetSocketTransportAddress(InetAddress.getByName(elasticsearchHost), elasticsearchPort));
     return client;
   }
 }

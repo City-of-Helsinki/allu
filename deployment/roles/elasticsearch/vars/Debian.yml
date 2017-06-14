@@ -1,4 +1,0 @@
----
-java: "openjdk-8-jre"
-default_file: "/etc/default/elasticsearch"
-es_home: "/usr/share/elasticsearch"

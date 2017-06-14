@@ -3,9 +3,8 @@ package fi.hel.allu.model.testUtils;
 import com.greghaskins.spectrum.Block;
 
 import fi.hel.allu.model.ModelApplication;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestContextManager;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -21,7 +20,7 @@ import static com.greghaskins.spectrum.dsl.specification.Specification.*;
  * Base class for spec tests, takes care of @Autowired and transactions
  */
 
-@SpringApplicationConfiguration(classes = ModelApplication.class)
+@SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 public class SpeccyTestBase {
 

@@ -1,0 +1,27 @@
+
+- name: stop and remove existing container from Docker
+  docker_container:
+    name: elasticsearch
+    state: absent
+  become: yes
+
+- name: add container to Docker
+  docker_image:
+    name=docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+    state=present
+  become: yes
+
+- name: start container
+  docker_container:
+    name: elasticsearch
+    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+    restart_policy: always
+    volumes:
+      - /home/allu/elasticsearch:/usr/share/elasticsearch/data:rw
+    published_ports:
+      - "9200:9200"
+      - "9300:9300"
+    env:
+      xpack.security.enabled: "false"
+      cluster.name: allu-cluster
+  become: yes

@@ -1,18 +1,16 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
-
 import fi.hel.allu.common.types.ApplicationKind;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.pricing.PricingConfiguration;
 import fi.hel.allu.model.testUtils.TestCommon;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,12 +21,10 @@ import static fi.hel.allu.QCityDistrict.cityDistrict;
 import static fi.hel.allu.QFixedLocation.fixedLocation;
 import static fi.hel.allu.QLocationArea.locationArea;
 import static fi.hel.allu.QOutdoorPricing.outdoorPricing;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ModelApplication.class)
+@SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 @Transactional
 public class PricingDaoTest {

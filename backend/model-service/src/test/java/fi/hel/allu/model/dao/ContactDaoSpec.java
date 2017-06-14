@@ -1,17 +1,15 @@
 package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
-
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.domain.PostalAddressItem;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
-
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
@@ -19,13 +17,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.context;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 
 @RunWith(Spectrum.class)
-@SpringApplicationConfiguration(classes = ModelApplication.class)
+@SpringBootTest(classes = ModelApplication.class)
 @WebAppConfiguration
 public class ContactDaoSpec extends SpeccyTestBase {
   @Autowired

@@ -57,6 +57,7 @@
   docker_container:
     name: allu_database_container
     image: allu_database
+    restart_policy: always
     volumes:
       - /home/allu/database/data:/var/lib/postgresql/data:rw
     published_ports:
