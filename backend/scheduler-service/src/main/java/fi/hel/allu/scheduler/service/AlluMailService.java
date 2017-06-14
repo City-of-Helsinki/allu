@@ -4,6 +4,8 @@ import fi.hel.allu.mail.model.MailMessage;
 import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AlluMailService {
+
+  private static final Logger logger = LoggerFactory.getLogger(AlluMailService.class);
 
   private ApplicationProperties applicationProperties;
   private MailService mailService;
@@ -66,6 +70,7 @@ public class AlluMailService {
     try {
       mailService.send(message);
     } catch (MessagingException e) {
+      logger.error("Failed to send the message", e);
       throw new RuntimeException(e);
     }
   }

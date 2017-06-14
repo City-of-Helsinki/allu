@@ -3,3 +3,4 @@ allu_service_list:
   - model-service
   - search-service
   - pdf-service
+  - scheduler-service

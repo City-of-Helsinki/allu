@@ -29,6 +29,7 @@ RUN mkdir -p /home/allu/allu-ui-service
 RUN mkdir -p /home/allu/model-service
 RUN mkdir -p /home/allu/pdf-service
 RUN mkdir -p /home/allu/search-service
+RUN mkdir -p /home/allu/scheduler-service
 
 ######################################################################################
 # Expose ports
@@ -70,7 +71,7 @@ RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\
 RUN for service in `find /home/allu -mindepth 1 -maxdepth 1 -type d -printf "%f\n"`; do ln -s /servicehome/services/"${service}/${service}.properties" "/home/allu/${service}"/${service}.properties; done
 
 # Stylesheets for pdf-service
-RUN ln -s /servicehome/pdf-service/stylesheets /home/allu/pdf-service/stylesheets
+RUN ln -s /servicehome/services/pdf-service/stylesheets /home/allu/pdf-service/stylesheets
 
 ######################################################################################
 # Copy files to image

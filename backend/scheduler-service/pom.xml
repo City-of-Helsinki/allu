@@ -27,6 +27,11 @@
       <artifactId>mail</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <!-- support for conditional processing of logback configuration file -->
+      <groupId>org.codehaus.janino</groupId>
+      <artifactId>janino</artifactId>
+    </dependency>
   </dependencies>
   <build>
     <plugins>
