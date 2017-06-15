@@ -92,7 +92,7 @@
         </div>
     </div>
 
-    <div class="row">
+    <div class="row" *ngIf="showCableInfo">
         <div class="col m12">
             <cable-info [parentForm]="applicationForm" [cableReport]="application.extension" [readonly]="readonly"></cable-info>
         </div>

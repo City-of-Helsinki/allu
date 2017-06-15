@@ -12,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/applications")
 public class ApplicationStatusController {
@@ -40,8 +42,9 @@ public class ApplicationStatusController {
 
     @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-    public ResponseEntity<ApplicationJson> changeStatusToDecisionMaking(@PathVariable int id, @RequestBody StatusCommentJson comment) {
-        commentService.addDecisionProposalComment(id, comment);
+    public ResponseEntity<ApplicationJson> changeStatusToDecisionMaking(
+            @PathVariable int id, @RequestBody(required = false) StatusCommentJson comment) {
+        Optional.ofNullable(comment).ifPresent(c -> commentService.addDecisionProposalComment(id, c));
         return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.DECISIONMAKING), HttpStatus.OK);
     }
 

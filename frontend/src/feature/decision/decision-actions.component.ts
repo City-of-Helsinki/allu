@@ -3,22 +3,19 @@ import {Router} from '@angular/router';
 import {MdDialog} from '@angular/material';
 
 import {Application} from '../../model/application/application';
-import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {findTranslation} from '../../util/translations';
 import {NotificationService} from '../../service/notification/notification.service';
-import {DecisionModalComponent, DECISION_MODAL_CONFIG} from './decision-modal.component';
+import {DECISION_MODAL_CONFIG, DecisionModalComponent} from './decision-modal.component';
 import {DecisionConfirmation} from '../../model/decision/decision-confirmation';
 import {Observable} from 'rxjs';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DecisionDetails} from '../../model/decision/decision-details';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
-import {Comment} from '../../model/application/comment/comment';
 import {ApplicationState} from '../../service/application/application-state';
 import {StatusChangeComment} from '../../model/application/status-change-comment';
-import {CommentType} from '../../model/application/comment/comment-type';
 
 @Component({
   selector: 'decision-actions',

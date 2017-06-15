@@ -8,6 +8,7 @@ import {CableReportForm} from './cable-report.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
+import {ApplicationStatus} from '../../../../model/application/application-status';
 
 @Component({
   selector: 'cable-report',
@@ -16,6 +17,9 @@ import {CableReport} from '../../../../model/application/cable-report/cable-repo
   styles: []
 })
 export class CableReportComponent extends ApplicationInfoBaseComponent implements OnInit {
+
+  showCableInfo = false;
+
   constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
     super(fb, route, applicationState);
   };
@@ -23,6 +27,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   ngOnInit(): any {
     super.ngOnInit();
     this.applicationForm.patchValue(CableReportForm.from(this.application));
+    this.showCableInfo = ApplicationStatus[this.application.status] >= ApplicationStatus.HANDLING;
   }
 
 

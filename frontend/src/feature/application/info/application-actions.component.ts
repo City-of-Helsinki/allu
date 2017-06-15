@@ -9,6 +9,8 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {MaterializeUtil} from '../../../util/materialize.util';
 import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
+import {Observable} from 'rxjs/Observable';
+import {Application} from '../../../model/application/application';
 
 @Component({
   selector: 'application-actions',
@@ -62,6 +64,27 @@ export class ApplicationActionsComponent implements OnInit {
   }
 
   toDecisionmaking(): void {
-    this.router.navigate(['/applications', this.applicationId, 'decision']);
+    this.moveToDecisionMaking().subscribe(app => this.router.navigate(['/applications', app.id, 'decision']));
+  }
+
+  private moveToDecisionMaking(): Observable<Application> {
+
+    if (this.shouldMoveToDecisionMaking()) {
+      return this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.DECISIONMAKING))
+        .map(app => {
+          MaterializeUtil.toast(findTranslation('application.statusChange.DECISIONMAKING'));
+          this.applicationState.application = app;
+          return app;
+        },
+        err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
+    } else {
+      return Observable.of(this.applicationState.application);
+    }
+  }
+
+  private shouldMoveToDecisionMaking(): boolean {
+    const appType = this.applicationState.application.typeEnum;
+    const status =  ApplicationStatus[this.applicationState.application.status];
+    return appType === ApplicationType.CABLE_REPORT && status === ApplicationStatus.HANDLING;
   }
 }
