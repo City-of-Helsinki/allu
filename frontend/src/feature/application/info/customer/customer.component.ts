@@ -1,19 +1,17 @@
-import {Component, Input, OnDestroy, OnInit, ViewChild, AfterViewInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
-import {Subject} from 'rxjs/Subject';
 import {NumberUtil} from '../../../../util/number.util';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import {CustomerModalComponent} from '../../../customerregistry/customer/customer-modal.component';
-import {Observable} from 'rxjs';
 import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
 
-const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'representative'];
+const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 
 @Component({
   selector: 'customer',

@@ -13,6 +13,7 @@ export class CustomerQueryParametersMapper {
   private static mapCustomerParameters(query: CustomerSearchQuery): Array<BackendQueryParameter> {
     let queryParameters: Array<BackendQueryParameter> = [];
     QueryParametersMapper.mapParameter(queryParameters, 'name', QueryParametersMapper.removeExtraWhitespace(query.name));
+    QueryParametersMapper.mapParameter(queryParameters, 'registryKey', QueryParametersMapper.removeExtraWhitespace(query.registryKey));
     QueryParametersMapper.mapRawParameter(queryParameters, 'type', query.type);
     QueryParametersMapper.mapBooleanParameter(queryParameters, 'active', query.active);
     return queryParameters;
@@ -22,6 +23,7 @@ export class CustomerQueryParametersMapper {
 export interface CustomerSearchQuery {
   name?: string;
   type?: string;
+  registryKey?: string;
   active?: boolean;
   sort?: Sort;
 }

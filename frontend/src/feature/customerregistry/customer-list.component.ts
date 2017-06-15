@@ -24,6 +24,7 @@ export class CustomerListComponent implements OnInit {
   constructor(private router: Router, private customerHub: CustomerHub, private fb: FormBuilder) {
     this.searchForm = this.fb.group({
       name: [''],
+      registryKey: [''],
       type: [''],
       active: [true],
       sort: [new Sort()]

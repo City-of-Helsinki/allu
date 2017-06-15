@@ -9,9 +9,11 @@ import {CustomerHub} from '../../../service/customer/customer-hub';
 import {CustomerForm} from './customer.form';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
+import {CustomerSearchQuery} from '../../../service/mapper/query/customer-query-parameters-mapper';
 
 const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
 const PERSON_REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2), ComplexValidator.invalidSsnWarning];
+const DEBOUNCE_TIME_MS = 300;
 
 @Component({
   selector: 'customer-info',
@@ -24,7 +26,8 @@ export class CustomerInfoComponent {
 
   @Output() customerChange = new EventEmitter<Customer>();
 
-  matchingCustomers: Observable<Array<Customer>>;
+  matchingNameCustomers: Observable<Array<Customer>>;
+  matchingRegistryKeyCustomers: Observable<Array<Customer>>;
   customerTypes = EnumUtil.enumValues(CustomerType);
   typeSubscription: Subscription;
   registryKeyControl: FormControl;
@@ -39,9 +42,13 @@ export class CustomerInfoComponent {
     this.typeControl = <FormControl>this.form.get('type');
     this.registryKeyControl = <FormControl>this.form.get('registryKey');
 
-    this.matchingCustomers = this.nameControl.valueChanges
-      .debounceTime(300)
-      .switchMap(name => this.onNameSearchChange(name));
+    this.matchingNameCustomers = this.nameControl.valueChanges
+      .debounceTime(DEBOUNCE_TIME_MS)
+      .switchMap(name => this.onSearchChange({name: name}));
+
+    this.matchingRegistryKeyCustomers = this.registryKeyControl.valueChanges
+      .debounceTime(DEBOUNCE_TIME_MS)
+      .switchMap(key => this.onSearchChange({registryKey: key}));
 
     this.typeSubscription = this.typeControl.valueChanges
       .map((type: string) => CustomerType[type])
@@ -52,9 +59,10 @@ export class CustomerInfoComponent {
     this.typeSubscription.unsubscribe();
   }
 
-  onNameSearchChange(term: string): Observable<Array<Customer>> {
+  onSearchChange(terms: CustomerSearchQuery): Observable<Array<Customer>> {
     if (this.allowSearch) {
-      return this.customerHub.searchCustomersBy({name: term, type: this.typeControl.value});
+      const termsWithType = {...terms, type: this.typeControl.value};
+      return this.customerHub.searchCustomersBy(termsWithType);
     } else {
       return Observable.empty();
     }

@@ -23,7 +23,7 @@
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
                        [mdAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
                 <md-autocomplete #nameSearch="mdAutocomplete">
-                    <md-option *ngFor="let customer of matchingCustomers | async"
+                    <md-option *ngFor="let customer of matchingNameCustomers | async"
                                [value]="customer.name" (click)="customerSelected(customer)">
                         {{ customer.name }}
                     </md-option>
@@ -38,7 +38,16 @@
         <div class="col m6">
             <md-input-container class="input-full-width" [inputWarning]="registryKeyControl">
                 <input mdInput type="text" formControlName="registryKey"
-                       placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"/>
+                       placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"
+                       [mdAutocomplete]="registryKeySearch"/>
+
+                <md-autocomplete #registryKeySearch="mdAutocomplete">
+                    <md-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
+                               [value]="customer.registryKey" (click)="customerSelected(customer)">
+                        {{ customer.name }} ({{ customer.registryKey}})
+                    </md-option>
+                </md-autocomplete>
+
                 <md-hint>
                     <field-error [form]="form" field="registryKey" hasError="required">{{'customer.field.registryKeyMissing' | translation}}</field-error>
                     <field-error [form]="form" field="registryKey" hasError="minlength">{{'customer.field.registryKeyShort' | translation}}</field-error>
