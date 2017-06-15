@@ -18,7 +18,7 @@
                    [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
             </div>
           </div>
-          <div class="row">
+          <div class="row form-group">
             <ng-container *ngIf="areas.length > 0">
               <div *ngIf="editedItemCount > 0" class="col m6">
                 <div class="input-field-info-text">
@@ -39,6 +39,8 @@
                 </div>
               </div>
             </ng-container>
+          </div>
+          <div class="row form-group">
             <div class="col m2">
               <md-input-container class="input-full-width">
                 <input mdInput type="number" formControlName="areaSize" placeholder="Alueen pinta-ala"/>
@@ -60,11 +62,20 @@
                 <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
               </md-select>
             </div>
-            <div class="col m8">
+            <div class="col m2" *ngIf="application.type==='AREA_RENTAL'">
+              <md-checkbox formControlName="underpass" class="checkbox-matching-height">
+                Altakuljettava
+              </md-checkbox>
+            </div>
+          </div>
+          <div class="row" form-group>
+            <div class="col m10">
               <md-input-container class="input-full-width">
                 <input mdInput type="text" formControlName="info" placeholder="Lisätietoja paikasta"/>
               </md-input-container>
             </div>
+          </div>
+          <div class="row" form-group>
             <div class="col m12" *ngIf="multipleLocations">
               <button md-raised-button type="button" color="primary" [disabled]="!locationForm.valid" (click)="store(locationForm.value)">TALLENNA</button>
               <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>

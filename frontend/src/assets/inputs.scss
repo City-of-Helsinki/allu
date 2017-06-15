@@ -88,6 +88,11 @@ input.mat-input-element.year-input {
   transform: translate3d(0,0,0) scale(.75);
 }
 
+.checkbox-matching-height .mat-checkbox-layout .mat-checkbox-label {
+  line-height: 42px;
+}
+
+
 @mixin placeholder-theme($theme) {
   $primary: map-get($theme, primary);
 

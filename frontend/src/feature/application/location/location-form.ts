@@ -16,6 +16,7 @@ export class LocationForm {
     public city?: string,
     public cityDistrictId?: number,
     public cityDistrictIdOverride?: number,
+    public underpass?: boolean,
     public info?: string) {}
 
   static from(location: Location): LocationForm {
@@ -36,6 +37,7 @@ export class LocationForm {
     });
     form.cityDistrictId = location.cityDistrictId;
     form.cityDistrictIdOverride = location.cityDistrictIdOverride;
+    form.underpass = location.underpass;
     form.info = location.info;
     return form;
   }
@@ -58,6 +60,7 @@ export class LocationForm {
     }
     location.cityDistrictId = form.cityDistrictId;
     location.cityDistrictIdOverride = form.cityDistrictIdOverride;
+    location.underpass = form.underpass;
     location.info = form.info;
     return location;
   }

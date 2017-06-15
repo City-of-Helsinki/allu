@@ -85,6 +85,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       cityDistrictId: [undefined],
       cityDistrictName: [{value: undefined, disabled: true}],
       cityDistrictIdOverride: [undefined],
+      underpass: [false],
       info: ['']
     });
   };

@@ -8,6 +8,7 @@
         <th>Lopetus</th>
         <th>Alue</th>
         <th>Kaupunginosa</th>
+        <th>Altakuljettava</th>
         <th>Lisätiedot</th>
     </tr>
     </thead>
@@ -21,6 +22,7 @@
         <td>{{location.uiEndTime}}</td>
         <td>{{location.effectiveUiArea}}</td>
         <td>{{districtName(location.effectiveCityDistrictId) | async}}</td>
+        <td>{{location.uiUnderpass}}</td>
         <td>{{location.info}}</td>
     </tr>
     </tbody>

@@ -76,6 +76,10 @@ export class Location {
     this.endTime = TimeUtil.getEndDateFromUi(dateString);
   }
 
+  public get uiUnderpass() {
+    return this.underpass ? 'X' : '-';
+  }
+
   public geometryCount(): number {
     return Some(this.geometry)
       .map(g => g.geometries.length)
