@@ -123,7 +123,7 @@ export class ContactComponent implements OnInit {
   private initContacts(): void {
     this.contacts = <FormArray>this.parentForm.get('contacts');
     const defaultContactList = this.contactRequired ? [new Contact()] : [];
-    this.contactList = Some(this.contactList).orElse(defaultContactList);
+    this.contactList = Some(this.contactList).filter(cl => cl.length > 0).orElse(defaultContactList);
     this.contactList.forEach(contact => this.addContact(contact));
 
   }
