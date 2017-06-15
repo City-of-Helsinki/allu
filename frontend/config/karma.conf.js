@@ -21,7 +21,11 @@ module.exports = function(config) {
      *
      * we are building the test environment in ./spec-bundle.js
      */
-    files: [ { pattern: './config/spec-bundle.js', watched: true } ],
+    files: [
+      { pattern: './config/spec-bundle.js', watched: true },
+      // Include a Material theme in the test suite.
+      {pattern: './node_modules/@angular/material/prebuilt-themes/indigo-pink.css', included: true, watched: true},
+    ],
 
     /*
      * preprocess matching files before serving them to the browser
