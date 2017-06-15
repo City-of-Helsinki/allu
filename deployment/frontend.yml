@@ -1,7 +1,6 @@
 - name: install Allu frontend
   hosts: webservers
   remote_user: allu
-  become: yes
+  become: no
   roles:
     - frontend
-    - mapproxy

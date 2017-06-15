@@ -1,3 +1,4 @@
+- include: firewall.yml
 - include: usersetup.yml
 - include: postgresql.yml
 - include: create_directories.yml

@@ -1,4 +1,32 @@
+- name: create virtual host file
+  template: src=virtualhost.conf dest=/home/allu/apache/sites-available/{{ proxy_domain }}.conf
+
 - name: copy frontend files under web server
-  copy: src=../frontend/dist/ dest=/var/www/html
+  copy: src=../frontend/dist/ dest=/home/allu/apache/www
         owner=www-data
         group=www-data
+  become: yes
+
+- name: add maproxy configuration
+  template: src=mapproxy.yaml dest=/home/allu/mapproxy/configuration/mapproxy.yaml
+            owner=allu
+            group=allu
+            mode="u=rwx,g=rx,o=rx"
+
+- name: add mapproxy python server configuration
+  copy: src=config.py dest=/home/allu/mapproxy/python/config.py
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: add mapproxy logging configuration
+  copy: src=log.ini dest=/home/allu/mapproxy/python/log.ini
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
+- name: add mapproxy seeding / cleanup configuration
+  copy: src=seed.yaml dest=/home/allu/mapproxy/configuration/seed.yaml
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"

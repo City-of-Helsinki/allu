@@ -1,7 +1,7 @@
 FROM ubuntu:16.04
 
 RUN apt-get update \
-    && apt-get install -y openssh-server xz-utils supervisor python-pip openjdk-8-jre tzdata \
+    && apt-get install -y wget xz-utils supervisor python-pip openjdk-8-jre tzdata \
     && rm -rf /var/lib/apt/lists/*
 
 
