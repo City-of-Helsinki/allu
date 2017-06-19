@@ -6,5 +6,7 @@ allu_service_memory_limit:
   search-service: 128m
   pdf-service: 128m
   scheduler-service: 128m
+  allu-ui-service: 128m
+  model-service: 128m
 
 database_host: 172.17.0.1
