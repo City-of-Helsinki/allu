@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router, ActivatedRoute} from '@angular/router';
 import {UrlUtil} from '../../util/url.util';
-import {AuthService} from './auth.service';
+import {AuthService} from '../../service/authorization/auth.service';
 
 @Component({
   selector: 'login',
@@ -16,12 +16,13 @@ export class Login implements OnInit {
 
   login(event, username) {
     event.preventDefault();
-    this.authentication.login(username).subscribe(
-      response => this.router.navigateByUrl('/'),
-      error => {
-        alert(error.text());
-        console.log(error.text());
-      });
+    this.authentication.login(username)
+      .subscribe(
+        response => this.router.navigateByUrl('/'),
+        error => {
+          alert(error.text());
+          console.log(error.text());
+        });
   }
 
 

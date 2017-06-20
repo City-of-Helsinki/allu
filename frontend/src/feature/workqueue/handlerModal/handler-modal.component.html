@@ -1,9 +1,9 @@
 <h1 md-dialog-title>Siirrä käsittelijälle</h1>
 <div md-dialog-content>
     <div class="col s2">
-        <md-select [(ngModel)]="currentUserName" class="input-full-width" placeholder="Hakemuksen käsittelijä" >
+        <md-select [(ngModel)]="selectedUser" class="input-full-width" placeholder="Hakemuksen käsittelijä" >
             <md-option value="">Ei käsittelijää</md-option>
-            <md-option *ngFor="let handler of allUsers" [value]="handler.userName">{{handler.realName}}</md-option>
+            <md-option *ngFor="let user of allUsers" [value]="user">{{user.realName}}</md-option>
         </md-select>
     </div>
 </div>

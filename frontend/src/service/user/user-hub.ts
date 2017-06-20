@@ -24,6 +24,11 @@ export class UserHub {
   public getUser = (userName: string) => this.userService.getUser(userName);
 
   /**
+   * Fetches currently logged user
+   */
+  public getCurrent = () => this.userService.getCurrentUser();
+
+  /**
    * Saves given user
    */
   public saveUser = (user: User) => this.userService.save(user);

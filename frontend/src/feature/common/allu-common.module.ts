@@ -33,6 +33,7 @@ import {FileSelectDirective} from '../application/attachment/file-select.directi
 import {InputBoxComponent, InputBoxInputDirective} from './input-box/input-box.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InputWarningDirective} from './validation/input-warning.directive';
+import {AvailableToDirective} from '../../service/authorization/available-to.directive';
 
 @NgModule({
   imports: [
@@ -55,7 +56,8 @@ import {InputWarningDirective} from './validation/input-warning.directive';
     CommaSeparatedPipe,
     InputBoxComponent,
     InputBoxInputDirective,
-    InputWarningDirective
+    InputWarningDirective,
+    AvailableToDirective
   ],
   exports: [
     CommonModule,
@@ -86,7 +88,8 @@ import {InputWarningDirective} from './validation/input-warning.directive';
     CommaSeparatedPipe,
     InputBoxComponent,
     InputBoxInputDirective,
-    InputWarningDirective
+    InputWarningDirective,
+    AvailableToDirective
   ],
   entryComponents: [
     AutoCompletionListComponent,

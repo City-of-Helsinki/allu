@@ -36,7 +36,7 @@
                         </div>
                         <div class="col s12">
                             <md-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit" class="input-full-width">
-                                <md-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole()">{{translations.user.role['ROLE_ADMIN']}}</md-option>
+                                <md-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole() | async">{{translations.user.role['ROLE_ADMIN']}}</md-option>
                                 <md-option *ngFor="let role of roles" [value]="role">{{translations.user.role[role]}}</md-option>
                             </md-select>
                         </div>

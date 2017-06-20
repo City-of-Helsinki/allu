@@ -2,7 +2,7 @@ import {Routes} from '@angular/router';
 
 import {ApplicationComponent} from './info/application.component';
 import {LocationComponent} from '../application/location/location.component';
-import {AuthGuard} from '../../feature/login/auth-guard.service';
+import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {ApplicationResolve} from './application-resolve';
 import {ApplicationInfoComponent} from './info/application-info.component';
 import {SearchComponent} from '../search/search.component';

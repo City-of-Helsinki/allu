@@ -11,6 +11,7 @@ import {Some} from '../../../util/option';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {CityDistrict} from '../../../model/common/city-district';
+import {User} from '../../../model/common/user';
 
 @Component({
   selector: 'user',
@@ -38,7 +39,8 @@ export class UserComponent implements OnInit {
               private userHub: UserHub,
               private mapHub: MapHub,
               private fb: FormBuilder,
-              private router: Router) {
+              private router: Router,
+              private currentUser: CurrentUser) {
     this.userForm = fb.group({
       id: undefined,
       userName: ['', Validators.required],
@@ -64,9 +66,8 @@ export class UserComponent implements OnInit {
     this.districts = this.mapHub.districts();
   }
 
-  save(user: UserForm): void {
+  save(user: User): void {
     this.submitted = true;
-    console.log('user.id', user.id);
     this.userHub.saveUser(user).subscribe(savedUser => {
       this.submitted = false;
       this.userForm.setValue(savedUser);
@@ -74,23 +75,8 @@ export class UserComponent implements OnInit {
     });
   }
 
-  canRemoveAdminRole(): boolean {
-    return CurrentUser.isAdmin() && this.editingOther();
+  canRemoveAdminRole(): Observable<boolean> {
+    return this.currentUser.user
+      .map(u => u.isAdmin && u.userName !== this.userForm.value.userName);
   }
-
-  private editingOther(): boolean {
-    return CurrentUser.userName().map(current => current !== this.userForm.value.userName).orElse(false);
-  }
-}
-
-interface UserForm {
-  id: number;
-  userName: string;
-  realName: string;
-  emailAddress: string;
-  title: string;
-  isActive: boolean;
-  allowedApplicationTypes: Array<string>;
-  assignedRoles: Array<string>;
-  cityDistrictIds: Array<number>;
 }

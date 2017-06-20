@@ -50,7 +50,8 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
               private workqueueHub: WorkQueueHub,
               private dialog: MdDialog,
               private viewContainerRef: ViewContainerRef,
-              private userHub: UserHub) { }
+              private userHub: UserHub,
+              private currentUser: CurrentUser) { }
 
   ngOnInit() {
     this.applications = this.applicationQuery.asObservable()
@@ -87,9 +88,8 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   moveSelectedToSelf() {
-    console.log('Moving following applications to self', this.selectedApplicationIds);
-    let currentUserName = CurrentUser.userName().value();
-    this.changeHandler(currentUserName, this.selectedApplicationIds);
+    this.currentUser.user
+      .subscribe(u => this.changeHandler(u, this.selectedApplicationIds));
   }
 
   openHandlerModal() {
@@ -101,7 +101,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {
         if (dialogCloseValue.result) {
-          this.changeHandler(dialogCloseValue.result.userName, this.selectedApplicationIds);
+          this.changeHandler(dialogCloseValue.result, this.selectedApplicationIds);
         } else {
           this.removeHandler(this.selectedApplicationIds);
         }
@@ -121,9 +121,8 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     }
   }
 
-  private changeHandler(newHandler: string, ids: Array<number>): void {
-    let targetUser = this.handlers.find(handler => handler.userName === newHandler);
-    this.applicationHub.changeHandler(targetUser.id, ids).subscribe(
+  private changeHandler(handler: User, ids: Array<number>): void {
+    this.applicationHub.changeHandler(handler.id, ids).subscribe(
       () => NotificationService.message('Hakemuksien käsittelijä vaihdettu'),
       () => NotificationService.errorMessage('Hakemuksien käsittelijän vaihtaminen epäonnistui'),
       () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view

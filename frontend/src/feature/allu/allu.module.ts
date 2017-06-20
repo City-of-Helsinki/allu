@@ -12,7 +12,7 @@ import {LocationService} from '../../service/location.service';
 import {MapHub} from '../../service/map/map-hub';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
-import {AuthGuard} from '../../feature/login/auth-guard.service';
+import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {AlluComponent} from './allu.component';
 import {rootRoutes} from './allu.routing';
 import {MapSearchModule} from '../mapsearch/mapsearch.module';
@@ -38,6 +38,7 @@ import {CustomerRegistryModule} from '../customerregistry/customer-registry.modu
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter} from '@angular/material';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
+import {CurrentUser} from '../../service/user/current-user';
 
 
 @NgModule({
@@ -81,6 +82,7 @@ import {AlluDateAdapter} from '../../util/allu-date-adapter';
     LocationState,
     ErrorHandler,
     DefaultTextService,
+    CurrentUser,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({

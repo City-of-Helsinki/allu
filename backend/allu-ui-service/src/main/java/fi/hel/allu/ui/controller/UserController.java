@@ -43,6 +43,13 @@ public class UserController {
     return new ResponseEntity<>(user, HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/current", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<UserJson> getCurrentUser() {
+    UserJson user = userService.getCurrentUser();
+    return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<UserJson> addUser(@RequestBody UserJson user) {

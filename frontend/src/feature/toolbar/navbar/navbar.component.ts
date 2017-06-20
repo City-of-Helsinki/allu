@@ -1,6 +1,7 @@
 import {Component} from '@angular/core';
 import {CurrentUser} from '../../../service/user/current-user';
-import {AuthService} from '../../login/auth.service';
+import {AuthService} from '../../../service/authorization/auth.service';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'navbar',
@@ -12,11 +13,11 @@ import {AuthService} from '../../login/auth.service';
 export class NavbarComponent {
   authenticated: () => boolean;
 
-  constructor(authService: AuthService) {
+  constructor(authService: AuthService, private currentUser: CurrentUser) {
     this.authenticated = () => authService.authenticated();
   }
 
-  hasRole(role: string): boolean {
-    return CurrentUser.hasRole(role);
+  hasRole(role: string): Observable<boolean> {
+    return this.currentUser.user.map(u => u.hasRole(role));
   }
 }

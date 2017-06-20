@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {Login} from './login.component';
-import {AuthService} from './auth.service';
+import {AuthService} from '../../service/authorization/auth.service';
 
 @NgModule({
   declarations: [

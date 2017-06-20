@@ -7,7 +7,7 @@ import {ProjectComponent} from './project.component';
 import {ProjectApplicationsComponent} from './applications/project-applications.component';
 import {ProjectResolve} from './project-resolve';
 import {ProjectProjectsComponent} from './projects/project-projects.component';
-import {AuthGuard} from '../login/auth-guard.service';
+import {AuthGuard} from '../../service/authorization/auth-guard.service';
 
 export const projectRoutes: Routes = [
   { path: 'projects', canActivate: [AuthGuard], children: [

@@ -6,31 +6,39 @@ import {User} from '../../model/common/user';
 import {UIStateHub} from '../ui-state/ui-state-hub';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 
+const ACTIVE_USERS_URL = '/api/users/active';
+const USERS_URL = '/api/users';
+const USER_URL = '/api/users/userName';
+const CURRENT_USER_URL = '/api/users/current';
+
 @Injectable()
 export class UserService {
-  static ACTIVE_USERS_URL = '/api/users/active';
-  static USERS_URL = '/api/users';
-  static USER_URL = '/api/users/userName';
 
   constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {}
 
   public getActiveUsers(): Observable<Array<User>> {
-    return this.authHttp.get(UserService.ACTIVE_USERS_URL)
+    return this.authHttp.get(ACTIVE_USERS_URL)
       .map(response => response.json())
       .map(users => users.map(user => UserMapper.mapBackend(user)))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   public getAllUsers(): Observable<Array<User>> {
-    return this.authHttp.get(UserService.USERS_URL)
+    return this.authHttp.get(USERS_URL)
       .map(response => response.json())
       .map(users => users.map(user => UserMapper.mapBackend(user)))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   public getUser(userName: string): Observable<User> {
-    let url = UserService.USER_URL + '/' + userName;
+    let url = USER_URL + '/' + userName;
     return this.authHttp.get(url)
+      .map(response => UserMapper.mapBackend(response.json()))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
+  public getCurrentUser(): Observable<User> {
+    return this.authHttp.get(CURRENT_USER_URL)
       .map(response => UserMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
@@ -44,13 +52,13 @@ export class UserService {
   }
 
   public create(user: User): Observable<User> {
-    return this.authHttp.post(UserService.USERS_URL, JSON.stringify(UserMapper.mapFrontend(user)))
+    return this.authHttp.post(USERS_URL, JSON.stringify(UserMapper.mapFrontend(user)))
       .map(response => UserMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
   public update(user: User): Observable<User> {
-    return this.authHttp.put(UserService.USERS_URL, JSON.stringify(UserMapper.mapFrontend(user)))
+    return this.authHttp.put(USERS_URL, JSON.stringify(UserMapper.mapFrontend(user)))
       .map(response => UserMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }

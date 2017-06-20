@@ -39,7 +39,10 @@ export class WorkQueueFilterComponent implements OnInit {
   private tagsCtrl: FormControl;
 
 
-  constructor(fb: FormBuilder, private mapHub: MapHub, private workQueueHub: WorkQueueHub) {
+  constructor(fb: FormBuilder,
+              private mapHub: MapHub,
+              private workQueueHub: WorkQueueHub,
+              private currentUser: CurrentUser) {
     this.typeCtrl = fb.control(undefined);
     this.handlerCtrl = fb.control(undefined);
     this.statusCtrl = fb.control(undefined);
@@ -85,7 +88,7 @@ export class WorkQueueFilterComponent implements OnInit {
     // remove waiting tag filter if such was selected
     let tags = this.tagsCtrl.value.filter(tag => tag !== ApplicationTagType[ApplicationTagType.WAITING]);
     this.tagsCtrl.setValue(tags);
-    CurrentUser.userName().do(userName => this.handlerCtrl.patchValue([userName]));
+    this.currentUser.user.subscribe(user => this.handlerCtrl.patchValue([user.userName]));
   }
 
   private waitingTabSelected(): void {
