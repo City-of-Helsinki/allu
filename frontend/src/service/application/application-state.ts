@@ -181,6 +181,11 @@ export class ApplicationState {
       .switchMap(app => this.saved(app));
   }
 
+  delete(id: number): Observable<HttpResponse> {
+    return this.applicationHub.delete(id)
+      .do(response => this.reset());
+  }
+
   changeStatus(statusChange: ApplicationStatusChange): Observable<Application> {
     statusChange.id = statusChange.id || this.application.id;
     return this.applicationHub.changeStatus(statusChange)

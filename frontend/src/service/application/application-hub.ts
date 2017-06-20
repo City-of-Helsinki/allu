@@ -48,6 +48,11 @@ export class ApplicationHub {
   public save = (application: Application) => this.applicationService.saveApplication(application);
 
   /**
+   * Deletes given application (only NOTE-types can be deleted)
+   */
+  public delete = (id: number) => this.applicationService.deleteApplication(id);
+
+  /**
    * Changes applications status according to statusChange.
    * Returns updated application.
    */
