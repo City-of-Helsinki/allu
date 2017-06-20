@@ -59,6 +59,7 @@ public class ElasticSearchMappingConfig {
       CreateIndexRequestBuilder createIndexRequestBuilder =
           client.admin().indices().prepareCreate(CUSTOMER_INDEX_NAME).setSettings(getIndexSettingsForCustomer());
       createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultCustomersIndex());
+      createIndexRequestBuilder.addMapping(CUSTOMER_TYPE_NAME, getMappingBuilderForCustomer());
       createIndexRequestBuilder.execute().actionGet();
     } catch (ResourceAlreadyExistsException e) {
       logger.info("ElasticSearch mapping for index " + CUSTOMER_INDEX_NAME  + " not created, because it exists already.");
@@ -197,6 +198,24 @@ public class ElasticSearchMappingConfig {
   }
 
   /**
+   * @return  Customer specific type mappings for customer index.
+   */
+  public XContentBuilder getMappingBuilderForCustomer() {
+    try {
+      XContentBuilder mappingBuilder = XContentFactory.jsonBuilder()
+          .startObject()
+            .startObject("properties")
+              .field("registryKey").copyCurrentStructure(parser(autocompleteWithAlphaSortingMappingAnalyzer()))
+            .endObject()
+          .endObject();
+      logger.debug("Customers mapping: " + mappingBuilder.string());
+      return mappingBuilder;
+    } catch (IOException e) {
+      throw new RuntimeException("Unexpected exception while creating ElasticSearch mapping builder", e);
+    }
+  }
+
+  /**
    * @return  Customers index settings.
    */
   public XContentBuilder getIndexSettingsForCustomer() {
@@ -279,9 +298,9 @@ public class ElasticSearchMappingConfig {
             .startObject("analyzer")
               .field(ANALYZER_AUTOCOMPLETE).copyCurrentStructure(parser(autocompleteSettingsAnalyzer()))
             .endObject()
-          .startObject("normalizer")
-            .field(ANALYZER_CASE_INSENSITIVE_SORT).copyCurrentStructure(parser(caseInsensitiveSortAnalyzer()))
-          .endObject()
+            .startObject("normalizer")
+              .field(ANALYZER_CASE_INSENSITIVE_SORT).copyCurrentStructure(parser(caseInsensitiveSortAnalyzer()))
+            .endObject()
           .endObject()
         .endObject();
   }

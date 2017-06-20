@@ -76,12 +76,18 @@ public class ApplicationSearchTest {
   public void testFindByFieldPartial() {
     ApplicationES applicationES = createApplication(1);
     genericSearchService.insert(applicationES.getId().toString(), applicationES);
+    genericSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("applicationId", "TP00");
-    genericSearchService.refreshIndex();
     List<Integer> appList = genericSearchService.findByField(params);
     assertNotNull(appList);
     assertEquals(1, appList.size());
+
+    params = SearchTestUtil.createQueryParameters("applicationId", "TP000001");
+    appList = genericSearchService.findByField(params);
+    assertNotNull(appList);
+    assertEquals(1, appList.size());
+
     genericSearchService.delete("1");
   }
 

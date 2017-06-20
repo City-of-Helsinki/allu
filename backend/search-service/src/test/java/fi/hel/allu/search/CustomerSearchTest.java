@@ -82,7 +82,7 @@ public class CustomerSearchTest {
 
   @Test
   public void testFindByFieldSorted() {
-    CustomerES customerES1 = createCustomer("zyzzy baabeli", 1);
+    CustomerES customerES1 = createCustomer("Zyzzy baabeli", 1);
     CustomerES customerES2 = createCustomer("baabeli aapeli", 2);
     CustomerES customerES3 = createCustomer("aapeli baabeli", 3);
     CustomerES customerES4 = createCustomer("ei löydy", 4);
@@ -99,6 +99,52 @@ public class CustomerSearchTest {
     List<Integer> appList = customerSearchService.findByField(params);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(3, 2, 1), appList);
+  }
+
+  @Test
+  public void testFindByRegistryKey() {
+    CustomerES customerES1 = createCustomer("1", 1);
+    customerES1.setRegistryKey("9444-9231");
+    CustomerES customerES2 = createCustomer("2", 2);
+    customerES2.setRegistryKey("9233-2311");
+    CustomerES customerES3 = createCustomer("3", 3);
+    customerES3.setRegistryKey("9222-5551");
+    customerSearchService.insert(customerES1.getId().toString(), customerES1);
+    customerSearchService.insert(customerES2.getId().toString(), customerES2);
+    customerSearchService.insert(customerES3.getId().toString(), customerES3);
+
+    customerSearchService.refreshIndex();
+
+    // test finding partial and sorting alphabetically: 9
+    QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "9");
+    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
+
+    List<Integer> appList = customerSearchService.findByField(params);
+    assertEquals(3, appList.size());
+    assertEquals(Arrays.asList(3, 2, 1), appList);
+
+    // test searching only from beginning of word (dash is part of word)
+    params = SearchTestUtil.createQueryParameters("registryKey", "9222");
+    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
+
+    appList = customerSearchService.findByField(params);
+    assertEquals(1, appList.size());
+    assertEquals(Arrays.asList(3), appList);
+
+    // test full string search
+    params = SearchTestUtil.createQueryParameters("registryKey", "9444-9231");
+    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
+
+    appList = customerSearchService.findByField(params);
+    assertEquals(1, appList.size());
+    assertEquals(Arrays.asList(1), appList);
+
+    // test searching beginning of word after dash
+    params = SearchTestUtil.createQueryParameters("registryKey", "23");
+    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
+
+    appList = customerSearchService.findByField(params);
+    assertEquals(1, appList.size());
   }
 
   @Test
