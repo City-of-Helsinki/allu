@@ -7,6 +7,7 @@
                 <div *ngIf="readonly">
                     <button md-raised-button type="button" color="primary" [routerLink]="['/applications', applicationId, 'edit']">MUOKKAA</button>
                     <button md-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">KOPIOI UUDEKSI</button>
+                    <button *ngIf="showDelete" md-raised-button type="button" color="primary" (click)="delete()">POISTA</button>
                 </div>
             </div>
             <div class="right-aligned">

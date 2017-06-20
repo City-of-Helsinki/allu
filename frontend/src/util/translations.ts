@@ -8,11 +8,13 @@ export const translations = {
       handlerChangeFailed: 'Hakemuksen käsittelijän vaihto epäonnistui',
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui',
+      deleteFailed: 'Hakemuksen poistaminen epäonnistui',
       toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',
       toDecisionmaking: 'Hakemuksen siirtäminen odottamaan päätöstä epäonnistui'
     },
     action: {
-      saved: 'Hakemus tallennettu'
+      saved: 'Hakemus tallennettu',
+      deleted: 'Hakemus poistettu'
     },
     status: {
       PRE_RESERVED: 'Alustava varaus',

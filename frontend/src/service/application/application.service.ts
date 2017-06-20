@@ -13,6 +13,8 @@ import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery'
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {ApplicationQueryParametersMapper} from '../mapper/query/application-query-parameters-mapper';
+import {HttpResponse} from '../../util/http-response';
+import {HttpUtil} from '../../util/http.util';
 
 
 @Injectable()
@@ -78,6 +80,13 @@ export class ApplicationService {
         .map(response => ApplicationMapper.mapBackend(response.json()))
         .catch(error => this.errorHandler.handle(error, findTranslation('application.error.saveFailed')));
     }
+  }
+
+  public deleteApplication(id: number): Observable<HttpResponse> {
+    const url = ApplicationService.APPLICATIONS_URL + '/note/' + id;
+    return this.authHttp.delete(url)
+      .map(response => HttpUtil.extractHttpResponse(response))
+      .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')));
   }
 
   public loadMetadata(applicationType: string): Observable<StructureMeta> {

@@ -11,6 +11,7 @@ import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {Observable} from 'rxjs/Observable';
 import {Application} from '../../../model/application/application';
+import {Some} from '../../../util/option';
 
 @Component({
   selector: 'application-actions',
@@ -30,6 +31,7 @@ export class ApplicationActionsComponent implements OnInit {
 
   showDecision: boolean = true;
   showHandling: boolean = true;
+  showDelete: boolean = false;
 
   constructor(private router: Router,
               private applicationState: ApplicationState,
@@ -41,6 +43,7 @@ export class ApplicationActionsComponent implements OnInit {
       let status = ApplicationStatus[app.status];
       this.showDecision = (ApplicationType[app.type] !== ApplicationType.NOTE) && (status >= ApplicationStatus.HANDLING);
       this.showHandling = status < ApplicationStatus.HANDLING;
+      this.showDelete = app.typeEnum === ApplicationType.NOTE;
     });
   }
 
@@ -65,6 +68,15 @@ export class ApplicationActionsComponent implements OnInit {
 
   toDecisionmaking(): void {
     this.moveToDecisionMaking().subscribe(app => this.router.navigate(['/applications', app.id, 'decision']));
+  }
+
+  delete(): void {
+    Some(this.applicationId).do(id => this.applicationState.delete(id).subscribe(
+      response => {
+        NotificationService.message(findTranslation('application.action.deleted'));
+        this.router.navigate(['/']);
+      },
+      error => NotificationService.error(error)));
   }
 
   private moveToDecisionMaking(): Observable<Application> {
