@@ -1,7 +1,7 @@
 - name: delete database data directory in test environment
   file: path=/home/allu/database/data
         state=absent
-  when: "'test' in group_names"
+  when: "'test' in group_names or 'staging' in group_names"
   become: yes
 
 - name: create database directory for Postgresql databases

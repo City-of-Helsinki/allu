@@ -1,7 +1,7 @@
 - name: delete ElasticSearch data directory in test environment
   file: path=/home/allu/elasticsearch
         state=absent
-  when: "'test' in group_names"
+  when: "'test' in group_names or 'staging' in group_names"
   become: yes
 
 - name: create data directory for ElasticSearch

@@ -1,16 +1,16 @@
 [webservers]
-185.26.49.172
+94.199.118.86
 
 [dbservers]
-185.26.48.184
+94.199.118.86
 
 [backendservers]
-185.26.48.184
+94.199.118.86
 
 [searchservers]
-185.26.48.184
+94.199.118.86
 
-[test:children]
+[staging:children]
 webservers
 dbservers
 backendservers

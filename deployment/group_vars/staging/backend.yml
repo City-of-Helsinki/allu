@@ -1,0 +1,7 @@
+# add environment specific backend variables here
+
+# process specific Java -Xmx settings for limiting memory usage. If nothing is specified here for a service, service will use the default
+# value specified elsewhere
+allu_service_memory_limit:
+
+database_host: 172.17.0.1
