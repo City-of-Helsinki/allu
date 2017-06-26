@@ -1,7 +1,8 @@
 # runs preparation tasks against a fresh Ubuntu 16.04 image
 - name: prepare fresh Ubuntu 16.04 for Allu deployment (done for all Ansible roles)
   hosts: all
-  remote_user: root
+  remote_user: "{{ deployment_user }}"
+  become: yes
   gather_facts: no
   pre_tasks:
     - name: install python2 before other Ansible tasks, because Ansible modules depend on Python

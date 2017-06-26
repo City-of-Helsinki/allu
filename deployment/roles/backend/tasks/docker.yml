@@ -6,6 +6,8 @@
     name: allu_backend
     force: true
     buildargs:
+      CUSTOM_UID: "{{ system_user_id_allu }}"
+      CUSTOM_GID: "{{ system_group_id_allu }}"
       CACHEBUST: "{{ 9999999 |random }}"
 
 - name: remove existing docker image to avoid Ansible task caching
@@ -63,3 +65,6 @@
     published_ports:
       - "9000:9000"
   become: yes
+
+- name: remove Docker image tar file
+  file: path=/tmp/allu_backend.tar state=absent

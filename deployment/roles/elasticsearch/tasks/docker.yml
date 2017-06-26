@@ -1,20 +1,62 @@
+- name: Build ElasticSearch Docker image
+  local_action:
+    module: docker_image
+    path: "{{ role_path }}/files/elasticsearch_docker"
+    name: allu_elasticsearch
+    force: true
+    buildargs:
+      CUSTOM_UID: "{{ system_user_id_allu }}"
+      CUSTOM_GID: "{{ system_group_id_allu }}"
+
+- name: remove existing docker image to avoid Ansible task caching
+  local_action: file path=/tmp/allu_elasticsearch.tar state=absent
+
+# This task requires docker-py to be installed on the local host. Also the user who's executing Ansible has to belong to docker group to be
+# able to use docker without super user rights
+- name: save local Docker image as file on local host
+  local_action: docker_image
+                name=allu_elasticsearch
+                archive_path=/tmp/allu_elasticsearch.tar
+                state=present
+
+- name: gzip Docker image on local host
+  local_action: archive
+                path=/tmp/allu_elasticsearch.tar
+                remove=true
+
+- name: copy Docker image to target host
+  copy: src=/tmp/allu_elasticsearch.tar.gz dest=/tmp
+            owner=allu
+            group=allu
+            mode="u=rwx,g=rx,o=rx"
+
+- name: extract tar from Docker gzipped image
+  command: gunzip -f /tmp/allu_elasticsearch.tar.gz
 
 - name: stop and remove existing container from Docker
   docker_container:
-    name: elasticsearch
+    name: allu_elasticsearch_container
     state: absent
+  become: yes
+
+- name: remove existing container from Docker
+  docker_image:
+    name=allu_elasticsearch
+    state=absent
+    force=true
   become: yes
 
 - name: add container to Docker
   docker_image:
-    name=docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+    name=allu_elasticsearch
     state=present
+    load_path=/tmp/allu_elasticsearch.tar
   become: yes
 
 - name: start container
   docker_container:
-    name: elasticsearch
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.4.1
+    name: allu_elasticsearch_container
+    image: allu_elasticsearch
     restart_policy: always
     volumes:
       - /home/allu/elasticsearch:/usr/share/elasticsearch/data:rw
@@ -27,3 +69,6 @@
       # TODO: should be increased for production
       ES_JAVA_OPTS: "-Xms256m -Xmx256m"
   become: yes
+
+- name: remove Docker image tar file
+  file: path=/tmp/allu_elasticsearch.tar state=absent

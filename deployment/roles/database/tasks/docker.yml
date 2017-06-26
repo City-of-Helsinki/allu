@@ -64,6 +64,9 @@
       - "5432:5432"
   become: yes
 
+- name: remove Docker image tar file
+  file: path=/tmp/allu_database.tar state=absent
+
 - name: wait for Postgresql to initialize
   command: psql --host localhost -l -U postgres
   register: result

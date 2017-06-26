@@ -1,5 +1,8 @@
 FROM ubuntu:16.04
 
+ARG CUSTOM_UID
+ARG CUSTOM_GID
+
 RUN apt-get update \
     && apt-get install -y tzdata apache2 cron libapache2-mod-wsgi python-pip python-imaging python-yaml python-dev libproj9 build-essential libjpeg-dev zlib1g-dev libfreetype6-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -15,7 +18,8 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Add users
 ######################################################################################
 
-RUN adduser allu --disabled-password --gecos ''
+RUN addgroup --gid $CUSTOM_GID allu && \
+    adduser allu --uid $CUSTOM_UID --gid $CUSTOM_GID --disabled-password --gecos ''
 
 ######################################################################################
 # Create directories

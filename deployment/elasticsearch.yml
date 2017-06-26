@@ -1,6 +1,5 @@
 - name: install elasticsearch
   hosts: searchservers
   remote_user: allu
-  become: yes
   roles:
     - elasticsearch

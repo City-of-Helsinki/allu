@@ -1,10 +1,10 @@
 # Add users and user configuration needed for deployment of everything else in this file
 
 - name: create allu group to system
-  group: name=allu state=present
+  group: name=allu gid={{ system_group_id_allu }} state=present
 
 - name: add allu user to system
-  user: name=allu uid=1000 group=allu groups=adm,sudo
+  user: name=allu uid={{ system_user_id_allu }} group=allu groups=adm,sudo
         password={{ system_password_allu }}
         shell=/bin/bash
 
