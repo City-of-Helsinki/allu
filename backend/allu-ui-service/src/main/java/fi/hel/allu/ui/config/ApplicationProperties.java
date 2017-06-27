@@ -12,6 +12,7 @@ import java.util.List;
 @Component
 public class ApplicationProperties {
 
+  private boolean production;
   private String modelServiceHost;
   private String modelServicePort;
   private String searchServiceHost;
@@ -22,6 +23,7 @@ public class ApplicationProperties {
   private String streetSearchUrl;
   private String wfsUsername;
   private String wfsPassword;
+  private String oauth2AuthorizationEndpointUrl;
   private String oauth2TokenUrl;
   private String oauth2ClientId;
   private String oauth2RedirectUri;
@@ -30,7 +32,8 @@ public class ApplicationProperties {
   private String emailSenderAddress;
 
   @Autowired
-  public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
+  public ApplicationProperties(@Value("${production}") boolean production,
+                               @Value("${model.service.host}") @NotEmpty String modelServiceHost,
                                @Value("${model.service.port}") @NotEmpty String modelServicePort,
                                @Value("${search.service.host}") @NotEmpty String searchServiceHost,
                                @Value("${search.service.port}") @NotEmpty String searchServicePort,
@@ -40,12 +43,14 @@ public class ApplicationProperties {
                                @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
                                @Value("${wfs.username}") @NotEmpty String wfsUsername,
                                @Value("${wfs.password}") @NotEmpty String wfsPassword,
+                               @Value("${oauth2.url.authorization}") @NotEmpty String oauth2AuthorizationEndpointUrl,
                                @Value("${oauth2.url.token}") @NotEmpty String oauth2TokenUrl,
                                @Value("${oauth2.clientid}") @NotEmpty String oauth2ClientId,
                                @Value("${oauth2.redirect.uri}") @NotEmpty String oauth2RedirectUri,
                                @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate,
                                @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
                                @Value("${email.sender.address}") @NotEmpty String emailSenderAddress) {
+    this.production = production;
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -56,6 +61,7 @@ public class ApplicationProperties {
     this.streetSearchUrl = streetSearchUrl;
     this.wfsUsername = wfsUsername;
     this.wfsPassword = wfsPassword;
+    this.oauth2AuthorizationEndpointUrl = oauth2AuthorizationEndpointUrl;
     this.oauth2TokenUrl = oauth2TokenUrl;
     this.oauth2ClientId = oauth2ClientId;
     this.oauth2RedirectUri = oauth2RedirectUri;
@@ -135,6 +141,13 @@ public class ApplicationProperties {
    * PDF-service path to generate pdf
    */
   public static final String PATH_PDF_GENERATE = "/generate?stylesheet={stylesheet}";
+
+  /**
+   * @return  true, if system is running in production.
+   */
+  public boolean isProduction() {
+    return production;
+  }
 
   /**
    * Create absolute url to model-service. Host and port values are read from
@@ -773,6 +786,14 @@ public class ApplicationProperties {
    */
   public String getWfsPassword() {
     return wfsPassword;
+  }
+
+  /**
+   * @return  Returns the beginning of OAuth2 authorization endpoint URL, which should be extended with the proper redirect URI
+   *          and client id.
+   */
+  public String getOauth2AuthorizationEndpointUrl() {
+    return oauth2AuthorizationEndpointUrl;
   }
 
   /**

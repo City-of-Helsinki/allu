@@ -35,7 +35,8 @@ public class StatelessAuthenticationFilter extends GenericFilterBean {
     // If empty authentication (no JWT) is used and path is different that login, we're handling unauthorized case
     if (authenticationService.isEmptyAuthentication(httpRequest) &&
         !SecurityConfig.SECURITY_PATHS.LOGIN.toString().equals(httpRequest.getRequestURI()) && // TODO: remove or replace this with something once dummy login is removed
-        !SecurityConfig.SECURITY_PATHS.OAUTH2.toString().equals(httpRequest.getRequestURI())) {
+        !SecurityConfig.SECURITY_PATHS.OAUTH2.toString().equals(httpRequest.getRequestURI()) &&
+        !SecurityConfig.SECURITY_PATHS.UICONFIG.toString().equals(httpRequest.getRequestURI())) {
       setUnauthorizedResponse(httpRequest, response);
       return;
     }

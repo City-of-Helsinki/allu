@@ -22,7 +22,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   public enum SECURITY_PATHS {
     LOGIN("/auth/login"), // TODO: remove or replace this with something once dummy login is removed
-    OAUTH2("/oauth2/");
+    OAUTH2("/oauth2/"),
+    UICONFIG("/uiconfig");
 
     private final String path;
 
@@ -47,6 +48,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         // Allow anonymous logins
         .antMatchers(SECURITY_PATHS.LOGIN.toString()).permitAll() // TODO: remove or replace this with something once dummy login is removed
         .antMatchers(SECURITY_PATHS.OAUTH2.toString()).permitAll()
+        .antMatchers(SECURITY_PATHS.UICONFIG.toString()).permitAll()
         .anyRequest()
         .authenticated()
         .and().addFilterBefore(

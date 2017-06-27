@@ -21,7 +21,8 @@ public class PreAuthorizeEnforcerInterceptor extends HandlerInterceptorAdapter {
   // List of URLs that are not checked against using @PreAuthorize annotation
   private Set<String> skipCheck = new HashSet<String>(Arrays.asList(
       SecurityConfig.SECURITY_PATHS.LOGIN.toString(), // TODO: remove or replace this with something once dummy login is removed
-      SecurityConfig.SECURITY_PATHS.OAUTH2.toString()));
+      SecurityConfig.SECURITY_PATHS.OAUTH2.toString(),
+      SecurityConfig.SECURITY_PATHS.UICONFIG.toString()));
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
