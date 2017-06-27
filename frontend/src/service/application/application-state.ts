@@ -15,6 +15,8 @@ import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
+import {NumberUtil} from '../../util/number.util';
+import {ObjectUtil} from '../../util/object.util';
 
 @Injectable()
 export class ApplicationState {
@@ -190,6 +192,19 @@ export class ApplicationState {
     statusChange.id = statusChange.id || this.application.id;
     return this.applicationHub.changeStatus(statusChange)
       .do(application => this.application = application);
+  }
+
+  saveTags(tags: Array<ApplicationTag>) {
+    if (!NumberUtil.isDefined(this.application.id)) {
+      throw new Error('Cannot save tags when application state has no saved application');
+    }
+
+    return this.applicationHub.saveTags(this.application.id, tags)
+      .map(savedTags => {
+        const app = ObjectUtil.clone(this.application);
+        app.applicationTags = savedTags;
+        return app;
+      }).do(app => this.application$.next(app));
   }
 
   private savePending(application: Application) {

@@ -64,7 +64,16 @@ export class ApplicationComponent implements OnInit {
   }
 
   onTagChange(tags: Array<ApplicationTag>): void {
-    this.applicationState.tags = tags;
+    if (this.readonly) {
+      // on readonly mode we should save tags immediately
+      this.applicationState.saveTags(tags)
+        .subscribe(
+          app => {}, // Nothing to do with updated app
+          error => NotificationService.error(error)
+        );
+    } else {
+      this.applicationState.tags = tags;
+    }
   }
 
   sidebar(summary: boolean): Observable<Array<SidebarItem>> {

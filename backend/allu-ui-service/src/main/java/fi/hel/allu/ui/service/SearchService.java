@@ -1,21 +1,31 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.CustomerRoleType;
-import fi.hel.allu.search.domain.*;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.ApplicationWithContactsES;
+import fi.hel.allu.search.domain.ContactES;
+import fi.hel.allu.search.domain.CustomerES;
+import fi.hel.allu.search.domain.ProjectES;
+import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.ui.domain.ApplicationTagJson;
 import fi.hel.allu.ui.domain.ContactJson;
 import fi.hel.allu.ui.domain.CustomerJson;
 import fi.hel.allu.ui.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import fi.hel.allu.ui.mapper.ProjectMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
@@ -56,6 +66,18 @@ public class SearchService {
     restTemplate.put(
         applicationProperties.getApplicationsSearchUpdateUrl(),
         applications);
+  }
+
+  /**
+   * Updates tags of given application id into index
+   * @param applicationId id of application to update
+   * @param tagJsons list jsons containing tags which replace old tags
+   */
+  public void updateTags(int applicationId, List<ApplicationTagJson> tagJsons) {
+    ApplicationES appEs = new ApplicationES();
+    appEs.setId(applicationId);
+    appEs.setApplicationTags(applicationMapper.createTagES(tagJsons));
+    restTemplate.put(applicationProperties.getApplicationsSearchUpdateUrl(), Collections.singletonList(appEs));
   }
 
   /**

@@ -1,8 +1,10 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.common.types.ApplicationTagType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoiceRowDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.InvoiceRow;
 
 import org.junit.Before;
@@ -11,8 +13,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 public class ApplicationServiceTest {
 
@@ -80,6 +85,18 @@ public class ApplicationServiceTest {
     Mockito.verify(application).setCalculatedPrice(TOTAL_PRICE);
     // Should have updated the application
     Mockito.verify(applicationDao).update(APP_ID, application);
+  }
+
+  @Test
+  public void testUpdateTags() {
+    final int APP_ID = 123;
+    final ApplicationTag tag = new ApplicationTag(1, ApplicationTagType.STATEMENT_REQUESTED, ZonedDateTime.now());
+    final List<ApplicationTag> tagList = Arrays.asList(tag);
+    Mockito.when(applicationDao.updateTags(APP_ID, tagList)).thenReturn(tagList);
+
+    List<ApplicationTag> saved = applicationService.updateTags(APP_ID, tagList);
+    Mockito.verify(applicationDao).updateTags(APP_ID, tagList);
+    assertEquals(tag, saved.get(0));
   }
 
 }

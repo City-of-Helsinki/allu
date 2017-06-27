@@ -230,6 +230,18 @@ public class ApplicationServiceComposer {
   }
 
   /**
+   * Update (replace) applications tags with new ones
+   * @param id Id of the application to be changed.
+   * @param tags New tags as json
+   * @return New stored tags
+   */
+  public List<ApplicationTagJson> updateTags(int id, List<ApplicationTagJson> tags) {
+    List<ApplicationTagJson> updatedTags = applicationService.updateTags(id, tags);
+    searchService.updateTags(id, tags);
+    return updatedTags;
+  }
+
+  /**
    * Get change items for an application
    *
    * @param applicationId

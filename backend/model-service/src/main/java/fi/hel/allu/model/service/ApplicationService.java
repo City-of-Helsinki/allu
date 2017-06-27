@@ -5,6 +5,7 @@ import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoiceRowDao;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.DeadlineCheckParams;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
@@ -154,6 +155,17 @@ public class ApplicationService {
     } else {
       return applicationDao.updateStatus(applicationId, statusType);
     }
+  }
+
+  /**
+   * Update (replace) applications tags with new ones
+   * @param applicationId Id of the application to be changed.
+   * @param tags New tags
+   * @return New stored tags
+   */
+  @Transactional
+  public List<ApplicationTag> updateTags(int applicationId, List<ApplicationTag> tags) {
+    return applicationDao.updateTags(applicationId, tags);
   }
 
   /**

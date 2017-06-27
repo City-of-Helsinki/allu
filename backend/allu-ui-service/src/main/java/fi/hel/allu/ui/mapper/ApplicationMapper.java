@@ -50,10 +50,7 @@ public class ApplicationMapper {
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
     applicationDomain.setKind(applicationJson.getKind());
-    if (applicationJson.getApplicationTags() != null) {
-      applicationDomain.setApplicationTags(applicationJson.getApplicationTags().stream()
-          .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime())).collect(Collectors.toList()));
-    }
+    applicationDomain.setApplicationTags(createTagModel(applicationJson.getApplicationTags()));
     applicationDomain.setMetadataVersion(applicationJson.getMetadataVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
     applicationDomain.setDecisionTime(applicationJson.getDecisionTime());
@@ -96,10 +93,7 @@ public class ApplicationMapper {
         applicationJson.getHandler() != null ?
             new UserES(applicationJson.getHandler().getUserName(), applicationJson.getHandler().getRealName()) : null);
     applicationES.setType(new ApplicationTypeES(applicationJson.getType()));
-    if (applicationJson.getApplicationTags() != null) {
-      applicationES.setApplicationTags(
-          applicationJson.getApplicationTags().stream().map(tag -> tag.getType().toString()).collect(Collectors.toList()));
-    }
+    applicationES.setApplicationTags(createTagES(applicationJson.getApplicationTags()));
     applicationES.setStatus(new StatusTypeES(applicationJson.getStatus()));
     applicationES.setDecisionTime(TimeUtil.dateToMillis(applicationJson.getDecisionTime()));
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
@@ -133,10 +127,7 @@ public class ApplicationMapper {
     applicationJson.setStatus(application.getStatus());
     applicationJson.setType(application.getType());
     applicationJson.setKind(application.getKind());
-    if (application.getApplicationTags() != null) {
-      applicationJson.setApplicationTags(application.getApplicationTags().stream()
-          .map(t -> new ApplicationTagJson(t.getAddedBy(), t.getType(), t.getCreationTime())).collect(Collectors.toList()));
-    }
+    applicationJson.setApplicationTags(createTagJson(application.getApplicationTags()));
     applicationJson.setMetadataVersion(application.getMetadataVersion());
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setStartTime(application.getStartTime());
@@ -429,6 +420,32 @@ public class ApplicationMapper {
     distributionEntry.setEmail(distributionEntryJson.getEmail());
     distributionEntry.setPostalAddress(createPostalAddressModel(distributionEntryJson.getPostalAddress()));
     return distributionEntry;
+  }
+
+  public List<ApplicationTag> createTagModel(List<ApplicationTagJson> tagJsons) {
+    if (tagJsons == null) {
+      return null;
+    }
+    return tagJsons.stream()
+            .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime()))
+            .collect(Collectors.toList());
+  }
+
+  public List<ApplicationTagJson> createTagJson(List<ApplicationTag> tags) {
+    if (tags == null) {
+      return null;
+    }
+    return tags.stream()
+            .map(t -> new ApplicationTagJson(t.getAddedBy(), t.getType(), t.getCreationTime()))
+            .collect(Collectors.toList());
+  }
+
+  public List<String> createTagES(List<ApplicationTagJson> tagJsons) {
+    if (tagJsons == null) {
+      return null;
+    }
+
+    return tagJsons.stream().map(tag -> tag.getType().toString()).collect(Collectors.toList());
   }
 
   private PostalAddressJson createPostalAddressJson(PostalAddress postalAddress) {

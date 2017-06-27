@@ -5,10 +5,10 @@
         <md-chip-list>
             <md-chip class="accent-chip slim-chip" color="accent" selected="true" *ngFor="let tag of application.applicationTags; let i = index;">
                 {{['application.tag.type', tag.type] | translation}}
-                <button md-icon-button *ngIf="!readonly" (click)="remove(i)"><md-icon>remove_circle_outline</md-icon></button>
+                <button md-icon-button (click)="remove(i)"><md-icon>remove_circle_outline</md-icon></button>
             </md-chip>
         </md-chip-list>
-        <span class="single-line" *ngIf="!readonly">
+        <span class="single-line">
             <md-chip class="slim-chip chip-outline" color="primary" selected="true">
                 Lisää tunniste
                 <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>add_circle_outline</md-icon></button>

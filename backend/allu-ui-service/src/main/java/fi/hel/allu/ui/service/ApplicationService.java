@@ -2,6 +2,7 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.StatusType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
@@ -139,6 +140,27 @@ public class ApplicationService {
   }
 
   /**
+   * Update (replace) applications tags with new ones
+   * @param id Id of the application to be changed.
+   * @param tags New tags
+   * @return New stored tags
+   */
+  public List<ApplicationTagJson> updateTags(int id, List<ApplicationTagJson> tags) {
+    List<ApplicationTag> tagsWithUserInfo = tagsWithUserInfo(tags).stream()
+            .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime()))
+            .collect(Collectors.toList());
+
+    ResponseEntity<ApplicationTag[]> response = restTemplate.exchange(
+            applicationProperties.getUpdateTagsUrl(),
+            HttpMethod.PUT,
+            new HttpEntity<>(tagsWithUserInfo),
+            ApplicationTag[].class,
+            id);
+    return applicationMapper.createTagJson(Arrays.asList(response.getBody()));
+  }
+
+
+  /**
    * Create applications by calling backend service.
    *
    * @param newApplication  Application to be added to backend.
@@ -147,10 +169,7 @@ public class ApplicationService {
   Application createApplication(ApplicationJson newApplication) {
     newApplication.setCustomersWithContacts(
         newApplication.getCustomersWithContacts().stream().map(cwc -> createMissingCustomerWithContacts(cwc)).collect(Collectors.toList()));
-    if (newApplication.getApplicationTags() != null) {
-      UserJson currentUser = userService.getCurrentUser();
-      newApplication.getApplicationTags().forEach(t -> updateTag(currentUser, t));
-    }
+    newApplication.setApplicationTags(tagsWithUserInfo(newApplication.getApplicationTags()));
     Application applicationModel = restTemplate.postForObject(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
         applicationMapper.createApplicationModel(newApplication),
@@ -193,10 +212,7 @@ public class ApplicationService {
     } else {
       locationService.deleteApplicationLocation(applicationId);
     }
-    if (applicationJson.getApplicationTags() != null) {
-      UserJson currentUser = userService.getCurrentUser();
-      applicationJson.getApplicationTags().forEach(t -> updateTag(currentUser, t));
-    }
+    applicationJson.setApplicationTags(tagsWithUserInfo(applicationJson.getApplicationTags()));
     HttpEntity<Application> requestEntity = new HttpEntity<>(applicationMapper.createApplicationModel(applicationJson));
     ResponseEntity<Application> responseEntity = restTemplate.exchange(applicationProperties.getApplicationUpdateUrl(),
         HttpMethod.PUT, requestEntity, Application.class, applicationId);
@@ -245,11 +261,23 @@ public class ApplicationService {
     lsc.setBefore(query.getBefore());
   }
 
-  private void updateTag(UserJson currentUser, ApplicationTagJson tag) {
-    if (tag.getAddedBy() == null) {
-      tag.setAddedBy(currentUser.getId());
-      tag.setCreationTime(ZonedDateTime.now());
+  private List<ApplicationTagJson> tagsWithUserInfo(List<ApplicationTagJson> tags) {
+    if (tags != null) {
+      UserJson currentUser = userService.getCurrentUser();
+      return tags.stream()
+              .map(t -> tagWithUserInfo(currentUser, t))
+              .collect(Collectors.toList());
     }
+    return tags;
+  }
+
+  private ApplicationTagJson tagWithUserInfo(UserJson currentUser, ApplicationTagJson tag) {
+    ApplicationTagJson updatedTag = new ApplicationTagJson(tag.getAddedBy(), tag.getType(), tag.getCreationTime());
+    if (updatedTag.getAddedBy() == null) {
+      updatedTag.setAddedBy(currentUser.getId());
+      updatedTag.setCreationTime(ZonedDateTime.now());
+    }
+    return updatedTag;
   }
 }
 

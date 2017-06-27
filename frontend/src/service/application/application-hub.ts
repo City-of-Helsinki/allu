@@ -11,6 +11,7 @@ import {StructureMeta} from '../../model/application/meta/structure-meta';
 import {DefaultText} from '../../model/application/cable-report/default-text';
 import {DefaultTextService} from './default-text.service';
 import {ApplicationType} from '../../model/application/type/application-type';
+import {ApplicationTag} from '../../model/application/tag/application-tag';
 
 export type ApplicationSearch = ApplicationLocationQuery | number;
 
@@ -69,6 +70,11 @@ export class ApplicationHub {
    */
   public removeHandler =
     (applicationIds: Array<number>) => this.applicationService.applicationHandlerRemove(applicationIds);
+
+  /**
+   * Saves tags for application specified by id
+   */
+  public saveTags = (id: number, tags: Array<ApplicationTag>) => this.applicationService.saveApplicationTags(id, tags);
 
   public loadDefaultTexts = (applicationType: ApplicationType) => this.defaultTextService.load(applicationType);
 

@@ -743,6 +743,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * Model-service path to update tags
+   */
+  public String getUpdateTagsUrl() {
+    return getModelServiceUrl("/applications/{id}/tags");
+  }
+
+  /**
    * @return url to find contact from search index.
    */
   public String getContactSearchUrl() {

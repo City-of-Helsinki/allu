@@ -9,6 +9,7 @@ export const translations = {
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui',
       deleteFailed: 'Hakemuksen poistaminen epäonnistui',
+      tagUpdateFailed: 'Hakemuksen tarkenteiden tallentaminen epäonnistui',
       toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',
       toDecisionmaking: 'Hakemuksen siirtäminen odottamaan päätöstä epäonnistui'
     },

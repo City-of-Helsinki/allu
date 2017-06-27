@@ -418,6 +418,16 @@ public class ApplicationDao {
     return populateTags(application);
   }
 
+  /**
+   * Replaces applications tags with given new tags.
+   * Returns updated tags.
+   */
+  @Transactional
+  public List<ApplicationTag> updateTags(int id, List<ApplicationTag> tags) {
+    replaceApplicationTags(id, tags);
+    return findTagsByApplicationId(id);
+  }
+
   String createApplicationId(ApplicationType applicationType) {
     long seqValue = applicationSequenceDao
         .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));

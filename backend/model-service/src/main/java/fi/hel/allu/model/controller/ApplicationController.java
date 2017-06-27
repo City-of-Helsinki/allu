@@ -145,6 +145,17 @@ public class ApplicationController {
   }
 
   /**
+   * Update (replace) applications tags with new ones
+   * @param id Id of the application to be changed.
+   * @param tags New tags
+   * @return stored tags
+   */
+  @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
+  public ResponseEntity<List<ApplicationTag>> updateTags(@PathVariable int id, @RequestBody List<ApplicationTag> tags) {
+    return new ResponseEntity<>(applicationService.updateTags(id, tags), HttpStatus.OK);
+  }
+
+  /**
    * Find attachments for an application
    *
    * @param id The application id

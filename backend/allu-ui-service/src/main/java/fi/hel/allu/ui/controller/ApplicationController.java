@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.controller;
 
 
+import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
@@ -279,5 +280,12 @@ public class ApplicationController {
   public ResponseEntity<List<InvoiceRow>> setInvoiceRows(@PathVariable int id,
       @Valid @RequestBody List<InvoiceRow> invoiceRows) {
     return new ResponseEntity<>(applicationServiceComposer.setInvoiceRows(id, invoiceRows), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<ApplicationTagJson>> updateTags(@PathVariable int id,
+     @Valid @RequestBody List<ApplicationTagJson> tags) {
+    return new ResponseEntity<>(applicationServiceComposer.updateTags(id, tags), HttpStatus.OK);
   }
 }

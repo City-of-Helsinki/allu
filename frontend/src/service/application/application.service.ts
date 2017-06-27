@@ -15,15 +15,17 @@ import {findTranslation} from '../../util/translations';
 import {ApplicationQueryParametersMapper} from '../mapper/query/application-query-parameters-mapper';
 import {HttpResponse} from '../../util/http-response';
 import {HttpUtil} from '../../util/http.util';
+import {ApplicationTag} from '../../model/application/tag/application-tag';
+import {ApplicationTagMapper} from '../mapper/application-tag-mapper';
 
+const APPLICATIONS_URL = '/api/applications';
+const TAGS_URL = '/api/applications/:appId/tags';
+const SEARCH = '/search';
+const SEARCH_LOCATION = '/search_location';
+const METADATA_URL = '/api/meta';
 
 @Injectable()
 export class ApplicationService {
-  static APPLICATIONS_URL = '/api/applications';
-  static SEARCH = '/search';
-  static SEARCH_LOCATION = '/search_location';
-  static METADATA_URL = '/api/meta';
-
   private statusToUrl = new Map<ApplicationStatus, string>();
 
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
@@ -38,14 +40,14 @@ export class ApplicationService {
   }
 
   public getApplication(id: number): Observable<Application> {
-    return this.authHttp.get(ApplicationService.APPLICATIONS_URL + '/' + id)
+    return this.authHttp.get(APPLICATIONS_URL + '/' + id)
       .map(response => response.json())
       .map(app => ApplicationMapper.mapBackend(app))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.fetch')));
   }
 
   public getApplicationsByLocation(query: ApplicationLocationQuery): Observable<Array<Application>> {
-    let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH_LOCATION;
+    let searchUrl = APPLICATIONS_URL + SEARCH_LOCATION;
 
     return this.authHttp.post(
       searchUrl,
@@ -56,7 +58,7 @@ export class ApplicationService {
   }
 
   public searchApplications(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
-    let searchUrl = ApplicationService.APPLICATIONS_URL + ApplicationService.SEARCH;
+    let searchUrl = APPLICATIONS_URL + SEARCH;
 
     return this.authHttp.post(
       searchUrl,
@@ -68,14 +70,14 @@ export class ApplicationService {
 
   public saveApplication(application: Application): Observable<Application> {
     if (application.id) {
-      let url = ApplicationService.APPLICATIONS_URL + '/' + application.id;
+      let url = APPLICATIONS_URL + '/' + application.id;
 
       return this.authHttp.put(url,
         JSON.stringify(ApplicationMapper.mapFrontend(application)))
         .map(response => ApplicationMapper.mapBackend(response.json()))
         .catch(error => this.errorHandler.handle(error, findTranslation('application.error.saveFailed')));
     } else {
-      return this.authHttp.post(ApplicationService.APPLICATIONS_URL,
+      return this.authHttp.post(APPLICATIONS_URL,
         JSON.stringify(ApplicationMapper.mapFrontend(application)))
         .map(response => ApplicationMapper.mapBackend(response.json()))
         .catch(error => this.errorHandler.handle(error, findTranslation('application.error.saveFailed')));
@@ -83,35 +85,42 @@ export class ApplicationService {
   }
 
   public deleteApplication(id: number): Observable<HttpResponse> {
-    const url = ApplicationService.APPLICATIONS_URL + '/note/' + id;
+    const url = APPLICATIONS_URL + '/note/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response))
       .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')));
   }
 
   public loadMetadata(applicationType: string): Observable<StructureMeta> {
-    return this.authHttp.get(ApplicationService.METADATA_URL + '/' + applicationType)
+    return this.authHttp.get(METADATA_URL + '/' + applicationType)
       .map(response => StructureMetaMapper.mapBackend(response.json()))
       .catch(error => this.errorHandler.handle(error, 'Loading metadata failed'));
   }
 
   public applicationStatusChange(statusChange: ApplicationStatusChange): Observable<Application> {
-    let url = ApplicationService.APPLICATIONS_URL + '/' + statusChange.id + this.statusToUrl.get(statusChange.status);
+    let url = APPLICATIONS_URL + '/' + statusChange.id + this.statusToUrl.get(statusChange.status);
     return this.authHttp.put(url, JSON.stringify(ApplicationMapper.mapComment(statusChange.comment)))
       .map(response => ApplicationMapper.mapBackend(response.json()))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.statusChangeFailed')));
   }
 
   public applicationHandlerChange(handler: number, applicationIds: Array<number>): Observable<any> {
-    let url = ApplicationService.APPLICATIONS_URL + '/handler/' + handler;
+    let url = APPLICATIONS_URL + '/handler/' + handler;
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
   public applicationHandlerRemove(applicationIds: Array<number>): Observable<any> {
-    let url = ApplicationService.APPLICATIONS_URL + '/handler/remove';
+    let url = APPLICATIONS_URL + '/handler/remove';
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
+  }
+
+  public saveApplicationTags(appId: number, tags: Array<ApplicationTag>): Observable<Array<ApplicationTag>> {
+    let url = TAGS_URL.replace(':appId', String(appId));
+    return this.authHttp.put(url, JSON.stringify(ApplicationTagMapper.mapFrontendList(tags)))
+      .map(response => ApplicationTagMapper.mapBackend(response.json()))
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.tagUpdateFailed')));
   }
 }
 
