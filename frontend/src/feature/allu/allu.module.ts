@@ -39,6 +39,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {DateAdapter} from '@angular/material';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
+import {ConfigService} from '../../service/config/config.service';
 
 
 @NgModule({
@@ -83,6 +84,7 @@ import {CurrentUser} from '../../service/user/current-user';
     ErrorHandler,
     DefaultTextService,
     CurrentUser,
+    ConfigService,
     { provide: APP_BASE_HREF,  useValue: '/' },
     { provide: AuthHttp, useFactory: (http) => {
       return new AuthHttp(new AuthConfig({

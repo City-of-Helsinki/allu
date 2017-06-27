@@ -658,6 +658,11 @@ export const translations = {
         CONTENTS_CHANGED: 'Tietoja päivitetty'
       }
     }
+  },
+  config: {
+    error: {
+      fetch: 'Sovelluksen asetusten hakeminen epäonnistui'
+    }
   }
 };
 
