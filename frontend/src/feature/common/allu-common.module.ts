@@ -15,7 +15,8 @@ import {
   MdSelectModule,
   MdTabsModule,
   MdToolbarModule,
-  MdProgressBarModule
+  MdProgressBarModule,
+  MdTooltipModule
 } from '@angular/material';
 import 'materialize-css';
 import 'angular2-materialize';
@@ -76,6 +77,7 @@ import {AvailableToDirective} from '../../service/authorization/available-to.dir
     MdDatepickerModule,
     MdNativeDateModule,
     MdProgressBarModule,
+    MdTooltipModule,
     MaterializeModule,
     AutoCompletionDirective,
     AutoCompletionListComponent,

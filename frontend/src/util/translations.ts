@@ -442,6 +442,9 @@ export const translations = {
       OTHER: 'Yleisesti/muut'
     }
   },
+  location: {
+    underpass: 'Altakuljettava'
+  },
   common: {
     field: {
       nameMissing: 'Nimi puuttuu',

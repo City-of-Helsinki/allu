@@ -8,7 +8,6 @@
         <th>Lopetus</th>
         <th>Alue</th>
         <th>Kaupunginosa</th>
-        <th>Altakuljettava</th>
         <th>Lisätiedot</th>
     </tr>
     </thead>
@@ -16,13 +15,19 @@
     <tr *ngFor="let location of locations | async; let i = index"
         [class.selected]="i===locationState.editIndex" class="clickable row-highlight"
         (click)="editLocation(i)">
-        <th><button type="button" *ngIf="!readonly" md-icon-button (click)="remove()"><md-icon>clear</md-icon></button></th>
+        <th>
+            <button type="button" *ngIf="!readonly" md-icon-button (click)="remove()"><md-icon>clear</md-icon></button>
+            <md-icon class="icon-middle" *ngIf="location.underpass"
+                     [mdTooltip]="'location.underpass' | translation"
+                     mdTooltipPosition="above">
+                call_missed_outgoing
+            </md-icon>
+        </th>
         <td>{{location.locationKey}}</td>
         <td>{{location.uiStartTime}}</td>
         <td>{{location.uiEndTime}}</td>
         <td>{{location.effectiveUiArea}}</td>
         <td>{{districtName(location.effectiveCityDistrictId) | async}}</td>
-        <td>{{location.uiUnderpass}}</td>
         <td>{{location.info}}</td>
     </tr>
     </tbody>
