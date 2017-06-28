@@ -9,6 +9,7 @@ import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
+import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
 import org.elasticsearch.action.bulk.BulkProcessor;
@@ -19,8 +20,10 @@ import org.elasticsearch.action.index.IndexRequest;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
+import org.elasticsearch.action.update.UpdateRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.unit.ByteSizeValue;
+import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
@@ -80,7 +83,7 @@ public class GenericSearchService {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
       IndexResponse response =
-          client.prepareIndex(indexName, indexTypeName, id).setSource(json).get();
+          client.prepareIndex(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
       if (response.status() != RestStatus.CREATED) {
         throw new SearchException("Unable to insert record to " + indexTypeName + " with id " + id);
       }
@@ -95,7 +98,7 @@ public class GenericSearchService {
    * @param idToIndexedObject   A map having object id as key and indexed object as value.
    */
   public void bulkInsert(Map<String, Object> idToIndexedObject) {
-    List<IndexRequest> indexRequests =
+    List<DocWriteRequest> indexRequests =
         idToIndexedObject.entrySet().stream().map(entry -> createRequest(entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
     executeBulk(indexRequests);
@@ -110,7 +113,7 @@ public class GenericSearchService {
    * @param idToUpdatedObject Map having id of the updated object as key and object that will be updated to search index as JSON.
    */
   public void bulkUpdate(Map<String, Object> idToUpdatedObject) {
-    List<IndexRequest> updateRequests =
+    List<DocWriteRequest> updateRequests =
         idToUpdatedObject.entrySet().stream().map(entry -> updateRequest(entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
     executeBulk(updateRequests);
@@ -218,15 +221,15 @@ public class GenericSearchService {
     client.admin().indices().prepareRefresh(indexName).execute().actionGet();
   }
 
-  private IndexRequest updateRequest(String id, Object indexedObject) {
+  private UpdateRequest updateRequest(String id, Object indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       logger.debug("Creating update request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
-      IndexRequest updateRequest = new IndexRequest();
+      UpdateRequest updateRequest = new UpdateRequest();
       updateRequest.index(indexName);
       updateRequest.type(indexTypeName);
       updateRequest.id(id);
-      updateRequest.source(json);
+      updateRequest.doc(json, XContentType.JSON);
       return updateRequest;
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
@@ -241,7 +244,7 @@ public class GenericSearchService {
       indexRequest.index(indexName);
       indexRequest.type(indexTypeName);
       indexRequest.id(id);
-      indexRequest.source(json);
+      indexRequest.source(json, XContentType.JSON);
       return indexRequest;
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
@@ -336,19 +339,19 @@ public class GenericSearchService {
     BoolQueryBuilder qbRecurring1 = QueryBuilders.boolQuery();
     qbRecurring1 = qbRecurring1.should(qbPeriod1_1);
     qbRecurring1 = qbRecurring1.should(qbPeriod1_2);
-    qbRecurring1.minimumNumberShouldMatch(1);
+    qbRecurring1.minimumShouldMatch(1);
 
     BoolQueryBuilder qbRecurring2 = QueryBuilders.boolQuery();
     qbRecurring2 = qbRecurring2.should(qbPeriod2_1);
     qbRecurring2 = qbRecurring2.should(qbPeriod2_2);
-    qbRecurring2.minimumNumberShouldMatch(1);
+    qbRecurring2.minimumShouldMatch(1);
 
     BoolQueryBuilder qbCombined = QueryBuilders.boolQuery();
     qbCombined = qbCombined.must(QueryBuilders.rangeQuery("recurringApplication.startTime").lte(recurringApplication.getEndTime()));
     qbCombined = qbCombined.must(QueryBuilders.rangeQuery("recurringApplication.endTime").gte(recurringApplication.getStartTime()));
     qbCombined = qbCombined.should(qbRecurring1);
     qbCombined = qbCombined.should(qbRecurring2);
-    qbCombined.minimumNumberShouldMatch(1);
+    qbCombined.minimumShouldMatch(1);
 
     return qbCombined;
   }
@@ -357,7 +360,7 @@ public class GenericSearchService {
     return (startOrEnd == 0) ? 1 : startOrEnd;
   }
 
-  private void executeBulk(List<IndexRequest> requests) {
+  private void executeBulk(List<DocWriteRequest> requests) {
     final BulkProcessor bp = BulkProcessor.builder(client, new BulkProcessorListener())
         .setConcurrentRequests(1)           // at most 1 concurrent request
         .setBulkActions(1000)               // maximum of 1000 updates per request

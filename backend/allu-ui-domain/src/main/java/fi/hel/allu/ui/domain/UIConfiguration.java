@@ -19,7 +19,7 @@ public class UIConfiguration {
   }
 
   /**
-   * @return OAuth2 redirect URI.
+   * @return OAuth2 authorization endpoint URL i.e. the URL (OAuth2 service) where user is redirected for authentication and authorization.
    */
   public String getOauth2AuthorizationEndpointUrl() {
     return oauth2AuthorizationEndpointUrl;

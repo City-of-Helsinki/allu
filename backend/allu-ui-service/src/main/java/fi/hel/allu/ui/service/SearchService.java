@@ -74,10 +74,9 @@ public class SearchService {
    * @param tagJsons list jsons containing tags which replace old tags
    */
   public void updateTags(int applicationId, List<ApplicationTagJson> tagJsons) {
-    ApplicationES appEs = new ApplicationES();
-    appEs.setId(applicationId);
-    appEs.setApplicationTags(applicationMapper.createTagES(tagJsons));
-    restTemplate.put(applicationProperties.getApplicationsSearchUpdateUrl(), Collections.singletonList(appEs));
+    HashMap<Integer, Map<String, List<String>>> idToTags = new HashMap<>();
+    idToTags.put(applicationId, Collections.singletonMap("applicationTags", applicationMapper.createTagES(tagJsons)));
+    restTemplate.put(applicationProperties.getApplicationsSearchUpdatePartialUrl(), idToTags);
   }
 
   /**

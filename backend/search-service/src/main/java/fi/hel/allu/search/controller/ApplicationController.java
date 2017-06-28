@@ -39,8 +39,23 @@ public class ApplicationController {
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
-  public ResponseEntity<Void> update(@RequestBody(required = true) List<ApplicationES> applicationESs) {
+  public ResponseEntity<Void> update(@RequestBody List<ApplicationES> applicationESs) {
     Map<String, Object> idToApplication = applicationESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
+    applicationSearchService.bulkUpdate(idToApplication);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Support for partially updating an application. For example, if you want to update application tags of an application 1, you should
+   * use 1 as key of map and another map consisting of <code>applicationTags</code> as key and list of new application tag strings as value.
+   *
+   * @param idToPartialUpdateObj  Map having application id as key and partial update structure as value.
+   * @return Nothing.
+   */
+  @RequestMapping(value = "/partialupdate", method = RequestMethod.PUT)
+  public ResponseEntity<Void> partialUpdate(@RequestBody Map<Integer, Object> idToPartialUpdateObj) {
+    Map<String, Object> idToApplication = idToPartialUpdateObj.entrySet().stream()
+        .collect(Collectors.toMap(idToPU -> Integer.toString(idToPU.getKey()), idToPU -> idToPU.getValue()));
     applicationSearchService.bulkUpdate(idToApplication);
     return new ResponseEntity<>(HttpStatus.OK);
   }

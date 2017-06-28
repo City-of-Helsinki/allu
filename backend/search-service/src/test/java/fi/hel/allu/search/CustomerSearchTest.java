@@ -2,10 +2,7 @@ package fi.hel.allu.search;
 
 import fi.hel.allu.common.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.ApplicationES;
-import fi.hel.allu.search.domain.CustomerES;
-import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.domain.RoleTypedCustomerES;
+import fi.hel.allu.search.domain.*;
 import fi.hel.allu.search.service.GenericSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.elasticsearch.client.Client;
@@ -164,9 +161,17 @@ public class CustomerSearchTest {
     applicationES.getCustomers().getApplicant().setCustomer(customerES);
     applicationSearchService.refreshIndex();
 
+    QueryParameters params;
+    List<Integer> appList;
+
+    // should find by application name
+    params = SearchTestUtil.createQueryParameters("name", applicationES.getName());
+    appList = applicationSearchService.findByField(params);
+    assertEquals(1, appList.size());
+
     // should find by inserted name
-    QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.customer.name", TEST_NAME);
-    List<Integer> appList = applicationSearchService.findByField(params);
+    params = SearchTestUtil.createQueryParameters("customers.applicant.customer.name", TEST_NAME);
+    appList = applicationSearchService.findByField(params);
     assertEquals(1, appList.size());
 
     Map customersMap = CustomersIndexUtil.getCustomerUpdateStructure(Collections.singletonList(CustomerRoleType.APPLICANT), customerES);
@@ -180,6 +185,11 @@ public class CustomerSearchTest {
 
     // should find by updated registry key
     params = SearchTestUtil.createQueryParameters("customers.applicant.customer.registryKey", updatedKey);
+    appList = applicationSearchService.findByField(params);
+    assertEquals(1, appList.size());
+
+    // should still find by application name
+    params = SearchTestUtil.createQueryParameters("name", applicationES.getName());
     appList = applicationSearchService.findByField(params);
     assertEquals(1, appList.size());
 

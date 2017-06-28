@@ -226,6 +226,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to send multiple partial application search index updates.
+   */
+  public String getApplicationsSearchUpdatePartialUrl() {
+    return getSearchServiceUrl("/applications/partialupdate");
+  }
+
+  /**
    * @return url to add application to search index.
    */
   public String getApplicationSearchCreateUrl() {
