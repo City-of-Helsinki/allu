@@ -2,7 +2,9 @@ package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.ApplicationType;
 import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.common.util.TimeUtil;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +20,7 @@ public class User {
   private String emailAddress;
   private String title;
   private boolean isActive;
+  private ZonedDateTime lastLogin;
   private List<ApplicationType> allowedApplicationTypes = new ArrayList<>();
   private List<RoleType> assignedRoles = new ArrayList<>();
   private List<Integer> cityDistrictIds = new ArrayList<>();
@@ -32,6 +35,7 @@ public class User {
               String emailAddress,
               String title,
               boolean isActive,
+              ZonedDateTime lastLogin,
               List<ApplicationType> allowedApplicationTypes,
               List<RoleType> assignedRoles,
               List<Integer> cityDistrictIds) {
@@ -41,6 +45,7 @@ public class User {
     this.emailAddress = emailAddress;
     this.title = title;
     this.isActive = isActive;
+    this.lastLogin = lastLogin;
     setAllowedApplicationTypes(allowedApplicationTypes);
     setAssignedRoles(assignedRoles);
     setCityDistrictIds(cityDistrictIds);
@@ -122,6 +127,17 @@ public class User {
   public void setActive(boolean active) {
     // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
     setIsActive(active);
+  }
+
+  /**
+   * Returns last time the user logged in
+   */
+  public ZonedDateTime getLastLogin() {
+    return TimeUtil.homeTime(lastLogin);
+  }
+
+  public void setLastLogin(ZonedDateTime lastLogin) {
+    this.lastLogin = lastLogin;
   }
 
   /**

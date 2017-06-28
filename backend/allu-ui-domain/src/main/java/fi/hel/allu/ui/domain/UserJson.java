@@ -5,6 +5,7 @@ import fi.hel.allu.common.types.RoleType;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class UserJson {
   private String title;
   @NotBlank(message = "{user.isActive}")
   private boolean isActive;
+  private ZonedDateTime lastLogin;
   private List<ApplicationType> allowedApplicationTypes = new ArrayList<>();
   private List<RoleType> assignedRoles = new ArrayList<>();
   private List<Integer> cityDistrictIds;
@@ -37,6 +39,7 @@ public class UserJson {
       String emailAddress,
       String title,
       boolean isActive,
+      ZonedDateTime lastLogin,
       List<ApplicationType> allowedApplicationTypes,
       List<RoleType> assignedRoles,
       List<Integer> cityDistrictIds) {
@@ -46,6 +49,7 @@ public class UserJson {
     this.emailAddress = emailAddress;
     this.title = title;
     this.isActive = isActive;
+    this.lastLogin = lastLogin;
     this.allowedApplicationTypes = allowedApplicationTypes;
     this.assignedRoles = assignedRoles;
     this.cityDistrictIds = cityDistrictIds;
@@ -122,6 +126,17 @@ public class UserJson {
 
   public void setActive(boolean active) {
     isActive = active;
+  }
+
+  /**
+   * Returns last time the user logged in
+   */
+  public ZonedDateTime getLastLogin() {
+    return lastLogin;
+  }
+
+  public void setLastLogin(ZonedDateTime lastLogin) {
+    this.lastLogin = lastLogin;
   }
 
   /**

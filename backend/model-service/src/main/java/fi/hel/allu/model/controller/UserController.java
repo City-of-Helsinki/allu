@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 /**
@@ -50,5 +51,10 @@ public class UserController {
   public ResponseEntity updateUser(@RequestBody User user) throws NoSuchEntityException {
     userDao.update(user);
     return new ResponseEntity(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/lastLogin", method = RequestMethod.PUT)
+  public void setLastLogin(@PathVariable int id, @RequestBody ZonedDateTime loginTime) {
+    userDao.setLastLogin(id, loginTime);
   }
 }

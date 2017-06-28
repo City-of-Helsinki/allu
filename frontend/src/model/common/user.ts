@@ -1,3 +1,4 @@
+import {TimeUtil} from '../../util/time.util';
 export class User {
   constructor(
     public id?: number,
@@ -6,6 +7,7 @@ export class User {
     public emailAddress?: string,
     public title?: string,
     public isActive?: boolean,
+    public lastLogin?: Date,
     public allowedApplicationTypes: Array<string> = [],
     public assignedRoles: Array<string> = [],
     public cityDistrictIds: Array<number> = []) {};
@@ -20,5 +22,9 @@ export class User {
 
   get roles(): Array<string> {
     return this.assignedRoles;
+  }
+
+  get uiLastLogin(): string {
+    return TimeUtil.getUiDateTimeString(this.lastLogin);
   }
 }

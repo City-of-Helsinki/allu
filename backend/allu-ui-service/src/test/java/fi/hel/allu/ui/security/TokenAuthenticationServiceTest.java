@@ -56,6 +56,7 @@ public class TokenAuthenticationServiceTest {
       "mail@some.fi",
       "notitle",
       true,
+      null,
       Collections.emptyList(),
       Collections.emptyList(),
       Collections.emptyList());

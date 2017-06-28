@@ -1,5 +1,6 @@
 import {BackendUser} from '../backend-model/backend-user';
 import {User} from '../../model/common/user';
+import {TimeUtil} from '../../util/time.util';
 
 export class UserMapper {
 
@@ -12,6 +13,7 @@ export class UserMapper {
         backendUser.emailAddress,
         backendUser.title,
         backendUser.active,
+        TimeUtil.dateFromBackend(backendUser.lastLogin),
         backendUser.allowedApplicationTypes,
         backendUser.assignedRoles,
         backendUser.cityDistrictIds
@@ -27,6 +29,7 @@ export class UserMapper {
       emailAddress: user.emailAddress,
       title: user.title,
       active: user.isActive,
+      lastLogin: TimeUtil.dateToBackend(user.lastLogin),
       allowedApplicationTypes: user.allowedApplicationTypes,
       assignedRoles: user.assignedRoles,
       cityDistrictIds: user.cityDistrictIds

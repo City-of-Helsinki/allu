@@ -36,6 +36,7 @@ public class TokenHandlerTest {
         "email",
         "Johtaja",
         true,
+        null,
         Collections.emptyList(),
         Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN),
         Collections.emptyList());

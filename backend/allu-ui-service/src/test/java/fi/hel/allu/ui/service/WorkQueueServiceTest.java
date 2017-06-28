@@ -27,6 +27,7 @@ public class WorkQueueServiceTest {
           "foo@bar.fi",
           "titteli",
           true,
+          null,
           Collections.emptyList(),
           Collections.emptyList(),
           Collections.emptyList());

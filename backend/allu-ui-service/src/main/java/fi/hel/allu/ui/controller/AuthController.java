@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZonedDateTime;
+
 // TODO: remove or replace this with something once dummy login is removed
 @RestController
 @RequestMapping("/auth")
@@ -24,6 +26,7 @@ public class AuthController {
   @RequestMapping(value = "/login", method = RequestMethod.POST)
   public ResponseEntity<String> login(@RequestBody TempLogin user) {
     UserJson userJson = userService.findUserByUserName(user.userName);
+    userService.setLastLogin(userJson.getId(), ZonedDateTime.now());
     return new ResponseEntity<String>(tokenHandler.createTokenForUser(userJson), HttpStatus.OK);
   }
 

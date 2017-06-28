@@ -3,6 +3,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.ui.domain.UserJson;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
 import fi.hel.allu.ui.security.TokenHandler;
+import fi.hel.allu.ui.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
 /**
@@ -30,6 +32,8 @@ public class OAuth2Controller {
   TokenAuthenticationService tokenAuthenticationService;
   @Autowired
   TokenHandler tokenHandler;
+  @Autowired
+  UserService userService;
 
   @RequestMapping(value = "/", method = RequestMethod.GET)
   public ResponseEntity<String> login(@RequestParam String code) {
@@ -37,6 +41,7 @@ public class OAuth2Controller {
     if (userJsonOpt.isPresent()) {
       UserJson userJson = userJsonOpt.get();
       if (userJson.isActive()) {
+        userService.setLastLogin(userJson.getId(), ZonedDateTime.now());
         return new ResponseEntity<String>(tokenHandler.createTokenForUser(userJson), HttpStatus.OK);
       } else {
         logger.info("Attempt to login using inactive user account: {}" + userJson.getUserName());

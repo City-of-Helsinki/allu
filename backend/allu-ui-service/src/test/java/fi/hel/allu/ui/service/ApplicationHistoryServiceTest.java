@@ -162,12 +162,12 @@ public class ApplicationHistoryServiceTest extends MockServices {
     setupChangeCapture(APPLICATION_ID);
 
     ApplicationJson oldApplication = createMockApplicationJson(APPLICATION_ID);
-    oldApplication.setHandler(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "perustaja", true,
+    oldApplication.setHandler(new UserJson(123, "pera", "Pertti", "pera@xxx.eu", "perustaja", true, null,
         Collections.singletonList(ApplicationType.AREA_RENTAL), Collections.singletonList(RoleType.ROLE_DECISION),
         Collections.singletonList(1)));
     oldApplication.setName("Old application");
     ApplicationJson newApplication = createMockApplicationJson(APPLICATION_ID);
-    newApplication.setHandler(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "romuttaja", true,
+    newApplication.setHandler(new UserJson(123, "riku", "Risto", "rike@xxx.ca", "romuttaja", true, null,
         Collections.singletonList(ApplicationType.CABLE_REPORT),
         Collections.singletonList(RoleType.ROLE_CREATE_APPLICATION), Collections.singletonList(2)));
     newApplication.setName("New application");

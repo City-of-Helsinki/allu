@@ -19,6 +19,7 @@ const currentUser = new User(
   'email',
   'title',
   true,
+  undefined,
   ['ALLOWED_TYPE'],
   ['ROLE_TEST'],
   []

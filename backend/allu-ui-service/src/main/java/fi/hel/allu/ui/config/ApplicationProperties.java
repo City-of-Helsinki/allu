@@ -353,6 +353,10 @@ public class ApplicationProperties {
     return getModelServiceUrl("/users/{id}");
   }
 
+  public String getLastLoginUpdateUrl() {
+    return getModelServiceUrl("/users/{id}/lastLogin");
+  }
+
   /**
    * Get URL to find all comments for an application
    *

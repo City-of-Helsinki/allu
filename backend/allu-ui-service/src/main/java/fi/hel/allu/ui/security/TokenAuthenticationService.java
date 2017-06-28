@@ -125,6 +125,7 @@ public class TokenAuthenticationService {
             tokenFields.email,
             "", // using empty value as title, because title is required. However, the correct title is unknown at this point
             true,
+            null,
             Collections.emptyList(),
             Collections.singletonList(RoleType.ROLE_VIEW),
             Collections.emptyList());

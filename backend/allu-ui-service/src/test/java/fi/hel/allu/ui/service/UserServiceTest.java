@@ -38,6 +38,7 @@ public class UserServiceTest {
         "email@email",
         "title",
         true,
+        null,
         Collections.emptyList(),
         Collections.emptyList(),
         Collections.emptyList());

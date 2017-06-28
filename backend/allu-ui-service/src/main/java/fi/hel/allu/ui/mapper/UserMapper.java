@@ -21,6 +21,7 @@ public class UserMapper {
         user.getEmailAddress(),
         user.getTitle(),
         user.isActive(),
+        user.getLastLogin(),
         user.getAllowedApplicationTypes(),
         user.getAssignedRoles(),
         user.getCityDistrictIds());
@@ -34,6 +35,7 @@ public class UserMapper {
         userJson.getEmailAddress(),
         userJson.getTitle(),
         userJson.isActive(),
+        userJson.getLastLogin(),
         userJson.getAllowedApplicationTypes(),
         userJson.getAssignedRoles(),
         userJson.getCityDistrictIds());

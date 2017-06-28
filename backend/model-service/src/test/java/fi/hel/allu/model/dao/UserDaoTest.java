@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -153,6 +154,20 @@ public class UserDaoTest {
     Assert.assertEquals(1, updatedUser.getAllowedApplicationTypes().size());
     Assert.assertTrue(updatedUser.getAllowedApplicationTypes().contains(ApplicationType.EVENT));
     Assert.assertEquals(1, updatedUser.getCityDistrictIds().size());
+  }
+
+  @Test
+  public void testSetLastLogin() {
+    User user = createDummyUser("username");
+    User insertedUser = userDao.insert(user);
+
+    Assert.assertNull(insertedUser.getLastLogin());
+
+    ZonedDateTime loginTime = ZonedDateTime.now();
+    userDao.setLastLogin(insertedUser.getId(), loginTime);
+
+    userDao.findById(insertedUser.getId())
+    .ifPresent(u -> Assert.assertEquals(loginTime, u.getLastLogin()));
   }
 
   private User createDummyUser(String userName) {

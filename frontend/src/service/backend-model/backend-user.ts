@@ -5,6 +5,7 @@ export interface BackendUser {
   emailAddress: string;
   title: string;
   active: boolean;
+  lastLogin: string;
   allowedApplicationTypes: Array<string>;
   assignedRoles: Array<string>;
   cityDistrictIds: Array<number>;

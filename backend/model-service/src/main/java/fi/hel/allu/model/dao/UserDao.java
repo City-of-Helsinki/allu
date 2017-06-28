@@ -19,6 +19,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -141,6 +142,11 @@ public class UserDao {
       }
       throw e;
     }
+  }
+
+  @Transactional
+  public void setLastLogin(int id, ZonedDateTime loginTime) {
+    queryFactory.update(user).set(user.lastLogin, loginTime).where(user.id.eq(id)).execute();
   }
 
   private void insertRoles(int id, User userData) {

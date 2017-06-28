@@ -12,7 +12,7 @@ create table allu.customer (
     registry_key text,
     email text,
     phone text,
-    is_active boolean not null );
+    is_active boolean not null);
 
 create table allu.city_district (
   id serial primary key,
@@ -55,7 +55,8 @@ create table allu.user (
   real_name text NOT NULL,
   email_address text,
   title text NOT NULL,
-  is_active boolean NOT NULL);
+  is_active boolean NOT NULL,
+  last_login timestamp with time zone);
 
 create table allu.user_role (
   id serial primary key,
@@ -298,10 +299,10 @@ create SEQUENCE allu.TP_application_type_sequence START 1600001;
 create SEQUENCE allu.VL_application_type_sequence START 1600001;
 create SEQUENCE allu.MP_application_type_sequence START 1600001;
 
-insert into allu.user values (DEFAULT, 'admin', 'admin user', 'admin@no-mail.fi', 'administrator', true);
+insert into allu.user values (DEFAULT, 'admin', 'admin user', 'admin@no-mail.fi', 'administrator', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_ADMIN');
 
-insert into allu.user values (DEFAULT, 'ALLUTE', 'all rights user', 'allutest@no-mail.fi', 'Kaikkivaltias', true);
+insert into allu.user values (DEFAULT, 'ALLUTE', 'all rights user', 'allutest@no-mail.fi', 'Kaikkivaltias', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_CREATE_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_PROCESS_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_DECISION');
@@ -318,7 +319,7 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'SHORT_TERM_RENTAL');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'NOTE');
 
-insert into allu.user values (DEFAULT, 'ALLUASPA', 'Allu Asiakaspalvelija', 'allu.asiakaspalvelija@no-mail.fi', 'Asiakaspalvelija', true);
+insert into allu.user values (DEFAULT, 'ALLUASPA', 'Allu Asiakaspalvelija', 'allu.asiakaspalvelija@no-mail.fi', 'Asiakaspalvelija', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_CREATE_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_VIEW');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'EXCAVATION_ANNOUNCEMENT');
@@ -330,7 +331,7 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'SHORT_TERM_RENTAL');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'NOTE');
 
-insert into allu.user values (DEFAULT, 'ALLUKASI', 'Allu Käsittelijä', 'allu.kasittelija@no-mail.fi', 'Käsittelijä', true);
+insert into allu.user values (DEFAULT, 'ALLUKASI', 'Allu Käsittelijä', 'allu.kasittelija@no-mail.fi', 'Käsittelijä', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_CREATE_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_PROCESS_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_VIEW');
@@ -343,7 +344,7 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'SHORT_TERM_RENTAL');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'NOTE');
 
-insert into allu.user values (DEFAULT, 'ALLUPAAT', 'Allu Päättäjä', 'allu.paattaja@no-mail.fi', 'Päättäjä', true);
+insert into allu.user values (DEFAULT, 'ALLUPAAT', 'Allu Päättäjä', 'allu.paattaja@no-mail.fi', 'Päättäjä', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_CREATE_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_PROCESS_APPLICATION');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_DECISION');
@@ -357,7 +358,7 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'SHORT_TERM_RENTAL');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'NOTE');
 
-insert into allu.user values (DEFAULT, 'ALLUVALV', 'Allu Valvoja', 'allu.valvoja@no-mail.fi', 'Valvoja', true);
+insert into allu.user values (DEFAULT, 'ALLUVALV', 'Allu Valvoja', 'allu.valvoja@no-mail.fi', 'Valvoja', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_SUPERVISE');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_VIEW');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'EXCAVATION_ANNOUNCEMENT');
@@ -369,7 +370,7 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'SHORT_TERM_RENTAL');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'NOTE');
 
-insert into allu.user values (DEFAULT, 'ALLULASK', 'Allu Laskuttaja', 'allu.laskuttaja@no-mail.fi', 'Laskuttaja', true);
+insert into allu.user values (DEFAULT, 'ALLULASK', 'Allu Laskuttaja', 'allu.laskuttaja@no-mail.fi', 'Laskuttaja', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_INVOICING');
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_VIEW');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'EXCAVATION_ANNOUNCEMENT');

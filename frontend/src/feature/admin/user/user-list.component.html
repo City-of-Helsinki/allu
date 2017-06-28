@@ -10,6 +10,7 @@
                     <th>Käyttäjänimi</th>
                     <th>Nimi</th>
                     <th>Sähköposti</th>
+                    <th>Viimeisin kirjautuminen</th>
                     <th>Roolit</th>
                     <th>Hakemustyypit</th>
                 </tr>
@@ -20,6 +21,7 @@
                     <td>{{user.userName}}</td>
                     <td>{{user.realName}}</td>
                     <td>{{user.emailAddress}}</td>
+                    <td>{{user.uiLastLogin}}</td>
                     <td>
                     <span *ngFor="let role of user.assignedRoles; let last=last">
                         {{translations.user.role[role] | commaSeparated: last}}

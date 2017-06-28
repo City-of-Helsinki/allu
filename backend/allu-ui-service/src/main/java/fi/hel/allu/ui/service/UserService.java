@@ -13,6 +13,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -72,6 +73,10 @@ public class UserService {
   public void updateUser(UserJson userJson) {
     User user = UserMapper.mapToModelUser(userJson);
     restTemplate.put(applicationProperties.getUserUpdateUrl(), user);
+  }
+
+  public void setLastLogin(int userId, ZonedDateTime loginTime) {
+    restTemplate.put(applicationProperties.getLastLoginUpdateUrl(), loginTime, userId);
   }
 
   private List<UserJson> mapUsers(User[] users) {
