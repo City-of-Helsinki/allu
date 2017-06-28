@@ -230,12 +230,15 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     Some(this.application.firstLocation)
       .map(location => this.areas.filter(area => area.hasSectionIds(location.fixedLocationIds)))
       .filter(areas => areas.length > 0)
-      .map(areas => areas[0].id)
-      .do(id => this.locationForm.patchValue({area: id}));
+      .map(areas => areas[0])
+      .do(area => {
+        this.locationForm.patchValue({area: area.id});
+        this.areaSections = this.sortedAreaSectionsFrom(area);
+      });
 
     Some(this.application.firstLocation)
       .filter(location => location.fixedLocationIds.length > 0)
-      .do(location => this.sectionsCtrl.patchValue({sections: location.fixedLocationIds}));
+      .do(location => this.sectionsCtrl.patchValue(location.fixedLocationIds));
   }
 
   private onAreaChange(id: number): void {
@@ -243,8 +246,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       let area = this.areas.find(a => a.id === id);
       let kind = ApplicationKind[this.application.kind];
 
-      this.areaSections = area.namedSectionsForKind(kind)
-        .sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
+      this.areaSections = this.sortedAreaSectionsFrom(area);
 
       area.singleDefaultSectionForKind(kind)
         .do(defaultSection => this.sectionsCtrl.patchValue([defaultSection.id]));
@@ -312,5 +314,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private resetForm(): void {
     this.locationForm.reset(LocationForm.from(new Location()));
     this.searchbarFilter$.next(new SearchbarFilter());
+  }
+
+  private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {
+    const kind = ApplicationKind[this.application.kind];
+    return area.namedSectionsForKind(kind).sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
   }
 }
