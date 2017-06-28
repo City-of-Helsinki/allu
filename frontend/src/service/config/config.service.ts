@@ -4,14 +4,14 @@ import {Observable} from 'rxjs/Observable';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {UiConfiguration} from '../../model/config/ui-configuration';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Subject} from 'rxjs/Subject';
 
 const CONFIG_URL = '/api/uiconfig';
 
 @Injectable()
 export class ConfigService {
 
-  private configuration$ = new BehaviorSubject<UiConfiguration>(new UiConfiguration());
+  private configuration$ = new Subject<UiConfiguration>();
 
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
     this.loadConfiguration();
