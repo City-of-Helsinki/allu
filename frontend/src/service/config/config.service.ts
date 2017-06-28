@@ -3,15 +3,15 @@ import {AuthHttp} from 'angular2-jwt';
 import {Observable} from 'rxjs/Observable';
 import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
-import {Subject} from 'rxjs/Subject';
 import {UiConfiguration} from '../../model/config/ui-configuration';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 const CONFIG_URL = '/api/uiconfig';
 
 @Injectable()
 export class ConfigService {
 
-  private configuration$ = new Subject<UiConfiguration>();
+  private configuration$ = new BehaviorSubject<UiConfiguration>(new UiConfiguration());
 
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
     this.loadConfiguration();
