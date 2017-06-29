@@ -47,6 +47,7 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      pksCard: [false],
       workFinished: [undefined],
       calculatedPrice: [0],
       priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],

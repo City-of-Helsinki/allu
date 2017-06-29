@@ -96,6 +96,7 @@ export class ApplicationTypeDataMapper {
         );
       case ApplicationType.AREA_RENTAL:
         return new AreaRental(
+          backendExtension.pksCard,
           TimeUtil.dateFromBackend(backendExtension.workFinished),
           backendExtension.trafficArrangements,
           backendExtension.trafficArrangementImpedimentType,

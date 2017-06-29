@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
  * Area rental (aluevuokraus) specific data.
  */
 public class AreaRentalJson extends ApplicationExtensionJson {
+  private Boolean pksCard;
   private String additionalInfo;
   private String trafficArrangements;
   private ZonedDateTime workFinished;
@@ -19,6 +20,18 @@ public class AreaRentalJson extends ApplicationExtensionJson {
   @Override
   public ApplicationType getApplicationType() {
     return ApplicationType.AREA_RENTAL;
+  }
+
+  /**
+   * In Finnish: PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
+   * True, if the contractor doing the actual work has PKS-card.
+   */
+  public Boolean getPksCard() {
+    return pksCard;
+  }
+
+  public void setPksCard(Boolean pksCard) {
+    this.pksCard = pksCard;
   }
 
   /**

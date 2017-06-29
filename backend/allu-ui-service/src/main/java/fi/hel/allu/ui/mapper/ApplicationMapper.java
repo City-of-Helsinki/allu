@@ -13,19 +13,25 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.domain.*;
 
+import fi.hel.allu.ui.mapper.extension.AreaRentalMapper;
+import fi.hel.allu.ui.mapper.extension.CableReportMapper;
+import fi.hel.allu.ui.mapper.extension.EventMapper;
+import fi.hel.allu.ui.mapper.extension.ExcavationAnnouncementMapper;
+import fi.hel.allu.ui.mapper.extension.NoteMapper;
+import fi.hel.allu.ui.mapper.extension.PlacementContractMapper;
+import fi.hel.allu.ui.mapper.extension.ShortTermRentalMapper;
+import fi.hel.allu.ui.mapper.extension.TrafficArrangementMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Component
 public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
-
 
   /**
    * Create a new <code>Application</code> model-domain object from given ui-domain object
@@ -136,7 +142,7 @@ public class ApplicationMapper {
     applicationJson.setName(application.getName());
     applicationJson.setDecisionTime(application.getDecisionTime());
     if (application.getExtension() != null) {
-      mapModelToJson(applicationJson, application);
+      applicationJson.setExtension(createExtensionJson(application));
     }
     applicationJson.setDecisionDistributionType(application.getDecisionDistributionType());
     applicationJson.setDecisionPublicityType(application.getDecisionPublicityType());
@@ -154,80 +160,30 @@ public class ApplicationMapper {
 
   /**
    * Transfer the information from the given model-domain object to given ui-domain object
-   * @param applicationJson
    * @param application
+   * @return created Json application extension
    */
-  public void mapModelToJson(ApplicationJson applicationJson, Application application) {
-    switch (applicationJson.getType()) {
+  public ApplicationExtensionJson createExtensionJson(Application application) {
+    switch (application.getType()) {
     case EVENT:
-        Event event = (Event) application.getExtension();
-        EventJson eventJson = new EventJson();
-        eventJson.setUrl(event.getUrl());
-        eventJson.setNature(event.getNature());
-        if (event.getBuildSeconds() != 0 && application.getStartTime() != null) {
-          eventJson.setEventStartTime(application.getStartTime().plusSeconds(event.getBuildSeconds()));
-          eventJson.setStructureStartTime(application.getStartTime());
-        } else {
-          eventJson.setEventStartTime(application.getStartTime());
-          eventJson.setStructureStartTime(null);
-        }
-        if (event.getTeardownSeconds() != 0 && application.getEndTime() != null) {
-          eventJson.setEventEndTime(application.getEndTime().minusSeconds(event.getTeardownSeconds()));
-          eventJson.setStructureEndTime(application.getEndTime());
-        } else {
-          eventJson.setEventEndTime(application.getEndTime());
-          eventJson.setStructureEndTime(null);
-        }
-        eventJson.setAttendees(event.getAttendees());
-        eventJson.setDescription(event.getDescription());
-        eventJson.setTimeExceptions(event.getTimeExceptions());
-        eventJson.setEcoCompass(event.isEcoCompass());
-        eventJson.setStructureArea(event.getStructureArea());
-        eventJson.setStructureDescription(event.getStructureDescription());
-        eventJson.setEntryFee(event.getEntryFee());
-        eventJson.setFoodProviders(event.getFoodProviders());
-        eventJson.setMarketingProviders(event.getMarketingProviders());
-        eventJson.setNoPriceReason(event.getNoPriceReason());
-        eventJson.setSalesActivity(event.isSalesActivity());
-        eventJson.setHeavyStructure(event.isHeavyStructure());
-        eventJson.setFoodSales(event.isFoodSales());
-        applicationJson.setExtension(eventJson);
-        break;
-      // short term rentals
+        return EventMapper.modelToJson(application);
     case SHORT_TERM_RENTAL:
-        ShortTermRental shortTermRental = (ShortTermRental) application.getExtension();
-        ShortTermRentalJson shortTermRentalJson = new ShortTermRentalJson();
-        shortTermRentalJson.setDescription(shortTermRental.getDescription());
-        shortTermRentalJson.setCommercial(shortTermRental.getCommercial());
-        shortTermRentalJson.setLargeSalesArea(shortTermRental.getLargeSalesArea());
-        applicationJson.setExtension(shortTermRentalJson);
-        break;
-      // cable reports
+        return ShortTermRentalMapper.modelToJson((ShortTermRental) application.getExtension());
     case CABLE_REPORT:
-      applicationJson.setExtension(createCableReportJson((CableReport) application.getExtension()));
-      break;
+      return CableReportMapper.modelToJson((CableReport) application.getExtension());
     case AREA_RENTAL:
-      applicationJson.setExtension(createAreaRentalJson((AreaRental) application.getExtension()));
-      break;
+      return AreaRentalMapper.modelToJson((AreaRental) application.getExtension());
     case EXCAVATION_ANNOUNCEMENT:
-      applicationJson
-          .setExtension(createExcavationAnnouncementJson((ExcavationAnnouncement) application.getExtension()));
-      break;
+      return ExcavationAnnouncementMapper.modelToJson((ExcavationAnnouncement) application.getExtension());
     case NOTE:
-      applicationJson.setExtension(createNoteJson((Note) application.getExtension()));
-      break;
+      return NoteMapper.modelToJson((Note) application.getExtension());
     case PLACEMENT_CONTRACT:
-      applicationJson.setExtension(createPlacementContractJson((PlacementContract) application.getExtension()));
-      break;
+      return PlacementContractMapper.modelToJson((PlacementContract) application.getExtension());
     case TEMPORARY_TRAFFIC_ARRANGEMENTS:
-      applicationJson.setExtension(createTrafficArrangementJson((TrafficArrangement) application.getExtension()));
-      break;
-    default:
-      break;
+      return TrafficArrangementMapper.modelToJson((TrafficArrangement) application.getExtension());
+      default:
+        throw new IllegalArgumentException("No model to json mapper for extension type " + application.getType());
     }
-
-    applicationJson.getExtension().setSpecifiers(application.getExtension().getSpecifiers());
-    applicationJson.getExtension().setTerms(application.getExtension().getTerms());
   }
 
   /**
@@ -236,70 +192,26 @@ public class ApplicationMapper {
    * @return created event object
    */
   public ApplicationExtension createExtensionModel(ApplicationJson applicationJson) {
-    ApplicationExtension applicationExtension = null;
     switch (applicationJson.getType()) {
-    case EVENT:
-        EventJson eventJson = (EventJson) applicationJson.getExtension();
-        Event event = new Event();
-        event.setDescription(eventJson.getDescription());
-        event.setNature(eventJson.getNature());
-        event.setUrl(eventJson.getUrl());
-        event.setAttendees(eventJson.getAttendees());
-        if (eventJson.getStructureStartTime() != null && eventJson.getEventStartTime() != null) {
-          event.setBuildSeconds(eventJson.getStructureStartTime().until(eventJson.getEventStartTime(), ChronoUnit.SECONDS));
-        }
-        if (eventJson.getStructureEndTime() != null && eventJson.getEventEndTime() != null) {
-          event.setTeardownSeconds(eventJson.getEventEndTime().until(eventJson.getStructureEndTime(), ChronoUnit.SECONDS));
-        }
-        event.setFoodSales(eventJson.isFoodSales());
-        event.setMarketingProviders(eventJson.getMarketingProviders());
-        event.setNoPriceReason(eventJson.getNoPriceReason());
-        event.setSalesActivity(eventJson.isSalesActivity());
-        event.setHeavyStructure(eventJson.isHeavyStructure());
-        event.setFoodProviders(eventJson.getFoodProviders());
-        event.setEntryFee(eventJson.getEntryFee());
-        event.setEcoCompass(eventJson.isEcoCompass());
-        event.setStructureArea(eventJson.getStructureArea());
-        event.setStructureDescription(eventJson.getStructureDescription());
-        event.setTimeExceptions(eventJson.getTimeExceptions());
-        applicationExtension = event;
-      break;
-      // short term rentals
-    case SHORT_TERM_RENTAL:
-        ShortTermRentalJson shortTermRentalJson = (ShortTermRentalJson) applicationJson.getExtension();
-        ShortTermRental shortTermRental = new ShortTermRental();
-        shortTermRental.setDescription(shortTermRentalJson.getDescription());
-        shortTermRental.setCommercial(shortTermRentalJson.getCommercial());
-        shortTermRental.setLargeSalesArea(shortTermRentalJson.getLargeSalesArea());
-        applicationExtension = shortTermRental;
-      break;
-    case CABLE_REPORT:
-      applicationExtension = createCableReportModel((CableReportJson) applicationJson.getExtension());
-      break;
-    case AREA_RENTAL:
-      applicationExtension = createAreaRentalModel((AreaRentalJson) applicationJson.getExtension());
-      break;
-    case EXCAVATION_ANNOUNCEMENT:
-      applicationExtension = createExcavationAnnouncementModel(
-          (ExcavationAnnouncementJson) applicationJson.getExtension());
-      break;
-    case NOTE:
-      applicationExtension = createNoteModel((NoteJson) applicationJson.getExtension());
-      break;
-    case PLACEMENT_CONTRACT:
-      applicationExtension = createPlacementContractModel((PlacementContractJson) applicationJson.getExtension());
-      break;
-    case TEMPORARY_TRAFFIC_ARRANGEMENTS:
-      applicationExtension = createTrafficArrangementModel((TrafficArrangementJson) applicationJson.getExtension());
-      break;
-    default:
-      break;
+      case EVENT:
+        return EventMapper.jsonToModel((EventJson) applicationJson.getExtension());
+      case SHORT_TERM_RENTAL:
+        return  ShortTermRentalMapper.jsonToModel((ShortTermRentalJson) applicationJson.getExtension());
+      case CABLE_REPORT:
+        return CableReportMapper.jsonToModel((CableReportJson) applicationJson.getExtension());
+      case AREA_RENTAL:
+        return AreaRentalMapper.jsonToModel((AreaRentalJson) applicationJson.getExtension());
+      case EXCAVATION_ANNOUNCEMENT:
+        return ExcavationAnnouncementMapper.jsonToModel((ExcavationAnnouncementJson) applicationJson.getExtension());
+      case NOTE:
+        return NoteMapper.jsonToModel((NoteJson) applicationJson.getExtension());
+      case PLACEMENT_CONTRACT:
+        return PlacementContractMapper.jsonToModel((PlacementContractJson) applicationJson.getExtension());
+      case TEMPORARY_TRAFFIC_ARRANGEMENTS:
+        return TrafficArrangementMapper.jsonToModel((TrafficArrangementJson) applicationJson.getExtension());
+      default:
+        throw new IllegalArgumentException("No json to model mapper for extension type " + applicationJson.getType());
     }
-
-    applicationExtension.setSpecifiers(applicationJson.getExtension().getSpecifiers());
-    applicationExtension.setTerms(applicationJson.getExtension().getTerms());
-
-    return applicationExtension;
   }
 
   /**
@@ -466,176 +378,6 @@ public class ApplicationMapper {
     } else {
       return null;
     }
-  }
-
-  /**
-   * Map AreaRentalJson to AreaRental
-   */
-  private AreaRental createAreaRentalModel(AreaRentalJson areaRentalJson) {
-    AreaRental areaRental = new AreaRental();
-
-    areaRental.setAdditionalInfo(areaRentalJson.getAdditionalInfo());
-    areaRental.setTrafficArrangements(areaRentalJson.getTrafficArrangements());
-    areaRental.setTrafficArrangementImpedimentType(areaRentalJson.getTrafficArrangementImpedimentType());
-    areaRental.setWorkFinished(areaRentalJson.getWorkFinished());
-    return areaRental;
-  }
-
-  /*
-   * Map AreaRental to AreaRentalJson
-   */
-  private AreaRentalJson createAreaRentalJson(AreaRental areaRental) {
-    AreaRentalJson areaRentalJson = new AreaRentalJson();
-
-    areaRentalJson.setAdditionalInfo(areaRental.getAdditionalInfo());
-    areaRentalJson.setTrafficArrangements(areaRental.getTrafficArrangements());
-    areaRentalJson.setTrafficArrangementImpedimentType(areaRental.getTrafficArrangementImpedimentType());
-    areaRentalJson.setWorkFinished(areaRental.getWorkFinished());
-    return areaRentalJson;
-  }
-
-  /*
-   * Map CableReportJson to CableReport
-   */
-  private CableReport createCableReportModel(CableReportJson cableReportJson) {
-    CableReport cableReport = new CableReport();
-    cableReport.setCableReportId(cableReportJson.getCableReportId());
-    cableReport.setWorkDescription(cableReportJson.getWorkDescription());
-    cableReport.setMapExtractCount(cableReportJson.getMapExtractCount());
-    cableReport.setCableSurveyRequired(cableReportJson.getCableSurveyRequired());
-    List<CableInfoEntry> infoEntries = Optional.ofNullable(cableReportJson.getInfoEntries())
-        .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryModel(i)).collect(Collectors.toList());
-    cableReport.setInfoEntries(infoEntries);
-    cableReport.setMapUpdated(cableReportJson.getMapUpdated());
-    cableReport.setConstructionWork(cableReportJson.getConstructionWork());
-    cableReport.setMaintenanceWork(cableReportJson.getMaintenanceWork());
-    cableReport.setEmergencyWork(cableReportJson.getEmergencyWork());
-    cableReport.setPropertyConnectivity(cableReportJson.getPropertyConnectivity());
-    cableReport.setValidityTime(cableReportJson.getValidityTime());
-    return cableReport;
-  }
-
-  /*
-   * Map CableReport to CableReportJson
-   */
-  private CableReportJson createCableReportJson(CableReport cableReport) {
-    CableReportJson cableReportJson = new CableReportJson();
-    cableReportJson.setCableReportId(cableReport.getCableReportId());
-    cableReportJson.setWorkDescription(cableReport.getWorkDescription());
-    cableReportJson.setMapExtractCount(cableReport.getMapExtractCount());
-    cableReportJson.setCableSurveyRequired(cableReport.isCableSurveyRequired());
-    List<CableInfoEntryJson> infoEntries = Optional.ofNullable(cableReport.getInfoEntries())
-        .orElse(Collections.emptyList()).stream().map(i -> createCableInfoEntryJson(i)).collect(Collectors.toList());
-    cableReportJson.setInfoEntries(infoEntries);
-    cableReportJson.setMapUpdated(cableReport.getMapUpdated());
-    cableReportJson.setConstructionWork(cableReport.getConstructionWork());
-    cableReportJson.setMaintenanceWork(cableReport.getMaintenanceWork());
-    cableReportJson.setEmergencyWork(cableReport.getEmergencyWork());
-    cableReportJson.setPropertyConnectivity(cableReport.getPropertyConnectivity());
-    cableReportJson.setValidityTime(cableReport.getValidityTime());
-    return cableReportJson;
-  }
-
-  private ExcavationAnnouncementJson createExcavationAnnouncementJson(ExcavationAnnouncement model) {
-    ExcavationAnnouncementJson json = new ExcavationAnnouncementJson();
-    json.setAdditionalInfo(model.getAdditionalInfo());
-    json.setCableReportId(model.getCableReportId());
-    json.setGuaranteeEndTime(model.getGuaranteeEndTime());
-    json.setSummerTimeOperation(model.getSummerTimeOperation());
-    json.setWinterTimeOperation(model.getWinterTimeOperation());
-    json.setWorkFinished(model.getWorkFinished());
-    json.setTrafficArrangements(model.getTrafficArrangements());
-    json.setTrafficArrangementImpedimentType(model.getTrafficArrangementImpedimentType());
-    json.setPksCard(model.getPksCard());
-    json.setConstructionWork(model.getConstructionWork());
-    json.setMaintenanceWork(model.getMaintenanceWork());
-    json.setEmergencyWork(model.getEmergencyWork());
-    json.setPropertyConnectivity(model.getPropertyConnectivity());
-    json.setUnauthorizedWorkStartTime(model.getUnauthorizedWorkStartTime());
-    json.setUnauthorizedWorkEndTime(model.getUnauthorizedWorkEndTime());
-    return json;
-  }
-
-  private ExcavationAnnouncement createExcavationAnnouncementModel(ExcavationAnnouncementJson excavationAnnouncementJson) {
-    ExcavationAnnouncement excavationAnnouncement = new ExcavationAnnouncement();
-    excavationAnnouncement.setAdditionalInfo(excavationAnnouncementJson.getAdditionalInfo());
-    excavationAnnouncement.setCableReportId(excavationAnnouncementJson.getCableReportId());
-    excavationAnnouncement.setGuaranteeEndTime(excavationAnnouncementJson.getGuaranteeEndTime());
-    excavationAnnouncement.setSummerTimeOperation(excavationAnnouncementJson.getSummerTimeOperation());
-    excavationAnnouncement.setWinterTimeOperation(excavationAnnouncementJson.getWinterTimeOperation());
-    excavationAnnouncement.setWorkFinished(excavationAnnouncementJson.getWorkFinished());
-    excavationAnnouncement.setTrafficArrangements(excavationAnnouncementJson.getTrafficArrangements());
-    excavationAnnouncement.setTrafficArrangementImpedimentType(excavationAnnouncementJson.getTrafficArrangementImpedimentType());
-    excavationAnnouncement.setPksCard(excavationAnnouncementJson.getPksCard());
-    excavationAnnouncement.setConstructionWork(excavationAnnouncementJson.getConstructionWork());
-    excavationAnnouncement.setMaintenanceWork(excavationAnnouncementJson.getMaintenanceWork());
-    excavationAnnouncement.setEmergencyWork(excavationAnnouncementJson.getEmergencyWork());
-    excavationAnnouncement.setPropertyConnectivity(excavationAnnouncementJson.getPropertyConnectivity());
-    excavationAnnouncement.setUnauthorizedWorkStartTime(excavationAnnouncementJson.getUnauthorizedWorkStartTime());
-    excavationAnnouncement.setUnauthorizedWorkEndTime(excavationAnnouncementJson.getUnauthorizedWorkEndTime());
-    return excavationAnnouncement;
-  }
-
-  private CableInfoEntryJson createCableInfoEntryJson(CableInfoEntry cableInfoEntry) {
-    CableInfoEntryJson cableInfoEntryJson = new CableInfoEntryJson();
-    cableInfoEntryJson.setType(cableInfoEntry.getType());
-    cableInfoEntryJson.setAdditionalInfo(cableInfoEntry.getAdditionalInfo());
-    return cableInfoEntryJson;
-  }
-
-  private CableInfoEntry createCableInfoEntryModel(CableInfoEntryJson cableInfoEntryJson) {
-    CableInfoEntry cableInfoEntry = new CableInfoEntry();
-    cableInfoEntry.setType(cableInfoEntryJson.getType());
-    cableInfoEntry.setAdditionalInfo(cableInfoEntryJson.getAdditionalInfo());
-    return cableInfoEntry;
-  }
-
-  private NoteJson createNoteJson(Note note) {
-    NoteJson noteJson = new NoteJson();
-    noteJson.setDescription(note.getDescription());
-    return noteJson;
-  }
-
-  private Note createNoteModel(NoteJson noteJson) {
-    Note note = new Note();
-    note.setDescription(noteJson.getDescription());
-    return note;
-  }
-
-  private ApplicationExtensionJson createPlacementContractJson(PlacementContract placementContract) {
-    PlacementContractJson placementContractJson = new PlacementContractJson();
-    placementContractJson.setDiaryNumber(placementContract.getDiaryNumber());
-    placementContractJson.setAdditionalInfo(placementContract.getAdditionalInfo());
-    placementContractJson.setGeneralTerms(placementContract.getGeneralTerms());
-    return placementContractJson;
-  }
-
-  private ApplicationExtension createPlacementContractModel(PlacementContractJson placementContractJson) {
-    PlacementContract placementContract = new PlacementContract();
-    placementContract.setDiaryNumber(placementContractJson.getDiaryNumber());
-    placementContract.setAdditionalInfo(placementContractJson.getAdditionalInfo());
-    placementContract.setGeneralTerms(placementContractJson.getGeneralTerms());
-    return placementContract;
-  }
-
-  private TrafficArrangementJson createTrafficArrangementJson(TrafficArrangement trafficArrangement) {
-    TrafficArrangementJson trafficArrangementJson = new TrafficArrangementJson();
-    trafficArrangementJson.setPksCard(trafficArrangement.getPksCard());
-    trafficArrangementJson.setWorkFinished(trafficArrangement.getWorkFinished());
-    trafficArrangementJson.setAdditionalInfo(trafficArrangement.getAdditionalInfo());
-    trafficArrangementJson.setTrafficArrangements(trafficArrangement.getTrafficArrangements());
-    trafficArrangementJson.setTrafficArrangementImpedimentType(trafficArrangement.getTrafficArrangementImpedimentType());
-    return trafficArrangementJson;
-  }
-
-  private TrafficArrangement createTrafficArrangementModel(TrafficArrangementJson trafficArrangementJson) {
-    TrafficArrangement trafficArrangement = new TrafficArrangement();
-    trafficArrangement.setPksCard(trafficArrangementJson.getPksCard());
-    trafficArrangement.setWorkFinished(trafficArrangementJson.getWorkFinished());
-    trafficArrangement.setAdditionalInfo(trafficArrangementJson.getAdditionalInfo());
-    trafficArrangement.setTrafficArrangements(trafficArrangementJson.getTrafficArrangements());
-    trafficArrangement.setTrafficArrangementImpedimentType(trafficArrangementJson.getTrafficArrangementImpedimentType());
-    return trafficArrangement;
   }
 
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {

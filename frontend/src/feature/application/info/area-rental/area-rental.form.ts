@@ -6,6 +6,7 @@ import {AreaRental} from '../../../../model/application/area-rental/area-rental'
 export class AreaRentalForm implements ApplicationForm {
   constructor(
     public validityTimes?: TimePeriod,
+    public pksCard?: boolean,
     public workFinished?: string,
     public calculatedPrice?: number,
     public priceOverride?: number,
@@ -17,6 +18,7 @@ export class AreaRentalForm implements ApplicationForm {
 
   static to(form: AreaRentalForm): AreaRental {
     let areaRental = new AreaRental();
+    areaRental.pksCard = form.pksCard;
     areaRental.uiWorkFinished = form.workFinished;
     areaRental.trafficArrangements = form.trafficArrangements;
     areaRental.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
@@ -27,6 +29,7 @@ export class AreaRentalForm implements ApplicationForm {
   static from(application: Application, areaRental: AreaRental) {
     return new AreaRentalForm(
       new TimePeriod(application.startTime, application.endTime),
+      areaRental.pksCard,
       areaRental.uiWorkFinished,
       application.calculatedPriceEuro,
       application.priceOverrideEuro,
