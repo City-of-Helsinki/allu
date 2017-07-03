@@ -33,7 +33,7 @@ export class AlluDateAdapter extends NativeDateAdapter {
   }
 
 
-  parse(value: any, parseFormat: Object): Date | any {
+  parse(value: any): Date | any {
     return typeof value === 'string' ? TimeUtil.getDateFromUi(value) : value;
   }
 

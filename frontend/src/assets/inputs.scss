@@ -72,19 +72,19 @@ input.mat-input-element.year-input {
   }
 }
 
+// To fix material input / select heights
 .mat-select > .mat-select-trigger {
-  font-size: inherit;
-  margin-bottom: 17px;
-  padding-top: 6px;
-  height: 2.5rem !important; // important to override materials !important
+  margin-top: 10px;
+  min-height: 44px;
+  margin-bottom: 1.29688em;
 }
 
-.mat-select-value-text {
-  padding-top: 6px;
+// To fix material input / select heights
+.mat-input-flex {
+  min-height: 54px;
 }
 
 .mat-select-placeholder.mat-floating-placeholder {
-  top: -0.9em !important;
   transform: translate3d(0,0,0) scale(.75);
 }
 
