@@ -55,9 +55,9 @@ public enum ApplicationSpecifier {
   TEST_HOLE(ApplicationKind.GEOLOGICAL_SURVEY), // Koekuoppa
   GROUND_WATER_PIPE(ApplicationKind.GEOLOGICAL_SURVEY), // Pohjavesiputki
   // Muu
-  ABSORBING_SEWAGE_SYSTEM(ApplicationKind.OTHER_CABLE_REPORT), // Imujätejärjestelmä
-  GAS_PIPE(ApplicationKind.OTHER_CABLE_REPORT), // Kaasujohto
-  OTHER(ApplicationKind.OTHER_CABLE_REPORT); // Muu
+  ABSORBING_SEWAGE_SYSTEM(ApplicationKind.OTHER), // Imujätejärjestelmä
+  GAS_PIPE(ApplicationKind.OTHER), // Kaasujohto
+  OTHER(ApplicationKind.OTHER); // Muu
 
   public ApplicationKind getKind() {
     return kind;

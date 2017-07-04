@@ -1,9 +1,10 @@
 package fi.hel.allu.ui.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fi.hel.allu.common.types.*;
 
+import fi.hel.allu.common.types.*;
 import fi.hel.allu.common.validator.NotFalse;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
@@ -16,7 +17,10 @@ import java.util.List;
 /**
  * in Finnish: Hakemus
  */
-@NotFalse(rules = {"recurringEndTime, lessThanYearActivity, Recurring applications start and end time duration has to be less than a year"})
+@NotFalse(rules = {
+    "recurringEndTime, lessThanYearActivity, Recurring applications start and end time duration has to be less than a year",
+    "kind, kindMatchesType, Application kind must be valid for the type",
+    "extension, specifiersMatchKind, Application specifiers must be suitable for application kind" })
 public class ApplicationJson {
 
   private Integer id;
@@ -391,6 +395,22 @@ public class ApplicationJson {
   public boolean getLessThanYearActivity() {
     if (recurringEndTime != null && startTime != null && endTime != null) {
       return startTime.plusYears(1).isAfter(endTime);
+    }
+    return true;
+  }
+
+  @JsonIgnore
+  public boolean getKindMatchesType() {
+    if (kind != null && type != null) {
+      return kind.getTypes().contains(type);
+    }
+    return true;
+  }
+
+  @JsonIgnore
+  public boolean getSpecifiersMatchKind() {
+    if (kind != null && extension != null && extension.getSpecifiers() != null) {
+      return extension.getSpecifiers().stream().allMatch(s -> kind.equals(s.getKind()));
     }
     return true;
   }

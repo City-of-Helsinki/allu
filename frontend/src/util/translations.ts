@@ -61,7 +61,6 @@ export const translations = {
       CIRCUS: 'Sirkus/tivolivierailu',
       ART: 'Taideteos',
       STORAGE_AREA: 'Varastoalue',
-      OTHER_SHORT_TERM_RENTAL: 'Muu lyhytaikainen maanvuokraus',
       STREET_AND_GREEN: 'Katu- ja vihertyöt',
       WATER_AND_SEWAGE: 'Vesi / viemäri',
       ELECTRICITY: 'Sähkö',
@@ -70,7 +69,6 @@ export const translations = {
       CONSTRUCTION: 'Rakennus',
       YARD: 'Piha',
       GEOLOGICAL_SURVEY: 'Pohjatutkimus',
-      OTHER_CABLE_REPORT: 'Muut',
       PROPERTY_RENOVATION: 'Kiinteistöremontti',
       CONTAINER_BARRACK: 'Kontti/parakki',
       PHOTO_SHOOTING: 'Kuvaus',
@@ -79,7 +77,6 @@ export const translations = {
       LIFTING: 'Nostotyö',
       NEW_BUILDING_CONSTRUCTION: 'Työmaa-alue',
       ROLL_OFF: 'Vaihtolava',
-      OTHER_AREA_RENTAL: 'Muu',
       CHRISTMAS_TREE_SALES_AREA: 'Joulukuusenmyyntipaikka',
       CITY_CYCLING_AREA: 'Kaupunkipyöräpaikka',
       AGILE_KIOSK_AREA: 'Ketterien kioskien myyntipaikka',
@@ -91,9 +88,8 @@ export const translations = {
       WINTER_PARKING: 'Talvipysäköinti',
       REPAVING: 'Uudelleenpäällystykset',
       ELECTION_ADD_STAND: 'Vaalimainosteline',
-      NOTE_OTHER: 'Muu',
       PUBLIC_EVENT: 'Yleisötilaisuus',
-      OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT: 'Muu'
+      OTHER: 'Muu'
     },
     specifier: {
       ASPHALT: 'Asfaltointityö',

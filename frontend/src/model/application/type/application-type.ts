@@ -97,7 +97,7 @@ const commonApplicationKinds = [
     ApplicationSpecifier.TEST_HOLE,
     ApplicationSpecifier.GROUND_WATER_PIPE
   ]),
-  new ApplicationKindStructure(ApplicationKind.OTHER_CABLE_REPORT, [
+  new ApplicationKindStructure(ApplicationKind.OTHER, [
     ApplicationSpecifier.ABSORBING_SEWAGE_SYSTEM,
     ApplicationSpecifier.GAS_PIPE,
     ApplicationSpecifier.OTHER
@@ -115,12 +115,12 @@ export const areaRental = new ApplicationTypeStructure(ApplicationType.AREA_RENT
   new ApplicationKindStructure(ApplicationKind.LIFTING),
   new ApplicationKindStructure(ApplicationKind.NEW_BUILDING_CONSTRUCTION),
   new ApplicationKindStructure(ApplicationKind.ROLL_OFF),
-  new ApplicationKindStructure(ApplicationKind.OTHER_AREA_RENTAL)
+  new ApplicationKindStructure(ApplicationKind.OTHER)
 ]);
 
 export const temporaryTrafficArrangements = new ApplicationTypeStructure(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, [
   new ApplicationKindStructure(ApplicationKind.PUBLIC_EVENT),
-  new ApplicationKindStructure(ApplicationKind.OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT)
+  new ApplicationKindStructure(ApplicationKind.OTHER)
 ]);
 
 export const cableReport = new ApplicationTypeStructure(ApplicationType.CABLE_REPORT, commonApplicationKinds);
@@ -147,7 +147,7 @@ export const shortTermRental = new ApplicationTypeStructure(ApplicationType.SHOR
   new ApplicationKindStructure(ApplicationKind.CIRCUS),
   new ApplicationKindStructure(ApplicationKind.ART),
   new ApplicationKindStructure(ApplicationKind.STORAGE_AREA),
-  new ApplicationKindStructure(ApplicationKind.OTHER_SHORT_TERM_RENTAL)
+  new ApplicationKindStructure(ApplicationKind.OTHER)
 ]);
 
 export const note = new ApplicationTypeStructure(ApplicationType.NOTE, [
@@ -162,7 +162,7 @@ export const note = new ApplicationTypeStructure(ApplicationType.NOTE, [
   new ApplicationKindStructure(ApplicationKind.WINTER_PARKING),
   new ApplicationKindStructure(ApplicationKind.REPAVING),
   new ApplicationKindStructure(ApplicationKind.ELECTION_ADD_STAND),
-  new ApplicationKindStructure(ApplicationKind.NOTE_OTHER)
+  new ApplicationKindStructure(ApplicationKind.OTHER)
 ]);
 
 export const applicationTypeStructures: Array<ApplicationTypeStructure> = [

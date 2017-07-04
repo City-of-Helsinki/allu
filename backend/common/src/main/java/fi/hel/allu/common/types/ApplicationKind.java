@@ -1,61 +1,76 @@
 package fi.hel.allu.common.types;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Application kind specifies the subtype of application.
  */
 public enum ApplicationKind {
-  // for EVENT:
-  PROMOTION,
-  OUTDOOREVENT,
-  // for SHORT_TERM_RENTAL: lyhytaikainen maanvuokraus
-  BRIDGE_BANNER, // Banderollit silloissa
-  BENJI, // Benji-hyppylaite
-  PROMOTION_OR_SALES, // Esittely- tai myyntitila liikkeen edustalla
-  URBAN_FARMING, // Kaupunkiviljelypaikka
-  KESKUSKATU_SALES, // Keskuskadun myyntipaikka
-  SUMMER_THEATER, // Kesäteatterit
-  DOG_TRAINING_FIELD, // Koirakoulutuskentät
-  DOG_TRAINING_EVENT, // Koirakoulutustapahtuma
-  OTHER_SHORT_TERM_RENTAL, // Muu lyhytaikainen maanvuokraus
-  SMALL_ART_AND_CULTURE, // Pienimuotoinen taide- ja kulttuuritoiminta
-  SEASON_SALE, // Sesonkimyynti
-  CIRCUS, // Sirkus/tivolivierailu
-  ART, // Taideteos
-  STORAGE_AREA, // Varastoalue, also used by AREA RENTAL!
-  // cable reports - johtoselvitykset
-  STREET_AND_GREEN, // Katu- ja vihertyöt
-  WATER_AND_SEWAGE, // Vesi / viemäri
-  ELECTRICITY, // Sähkö
-  DATA_TRANSFER, // Tiedonsiirto
-  HEATING_COOLING, // Lämmitys/viilennys
-  CONSTRUCTION, // Rakennus
-  YARD, // Piha
-  GEOLOGICAL_SURVEY, // Pohjatutkimus
-  OTHER_CABLE_REPORT, // Muut
-  // AREA RENTAL
-  PROPERTY_RENOVATION,        // kiinteistöremontti
-  CONTAINER_BARRACK,          // kontti/parakki
-  PHOTO_SHOOTING,             // kuvaus
-  SNOW_WORK,                  // lumenpudotus
-  RELOCATION,                 // muutto
-  LIFTING,                    // nostotyö
-  NEW_BUILDING_CONSTRUCTION,  // uudisrakennuksen työmaa-alue
-  ROLL_OFF,                   // vaihtolava
-  OTHER_AREA_RENTAL,          // muu
-  // NOTES
-  CHRISTMAS_TREE_SALES_AREA, // Joulukuusenmyyntipaikka
-  CITY_CYCLING_AREA, // Kaupunkipyöräpaikka
-  AGILE_KIOSK_AREA, // Ketterien kioskien myyntipaikka
-  STATEMENT, // Lausunto
-  SNOW_HEAP_AREA, // Lumenkasauspaikka
-  SNOW_GATHER_AREA, // Lumenvastaanottopaikka
-  OTHER_SUBVISION_OF_STATE_AREA, // Muun hallintokunnan alue
-  MILITARY_EXCERCISE, // Sotaharjoitus
-  WINTER_PARKING, // Talvipysäköinti
-  REPAVING, // Uudelleenpäällystykset
-  ELECTION_ADD_STAND, // Vaalimainosteline
-  NOTE_OTHER, // Muu
-  // TEMPORARY TRAFFIC ARRANGEMENTS
-  PUBLIC_EVENT, // Yleisötilaisus, also used by AREA RENTAL!
-  OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT // Muu
+  PROMOTION(ApplicationType.EVENT),
+  OUTDOOREVENT(ApplicationType.EVENT),
+  BRIDGE_BANNER(ApplicationType.SHORT_TERM_RENTAL), // Banderollit silloissa
+  BENJI(ApplicationType.SHORT_TERM_RENTAL), // Benji-hyppylaite
+  PROMOTION_OR_SALES(ApplicationType.SHORT_TERM_RENTAL), // Esittely- tai myyntitila liikkeen edustalla
+  URBAN_FARMING(ApplicationType.SHORT_TERM_RENTAL), // Kaupunkiviljelypaikka
+  KESKUSKATU_SALES(ApplicationType.SHORT_TERM_RENTAL), // Keskuskadun myyntipaikka
+  SUMMER_THEATER(ApplicationType.SHORT_TERM_RENTAL), // Kesäteatterit
+  DOG_TRAINING_FIELD(ApplicationType.SHORT_TERM_RENTAL), // Koirakoulutuskentät
+  DOG_TRAINING_EVENT(ApplicationType.SHORT_TERM_RENTAL), // Koirakoulutustapahtuma
+  SMALL_ART_AND_CULTURE(ApplicationType.SHORT_TERM_RENTAL), // Pienimuotoinen taide- ja kulttuuritoiminta
+  SEASON_SALE(ApplicationType.SHORT_TERM_RENTAL), // Sesonkimyynti
+  CIRCUS(ApplicationType.SHORT_TERM_RENTAL), // Sirkus/tivolivierailu
+  ART(ApplicationType.SHORT_TERM_RENTAL), // Taideteos
+  STORAGE_AREA(ApplicationType.SHORT_TERM_RENTAL, ApplicationType.AREA_RENTAL), // Varastoalue
+  STREET_AND_GREEN(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT), // Katu- ja vihertyöt
+  WATER_AND_SEWAGE(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT), // Vesi / viemäri
+  ELECTRICITY(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT), // Sähkö
+  DATA_TRANSFER(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT), // Tiedonsiirto
+  HEATING_COOLING(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT), // Lämmitys/viilennys
+  CONSTRUCTION(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT), // Rakennus
+  YARD(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT, ApplicationType.PLACEMENT_CONTRACT), // Piha
+  GEOLOGICAL_SURVEY(ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT), // Pohjatutkimus
+  PROPERTY_RENOVATION(ApplicationType.AREA_RENTAL),        // kiinteistöremontti
+  CONTAINER_BARRACK(ApplicationType.AREA_RENTAL),          // kontti/parakki
+  PHOTO_SHOOTING(ApplicationType.AREA_RENTAL),             // kuvaus
+  SNOW_WORK(ApplicationType.AREA_RENTAL),                  // lumenpudotus
+  RELOCATION(ApplicationType.AREA_RENTAL),                 // muutto
+  LIFTING(ApplicationType.AREA_RENTAL),                    // nostotyö
+  NEW_BUILDING_CONSTRUCTION(ApplicationType.AREA_RENTAL),  // uudisrakennuksen työmaa-alue
+  ROLL_OFF(ApplicationType.AREA_RENTAL),                   // vaihtolava
+  CHRISTMAS_TREE_SALES_AREA(ApplicationType.NOTE), // Joulukuusenmyyntipaikka
+  CITY_CYCLING_AREA(ApplicationType.NOTE), // Kaupunkipyöräpaikka
+  AGILE_KIOSK_AREA(ApplicationType.NOTE), // Ketterien kioskien myyntipaikka
+  STATEMENT(ApplicationType.NOTE), // Lausunto
+  SNOW_HEAP_AREA(ApplicationType.NOTE), // Lumenkasauspaikka
+  SNOW_GATHER_AREA(ApplicationType.NOTE), // Lumenvastaanottopaikka
+  OTHER_SUBVISION_OF_STATE_AREA(ApplicationType.NOTE), // Muun hallintokunnan alue
+  MILITARY_EXCERCISE(ApplicationType.NOTE), // Sotaharjoitus
+  WINTER_PARKING(ApplicationType.NOTE), // Talvipysäköinti
+  REPAVING(ApplicationType.NOTE), // Uudelleenpäällystykset
+  ELECTION_ADD_STAND(ApplicationType.NOTE), // Vaalimainosteline
+  PUBLIC_EVENT(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, ApplicationType.AREA_RENTAL), // Yleisötilaisuus
+  OTHER(ApplicationType.SHORT_TERM_RENTAL, ApplicationType.CABLE_REPORT, ApplicationType.EXCAVATION_ANNOUNCEMENT,
+      ApplicationType.PLACEMENT_CONTRACT, ApplicationType.AREA_RENTAL,
+      ApplicationType.NOTE, ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS); // Muu
+
+  private final List<ApplicationType> types;
+
+  /**
+   * Get the allowed application type for this application kind
+   */
+  public List<ApplicationType> getTypes() {
+    return types;
+  }
+
+  private ApplicationKind(ApplicationType... types) {
+    this.types = Arrays.asList(types);
+  }
 }

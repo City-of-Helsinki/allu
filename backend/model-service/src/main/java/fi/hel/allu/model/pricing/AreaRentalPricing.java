@@ -44,8 +44,8 @@ public class AreaRentalPricing extends Pricing {
     case PROPERTY_RENOVATION:
     case NEW_BUILDING_CONSTRUCTION:
     case CONTAINER_BARRACK:
-    case OTHER_AREA_RENTAL:
     case STORAGE_AREA:
+    case OTHER:
       setPriceInCents(LONG_TERM_HANDLING_FEE);
       addInvoiceRow(InvoiceUnit.PIECE, 1, LONG_TERM_HANDLING_FEE, LONG_TERM_HANDLING_EXPLANATION, LONG_TERM_HANDLING_FEE);
       break;

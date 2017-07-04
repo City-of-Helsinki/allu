@@ -23,7 +23,6 @@ export enum ApplicationKind {
   CIRCUS, // Sirkus/tivolivierailu
   ART, // Taideteos
   STORAGE_AREA, // Varastoalue
-  OTHER_SHORT_TERM_RENTAL, // Muu lyhytaikainen maanvuokraus
     // CABLE REPORTS
   STREET_AND_GREEN, // Katu- ja vihertyöt
   WATER_AND_SEWAGE, // Vesi / viemäri
@@ -33,7 +32,7 @@ export enum ApplicationKind {
   CONSTRUCTION, // Rakennus
   YARD, // Piha
   GEOLOGICAL_SURVEY, // Pohjatutkimus
-  OTHER_CABLE_REPORT, // Muut
+  // AREA RENTAL
   PROPERTY_RENOVATION,        // kiinteistöremontti
   CONTAINER_BARRACK,          // kontti/parakki
   PHOTO_SHOOTING,             // kuvaus
@@ -42,7 +41,6 @@ export enum ApplicationKind {
   LIFTING,                    // nostotyö
   NEW_BUILDING_CONSTRUCTION,  // uudisrakennuksen työmaa-alue
   ROLL_OFF,                   // vaihtolava
-  OTHER_AREA_RENTAL,          // muu
   // NOTES
   CHRISTMAS_TREE_SALES_AREA, // Joulukuusenmyyntipaikka
   CITY_CYCLING_AREA, // Kaupunkipyöräpaikka
@@ -55,10 +53,9 @@ export enum ApplicationKind {
   WINTER_PARKING, // Talvipysäköinti
   REPAVING, 	// Uudelleenpäällystykset
   ELECTION_ADD_STAND, // Vaalimainosteline
-  NOTE_OTHER, // Muu
   // TEMPORARY TRAFFIC ARRANGEMENTS
   PUBLIC_EVENT, // Yleisötilaisus
-  OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT // Muu
+  OTHER // Muu
 }
 
 export class ApplicationKindStructure {

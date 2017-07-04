@@ -130,7 +130,7 @@ public class ShortTermRentalPricing extends Pricing {
       updatePriceByTimeAndArea(KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true,
           InvoiceLines.KESKUSKATU_SALES_SHORT, InvoiceLines.KESKUSKATU_SALES_LONG);
       break;
-    case OTHER_SHORT_TERM_RENTAL:
+    case OTHER:
       // Handler should set the price override
       setPriceInCents(0);
       addInvoiceRow(InvoiceUnit.PIECE, 1, 0, InvoiceLines.OTHER_SHORT_TERM_RENTAL, 0);
