@@ -789,6 +789,41 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for retrieving the default recipients.
+   */
+  public String getDefaultRecipientListUrl() {
+    return getModelServiceUrl("/default-recipients");
+  }
+
+  /**
+   * @return url for retrieving the default recipient by id.
+   */
+  public String getDefaultRecipientByIdUrl() {
+    return getModelServiceUrl("/default-recipients/{id}");
+  }
+
+  /**
+   * @return url for adding default recipient.
+   */
+  public String getDefaultRecipientAddUrl() {
+    return getModelServiceUrl("/default-recipients");
+  }
+
+  /**
+   * @return url for updating default recipient.
+   */
+  public String getDefaultRecipientUpdateUrl() {
+    return getModelServiceUrl("/default-recipients/{id}");
+  }
+
+  /**
+   * @return url for deleting default recipient.
+   */
+  public String getDefaultRecipientDeleteUrl() {
+    return getModelServiceUrl("/default-recipients/{id}");
+  }
+
+  /**
    * Returns username for the WFS service.
    *
    * @return username for the WFS service.

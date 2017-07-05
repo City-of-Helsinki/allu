@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MdCardModule} from '@angular/material';
+import {MdAccordion, MdAccordionDisplayMode, MdCardModule, MdExpansionModule, MdSlideToggleModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {adminRoutes} from './admin.routing';
@@ -12,6 +12,10 @@ import {AdminNavComponent} from './nav/admin-nav.component';
 import {DefaultAttachmentsComponent} from './default-attachment/default-attachments.component';
 import {DefaultAttachmentComponent} from './default-attachment/default-attachment.component';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
+import {DefaultRecipientsComponent} from './default-recipients/default-recipients.component';
+import {RecipientsByTypeComponent} from './default-recipients/recipients-by-type.component';
+import {DefaultRecipientService} from '../../service/recipients/default-recipient.service';
+import {DefaultRecipientHub} from '../../service/recipients/default-recipient-hub';
 
 @NgModule({
   imports: [
@@ -20,6 +24,8 @@ import {SelectionGroupModule} from '../common/selection-group/selection-group.mo
     FormsModule,
     ReactiveFormsModule,
     MdCardModule,
+    MdExpansionModule,
+    MdSlideToggleModule,
     SelectionGroupModule
   ],
   declarations: [
@@ -28,8 +34,13 @@ import {SelectionGroupModule} from '../common/selection-group/selection-group.mo
     UserListComponent,
     UserComponent,
     DefaultAttachmentsComponent,
-    DefaultAttachmentComponent
+    DefaultAttachmentComponent,
+    DefaultRecipientsComponent,
+    RecipientsByTypeComponent
   ],
-  providers: []
+  providers: [
+    DefaultRecipientService,
+    DefaultRecipientHub
+  ]
 })
 export class AdminModule {}

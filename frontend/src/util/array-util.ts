@@ -23,6 +23,20 @@ export class ArrayUtil {
     return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;
   }
 
+  static createOrReplace<T>(array: Array<T>, item: T, predicate: (item: T) => boolean): Array<T> {
+    if (array.some(predicate)) {
+      return array.map(original => {
+        if (predicate.call(this, original)) {
+          return item;
+        } else {
+          return original;
+        }
+      });
+    } else {
+      return array.concat(item);
+    }
+  }
+
   private static compareNumeric(left: Array<number>, right: Array<number>): number {
     while (left.length && right.length) {
       let leftHead = left.shift();

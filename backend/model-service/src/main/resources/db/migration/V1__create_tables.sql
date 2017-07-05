@@ -290,6 +290,12 @@ create table allu.application_reminder (
     reminder_trigger timestamp with time zone not null
 );
 
+create table allu.default_recipient (
+  id serial primary key,
+  email text not null,
+  application_type text not null
+);
+
 create SEQUENCE allu.KP_application_type_sequence START 1600001;
 create SEQUENCE allu.AL_application_type_sequence START 1600001;
 create SEQUENCE allu.LJ_application_type_sequence START 1600001;

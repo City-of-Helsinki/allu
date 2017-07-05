@@ -369,6 +369,11 @@
                             <column>new_status</column>
                             <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>default_recipient</table>
+                            <column>application_type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>
