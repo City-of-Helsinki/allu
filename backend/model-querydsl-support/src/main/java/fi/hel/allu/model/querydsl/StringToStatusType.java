@@ -1,7 +1,7 @@
 package fi.hel.allu.model.querydsl;
 
 import com.querydsl.sql.types.EnumAsObjectType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 
 /*
  * Tells QueryDSL how to map enum type to SQL

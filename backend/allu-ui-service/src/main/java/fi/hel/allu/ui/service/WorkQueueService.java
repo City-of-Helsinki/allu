@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.RoleType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.ui.domain.ApplicationJson;
 import fi.hel.allu.ui.domain.QueryParameterJson;

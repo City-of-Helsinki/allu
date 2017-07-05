@@ -1,8 +1,8 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.types.ApplicationSpecifier;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.StatusType;
 
 import javax.validation.constraints.NotNull;
 

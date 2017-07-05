@@ -28,6 +28,7 @@
     </properties>
 
     <modules>
+        <module>common-domain</module>
         <module>common</module>
         <module>mail</module>
         <module>model-domain</module>
@@ -41,6 +42,8 @@
         <module>pdf-service</module>
         <module>scheduler-service</module>
         <module>sap-interface</module>
+        <module>external-service</module>
+        <module>external-domain</module>
     </modules>
 
     <build>

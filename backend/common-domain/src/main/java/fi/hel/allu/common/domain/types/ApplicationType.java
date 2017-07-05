@@ -1,4 +1,4 @@
-package fi.hel.allu.common.types;
+package fi.hel.allu.common.domain.types;
 
 /**
  * Application types define grouping for different application types. Each of

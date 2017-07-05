@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper;
 
 import fi.hel.allu.common.types.ApplicationKind;
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
 import fi.hel.allu.ui.domain.ApplicationExtensionJson;

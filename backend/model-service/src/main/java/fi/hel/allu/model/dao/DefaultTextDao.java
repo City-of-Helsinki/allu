@@ -3,7 +3,7 @@ package fi.hel.allu.model.dao;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.DefaultText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

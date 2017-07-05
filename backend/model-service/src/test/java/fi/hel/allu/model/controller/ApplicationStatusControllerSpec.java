@@ -1,7 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import com.greghaskins.spectrum.Spectrum;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;

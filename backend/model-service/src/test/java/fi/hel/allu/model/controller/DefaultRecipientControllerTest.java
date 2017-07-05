@@ -1,8 +1,7 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.DefaultRecipient;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.junit.Before;
@@ -15,7 +14,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.hamcrest.Matchers.arrayWithSize;
 import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;

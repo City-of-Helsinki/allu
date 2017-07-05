@@ -1,5 +1,6 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicationDao;

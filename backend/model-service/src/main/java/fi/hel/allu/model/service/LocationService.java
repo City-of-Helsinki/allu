@@ -1,8 +1,8 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Application;

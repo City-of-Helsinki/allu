@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.ui.domain.StructureMetaJson;
 import fi.hel.allu.ui.service.MetaService;
 

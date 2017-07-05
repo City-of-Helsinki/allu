@@ -4,7 +4,7 @@ import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;

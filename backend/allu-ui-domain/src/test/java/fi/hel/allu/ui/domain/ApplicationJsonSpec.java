@@ -2,6 +2,7 @@ package fi.hel.allu.ui.domain;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.*;
 
 import org.junit.runner.RunWith;

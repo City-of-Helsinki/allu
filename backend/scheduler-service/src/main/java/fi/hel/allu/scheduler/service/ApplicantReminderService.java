@@ -1,12 +1,12 @@
 package fi.hel.allu.scheduler.service;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerRoleType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.DeadlineCheckParams;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
-
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -77,26 +73,12 @@ public class ApplicantReminderService {
     String subject = String.format(MAIL_SUBJECT, application.getApplicationId());
     String mailTemplate = null;
     try {
-      mailTemplate = readMailTemplate();
+      mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
       String body = StrSubstitutor.replace(mailTemplate, mailVariables(application));
       alluMailService.sendEmail(Collections.singletonList(email), subject, body);
     } catch (IOException e) {
       logger.error("Error reading mail template: " + e);
     }
-  }
-
-  private String readMailTemplate() throws IOException {
-    StringBuilder result = new StringBuilder();
-    // Get file from resources folder
-    try (InputStream stream = getClass().getResourceAsStream(MAIL_TEMPLATE)) {
-      BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-      String line;
-
-      while ((line = reader.readLine()) != null) {
-        result.append(line).append('\n');
-      }
-    }
-    return result.toString();
   }
 
   private Map<String, String> mailVariables(Application application) {

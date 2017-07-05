@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.security;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.UserJson;
 import fi.hel.allu.ui.service.UserService;

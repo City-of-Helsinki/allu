@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.config;
 
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;

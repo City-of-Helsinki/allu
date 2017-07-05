@@ -1,10 +1,8 @@
 package fi.hel.allu.model.dao;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.model.domain.DefaultRecipient;
 import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.Before;
@@ -19,9 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = ModelApplication.class)

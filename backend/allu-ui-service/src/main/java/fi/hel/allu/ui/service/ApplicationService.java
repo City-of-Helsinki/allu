@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.DistributionEntry;

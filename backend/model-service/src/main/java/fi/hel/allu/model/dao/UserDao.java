@@ -9,8 +9,8 @@ import fi.hel.allu.QUserApplicationType;
 import fi.hel.allu.QUserRole;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.NonUniqueException;
-import fi.hel.allu.common.types.ApplicationType;
-import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.model.postgres.ExceptionResolver;
 

@@ -1,0 +1,102 @@
+swagger: '2.0'
+info:
+  description: Allu public interface. Allu is management system for Helsinki land areas.
+  version: 1.0.0
+  title: Allu public interface
+  termsOfService: TODO
+  contact:
+    email: TODO@TODO.FI
+  license:
+    name: MIT
+    url: 'https://bitbucket.org/vincit/allu/raw/HEAD/LICENSE'
+host: localhost
+basePath: /api-docs
+tags:
+  - name: applications
+    description: Create and update applications
+schemes:
+  - http
+paths:
+  /applications/create:
+    post:
+      tags:
+        - applications
+      summary: Create a new application
+      description: ''
+      operationId: applicationsCreate
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Application created to Allu
+          required: true
+          schema:
+            $ref: '#/definitions/ApplicationExt'
+      responses:
+        '200':
+          description: Created application
+          schema:
+            $ref: '#/definitions/ApplicationExt'
+definitions:
+  StatusType:
+    type: string
+    description: Application status
+    enum:
+      - PRE_RESERVED
+      - PENDING
+      - HANDLING
+      - RETURNED_TO_PREPARATION
+      - DECISIONMAKING
+      - DECISION
+      - REJECTED
+      - FINISHED
+      - CANCELLED
+  ApplicationType:
+    type: string
+    description: Application type
+    enum:
+      - EXCAVATION_ANNOUNCEMENT
+      - AREA_RENTAL
+      - TEMPORARY_TRAFFIC_ARRANGEMENTS
+      - CABLE_REPORT
+      - PLACEMENT_CONTRACT
+      - EVENT
+      - SHORT_TERM_RENTAL
+      - NOTE
+  ApplicationExt:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      status:
+        $ref: '#/definitions/StatusType'
+      extension:
+        $ref: '#/definitions/ApplicationExtensionExt'
+  ApplicationExtensionExt:
+    type: object
+    description: >-
+      Base class for application extensions. See swagger.json and types
+      referring to this type using allOf : [{$ref :
+      #/definitions/ApplicationExtensionExt}]
+    discriminator: applicationType
+    properties:
+      terms:
+        type: string
+      applicationType:
+        $ref: '#/definitions/ApplicationType'
+  ExcavationAnnouncementExt:
+    type: object
+    description: Extends ApplicationExtensionExt. Excavation announcement data.
+    allOf:
+      - $ref: '#/definitions/ApplicationExtensionExt'
+      - type: object
+        properties:
+          pksCard:
+            description: >-
+              PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
+              True, if the contractor doing the actual work has PKS-card.
+            type: boolean

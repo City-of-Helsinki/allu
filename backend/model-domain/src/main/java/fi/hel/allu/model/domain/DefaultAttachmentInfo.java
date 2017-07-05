@@ -1,6 +1,6 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.AttachmentType;
 
 import java.time.ZonedDateTime;

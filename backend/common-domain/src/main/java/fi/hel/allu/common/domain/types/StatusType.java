@@ -1,4 +1,4 @@
-package fi.hel.allu.common.types;
+package fi.hel.allu.common.domain.types;
 
 /**
  * The status types of applications. The order of these enum values is used also in ordering the applications in UI. If you add a new value,

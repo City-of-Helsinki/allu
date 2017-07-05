@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.ApplicationChange;
 import fi.hel.allu.model.domain.ApplicationFieldChange;
 import fi.hel.allu.ui.config.ApplicationProperties;

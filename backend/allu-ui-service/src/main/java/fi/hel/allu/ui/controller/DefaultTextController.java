@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.DefaultText;
 import fi.hel.allu.ui.service.DefaultTextService;
 import org.springframework.beans.factory.annotation.Autowired;

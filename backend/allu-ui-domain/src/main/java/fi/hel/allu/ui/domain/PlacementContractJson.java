@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 
 /**
  * Placement contract (sijoitussopimus) specific data.

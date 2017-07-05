@@ -1,6 +1,6 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.StructureMetaDao;
 import fi.hel.allu.model.domain.AreaRental;

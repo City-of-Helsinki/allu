@@ -1,6 +1,6 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.dao.DefaultTextDao;
 import fi.hel.allu.model.domain.DefaultText;
 import org.springframework.beans.factory.annotation.Autowired;

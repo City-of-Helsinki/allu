@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;
 import fi.hel.allu.ui.config.ApplicationProperties;

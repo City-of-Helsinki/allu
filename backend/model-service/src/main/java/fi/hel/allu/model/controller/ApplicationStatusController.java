@@ -1,6 +1,6 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.service.ApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;

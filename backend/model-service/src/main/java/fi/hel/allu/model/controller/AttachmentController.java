@@ -1,7 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.dao.AttachmentDao;
 import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.DefaultAttachmentInfo;

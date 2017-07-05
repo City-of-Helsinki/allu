@@ -12,9 +12,9 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerRoleType;
-import fi.hel.allu.common.types.StatusType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;

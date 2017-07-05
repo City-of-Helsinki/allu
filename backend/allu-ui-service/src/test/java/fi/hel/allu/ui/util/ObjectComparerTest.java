@@ -1,9 +1,9 @@
 package fi.hel.allu.ui.util;
 
 import fi.hel.allu.common.types.ApplicationTagType;
-import fi.hel.allu.common.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.CustomerRoleType;
-import fi.hel.allu.common.types.RoleType;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.ui.domain.*;
 import fi.hel.allu.ui.util.ObjectComparer.Difference;
 
