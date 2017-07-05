@@ -48,8 +48,6 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'DOG_TRAINING_EVENT', 'Koirakoulutustapahtuma', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'OTHER_SHORT_TERM_RENTAL', 'Muu lyhytaikainen maanvuokraus', 'ENUM_VALUE');
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'SMALL_ART_AND_CULTURE', 'Pienimuotoinen taide- ja kulttuuritoiminta', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'SEASON_SALE', 'Sesonkimyynti', 'ENUM_VALUE');
@@ -76,8 +74,6 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'GEOLOGICAL_SURVEY', 'Pohjatutkimus', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'OTHER_CABLE_REPORT', 'Muut', 'ENUM_VALUE');
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'PROPERTY_RENOVATION', 'Kiinteistöremontti', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'CONTAINER_BARRACK', 'Kontti/parakki', 'ENUM_VALUE');
@@ -93,8 +89,6 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'NEW_BUILDING_CONSTRUCTION', 'Uudisrakennuksen työmaa-alue', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'ROLL_OFF', 'Vaihtolava', 'ENUM_VALUE');
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'OTHER_AREA_RENTAL', 'Muu', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'CHRISTMAS_TREE_SALES_AREA', 'Joulukuusenmyyntipaikka', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
@@ -118,11 +112,9 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'ELECTION_ADD_STAND', 'Vaalimainosteline', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'NOTE_OTHER', 'Muu', 'ENUM_VALUE');
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'PUBLIC_EVENT', 'Yleisötilaisuus', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'OTHER_TEMPORARY_TRAFFIC_ARRANGEMENT', 'Muu', 'ENUM_VALUE');
+    VALUES (currval('allu.structure_meta_id_seq'),  'OTHER', 'Muu', 'ENUM_VALUE');
 
 -- ApplicationSpecifier
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('ApplicationSpecifier', 1);

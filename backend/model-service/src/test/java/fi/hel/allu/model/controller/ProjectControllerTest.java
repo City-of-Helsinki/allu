@@ -8,6 +8,7 @@ import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.geolatte.geom.builder.DSL;
 import org.junit.Assert;
 import org.junit.Before;
@@ -30,7 +31,9 @@ import java.util.List;
 import static org.geolatte.geom.builder.DSL.*;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -370,7 +373,7 @@ public class ProjectControllerTest {
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
     application.setExtension(shortTermRental);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.OTHER_SHORT_TERM_RENTAL);
+    application.setKind(ApplicationKind.OTHER);
     application.setMetadataVersion(1);
     application.setName("short term test");
     return application;

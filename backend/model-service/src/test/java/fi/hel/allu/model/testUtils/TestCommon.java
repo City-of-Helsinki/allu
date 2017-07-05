@@ -94,7 +94,7 @@ public class TestCommon {
   public Application dummyAreaRentalApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.AREA_RENTAL);
-    app.setKind(ApplicationKind.OTHER_AREA_RENTAL);
+    app.setKind(ApplicationKind.OTHER);
     app.setApplicationId("AL1700001");
     app.setExtension(dummyAreaRentalEvent());
     return app;
