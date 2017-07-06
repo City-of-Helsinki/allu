@@ -120,11 +120,16 @@ public class ApplicationDao {
             );
     BooleanExpression geometryExpression = locationGeometry.geometry.intersects(lsc.getIntersects());
 
+    List<StatusType> hiddenStatus = new ArrayList<>(Collections.singletonList(StatusType.CANCELLED));
+
     if (strictStartEndTimeCondition != null) {
       // Time based where conditions are used only if at least start or end time is defined in search query.
       // Both recurring and start/end time conditions are checked, because only recurring applications have recurring_period rows in database
       recurringCondition = recurringCondition.or(strictStartEndTimeCondition);
       geometryExpression = geometryExpression.and(recurringCondition);
+    } else {
+      // No time limits given --> hide also FINISHED applications
+      hiddenStatus.add(StatusType.FINISHED);
     }
 
     BooleanExpression condition =
@@ -133,7 +138,7 @@ public class ApplicationDao {
             .join(location).on(locationGeometry.locationId.eq(location.id))
             .join(application).on(location.applicationId.eq(application.id))
             .leftJoin(recurringPeriod).on(recurringPeriod.applicationId.eq(application.id))
-            .where(geometryExpression));
+            .where(geometryExpression.and(application.status.notIn(hiddenStatus))));
 
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(condition).fetch();
