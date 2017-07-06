@@ -32,6 +32,7 @@ export class ApplicationActionsComponent implements OnInit {
   showDecision: boolean = true;
   showHandling: boolean = true;
   showDelete: boolean = false;
+  showCancel: boolean = false;
 
   constructor(private router: Router,
               private applicationState: ApplicationState,
@@ -40,10 +41,11 @@ export class ApplicationActionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.applicationState.applicationChanges.subscribe(app => {
-      let status = ApplicationStatus[app.status];
+      let status = app.statusEnum;
       this.showDecision = (ApplicationType[app.type] !== ApplicationType.NOTE) && (status >= ApplicationStatus.HANDLING);
       this.showHandling = status < ApplicationStatus.HANDLING;
       this.showDelete = app.typeEnum === ApplicationType.NOTE;
+      this.showCancel = status < ApplicationStatus.DECISION;
     });
   }
 
@@ -79,6 +81,18 @@ export class ApplicationActionsComponent implements OnInit {
       error => NotificationService.error(error)));
   }
 
+  cancel(): void {
+    if (this.applicationState.application.statusEnum < ApplicationStatus.DECISION) {
+      this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.CANCELLED))
+        .subscribe(app => {
+            MaterializeUtil.toast(findTranslation('application.statusChange.CANCELLED'));
+            this.applicationState.application = app;
+            this.router.navigate(['/workqueue']);
+          },
+          err => NotificationService.errorMessage(findTranslation('application.error.cancel')));
+    }
+  }
+
   private moveToDecisionMaking(): Observable<Application> {
 
     if (this.shouldMoveToDecisionMaking()) {
@@ -96,7 +110,7 @@ export class ApplicationActionsComponent implements OnInit {
 
   private shouldMoveToDecisionMaking(): boolean {
     const appType = this.applicationState.application.typeEnum;
-    const status =  ApplicationStatus[this.applicationState.application.status];
+    const status =  this.applicationState.application.statusEnum;
     return appType === ApplicationType.CABLE_REPORT && status === ApplicationStatus.HANDLING;
   }
 }

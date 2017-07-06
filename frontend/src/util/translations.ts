@@ -11,7 +11,8 @@ export const translations = {
       deleteFailed: 'Hakemuksen poistaminen epäonnistui',
       tagUpdateFailed: 'Hakemuksen tarkenteiden tallentaminen epäonnistui',
       toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',
-      toDecisionmaking: 'Hakemuksen siirtäminen odottamaan päätöstä epäonnistui'
+      toDecisionmaking: 'Hakemuksen siirtäminen odottamaan päätöstä epäonnistui',
+      cancel: 'Hakemuksen peruminen epäonnistui'
     },
     action: {
       saved: 'Hakemus tallennettu',
@@ -30,7 +31,8 @@ export const translations = {
     },
     statusChange: {
       HANDLING: 'Hakemus siirretty käsittelyyn',
-      DECISIONMAKING: 'Hakemus siirretty odottamaan päätöstä'
+      DECISIONMAKING: 'Hakemus siirretty odottamaan päätöstä',
+      CANCELLED: 'Hakemus peruttu'
     },
     type: {
       EVENT: 'Tapahtuma',

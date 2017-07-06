@@ -16,6 +16,7 @@ import {DistributionType} from '../common/distribution-type';
 import {ArrayUtil} from '../../util/array-util';
 import {CustomerWithContacts} from '../customer/customer-with-contacts';
 import {CustomerRoleType} from '../customer/customer-role-type';
+import {ApplicationStatus} from './application-status';
 
 export class Application {
   constructor(
@@ -126,6 +127,10 @@ export class Application {
 
   get typeEnum(): ApplicationType {
     return ApplicationType[this.type];
+  }
+
+  get statusEnum(): ApplicationStatus {
+    return ApplicationStatus[this.status];
   }
 
   get applicant(): CustomerWithContacts {
