@@ -1,10 +1,9 @@
 import {Component} from '@angular/core';
-import {TestBed, async} from '@angular/core/testing';
+import {async, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {CurrentUser} from '../../../src/service/user/current-user';
 import {AvailableToDirective} from '../../../src/service/authorization/available-to.directive';
-import {User} from '../../../src/model/common/user';
-import {Observable} from 'rxjs/Observable';
+import {availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
 
 @Component({
   selector: 'test-component',
@@ -12,43 +11,29 @@ import {Observable} from 'rxjs/Observable';
 })
 class TestComponent {}
 
-const currentUser = new User(
-  1,
-  'username',
-  'realname',
-  'email',
-  'title',
-  true,
-  undefined,
-  ['ALLOWED_TYPE'],
-  ['ROLE_TEST'],
-  []
-);
-
 const AVAILABLE = 'AVAILABLE';
 
-class CurrentUserMock {
-  get user(): Observable<User> {
-    return Observable.of(currentUser);
-  }
-}
-
 describe('AvailableToDirective', () => {
+  let currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [TestComponent, AvailableToDirective],
       providers: [
         AvailableToDirective,
-        { provide: CurrentUser, useClass: CurrentUserMock}
+        { provide: CurrentUser, useValue: currentUserMock}
       ]
     });
   }));
 
   it('Element should be available when user has required role', () => {
-    const div = createDivWithDirective(currentUser.roles[0]);
+    const div = createDivWithDirective('ROLE_OK');
+    currentUserMock.allowHasRole = true;
+    currentUserMock.allowHasType = false;
 
-    TestBed.overrideTemplate(TestComponent, div).compileComponents().then(res => {
+    TestBed.overrideTemplate(TestComponent, div)
+      .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
+      .compileComponents().then(res => {
       expectElement(element => {
         expect(element).not.toBeNull('Element was not available');
         expect(element.nativeElement.textContent).toContain(AVAILABLE, 'AVAILABLE text was not available');
@@ -56,10 +41,13 @@ describe('AvailableToDirective', () => {
     });
   });
 
-  it('Element should not be available when user has required role', () => {
-    const div = createDivWithDirective('ROLE_MISSING');
+  it('Element should not be available when user has no required role', () => {
+    const div = createDivWithDirective('ROLE_WRONG');
+    currentUserMock.allowHasRole = false;
 
-    TestBed.overrideTemplate(TestComponent, div).compileComponents().then(res => {
+    TestBed.overrideTemplate(TestComponent, div)
+      .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
+      .compileComponents().then(res => {
       expectElement(element => {
         expect(element).toBeNull('Element was available when it should not');
       });
@@ -67,9 +55,13 @@ describe('AvailableToDirective', () => {
   });
 
   it('Element should be available when user has required role and application type', () => {
-    const div = createDivWithDirective(currentUser.roles[0], currentUser.allowedApplicationTypes[0]);
+    const div = createDivWithDirective('ROLE_OK', 'TYPE_OK');
+    currentUserMock.allowHasRole = true;
+    currentUserMock.allowHasType = true;
 
-    TestBed.overrideTemplate(TestComponent, div).compileComponents().then(res => {
+    TestBed.overrideTemplate(TestComponent, div)
+      .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
+      .compileComponents().then(res => {
       expectElement(element => {
         expect(element).not.toBeNull('Element was not available');
         expect(element.nativeElement.textContent).toContain(AVAILABLE, 'AVAILABLE text was not available');
@@ -78,9 +70,13 @@ describe('AvailableToDirective', () => {
   });
 
   it('Element should not be available when user has required role and wrong application type', () => {
-    const div = createDivWithDirective(currentUser.roles[0], 'TYPE_WRONG');
+    const div = createDivWithDirective('ROLE_OK', 'TYPE_WRONG');
+    currentUserMock.allowHasRole = true;
+    currentUserMock.allowHasType = false;
 
-    TestBed.overrideTemplate(TestComponent, div).compileComponents().then(res => {
+    TestBed.overrideTemplate(TestComponent, div)
+      .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
+      .compileComponents().then(res => {
       expectElement(element => {
         expect(element).toBeNull('Element was available when it should not');
       });
@@ -89,7 +85,9 @@ describe('AvailableToDirective', () => {
 
   it('Directive should throw when no roles are given', () => {
     const div = '<div *availableTo id="content">AVAILABLE</div>';
-    TestBed.overrideTemplate(TestComponent, div).compileComponents()
+    TestBed.overrideTemplate(TestComponent, div)
+      .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
+      .compileComponents()
       .then(noError => {
         const fixture = TestBed.createComponent(TestComponent);
         fixture.detectChanges();

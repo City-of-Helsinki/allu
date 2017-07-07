@@ -44,8 +44,10 @@
                 <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
             </div>
             <div *ngIf="!edit">
-                <button md-raised-button type="button" color="primary" (click)="editComment()">MUOKKAA</button>
-                <button md-raised-button type="button" color="primary" (click)="remove()">POISTA</button>
+                <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+                    <button md-raised-button type="button" color="primary" (click)="editComment()">MUOKKAA</button>
+                    <button md-raised-button type="button" color="primary" (click)="remove()">POISTA</button>
+                </ng-container>
             </div>
         </div>
     </md-card-content>

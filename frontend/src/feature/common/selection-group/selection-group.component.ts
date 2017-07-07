@@ -1,5 +1,5 @@
 import {
-  Component, OnDestroy, Output, EventEmitter, forwardRef, QueryList, AfterContentInit, ContentChildren
+  Component, OnDestroy, Output, EventEmitter, forwardRef, QueryList, AfterContentInit, ContentChildren, Input, AfterViewInit
 } from '@angular/core';
 import {SelectionEventService, SelectionEvent} from './selection-event.service';
 import {Subscription} from 'rxjs/Subscription';
@@ -23,7 +23,7 @@ const ID_FIELD = 'id';
   ],
   providers: [SELECTION_GROUP_VALUE_ACCESSOR, SelectionEventService]
 })
-export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor, AfterContentInit {
+export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor, AfterViewInit {
   @Output() select = new EventEmitter<SelectionEvent>();
 
   @ContentChildren(SelectionItemComponent) selectionItems: QueryList<SelectionItemComponent> = new QueryList<SelectionItemComponent>();
@@ -41,9 +41,11 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
     this.selectedItemsSubscription.unsubscribe();
   }
 
-  ngAfterContentInit(): void {
+  ngAfterViewInit(): void {
     this.selectedItemsSubscription = this.selectedItems$.subscribe(items =>
-        this.selectionItems.forEach(item => item.selected = items.some(i => this.isSame(i, item.item))));
+        this.selectionItems.forEach(item => {
+          item.selected = items.some(i => this.isSame(i, item.item));
+        }));
   }
 
   writeValue(items: Array<any>): void {

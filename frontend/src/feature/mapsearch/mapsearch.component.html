@@ -20,7 +20,7 @@
             <searchbar barType="SIMPLE" (onShowAdvanced)="showAdvancedSearch()"></searchbar>
         </div>
         <map [zoom]="true" [draw]="true" [selection]="true">Ladataan karttaa</map>
-        <div class="map-action-buttons">
+        <div class="map-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
             <button md-fab color="accent" [routerLink]="['/applications/location']"
                     mdTooltip="Uusi hakemus" mdTooltipPosition="above">
                 <md-icon>filter_none</md-icon>

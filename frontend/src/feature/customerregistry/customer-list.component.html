@@ -24,7 +24,7 @@
             <button md-raised-button type="button" color="primary" (click)="search()">HAE</button>
         </div>
     </div>
-    <div class="row">
+    <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
         <div class="col s12">
             <button md-raised-button type="button" color="primary" (click)="newCustomer()">Lisää uusi asiakas</button>
         </div>

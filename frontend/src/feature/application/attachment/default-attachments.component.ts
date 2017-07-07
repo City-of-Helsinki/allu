@@ -8,6 +8,7 @@ import {SelectionEvent} from '../../common/selection-group/selection-event.servi
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {AttachmentType} from '../../../model/application/attachment/attachment-type';
 import {ArrayUtil} from '../../../util/array-util';
+import {CurrentUser} from '../../../service/user/current-user';
 
 @Component({
   selector: 'default-attachments',
@@ -20,14 +21,19 @@ export class DefaultAttachmentsComponent implements OnInit {
   @Input() selectedAttachments: Array<DefaultAttachmentInfo> = [];
   @Output() add = new EventEmitter<DefaultAttachmentInfo>();
   @Output() remove = new EventEmitter<DefaultAttachmentInfo>();
-  defaultAttachments: Array<DefaultAttachmentInfo> = [];
 
-  constructor(private attachmentHub: AttachmentHub) {}
+  defaultAttachments: Array<DefaultAttachmentInfo> = [];
+  isAllowedToEdit: boolean = false;
+
+  constructor(private attachmentHub: AttachmentHub, private currentUser: CurrentUser) {}
 
   ngOnInit(): void {
     this.attachmentHub.defaultAttachmentInfosBy(ApplicationType[this.applicationType], AttachmentType[this.attachmentType])
       .map(das => das.sort(ArrayUtil.naturalSort((item: DefaultAttachmentInfo) => item.name)))
       .subscribe(das => this.defaultAttachments = das);
+
+    this.currentUser.hasRole(['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION'])
+      .subscribe(hasValidRole => this.isAllowedToEdit = hasValidRole);
   }
 
   onSelect(event: SelectionEvent): void {

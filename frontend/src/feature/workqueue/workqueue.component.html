@@ -2,7 +2,7 @@
   <workqueue-filter [handlers]="handlers" [selectedTab]="tab"></workqueue-filter>
 
 
-  <div class="work-queue-action-buttons">
+  <div class="work-queue-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
     <button md-raised-button type="button" color="primary" [disabled]="selectedApplicationIds.length === 0"
             class="in-front" (click)="moveSelectedToSelf()">OMAKSI</button>
 

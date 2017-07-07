@@ -1,4 +1,4 @@
-<div class="row valign-wrapper">
+<div class="row valign-wrapper" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
     <div class="col m6 valign">
         <a md-raised-button type="button" color="primary" routerLink="/applications/location" [queryParams]="{relatedProject: project.id}">UUSI</a>
         <a md-raised-button type="button" color="primary" disabled>KOPIOI</a>

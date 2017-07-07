@@ -1,5 +1,5 @@
 <h1 class="content-header">Liitteet</h1>
-<div class="row">
+<div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
     <div class="col m12 col-centered">
         <div fileDrop (onFileDrop)="onFileDrop($event)" (onFileOver)="fileOverDropzone($event)"
              class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
@@ -18,7 +18,7 @@
 
         <li *ngFor="let attachment of commonAttachments; let i = index;">
             <md-card class="slim-card">
-                <div>
+                <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
                     <div class="clickable" (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
                 </div>
                 <div *ngIf="attachment.id !== undefined">

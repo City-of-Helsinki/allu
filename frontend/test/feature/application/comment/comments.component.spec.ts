@@ -1,4 +1,4 @@
-import {Component, DebugElement, Input, Output, EventEmitter} from '@angular/core';
+import {Component, DebugElement, Input, Output, EventEmitter, Directive} from '@angular/core';
 import {ComponentFixture, TestBed, async, fakeAsync, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
@@ -12,6 +12,8 @@ import {Subject} from 'rxjs/Subject';
 import {ErrorInfo} from '../../../../src/service/ui-state/error-info';
 import {NotificationService} from '../../../../src/service/notification/notification.service';
 import {HttpStatus, HttpResponse} from '../../../../src/util/http-response';
+import {availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {AvailableToDirective} from '../../../../src/service/authorization/available-to.directive';
 
 
 const COMMENT_ONE = new Comment(
@@ -51,6 +53,7 @@ describe('CommentsComponent', () => {
   let fixture: ComponentFixture<CommentsComponent>;
   let applicationState: ApplicationStateMock;
   let de: DebugElement;
+  let currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -62,7 +65,9 @@ describe('CommentsComponent', () => {
       providers: [
         { provide: ApplicationState, useClass: ApplicationStateMock }
       ]
-    }).compileComponents();
+    })
+    .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
+    .compileComponents();
   }));
 
   beforeEach(() => {
@@ -73,6 +78,7 @@ describe('CommentsComponent', () => {
 
     comp.ngOnInit();
     comp.comments = [COMMENT_ONE, COMMENT_TWO];
+    fixture.detectChanges();
   });
 
   afterEach(() => {

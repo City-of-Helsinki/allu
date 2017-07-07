@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.controller;
 
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.domain.*;
@@ -186,6 +187,40 @@ public class ApplicationController {
     HttpHeaders httpHeaders = new HttpHeaders();
     httpHeaders.setContentType(MediaType.parseMediaType("application/octet-stream"));
     return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+  }
+
+  /**
+   * Read default attachment info by ID.
+   *
+   * @param id          attachment ID
+   * @return attachment info for the ID.
+   */
+  @RequestMapping(value = "/default-attachments/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<DefaultAttachmentInfoJson> readDefaultAttachmentInfo(@PathVariable int id) {
+    return new ResponseEntity<>(attachmentService.getDefaultAttachment(id), HttpStatus.OK);
+  }
+
+  /**
+   * Read all default attachments.
+   *
+   * @return attachment info of all default attachments.
+   */
+  @RequestMapping(value = "/default-attachments", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<DefaultAttachmentInfoJson>> readDefaultAttachmentInfos() {
+    return new ResponseEntity<>(attachmentService.getDefaultAttachments(), HttpStatus.OK);
+  }
+
+  /**
+   * Read default attachments for given application type.
+   *
+   * @return attachment info of all default attachments.
+   */
+  @RequestMapping(value = "/default-attachments/applicationType/{applicationType}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<DefaultAttachmentInfoJson>> readDefaultAttachmentInfos(@PathVariable ApplicationType applicationType) {
+    return new ResponseEntity<>(attachmentService.getDefaultAttachmentsByApplicationType(applicationType), HttpStatus.OK);
   }
 
   /**

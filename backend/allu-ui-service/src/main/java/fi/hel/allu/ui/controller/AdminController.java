@@ -24,7 +24,7 @@ public class AdminController {
   @Autowired
   private AttachmentService attachmentService;
 
-  // Default Attachment API
+  // Default Attachment modification API
 
   /**
    * Read default attachment info by ID.

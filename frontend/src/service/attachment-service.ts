@@ -14,7 +14,8 @@ import {HttpResponse} from '../util/http-response';
 
 const uploadUrl = '/api/applications/appId/attachments';
 const downloadUrl = '/api/applications/attachments/:attachmentId/data';
-const defaultAttachmentUrl = '/api/admin/attachments';
+const defaultAttachmentGetUrl = '/api/applications/default-attachments';
+const defaultAttachmentUrlEdit = '/api/admin/attachments';
 
 @Injectable()
 export class AttachmentService {
@@ -40,20 +41,20 @@ export class AttachmentService {
   }
 
   getDefaultAttachmentInfo(id: number): Observable<DefaultAttachmentInfo> {
-    let url = defaultAttachmentUrl + '/' + id;
+    let url = defaultAttachmentGetUrl + '/' + id;
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
   }
 
   getDefaultAttachmentInfos(): Observable<Array<DefaultAttachmentInfo>> {
-    return this.authHttp.get(defaultAttachmentUrl)
+    return this.authHttp.get(defaultAttachmentGetUrl)
       .map(response => response.json())
       .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
   }
 
   getDefaultAttachmentInfosByType(appType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
-    let url = defaultAttachmentUrl + '/applicationType/' + ApplicationType[appType];
+    let url = defaultAttachmentGetUrl + '/applicationType/' + ApplicationType[appType];
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
@@ -63,19 +64,19 @@ export class AttachmentService {
     if (attachment.id) {
       return this.updateDefaultAttachmentInfo(attachment);
     } else {
-      return this.upload(defaultAttachmentUrl, [attachment]).map(results => results[0]);
+      return this.upload(defaultAttachmentUrlEdit, [attachment]).map(results => results[0]);
     }
   }
 
   updateDefaultAttachmentInfo(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
-    let url = defaultAttachmentUrl + '/' + attachment.id;
+    let url = defaultAttachmentUrlEdit + '/' + attachment.id;
     return this.authHttp.put(url, attachment)
       .map(response => response.json())
       .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
   }
 
   removeDefaultAttachment(id: number): Observable<HttpResponse> {
-    let url = defaultAttachmentUrl + '/' + id;
+    let url = defaultAttachmentUrlEdit + '/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response));
   }

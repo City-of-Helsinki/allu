@@ -27,6 +27,16 @@ export class CurrentUser {
       .first(); // Use first so clients observable automatically completes after logged user is returned
   }
 
+  public hasRole(roles: Array<string>): Observable<boolean> {
+    return this.user
+      .map(u => u.roles.reduce((prev, cur) => prev || roles.some(role => role === cur), false));
+  }
+
+  public hasApplicationType(types: Array<string>): Observable<boolean> {
+    return this.user
+      .map(u => u.allowedApplicationTypes.reduce((prev, cur) => prev || types.some(type => type === cur), false));
+  }
+
   private userNameFromToken(token: string): string {
     const decoded = new JwtHelper().decodeToken(token);
     if (decoded) {

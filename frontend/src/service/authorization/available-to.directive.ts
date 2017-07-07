@@ -1,6 +1,5 @@
 import {Directive, Input, TemplateRef, ViewContainerRef} from '@angular/core';
 import {CurrentUser} from '../user/current-user';
-import {User} from '../../model/common/user';
 
 @Directive({ selector: '[availableTo]' })
 export class AvailableToDirective {
@@ -17,8 +16,7 @@ export class AvailableToDirective {
 
   @Input() set availableTo(roles: Array<string>) {
     if (roles && roles.length) {
-      this.currentUser.user
-        .map(u => this.userHasRole(u, roles))
+      this.currentUser.hasRole(roles)
         .subscribe(hasRequiredRole => {
           this.hasRequiredRole = hasRequiredRole;
           this.updateTemplate();
@@ -30,21 +28,12 @@ export class AvailableToDirective {
 
   @Input() set availableToTypes(types: Array<string>) {
     if (types && types.length) {
-      this.currentUser.user
-        .map(u => this.userHasApplicationType(u, types))
+      this.currentUser.hasApplicationType(types)
         .subscribe(hasRequiredType => {
           this.hasRequiredType = hasRequiredType;
           this.updateTemplate();
         });
     }
-  }
-
-  private userHasRole(user: User, roles: Array<string>): boolean {
-    return user.roles.reduce((prev, cur) => prev || roles.some(role => role === cur), false);
-  }
-
-  private userHasApplicationType(user: User, types: Array<string>): boolean {
-    return user.allowedApplicationTypes.reduce((prev, cur) => prev || types.some(type => type === cur), false);
   }
 
   private updateTemplate(): void {
