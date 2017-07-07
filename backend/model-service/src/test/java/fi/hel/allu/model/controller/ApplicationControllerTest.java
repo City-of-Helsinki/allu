@@ -1,6 +1,8 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.ModelApplication;

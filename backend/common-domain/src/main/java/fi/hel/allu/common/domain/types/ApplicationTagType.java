@@ -1,4 +1,4 @@
-package fi.hel.allu.common.types;
+package fi.hel.allu.common.domain.types;
 
 /**
  * Application tags that may be added to application.

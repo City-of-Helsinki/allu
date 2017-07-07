@@ -3,7 +3,7 @@ package fi.hel.allu.ui.domain;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
-import fi.hel.allu.common.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 
 import javax.validation.constraints.NotNull;
 

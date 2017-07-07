@@ -1,6 +1,6 @@
 package fi.hel.allu.model.domain;
 
-import fi.hel.allu.common.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;

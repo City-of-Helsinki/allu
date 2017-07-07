@@ -1,7 +1,7 @@
 package fi.hel.allu.model.dao;
 
 import com.querydsl.sql.SQLQueryFactory;
-import fi.hel.allu.common.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;

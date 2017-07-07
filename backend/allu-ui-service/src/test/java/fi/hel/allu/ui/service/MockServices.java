@@ -1,9 +1,7 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.meta.AttributeDataType;

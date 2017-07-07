@@ -1,9 +1,8 @@
 package fi.hel.allu.model.pricing;
 
 import com.greghaskins.spectrum.Spectrum;
-import fi.hel.allu.common.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.pricing.AreaRentalPricing;
 import org.junit.runner.RunWith;
 
 import java.time.ZonedDateTime;

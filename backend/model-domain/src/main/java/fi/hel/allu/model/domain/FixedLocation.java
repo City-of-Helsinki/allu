@@ -3,7 +3,7 @@ package fi.hel.allu.model.domain;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import fi.hel.allu.common.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
 

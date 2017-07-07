@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ApplicationWithContactsES;
 import fi.hel.allu.search.domain.ContactES;

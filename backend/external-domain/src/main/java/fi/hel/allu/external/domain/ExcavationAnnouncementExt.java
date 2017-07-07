@@ -15,7 +15,6 @@ public class ExcavationAnnouncementExt extends ApplicationExtensionExt {
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
   private ZonedDateTime winterTimeOperation;
-  private ZonedDateTime summerTimeOperation;
   private ZonedDateTime workFinished;
   private ZonedDateTime unauthorizedWorkStartTime;
   private ZonedDateTime unauthorizedWorkEndTime;
@@ -23,7 +22,7 @@ public class ExcavationAnnouncementExt extends ApplicationExtensionExt {
   private Integer cableReportId;
   private String additionalInfo;
   private String trafficArrangements;
-  // TODO: add when available in common-domain
+  // TODO: Is this part of the public interface?
 //  private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
 
@@ -97,17 +96,6 @@ public class ExcavationAnnouncementExt extends ApplicationExtensionExt {
 
   public void setWinterTimeOperation(ZonedDateTime winterTimeOperation) {
     this.winterTimeOperation = winterTimeOperation;
-  }
-
-  /**
-   * In Finnish: Kesätyön toiminnallinen kunto (päivämäärä, jolloin valmis).
-   */
-  public ZonedDateTime getSummerTimeOperation() {
-    return summerTimeOperation;
-  }
-
-  public void setSummerTimeOperation(ZonedDateTime summerTimeOperation) {
-    this.summerTimeOperation = summerTimeOperation;
   }
 
   /**

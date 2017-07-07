@@ -1,6 +1,6 @@
 package fi.hel.allu.search;
 
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.search.service.GenericSearchService;

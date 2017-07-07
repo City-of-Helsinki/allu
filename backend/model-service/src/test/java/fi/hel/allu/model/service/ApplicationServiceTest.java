@@ -1,6 +1,6 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoiceRowDao;
 import fi.hel.allu.model.domain.Application;

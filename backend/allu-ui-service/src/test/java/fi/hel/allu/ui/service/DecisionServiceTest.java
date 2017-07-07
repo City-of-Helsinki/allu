@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.ui.domain.*;
 import org.junit.Before;

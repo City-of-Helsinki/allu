@@ -7,7 +7,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.QPostalAddress;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;

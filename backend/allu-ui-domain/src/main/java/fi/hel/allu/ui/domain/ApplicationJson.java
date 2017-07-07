@@ -2,6 +2,7 @@ package fi.hel.allu.ui.domain;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.*;

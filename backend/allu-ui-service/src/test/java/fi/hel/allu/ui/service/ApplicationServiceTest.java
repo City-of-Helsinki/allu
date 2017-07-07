@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.service;
 
 
-import fi.hel.allu.common.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;

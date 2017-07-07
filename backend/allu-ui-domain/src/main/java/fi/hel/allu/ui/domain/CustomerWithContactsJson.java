@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.domain;
 
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 
 import java.util.ArrayList;
 import java.util.List;

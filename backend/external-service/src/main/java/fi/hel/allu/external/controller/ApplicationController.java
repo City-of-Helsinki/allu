@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/applications")
 public class ApplicationController {
 
-  @RequestMapping(value = "/create", method = RequestMethod.POST)
+  @RequestMapping(method = RequestMethod.POST)
 //  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
   public ResponseEntity<ApplicationExt> create(@RequestBody ApplicationExt application) {
     return new ResponseEntity<ApplicationExt>(new ApplicationExt(), HttpStatus.OK);

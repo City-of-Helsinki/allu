@@ -1,7 +1,7 @@
 package fi.hel.allu.search.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameters;

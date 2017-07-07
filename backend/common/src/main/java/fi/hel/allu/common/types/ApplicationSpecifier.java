@@ -1,5 +1,7 @@
 package fi.hel.allu.common.types;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
+
 /**
  * Additional specifiers for certain application kinds
  */

@@ -17,7 +17,7 @@ tags:
 schemes:
   - http
 paths:
-  /applications/create:
+  /applications:
     post:
       tags:
         - applications
@@ -42,8 +42,8 @@ paths:
             $ref: '#/definitions/ApplicationExt'
 definitions:
   StatusType:
-    type: string
     description: Application status
+    type: string
     enum:
       - PRE_RESERVED
       - PENDING
@@ -55,8 +55,8 @@ definitions:
       - FINISHED
       - CANCELLED
   ApplicationType:
-    type: string
     description: Application type
+    type: string
     enum:
       - EXCAVATION_ANNOUNCEMENT
       - AREA_RENTAL
@@ -66,22 +66,164 @@ definitions:
       - EVENT
       - SHORT_TERM_RENTAL
       - NOTE
+  ApplicationKind:
+    description: >-
+      Application type specifies the subtype of the application. Kind is
+      application type specific and all kinds are not allowed for all types (see
+      Java code for exact information)
+    type: string
+    enum:
+      - PROMOTION
+      - OUTDOOREVENT
+      - BRIDGE_BANNER
+      - BENJI
+      - PROMOTION_OR_SALES
+      - URBAN_FARMING
+      - KESKUSKATU_SALES
+      - SUMMER_THEATER
+      - DOG_TRAINING_FIELD
+      - DOG_TRAINING_EVENT
+      - SMALL_ART_AND_CULTURE
+      - SEASON_SALE
+      - CIRCUS
+      - ART
+      - STORAGE_AREA
+      - STREET_AND_GREEN
+      - WATER_AND_SEWAGE
+      - ELECTRICITY
+      - DATA_TRANSFER
+      - HEATING_COOLING
+      - CONSTRUCTION
+      - YARD
+      - GEOLOGICAL_SURVEY
+      - PROPERTY_RENOVATION
+      - CONTAINER_BARRACK
+      - PHOTO_SHOOTING
+      - SNOW_WORK
+      - RELOCATION
+      - LIFTING
+      - NEW_BUILDING_CONSTRUCTION
+      - ROLL_OFF
+      - CHRISTMAS_TREE_SALES_AREA
+      - CITY_CYCLING_AREA
+      - AGILE_KIOSK_AREA
+      - STATEMENT
+      - SNOW_HEAP_AREA
+      - SNOW_GATHER_AREA
+      - OTHER_SUBVISION_OF_STATE_AREA
+      - MILITARY_EXCERCISE
+      - WINTER_PARKING
+      - REPAVING
+      - ELECTION_ADD_STAND
+      - PUBLIC_EVENT
+      - OTHER
+  ApplicationTagType:
+    description: Application tag type
+    type: string
+    enum:
+      - ADDITIONAL_INFORMATION_REQUESTED
+      - STATEMENT_REQUESTED
+      - DEPOSIT_REQUESTED
+      - DEPOSIT_PAID
+      - PRELIMINARY_INSPECTION_REQUESTED
+      - PRELIMINARY_INSPECTION_DONE
+      - FINAL_INSPECTION_AGREED
+      - FINAL_INSPECTION_DONE
+      - WAITING
+      - COMPENSATION_CLARIFICATION
+      - PAYMENT_BASIS_CORRECTION
+  CustomerRoleType:
+    description: Application customer role
+    type: string
+    enum:
+      - APPLICANT
+      - PROPERTY_DEVELOPER
+      - CONTRACTOR
+      - REPRESENTATIVE
   ApplicationExt:
     type: object
+    required:
+      - status
+      - type
+      - kind
+      - name
+      - creationTime
+      - extension
     properties:
       id:
+        description: The unique identifier of the application
         type: integer
         format: int32
+      projectId:
+        description: The unique identifier of the project the application belongs to
+        type: integer
+        format: int32
+      customersWithContacts:
+        type: array
+        items:
+          $ref: '#/definitions/CustomerWithContactsExt'
       status:
         $ref: '#/definitions/StatusType'
+      type:
+        $ref: '#/definitions/ApplicationType'
+      kind:
+        $ref: '#/definitions/ApplicationKind'
+      applicationTags:
+        type: array
+        items:
+          $ref: '#/definitions/ApplicationTagExt'
+      name:
+        description: Name of the application
+        type: string
+      creationTime:
+        description: Creation time of the application
+        type: string
+        format: date-time
+      startTime:
+        description: >-
+          start time of the the application. This is automatically calculated
+          from location data
+        type: string
+        format: date-time
+      endTime:
+        description: >-
+          end time of the the application. This is automatically calculated from
+          location data
+        type: string
+        format: date-time
       extension:
         $ref: '#/definitions/ApplicationExtensionExt'
-  ApplicationExtensionExt:
+  ApplicationTagExt:
     type: object
+    description: Tag of an application
+    properties:
+      type:
+        $ref: '#/definitions/ApplicationTagType'
+      creationTime:
+        description: Creation time of the application tag
+        type: string
+        format: date-time
+  CustomerWithContactsExt:
+    type: object
+    properties:
+      roleType:
+        $ref: '#/definitions/CustomerRoleType'
+      customer:
+        type: integer
+        format: int32
+        description: Id of the customer
+      contacts:
+        description: Contacts of the customer
+        type: array
+        items:
+          type: integer
+          format: int32
+  ApplicationExtensionExt:
     description: >-
-      Base class for application extensions. See swagger.json and types
-      referring to this type using allOf : [{$ref :
-      #/definitions/ApplicationExtensionExt}]
+      Base class for application extensions. Application extension contains
+      application type specific data. See swagger.json and types referring to
+      this type using allOf : [{$ref : #/definitions/ApplicationExtensionExt}]
+    type: object
     discriminator: applicationType
     properties:
       terms:
@@ -89,8 +231,8 @@ definitions:
       applicationType:
         $ref: '#/definitions/ApplicationType'
   ExcavationAnnouncementExt:
-    type: object
     description: Extends ApplicationExtensionExt. Excavation announcement data.
+    type: object
     allOf:
       - $ref: '#/definitions/ApplicationExtensionExt'
       - type: object
@@ -100,3 +242,47 @@ definitions:
               PKS-kortti (pääkaupunkiseudun katutöihin liittyvät koulutus).
               True, if the contractor doing the actual work has PKS-card.
             type: boolean
+          constructionWork:
+            description: Construction
+            type: boolean
+          maintenanceWork:
+            description: Maintenance
+            type: boolean
+          emergencyWork:
+            description: Emergency work
+            type: boolean
+          propertyConnectivity:
+            description: Property connectivity (kiinteistöliitos)
+            type: boolean
+          winterTimeOperation:
+            description: >-
+              Date of winter time operability (Talvityön toiminnallinen kunto,
+              valmistumis pvm)
+            type: string
+            format: date-time
+          workFinished:
+            description: The date work has been accepted as finished
+            type: string
+            format: date-time
+          unauthorizedWorkStartTime:
+            description: The time un-authorized work began
+            type: string
+            format: date-time
+          unauthorizedWorkEndTime:
+            description: The time un-authorized work ended
+            type: string
+            format: date-time
+          guaranteeEndTime:
+            description: Date of the guarantee end time
+            type: string
+            format: date-time
+          cableReportId:
+            description: Id of the cable report related to this excavation announcement
+            type: integer
+            format: int32
+          additionalInfo:
+            description: Additional information regarding application
+            type: string
+          trafficArrangements:
+            description: Information regarding traffic arrangements
+            type: string

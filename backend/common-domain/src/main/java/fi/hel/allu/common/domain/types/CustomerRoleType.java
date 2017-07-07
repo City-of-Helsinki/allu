@@ -1,4 +1,4 @@
-package fi.hel.allu.common.types;
+package fi.hel.allu.common.domain.types;
 
 /**
  * Enumeration of all customer role types supported by Allu. A customer may have different roles on different applications.

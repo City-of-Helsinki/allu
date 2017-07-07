@@ -1,8 +1,8 @@
 package fi.hel.allu.search;
 
-import fi.hel.allu.common.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;

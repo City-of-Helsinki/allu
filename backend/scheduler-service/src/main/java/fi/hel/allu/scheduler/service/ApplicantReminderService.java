@@ -1,7 +1,7 @@
 package fi.hel.allu.scheduler.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.model.domain.Application;
