@@ -23,7 +23,7 @@ export class DefaultRecipientsComponent implements OnInit {
   }
 
   itemCountByType(type: string): Observable<number> {
-    return this.defaultRecipientHub.defaultRecipientsByType(type)
+    return this.defaultRecipientHub.defaultRecipientsByApplicationType(type)
       .map(dr => dr.length);
   }
 }

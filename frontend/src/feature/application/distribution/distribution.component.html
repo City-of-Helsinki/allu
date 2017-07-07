@@ -20,8 +20,8 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col s12">
-                    <distribution-list [form]="communicationForm" [distributionList]="application.decisionDistributionList"
+                <div class="col s12" *ngIf="distributionList">
+                    <distribution-list [form]="communicationForm" [distributionList]="distributionList"
                                        [readonly]="readonly"></distribution-list>
                 </div>
             </div>

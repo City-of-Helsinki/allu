@@ -2,14 +2,17 @@ import {Injectable} from '@angular/core';
 import '../../rxjs-extensions.ts';
 import {DefaultRecipientService} from './default-recipient.service';
 import {DefaultRecipient} from '../../model/common/default-recipient';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ArrayUtil} from '../../util/array-util';
+import {ReplaySubject} from 'rxjs/ReplaySubject';
 
 @Injectable()
 export class DefaultRecipientHub {
-  private defaultRecipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);
+  private latestRecipients: Array<DefaultRecipient> = [];
+  private defaultRecipients$ = new ReplaySubject<Array<DefaultRecipient>>();
 
   constructor(private service: DefaultRecipientService) {
+    this.loadDefaultRecipients();
+    this.defaultRecipients.subscribe(recipients => this.latestRecipients = recipients);
   }
 
   get defaultRecipients() {
@@ -18,7 +21,7 @@ export class DefaultRecipientHub {
       .share();
   }
 
-  defaultRecipientsByType(type: string) {
+  defaultRecipientsByApplicationType(type: string) {
     return this.defaultRecipients
       .map(recipients => recipients.filter(dr => dr.applicationType === type));
   }
@@ -27,7 +30,7 @@ export class DefaultRecipientHub {
     return this.service.saveDefaultRecipient(recipient)
       .do(saved => {
         const updated = ArrayUtil.createOrReplace(
-          this.defaultRecipients$.getValue(),
+          this.latestRecipients,
           saved,
           (item: DefaultRecipient) => item.id === saved.id);
         this.defaultRecipients$.next(updated);
@@ -37,7 +40,7 @@ export class DefaultRecipientHub {
   removeDefaultRecipient(id: number) {
     return this.service.removeDefaultRecipient(id)
       .do(response => {
-        const updated = this.defaultRecipients$.getValue().filter(dr => dr.id !== id);
+        const updated = this.latestRecipients.filter(dr => dr.id !== id);
         this.defaultRecipients$.next(updated);
       });
   }

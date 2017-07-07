@@ -15,7 +15,7 @@ import {Observable} from 'rxjs/Observable';
 class DefaultRecipientHubMock {
   recipients$ = new BehaviorSubject<Array<DefaultRecipient>>([]);
 
-  defaultRecipientsByType(type: string) {
+  defaultRecipientsByApplicationType(type: string) {
     return this.recipients$.asObservable().share();
   }
   removeDefaultRecipient(id: number) {}

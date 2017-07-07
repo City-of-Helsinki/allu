@@ -30,7 +30,7 @@ export class RecipientsByTypeComponent implements OnInit {
 
   ngOnInit(): void {
     this.onItemCountChanged.emit(this.recipientRows.length);
-    this.recipientHub.defaultRecipientsByType(this.type)
+    this.recipientHub.defaultRecipientsByApplicationType(this.type)
       .subscribe(recipients => this.replaceRecipients(recipients));
   }
 
