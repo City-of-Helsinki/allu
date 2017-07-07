@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.ui.domain.CoordinateJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.servicecore.domain.CoordinateJson;
+import fi.hel.allu.servicecore.domain.PostalAddressJson;
 import fi.hel.allu.ui.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

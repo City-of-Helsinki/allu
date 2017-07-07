@@ -3,10 +3,10 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.search.domain.QueryParameter;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.QueryParameterJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
-import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.QueryParameterJson;
+import fi.hel.allu.servicecore.domain.QueryParametersJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

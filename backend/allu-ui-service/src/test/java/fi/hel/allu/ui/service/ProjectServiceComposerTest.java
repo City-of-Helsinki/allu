@@ -1,8 +1,8 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

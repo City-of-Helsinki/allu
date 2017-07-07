@@ -9,7 +9,7 @@ import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.ui.mapper.UserMapper;
 
 import org.mockito.Mock;

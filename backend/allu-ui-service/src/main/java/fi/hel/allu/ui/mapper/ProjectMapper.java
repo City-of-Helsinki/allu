@@ -3,7 +3,7 @@ package fi.hel.allu.ui.mapper;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.search.domain.ProjectES;
-import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;

@@ -1,9 +1,9 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ProjectJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.ProjectService;
 import fi.hel.allu.ui.service.ProjectServiceComposer;

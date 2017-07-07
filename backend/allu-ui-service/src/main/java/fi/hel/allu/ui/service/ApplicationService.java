@@ -7,7 +7,7 @@ import fi.hel.allu.model.domain.DistributionEntry;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.LocationSearchCriteria;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.Note;
-import fi.hel.allu.ui.domain.NoteJson;
+import fi.hel.allu.servicecore.domain.NoteJson;
 
 public class NoteMapper {
   public static NoteJson modelToJson(Note note) {

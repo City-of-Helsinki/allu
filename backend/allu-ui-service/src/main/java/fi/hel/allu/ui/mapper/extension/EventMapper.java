@@ -2,7 +2,7 @@ package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Event;
-import fi.hel.allu.ui.domain.EventJson;
+import fi.hel.allu.servicecore.domain.EventJson;
 
 import java.time.temporal.ChronoUnit;
 

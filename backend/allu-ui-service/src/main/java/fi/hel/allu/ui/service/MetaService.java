@@ -4,8 +4,8 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.AttributeMetaJson;
-import fi.hel.allu.ui.domain.StructureMetaJson;
+import fi.hel.allu.servicecore.domain.AttributeMetaJson;
+import fi.hel.allu.servicecore.domain.StructureMetaJson;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

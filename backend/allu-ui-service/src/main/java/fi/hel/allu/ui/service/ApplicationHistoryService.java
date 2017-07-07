@@ -5,9 +5,9 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.ApplicationChange;
 import fi.hel.allu.model.domain.ApplicationFieldChange;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.ApplicationChangeJson;
-import fi.hel.allu.ui.domain.ApplicationFieldChangeJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ApplicationChangeJson;
+import fi.hel.allu.servicecore.domain.ApplicationFieldChangeJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.ui.util.ObjectComparer;
 
 import org.springframework.beans.factory.annotation.Autowired;

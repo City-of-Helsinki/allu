@@ -11,7 +11,7 @@ import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 
 import fi.hel.allu.ui.mapper.extension.AreaRentalMapper;
 import fi.hel.allu.ui.mapper.extension.CableReportMapper;

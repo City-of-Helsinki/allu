@@ -100,7 +100,7 @@
         </dependency>
         <dependency>
             <groupId>fi.hel.allu</groupId>
-            <artifactId>ui-domain</artifactId>
+            <artifactId>service-core-domain</artifactId>
             <version>${project.parent.version}</version>
             <scope>test</scope>
         </dependency>

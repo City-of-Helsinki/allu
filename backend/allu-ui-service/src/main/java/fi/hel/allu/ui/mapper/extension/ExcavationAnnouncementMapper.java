@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.ExcavationAnnouncement;
-import fi.hel.allu.ui.domain.ExcavationAnnouncementJson;
+import fi.hel.allu.servicecore.domain.ExcavationAnnouncementJson;
 
 public class ExcavationAnnouncementMapper {
   public static ExcavationAnnouncementJson modelToJson(ExcavationAnnouncement excavationAnnouncement) {

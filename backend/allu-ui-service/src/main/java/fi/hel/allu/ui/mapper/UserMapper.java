@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper;
 
 import fi.hel.allu.model.domain.User;
-import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.ui.security.AlluUser;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

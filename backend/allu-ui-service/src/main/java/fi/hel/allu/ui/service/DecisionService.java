@@ -6,7 +6,7 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -31,10 +31,11 @@
         <module>common-domain</module>
         <module>common</module>
         <module>mail</module>
+        <module>service-core</module>
+        <module>service-core-domain</module>
         <module>model-domain</module>
         <module>model-querydsl-support</module>
         <module>model-service</module>
-        <module>allu-ui-domain</module>
         <module>pdf-domain</module>
         <module>allu-ui-service</module>
         <module>search-domain</module>

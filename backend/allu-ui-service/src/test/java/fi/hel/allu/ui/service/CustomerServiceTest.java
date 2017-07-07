@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.service;
 
-import fi.hel.allu.ui.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;

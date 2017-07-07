@@ -2,7 +2,7 @@ package fi.hel.allu.ui.mapper.extension;
 
 
 import fi.hel.allu.model.domain.ApplicationExtension;
-import fi.hel.allu.ui.domain.ApplicationExtensionJson;
+import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
 
 public class ApplicationExtensionMapper {
   public static <JSON extends ApplicationExtensionJson> JSON modelToJson(ApplicationExtension model, JSON json) {

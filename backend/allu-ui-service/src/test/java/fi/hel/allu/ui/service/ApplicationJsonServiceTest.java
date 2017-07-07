@@ -5,7 +5,7 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.junit.Assert;
 import org.junit.Before;

@@ -4,10 +4,10 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.ui.domain.ApplicationExtensionJson;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.CustomerWithContactsJson;
-import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 
 import org.junit.Assert;
 import org.junit.Test;

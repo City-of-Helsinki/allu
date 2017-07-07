@@ -2,9 +2,9 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.FixedLocationAreaJson;
-import fi.hel.allu.ui.domain.FixedLocationJson;
-import fi.hel.allu.ui.domain.LocationJson;
+import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
+import fi.hel.allu.servicecore.domain.FixedLocationJson;
+import fi.hel.allu.servicecore.domain.LocationJson;
 
 import org.junit.Before;
 import org.junit.BeforeClass;

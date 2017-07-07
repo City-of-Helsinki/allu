@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.ui.domain.CommentJson;
+import fi.hel.allu.servicecore.domain.CommentJson;
 import fi.hel.allu.ui.service.CommentService;
 
 import org.springframework.beans.factory.annotation.Autowired;

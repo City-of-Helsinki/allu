@@ -2,8 +2,8 @@ package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.CableInfoEntry;
 import fi.hel.allu.model.domain.CableReport;
-import fi.hel.allu.ui.domain.CableInfoEntryJson;
-import fi.hel.allu.ui.domain.CableReportJson;
+import fi.hel.allu.servicecore.domain.CableInfoEntryJson;
+import fi.hel.allu.servicecore.domain.CableReportJson;
 
 import java.util.Collections;
 import java.util.List;

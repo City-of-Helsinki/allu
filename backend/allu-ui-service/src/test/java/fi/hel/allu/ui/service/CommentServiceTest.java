@@ -3,8 +3,8 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.CommentJson;
-import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.servicecore.domain.CommentJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 
 import org.junit.Before;
 import org.junit.Test;

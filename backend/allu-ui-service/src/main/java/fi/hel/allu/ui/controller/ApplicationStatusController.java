@@ -1,8 +1,8 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.StatusCommentJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.StatusCommentJson;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.CommentService;
 

@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.Project;
-import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ProjectMapper;
 import org.junit.Before;
 import org.junit.BeforeClass;

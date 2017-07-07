@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.TrafficArrangement;
-import fi.hel.allu.ui.domain.TrafficArrangementJson;
+import fi.hel.allu.servicecore.domain.TrafficArrangementJson;
 
 public class TrafficArrangementMapper {
   public static TrafficArrangementJson modelToJson(TrafficArrangement trafficArrangement) {

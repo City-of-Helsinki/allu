@@ -2,8 +2,8 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.CoordinateJson;
-import fi.hel.allu.ui.domain.PostalAddressJson;
+import fi.hel.allu.servicecore.domain.CoordinateJson;
+import fi.hel.allu.servicecore.domain.PostalAddressJson;
 import fi.hel.allu.ui.util.WfsRestTemplate;
 import org.junit.Assert;
 import org.junit.Before;

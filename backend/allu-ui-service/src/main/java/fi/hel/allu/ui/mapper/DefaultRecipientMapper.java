@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper;
 
 import fi.hel.allu.model.domain.DefaultRecipient;
-import fi.hel.allu.ui.domain.DefaultRecipientJson;
+import fi.hel.allu.servicecore.domain.DefaultRecipientJson;
 import org.springframework.stereotype.Component;
 
 /**

@@ -4,7 +4,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.ui.mapper.QueryParameterMapper;
 
 import org.slf4j.Logger;

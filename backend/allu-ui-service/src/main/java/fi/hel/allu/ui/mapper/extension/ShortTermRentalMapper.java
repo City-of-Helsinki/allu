@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.ShortTermRental;
-import fi.hel.allu.ui.domain.ShortTermRentalJson;
+import fi.hel.allu.servicecore.domain.ShortTermRentalJson;
 
 public class ShortTermRentalMapper {
   public static ShortTermRentalJson modelToJson(ShortTermRental shortTermRental) {

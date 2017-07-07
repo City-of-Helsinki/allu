@@ -2,7 +2,7 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.DefaultRecipient;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.DefaultRecipientJson;
+import fi.hel.allu.servicecore.domain.DefaultRecipientJson;
 import fi.hel.allu.ui.mapper.DefaultRecipientMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;

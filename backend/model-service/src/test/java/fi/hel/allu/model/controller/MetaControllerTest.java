@@ -8,7 +8,7 @@ import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.model.testUtils.WebTestCommon;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

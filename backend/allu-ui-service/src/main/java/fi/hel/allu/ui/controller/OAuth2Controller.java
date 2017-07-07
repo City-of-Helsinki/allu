@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
 import fi.hel.allu.ui.security.TokenHandler;
 import fi.hel.allu.ui.service.UserService;

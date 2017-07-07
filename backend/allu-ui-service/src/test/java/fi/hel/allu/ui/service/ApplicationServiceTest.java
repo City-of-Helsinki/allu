@@ -5,7 +5,7 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 
 import org.junit.Assert;

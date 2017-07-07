@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.AreaRental;
-import fi.hel.allu.ui.domain.AreaRentalJson;
+import fi.hel.allu.servicecore.domain.AreaRentalJson;
 
 public class AreaRentalMapper {
   public static AreaRentalJson modelToJson(AreaRental areaRental) {

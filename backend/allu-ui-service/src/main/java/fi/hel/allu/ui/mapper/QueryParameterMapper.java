@@ -2,8 +2,8 @@ package fi.hel.allu.ui.mapper;
 
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.domain.QueryParameterJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.servicecore.domain.QueryParameterJson;
+import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

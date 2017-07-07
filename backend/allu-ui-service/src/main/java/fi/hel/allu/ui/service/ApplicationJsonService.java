@@ -2,8 +2,8 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.ui.domain.ApplicationJson;
-import fi.hel.allu.ui.domain.ProjectJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
+import fi.hel.allu.servicecore.domain.ProjectJson;
 import fi.hel.allu.ui.mapper.ApplicationMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

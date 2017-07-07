@@ -4,7 +4,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.AttachmentService;
 import fi.hel.allu.ui.service.DecisionService;

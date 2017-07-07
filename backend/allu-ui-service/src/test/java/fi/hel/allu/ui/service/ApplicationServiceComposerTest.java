@@ -3,7 +3,7 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 
 import org.junit.Assert;
 import org.junit.Before;

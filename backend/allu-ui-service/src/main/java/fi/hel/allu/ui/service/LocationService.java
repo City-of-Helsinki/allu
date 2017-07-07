@@ -2,7 +2,7 @@ package fi.hel.allu.ui.service;
 
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.*;
+import fi.hel.allu.servicecore.domain.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

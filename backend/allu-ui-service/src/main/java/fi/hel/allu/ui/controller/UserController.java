@@ -1,6 +1,6 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.ui.domain.UserJson;
+import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.ui.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

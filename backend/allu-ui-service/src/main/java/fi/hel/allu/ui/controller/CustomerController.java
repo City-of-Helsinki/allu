@@ -1,9 +1,9 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.ui.domain.CustomerJson;
-import fi.hel.allu.ui.domain.CustomerWithContactsJson;
-import fi.hel.allu.ui.domain.ContactJson;
-import fi.hel.allu.ui.domain.QueryParametersJson;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.ui.service.CustomerService;
 import fi.hel.allu.ui.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;

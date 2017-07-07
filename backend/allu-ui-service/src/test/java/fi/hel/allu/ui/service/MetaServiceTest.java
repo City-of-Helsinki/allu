@@ -3,7 +3,7 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.meta.StructureMeta;
-import fi.hel.allu.ui.domain.StructureMetaJson;
+import fi.hel.allu.servicecore.domain.StructureMetaJson;
 
 import org.junit.Before;
 import org.junit.BeforeClass;

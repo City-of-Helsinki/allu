@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.mapper.extension;
 
 import fi.hel.allu.model.domain.PlacementContract;
-import fi.hel.allu.ui.domain.PlacementContractJson;
+import fi.hel.allu.servicecore.domain.PlacementContractJson;
 
 public class PlacementContractMapper {
   public static PlacementContractJson modelToJson(PlacementContract placementContract) {

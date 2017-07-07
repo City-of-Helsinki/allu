@@ -3,9 +3,9 @@ package fi.hel.allu.ui.service;
 import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.ui.config.ApplicationProperties;
-import fi.hel.allu.ui.domain.CommentJson;
+import fi.hel.allu.servicecore.domain.CommentJson;
 
-import fi.hel.allu.ui.domain.StatusCommentJson;
+import fi.hel.allu.servicecore.domain.StatusCommentJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
