@@ -9,3 +9,7 @@ export enum ApplicationStatus {
   FINISHED,
   CANCELLED
 }
+
+export function canBeEdited(status: ApplicationStatus): boolean {
+  return status >= ApplicationStatus.DECISIONMAKING;
+}

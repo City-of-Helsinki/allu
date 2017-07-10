@@ -15,15 +15,26 @@
         </ng-container>
     </div>
     <div class="action-row" *ngSwitchCase="'DECISIONMAKING'">
-        <div class="action-item">
-            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
-        </div>
-        <div class="action-item" *ngIf="application.type !== 'CABLE_REPORT'">
-            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('RETURNED_TO_PREPARATION')">Palauta</button>
-        </div>
-        <div class="action-item" *ngIf="application.type !== 'CABLE_REPORT'">
-            <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('REJECTED')">Hylkää</button>
-        </div>
+        <ng-container *ngIf="application.type === 'CABLE_REPORT'">
+            <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
+                <div class="action-item">
+                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
+                </div>
+            </ng-container>
+        </ng-container>
+        <ng-container *ngIf="application.type !== 'CABLE_REPORT'">
+            <ng-container *availableTo="['ROLE_DECISION']">
+                <div class="action-item">
+                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
+                </div>
+                <div class="action-item">
+                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('RETURNED_TO_PREPARATION')">Palauta</button>
+                </div>
+                <div class="action-item">
+                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('REJECTED')">Hylkää</button>
+                </div>
+            </ng-container>
+        </ng-container>
     </div>
     <div class="action-row" *ngSwitchDefault></div>
 </div>

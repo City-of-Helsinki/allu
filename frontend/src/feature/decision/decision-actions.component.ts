@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Router} from '@angular/router';
 import {MdDialog} from '@angular/material';
 
@@ -24,6 +24,7 @@ import {StatusChangeComment} from '../../model/application/status-change-comment
 })
 export class DecisionActionsComponent {
   @Input() application: Application;
+  @Output() onDecisionConfirm = new EventEmitter<ApplicationStatusChange>();
 
   constructor(private applicationState: ApplicationState,
               private decisionHub: DecisionHub,
@@ -60,11 +61,14 @@ export class DecisionActionsComponent {
 
   private proposalConfirmed(comment: StatusChangeComment) {
     if (comment) {
-      this.applicationState.changeStatus(new ApplicationStatusChange(this.application.id, ApplicationStatus.DECISIONMAKING, comment))
+      const statusChange = new ApplicationStatusChange(this.application.id, ApplicationStatus.DECISIONMAKING, comment);
+      this.applicationState.changeStatus(statusChange)
         .subscribe(app => {
           this.applicationState.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
           NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
+          this.applicationState.application = app;
           this.application = app;
+          this.onDecisionConfirm.emit(statusChange);
         }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
     }
   }

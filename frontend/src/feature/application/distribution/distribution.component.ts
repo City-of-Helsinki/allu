@@ -49,7 +49,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
 
   initDistributionList(): void {
     // Only use default recipients when creating new application
-    if (this.application.id === undefined) {
+    if (!this.readonly && this.application.id === undefined) {
       this.recipientSubscription = this.defaultRecipientHub.defaultRecipientsByApplicationType(this.application.type)
         .map(recipients => recipients.map(r => this.toDistributionEntry(r)))
         .subscribe(distributionEntries => this.distributionList = distributionEntries);

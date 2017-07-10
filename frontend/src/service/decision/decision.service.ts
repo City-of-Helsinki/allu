@@ -21,18 +21,8 @@ const DECISION_DISTRIBUTION_URL = '/api/applications/:appId/decision/send';
 @Injectable()
 export class DecisionService {
 
-  constructor(private authHttp: AuthHttp, private uiState: UIStateHub, private errorHandler: ErrorHandler) {
+  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
   }
-
-  public generate(applicationId: number): Observable<Decision> {
-    console.log('Generating pdf for application ' + applicationId);
-    let url = DECISION_URL.replace(':appId', String(applicationId));
-
-    return this.authHttp.put(url, '')
-      .flatMap(decision => this.fetch(applicationId))
-      .catch(error => this.uiState.addError(new ErrorInfo(ErrorType.PDF_GENERATION_FAILED)));
-  }
-
 
   public fetch(applicationId: number): Observable<Decision> {
     console.log('Fetching pdf for application ' + applicationId);

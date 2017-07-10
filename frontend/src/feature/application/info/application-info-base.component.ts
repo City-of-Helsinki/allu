@@ -6,7 +6,7 @@ import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationForm} from './application-form';
-import {ApplicationStatus} from '../../../model/application/application-status';
+import {ApplicationStatus, canBeEdited} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
@@ -33,8 +33,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
   ngOnInit(): void {
     this.initForm();
-    this.hasPropertyDeveloperCtrl = this.fb.control(false);
-    this.hasRepresentativeCtrl = this.fb.control(false);
+    this.hasPropertyDeveloperCtrl = this.fb.control([false]);
+    this.hasRepresentativeCtrl = this.fb.control([false]);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
 
@@ -43,7 +43,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     UrlUtil.urlPathContains(this.route.parent, 'summary')
       .filter(contains => contains)
       .forEach(summary => {
-        this.readonly = summary;
+        this.readonly = summary || !canBeEdited(this.applicationState.application.statusEnum);
       });
 
     this.tabChanges = this.applicationState.tabChange.subscribe(tab => {

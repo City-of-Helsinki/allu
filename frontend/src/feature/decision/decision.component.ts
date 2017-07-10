@@ -6,6 +6,7 @@ import {Decision} from '../../model/decision/Decision';
 import {stepFrom} from '../application/progressbar/progress-step';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationState} from '../../service/application/application-state';
+import {ApplicationStatusChange} from '../../model/application/application-status-change';
 
 @Component({
   selector: 'decision',
@@ -27,7 +28,13 @@ export class DecisionComponent implements OnInit {
   ngOnInit(): void {
     this.application = this.applicationState.application;
     this.progressStep = stepFrom(ApplicationStatus[this.application.status]);
-    this.decisionHub.generate(this.application.id).subscribe(decision => this.providePdf(decision));
+    this.decisionHub.fetchByStatus(this.application.id, this.application.statusEnum)
+      .subscribe(decision => this.providePdf(decision));
+  }
+
+  onDecisionConfirm(statusChange: ApplicationStatusChange): void {
+    this.decisionHub.fetchByStatus(this.application.id, statusChange.status)
+      .subscribe(decision => this.providePdf(decision));
   }
 
   private providePdf(decision: Decision): void {

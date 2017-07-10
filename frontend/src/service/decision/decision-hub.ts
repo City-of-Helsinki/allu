@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import '../../rxjs-extensions.ts';
 import {DecisionService} from './decision.service';
 import {DecisionDetails} from '../../model/decision/decision-details';
+import {ApplicationStatus, canBeEdited} from '../../model/application/application-status';
 
 @Injectable()
 export class DecisionHub {
@@ -9,10 +10,12 @@ export class DecisionHub {
   }
 
   /**
-   * Asks decision service to generate decision pdf for given application.
-   * Returns observable which contains generated pdf eventually
+   * Fetch real decision when application is in decision state or state after it
+   * otherwise show preview
    */
-  public generate = (applicationId: number) => this.decisionService.generate(applicationId);
+  public fetchByStatus = (applicationId: number, status: ApplicationStatus) => canBeEdited(status)
+      ? this.fetch(applicationId)
+      : this.preview(applicationId);
 
   /**
    * Asks decision service to fetch decision pdf for given application.

@@ -24,17 +24,9 @@ export class DecisionPreviewComponent implements OnInit {
               private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    let appStatus = ApplicationStatus[this.applicationState.application.status];
-
-    // Fetch real decision when application is in decision state or state after it
-    // otherwise show preview
-    if (appStatus >= ApplicationStatus.DECISION) {
-      this.decisionHub.fetch(this.applicationState.application.id)
+    let appStatus = this.applicationState.application.statusEnum;
+    this.decisionHub.fetchByStatus(this.applicationState.application.id, appStatus)
         .subscribe(decision => this.providePdf(decision));
-    } else {
-      this.decisionHub.preview(this.applicationState.application.id)
-        .subscribe(decision => this.providePdf(decision));
-    }
   }
   private providePdf(decision: Decision): void {
     let url = URL.createObjectURL(decision.pdf);

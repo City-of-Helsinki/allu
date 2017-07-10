@@ -5,6 +5,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.ui.security.DecisionSecurityService;
 import fi.hel.allu.ui.service.ApplicationServiceComposer;
 import fi.hel.allu.ui.service.AttachmentService;
 import fi.hel.allu.ui.service.DecisionService;
@@ -52,7 +53,7 @@ public class ApplicationController {
   /**
    * Delete a note from database.
    *
-   * @param applicationId note application's database ID
+   * @param id note application's database ID
    */
   @RequestMapping(value = "/note/{id}", method = RequestMethod.DELETE)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
@@ -221,24 +222,6 @@ public class ApplicationController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<DefaultAttachmentInfoJson>> readDefaultAttachmentInfos(@PathVariable ApplicationType applicationType) {
     return new ResponseEntity<>(attachmentService.getDefaultAttachmentsByApplicationType(applicationType), HttpStatus.OK);
-  }
-
-  /**
-   * Generate decision PDF for application
-   *
-   * @param applicationId
-   *          the application's Id
-   * @return Response with Location header pointing to generated PDF
-   * @throws IOException
-   */
-  @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.PUT)
-  @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-  public ResponseEntity<Void> generateDecision(@PathVariable int applicationId) throws IOException {
-    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(applicationId);
-    decisionService.generateDecision(applicationId, applicationJson);
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().build().toUri());
-    return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
   }
 
   /**
