@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {ComplexValidator} from '../../../../util/complex-validator';
@@ -7,9 +7,6 @@ import {ApplicationState} from '../../../../service/application/application-stat
 import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
-import {Some} from '../../../../util/option';
-import {NotificationService} from '../../../../service/notification/notification.service';
-import {findTranslation} from '../../../../util/translations';
 
 @Component({
   selector: 'note',
@@ -19,7 +16,7 @@ import {findTranslation} from '../../../../util/translations';
 })
 export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState, private router: Router) {
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
     super(fb, route, applicationState);
   };
 

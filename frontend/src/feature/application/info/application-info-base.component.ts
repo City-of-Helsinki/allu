@@ -1,4 +1,4 @@
-import {OnDestroy, OnInit, AfterViewInit} from '@angular/core';
+import {OnDestroy, OnInit, AfterViewInit, AfterContentInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
@@ -14,7 +14,7 @@ import {DistributionEntryForm} from '../distribution/distribution-list/distribut
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 
-export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterViewInit {
+export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
 
   application: Application;
   applicationForm: FormGroup;
@@ -33,8 +33,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
   ngOnInit(): void {
     this.initForm();
-    this.hasPropertyDeveloperCtrl = this.fb.control([false]);
-    this.hasRepresentativeCtrl = this.fb.control([false]);
+    this.hasPropertyDeveloperCtrl = this.fb.control(false);
+    this.hasRepresentativeCtrl = this.fb.control(false);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
 
@@ -54,7 +54,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     });
   }
 
-  ngAfterViewInit(): void {
+  ngAfterContentInit(): void {
     if (this.readonly) {
       this.applicationForm.disable();
     }
