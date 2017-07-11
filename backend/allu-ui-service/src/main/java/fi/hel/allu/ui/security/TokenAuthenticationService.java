@@ -4,7 +4,7 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.ui.service.UserService;
+import fi.hel.allu.servicecore.service.UserService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;

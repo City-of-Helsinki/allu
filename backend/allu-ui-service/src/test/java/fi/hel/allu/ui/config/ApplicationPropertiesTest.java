@@ -7,9 +7,9 @@ public class ApplicationPropertiesTest {
 
   @Test
   public void testCreateValidUrl() throws Exception {
-    ApplicationProperties props = new ApplicationProperties(false, "localhost", "9090", "localhost", "9090", "localhost",
-        "9090", null, null, null, null, null, null, null, null, null, null, null);
-    String result = props.getModelServiceUrl("/test/joo");
-    Assert.assertEquals("http://localhost:9090/test/joo", result);
+    ApplicationProperties props = new ApplicationProperties(false, "localhost/geocode", "9090", "localhost", "9090", "localhost",
+        "9090", null, null, null);
+    String result = props.getStreetGeocodeUrl();
+    Assert.assertEquals("localhost/geocode", result);
   }
 }

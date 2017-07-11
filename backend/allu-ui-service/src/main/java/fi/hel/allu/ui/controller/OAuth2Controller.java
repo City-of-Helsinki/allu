@@ -3,7 +3,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
 import fi.hel.allu.ui.security.TokenHandler;
-import fi.hel.allu.ui.service.UserService;
+import fi.hel.allu.servicecore.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

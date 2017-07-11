@@ -2,13 +2,11 @@ package fi.hel.allu.ui.controller;
 
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.ui.security.DecisionSecurityService;
-import fi.hel.allu.ui.service.ApplicationServiceComposer;
-import fi.hel.allu.ui.service.AttachmentService;
-import fi.hel.allu.ui.service.DecisionService;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.AttachmentService;
+import fi.hel.allu.servicecore.service.DecisionService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +16,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 

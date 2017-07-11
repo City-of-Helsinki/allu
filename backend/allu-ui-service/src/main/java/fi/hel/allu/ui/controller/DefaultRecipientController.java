@@ -1,7 +1,7 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.servicecore.domain.DefaultRecipientJson;
-import fi.hel.allu.ui.service.DefaultRecipientService;
+import fi.hel.allu.servicecore.service.DefaultRecipientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

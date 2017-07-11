@@ -3,7 +3,7 @@ package fi.hel.allu.ui.security;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.ui.service.UserService;
+import fi.hel.allu.servicecore.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.junit.Assert;

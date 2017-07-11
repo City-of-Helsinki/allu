@@ -4,10 +4,10 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.StatusCommentJson;
 import fi.hel.allu.ui.security.DecisionSecurityService;
-import fi.hel.allu.ui.service.ApplicationServiceComposer;
-import fi.hel.allu.ui.service.CommentService;
+import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+import fi.hel.allu.servicecore.service.CommentService;
 
-import fi.hel.allu.ui.service.DecisionService;
+import fi.hel.allu.servicecore.service.DecisionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

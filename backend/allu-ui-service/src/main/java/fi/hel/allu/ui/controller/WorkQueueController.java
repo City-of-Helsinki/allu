@@ -2,7 +2,7 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
-import fi.hel.allu.ui.service.WorkQueueService;
+import fi.hel.allu.servicecore.service.WorkQueueService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

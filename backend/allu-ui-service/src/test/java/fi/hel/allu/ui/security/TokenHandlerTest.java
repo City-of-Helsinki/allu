@@ -3,7 +3,7 @@ package fi.hel.allu.ui.security;
 import com.google.common.collect.Sets;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.ui.service.UserService;
+import fi.hel.allu.servicecore.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;

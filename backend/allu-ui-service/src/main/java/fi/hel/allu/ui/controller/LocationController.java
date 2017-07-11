@@ -3,7 +3,7 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.servicecore.domain.CityDistrictInfoJson;
 import fi.hel.allu.servicecore.domain.FixedLocationAreaJson;
 import fi.hel.allu.servicecore.domain.FixedLocationJson;
-import fi.hel.allu.ui.service.LocationService;
+import fi.hel.allu.servicecore.service.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

@@ -14,6 +14,11 @@
     <dependencies>
         <dependency>
             <groupId>fi.hel.allu</groupId>
+            <artifactId>service-core-domain</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
             <artifactId>common-domain</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
@@ -26,6 +31,28 @@
             <groupId>fi.hel.allu</groupId>
             <artifactId>model-domain</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>search-domain</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>pdf-domain</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>mail</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <!-- For flattening structures as key-value-pair JSON -->
+            <groupId>com.github.wnameless</groupId>
+            <artifactId>json-flattener</artifactId>
+            <version>0.2.2</version>
         </dependency>
     </dependencies>
 </project>

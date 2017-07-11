@@ -4,12 +4,11 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.ui.service.ApplicationService;
-import fi.hel.allu.ui.service.UserService;
+import fi.hel.allu.servicecore.service.ApplicationService;
+import fi.hel.allu.servicecore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;

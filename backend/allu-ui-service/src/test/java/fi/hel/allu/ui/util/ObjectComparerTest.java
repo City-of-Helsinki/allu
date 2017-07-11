@@ -5,7 +5,8 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.ui.util.ObjectComparer.Difference;
+import fi.hel.allu.servicecore.util.ObjectComparer;
+import fi.hel.allu.servicecore.util.ObjectComparer.Difference;
 
 import org.junit.Before;
 import org.junit.Test;

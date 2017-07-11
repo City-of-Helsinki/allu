@@ -4,7 +4,7 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CoordinateJson;
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
-import fi.hel.allu.ui.util.WfsRestTemplate;
+import fi.hel.allu.servicecore.util.WfsRestTemplate;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

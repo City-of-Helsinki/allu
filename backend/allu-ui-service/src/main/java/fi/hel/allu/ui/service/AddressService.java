@@ -6,7 +6,7 @@ import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CoordinateJson;
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
 import fi.hel.allu.ui.geocode.StreetAddressXml;
-import fi.hel.allu.ui.util.WfsRestTemplate;
+import fi.hel.allu.servicecore.util.WfsRestTemplate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
