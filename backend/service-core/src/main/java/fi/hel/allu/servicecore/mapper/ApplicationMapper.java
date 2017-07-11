@@ -6,26 +6,45 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.extension.*;
+import fi.hel.allu.servicecore.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
 public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
+
+  private UserService userService;
+
+  @Autowired
+  public ApplicationMapper(UserService userService) {
+    this.userService = userService;
+  }
+
+  private Set<RoleType> canSeeSsn = new HashSet<>(Arrays.asList(
+          RoleType.ROLE_CREATE_APPLICATION,
+          RoleType.ROLE_PROCESS_APPLICATION,
+          RoleType.ROLE_INVOICING));
 
   /**
    * Create a new <code>Application</code> model-domain object from given ui-domain object
@@ -241,7 +260,7 @@ public class ApplicationMapper {
     customerJson.setId(customer.getId());
     customerJson.setType(customer.getType());
     customerJson.setName(customer.getName());
-    customerJson.setRegistryKey(customer.getRegistryKey());
+    customerJson.setRegistryKey(getVisibleRegistryKey(customer.getType(), customer.getRegistryKey()));
     customerJson.setPhone(customer.getPhone());
     customerJson.setEmail(customer.getEmail());
     customerJson.setPostalAddress(createPostalAddressJson(customer.getPostalAddress()));
@@ -423,6 +442,21 @@ public class ApplicationMapper {
           cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList())));
     });
     return customerWithContacts;
+  }
+
+  static final String SSN_REPLACEMENT = "***********";
+
+  private String getVisibleRegistryKey(CustomerType type, String registryKey) {
+    if (!userCanSeeSsn() && CustomerType.PERSON.equals(type)) {
+      return SSN_REPLACEMENT;
+    } else {
+      return registryKey;
+    }
+  }
+
+  private boolean userCanSeeSsn() {
+    UserJson user = userService.getCurrentUser();
+    return user.getAssignedRoles().stream().anyMatch(canSeeSsn::contains);
   }
 
 }

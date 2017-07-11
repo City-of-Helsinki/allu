@@ -63,7 +63,7 @@ public class ApplicationServiceTest extends MockServices {
 
   @Before
   public void setUp() {
-    applicationMapper = new ApplicationMapper();
+    applicationMapper = new ApplicationMapper(userService);
 
     initSaveMocks();
     initSearchMocks();

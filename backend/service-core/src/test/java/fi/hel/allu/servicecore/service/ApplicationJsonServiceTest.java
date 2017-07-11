@@ -2,6 +2,8 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.types.CustomerType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
@@ -42,6 +44,7 @@ public class ApplicationJsonServiceTest {
   private UserJson userJson = Mockito.mock(UserJson.class);
   private LocationJson locationJson = Mockito.mock(LocationJson.class);
   private List<CommentJson> comments = new ArrayList<>();
+  private UserJson currentUser = Mockito.mock(UserJson.class);
 
   @Before
   public void init() {
@@ -73,12 +76,15 @@ public class ApplicationJsonServiceTest {
     comments.add(Mockito.mock(CommentJson.class));
     comments.add(Mockito.mock(CommentJson.class));
     Mockito.when(commentService.findByApplicationId(applicationId)).thenReturn(comments);
+
+    Mockito.when(userService.getCurrentUser()).thenReturn(currentUser);
   }
 
 
   @Test
   public void testGetFullyPopulatedApplication() {
     Mockito.when(applicationMapper.mapApplicationToJson(application)).thenReturn(new ApplicationJson());
+    Mockito.when(currentUser.getAssignedRoles()).thenReturn(Collections.singletonList(RoleType.ROLE_PROCESS_APPLICATION));
     ApplicationJsonService applicationJsonService = new ApplicationJsonService(
         applicationMapper,
         projectService,

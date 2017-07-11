@@ -31,11 +31,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
   }
 
   @Bean
-  public ApplicationMapper applicationMapper() {
-    return new ApplicationMapper();
-  }
-
-  @Bean
   public fi.hel.allu.servicecore.config.ApplicationProperties serviceCoreApplicationProperties(
   @Value("${model.service.host}") @NotEmpty String modelServiceHost,
   @Value("${model.service.port}") @NotEmpty String modelServicePort,
