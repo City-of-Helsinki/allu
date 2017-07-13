@@ -251,7 +251,7 @@
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>application_change</table>
+                            <table>change_history</table>
                             <column>change_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
@@ -363,12 +363,12 @@
                             <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>application_change</table>
+                            <table>change_history</table>
                             <column>change_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToChangeType</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>application_change</table>
+                            <table>change_history</table>
                             <column>new_status</column>
                             <type>fi.hel.allu.model.querydsl.StringToStatusType</type>
                         </typeMapping>

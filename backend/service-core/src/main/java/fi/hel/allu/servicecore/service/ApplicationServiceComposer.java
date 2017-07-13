@@ -248,7 +248,7 @@ public class ApplicationServiceComposer {
    *          application ID
    * @return list of changes ordered from oldest to newest
    */
-  public List<ApplicationChangeJson> getChanges(Integer applicationId) {
+  public List<ChangeHistoryItemJson> getChanges(Integer applicationId) {
     return applicationHistoryService.getChanges(applicationId);
   }
 

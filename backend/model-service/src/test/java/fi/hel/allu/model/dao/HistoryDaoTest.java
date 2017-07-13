@@ -3,8 +3,8 @@ package fi.hel.allu.model.dao;
 import fi.hel.allu.common.types.ChangeType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.ApplicationChange;
-import fi.hel.allu.model.domain.ApplicationFieldChange;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.model.testUtils.TestCommon;
 import org.junit.Before;
 import org.junit.Test;
@@ -40,7 +40,7 @@ public class HistoryDaoTest {
 
   @Test
   public void testNoHistory() {
-    List<ApplicationChange> changes = historyDao.getApplicationHistory(991);
+    List<ChangeHistoryItem> changes = historyDao.getApplicationHistory(991);
     assertEquals(0, changes.size());
   }
 
@@ -51,21 +51,21 @@ public class HistoryDaoTest {
     int userId = testCommon.insertUser("Test User").getId();
     // Add some changes to the application
     historyDao.addApplicationChange(applicationId,
-        new ApplicationChange(userId, ChangeType.CREATED, null, ZonedDateTime.now(), null));
+        new ChangeHistoryItem(userId, ChangeType.CREATED, null, ZonedDateTime.now(), null));
     historyDao.addApplicationChange(applicationId,
-        new ApplicationChange(userId, ChangeType.STATUS_CHANGED, StatusType.HANDLING, ZonedDateTime.now(), null));
+        new ChangeHistoryItem(userId, ChangeType.STATUS_CHANGED, StatusType.HANDLING, ZonedDateTime.now(), null));
     historyDao.addApplicationChange(applicationId,
-        new ApplicationChange(userId, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(),
-            Arrays.asList(new ApplicationFieldChange("/foo", "oldFoo", "newFoo"),
-                new ApplicationFieldChange("/bar", "oldBar", "newBar"))));
+        new ChangeHistoryItem(userId, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.now(),
+            Arrays.asList(new FieldChange("/foo", "oldFoo", "newFoo"),
+                new FieldChange("/bar", "oldBar", "newBar"))));
     // Check that the changes are there
-    List<ApplicationChange> changes = historyDao.getApplicationHistory(applicationId);
+    List<ChangeHistoryItem> changes = historyDao.getApplicationHistory(applicationId);
     assertEquals(3, changes.size());
     assertEquals(ChangeType.CREATED, changes.get(0).getChangeType());
     assertEquals(ChangeType.STATUS_CHANGED, changes.get(1).getChangeType());
     assertEquals(StatusType.HANDLING, changes.get(1).getNewStatus());
     assertEquals(ChangeType.CONTENTS_CHANGED, changes.get(2).getChangeType());
-    List<ApplicationFieldChange> fields = changes.get(2).getFieldChanges();
+    List<FieldChange> fields = changes.get(2).getFieldChanges();
     assertEquals(2, fields.size());
   }
 

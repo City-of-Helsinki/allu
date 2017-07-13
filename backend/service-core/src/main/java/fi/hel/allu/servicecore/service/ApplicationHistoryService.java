@@ -2,18 +2,20 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.model.domain.ApplicationChange;
-import fi.hel.allu.model.domain.ApplicationFieldChange;
+import fi.hel.allu.common.util.ObjectComparer;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationChangeJson;
-import fi.hel.allu.servicecore.domain.ApplicationFieldChangeJson;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.util.ObjectComparer;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
+
 import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.Map.Entry;
@@ -63,9 +65,10 @@ public class ApplicationHistoryService {
    *          application ID
    * @return list of changes ordered from oldest to newest
    */
-  public List<ApplicationChangeJson> getChanges(Integer applicationId) {
+  public List<ChangeHistoryItemJson> getChanges(Integer applicationId) {
     return Arrays.stream(restTemplate.getForObject(applicationProperties.getApplicationHistoryUrl(),
-        ApplicationChange[].class, applicationId)).map(c -> mapToJson(c)).collect(Collectors.toList());
+        ChangeHistoryItem[].class, applicationId)).map(c -> ChangeHistoryMapper.mapToJson(c))
+        .collect(Collectors.toList());
   }
 
   /**
@@ -84,16 +87,16 @@ public class ApplicationHistoryService {
 
     Set<String> abbreviated = new HashSet<>();
 
-    List<ApplicationFieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()
+    List<FieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()
         .filter(diff -> !skipFieldPattern.matcher(diff.keyName).matches())
         .filter(diff -> !shouldAbbreviate(diff.keyName, abbreviated))
-        .map(diff -> new ApplicationFieldChange(diff.keyName, diff.oldValue, diff.newValue))
+        .map(diff -> new FieldChange(diff.keyName, diff.oldValue, diff.newValue))
         .collect(Collectors.toList());
 
-    abbreviated.forEach(fieldName -> fieldChanges.add(new ApplicationFieldChange(fieldName, "..", "..")));
+    abbreviated.forEach(fieldName -> fieldChanges.add(new FieldChange(fieldName, "..", "..")));
 
     if (!fieldChanges.isEmpty()) {
-      ApplicationChange change = new ApplicationChange();
+      ChangeHistoryItem change = new ChangeHistoryItem();
       change.setChangeType(ChangeType.CONTENTS_CHANGED);
       change.setFieldChanges(fieldChanges);
       addChangeItem(applicationId, change);
@@ -124,7 +127,7 @@ public class ApplicationHistoryService {
    *          new status
    */
   public void addStatusChange(Integer applicationId, StatusType newStatus) {
-    ApplicationChange change = new ApplicationChange();
+    ChangeHistoryItem change = new ChangeHistoryItem();
     change.setChangeType(ChangeType.STATUS_CHANGED);
     change.setNewStatus(newStatus);
     addChangeItem(applicationId, change);
@@ -137,7 +140,7 @@ public class ApplicationHistoryService {
    *          The application's ID.
    */
   public void addApplicationCreated(Integer applicationId) {
-    ApplicationChange change = new ApplicationChange();
+    ChangeHistoryItem change = new ChangeHistoryItem();
     change.setChangeType(ChangeType.CREATED);
     addChangeItem(applicationId, change);
   }
@@ -146,31 +149,9 @@ public class ApplicationHistoryService {
    * Make the REST call to add given application change for given application
    * ID.
    */
-  private void addChangeItem(Integer applicationId, ApplicationChange change) {
+  private void addChangeItem(Integer applicationId, ChangeHistoryItem change) {
     change.setChangeTime(ZonedDateTime.now());
     change.setUserId(userService.getCurrentUser().getId());
     restTemplate.postForObject(applicationProperties.getAddApplicationHistoryUrl(), change, Void.class, applicationId);
-  }
-
-  /*
-   * Map a change item from model space to UI space
-   */
-  private ApplicationChangeJson mapToJson(ApplicationChange c) {
-    return new ApplicationChangeJson(c.getUserId(), c.getChangeType(), c.getNewStatus(), c.getChangeTime(),
-        mapToJson(c.getFieldChanges()));
-  }
-
-  /*
-   * Map a list of field changes from model space to UI space
-   */
-  private List<ApplicationFieldChangeJson> mapToJson(List<ApplicationFieldChange> fieldChanges) {
-    return fieldChanges.stream().map(fc -> mapToJson(fc)).collect(Collectors.toList());
-  }
-
-  /*
-   * Map a single field change from model space to UI space
-   */
-  private ApplicationFieldChangeJson mapToJson(ApplicationFieldChange fc) {
-    return new ApplicationFieldChangeJson(fc.getFieldName(), fc.getOldValue(), fc.getNewValue());
   }
 }

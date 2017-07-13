@@ -1,14 +1,15 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.CustomerChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -28,6 +29,7 @@ public class CustomerService {
   private ApplicationMapper applicationMapper;
   private SearchService searchService;
   private ContactService contactService;
+  private UserService userService;
 
   @Autowired
   public CustomerService(
@@ -35,12 +37,14 @@ public class CustomerService {
       RestTemplate restTemplate,
       ApplicationMapper applicationMapper,
       SearchService searchService,
-      ContactService contactService) {
+      ContactService contactService,
+      UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
     this.searchService = searchService;
     this.contactService = contactService;
+    this.userService = userService;
   }
 
 
@@ -51,9 +55,11 @@ public class CustomerService {
    * @return Created customer.
    */
   public CustomerJson createCustomer(CustomerJson customerJson) {
+    CustomerChange customerChange = new CustomerChange(userService.getCurrentUser().getId(),
+        applicationMapper.createCustomerModel(customerJson));
     Customer customerModel = restTemplate.postForObject(
         applicationProperties.getCustomerCreateUrl(),
-        applicationMapper.createCustomerModel(customerJson),
+        customerChange,
         Customer.class);
     CustomerJson createdCustomer = applicationMapper.createCustomerJson(customerModel);
     // all created customers will be set active
@@ -93,7 +99,9 @@ public class CustomerService {
    * @param customerJson customer that is going to be updated
    */
   public CustomerJson updateCustomer(int customerId, CustomerJson customerJson) {
-    HttpEntity<Customer> requestEntity = new HttpEntity<>(applicationMapper.createCustomerModel(customerJson));
+    CustomerChange customerChange = new CustomerChange(userService.getCurrentUser().getId(),
+        applicationMapper.createCustomerModel(customerJson));
+    HttpEntity<CustomerChange> requestEntity = new HttpEntity<>(customerChange);
     ResponseEntity<Customer> response = restTemplate.exchange(
         applicationProperties.getCustomerUpdateUrl(),
         HttpMethod.PUT,
@@ -187,4 +195,18 @@ public class CustomerService {
     SearchService.orderByIdList(customerIds, resultList, (customer) -> customer.getId());
     return resultList;
   }
+
+  /**
+   * Get change items for a customer
+   *
+   * @param customerId acustomer's database ID
+   * @return list of changes ordered from oldest to newest
+   */
+  public List<ChangeHistoryItemJson> getChanges(Integer customerId) {
+    return Arrays.stream(
+        restTemplate.getForObject(applicationProperties.getCustomerHistoryUrl(), ChangeHistoryItem[].class, customerId))
+        .map(c -> ChangeHistoryMapper.mapToJson(c))
+        .collect(Collectors.toList());
+  }
+
 }

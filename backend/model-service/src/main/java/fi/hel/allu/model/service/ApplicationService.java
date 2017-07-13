@@ -1,14 +1,11 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.InvoiceRowDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.DeadlineCheckParams;
-import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.domain.LocationSearchCriteria;
+import fi.hel.allu.model.domain.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -73,6 +71,17 @@ public class ApplicationService {
   @Transactional(readOnly = true)
   public List<Application> findByLocation(LocationSearchCriteria lsc) {
     return applicationDao.findByLocation(lsc);
+  }
+
+  /**
+   * Returns application ids of the applications having given customer.
+   *
+   * @param id id of the customer whose related applications are returned.
+   * @return List of application ids. Never <code>null</code>.
+   */
+  @Transactional(readOnly = true)
+  public Map<Integer, List<CustomerRoleType>> findByCustomer(int id) {
+    return applicationDao.findByCustomer(id);
   }
 
   /**
@@ -214,5 +223,20 @@ public class ApplicationService {
   @Transactional
   public long markReminderSent(List<Integer> applications) {
     return applicationDao.markReminderSent(applications);
+  }
+
+  /**
+   * Find all contacts of applications having given contact.
+   *
+   * @param contactIds Ids of the contacts whose related applications with
+   *          contacts are fetched.
+   * @return all contacts of applications having given contact. It's worth
+   *         noticing that the same application may appear more than once in the
+   *         result list. This happens, if contact appears in application under
+   *         several customer roles.
+   */
+  @Transactional(readOnly = true)
+  public List<ApplicationWithContacts> findRelatedApplicationsWithContacts(List<Integer> contactIds) {
+    return applicationDao.findRelatedApplicationsWithContacts(contactIds);
   }
 }

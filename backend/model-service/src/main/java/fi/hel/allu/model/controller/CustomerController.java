@@ -1,40 +1,51 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.CustomerDao;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.CustomerChange;
+import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.CustomerService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/customers")
 public class CustomerController {
 
   @Autowired
-  private CustomerDao customerDao;
+  private CustomerService customerService;
   @Autowired
-  private ApplicationDao applicationDao;
+  private ApplicationService applicationService;
 
+  /**
+   * Find a customer by database ID
+   *
+   * @param id customer's database ID
+   * @return the customer's data
+   */
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Customer> findCustomer(@PathVariable int id) {
-    Optional<Customer> customer = customerDao.findById(id);
-    Customer customerValue = customer
-        .orElseThrow(() -> new NoSuchEntityException("Customer not found", Integer.toString(id)));
-    return new ResponseEntity<>(customerValue, HttpStatus.OK);
+    return new ResponseEntity<>(customerService.findById(id), HttpStatus.OK);
   }
 
+  /**
+   * Find a number of customers by their database IDs
+   *
+   * @param ids list of customer IDs to search for
+   * @return list of found customers
+   */
   @RequestMapping(value = "/find", method = RequestMethod.POST)
   public ResponseEntity<List<Customer>> findCustomers(@RequestBody List<Integer> ids) {
-    return new ResponseEntity<>(customerDao.findByIds(ids), HttpStatus.OK);
+    return new ResponseEntity<>(customerService.findByIds(ids), HttpStatus.OK);
   }
 
   /**
@@ -45,23 +56,53 @@ public class CustomerController {
    */
   @RequestMapping(value = "/applications/{id}", method = RequestMethod.GET)
   public ResponseEntity<Map<Integer, List<CustomerRoleType>>> findApplicationsByCustomer(@PathVariable int id) {
-    return new ResponseEntity<>(applicationDao.findByCustomer(id), HttpStatus.OK);
+    return new ResponseEntity<>(applicationService.findByCustomer(id), HttpStatus.OK);
   }
 
+  /**
+   * Find all customers in the database
+   *
+   * @return list of customers
+   */
   @RequestMapping(method = RequestMethod.GET)
   public ResponseEntity<List<Customer>> findAllCustomers() {
-    return new ResponseEntity<>(customerDao.findAll(), HttpStatus.OK);
+    return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
   }
 
+  /**
+   * Update customer data
+   *
+   * @param id Customer's database ID
+   * @param customerChange customer change request
+   * @return updated customer data
+   */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Customer> updateCustomer(@PathVariable int id,
-                                                 @Valid @RequestBody(required = true) Customer customer) {
-    Customer resultCustomer = customerDao.update(id, customer);
+      @Valid @RequestBody(required = true) CustomerChange customerChange) {
+    Customer resultCustomer = customerService.update(id, customerChange.getCustomer(), customerChange.getUserId());
     return new ResponseEntity<>(resultCustomer, resultCustomer != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
   }
 
+  /**
+   * Insert new customer into database
+   *
+   * @param customerChange customer change request
+   * @return created Customer object
+   */
   @RequestMapping(method = RequestMethod.POST)
-  public ResponseEntity<Customer> addCustomer(@Valid @RequestBody(required = true) Customer customer) {
-    return new ResponseEntity<>(customerDao.insert(customer), HttpStatus.OK);
+  public ResponseEntity<Customer> addCustomer(@Valid @RequestBody(required = true) CustomerChange customerChange) {
+    return new ResponseEntity<>(customerService.insert(customerChange.getCustomer(), customerChange.getUserId()),
+        HttpStatus.OK);
+  }
+
+  /**
+   * Get customer's change history
+   *
+   * @param id the customer's database ID
+   * @return list of changes for the customer
+   */
+  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
+  public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
+    return new ResponseEntity<>(customerService.getCustomerChanges(id), HttpStatus.OK);
   }
 }

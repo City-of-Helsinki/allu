@@ -1,17 +1,17 @@
-package fi.hel.allu.model.domain;
+package fi.hel.allu.servicecore.domain;
 
 /**
  * Represents a single field change in application history
  */
-public class ApplicationFieldChange {
+public class FieldChangeJson {
   private String fieldName;
   private String oldValue;
   private String newValue;
 
-  public ApplicationFieldChange() {
+  public FieldChangeJson() {
   }
 
-  public ApplicationFieldChange(String fieldName, String oldValue, String newValue) {
+  public FieldChangeJson(String fieldName, String oldValue, String newValue) {
     this.fieldName = fieldName;
     this.oldValue = oldValue;
     this.newValue = newValue;

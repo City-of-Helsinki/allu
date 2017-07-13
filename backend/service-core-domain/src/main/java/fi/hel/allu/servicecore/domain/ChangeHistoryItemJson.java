@@ -11,18 +11,18 @@ import java.util.List;
  * change. In case of a status change, the new status is provided. In case of
  * contents change, the changed field descriptions are provided.
  */
-public class ApplicationChangeJson {
+public class ChangeHistoryItemJson {
   private Integer userId;
   private ChangeType changeType;
   private StatusType newStatus;
   private ZonedDateTime changeTime;
-  private List<ApplicationFieldChangeJson> fieldChanges;
+  private List<FieldChangeJson> fieldChanges;
 
-  public ApplicationChangeJson() {
+  public ChangeHistoryItemJson() {
   }
 
-  public ApplicationChangeJson(Integer userId, ChangeType changeType,
-      StatusType newStatus, ZonedDateTime changeTime, List<ApplicationFieldChangeJson> fieldChanges) {
+  public ChangeHistoryItemJson(Integer userId, ChangeType changeType,
+      StatusType newStatus, ZonedDateTime changeTime, List<FieldChangeJson> fieldChanges) {
     this.userId = userId;
     this.changeType = changeType;
     this.newStatus = newStatus;
@@ -87,11 +87,11 @@ public class ApplicationChangeJson {
    *
    * @return list of fields, empty list, or null
    */
-  public List<ApplicationFieldChangeJson> getFieldChanges() {
+  public List<FieldChangeJson> getFieldChanges() {
     return fieldChanges;
   }
 
-  public void setFieldChanges(List<ApplicationFieldChangeJson> fieldChanges) {
+  public void setFieldChanges(List<FieldChangeJson> fieldChanges) {
     this.fieldChanges = fieldChanges;
   }
 }

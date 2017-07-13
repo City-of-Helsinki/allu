@@ -353,11 +353,13 @@ public class ProjectControllerTest {
 
   // Helper to add person
   private Customer addPersonCustomerToDatabase(String name, String email) throws Exception {
+    Integer userId = testCommon.insertUser("dummyUser").getId();
     Customer customer = new Customer();
     customer.setName(name);
     customer.setType(CustomerType.PERSON);
     customer.setEmail(email);
-    ResultActions resultActions = wtc.perform(post("/customers"), customer).andExpect(status().isOk());
+    CustomerChange customerChange = new CustomerChange(userId, customer);
+    ResultActions resultActions = wtc.perform(post("/customers"), customerChange).andExpect(status().isOk());
     return wtc.parseObjectFromResult(resultActions, Customer.class);
   }
 

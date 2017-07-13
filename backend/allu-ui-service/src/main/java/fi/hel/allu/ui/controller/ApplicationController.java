@@ -100,7 +100,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/{applicationId}/history", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationChangeJson>> getChanges(@PathVariable Integer applicationId) {
+  public ResponseEntity<List<ChangeHistoryItemJson>> getChanges(@PathVariable Integer applicationId) {
     return new ResponseEntity<>(applicationServiceComposer.getChanges(applicationId), HttpStatus.OK);
   }
 

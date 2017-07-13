@@ -1,11 +1,9 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.ContactJson;
-import fi.hel.allu.servicecore.domain.QueryParametersJson;
-import fi.hel.allu.servicecore.service.CustomerService;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 
 /**
@@ -43,6 +42,18 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<ContactJson>> findByCustomer(@PathVariable int id) {
     return new ResponseEntity<>(contactService.findByCustomer(id), HttpStatus.OK);
+  }
+
+  /**
+   * Get change items for a customer
+   *
+   * @param id Customer's database id
+   * @return list of changes ordered from oldest to newest
+   */
+  @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<ChangeHistoryItemJson>> getChanges(@PathVariable int id) {
+    return new ResponseEntity<>(customerService.getChanges(id), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)

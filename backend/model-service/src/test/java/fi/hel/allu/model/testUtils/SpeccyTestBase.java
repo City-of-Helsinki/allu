@@ -3,6 +3,7 @@ package fi.hel.allu.model.testUtils;
 import com.greghaskins.spectrum.Block;
 
 import fi.hel.allu.model.ModelApplication;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.TestContextManager;
@@ -72,7 +73,7 @@ public class SpeccyTestBase {
    * example:
    * <p>
    * <code>
-   * assertThrows(() -> { throw new RuntimeException(); }, IllegalArgumentException.class, RuntimeException.class);
+   * assertThrows(IllegalArgumentException.class, RuntimeException.class).when(() -> { throw new RuntimeException(); });
    * </code>
    *
    * @param expected List of throwables. Code block must throw one of these.

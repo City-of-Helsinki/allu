@@ -269,17 +269,19 @@ create table allu.application_comment (
     create_time timestamp with time zone not null,
     update_time timestamp with time zone not null);
 
-create table allu.application_change (
+create table allu.change_history (
     id serial primary key,
-    application_id integer not null references allu.application(id) on delete cascade,
+    application_id integer references allu.application(id) on delete cascade,
+    customer_id integer references allu.customer(id),
     user_id integer references allu.user(id) not null,
     change_type text not null,   -- change type
     new_status text,      -- new status if applicable
-    change_time timestamp with time zone not null);
+    change_time timestamp with time zone not null,
+    constraint "change must refer to exactly one data table" check ((application_id is null) != (customer_id is null)));
 
-create table allu.application_field_change (
+create table allu.field_change (
     id serial primary key,
-    application_change_id integer not null references allu.application_change(id) on delete cascade,
+    change_history_id integer not null references allu.change_history(id) on delete cascade,
     field_name text not null,
     old_value text,
     new_value text);

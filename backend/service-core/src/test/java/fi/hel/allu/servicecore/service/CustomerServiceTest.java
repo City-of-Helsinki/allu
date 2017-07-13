@@ -1,9 +1,9 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.User;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -16,6 +16,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.util.Set;
 
 import static org.mockito.Mockito.when;
@@ -40,7 +41,8 @@ public class CustomerServiceTest extends MockServices {
     initSaveMocks();
     initSearchMocks();
     customerService = new CustomerService(
-        props, restTemplate, new ApplicationMapper(userService), Mockito.mock(SearchService.class), Mockito.mock(ContactService.class));
+        props, restTemplate, new ApplicationMapper(userService), Mockito.mock(SearchService.class),
+        Mockito.mock(ContactService.class), userService);
     when(userService.getCurrentUser()).thenReturn(new UserJson());
   }
 

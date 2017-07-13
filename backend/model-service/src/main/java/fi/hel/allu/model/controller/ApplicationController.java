@@ -232,7 +232,7 @@ public class ApplicationController {
    * @return list of changes for the application
    */
   @RequestMapping(value = "/{id}/history", method = RequestMethod.GET)
-  public ResponseEntity<List<ApplicationChange>> getChanges(@PathVariable int id) {
+  public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
     return new ResponseEntity<>(historyDao.getApplicationHistory(id), HttpStatus.OK);
   }
 
@@ -242,7 +242,7 @@ public class ApplicationController {
    * @param change the change item to add
    */
   @RequestMapping(value = "/{id}/history", method = RequestMethod.POST)
-  public ResponseEntity<Void> addChange(@PathVariable int id, @RequestBody ApplicationChange change) {
+  public ResponseEntity<Void> addChange(@PathVariable int id, @RequestBody ChangeHistoryItem change) {
     historyDao.addApplicationChange(id, change);
     return new ResponseEntity<>(HttpStatus.OK);
   }

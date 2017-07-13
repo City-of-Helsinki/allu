@@ -609,6 +609,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for getting customer's history
+   */
+  public String getCustomerHistoryUrl() {
+    return getModelServiceUrl("/customers/{id}/history");
+  }
+
+  /**
    * @return url to send customer search queries.
    */
   public String getCustomerSearchUrl() {

@@ -5,13 +5,14 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ChangeType;
-import fi.hel.allu.model.domain.ApplicationChange;
-import fi.hel.allu.model.domain.ApplicationFieldChange;
+import fi.hel.allu.model.domain.ChangeHistoryItem;
+import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationChangeJson;
+import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,9 +44,9 @@ public class ApplicationHistoryServiceTest extends MockServices {
   private static final String ADD_APPLICATION_HISTORY_URL = "AddApplicationHistoryUrl";
   private static final int MOCK_USER_ID = 911;
 
-  private ApplicationChange capturedChange = null;
+  private ChangeHistoryItem capturedChange = null;
 
-  private ApplicationChange captureChange(ApplicationChange change) {
+  private ChangeHistoryItem captureChange(ChangeHistoryItem change) {
     capturedChange = change;
     return capturedChange;
   }
@@ -65,13 +66,13 @@ public class ApplicationHistoryServiceTest extends MockServices {
   @Test
   public void testGetChanges() {
     final int APPLICATION_ID = 432;
-    ApplicationChange[] changes = new ApplicationChange[] {
-        new ApplicationChange(12, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.parse("2017-02-03T10:15:30+02:00"),
-            Arrays.asList(new ApplicationFieldChange("foo", "oldFoo", "newFoo"))) };
+    ChangeHistoryItem[] changes = new ChangeHistoryItem[] {
+        new ChangeHistoryItem(12, ChangeType.CONTENTS_CHANGED, null, ZonedDateTime.parse("2017-02-03T10:15:30+02:00"),
+            Arrays.asList(new FieldChange("foo", "oldFoo", "newFoo"))) };
     Mockito.when(mockRestTemplate.getForObject(Mockito.eq(APPLICATION_HISTORY_URL),
-        Mockito.eq(ApplicationChange[].class), Mockito.eq(APPLICATION_ID))).thenReturn(changes);
+        Mockito.eq(ChangeHistoryItem[].class), Mockito.eq(APPLICATION_ID))).thenReturn(changes);
 
-    List<ApplicationChangeJson> result = applicationHistoryService.getChanges(APPLICATION_ID);
+    List<ChangeHistoryItemJson> result = applicationHistoryService.getChanges(APPLICATION_ID);
     Assert.assertNotNull(result);
     Assert.assertEquals(1, result.size());
     Assert.assertEquals(ChangeType.CONTENTS_CHANGED, result.get(0).getChangeType());
@@ -97,7 +98,7 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Assert.assertNotNull(capturedChange);
     Assert.assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
     Assert.assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
-    List<ApplicationFieldChange> fieldChanges = capturedChange.getFieldChanges();
+    List<FieldChange> fieldChanges = capturedChange.getFieldChanges();
     Assert.assertNotNull(fieldChanges);
     Assert.assertEquals(1, fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name")).count());
     Assert.assertEquals("Changed Name", fieldChanges.stream().filter(fc -> fc.getFieldName().equals("/name"))
@@ -149,8 +150,8 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Assert.assertNotNull(capturedChange);
     Assert.assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
     Assert.assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
-    List<ApplicationFieldChange> fieldChanges = capturedChange.getFieldChanges();
-    List<ApplicationFieldChange> tagChanges = fieldChanges.stream()
+    List<FieldChange> fieldChanges = capturedChange.getFieldChanges();
+    List<FieldChange> tagChanges = fieldChanges.stream()
         .filter(chg -> chg.getFieldName().startsWith("/applicationTags/")).collect(Collectors.toList());
     Assert.assertEquals(2, tagChanges.size());
     Assert.assertEquals(0, tagChanges.stream().filter(c -> c.getFieldName().endsWith("/id")).count());
@@ -178,8 +179,8 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Assert.assertNotNull(capturedChange);
     Assert.assertEquals(ChangeType.CONTENTS_CHANGED, capturedChange.getChangeType());
     Assert.assertEquals(MOCK_USER_ID, capturedChange.getUserId().intValue());
-    List<ApplicationFieldChange> fieldChanges = capturedChange.getFieldChanges();
-    List<ApplicationFieldChange> tagChanges = fieldChanges.stream()
+    List<FieldChange> fieldChanges = capturedChange.getFieldChanges();
+    List<FieldChange> tagChanges = fieldChanges.stream()
         .filter(chg -> chg.getFieldName().startsWith("/handler/")).collect(Collectors.toList());
     Assert.assertEquals(0, tagChanges.size());
   }
@@ -188,14 +189,14 @@ public class ApplicationHistoryServiceTest extends MockServices {
   // "/applicationTags/*/id" and "/extension/infoEntries/*/id"
 
   /*
-   * Setup Mockito to store ApplicationChange to capturedChange when
+   * Setup Mockito to store ChangeHistoryItem to capturedChange when
    * restTemplate.postForObject is called.
    */
   private void setupChangeCapture(int applicationId) {
     Mockito
         .when(mockRestTemplate.postForObject(Mockito.eq(ADD_APPLICATION_HISTORY_URL), Mockito.any(),
             Mockito.eq(Void.class), Mockito.eq(applicationId)))
-        .then(invocation -> captureChange(invocation.getArgumentAt(1, ApplicationChange.class)));
+        .then(invocation -> captureChange(invocation.getArgumentAt(1, ChangeHistoryItem.class)));
     capturedChange = null;
   }
 }

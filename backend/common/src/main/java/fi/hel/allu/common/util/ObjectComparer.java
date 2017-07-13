@@ -1,4 +1,4 @@
-package fi.hel.allu.servicecore.util;
+package fi.hel.allu.common.util;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
