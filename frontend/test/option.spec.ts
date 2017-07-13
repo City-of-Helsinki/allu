@@ -33,4 +33,4 @@ describe('Option', () => {
     Some(0).do(v => val = v);
     expect(val).toBe(0);
   });
-})
+});

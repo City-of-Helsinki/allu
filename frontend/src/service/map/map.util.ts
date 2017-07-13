@@ -119,6 +119,8 @@ export class MapUtil {
     switch (geometry.type) {
       case 'Point':
         return this.wgs84ToEpsg3879(geometry.coordinates);
+      case 'LineString':
+        return this.mapWgs84CoordinateArray(geometry.coordinates);
       default: {
         return this.mapWgs84GeometryArray(geometry.coordinates);
       }
@@ -141,6 +143,8 @@ export class MapUtil {
     switch (geometry.type) {
       case 'Point':
         return this.epsg3879ToWgs84(geometry.coordinates);
+      case 'LineString':
+        return this.mapEPSG3879CoordinateArray(geometry.coordinates);
       default: {
         return this.mapEPSG3879GeometryArray(geometry.coordinates);
       }

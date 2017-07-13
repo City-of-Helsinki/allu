@@ -3,6 +3,9 @@
   <a [routerLink]="['/workqueue']" routerLinkActive="active">TYÖJONO</a>
   <a [routerLink]="['/applications']" routerLinkActive="active">HAKEMUKSET</a>
   <a [routerLink]="['/projects']" routerLinkActive="active">HANKKEET</a>
-  <a [routerLink]="['/customers']" routerLinkActive="active">ASIAKKAAT</a>
+  <a [routerLink]="['/customers']" routerLinkActive="active"
+     *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_INVOICING']">
+    ASIAKKAAT
+  </a>
   <a [routerLink]="['/admin']" routerLinkActive="active" *availableTo="['ROLE_ADMIN']; types ['NOTE']">YLLÄPITO</a>
 </nav>

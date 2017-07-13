@@ -59,7 +59,7 @@ export class ComplexValidator {
       let start = this.fieldValue(fg, startField);
       let end = this.fieldValue(fg, endField);
 
-      if (start && end) {
+      if (!!start && !!end) {
         let valid = !TimeUtil.isBefore(end, start);
 
         // undefined means valid field
