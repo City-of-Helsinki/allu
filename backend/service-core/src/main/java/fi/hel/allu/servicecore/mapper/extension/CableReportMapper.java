@@ -2,8 +2,11 @@ package fi.hel.allu.servicecore.mapper.extension;
 
 import fi.hel.allu.model.domain.CableInfoEntry;
 import fi.hel.allu.model.domain.CableReport;
+import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.servicecore.domain.CableInfoEntryJson;
 import fi.hel.allu.servicecore.domain.CableReportJson;
+import fi.hel.allu.servicecore.domain.ContactJson;
+import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 
 import java.util.Collections;
 import java.util.List;
@@ -29,7 +32,7 @@ public class CableReportMapper {
     return ApplicationExtensionMapper.modelToJson(cableReport, cableReportJson);
   }
 
-  public static CableReport jsonToModel(CableReportJson json) {
+  public static CableReport jsonToModel(CableReportJson json, List<CustomerWithContactsJson> customersWithContactsJson) {
     CableReport cableReport = new CableReport();
     cableReport.setCableReportId(json.getCableReportId());
     cableReport.setWorkDescription(json.getWorkDescription());
@@ -44,6 +47,7 @@ public class CableReportMapper {
     cableReport.setEmergencyWork(json.getEmergencyWork());
     cableReport.setPropertyConnectivity(json.getPropertyConnectivity());
     cableReport.setValidityTime(json.getValidityTime());
+    cableReport.setOrderer(getOrdererId(customersWithContactsJson));
     return ApplicationExtensionMapper.jsonToModel(json, cableReport);
   }
 
@@ -59,5 +63,19 @@ public class CableReportMapper {
     cableInfoEntry.setType(cableInfoEntryJson.getType());
     cableInfoEntry.setAdditionalInfo(cableInfoEntryJson.getAdditionalInfo());
     return cableInfoEntry;
+  }
+
+  private static Integer getOrdererId(List<CustomerWithContactsJson> customersWithContactsJson) {
+    List<Integer> ordererIds = customersWithContactsJson.stream()
+      .flatMap(cwc -> cwc.getContacts().stream())
+      .filter(contact -> contact.isOrderer())
+      .map(ContactJson::getId)
+      .collect(Collectors.toList());
+
+    if (ordererIds.size() > 1) {
+      throw new IllegalArgumentException("Only one contact per application can be marked as orderer");
+    } else {
+      return ordererIds.stream().findFirst().orElse(null);
+    }
   }
 }

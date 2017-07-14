@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {Contact} from '../../../../model/customer/contact';
@@ -8,8 +8,13 @@ import {MdDialog, MdDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
 import {Observable} from 'rxjs';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
+import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
+import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
+import {Subscription} from 'rxjs/Subscription';
+import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationType} from '../../../../model/application/type/application-type';
 
-const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId'];
+const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
 @Component({
   selector: 'contact',
@@ -19,7 +24,7 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId'];
     require('./contact.component.scss')
   ]
 })
-export class ContactComponent implements OnInit {
+export class ContactComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
   @Input() customerId: number;
   @Input() customerRoleType: string;
@@ -27,18 +32,23 @@ export class ContactComponent implements OnInit {
   @Input() readonly: boolean;
   @Input() contactRequired = false;
 
+  form: FormGroup;
   contacts: FormArray;
   availableContacts: Observable<Array<Contact>>;
   matchingContacts: Observable<Array<Contact>>;
+  showOrderer: boolean = false;
 
   private dialogRef: MdDialogRef<ContactModalComponent>;
+  private ordererSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
               private dialog: MdDialog,
-              private customerHub: CustomerHub) {}
+              private customerHub: CustomerHub,
+              private applicationState: ApplicationState) {}
 
   ngOnInit(): void {
     this.initContacts();
+    this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationState.application.typeEnum;
 
     if (this.readonly) {
       this.contacts.disable();
@@ -47,6 +57,12 @@ export class ContactComponent implements OnInit {
     this.availableContacts = Some(this.customerId)
       .map(id => this.customerHub.findCustomerActiveContacts(id))
       .orElse(Observable.of([]));
+
+    this.ordererSubscription = this.customerHub.orderer.subscribe(orderer => this.ordererSelected(orderer));
+  }
+
+  ngOnDestroy(): void {
+    this.ordererSubscription.unsubscribe();
   }
 
   contactSelected(contact: Contact, index: number): void {
@@ -62,6 +78,16 @@ export class ContactComponent implements OnInit {
     const contactCanBeRemoved = !this.contactRequired || (this.contacts.length > 1);
     const canBeEdited = !this.readonly;
     return contactCanBeRemoved && canBeEdited;
+  }
+
+  selectOrderer(orderer: Contact): void {
+    this.customerHub.ordererSelected(orderer);
+  }
+
+  ordererSelected(orderer: Contact): void {
+    this.contacts.controls
+      .filter(ctrl => ctrl.value !== orderer)
+      .forEach(ctrl => ctrl.patchValue({orderer: false}));
   }
 
   edit(id: number, index: number): void {
@@ -93,7 +119,7 @@ export class ContactComponent implements OnInit {
     }
   }
 
-  private addContact(contact: Contact = new Contact()): void {
+  addContact(contact: Contact = new Contact()): void {
     let fg = Contact.formGroup(this.fb, contact);
     let nameControl = fg.get('name');
     this.matchingContacts = nameControl.valueChanges
@@ -107,6 +133,10 @@ export class ContactComponent implements OnInit {
     }
   }
 
+  remove(index: number): void {
+    this.contacts.removeAt(index);
+  }
+
   private onNameSearchChange(term: string): Observable<Array<Contact>> {
     if (!!term) {
       return this.availableContacts
@@ -116,16 +146,12 @@ export class ContactComponent implements OnInit {
     }
   }
 
-  private remove(index: number): void {
-    this.contacts.removeAt(index);
-  }
-
   private initContacts(): void {
-    this.contacts = <FormArray>this.parentForm.get('contacts');
+    this.form = <FormGroup>this.parentForm.get(CustomerWithContactsForm.formName(CustomerRoleType[this.customerRoleType]));
+    this.contacts = <FormArray>this.form.get('contacts');
     const defaultContactList = this.contactRequired ? [new Contact()] : [];
     this.contactList = Some(this.contactList).filter(cl => cl.length > 0).orElse(defaultContactList);
     this.contactList.forEach(contact => this.addContact(contact));
-
   }
 
   private resetContacts(): void {

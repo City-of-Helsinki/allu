@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.types.CustomerType;
@@ -166,7 +167,7 @@ public class ApplicationMapper {
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setPriceOverride(application.getPriceOverride());
     applicationJson.setPriceOverrideReason(application.getPriceOverrideReason());
-    applicationJson.setCustomersWithContacts(createCustomerWithContactsJson(application.getCustomersWithContacts()));
+    applicationJson.setCustomersWithContacts(createCustomerWithContactsJson(application));
 
     return applicationJson;
   }
@@ -183,7 +184,7 @@ public class ApplicationMapper {
     case SHORT_TERM_RENTAL:
         return ShortTermRentalMapper.modelToJson((ShortTermRental) application.getExtension());
     case CABLE_REPORT:
-      return CableReportMapper.modelToJson((CableReport) application.getExtension());
+        return CableReportMapper.modelToJson((CableReport) application.getExtension());
     case AREA_RENTAL:
       return AreaRentalMapper.modelToJson((AreaRental) application.getExtension());
     case EXCAVATION_ANNOUNCEMENT:
@@ -211,7 +212,7 @@ public class ApplicationMapper {
       case SHORT_TERM_RENTAL:
         return  ShortTermRentalMapper.jsonToModel((ShortTermRentalJson) applicationJson.getExtension());
       case CABLE_REPORT:
-        return CableReportMapper.jsonToModel((CableReportJson) applicationJson.getExtension());
+        return CableReportMapper.jsonToModel((CableReportJson) applicationJson.getExtension(), applicationJson.getCustomersWithContacts());
       case AREA_RENTAL:
         return AreaRentalMapper.jsonToModel((AreaRentalJson) applicationJson.getExtension());
       case EXCAVATION_ANNOUNCEMENT:
@@ -263,7 +264,7 @@ public class ApplicationMapper {
     customerJson.setRegistryKey(getVisibleRegistryKey(customer.getType(), customer.getRegistryKey()));
     customerJson.setPhone(customer.getPhone());
     customerJson.setEmail(customer.getEmail());
-    customerJson.setPostalAddress(createPostalAddressJson(customer.getPostalAddress()));
+    customerJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(customer.getPostalAddress()));
     customerJson.setActive(customer.isActive());
     return customerJson;
   }
@@ -276,11 +277,17 @@ public class ApplicationMapper {
     customerModel.setRegistryKey(customerJson.getRegistryKey());
     customerModel.setPhone(customerJson.getPhone());
     customerModel.setEmail(customerJson.getEmail());
-    customerModel.setPostalAddress(createPostalAddressModel(customerJson.getPostalAddress()));
+    customerModel.setPostalAddress(ApplicationCommonMapper.createPostalAddressModel(customerJson.getPostalAddress()));
     customerModel.setActive(customerJson.isActive());
     return customerModel;
   }
 
+  private ContactJson createContactJson(Contact contact, Optional<Integer> ordererId) {
+    ContactJson json = createContactJson(contact);
+    json.setOrderer(ordererId.map(id -> id == json.getId()).orElse(false));
+
+    return json;
+  }
   /**
    * Map the given Contact object into ContactJson
    *
@@ -343,7 +350,7 @@ public class ApplicationMapper {
     distributionEntry.setDistributionType(distributionEntryJson.getDistributionType());
     distributionEntry.setName(distributionEntryJson.getName());
     distributionEntry.setEmail(distributionEntryJson.getEmail());
-    distributionEntry.setPostalAddress(createPostalAddressModel(distributionEntryJson.getPostalAddress()));
+    distributionEntry.setPostalAddress(ApplicationCommonMapper.createPostalAddressModel(distributionEntryJson.getPostalAddress()));
     return distributionEntry;
   }
 
@@ -373,26 +380,6 @@ public class ApplicationMapper {
     return tagJsons.stream().map(tag -> tag.getType().toString()).collect(Collectors.toList());
   }
 
-  private PostalAddressJson createPostalAddressJson(PostalAddress postalAddress) {
-    if (postalAddress != null) {
-      PostalAddressJson postalAddressJson = new PostalAddressJson();
-      postalAddressJson.setStreetAddress(postalAddress.getStreetAddress());
-      postalAddressJson.setPostalCode(postalAddress.getPostalCode());
-      postalAddressJson.setCity(postalAddress.getCity());
-      return postalAddressJson;
-    } else {
-      return null;
-    }
-  }
-
-  private PostalAddress createPostalAddressModel(PostalAddressJson postalAddressJson) {
-    if (postalAddressJson != null) {
-      return new PostalAddress(postalAddressJson.getStreetAddress(), postalAddressJson.getPostalCode(), postalAddressJson.getCity());
-    } else {
-      return null;
-    }
-  }
-
   private List<LocationES> createLocationES(List<LocationJson> locationJsons) {
     if (locationJsons != null) {
       return locationJsons.stream()
@@ -417,15 +404,20 @@ public class ApplicationMapper {
     distributionEntryJson.setDistributionType(distributionEntry.getDistributionType());
     distributionEntryJson.setName(distributionEntry.getName());
     distributionEntryJson.setEmail(distributionEntry.getEmail());
-    distributionEntryJson.setPostalAddress(createPostalAddressJson(distributionEntry.getPostalAddress()));
+    distributionEntryJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(distributionEntry.getPostalAddress()));
     return distributionEntryJson;
   }
 
-  private List<CustomerWithContactsJson> createCustomerWithContactsJson(List<CustomerWithContacts> customersWithContacts) {
+  private List<CustomerWithContactsJson> createCustomerWithContactsJson(Application application) {
+    List<CustomerWithContacts> customersWithContacts = application.getCustomersWithContacts();
     List<CustomerWithContactsJson> customerWithContactsJsons = new ArrayList<>();
+    Optional<Integer> orderer = getOrderer(application);
+
     customersWithContacts.forEach(cwc -> {
       CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
-      customerWithContactsJson.setContacts(cwc.getContacts().stream().map(c -> createContactJson(c)).collect(Collectors.toList()));
+      customerWithContactsJson.setContacts(cwc.getContacts().stream()
+              .map(c -> createContactJson(c, orderer))
+              .collect(Collectors.toList()));
       customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer()));
       customerWithContactsJson.setRoleType(cwc.getRoleType());
       customerWithContactsJsons.add(customerWithContactsJson);
@@ -459,4 +451,12 @@ public class ApplicationMapper {
     return user.getAssignedRoles().stream().anyMatch(canSeeSsn::contains);
   }
 
+  private Optional<Integer> getOrderer(Application application) {
+    if (ApplicationType.CABLE_REPORT.equals(application.getType())) {
+      CableReport cr = (CableReport) application.getExtension();
+      return Optional.ofNullable(cr.getOrderer());
+    } else {
+      return Optional.empty();
+    }
+  }
 }

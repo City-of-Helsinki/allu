@@ -17,6 +17,7 @@ public class ContactJson {
   private String email;
   private String phone;
   private boolean isActive;
+  private boolean orderer;
 
   /**
    * in Finnish: Yhteyshenkilön tunniste
@@ -115,5 +116,19 @@ public class ContactJson {
 
   public void setActive(boolean active) {
     isActive = active;
+  }
+
+  /**
+   * In Finnish: Tilaaja
+   * Marks contact as a person who ordered the application
+   * Currently in use only for cable report (Johtoselvityksen tilaaja)
+   * Only one contact per application can be marked as orderer.
+   */
+  public boolean isOrderer() {
+    return orderer;
+  }
+
+  public void setOrderer(boolean orderer) {
+    this.orderer = orderer;
   }
 }

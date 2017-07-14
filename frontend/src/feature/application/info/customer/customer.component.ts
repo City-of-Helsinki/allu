@@ -10,6 +10,7 @@ import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
+import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 

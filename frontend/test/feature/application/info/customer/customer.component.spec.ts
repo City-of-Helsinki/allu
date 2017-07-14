@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MdCardModule} from '@angular/material';
@@ -6,17 +6,27 @@ import {MdCardModule} from '@angular/material';
 import {CustomerComponent} from '../../../../../src/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
 import {CustomerHub} from '../../../../../src/service/customer/customer-hub';
-import {ContactComponent} from '../../../../../src/feature/application/info/contact/contact.component';
 import {CustomerInfoComponent} from '../../../../../src/feature/customerregistry/customer/customer-info.component';
 import {Customer} from '../../../../../src/model/customer/customer';
 import {CustomerWithContacts} from '../../../../../src/model/customer/customer-with-contacts';
 import {CustomerRoleType} from '../../../../../src/model/customer/customer-role-type';
+import {Component, Input} from '@angular/core';
+import {Contact} from '../../../../../src/model/customer/contact';
+import {CustomerHubMock} from '../../../../mocks';
 
 const headerText = 'Hakija';
 
-class CustomerHubMock {
-  searchCustomersByField(fieldName: string, term: string) {}
-  findCustomerActiveContacts(customerId: number) {};
+@Component({
+  selector: 'contact',
+  template: ''
+})
+class ContactComponentMock {
+  @Input() parentForm: FormGroup;
+  @Input() customerId: number;
+  @Input() customerRoleType: string;
+  @Input() contactList: Array<Contact> = [];
+  @Input() readonly: boolean;
+  @Input() contactRequired = false;
 }
 
 describe('CustomerComponent', () => {
@@ -52,7 +62,7 @@ describe('CustomerComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, ReactiveFormsModule, MdCardModule],
-      declarations: [CustomerComponent, ContactComponent, CustomerInfoComponent],
+      declarations: [CustomerComponent, ContactComponentMock, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerHub, useClass: CustomerHubMock}

@@ -2,6 +2,26 @@ import {Directive} from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
 import {Observable} from 'rxjs/Observable';
 import {CurrentUser} from '../src/service/user/current-user';
+import {Application} from '../src/model/application/application';
+import {Contact} from '../src/model/customer/contact';
+import {Subject} from 'rxjs/Subject';
+
+export class ApplicationStateMock {
+  private _application: Application = new Application();
+
+  get application() {
+    return this._application;
+  }
+}
+
+export class CustomerHubMock {
+  public orderer$ = new Subject<Contact>();
+
+  searchCustomersByField(fieldName: string, term: string) {}
+  findCustomerActiveContacts(customerId: number) {};
+  get orderer() { return this.orderer$.asObservable(); };
+  ordererSelected(orderer) {};
+}
 
 export class CurrentUserMock {
   public allowHasRole = true;

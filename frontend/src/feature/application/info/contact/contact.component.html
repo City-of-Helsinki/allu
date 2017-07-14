@@ -1,4 +1,4 @@
-<div [formGroup]="parentForm">
+<div [formGroup]="form">
     <div formArrayName="contacts">
         <div *ngFor="let contact of contacts.controls; let index=index" class="col m6 contact-card">
             <div [formGroupName]="index" class="no-border">
@@ -71,6 +71,13 @@
                                         <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
                                     </md-hint>
                                 </md-input-container>
+                            </div>
+                        </div>
+                        <div class="row form-group" *ngIf="showOrderer" id="orderer">
+                            <div class="col m12">
+                                <md-checkbox formControlName="orderer" (change)="selectOrderer(contact.value)">
+                                    Hakemuksen tilaaja
+                                </md-checkbox>
                             </div>
                         </div>
                     </md-card-content>

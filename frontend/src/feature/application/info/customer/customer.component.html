@@ -34,7 +34,7 @@
         </md-card>
     </div>
 </form>
-<contact #contacts [parentForm]="customerWithContactsForm" [customerId]="customerWithContacts.customerId"
+<contact #contacts [parentForm]="parentForm" [customerId]="customerWithContacts.customerId"
          [contactList]="customerWithContacts.contacts" [customerRoleType]="customerWithContacts.uiRoleType"
          [readonly]="readonly" [contactRequired]="contactRequired">
 </contact>

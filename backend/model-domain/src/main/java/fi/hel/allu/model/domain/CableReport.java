@@ -18,6 +18,7 @@ public class CableReport extends ApplicationExtension {
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
   private ZonedDateTime validityTime;
+  private Integer orderer;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -153,5 +154,19 @@ public class CableReport extends ApplicationExtension {
 
   public void setValidityTime(ZonedDateTime validityTime) {
     this.validityTime = validityTime;
+  }
+
+  /**
+   * In Finnish: Johtoselvityksen tilaaja
+   * Contact who ordered the cable report
+   *
+   * @return id of the contact who ordered the cable report
+   */
+  public Integer getOrderer() {
+    return orderer;
+  }
+
+  public void setOrderer(Integer orderer) {
+    this.orderer = orderer;
   }
 }
