@@ -7,6 +7,7 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -222,8 +223,10 @@ public class DecisionService {
     CableReportJson cableReportJson = (CableReportJson) applicationJson.getExtension();
     if (cableReportJson != null) {
       cableReportJson.setValidityTime(ZonedDateTime.now().plusMonths(1));
-      decisionJson.setCableReportValidityTime(cableReportJson.getValidityTime());
+      decisionJson.setCableReportValidUntil(formatDateWithDelta(cableReportJson.getValidityTime(), 0));
+      decisionJson.setWorkDescription(cableReportJson.getWorkDescription());
       applicationServiceComposer.updateApplication(applicationJson.getId(), applicationJson);
+      /* TODO: cable info entries */
     }
   }
 
@@ -243,7 +246,7 @@ public class DecisionService {
     Optional<CustomerWithContactsJson> cwcOpt =
         applicationJson.getCustomersWithContacts().stream().filter(cwc -> CustomerRoleType.APPLICANT.equals(cwc.getRoleType())).findFirst();
 
-    final List<String> addressLines = new ArrayList();
+    final List<String> addressLines = new ArrayList<>();
     cwcOpt.ifPresent(cwc -> {
       addressLines.addAll(
           Arrays.asList(
@@ -371,10 +374,12 @@ public class DecisionService {
   // Get the stylesheet name to use for given application.
   private String styleSheetName(ApplicationJson application) {
     /*
-     * FIXME: only EVENT and SHORT_TERM_RENTAL are supported. For others, use
-     * "DUMMY"
+     * FIXME: only EVENT, SHORT_TERM_RENTAL, and CABLE_REPORT are supported. For
+     * others, use "DUMMY"
      */
-    if (application.getType() == ApplicationType.EVENT || application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
+    if (application.getType() == ApplicationType.EVENT
+        || application.getType() == ApplicationType.SHORT_TERM_RENTAL
+        || application.getType() == ApplicationType.CABLE_REPORT) {
       return application.getType().name();
     }
     return "DUMMY";

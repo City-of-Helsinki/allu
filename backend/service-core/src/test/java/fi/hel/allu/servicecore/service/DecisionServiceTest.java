@@ -4,6 +4,7 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -125,7 +126,7 @@ public class DecisionServiceTest {
     // - PDF creation was executed with the right stylesheet name :
     Mockito.verify(restTemplate).postForObject(Matchers.eq("PdfServiceUrl"), Mockito.anyObject(),
         Matchers.eq(byte[].class),
-        Matchers.eq("DUMMY")); // FIXME: "CABLE_REPORT" not implemented yet.
+        Matchers.eq("CABLE_REPORT"));
     // - Validity time was stored to model:
     final ArgumentCaptor<ApplicationJson> msgCaptor = ArgumentCaptor.forClass(ApplicationJson.class);
     Mockito.verify(applicationServiceComposer).updateApplication(Matchers.eq(123), msgCaptor.capture());

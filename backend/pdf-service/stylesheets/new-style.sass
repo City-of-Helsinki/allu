@@ -1,0 +1,158 @@
+$logo-width: 13%
+$h1-font-size: 11pt
+$h2-font-size: 10pt
+$p-font-size: 10pt
+$p-small-font-size: 8pt
+$h1-footer-font-size: 11px
+$p-footer-font-size: 11px
+
+html,
+button,
+input,
+select,
+textarea
+  color: #222
+
+img
+  width: 100%
+
+html
+  font-family: Arial
+
+h1
+  font-size: $h1-font-size
+
+h2
+  font-size: $h2-font-size
+
+p
+  font-size: $p-font-size
+
+hr
+  width: 100%
+  margin-bottom: 5px
+
+.header
+  margin-left: 10px
+  margin-right: 10px
+  margin-top: 30px
+  padding: 10px 0px
+  float: left
+  width: 95%
+
+  div
+    display: inline-block
+    vertical-align: top
+
+  p
+    margin: 0.1em
+
+  .logo
+    width: $logo-width
+    float: left
+    padding-right: 10pt
+
+  .department
+    width: 49% - $logo-width
+    float: left
+
+  .half-right
+    width: 49%
+    float: right
+
+    h1
+      display: inline
+      float: left
+      margin: 0.1em
+    .page
+      margin: 0.1em
+      display: inline
+      float: right
+      font-style: normal
+
+    div.id
+      clear: both
+      display: block
+
+      dt
+        display: inline-block
+        width: 30%
+        font-size: $p-small-font-size
+      dd
+        display: inline
+        font-size: $p-font-size
+      dd:after
+        display: block
+        content: ''
+
+.body
+
+  .boxed
+    border: solid black thin
+    padding: 0 10px
+    margin: 12pt 0
+  h1, h2, p, ul
+    margin-bottom: 0px
+    margin-top: 0px
+  li
+    margin-top: 2pt
+  hr
+    border-style: none
+    margin-bottom: 0px
+  hr.signature
+    border-bottom-style: solid
+    border-bottom-width: thin
+    margin-top: 1em
+  .half-left
+    display: inline-block
+    vertical-align: top
+    width: 47%
+  .half-right
+    display: inline-block
+    vertical-align: top
+    width: 47%
+  .threecols-left
+    display: inline-block
+    vertical-align: top
+    margin-right: 10px
+    width: 25%
+  .threecols-center
+    display: inline-block
+    vertical-align: top
+    margin-right: 10px
+    width: 45%
+  .threecols-right
+    display: inline-block
+    vertical-align: top
+    width: 25%
+
+.footer
+  padding-bottom: 30px
+  width: 100%
+  div
+    width: 15%
+    display: block
+    float: left
+    &.visit
+      width: 24%
+    &.contact
+      width: 24%
+    &.logo
+      width: $logo-width
+      float: right
+    h1
+      margin-top: 0
+      margin-bottom: 0
+      font-size: $h1-footer-font-size
+    p
+      margin-top: 0
+      margin-bottom: 0
+      font-size: $p-footer-font-size
+
+.bottom
+  border-color: white
+  border-top: white
+  border-left: white
+  border-right: white
+  border-bottom: white
+  padding-bottom: 20px
