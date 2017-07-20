@@ -186,7 +186,7 @@ public class CustomerService {
     return resultList;
   }
 
-  private List<CustomerJson> getCustomersById(List<Integer> customerIds) {
+  public List<CustomerJson> getCustomersById(List<Integer> customerIds) {
     Customer[] customers = restTemplate.postForObject(
         applicationProperties.getCustomersByIdUrl(),
         customerIds,

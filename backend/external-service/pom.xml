@@ -13,12 +13,22 @@
         <dependency>
             <groupId>fi.hel.allu</groupId>
             <artifactId>external-domain</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>fi.hel.allu</groupId>
             <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>service-core</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.hel.allu</groupId>
+            <artifactId>service-core-domain</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

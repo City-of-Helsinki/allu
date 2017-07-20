@@ -1,4 +1,4 @@
-package fi.hel.allu.model.domain.serialization;
+package fi.hel.allu.common.domain.serialization;
 
 import java.io.IOException;
 

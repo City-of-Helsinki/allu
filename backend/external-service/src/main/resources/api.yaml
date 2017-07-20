@@ -17,7 +17,7 @@ tags:
 schemes:
   - http
 paths:
-  /applications:
+  /v1/applications:
     post:
       tags:
         - applications
@@ -140,6 +140,14 @@ definitions:
       - PROPERTY_DEVELOPER
       - CONTRACTOR
       - REPRESENTATIVE
+  TrafficArrangementImpedimentType:
+    description: Type of the traffic impediment
+    type: string
+    enum:
+      - NO_IMPEDIMENT
+      - SIGNIFICANT_IMPEDIMENT
+      - IMPEDIMENT_FOR_HEAVY_TRAFFIC
+      - INSIGNIFICANT_IMPEDIMENT
   ApplicationExt:
     type: object
     required:
@@ -162,6 +170,10 @@ definitions:
         type: array
         items:
           $ref: '#/definitions/CustomerWithContactsExt'
+      locations:
+        type: array
+        items:
+          $ref: '#/definitions/LocationExt'
       status:
         $ref: '#/definitions/StatusType'
       type:
@@ -181,13 +193,13 @@ definitions:
         format: date-time
       startTime:
         description: >-
-          start time of the the application. This is automatically calculated
-          from location data
+          start time of the application. This is automatically calculated from
+          location data
         type: string
         format: date-time
       endTime:
         description: >-
-          end time of the the application. This is automatically calculated from
+          end time of the application. This is automatically calculated from
           location data
         type: string
         format: date-time
@@ -209,15 +221,84 @@ definitions:
       roleType:
         $ref: '#/definitions/CustomerRoleType'
       customer:
+        description: Id of the customer
         type: integer
         format: int32
-        description: Id of the customer
       contacts:
         description: Contacts of the customer
         type: array
         items:
           type: integer
           format: int32
+  Geometry:
+    description: Any GeoJSON
+    type: object
+  LocationExt:
+    description: Description of time and location of an application
+    type: object
+    properties:
+      id:
+        description: Id of the location
+        type: integer
+        format: int32
+      locationKey:
+        description: >-
+          If an application has multiple locations (applies to limited
+          application types), location key contains the number of location
+        type: integer
+        format: int32
+      locationVersion:
+        description: Version of the location
+        type: integer
+        format: int32
+      startTime:
+        description: Start time of the use of location
+        type: string
+        format: date-time
+      endTime:
+        description: End time of the use of location
+        type: string
+        format: date-time
+      geometry:
+        $ref: '#/definitions/Geometry'
+      area:
+        description: Area in square meters calculated from the geometry
+        type: number
+        format: double
+      areaOverride:
+        description: >-
+          Area in square meters as defined manually. If defined, calculated area
+          is not used
+        type: number
+        format: double
+      postalAddress:
+        $ref: '#/definitions/PostalAddressExt'
+      paymentTariff:
+        description: Payment tariff calculated from the location geometry
+        type: integer
+        format: int32
+      paymentTariffOverride:
+        description: >-
+          Payment tariff set manually. If defined, calculated payment tariff is
+          not used
+        type: integer
+        format: int32
+      underpass:
+        description: 'True, if it''s possible to pass the location below construction area'
+        type: boolean
+  PostalAddressExt:
+    description: Postal address
+    type: object
+    properties:
+      streetAddress:
+        description: Street address. For example Mannerheimintie 1
+        type: string
+      postalCode:
+        description: Postal code of address. For example 00100
+        type: string
+      city:
+        description: City of postal address. For example Helsinki
+        type: string
   ApplicationExtensionExt:
     description: >-
       Base class for application extensions. Application extension contains
@@ -286,3 +367,5 @@ definitions:
           trafficArrangements:
             description: Information regarding traffic arrangements
             type: string
+          trafficArrangementImpedimentType:
+            $ref: '#/definitions/TrafficArrangementImpedimentType'

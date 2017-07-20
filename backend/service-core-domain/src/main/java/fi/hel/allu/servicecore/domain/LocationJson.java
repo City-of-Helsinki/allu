@@ -5,8 +5,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import fi.hel.allu.common.validator.NotFalse;
-import fi.hel.allu.model.domain.serialization.GeometryDeserializerProxy;
-import fi.hel.allu.model.domain.serialization.GeometrySerializerProxy;
+import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
+import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
 
 import org.geolatte.geom.Geometry;
 

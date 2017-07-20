@@ -1,22 +1,18 @@
 package fi.hel.allu.servicecore.domain;
 
 import com.greghaskins.spectrum.Spectrum;
-
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.*;
-
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.CableReportJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.NoteJson;
+import fi.hel.allu.common.types.ApplicationSpecifier;
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.common.types.PublicityType;
 import org.junit.runner.RunWith;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
-
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Set;
@@ -56,6 +52,10 @@ public class ApplicationJsonSpec {
           applicationJson.setDecisionPublicityType(PublicityType.CONFIDENTIAL);
           CustomerWithContactsJson customer = new CustomerWithContactsJson();
           applicationJson.setCustomersWithContacts(Collections.singletonList(customer));
+          LocationJson locationJson = new LocationJson();
+          locationJson.setStartTime(ZonedDateTime.now().minusDays(1));
+          locationJson.setEndTime(ZonedDateTime.now());
+          applicationJson.setLocations(Collections.singletonList(locationJson));
         });
         context("Without added errors", () -> {
           it("should validate ok", () -> {

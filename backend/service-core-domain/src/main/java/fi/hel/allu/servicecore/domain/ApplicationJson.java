@@ -46,6 +46,7 @@ public class ApplicationJson {
   private ZonedDateTime recurringEndTime;
   @NotEmpty(message = "{application.customersWithContacts}")
   private List<CustomerWithContactsJson> customersWithContacts;
+  @NotEmpty(message = "{application.locations}")
   @Valid
   private List<LocationJson> locations;
   @NotNull(message = "{application.extension}")

@@ -1,4 +1,4 @@
-package fi.hel.allu.common.types;
+package fi.hel.allu.common.domain.types;
 
 public enum TrafficArrangementImpedimentType {
     NO_IMPEDIMENT, // Ei haittaa

@@ -123,6 +123,16 @@ public class ContactService {
     return allContacts;
   }
 
+  public List<ContactJson> getContactsById(List<Integer> contactIds) {
+    Contact[] contacts = restTemplate.postForObject(
+        applicationProperties.getContactsByIdUrl(),
+        contactIds,
+        Contact[].class);
+    List<ContactJson> resultList = Arrays.stream(contacts).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
+    SearchService.orderByIdList(contactIds, resultList, (contact) -> contact.getId());
+    return resultList;
+  }
+
   /**
    * Find all contacts of applications having given contacts.
    *
@@ -150,15 +160,4 @@ public class ContactService {
   private ContactES mapContact(Contact contact) {
     return new ContactES(contact.getId(), contact.getName(), contact.isActive());
   }
-
-  private List<ContactJson> getContactsById(List<Integer> contactIds) {
-    Contact[] contacts = restTemplate.postForObject(
-        applicationProperties.getContactsByIdUrl(),
-        contactIds,
-        Contact[].class);
-    List<ContactJson> resultList = Arrays.stream(contacts).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
-    SearchService.orderByIdList(contactIds, resultList, (contact) -> contact.getId());
-    return resultList;
-  }
-
 }

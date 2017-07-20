@@ -28,7 +28,7 @@ public abstract class ApplicationExtensionExt {
    */
   public abstract ApplicationType getApplicationType();
 
-  // TODO: implement once the faith of application specifiers has been decided
+  // TODO: implement once the fate of application specifiers has been decided
 //  /**
 //   * Get the specifiers for the application extension.
 //   *

@@ -1,7 +1,7 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.TrafficArrangementImpedimentType;
+import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 
 import java.time.ZonedDateTime;
 

@@ -10,4 +10,16 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
     <artifactId>common-domain</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>org.geolatte</groupId>
+            <artifactId>geolatte-common</artifactId>
+            <version>0.7.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+            <version>1.9.13</version>
+        </dependency>
+    </dependencies>
 </project>

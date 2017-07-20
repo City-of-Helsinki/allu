@@ -162,7 +162,7 @@ create table allu.location (
   city_district_id_override integer references allu.city_district(id),
   payment_tariff integer,                   -- the payment tariff (maksuluokka) of the location
   payment_tariff_override integer,          -- possible user defined override for the payment tariff
-  underpass boolean not null,               -- altakuljettava i.e. it's possible to pass through the reserved area without obstacles
+  underpass boolean not null default false, -- altakuljettava i.e. it's possible to pass through the reserved area without obstacles
   unique (application_id, location_key, location_version));
 
 create table allu.location_flids (

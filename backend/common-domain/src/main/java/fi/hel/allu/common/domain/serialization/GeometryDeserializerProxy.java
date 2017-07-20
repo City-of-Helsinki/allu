@@ -1,23 +1,17 @@
-package fi.hel.allu.model.domain.serialization;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.BigInteger;
-
-import org.codehaus.jackson.Base64Variant;
-import org.codehaus.jackson.JsonLocation;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.JsonStreamContext;
-import org.codehaus.jackson.JsonToken;
-import org.codehaus.jackson.ObjectCodec;
-import org.geolatte.common.dataformats.json.jackson.GeometryDeserializer;
-import org.geolatte.common.dataformats.json.jackson.JsonMapper;
-import org.geolatte.geom.Geometry;
+package fi.hel.allu.common.domain.serialization;
 
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
+import org.codehaus.jackson.*;
+import org.geolatte.common.dataformats.json.jackson.GeometryDeserializer;
+import org.geolatte.common.dataformats.json.jackson.JsonMapper;
+import org.geolatte.geom.Geometry;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 public class GeometryDeserializerProxy extends JsonDeserializer<Geometry> {
 

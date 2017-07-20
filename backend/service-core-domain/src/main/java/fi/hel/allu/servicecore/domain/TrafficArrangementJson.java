@@ -1,7 +1,7 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.TrafficArrangementImpedimentType;
+import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 
 import javax.validation.constraints.NotNull;
 import java.time.ZonedDateTime;

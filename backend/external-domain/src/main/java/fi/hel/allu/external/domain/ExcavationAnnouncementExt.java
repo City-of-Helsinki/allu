@@ -1,12 +1,12 @@
 package fi.hel.allu.external.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.TrafficArrangementImpedimentType;
 
 import java.time.ZonedDateTime;
 
 /**
  * Allu Excavation announcement (Kaivuilmoitus) specific data, which is exposed to external users.
- * .
  */
 public class ExcavationAnnouncementExt extends ApplicationExtensionExt {
   private Boolean pksCard;
@@ -22,8 +22,7 @@ public class ExcavationAnnouncementExt extends ApplicationExtensionExt {
   private Integer cableReportId;
   private String additionalInfo;
   private String trafficArrangements;
-  // TODO: Is this part of the public interface?
-//  private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
+  private TrafficArrangementImpedimentType trafficArrangementImpedimentType;
 
 
   @Override
@@ -175,14 +174,14 @@ public class ExcavationAnnouncementExt extends ApplicationExtensionExt {
     this.trafficArrangements = trafficArrangements;
   }
 
-//  /**
-//   * In Finnish: Liikennejärjestelyn haitta.
-//   */
-//  public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
-//    return trafficArrangementImpedimentType;
-//  }
-//
-//  public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
-//    this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
-//  }
+  /**
+   * In Finnish: Liikennejärjestelyn haitta.
+   */
+  public TrafficArrangementImpedimentType getTrafficArrangementImpedimentType() {
+    return trafficArrangementImpedimentType;
+  }
+
+  public void setTrafficArrangementImpedimentType(TrafficArrangementImpedimentType trafficArrangementImpedimentType) {
+    this.trafficArrangementImpedimentType = trafficArrangementImpedimentType;
+  }
 }

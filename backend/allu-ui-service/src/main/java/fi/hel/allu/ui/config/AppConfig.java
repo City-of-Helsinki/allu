@@ -2,7 +2,6 @@ package fi.hel.allu.ui.config;
 
 import fi.hel.allu.common.controller.handler.ServiceResponseErrorHandler;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.ui.security.PreAuthorizeEnforcerInterceptor;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Value;
