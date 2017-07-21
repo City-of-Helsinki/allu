@@ -1,27 +1,33 @@
 package fi.hel.allu.ui.security;
 
+import com.google.common.collect.Sets;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.servicecore.security.TokenUtil;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.UserService;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.codec.Base64;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.UnsupportedEncodingException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
+import static org.hamcrest.Matchers.containsInAnyOrder;
+import static org.junit.Assert.*;
 
 public class TokenAuthenticationServiceTest {
 
@@ -37,7 +43,6 @@ public class TokenAuthenticationServiceTest {
   private UserService userService;
   private RestTemplate restTemplate;
   private ApplicationProperties applicationProperties;
-  private TokenHandler tokenHandler;
   private TokenAuthenticationService tokenAuthenticationService;
 
   private final String clientId = "client123";
@@ -49,17 +54,7 @@ public class TokenAuthenticationServiceTest {
   private final String oauth2TokenUrl = "https://token.url";
   private TokenAuthenticationService.TokenWrapper tokenWrapper;
 
-  private UserJson userJson = new UserJson(
-      1,
-      USER_NAME,
-      "firstname lastname",
-      "mail@some.fi",
-      "notitle",
-      true,
-      null,
-      Collections.emptyList(),
-      Collections.emptyList(),
-      Collections.emptyList());
+  private UserJson userJson;
 
   @Before
   public void init() {
@@ -71,9 +66,26 @@ public class TokenAuthenticationServiceTest {
     Mockito.when(applicationProperties.getOauth2ClientId()).thenReturn(clientId);
     Mockito.when(applicationProperties.getOauth2RedirectUri()).thenReturn(redirectUri);
     Mockito.when(applicationProperties.getOauth2Certificate()).thenReturn(certificateStr);
+    Mockito.when(applicationProperties.getJwtSecret()).thenReturn("test secret");
+    Mockito.when(applicationProperties.getJwtExpirationHours()).thenReturn(12);
     tokenWrapper = new TokenAuthenticationService.TokenWrapper();
-    tokenAuthenticationService = new TokenAuthenticationService(applicationProperties, restTemplate, userService, tokenHandler);
+    tokenAuthenticationService = new TokenAuthenticationService(applicationProperties, restTemplate, userService);
     tokenAuthenticationService.initializePublicKey();
+
+    List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
+    roles.add(new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()));
+    userJson = new UserJson(
+        1,
+        USER_NAME,
+        "John Doe",
+        "email",
+        "Johtaja",
+        true,
+        null,
+        Collections.emptyList(),
+        Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN),
+        Collections.emptyList());
   }
 
   private String createToken(List<String> groups) throws Exception {
@@ -136,5 +148,53 @@ public class TokenAuthenticationServiceTest {
     Mockito.when(restTemplate.postForObject(oauth2TokenUrl, codeBody, TokenAuthenticationService.TokenWrapper.class))
         .thenThrow(new IllegalArgumentException());
     tokenAuthenticationService.authenticateWithOAuth2Code(code);
+  }
+
+  @Test(expected = IllegalArgumentException.class)
+  public void testCreateJWTWithoutPrinciple() {
+    Set<GrantedAuthority> roles = Sets.newHashSet(new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
+    UserJson userNullId = new UserJson();
+    tokenAuthenticationService.createTokenForUser(userNullId);
+  }
+
+  @Test
+  public void testCreateValidJWT() {
+    String token = tokenAuthenticationService.createTokenForUser(userJson);
+    assertNotNull("token must not be null", token);
+    JwtParser parser = Jwts.parser().setSigningKey(applicationProperties.getJwtSecret());
+    assertTrue("token must be signed", parser.isSigned(token));
+  }
+
+  @Test
+  public void testParseJWT() throws UnsupportedEncodingException {
+    String token = tokenAuthenticationService.createTokenForUser(userJson);
+    User alluUser = (User) TokenUtil.parseUserFromToken(
+        new String(java.util.Base64.getEncoder().encode(applicationProperties.getJwtSecret().getBytes()), "UTF-8"),
+        TokenAuthenticationService.ROLES,
+        token);
+    assertNotNull("User must not be null", alluUser);
+    assertEquals(USER_NAME, alluUser.getUsername());
+    assertEquals("", alluUser.getPassword());
+    assertEquals(2, alluUser.getAuthorities().size());
+    Set<GrantedAuthority> roles = Sets.newHashSet(
+        new SimpleGrantedAuthority(RoleType.ROLE_ADMIN.toString()),
+        new SimpleGrantedAuthority(RoleType.ROLE_VIEW.toString()));
+    assertThat(roles, containsInAnyOrder(alluUser.getAuthorities().toArray()));
+  }
+
+  @Test(expected = ExpiredJwtException.class)
+  public void testExpiredJWT() throws UnsupportedEncodingException {
+    Mockito.when(applicationProperties.getJwtExpirationHours()).thenReturn(-1);
+    String token = tokenAuthenticationService.createTokenForUser(userJson);
+    TokenUtil.parseUserFromToken(
+        new String(java.util.Base64.getEncoder().encode(applicationProperties.getJwtSecret().getBytes()), "UTF-8"),
+        TokenAuthenticationService.ROLES,
+        token);
+  }
+
+  @Test(expected = SignatureException.class)
+  public void testInvalidJWT() {
+    String token = tokenAuthenticationService.createTokenForUser(userJson);
+    TokenUtil.parseUserFromToken(applicationProperties.getJwtSecret() + "invalid!", TokenAuthenticationService.ROLES, token);
   }
 }

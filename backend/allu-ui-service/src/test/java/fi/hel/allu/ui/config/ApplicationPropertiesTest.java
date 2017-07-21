@@ -7,8 +7,20 @@ public class ApplicationPropertiesTest {
 
   @Test
   public void testCreateValidUrl() throws Exception {
-    ApplicationProperties props = new ApplicationProperties(false, "localhost/geocode", "9090", "localhost", "9090", "localhost",
-        "9090", null, null, null);
+    ApplicationProperties props = new ApplicationProperties(
+        false,
+        "localhost/geocode",
+        "9090",
+        "localhost",
+        "9090",
+        "jwtsecret",
+        123,
+        "localhost",
+        "9090",
+        null,
+        null,
+        null,
+        null);
     String result = props.getStreetGeocodeUrl();
     Assert.assertEquals("localhost/geocode", result);
   }

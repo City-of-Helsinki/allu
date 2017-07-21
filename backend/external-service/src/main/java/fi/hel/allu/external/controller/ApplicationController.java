@@ -7,6 +7,7 @@ import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,7 +29,7 @@ public class ApplicationController {
   ApplicationServiceComposer applicationServiceComposer;
 
   @RequestMapping(method = RequestMethod.POST)
-//  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
+  @PreAuthorize("hasAnyRole('SOMEROLE')")
   public ResponseEntity<ApplicationExt> create(@Valid @RequestBody ApplicationExt application) {
     ApplicationJson applicationJson = applicationExtMapper.createApplicationJson(application);
     ApplicationJson createdApplicationJson = applicationServiceComposer.createApplication(applicationJson);

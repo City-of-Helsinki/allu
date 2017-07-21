@@ -2,25 +2,31 @@ package fi.hel.allu.external.config;
 
 import fi.hel.allu.common.controller.handler.ServiceResponseErrorHandler;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.security.PreAuthorizeEnforcerInterceptor;
 import org.hibernate.validator.constraints.NotEmpty;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Configuration
 @EnableAutoConfiguration
 public class AppConfig extends WebMvcConfigurerAdapter {
 
-  // TODO: add later, when authorization is added to external-service
-//  @Override
-//  public void addInterceptors(InterceptorRegistry registry) {
-//    registry.addInterceptor(new PreAuthorizeEnforcerInterceptor());
-//  }
+  @Autowired
+  private PreAuthorizeEnforcerInterceptor preAuthorizeEnforcerInterceptor;
+
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(preAuthorizeEnforcerInterceptor);
+  }
 
   @Bean
   public RestTemplate restTemplate() {
@@ -31,6 +37,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
   @Bean
   public fi.hel.allu.servicecore.config.ApplicationProperties serviceCoreApplicationProperties(
+      @Value("${jwt.secret}") @NotEmpty String jwtSecret,
+      @Value("${jwt.expiration.hours:12}") @NotNull Integer jwtExpirationHours,
       @Value("${model.service.host}") @NotEmpty String modelServiceHost,
       @Value("${model.service.port}") @NotEmpty String modelServicePort,
       @Value("${search.service.host}") @NotEmpty String searchServiceHost,
@@ -38,8 +46,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
       @Value("${pdf.service.host}") @NotEmpty String pdfServiceHost,
       @Value("${pdf.service.port}") @NotEmpty String pdfServicePort,
       @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
-      @Value("${email.sender.address}") @NotEmpty String emailSenderAddress) {
+      @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
+      @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
     return new ApplicationProperties(
+        jwtSecret,
+        jwtExpirationHours,
         modelServiceHost,
         modelServicePort,
         searchServiceHost,
@@ -47,7 +58,8 @@ public class AppConfig extends WebMvcConfigurerAdapter {
         pdfServiceHost,
         pdfServicePort,
         emailAllowedAddresses,
-        emailSenderAddress);
+        emailSenderAddress,
+        anonymousAccessPaths);
   }
 
 }

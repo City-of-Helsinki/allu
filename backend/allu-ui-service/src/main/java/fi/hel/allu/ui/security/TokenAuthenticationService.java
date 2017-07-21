@@ -1,12 +1,16 @@
 package fi.hel.allu.ui.security;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.ui.config.ApplicationProperties;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.security.TokenUtil;
+import fi.hel.allu.servicecore.security.UserAuthentication;
+import fi.hel.allu.servicecore.service.AuthenticationServiceInterface;
 import fi.hel.allu.servicecore.service.UserService;
+import fi.hel.allu.ui.config.ApplicationProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +25,18 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
-public class TokenAuthenticationService {
+public class TokenAuthenticationService extends AuthenticationServiceInterface {
   private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationService.class);
-
-  private static final String AUTH_HEADER_NAME = "Authorization";
 
   private static final String OAUTH2_CLIENT_ID_PARAM = "client_id";
   private static final String OAUTH2_REDIRECT_URI_PARAM = "redirect_uri";
@@ -47,23 +49,23 @@ public class TokenAuthenticationService {
   private static final String ADFS_GROUP = "group";
   private static final String ADFS_ALLU_GROUP_NAME = "sg_HKR_Allu";
 
-  private TokenHandler tokenHandler;
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
 
   private PublicKey publicKey;
 
+  public static final String EMAIL = "emailAddress";
+  public static final String ROLES = "alluRoles";
+
   @Autowired
   public TokenAuthenticationService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
-      UserService userService,
-      TokenHandler tokenHandler) {
+      UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
-    this.tokenHandler = tokenHandler;
   }
 
   @PostConstruct
@@ -78,6 +80,7 @@ public class TokenAuthenticationService {
     }
   }
 
+  @Override
   public Authentication getAuthentication(HttpServletRequest request) {
     if (request.getMethod().equals(HttpMethod.OPTIONS.name())) {
       logger.debug("OPTIONS is always allowed");
@@ -85,7 +88,7 @@ public class TokenAuthenticationService {
     }
     final String token = request.getHeader(AUTH_HEADER_NAME);
     if (token != null && token.startsWith("Bearer ")) {
-      final User user = tokenHandler.parseUserFromToken(token.replaceFirst("^Bearer ", ""));
+      final User user = TokenUtil.parseUserFromToken(getBase64EncodedJWTSecret(), ROLES, token.replaceFirst("^Bearer ", ""));
       if (user != null) {
         return new UserAuthentication(user);
       }
@@ -93,13 +96,30 @@ public class TokenAuthenticationService {
     return null;
   }
 
-  public boolean isEmptyAuthentication(HttpServletRequest request) {
-    final String token = request.getHeader(AUTH_HEADER_NAME);
-    if (token == null || token.isEmpty()) {
-      return true;
-    } else {
-      return false;
+  @Override
+  public boolean isAnonymousAccessAllowedForPath(String path) {
+    return applicationProperties.getAnonymousAccessPaths().contains(path);
+  }
+
+  /**
+   * Create a token using the given parameters and sign it using the application’s secret key.
+   *
+   * @param user User that contains principal that can be used to identify the user related to the JWT.
+   * @return signed token
+   */
+  public String createTokenForUser(UserJson user) {
+    if (user == null || user.getUserName() == null || user.getUserName().trim().length() == 0) {
+      throw new IllegalArgumentException("User principal name must not be null");
     }
+    LocalDateTime dateTimeToConvert = LocalDateTime.now().plusHours(applicationProperties.getJwtExpirationHours());
+    Date convertToDate = Date.from(dateTimeToConvert.atZone(ZoneId.systemDefault()).toInstant());
+    return Jwts.builder()
+        .setExpiration(convertToDate)
+        .setSubject(user.getUserName())
+        .claim(ROLES, user.getAssignedRoles())
+        .claim(EMAIL, user.getEmailAddress())
+        .signWith(SignatureAlgorithm.HS512, getBase64EncodedJWTSecret())
+        .compact();
   }
 
   /**
@@ -134,6 +154,16 @@ public class TokenAuthenticationService {
       }
     }
     return Optional.ofNullable(userJson);
+  }
+
+
+  private String getBase64EncodedJWTSecret() {
+    try {
+      return new String(java.util.Base64.getEncoder().encode(applicationProperties.getJwtSecret().getBytes()), "UTF-8");
+    } catch (UnsupportedEncodingException e) {
+      // should never happen
+      throw new RuntimeException(e);
+    }
   }
 
   /**
@@ -182,7 +212,6 @@ public class TokenAuthenticationService {
   private String createOAuth2Param(String paramName, String paramValue) {
     return paramName + "=" + paramValue;
   }
-
 
   /**
    * JSON mapping for ADFS JWT: {"access_token":"...","token_type":"bearer","expires_in":3600}

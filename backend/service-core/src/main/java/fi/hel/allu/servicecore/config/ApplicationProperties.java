@@ -6,6 +6,8 @@ import java.util.List;
 
 public class ApplicationProperties {
 
+  private String jwtSecret;
+  private Integer jwtExpirationHours;
   private String modelServiceHost;
   private String modelServicePort;
   private String searchServiceHost;
@@ -14,8 +16,11 @@ public class ApplicationProperties {
   private String pdfServicePort;
   private List<String> emailAllowedAddresses;
   private String emailSenderAddress;
+  private List<String> anonymousAccessPaths;
 
   public ApplicationProperties(
+      String jwtSecret,
+      Integer jwtExpirationHours,
       String modelServiceHost,
       String modelServicePort,
       String searchServiceHost,
@@ -23,7 +28,10 @@ public class ApplicationProperties {
       String pdfServiceHost,
       String pdfServicePort,
       List<String> emailAllowedAddresses,
-      String emailSenderAddress) {
+      String emailSenderAddress,
+      List<String> anonymousAccessPaths) {
+    this.jwtSecret = jwtSecret;
+    this.jwtExpirationHours = jwtExpirationHours;
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -32,6 +40,7 @@ public class ApplicationProperties {
     this.pdfServicePort = pdfServicePort;
     this.emailAllowedAddresses = emailAllowedAddresses;
     this.emailSenderAddress = emailSenderAddress;
+    this.anonymousAccessPaths = anonymousAccessPaths;
   }
 
   public static final String PATH_PREFIX = "http://";
@@ -95,6 +104,24 @@ public class ApplicationProperties {
    * PDF-service path to generate pdf
    */
   public static final String PATH_PDF_GENERATE = "/generate?stylesheet={stylesheet}";
+
+  /**
+   * Returns JWT secret key used to sign tokens.
+   *
+   * @return  JWT secret key used to sign tokens.
+   */
+  public String getJwtSecret() {
+    return jwtSecret;
+  }
+
+  /**
+   * Returns the expiration time of JWT.
+   *
+   * @return  the expiration time of JWT.
+   */
+  public Integer getJwtExpirationHours() {
+    return jwtExpirationHours;
+  }
 
   /**
    * Create absolute url to model-service. Host and port values are read from
@@ -783,5 +810,15 @@ public class ApplicationProperties {
    */
   public String getEmailSenderAddress() {
     return emailSenderAddress;
+  }
+
+  /**
+   * Get list of (url) paths allowed to be accessed by anonymous users. Controller methods bound to these won't be checked against normal
+   * security measures.
+   *
+   * @return list of (url) paths allowed to be accessed by anonymous users.
+   */
+  public List<String> getAnonymousAccessPaths() {
+    return anonymousAccessPaths;
   }
 }

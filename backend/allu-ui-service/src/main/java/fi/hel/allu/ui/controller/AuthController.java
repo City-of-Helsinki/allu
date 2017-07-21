@@ -1,8 +1,8 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.servicecore.domain.UserJson;
-import fi.hel.allu.ui.security.TokenHandler;
 import fi.hel.allu.servicecore.service.UserService;
+import fi.hel.allu.ui.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +17,9 @@ import java.time.ZonedDateTime;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-  @Autowired
-  TokenHandler tokenHandler;
 
+  @Autowired
+  TokenAuthenticationService tokenAuthenticationService;
   @Autowired
   UserService userService;
 
@@ -27,7 +27,7 @@ public class AuthController {
   public ResponseEntity<String> login(@RequestBody TempLogin user) {
     UserJson userJson = userService.findUserByUserName(user.userName);
     userService.setLastLogin(userJson.getId(), ZonedDateTime.now());
-    return new ResponseEntity<String>(tokenHandler.createTokenForUser(userJson), HttpStatus.OK);
+    return new ResponseEntity<String>(tokenAuthenticationService.createTokenForUser(userJson), HttpStatus.OK);
   }
 
   /**
