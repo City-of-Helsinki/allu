@@ -70,6 +70,8 @@ public class DecisionJson {
 
   private String workDescription;
 
+  private List<CableInfoTexts> cableInfoTexts;
+
   public boolean isDraft() {
     return isDraft;
   }
@@ -418,6 +420,17 @@ public class DecisionJson {
 
   public void setWorkDescription(String workDescription) {
     this.workDescription = workDescription;
+  }
+
+  /*
+   * Get the cable info entries
+   */
+  public List<CableInfoTexts> getCableInfoEntries() {
+    return cableInfoTexts;
+  }
+
+  public void setCableInfoEntries(List<CableInfoTexts> cableInfoTexts) {
+    this.cableInfoTexts = cableInfoTexts;
   }
 
 }
