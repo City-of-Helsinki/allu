@@ -5,14 +5,16 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
+
 import fi.hel.allu.QPostalAddress;
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.model.domain.PostalAddress;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,7 +86,9 @@ public class CustomerDao {
     QPostalAddress contactPostalAddress = new QPostalAddress("contactPostalAddress");
 
     List<Tuple> tuples = queryFactory
-        .select(applicationCustomer.customerRoleType, customerBean, bean(PostalAddress.class, customerPostalAddress.all()), contactBean, bean(PostalAddress.class, contactPostalAddress.all()))
+        .select(applicationCustomer.customerRoleType, customerBean,
+            bean(PostalAddress.class, customerPostalAddress.all()), contactBean,
+            bean(PostalAddress.class, contactPostalAddress.all()), applicationCustomer.id)
         .from(applicationCustomer)
         .join(customer).on(applicationCustomer.customerId.eq(customer.id))
         .leftJoin(customerPostalAddress).on(customer.postalAddressId.eq(customerPostalAddress.id))
@@ -95,19 +99,20 @@ public class CustomerDao {
 
     Map<Integer, CustomerWithContacts> customerIdToCwc = new HashMap<>();
     tuples.forEach(t -> mapCustomerWithContactTuple(customerIdToCwc, t));
-    return new ArrayList(customerIdToCwc.values());
+    return new ArrayList<>(customerIdToCwc.values());
   }
 
   private void mapCustomerWithContactTuple(Map<Integer, CustomerWithContacts> customerIdToCwc, Tuple tuple) {
     Customer customer = tuple.get(1, Customer.class);
-    CustomerWithContacts cwc = customerIdToCwc.get(customer.getId());
+    Integer applicationCustomerId = tuple.get(5, Integer.class);
+    CustomerWithContacts cwc = customerIdToCwc.get(applicationCustomerId);
     if (cwc == null) {
       PostalAddress customerPostalAddress = tuple.get(2, PostalAddress.class);
       if (customerPostalAddress.getId() != null) {
         customer.setPostalAddress(customerPostalAddress);
       }
       cwc = new CustomerWithContacts(tuple.get(0, CustomerRoleType.class), customer, new ArrayList<>());
-      customerIdToCwc.put(customer.getId(), cwc);
+      customerIdToCwc.put(applicationCustomerId, cwc);
     }
     Contact contact = tuple.get(3, Contact.class);
     if (contact != null && contact.getId() != null) {
