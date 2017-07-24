@@ -52,8 +52,14 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
           <div class="half-right">
             <p><!-- [Kohteen osoite tai lisätietoja paikasta] -->
-              <xsl:value-of select="data/siteAddressLine"/>
-              <xsl:value-of select="data/siteAdditionalInfo"/>
+              <xsl:choose>
+                <xsl:when test="data/siteAddressLine != ''">
+                  <xsl:value-of select="data/siteAddressLine"/>
+                </xsl:when>
+                <xsl:otherwise>
+                  <xsl:value-of select="data/siteAdditionalInfo"/>
+                </xsl:otherwise>
+              </xsl:choose>
             </p>
             <p>Arvioitu aloitus:<!-- [Alkupäivämäärä]  -->
               <xsl:value-of select="data/reservationStartDate"/>
@@ -75,7 +81,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
               uusittava.</li>
             <li>Johdon sijainnin ollessa epävarma (~) johdon
               maastonäyttö tilattava johdon omistajalta.</li>
-            <li>Selvitys sisältää karttaotteita [karttaotteiden lkm]
+            <li>Selvitys sisältää karttaotteita<!-- [karttaotteiden lkm] -->
+              <xsl:value-of select="data/mapExtractCount"/>
               kpl.</li>
             <li>Kiinteistöjen johtotiedot sekä tonttiliitokset
               puuttuvat pääosin johtokartalta.</li>
