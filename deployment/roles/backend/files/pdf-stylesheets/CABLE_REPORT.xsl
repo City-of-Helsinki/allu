@@ -88,7 +88,14 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
       <div class="boxed" style="min-height: 200px">
         <section>
           <h2>Kaivualueella olevat johdot</h2>
-          <p>[Johtotiedot]</p>
+          <p><ul>
+            <xsl:for-each select="data/cableInfoEntries">
+            <li>
+            <b><xsl:value-of select="type"/>:</b>
+            <xsl:value-of select="text"/>
+            </li>
+            </xsl:for-each>
+          </ul></p>
         </section>
       </div>
 

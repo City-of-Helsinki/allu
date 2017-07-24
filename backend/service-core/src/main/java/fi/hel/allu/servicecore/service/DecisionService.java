@@ -3,7 +3,9 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.types.DefaultTextType;
 import fi.hel.allu.common.types.EventNature;
+import fi.hel.allu.pdf.domain.CableInfoTexts;
 import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
@@ -37,6 +39,7 @@ public class DecisionService {
 
   private static final FixedLocationJson BAD_LOCATION;
   private static final String ADDRESS_LINE_SEPARATOR = "; ";
+  private static final Map<DefaultTextType, String> defaultTextTypeTranslations;
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
@@ -49,6 +52,20 @@ public class DecisionService {
   static {
     BAD_LOCATION = new FixedLocationJson();
     BAD_LOCATION.setArea("Tuntematon alue");
+    Map<DefaultTextType, String> tempMap = new HashMap<>();
+    tempMap.put(DefaultTextType.TELECOMMUNICATION, "Tietoliikenne");
+    tempMap.put(DefaultTextType.ELECTRICITY, "Sähkö");
+    tempMap.put(DefaultTextType.WATER_AND_SEWAGE, "Vesi ja viemäri");
+    tempMap.put(DefaultTextType.DISTRICT_HEATING_COOLING, "Kaukolämpö/jäähdytys");
+    tempMap.put(DefaultTextType.GAS, "Kaasu");
+    tempMap.put(DefaultTextType.UNDERGROUND_STRUCTURE, "Maanalainen rakenne/tila");
+    tempMap.put(DefaultTextType.TRAMWAY, "Raitiotie");
+    tempMap.put(DefaultTextType.STREET_HEATING, "Katulämmitys");
+    tempMap.put(DefaultTextType.SEWAGE_PIPE, "Jäteputki");
+    tempMap.put(DefaultTextType.GEOTHERMAL_WELL, "Maalämpökaivo");
+    tempMap.put(DefaultTextType.GEOTECHNICAL_OBSERVATION_POST, "Geotekninen tarkkailupiste");
+    tempMap.put(DefaultTextType.OTHER, "Yleisesti/muut");
+    defaultTextTypeTranslations = Collections.unmodifiableMap(tempMap);
   }
 
   @Autowired
@@ -226,7 +243,9 @@ public class DecisionService {
       decisionJson.setCableReportValidUntil(formatDateWithDelta(cableReportJson.getValidityTime(), 0));
       decisionJson.setWorkDescription(cableReportJson.getWorkDescription());
       applicationServiceComposer.updateApplication(applicationJson.getId(), applicationJson);
-      /* TODO: cable info entries */
+      decisionJson.setCableInfoEntries(cableReportJson.getInfoEntries().stream()
+          .map(i -> new CableInfoTexts(defaultTextTypeTranslations.get(i.getType()), i.getAdditionalInfo()))
+          .collect(Collectors.toList()));
     }
   }
 

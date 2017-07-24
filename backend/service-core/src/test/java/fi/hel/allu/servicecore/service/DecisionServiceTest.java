@@ -2,6 +2,9 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.types.DefaultTextType;
+import fi.hel.allu.pdf.domain.CableInfoTexts;
+import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
@@ -17,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -117,24 +121,41 @@ public class DecisionServiceTest {
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setCustomersWithContacts(createDummyCustomersWithContactsJson());
     applicationJson.setType(ApplicationType.CABLE_REPORT);
-    applicationJson.setExtension(new CableReportJson());
+    CableReportJson cableReportJsonIn = new CableReportJson();
+    cableReportJsonIn.setInfoEntries(Arrays.asList(
+        newInfoEntry(DefaultTextType.ELECTRICITY, "Sähköä"),
+        newInfoEntry(DefaultTextType.GAS, "Kaasua"),
+        newInfoEntry(DefaultTextType.ELECTRICITY, "Lisää sähköä")));
+    applicationJson.setExtension(cableReportJsonIn);
     applicationJson.setId(123);
     // Call the method under test
     decisionService.generateDecision(123, applicationJson);
 
     // Verify that some important REST calls were made:
     // - PDF creation was executed with the right stylesheet name :
-    Mockito.verify(restTemplate).postForObject(Matchers.eq("PdfServiceUrl"), Mockito.anyObject(),
+    final ArgumentCaptor<DecisionJson> jsonCaptor = ArgumentCaptor.forClass(DecisionJson.class);
+    Mockito.verify(restTemplate).postForObject(Matchers.eq("PdfServiceUrl"), jsonCaptor.capture(),
         Matchers.eq(byte[].class),
         Matchers.eq("CABLE_REPORT"));
+    // - Sent JSON object contains field cableInfoEntries
+    List<CableInfoTexts> infoEntries = jsonCaptor.getValue().getCableInfoEntries();
+    Assert.assertNotNull(infoEntries);
+    Assert.assertEquals(3, infoEntries.size());
     // - Validity time was stored to model:
     final ArgumentCaptor<ApplicationJson> msgCaptor = ArgumentCaptor.forClass(ApplicationJson.class);
     Mockito.verify(applicationServiceComposer).updateApplication(Matchers.eq(123), msgCaptor.capture());
-    CableReportJson cableReportJson = (CableReportJson) msgCaptor.getValue().getExtension();
-    Assert.assertNotNull(cableReportJson.getValidityTime());
+    CableReportJson cableReportJsonOut = (CableReportJson) msgCaptor.getValue().getExtension();
+    Assert.assertNotNull(cableReportJsonOut.getValidityTime());
     // - Generated PDF was stored to model:
     Mockito.verify(restTemplate).exchange(Matchers.eq("ModelServiceUrl"), Matchers.eq(HttpMethod.POST), Mockito.any(),
         Matchers.eq(String.class), Mockito.anyInt());
+  }
+
+  private CableInfoEntryJson newInfoEntry(DefaultTextType type, String additionalInfo) {
+    CableInfoEntryJson cie = new CableInfoEntryJson();
+    cie.setType(type);
+    cie.setAdditionalInfo(additionalInfo);
+    return cie;
   }
 
   @Test
