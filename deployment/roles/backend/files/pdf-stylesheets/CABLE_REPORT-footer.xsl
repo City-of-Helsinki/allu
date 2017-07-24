@@ -26,7 +26,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           Johtotietopalvelu
         </p>
         <p>
-          Sörnäistenkatu 1, 00580
+          Sörnäistenkatu 1, 00580
         </p>
         <p>
           Helsinki
