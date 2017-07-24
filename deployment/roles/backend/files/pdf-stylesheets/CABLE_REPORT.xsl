@@ -114,8 +114,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </div>
             <div class="threecols-center">
               <p><!-- [Käsittelijä] -->
-                <xsl:value-of select="data/handlerTitle"/>
-                <xsl:value-of select="data/handlerName"/>
+                <xsl:value-of select="data/handlerTitle"/>&#160;<xsl:value-of select="data/handlerName"/>
               </p>
             </div>
             <div class="threecols-right">
