@@ -110,6 +110,7 @@ public class DecisionServiceTest {
 
   @Test
   public void testGenerateCableReport() throws IOException {
+    final int MAP_EXCTRACT_COUNT = 93;
     // Setup mocks
     byte[] mockData = new byte[123];
     Mockito.when(restTemplate.postForObject(Mockito.anyString(), Mockito.anyObject(), Matchers.eq(byte[].class),
@@ -126,6 +127,7 @@ public class DecisionServiceTest {
         newInfoEntry(DefaultTextType.ELECTRICITY, "Sähköä"),
         newInfoEntry(DefaultTextType.GAS, "Kaasua"),
         newInfoEntry(DefaultTextType.ELECTRICITY, "Lisää sähköä")));
+    cableReportJsonIn.setMapExtractCount(MAP_EXCTRACT_COUNT);
     applicationJson.setExtension(cableReportJsonIn);
     applicationJson.setId(123);
     // Call the method under test
@@ -138,9 +140,11 @@ public class DecisionServiceTest {
         Matchers.eq(byte[].class),
         Matchers.eq("CABLE_REPORT"));
     // - Sent JSON object contains field cableInfoEntries
-    List<CableInfoTexts> infoEntries = jsonCaptor.getValue().getCableInfoEntries();
+    DecisionJson decisionJson = jsonCaptor.getValue();
+    List<CableInfoTexts> infoEntries = decisionJson.getCableInfoEntries();
     Assert.assertNotNull(infoEntries);
     Assert.assertEquals(3, infoEntries.size());
+    Assert.assertEquals(MAP_EXCTRACT_COUNT, decisionJson.getMapExtractCount());
     // - Validity time was stored to model:
     final ArgumentCaptor<ApplicationJson> msgCaptor = ArgumentCaptor.forClass(ApplicationJson.class);
     Mockito.verify(applicationServiceComposer).updateApplication(Matchers.eq(123), msgCaptor.capture());

@@ -70,7 +70,9 @@ public class DecisionJson {
 
   private String workDescription;
 
-  private List<CableInfoTexts> cableInfoTexts;
+  private List<CableInfoTexts> cableInfoEntries;
+
+  private int mapExtractCount;
 
   public boolean isDraft() {
     return isDraft;
@@ -426,11 +428,19 @@ public class DecisionJson {
    * Get the cable info entries
    */
   public List<CableInfoTexts> getCableInfoEntries() {
-    return cableInfoTexts;
+    return cableInfoEntries;
   }
 
   public void setCableInfoEntries(List<CableInfoTexts> cableInfoTexts) {
-    this.cableInfoTexts = cableInfoTexts;
+    this.cableInfoEntries = cableInfoTexts;
+  }
+
+  public int getMapExtractCount() {
+    return mapExtractCount;
+  }
+
+  public void setMapExtractCount(int mapExtractCount) {
+    this.mapExtractCount = mapExtractCount;
   }
 
 }

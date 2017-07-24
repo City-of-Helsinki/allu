@@ -48,6 +48,7 @@ public class DecisionService {
   private final ZoneId zoneId;
   private final Locale locale;
   private final DateTimeFormatter dateTimeFormatter;
+  private final DateTimeFormatter timeStampFormatter;
 
   static {
     BAD_LOCATION = new FixedLocationJson();
@@ -81,6 +82,7 @@ public class DecisionService {
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
+    timeStampFormatter = DateTimeFormatter.ofPattern("d.M.uuuu 'kello' HH.mm");
   }
 
   /**
@@ -183,12 +185,16 @@ public class DecisionService {
     decisionJson.setReservationEndDate(formatDateWithDelta(application.getEndTime(), 0));
     decisionJson.setNumReservationDays(daysBetween(application.getStartTime(), application.getEndTime()) + 1);
     decisionJson.setSiteAdditionalInfo("[Lisätietoja paikasta]");
-    decisionJson.setDecisionDate("[päätöspvm]");
+    decisionJson.setDecisionDate(
+        Optional.ofNullable(application.getDecisionTime()).map(dt -> formatDateWithDelta(dt, 0)).orElse("[Päätöspvm]"));
     decisionJson.setVatPercentage(99);
     decisionJson.setAdditionalConditions("[Ehtokentän teksti]");
-    decisionJson.setDecisionTimestamp("[aikaleima]");
-    decisionJson.setDeciderTitle("[päättäjän työnimike]");
-    decisionJson.setDeciderName("[päättäjän nimi]");
+    decisionJson.setDecisionTimestamp(ZonedDateTime.now().withZoneSameInstant(zoneId).format(timeStampFormatter));
+    UserJson decider = application.getDecisionMaker();
+    if (decider != null) {
+      decisionJson.setDeciderTitle(decider.getTitle());
+      decisionJson.setDeciderName(decider.getRealName());
+    }
     decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
     Integer priceInCents = (application.getPriceOverride() != null) ? application.getPriceOverride()
         : application.getCalculatedPrice();
@@ -246,6 +252,7 @@ public class DecisionService {
       decisionJson.setCableInfoEntries(cableReportJson.getInfoEntries().stream()
           .map(i -> new CableInfoTexts(defaultTextTypeTranslations.get(i.getType()), i.getAdditionalInfo()))
           .collect(Collectors.toList()));
+      decisionJson.setMapExtractCount(Optional.ofNullable(cableReportJson.getMapExtractCount()).orElse(0));
     }
   }
 
@@ -313,6 +320,7 @@ public class DecisionService {
       sb.append(application.getLocations().stream()
           .filter(l -> l.getPostalAddress() != null)
           .map(l -> l.getPostalAddress().getStreetAddress())
+          .filter(s -> s != null)
           .collect(Collectors.joining(ADDRESS_LINE_SEPARATOR)));
     }
 
