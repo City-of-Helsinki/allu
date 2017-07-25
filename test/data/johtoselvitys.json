@@ -79,6 +79,7 @@
     {
       "startTime": "2017-01-22T22:00:00.000Z",
       "endTime": "2017-01-29T22:00:00.000Z",
+      "additionalInfo": "Näiltä nurkin pitäisi kaivella",
       "underpass": false,
       "postalAddress": {},
       "fixedLocationIds": [],

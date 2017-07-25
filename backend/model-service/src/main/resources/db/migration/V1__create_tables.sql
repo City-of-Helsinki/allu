@@ -155,6 +155,7 @@ create table allu.location (
   location_version integer not null,        -- version of the location with same location_key. If area changes, it will be stored as new version
   start_time timestamp with time zone not null,
   end_time timestamp with time zone not null,
+  additional_info text,
   postal_address_id integer references allu.postal_address(id),
   area double precision,
   area_override double precision,

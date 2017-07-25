@@ -18,6 +18,7 @@ public class LocationExtMapper {
     LocationJson locationJson = new LocationJson();
     locationJson.setStartTime(locationExt.getStartTime());
     locationJson.setEndTime(locationExt.getEndTime());
+    locationJson.setAdditionalInfo(locationExt.getAdditionalInfo());
     locationJson.setGeometry(locationExt.getGeometry());
     // TODO: create mapping for postal address
 //    locationJson.setPostalAddress(locationExt.getPostalAddress());
@@ -33,6 +34,7 @@ public class LocationExtMapper {
     locationExt.setLocationVersion(locationJson.getLocationVersion());
     locationExt.setStartTime(locationJson.getStartTime());
     locationExt.setEndTime(locationJson.getEndTime());
+    locationExt.setAdditionalInfo(locationJson.getAdditionalInfo());
     locationExt.setGeometry(locationJson.getGeometry());
     locationExt.setArea(locationJson.getArea());
     locationExt.setAreaOverride(locationJson.getAreaOverride());

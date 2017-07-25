@@ -8,16 +8,19 @@ public class LocationES {
   private String postalCode;
   private String city;
   private Integer cityDistrictId;
+  private String additionalInfo;
 
   public LocationES() {
     // for JSON serialization
   }
 
-  public LocationES(String streetAddress, String postalCode, String city, Integer cityDistrictId) {
+  public LocationES(String streetAddress, String postalCode, String city, Integer cityDistrictId,
+      String additionalInfo) {
     this.streetAddress = streetAddress;
     this.postalCode = postalCode;
     this.city = city;
     this.cityDistrictId = cityDistrictId;
+    this.additionalInfo = additionalInfo;
   }
 
   public String getStreetAddress() {
@@ -50,5 +53,13 @@ public class LocationES {
 
   public void setCityDistrictId(Integer cityDistrictId) {
     this.cityDistrictId = cityDistrictId;
+  }
+
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 }

@@ -19,6 +19,7 @@ public class Location implements PostalAddressItem {
   private Integer locationVersion;
   private ZonedDateTime startTime;
   private ZonedDateTime endTime;
+  private String additionalInfo;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
@@ -109,6 +110,17 @@ public class Location implements PostalAddressItem {
 
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
+  }
+
+  /**
+   * Get additional info for the location
+   */
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 
   /**

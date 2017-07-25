@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,6 +165,7 @@ public class LocationService {
     location.setLocationVersion(locationJson.getLocationVersion());
     location.setStartTime(locationJson.getStartTime());
     location.setEndTime(locationJson.getEndTime());
+    location.setAdditionalInfo(locationJson.getAdditionalInfo());
     location.setApplicationId(applicationId);
     if (locationJson.getPostalAddress() != null) {
       location.setPostalAddress(new PostalAddress(
@@ -194,6 +196,7 @@ public class LocationService {
     locationJson.setLocationVersion(location.getLocationVersion());
     locationJson.setStartTime(location.getStartTime());
     locationJson.setEndTime(location.getEndTime());
+    locationJson.setAdditionalInfo(location.getAdditionalInfo());
     PostalAddressJson postalAddressJson = new PostalAddressJson();
     if (location.getPostalAddress() != null) {
       postalAddressJson.setStreetAddress(location.getPostalAddress().getStreetAddress());
