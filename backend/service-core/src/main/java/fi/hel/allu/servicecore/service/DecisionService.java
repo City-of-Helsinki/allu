@@ -254,6 +254,36 @@ public class DecisionService {
           .collect(Collectors.toList()));
       decisionJson.setMapExtractCount(Optional.ofNullable(cableReportJson.getMapExtractCount()).orElse(0));
     }
+    // Override customer contact lines
+    decisionJson.setCustomerContactLines(cableReportContactLines(applicationJson));
+  }
+
+  /*
+   * Helper to create streams for possibly null collections
+   */
+  private static <T> Stream<T> streamFor(Collection<T> coll) {
+    return Optional.ofNullable(coll).orElse(Collections.emptyList()).stream();
+  }
+
+  /*
+   * Find the customer and contact that left the cable report and return them
+   */
+  private List<String> cableReportContactLines(ApplicationJson applicationJson) {
+    // Find first customer that has a contact that is the orderer of the application:
+    Optional<AbstractMap.SimpleEntry<CustomerJson, ContactJson>> customerAndContact =
+        streamFor(applicationJson.getCustomersWithContacts())
+        .map(cwc -> streamFor(cwc.getContacts()).filter(ContactJson::isOrderer)
+            .map(c -> new AbstractMap.SimpleEntry<>(cwc.getCustomer(), c)).findFirst().orElse(null))
+        .filter(p -> p != null).findFirst();
+    // Format result to a string:
+    if (!customerAndContact.isPresent()) {
+      return Collections.singletonList("[Tilaajatieto puuttuu]");
+    }
+    final CustomerJson customer = customerAndContact.get().getKey();
+    final ContactJson contact = customerAndContact.get().getValue();
+    return Arrays.asList(
+        customer.getName(), contact.getName(), contact.getPhone(), contact.getEmail())
+        .stream().filter(p -> p != null).collect(Collectors.toList());
   }
 
   private String formatDateWithDelta(ZonedDateTime zonedDateTime, int deltaDays) {

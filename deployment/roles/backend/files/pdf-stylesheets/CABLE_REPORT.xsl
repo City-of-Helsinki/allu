@@ -31,8 +31,13 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
         <section>
           <div class="half-left">
             <h2>Johtoselvityksen tilaaja</h2>
-            <p>[Valittu johtoselvityksen tilaaja. (nimi, s.posti ja
-              puhelin)]</p>
+            <p><!-- [Valittu johtoselvityksen tilaaja. (nimi, s.posti ja
+              puhelin)]  -->
+              <xsl:for-each select="data/customerContactLines">
+                <xsl:value-of select="."/>
+                <xsl:if test="position() != last()">, </xsl:if>
+              </xsl:for-each>
+              </p>
           </div>
 
           <div class="half-right">
