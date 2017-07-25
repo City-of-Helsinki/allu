@@ -184,7 +184,10 @@ public class DecisionService {
     decisionJson.setReservationStartDate(formatDateWithDelta(application.getStartTime(), 0));
     decisionJson.setReservationEndDate(formatDateWithDelta(application.getEndTime(), 0));
     decisionJson.setNumReservationDays(daysBetween(application.getStartTime(), application.getEndTime()) + 1);
-    decisionJson.setSiteAdditionalInfo("[Lisätietoja paikasta]");
+    String additionalInfos = String.join("; ",
+        streamFor(application.getLocations()).map(LocationJson::getAdditionalInfo).filter(p -> p != null)
+            .map(p -> p.trim()).filter(p -> !p.isEmpty()).collect(Collectors.toList()));
+    decisionJson.setSiteAdditionalInfo(additionalInfos);
     decisionJson.setDecisionDate(
         Optional.ofNullable(application.getDecisionTime()).map(dt -> formatDateWithDelta(dt, 0)).orElse("[Päätöspvm]"));
     decisionJson.setVatPercentage(99);
@@ -254,8 +257,9 @@ public class DecisionService {
           .collect(Collectors.toList()));
       decisionJson.setMapExtractCount(Optional.ofNullable(cableReportJson.getMapExtractCount()).orElse(0));
     }
-    // Override customer contact lines
+    // Override customer contact & address lines
     decisionJson.setCustomerContactLines(cableReportContactLines(applicationJson));
+    decisionJson.setCustomerAddressLines(cableReportAddressLines(applicationJson));
   }
 
   /*
@@ -283,9 +287,26 @@ public class DecisionService {
     final ContactJson contact = customerAndContact.get().getValue();
     return Arrays.asList(
         customer.getName(), contact.getName(), contact.getPhone(), contact.getEmail())
-        .stream().filter(p -> p != null).collect(Collectors.toList());
+        .stream().filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
   }
 
+  /*
+   * For cable reports, the customer address data should come from the customer
+   * that is doing the work
+   */
+  private List<String> cableReportAddressLines(ApplicationJson applicationJson) {
+    CustomerWithContactsJson contractor = streamFor(applicationJson.getCustomersWithContacts())
+        .filter(cwc -> CustomerRoleType.CONTRACTOR.equals(cwc.getRoleType())).findFirst().orElse(null);
+    if (contractor == null) {
+      return Collections.singletonList("[Kaivajan tiedot puuttuvat]");
+    }
+    final CustomerJson customer = contractor.getCustomer();
+    return Arrays
+        .asList(customer.getName(), customer.getPostalAddress().getStreetAddress(),
+            customer.getPostalAddress().getCity(), customer.getPhone())
+        .stream().filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
+
+  }
   private String formatDateWithDelta(ZonedDateTime zonedDateTime, int deltaDays) {
     if (zonedDateTime == null) {
       return null;

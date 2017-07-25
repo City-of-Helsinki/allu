@@ -26,7 +26,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <!-- <p>[Hakijan nimi], [Y-tunnus]<br/>[Osoite, postinumero, toimipaikka]<br/>
             [Sähköpostiosoite, puhelin]</p> -->
           <p>
-            <xsl:for-each select="data/applicantAddressLines">
+            <xsl:for-each select="data/customerAddressLines">
               <xsl:value-of select="." /><br/>
             </xsl:for-each>
           </p>
@@ -36,7 +36,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <h1>Yhteyshenkilö</h1>
           <!-- <p>[Yhteyshenkilön nimi]<br/>[Sähköpostiosoite, puhelin]</p> -->
           <p>
-            <xsl:for-each select="data/applicantContactLines">
+            <xsl:for-each select="data/customerContactLines">
               <xsl:value-of select="."/><br/>
             </xsl:for-each>
           </p>
