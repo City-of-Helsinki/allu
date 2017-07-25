@@ -33,7 +33,7 @@ export class LocationMapper {
         backendLocation.paymentTariff,
         backendLocation.paymentTariffOverride,
         backendLocation.underpass,
-        backendLocation.info) : undefined;
+        backendLocation.additionalInfo) : undefined;
   }
   public static mapFrontend(location: Location): BackendLocation {
     return (location) ?
@@ -53,7 +53,7 @@ export class LocationMapper {
       paymentTariff: location.paymentTariff,
       paymentTariffOverride: location.paymentTariffOverride,
       underpass: location.underpass,
-      info: location.info
+      additionalInfo: location.info
     } : undefined;
   }
 }
