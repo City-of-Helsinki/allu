@@ -42,7 +42,12 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
           <div class="half-right">
             <h1>Kaivajayritys/Toimija</h1>
-            <p>[Kaivajayritys/Toimija (nimi)]</p>
+            <p><!-- [Kaivajayritys/Toimija (nimi)] -->
+              <xsl:for-each select="data/customerAddressLines">
+                <xsl:value-of select="."/>
+                <xsl:if test="position() != last()">, </xsl:if>
+              </xsl:for-each>
+            </p>
           </div>
         </section>
       </div>
