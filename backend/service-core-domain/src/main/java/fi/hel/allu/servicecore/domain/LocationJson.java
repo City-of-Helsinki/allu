@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-import fi.hel.allu.common.validator.NotFalse;
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
+import fi.hel.allu.common.validator.NotFalse;
 
 import org.geolatte.geom.Geometry;
 
@@ -28,6 +28,7 @@ public class LocationJson {
   private ZonedDateTime startTime;
   @NotNull(message = "{location.endTime}")
   private ZonedDateTime endTime;
+  private String additionalInfo;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
@@ -103,6 +104,17 @@ public class LocationJson {
 
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
+  }
+
+  /**
+   * Get the additional info for the location
+   */
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 
   public Geometry getGeometry() {

@@ -8,6 +8,7 @@ import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.search.service.GenericSearchService;
+
 import org.elasticsearch.client.Client;
 import org.junit.Before;
 import org.junit.Test;
@@ -134,8 +135,8 @@ public class ApplicationSearchTest {
     applicationES1.setCustomers(roleTypedCustomerES);
 
     applicationES1.setLocations(Arrays.asList(
-        new LocationES("AEnsimmäinen osoite 9", "00100", "Sinki", 1),
-        new LocationES("Zviimonen 777", "00100", "Sinki", 5)));
+        new LocationES("AEnsimmäinen osoite 9", "00100", "Sinki", 1, "Eka lisätieto"),
+        new LocationES("Zviimonen 777", "00100", "Sinki", 5, "Vika lisätieto")));
 
     ApplicationES applicationES2 = createApplication(2);
     applicationES2.setName(USERNAME + " " + 2);
@@ -145,7 +146,8 @@ public class ApplicationSearchTest {
     roleTypedCustomerES =
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
     applicationES2.setCustomers(roleTypedCustomerES);
-    applicationES2.setLocations(Collections.singletonList(new LocationES("bToinen osoite 1", "00100", "Sinki", 2)));
+    applicationES2.setLocations(
+        Collections.singletonList(new LocationES("bToinen osoite 1", "00100", "Sinki", 2, "Toka lisätieto")));
 
     ApplicationES applicationES3 = createApplication(3);
     applicationES3.setName(USERNAME + " " + 3);
@@ -156,8 +158,8 @@ public class ApplicationSearchTest {
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
     applicationES3.setCustomers(roleTypedCustomerES);
     applicationES3.setLocations(Arrays.asList(
-        new LocationES("Zviimonen 777", "00100", "Sinki", 3),
-        new LocationES("Ckolmas osoite 5", "00100", "Sinki", 4)));
+        new LocationES("Zviimonen 777", "00100", "Sinki", 3, "Vika lisätieto"),
+        new LocationES("Ckolmas osoite 5", "00100", "Sinki", 4, "Kolmoslisätieto")));
 
     genericSearchService.insert(applicationES1.getId().toString(), applicationES1);
     genericSearchService.insert(applicationES2.getId().toString(), applicationES2);

@@ -2,12 +2,15 @@ package fi.hel.allu.external.domain;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import fi.hel.allu.common.domain.serialization.GeometryDeserializerProxy;
 import fi.hel.allu.common.domain.serialization.GeometrySerializerProxy;
+
 import org.geolatte.geom.Geometry;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 
 /**
@@ -22,6 +25,7 @@ public class LocationExt {
   private ZonedDateTime startTime;
   @NotNull
   private ZonedDateTime endTime;
+  private String additionalInfo;
   @JsonSerialize(using = GeometrySerializerProxy.class)
   @JsonDeserialize(using = GeometryDeserializerProxy.class)
   private Geometry geometry;
@@ -71,6 +75,14 @@ public class LocationExt {
 
   public void setEndTime(ZonedDateTime endTime) {
     this.endTime = endTime;
+  }
+
+  public String getAdditionalInfo() {
+    return additionalInfo;
+  }
+
+  public void setAdditionalInfo(String additionalInfo) {
+    this.additionalInfo = additionalInfo;
   }
 
   public Geometry getGeometry() {

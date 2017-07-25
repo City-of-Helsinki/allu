@@ -259,6 +259,9 @@ definitions:
         description: End time of the use of location
         type: string
         format: date-time
+      additionalInfo:
+        description: Additional info about the location
+        type: string
       geometry:
         $ref: '#/definitions/Geometry'
       area:

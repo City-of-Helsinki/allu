@@ -16,5 +16,5 @@ export interface BackendLocation {
   paymentTariff: number;
   paymentTariffOverride: number;
   underpass: boolean;
-  info: string;
+  additionalInfo: string;
 }
