@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.mapper.extension;
 
 import fi.hel.allu.model.domain.CableInfoEntry;
 import fi.hel.allu.model.domain.CableReport;
-import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.servicecore.domain.CableInfoEntryJson;
 import fi.hel.allu.servicecore.domain.CableReportJson;
 import fi.hel.allu.servicecore.domain.ContactJson;
@@ -11,6 +10,7 @@ import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class CableReportMapper {
@@ -66,11 +66,11 @@ public class CableReportMapper {
   }
 
   private static Integer getOrdererId(List<CustomerWithContactsJson> customersWithContactsJson) {
-    List<Integer> ordererIds = customersWithContactsJson.stream()
+    Set<Integer> ordererIds = customersWithContactsJson.stream()
       .flatMap(cwc -> cwc.getContacts().stream())
       .filter(contact -> contact.isOrderer())
       .map(ContactJson::getId)
-      .collect(Collectors.toList());
+      .collect(Collectors.toSet());
 
     if (ordererIds.size() > 1) {
       throw new IllegalArgumentException("Only one contact per application can be marked as orderer");
