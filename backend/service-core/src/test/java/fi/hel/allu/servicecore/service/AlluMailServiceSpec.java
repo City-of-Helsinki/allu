@@ -1,8 +1,10 @@
 package fi.hel.allu.servicecore.service;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -13,6 +15,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 
 import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
+
 import java.util.Arrays;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -55,7 +58,7 @@ public class AlluMailServiceSpec {
         it("Should fail with forbidden email", () -> {
           try {
             alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "potsmasher@masher.xx"), "Cheep Cialis",
-                "Body", Stream.empty());
+                "Prescription.jpg", "Body", Stream.empty());
             Assert.fail("Did not throw!");
           } catch (IllegalArgumentException e) {
             // this was expected
@@ -66,13 +69,13 @@ public class AlluMailServiceSpec {
 
         it("Should accept allowed emails", () -> {
           alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"), "Cheep Cialis",
-              "Body", Stream.empty());
+              "Decision.doc", "Body", Stream.empty());
           Mockito.verify(javaMailSender).send(Mockito.any(MimeMessage.class));
         });
 
         it("Should add all attachments", () -> {
           alluMailService.sendDecision(123, Arrays.asList("yucca@jucca.org", "postmasher@masher.xx"),
-              "iPhone 5 only $1!!", "BUY NOW!",
+              "iPhone 5 only $1!!", "image.jpg.exe", "BUY NOW!",
               Stream.of(new Attachment("eka", "EKA".getBytes()), new Attachment("toka", "TOKA".getBytes())));
           ArgumentCaptor<Multipart> contentCaptor = ArgumentCaptor.forClass(Multipart.class);
           Mockito.verify(mockMimeMessage.get()).setContent(contentCaptor.capture());

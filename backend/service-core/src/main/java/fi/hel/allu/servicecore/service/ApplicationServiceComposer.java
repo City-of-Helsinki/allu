@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.model.domain.Application;
@@ -269,13 +270,31 @@ public class ApplicationServiceComposer {
   {
     ApplicationJson application = replaceDistributionList(applicationId,
         decisionDetailsJson.getDecisionDistributionList());
-    String subject = "Aluevarauspäätös " + application.getApplicationId();
+    String subject = String.format(subjectFor(application.getType()), application.getApplicationId());
     List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
         .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
     Stream<Attachment> attachments = application.getAttachmentList().stream()
         .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())));
-    alluMailService.sendDecision(applicationId, emailRecipients, subject, decisionDetailsJson.getMessageBody(),
+    alluMailService.sendDecision(applicationId, emailRecipients, subject,
+        String.format("%s.pdf", application.getApplicationId()), decisionDetailsJson.getMessageBody(),
         attachments);
+  }
+
+  private String subjectFor(ApplicationType type) {
+    switch (type) {
+    case AREA_RENTAL:
+      return "Aluevarauspäätös %s";
+    case CABLE_REPORT:
+      return "Johtoselvitys %s";
+    case EVENT:
+      return "Tapahtumapäätös %s";
+    case EXCAVATION_ANNOUNCEMENT:
+      return "Kaivuilmoitus %s";
+    case PLACEMENT_CONTRACT:
+      return "Sijoitussopimus %s";
+    default:
+      return "Päätös %s";
+    }
   }
 
   /*

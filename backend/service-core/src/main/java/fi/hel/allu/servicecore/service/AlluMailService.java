@@ -4,12 +4,14 @@ import fi.hel.allu.mail.model.MailMessage;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.mail.service.MailService;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.mail.MessagingException;
+
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -20,7 +22,6 @@ import java.util.stream.Stream;
  */
 @Service
 public class AlluMailService {
-  private static final String DECISION_PDF_NAME = "paatos.pdf";
 
   private ApplicationProperties applicationProperties;
   private DecisionService decisionService;
@@ -50,10 +51,14 @@ public class AlluMailService {
    *
    * @param applicationId
    * @param recipients list of e-mail addresses
+   * @param subject The subject of the e-mail
+   * @param decisionPdfName What name to give to the decision PDF attachment
+   * @param body The body of the email
+   * @param attachments attachments that should be added to the mail
    * @return
    */
-  public void sendDecision(int applicationId, List<String> recipients, String subject, String body,
-      Stream<Attachment> attachments) {
+  public void sendDecision(int applicationId, List<String> recipients, String subject, String decisionPdfName,
+      String body, Stream<Attachment> attachments) {
     if (emailAcceptPattern != null) {
       List<String> forbidden = recipients.stream().filter(r -> emailAcceptPattern.matcher(r).matches() == false)
           .collect(Collectors.toList());
@@ -68,7 +73,7 @@ public class AlluMailService {
     message.setFrom(applicationProperties.getEmailSenderAddress());
 
     message.setAttachments(
-        Stream.concat(Stream.of(new Attachment(DECISION_PDF_NAME, decisionService.getDecision(applicationId))),
+        Stream.concat(Stream.of(new Attachment(decisionPdfName, decisionService.getDecision(applicationId))),
             attachments).collect(Collectors.toList()));
     try {
       mailService.send(message);
