@@ -41,7 +41,7 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           </div>
 
           <div class="half-right">
-            <h1>Kaivajayritys/Toimija</h1>
+            <h2>Kaivajayritys/Toimija</h2>
             <p><!-- [Kaivajayritys/Toimija (nimi)] -->
               <xsl:for-each select="data/customerAddressLines">
                 <xsl:value-of select="."/>
@@ -54,13 +54,14 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
       <div class="boxed">
         <section>
-          <h2>Työn kuvaus</h2>
           <div class="half-left">
+            <h2>Työn kuvaus</h2>
             <p><!-- [Työn kuvaus] -->
               <xsl:value-of select="data/workDescription"/></p>
           </div>
 
           <div class="half-right">
+            <h2>Osoite/Lisätiedot</h2>
             <p><!-- [Kohteen osoite tai lisätietoja paikasta] -->
               <xsl:choose>
                 <xsl:when test="data/siteAddressLine != ''">
@@ -137,12 +138,8 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
             </div>
             <div class="threecols-center">
               <hr class="signature"/>
-              <p>[Johtoselvityksen jättäjä]</p>
-            </div>
-            <div class="threecols-right">
-              <p>Tulostettu: <!-- [pvm + aika] -->
-                <xsl:value-of select="data/decisionTimeStamp"/>
-              </p>
+              <p><!-- [Johtoselvityksen jättäjä] -->
+              <xsl:value-of select="data/cableReportOrderer"/></p>
             </div>
           </div>
         </section>

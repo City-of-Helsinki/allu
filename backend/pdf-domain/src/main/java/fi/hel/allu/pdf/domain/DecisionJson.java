@@ -74,6 +74,8 @@ public class DecisionJson {
 
   private int mapExtractCount;
 
+  private String cableReportOrderer;
+
   public boolean isDraft() {
     return isDraft;
   }
@@ -441,6 +443,15 @@ public class DecisionJson {
 
   public void setMapExtractCount(int mapExtractCount) {
     this.mapExtractCount = mapExtractCount;
+  }
+
+  /* Get the name of the cable report orderer */
+  public String getCableReportOrderer() {
+    return cableReportOrderer;
+  }
+
+  public void setCableReportOrderer(String cableReportOrderer) {
+    this.cableReportOrderer = cableReportOrderer;
   }
 
 }

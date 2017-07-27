@@ -10,6 +10,7 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -258,7 +259,11 @@ public class DecisionService {
       decisionJson.setMapExtractCount(Optional.ofNullable(cableReportJson.getMapExtractCount()).orElse(0));
     }
     // Override customer contact & address lines
-    decisionJson.setCustomerContactLines(cableReportContactLines(applicationJson));
+    Optional<Pair<CustomerJson, ContactJson>> orderer = cableReportOrderer(applicationJson);
+
+    decisionJson.setCustomerContactLines(cableReportContactLines(orderer));
+    decisionJson.setCableReportOrderer(
+        orderer.map(e -> e.getValue().getName()).orElse("[Johtoselvityksen tilaajan nimi puuttuu]"));
     decisionJson.setCustomerAddressLines(cableReportAddressLines(applicationJson));
   }
 
@@ -269,22 +274,24 @@ public class DecisionService {
     return Optional.ofNullable(coll).orElse(Collections.emptyList()).stream();
   }
 
+  /* Find the customer and contact that ordered the application */
+  private Optional<Pair<CustomerJson, ContactJson>> cableReportOrderer(
+      ApplicationJson applicationJson) {
+    return streamFor(applicationJson.getCustomersWithContacts())
+        .map(cwc -> streamFor(cwc.getContacts()).filter(ContactJson::isOrderer)
+            .map(c -> Pair.of(cwc.getCustomer(), c)).findFirst().orElse(null))
+        .filter(p -> p != null).findFirst();
+
+  }
   /*
    * Find the customer and contact that left the cable report and return them
    */
-  private List<String> cableReportContactLines(ApplicationJson applicationJson) {
-    // Find first customer that has a contact that is the orderer of the application:
-    Optional<AbstractMap.SimpleEntry<CustomerJson, ContactJson>> customerAndContact =
-        streamFor(applicationJson.getCustomersWithContacts())
-        .map(cwc -> streamFor(cwc.getContacts()).filter(ContactJson::isOrderer)
-            .map(c -> new AbstractMap.SimpleEntry<>(cwc.getCustomer(), c)).findFirst().orElse(null))
-        .filter(p -> p != null).findFirst();
-    // Format result to a string:
-    if (!customerAndContact.isPresent()) {
+  private List<String> cableReportContactLines(Optional<Pair<CustomerJson, ContactJson>> orderer) {
+    if (!orderer.isPresent()) {
       return Collections.singletonList("[Tilaajatieto puuttuu]");
     }
-    final CustomerJson customer = customerAndContact.get().getKey();
-    final ContactJson contact = customerAndContact.get().getValue();
+    final CustomerJson customer = orderer.get().getKey();
+    final ContactJson contact = orderer.get().getValue();
     return Arrays.asList(
         customer.getName(), contact.getName(), contact.getPhone(), contact.getEmail())
         .stream().filter(p -> p != null && !p.trim().isEmpty()).collect(Collectors.toList());
