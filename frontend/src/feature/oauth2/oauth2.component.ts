@@ -1,12 +1,19 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {Router} from '@angular/router';
 
 /**
- * Empty component to simply provide a landing
- * page for Oauth2 service redirect
+ * Landing page component for OAuth2 login. Simply
+ * redirects to home.
  */
 @Component({
   selector: 'oauth2',
   template: ''
 })
-export class Oauth2Component {
+export class Oauth2Component implements OnInit {
+
+  constructor(private router: Router) { }
+
+  ngOnInit() {
+    this.router.navigate(['home']);
+  }
 }
