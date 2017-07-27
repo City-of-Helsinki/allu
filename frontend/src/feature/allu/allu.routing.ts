@@ -7,7 +7,6 @@ import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {HandlerModalComponent} from '../workqueue/handlerModal/handler-modal.component';
 import {Oauth2Component} from '../oauth2/oauth2.component';
 
-
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: MapSearchComponent, canActivate: [AuthGuard]},
@@ -15,6 +14,6 @@ export const rootRoutes: Routes = [
   { path: 'workqueue/handler', component: HandlerModalComponent, canActivate: [AuthGuard] },
   { path: 'login', component: Login },
   { path: 'logout', component: Login },
-  { path: 'oauth2', component: Oauth2Component },
+  { path: 'oauth2', component: Oauth2Component, canActivate: [AuthGuard]},
   { path: '**', redirectTo: 'home' }
 ];
