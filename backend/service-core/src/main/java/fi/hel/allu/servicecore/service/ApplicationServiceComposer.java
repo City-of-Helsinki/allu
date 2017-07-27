@@ -34,6 +34,7 @@ public class ApplicationServiceComposer {
   private ApplicationHistoryService applicationHistoryService;
   private AttachmentService attachmentService;
   private AlluMailService alluMailService;
+  private UserService userService;
 
   @Autowired
   public ApplicationServiceComposer(
@@ -43,7 +44,7 @@ public class ApplicationServiceComposer {
       ApplicationJsonService applicationJsonService,
       ApplicationHistoryService applicationHistoryService,
       AttachmentService attachmentService,
-      @Lazy AlluMailService alluMailService) {
+      @Lazy AlluMailService alluMailService, UserService userService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
@@ -51,6 +52,7 @@ public class ApplicationServiceComposer {
     this.applicationHistoryService = applicationHistoryService;
     this.attachmentService = attachmentService;
     this.alluMailService = alluMailService;
+    this.userService = userService;
   }
 
   /**
@@ -184,6 +186,10 @@ public class ApplicationServiceComposer {
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     logger.debug("found application {}, current status {}, handler {}",
         applicationJson.getId(), applicationJson.getStatus(), applicationJson.getHandler());
+    if (StatusType.HANDLING.equals(newStatus) && application.getHandler() == null) {
+      updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(applicationId));
+      applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
+    }
     applicationJson.setStatus(newStatus);
     // TODO: add person who made the decision to somewhere
     ApplicationJson result = updateApplicationNoTracking(applicationId, applicationJson);

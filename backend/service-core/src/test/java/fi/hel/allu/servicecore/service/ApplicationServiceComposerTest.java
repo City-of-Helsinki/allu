@@ -5,8 +5,6 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.*;
 
-import fi.hel.allu.servicecore.service.*;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -30,6 +28,7 @@ public class ApplicationServiceComposerTest {
   private ApplicationHistoryService applicationHistoryService;
   private AttachmentService attachmentService;
   private AlluMailService alluMailService;
+  private UserService userService;
 
   private static final int applicationId = 1;
   private static final int projectId = 12;
@@ -46,13 +45,17 @@ public class ApplicationServiceComposerTest {
     applicationHistoryService = Mockito.mock(ApplicationHistoryService.class);
     attachmentService = Mockito.mock(AttachmentService.class);
     alluMailService = Mockito.mock(AlluMailService.class);
+    userService = Mockito.mock(UserService.class);
 
     applicationServiceComposer = new ApplicationServiceComposer(
         applicationService,
         projectService,
         searchService,
         applicationJsonService,
-        applicationHistoryService, attachmentService, alluMailService
+        applicationHistoryService,
+        attachmentService,
+        alluMailService,
+        userService
     );
   }
 
