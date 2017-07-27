@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
@@ -120,6 +121,7 @@ public class ApplicationServiceComposerTest {
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(Mockito.any(Application.class)))
         .thenReturn(applicationJson);
     Mockito.when(applicationJson.getApplicationId()).thenReturn("HK_BLEU");
+    Mockito.when(applicationJson.getType()).thenReturn(ApplicationType.NOTE);
     List<DistributionEntryJson> distribution = Collections
         .singletonList(emailDistribution("Pekka Pekanpekka", "pekkapekanpekka@pekanpekka.org"));
     Mockito.when(applicationJson.getDecisionDistributionList()).thenReturn(distribution);
@@ -132,7 +134,7 @@ public class ApplicationServiceComposerTest {
 
     ArgumentCaptor<Stream> streamCaptor = ArgumentCaptor.forClass(Stream.class);
     Mockito.verify(alluMailService).sendDecision(Mockito.eq(applicationId), Mockito.anyList(), Mockito.anyString(),
-        Mockito.anyString(), streamCaptor.capture());
+        Mockito.anyString(), Mockito.anyString(), streamCaptor.capture());
     assertEquals(2, streamCaptor.getValue().count());
   }
 
