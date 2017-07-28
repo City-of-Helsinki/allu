@@ -9,7 +9,11 @@ info:
   license:
     name: MIT
     url: 'https://bitbucket.org/vincit/allu/raw/HEAD/LICENSE'
-host: localhost
+securityDefinitions:
+  api_key:
+    type: apiKey
+    name: Authorization
+    in: header
 basePath: /api-docs
 tags:
   - name: applications
@@ -40,6 +44,8 @@ paths:
           description: Created application
           schema:
             $ref: '#/definitions/ApplicationExt'
+      security:
+        - api_key: []
 definitions:
   StatusType:
     description: Application status

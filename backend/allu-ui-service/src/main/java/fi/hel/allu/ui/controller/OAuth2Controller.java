@@ -2,7 +2,6 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.ui.security.TokenAuthenticationService;
-import fi.hel.allu.ui.security.TokenHandler;
 import fi.hel.allu.servicecore.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +30,6 @@ public class OAuth2Controller {
   @Autowired
   TokenAuthenticationService tokenAuthenticationService;
   @Autowired
-  TokenHandler tokenHandler;
-  @Autowired
   UserService userService;
 
   @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -42,7 +39,7 @@ public class OAuth2Controller {
       UserJson userJson = userJsonOpt.get();
       if (userJson.isActive()) {
         userService.setLastLogin(userJson.getId(), ZonedDateTime.now());
-        return new ResponseEntity<String>(tokenHandler.createTokenForUser(userJson), HttpStatus.OK);
+        return new ResponseEntity<String>(tokenAuthenticationService.createTokenForUser(userJson), HttpStatus.OK);
       } else {
         logger.info("Attempt to login using inactive user account: {}" + userJson.getUserName());
         throw new LockedException("User account is not active");

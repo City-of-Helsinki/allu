@@ -5,6 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 @Component
 public class ApplicationProperties {
 
@@ -13,11 +16,14 @@ public class ApplicationProperties {
   private String streetSearchUrl;
   private String wfsUsername;
   private String wfsPassword;
+  private String jwtSecret;
+  private Integer jwtExpirationHours;
   private String oauth2AuthorizationEndpointUrl;
   private String oauth2TokenUrl;
   private String oauth2ClientId;
   private String oauth2RedirectUri;
   private String oauth2Certificate;
+  private List<String> anonymousAccessPaths;
 
   @Autowired
   public ApplicationProperties(@Value("${production}") boolean production,
@@ -25,21 +31,27 @@ public class ApplicationProperties {
                                @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
                                @Value("${wfs.username}") @NotEmpty String wfsUsername,
                                @Value("${wfs.password}") @NotEmpty String wfsPassword,
+                               @Value("${jwt.secret}") @NotEmpty String jwtSecret,
+                               @Value("${jwt.expiration.hours:12}") @NotNull Integer jwtExpirationHours,
                                @Value("${oauth2.url.authorization}") @NotEmpty String oauth2AuthorizationEndpointUrl,
                                @Value("${oauth2.url.token}") @NotEmpty String oauth2TokenUrl,
                                @Value("${oauth2.clientid}") @NotEmpty String oauth2ClientId,
                                @Value("${oauth2.redirect.uri}") @NotEmpty String oauth2RedirectUri,
-                               @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate) {
+                               @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate,
+                               @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
     this.production = production;
     this.geocodeUrl = geocodeUrl;
     this.streetSearchUrl = streetSearchUrl;
     this.wfsUsername = wfsUsername;
     this.wfsPassword = wfsPassword;
+    this.jwtSecret = jwtSecret;
+    this.jwtExpirationHours = jwtExpirationHours;
     this.oauth2AuthorizationEndpointUrl = oauth2AuthorizationEndpointUrl;
     this.oauth2TokenUrl = oauth2TokenUrl;
     this.oauth2ClientId = oauth2ClientId;
     this.oauth2RedirectUri = oauth2RedirectUri;
     this.oauth2Certificate = oauth2Certificate;
+    this.anonymousAccessPaths = anonymousAccessPaths;
   }
 
   /**
@@ -80,6 +92,24 @@ public class ApplicationProperties {
    */
   public String getWfsPassword() {
     return wfsPassword;
+  }
+
+  /**
+   * Returns JWT secret key used to sign tokens.
+   *
+   * @return  JWT secret key used to sign tokens.
+   */
+  public String getJwtSecret() {
+    return jwtSecret;
+  }
+
+  /**
+   * Returns the expiration time of JWT.
+   *
+   * @return  the expiration time of JWT.
+   */
+  public Integer getJwtExpirationHours() {
+    return jwtExpirationHours;
   }
 
   /**
@@ -124,5 +154,15 @@ public class ApplicationProperties {
    */
   public String getOauth2Certificate() {
     return oauth2Certificate;
+  }
+
+  /**
+   * Get list of (url) paths allowed to be accessed by anonymous users. Controller methods bound to these won't be checked against normal
+   * security measures.
+   *
+   * @return list of (url) paths allowed to be accessed by anonymous users.
+   */
+  public List<String> getAnonymousAccessPaths() {
+    return anonymousAccessPaths;
   }
 }

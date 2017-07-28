@@ -1,6 +1,6 @@
-package fi.hel.allu.ui.security;
+package fi.hel.allu.servicecore.security;
 
-import fi.hel.allu.ui.config.SecurityConfig;
+import fi.hel.allu.servicecore.service.AuthenticationServiceInterface;
 import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,9 +19,9 @@ import java.io.IOException;
 public class StatelessAuthenticationFilter extends GenericFilterBean {
   private final Logger logger = LoggerFactory.getLogger(StatelessAuthenticationFilter.class);
 
-  private final TokenAuthenticationService authenticationService;
+  private final AuthenticationServiceInterface authenticationService;
 
-  public StatelessAuthenticationFilter(TokenAuthenticationService authenticationService) {
+  public StatelessAuthenticationFilter(AuthenticationServiceInterface authenticationService) {
     this.authenticationService = authenticationService;
   }
 
@@ -32,11 +32,9 @@ public class StatelessAuthenticationFilter extends GenericFilterBean {
 
     Authentication authentication;
 
-    // If empty authentication (no JWT) is used and path is different that login, we're handling unauthorized case
+    // If empty authentication (no JWT) is used and path is not allowed for anonymous users, we're handling unauthorized case
     if (authenticationService.isEmptyAuthentication(httpRequest) &&
-        !SecurityConfig.SECURITY_PATHS.LOGIN.toString().equals(httpRequest.getRequestURI()) && // TODO: remove or replace this with something once dummy login is removed
-        !SecurityConfig.SECURITY_PATHS.OAUTH2.toString().equals(httpRequest.getRequestURI()) &&
-        !SecurityConfig.SECURITY_PATHS.UICONFIG.toString().equals(httpRequest.getRequestURI())) {
+        !authenticationService.isAnonymousAccessAllowedForPath(httpRequest.getRequestURI())) {
       setUnauthorizedResponse(httpRequest, response);
       return;
     }

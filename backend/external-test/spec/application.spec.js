@@ -102,7 +102,11 @@ describe('Application', () => {
 function swaggerClient() {
   return new Swagger({
     url: process.env.SWAGGER_JSON_URL,
-    usePromise: true
+    usePromise: true,
+    authorizations: {
+      // TODO: replace with something else than this hard coded pre-generated JWT. Perhaps another environment variable or secret key, which can be used to generate the secret?
+      api_key: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4MTYxNzM1ODMsInN1YiI6InRlc3RzdWJqZWN0IiwicHVibGljQWxsdVJvbGVzIjpbIlJPTEVfU09NRVJPTEUiXX0.hlmqNaAWw2qRYsVPcEcAqETPDHMHppYcN70u8CEO-ZWSjuxAxCPyWx-cznHniD_QIJsPo_IBvMV83n1cbPNE4w',
+    }
   });
 }
 

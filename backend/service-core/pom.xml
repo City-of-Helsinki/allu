@@ -49,6 +49,16 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.7.0</version>
+        </dependency>
+
+        <dependency>
             <!-- For flattening structures as key-value-pair JSON -->
             <groupId>com.github.wnameless</groupId>
             <artifactId>json-flattener</artifactId>

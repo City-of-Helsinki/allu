@@ -1,7 +1,8 @@
-package fi.hel.allu.ui.config;
+package fi.hel.allu.external.config;
 
+import fi.hel.allu.external.service.ServerTokenAuthenticationService;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.security.StatelessAuthenticationFilter;
-import fi.hel.allu.ui.security.TokenAuthenticationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Autowired
-  private TokenAuthenticationService tokenAuthenticationService;
+  private ServerTokenAuthenticationService tokenAuthenticationService;
   @Autowired
   private ApplicationProperties applicationProperties;
 
@@ -35,8 +36,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .anyRequest()
         .authenticated()
         .and().addFilterBefore(
-        new StatelessAuthenticationFilter(tokenAuthenticationService),
-        UsernamePasswordAuthenticationFilter.class)
+            new StatelessAuthenticationFilter(tokenAuthenticationService),
+            UsernamePasswordAuthenticationFilter.class)
         .csrf().disable();
   }
 
