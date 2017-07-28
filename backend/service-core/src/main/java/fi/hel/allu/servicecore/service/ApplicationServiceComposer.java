@@ -39,13 +39,14 @@ public class ApplicationServiceComposer {
 
   @Autowired
   public ApplicationServiceComposer(
-      ApplicationService applicationService,
+      @Lazy ApplicationService applicationService,
       ProjectService projectService,
       SearchService searchService,
       ApplicationJsonService applicationJsonService,
       ApplicationHistoryService applicationHistoryService,
       AttachmentService attachmentService,
-      @Lazy AlluMailService alluMailService, UserService userService) {
+      @Lazy AlluMailService alluMailService,
+      UserService userService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
