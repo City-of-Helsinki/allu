@@ -39,7 +39,7 @@ public class ApplicationServiceComposer {
 
   @Autowired
   public ApplicationServiceComposer(
-      @Lazy ApplicationService applicationService,
+      ApplicationService applicationService,
       ProjectService projectService,
       SearchService searchService,
       ApplicationJsonService applicationJsonService,
