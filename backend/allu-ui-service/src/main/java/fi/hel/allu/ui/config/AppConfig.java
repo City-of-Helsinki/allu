@@ -3,25 +3,43 @@ package fi.hel.allu.ui.config;
 import fi.hel.allu.common.controller.handler.ServiceResponseErrorHandler;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.security.PreAuthorizeEnforcerInterceptor;
+
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.annotation.PostConstruct;
 import javax.validation.constraints.NotNull;
+
 import java.util.List;
 
 @Configuration
 @EnableAutoConfiguration
 public class AppConfig extends WebMvcConfigurerAdapter {
 
-  @Autowired
+  private ApplicationContext context;
+
   private PreAuthorizeEnforcerInterceptor preAuthorizeEnforcerInterceptor;
+
+  @Autowired
+  public AppConfig(ApplicationContext context) {
+    this.context = context;
+  }
+
+  /*
+   * Manually inject the interceptor bean to avoid autowire loops.
+   */
+  @PostConstruct
+  public void injectBeans() {
+    preAuthorizeEnforcerInterceptor = context.getBean(PreAuthorizeEnforcerInterceptor.class);
+  }
 
   @Override
   public void addInterceptors(InterceptorRegistry registry) {
