@@ -3,13 +3,12 @@ import {CustomerService} from './customer.service';
 import {Contact} from '../../model/customer/contact';
 import {CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
 import {Customer} from '../../model/customer/customer';
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class CustomerHub {
 
-  private orderer$ = new Subject<Contact>();
+  private orderer$ = new BehaviorSubject<Contact>(undefined);
 
   constructor(private customerService: CustomerService) {}
 
@@ -55,7 +54,7 @@ export class CustomerHub {
   /**
    * Method to inform that new orderer is selected
    */
-  public ordererSelected(contact: Contact): void {
+  public ordererWasSelected(contact: Contact): void {
     this.orderer$.next(contact);
   }
 }

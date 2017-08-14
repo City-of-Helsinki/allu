@@ -144,17 +144,17 @@ describe('ContactComponent', () => {
 
   it('should show orderer for cable report', fakeAsync(() => {
     reInitWithCableReport();
-    expect(page.getFromContact(0, '.mat-checkbox')).toBeTruthy();
-    expect(page.getFromContact(0, '.mat-checkbox-checked')).toBeFalsy();
+    expect(page.getFromContact(0, '.mat-radio-button')).toBeTruthy();
+    expect(page.getFromContact(0, '.mat-radio-checked')).toBeFalsy();
   }));
 
   it('should notify when orderer is selected', fakeAsync(() => {
-    const customerHubSpy = spyOn(customerHubMock, 'ordererSelected');
+    const customerHubSpy = spyOn(customerHubMock, 'ordererWasSelected');
     reInitWithCableReport();
-    const checkboxEl = page.getFromContact(0, '.mat-checkbox-label').nativeElement;
+    const checkboxEl = page.getFromContact(0, '.mat-radio-label').nativeElement;
     checkboxEl.click();
     detectChangesAndUpdate();
-    expect(page.getFromContact(0, '.mat-checkbox-checked').nativeElement).toBeDefined('checkbox was checked');
+    expect(page.getFromContact(0, '.mat-radio-checked').nativeElement).toBeDefined('checkbox was checked');
     expect(customerHubSpy.calls.count()).toEqual(1, 'stubbed method was called');
     const orderer = customerHubSpy.calls.first().args[0];
     expect(orderer.id).toEqual(CONTACT1.id, 'orderer id is correct');
@@ -165,12 +165,12 @@ describe('ContactComponent', () => {
     reInitWithCableReport();
     comp.contacts.at(0).patchValue({orderer: true});
     detectChangesAndUpdate();
-    expect(page.getFromContact(0, '.mat-checkbox-checked').nativeElement).toBeDefined('checkbox was checked');
+    expect(page.getFromContact(0, '.mat-radio-checked').nativeElement).toBeDefined('checkbox was checked');
 
     CONTACT2.orderer = true;
     customerHubMock.orderer$.next(CONTACT2);
     detectChangesAndUpdate();
-    expect(page.getFromContact(0, '.mat-checkbox-checked')).toBeFalsy('checkbox was unchecked');
+    expect(page.getFromContact(0, '.mat-radio-checked')).toBeFalsy('checkbox was unchecked');
   }));
 
   function reInitWithCableReport() {

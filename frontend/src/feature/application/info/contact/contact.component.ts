@@ -13,6 +13,7 @@ import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 import {Subscription} from 'rxjs/Subscription';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationType} from '../../../../model/application/type/application-type';
+import {ObjectUtil} from '../../../../util/object.util';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -80,14 +81,20 @@ export class ContactComponent implements OnInit, OnDestroy {
     return contactCanBeRemoved && canBeEdited;
   }
 
-  selectOrderer(orderer: Contact): void {
-    this.customerHub.ordererSelected(orderer);
+  selectOrderer(index: number): void {
+    const orderer = this.contacts.at(index);
+    orderer.patchValue({orderer: true});
+    this.customerHub.ordererWasSelected(orderer.value);
   }
 
   ordererSelected(orderer: Contact): void {
     this.contacts.controls
-      .filter(ctrl => ctrl.value !== orderer)
+      .filter(ctrl => !ObjectUtil.equal(ctrl.value, orderer))
       .forEach(ctrl => ctrl.patchValue({orderer: false}));
+
+    if (orderer === undefined && CustomerRoleType[CustomerRoleType.APPLICANT] === this.customerRoleType) {
+      this.contacts.at(0).patchValue({orderer: true});
+    }
   }
 
   edit(id: number, index: number): void {
@@ -106,7 +113,8 @@ export class ContactComponent implements OnInit, OnDestroy {
     if (NumberUtil.isDefined(contactCtrl.value.id)) {
       contactCtrl.reset({
         name: contactCtrl.value.name,
-        active: true
+        active: true,
+        orderer: contactCtrl.value.orderer
       });
     }
     contactCtrl.enable();
@@ -128,12 +136,35 @@ export class ContactComponent implements OnInit, OnDestroy {
 
     this.contacts.push(fg);
 
+    if (contact.orderer) {
+      this.customerHub.ordererWasSelected(contact);
+    }
+
     if (NumberUtil.isDefined(contact.id)) {
       this.disableContactEdit(this.contacts.length - 1);
     }
   }
 
+  /**
+   * If customer is removed for some reason from form
+   * and current customer contained contact which was orderer
+   * then reset orderer
+   */
+  onCustomerRemove() {
+    let containsOrderer = this.contacts.controls
+      .map(ctrl => ctrl.value)
+      .some(contact => contact.orderer);
+
+    if (containsOrderer) {
+      this.customerHub.ordererWasSelected(undefined);
+    }
+  }
+
   remove(index: number): void {
+    if (this.contacts.at(index).value.orderer) {
+      this.customerHub.ordererWasSelected(undefined);
+    }
+
     this.contacts.removeAt(index);
   }
 
@@ -157,7 +188,7 @@ export class ContactComponent implements OnInit, OnDestroy {
   private resetContacts(): void {
     this.contacts.reset();
     while (this.contacts.length > 1) {
-      this.contacts.removeAt(1);
+      this.remove(1);
     }
     this.contacts.enable();
   }

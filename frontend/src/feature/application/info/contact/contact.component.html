@@ -75,9 +75,10 @@
                         </div>
                         <div class="row form-group" *ngIf="showOrderer" id="orderer">
                             <div class="col m12">
-                                <md-checkbox formControlName="orderer" (change)="selectOrderer(contact.value)">
+                                <md-radio-button name="orderer" [checked]="contact.value.orderer"
+                                                 [disabled]="readonly" (change)="selectOrderer(index)">
                                     Hakemuksen tilaaja
-                                </md-checkbox>
+                                </md-radio-button>
                             </div>
                         </div>
                     </md-card-content>

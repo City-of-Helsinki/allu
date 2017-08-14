@@ -78,15 +78,13 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   onRepresentativeChange(checked: boolean): void {
-    this.parentForm.patchValue({
-      hasRepresentative: checked
-    });
+    this.parentForm.patchValue({hasRepresentative: checked});
+    this.onCustomerToggle(checked);
   }
 
   onPropertyDeveloperChange(checked: boolean): void {
-    this.parentForm.patchValue({
-      hasPropertyDeveloper: checked
-    });
+    this.parentForm.patchValue({hasPropertyDeveloper: checked});
+    this.onCustomerToggle(checked);
   }
 
   private initForm() {
@@ -108,5 +106,11 @@ export class CustomerComponent implements OnInit, OnDestroy {
     Object.keys(this.customerForm.controls)
       .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
       .forEach(key => this.customerForm.get(key).disable());
+  }
+
+  private onCustomerToggle(checked: boolean): void {
+    if (!checked) {
+      this.contacts.onCustomerRemove();
+    }
   }
 }

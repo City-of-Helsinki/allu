@@ -20,7 +20,7 @@ export class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}
   findCustomerActiveContacts(customerId: number) {};
   get orderer() { return this.orderer$.asObservable(); };
-  ordererSelected(orderer) {};
+  ordererWasSelected(orderer) {};
 }
 
 export class CurrentUserMock {
