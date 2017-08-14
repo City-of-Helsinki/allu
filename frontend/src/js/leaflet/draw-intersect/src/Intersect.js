@@ -21,7 +21,14 @@ class Intersect {
   }
 
   validLayers(l1, l2) {
-    return l1 && l2 && l1._leaflet_id !== l2._leaflet_id;
+    if (l1 && l2) {
+      const bothOnMap = !!l1._map && !!l2._map;
+      const differentLayers = l1._leaflet_id !== l2._leaflet_id;
+      return bothOnMap && differentLayers;
+    } else {
+      return false;
+    }
+
   }
 
   polyIntersect(layer, againstLayer) {
