@@ -25,7 +25,7 @@ export class DecisionPreviewComponent implements OnInit {
 
   ngOnInit(): void {
     let appStatus = this.applicationState.application.statusEnum;
-    this.decisionHub.fetchByStatus(this.applicationState.application.id, appStatus)
+    this.decisionHub.fetch(this.applicationState.application.id)
         .subscribe(decision => this.providePdf(decision));
   }
   private providePdf(decision: Decision): void {

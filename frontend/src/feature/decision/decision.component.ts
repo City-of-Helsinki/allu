@@ -28,12 +28,12 @@ export class DecisionComponent implements OnInit {
   ngOnInit(): void {
     this.application = this.applicationState.application;
     this.progressStep = stepFrom(ApplicationStatus[this.application.status]);
-    this.decisionHub.fetchByStatus(this.application.id, this.application.statusEnum)
+    this.decisionHub.fetch(this.application.id)
       .subscribe(decision => this.providePdf(decision));
   }
 
   onDecisionConfirm(statusChange: ApplicationStatusChange): void {
-    this.decisionHub.fetchByStatus(this.application.id, statusChange.status)
+    this.decisionHub.fetch(this.application.id)
       .subscribe(decision => this.providePdf(decision));
   }
 

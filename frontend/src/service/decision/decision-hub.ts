@@ -2,20 +2,11 @@ import {Injectable} from '@angular/core';
 import '../../rxjs-extensions.ts';
 import {DecisionService} from './decision.service';
 import {DecisionDetails} from '../../model/decision/decision-details';
-import {ApplicationStatus, canBeEdited} from '../../model/application/application-status';
 
 @Injectable()
 export class DecisionHub {
   constructor(private decisionService: DecisionService) {
   }
-
-  /**
-   * Fetch real decision when application is in decision state or state after it
-   * otherwise show preview
-   */
-  public fetchByStatus = (applicationId: number, status: ApplicationStatus) => canBeEdited(status)
-      ? this.fetch(applicationId)
-      : this.preview(applicationId);
 
   /**
    * Asks decision service to fetch decision pdf for given application.

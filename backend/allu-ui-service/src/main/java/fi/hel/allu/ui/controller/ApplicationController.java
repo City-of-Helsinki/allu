@@ -2,6 +2,7 @@ package fi.hel.allu.ui.controller;
 
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
@@ -222,7 +223,7 @@ public class ApplicationController {
   }
 
   /**
-   * Get the decision PDF for application
+   * Get the decision PDF for application. If it doesn't exist, generate & return a preview.
    *
    * @param applicationId
    *          the application's Id
@@ -231,10 +232,14 @@ public class ApplicationController {
   @RequestMapping(value = "/{applicationId}/decision", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<byte[]> getDecision(@PathVariable int applicationId) {
-    byte[] bytes = decisionService.getDecision(applicationId);
-    HttpHeaders httpHeaders = new HttpHeaders();
-    httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
-    return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    try {
+      byte[] bytes = decisionService.getDecision(applicationId);
+      HttpHeaders httpHeaders = new HttpHeaders();
+      httpHeaders.setContentType(MediaType.parseMediaType("application/pdf"));
+      return new ResponseEntity<>(bytes, httpHeaders, HttpStatus.OK);
+    } catch (NoSuchEntityException e) {
+      return getDecisionPreview(applicationId);
+    }
   }
 
   /**
