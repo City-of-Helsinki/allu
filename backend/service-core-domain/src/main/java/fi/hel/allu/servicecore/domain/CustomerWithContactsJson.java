@@ -9,9 +9,17 @@ import java.util.List;
  * Wrapper class for communicating changes to customer and its related contacts to and back from frontend.
  */
 public class CustomerWithContactsJson {
-  CustomerRoleType roleType;
-  CustomerJson customer;
-  List<ContactJson> contacts = new ArrayList<>();
+
+  private CustomerRoleType roleType;
+  private CustomerJson customer;
+  private List<ContactJson> contacts = new ArrayList<>();
+
+  /**
+   * Return an ID for the item -- needed for application history
+   */
+  public Integer getId() {
+    return (customer == null) ? null : customer.getId();
+  }
 
   /**
    * @return  The role type of the customer.
