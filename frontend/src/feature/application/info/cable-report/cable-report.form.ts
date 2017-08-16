@@ -48,7 +48,7 @@ export class CableReportForm implements ApplicationForm {
       cableReport.propertyConnectivity,
       new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
-      new CableInfoForm(cableReport.mapExtractCount, cableReport.infoEntries),
+      CableInfoForm.from(cableReport),
       cableReport.specifiers
     );
   }
@@ -64,6 +64,7 @@ export class CableReportForm implements ApplicationForm {
 
 export class CableInfoForm {
   constructor(
+    public selectedCableInfoTypes?: Array<string>,
     public mapExtractCount?: number,
     public cableInfoEntries?: Array<CableInfoEntry>
   ) {}
@@ -71,10 +72,16 @@ export class CableInfoForm {
   static to(form: CableInfoForm, report: CableReport): CableReport {
     if (form) {
       report.mapExtractCount = form.mapExtractCount;
-      report.infoEntries = form.cableInfoEntries.filter(entry => !StringUtil.isEmpty(entry.additionalInfo));
+      report.infoEntries = form.cableInfoEntries.filter(entry => form.selectedCableInfoTypes.indexOf(entry.type) >= 0);
     }
     return report;
   }
 
-
+  static from(cableReport: CableReport): CableInfoForm {
+    let cableInfoForm = new CableInfoForm();
+    cableInfoForm.mapExtractCount = cableReport.mapExtractCount;
+    cableInfoForm.cableInfoEntries = cableReport.infoEntries;
+    cableInfoForm.selectedCableInfoTypes = cableReport.infoEntries.map(entry => entry.type);
+    return cableInfoForm;
+  }
 }
