@@ -11,8 +11,7 @@ export class Contact {
     public city?: string,
     public email?: string,
     public phone?: string,
-    public active = true,
-    public orderer = false) {}
+    public active = true) {}
 
   static formGroup(fb: FormBuilder, contact: Contact = new Contact()): FormGroup {
     return fb.group({
@@ -24,8 +23,7 @@ export class Contact {
       city: [contact.city],
       email: [contact.email, emailValidator],
       phone: [contact.phone, Validators.minLength(2)],
-      active: [contact.active],
-      orderer: [contact.orderer]
+      active: [contact.active]
     });
   }
 

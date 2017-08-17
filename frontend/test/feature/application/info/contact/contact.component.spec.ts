@@ -15,6 +15,7 @@ import {getMdIconButton} from '../../../../selector-helpers';
 import {ApplicationType} from '../../../../../src/model/application/type/application-type';
 import {Application} from '../../../../../src/model/application/application';
 import {Observable} from 'rxjs/Observable';
+import { OrdererIndexForm } from '../../../../../src/feature/application/info/cable-report/cable-report.form';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');
@@ -142,35 +143,18 @@ describe('ContactComponent', () => {
     expect(page.getFromContact(0, '[formControlName="streetAddress"]').nativeElement.value).toBe('');
   }));
 
-  it('should show orderer for cable report', fakeAsync(() => {
+  it('should show and select first contact from applicant as an orderer for cable report', fakeAsync(() => {
     reInitWithCableReport();
     expect(page.getFromContact(0, '.mat-radio-button')).toBeTruthy();
-    expect(page.getFromContact(0, '.mat-radio-checked')).toBeFalsy();
-  }));
-
-  it('should notify when orderer is selected', fakeAsync(() => {
-    const customerHubSpy = spyOn(customerHubMock, 'ordererWasSelected');
-    reInitWithCableReport();
-    const checkboxEl = page.getFromContact(0, '.mat-radio-label').nativeElement;
-    checkboxEl.click();
-    detectChangesAndUpdate();
-    expect(page.getFromContact(0, '.mat-radio-checked').nativeElement).toBeDefined('checkbox was checked');
-    expect(customerHubSpy.calls.count()).toEqual(1, 'stubbed method was called');
-    const orderer = customerHubSpy.calls.first().args[0];
-    expect(orderer.id).toEqual(CONTACT1.id, 'orderer id is correct');
-    expect(orderer.orderer).toEqual(true, 'contact was marked as orderer');
+    expect(page.getFromContact(0, '.mat-radio-button').componentInstance.checked).toBe(true);
   }));
 
   it('should uncheck orderer when other orderer is selected', fakeAsync(() => {
     reInitWithCableReport();
-    comp.contacts.at(0).patchValue({orderer: true});
+    page.getFromContact(1, '.mat-radio-label').nativeElement.click();
     detectChangesAndUpdate();
-    expect(page.getFromContact(0, '.mat-radio-checked').nativeElement).toBeDefined('checkbox was checked');
-
-    CONTACT2.orderer = true;
-    customerHubMock.orderer$.next(CONTACT2);
-    detectChangesAndUpdate();
-    expect(page.getFromContact(0, '.mat-radio-checked')).toBeFalsy('checkbox was unchecked');
+    expect(page.getFromContact(0, '.mat-radio-button').componentInstance.checked).toBe(false, 'original checkbox was checked');
+    expect(page.getFromContact(1, '.mat-radio-button').componentInstance.checked).toBe(true, 'clicked checkbox was unchecked');
   }));
 
   function reInitWithCableReport() {
@@ -180,7 +164,7 @@ describe('ContactComponent', () => {
     while (comp.contacts.length) {
       comp.contacts.removeAt(0);
     }
-    comp.ngOnDestroy();
+
     comp.ngOnInit();
     detectChangesAndUpdate();
   }
@@ -191,6 +175,7 @@ describe('ContactComponent', () => {
     form.addControl(
       CustomerWithContactsForm.formName(CustomerRoleType.APPLICANT),
       CustomerWithContactsForm.initialForm(fb, CustomerRoleType.APPLICANT));
+    form.addControl('ordererIndex', fb.group(OrdererIndexForm.createDefault()));
     return form;
   }
 });

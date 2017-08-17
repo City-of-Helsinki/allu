@@ -43,18 +43,4 @@ export class CustomerHub {
    */
   public findCustomerActiveContacts = (customerId: number) => this.customerService.findCustomerContacts(customerId)
     .map(contacts => contacts.filter(c => c.active));
-
-  /**
-   * Emits values of contact id which is currently selected as orderer
-   */
-  get orderer() {
-    return this.orderer$.asObservable().share();
-  }
-
-  /**
-   * Method to inform that new orderer is selected
-   */
-  public ordererWasSelected(contact: Contact): void {
-    this.orderer$.next(contact);
-  }
 }

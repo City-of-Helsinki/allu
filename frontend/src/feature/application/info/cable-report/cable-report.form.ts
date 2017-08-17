@@ -6,6 +6,8 @@ import {StringUtil} from '../../../../util/string.util';
 import {ApplicationForm} from '../application-form';
 import {TimeUtil} from '../../../../util/time.util';
 import {ApplicationStatus} from '../../../../model/application/application-status';
+import {OrdererIndex} from '../../../../model/application/cable-report/orderer-index';
+import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 
 export class CableReportForm implements ApplicationForm {
   constructor(
@@ -19,7 +21,8 @@ export class CableReportForm implements ApplicationForm {
     public reportTimes?: TimePeriod,
     public workDescription?: string,
     public cableInfo?: CableInfoForm,
-    public specifiers?: Array<string>
+    public specifiers?: Array<string>,
+    public ordererIndex?: OrdererIndexForm
   ) {}
 
   static to(form: CableReportForm, validityTime: Date, specifiers: Array<string>): CableReport {
@@ -33,6 +36,7 @@ export class CableReportForm implements ApplicationForm {
     cableReport.propertyConnectivity = form.propertyConnectivity;
     cableReport.workDescription = form.workDescription;
     cableReport.specifiers = specifiers;
+    cableReport.ordererIndex = OrdererIndexForm.to(form.ordererIndex);
     return CableInfoForm.to(form.cableInfo, cableReport);
   }
 
@@ -49,7 +53,8 @@ export class CableReportForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
       CableInfoForm.from(cableReport),
-      cableReport.specifiers
+      cableReport.specifiers,
+      OrdererIndexForm.from(cableReport.ordererIndex)
     );
   }
 
@@ -83,5 +88,24 @@ export class CableInfoForm {
     cableInfoForm.cableInfoEntries = cableReport.infoEntries;
     cableInfoForm.selectedCableInfoTypes = cableReport.infoEntries.map(entry => entry.type);
     return cableInfoForm;
+  }
+}
+
+export class OrdererIndexForm {
+  constructor(
+    public customerRoleType: string,
+    public index: number
+  ) {}
+
+  static to(form: OrdererIndexForm): OrdererIndex {
+    return form ? new OrdererIndex(form.customerRoleType, form.index) : undefined;
+  }
+
+  static from(ordererIndex: OrdererIndex): OrdererIndexForm {
+    return ordererIndex ? new OrdererIndexForm(ordererIndex.customerRoleType, ordererIndex.index) : OrdererIndexForm.createDefault();
+  }
+
+  static createDefault() {
+    return new OrdererIndexForm(CustomerRoleType[CustomerRoleType.APPLICANT], 0);
   }
 }

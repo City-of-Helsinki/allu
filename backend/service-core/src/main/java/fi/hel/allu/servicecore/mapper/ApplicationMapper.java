@@ -180,7 +180,7 @@ public class ApplicationMapper {
     case SHORT_TERM_RENTAL:
         return ShortTermRentalMapper.modelToJson((ShortTermRental) application.getExtension());
     case CABLE_REPORT:
-        return CableReportMapper.modelToJson((CableReport) application.getExtension());
+        return CableReportMapper.modelToJson(application);
     case AREA_RENTAL:
       return AreaRentalMapper.modelToJson((AreaRental) application.getExtension());
     case EXCAVATION_ANNOUNCEMENT:
@@ -278,12 +278,6 @@ public class ApplicationMapper {
     return customerModel;
   }
 
-  private ContactJson createContactJson(Contact contact, Optional<Integer> ordererId) {
-    ContactJson json = createContactJson(contact);
-    json.setOrderer(ordererId.map(id -> id == json.getId()).orElse(false));
-
-    return json;
-  }
   /**
    * Map the given Contact object into ContactJson
    *
@@ -408,12 +402,11 @@ public class ApplicationMapper {
   private List<CustomerWithContactsJson> createCustomerWithContactsJson(Application application) {
     List<CustomerWithContacts> customersWithContacts = application.getCustomersWithContacts();
     List<CustomerWithContactsJson> customerWithContactsJsons = new ArrayList<>();
-    Optional<Integer> orderer = getOrderer(application);
 
     customersWithContacts.forEach(cwc -> {
       CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
       customerWithContactsJson.setContacts(cwc.getContacts().stream()
-              .map(c -> createContactJson(c, orderer))
+              .map(c -> createContactJson(c))
               .collect(Collectors.toList()));
       customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer()));
       customerWithContactsJson.setRoleType(cwc.getRoleType());
@@ -446,14 +439,5 @@ public class ApplicationMapper {
   private boolean userCanSeeSsn() {
     UserJson user = userService.getCurrentUser();
     return user.getAssignedRoles().stream().anyMatch(canSeeSsn::contains);
-  }
-
-  private Optional<Integer> getOrderer(Application application) {
-    if (ApplicationType.CABLE_REPORT.equals(application.getType())) {
-      CableReport cr = (CableReport) application.getExtension();
-      return Optional.ofNullable(cr.getOrderer());
-    } else {
-      return Optional.empty();
-    }
   }
 }

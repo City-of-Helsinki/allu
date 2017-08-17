@@ -52,7 +52,8 @@ export class ApplicationTypeDataMapper {
           backendExtension.cableReportId,
           backendExtension.workDescription,
           backendExtension.mapExtractCount,
-          backendExtension.infoEntries
+          backendExtension.infoEntries,
+          backendExtension.ordererIndex
         );
       case ApplicationType.EXCAVATION_ANNOUNCEMENT:
         return new ExcavationAnnouncement(

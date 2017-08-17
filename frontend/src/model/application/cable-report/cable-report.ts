@@ -2,6 +2,7 @@ import {ApplicationExtension} from '../type/application-extension';
 import {CableInfoEntry} from './cable-info-entry';
 import {ApplicationType} from '../type/application-type';
 import {TimeUtil} from '../../../util/time.util';
+import { OrdererIndex } from './orderer-index';
 
 export class CableReport extends ApplicationExtension {
   constructor(
@@ -16,7 +17,8 @@ export class CableReport extends ApplicationExtension {
     public cableReportId?: string,
     public workDescription?: string,
     public mapExtractCount?: number,
-    public infoEntries?: Array<CableInfoEntry>) {
+    public infoEntries?: Array<CableInfoEntry>,
+    public ordererIndex?: OrdererIndex) {
     super(ApplicationType[ApplicationType.CABLE_REPORT], specifiers);
     this.infoEntries = infoEntries || [];
   }

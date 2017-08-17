@@ -27,6 +27,8 @@ class ContactComponentMock {
   @Input() contactList: Array<Contact> = [];
   @Input() readonly: boolean;
   @Input() contactRequired = false;
+
+  onCustomerRemove() {}
 }
 
 describe('CustomerComponent', () => {

@@ -13,8 +13,7 @@ export class ContactMapper {
       backendContact.city,
       backendContact.email,
       backendContact.phone,
-      backendContact.active,
-      backendContact.orderer
+      backendContact.active
     ) : undefined;
   }
 
@@ -29,8 +28,7 @@ export class ContactMapper {
       city: contact.city,
       email: contact.email,
       phone: contact.phone,
-      active: contact.active,
-      orderer: contact.orderer
+      active: contact.active
     } : undefined;
   }
 }

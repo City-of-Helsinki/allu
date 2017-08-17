@@ -10,6 +10,7 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
+import fi.hel.allu.servicecore.mapper.extension.CableReportMapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -277,11 +278,10 @@ public class DecisionService {
   /* Find the customer and contact that ordered the application */
   private Optional<Pair<CustomerJson, ContactJson>> cableReportOrderer(
       ApplicationJson applicationJson) {
-    return streamFor(applicationJson.getCustomersWithContacts())
-        .map(cwc -> streamFor(cwc.getContacts()).filter(ContactJson::isOrderer)
-            .map(c -> Pair.of(cwc.getCustomer(), c)).findFirst().orElse(null))
-        .filter(p -> p != null).findFirst();
-
+    CableReportJson cableReport = (CableReportJson)applicationJson.getExtension();
+    OrdererIndexJson index = cableReport.getOrdererIndex();
+    return CableReportMapper.getCustomerJsonWithOrderer(index, applicationJson.getCustomersWithContacts())
+        .map(cwc -> Pair.of(cwc.getCustomer(), CableReportMapper.getOrdererJson(index.getIndex(), cwc)));
   }
   /*
    * Find the customer and contact that left the cable report and return them

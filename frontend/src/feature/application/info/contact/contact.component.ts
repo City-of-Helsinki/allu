@@ -14,6 +14,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {ObjectUtil} from '../../../../util/object.util';
+import { OrdererIndexForm } from '../cable-report/cable-report.form';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -25,7 +26,7 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
     require('./contact.component.scss')
   ]
 })
-export class ContactComponent implements OnInit, OnDestroy {
+export class ContactComponent implements OnInit {
   @Input() parentForm: FormGroup;
   @Input() customerId: number;
   @Input() customerRoleType: string;
@@ -40,7 +41,6 @@ export class ContactComponent implements OnInit, OnDestroy {
   showOrderer: boolean = false;
 
   private dialogRef: MdDialogRef<ContactModalComponent>;
-  private ordererSubscription: Subscription;
 
   constructor(private fb: FormBuilder,
               private dialog: MdDialog,
@@ -58,12 +58,6 @@ export class ContactComponent implements OnInit, OnDestroy {
     this.availableContacts = Some(this.customerId)
       .map(id => this.customerHub.findCustomerActiveContacts(id))
       .orElse(Observable.of([]));
-
-    this.ordererSubscription = this.customerHub.orderer.subscribe(orderer => this.ordererSelected(orderer));
-  }
-
-  ngOnDestroy(): void {
-    this.ordererSubscription.unsubscribe();
   }
 
   contactSelected(contact: Contact, index: number): void {
@@ -82,19 +76,14 @@ export class ContactComponent implements OnInit, OnDestroy {
   }
 
   selectOrderer(index: number): void {
-    const orderer = this.contacts.at(index);
-    orderer.patchValue({orderer: true});
-    this.customerHub.ordererWasSelected(orderer.value);
+    this.parentForm.patchValue({ordererIndex: new OrdererIndexForm(this.customerRoleType, index)});
   }
 
-  ordererSelected(orderer: Contact): void {
-    this.contacts.controls
-      .filter(ctrl => !ObjectUtil.equal(ctrl.value, orderer))
-      .forEach(ctrl => ctrl.patchValue({orderer: false}));
-
-    if (orderer === undefined && CustomerRoleType[CustomerRoleType.APPLICANT] === this.customerRoleType) {
-      this.contacts.at(0).patchValue({orderer: true});
-    }
+  isOrderer(index: number): boolean {
+    const currentOrderer = this.parentForm.getRawValue().ordererIndex;
+    return !!currentOrderer
+      && currentOrderer.customerRoleType === this.customerRoleType
+      && currentOrderer.index === index;
   }
 
   edit(id: number, index: number): void {
@@ -113,8 +102,7 @@ export class ContactComponent implements OnInit, OnDestroy {
     if (NumberUtil.isDefined(contactCtrl.value.id)) {
       contactCtrl.reset({
         name: contactCtrl.value.name,
-        active: true,
-        orderer: contactCtrl.value.orderer
+        active: true
       });
     }
     contactCtrl.enable();
@@ -136,10 +124,6 @@ export class ContactComponent implements OnInit, OnDestroy {
 
     this.contacts.push(fg);
 
-    if (contact.orderer) {
-      this.customerHub.ordererWasSelected(contact);
-    }
-
     if (NumberUtil.isDefined(contact.id)) {
       this.disableContactEdit(this.contacts.length - 1);
     }
@@ -151,18 +135,15 @@ export class ContactComponent implements OnInit, OnDestroy {
    * then reset orderer
    */
   onCustomerRemove() {
-    let containsOrderer = this.contacts.controls
-      .map(ctrl => ctrl.value)
-      .some(contact => contact.orderer);
-
-    if (containsOrderer) {
-      this.customerHub.ordererWasSelected(undefined);
+    const currentOrderer = this.parentForm.value.ordererIndex;
+    if (currentOrderer && currentOrderer.customerRoleType === this.customerRoleType) {
+      this.parentForm.patchValue({ordererIndex: OrdererIndexForm.createDefault()});
     }
   }
 
   remove(index: number): void {
-    if (this.contacts.at(index).value.orderer) {
-      this.customerHub.ordererWasSelected(undefined);
+    if (this.isOrderer(index)) {
+      this.parentForm.patchValue({ordererIndex: OrdererIndexForm.createDefault()});
     }
 
     this.contacts.removeAt(index);
