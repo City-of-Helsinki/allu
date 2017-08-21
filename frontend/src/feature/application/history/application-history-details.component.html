@@ -8,22 +8,29 @@
     <table class="bordered" *ngIf="change.changeType === 'STATUS_CHANGED'">
         Tila vaihdettu {{['application.status', change.newStatus] | translation}}
     </table>
-    <table class="bordered" *ngIf="change.changeType === 'CONTENTS_CHANGED'">
-        <thead>
-        <tr>
-            <th>Kenttä</th>
-            <th>Vanha</th>
-            <th>Uusi</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let fieldChange of fieldChanges">
-            <td>{{fieldChange.fieldName}}</td>
-            <td>{{fieldChange.oldValue}}</td>
-            <td>{{fieldChange.newValue}}</td>
-        </tr>
-        </tbody>
-    </table>
+    <div *ngIf="change.changeType === 'CONTENTS_CHANGED'">        
+        <table class="bordered" *ngIf="fieldChanges.length">
+            <thead>
+            <tr>
+                <th>Kenttä</th>
+                <th>Muutos</th>                
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let fieldChange of fieldChanges">
+                <td>{{fieldChange.uiFieldName}}</td>    
+                <td *ngIf="fieldChange.link">
+                    <a [routerLink]="fieldChange.link" (click)="closeModal()">{{fieldChange.definedValue}}</a>
+                </td>            
+                <td *ngIf="!fieldChange.link">
+                    <span>{{fieldChange.oldValue}}</span>
+                    <span><md-icon class="icon-middle">arrow_forward</md-icon></span>
+                    <span>{{fieldChange.newValue}}</span>
+                </td>            
+            </tr>
+            </tbody>
+        </table>
+    </div>    
 </md-dialog-content>
 <md-dialog-actions>
     <button md-raised-button md-dialog-close color="primary">SULJE</button>

@@ -1,4 +1,4 @@
-package fi.hel.allu.servicecore.service;
+package fi.hel.allu.servicecore.service.applicationhistory;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.types.ChangeType;
@@ -6,10 +6,10 @@ import fi.hel.allu.common.util.ObjectComparer;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.ChangeHistoryItemJson;
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
 
+import fi.hel.allu.servicecore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -32,11 +32,12 @@ public class ApplicationHistoryService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
+  private ObjectComparer comparer;
   private Pattern skipFieldPattern;
 
-  // regex to control which change fields should be skipped.
+  // regex to skip id fields since they are needed for comparison but no need to show them to user.
   // TODO: add cable report validityTime as skipped field too
-  private static final String SKIP_FIELDS_RE = "(/applicationTags/[^/]+/id)|(/extension/infoEntries/[^/]+/id)|(/handler/.*)";
+  private static final String SKIP_FIELDS_RE = "(/.*/[^/]+/id)"; // Skip all id-fields
 
   /* List of mappings for abbreviated history keys */
   private static final Map<Pattern, String> ABBREV_MAP = new HashMap<>();
@@ -51,11 +52,13 @@ public class ApplicationHistoryService {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
-  }
+    this.skipFieldPattern = Pattern.compile(SKIP_FIELDS_RE);
 
-  @PostConstruct
-  public void setupPattern() {
-    skipFieldPattern = Pattern.compile(SKIP_FIELDS_RE);
+    this.comparer = new ObjectComparer();
+    comparer.addMixin(ContactJson.class, ContactSimpleMixIn.class);
+    comparer.addMixin(CustomerJson.class, CustomerSimpleMixin.class);
+    comparer.addMixin(ApplicationJson.class, ApplicationMixIn.class);
+    comparer.addMixin(CustomerWithContactsJson.class, CustomerWithContactsSimpleMixin.class);
   }
 
   /**
@@ -83,8 +86,6 @@ public class ApplicationHistoryService {
    *          new contents
    */
   public void addFieldChanges(Integer applicationId, ApplicationJson oldApplication, ApplicationJson newApplication) {
-    ObjectComparer comparer = new ObjectComparer();
-
     Set<String> abbreviated = new HashSet<>();
 
     List<FieldChange> fieldChanges = comparer.compare(oldApplication, newApplication).stream()

@@ -8,6 +8,7 @@ import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

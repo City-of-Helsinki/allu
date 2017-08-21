@@ -417,7 +417,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'phone', 'Puhelin', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'isActive', 'Kontakti käytössä', 'BOOLEAN', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'active', 'Kontakti käytössä', 'BOOLEAN', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'orderer', 'Johtoselvityksen tilaaja', 'BOOLEAN', null, null);
 
@@ -434,23 +434,23 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 -- Customer
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('Customer', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Hakijan tunniste', 'INTEGER', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'),  'id', 'Asiakkaan tunniste', 'INTEGER', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'type', 'Hakijan tyyppi', 'ENUMERATION', null,
+    VALUES (currval('allu.structure_meta_id_seq'), 'type', 'Asiakkaan tyyppi', 'ENUMERATION', null,
             (select id from allu.structure_meta where type_name = 'CustomerType' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'name', 'Hakijan nimi', 'STRING', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'name', 'Asiakkaan nimi', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'postalAddress', 'Hakijan osoitetiedot', 'STRUCTURE', null,
+    VALUES (currval('allu.structure_meta_id_seq'), 'postalAddress', 'Asiakkaan osoitetiedot', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'PostalAddress' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'email', 'Hakijan sähköpostiosoite', 'STRING', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'email', 'Asiakkaan sähköpostiosoite', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'phone', 'Hakijan puhelinnumero', 'STRING', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'phone', 'Asiakkaan puhelinnumero', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'registryKey', 'Henkilö-/Y-tunnus', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'isActive', 'Hakija käytössä', 'BOOLEAN', null, null);
+    VALUES (currval('allu.structure_meta_id_seq'), 'active', 'Asiakkaan käytössä', 'BOOLEAN', null, null);
 
 -- CustomerWithContacts
 
@@ -462,7 +462,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'customer', 'Asiakas', 'STRUCTURE', null,
             (select id from allu.structure_meta where type_name = 'Customer' and version = 1));
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'contactList', 'Asiakkaan yhteyshenkilöt', 'LIST', 'STRUCTURE',
+    VALUES (currval('allu.structure_meta_id_seq'), 'contacts', 'Asiakkaan yhteyshenkilöt', 'LIST', 'STRUCTURE',
             (select id from allu.structure_meta where type_name = 'Contact' and version = 1));
 
 ------------------------

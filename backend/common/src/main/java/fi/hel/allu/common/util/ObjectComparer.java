@@ -34,6 +34,23 @@ public class ObjectComparer {
 
   private static final String SLASH = "/";
   private static final String ID = "id";
+  private ObjectMapper mapper;
+
+  public ObjectComparer() {
+    mapper = new ObjectMapper();
+    mapper.registerModule(new JavaTimeModule());
+    mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+  }
+
+  /**
+   * Adds a mixin to mapper.
+   * Can be used to modify field serialization to ignore some fields for example
+   * @param target target class which is modified
+   * @param mixinSource mixin which is used to modify target
+   */
+  public void addMixin(Class<?> target, Class<?> mixinSource) {
+    this.mapper.addMixIn(target, mixinSource);
+  }
 
   /**
    * Compare two objects and return their differences
@@ -48,9 +65,6 @@ public class ObjectComparer {
     JsonNode source;
     JsonNode target;
     try {
-      ObjectMapper mapper = new ObjectMapper();
-      mapper.registerModule(new JavaTimeModule());
-      mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
       String sourceJson = mapper.writeValueAsString(oldObject);
       String targetJson = mapper.writeValueAsString(newObject);
       source = mapper.readTree(sourceJson);

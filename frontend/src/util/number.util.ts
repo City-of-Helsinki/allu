@@ -6,6 +6,10 @@ export class NumberUtil {
     return !!num || (num === 0);
   }
 
+  static isNumeric(num: any): boolean {
+    return num !== undefined && num !== '' && !isNaN(num);
+  }
+
   static isBetween(val: number, min: number, max: number): boolean {
     return NumberUtil.isDefined(val) && (min <= val) && (val <= max);
   }

@@ -657,6 +657,14 @@ export const translations = {
         CREATED: 'Luotu',
         STATUS_CHANGED: 'Siirretty tilaan',
         CONTENTS_CHANGED: 'Tietoja päivitetty'
+      },
+      field: {
+        CUSTOMER: 'Asiakas',
+        CONTACT: 'Yhteyshenkilö'
+      },
+      operation: {
+        ADD: 'lisätty',
+        REMOVE: 'poistettu'
       }
     }
   },

@@ -13,6 +13,7 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.ApplicationTagJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +61,6 @@ public class ApplicationHistoryServiceTest extends MockServices {
     Mockito.when(mockUserJson.getId()).thenReturn(MOCK_USER_ID);
     applicationHistoryService = new ApplicationHistoryService(mockApplicationProperties, mockRestTemplate,
         mockUserService);
-    applicationHistoryService.setupPattern();
   }
 
   @Test

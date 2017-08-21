@@ -18,7 +18,7 @@ public class CustomerJson {
   private String email;
   private String phone;
   private String registryKey;
-  private boolean isActive;
+  private boolean active;
 
   /**
    * in Finnish: Tietokantatunniste
@@ -101,10 +101,10 @@ public class CustomerJson {
    * @return  True, if the user is active i.e. has not been marked as deleted.
    */
   public boolean isActive() {
-    return isActive;
+    return active;
   }
 
   public void setActive(boolean active) {
-    isActive = active;
+    this.active = active;
   }
 }

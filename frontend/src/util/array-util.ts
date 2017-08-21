@@ -19,6 +19,14 @@ export class ArrayUtil {
     }
   }
 
+  static last<T>(array: Array<T>, filterFn?: (item: T) => boolean): T {
+    if (array) {
+      return ArrayUtil.first(array.reverse());
+    } else {
+      return undefined;
+    }
+  }
+
   static numberArrayEqual(left: Array<number>, right: Array<number>): boolean {
     return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;
   }

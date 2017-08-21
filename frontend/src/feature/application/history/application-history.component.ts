@@ -12,6 +12,7 @@ import {ApplicationHub} from '../../../service/application/application-hub';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
+import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
 
 @Component({
   selector: 'application-history',
@@ -30,11 +31,13 @@ export class ApplicationHistoryComponent implements OnInit {
               private applicationHub: ApplicationHub,
               private historyHub: HistoryHub,
               private userHub: UserHub,
-              private dialog: MdDialog) {}
+              private dialog: MdDialog,
+              protected formatter: ApplicationHistoryFormatter) {}
 
   ngOnInit(): void {
     this.applicationHub.loadMetaData(this.applicationState.application.type).subscribe(meta => {
       this.meta = meta;
+      this.formatter.setMeta(meta);
       this.history = this.historyHub.applicationHistory(this.applicationState.application.id);
       this.userHub.getActiveUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
     },

@@ -1,5 +1,6 @@
 package fi.hel.allu.common.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.util.ObjectComparer.Difference;
@@ -47,6 +48,27 @@ public class ObjectComparerTest {
     assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/thirdStringField")).count());
     assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/otherStringField")).count());
     assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/otherListField/1")).count());
+  }
+
+  @Test
+  public void testSimpleWithFieldIgnore() {
+    SimpleClass simple1 = new SimpleClass();
+    simple1.setBooleanField(true);
+    simple1.setStringField("Jouko Turkko");
+    simple1.setListField(Arrays.asList(ApplicationType.AREA_RENTAL, ApplicationType.CABLE_REPORT));
+    simple1.setOtherListField(Arrays.asList(RoleType.ROLE_DECISION, RoleType.ROLE_INVOICING));
+    simple1.setOtherStringField("jouko@turkko.xx");
+    simple1.setThirdStringField("Manager of managing");
+    SimpleClass simple2 = new SimpleClass();
+    simple2.setBooleanField(false);
+    simple2.setStringField("Jouko Turkko");
+    simple2.setListField(Arrays.asList(ApplicationType.AREA_RENTAL, ApplicationType.CABLE_REPORT));
+    simple2.setOtherListField(Arrays.asList(RoleType.ROLE_DECISION, RoleType.ROLE_SUPERVISE));
+    simple2.setThirdStringField("Manager of managing change");
+    comparer.addMixin(SimpleClass.class, SimpleClassCompare.class);
+    List<Difference> diff = comparer.compare(simple1, simple2);
+    assertEquals(1, diff.size());
+    assertEquals(1, diff.stream().filter(d -> d.keyName.equals("/booleanField")).count());
   }
 
   @Test
@@ -237,6 +259,15 @@ public class ObjectComparerTest {
       this.stringField = stringField;
     }
 
+  }
+
+  abstract class SimpleClassCompare {
+    // Boolean field is not ignored
+    @JsonIgnore public abstract String getStringField();
+    @JsonIgnore public abstract String getOtherStringField();
+    @JsonIgnore public abstract String getThirdStringField();
+    @JsonIgnore public abstract List<ApplicationType> getListField();
+    @JsonIgnore public abstract List<RoleType> getOtherListField();
   }
 
   class ComplexClass {

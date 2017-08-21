@@ -14,6 +14,9 @@ export class StructureMeta {
     return this.getAttribute(StringUtil.toPath(path, '/')).dataType;
   }
 
+  replaceAttribute(attribute: AttributeMeta, ...path: string[]) {
+  }
+
   private getAttribute(...path: string[]): AttributeMeta {
     let fullPath = StringUtil.toPath(path, '/');
     let currentAttributeName = fullPath.replace( /\d+/g, '*');

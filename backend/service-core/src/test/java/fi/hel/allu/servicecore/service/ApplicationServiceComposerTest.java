@@ -6,6 +6,7 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.servicecore.domain.*;
 
+import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

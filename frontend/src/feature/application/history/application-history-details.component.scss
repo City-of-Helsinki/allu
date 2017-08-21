@@ -1,3 +1,9 @@
+@import '../../../assets/colors';
+
 td {
   min-width: 150px;
+}
+
+a {
+  color: mat-color($allu-blue, 500);
 }
