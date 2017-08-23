@@ -42,16 +42,20 @@ xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
           <span id="pdfkit_page_current"></span>/<span id="pdfkit_page_count"></span>
         </p>
         <div class="id">
-          <dl>
-            <dt>Päivämäärä:</dt>
-            <dd><!--  [päätöspvm] -->
-              <xsl:value-of select="data/decisionDate" />
-            </dd>
-            <dt>Tunnus:</dt>
-            <dd><!-- [tunnus]  -->
-              <xsl:value-of select="data/decisionId" />
-            </dd>
-          </dl>
+          <table>
+            <tr>
+              <td class="c1">Päivämäärä:</td>
+              <td class="c2"><!-- [päätöspvm] -->
+                <xsl:value-of select="data/decisionDate" />
+              </td>
+            </tr>
+            <tr>
+              <td class="c1">Tunnus:</td>
+              <td class="c2"><!-- [tunnus]  -->
+                <xsl:value-of select="data/decisionId" />
+              </td>
+            </tr>
+          </table>
         </div>
       </div>
     </div>

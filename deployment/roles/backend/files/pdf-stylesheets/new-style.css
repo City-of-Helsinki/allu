@@ -55,19 +55,18 @@ hr {
       display: inline;
       float: right;
       font-style: normal; }
-    .header .half-right div.id {
+    .header .half-right .id {
       clear: both;
       display: block; }
-      .header .half-right div.id dt {
-        display: inline-block;
-        width: 30%;
-        font-size: 8pt; }
-      .header .half-right div.id dd {
-        display: inline;
-        font-size: 10pt; }
-      .header .half-right div.id dd:after {
-        display: block;
-        content: ""; }
+      .header .half-right .id table {
+        width: 100%;
+        border-style: none; }
+        .header .half-right .id table td.c1 {
+          width: 35%;
+          font-size: 8pt; }
+        .header .half-right .id table td.c2 {
+          display: inline;
+          font-size: 10pt; }
 
 .body .boxed {
   border: solid black thin;
