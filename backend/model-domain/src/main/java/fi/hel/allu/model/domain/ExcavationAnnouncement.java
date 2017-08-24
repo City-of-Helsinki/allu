@@ -15,11 +15,14 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
   private ZonedDateTime winterTimeOperation;
-  private ZonedDateTime summerTimeOperation;
   private ZonedDateTime workFinished;
   private ZonedDateTime unauthorizedWorkStartTime;
   private ZonedDateTime unauthorizedWorkEndTime;
   private ZonedDateTime guaranteeEndTime;
+  private ZonedDateTime customerStartTime;
+  private ZonedDateTime customerEndTime;
+  private ZonedDateTime customerWinterTimeOperation;
+  private ZonedDateTime customerWorkFinished;
   private Integer cableReportId;
   private String additionalInfo;
   private String trafficArrangements;
@@ -99,17 +102,6 @@ public class ExcavationAnnouncement extends ApplicationExtension {
   }
 
   /**
-   * In Finnish: Kesätyön toiminnallinen kunto (päivämäärä, jolloin valmis).
-   */
-  public ZonedDateTime getSummerTimeOperation() {
-    return summerTimeOperation;
-  }
-
-  public void setSummerTimeOperation(ZonedDateTime summerTimeOperation) {
-    this.summerTimeOperation = summerTimeOperation;
-  }
-
-  /**
    * In Finnish: Työ valmis.
    */
   public ZonedDateTime getWorkFinished() {
@@ -151,6 +143,50 @@ public class ExcavationAnnouncement extends ApplicationExtension {
 
   public void setGuaranteeEndTime(ZonedDateTime guaranteeEndTime) {
     this.guaranteeEndTime = guaranteeEndTime;
+  }
+
+  /**
+   * In Finnish: Asiakkaan ilmoittama hakemuksen alkuaika.
+   */
+  public ZonedDateTime getCustomerStartTime() {
+    return customerStartTime;
+  }
+
+  public void setCustomerStartTime(ZonedDateTime customerStartTime) {
+    this.customerStartTime = customerStartTime;
+  }
+
+  /**
+   * In Finnish: Asiakkaan ilmoittama hakemuksen loppuaika.
+   */
+  public ZonedDateTime getCustomerEndTime() {
+    return customerEndTime;
+  }
+
+  public void setCustomerEndTime(ZonedDateTime customerEndTime) {
+    this.customerEndTime = customerEndTime;
+  }
+
+  /**
+   * In Finnish: Asiakkaan ilmoittama talvityön toiminnallinen kunto.
+   */
+  public ZonedDateTime getCustomerWinterTimeOperation() {
+    return customerWinterTimeOperation;
+  }
+
+  public void setCustomerWinterTimeOperation(ZonedDateTime customerWinterTimeOperation) {
+    this.customerWinterTimeOperation = customerWinterTimeOperation;
+  }
+
+  /**
+   * In Finnish: Asiakkaan ilmoittama aika, jolloin työ on valmis.
+   */
+  public ZonedDateTime getCustomerWorkFinished() {
+    return customerWorkFinished;
+  }
+
+  public void setCustomerWorkFinished(ZonedDateTime customerWorkFinished) {
+    this.customerWorkFinished = customerWorkFinished;
   }
 
   /**

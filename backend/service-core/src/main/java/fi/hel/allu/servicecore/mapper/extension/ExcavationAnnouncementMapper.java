@@ -9,9 +9,12 @@ public class ExcavationAnnouncementMapper {
     json.setAdditionalInfo(excavationAnnouncement.getAdditionalInfo());
     json.setCableReportId(excavationAnnouncement.getCableReportId());
     json.setGuaranteeEndTime(excavationAnnouncement.getGuaranteeEndTime());
-    json.setSummerTimeOperation(excavationAnnouncement.getSummerTimeOperation());
     json.setWinterTimeOperation(excavationAnnouncement.getWinterTimeOperation());
     json.setWorkFinished(excavationAnnouncement.getWorkFinished());
+    json.setCustomerStartTime(excavationAnnouncement.getCustomerStartTime());
+    json.setCustomerEndTime(excavationAnnouncement.getCustomerEndTime());
+    json.setCustomerWinterTimeOperation(excavationAnnouncement.getCustomerWinterTimeOperation());
+    json.setCustomerWorkFinished(excavationAnnouncement.getCustomerWorkFinished());
     json.setTrafficArrangements(excavationAnnouncement.getTrafficArrangements());
     json.setTrafficArrangementImpedimentType(excavationAnnouncement.getTrafficArrangementImpedimentType());
     json.setPksCard(excavationAnnouncement.getPksCard());
@@ -29,9 +32,12 @@ public class ExcavationAnnouncementMapper {
     excavationAnnouncement.setAdditionalInfo(json.getAdditionalInfo());
     excavationAnnouncement.setCableReportId(json.getCableReportId());
     excavationAnnouncement.setGuaranteeEndTime(json.getGuaranteeEndTime());
-    excavationAnnouncement.setSummerTimeOperation(json.getSummerTimeOperation());
     excavationAnnouncement.setWinterTimeOperation(json.getWinterTimeOperation());
     excavationAnnouncement.setWorkFinished(json.getWorkFinished());
+    excavationAnnouncement.setCustomerStartTime(json.getCustomerStartTime());
+    excavationAnnouncement.setCustomerEndTime(json.getCustomerEndTime());
+    excavationAnnouncement.setCustomerWinterTimeOperation(json.getCustomerWinterTimeOperation());
+    excavationAnnouncement.setCustomerWorkFinished(json.getCustomerWorkFinished());
     excavationAnnouncement.setTrafficArrangements(json.getTrafficArrangements());
     excavationAnnouncement.setTrafficArrangementImpedimentType(json.getTrafficArrangementImpedimentType());
     excavationAnnouncement.setPksCard(json.getPksCard());
