@@ -165,6 +165,10 @@
   "extension": {
     "applicationType": "EXCAVATION_ANNOUNCEMENT",
     "guaranteeEndTime": "2019-03-31T22:00:00Z",
+    "customerStartTime": "2017-01-01T05:00:00Z",
+    "customerEndTime": "2017-03-30T22:00:00Z",
+    "customerWinterTimeOperation": "2017-03-10T22:00:00Z",
+    "customerWorkFinished": "2017-03-30T22:00:00Z",
     "additionalInfo": "Automaagisesti tehty kaivuilmoitus",
     "traffixArrangements": "Mannerheimintie kokonaan poikki. Koittakaa selvitä!",
     "trafficArrangementImpedimentType": "SIGNIFICANT_IMPEDIMENT",
