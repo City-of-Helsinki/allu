@@ -1,4 +1,4 @@
-package fi.hel.allu.common.types;
+package fi.hel.allu.common.domain.types;
 
 /**
  * Used in differentiate between different types of customers.

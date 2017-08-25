@@ -26,7 +26,7 @@ paths:
       tags:
         - applications
       summary: Create a new application
-      description: ''
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
       operationId: applicationsCreate
       consumes:
         - application/json
@@ -46,7 +46,114 @@ paths:
             $ref: '#/definitions/ApplicationExt'
       security:
         - api_key: []
+  /v1/customers:
+    post:
+      tags:
+        - customers
+      summary: Create a new customer
+      description: Requires ROLE_INTERNAL
+      operationId: customersCreate
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Customer created to Allu
+          required: true
+          schema:
+            $ref: '#/definitions/CustomerExt'
+      responses:
+        '200':
+          description: Created customer
+          schema:
+            $ref: '#/definitions/CustomerExt'
+      security:
+        - api_key: []
+  /v1/customers/{id}:
+    get:
+      tags:
+        - customers
+      summary: Find a customer by id
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: customersFindById
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Id of the customer
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Customer with given id
+          schema:
+            $ref: '#/definitions/CustomerExt'
+      security:
+        - api_key: []
+  /v1/contacts:
+    post:
+      tags:
+        - contacts
+      summary: Create a new contact
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: contactsCreate
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Contact created to Allu
+          required: true
+          schema:
+            $ref: '#/definitions/ContactExt'
+      responses:
+        '200':
+          description: Created contact
+          schema:
+            $ref: '#/definitions/ContactExt'
+      security:
+        - api_key: []
+  /v1/contacts/{id}:
+    get:
+      tags:
+        - contacts
+      summary: Find a contact by id
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: contactsFindById
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: Id of the contact
+          required: true
+          type: string
+      responses:
+        '200':
+          description: Contact with given id
+          schema:
+            $ref: '#/definitions/ContactExt'
+      security:
+        - api_key: []
 definitions:
+  CustomerType:
+    description: Type of a customer
+    type: string
+    enum:
+      - PERSON
+      - COMPANY
+      - ASSOCIATION
+      - PROPERTY
+      - OTHER
   StatusType:
     description: Application status
     type: string
@@ -154,6 +261,56 @@ definitions:
       - SIGNIFICANT_IMPEDIMENT
       - IMPEDIMENT_FOR_HEAVY_TRAFFIC
       - INSIGNIFICANT_IMPEDIMENT
+  CustomerExt:
+    description: Customer information
+    type: object
+    required:
+      - type
+      - name
+    properties:
+      id:
+        description: The unique identifier of the customer
+        type: integer
+        format: int32
+      type:
+        $ref: '#/definitions/CustomerType'
+      name:
+        description: Name of the customer
+        type: string
+      postalAddress:
+        $ref: '#/definitions/PostalAddressExt'
+      email:
+        description: Email of the customer
+        type: string
+      phone:
+        description: Phone number of the customer
+        type: string
+      registryKey:
+        description: Registry key of the customer. Either business id (Y-tunnus) for companies or social security number (henkilötunnus) for persons
+        type: string
+  ContactExt:
+    description: Customer contact information
+    type: object
+    properties:
+      id:
+        description: The unique identifier of the contact
+        type: integer
+        format: int32
+      customerId:
+        description: The unique identifier of the customer
+        type: integer
+        format: int32
+      name:
+        description: Name of the contact
+        type: string
+      postalAddress:
+        $ref: '#/definitions/PostalAddressExt'
+      email:
+        description: Email of the customer
+        type: string
+      phone:
+        description: Phone number of the customer
+        type: string
   ApplicationExt:
     type: object
     required:
@@ -237,7 +394,7 @@ definitions:
           type: integer
           format: int32
   Geometry:
-    description: Any GeoJSON
+    description: Any multipolygon GeoJSON
     type: object
   LocationExt:
     description: Description of time and location of an application

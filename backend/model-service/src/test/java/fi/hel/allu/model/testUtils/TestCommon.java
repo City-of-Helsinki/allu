@@ -1,9 +1,6 @@
 package fi.hel.allu.model.testUtils;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.types.*;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;

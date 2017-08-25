@@ -2,7 +2,7 @@ package fi.hel.allu.servicecore.service;
 
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.types.PublicityType;

@@ -1,6 +1,6 @@
 package fi.hel.allu.search.domain;
 
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 
 /**
  * ElasticSearch mapping for customer.

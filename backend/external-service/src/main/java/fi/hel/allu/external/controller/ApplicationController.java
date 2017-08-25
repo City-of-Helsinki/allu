@@ -29,9 +29,11 @@ public class ApplicationController {
   ApplicationServiceComposer applicationServiceComposer;
 
   @RequestMapping(method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('SOMEROLE')")
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<ApplicationExt> create(@Valid @RequestBody ApplicationExt application) {
     ApplicationJson applicationJson = applicationExtMapper.createApplicationJson(application);
+    // TODO: if method caller has only ROLE_TRUSTED_PARTNER, fetch user information and make sure that applications APPLICANT matches user info
+    // TODO: if ROLE_TRUSTED_PARTNER and APPLICANT does not match user info, throw HTTP 403 forbidden (not allowed to create application on behalf other users)
     ApplicationJson createdApplicationJson = applicationServiceComposer.createApplication(applicationJson);
     return new ResponseEntity<ApplicationExt>(applicationExtMapper.mapApplicationExt(createdApplicationJson), HttpStatus.OK);
   }

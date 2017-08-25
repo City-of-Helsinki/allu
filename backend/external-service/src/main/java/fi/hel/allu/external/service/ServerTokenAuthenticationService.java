@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -43,6 +44,7 @@ public class ServerTokenAuthenticationService extends AuthenticationServiceInter
 
   @Override
   public boolean isAnonymousAccessAllowedForPath(String path) {
-    return applicationProperties.getAnonymousAccessPaths().contains(path);
+    final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    return applicationProperties.getAnonymousAccessPaths().stream().anyMatch(p -> antPathMatcher.match(p, path));
   }
 }

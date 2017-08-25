@@ -1,7 +1,7 @@
 package fi.hel.allu.servicecore.service.applicationhistory;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
 
 /**

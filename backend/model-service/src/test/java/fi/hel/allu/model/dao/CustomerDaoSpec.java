@@ -2,7 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;

@@ -3,7 +3,7 @@ package fi.hel.allu.model.service;
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.HistoryDao;

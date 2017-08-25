@@ -1,6 +1,6 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.Contact;

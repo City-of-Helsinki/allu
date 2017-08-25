@@ -1,7 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerChange;

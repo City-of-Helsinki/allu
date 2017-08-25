@@ -8,6 +8,16 @@ public class PostalAddressExt {
   private String postalCode;
   private String city;
 
+  public PostalAddressExt() {
+    // serialization
+  }
+
+  public PostalAddressExt(String streetAddress, String postalCode, String city) {
+    this.streetAddress = streetAddress;
+    this.postalCode = postalCode;
+    this.city = city;
+  }
+
   public String getStreetAddress() {
     return streetAddress;
   }

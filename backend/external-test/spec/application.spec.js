@@ -1,146 +1,141 @@
+const ComparisonUtil = require('../util/comparison-util');
+const TestUtil = require('../util/test-util');
 
-const Swagger = require('swagger-client')
-const ComparisonUtil = require('../util/comparison-util')
-
-if (!process.env.SWAGGER_HOST || !process.env.SWAGGER_JSON_URL) {
-  console.error('Test expects SWAGGER_HOST AND SWAGGER_JSON_URL envinronment variables to be defined!');
-  console.error('For example:');
-  console.error('SWAGGER_HOST=localhost:9040 SWAGGER_JSON_URL=http://localhost:9040/api-docs/swagger.json npm test');
-  process.exit(255);
-}
+TestUtil.assertEnv();
 
 describe('Application', () => {
 
-    describe('Create Excavation Announcement', () => {
-      let applicationExtNew;
-      let extension;
-      let customerWithContactsExt;
-      let locationExt;
+  let customerCreated;
+  let contactCreated;
 
-      beforeEach(() => {
-        extension = {
-          'applicationType': 'EXCAVATION_ANNOUNCEMENT',
-          'terms': 'Some terms for application',
-          'pksCard': true,
-          'constructionWork': false,
-          'maintenanceWork': false,
-          'emergencyWork': null,
-          'propertyConnectivity': false,
-          'winterTimeOperation': null,
-          'workFinished': null,
-          'unauthorizedWorkStartTime': null,
-          'unauthorizedWorkEndTime': null,
-          'guaranteeEndTime': null,
-          'cableReportId': null,
-          'additionalInfo': 'Some additional info on extension',
-          'trafficArrangements': 'No problem with traffic arrangements',
-          'trafficArrangementImpedimentType': 'NO_IMPEDIMENT'
-        };
-        customerWithContactsExt = {
-          // TODO: customer and contact ids won't be available unless insert_test_data.sh has been executed. This should be improved once external-service provides customer creation
-          'customer': 210,
-          'roleType': 'APPLICANT',
-          'contacts': [35]
-        };
-        locationExt = {
-          'id': null,
-          'locationKey': null,
-          'locationVersion': null,
-          'startTime': '2017-07-17T10:42:48.315Z',
-          'endTime': '2017-08-17T10:42:48.315Z',
-          'geometry': null,
-          'area': null,
-          'areaOverride': null,
-          'postalAddress': null,
-          'paymentTariff': null,
-          'paymentTariffOverride': null,
-          'underpass': null
-        };
-        applicationExtNew = {
-          'id': null,
-          'projectId': null,
-          'customersWithContacts': [customerWithContactsExt],
-          'locations': [locationExt],
-          'status': 'PENDING',
-          'type': 'EXCAVATION_ANNOUNCEMENT',
-          'kind': 'REPAVING',
-          'applicationTags': null,
-          'name': 'test application',
-          'creationTime': null,
-          'startTime': null,
-          'endTime': null,
-          'extension': extension
-        }
-      });
+  beforeAll((done) => {
 
-      it('should contain all swagger defined properties in application', (done) => {
-        swaggerClient()
-          .then(client => compareAgainstSwaggerSpec(
-            [
-              { definition: client.spec.definitions.ApplicationExt.properties, data: applicationExtNew },
-              { definition: client.spec.definitions.CustomerWithContactsExt.properties, data: customerWithContactsExt },
-              { definition: client.spec.definitions.LocationExt.properties, data: locationExt },
-              { definition: client.spec.definitions.ExcavationAnnouncementExt.properties, data: extension },
-            ]))
-          .then(diff => expect(diff).toEqual([]))
-          .then(done)
-          .catch(err => done.fail(err));
-      });
+    let contactNew = {
+      'id': null,
+      'customerId': null,
+      'name': 'testi kontakti',
+      'postalAddress': {
+        'streetAddress': 'Testitie kontaktille 1',
+        'postalCode': '00900',
+        'city': 'Testikontaktikaupunki'
+      },
+      'email': 'testkontaktemail@test.se',
+      'phone': '090 9090'
+    };
 
-      it('should create an application', (done) => {
-        swaggerClient()
-          .then(client => prepareClient(client))
-          .then(client => client.apis.applications.applicationsCreate({ body: applicationExtNew}) )
-          .then(application => expect(ComparisonUtil.deepCompareNonNull('', applicationExtNew, application.obj)).toEqual([]))
-          .then(done)
-          .catch(err => done.fail(err));
-      });
+    let customerNew = {
+      'id': null,
+      'type': 'COMPANY',
+      'name': 'testi firma',
+      'postalAddress': {
+        'streetAddress': 'Testitie 1',
+        'postalCode': '00100',
+        'city': 'Testikaupunki'
+      },
+      'email': 'testemail@test.fi',
+      'phone': '010 1010',
+      'registryKey': '1234-123'
+    };
 
-    });
-});
-
-function swaggerClient() {
-  return new Swagger({
-    url: process.env.SWAGGER_JSON_URL,
-    usePromise: true,
-    authorizations: {
-      // TODO: replace with something else than this hard coded pre-generated JWT. Perhaps another environment variable or secret key, which can be used to generate the secret?
-      api_key: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4MTYxNzM1ODMsInN1YiI6InRlc3RzdWJqZWN0IiwicHVibGljQWxsdVJvbGVzIjpbIlJPTEVfU09NRVJPTEUiXX0.hlmqNaAWw2qRYsVPcEcAqETPDHMHppYcN70u8CEO-ZWSjuxAxCPyWx-cznHniD_QIJsPo_IBvMV83n1cbPNE4w',
-    }
+    // create customer and related contact for the customer to be used in this spec
+    TestUtil.swaggerClient()
+    .then(client =>
+        client.apis.customers.customersCreate({ body: customerNew})
+        .then(customer => {
+          customerCreated = customer.obj;
+          contactNew.customerId = customerCreated.id;
+          return client.apis.contacts.contactsCreate({ body: contactNew}).then(contact => contactCreated = contact.obj);
+        })
+    )
+    .then(() => done());
   });
-}
 
-function equalMapKeys(map1, map2) {
-  let keys1 = new Set(Object.keys(map1));
-  let keys2 = new Set(Object.keys(map2));
-  return equalSets(keys1, keys2);
-}
+  describe('Create Excavation Announcement', () => {
+    let applicationExtNew;
+    let extension;
+    let customerWithContactsExt;
+    let locationExt;
 
-function equalSets(set1, set2) {
-  return (set1.length === set2.length && [...set1].every((o) => set2.has(o)));
-}
+    beforeEach(() => {
 
-function compareAgainstSwaggerSpec(definitionDataPairs) {
-  let diff = definitionDataPairs.reduce(
-    (acc, curr) => acc.concat(intersectionComplement(new Set(Object.keys(curr.definition)), new Set(Object.keys(curr.data)))), []);
-  return diff;
-}
+      extension = {
+        'applicationType': 'EXCAVATION_ANNOUNCEMENT',
+        'terms': 'Some terms for application',
+        'pksCard': true,
+        'constructionWork': false,
+        'maintenanceWork': false,
+        'emergencyWork': null,
+        'propertyConnectivity': false,
+        'winterTimeOperation': null,
+        'workFinished': null,
+        'unauthorizedWorkStartTime': null,
+        'unauthorizedWorkEndTime': null,
+        'guaranteeEndTime': null,
+        'cableReportId': null,
+        'additionalInfo': 'Some additional info on extension',
+        'trafficArrangements': 'No problem with traffic arrangements',
+        'trafficArrangementImpedimentType': 'NO_IMPEDIMENT'
+      };
+      customerWithContactsExt = {
+        'customer': customerCreated.id,
+        'roleType': 'APPLICANT',
+        'contacts': [contactCreated.id]
+      };
+      locationExt = {
+        'id': null,
+        'locationKey': null,
+        'locationVersion': null,
+        'startTime': '2017-07-17T10:42:48.315Z',
+        'endTime': '2017-08-17T10:42:48.315Z',
+        'additionalInfo': null,
+        'geometry': null,
+        'area': null,
+        'areaOverride': null,
+        'postalAddress': null,
+        'paymentTariff': null,
+        'paymentTariffOverride': null,
+        'underpass': null
+      };
+      applicationExtNew = {
+        'id': null,
+        'projectId': null,
+        'customersWithContacts': [customerWithContactsExt],
+        'locations': [locationExt],
+        'status': 'PENDING',
+        'type': 'EXCAVATION_ANNOUNCEMENT',
+        'kind': 'REPAVING',
+        'applicationTags': null,
+        'name': 'test application',
+        'creationTime': null,
+        'startTime': null,
+        'endTime': null,
+        'extension': extension
+      }
+    });
 
-/*
- * Returns values that are not shared by the sets.
- */
-function intersectionComplement(set1, set2) {
-  let intersectionComplement = [];
-  if (!set1 || !set2) {
-    throw new Error('intersectionComplement requires sets to be defined');
-  }
-  [...set1].every((o) => set2.has(o) || intersectionComplement.push(o));
-  [...set2].every((o) => set1.has(o) || intersectionComplement.push(o));
-  return intersectionComplement;
-}
+    it('should contain all swagger defined properties in application', (done) => {
+      TestUtil.swaggerClient()
+      .then(client => ComparisonUtil.compareAgainstSwaggerSpec(
+        [
+          {definition: client.spec.definitions.ApplicationExt.properties, data: applicationExtNew},
+          {definition: client.spec.definitions.CustomerWithContactsExt.properties, data: customerWithContactsExt},
+          {definition: client.spec.definitions.LocationExt.properties, data: locationExt},
+          {definition: client.spec.definitions.ExcavationAnnouncementExt.properties, data: extension},
+        ]))
+      .then(diff => expect(diff).toEqual([]))
+      .then(done)
+      .catch(err => done.fail(err));
+    });
 
-function prepareClient(client) {
-  client.spec.host = process.env.SWAGGER_HOST;
-  client.spec.basePath = null;
-  return client;
-}
+    it('should create an application', (done) => {
+      TestUtil.swaggerClient()
+      .then(client => client.apis.applications.applicationsCreate({body: applicationExtNew}))
+      .then(application => expect(ComparisonUtil.deepCompareNonNull('', applicationExtNew, application.obj)).toEqual([]))
+      .then(done)
+      .catch(err => {
+        console.log('Error', err);
+        done.fail(err);
+      });
+    });
+  });
+});

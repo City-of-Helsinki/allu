@@ -1,4 +1,3 @@
-
 /*
  * Compares non null values of a to b. Objects and arrays are compared recursively.
  */
@@ -32,4 +31,29 @@ function diffPair(path, a, b) {
   return [{'path': path, 'original': a, 'compared': b}];
 }
 
+/*
+ * Compares given swagger definition and data. Both should contain all the keys of each other i.e. all swagger definitions should have
+ * corresponding data value and no data value should exist without swagger definition.
+ */
+function compareAgainstSwaggerSpec(definitionDataPairs) {
+  let diff = definitionDataPairs.reduce(
+    (acc, curr) => acc.concat(intersectionComplement(new Set(Object.keys(curr.definition)), new Set(Object.keys(curr.data)))), []);
+  return diff;
+}
+
+/*
+ * Returns values that are not shared by the sets.
+ */
+function intersectionComplement(set1, set2) {
+  let intersectionComplement = [];
+  if (!set1 || !set2) {
+    throw new Error('intersectionComplement requires sets to be defined');
+  }
+  [...set1].every((o) => set2.has(o) || intersectionComplement.push(o));
+  [...set2].every((o) => set1.has(o) || intersectionComplement.push(o));
+  return intersectionComplement;
+}
+
+
 module.exports.deepCompareNonNull = deepCompareNonNull;
+module.exports.compareAgainstSwaggerSpec = compareAgainstSwaggerSpec;

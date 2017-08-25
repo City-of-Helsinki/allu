@@ -3,7 +3,7 @@ package fi.hel.allu.servicecore.mapper;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
@@ -13,8 +13,6 @@ import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
-import fi.hel.allu.servicecore.service.ApplicationJsonService;
 import fi.hel.allu.servicecore.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;

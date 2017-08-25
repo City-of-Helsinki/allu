@@ -9,6 +9,16 @@ public class PostalAddressJson {
   private String postalCode;
   private String city;
 
+  public PostalAddressJson() {
+    // serialization
+  }
+
+  public PostalAddressJson(String streetAddress, String postalCode, String city) {
+    this.streetAddress = streetAddress;
+    this.postalCode = postalCode;
+    this.city = city;
+  }
+
   /**
    * in Finnish: postiosoite
    */

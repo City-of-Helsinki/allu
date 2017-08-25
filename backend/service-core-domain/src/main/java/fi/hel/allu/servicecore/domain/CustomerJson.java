@@ -1,6 +1,6 @@
 package fi.hel.allu.servicecore.domain;
 
-import fi.hel.allu.common.types.CustomerType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.Valid;

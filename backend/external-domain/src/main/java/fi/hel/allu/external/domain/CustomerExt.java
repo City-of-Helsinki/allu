@@ -1,8 +1,7 @@
-package fi.hel.allu.model.domain;
+package fi.hel.allu.external.domain;
 
 import fi.hel.allu.common.domain.types.CustomerType;
 import org.hibernate.validator.constraints.NotBlank;
-
 import javax.validation.constraints.NotNull;
 
 /**
@@ -10,17 +9,16 @@ import javax.validation.constraints.NotNull;
  *
  * <p>A customer is either person, organization or a company.
  */
-public class Customer implements PostalAddressItem {
+public class CustomerExt {
   private Integer id;
   @NotNull
   private CustomerType type;
   @NotBlank
   private String name;
-  private PostalAddress postalAddress;
+  private PostalAddressExt postalAddress;
   private String email;
   private String phone;
   private String registryKey;
-  private boolean isActive = true;
 
   public Integer getId() {
     return id;
@@ -61,13 +59,11 @@ public class Customer implements PostalAddressItem {
    *
    * @return  the postal address of the customer.
    */
-  @Override
-  public PostalAddress getPostalAddress() {
+  public PostalAddressExt getPostalAddress() {
     return postalAddress;
   }
 
-  @Override
-  public void setPostalAddress(PostalAddress postalAddress) {
+  public void setPostalAddress(PostalAddressExt postalAddress) {
     this.postalAddress = postalAddress;
   }
 
@@ -108,36 +104,5 @@ public class Customer implements PostalAddressItem {
 
   public void setRegistryKey(String registryKey) {
     this.registryKey = registryKey;
-  }
-
-  /**
-   * @return  True, if the user is active i.e. has not been marked as deleted.
-   */
-  public boolean isActive() {
-    return isActive;
-  }
-
-  public void setIsActive(boolean active) {
-    isActive = active;
-  }
-
-  public void setActive(boolean active) {
-    // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
-    setIsActive(active);
-  }
-
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-
-    Customer customer = (Customer) o;
-
-    return id != null ? id.equals(customer.id) : customer.id == null;
-  }
-
-  @Override
-  public int hashCode() {
-    return id != null ? id.hashCode() : 0;
   }
 }
