@@ -1,5 +1,7 @@
 # add environment specific frontend variables here
 http_port: 80
 proxy_domain: allufront
-proxypass_context: /api/
-proxypass_target: http://10.1.2.157:9000/
+proxypass_api_context: /api/
+proxypass_api_target: http://10.1.2.157:9000/
+proxypass_external_context: /external/
+proxypass_external_target: http://10.1.2.157:9040/

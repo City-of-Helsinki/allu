@@ -7,7 +7,6 @@ import java.util.List;
 public class ApplicationProperties {
 
   private String jwtSecret;
-  private Integer jwtExpirationHours;
   private String modelServiceHost;
   private String modelServicePort;
   private String searchServiceHost;
@@ -20,7 +19,6 @@ public class ApplicationProperties {
 
   public ApplicationProperties(
       String jwtSecret,
-      Integer jwtExpirationHours,
       String modelServiceHost,
       String modelServicePort,
       String searchServiceHost,
@@ -31,7 +29,6 @@ public class ApplicationProperties {
       String emailSenderAddress,
       List<String> anonymousAccessPaths) {
     this.jwtSecret = jwtSecret;
-    this.jwtExpirationHours = jwtExpirationHours;
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -112,15 +109,6 @@ public class ApplicationProperties {
    */
   public String getJwtSecret() {
     return jwtSecret;
-  }
-
-  /**
-   * Returns the expiration time of JWT.
-   *
-   * @return  the expiration time of JWT.
-   */
-  public Integer getJwtExpirationHours() {
-    return jwtExpirationHours;
   }
 
   /**

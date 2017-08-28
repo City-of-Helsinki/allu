@@ -34,6 +34,7 @@ RUN mkdir -p /home/allu/model-service
 RUN mkdir -p /home/allu/pdf-service
 RUN mkdir -p /home/allu/search-service
 RUN mkdir -p /home/allu/scheduler-service
+RUN mkdir -p /home/allu/external-service
 
 ######################################################################################
 # Expose ports
@@ -47,6 +48,8 @@ EXPOSE 9010
 EXPOSE 9020
 # pdf-service
 EXPOSE 9030
+# external-service
+EXPOSE 9040
 
 ######################################################################################
 # Supervisord

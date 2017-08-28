@@ -8,5 +8,20 @@ allu_service_memory_limit:
   scheduler-service: 128m
   allu-ui-service: 128m
   model-service: 128m
+  external-service: 128m
 
 database_host: 172.17.0.1
+
+model_service_host: localhost
+model_service_port: 9010
+
+search_service_host: localhost
+search_service_port: 9020
+
+pdf_service_host: localhost
+pdf_service_port: 9030
+
+mail_server_host: smtp.gmail.com
+mail_server_port: 587
+email_allowed_addresses: "*@vincit.fi,*@hel.fi"
+email_sender_address: Allu Test Aluevaraus <noreply@allu.alluallu.invalid>

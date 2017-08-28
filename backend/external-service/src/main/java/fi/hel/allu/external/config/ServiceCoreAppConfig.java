@@ -1,23 +1,19 @@
-package fi.hel.allu.ui.config;
+package fi.hel.allu.external.config;
 
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.validation.constraints.NotNull;
-
 import java.util.List;
 
 @Configuration
-public class SerciveCoreAppConfig {
-
+public class ServiceCoreAppConfig {
   @Bean
   public fi.hel.allu.servicecore.config.ApplicationProperties serviceCoreApplicationProperties(
       @Value("${jwt.secret}") @NotEmpty String jwtSecret,
-      @Value("${jwt.expiration.hours:12}") @NotNull Integer jwtExpirationHours,
       @Value("${model.service.host}") @NotEmpty String modelServiceHost,
       @Value("${model.service.port}") @NotEmpty String modelServicePort,
       @Value("${search.service.host}") @NotEmpty String searchServiceHost,
@@ -27,18 +23,16 @@ public class SerciveCoreAppConfig {
       @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
       @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
-      return new ApplicationProperties(
-          jwtSecret,
-          jwtExpirationHours,
-          modelServiceHost,
-          modelServicePort,
-          searchServiceHost,
-          searchServicePort,
-          pdfServiceHost,
-          pdfServicePort,
-          emailAllowedAddresses,
-          emailSenderAddress,
-          anonymousAccessPaths);
+    return new ApplicationProperties(
+        jwtSecret,
+        modelServiceHost,
+        modelServicePort,
+        searchServiceHost,
+        searchServicePort,
+        pdfServiceHost,
+        pdfServicePort,
+        emailAllowedAddresses,
+        emailSenderAddress,
+        anonymousAccessPaths);
   }
-
 }

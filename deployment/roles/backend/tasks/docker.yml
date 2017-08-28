@@ -64,6 +64,7 @@
       - /home/allu:/servicehome:rw
     published_ports:
       - "9000:9000"
+      - "9040:9040"
   become: yes
 
 - name: remove Docker image tar file

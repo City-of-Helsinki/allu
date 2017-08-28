@@ -1,9 +1,7 @@
 package fi.hel.allu.servicecore.security;
 
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,18 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 public class PreAuthorizeEnforcerInterceptor extends HandlerInterceptorAdapter {
 
   @Autowired
-  ApplicationContext context;
-
   ApplicationProperties applicationProperties;
-
-  /*
-   * To prevent autowire-loop, inject application properties only after the bean
-   * creation.
-   */
-  @PostConstruct
-  public void injectBeans() {
-    applicationProperties = context.getBean(ApplicationProperties.class);
-  }
 
   @Override
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
