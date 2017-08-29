@@ -2,20 +2,21 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
-
+import {MdDatepicker} from '@angular/material';
 import {Application} from '../../../../model/application/application';
 import {ApplicationHub} from '../../../../service/application/application-hub';
-import {ComplexValidator} from '../../../../util/complex-validator';
+import {AbstractControlWarn, ComplexValidator} from '../../../../util/complex-validator';
 import {ExcavationAnnouncementForm} from './excavation-announcement.form';
 import {ApplicationSearchQuery} from '../../../../model/search/ApplicationSearchQuery';
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {Some} from '../../../../util/option';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {NumberUtil} from '../../../../util/number.util';
-
+import {TimeUtil, WINTER_TIME_END} from '../../../../util/time.util';
+import {Some} from '../../../../util/option';
+import {IconConfig} from '../../../common/icon-config';
 
 @Component({
   selector: 'excavation-announcement',
@@ -26,6 +27,9 @@ import {NumberUtil} from '../../../../util/number.util';
 export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponent implements OnInit {
 
   matchingApplications: Observable<Array<Application>>;
+
+  validityEndTimeCtrl: AbstractControlWarn;
+  validityEndTimeIcon: IconConfig = new IconConfig(undefined, true, 'today');
 
   private cableReportIdentifierCtrl: FormControl;
 
@@ -55,11 +59,14 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.applicationForm.patchValue({cableReportId: application.id});
   }
 
-  getCableReport(applicationId: number): Observable<Application> {
-    return Some(applicationId)
-      .map(id => this.applicationHub.getApplication(id))
-      .orElse(Observable.empty())
-      .catch(err => NotificationService.errorCatch(err));
+  onValidityEndTimePickerClick(picker: MdDatepicker<Date>): void {
+    if (this.validityEndTimeCtrl.warnings.inWinterTime) {
+      Some(this.validityEndTimeCtrl.value)
+        .map(date => TimeUtil.dateWithYear(WINTER_TIME_END.toDate(), date.getFullYear()))
+        .do(date => this.validityEndTimeCtrl.patchValue(date));
+    } else {
+      picker.open();
+    }
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {
@@ -80,7 +87,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.applicationForm = this.fb.group({
       validityTimes: this.fb.group({
         startTime: [undefined, Validators.required],
-        endTime: [undefined, Validators.required]
+        endTime: [undefined, [Validators.required, ComplexValidator.inWinterTime]]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       pksCard: [false],
       constructionWork: [{value: false, disabled: this.readonly}],
@@ -88,13 +95,18 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       emergencyWork: [{value: false, disabled: this.readonly}],
       propertyConnectivity: [{value: false, disabled: this.readonly}],
       winterTimeOperation: [undefined],
-      summerTimeOperation: [undefined],
       workFinished: [undefined],
       unauthorizedWork: this.fb.group({
         startTime: [undefined],
         endTime: [undefined]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       guaranteeEndTime: [undefined],
+      customerValidityTimes: this.fb.group({
+        startTime: [undefined],
+        endTime: [undefined]
+      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      customerWinterTimeOperation: [undefined],
+      customerWorkFinished: [undefined],
       calculatedPrice: [0],
       priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       priceOverrideReason: [''],
@@ -104,6 +116,13 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required]
     });
+
+    this.validityEndTimeCtrl = <AbstractControlWarn>this.applicationForm.get(['validityTimes', 'endTime']);
+    this.validityEndTimeCtrl.statusChanges.subscribe(status => this.onValidityEndTimeChange(status));
+
+    if (this.applicationState.isNew) {
+      this.validityEndTimeCtrl.markAsDirty(); // To trigger validation
+    }
   }
 
   private patchRelatedCableReport(excavation: ExcavationAnnouncement): void {
@@ -111,5 +130,11 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       this.applicationHub.getApplication(excavation.cableReportId)
         .subscribe(cableReport => this.applicationForm.patchValue({cableReportIdentifier: cableReport.applicationId}));
     }
+  }
+
+  private onValidityEndTimeChange(status: any) {
+    this.validityEndTimeIcon = this.validityEndTimeCtrl.warnings.inWinterTime
+      ? new IconConfig('accent', false, 'warning')
+      : new IconConfig(undefined, true, 'today');
   }
 }

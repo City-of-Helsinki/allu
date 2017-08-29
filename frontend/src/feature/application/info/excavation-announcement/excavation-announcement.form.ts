@@ -12,10 +12,12 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public emergencyWork?: boolean,
     public propertyConnectivity?: boolean,
     public winterTimeOperation?: string,
-    public summerTimeOperation?: string,
     public workFinished?: string,
     public unauthorizedWork?: TimePeriod,
     public guaranteeEndTime?: string,
+    public customerValidityTimes?: TimePeriod,
+    public customerWinterTimeOperation?: string,
+    public customerWorkFinished?: string,
     public calculatedPrice?: number,
     public priceOverride?: number,
     public priceOverrideReason?: string,
@@ -32,11 +34,14 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.emergencyWork = form.emergencyWork;
     ea.propertyConnectivity = form.propertyConnectivity;
     ea.uiWinterTimeOperation = form.winterTimeOperation;
-    ea.uiSummerTimeOperation = form.summerTimeOperation;
     ea.uiWorkFinished = form.workFinished;
     ea.unauthorizedWorkStartTime = form.unauthorizedWork.startTime;
     ea.unauthorizedWorkEndTime = form.unauthorizedWork.endTime;
     ea.uiGuaranteeEndTime = form.guaranteeEndTime;
+    ea.customerStartTime = form.customerValidityTimes.startTime;
+    ea.customerEndTime = form.customerValidityTimes.endTime;
+    ea.uiCustomerWinterTimeOperation = form.customerWinterTimeOperation;
+    ea.uiCustomerWorkFinished = form.customerWorkFinished;
     ea.cableReportId = form.cableReportId;
     ea.additionalInfo = form.additionalInfo;
     ea.trafficArrangements = form.trafficArrangements;
@@ -53,10 +58,12 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.emergencyWork,
       excavation.propertyConnectivity,
       excavation.uiWinterTimeOperation,
-      excavation.uiSummerTimeOperation,
       excavation.uiWorkFinished,
       new TimePeriod(excavation.unauthorizedWorkStartTime, excavation.unauthorizedWorkEndTime),
       excavation.uiGuaranteeEndTime,
+      new TimePeriod(excavation.customerStartTime, excavation.customerEndTime),
+      excavation.uiCustomerWinterTimeOperation,
+      excavation.uiCustomerWorkFinished,
       application.calculatedPriceEuro,
       application.priceOverrideEuro,
       application.priceOverrideReason,

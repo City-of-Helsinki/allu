@@ -231,10 +231,9 @@ export const translations = {
       }
     },
     excavationAnnouncement: {
+      setToWinterTimeEnd: 'Aseta loppupäivämääräksi talviajan loppupäivä (14.5.)',
       field: {
-        validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
-        validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
-        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta',
+        inWinterTime: 'Hakemus päättyy talvityöaikana',
         unauthorizedWorkStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
       }
     },

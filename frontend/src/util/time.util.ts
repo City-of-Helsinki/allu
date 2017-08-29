@@ -1,4 +1,4 @@
-import * as momentLib from 'moment';
+import * as moment from 'moment';
 import {UnitOfTime} from 'moment';
 
 export const MIN_YEAR = 1972;
@@ -10,17 +10,19 @@ export const UI_DATE_FORMAT: string = 'DD.MM.YYYY';
 export const UI_DATE_TIME_FORMAT: string = 'DD.MM.YYYY HH:mm';
 const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
+export const WINTER_TIME_START = moment('1972-01-12');
+export const WINTER_TIME_END = moment('1972-05-14');
 
 /**
  * Helpers for time related UI functionality.
  */
 export class TimeUtil {
   public static getUiDateString(time: Date): string {
-    return time ? momentLib(time).format(UI_DATE_FORMAT).toString() : undefined;
+    return time ? moment(time).format(UI_DATE_FORMAT).toString() : undefined;
   }
 
   public static getUiDateTimeString(time: Date): string {
-    return time ? momentLib(time).format(UI_DATE_TIME_FORMAT).toString() : undefined;
+    return time ? moment(time).format(UI_DATE_TIME_FORMAT).toString() : undefined;
   }
 
   public static getDateFromUi(dateString: string): Date {
@@ -29,28 +31,32 @@ export class TimeUtil {
   }
 
   public static getStartDateFromUi(dateString: string): Date {
-    return dateString ? momentLib(dateString, UI_DATE_FORMAT).startOf('day').toDate() : undefined;
+    return dateString ? moment(dateString, UI_DATE_FORMAT).startOf('day').toDate() : undefined;
   }
 
   public static getEndDateFromUi(dateString: string): Date {
-    return dateString ? momentLib(dateString, UI_DATE_FORMAT).endOf('day').toDate() : undefined;
+    return dateString ? moment(dateString, UI_DATE_FORMAT).endOf('day').toDate() : undefined;
   }
 
   public static yearFromDate(date: Date): number {
-    return date ? momentLib(date).year() : undefined;
+    return date ? moment(date).year() : undefined;
   }
 
   public static dateWithYear(date: Date, year: number): Date {
     if (date && year) {
-      let baseDate = momentLib(date);
+      let baseDate = moment(date);
       return baseDate.year(year).toDate();
     } else {
       return undefined;
     }
   }
 
+  public static dateWithCurrentYear(date: Date): Date {
+    return TimeUtil.dateWithYear(date, moment().year());
+  }
+
   public static dateFromBackend(dateString: string): Date {
-    return dateString ? momentLib(dateString).toDate() : undefined;
+    return dateString ? moment(dateString).toDate() : undefined;
   }
 
   public static dateToBackend(date: Date): string {
@@ -58,21 +64,21 @@ export class TimeUtil {
   }
 
   public static formatHistoryDateTimeString(dateTime: string): string {
-    return dateTime ? momentLib(dateTime, HISTORY_DATE_TIME_FORMAT).format(HISTORY_DATE_FORMAT).toString() : undefined;
+    return dateTime ? moment(dateTime, HISTORY_DATE_TIME_FORMAT).format(HISTORY_DATE_FORMAT).toString() : undefined;
   }
 
   public static minimum(...dates: Date[]) {
-    let moments: Array<momentLib.Moment> = dates.map(date => momentLib(date));
-    return momentLib.min(... moments).toDate();
+    let moments: Array<moment.Moment> = dates.map(date => moment(date));
+    return moment.min(... moments).toDate();
   }
 
   public static maximum(...dates: Date[]) {
-    let moments: Array<momentLib.Moment> = dates.map(date => momentLib(date));
-    return momentLib.max(... moments).toDate();
+    let moments: Array<moment.Moment> = dates.map(date => moment(date));
+    return moment.max(... moments).toDate();
   }
 
   public static add(baseDate: Date = new Date(), amount: number, unit: UnitOfTime): Date {
-    return momentLib(baseDate).add(amount, unit).toDate();
+    return moment(baseDate).add(amount, unit).toDate();
   }
 
   /**
@@ -82,7 +88,7 @@ export class TimeUtil {
    * @returns {Date}  end of given day i.e. any date 1.1.2001 would be converted to 1.1.2001 23:59.
    */
   public static getEndOfDay(date: Date): Date {
-    return momentLib(date).endOf('day').toDate();
+    return moment(date).endOf('day').toDate();
   }
 
   /**
@@ -98,11 +104,10 @@ export class TimeUtil {
     } else {
       return true;
     }
-
   }
 
   public static isBetweenInclusive(date: Date, start: Date, end: Date): boolean {
-      return momentLib(date).isBetween(start, end, undefined, '[]');
+      return moment(date).isBetween(start, end, undefined, '[]');
   }
 
   public static compareTo(left: Date, right: Date): number {
@@ -115,9 +120,18 @@ export class TimeUtil {
     }
   }
 
+  public static isInWinterTime(date: Date): boolean {
+    const now = moment();
+    let winterStart = moment(WINTER_TIME_START);
+    winterStart.year(now.year() - 1);
+    let winterEnd = moment(WINTER_TIME_END);
+    winterEnd.year(now.year());
+    return moment(date).isBetween(winterStart, winterEnd);
+  }
+
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
     if (dateString) {
-      let m = momentLib(dateString, format);
+      let m = moment(dateString, format);
       return m.isValid() ? m : undefined;
     } else {
       return undefined;

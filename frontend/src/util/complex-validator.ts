@@ -44,12 +44,24 @@ export class ComplexValidator {
    * @returns always a valid result (undefined) so form field is not invalidated
    */
   static invalidSsnWarning(fc: AbstractControlWarn) {
-    let ssn = fc.value;
+    const ssn = fc.value;
     fc.warnings = fc.warnings || {};
     if (fc.dirty && !finnishSsn.validate(ssn)) {
       fc.warnings.invalidSsn = {ssn};
     } else {
       fc.warnings.invalidSsn = undefined;
+    }
+    return undefined;
+  }
+
+  static inWinterTime(fc: AbstractControlWarn) {
+    const date = fc.value;
+
+    fc.warnings = fc.warnings || {};
+    if (fc.dirty && TimeUtil.isInWinterTime(date)) {
+      fc.warnings.inWinterTime = {date};
+    } else {
+      fc.warnings.inWinterTime = undefined;
     }
     return undefined;
   }

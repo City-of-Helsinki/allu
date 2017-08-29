@@ -18,6 +18,7 @@ export class InputWarningDirective implements OnInit {
   }
 
   get warning(): boolean {
-    return !!this.control.warnings;
+    const warnings = this.control.warnings;
+    return warnings && Object.keys(warnings).some(key => warnings[key] !== undefined);
   }
 }
