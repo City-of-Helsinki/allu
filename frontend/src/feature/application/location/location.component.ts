@@ -93,6 +93,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.application = this.applicationState.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
+    this.kindsSelected = this.application.kinds.length > 0;
     this.loadFixedLocations();
 
     this.progressStep = ProgressStep.LOCATION;
@@ -130,8 +131,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.kindsSelected = this.application.kinds.length > 0;
     this.loadFixedLocations();
     this.notifyEditingAllowed();
-    this.areaCtrl.reset(undefined);
-    this.sectionsCtrl.reset([]);
+    this.resetFixedLocations();
   }
 
   searchUpdated(filter: SearchbarFilter) {
@@ -318,6 +318,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       return area.namedSectionsForKind(kind).sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
     } else {
       return [];
+    }
+  }
+
+  private resetFixedLocations(): void {
+    if (this.areaCtrl.value) {
+      this.areaCtrl.reset(undefined);
+      this.sectionsCtrl.reset([]);
     }
   }
 }
