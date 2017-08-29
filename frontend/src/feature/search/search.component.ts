@@ -4,6 +4,9 @@ import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
+import {ApplicationStatus} from '../../model/application/application-status';
+import {EnumUtil} from '../../util/enum.util';
+import {ApplicationType} from '../../model/application/type/application-type';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/common/user';
@@ -24,13 +27,15 @@ export class SearchComponent implements OnInit {
   applications: Array<Application>;
   handlers: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
+  applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
+  applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
 
   constructor(private applicationHub: ApplicationHub,
               private userHub: UserHub,
               private mapHub: MapHub,
               private router: Router,
-              fb: FormBuilder) {
-    this.queryForm = fb.group({
+              private fb: FormBuilder) {
+    this.queryForm = this.fb.group({
       applicationId: undefined,
       type: undefined,
       status: undefined,
