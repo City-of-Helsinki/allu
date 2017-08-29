@@ -9,7 +9,7 @@
   "handler": null,
   "status": null,
   "type": "EVENT",
-  "kind": "OUTDOOREVENT",
+  "kindsWithSpecifiers": {"OUTDOOREVENT" : []},
   "name": "Hernesaaren hytinät",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",

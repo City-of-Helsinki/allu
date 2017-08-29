@@ -17,6 +17,8 @@ import {ArrayUtil} from '../../util/array-util';
 import {CustomerWithContacts} from '../customer/customer-with-contacts';
 import {CustomerRoleType} from '../customer/customer-role-type';
 import {ApplicationStatus} from './application-status';
+import {ApplicationKind} from './type/application-kind';
+import {ApplicationSpecifier, KindsWithSpecifiers} from './type/application-specifier';
 
 export class Application {
   constructor(
@@ -26,7 +28,7 @@ export class Application {
     public handler?: User,
     public status?: string,
     public type?: string,
-    public kind?: string,
+    public kindsWithSpecifiers?: KindsWithSpecifiers,
     public metadataVersion?: number,
     public name?: string,
     public creationTime?: Date,
@@ -55,6 +57,7 @@ export class Application {
     this.decisionDistributionType = decisionDistributionType || DistributionType[DistributionType.EMAIL];
     this.decisionPublicityType = decisionPublicityType || PublicityType[PublicityType.PUBLIC];
     this.decisionDistributionList = decisionDistributionList || [];
+    this.kindsWithSpecifiers = this.kindsWithSpecifiers || {};
   }
 
   /*
@@ -96,10 +99,6 @@ export class Application {
     }
   }
 
-  set singleLocation(location: Location) {
-    this.locations = [location];
-  }
-
   get firstLocation(): Location {
     return ArrayUtil.first(this.locations);
   }
@@ -131,6 +130,34 @@ export class Application {
 
   get statusEnum(): ApplicationStatus {
     return ApplicationStatus[this.status];
+  }
+
+  get kinds() {
+    return this.uiKinds.map(kind => ApplicationKind[kind]);
+  }
+
+  get kind() {
+    if (this.kinds.length > 1) {
+      throw new Error('Expected extension to contain single kind but it has ' + this.kinds.length);
+    } else {
+      return ArrayUtil.first(this.kinds);
+    }
+  }
+
+  get uiKind() {
+    return ApplicationKind[this.kind];
+  }
+
+  get uiKinds() {
+    return this.kindsWithSpecifiers ? Object.keys(this.kindsWithSpecifiers) : [];
+  }
+
+  get uiSpecifiers() {
+    return [].concat(this.uiKinds.map(kind => this.kindsWithSpecifiers[kind]));
+  }
+
+  get specifiers() {
+    return this.uiSpecifiers.map(s => ApplicationSpecifier[s]);
   }
 
   get applicant(): CustomerWithContacts {

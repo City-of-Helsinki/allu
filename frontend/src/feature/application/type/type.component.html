@@ -12,18 +12,29 @@
                                 </md-option>
                             </md-select>
                         </div>
-                        <div class="col m12 type-select">
-                            <md-select  formControlName="kind" class="input-full-width" placeholder="Hakemuksen laji">
-                                <md-option *ngFor="let kind of selectableKinds" [value]="kind">
+                        <div class="col m12 type-select" *ngIf="multipleKinds">
+                            <md-select formControlName="kinds" multiple class="input-full-width" placeholder="Hakemuksen lajit">
+                                <md-option *ngFor="let kind of availableKinds" [value]="kind">
+                                    {{['application.kind', kind] | translation}}
+                                </md-option>
+                            </md-select>
+                        </div>
+                        <div class="col m12 type-select" *ngIf="!multipleKinds">
+                            <md-select formControlName="kinds" class="input-full-width" placeholder="Hakemuksen laji">
+                                <md-option *ngFor="let kind of availableKinds" [value]="kind">
                                     {{['application.kind', kind] | translation}}
                                 </md-option>
                             </md-select>
                         </div>
                         <div class="col m12 type-select" *ngIf="showSpecifierSelection()">
-                            <md-select formControlName="specifiers" [multiple]="true" placeholder="Työn tarkenne" class="input-full-width">
-                                <md-option *ngFor="let specifier of selectableSpecifiers" [value]="specifier">
-                                    {{['application.specifier', specifier] | translation}}
-                                </md-option>
+                            <md-select formControlName="specifiers" multiple placeholder="Työn tarkenne" class="input-full-width">
+                                <md-optgroup *ngFor="let kindEntry of availableKindsWithSpecifiers"
+                                             [label]="['application.kind', kindEntry.uiKind] | translation">
+                                    <md-option *ngFor="let specifierEntry of kindEntry.specifierEntriesSortedByTranslation"
+                                               [value]="specifierEntry.key">
+                                        {{['application.specifier', specifierEntry.specifier] | translation}}
+                                    </md-option>
+                                </md-optgroup>
                             </md-select>
                         </div>
                     </div>

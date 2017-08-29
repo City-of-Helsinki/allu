@@ -366,7 +366,6 @@ public class ProjectControllerTest {
   private Application createApplication(Customer customer) {
     ShortTermRental shortTermRental = new ShortTermRental();
     shortTermRental.setDescription("desc");
-
     Application application = new Application();
     application.setStartTime(ZonedDateTime.parse("2015-01-03T10:15:30+02:00"));
     application.setEndTime(ZonedDateTime.parse("2015-02-03T10:15:30+02:00"));
@@ -375,7 +374,7 @@ public class ProjectControllerTest {
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
     application.setExtension(shortTermRental);
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.OTHER);
+    application.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OTHER, Collections.emptyList()));
     application.setMetadataVersion(1);
     application.setName("short term test");
     return application;

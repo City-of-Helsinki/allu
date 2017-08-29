@@ -1,16 +1,15 @@
-import {Component, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import '../../../rxjs-extensions.ts';
 import {Observable} from 'rxjs/Observable';
-import {FormBuilder, FormGroup, Validators, FormControl} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {MapUtil} from '../../../service/map/map.util';
 import {SearchbarFilter} from '../../../service/searchbar-filter';
 import {MapHub} from '../../../service/map/map-hub';
 import {Some} from '../../../util/option';
-import {ApplicationType} from '../../../model/application/type/application-type';
-import {ApplicationSpecifier} from '../../../model/application/type/application-specifier';
-import {ApplicationKind, drawingAllowedForKind} from '../../../model/application/type/application-kind';
+import {ApplicationType, hasSingleKind} from '../../../model/application/type/application-type';
+import {drawingAllowedForKind} from '../../../model/application/type/application-kind';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationExtension} from '../../../model/application/type/application-extension';
 import {CableReport} from '../../../model/application/cable-report/cable-report';
@@ -33,6 +32,7 @@ import {LocationForm} from './location-form';
 import {LocationState} from '../../../service/application/location-state';
 import {Location} from '../../../model/common/location';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
 
 @Component({
   selector: 'type',
@@ -53,6 +53,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   application: Application;
   progressStep: ProgressStep;
   typeSelected = false;
+  kindsSelected = false;
   districts: Observable<Array<CityDistrict>>;
   searchbarFilter$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
   multipleLocations: boolean = false;
@@ -93,11 +94,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   ngOnInit() {
     this.application = this.applicationState.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
-
-    if (this.application.id) {
-      this.typeSelected = this.application.kind !== undefined;
-      this.loadFixedLocationsForKind(ApplicationKind[this.application.kind]);
-    };
+    this.loadFixedLocations();
 
     this.progressStep = ProgressStep.LOCATION;
     this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
@@ -129,18 +126,13 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.multipleLocations = type === ApplicationType.AREA_RENTAL;
   }
 
-  onApplicationKindChange(kind: ApplicationKind) {
-    this.application.kind = ApplicationKind[kind];
-    this.typeSelected = kind !== undefined;
-
-    if (kind !== undefined) {
-      this.loadFixedLocationsForKind(kind);
-    }
-  }
-
-  onApplicationSpecifierChange(specifiers: Array<ApplicationSpecifier>) {
-    Some(this.application.extension).do(extension =>
-      extension.specifiers = specifiers.map(s => ApplicationSpecifier[s]));
+  onKindSpecifierChange(kindsWithSpecifiers: KindsWithSpecifiers) {
+    this.application.kindsWithSpecifiers = kindsWithSpecifiers;
+    this.kindsSelected = this.application.kinds.length > 0;
+    this.loadFixedLocations();
+    this.notifyEditingAllowed();
+    this.areaCtrl.reset(undefined);
+    this.sectionsCtrl.reset([]);
   }
 
   searchUpdated(filter: SearchbarFilter) {
@@ -190,8 +182,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.mapHub.districtById(id).map(d => d.name);
   }
 
-  get editingAllowed(): boolean {
-    return drawingAllowedForKind(ApplicationKind[this.application.kind]) && this.sectionsCtrl.value.length === 0;
+  notifyEditingAllowed(): void {
+    const isAllowedForKind = Some(this.application.kinds)
+      .map(kinds => kinds.every(kind => drawingAllowedForKind(kind)))
+      .orElse(true);
+    this.mapHub.setDrawingAllowed(isAllowedForKind && (this.sectionsCtrl.value.length === 0));
   }
 
   get submitAllowed(): boolean {
@@ -214,16 +209,18 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     }
   }
 
-  private loadFixedLocationsForKind(kind: ApplicationKind): void {
-    this.mapHub.fixedLocationAreas()
-      .subscribe(fixedLocations => {
-        this.areas = fixedLocations
-          .filter(f => f.hasSectionsForKind(kind))
-          .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name));
+  private loadFixedLocations(): void {
+    if (hasSingleKind(this.application.typeEnum)) {
+      this.mapHub.fixedLocationAreas()
+        .subscribe(fixedLocations => {
+          this.areas = fixedLocations
+            .filter(f => f.hasSectionsForKind(this.application.kind))
+            .sort(ArrayUtil.naturalSort((area: FixedLocationArea) => area.name));
 
-        this.areaSections = [];
-        this.setInitialSelections();
-      });
+          this.areaSections = [];
+          this.setInitialSelections();
+        });
+    }
   }
 
   private setInitialSelections() {
@@ -242,9 +239,9 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private onAreaChange(id: number): void {
-    if (NumberUtil.isDefined(id)) {
-      let area = this.areas.find(a => a.id === id);
-      let kind = ApplicationKind[this.application.kind];
+    if (NumberUtil.isDefined(id) && hasSingleKind(this.application.typeEnum)) {
+      const area = this.areas.find(a => a.id === id);
+      const kind = this.application.kind;
 
       this.areaSections = this.sortedAreaSectionsFrom(area);
 
@@ -317,7 +314,11 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {
-    const kind = ApplicationKind[this.application.kind];
-    return area.namedSectionsForKind(kind).sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
+    if (hasSingleKind(this.application.typeEnum)) {
+      const kind = this.application.kind;
+      return area.namedSectionsForKind(kind).sort(ArrayUtil.naturalSort((s: FixedLocationSection) => s.name));
+    } else {
+      return [];
+    }
   }
 }

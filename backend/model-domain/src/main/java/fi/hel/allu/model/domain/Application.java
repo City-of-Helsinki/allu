@@ -1,18 +1,26 @@
 package fi.hel.allu.model.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.*;
+import fi.hel.allu.common.types.ApplicationSpecifier;
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.util.TimeUtil;
+
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * In Finnish: hakemus
@@ -28,8 +36,6 @@ public class Application {
   private StatusType status;
   @NotNull
   private ApplicationType type;
-  @NotNull
-  private ApplicationKind kind;
   private List<ApplicationTag> applicationTags;
   private Integer metadataVersion;
   @NotBlank
@@ -49,6 +55,7 @@ public class Application {
   private Integer calculatedPrice;
   private Integer priceOverride;
   private String priceOverrideReason;
+  private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -131,17 +138,6 @@ public class Application {
 
   public void setType(ApplicationType type) {
     this.type = type;
-  }
-
-  /**
-   * in Finnish: Hakemuksen laji
-   */
-  public ApplicationKind getKind() {
-    return kind;
-  }
-
-  public void setKind(ApplicationKind kind) {
-    this.kind = kind;
   }
 
   /**
@@ -347,5 +343,47 @@ public class Application {
 
   public void setPriceOverrideReason(String priceOverrideReason) {
     this.priceOverrideReason = priceOverrideReason;
+  }
+
+  /**
+   * Get the application kinds and their specifiers.
+   *
+   * @return Map where keys are the application kinds and values are a list of
+   *         specifiers for that kind.
+   */
+  public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
+    return kindsWithSpecifiers;
+  }
+
+  public void setKindsWithSpecifiers(Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
+    this.kindsWithSpecifiers = kindsWithSpecifiers;
+  }
+
+  /**
+   * Get the application kind for this application -- only works correctly with
+   * application types that don't have multiple kinds.
+   *
+   * @return
+   */
+  @JsonIgnore
+  public ApplicationKind getKind() {
+    if (kindsWithSpecifiers == null) {
+      return null;
+    }
+    if (kindsWithSpecifiers.size() > 1) {
+      throw new IllegalStateException("Application has multiple kinds");
+    }
+    return kindsWithSpecifiers.keySet().stream().findFirst().orElse(null);
+  }
+
+  public void setKind(ApplicationKind kind) {
+    if (extension == null) {
+      throw new IllegalStateException("Extension not set");
+    }
+    setKindsWithSpecifiers(Collections.singletonMap(kind, Collections.emptyList()));
+  }
+
+  public boolean hasTypeAndKind(ApplicationType type, ApplicationKind kind) {
+    return type == this.type && kindsWithSpecifiers != null && kindsWithSpecifiers.containsKey(kind);
   }
 }

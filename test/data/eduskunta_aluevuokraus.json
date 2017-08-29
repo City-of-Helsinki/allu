@@ -1,6 +1,6 @@
 {
   "type": "AREA_RENTAL",
-  "kind": "PROPERTY_RENOVATION",
+  "kindsWithSpecifiers": {"PROPERTY_RENOVATION" : []},
   "name": "Aluevuokraus",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",

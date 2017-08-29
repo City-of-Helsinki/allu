@@ -308,6 +308,16 @@
                             <type>fi.hel.allu.model.querydsl.StringToPublicityType</type>
                         </typeMapping>
                         <typeMapping>
+                            <table>application_kind</table>
+                            <column>kind</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationKind</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>kind_specifier</table>
+                            <column>specifier</column>
+                            <type>fi.hel.allu.model.querydsl.StringToApplicationSpecifier</type>
+                        </typeMapping>
+                        <typeMapping>
                             <table>distribution_entry</table>
                             <column>distribution_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToDistributionType</type>

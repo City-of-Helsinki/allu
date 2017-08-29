@@ -1,8 +1,8 @@
 <progressbar [step]="progressStep" [application]="application"></progressbar>
 <application-type (onTypeChange)="onApplicationTypeChange($event)"
-                  (onKindChange)="onApplicationKindChange($event)"
-                  (onSpecifierChange)="onApplicationSpecifierChange($event)"></application-type>
-<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" [hidden]="!typeSelected">
+                  (onKindSpecifierChange)="onKindSpecifierChange($event)"></application-type>
+
+<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" [hidden]="!kindsSelected">
   <div class="row">
     <div class="col m12">
       <md-card>
@@ -14,7 +14,7 @@
                 <searchbar [filter]="searchbarFilter" [datesRequired]="true"
                            (searchUpdated)="searchUpdated($event)">Loading searchbar</searchbar>
               </div>
-              <map [zoom]="true" [draw]="true" [edit]="editingAllowed" [selection]="true"
+              <map [zoom]="true" [draw]="true" [edit]="true" [selection]="true"
                    [applicationId]="application.id" (editedItemCountChanged)="editedItemCountChanged($event)"></map>
             </div>
           </div>
@@ -33,7 +33,7 @@
               </div>
               <div class="col m2">
                 <div *ngIf="areaSections.length">
-                  <md-select formControlName="sections" class="input-full-width" [multiple]="true" placeholder="Lohko">
+                  <md-select formControlName="sections" class="input-full-width" multiple placeholder="Lohko">
                     <md-option *ngFor="let section of areaSections" [value]="section.id">{{section.name}}</md-option>
                   </md-select>
                 </div>

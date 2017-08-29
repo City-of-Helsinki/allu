@@ -247,7 +247,6 @@ public class ApplicationControllerTest {
     Customer eventCustomer = testCommon.insertPerson();
     Application newApplication = new Application();
     newApplication.setType(ApplicationType.EVENT);
-    newApplication.setKind(ApplicationKind.OUTDOOREVENT);
     newApplication.setName("test outdoor event");
     newApplication.setCustomersWithContacts(
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, eventCustomer, Collections.emptyList())));
@@ -256,6 +255,8 @@ public class ApplicationControllerTest {
     newApplication.setEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setRecurringEndTime(ZonedDateTime.parse("2017-02-08T00:00:01+02:00[Europe/Helsinki]"));
     newApplication.setMetadataVersion(1);
+    newApplication.setKindsWithSpecifiers(
+        Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
     Event event = new Event();
     event.setDescription("Eventti");
     event.setEcoCompass(true);

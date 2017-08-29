@@ -33,6 +33,7 @@ export class MapHub {
   private fixedLocations$ = new BehaviorSubject<Array<FixedLocationArea>>([]);
   private selectedFixedLocations$ = new Subject<Array<FixedLocationSection>>();
   private cityDistricts$ = new BehaviorSubject<Array<CityDistrict>>([]);
+  private drawingAllowed$ = new BehaviorSubject<boolean>(true);
 
   constructor(private applicationService: ApplicationService,
               private locationService: LocationService,
@@ -183,6 +184,12 @@ export class MapHub {
    * Search addresses matching with partial search term
    */
   public addressSearch = (searchTerm: string) => this.locationService.search(searchTerm);
+
+  /**
+   * Observable to notify map if drawing should be allowed
+   */
+  public drawingAllowed = () => this.drawingAllowed$;
+  public setDrawingAllowed = (allowed: boolean) => this.drawingAllowed().next(allowed);
 
   /**
    * Used to notify about new address search terms

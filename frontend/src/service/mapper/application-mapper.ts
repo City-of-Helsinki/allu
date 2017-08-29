@@ -3,7 +3,7 @@ import {Application} from '../../model/application/application';
 import {ProjectMapper} from './project-mapper';
 import {CustomerMapper} from './customer-mapper';
 import {LocationMapper} from './location-mapper';
-import {ApplicationTypeDataMapper} from './application-type-data-mapper';
+import {ApplicationExtensionMapper} from './application-extension-mapper';
 import {AttachmentInfoMapper} from './attachment-info-mapper';
 import {UserMapper} from './user-mapper';
 import {TimeUtil} from '../../util/time.util';
@@ -23,7 +23,7 @@ export class ApplicationMapper {
     application.handler = UserMapper.mapBackend(backendApplication.handler);
     application.status = backendApplication.status;
     application.type = backendApplication.type;
-    application.kind = backendApplication.kind;
+    application.kindsWithSpecifiers = backendApplication.kindsWithSpecifiers;
     application.metadataVersion = backendApplication.metadataVersion;
     application.name = backendApplication.name;
     application.creationTime = TimeUtil.dateFromBackend(backendApplication.creationTime);
@@ -32,7 +32,7 @@ export class ApplicationMapper {
     application.recurringEndTime = TimeUtil.dateFromBackend(backendApplication.recurringEndTime);
     application.customersWithContacts = CustomerMapper.mapBackendCustomersWithContacts(backendApplication.customersWithContacts);
     application.locations = LocationMapper.mapBackendList(backendApplication.locations);
-    application.extension = ApplicationTypeDataMapper.mapBackend(backendApplication.extension);
+    application.extension = ApplicationExtensionMapper.mapBackend(backendApplication.extension);
     application.decisionTime = TimeUtil.dateFromBackend(backendApplication.decisionTime);
     application.decisionMaker = backendApplication.decisionMaker;
     application.decisionDistributionType = backendApplication.decisionDistributionType;
@@ -57,7 +57,7 @@ export class ApplicationMapper {
       handler: UserMapper.mapFrontend(application.handler),
       status: application.status,
       type: application.type,
-      kind: application.kind,
+      kindsWithSpecifiers: application.kindsWithSpecifiers,
       metadataVersion: application.metadataVersion,
       name: application.name,
       creationTime: TimeUtil.dateToBackend(application.creationTime),
@@ -66,7 +66,7 @@ export class ApplicationMapper {
       recurringEndTime: TimeUtil.dateToBackend(application.recurringEndTime),
       customersWithContacts: CustomerMapper.mapFrontendCustomersWithContacts(application.customersWithContacts),
       locations: LocationMapper.mapFrontendList(application.locations),
-      extension: ApplicationTypeDataMapper.mapFrontend(application.extension),
+      extension: ApplicationExtensionMapper.mapFrontend(application.extension),
       decisionTime: TimeUtil.dateToBackend(application.decisionTime),
       decisionMaker: application.decisionMaker,
       decisionDistributionType: application.decisionDistributionType,

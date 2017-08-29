@@ -1,17 +1,20 @@
 package fi.hel.allu.servicecore.domain;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.ApplicationSpecifier;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
+
 import org.junit.runner.RunWith;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,11 +47,11 @@ public class ApplicationJsonSpec {
       describe("Minimally valid application", () -> {
         beforeEach(() -> {
           applicationJson.setType(ApplicationType.CABLE_REPORT);
-          applicationJson.setKind(ApplicationKind.STREET_AND_GREEN);
           applicationJson.setDecisionDistributionType(DistributionType.EMAIL);
           applicationJson.setName("Test application");
           CableReportJson extension = new CableReportJson();
           applicationJson.setExtension(extension);
+          applicationJson.setKind(ApplicationKind.STREET_AND_GREEN);
           applicationJson.setDecisionPublicityType(PublicityType.CONFIDENTIAL);
           CustomerWithContactsJson customer = new CustomerWithContactsJson();
           applicationJson.setCustomersWithContacts(Collections.singletonList(customer));
@@ -76,10 +79,11 @@ public class ApplicationJsonSpec {
 
         context("With incompatible application specifier", () -> {
           beforeEach(() -> {
-            NoteJson extension = new NoteJson();
-            extension.setSpecifiers(Arrays.asList(ApplicationSpecifier.INDUCTION_LOOP, ApplicationSpecifier.BRIDGE,
-                ApplicationSpecifier.DATA_WELL));
-            applicationJson.setExtension(extension);
+            applicationJson
+                .setKindsWithSpecifiers(
+              Collections.singletonMap(ApplicationKind.STREET_AND_GREEN,
+                Arrays.asList(
+                  ApplicationSpecifier.INDUCTION_LOOP, ApplicationSpecifier.BRIDGE, ApplicationSpecifier.DATA_WELL)));
           });
           it("Should not validate", () -> {
             Set<ConstraintViolation<ApplicationJson>> constraintViolations = validator.validate(applicationJson);

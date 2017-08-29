@@ -53,7 +53,7 @@ export const translations = {
       BENJI: 'Benji-hyppylaite',
       PROMOTION_OR_SALES: 'Esittely- tai myyntitila liikkeen edustalla',
       URBAN_FARMING: 'Kaupunkiviljelypaikka',
-      MAIN_STREET_SALES: 'Keskuskadun myyntipaikka',
+      KESKUSKATU_SALES: 'Keskuskadun myyntipaikka',
       SUMMER_THEATER: 'Kesäteatterit',
       DOG_TRAINING_FIELD: 'Koirakoulutuskentät',
       DOG_TRAINING_EVENT: 'Koirakoulutustapahtuma',

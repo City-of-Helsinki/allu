@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.*;
+import fi.hel.allu.common.types.ApplicationSpecifier;
+import fi.hel.allu.common.types.DistributionType;
+import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.validator.NotFalse;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -15,15 +17,18 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * in Finnish: Hakemus
  */
 @NotFalse(rules = {
     "recurringEndTime, lessThanYearActivity, Recurring applications start and end time duration has to be less than a year",
-    "kind, kindMatchesType, Application kind must be valid for the type",
+    "kind, kindsMatchType, Application kinds must be valid for the type",
     "extension, specifiersMatchKind, Application specifiers must be suitable for application kind" })
+
 public class ApplicationJson {
 
   private Integer id;
@@ -34,8 +39,6 @@ public class ApplicationJson {
   private StatusType status;
   @NotNull(message = "{application.type}")
   private ApplicationType type;
-  @NotNull(message = "{application.kind}")
-  private ApplicationKind kind;
   private List<ApplicationTagJson> applicationTags;
   private Integer metadataVersion;
   @NotBlank(message = "{application.name}")
@@ -68,6 +71,8 @@ public class ApplicationJson {
   private Integer calculatedPrice;
   private Integer priceOverride;
   private String priceOverrideReason;
+  @NotEmpty
+  private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
 
   /**
   /**
@@ -136,17 +141,6 @@ public class ApplicationJson {
 
   public void setType(ApplicationType type) {
     this.type = type;
-  }
-
-  /**
-   * in Finnish: Hakemuksen laji
-   */
-  public ApplicationKind getKind() {
-    return kind;
-  }
-
-  public void setKind(ApplicationKind kind) {
-    this.kind = kind;
   }
 
   /**
@@ -395,6 +389,44 @@ public class ApplicationJson {
     this.priceOverrideReason = priceOverrideReason;
   }
 
+  /**
+   * Get the application kinds and their specifiers.
+   *
+   * @return Map where keys are the application kinds and values are a list of
+   *         specifiers for that kind.
+   */
+  public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
+    return kindsWithSpecifiers;
+  }
+
+  public void setKindsWithSpecifiers(Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
+    this.kindsWithSpecifiers = kindsWithSpecifiers;
+  }
+
+  /**
+   * Get the application kind for this application -- only works correctly with
+   * application types that don't have multiple kinds.
+   *
+   * @return
+   */
+  @JsonIgnore
+  public ApplicationKind getKind() {
+    if (kindsWithSpecifiers == null) {
+      return null;
+    }
+    if (kindsWithSpecifiers.size() > 1) {
+      throw new IllegalStateException("Application has multiple kinds");
+    }
+    return kindsWithSpecifiers.keySet().stream().findFirst().orElse(null);
+  }
+
+  public void setKind(ApplicationKind kind) {
+    if (extension == null) {
+      throw new IllegalStateException("Extension not set");
+    }
+    setKindsWithSpecifiers(Collections.singletonMap(kind, Collections.emptyList()));
+  }
+
   @JsonIgnore
   public boolean getLessThanYearActivity() {
     if (recurringEndTime != null && startTime != null && endTime != null) {
@@ -404,17 +436,18 @@ public class ApplicationJson {
   }
 
   @JsonIgnore
-  public boolean getKindMatchesType() {
-    if (kind != null && type != null) {
-      return kind.getTypes().contains(type);
+  public boolean getKindsMatchType() {
+    if (type != null && kindsWithSpecifiers != null) {
+      return kindsWithSpecifiers.keySet().stream().allMatch(k -> k.getTypes().contains(type));
     }
     return true;
   }
 
   @JsonIgnore
   public boolean getSpecifiersMatchKind() {
-    if (kind != null && extension != null && extension.getSpecifiers() != null) {
-      return extension.getSpecifiers().stream().allMatch(s -> kind.equals(s.getKind()));
+    if (kindsWithSpecifiers != null) {
+      return kindsWithSpecifiers.entrySet().stream()
+          .allMatch(e -> e.getValue().stream().allMatch(s -> e.getKey().equals(s.getKind())));
     }
     return true;
   }

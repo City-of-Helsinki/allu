@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceUnit;
 
@@ -31,7 +32,8 @@ public class AreaRentalPricing extends Pricing {
   }
 
   private void setHandlingFee() {
-    switch (application.getKind()) {
+    ApplicationKind kind = application.getKind();
+    switch (kind) {
     case ROLL_OFF:
     case LIFTING:
     case RELOCATION:
@@ -50,7 +52,7 @@ public class AreaRentalPricing extends Pricing {
       addInvoiceRow(InvoiceUnit.PIECE, 1, LONG_TERM_HANDLING_FEE, LONG_TERM_HANDLING_EXPLANATION, LONG_TERM_HANDLING_FEE);
       break;
     default:
-      throw new IllegalArgumentException("Bad application kind for area rental: " + application.getKind());
+      throw new IllegalArgumentException("Bad application kind for area rental: " + kind);
     }
   }
 

@@ -1,6 +1,6 @@
 {
   "type": "NOTE",
-  "kind": "CHRISTMAS_TREE_SALES_AREA",
+  "kindsWithSpecifiers": {"CHRISTMAS_TREE_SALES_AREA": []},
   "locations": [
     {
       "startTime": "2017-01-11T22:00:00.000Z",
@@ -56,7 +56,6 @@
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
   "extension": {
-    "specifiers": [],
     "description": "Joulusta ylijääneiden kuusien alennusmyynti hintatietoisille.",
     "reoccurring": true,
     "applicationType": "NOTE"

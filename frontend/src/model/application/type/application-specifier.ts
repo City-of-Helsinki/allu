@@ -1,3 +1,5 @@
+import {ObjectUtil} from '../../../util/object.util';
+
 export enum ApplicationSpecifier {
   // Katu- ja vihertyöt
   ASPHALT, // Asfaltointityö
@@ -13,7 +15,7 @@ export enum ApplicationSpecifier {
   // Vesi / viemäri
   STORM_DRAIN, // Hulevesi
   WELL, // Kaivo
-  UNDERGROUND_DRAIN,  // Salaoja
+  UNDERGROUND_DRAIN, // Salaoja
   WATER_PIPE, // Vesijohto
   DRAIN, // Viemäri
   // Sähkö
@@ -34,23 +36,69 @@ export enum ApplicationSpecifier {
   UNDERGROUND_SPACE, // Maanalainen tila
   BASE_STRUCTURES, // Perusrakenteet
   DRILL_PILE, // Porapaalu
-  CONSTRUCTION_EQUIPMENT, //  Rakennuksen laite/varuste
+  CONSTRUCTION_EQUIPMENT, // Rakennuksen laite/varuste
   CONSTRUCTION_PART, // Rakennuksen osa
   GROUND_FROST_INSULATION, // Routaeriste
-  SMOKE_HATCH_OR_PIPE,  // Savunpoistoluukku/-putki, IV-putki
-  STOP_OR_TRANSITION_SLAB,  // Sulku-/siirtymälaatta
-  SUPPORTING_WALL_OR_PILE,  // Tukiseinä/-paalu
+  SMOKE_HATCH_OR_PIPE, // Savunpoistoluukku/-putki, IV-putki
+  STOP_OR_TRANSITION_SLAB, // Sulku-/siirtymälaatta
+  SUPPORTING_WALL_OR_PILE, // Tukiseinä/-paalu
   // Piha
   FENCE_OR_WALL, // Aita, muuri, penger
   DRIVEWAY, // Kulkutie
-  STAIRS_RAMP,  // Portaat, luiska tms.
-  SUPPORTING_WALL_OR_BANK,   // Tukimuuri/-penger, lujitemaamuuri
+  STAIRS_RAMP, // Portaat, luiska tms.
+  SUPPORTING_WALL_OR_BANK, // Tukimuuri/-penger, lujitemaamuuri
   // Pohjatutkimus
   DRILLING, // Kairaus
   TEST_HOLE, // Koekuoppa
   GROUND_WATER_PIPE, // Pohjavesiputki
   // Muu
   ABSORBING_SEWAGE_SYSTEM, // Imujätejärjestelmä
-  GAS_PIPE,  // Kaasujohto
-  OTHER  // Muu
+  GAS_PIPE, // Kaasujohto
+  OTHER // Muu
+}
+
+export class SpecifierEntry {
+  constructor(public specifier: string, public kind: string) {}
+
+  get key() {
+    return this.kind + ':' + this.specifier;
+  }
+
+  static fromKey(key: string): SpecifierEntry {
+    const kindAndSpecifier = key.split(':');
+    return new SpecifierEntry(kindAndSpecifier[1], kindAndSpecifier[0]);
+  }
+}
+
+export interface KindsWithSpecifiers {
+  [kind: string]: string[];
+}
+
+export function toKindsWithSpecifiers(specifierEntries: Array<SpecifierEntry>) {
+  return specifierEntries.reduce((prev: KindsWithSpecifiers, cur: SpecifierEntry) => {
+    let next = ObjectUtil.clone(prev);
+    if (next[cur.kind] === undefined) {
+      next[cur.kind] = [];
+    }
+
+    if (cur.specifier) {
+      next[cur.kind].push(cur.specifier);
+    }
+
+    return next;
+  }, {});
+}
+
+/**
+ * Converts kinds with specifiers object to array of kind:specifier keys
+ * where string is in form of kind:specifier
+ */
+export function fromKindsWithSpecifiers(kindsWithSpecifiers: KindsWithSpecifiers): Array<string> {
+  return Object.keys(kindsWithSpecifiers)
+    .map(kind => fromKindAndSpecifiers(kind, kindsWithSpecifiers[kind]))
+    .reduce((prev, cur) => prev.concat(cur), []);
+}
+
+function fromKindAndSpecifiers(kind: string, specifiers: Array<string>): Array<string> {
+  return specifiers.map(s => new SpecifierEntry(s, kind).key);
 }

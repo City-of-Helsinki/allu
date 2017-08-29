@@ -59,11 +59,12 @@
       }]
     }
   ],
-  "kind": "STREET_AND_GREEN",
   "type": "CABLE_REPORT",
+  "kindsWithSpecifiers": {
+    "STREET_AND_GREEN": ["STREET_OR_PARK", "BRIDGE"],
+    "DATA_TRANSFER": ["DATA_CABLE"]},
   "extension": {
     "mapExtractCount": 0,
-    "specifiers": [],
     "cableSurveyRequired": true,
     "applicationType": "CABLE_REPORT",
     "infoEntries": [

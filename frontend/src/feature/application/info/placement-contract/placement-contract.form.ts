@@ -14,12 +14,11 @@ export class PlacementContractForm implements ApplicationForm {
     public generalTerms?: string
   ) {}
 
-  static to(form: PlacementContractForm, specifiers: Array<string>): PlacementContract {
+  static to(form: PlacementContractForm): PlacementContract {
     let placementContract = new PlacementContract();
     placementContract.diaryNumber = form.diaryNumber;
     placementContract.additionalInfo = form.additionalInfo;
     placementContract.generalTerms = form.generalTerms;
-    placementContract.specifiers = specifiers;
     return placementContract;
   }
 

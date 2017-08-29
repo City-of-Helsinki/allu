@@ -5,7 +5,6 @@ import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impedimen
 
 export class ExcavationAnnouncement extends ApplicationExtension {
   constructor(
-    public specifiers?: Array<string>,
     public pksCard?: boolean,
     public constructionWork?: boolean,
     public maintenanceWork?: boolean,
@@ -23,7 +22,7 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     public trafficArrangementImpedimentType?: string,
     public terms?: string
   ) {
-    super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], specifiers, terms);
+    super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
       || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }

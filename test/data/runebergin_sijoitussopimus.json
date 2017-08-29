@@ -1,6 +1,6 @@
 {
   "type": "PLACEMENT_CONTRACT",
-  "kind": "WATER_AND_SEWAGE",
+  "kindsWithSpecifiers": {"WATER_AND_SEWAGE" : []},
   "name": "Sijoitussopimus",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",

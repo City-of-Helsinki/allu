@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {Contact} from '../../../../model/customer/contact';
@@ -10,11 +10,9 @@ import {Observable} from 'rxjs';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
-import {Subscription} from 'rxjs/Subscription';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {ObjectUtil} from '../../../../util/object.util';
-import { OrdererIndexForm } from '../cable-report/cable-report.form';
+import {OrdererIndexForm} from '../cable-report/cable-report.form';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 

@@ -4,7 +4,7 @@
   "handler": null,
   "status": null,
   "type": "EXCAVATION_ANNOUNCEMENT",
-  "kind": "HEATING_COOLING",
+  "kindsWithSpecifiers": {"HEATING_COOLING": []},
   "name": "Manskun lämpö ja puhallus",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",

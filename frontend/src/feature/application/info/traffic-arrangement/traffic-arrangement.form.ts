@@ -1,11 +1,7 @@
 import {TimePeriod} from '../time-period';
-import {CustomerForm} from '../../../customerregistry/customer/customer.form';
-import {Some} from '../../../../util/option';
 import {Application} from '../../../../model/application/application';
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {ApplicationForm} from '../application-form';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
-import {ArrayUtil} from '../../../../util/array-util';
 
 export class TrafficArrangementForm implements ApplicationForm {
   constructor(
@@ -17,8 +13,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     public priceOverrideReason?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
-    public additionalInfo?: string,
-    public specifiers?: Array<string>
+    public additionalInfo?: string
   ) {}
 
   static to(form: TrafficArrangementForm): TrafficArrangement {
@@ -28,7 +23,6 @@ export class TrafficArrangementForm implements ApplicationForm {
     arrangement.trafficArrangements = form.trafficArrangements;
     arrangement.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     arrangement.additionalInfo = form.additionalInfo;
-    arrangement.specifiers = form.specifiers;
     return arrangement;
   }
 
@@ -42,8 +36,7 @@ export class TrafficArrangementForm implements ApplicationForm {
       application.priceOverrideReason,
       arrangement.trafficArrangements,
       arrangement.trafficArrangementImpedimentType,
-      arrangement.additionalInfo,
-      arrangement.specifiers
+      arrangement.additionalInfo
     );
   }
 }

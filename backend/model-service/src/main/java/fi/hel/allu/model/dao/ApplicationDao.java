@@ -11,10 +11,12 @@ import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.ApplicationSpecifier;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
@@ -38,11 +40,13 @@ import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationAttachment.applicationAttachment;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
+import static fi.hel.allu.QApplicationKind.applicationKind;
 import static fi.hel.allu.QApplicationReminder.applicationReminder;
 import static fi.hel.allu.QApplicationTag.applicationTag;
 import static fi.hel.allu.QAttachment.attachment;
 import static fi.hel.allu.QContact.contact;
 import static fi.hel.allu.QDefaultAttachment.defaultAttachment;
+import static fi.hel.allu.QKindSpecifier.kindSpecifier;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
 import static fi.hel.allu.QPostalAddress.postalAddress;
@@ -278,6 +282,7 @@ public class ApplicationDao {
     }
     insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
+    replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
     Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
@@ -417,6 +422,7 @@ public class ApplicationDao {
     distributionEntryDao.deleteByApplication(id);
     insertDistributionEntries(id, appl.getDecisionDistributionList());
     replaceCustomersWithContacts(id, appl.getCustomersWithContacts());
+    replaceKindsWithSpecifiers(id, appl.getKindsWithSpecifiers());
     Application application = findByIds(Collections.singletonList(id)).get(0);
     replaceApplicationTags(application.getId(), appl.getApplicationTags());
     replaceRecurringPeriods(application);
@@ -451,12 +457,22 @@ public class ApplicationDao {
     applications.forEach(a -> a.setDecisionDistributionList(distributionEntryDao.findByApplicationId(a.getId())));
     applications.forEach(a -> populateTags(a));
     applications.forEach(a -> a.setCustomersWithContacts(customerDao.findByApplicationWithContacts(a.getId())));
+    applications.forEach(a -> a.setKindsWithSpecifiers(findKindsAndSpecifiers(a.getId())));
     return applications;
   }
 
   private Application populateTags(Application application) {
     application.setApplicationTags(findTagsByApplicationId(application.getId()));
     return application;
+  }
+
+  private Map<ApplicationKind, List<ApplicationSpecifier>> findKindsAndSpecifiers(Integer applicationId) {
+    Map<ApplicationKind, List<ApplicationSpecifier>> m = queryFactory
+        .select(applicationKind.kind, kindSpecifier.specifier).from(applicationKind)
+        .leftJoin(kindSpecifier)
+        .on(applicationKind.id.eq(kindSpecifier.kindId)).where(applicationKind.applicationId.eq(applicationId))
+        .transform(groupBy(applicationKind.kind).as(list(kindSpecifier.specifier)));
+    return m;
   }
 
   private List<ApplicationTag> findTagsByApplicationId(Integer applicationId) {
@@ -491,6 +507,18 @@ public class ApplicationDao {
         queryFactory.insert(recurringPeriod).populate(period2).execute();
       }
     }
+  }
+
+  /* Set new kinds and specifiers for the given application id */
+  private void replaceKindsWithSpecifiers(Integer applicationId,
+      Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
+    queryFactory.delete(applicationKind).where(applicationKind.applicationId.eq(applicationId)).execute();
+    kindsWithSpecifiers.forEach((kind, specifiers) -> {
+      final int kindId = queryFactory.insert(applicationKind).set(applicationKind.applicationId, applicationId)
+          .set(applicationKind.kind, kind).executeWithKey(applicationKind.id);
+      specifiers.forEach(specifier -> queryFactory.insert(kindSpecifier).set(kindSpecifier.kindId, kindId)
+          .set(kindSpecifier.specifier, specifier).execute());
+    });
   }
 
   private List<CustomerWithContacts> replaceCustomersWithContacts(Integer applicationId, List<CustomerWithContacts> customerWithContacts) {

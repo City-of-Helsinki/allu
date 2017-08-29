@@ -2,7 +2,6 @@ import {TimePeriod} from '../time-period';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {CableInfoEntry} from '../../../../model/application/cable-report/cable-info-entry';
 import {Application} from '../../../../model/application/application';
-import {StringUtil} from '../../../../util/string.util';
 import {ApplicationForm} from '../application-form';
 import {TimeUtil} from '../../../../util/time.util';
 import {ApplicationStatus} from '../../../../model/application/application-status';
@@ -21,11 +20,10 @@ export class CableReportForm implements ApplicationForm {
     public reportTimes?: TimePeriod,
     public workDescription?: string,
     public cableInfo?: CableInfoForm,
-    public specifiers?: Array<string>,
     public ordererIndex?: OrdererIndexForm
   ) {}
 
-  static to(form: CableReportForm, validityTime: Date, specifiers: Array<string>): CableReport {
+  static to(form: CableReportForm, validityTime: Date): CableReport {
     let cableReport = new CableReport();
     cableReport.validityTime = validityTime;
     cableReport.cableSurveyRequired = form.cableSurveyRequired;
@@ -35,7 +33,6 @@ export class CableReportForm implements ApplicationForm {
     cableReport.emergencyWork = form.emergencyWork;
     cableReport.propertyConnectivity = form.propertyConnectivity;
     cableReport.workDescription = form.workDescription;
-    cableReport.specifiers = specifiers;
     cableReport.ordererIndex = OrdererIndexForm.to(form.ordererIndex);
     return CableInfoForm.to(form.cableInfo, cableReport);
   }
@@ -53,7 +50,6 @@ export class CableReportForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
       CableInfoForm.from(cableReport),
-      cableReport.specifiers,
       OrdererIndexForm.from(cableReport.ordererIndex)
     );
   }

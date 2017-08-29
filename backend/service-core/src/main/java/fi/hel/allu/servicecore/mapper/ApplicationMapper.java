@@ -64,7 +64,7 @@ public class ApplicationMapper {
     applicationDomain.setCustomersWithContacts(createCustomerWithContactsModel(applicationJson.getCustomersWithContacts()));
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
-    applicationDomain.setKind(applicationJson.getKind());
+    applicationDomain.setKindsWithSpecifiers(applicationJson.getKindsWithSpecifiers());
     applicationDomain.setApplicationTags(createTagModel(applicationJson.getApplicationTags()));
     applicationDomain.setMetadataVersion(applicationJson.getMetadataVersion());
     applicationDomain.setStatus(applicationJson.getStatus());
@@ -141,7 +141,7 @@ public class ApplicationMapper {
     applicationJson.setApplicationId(application.getApplicationId());
     applicationJson.setStatus(application.getStatus());
     applicationJson.setType(application.getType());
-    applicationJson.setKind(application.getKind());
+    applicationJson.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
     applicationJson.setApplicationTags(createTagJson(application.getApplicationTags()));
     applicationJson.setMetadataVersion(application.getMetadataVersion());
     applicationJson.setCreationTime(application.getCreationTime());

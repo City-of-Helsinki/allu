@@ -33,7 +33,7 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
     application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;
-    application.extension = PlacementContractForm.to(form, application.extension.specifiers);
+    application.extension = PlacementContractForm.to(form);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

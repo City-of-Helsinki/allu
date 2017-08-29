@@ -82,7 +82,6 @@ create table allu.application (
     handler integer references allu.user,
     status text,   -- TODO: enum
     type text not null,
-    kind text not null,
     metadata_version integer not null,
     creation_time timestamp with time zone,
     start_time timestamp with time zone,
@@ -95,8 +94,17 @@ create table allu.application (
     decision_maker integer references allu.user,
     calculated_price integer,
     price_override integer,
-    price_override_reason text
-);
+    price_override_reason text);
+
+create table allu.application_kind (
+  id serial primary key,
+  application_id integer references allu.application(id) on delete cascade not null,
+  kind text);
+
+create table allu.kind_specifier (
+  id serial primary key,
+  kind_id integer references allu.application_kind(id) on delete cascade not null,
+  specifier text);
 
 create table allu.application_customer (
   id serial primary key,

@@ -1,19 +1,14 @@
 package fi.hel.allu.servicecore.mapper;
 
-import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ESFlatValue;
-import fi.hel.allu.servicecore.domain.ApplicationExtensionJson;
-import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.CustomerJson;
-import fi.hel.allu.servicecore.domain.CustomerWithContactsJson;
-import fi.hel.allu.servicecore.domain.UserJson;
-
+import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.UserService;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,7 +47,6 @@ public class ApplicationMapperTest {
 
     ApplicationJson applicationJson = new ApplicationJson();
     applicationJson.setType(ApplicationType.EVENT);
-    applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
     applicationJson.setExtension(eventJson);
     applicationJson.setHandler(userJson);
     applicationJson.setCustomersWithContacts(Collections.singletonList(new CustomerWithContactsJson()));

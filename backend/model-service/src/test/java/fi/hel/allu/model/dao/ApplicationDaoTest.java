@@ -1,13 +1,12 @@
 package fi.hel.allu.model.dao;
 
-import fi.hel.allu.common.domain.types.ApplicationTagType;
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.*;
+import fi.hel.allu.common.domain.types.*;
+import fi.hel.allu.common.types.ApplicationSpecifier;
+import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.TestCommon;
+
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -120,11 +119,17 @@ public class ApplicationDaoTest {
   }
 
   @Test
-  public void insertApplication() {
+  public void testInsertApplication() {
     final int OVERRIDE_PRICE = 1234567;
     final String OVERRIDE_REASON = "Just felt like it";
 
     Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers = new HashMap<>();
+    kindsWithSpecifiers.put(ApplicationKind.OUTDOOREVENT, Collections.EMPTY_LIST);
+    kindsWithSpecifiers.put(ApplicationKind.MILITARY_EXCERCISE, Collections.singletonList(ApplicationSpecifier.OTHER));
+    kindsWithSpecifiers.put(ApplicationKind.ART,
+        Arrays.asList(ApplicationSpecifier.ASPHALT, ApplicationSpecifier.BRIDGE));
+    application.setKindsWithSpecifiers(kindsWithSpecifiers);
     application.setPriceOverride(OVERRIDE_PRICE);
     application.setPriceOverrideReason(OVERRIDE_REASON);
     application.setCreationTime(ZonedDateTime.parse("2015-12-03T10:15:30+02:00"));
@@ -136,6 +141,7 @@ public class ApplicationDaoTest {
     assertEquals(OVERRIDE_REASON, applOut.getPriceOverrideReason());
     assertNotEquals(application.getCreationTime(), applOut.getCreationTime());
     assertEquals(1, applOut.getDecisionDistributionList().size());
+    assertEquals(application.getKindsWithSpecifiers().size(), applOut.getKindsWithSpecifiers().size());
   }
 
   @Test

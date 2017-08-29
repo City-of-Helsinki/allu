@@ -6,7 +6,6 @@ import { OrdererIndex } from './orderer-index';
 
 export class CableReport extends ApplicationExtension {
   constructor(
-    public specifiers?: Array<string>,
     public validityTime?: Date,
     public cableSurveyRequired?: boolean,
     public mapUpdated?: boolean,
@@ -19,7 +18,7 @@ export class CableReport extends ApplicationExtension {
     public mapExtractCount?: number,
     public infoEntries?: Array<CableInfoEntry>,
     public ordererIndex?: OrdererIndex) {
-    super(ApplicationType[ApplicationType.CABLE_REPORT], specifiers);
+    super(ApplicationType[ApplicationType.CABLE_REPORT]);
     this.infoEntries = infoEntries || [];
   }
 

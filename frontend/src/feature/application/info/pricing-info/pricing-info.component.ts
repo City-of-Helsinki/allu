@@ -22,7 +22,6 @@ export class PricingInfoComponent implements OnInit {
   }
 
   eventNatureChange(nature: string): void {
-    console.log('eventNatureChange', nature);
     if (EventNature.PUBLIC_FREE !== EventNature[nature]) {
       this.form.patchValue({noPrice: false});
       this.noPriceChange(true);

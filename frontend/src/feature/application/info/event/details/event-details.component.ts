@@ -11,7 +11,6 @@ import {ApplicationType} from '../../../../../model/application/type/application
 import {ApplicationState} from '../../../../../service/application/application-state';
 import {Application} from '../../../../../model/application/application';
 import {ApplicationKind} from '../../../../../model/application/type/application-kind';
-import moment = require('moment/moment');
 
 @Component({
   selector: 'event-details',

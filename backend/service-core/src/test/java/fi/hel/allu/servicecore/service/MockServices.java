@@ -14,6 +14,7 @@ import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.UserMapper;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
@@ -30,7 +31,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.geometrycollection;
+import static org.geolatte.geom.builder.DSL.ring;
 
 public abstract class MockServices {
   @Mock
@@ -190,7 +193,6 @@ public abstract class MockServices {
     applicationJson.setId(id);
     applicationJson.setName("Tapahtuma 1, Json");
     applicationJson.setType(ApplicationType.EVENT);
-    applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
     applicationJson.setMetadataVersion(METADATA_VERSION);
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setStartTime(ZonedDateTime.now());
@@ -204,6 +206,7 @@ public abstract class MockServices {
     applicationJson.setLocations(Collections.singletonList(createLocationJson(null)));
     applicationJson.setProject(createProjectJson(null));
     applicationJson.setExtension(createOutdoorEventJson());
+    applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
     return applicationJson;
   }
 
@@ -216,13 +219,13 @@ public abstract class MockServices {
     application.setDecisionTime(ZonedDateTime.now());
     application.setHandler(createMockUser().getId());
     application.setType(ApplicationType.EVENT);
-    application.setKind(ApplicationKind.OUTDOOREVENT);
     Customer customer = new Customer();
     customer.setId(103);
     application.setCustomersWithContacts(
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
     application.setStatus(StatusType.PENDING);
     application.setExtension(createMockOutdoorEventModel());
+    application.setKind(ApplicationKind.OUTDOOREVENT);
     application.setMetadataVersion(1);
     return application;
   }
@@ -337,7 +340,6 @@ public abstract class MockServices {
     Application applicationModel = new Application();
     applicationModel.setId(1234);
     applicationModel.setType(ApplicationType.EVENT);
-    applicationModel.setKind(ApplicationKind.OUTDOOREVENT);
     applicationModel.setHandler(createMockUser().getId());
     applicationModel.setStatus(StatusType.HANDLING);
     applicationModel.setProjectId(4321);
@@ -347,6 +349,7 @@ public abstract class MockServices {
     applicationModel.setCustomersWithContacts(
         Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, customer, Collections.emptyList())));
     applicationModel.setExtension(createMockOutdoorEventModel());
+    applicationModel.setKind(ApplicationKind.OUTDOOREVENT);
     applicationModel.setMetadataVersion(1);
     applicationModelArray[1] = applicationModel;
 

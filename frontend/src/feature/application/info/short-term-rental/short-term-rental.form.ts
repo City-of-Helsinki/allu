@@ -30,6 +30,10 @@ export class ShortTermRentalForm implements ApplicationForm {
   }
 
   static to(form: ShortTermRentalForm): ShortTermRental {
-    return new ShortTermRental(form.description, form.commercial, form.largeSalesArea);
+    let rental =  new ShortTermRental();
+    rental.description = form.description;
+    rental.commercial = form.commercial;
+    rental.largeSalesArea = form.largeSalesArea;
+    return rental;
   }
 }

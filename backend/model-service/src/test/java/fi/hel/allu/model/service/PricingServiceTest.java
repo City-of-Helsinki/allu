@@ -4,12 +4,13 @@ import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.types.*;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,7 +75,6 @@ public class PricingServiceTest {
     // 2835.00 EUR
     Application application = new Application();
     application.setType(ApplicationType.EVENT);
-    application.setKind(ApplicationKind.OUTDOOREVENT);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T09:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-07T09:00:00+02:00"));
     application.setRecurringEndTime(application.getEndTime());
@@ -84,6 +84,8 @@ public class PricingServiceTest {
     event.setNature(EventNature.PUBLIC_FREE);
     event.setBuildSeconds(60 * 60 * 24); // 24 hours
     application.setExtension(event);
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
     addDummyCustomer(application, CustomerType.PERSON);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
@@ -103,12 +105,13 @@ public class PricingServiceTest {
   public void testBridgeBanner() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.BRIDGE_BANNER);
     ShortTermRental event = new ShortTermRental();
     event.setCommercial(false);
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T23:00:00+02:00"));
     application.setExtension(event);
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.BRIDGE_BANNER, Collections.emptyList()));
     addDummyCustomer(application, CustomerType.PERSON);
     // Five weeks non-commercial -> 750 EUR
     checkPrice(application, 75000);
@@ -124,7 +127,9 @@ public class PricingServiceTest {
   public void testCircus() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.CIRCUS);
+    application.setExtension(new ShortTermRental());
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.CIRCUS, Collections.emptyList()));
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
     addDummyCustomer(application, CustomerType.PERSON);
@@ -136,7 +141,9 @@ public class PricingServiceTest {
   public void testDogTrainingEvent() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.DOG_TRAINING_EVENT);
+    application.setExtension(new ShortTermRental());
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.DOG_TRAINING_EVENT, Collections.emptyList()));
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-10T05:59:59+02:00"));
     addDummyCustomer(application, CustomerType.ASSOCIATION);
@@ -152,7 +159,9 @@ public class PricingServiceTest {
   public void testDogTrainingField() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.DOG_TRAINING_FIELD);
+    application.setExtension(new ShortTermRental());
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.DOG_TRAINING_FIELD, Collections.emptyList()));
     application.setStartTime(ZonedDateTime.parse("2016-11-07T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-10T05:59:59+02:00"));
     addDummyCustomer(application, CustomerType.PERSON);
@@ -168,12 +177,13 @@ public class PricingServiceTest {
   public void testKeskuskatuSales() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.KESKUSKATU_SALES);
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2016-12-22T05:59:59+02:00"));
     application.setRecurringEndTime(application.getEndTime());
     application.setMetadataVersion(1);
     application.setExtension(new ShortTermRental());
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.KESKUSKATU_SALES, Collections.emptyList()));
     addDummyCustomer(application, CustomerType.PERSON);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
@@ -188,10 +198,11 @@ public class PricingServiceTest {
   public void testPromotionOrSales() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.PROMOTION_OR_SALES);
     ShortTermRental event = new ShortTermRental();
     event.setLargeSalesArea(true);
     application.setExtension(event);
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.PROMOTION_OR_SALES, Collections.emptyList()));
     application.setStartTime(ZonedDateTime.parse("2016-12-03T06:00:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2018-12-22T05:59:59+02:00"));
     addDummyCustomer(application, CustomerType.PERSON);
@@ -207,10 +218,11 @@ public class PricingServiceTest {
   public void testSummerTheatre() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.SUMMER_THEATER);
     application.setStartTime(ZonedDateTime.parse("2017-06-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2017-08-10T23:59:59+02:00"));
     application.setExtension(new ShortTermRental());
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.SUMMER_THEATER, Collections.emptyList()));
     application.setMetadataVersion(1);
     addDummyCustomer(application, CustomerType.PERSON);
     // Three months -> 360 EUR
@@ -221,11 +233,12 @@ public class PricingServiceTest {
   public void testUrbanFarming() {
     Application application = new Application();
     application.setType(ApplicationType.SHORT_TERM_RENTAL);
-    application.setKind(ApplicationKind.URBAN_FARMING);
     application.setStartTime(ZonedDateTime.parse("2017-05-15T08:30:00+02:00"));
     application.setEndTime(ZonedDateTime.parse("2019-09-10T23:59:59+02:00"));
     application.setRecurringEndTime(application.getEndTime());
     application.setExtension(new ShortTermRental());
+    application
+        .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.URBAN_FARMING, Collections.emptyList()));
     application.setMetadataVersion(1);
     addDummyCustomer(application, CustomerType.PERSON);
     application = applicationDao.insert(application);

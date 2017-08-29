@@ -10,6 +10,7 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
 import fi.hel.allu.servicecore.service.ProjectService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,11 +53,12 @@ public class ApplicationExtMapper {
         .map(locations -> locations.stream().map(l -> LocationExtMapper.createLocationJson(l)).collect(Collectors.toList())).orElse(null));
     applicationJson.setStatus(StatusType.PENDING);
     applicationJson.setType(applicationExt.getType());
-    applicationJson.setKind(applicationExt.getKind());
     applicationJson.setApplicationTags(null);
     applicationJson.setName(applicationExt.getName());
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setExtension(mapApplicationExtensionJson(applicationExt));
+    // FIXME: kinds and specifiers should go in applicationExtensionExt!
+    applicationJson.setKindsWithSpecifiers(Collections.singletonMap(applicationExt.getKind(), Collections.emptyList()));
     applicationJson.setDecisionDistributionType(DistributionType.EMAIL);
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
 
@@ -73,7 +75,12 @@ public class ApplicationExtMapper {
         .map(locations -> locations.stream().map(l -> LocationExtMapper.mapLocationExt(l)).collect(Collectors.toList())).orElse(null));
     applicationExt.setStatus(applicationJson.getStatus());
     applicationExt.setType(applicationJson.getType());
-    applicationExt.setKind(applicationJson.getKind());
+    // TODO: mirror ApplicationExtensionJson.kindsWithSpecifiers in ApplicationExtensionExt!
+    if (applicationJson.getKindsWithSpecifiers() != null) {
+      // FIXME: assuming only one kind in Json
+      applicationExt
+          .setKind(applicationJson.getKindsWithSpecifiers().keySet().stream().findFirst().orElse(null));
+    }
     applicationExt.setApplicationTags(Optional.ofNullable(applicationJson.getApplicationTags()).orElse(Collections.emptyList())
         .stream().map(t -> mapApplicationTagExt(t)).collect(Collectors.toList()));
     applicationExt.setName(applicationJson.getName());

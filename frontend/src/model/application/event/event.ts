@@ -23,7 +23,7 @@ export class Event extends ApplicationExtension {
               public structureStartTime?: Date,
               public structureEndTime?: Date,
               public terms?: string) {
-    super(applicationType, [], terms);
+    super(applicationType, terms);
   }
 
   /*

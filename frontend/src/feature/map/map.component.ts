@@ -169,7 +169,12 @@ export class MapComponent implements OnInit, OnDestroy {
       this.mapHub.applicationSelection().subscribe(app => this.applicationSelected(app)),
       this.mapHub.selectedFixedLocationSections().subscribe(fxs => this.drawFixedLocations(fxs)),
       this.mapHub.editedLocation().subscribe(loc => this.drawEditedLocation(loc)),
-      this.mapHub.locationsToDraw().subscribe(locs => this.drawFocusedLocations(locs))
+      this.mapHub.locationsToDraw().subscribe(locs => this.drawFocusedLocations(locs)),
+      this.mapHub.drawingAllowed().subscribe(allowed => this.drawingAllowed(allowed))
     ];
+  }
+
+  private drawingAllowed(allowed: boolean) {
+    this.mapState.setDynamicControls(allowed);
   }
 }

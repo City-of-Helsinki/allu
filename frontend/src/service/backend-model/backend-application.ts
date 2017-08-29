@@ -1,5 +1,4 @@
 import {BackendProject} from './backend-project';
-import {BackendContact} from './backend-contact';
 import {BackendLocation} from './backend-location';
 import {BackendAttachmentInfo} from './backend-attachment-info';
 import {BackendUser} from './backend-user';
@@ -7,6 +6,7 @@ import {BackendApplicationTag} from '../mapper/application-tag-mapper';
 import {BackendComment} from '../application/comment/comment-mapper';
 import {BackendDistributionEntry} from './backend-distribution-entry';
 import {BackendCustomerWithContacts} from './backend-customer-with-contacts';
+import {KindsWithSpecifiers} from '../../model/application/type/application-specifier';
 
 export interface BackendApplication {
   id: number;
@@ -15,7 +15,7 @@ export interface BackendApplication {
   handler: BackendUser;
   status: string;
   type: string;
-  kind: string;
+  kindsWithSpecifiers?: KindsWithSpecifiers,
   metadataVersion: number;
   name: string;
   creationTime: string;

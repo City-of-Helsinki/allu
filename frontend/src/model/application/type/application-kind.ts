@@ -1,29 +1,22 @@
-import {ApplicationSpecifier} from './application-specifier';
+import {ApplicationSpecifier, SpecifierEntry} from './application-specifier';
 import {ArrayUtil} from '../../../util/array-util';
 
 export enum ApplicationKind {
-  // EVENTS
-  OUTDOOREVENT, // Ulkoilmatapahtuma
-  PROMOTION, // Promootio
-  // SHORT TERM RENTALS
-  EXCAVATION_ANNOUNCEMENT, // Kaivuuilmoitus
-  AREA_RENTAL, // ALuevuokraus
-  TEMPORARY_TRAFFIC_ARRANGEMENTS, // Tilapäiset liikennejärjestelyt
+  PROMOTION,
+  OUTDOOREVENT,
   BRIDGE_BANNER, // Banderollit silloissa
   BENJI, // Benji-hyppylaite
   PROMOTION_OR_SALES, // Esittely- tai myyntitila liikkeen edustalla
   URBAN_FARMING, // Kaupunkiviljelypaikka
-  MAIN_STREET_SALES, // Keskuskadun myyntipaikka
+  KESKUSKATU_SALES, // Keskuskadun myyntipaikka
   SUMMER_THEATER, // Kesäteatterit
   DOG_TRAINING_FIELD, // Koirakoulutuskentät
   DOG_TRAINING_EVENT, // Koirakoulutustapahtuma
-  CARGO_CONTAINER, // Kontti
   SMALL_ART_AND_CULTURE, // Pienimuotoinen taide- ja kulttuuritoiminta
   SEASON_SALE, // Sesonkimyynti
   CIRCUS, // Sirkus/tivolivierailu
   ART, // Taideteos
   STORAGE_AREA, // Varastoalue
-    // CABLE REPORTS
   STREET_AND_GREEN, // Katu- ja vihertyöt
   WATER_AND_SEWAGE, // Vesi / viemäri
   ELECTRICITY, // Sähkö
@@ -32,16 +25,14 @@ export enum ApplicationKind {
   CONSTRUCTION, // Rakennus
   YARD, // Piha
   GEOLOGICAL_SURVEY, // Pohjatutkimus
-  // AREA RENTAL
-  PROPERTY_RENOVATION,        // kiinteistöremontti
-  CONTAINER_BARRACK,          // kontti/parakki
-  PHOTO_SHOOTING,             // kuvaus
-  SNOW_WORK,                  // lumenpudotus
-  RELOCATION,                 // muutto
-  LIFTING,                    // nostotyö
-  NEW_BUILDING_CONSTRUCTION,  // uudisrakennuksen työmaa-alue
-  ROLL_OFF,                   // vaihtolava
-  // NOTES
+  PROPERTY_RENOVATION, // kiinteistöremontti
+  CONTAINER_BARRACK, // kontti/parakki
+  PHOTO_SHOOTING, // kuvaus
+  SNOW_WORK, // lumenpudotus
+  RELOCATION, // muutto
+  LIFTING, // nostotyö
+  NEW_BUILDING_CONSTRUCTION, // uudisrakennuksen työmaa-alue
+  ROLL_OFF, // vaihtolava
   CHRISTMAS_TREE_SALES_AREA, // Joulukuusenmyyntipaikka
   CITY_CYCLING_AREA, // Kaupunkipyöräpaikka
   AGILE_KIOSK_AREA, // Ketterien kioskien myyntipaikka
@@ -49,27 +40,50 @@ export enum ApplicationKind {
   SNOW_HEAP_AREA, // Lumenkasauspaikka
   SNOW_GATHER_AREA, // Lumenvastaanottopaikka
   OTHER_SUBVISION_OF_STATE_AREA, // Muun hallintokunnan alue
-  MILITARY_EXCERCISE, 	// Sotaharjoitus
+  MILITARY_EXCERCISE, // Sotaharjoitus
   WINTER_PARKING, // Talvipysäköinti
-  REPAVING, 	// Uudelleenpäällystykset
+  REPAVING, // Uudelleenpäällystykset
   ELECTION_ADD_STAND, // Vaalimainosteline
-  // TEMPORARY TRAFFIC ARRANGEMENTS
-  PUBLIC_EVENT, // Yleisötilaisus
-  OTHER // Muu
+  PUBLIC_EVENT, // Yleisötilaisuus
+  OTHER
 }
 
-export class ApplicationKindStructure {
+export class ApplicationKindEntry {
+  private _specifierNamesSortedByTranslation: Array<SpecifierEntry>;
+
   constructor(public kind: ApplicationKind, private specifiers?: Array<ApplicationSpecifier>) {
     this.specifiers = specifiers || [];
+    this._specifierNamesSortedByTranslation = this.uiSpecifiers
+      .sort(ArrayUtil.naturalSortTranslated(['application.specifier'], (specifier: string) => specifier))
+      .map(s => new SpecifierEntry(s, this.uiKind));
   }
 
-  get applicationSpecifierNames() {
+  get uiKind() {
+    return ApplicationKind[this.kind];
+  }
+
+  set uiKind(kind: string) {
+    this.kind = ApplicationKind[kind];
+  }
+
+  get uiSpecifiers() {
     return this.specifiers.map(s => ApplicationSpecifier[s]);
   }
 
-  get applicationSpecifierNamesSortedByTranslation() {
-    return this.applicationSpecifierNames
-      .sort(ArrayUtil.naturalSortTranslated(['application.specifier'], (specifier: string) => specifier));
+  set uiSpecifiers(specifiers: Array<string>) {
+    this.specifiers = specifiers.map(s => ApplicationSpecifier[s]);
+  }
+
+  get specifierEntriesSortedByTranslation() {
+    return this._specifierNamesSortedByTranslation;
+  }
+
+  contains(specifier: string): boolean {
+    return this.specifiers.some(s => s === ApplicationSpecifier[specifier]);
+  }
+
+  hasSpecifiers(): boolean {
+    return this.specifiers.length > 0;
   }
 }
 

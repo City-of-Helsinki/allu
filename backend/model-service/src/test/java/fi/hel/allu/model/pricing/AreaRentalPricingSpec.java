@@ -1,16 +1,17 @@
 package fi.hel.allu.model.pricing;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.AreaRental;
+
 import org.junit.runner.RunWith;
 
 import java.time.ZonedDateTime;
+import java.util.Collections;
 
-import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
-import static com.greghaskins.spectrum.dsl.specification.Specification.context;
-import static com.greghaskins.spectrum.dsl.specification.Specification.it;
-import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Spectrum.class)
@@ -22,13 +23,16 @@ public class AreaRentalPricingSpec {
   {
     describe("Area rental Pricing", () -> {
 
-      beforeEach(() -> app = new Application());
+      beforeEach(() -> {
+        app = new Application();
+        app.setExtension(new AreaRental());
+      });
 
       context("with Five-day snow work", () -> {
         beforeEach(() -> {
           app.setStartTime(ZonedDateTime.parse("2017-04-20T08:00:00+03:00"));
           app.setEndTime(ZonedDateTime.parse("2017-04-24T17:00:00+03:00"));
-          app.setKind(ApplicationKind.SNOW_WORK);
+          app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.SNOW_WORK, Collections.emptyList()));
           arp = new AreaRentalPricing(app);
         });
 
@@ -59,7 +63,8 @@ public class AreaRentalPricingSpec {
         beforeEach(() -> {
           app.setStartTime(ZonedDateTime.parse("2017-06-01T08:00:00+03:00"));
           app.setEndTime(ZonedDateTime.parse("2017-06-30T17:00:00+03:00"));
-          app.setKind(ApplicationKind.NEW_BUILDING_CONSTRUCTION);
+          app.setKindsWithSpecifiers(
+              Collections.singletonMap(ApplicationKind.NEW_BUILDING_CONSTRUCTION, Collections.emptyList()));
           arp = new AreaRentalPricing(app);
         });
 

@@ -9,7 +9,7 @@
   "handler": null,
   "status": null,
   "type": "SHORT_TERM_RENTAL",
-  "kind": "BRIDGE_BANNER",
+  "kindsWithSpecifiers": {"BRIDGE_BANNER" : []},
   "name": "Siltamainos Porkkalassa",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",

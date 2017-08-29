@@ -1,7 +1,7 @@
 package fi.hel.allu.model.testUtils;
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.types.*;
+import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ProjectDao;
@@ -77,7 +77,7 @@ public class TestCommon {
   public Application dummyOutdoorApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.EVENT);
-    app.setKind(ApplicationKind.OUTDOOREVENT);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
     app.setApplicationId("TP1600001");
     app.setExtension(dummyOutdoorEvent());
     return app;
@@ -86,7 +86,7 @@ public class TestCommon {
   public Application dummyBridgeBannerApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.SHORT_TERM_RENTAL);
-    app.setKind(ApplicationKind.BRIDGE_BANNER);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.BRIDGE_BANNER, Collections.emptyList()));
     app.setApplicationId("VL1600001");
     app.setExtension(dummyBridgeBannerEvent());
     return app;
@@ -95,7 +95,7 @@ public class TestCommon {
   public Application dummyAreaRentalApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.AREA_RENTAL);
-    app.setKind(ApplicationKind.OTHER);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OTHER, Collections.emptyList()));
     app.setApplicationId("AL1700001");
     app.setExtension(dummyAreaRentalEvent());
     return app;
@@ -104,7 +104,7 @@ public class TestCommon {
   public Application dummyNoteApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.NOTE);
-    app.setKind(ApplicationKind.STATEMENT);
+    app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.STATEMENT, Collections.emptyList()));
     app.setApplicationId("MP1700001");
     app.setExtension(dummyNote());
     return app;

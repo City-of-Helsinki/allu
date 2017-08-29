@@ -14,7 +14,9 @@ export class NoteForm implements ApplicationForm {
   ) {}
 
   static to(form: NoteForm): Note {
-    return new Note(form.description);
+    let note = new Note();
+    note.description = form.description;
+    return note;
   }
 
   static from(application: Application): NoteForm {

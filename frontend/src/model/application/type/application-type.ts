@@ -1,4 +1,4 @@
-import {ApplicationKindStructure, ApplicationKind} from './application-kind';
+import {ApplicationKindEntry, ApplicationKind} from './application-kind';
 import {ApplicationSpecifier} from './application-specifier';
 import {ArrayUtil} from '../../../util/array-util';
 import {Some, Option} from '../../../util/option';
@@ -14,14 +14,14 @@ export enum ApplicationType {
   NOTE // Muistiinpano
 }
 
-export class ApplicationTypeStructure {
-  constructor(public type: ApplicationType, private kinds: Array<ApplicationKindStructure>) {}
+export class ApplicationTypeEntry {
+  constructor(public type: ApplicationType, private kinds: Array<ApplicationKindEntry>) {}
 
   public containsKind(kind: ApplicationKind): boolean {
     return this.kinds.map(k => k.kind).indexOf(kind) >= 0;
   }
 
-  public structureByKind(kind: ApplicationKind): ApplicationKindStructure {
+  public kindEntryByType(kind: ApplicationKind): ApplicationKindEntry {
     return this.kinds.find(k => k.kind === kind);
   }
 
@@ -39,7 +39,7 @@ export class ApplicationTypeStructure {
 }
 
 const commonApplicationKinds = [
-  new ApplicationKindStructure(ApplicationKind.STREET_AND_GREEN, [
+  new ApplicationKindEntry(ApplicationKind.STREET_AND_GREEN, [
     ApplicationSpecifier.ASPHALT,
     ApplicationSpecifier.INDUCTION_LOOP,
     ApplicationSpecifier.COVER_STRUCTURE,
@@ -51,29 +51,29 @@ const commonApplicationKinds = [
     ApplicationSpecifier.BRIDGE,
     ApplicationSpecifier.OUTDOOR_LIGHTING
   ]),
-  new ApplicationKindStructure(ApplicationKind.WATER_AND_SEWAGE, [
+  new ApplicationKindEntry(ApplicationKind.WATER_AND_SEWAGE, [
     ApplicationSpecifier.STORM_DRAIN,
     ApplicationSpecifier.WELL,
     ApplicationSpecifier.UNDERGROUND_DRAIN,
     ApplicationSpecifier.WATER_PIPE,
     ApplicationSpecifier.DRAIN
   ]),
-  new ApplicationKindStructure(ApplicationKind.ELECTRICITY, [
+  new ApplicationKindEntry(ApplicationKind.ELECTRICITY, [
     ApplicationSpecifier.DISTRIBUTION_CABINET,
     ApplicationSpecifier.ELECTRICITY_CABLE,
     ApplicationSpecifier.ELECTRICITY_WELL
   ]),
-  new ApplicationKindStructure(ApplicationKind.DATA_TRANSFER, [
+  new ApplicationKindEntry(ApplicationKind.DATA_TRANSFER, [
     ApplicationSpecifier.DISTRIBUTION_CABINET_OR_PILAR,
     ApplicationSpecifier.DATA_CABLE,
     ApplicationSpecifier.DATA_WELL
   ]),
-  new ApplicationKindStructure(ApplicationKind.HEATING_COOLING, [
+  new ApplicationKindEntry(ApplicationKind.HEATING_COOLING, [
     ApplicationSpecifier.STREET_HEATING,
     ApplicationSpecifier.DISTRICT_HEATING,
     ApplicationSpecifier.DISTRICT_COOLING
   ]),
-  new ApplicationKindStructure(ApplicationKind.CONSTRUCTION, [
+  new ApplicationKindEntry(ApplicationKind.CONSTRUCTION, [
     ApplicationSpecifier.GROUND_ROCK_ANCHOR,
     ApplicationSpecifier.UNDERGROUND_STRUCTURE,
     ApplicationSpecifier.UNDERGROUND_SPACE,
@@ -86,86 +86,85 @@ const commonApplicationKinds = [
     ApplicationSpecifier.STOP_OR_TRANSITION_SLAB,
     ApplicationSpecifier.SUPPORTING_WALL_OR_PILE
   ]),
-  new ApplicationKindStructure(ApplicationKind.YARD, [
+  new ApplicationKindEntry(ApplicationKind.YARD, [
     ApplicationSpecifier.FENCE_OR_WALL,
     ApplicationSpecifier.DRIVEWAY,
     ApplicationSpecifier.STAIRS_RAMP,
     ApplicationSpecifier.SUPPORTING_WALL_OR_BANK
   ]),
-  new ApplicationKindStructure(ApplicationKind.GEOLOGICAL_SURVEY, [
+  new ApplicationKindEntry(ApplicationKind.GEOLOGICAL_SURVEY, [
     ApplicationSpecifier.DRILLING,
     ApplicationSpecifier.TEST_HOLE,
     ApplicationSpecifier.GROUND_WATER_PIPE
   ]),
-  new ApplicationKindStructure(ApplicationKind.OTHER, [
+  new ApplicationKindEntry(ApplicationKind.OTHER, [
     ApplicationSpecifier.ABSORBING_SEWAGE_SYSTEM,
     ApplicationSpecifier.GAS_PIPE,
     ApplicationSpecifier.OTHER
   ])
 ];
 
-export const excavationAnnouncement = new ApplicationTypeStructure(ApplicationType.EXCAVATION_ANNOUNCEMENT, commonApplicationKinds);
+export const excavationAnnouncement = new ApplicationTypeEntry(ApplicationType.EXCAVATION_ANNOUNCEMENT, commonApplicationKinds);
 
-export const areaRental = new ApplicationTypeStructure(ApplicationType.AREA_RENTAL, [
-  new ApplicationKindStructure(ApplicationKind.PROPERTY_RENOVATION),
-  new ApplicationKindStructure(ApplicationKind.CONTAINER_BARRACK),
-  new ApplicationKindStructure(ApplicationKind.PHOTO_SHOOTING),
-  new ApplicationKindStructure(ApplicationKind.SNOW_WORK),
-  new ApplicationKindStructure(ApplicationKind.RELOCATION),
-  new ApplicationKindStructure(ApplicationKind.LIFTING),
-  new ApplicationKindStructure(ApplicationKind.NEW_BUILDING_CONSTRUCTION),
-  new ApplicationKindStructure(ApplicationKind.ROLL_OFF),
-  new ApplicationKindStructure(ApplicationKind.OTHER)
+export const areaRental = new ApplicationTypeEntry(ApplicationType.AREA_RENTAL, [
+  new ApplicationKindEntry(ApplicationKind.PROPERTY_RENOVATION),
+  new ApplicationKindEntry(ApplicationKind.CONTAINER_BARRACK),
+  new ApplicationKindEntry(ApplicationKind.PHOTO_SHOOTING),
+  new ApplicationKindEntry(ApplicationKind.SNOW_WORK),
+  new ApplicationKindEntry(ApplicationKind.RELOCATION),
+  new ApplicationKindEntry(ApplicationKind.LIFTING),
+  new ApplicationKindEntry(ApplicationKind.NEW_BUILDING_CONSTRUCTION),
+  new ApplicationKindEntry(ApplicationKind.ROLL_OFF),
+  new ApplicationKindEntry(ApplicationKind.OTHER)
 ]);
 
-export const temporaryTrafficArrangements = new ApplicationTypeStructure(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, [
-  new ApplicationKindStructure(ApplicationKind.PUBLIC_EVENT),
-  new ApplicationKindStructure(ApplicationKind.OTHER)
+export const temporaryTrafficArrangements = new ApplicationTypeEntry(ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS, [
+  new ApplicationKindEntry(ApplicationKind.PUBLIC_EVENT),
+  new ApplicationKindEntry(ApplicationKind.OTHER)
 ]);
 
-export const cableReport = new ApplicationTypeStructure(ApplicationType.CABLE_REPORT, commonApplicationKinds);
+export const cableReport = new ApplicationTypeEntry(ApplicationType.CABLE_REPORT, commonApplicationKinds);
 
-export const placementContract = new ApplicationTypeStructure(ApplicationType.PLACEMENT_CONTRACT, commonApplicationKinds);
+export const placementContract = new ApplicationTypeEntry(ApplicationType.PLACEMENT_CONTRACT, commonApplicationKinds);
 
-export const event = new ApplicationTypeStructure(ApplicationType.EVENT, [
-  new ApplicationKindStructure(ApplicationKind.PROMOTION),
-  new ApplicationKindStructure(ApplicationKind.OUTDOOREVENT)
+export const event = new ApplicationTypeEntry(ApplicationType.EVENT, [
+  new ApplicationKindEntry(ApplicationKind.PROMOTION),
+  new ApplicationKindEntry(ApplicationKind.OUTDOOREVENT)
 ]);
 
-export const shortTermRental = new ApplicationTypeStructure(ApplicationType.SHORT_TERM_RENTAL, [
-  new ApplicationKindStructure(ApplicationKind.BRIDGE_BANNER),
-  new ApplicationKindStructure(ApplicationKind.BENJI),
-  new ApplicationKindStructure(ApplicationKind.PROMOTION_OR_SALES),
-  new ApplicationKindStructure(ApplicationKind.URBAN_FARMING),
-  new ApplicationKindStructure(ApplicationKind.MAIN_STREET_SALES),
-  new ApplicationKindStructure(ApplicationKind.SUMMER_THEATER),
-  new ApplicationKindStructure(ApplicationKind.DOG_TRAINING_FIELD),
-  new ApplicationKindStructure(ApplicationKind.DOG_TRAINING_EVENT),
-  new ApplicationKindStructure(ApplicationKind.CARGO_CONTAINER),
-  new ApplicationKindStructure(ApplicationKind.SMALL_ART_AND_CULTURE),
-  new ApplicationKindStructure(ApplicationKind.SEASON_SALE),
-  new ApplicationKindStructure(ApplicationKind.CIRCUS),
-  new ApplicationKindStructure(ApplicationKind.ART),
-  new ApplicationKindStructure(ApplicationKind.STORAGE_AREA),
-  new ApplicationKindStructure(ApplicationKind.OTHER)
+export const shortTermRental = new ApplicationTypeEntry(ApplicationType.SHORT_TERM_RENTAL, [
+  new ApplicationKindEntry(ApplicationKind.BRIDGE_BANNER),
+  new ApplicationKindEntry(ApplicationKind.BENJI),
+  new ApplicationKindEntry(ApplicationKind.PROMOTION_OR_SALES),
+  new ApplicationKindEntry(ApplicationKind.URBAN_FARMING),
+  new ApplicationKindEntry(ApplicationKind.KESKUSKATU_SALES),
+  new ApplicationKindEntry(ApplicationKind.SUMMER_THEATER),
+  new ApplicationKindEntry(ApplicationKind.DOG_TRAINING_FIELD),
+  new ApplicationKindEntry(ApplicationKind.DOG_TRAINING_EVENT),
+  new ApplicationKindEntry(ApplicationKind.SMALL_ART_AND_CULTURE),
+  new ApplicationKindEntry(ApplicationKind.SEASON_SALE),
+  new ApplicationKindEntry(ApplicationKind.CIRCUS),
+  new ApplicationKindEntry(ApplicationKind.ART),
+  new ApplicationKindEntry(ApplicationKind.STORAGE_AREA),
+  new ApplicationKindEntry(ApplicationKind.OTHER)
 ]);
 
-export const note = new ApplicationTypeStructure(ApplicationType.NOTE, [
-  new ApplicationKindStructure(ApplicationKind.CHRISTMAS_TREE_SALES_AREA),
-  new ApplicationKindStructure(ApplicationKind.CITY_CYCLING_AREA),
-  new ApplicationKindStructure(ApplicationKind.AGILE_KIOSK_AREA),
-  new ApplicationKindStructure(ApplicationKind.STATEMENT),
-  new ApplicationKindStructure(ApplicationKind.SNOW_HEAP_AREA),
-  new ApplicationKindStructure(ApplicationKind.SNOW_GATHER_AREA),
-  new ApplicationKindStructure(ApplicationKind.OTHER_SUBVISION_OF_STATE_AREA),
-  new ApplicationKindStructure(ApplicationKind.MILITARY_EXCERCISE),
-  new ApplicationKindStructure(ApplicationKind.WINTER_PARKING),
-  new ApplicationKindStructure(ApplicationKind.REPAVING),
-  new ApplicationKindStructure(ApplicationKind.ELECTION_ADD_STAND),
-  new ApplicationKindStructure(ApplicationKind.OTHER)
+export const note = new ApplicationTypeEntry(ApplicationType.NOTE, [
+  new ApplicationKindEntry(ApplicationKind.CHRISTMAS_TREE_SALES_AREA),
+  new ApplicationKindEntry(ApplicationKind.CITY_CYCLING_AREA),
+  new ApplicationKindEntry(ApplicationKind.AGILE_KIOSK_AREA),
+  new ApplicationKindEntry(ApplicationKind.STATEMENT),
+  new ApplicationKindEntry(ApplicationKind.SNOW_HEAP_AREA),
+  new ApplicationKindEntry(ApplicationKind.SNOW_GATHER_AREA),
+  new ApplicationKindEntry(ApplicationKind.OTHER_SUBVISION_OF_STATE_AREA),
+  new ApplicationKindEntry(ApplicationKind.MILITARY_EXCERCISE),
+  new ApplicationKindEntry(ApplicationKind.WINTER_PARKING),
+  new ApplicationKindEntry(ApplicationKind.REPAVING),
+  new ApplicationKindEntry(ApplicationKind.ELECTION_ADD_STAND),
+  new ApplicationKindEntry(ApplicationKind.OTHER)
 ]);
 
-export const applicationTypeStructures: Array<ApplicationTypeStructure> = [
+export const applicationTypeEntries: Array<ApplicationTypeEntry> = [
   excavationAnnouncement,
   areaRental,
   temporaryTrafficArrangements,
@@ -176,15 +175,31 @@ export const applicationTypeStructures: Array<ApplicationTypeStructure> = [
   note
 ];
 
-export function typeStructureByType(type: string): Option<ApplicationTypeStructure> {
+export function typeEntryByType(type: string): Option<ApplicationTypeEntry> {
   let appType = ApplicationType[type];
-  return Some(applicationTypeStructures.find(ts => ts.type === appType));
+  return Some(applicationTypeEntries.find(ts => ts.type === appType));
 }
 
-export function kindStructureByTypeAndKind(type: string, kind: string): Option<ApplicationKindStructure> {
+export function kindEntryByTypeAndKind(type: string, kind: string): Option<ApplicationKindEntry> {
   let kindType = ApplicationKind[kind];
-  return typeStructureByType(type)
-    .map(ts => ts.structureByKind(kindType));
+  return typeEntryByType(type)
+    .map(ts => ts.kindEntryByType(kindType));
+}
+
+export function hasMultipleKinds(type: ApplicationType): boolean {
+  return hasSpecifiers(type);
+}
+
+export function hasSingleKind(type: ApplicationType): boolean {
+  return !hasMultipleKinds(type);
+}
+
+export function hasSpecifiers(type: ApplicationType): boolean {
+  return [
+    ApplicationType.CABLE_REPORT,
+    ApplicationType.EXCAVATION_ANNOUNCEMENT,
+    ApplicationType.PLACEMENT_CONTRACT
+  ].indexOf(type) >= 0;
 }
 
 

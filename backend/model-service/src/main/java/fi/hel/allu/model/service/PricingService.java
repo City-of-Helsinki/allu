@@ -1,8 +1,8 @@
 package fi.hel.allu.model.service;
 
-import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
@@ -63,7 +63,7 @@ public class PricingService {
   public void updatePrice(Application application, List<InvoiceRow> invoiceRows) {
     if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
       updateShortTermRentalPrice(application, invoiceRows);
-    } else if (application.getKind() == ApplicationKind.OUTDOOREVENT) {
+    } else if (application.hasTypeAndKind(ApplicationType.EVENT, ApplicationKind.OUTDOOREVENT)) {
       updateOutdoorEventPrice(application, invoiceRows);
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
       updateExcavationAnnouncementPrice(application, invoiceRows);
@@ -71,7 +71,6 @@ public class PricingService {
       updateAreaRentalPrice(application, invoiceRows);
     }
   }
-
 
   /*
    * Calculate price for outdoor event

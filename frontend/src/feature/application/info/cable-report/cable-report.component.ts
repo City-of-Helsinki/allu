@@ -55,7 +55,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
     application.startTime = form.reportTimes.startTime;
     application.endTime = form.reportTimes.endTime;
     let extension = <CableReport>application.extension;
-    application.extension = CableReportForm.to(form, extension.validityTime, extension.specifiers);
+    application.extension = CableReportForm.to(form, extension.validityTime);
 
     application.singleLocation.startTime = application.startTime;
     application.singleLocation.endTime = application.endTime;

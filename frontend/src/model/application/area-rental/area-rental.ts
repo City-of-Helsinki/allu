@@ -12,7 +12,7 @@ export class AreaRental extends ApplicationExtension {
     public additionalInfo?: string,
     public terms?: string
   ) {
-    super(ApplicationType[ApplicationType.AREA_RENTAL], [], terms);
+    super(ApplicationType[ApplicationType.AREA_RENTAL], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
       || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }

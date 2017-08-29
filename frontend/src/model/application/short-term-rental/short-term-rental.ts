@@ -2,11 +2,6 @@ import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
 
 export class ShortTermRental extends ApplicationExtension {
-  constructor()
-  constructor(
-    description: string,
-    commercial?: boolean,
-    largeSalesArea?: boolean)
   constructor(
     public description?: string,
     public commercial?: boolean,

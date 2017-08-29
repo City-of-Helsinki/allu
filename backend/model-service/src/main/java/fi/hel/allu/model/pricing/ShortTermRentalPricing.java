@@ -1,5 +1,6 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.InvoiceUnit;
 import fi.hel.allu.model.domain.ShortTermRental;
@@ -73,7 +74,14 @@ public class ShortTermRentalPricing extends Pricing {
 
 
   public void calculatePrice() {
-    switch (application.getKind()) {
+    if (application.getKindsWithSpecifiers() == null) {
+      return;
+    }
+    application.getKindsWithSpecifiers().keySet().forEach(kind -> calculatePrice(kind));
+  }
+
+  private void calculatePrice(ApplicationKind kind) {
+    switch (kind) {
     case ART:
       // Free event
       setPriceInCents(0);

@@ -1,12 +1,10 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
-import {Contact} from '../../customer/contact';
 import {TimeUtil} from '../../../util/time.util';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
 
 export class TrafficArrangement extends ApplicationExtension {
   constructor(
-    public specifiers?: Array<string>,
     public pksCard?: boolean,
     public workFinished?: Date,
     public trafficArrangements?: string,
@@ -14,7 +12,7 @@ export class TrafficArrangement extends ApplicationExtension {
     public additionalInfo?: string,
     public terms?: string
   ) {
-    super(ApplicationType[ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS], specifiers, terms);
+    super(ApplicationType[ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
       || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
   }

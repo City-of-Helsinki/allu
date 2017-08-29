@@ -1,6 +1,6 @@
 {
   "type": "TEMPORARY_TRAFFIC_ARRANGEMENTS",
-  "kind": "OTHER",
+  "kindsWithSpecifiers": {"OTHER" : []},
   "name": "Liikennejärjestely",
   "decisionPublicityType": "PUBLIC",
   "decisionDistributionType": "EMAIL",
