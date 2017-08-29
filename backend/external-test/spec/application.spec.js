@@ -81,6 +81,84 @@ describe('Application', () => {
         'roleType': 'APPLICANT',
         'contacts': [contactCreated.id]
       };
+      locationGeometry = {
+        "type": "GeometryCollection",
+        "crs": {
+          "properties": {
+            "name": "EPSG:3879"
+          },
+          "type": "name"
+        },
+        "bbox": null,
+        "geometries": [
+          {
+            "type": "Polygon",
+            "crs": null,
+            "bbox": [
+              2.549589275E7,
+              6674232.999998959,
+              2.549606025E7,
+              6674407.499998961
+            ],
+            "coordinates": [
+              [
+                [
+                  2.549589975E7,
+                  6674390.49999896
+                ],
+                [
+                  2.549592575E7,
+                  6674407.499998961
+                ],
+                [
+                  2.549596925E7,
+                  6674348.99999896
+                ],
+                [
+                  2.549603675E7,
+                  6674393.499998959
+                ],
+                [
+                  2.549606025E7,
+                  6674357.999998961
+                ],
+                [
+                  2.549599975E7,
+                  6674320.99999896
+                ],
+                [
+                  2.549602225E7,
+                  6674239.999998959
+                ],
+                [
+                  2.549597825E7,
+                  6674232.999998959
+                ],
+                [
+                  2.549596175E7,
+                  6674303.499998958
+                ],
+                [
+                  2.549590825E7,
+                  6674251.999998959
+                ],
+                [
+                  2.549589275E7,
+                  6674283.999998958
+                ],
+                [
+                  2.549594775E7,
+                  6674327.999998961
+                ],
+                [
+                  2.549589975E7,
+                  6674390.49999896
+                ]
+              ]
+            ]
+          }
+        ]
+      };
       locationExt = {
         'id': null,
         'locationKey': null,
@@ -88,7 +166,7 @@ describe('Application', () => {
         'startTime': '2017-07-17T10:42:48.315Z',
         'endTime': '2017-08-17T10:42:48.315Z',
         'additionalInfo': null,
-        'geometry': null,
+        'geometry': locationGeometry,
         'area': null,
         'areaOverride': null,
         'postalAddress': null,
