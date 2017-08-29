@@ -1,23 +1,22 @@
-import {TestBed, tick, fakeAsync} from '@angular/core/testing';
+import {fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {AuthHttp} from 'angular2-jwt';
 import {
   BaseRequestOptions,
   ConnectionBackend,
   Http,
-  RequestOptions,
   HttpModule,
+  RequestMethod,
+  RequestOptions,
   Response,
   ResponseOptions,
-  ResponseType,
-  RequestMethod
+  ResponseType
 } from '@angular/http';
 import {MockBackend} from '@angular/http/testing';
 import {CommentService} from '../../../../src/service/application/comment/comment.service';
 import {Comment} from '../../../../src/model/application/comment/comment';
 import {CommentType} from '../../../../src/model/application/comment/comment-type';
-import {HttpStatus, HttpResponse} from '../../../../src/util/http-response';
+import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
 import {ErrorHandler} from '../../../../src/service/error/error-handler.service';
-import createSpy = jasmine.createSpy;
 
 const COMMENTS_URL = '/api/comments';
 const COMMENTS_APP_URL = COMMENTS_URL + '/applications/:appId';

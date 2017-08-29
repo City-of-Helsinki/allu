@@ -37,7 +37,6 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   matchingAddresses: Observable<Array<PostalAddress>>;
 
   private coordinateSubscription: Subscription;
-  private notFound: boolean;
 
   constructor(private fb: FormBuilder, private mapHub: MapHub) {
     this.addressControl = this.fb.control('');

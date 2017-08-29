@@ -1,7 +1,6 @@
-import {AfterViewInit, Component, OnInit, QueryList, ViewChildren} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {RecipientsByTypeComponent} from './recipients-by-type.component';
 import {DefaultRecipientHub} from '../../../service/recipients/default-recipient-hub';
 import {Observable} from 'rxjs/Observable';
 

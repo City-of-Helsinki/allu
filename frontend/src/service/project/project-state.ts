@@ -3,11 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {Project} from '../../model/project/project';
 import {Application} from '../../model/application/application';
 import {ProjectHub} from './project-hub';
-import {ApplicationHub} from '../application/application-hub';
-import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {BehaviorSubject} from 'rxjs';
-import {Sort} from '../../model/common/sort';
-import {StringUtil} from '../../util/string.util';
 import {MapHub} from '../map/map-hub';
 
 @Injectable()

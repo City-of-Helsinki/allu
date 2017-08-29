@@ -1,17 +1,10 @@
-import {AfterContentInit, Component, Input, OnInit} from '@angular/core';
+import {AfterContentInit, Component, Input} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 
 import {ApplicationChange} from '../../../model/application/application-change/application-change';
 import {User} from '../../../model/common/user';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
-import {ApplicationFieldChange, FieldChangeType} from '../../../model/application/application-change/application-field-change';
-import {AttributeDataType} from '../../../model/application/meta/attribute-data-type';
-import {TimeUtil} from '../../../util/time.util';
-import {findTranslation} from '../../../util/translations';
-import {StringUtil} from '../../../util/string.util';
-import {Some} from '../../../util/option';
-import {CityDistrict} from '../../../model/common/city-district';
-import {MapHub} from '../../../service/map/map-hub';
+import {ApplicationFieldChange} from '../../../model/application/application-change/application-field-change';
 import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
 
 @Component({

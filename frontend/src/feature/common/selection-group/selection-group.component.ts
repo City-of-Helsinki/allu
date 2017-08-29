@@ -1,7 +1,5 @@
-import {
-  Component, OnDestroy, Output, EventEmitter, forwardRef, QueryList, AfterContentInit, ContentChildren, Input, AfterViewInit
-} from '@angular/core';
-import {SelectionEventService, SelectionEvent} from './selection-event.service';
+import {AfterViewInit, Component, ContentChildren, EventEmitter, forwardRef, OnDestroy, Output, QueryList} from '@angular/core';
+import {SelectionEvent, SelectionEventService} from './selection-event.service';
 import {Subscription} from 'rxjs/Subscription';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
@@ -32,7 +30,7 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
   private eventSubscription: Subscription;
   private selectedItemsSubscription: Subscription;
 
-  constructor(private selectionService: SelectionEventService) {
+  constructor(selectionService: SelectionEventService) {
     this.eventSubscription = selectionService.subscribe(event => this.onSelectionEvent(event));
   }
 

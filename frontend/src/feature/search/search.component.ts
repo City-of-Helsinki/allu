@@ -4,17 +4,11 @@ import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
-import {translations} from '../../util/translations';
-import {ApplicationStatus} from '../../model/application/application-status';
-import {UI_PIPE_DATE_FORMAT} from '../../util/time.util';
-import {EnumUtil} from '../../util/enum.util';
-import {ApplicationType} from '../../model/application/type/application-type';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/common/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Sort} from '../../model/common/sort';
-import {ApplicationState} from '../../service/application/application-state';
 import {MapHub} from '../../service/map/map-hub';
 import {CityDistrict} from '../../model/common/city-district';
 import {NotificationService} from '../../service/notification/notification.service';
@@ -30,18 +24,12 @@ export class SearchComponent implements OnInit {
   applications: Array<Application>;
   handlers: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
-  private translations = translations;
-  private format = UI_PIPE_DATE_FORMAT;
-  private applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
-  private applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
-  private selections = [];
 
   constructor(private applicationHub: ApplicationHub,
-              private applicationState: ApplicationState,
               private userHub: UserHub,
               private mapHub: MapHub,
               private router: Router,
-              private fb: FormBuilder) {
+              fb: FormBuilder) {
     this.queryForm = fb.group({
       applicationId: undefined,
       type: undefined,

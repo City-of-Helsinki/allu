@@ -20,8 +20,8 @@ export class ContactModalComponent implements OnInit {
   contactForm: FormGroup;
 
   constructor(public dialogRef: MdDialogRef<ContactModalComponent>,
-              private fb: FormBuilder,
-              private customerHub: CustomerHub) {
+              private customerHub: CustomerHub,
+              fb: FormBuilder) {
     this.contactForm = Contact.formGroup(fb);
   }
 

@@ -2,7 +2,6 @@ import {Injectable} from '@angular/core';
 
 import {MapUtil} from './map.util';
 import {MapLayerService} from './map-layer.service';
-import GeoJSONOptions = L.GeoJSONOptions;
 import {MapState, MapStateConfig} from './map-state';
 
 @Injectable()

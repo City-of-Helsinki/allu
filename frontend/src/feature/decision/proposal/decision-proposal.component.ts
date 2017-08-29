@@ -1,6 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {CommentHub} from '../../../service/application/comment/comment-hub';
 import {CommentType, decisionProposalComments} from '../../../model/application/comment/comment-type';
 import {Comment} from '../../../model/application/comment/comment';
 import {TimeUtil} from '../../../util/time.util';

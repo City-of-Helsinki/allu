@@ -1,10 +1,8 @@
 import {Component, OnInit} from '@angular/core';
-import {SafeResourceUrl, SafeUrl, DomSanitizer} from '@angular/platform-browser';
-import {Observable} from 'rxjs/Observable';
+import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 import {Decision} from '../../../model/decision/Decision';
 import {ApplicationState} from '../../../service/application/application-state';
 import {DecisionHub} from '../../../service/decision/decision-hub';
-import {ApplicationStatus} from '../../../model/application/application-status';
 
 @Component({
   selector: 'decision-preview',
@@ -24,7 +22,6 @@ export class DecisionPreviewComponent implements OnInit {
               private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    let appStatus = this.applicationState.application.statusEnum;
     this.decisionHub.fetch(this.applicationState.application.id)
         .subscribe(decision => this.providePdf(decision));
   }

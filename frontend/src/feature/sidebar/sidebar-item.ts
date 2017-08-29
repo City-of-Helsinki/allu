@@ -1,4 +1,3 @@
-import {ApplicationType} from '../../model/application/type/application-type';
 export interface SidebarItem {
   type: SidebarItemType;
   count?: number;

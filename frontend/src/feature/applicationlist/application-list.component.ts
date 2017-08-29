@@ -1,8 +1,7 @@
-import {Component, OnInit, OnDestroy} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
-import {SearchbarFilter} from '../../service/searchbar-filter';
 import {MapHub} from '../../service/map/map-hub';
 
 

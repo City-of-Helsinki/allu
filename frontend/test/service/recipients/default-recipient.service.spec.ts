@@ -16,7 +16,6 @@ import {DefaultRecipient} from '../../../src/model/common/default-recipient';
 import {DefaultRecipientService} from '../../../src/service/recipients/default-recipient.service';
 import {ErrorHandler} from '../../../src/service/error/error-handler.service';
 import {HttpResponse, HttpStatus} from '../../../src/util/http-response';
-import createSpy = jasmine.createSpy;
 import {RECIPIENT_NEW, RECIPIENT_ONE, RECIPIENT_TWO} from './default-recipient-mock-values';
 
 const ERROR_RESPONSE = new Response(new ResponseOptions({

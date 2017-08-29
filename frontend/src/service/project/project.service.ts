@@ -12,7 +12,6 @@ import {ErrorType} from '../ui-state/error-type';
 import {ApplicationMapper} from '../mapper/application-mapper';
 import {Application} from '../../model/application/application';
 import {ProjectSearchQuery} from '../../model/project/project-search-query';
-import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {ProjectQueryParametersMapper} from '../mapper/query/project-query-parameters-mapper';
 

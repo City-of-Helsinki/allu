@@ -34,7 +34,7 @@ export class DefaultAttachmentComponent implements OnInit {
   constructor(private fb: FormBuilder, private route: ActivatedRoute, private router: Router,
               private mapHub: MapHub, private attachmentHub: AttachmentHub) {
 
-    this.attachmentForm = fb.group({
+    this.attachmentForm = this.fb.group({
       id: [undefined],
       type: [''],
       name: ['', Validators.required],

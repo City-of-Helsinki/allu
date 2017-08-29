@@ -213,10 +213,4 @@ export class Application {
   private toCents(priceInEuros: number): number {
     return NumberUtil.toCents(priceInEuros);
   }
-
-  private assertUniqueCustomerRole(roleType: CustomerRoleType): void {
-    if (this.customersWithContacts.map(cwc => cwc.roleType).indexOf(roleType) >= 0) {
-      throw new Error('Tried to customer with existing role type to application ' + CustomerRoleType[roleType]);
-    }
-  }
 }

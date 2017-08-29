@@ -14,8 +14,7 @@ import {Contact} from '../../../../../src/model/customer/contact';
 import {getMdIconButton} from '../../../../selector-helpers';
 import {ApplicationType} from '../../../../../src/model/application/type/application-type';
 import {Application} from '../../../../../src/model/application/application';
-import {Observable} from 'rxjs/Observable';
-import { OrdererIndexForm } from '../../../../../src/feature/application/info/cable-report/cable-report.form';
+import {OrdererIndexForm} from '../../../../../src/feature/application/info/cable-report/cable-report.form';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');

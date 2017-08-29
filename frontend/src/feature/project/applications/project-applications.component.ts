@@ -1,9 +1,7 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-
-import {ProjectHub} from '../../../service/project/project-hub';
 import {Application} from '../../../model/application/application';
 import {Project} from '../../../model/project/project';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
@@ -30,8 +28,7 @@ export class ProjectApplicationsComponent implements OnInit {
   sort: Sort = new Sort(undefined, undefined);
   dateFormat = UI_PIPE_DATE_FORMAT;
 
-  constructor(private route: ActivatedRoute, private router: Router,
-              private projectHub: ProjectHub, private applicationHub: ApplicationHub,
+  constructor(private router: Router, private applicationHub: ApplicationHub,
               private projectState: ProjectState) {}
 
   ngOnInit(): void {

@@ -1,5 +1,5 @@
-import {Component, DebugElement, Input, Output, EventEmitter, Directive} from '@angular/core';
-import {ComponentFixture, TestBed, async, fakeAsync, tick} from '@angular/core/testing';
+import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/core';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
 import {FormsModule} from '@angular/forms';
@@ -11,7 +11,7 @@ import {Comment} from '../../../../src/model/application/comment/comment';
 import {Subject} from 'rxjs/Subject';
 import {ErrorInfo} from '../../../../src/service/ui-state/error-info';
 import {NotificationService} from '../../../../src/service/notification/notification.service';
-import {HttpStatus, HttpResponse} from '../../../../src/util/http-response';
+import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
 import {availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/service/authorization/available-to.directive';
 

@@ -1,5 +1,4 @@
-import {Component, Output, OnInit, EventEmitter, Input} from '@angular/core';
-import {Observable} from 'rxjs/Observable';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as filesaverLib from 'filesaver';
 
 import {AttachmentHub} from './attachment-hub';

@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, OnInit, Renderer, ViewContainerRef} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output, Renderer, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {ArrayUtil} from '../../../util/array-util';
 
@@ -20,7 +20,7 @@ export class AutoCompletionListComponent implements OnInit {
   sortedEntries = [];
 
   constructor(private renderer: Renderer, private viewContainerRef: ViewContainerRef) {
-    this.renderer.setElementClass(viewContainerRef.element.nativeElement, 'auto-completion-list', true);
+    this.renderer.setElementClass(this.viewContainerRef.element.nativeElement, 'auto-completion-list', true);
   }
 
   ngOnInit(): void {

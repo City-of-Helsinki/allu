@@ -1,12 +1,10 @@
-import {Component, OnInit, Input} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 import {CustomerHub} from '../../../service/customer/customer-hub';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
-import {CustomerType} from '../../../model/customer/customer-type';
-import {EnumUtil} from '../../../util/enum.util';
 
 @Component({
   selector: 'customer-modal',
@@ -21,8 +19,8 @@ export class CustomerModalComponent implements OnInit {
   customerForm: FormGroup;
 
   constructor(public dialogRef: MdDialogRef<CustomerModalComponent>,
-              private fb: FormBuilder,
-              private customerHub: CustomerHub) {
+              private customerHub: CustomerHub,
+              fb: FormBuilder) {
     this.customerForm = CustomerForm.initialForm(fb);
   }
 

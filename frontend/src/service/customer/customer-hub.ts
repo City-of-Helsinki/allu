@@ -3,12 +3,9 @@ import {CustomerService} from './customer.service';
 import {Contact} from '../../model/customer/contact';
 import {CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
 import {Customer} from '../../model/customer/customer';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class CustomerHub {
-
-  private orderer$ = new BehaviorSubject<Contact>(undefined);
 
   constructor(private customerService: CustomerService) {}
 

@@ -1,5 +1,5 @@
-import {Component, Input, Output, EventEmitter} from '@angular/core';
-import {SidebarItemType, SidebarItem, itemPaths} from './sidebar-item';
+import {Component, Input} from '@angular/core';
+import {itemPaths, SidebarItem, SidebarItemType} from './sidebar-item';
 import {ApplicationState} from '../../service/application/application-state';
 
 @Component({

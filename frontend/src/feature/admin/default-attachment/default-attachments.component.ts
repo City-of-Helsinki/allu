@@ -8,7 +8,6 @@ import {DefaultAttachmentInfo} from '../../../model/application/attachment/defau
 import {translateArray} from '../../../util/translations';
 import {ContentRow} from '../../../model/common/content-row';
 import {MaterializeUtil} from '../../../util/materialize.util';
-import {AttachmentType} from '../../../model/application/attachment/attachment-type';
 import {NumberUtil} from '../../../util/number.util';
 import {MapHub} from '../../../service/map/map-hub';
 

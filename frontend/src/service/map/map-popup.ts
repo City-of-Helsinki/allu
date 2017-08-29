@@ -1,5 +1,3 @@
-import PopupOptions = L.PopupOptions;
-import LatLng = L.LatLng;
 
 export class MapPopup {
   constructor(

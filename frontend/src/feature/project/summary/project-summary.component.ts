@@ -1,12 +1,9 @@
 import {Component, OnInit} from '@angular/core';
-import {Router, ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
 import {Project} from '../../../model/project/project';
-import {ProjectHub} from '../../../service/project/project-hub';
-import {Some} from '../../../util/option';
 import {Application} from '../../../model/application/application';
-import {UI_PIPE_DATE_FORMAT, TimeUtil} from '../../../util/time.util';
+import {TimeUtil, UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {translations} from '../../../util/translations';
 import {ProjectState} from '../../../service/project/project-state';

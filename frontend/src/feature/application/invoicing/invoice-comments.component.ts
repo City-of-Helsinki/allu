@@ -1,7 +1,4 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
-import {InvoiceRow} from '../../../model/application/invoice/invoice-row';
-import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
 import {CommentHub} from '../../../service/application/comment/comment-hub';
 import {Observable} from 'rxjs/Observable';
 import {CommentType} from '../../../model/application/comment/comment-type';

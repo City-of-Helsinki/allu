@@ -16,6 +16,8 @@
     "noImplicitReturns": true,
     "noImplicitUseStrict": false,
     "noFallthroughCasesInSwitch": true,
+    "noUnusedParameters": false,
+    "noUnusedLocals": true,
     "typeRoots": [
       "node_modules/@types"
     ],

@@ -41,7 +41,7 @@ export class UserComponent implements OnInit {
               private fb: FormBuilder,
               private router: Router,
               private currentUser: CurrentUser) {
-    this.userForm = fb.group({
+    this.userForm = this.fb.group({
       id: undefined,
       userName: ['', Validators.required],
       realName: ['', Validators.required],

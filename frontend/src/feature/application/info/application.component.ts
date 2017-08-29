@@ -7,7 +7,7 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import {SidebarItem, SidebarItemType, visibleFor, visibleItemsByApplicationType} from '../../sidebar/sidebar-item';
+import {SidebarItem, SidebarItemType, visibleFor} from '../../sidebar/sidebar-item';
 import {ProgressStep, stepFrom} from '../progressbar/progress-step';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {AttachmentHub} from '../attachment/attachment-hub';

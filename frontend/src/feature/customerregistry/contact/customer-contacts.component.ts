@@ -7,8 +7,6 @@ import {Contact} from '../../../model/customer/contact';
 import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
 import {CustomerHub} from '../../../service/customer/customer-hub';
 import {NumberUtil} from '../../../util/number.util';
-import {NotificationService} from '../../../service/notification/notification.service';
-import {findTranslation} from '../../../util/translations';
 
 @Component({
   selector: 'customer-contacts',
@@ -42,17 +40,6 @@ export class CustomerContactsComponent implements OnInit, OnDestroy {
 
   private addContact(contact: Contact): void {
     this.contacts.push(this.createContact(contact));
-  }
-
-  private removeContact(index: number, contact: Contact): void {
-    if (NumberUtil.isDefined(contact.id)) {
-      let contactCtrl = this.contacts.at(index);
-      contactCtrl.patchValue({active: false});
-      contactCtrl.markAsDirty();
-    } else {
-      this.contacts.removeAt(index);
-    }
-    NotificationService.message(findTranslation('contact.action.remove'));
   }
 
   private createContact(contact: Contact): FormGroup {

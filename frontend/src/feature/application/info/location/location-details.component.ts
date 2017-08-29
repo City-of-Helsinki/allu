@@ -1,10 +1,9 @@
-import {Component, Input, OnInit, AfterViewInit} from '@angular/core';
+import {AfterViewInit, Component, Input, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 import {MapHub} from '../../../../service/map/map-hub';
 import {Application} from '../../../../model/application/application';
 import {Location} from '../../../../model/common/location';
-import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {ArrayUtil} from '../../../../util/array-util';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {LocationState} from '../../../../service/application/location-state';

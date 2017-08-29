@@ -1,4 +1,4 @@
-import {OnDestroy, OnInit, AfterViewInit, AfterContentInit} from '@angular/core';
+import {AfterContentInit, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';

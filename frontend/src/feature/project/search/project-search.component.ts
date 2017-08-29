@@ -4,8 +4,6 @@ import {Observable} from 'rxjs/Observable';
 import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {Project} from '../../../model/project/project';
-import {translations} from '../../../util/translations';
-import {UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
 import {ProjectSearchQuery} from '../../../model/project/project-search-query';
 import {ProjectHub} from '../../../service/project/project-hub';
 import {Sort} from '../../../model/common/sort';
@@ -23,15 +21,12 @@ export class ProjectSearchComponent implements OnInit {
   projects: Array<Project> = [];
   queryForm: FormGroup;
   districts: Observable<Array<CityDistrict>>;
-  private translations = translations;
-  private format = UI_PIPE_DATE_FORMAT;
-  private selections = [];
 
   constructor(private projectHub: ProjectHub,
               private projectState: ProjectState,
               private mapHub: MapHub,
               private router: Router,
-              private fb: FormBuilder) {
+              fb: FormBuilder) {
     this.queryForm = fb.group({
       id: undefined,
       startTime: undefined,

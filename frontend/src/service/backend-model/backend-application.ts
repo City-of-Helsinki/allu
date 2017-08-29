@@ -15,7 +15,7 @@ export interface BackendApplication {
   handler: BackendUser;
   status: string;
   type: string;
-  kindsWithSpecifiers?: KindsWithSpecifiers,
+  kindsWithSpecifiers?: KindsWithSpecifiers;
   metadataVersion: number;
   name: string;
   creationTime: string;

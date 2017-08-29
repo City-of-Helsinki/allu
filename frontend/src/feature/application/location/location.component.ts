@@ -52,7 +52,6 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   editedItemCount = 0;
   application: Application;
   progressStep: ProgressStep;
-  typeSelected = false;
   kindsSelected = false;
   districts: Observable<Array<CityDistrict>>;
   searchbarFilter$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
@@ -66,10 +65,10 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     private mapHub: MapHub,
     private fb: FormBuilder) {
 
-    this.areaCtrl = fb.control(undefined);
-    this.sectionsCtrl = fb.control([]);
+    this.areaCtrl = this.fb.control(undefined);
+    this.sectionsCtrl = this.fb.control([]);
 
-    this.locationForm = fb.group({
+    this.locationForm = this.fb.group({
       id: [undefined],
       locationKey: [undefined],
       locationVersion: [undefined],

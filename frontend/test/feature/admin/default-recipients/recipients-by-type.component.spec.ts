@@ -1,7 +1,7 @@
 import {DebugElement} from '@angular/core';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {RecipientsByTypeComponent} from '../../../../src/feature/admin/default-recipients/recipients-by-type.component';
 import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
 import {DefaultRecipientHub} from '../../../../src/service/recipients/default-recipient-hub';

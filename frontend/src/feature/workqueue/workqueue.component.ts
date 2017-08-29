@@ -2,17 +2,13 @@ import {Component, OnDestroy, OnInit, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {ConnectableObservable, Subscription} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {MdTabChangeEvent} from '@angular/material';
-import {MdDialog, MdDialogConfig, MdDialogRef} from '@angular/material';
+import {MdDialog, MdDialogConfig, MdDialogRef, MdTabChangeEvent} from '@angular/material';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
-import {translations} from '../../util/translations';
 import {EnumUtil} from '../../util/enum.util';
-import {ApplicationStatus} from '../../model/application/application-status';
-import {ApplicationType} from '../../model/application/type/application-type';
 import {Sort} from '../../model/common/sort';
 import {HandlerModalComponent} from './handlerModal/handler-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
@@ -39,10 +35,6 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private selectedApplicationIds = new Array<number>();
   private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
   private sort: Sort;
-  private translations = translations;
-  private items: Array<string> = ['Ensimmäinen', 'Toinen', 'Kolmas', 'Neljäs', 'Viides'];
-  private applicationStatuses = EnumUtil.enumValues(ApplicationStatus);
-  private applicationTypes = EnumUtil.enumValues(ApplicationType);
   private handlers: Array<User>;
   private searchQuerySub: Subscription;
 

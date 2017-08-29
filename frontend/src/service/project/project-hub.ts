@@ -1,6 +1,4 @@
-import {Injectable, OnInit} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
-import {Observable} from 'rxjs/Observable';
+import {Injectable} from '@angular/core';
 import '../../rxjs-extensions.ts';
 
 import {Project} from '../../model/project/project';

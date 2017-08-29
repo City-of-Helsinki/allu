@@ -1,10 +1,7 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
-import {UIStateHub} from '../ui-state/ui-state-hub';
 import {Decision} from '../../model/decision/Decision';
-import {ErrorInfo} from './../ui-state/error-info';
-import {ErrorType} from '../ui-state/error-type';
 import '../../rxjs-extensions.ts';
 import {ResponseContentType} from '@angular/http';
 import {ErrorHandler} from '../error/error-handler.service';

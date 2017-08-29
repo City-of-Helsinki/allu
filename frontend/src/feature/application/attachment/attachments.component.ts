@@ -10,8 +10,7 @@ import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog
 import {MdDialog} from '@angular/material';
 import {TimeUtil} from '../../../util/time.util';
 import {Some} from '../../../util/option';
-import {isCommon, AttachmentType} from '../../../model/application/attachment/attachment-type';
-import {NumberUtil} from '../../../util/number.util';
+import {AttachmentType, isCommon} from '../../../model/application/attachment/attachment-type';
 
 const toastTime = 4000;
 

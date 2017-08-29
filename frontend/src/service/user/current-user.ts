@@ -1,7 +1,4 @@
 import {Injectable} from '@angular/core';
-import {JwtHelper} from 'angular2-jwt/angular2-jwt';
-import {Some} from '../../util/option';
-import {Option} from '../../util/option';
 import {UserService} from './user-service';
 import {User} from '../../model/common/user';
 import {Observable} from 'rxjs/Observable';
@@ -35,14 +32,5 @@ export class CurrentUser {
   public hasApplicationType(types: Array<string>): Observable<boolean> {
     return this.user
       .map(u => u.allowedApplicationTypes.reduce((prev, cur) => prev || types.some(type => type === cur), false));
-  }
-
-  private userNameFromToken(token: string): string {
-    const decoded = new JwtHelper().decodeToken(token);
-    if (decoded) {
-      return decoded['sub'];
-    } else {
-      throw new Error('No username in jwt token');
-    }
   }
 }

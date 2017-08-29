@@ -1,5 +1,4 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerType} from '../../../../model/customer/customer-type';
 import {EnumUtil} from '../../../../util/enum.util';
@@ -22,7 +21,7 @@ export class InvoicingInfoComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     // TODO: Get invoicing info if already invoiced / otherwise get invoicing address from customer
-    this.invoicingInfoForm = InvoicingInfoForm.initialForm(fb);
+    this.invoicingInfoForm = InvoicingInfoForm.initialForm(this.fb);
     this.invoicingAddressForm = <FormGroup>this.invoicingInfoForm.get('invoicingAddress');
   }
 

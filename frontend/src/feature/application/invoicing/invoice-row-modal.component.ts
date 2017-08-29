@@ -4,7 +4,6 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../../util/enum.util';
 import {NegligencePaymentType} from '../../../model/application/invoice/negligence-payment-type';
 import {InvoiceRowForm} from './invoice-row.form';
-import {Subscription} from 'rxjs/Subscription';
 import {findTranslation} from '../../../util/translations';
 import {InvoiceUnit} from '../../../model/application/invoice/invoice-unit';
 import {DEFAULT_FEE_CENTS, InvoiceRow} from '../../../model/application/invoice/invoice-row';

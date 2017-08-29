@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MdCardModule} from '@angular/material';
@@ -7,8 +7,6 @@ import {CustomerInfoComponent} from '../../../../src/feature/customerregistry/cu
 import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
 import {CustomerHub} from '../../../../src/service/customer/customer-hub';
 import {CustomerType} from '../../../../src/model/customer/customer-type';
-
-const headerText = 'Hakija';
 
 class CustomerHubMock {
   searchCustomersByField(fieldName: string, term: string) {}

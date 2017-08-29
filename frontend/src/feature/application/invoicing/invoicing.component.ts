@@ -20,7 +20,7 @@ export class InvoicingComponent implements OnInit {
   applicationId: number;
 
   constructor(private fb: FormBuilder, private applicationState: ApplicationState, private invoiceHub: InvoiceHub) {
-    this.invoicingForm = fb.group({});
+    this.invoicingForm = this.fb.group({});
   }
 
   ngOnInit(): void {
