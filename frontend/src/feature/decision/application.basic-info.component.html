@@ -13,7 +13,11 @@
                 </div>
                 <div class="col l6 m12 info-field">
                     <md-card-subtitle class="card-subtitle-slim">Hakemuksen laji</md-card-subtitle>
-                    <div>{{['application.kind', application.kind] | translation}}</div>
+                    <div>
+                        <span *ngFor="let kind of application.uiKinds; let last=last">
+                            {{['application.kind', kind] | translation | commaSeparated: last}}
+                        </span>
+                    </div>
                 </div>
                 <div class="col l6 m12 info-field">
                     <md-card-subtitle class="card-subtitle-slim">Arvioitu aloitus</md-card-subtitle>
