@@ -3,9 +3,10 @@ const Swagger = require('swagger-client');
 
 module.exports.assertEnv = function() {
   if (!process.env.SWAGGER_HOST || !process.env.SWAGGER_JSON_URL) {
-    console.error('Test expects SWAGGER_HOST AND SWAGGER_JSON_URL envinronment variables to be defined!');
+    console.error('Test expects SWAGGER_HOST AND SWAGGER_JSON_URL environment variables to be defined!');
     console.error('For example:');
     console.error('SWAGGER_HOST=localhost:9040 SWAGGER_JSON_URL=http://localhost:9040/api-docs/swagger.json npm test');
+    console.error('You may also use SWAGGER_BASE_PATH to define beginning of the interface path such as http://host/base_path')
     process.exit(255);
   }
 }
@@ -23,7 +24,7 @@ module.exports.swaggerClient = function swaggerClient() {
 
 function prepareClient(client) {
   client.spec.host = process.env.SWAGGER_HOST;
-  client.spec.basePath = null;
+  client.spec.basePath = process.env.SWAGGER_BASE_PATH;
   return client;
 }
 
