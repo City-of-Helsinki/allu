@@ -34,7 +34,7 @@ describe('Application', () => {
       },
       'email': 'testemail@test.fi',
       'phone': '010 1010',
-      'registryKey': '1234-123'
+      'registryKey': '1234-123' 
     };
 
     // create customer and related contact for the customer to be used in this spec
@@ -181,7 +181,10 @@ describe('Application', () => {
         'locations': [locationExt],
         'status': 'PENDING',
         'type': 'EXCAVATION_ANNOUNCEMENT',
-        'kind': 'REPAVING',
+        'kindsWithSpecifiers': {
+          'STREET_AND_GREEN' : [],
+          'ELECTRICITY' : ['DISTRIBUTION_CABINET'],
+          'CONSTRUCTION' : ['GROUND_ROCK_ANCHOR', 'UNDERGROUND_SPACE', 'DRILL_PILE'] },
         'applicationTags': null,
         'name': 'test application',
         'creationTime': null,

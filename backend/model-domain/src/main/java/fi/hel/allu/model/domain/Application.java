@@ -3,9 +3,9 @@ package fi.hel.allu.model.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.common.types.ApplicationSpecifier;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.common.util.TimeUtil;

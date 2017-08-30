@@ -1,14 +1,18 @@
 package fi.hel.allu.external.domain;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
+
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Allu application, which is exposed to external users.
@@ -24,7 +28,6 @@ public class ApplicationExt {
   @NotNull
   private StatusType status;
   private ApplicationType type;
-  private ApplicationKind kind;
   private List<ApplicationTagExt> applicationTags;
   private String name;
   private ZonedDateTime creationTime;
@@ -34,6 +37,8 @@ public class ApplicationExt {
   @Valid
   private ApplicationExtensionExt extension;
   private ZonedDateTime decisionTime;
+  @NotEmpty
+  private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
 
   public Integer getId() {
     return id;
@@ -81,14 +86,6 @@ public class ApplicationExt {
 
   public void setType(ApplicationType type) {
     this.type = type;
-  }
-
-  public ApplicationKind getKind() {
-    return kind;
-  }
-
-  public void setKind(ApplicationKind kind) {
-    this.kind = kind;
   }
 
   public List<ApplicationTagExt> getApplicationTags() {
@@ -145,5 +142,19 @@ public class ApplicationExt {
 
   public void setDecisionTime(ZonedDateTime decisionTime) {
     this.decisionTime = decisionTime;
+  }
+
+  /**
+   * @return the kindsWithSpecifiers
+   */
+  public Map<ApplicationKind, List<ApplicationSpecifier>> getKindsWithSpecifiers() {
+    return kindsWithSpecifiers;
+  }
+
+  /**
+   * @param kindsWithSpecifiers the kindsWithSpecifiers to set
+   */
+  public void setKindsWithSpecifiers(Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
+    this.kindsWithSpecifiers = kindsWithSpecifiers;
   }
 }

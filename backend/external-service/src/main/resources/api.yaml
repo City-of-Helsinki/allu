@@ -230,6 +230,91 @@ definitions:
       - ELECTION_ADD_STAND
       - PUBLIC_EVENT
       - OTHER
+  ApplicationSpecifier:
+    description: >-
+      ApplicationSpecifier further specifies an application. The specifiers
+      are specific to a certain ApplicationKind (a specific specifier value is
+      allowed only in connection to a specific application kind). Application
+      specifiers are also optional; not all application kinds have specifiers.
+
+
+      | ApplicationKind | Allowed Specifiers |
+
+      |-----------------|------------|
+
+      | STREET_AND_GREEN | ASPHALT, INDUCTION_LOOP, COVER_STRUCTURE,
+      STREET_OR_PARK, PAVEMENT, TRAFFIC_LIGHT, COMMERCIAL_DEVICE, TRAFFIC_STOP,
+      BRIDGE, OUTDOOR_LIGHTNING |
+
+      | WATER_AND_SEWAGE | STORM_DRAIN, WELL, UNDERGROUND_DRAIN, WATER_PIPE,
+      DRAIN |
+
+      | ELECTRICITY | DISTRIBUTION_CABINET, ELECTRICITY_CABLE, ELECTRICITY_WELL
+      |
+
+      | DATA_TRANSFER | DISTRIBUTION_CABINET_OR_PILAR, DATA_CABLE, DATA_WELL |
+
+      | HEATING_COOLING | STREET_HEATING, DISTRICT_HEATING, DISTRICT_COOLING |
+
+      | CONSTRUCTION | GROUND_ROCK_ANCHOR, UNDERGROUND_STRUCTURE,
+      UNDERGROUND_SPACE, BASE_STRUCTURES, DRILL_PILE, CONSTRUCTION_EQUIPMENT,
+      CONSTRUCTION_PART, GROUND_FROST_INSULATION, SMOKE_HATCH_OR_PIPE,
+      STOP_OR_TRANSITION_SLAB, SUPPORTING_WALL_OR_PILE |
+
+      | YARD | FENCE_OR_WALL, DRIVEWAY, STAIRS_RAMP, SUPPORTING_WALL_OR_BANK |
+
+      | GEOLOGICAL_SURVEY | DRILLING, TEST_HOLE, GROUND_WATER_PIPE |
+
+      | OTHER | ABSORBING_SEWAGE_SYSTEM, GAS_PIPE, OTHER|
+
+    type: string
+    enum:
+      - ASPHALT
+      - INDUCTION_LOOP
+      - COVER_STRUCTURE
+      - STREET_OR_PARK
+      - PAVEMENT
+      - TRAFFIC_LIGHT
+      - COMMERCIAL_DEVICE
+      - TRAFFIC_STOP
+      - BRIDGE
+      - OUTDOOR_LIGHTING
+      - STORM_DRAIN
+      - WELL
+      - UNDERGROUND_DRAIN
+      - WATER_PIPE
+      - DRAIN
+      - DISTRIBUTION_CABINET
+      - ELECTRICITY_CABLE
+      - ELECTRICITY_WELL
+      - DISTRIBUTION_CABINET_OR_PILAR
+      - DATA_CABLE
+      - DATA_WELL
+      - STREET_HEATING
+      - DISTRICT_HEATING
+      - DISTRICT_COOLING
+      - GROUND_ROCK_ANCHOR
+      - UNDERGROUND_STRUCTURE
+      - UNDERGROUND_SPACE
+      - BASE_STRUCTURES
+      - DRILL_PILE
+      - CONSTRUCTION_EQUIPMENT
+      - CONSTRUCTION_PART
+      - GROUND_FROST_INSULATION
+      - SMOKE_HATCH_OR_PIPE
+      - STOP_OR_TRANSITION_SLAB
+      - SUPPORTING_WALL_OR_PILE
+      - FENCE_OR_WALL
+      - DRIVEWAY
+      - STAIRS_RAMP
+      - SUPPORTING_WALL_OR_BANK
+      - DRILLING
+      - TEST_HOLE
+      - GROUND_WATER_PIPE
+      - ABSORBING_SEWAGE_SYSTEM
+      - GAS_PIPE
+      - OTHER
+
   ApplicationTagType:
     description: Application tag type
     type: string
@@ -316,7 +401,7 @@ definitions:
     required:
       - status
       - type
-      - kind
+      - kindsWithSpecifiers
       - name
       - creationTime
       - extension
@@ -341,8 +426,18 @@ definitions:
         $ref: '#/definitions/StatusType'
       type:
         $ref: '#/definitions/ApplicationType'
-      kind:
-        $ref: '#/definitions/ApplicationKind'
+      kindsWithSpecifiers:
+        description: >-
+          A map that specifies all ApplicationKinds for the application
+          along with their ApplicationSpecifiers. The keys
+          [{$ref : #/definitions/ApplicationKind}] of the map represent
+          the ApplicationKinds and the values contain the list of
+          selected specifiers for that kind. Empty lists are allowed.
+        type: object
+        additionalProperties:
+          type: array
+          items:
+            $ref: '#/definitions/ApplicationSpecifier'
       applicationTags:
         type: array
         items:

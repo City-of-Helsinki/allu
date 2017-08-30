@@ -1,7 +1,6 @@
 package fi.hel.allu.model.dao;
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.types.ApplicationSpecifier;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;

@@ -57,8 +57,7 @@ public class ApplicationExtMapper {
     applicationJson.setName(applicationExt.getName());
     applicationJson.setCreationTime(ZonedDateTime.now());
     applicationJson.setExtension(mapApplicationExtensionJson(applicationExt));
-    // FIXME: kinds and specifiers should go in applicationExtensionExt!
-    applicationJson.setKindsWithSpecifiers(Collections.singletonMap(applicationExt.getKind(), Collections.emptyList()));
+    applicationJson.setKindsWithSpecifiers(applicationExt.getKindsWithSpecifiers());
     applicationJson.setDecisionDistributionType(DistributionType.EMAIL);
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
 
@@ -75,12 +74,7 @@ public class ApplicationExtMapper {
         .map(locations -> locations.stream().map(l -> LocationExtMapper.mapLocationExt(l)).collect(Collectors.toList())).orElse(null));
     applicationExt.setStatus(applicationJson.getStatus());
     applicationExt.setType(applicationJson.getType());
-    // TODO: mirror ApplicationExtensionJson.kindsWithSpecifiers in ApplicationExtensionExt!
-    if (applicationJson.getKindsWithSpecifiers() != null) {
-      // FIXME: assuming only one kind in Json
-      applicationExt
-          .setKind(applicationJson.getKindsWithSpecifiers().keySet().stream().findFirst().orElse(null));
-    }
+    applicationExt.setKindsWithSpecifiers(applicationJson.getKindsWithSpecifiers());
     applicationExt.setApplicationTags(Optional.ofNullable(applicationJson.getApplicationTags()).orElse(Collections.emptyList())
         .stream().map(t -> mapApplicationTagExt(t)).collect(Collectors.toList()));
     applicationExt.setName(applicationJson.getName());

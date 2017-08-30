@@ -3,8 +3,8 @@ package fi.hel.allu.servicecore.domain;
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ApplicationSpecifier;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.types.ApplicationSpecifier;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
 
