@@ -68,5 +68,24 @@ describe('Customer', () => {
         done.fail(err);
       });
     });
+    it('by business id', (done) => {
+      customerNew.registryKey = 'testfindbybusinessid';
+      let createFind = function(client) {
+        return client.apis.customers.customersCreate({body: customerNew})
+        .then(customer => client.apis.customers.customersFindByBusinessId({businessId: customer.obj.registryKey}));
+      };
+
+      let createdCustomer;
+      TestUtil.swaggerClient()
+      .then(client => createFind(client))
+      // find the latest (highest database id) created customer to make sure it's the one we just inserted in this test
+      .then(customers => customers.obj.reduce((acc, curr) => acc.id > curr.id ? acc : curr))
+      .then(customer => expect(ComparisonUtil.deepCompareNonNull('', customerNew, customer)).toEqual([]))
+      .then(done)
+      .catch(err => {
+        console.log('Error', err);
+        done.fail(err);
+      });
+    });
   });
 });

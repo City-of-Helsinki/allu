@@ -589,6 +589,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for getting a customer by business id.
+   */
+  public String getCustomerByBusinessIdUrl() {
+    return getModelServiceUrl("/customers/businessid/{businessid}");
+  }
+
+  /**
    * @return URL for getting customers by ids.
    */
   public String getCustomersByIdUrl() {

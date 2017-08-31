@@ -161,6 +161,14 @@ public class CustomerService {
     return applicationMapper.createCustomerJson(customerResult.getBody());
   }
 
+  public List<CustomerJson> findCustomerByBusinessId(String businessId) {
+    ResponseEntity<Customer[]> customerResult =
+        restTemplate.getForEntity(applicationProperties.getCustomerByBusinessIdUrl(), Customer[].class, businessId);
+    return Arrays.stream(customerResult.getBody())
+        .map(customer -> applicationMapper.createCustomerJson(customer))
+        .collect(Collectors.toList());
+  }
+
   public List<CustomerJson> findAllCustomers() {
     ResponseEntity<Customer[]> customerResult =
         restTemplate.getForEntity(

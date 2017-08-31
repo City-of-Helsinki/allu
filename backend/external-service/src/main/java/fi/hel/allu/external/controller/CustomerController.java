@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Public interface for managing customer information.
@@ -42,6 +43,14 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<CustomerExt> findById(@PathVariable int id) {
     return new ResponseEntity<>(CustomerExtMapper.mapCustomerExt(customerService.findCustomerById(id)), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/businessid/{businessId}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<List<CustomerExt>> findByBusinessId(@PathVariable String businessId) {
+    return new ResponseEntity<>(customerService.findCustomerByBusinessId(businessId)
+        .stream().map(c -> CustomerExtMapper.mapCustomerExt(c)).collect(Collectors.toList()),
+        HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.POST)

@@ -95,6 +95,32 @@ paths:
             $ref: '#/definitions/CustomerExt'
       security:
         - api_key: []
+  /v1/customers/businessid/{businessId}:
+    get:
+      tags:
+        - customers
+      summary: Find a customer by business id
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: customersFindByBusinessId
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: businessId
+          description: Business id of the customer
+          required: true
+          type: string
+      responses:
+        '200':
+          description: List of customers with given business id
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/CustomerExt'
+      security:
+        - api_key: []
   /v1/contacts:
     post:
       tags:

@@ -47,6 +47,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
       testCustomer = new Customer();
       testCustomer.setType(CustomerType.PERSON);
       testCustomer.setName("appl name");
+      testCustomer.setRegistryKey("111111-1111");
       testCustomer.setPhone("12345");
       testCustomer.setPostalAddress(testPostalAddress);
 
@@ -78,6 +79,19 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         it("should find customers by ids", () -> {
           List<Customer> customers = customerDao.findByIds(Collections.singletonList(insertedCustomer.getId()));
           assertFalse(customers.isEmpty());
+          Customer customer = customers.get(0);
+          assertEquals(testCustomer.getName(), customer.getName());
+          assertEquals(testCustomer.getPhone(), customer.getPhone());
+        });
+        it("should not find person customer by business id", () -> {
+          List<Customer> customers = customerDao.findByBusinessId(testCustomer.getRegistryKey());
+          assertTrue(customers.isEmpty());
+        });
+        it("should find non-person customer by business id", () -> {
+          testCustomer.setType(CustomerType.COMPANY);
+          Customer businessCustomer = customerDao.insert(testCustomer);
+          List<Customer> customers = customerDao.findByBusinessId(testCustomer.getRegistryKey());
+          assertEquals(1, customers.size());
           Customer customer = customers.get(0);
           assertEquals(testCustomer.getName(), customer.getName());
           assertEquals(testCustomer.getPhone(), customer.getPhone());

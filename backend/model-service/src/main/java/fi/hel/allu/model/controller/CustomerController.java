@@ -49,6 +49,17 @@ public class CustomerController {
   }
 
   /**
+   * Find customers by their business ids. Several customers may have the same business id.
+   *
+   * @param businessId  Business id to be searched.
+   * @return list of found customers
+   */
+  @RequestMapping(value = "/businessid/{businessId}", method = RequestMethod.GET)
+  public ResponseEntity<List<Customer>> findCustomersByBusinessId(@PathVariable String businessId) {
+    return new ResponseEntity<>(customerService.findByBusinessId(businessId), HttpStatus.OK);
+  }
+
+  /**
    * Returns application ids of the applications having given customer.
    *
    * @param id    id of the customer whose related applications are returned.

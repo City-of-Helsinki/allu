@@ -2,12 +2,15 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
 import fi.hel.allu.QPostalAddress;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.Contact;
@@ -52,6 +55,20 @@ public class CustomerDao {
       appl = PostalAddressUtil.mapPostalAddress(customerPostalAddress).get(0, Customer.class);
     }
     return Optional.ofNullable(appl);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Customer> findByBusinessId(String businessId) {
+    List<Expression> mappedExpressions = new ArrayList<>(Arrays.asList(customer.all()));
+    mappedExpressions.add(bean(PostalAddress.class, postalAddress.all()).as("postalAddress"));
+    List<Customer> customers = queryFactory
+        .select(Projections.bean(Customer.class, mappedExpressions.toArray(new Expression[0])))
+        .from(customer)
+        .leftJoin(postalAddress).on(customer.postalAddressId.eq(postalAddress.id))
+        .where(customer.type.ne(CustomerType.PERSON).and(customer.registryKey.eq(businessId)))
+        .fetch();
+    return customers;
+
   }
 
   @Transactional(readOnly = true)

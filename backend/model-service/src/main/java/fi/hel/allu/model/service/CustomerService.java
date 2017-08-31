@@ -65,6 +65,17 @@ public class CustomerService {
   }
 
   /**
+   * Find customers by their business ids. Several customers may have the same business id.
+   *
+   * @param businessId  Business id to be searched.
+   * @return list of found customers
+   */
+  @Transactional(readOnly = true)
+  public List<Customer> findByBusinessId(String businessId) {
+    return customerDao.findByBusinessId(businessId);
+  }
+
+  /**
    * Find all customers
    *
    * @return list of all customers
