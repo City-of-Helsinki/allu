@@ -38,4 +38,13 @@ public class ContactController {
         HttpStatus.OK);
   }
 
+  @RequestMapping(method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<ContactExt> update(@Valid @RequestBody ContactExt contactExt) {
+    // TODO: ROLE_TRUSTED_PARTNER should be allowed to edit only the contacts of customers connected to the token i.e. what getConnectedCustomers() returns
+    return new ResponseEntity<>(
+        ContactExtMapper.mapContactExt(
+            contactService.updateContacts(Collections.singletonList(ContactExtMapper.mapContactJson(contactExt))).get(0)),
+        HttpStatus.OK);
+  }
 }

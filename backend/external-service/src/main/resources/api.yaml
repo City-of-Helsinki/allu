@@ -71,6 +71,30 @@ paths:
             $ref: '#/definitions/CustomerExt'
       security:
         - api_key: []
+    put:
+      tags:
+        - customers
+      summary: Update a customer
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: customersUpdate
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Customer updated to Allu
+          required: true
+          schema:
+            $ref: '#/definitions/CustomerExt'
+      responses:
+        '200':
+          description: Updated customer
+          schema:
+            $ref: '#/definitions/CustomerExt'
+      security:
+        - api_key: []
   /v1/customers/{id}:
     get:
       tags:
@@ -142,6 +166,30 @@ paths:
       responses:
         '200':
           description: Created contact
+          schema:
+            $ref: '#/definitions/ContactExt'
+      security:
+        - api_key: []
+    put:
+      tags:
+        - contacts
+      summary: Update a contact
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: contactsUpdate
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: body
+          description: Contact updated to Allu
+          required: true
+          schema:
+            $ref: '#/definitions/ContactExt'
+      responses:
+        '200':
+          description: Updated contact
           schema:
             $ref: '#/definitions/ContactExt'
       security:

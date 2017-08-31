@@ -71,6 +71,26 @@ describe('Contact', () => {
     });
   });
 
+  describe('Update', () => {
+    it('should be successful', (done) => {
+      let createUpdateFind = function(client) {
+        return client.apis.contacts.contactsCreate({body: contactNew})
+        .then(contact => {contactNew.name = 'updated'; contact.obj.name = 'updated'; return contact.obj;})
+        .then(contact => client.apis.contacts.contactsUpdate({body: contact}))
+        .then(contact => client.apis.contacts.contactsFindById({id: contact.obj.id}));
+      };
+
+      TestUtil.swaggerClient()
+      .then(client => createUpdateFind(client))
+      .then(contact => expect(ComparisonUtil.deepCompareNonNull('', contactNew, contact.obj)).toEqual([]))
+      .then(done)
+      .catch(err => {
+        console.log('Error', err);
+        done.fail(err);
+      });
+    });
+  });
+
   describe('Find', () => {
     it('by id', (done) => {
 

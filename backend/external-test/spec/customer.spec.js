@@ -50,6 +50,26 @@ describe('Customer', () => {
     });
   });
 
+  describe('Update', () => {
+    it('should be successful', (done) => {
+      let createUpdateFind = function(client) {
+        return client.apis.customers.customersCreate({body: customerNew})
+        .then(customer => {customerNew.name = 'updated'; customer.obj.name = 'updated'; return customer.obj;})
+        .then(customer => client.apis.customers.customersUpdate({body: customer}))
+        .then(customer => client.apis.customers.customersFindById({id: customer.obj.id}));
+      };
+
+      TestUtil.swaggerClient()
+      .then(client => createUpdateFind(client))
+      .then(customer => expect(ComparisonUtil.deepCompareNonNull('', customerNew, customer.obj)).toEqual([]))
+      .then(done)
+      .catch(err => {
+        console.log('Error', err);
+        done.fail(err);
+      });
+    });
+  });
+
   describe('Find', () => {
     it('by id', (done) => {
 
