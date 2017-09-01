@@ -46,6 +46,36 @@ paths:
             $ref: '#/definitions/ApplicationExt'
       security:
         - api_key: []
+  /v1/applications/{id}:
+    put:
+      tags:
+        - applications
+      summary: Update existing application
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: applicationsUpdate
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier of the application
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: Application to update in Allu
+          required: true
+          schema:
+            $ref: '#/definitions/ApplicationExt'
+      responses:
+        '200':
+          description: Updated application
+          schema:
+            $ref: '#/definitions/ApplicationExt'
+      security:
+        - api_key: []
   /v1/customers:
     post:
       tags:

@@ -4,14 +4,12 @@ import fi.hel.allu.external.domain.ApplicationExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -35,13 +33,20 @@ public class ApplicationController {
     // TODO: if method caller has only ROLE_TRUSTED_PARTNER, fetch user information and make sure that applications APPLICANT matches user info
     // TODO: if ROLE_TRUSTED_PARTNER and APPLICANT does not match user info, throw HTTP 403 forbidden (not allowed to create application on behalf other users)
     ApplicationJson createdApplicationJson = applicationServiceComposer.createApplication(applicationJson);
-    return new ResponseEntity<ApplicationExt>(applicationExtMapper.mapApplicationExt(createdApplicationJson), HttpStatus.OK);
+    return new ResponseEntity<>(applicationExtMapper.mapApplicationExt(createdApplicationJson), HttpStatus.OK);
   }
 
-//  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
-////  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-//  public ResponseEntity<ApplicationJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ApplicationJson
-//      applicationJson) {
-//    return new ResponseEntity<>(applicationServiceComposer.updateApplication(id, applicationJson), HttpStatus.OK);
-//  }
+  @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<ApplicationExt> update(@PathVariable int id,
+      @Valid @RequestBody(required = true) ApplicationExt applicationExt) {
+    // TODO: ROLE_TRUSTED_PARTNER: check that both the stored and
+    // updated application's applicants match user info
+    ApplicationJson applicationJson = applicationServiceComposer.findApplicationById(id);
+    // TODO: ROLE_TRUSTED_PARTNER: check that application's state allows editing
+    applicationExtMapper.mergeApplicationJson(applicationJson, applicationExt);
+    return new ResponseEntity<>(
+        applicationExtMapper.mapApplicationExt(applicationServiceComposer.updateApplication(id, applicationJson)),
+        HttpStatus.OK);
+  }
 }

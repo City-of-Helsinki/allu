@@ -88,13 +88,22 @@ public class ApplicationExtMapper {
   }
 
   /**
-   * Merges existing application to given external application.
+   * Merges given external application's data into existing application
    *
-   * @param   existingApplicationJson   Existing application getting merged values.
-   * @param   applicationExt            Application providing values to be merged.
+   * @param existingApplicationJson Existing application getting merged values.
+   * @param applicationExt Application providing values to be merged.
    */
   public void mergeApplicationJson(ApplicationJson existingApplicationJson, ApplicationExt applicationExt) {
-    // TODO: is this good idea at all?
+    existingApplicationJson.setProject(mapProjectJson(applicationExt.getProjectId()));
+    existingApplicationJson
+        .setCustomersWithContacts(mapCustomerWithContactsJsons(applicationExt.getCustomersWithContacts()));
+    existingApplicationJson.setLocations(Optional.ofNullable(applicationExt.getLocations()).map(
+        locations -> locations.stream().map(l -> LocationExtMapper.createLocationJson(l)).collect(Collectors.toList()))
+        .orElse(null));
+    existingApplicationJson.setType(applicationExt.getType());
+    existingApplicationJson.setName(applicationExt.getName());
+    existingApplicationJson.setExtension(mapApplicationExtensionJson(applicationExt));
+    existingApplicationJson.setKindsWithSpecifiers(applicationExt.getKindsWithSpecifiers());
   }
 
   /**
