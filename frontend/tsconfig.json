@@ -39,6 +39,7 @@
     "./src/js/leaflet/draw-transform/index.js",
     "./src/js/leaflet/draw-intersect/index.js",
     "./src/js/leaflet/circle-to-poly/index.js",
+    "./src/js/leaflet/draw-line/index.js",
     "src/custom-typings.d.ts",
     "typings/browser.d.ts",
     "src/typings/leaflet-proj/index.d.ts",

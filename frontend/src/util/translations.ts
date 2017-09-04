@@ -477,6 +477,10 @@ export const translations = {
           rectangle: 'Piirrä suorakaide',
           circle: 'Piirrä ympyrä',
           marker: 'Piirrä piste'
+        },
+        lineWidth: {
+          title: 'Viivan leveys',
+          text: 'Leveys'
         }
       },
       handlers: {

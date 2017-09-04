@@ -18,6 +18,7 @@ import {MapLayerService} from './map-layer.service';
 import GeoJSONOptions = L.GeoJSONOptions;
 import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
+import '../../js/leaflet/draw-line';
 import {NotificationService} from '../notification/notification.service';
 
 const alluIcon = L.icon({
@@ -96,10 +97,14 @@ export class MapState {
       rectangle: {
         shapeOptions: pathStyle.DEFAULT_DRAW
       },
-      polyline: {
-        shapeOptions: pathStyle.DEFAULT_DRAW
-      },
-      marker: false
+      polyline: false,
+      marker: false,
+      bufferPolyline: {
+        shapeOptions: pathStyle.DEFAULT_DRAW,
+        polyOptions: {
+          shapeOptions: pathStyle.DEFAULT_DRAW
+        }
+      }
     } : false;
 
     let edit = controlsEnabled ? { selectedPathOptions: pathStyle.DEFAULT_EDIT } : false;

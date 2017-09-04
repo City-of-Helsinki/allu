@@ -1,0 +1,71 @@
+.leaflet-draw-actions .leaflet-input-container {
+    background-color: #919187;
+    border-left: 1px solid #AAA;
+    color: #FFF;
+    font: 11px/19px "Helvetica Neue", Arial, Helvetica, sans-serif;
+    line-height: 28px;
+    text-decoration: none;
+    padding-left: 10px;
+    padding-right: 10px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+}
+
+.leaflet-touch .leaflet-draw-actions .leaflet-input-container {
+    font-size: 12px;
+    line-height: 30px;
+    height: 30px;
+}
+
+.leaflet-draw-actions-top .leaflet-input-container,
+.leaflet-draw-actions-bottom .leaflet-input-container {
+    height: 27px;
+    line-height: 27px;
+}
+
+.leaflet-right .leaflet-draw-actions li:first-child .leaflet-input-container {
+    -webkit-border-radius: 4px 0 0 4px;
+    border-radius: 4px 0 0 4px;
+}
+
+.leaflet-draw-actions .leaflet-input-label,
+.leaflet-draw-actions .leaflet-input {
+    padding: 0 5px;
+}
+
+.leaflet-draw-actions .leaflet-input {
+    background-color: #BABABA;
+    height: 22px;
+    border: none;
+    border-radius: 2px;
+}
+
+.leaflet-input-suffix {
+    padding: 0 5px;
+}
+
+.leaflet-input-spinner-container {
+    padding-left: 0px;
+}
+
+button.leaflet-input-spinner {
+    background: none;
+    outline: none;
+    border: none;
+    color: #FFF;
+    display: block;
+    line-height: 60%;
+    font-size: 16px;
+    appearance: none;
+    box-shadow: none;
+    border-radius: 0;
+    padding: 1px 0px;
+}
+
+button.leaflet-input-spinner:hover {
+    background-color: #AAA;
+}
+
+
+
