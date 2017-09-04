@@ -7,8 +7,8 @@ const getActions = L.DrawToolbar.prototype.getActions;
 L.DrawToolbar.prototype.getActions = function getActionsExt(handler) {
   const actions = [{
     enabled: handler.setWidth,
-    title: L.drawLocal.draw.toolbar.lineWidth.title, // 'Viivan leveys', // L.drawLocal.draw.toolbar.finish.title,
-    text: L.drawLocal.draw.toolbar.lineWidth.text, // 'Leveys', // L.drawLocal.draw.toolbar.finish.text,
+    title: L.drawLocal.draw.toolbar.lineWidth.title,
+    text: L.drawLocal.draw.toolbar.lineWidth.text,
     suffix: 'm', // as meters
     type: 'input',
     callback: handler.setWidth,
