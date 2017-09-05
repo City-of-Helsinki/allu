@@ -10,8 +10,9 @@ export const UI_DATE_FORMAT: string = 'DD.MM.YYYY';
 export const UI_DATE_TIME_FORMAT: string = 'DD.MM.YYYY HH:mm';
 const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
-export const WINTER_TIME_START = moment('1972-01-12');
+export const WINTER_TIME_START = moment('1972-12-01');
 export const WINTER_TIME_END = moment('1972-05-14');
+
 
 /**
  * Helpers for time related UI functionality.
@@ -121,12 +122,9 @@ export class TimeUtil {
   }
 
   public static isInWinterTime(date: Date): boolean {
-    const now = moment();
-    let winterStart = moment(WINTER_TIME_START);
-    winterStart.year(now.year() - 1);
-    let winterEnd = moment(WINTER_TIME_END);
-    winterEnd.year(now.year());
-    return moment(date).isBetween(winterStart, winterEnd);
+    const checked = moment(date).year(WINTER_TIME_START.year());
+    return checked.isSameOrAfter(WINTER_TIME_START) || checked.isBefore(WINTER_TIME_END);
+
   }
 
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
