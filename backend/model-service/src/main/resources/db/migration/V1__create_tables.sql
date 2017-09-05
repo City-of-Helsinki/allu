@@ -439,3 +439,21 @@ insert into allu.default_text (application_type, text_type, text_value) values
   ('CABLE_REPORT', 'OTHER', 'Liitosalueella vesihuolto näytöt tekee Johtotieto Oy. puh. 044 587 1114.'),
   ('CABLE_REPORT', 'OTHER', 'Liitosalueella sähköverkon näytöt tekee Kaivulupa.fi. puh. 0800 133 544'),
   ('CABLE_REPORT', 'OTHER', 'Kiinteistön alueella sijaitsevissa johdoissa puutteita.');
+
+-- User of the external service
+create table allu.external_user (
+  id serial primary key,
+  username text not null unique,
+  name text not null,
+  email_address text not null,
+  token text not null,
+  active boolean not null,
+  last_login timestamp with time zone
+);
+
+-- Customers linked to the external service user
+create table allu.external_user_customer (
+  id serial primary key,
+  external_user_id integer not null references allu.external_user(id),
+  customer_id integer not null references allu.customer(id)
+);

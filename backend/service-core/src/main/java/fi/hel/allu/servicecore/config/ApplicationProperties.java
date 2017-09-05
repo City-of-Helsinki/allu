@@ -311,10 +311,16 @@ public class ApplicationProperties {
     return getModelServiceUrl("/users/userName/{userName}");
   }
 
+  /**
+   * @return url to fetch given user from model service.
+   */
   public String getUserByIdUrl() {
     return getModelServiceUrl("/users/{id}");
   }
 
+  /**
+   * @return url for updating last login time of given user to model service.
+   */
   public String getLastLoginUpdateUrl() {
     return getModelServiceUrl("/users/{id}/lastLogin");
   }
@@ -782,6 +788,48 @@ public class ApplicationProperties {
    */
   public String getDefaultRecipientDeleteUrl() {
     return getModelServiceUrl("/default-recipients/{id}");
+  }
+
+  /**
+   * @return url for creating external users to model service.
+   */
+  public String getExternalUserCreateUrl() {
+    return getModelServiceUrl("/externalusers");
+  }
+
+  /**
+   * @return url for updating external users to model service.
+   */
+  public String getExternalUserUpdateUrl() {
+    return getModelServiceUrl("/externalusers");
+  }
+
+  /**
+   * @return url for listing all external users.
+   */
+  public String getExternalUserListingUrl() {
+    return getModelServiceUrl("/externalusers");
+  }
+
+  /**
+   * @return url for fetching given external user from model service.
+   */
+  public String getExternalUserByUserNameUrl() {
+    return getModelServiceUrl("/exteranlusers/username/{username}");
+  }
+
+  /**
+   * @return url for fetching given extarnl user from model service.
+   */
+  public String getExternalUserByIdUrl() {
+    return getModelServiceUrl("/externalusers/{id}");
+  }
+
+  /**
+   * @return url for updating last login time of given external user to model service.
+   */
+  public String getExternalUserLastLoginUpdateUrl() {
+    return getModelServiceUrl("/externalusers/{id}/lastLogin");
   }
 
   /**
