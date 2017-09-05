@@ -64,7 +64,7 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
   },
 
   setWidth(width) {
-    this._width = width;
+    this._width = width > 0 ? width : 0.1;
     this._updateBufferedLine();
   },
 

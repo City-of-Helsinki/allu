@@ -1,10 +1,16 @@
 const ARROW_UP = '&#9650;';
 const ARROW_DOWN = '&#9660;';
+const MIN_VALUE = 0.1;
 
 function changeValue(inputEl, byValue, options) {
-  inputEl.value = (parseFloat(inputEl.value) + byValue).toFixed(1);
-  options.callback.call(options.context, inputEl.value);
+  const value = (parseFloat(inputEl.value) + byValue).toFixed(1);
+  setValue(inputEl, value,  options);
 };
+
+function setValue(inputEl, value, options) {
+  inputEl.value = value >= MIN_VALUE ? value : MIN_VALUE;
+  options.callback.call(options.context, inputEl.value);
+}
 
 function addAttributes(attributes, element) {
   Object.keys(attributes).forEach(key => {
@@ -59,9 +65,10 @@ L.Toolbar.prototype._createInput = function createInput(options) {
     .on(inputContainer, 'dblclick', L.DomEvent.stopPropagation)
     .on(inputContainer, 'touchstart', L.DomEvent.stopPropagation)
     .on(inputContainer, 'click', L.DomEvent.preventDefault)
+    .on(input, 'change', L.DomEvent.preventDefault)
     .on(increaseBtn, 'click', event => changeValue(input, 0.1, options), options.context)
     .on(decreaseBtn, 'click', event => changeValue(input, -0.1, options), options.context)
-    .on(input, 'change', event => options.callback.call(options.context, event.target.value), options.context);
+    .on(input, 'change', event => setValue(input, event.target.value, options));
 
   return inputContainer;
 };
