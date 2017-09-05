@@ -36,7 +36,7 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
   _bufferedLine: undefined,
   _polyShapeOptions: undefined, // For easier access
 
-  initialize: function (map, options) {
+  initialize: function(map, options) {
     this.type = L.Draw.BufferPolyLine.TYPE;
     L.Draw.Polyline.prototype.initialize.call(this, map, options);
     this._polyShapeOptions = options.polyOptions.shapeOptions;
@@ -53,22 +53,22 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
     }
   },
 
-  addVertex(latlng) {
+  addVertex: function(latlng) {
     L.Draw.Polyline.prototype.addVertex.call(this, latlng);
     this._updateBufferedLine();
   },
 
-  deleteLastVertex() {
+  deleteLastVertex: function() {
     L.Draw.Polyline.prototype.deleteLastVertex.call(this);
     this._updateBufferedLine();
   },
 
-  setWidth(width) {
+  setWidth: function(width) {
     this._width = width > 0 ? width : 0.1;
     this._updateBufferedLine();
   },
 
-  _updateBufferedLine() {
+  _updateBufferedLine: function() {
     if (this._bufferedLine) {
       this._map.removeLayer(this._bufferedLine);
     }
@@ -81,7 +81,7 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
     }
   },
 
-  _toRadius(inMeters) {
+  _toRadius: function(inMeters) {
     return inMeters / 1000 / 2; // width to kilometers to radius
   },
 

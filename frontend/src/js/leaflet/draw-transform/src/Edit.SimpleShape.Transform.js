@@ -76,7 +76,8 @@ L.Edit.SimpleShape.include( /** @lends L.Edit.SimpleShape.prototype */ {
       .off('dragstart', this._onStartTransformFeature, this);
   },
 
-  _enableTransform: function(options = Options.DEFAULT_TRANSFORM_OPTIONS) {
+  _enableTransform: function(options) {
+    options = options || Options.DEFAULT_TRANSFORM_OPTIONS;
     if (!this._shape.transform) {
       this._shape.transform = new L.Handler.PathTransform(this._shape);
     }
@@ -148,10 +149,7 @@ L.Edit.SimpleShape.include( /** @lends L.Edit.SimpleShape.prototype */ {
   _fireEdit: function () {
     this.__fireEdit();
     this._shape._map.fire(L.Draw.Event.EDITVERTEX, { layers: this._markerGroup, poly: this._shape });
-  },
-
-
-
+  }
 });
 
 /**

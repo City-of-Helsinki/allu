@@ -13,7 +13,7 @@ function setValue(inputEl, value, options) {
 }
 
 function addAttributes(attributes, element) {
-  Object.keys(attributes).forEach(key => {
+  Object.keys(attributes).forEach(function(key) {
     element.setAttribute(key, attributes[key]);
   });
 }
@@ -66,9 +66,9 @@ L.Toolbar.prototype._createInput = function createInput(options) {
     .on(inputContainer, 'touchstart', L.DomEvent.stopPropagation)
     .on(inputContainer, 'click', L.DomEvent.preventDefault)
     .on(input, 'change', L.DomEvent.preventDefault)
-    .on(increaseBtn, 'click', event => changeValue(input, 0.1, options), options.context)
-    .on(decreaseBtn, 'click', event => changeValue(input, -0.1, options), options.context)
-    .on(input, 'change', event => setValue(input, event.target.value, options));
+    .on(increaseBtn, 'click', function(event) { changeValue(input, 0.1, options); }, options.context)
+    .on(decreaseBtn, 'click', function(event) { changeValue(input, -0.1, options); }, options.context)
+    .on(input, 'change', function(event) { setValue(input, event.target.value, options); });
 
   return inputContainer;
 };

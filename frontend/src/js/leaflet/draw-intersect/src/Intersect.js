@@ -1,50 +1,48 @@
 const turfIntersect = require('@turf/intersect');
 const pip = require('@mapbox/leaflet-pip');
 
-class Intersect {
-  constructor(map) {
-    this._map = map;
-  }
+function Intersect (map) {
+  this._map = map;
+}
 
-  check(layer, againstLayer) {
-    let intersecting = [];
-    if (this.validLayers(layer, againstLayer)) {
-      if (layer instanceof L.LatLng) {
-        intersecting = pip.pointInLayer(layer, againstLayer);
-      } else if((layer instanceof L.Polyline) || (layer instanceof L.Circle)) {
-        againstLayer.eachLayer((l) => {
-          intersecting = intersecting.concat(this.polyIntersect(layer, l));
-        });
-      }
+Intersect.prototype.check = function(layer, againstLayer) {
+  let intersecting = [];
+  if (this.validLayers(layer, againstLayer)) {
+    if (layer instanceof L.LatLng) {
+      intersecting = pip.pointInLayer(layer, againstLayer);
+    } else if((layer instanceof L.Polyline) || (layer instanceof L.Circle)) {
+      const self = this;
+      againstLayer.eachLayer(function(l) {
+        intersecting = intersecting.concat(self.polyIntersect(layer, l));
+      });
     }
-    return intersecting;
   }
+  return intersecting;
+};
 
-  validLayers(l1, l2) {
-    if (l1 && l2) {
-      const bothOnMap = !!l1._map && !!l2._map;
-      const differentLayers = l1._leaflet_id !== l2._leaflet_id;
-      return bothOnMap && differentLayers;
-    } else {
-      return false;
-    }
-
+Intersect.prototype.validLayers = function(l1, l2) {
+  if (l1 && l2) {
+    const bothOnMap = !!l1._map && !!l2._map;
+    const differentLayers = l1._leaflet_id !== l2._leaflet_id;
+    return bothOnMap && differentLayers;
+  } else {
+    return false;
   }
+}
 
-  polyIntersect(layer, againstLayer) {
-    // Skip checking self
-    if (layer._leaflet_id === againstLayer._leaflet_id) return [];
+Intersect.prototype.polyIntersect = function(layer, againstLayer) {
+  // Skip checking self
+  if (layer._leaflet_id === againstLayer._leaflet_id) return [];
 
-    const intersecting = turfIntersect(this.toGeoJSON(layer), this.toGeoJSON(againstLayer));
-    return intersecting ? [againstLayer] : [];
-  }
+  const intersecting = turfIntersect(this.toGeoJSON(layer), this.toGeoJSON(againstLayer));
+  return intersecting ? [againstLayer] : [];
+}
 
-  toGeoJSON(layer) {
-    if (layer instanceof L.Circle) {
-      return layer.toPolygon().toGeoJSON();
-    } else {
-      return layer.toGeoJSON();
-    }
+Intersect.prototype.toGeoJSON = function(layer) {
+  if (layer instanceof L.Circle) {
+    return layer.toPolygon().toGeoJSON();
+  } else {
+    return layer.toGeoJSON();
   }
 }
 

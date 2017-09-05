@@ -1,11 +1,5 @@
 const Options =  require('./Options');
 
-/**
- * Transform routines for poly handler
- */
-L.Edit.Poly = L.Edit.Poly.include({
-});
-
 L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */ {
 
   // store methods to call them in overrides
@@ -48,7 +42,7 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
    * @override
    */
   removeHooks: function() {
-    var poly = this._poly;
+    let poly = this._poly;
 
     poly.setStyle(poly.options.original);
     if (this._poly._map) {
@@ -127,7 +121,8 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
       .off('dragstart', this._onStartTransformFeature, this);
   },
 
-  _enableTransform: function(options = Options.DEFAULT_TRANSFORM_OPTIONS) {
+  _enableTransform: function(options) {
+    options = options || Options.DEFAULT_TRANSFORM_OPTIONS;
     if (!this._poly.transform) {
       this._poly.transform = new L.Handler.PathTransform(this._poly);
     }
@@ -177,8 +172,8 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
   _updateMarkers: function(latLngs) {
     // We might have multipolygon since we have array inside array.
     // Need to update markers recursively for them
-    if (latLngs.some(sub => sub.length)) {
-      latLngs.forEach(sub => this._updateMarkers(sub));
+    if (latLngs.some(function(sub) { return sub.length; })) {
+      latLngs.forEach(function(sub) { this._updateMarkers(sub); });
     } else {
       for (let i = 0, len = latLngs.length; i < len; i++) {
         // update marker
@@ -201,7 +196,7 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
     this._updateMeasurements();
   },
 
-  _updateMeasurements() {
+  _updateMeasurements: function() {
     try {
       this._poly.updateMeasurements();
     } catch (e) {
@@ -252,7 +247,7 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
       this._markerGroup.addLayer(this._moveMarker);
       this._updateMoveMarker();
     }
-  },
+  }
 });
 
 /**

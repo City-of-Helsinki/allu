@@ -19,7 +19,7 @@ L.Control.Draw.include({
     this._onRemove();
   },
 
-  _initIntersectChecking() {
+  _initIntersectChecking: function() {
     this._map
       .on(L.Draw.Event.DRAWVERTEX, this._onDrawVertex, this)
       .on(L.Draw.Event.CREATED, this._onCreated, this)
@@ -27,7 +27,7 @@ L.Control.Draw.include({
       .on(L.Draw.Event.EDITVERTEX, this._onEditVertex, this);
   },
 
-  _disableIntersectChecking() {
+  _disableIntersectChecking: function() {
     this._map
       .off(L.Draw.Event.DRAWVERTEX, this._onDrawVertex, this)
       .off(L.Draw.Event.CREATED, this._onCreated, this)
@@ -37,9 +37,9 @@ L.Control.Draw.include({
 
   // Need to handle vertex drawing as separate case since currently drawn vertices
   // can be interpreted as a point (1 point), a line (2 points) or a polygon (3 or more points)
-  _onDrawVertex(evt) {
+  _onDrawVertex: function(evt) {
     let latLngs = [];
-    evt.layers.eachLayer(l => {
+    evt.layers.eachLayer(function(l) {
       latLngs.push(l._latlng);
     });
 
@@ -53,15 +53,15 @@ L.Control.Draw.include({
     }
   },
 
-  _onCreated(evt) {
+  _onCreated: function(evt) {
     this._intersects(evt.layer);
   },
 
-  _onEditVertex(evt) {
+  _onEditVertex: function(evt) {
     this._intersects(evt.poly);
   },
 
-  _intersects(layer) {
+  _intersects: function(layer) {
     try {
       const intersecting = this._intersectsLayers(layer);
       if (intersecting.length) {
@@ -72,10 +72,11 @@ L.Control.Draw.include({
     }
   },
 
-  _intersectsLayers(layer) {
+  _intersectsLayers: function(layer) {
     let intersecting = [];
-    this._intersectLayers.some(il => {
-      intersecting = this._intersect.check(layer, il);
+    let self = this;
+    this._intersectLayers.some(function(il) {
+      intersecting = self._intersect.check(layer, il);
       // Return true when first intersection is found so some terminates
       return intersecting.length;
     });
