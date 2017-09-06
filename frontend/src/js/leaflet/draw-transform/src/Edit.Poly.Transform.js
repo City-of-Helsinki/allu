@@ -172,8 +172,9 @@ L.Edit.PolyVerticesEdit.include( /** @lends L.Edit.PolyVerticesEdit.prototype */
   _updateMarkers: function(latLngs) {
     // We might have multipolygon since we have array inside array.
     // Need to update markers recursively for them
+    const self = this;
     if (latLngs.some(function(sub) { return sub.length; })) {
-      latLngs.forEach(function(sub) { this._updateMarkers(sub); });
+      latLngs.forEach(function(sub) { self._updateMarkers(sub); });
     } else {
       for (let i = 0, len = latLngs.length; i < len; i++) {
         // update marker

@@ -15,7 +15,7 @@ L.DrawToolbar.prototype.getActions = function getActionsExt(handler) {
     context: handler,
     attributes: {
       type: 'number',
-      value: 5.0,
+      value: 2.0,
       step: 0.1,
       min: 0.1,
       max: 100.0

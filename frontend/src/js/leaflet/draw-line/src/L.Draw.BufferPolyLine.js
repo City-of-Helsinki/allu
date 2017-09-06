@@ -32,7 +32,7 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
     }
   },
 
-  _width: 1.0,
+  _width: 2.0,
   _bufferedLine: undefined,
   _polyShapeOptions: undefined, // For easier access
 
@@ -76,7 +76,8 @@ L.Draw.BufferPolyLine = L.Draw.Polyline.extend({
     if (this._poly.getLatLngs().length > 1) {
       const bufferedGeoJSON = buffer(this._poly.toGeoJSON(), this._toRadius(this._width));
       // It is safe to assume only single polygon since it is created from single continuous line
-      this._bufferedLine = L.geoJSON(bufferedGeoJSON, this._polyShapeOptions).getLayers()[0];
+      const layer = L.geoJSON(bufferedGeoJSON).getLayers()[0];
+      this._bufferedLine = L.polygon(layer.getLatLngs(), this._polyShapeOptions);
       this._map.addLayer(this._bufferedLine);
     }
   },
