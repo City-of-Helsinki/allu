@@ -52,10 +52,6 @@ export class TimeUtil {
     }
   }
 
-  public static dateWithCurrentYear(date: Date): Date {
-    return TimeUtil.dateWithYear(date, moment().year());
-  }
-
   public static dateFromBackend(dateString: string): Date {
     return dateString ? moment(dateString).toDate() : undefined;
   }
@@ -124,7 +120,15 @@ export class TimeUtil {
   public static isInWinterTime(date: Date): boolean {
     const checked = moment(date).year(WINTER_TIME_START.year());
     return checked.isSameOrAfter(WINTER_TIME_START) || checked.isBefore(WINTER_TIME_END);
+  }
 
+  public static toWinterTimeEnd(date: Date): Date {
+    const checked = moment(date).year(WINTER_TIME_START.year());
+    let year = date.getFullYear();
+    if (checked.isSameOrAfter(WINTER_TIME_START)) {
+      year = year + 1;
+    }
+    return moment(WINTER_TIME_END).year(year).toDate();
   }
 
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {

@@ -14,7 +14,7 @@ import {ApplicationState} from '../../../../service/application/application-stat
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {NumberUtil} from '../../../../util/number.util';
-import {TimeUtil, WINTER_TIME_END} from '../../../../util/time.util';
+import {TimeUtil} from '../../../../util/time.util';
 import {Some} from '../../../../util/option';
 import {IconConfig} from '../../../common/icon-config';
 
@@ -62,7 +62,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   onValidityEndTimePickerClick(picker: MdDatepicker<Date>): void {
     if (this.validityEndTimeCtrl.warnings.inWinterTime) {
       Some(this.validityEndTimeCtrl.value)
-        .map(date => TimeUtil.dateWithYear(WINTER_TIME_END.toDate(), date.getFullYear()))
+        .map(date => TimeUtil.toWinterTimeEnd(date))
         .do(date => this.validityEndTimeCtrl.patchValue(date));
     } else {
       picker.open();

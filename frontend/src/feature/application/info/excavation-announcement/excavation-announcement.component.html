@@ -35,7 +35,7 @@
                                     <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
                                     <md-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
-                                            {{'application.common.field.validityStartTime' | translation}}
+                                            {{'application.common.field.validityStartTimeMissing' | translation}}
                                         </field-error>
                                         <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
                                             {{'application.common.field.validityStartBeforeEnd' | translation}}
@@ -59,7 +59,7 @@
                                     </button>
                                     <md-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
-                                            {{'application.common.field.validityEndTime' | translation}}
+                                            {{'application.common.field.validityEndTimeMissing' | translation}}
                                         </field-error>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="inWinterTime">
                                             <span>{{'application.excavationAnnouncement.field.inWinterTime' | translation}}</span>
