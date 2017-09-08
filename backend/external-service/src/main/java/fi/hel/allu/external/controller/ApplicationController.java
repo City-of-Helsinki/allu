@@ -1,7 +1,9 @@
 package fi.hel.allu.external.controller;
 
 import fi.hel.allu.external.domain.ApplicationExt;
+import fi.hel.allu.external.domain.ApplicationProgressReportExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
+import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 
@@ -26,6 +28,9 @@ public class ApplicationController {
   @Autowired
   ApplicationServiceComposer applicationServiceComposer;
 
+  @Autowired
+  ApplicationServiceExt applicationServiceExt;
+
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
   public ResponseEntity<ApplicationExt> create(@Valid @RequestBody ApplicationExt application) {
@@ -48,5 +53,15 @@ public class ApplicationController {
     return new ResponseEntity<>(
         applicationExtMapper.mapApplicationExt(applicationServiceComposer.updateApplication(id, applicationJson)),
         HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/progress", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<Void> reportProgress(@PathVariable int id,
+      @Valid @RequestBody ApplicationProgressReportExt progress) {
+    // TODO: ROLE_TRUSTED_PARTNER can only set dates that are within
+    // (5 days ago .. now).
+    applicationServiceExt.reportProgress(id, progress);
+    return new ResponseEntity<>(HttpStatus.OK);
   }
 }

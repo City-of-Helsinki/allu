@@ -76,6 +76,34 @@ paths:
             $ref: '#/definitions/ApplicationExt'
       security:
         - api_key: []
+  /v1/applications/{id}/progress:
+    put:
+      tags:
+        - applications
+      summary: Report application progress
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: applicationsProgress
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier of the application
+          required: true
+          type: integer
+        - in: body
+          name: body
+          description: The application progress
+          required: true
+          schema:
+            $ref: '#/definitions/ApplicationProgressReportExt'
+      responses:
+        '200':
+          description: The progress was saved successfully.
+      security:
+        - api_key: []
   /v1/customers:
     post:
       tags:
@@ -734,3 +762,15 @@ definitions:
             type: string
           trafficArrangementImpedimentType:
             $ref: '#/definitions/TrafficArrangementImpedimentType'
+  ApplicationProgressReportExt:
+    description: Object for reporting application progress
+    type: object
+    properties:
+      workFinished:
+        description: Date when work was finished
+        type: string
+        format: date-time
+      winterTimeOperation:
+        description: Date of winter time operability
+        type: string
+        format: date-time

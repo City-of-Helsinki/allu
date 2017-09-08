@@ -233,6 +233,18 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'COMPENSATION_CLARIFICATION', 'Hyvitysselvitys', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'PAYMENT_BASIS_CORRECTION', 'Maksuperusteet korjattava', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'OPERATIONAL_CONDITION_REPORTED',  'Toiminnallinen kunto ilmoitettu', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'OPERATIONAL_CONDITION_ACCEPTED',  'Toiminnallinen kunto hyväksytty', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'OPERATIONAL_CONDITION_REJECTED',  'Toiminnallinen kunto hylätty', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'WORK_READY_REPORTED',  'Työn valmistuminen ilmoitettu', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'WORK_READY_ACCEPTED',  'Työn valmistuminen hyväksytty', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'WORK_READY_REJECTED',  'Työn valmistuminen hylätty', 'ENUM_VALUE');
 
 -- ApplicationType
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('ApplicationType', 1);

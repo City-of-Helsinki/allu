@@ -249,5 +249,15 @@ describe('Application', () => {
         done.fail(err);
       });
     });
+    it('should report progress to application', (done) => {
+      const workFinished = '2017-09-06T11:37:53.534Z';
+      TestUtil.swaggerClient()
+      .then(client => client.apis.applications.applicationsProgress({id:applicationId, body: {workFinished: workFinished}}))
+      .then(done)
+      .catch(err => {
+        console.log('Error', err);
+        done.fail(err);
+      });
+    })
   });
 });
