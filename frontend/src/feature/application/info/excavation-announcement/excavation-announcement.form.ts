@@ -14,7 +14,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public winterTimeOperation?: Date,
     public workFinished?: Date,
     public unauthorizedWork?: TimePeriod,
-    public guaranteeEndTime?: Date,
+    public guaranteeEndTime?: string,
     public customerValidityTimes?: TimePeriod,
     public customerWinterTimeOperation?: Date,
     public customerWorkFinished?: Date,
@@ -37,7 +37,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.workFinished = form.workFinished;
     ea.unauthorizedWorkStartTime = form.unauthorizedWork.startTime;
     ea.unauthorizedWorkEndTime = form.unauthorizedWork.endTime;
-    ea.guaranteeEndTime = form.guaranteeEndTime;
+    ea.uiGuaranteeEndTime = form.guaranteeEndTime;
     ea.customerStartTime = form.customerValidityTimes.startTime;
     ea.customerEndTime = form.customerValidityTimes.endTime;
     ea.customerWinterTimeOperation = form.customerWinterTimeOperation;
@@ -60,7 +60,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.winterTimeOperation,
       excavation.workFinished,
       new TimePeriod(excavation.unauthorizedWorkStartTime, excavation.unauthorizedWorkEndTime),
-      excavation.guaranteeEndTime,
+      excavation.uiGuaranteeEndTime,
       new TimePeriod(excavation.customerStartTime, excavation.customerEndTime),
       excavation.customerWinterTimeOperation,
       excavation.customerWorkFinished,

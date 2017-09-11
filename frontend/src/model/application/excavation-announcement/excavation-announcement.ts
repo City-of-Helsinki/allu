@@ -1,6 +1,7 @@
 import {ApplicationExtension} from '../type/application-extension';
 import {ApplicationType} from '../type/application-type';
 import {TrafficArrangementImpedimentType} from '../traffic-arrangement-impediment-type';
+import {TimeUtil} from '../../../util/time.util';
 
 export class ExcavationAnnouncement extends ApplicationExtension {
   constructor(
@@ -27,5 +28,13 @@ export class ExcavationAnnouncement extends ApplicationExtension {
     super(ApplicationType[ApplicationType.EXCAVATION_ANNOUNCEMENT], terms);
     this.trafficArrangementImpedimentType = trafficArrangementImpedimentType
       || TrafficArrangementImpedimentType[TrafficArrangementImpedimentType.NO_IMPEDIMENT];
+  }
+
+  get uiGuaranteeEndTime() {
+    return TimeUtil.getUiDateString(this.guaranteeEndTime);
+  }
+
+  set uiGuaranteeEndTime(dateString: string) {
+    this.guaranteeEndTime = TimeUtil.getDateFromUi(dateString);
   }
 }

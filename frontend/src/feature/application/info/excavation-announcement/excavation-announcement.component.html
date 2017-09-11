@@ -49,8 +49,7 @@
                                     <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
                                            [mdDatepicker]="endTimePicker"/>
                                     <button type="button" md-icon-button [disabled]="readonly" mdSuffix (click)="onValidityEndTimePickerClick(endTimePicker)">
-                                        <md-icon class="mat-icon-med"
-                                                 [color]="validityEndTimeIcon.color"
+                                        <md-icon [color]="validityEndTimeIcon.color"
                                                  [mdTooltipDisabled]="validityEndTimeIcon.tooltipDisabled"
                                                  mdTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}}"
                                                  mdTooltipPosition="above">
