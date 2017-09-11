@@ -5,14 +5,14 @@
     <form [formGroup]="decisionForm">
         <div class="row">
             <div class="col s12" *ngIf="status !== 'DECISION'">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <textarea mdInput mdTextareaAutosize formControlName="comment" placeholder="Perustelut"></textarea>
-                </md-input-container>
+                </md-form-field>
             </div>
             <div class="col s12">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <textarea mdInput mdTextareaAutosize formControlName="emailMessage" placeholder="Sähköpostiviesti"></textarea>
-                </md-input-container>
+                </md-form-field>
             </div>
             <div class="col s12">
                 <h2>Päätöksen jakelu</h2>

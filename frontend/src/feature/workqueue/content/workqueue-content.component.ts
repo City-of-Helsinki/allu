@@ -83,7 +83,9 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   showComments(applicationId: number): void {
-    this.dialogRef = this.dialog.open(CommentsModalComponent, {disableClose: false, width: '800px'});
+    this.dialogRef = this.dialog.open<CommentsModalComponent>(CommentsModalComponent, {
+      disableClose: false, width: '800px'
+    });
     this.dialogRef.componentInstance.applicationId = applicationId;
   }
 

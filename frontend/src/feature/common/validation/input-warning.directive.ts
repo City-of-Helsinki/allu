@@ -1,7 +1,7 @@
 import {Directive, Input, OnInit} from '@angular/core';
 import {AbstractControlWarn} from '../../../util/complex-validator';
 @Directive({
-  selector: 'md-input-container[inputWarning]',
+  selector: 'md-form-field[inputWarning]',
   host: {
     '[class.has-warning]': 'warning'
   }

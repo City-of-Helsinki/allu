@@ -3,50 +3,50 @@
     <div md-dialog-content>
         <div class="row form-group">
             <div class="col m6">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
                     <md-hint>
                         <field-error [form]="contactForm" field="name" hasError="required">{{'contact.field.nameMissing' | translation}}</field-error>
                     </md-hint>
-                </md-input-container>
+                </md-form-field>
             </div>
         </div>
         <div class="row form-group">
             <div class="col m6">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
-                </md-input-container>
+                </md-form-field>
             </div>
             <div class="col m3">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
                     <md-hint>
                         <field-error [form]="contactForm" field="postalCode" hasError="pattern">{{'common.field.postalCode' | translation}}</field-error>
                     </md-hint>
-                </md-input-container>
+                </md-form-field>
             </div>
             <div class="col m3">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
-                </md-input-container>
+                </md-form-field>
             </div>
         </div>
         <div class="row form-group">
             <div class="col m6">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                     <md-hint>
                         <field-error [form]="contactForm" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
                     </md-hint>
-                </md-input-container>
+                </md-form-field>
             </div>
             <div class="col m6">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
                     <md-hint>
                         <field-error [form]="contactForm" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
                     </md-hint>
-                </md-input-container>
+                </md-form-field>
             </div>
         </div>
     </div>

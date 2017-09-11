@@ -85,7 +85,10 @@ export class ContactComponent implements OnInit {
   }
 
   edit(id: number, index: number): void {
-    this.dialogRef = this.dialog.open(ContactModalComponent, {disableClose: false, width: '800px'});
+    this.dialogRef = this.dialog.open<ContactModalComponent>(ContactModalComponent, {
+      disableClose: false,
+      width: '800px'
+    });
     this.dialogRef.componentInstance.contactId = id;
     this.dialogRef.afterClosed()
       .filter(contact => !!contact)

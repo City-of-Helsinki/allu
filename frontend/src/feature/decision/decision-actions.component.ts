@@ -32,7 +32,7 @@ export class DecisionActionsComponent {
               private dialog: MdDialog) {}
 
   public decisionProposal(proposalType: string): void {
-    let dialogRef = this.dialog.open(DecisionProposalModalComponent, DECISION_PROPOSAL_MODAL_CONFIG);
+    let dialogRef = this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, DECISION_PROPOSAL_MODAL_CONFIG);
     let component = dialogRef.componentInstance;
     component.proposal = proposalType;
     dialogRef.afterClosed()
@@ -40,7 +40,7 @@ export class DecisionActionsComponent {
   }
 
   public decision(status: string): void {
-    let dialogRef = this.dialog.open(DecisionModalComponent, DECISION_MODAL_CONFIG);
+    let dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, DECISION_MODAL_CONFIG);
     let component = dialogRef.componentInstance;
     component.applicationId = this.application.id;
     component.status = status;

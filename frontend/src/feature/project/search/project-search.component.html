@@ -4,14 +4,14 @@
         <form [formGroup]="queryForm">
             <div class="row">
                 <div class="col m3">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="text" formControlName="ownerName" placeholder="Hankkeen omistaja"/>
-                    </md-input-container>
+                    </md-form-field>
                 </div>
                 <div class="col m2">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="text" formControlName="id" placeholder="Hankkeen tunnus"/>
-                    </md-input-container>
+                    </md-form-field>
                 </div>
                 <div class="col m2">
                     <md-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
@@ -19,25 +19,25 @@
                     </md-select>
                 </div>
                 <div class="col m1">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="text" formControlName="startTime" placeholder="Alkupvm"
                                [mdDatepicker]="startTimePicker"/>
-                        <button type="button" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
-                    </md-input-container>
-                    <md-datepicker #startTimePicker></md-datepicker>
+                        <md-datepicker-toggle mdSuffix [for]="startTimePicker"></md-datepicker-toggle>
+                        <md-datepicker #startTimePicker></md-datepicker>
+                    </md-form-field>
                 </div>
                 <div class="col m1">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="text" formControlName="endTime" placeholder="Loppupvm"
                                [mdDatepicker]="endTimePicker"/>
-                        <button type="button" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
-                    </md-input-container>
-                    <md-datepicker #endTimePicker></md-datepicker>
+                        <md-datepicker-toggle mdSuffix [for]="endTimePicker"></md-datepicker-toggle>
+                        <md-datepicker #endTimePicker></md-datepicker>
+                    </md-form-field>
                 </div>
                 <div class="col m3">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="text" formControlName="creator" placeholder="Hankkeen lisääjä"/>
-                    </md-input-container>
+                    </md-form-field>
                 </div>
             </div>
             <div class="row">

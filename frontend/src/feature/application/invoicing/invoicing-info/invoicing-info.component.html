@@ -17,34 +17,34 @@
                 <div class="col m4">
                     <div class="row form-group">
                         <div class="col m12">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="workId" placeholder="Työnumero*"/>
                                 <md-hint>
                                     <field-error [form]="invoicingInfoForm" field="workId" hasError="required">
                                         {{'invoice.field.workIdMissing' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m12">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="invoiceReference" placeholder="Laskutusviite*"/>
                                 <md-hint>
                                     <field-error [form]="invoicingInfoForm" field="invoiceReference" hasError="required">
                                         {{'invoice.field.invoiceReferenceMissing' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m12">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="number" formControlName="deposit" placeholder="Vakuus"/>
                                 <div mdSuffix>€</div>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                     <div class="row form-group">

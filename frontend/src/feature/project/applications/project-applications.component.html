@@ -7,13 +7,13 @@
     <div class="col s6 valign-wrapper">
         <div class="col s2 valign input-field-label">Liitä hakemus:</div>
         <div class="col s10">
-            <md-input-container class="input-full-width">
+            <md-form-field class="input-full-width">
                 <input mdInput type="text" [readonly]="readonly"
                        [autocompletion]="matchingApplications"
                        nameField="applicationId"
                        (onSearchChange)="onIdentifierSearchChange($event)"
                        (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
-            </md-input-container>
+            </md-form-field>
         </div>
     </div>
 </div>

@@ -62,7 +62,10 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   edit(): void {
-    this.dialogRef = this.dialog.open(CustomerModalComponent, {disableClose: false, width: '800px'});
+    this.dialogRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, {
+      disableClose: false,
+      width: '800px'
+    });
     this.dialogRef.componentInstance.customerId = this.customerForm.value.id;
     this.dialogRef.afterClosed()
       .filter(customer => !!customer)

@@ -58,7 +58,7 @@ export class CableInfoComponent implements OnInit {
   }
 
   editDefaultTexts(type: string) {
-    this.dialogRef = this.dialog.open(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
+    this.dialogRef = this.dialog.open<DefaultTextModalComponent>(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
     let comp = this.dialogRef.componentInstance;
     comp.type = DefaultTextType[type];
     comp.applicationType = ApplicationType.CABLE_REPORT;

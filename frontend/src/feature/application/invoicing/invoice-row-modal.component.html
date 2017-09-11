@@ -3,7 +3,7 @@
     <div md-dialog-content>
         <div class="row form-group">
             <div class="col m12">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="rowText"
                            placeholder="Laiminlyöntimaksu*" [mdAutocomplete]="rowText"/>
                     <md-autocomplete #rowText="mdAutocomplete">
@@ -16,12 +16,12 @@
                             {{'invoice.row.field.rowTextMissing' | translation}}
                         </field-error>
                     </md-error>
-                </md-input-container>
+                </md-form-field>
             </div>
         </div>
         <div class="row">
             <div class="col m8">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="number" formControlName="quantity" placeholder="Kesto*"/>
                     <div mdSuffix>pv</div>
                     <md-error>
@@ -29,7 +29,7 @@
                             {{'invoice.row.field.quantityMissing' | translation}}
                         </field-error>
                     </md-error>
-                </md-input-container>
+                </md-form-field>
             </div>
         </div>
     </div>

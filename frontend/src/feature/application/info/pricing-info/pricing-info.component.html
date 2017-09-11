@@ -56,24 +56,24 @@
             </div>
             <div class="row form-group">
                 <div class="col m3">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
-                    </md-input-container>
+                    </md-form-field>
                 </div>
                 <div class="col m3">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
                         <md-hint>
                             <field-error [form]="form" field="priceOverride" hasError="greaterThanOrEqual">
                                 {{'application.common.field.priceOverrideGreaterThanOrEqual' | translation}}
                             </field-error>
                         </md-hint>
-                    </md-input-container>
+                    </md-form-field>
                 </div>
                 <div class="col m3">
-                    <md-input-container class="input-full-width">
+                    <md-form-field class="input-full-width">
                         <input mdInput type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
-                    </md-input-container>
+                    </md-form-field>
                 </div>
             </div>
         </md-card-content>

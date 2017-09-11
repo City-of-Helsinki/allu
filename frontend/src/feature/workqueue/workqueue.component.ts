@@ -88,7 +88,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     let config = new MdDialogConfig();
     config.viewContainerRef = this.viewContainerRef;
 
-    this.dialogRef = this.dialog.open(HandlerModalComponent, config);
+    this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, config);
 
     this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {

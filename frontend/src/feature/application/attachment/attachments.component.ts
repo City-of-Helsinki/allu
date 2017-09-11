@@ -71,10 +71,9 @@ export class AttachmentsComponent implements OnInit {
 
   remove(attachment: AttachmentInfo, index?: number) {
     if (isCommon(attachment.type)) {
-      let dialogRef = this.dialog.open(ConfirmDialogComponent);
-      let component = dialogRef.componentInstance;
-      component.title = 'Haluatko varmasti poistaa liitteen';
-      component.description = attachment.name;
+      let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+        data: {title: 'Haluatko varmasti poistaa liitteen', description: attachment.name}
+      });
       dialogRef.afterClosed()
         .filter(result => result) // Ignore no answers
         .subscribe(result => this.onRemoveConfirm(attachment, index));

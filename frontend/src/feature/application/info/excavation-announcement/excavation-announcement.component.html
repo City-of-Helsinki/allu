@@ -29,10 +29,11 @@
                     <div class="row form-group">
                         <div formGroupName="validityTimes">
                             <div class="col s6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
                                            [mdDatepicker]="startTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
+                                    <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #startTimePicker></md-datepicker>
                                     <md-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
                                             {{'application.common.field.validityStartTimeMissing' | translation}}
@@ -41,11 +42,10 @@
                                             {{'application.common.field.validityStartBeforeEnd' | translation}}
                                         </field-error>
                                     </md-hint>
-                                </md-input-container>
-                                <md-datepicker #startTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                             <div class="col s6">
-                                <md-input-container class="input-full-width" [inputWarning]="validityEndTimeCtrl">
+                                <md-form-field class="input-full-width" [inputWarning]="validityEndTimeCtrl">
                                     <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
                                            [mdDatepicker]="endTimePicker"/>
                                     <button type="button" md-icon-button [disabled]="readonly" mdSuffix (click)="onValidityEndTimePickerClick(endTimePicker)">
@@ -57,6 +57,7 @@
                                             {{validityEndTimeIcon.icon}}
                                         </md-icon>
                                     </button>
+                                    <md-datepicker #endTimePicker></md-datepicker>
                                     <md-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                                             {{'application.common.field.validityEndTimeMissing' | translation}}
@@ -65,50 +66,49 @@
                                             <span>{{'application.excavationAnnouncement.field.inWinterTime' | translation}}</span>
                                         </field-error>
                                     </md-hint>
-                                </md-input-container>
-                                <md-datepicker #endTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                         </div>
                         <div formGroupName="unauthorizedWork">
                             <div class="col s6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
                                            [mdDatepicker]="unauthorizedStartTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="unauthorizedStartTimePicker"></button>
+                                    <md-datepicker-toggle mdSuffix [for]="unauthorizedStartTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #unauthorizedStartTimePicker></md-datepicker>
                                     <md-hint>
                                         <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
                                             {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
                                         </field-error>
                                     </md-hint>
-                                </md-input-container>
-                                <md-datepicker #unauthorizedStartTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                             <div class="col s6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
                                            [mdDatepicker]="unauthorizedEndTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="unauthorizedEndTimePicker"></button>
-                                </md-input-container>
-                                <md-datepicker #unauthorizedEndTimePicker></md-datepicker>
+                                    <md-datepicker-toggle mdSuffix [for]="unauthorizedEndTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #unauthorizedEndTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                         </div>
                         <div class="col s6">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"
                                        [mdDatepicker]="winterTimeOperationPicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="winterTimeOperationPicker"></button>
-                            </md-input-container>
-                            <md-datepicker #winterTimeOperationPicker></md-datepicker>
+                                <md-datepicker-toggle mdSuffix [for]="winterTimeOperationPicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #winterTimeOperationPicker></md-datepicker>
+                            </md-form-field>
                         </div>
                         <div class="col s6">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div class="col s6">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                 </md-card-content>
@@ -121,42 +121,42 @@
                     <div class="row form-group">
                         <div formGroupName="customerValidityTimes">
                             <div class="col s6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus"
                                            [mdDatepicker]="customerStartTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="customerStartTimePicker"></button>
+                                    <md-datepicker-toggle mdSuffix [for]="customerStartTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #customerStartTimePicker></md-datepicker>
                                     <md-hint>
                                         <field-error [form]="applicationForm" field="customerValidityTimes" hasError="startBeforeEnd">
                                             {{'application.common.field.validityStartBeforeEnd' | translation}}
                                         </field-error>
                                     </md-hint>
-                                </md-input-container>
-                                <md-datepicker #customerStartTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                             <div class="col s6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus"
                                            [mdDatepicker]="customerEndTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="customerEndTimePicker"></button>
-                                </md-input-container>
-                                <md-datepicker #customerEndTimePicker></md-datepicker>
+                                    <md-datepicker-toggle mdSuffix [for]="customerEndTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #customerEndTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                         </div>
                         <div class="col s6">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="customerWinterTimeOperation" placeholder="Talvityön toiminn. kunto"
                                        [mdDatepicker]="customerWinterTimeOperationPicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="customerWinterTimeOperationPicker"></button>
-                            </md-input-container>
-                            <md-datepicker #customerWinterTimeOperationPicker></md-datepicker>
+                                <md-datepicker-toggle mdSuffix [for]="customerWinterTimeOperationPicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #customerWinterTimeOperationPicker></md-datepicker>
+                            </md-form-field>
                         </div>
                         <div class="col s6">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="customerWorkFinished" placeholder="Työ valmis"
                                        [mdDatepicker]="customerWorkFinishedPicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="customerWorkFinishedPicker"></button>
-                            </md-input-container>
-                            <md-datepicker #customerWorkFinishedPicker></md-datepicker>
+                                <md-datepicker-toggle mdSuffix [for]="customerWorkFinishedPicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #customerWorkFinishedPicker></md-datepicker>
+                            </md-form-field>
                         </div>
                     </div>
                 </md-card-content>
@@ -171,7 +171,7 @@
             <md-card-content>
                 <div class="row form-group">
                     <div class="col m6">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" formControlName="cableReportIdentifier"
                                    placeholder="Johtoselvitys"
                                    [mdAutocomplete]="cableReportSearch"/>
@@ -181,7 +181,7 @@
                                     {{ application.applicationId }}
                                 </md-option>
                             </md-autocomplete>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
                 <div class="row form-group">
@@ -205,10 +205,10 @@
                 </div>
                 <div class="row form-group">
                     <div class="col m12">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                                 <textarea mdInput mdTextareaAutosize formControlName="trafficArrangements"
                                           placeholder="Suoritettavat liikennejärjestelyt"></textarea>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
                 <div class="row">
@@ -231,9 +231,9 @@
                 </div>
                 <div class="row form-group">
                     <div class="col m12">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
             </md-card-content>

@@ -89,7 +89,10 @@ export class InvoiceRowsComponent implements OnInit, OnDestroy {
   }
 
   private openModal(row?: InvoiceRow): Observable<InvoiceRow> {
-    this.dialogRef = this.dialog.open(InvoiceRowModalComponent, {width: '600px', data: {invoiceRow: row}});
+    this.dialogRef = this.dialog.open<InvoiceRowModalComponent>(InvoiceRowModalComponent, {
+      width: '600px',
+      data: {invoiceRow: row}
+    });
     this.dialogRef.componentInstance.invoiceRow = row;
     return this.dialogRef.afterClosed()
       .filter(r => !!r);

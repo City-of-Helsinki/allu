@@ -25,20 +25,20 @@
                 </md-select>
             </div>
             <div class="col s2">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
                            [mdDatepicker]="startTimePicker"/>
-                    <button type="button" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
-                </md-input-container>
-                <md-datepicker #startTimePicker></md-datepicker>
+                    <md-datepicker-toggle mdSuffix [for]="startTimePicker"></md-datepicker-toggle>
+                    <md-datepicker #startTimePicker></md-datepicker>
+                </md-form-field>
             </div>
             <div class="col s2">
-                <md-input-container class="input-full-width">
+                <md-form-field class="input-full-width">
                     <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
                            [mdDatepicker]="endTimePicker"/>
-                    <button type="button" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
-                </md-input-container>
-                <md-datepicker #endTimePicker></md-datepicker>
+                    <md-datepicker-toggle mdSuffix [for]="endTimePicker"></md-datepicker-toggle>
+                    <md-datepicker #endTimePicker></md-datepicker>
+                </md-form-field>
             </div>
             <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
                 <div class="item-bar-content">

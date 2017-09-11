@@ -18,7 +18,7 @@
     </div>
     <div class="row form-group">
         <div class="col m6">
-            <md-input-container class="input-full-width">
+            <md-form-field class="input-full-width">
                 <input mdInput type="text" formControlName="name"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
                        [mdAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
@@ -33,10 +33,10 @@
                     <field-error [form]="form" field="name" hasError="required">{{'customer.field.nameMissing' | translation}}</field-error>
                     <field-error [form]="form" field="name" hasError="minlength">{{'customer.field.nameShort' | translation}}</field-error>
                 </md-hint>
-            </md-input-container>
+            </md-form-field>
         </div>
         <div class="col m6">
-            <md-input-container class="input-full-width" [inputWarning]="registryKeyControl">
+            <md-form-field class="input-full-width" [inputWarning]="registryKeyControl">
                 <input mdInput type="text" formControlName="registryKey"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"
                        [mdAutocomplete]="registryKeySearch"/>
@@ -53,47 +53,47 @@
                     <field-error [form]="form" field="registryKey" hasError="minlength">{{'customer.field.registryKeyShort' | translation}}</field-error>
                     <field-error [form]="form" field="registryKey" hasError="invalidSsn">{{'customer.field.invalidSsn' | translation}}</field-error>
                 </md-hint>
-            </md-input-container>
+            </md-form-field>
         </div>
     </div>
     <div formGroupName="postalAddress" class="row form-group">
         <div class="col m6">
-            <md-input-container class="input-full-width">
+            <md-form-field class="input-full-width">
                 <input mdInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
-            </md-input-container>
+            </md-form-field>
         </div>
         <div class="col m3">
-            <md-input-container class="input-full-width">
+            <md-form-field class="input-full-width">
                 <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
                 <md-hint>
                     <field-error [form]="form.get('postalAddress')" field="postalCode" hasError="pattern">
                         {{'common.field.postalCode' | translation}}
                     </field-error>
                 </md-hint>
-            </md-input-container>
+            </md-form-field>
         </div>
         <div class="col m3">
-            <md-input-container class="input-full-width">
+            <md-form-field class="input-full-width">
                 <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
-            </md-input-container>
+            </md-form-field>
         </div>
     </div>
     <div class="row form-group">
         <div class="col m6">
-            <md-input-container class="input-full-width">
+            <md-form-field class="input-full-width">
                 <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                 <md-hint>
                     <field-error [form]="form" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
                 </md-hint>
-            </md-input-container>
+            </md-form-field>
         </div>
         <div class="col m6">
-            <md-input-container class="input-full-width">
+            <md-form-field class="input-full-width">
                 <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
                 <md-hint>
                     <field-error [form]="form" field="phone" hasError="minLength">{{'customer.field.phoneShort' | translation}}</field-error>
                 </md-hint>
-            </md-input-container>
+            </md-form-field>
         </div>
     </div>
 </form>

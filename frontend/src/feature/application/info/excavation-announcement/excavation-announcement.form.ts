@@ -11,13 +11,13 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public maintenanceWork?: boolean,
     public emergencyWork?: boolean,
     public propertyConnectivity?: boolean,
-    public winterTimeOperation?: string,
-    public workFinished?: string,
+    public winterTimeOperation?: Date,
+    public workFinished?: Date,
     public unauthorizedWork?: TimePeriod,
-    public guaranteeEndTime?: string,
+    public guaranteeEndTime?: Date,
     public customerValidityTimes?: TimePeriod,
-    public customerWinterTimeOperation?: string,
-    public customerWorkFinished?: string,
+    public customerWinterTimeOperation?: Date,
+    public customerWorkFinished?: Date,
     public calculatedPrice?: number,
     public priceOverride?: number,
     public priceOverrideReason?: string,
@@ -33,15 +33,15 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.maintenanceWork = form.maintenanceWork;
     ea.emergencyWork = form.emergencyWork;
     ea.propertyConnectivity = form.propertyConnectivity;
-    ea.uiWinterTimeOperation = form.winterTimeOperation;
-    ea.uiWorkFinished = form.workFinished;
+    ea.winterTimeOperation = form.winterTimeOperation;
+    ea.workFinished = form.workFinished;
     ea.unauthorizedWorkStartTime = form.unauthorizedWork.startTime;
     ea.unauthorizedWorkEndTime = form.unauthorizedWork.endTime;
-    ea.uiGuaranteeEndTime = form.guaranteeEndTime;
+    ea.guaranteeEndTime = form.guaranteeEndTime;
     ea.customerStartTime = form.customerValidityTimes.startTime;
     ea.customerEndTime = form.customerValidityTimes.endTime;
-    ea.uiCustomerWinterTimeOperation = form.customerWinterTimeOperation;
-    ea.uiCustomerWorkFinished = form.customerWorkFinished;
+    ea.customerWinterTimeOperation = form.customerWinterTimeOperation;
+    ea.customerWorkFinished = form.customerWorkFinished;
     ea.cableReportId = form.cableReportId;
     ea.additionalInfo = form.additionalInfo;
     ea.trafficArrangements = form.trafficArrangements;
@@ -57,13 +57,13 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.maintenanceWork,
       excavation.emergencyWork,
       excavation.propertyConnectivity,
-      excavation.uiWinterTimeOperation,
-      excavation.uiWorkFinished,
+      excavation.winterTimeOperation,
+      excavation.workFinished,
       new TimePeriod(excavation.unauthorizedWorkStartTime, excavation.unauthorizedWorkEndTime),
-      excavation.uiGuaranteeEndTime,
+      excavation.guaranteeEndTime,
       new TimePeriod(excavation.customerStartTime, excavation.customerEndTime),
-      excavation.uiCustomerWinterTimeOperation,
-      excavation.uiCustomerWorkFinished,
+      excavation.customerWinterTimeOperation,
+      excavation.customerWorkFinished,
       application.calculatedPriceEuro,
       application.priceOverrideEuro,
       application.priceOverrideReason,

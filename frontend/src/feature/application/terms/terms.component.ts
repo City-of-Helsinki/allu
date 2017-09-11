@@ -49,7 +49,7 @@ export class TermsComponent implements OnInit {
   }
 
   editDefaultTexts() {
-    this.dialogRef = this.dialog.open(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
+    this.dialogRef = this.dialog.open<DefaultTextModalComponent>(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
     let comp = this.dialogRef.componentInstance;
     comp.type = DefaultTextType.OTHER;
     comp.applicationType = this.applicationType;

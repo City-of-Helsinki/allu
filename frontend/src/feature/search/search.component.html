@@ -4,9 +4,9 @@
     <form [formGroup]="queryForm">
       <div class="row">
         <div class="col m4 s6">
-          <md-input-container class="input-full-width">
+          <md-form-field class="input-full-width">
             <input mdInput type="text" formControlName="applicationId" placeholder="Hakemuksen tunnus"/>
-          </md-input-container>
+          </md-form-field>
         </div>
         <div class="col m2 s6">
           <md-select formControlName="type" [multiple]="true" placeholder="Hakemuksen tyyppi" class="input-full-width">
@@ -33,40 +33,40 @@
           </md-select>
         </div>
         <div class="col m4 s6">
-          <md-input-container class="input-full-width">
+          <md-form-field class="input-full-width">
             <input mdInput type="text" formControlName="address" placeholder="Osoite"/>
-          </md-input-container>
+          </md-form-field>
         </div>
         <div class="col m2 s6">
-          <md-input-container class="input-full-width">
+          <md-form-field class="input-full-width">
             <input mdInput type="text" formControlName="applicant" placeholder="Hakija"/>
-          </md-input-container>
+          </md-form-field>
         </div>
         <div class="col m2 s6">
-          <md-input-container class="input-full-width">
+          <md-form-field class="input-full-width">
             <input mdInput type="text" formControlName="contact" placeholder="Yhteyshenkilö"/>
-          </md-input-container>
+          </md-form-field>
         </div>
         <div class="col m2 s6">
-          <md-input-container class="input-full-width">
+          <md-form-field class="input-full-width">
             <input mdInput type="text" formControlName="freeText" placeholder="Vapaa tekstihaku"/>
-          </md-input-container>
+          </md-form-field>
         </div>
         <div class="col m1 s6">
-          <md-input-container class="input-full-width">
+          <md-form-field class="input-full-width">
             <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
                    [mdDatepicker]="startTimePicker"/>
-            <button type="button" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
-          </md-input-container>
-          <md-datepicker #startTimePicker></md-datepicker>
+            <md-datepicker-toggle mdSuffix [for]="startTimePicker"></md-datepicker-toggle>
+            <md-datepicker #startTimePicker></md-datepicker>
+          </md-form-field>
         </div>
         <div class="col m1 s6">
-          <md-input-container class="input-full-width">
+          <md-form-field class="input-full-width">
             <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
                    [mdDatepicker]="endTimePicker"/>
-            <button type="button" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
-          </md-input-container>
-          <md-datepicker #endTimePicker></md-datepicker>
+            <md-datepicker-toggle mdSuffix [for]="endTimePicker"></md-datepicker-toggle>
+            <md-datepicker #endTimePicker></md-datepicker>
+          </md-form-field>
         </div>
         <div class="col m12 s12">
           <button (click)="search()" md-raised-button type="button" color="primary">HAE</button>

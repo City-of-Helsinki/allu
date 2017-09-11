@@ -11,7 +11,7 @@
             <md-card-content>
                 <div class="row form-group">
                     <div class="col s6">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" formControlName="name" placeholder="Muistiinpanon nimi*"/>
                             <md-hint>
                                 <field-error [form]="applicationForm" field="name" hasError="required">
@@ -21,14 +21,15 @@
                                     {{'application.field.nameShort' | translation}}
                                 </field-error>
                             </md-hint>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div formGroupName="validityTimes">
                         <div class="col s3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
                                        [mdDatepicker]="startTimePicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
+                                <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #startTimePicker></md-datepicker>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
                                         {{'application.note.field.validityStartTimeMissing' | translation}}
@@ -37,21 +38,20 @@
                                         {{'application.note.field.validityStartBeforeEnd' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
-                            <md-datepicker #startTimePicker></md-datepicker>
+                            </md-form-field>
                         </div>
                         <div class="col s3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
                                        [mdDatepicker]="endTimePicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
+                                <md-datepicker-toggle mdSuffix [for]="endTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #endTimePicker></md-datepicker>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                                         {{'application.note.field.validityEndTimeMissing' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
-                            <md-datepicker #endTimePicker></md-datepicker>
+                            </md-form-field>
                         </div>
                     </div>
                 </div>
@@ -62,9 +62,9 @@
                 </div>
                 <div class="row form-group">
                     <div class="col m12">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <textarea mdInput mdTextareaAutosize formControlName="description" placeholder="Kuvaus"></textarea>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
             </md-card-content>

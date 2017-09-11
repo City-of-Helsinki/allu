@@ -1,17 +1,5 @@
 @import '~@angular/material/theming';
 
-// Base input styling
-input[type="text"] {
-  display: block;
-  margin: 0;
-  width: 100%;
-  appearance: none;
-  box-shadow: none;
-}
-input[type="text"]:focus {
-  outline: none;
-}
-
 input.mat-input-element.year-input {
   width: 75px;
   text-align: center;
@@ -73,15 +61,14 @@ input.mat-input-element.year-input {
 }
 
 // To fix material input / select heights
-.mat-select > .mat-select-trigger {
-  margin-top: 10px;
-  min-height: 44px;
-  margin-bottom: 1.29688em;
+.mat-form-field-wrapper {
+  padding-top: 16px;
 }
 
-// To fix material input / select heights
-.mat-input-flex {
-  min-height: 54px;
+.mat-select > .mat-select-trigger {
+  margin-top: 10px;
+  min-height: 32px;
+  margin-bottom: 1.34em;
 }
 
 .mat-select-placeholder.mat-floating-placeholder {

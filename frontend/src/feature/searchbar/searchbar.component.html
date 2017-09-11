@@ -34,28 +34,28 @@
     <div class="col s2">
       <input-box class="input-raised">
         <input inputBoxInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä" [mdDatepicker]="startDatePicker"/>
-        <button inputBoxSuffix type="button" [mdDatepickerToggle]="startDatePicker"></button>
+        <md-datepicker-toggle mdSuffix [for]="startDatePicker" inputBoxSuffix></md-datepicker-toggle>
+        <md-datepicker #startDatePicker></md-datepicker>
         <field-error [form]="searchForm" field="startDate" hasError="required">
           {{'application.common.field.validityStartTimeMissing' | translation}}
         </field-error>
       </input-box>
-      <md-datepicker #startDatePicker></md-datepicker>
     </div>
     <div class="col s2">
       <input-box class="input-raised">
         <input inputBoxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä" [mdDatepicker]="endDatePicker"/>
-        <button inputBoxSuffix type="button" [mdDatepickerToggle]="endDatePicker"></button>
+        <md-datepicker-toggle mdSuffix [for]="endDatePicker" inputBoxSuffix></md-datepicker-toggle>
+        <md-datepicker #endDatePicker></md-datepicker>
         <field-error [form]="searchForm" field="startDate" hasError="required">
           {{'application.common.field.validityEndTimeMissing' | translation}}
         </field-error>
       </input-box>
-      <md-datepicker #endDatePicker></md-datepicker>
     </div>
   </div>
 
   <div *ngIf="barType === 'ADVANCED'">
     <div class="col s12">
-      <md-input-container class="input-full-width">
+      <md-form-field class="input-full-width">
         <input mdInput type="text" formControlName="address"
                placeholder="Hae osoitteella"
                (keyup.enter)="addressSelected(searchForm.value.address)"
@@ -66,24 +66,24 @@
             {{ address.uiStreetAddress }}
           </md-option>
         </md-autocomplete>
-      </md-input-container>
+      </md-form-field>
     </div>
 
     <div class="input-field col s6">
-      <md-input-container class="input-full-width">
+      <md-form-field class="input-full-width">
         <input mdInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
                [mdDatepicker]="startDatePicker"/>
-        <button type="button" mdSuffix [mdDatepickerToggle]="startDatePicker"></button>
-      </md-input-container>
-      <md-datepicker #startDatePicker></md-datepicker>
+        <md-datepicker-toggle mdSuffix [for]="startDatePicker" inputBoxSuffix></md-datepicker-toggle>
+        <md-datepicker #startDatePicker></md-datepicker>
+      </md-form-field>
     </div>
     <div class="input-field col s6">
-      <md-input-container class="input-full-width">
+      <md-form-field class="input-full-width">
         <input mdInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
                [mdDatepicker]="endDatePicker"/>
-        <button type="button" mdSuffix [mdDatepickerToggle]="endDatePicker"></button>
-      </md-input-container>
-      <md-datepicker #endDatePicker></md-datepicker>
+        <md-datepicker-toggle mdSuffix [for]="endDatePicker" inputBoxSuffix></md-datepicker-toggle>
+        <md-datepicker #endDatePicker></md-datepicker>
+      </md-form-field>
     </div>
   </div>
 </form>

@@ -7,58 +7,58 @@
                     <md-card-content>
                         <div class="row form-group">
                             <div class="col m6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="ownerName" [readonly]="readonly" placeholder="Hankkeen omistaja"/>
                                     <md-hint>
                                         <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{translations.project.field.ownerNameMissing}}</field-error>
                                     </md-hint>
-                                </md-input-container>
+                                </md-form-field>
 
                             </div>
                             <div class="col m6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="contactName" [readonly]="readonly" placeholder="Yhteyshenkilö"/>
                                     <md-hint>
                                         <field-error [form]="projectInfoForm" field="contactName" hasError="required">{{translations.project.field.contactNameMissing}}</field-error>
                                     </md-hint>
-                                </md-input-container>
+                                </md-form-field>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col m6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="email" [readonly]="readonly" placeholder="Sähköposti"/>
                                     <md-hint>
                                         <field-error [form]="projectInfoForm" field="email" hasError="required">{{translations.common.field.emailInvalid}}</field-error>
                                     </md-hint>
-                                </md-input-container>
+                                </md-form-field>
                             </div>
                             <div class="col m6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="phone" [readonly]="readonly" placeholder="Puhelinnumero"/>
-                                </md-input-container>
+                                </md-form-field>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col m6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="name" [readonly]="readonly" placeholder="Hankkeen nimi"/>
                                     <md-hint>
                                         <field-error [form]="projectInfoForm" field="name" hasError="required">{{translations.project.field.nameMissing}}</field-error>
                                     </md-hint>
-                                </md-input-container>
+                                </md-form-field>
                             </div>
                             <div class="col m6">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="customerReference" [readonly]="readonly" placeholder="Asiakkaan viite/työnumero"/>
-                                </md-input-container>
+                                </md-form-field>
                             </div>
                         </div>
                         <div class="row form-group">
                             <div class="col m12">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" [readonly]="readonly" placeholder="Lisätietoja"></textarea>
-                                </md-input-container>
+                                </md-form-field>
                             </div>
                         </div>
                     </md-card-content>
@@ -74,13 +74,13 @@
                 <md-card-content>
                     <div class="row form-group">
                         <div class="col m3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" [readonly]="readonly"
                                        [autocompletion]="matchingApplications"
                                        nameField="applicationId"
                                        (onSearchChange)="onIdentifierSearchChange($event)"
                                        (onSelection)="add($event)" placeholder="Hakemuksen tunnus"/>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                     <div class="row">

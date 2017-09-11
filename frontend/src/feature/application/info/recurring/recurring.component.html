@@ -5,11 +5,11 @@
         <md-radio-button value="until" class="recurring-radio-button">
             <span>Toistuu vuosittain</span>
             <span>
-                <md-input-container floatPlaceholder="never" class="error-overflow">
+                <md-form-field floatPlaceholder="never" class="error-overflow">
                     <input type="number" mdInput formControlName="endYear" placeholder="Loppuvuosi"
                            class="year-input" min="{{minYear}}" max="{{maxYear}}" step="1"/>
                     <md-error>{{'application.field.recurringEndYearNotBetween' | translation}}</md-error>
-                </md-input-container>
+                </md-form-field>
             </span>
             <span>asti</span>
         </md-radio-button>

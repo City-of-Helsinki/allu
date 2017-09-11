@@ -4,7 +4,6 @@ import {Subscription} from 'rxjs/Subscription';
 
 import {SearchbarFilter} from '../../service/searchbar-filter';
 import {MapHub} from '../../service/map/map-hub';
-import {TimeUtil} from '../../util/time.util';
 import {PostalAddress} from '../../model/common/postal-address';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification/notification.service';
@@ -42,8 +41,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
-      startDate: this.datesRequired ? ['', Validators.required] : [''],
-      endDate: this.datesRequired ? ['', Validators.required] : ['']
+      startDate: this.datesRequired ? [undefined, Validators.required] : [undefined],
+      endDate: this.datesRequired ? [undefined, Validators.required] : [undefined]
     });
   }
 
@@ -51,8 +50,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.filter.subscribe(filter => {
       this.searchForm.patchValue({
         address: filter.search,
-        startDate: TimeUtil.getUiDateString(filter.startDate),
-        endDate: TimeUtil.getUiDateString(filter.endDate)
+        startDate: filter.startDate,
+        endDate: filter.endDate
       });
     });
 
@@ -74,8 +73,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
     this.coordinateSubscription.unsubscribe();
   }
 
-  public notifySearchUpdated(form: {address: string, startDate: string, endDate: string}): void {
-    let filter = new SearchbarFilter(form.address, TimeUtil.getDateFromUi(form.startDate), TimeUtil.getDateFromUi(form.endDate));
+  public notifySearchUpdated(form: {address: string, startDate: Date, endDate: Date}): void {
+    let filter = new SearchbarFilter(form.address, form.startDate, form.endDate);
     this.searchUpdated.emit(filter);
     this.mapHub.addSearchFilter(filter);
   }

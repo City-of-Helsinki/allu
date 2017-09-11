@@ -6,20 +6,21 @@
                 <md-card-content>
                     <div class="row form-group">
                         <div class="col m6">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="name" placeholder="Tapahtuman nimi*"/>
                                 <md-hint>
                                     <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                                     <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
                                 </md-hint>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div formGroupName="eventTimes">
                             <div class="col m3">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="startTime" placeholder="Tapahtuman alkupäivämäärä*"
                                            [mdDatepicker]="startTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
+                                    <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #startTimePicker></md-datepicker>
                                     <md-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
                                             {{translations.application.event.field.eventStartTimeMissing}}
@@ -28,45 +29,44 @@
                                             {{translations.application.event.field.startBeforeEnd}}
                                         </field-error>
                                     </md-hint>
-                                </md-input-container>
-                                <md-datepicker #startTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                             <div class="col m3">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="endTime" placeholder="Tapahtuman loppupäivämäärä*"
                                            [mdDatepicker]="endTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
+                                    <md-datepicker-toggle mdSuffix [for]="endTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #endTimePicker></md-datepicker>
                                     <md-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
                                             {{translations.application.event.field.eventEndTimeMissing}}
                                         </field-error>
                                     </md-hint>
-                                </md-input-container>
-                                <md-datepicker #endTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                         </div>
                         <div class="col m12">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <textarea mdInput mdTextareaAutosize formControlName="description" placeholder="Tapahtuman kuvaus*"></textarea>
                                 <md-hint>
                                     <field-error [form]="eventForm" field="description" hasError="required">
                                         {{translations.application.event.field.descriptionMissing}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div class="col m12">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <textarea mdInput mdTextareaAutosize formControlName="timeExceptions" placeholder="Tapahtuma-ajan poikkeukset"></textarea>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div class="col m6">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="url" placeholder="Tapahtuman www-sivu"/>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div class="col m3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="number" formControlName="attendees"
                                        step="1" min="0" placeholder="Yleisömäärä"/>
                                 <md-hint>
@@ -74,10 +74,10 @@
                                         {{translations.application.event.field.attendeesGreaterThanOrEqual}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div class="col m3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="number" formControlName="entryFee"
                                        step="any" min="0" placeholder="Osallistumismaksu, jos urheilutapahtuma"/>
                                 <md-hint>
@@ -85,7 +85,7 @@
                                         {{translations.application.event.field.eventEntryFeeThanOrEqual}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                 </md-card-content>
@@ -105,7 +105,7 @@
                             </md-checkbox>
                         </div>
                         <div class="col m3" [hidden]="!structureArea.checked">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="number" formControlName="structureArea" step="any" min="0"
                                        placeholder="Rakenteiden kokonaisneliömäärä"/>
                                 <md-hint>
@@ -113,13 +113,13 @@
                                         {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div class="col m12" [hidden]="!structureArea.checked">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                             <textarea mdInput mdTextareaAutosize formControlName="structureDescription"
                                       placeholder="Rakenteiden kuvaus"></textarea>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                     <div class="row">
@@ -132,25 +132,25 @@
 
                         <div formGroupName="structureTimes" [hidden]="!structureTimes.checked">
                             <div class="col m3">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="startTime" placeholder="Rakennuspäivämäärä"
                                            [mdDatepicker]="structureStartTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="structureStartTimePicker"></button>
+                                    <md-datepicker-toggle mdSuffix [for]="structureStartTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #structureStartTimePicker></md-datepicker>
                                     <md-hint>
                                         <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
                                             {{translations.application.event.field.startBeforeEnd}}
                                         </field-error>
                                     </md-hint>
-                                </md-input-container>
-                                <md-datepicker #structureStartTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                             <div class="col m3">
-                                <md-input-container class="input-full-width">
+                                <md-form-field class="input-full-width">
                                     <input mdInput type="text" formControlName="endTime" placeholder="Purkupäivämäärä"
                                            [mdDatepicker]="structureEndTimePicker"/>
-                                    <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="structureEndTimePicker"></button>
-                                </md-input-container>
-                                <md-datepicker #structureEndTimePicker></md-datepicker>
+                                    <md-datepicker-toggle mdSuffix [for]="structureEndTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #structureEndTimePicker></md-datepicker>
+                                </md-form-field>
                             </div>
                         </div>
                     </div>
@@ -183,19 +183,19 @@
                             </md-checkbox>
                         </div>
                         <div class="col m12" [hidden]="!marketingProviders.checked">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <textarea mdInput mdTextareaAutosize formControlName="marketingProviders"
                                           placeholder="Myynti- tai mainostoiminnan kuvaus"></textarea>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                         <div class="col m12 input-field-checkbox">
                             <md-checkbox #foodSales formControlName="foodSales">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua</md-checkbox>
                         </div>
                         <div class="col m12" [hidden]="!foodSales.checked">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <textarea mdInput mdTextareaAutosize formControlName="foodProviders"
                                           placeholder="Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua"></textarea>
-                            </md-input-container>
+                            </md-form-field>
                         </div>
                     </div>
                 </md-card-content>

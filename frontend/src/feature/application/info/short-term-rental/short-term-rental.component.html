@@ -16,30 +16,31 @@
             <md-card-content>
                 <div class="row form-group">
                     <div class="col m6">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
                             <md-hint>
                                 <field-error [form]="applicationForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
                                 <field-error [form]="applicationForm" field="name" hasError="minlength">{{'translations.application.field.nameShort' | translation}}</field-error>
                             </md-hint>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m6">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <textarea mdInput mdTextareaAutosize formControlName="description" placeholder="Vuokrauksen kuvaus*"></textarea>
                             <md-hint>
                                 <field-error [form]="applicationForm" field="description" hasError="required">
                                     {{'application.shortTermRental.field.descriptionMissing' | translation}}
                                 </field-error>
                             </md-hint>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div formGroupName="rentalTimes">
                         <div class="col m3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
                                        [mdDatepicker]="startTimePicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
+                                <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #startTimePicker></md-datepicker>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
                                         {{'application.shortTermRental.field.rentalStartTimeMissing' | translation}}
@@ -48,27 +49,26 @@
                                         {{'application.shortTermRental.field.startBeforeEnd' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
-                            <md-datepicker #startTimePicker></md-datepicker>
+                            </md-form-field>
                         </div>
                         <div class="col m3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
                                        [mdDatepicker]="endTimePicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
+                                <md-datepicker-toggle mdSuffix [for]="endTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #endTimePicker></md-datepicker>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
                                         {{'application.shortTermRental.field.rentalEndTimeMissing' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
-                            <md-datepicker #endTimePicker></md-datepicker>
+                            </md-form-field>
                         </div>
                     </div>
                     <div class="col m6">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="number" formControlName="area" placeholder="Pinta-ala"/>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
             </md-card-content>

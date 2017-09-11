@@ -5,49 +5,49 @@
             <div class="col m8">
                 <div class="col m12">
                     <div class="col m3">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="location.postalAddress.streetAddress" [disabled]="readonly" placeholder="Osoite"/>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m9">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="location.info" [disabled]="readonly" placeholder="Lisätietoja paikasta" />
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m10" *ngIf="area">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="area" [disabled]="readonly" placeholder="Alue"/>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m2" *ngIf="area">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="sections" [disabled]="readonly" placeholder="Lohko(t)"/>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
                 <div class="col m12">
                     <div class="col m3">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="location.uiArea" [disabled]="readonly" placeholder="Alueen pinta-ala" />
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m3">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="location.areaOverride" [disabled]="readonly"
                                    placeholder="Käsittelijän syöttämä pinta-ala" />
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m3">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="districtName(location.cityDistrictId) | async"
                                    [disabled]="readonly" placeholder="Kaupunginosa"/>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m3">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" [ngModel]="districtName(location.cityDistrictIdOverride) | async"
                                    [disabled]="readonly" placeholder="Käsittelijän valitsema kaupunginosa"/>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
             </div>

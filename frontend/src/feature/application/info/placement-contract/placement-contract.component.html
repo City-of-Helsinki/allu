@@ -15,18 +15,19 @@
             <md-card-content>
                 <div class="row form-group">
                     <div class="col m6">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <input mdInput type="text" formControlName="diaryNumber" placeholder="Diaarinumero"/>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div formGroupName="validityTimes">
                         <div class="col s3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
                                        [mdDatepicker]="startTimePicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="startTimePicker"></button>
+                                <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #startTimePicker></md-datepicker>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
                                         {{'application.common.field.validityStartTimeMissing' | translation}}
@@ -35,34 +36,33 @@
                                         {{'application.common.field.validityStartBeforeEnd' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
-                            <md-datepicker #startTimePicker></md-datepicker>
+                            </md-form-field>
                         </div>
                         <div class="col s3">
-                            <md-input-container class="input-full-width">
+                            <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
                                        [mdDatepicker]="endTimePicker"/>
-                                <button type="button" [disabled]="readonly" mdSuffix [mdDatepickerToggle]="endTimePicker"></button>
+                                <md-datepicker-toggle mdSuffix [for]="endTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                <md-datepicker #endTimePicker></md-datepicker>
                                 <md-hint>
                                     <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                                         {{'application.common.field.validityEndTimeMissing' | translation}}
                                     </field-error>
                                 </md-hint>
-                            </md-input-container>
-                            <md-datepicker #endTimePicker></md-datepicker>
+                            </md-form-field>
                         </div>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col m12">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" placeholder="Työn kuvaus"></textarea>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                     <div class="col m12">
-                        <md-input-container class="input-full-width">
+                        <md-form-field class="input-full-width">
                             <textarea mdInput mdTextareaAutosize formControlName="generalTerms" placeholder="Yleiset ehdot"></textarea>
-                        </md-input-container>
+                        </md-form-field>
                     </div>
                 </div>
             </md-card-content>
