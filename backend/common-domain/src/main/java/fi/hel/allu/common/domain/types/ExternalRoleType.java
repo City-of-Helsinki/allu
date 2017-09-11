@@ -1,4 +1,4 @@
-package fi.hel.allu.external.domain.types;
+package fi.hel.allu.common.domain.types;
 
 /**
  * User roles used in the external interface.

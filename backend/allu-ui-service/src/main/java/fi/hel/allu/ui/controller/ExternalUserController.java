@@ -2,6 +2,7 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.servicecore.domain.ExternalUserJson;
 import fi.hel.allu.servicecore.service.ExternalUserService;
+import fi.hel.allu.ui.config.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +19,18 @@ import java.util.List;
 public class ExternalUserController {
 
   private ExternalUserService userService;
+  private ApplicationProperties applicationProperties;
 
   @Autowired
-  public ExternalUserController(ExternalUserService userService) {
+  public ExternalUserController(ExternalUserService userService, ApplicationProperties applicationProperties) {
     this.userService = userService;
+    this.applicationProperties = applicationProperties;
+  }
+
+  @RequestMapping(value = "/{id}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
+  public ResponseEntity<ExternalUserJson> findById(@PathVariable int id) {
+    return new ResponseEntity<>(userService.findUserById(id), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.GET)
@@ -33,13 +42,13 @@ public class ExternalUserController {
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<ExternalUserJson> addUser(@RequestBody ExternalUserJson user) {
-    return new ResponseEntity<>(userService.addUser(user), HttpStatus.OK);
+    return new ResponseEntity<>(userService.addUser(applicationProperties.getJwtSecretExternalService(), user), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<ExternalUserJson> updateUser(@RequestBody ExternalUserJson user) {
-    userService.updateUser(user);
-    return new ResponseEntity(user, HttpStatus.OK);
+    userService.updateUser(applicationProperties.getJwtSecretExternalService(), user);
+    return new ResponseEntity(userService.findUserById(user.getId()), HttpStatus.OK);
   }
 }

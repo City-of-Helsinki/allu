@@ -18,6 +18,7 @@ public class ApplicationProperties {
   private String wfsPassword;
   private String jwtSecret;
   private Integer jwtExpirationHours;
+  private String jwtSecretExternalService;
   private String oauth2AuthorizationEndpointUrl;
   private String oauth2TokenUrl;
   private String oauth2ClientId;
@@ -33,6 +34,7 @@ public class ApplicationProperties {
                                @Value("${wfs.password}") @NotEmpty String wfsPassword,
                                @Value("${jwt.secret}") @NotEmpty String jwtSecret,
                                @Value("${jwt.expiration.hours:12}") @NotNull Integer jwtExpirationHours,
+                               @Value("${jwt.secret.external.service}") @NotEmpty String jwtSecretExternalService,
                                @Value("${oauth2.url.authorization}") @NotEmpty String oauth2AuthorizationEndpointUrl,
                                @Value("${oauth2.url.token}") @NotEmpty String oauth2TokenUrl,
                                @Value("${oauth2.clientid}") @NotEmpty String oauth2ClientId,
@@ -46,6 +48,7 @@ public class ApplicationProperties {
     this.wfsPassword = wfsPassword;
     this.jwtSecret = jwtSecret;
     this.jwtExpirationHours = jwtExpirationHours;
+    this.jwtSecretExternalService = jwtSecretExternalService;
     this.oauth2AuthorizationEndpointUrl = oauth2AuthorizationEndpointUrl;
     this.oauth2TokenUrl = oauth2TokenUrl;
     this.oauth2ClientId = oauth2ClientId;
@@ -110,6 +113,15 @@ public class ApplicationProperties {
    */
   public Integer getJwtExpirationHours() {
     return jwtExpirationHours;
+  }
+
+  /**
+   * Returns JWT secret key used to sign tokens used in external-service.
+   *
+   * @return  JWT secret key used to sign tokens used in external-service.
+   */
+  public String getJwtSecretExternalService() {
+    return jwtSecretExternalService;
   }
 
   /**

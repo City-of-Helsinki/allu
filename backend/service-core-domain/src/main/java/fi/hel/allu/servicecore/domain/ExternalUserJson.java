@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.domain;
 
+import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.util.TimeUtil;
 import org.hibernate.validator.constraints.NotBlank;
 
@@ -20,7 +21,9 @@ public class ExternalUserJson {
   private String emailAddress;
   private String token;
   private boolean active;
+  private ZonedDateTime expirationTime = TimeUtil.millisToZonedDateTime(0);
   private ZonedDateTime lastLogin;
+  private List<ExternalRoleType> assignedRoles = Collections.emptyList();
   private List<Integer> connectedCustomers = Collections.emptyList();
 
   public ExternalUserJson() {
@@ -34,7 +37,9 @@ public class ExternalUserJson {
       String emailAddress,
       String token,
       boolean active,
+      ZonedDateTime expirationTime,
       ZonedDateTime lastLogin,
+      List<ExternalRoleType> assignedRoles,
       List<Integer> connectedCustomers) {
     this.id = id;
     this.username = username;
@@ -42,7 +47,9 @@ public class ExternalUserJson {
     this.emailAddress = emailAddress;
     this.token = token;
     this.active = active;
+    setExpirationTime(expirationTime);
     this.lastLogin = lastLogin;
+    this.assignedRoles = assignedRoles;
     this.connectedCustomers = connectedCustomers;
   }
 
@@ -120,6 +127,24 @@ public class ExternalUserJson {
   }
 
   /**
+   * Returns the expiration time of the user i.e. the time user is not allowed to access the system anymore.
+   *
+   * @return  the expiration time of the user i.e. the time user is not allowed to access the system anymore.
+   */
+  public ZonedDateTime getExpirationTime() {
+    return expirationTime;
+  }
+
+  public void setExpirationTime(ZonedDateTime expirationTime) {
+    if (expirationTime == null) {
+      // expiration in the past
+      this.expirationTime = TimeUtil.millisToZonedDateTime(0);
+    } else {
+      this.expirationTime = expirationTime;
+    }
+  }
+
+  /**
    * Returns last time the user logged in
    */
   public ZonedDateTime getLastLogin() {
@@ -128,6 +153,19 @@ public class ExternalUserJson {
 
   public void setLastLogin(ZonedDateTime lastLogin) {
     this.lastLogin = lastLogin;
+  }
+
+  /**
+   * Returns the role types user has.
+   *
+   * @return  the role types user has.
+   */
+  public List<ExternalRoleType> getAssignedRoles() {
+    return assignedRoles;
+  }
+
+  public void setAssignedRoles(List<ExternalRoleType> assignedRoles) {
+    this.assignedRoles = assignedRoles;
   }
 
   /**

@@ -7,6 +7,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.model.domain.ExternalUser;
@@ -27,6 +28,7 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QExternalUser.externalUser;
 import static fi.hel.allu.QExternalUserCustomer.externalUserCustomer;
+import static fi.hel.allu.QExternalUserRole.externalUserRole;
 
 @Repository
 public class ExternalUserDao {
@@ -61,7 +63,8 @@ public class ExternalUserDao {
   public ExternalUser insert(ExternalUser userData) {
     try {
       Integer id = queryFactory.insert(externalUser).populate(userData).executeWithKey(externalUser.id);
-      insertConnectedCustomers(id, userData.getConnectedCustomers());
+      replaceConnectedCustomers(id, userData.getConnectedCustomers());
+      replaceAssignedRoles(id, userData.getAssignedRoles());
       if (id == null) {
         throw new QueryException("Failed to insert external user");
       }
@@ -78,12 +81,12 @@ public class ExternalUserDao {
   @Transactional
   public void update(ExternalUser userData) throws NoSuchEntityException {
     try {
-      queryFactory.delete(externalUserCustomer).where(externalUserCustomer.externalUserId.eq(userData.getId()));
       long changed = queryFactory.update(externalUser).populate(userData).where(externalUser.id.eq(userData.getId())).execute();
       if (changed == 0) {
         throw new NoSuchEntityException("Failed to update user", Integer.toString(userData.getId()));
       }
-      insertConnectedCustomers(userData.getId(), userData.getConnectedCustomers());
+      replaceConnectedCustomers(userData.getId(), userData.getConnectedCustomers());
+      replaceAssignedRoles(userData.getId(), userData.getAssignedRoles());
     } catch (DataIntegrityViolationException e) {
       if (ExceptionResolver.isUniqueConstraintViolation(e)) {
         throw new NonUniqueException(
@@ -99,10 +102,19 @@ public class ExternalUserDao {
   }
 
 
-  private void insertConnectedCustomers(int externalUserId, List<Integer> connectedCustomers) {
+  private void replaceConnectedCustomers(int externalUserId, List<Integer> connectedCustomers) {
+    queryFactory.delete(externalUserCustomer).where(externalUserCustomer.externalUserId.eq(externalUserId)).execute();
     connectedCustomers.forEach(customerId -> {
       queryFactory.insert(
           externalUserCustomer).set(externalUserCustomer.externalUserId, externalUserId).set(externalUserCustomer.customerId, customerId).execute();
+    });
+  }
+
+  private void replaceAssignedRoles(int externalUserId, List<ExternalRoleType> roles) {
+    queryFactory.delete(externalUserRole).where(externalUserRole.externalUserId.eq(externalUserId)).execute();
+    roles.forEach(role -> {
+      queryFactory.insert(
+          externalUserRole).set(externalUserRole.externalUserId, externalUserId).set(externalUserRole.role, role).execute();
     });
   }
 
@@ -115,7 +127,9 @@ public class ExternalUserDao {
         externalUser.emailAddress,
         externalUser.token,
         externalUser.active,
+        externalUser.expirationTime,
         externalUser.lastLogin,
+        list(externalUserRole.role),
         list(externalUserCustomer.customerId)));
   }
 
@@ -124,6 +138,8 @@ public class ExternalUserDao {
         .select(externalUserBean, externalUserCustomer.customerId)
         .from(externalUser)
         .leftJoin(externalUserCustomer)
-        .on(externalUser.id.eq(externalUserCustomer.externalUserId));
+        .on(externalUser.id.eq(externalUserCustomer.externalUserId))
+        .leftJoin(externalUserRole)
+        .on(externalUser.id.eq(externalUserRole.externalUserId));
   }
 }

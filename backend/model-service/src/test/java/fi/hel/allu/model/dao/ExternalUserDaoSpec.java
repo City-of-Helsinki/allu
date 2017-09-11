@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Customer;
@@ -49,6 +50,8 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
           "testtoken",
           true,
           null,
+          null,
+          Collections.emptyList(),
           Collections.emptyList());
       insertedUser = externalUserDao.insert(testUser);
       insertedCustomer1 = customerDao.insert(testCustomer);
@@ -98,13 +101,25 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
             assertThrows(NonUniqueException.class).when(() -> externalUserDao.insert(testUser));
         });
       });
+      context("insert with roles", () -> {
+        it("should work", () -> {
+          testUser.setUsername("external_roles_test");
+          testUser.setAssignedRoles(Arrays.asList(ExternalRoleType.ROLE_INTERNAL, ExternalRoleType.ROLE_TRUSTED_PARTNER));
+          insertedUser = externalUserDao.insert(testUser);
+          assertEquals(testUser.getName(), insertedUser.getName());
+          assertEquals(2, insertedUser.getAssignedRoles().size());
+          assertTrue(insertedUser.getAssignedRoles().containsAll(Arrays.asList(ExternalRoleType.ROLE_INTERNAL, ExternalRoleType.ROLE_TRUSTED_PARTNER)));
+        });
+      });
       context("update", () -> {
         it("should work", () -> {
           insertedUser.setConnectedCustomers(Arrays.asList(insertedCustomer1.getId()));
+          insertedUser.setAssignedRoles(Arrays.asList(ExternalRoleType.ROLE_TRUSTED_PARTNER));
           externalUserDao.update(insertedUser);
           Optional<ExternalUser> updatedUser = externalUserDao.findById(insertedUser.getId());
           assertTrue(updatedUser.isPresent());
           assertEquals(1, updatedUser.get().getConnectedCustomers().size());
+          assertEquals(1, updatedUser.get().getAssignedRoles().size());
         });
         it("should complain if duplicate username", () -> {
           testUser.setUsername("external_updateduplicate");

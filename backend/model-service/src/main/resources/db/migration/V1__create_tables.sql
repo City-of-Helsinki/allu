@@ -448,8 +448,15 @@ create table allu.external_user (
   email_address text not null,
   token text not null,
   active boolean not null,
+  expiration_time timestamp with time zone,
   last_login timestamp with time zone
 );
+
+-- Roles external service users have
+create table allu.external_user_role (
+  id serial primary key,
+  external_user_id integer references allu.external_user(id),
+  role text );
 
 -- Customers linked to the external service user
 create table allu.external_user_customer (

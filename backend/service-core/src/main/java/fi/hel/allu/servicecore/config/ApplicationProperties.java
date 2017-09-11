@@ -6,7 +6,6 @@ import java.util.List;
 
 public class ApplicationProperties {
 
-  private String jwtSecret;
   private String modelServiceHost;
   private String modelServicePort;
   private String searchServiceHost;
@@ -18,7 +17,6 @@ public class ApplicationProperties {
   private List<String> anonymousAccessPaths;
 
   public ApplicationProperties(
-      String jwtSecret,
       String modelServiceHost,
       String modelServicePort,
       String searchServiceHost,
@@ -28,7 +26,6 @@ public class ApplicationProperties {
       List<String> emailAllowedAddresses,
       String emailSenderAddress,
       List<String> anonymousAccessPaths) {
-    this.jwtSecret = jwtSecret;
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.searchServiceHost = searchServiceHost;
@@ -101,15 +98,6 @@ public class ApplicationProperties {
    * PDF-service path to generate pdf
    */
   public static final String PATH_PDF_GENERATE = "/generate?stylesheet={stylesheet}";
-
-  /**
-   * Returns JWT secret key used to sign tokens.
-   *
-   * @return  JWT secret key used to sign tokens.
-   */
-  public String getJwtSecret() {
-    return jwtSecret;
-  }
 
   /**
    * Create absolute url to model-service. Host and port values are read from

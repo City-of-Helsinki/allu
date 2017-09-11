@@ -14,7 +14,6 @@ public class ServiceCoreAppConfig {
 
   @Bean
   public fi.hel.allu.servicecore.config.ApplicationProperties serviceCoreApplicationProperties(
-      @Value("${jwt.secret}") @NotEmpty String jwtSecret,
       @Value("${model.service.host}") @NotEmpty String modelServiceHost,
       @Value("${model.service.port}") @NotEmpty String modelServicePort,
       @Value("${search.service.host}") @NotEmpty String searchServiceHost,
@@ -25,7 +24,6 @@ public class ServiceCoreAppConfig {
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
       @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
       return new ApplicationProperties(
-          jwtSecret,
           modelServiceHost,
           modelServicePort,
           searchServiceHost,

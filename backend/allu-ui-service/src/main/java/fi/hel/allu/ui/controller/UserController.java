@@ -60,6 +60,6 @@ public class UserController {
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity updateUser(@RequestBody UserJson user) {
     userService.updateUser(user);
-    return new ResponseEntity(user, HttpStatus.OK);
+    return new ResponseEntity(userService.findUserById(user.getId()), HttpStatus.OK);
   }
 }

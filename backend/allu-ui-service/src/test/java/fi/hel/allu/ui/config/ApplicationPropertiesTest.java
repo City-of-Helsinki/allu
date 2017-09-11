@@ -15,6 +15,7 @@ public class ApplicationPropertiesTest {
         "9090",
         "jwtsecret",
         123,
+        "jwtsecretexternalservice",
         "localhost",
         "9090",
         null,

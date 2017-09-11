@@ -10,7 +10,6 @@ import fi.hel.allu.servicecore.service.UserService;
 import fi.hel.allu.ui.config.ApplicationProperties;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +24,11 @@ import org.springframework.web.client.RestTemplate;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
-import java.io.UnsupportedEncodingException;
 import java.security.PublicKey;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 
 @Service
@@ -54,9 +51,7 @@ public class TokenAuthenticationService extends AuthenticationServiceInterface {
   private UserService userService;
 
   private PublicKey publicKey;
-
-  public static final String EMAIL = "emailAddress";
-  public static final String ROLES = "alluRoles";
+  private TokenUtil tokenUtil;
 
   @Autowired
   public TokenAuthenticationService(
@@ -66,6 +61,7 @@ public class TokenAuthenticationService extends AuthenticationServiceInterface {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
+    this.tokenUtil = new TokenUtil(applicationProperties.getJwtSecret());
   }
 
   @PostConstruct
@@ -88,7 +84,7 @@ public class TokenAuthenticationService extends AuthenticationServiceInterface {
     }
     final String token = request.getHeader(AUTH_HEADER_NAME);
     if (token != null && token.startsWith("Bearer ")) {
-      final User user = TokenUtil.parseUserFromToken(getBase64EncodedJWTSecret(), ROLES, token.replaceFirst("^Bearer ", ""));
+      final User user = tokenUtil.parseUserFromToken(TokenUtil.PROPERTY_ROLE_ALLU, token.replaceFirst("^Bearer ", ""));
       if (user != null) {
         return new UserAuthentication(user);
       }
@@ -111,15 +107,12 @@ public class TokenAuthenticationService extends AuthenticationServiceInterface {
     if (user == null || user.getUserName() == null || user.getUserName().trim().length() == 0) {
       throw new IllegalArgumentException("User principal name must not be null");
     }
-    LocalDateTime dateTimeToConvert = LocalDateTime.now().plusHours(applicationProperties.getJwtExpirationHours());
-    Date convertToDate = Date.from(dateTimeToConvert.atZone(ZoneId.systemDefault()).toInstant());
-    return Jwts.builder()
-        .setExpiration(convertToDate)
-        .setSubject(user.getUserName())
-        .claim(ROLES, user.getAssignedRoles())
-        .claim(EMAIL, user.getEmailAddress())
-        .signWith(SignatureAlgorithm.HS512, getBase64EncodedJWTSecret())
-        .compact();
+
+    ZonedDateTime dateTimeToConvert = ZonedDateTime.now().plusHours(applicationProperties.getJwtExpirationHours());
+    Map<String, Object> propertyNameToValue = new HashMap<>();
+    propertyNameToValue.put(TokenUtil.PROPERTY_ROLE_ALLU, user.getAssignedRoles());
+    propertyNameToValue.put(TokenUtil.PROPERTY_EMAIL, user.getEmailAddress());
+    return tokenUtil.createToken(dateTimeToConvert, user.getUserName(), propertyNameToValue);
   }
 
   /**
@@ -154,16 +147,6 @@ public class TokenAuthenticationService extends AuthenticationServiceInterface {
       }
     }
     return Optional.ofNullable(userJson);
-  }
-
-
-  private String getBase64EncodedJWTSecret() {
-    try {
-      return new String(java.util.Base64.getEncoder().encode(applicationProperties.getJwtSecret().getBytes()), "UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      // should never happen
-      throw new RuntimeException(e);
-    }
   }
 
   /**

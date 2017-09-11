@@ -55,6 +55,7 @@ public class TokenAuthenticationServiceTest {
   private TokenAuthenticationService.TokenWrapper tokenWrapper;
 
   private UserJson userJson;
+  private TokenUtil tokenUtil;
 
   @Before
   public void init() {
@@ -86,6 +87,8 @@ public class TokenAuthenticationServiceTest {
         Collections.emptyList(),
         Arrays.asList(RoleType.ROLE_VIEW, RoleType.ROLE_ADMIN),
         Collections.emptyList());
+
+    tokenUtil = new TokenUtil(applicationProperties.getJwtSecret());
   }
 
   private String createToken(List<String> groups) throws Exception {
@@ -166,11 +169,10 @@ public class TokenAuthenticationServiceTest {
   }
 
   @Test
-  public void testParseJWT() throws UnsupportedEncodingException {
+  public void testParseJWT() {
     String token = tokenAuthenticationService.createTokenForUser(userJson);
-    User alluUser = (User) TokenUtil.parseUserFromToken(
-        new String(java.util.Base64.getEncoder().encode(applicationProperties.getJwtSecret().getBytes()), "UTF-8"),
-        TokenAuthenticationService.ROLES,
+    User alluUser = (User) tokenUtil.parseUserFromToken(
+        TokenUtil.PROPERTY_ROLE_ALLU,
         token);
     assertNotNull("User must not be null", alluUser);
     assertEquals(USER_NAME, alluUser.getUsername());
@@ -186,15 +188,15 @@ public class TokenAuthenticationServiceTest {
   public void testExpiredJWT() throws UnsupportedEncodingException {
     Mockito.when(applicationProperties.getJwtExpirationHours()).thenReturn(-1);
     String token = tokenAuthenticationService.createTokenForUser(userJson);
-    TokenUtil.parseUserFromToken(
-        new String(java.util.Base64.getEncoder().encode(applicationProperties.getJwtSecret().getBytes()), "UTF-8"),
-        TokenAuthenticationService.ROLES,
+    tokenUtil.parseUserFromToken(
+        TokenUtil.PROPERTY_ROLE_ALLU,
         token);
   }
 
   @Test(expected = SignatureException.class)
   public void testInvalidJWT() {
     String token = tokenAuthenticationService.createTokenForUser(userJson);
-    TokenUtil.parseUserFromToken(applicationProperties.getJwtSecret() + "invalid!", TokenAuthenticationService.ROLES, token);
+    TokenUtil withWrongSecret = new TokenUtil(applicationProperties.getJwtSecret() + "invalid!");
+    withWrongSecret.parseUserFromToken(TokenUtil.PROPERTY_ROLE_ALLU, token);
   }
 }

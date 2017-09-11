@@ -267,6 +267,11 @@
                         </typeMapping>
                         <typeMapping>
                             <table>external_user</table>
+                            <column>expiration_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>external_user</table>
                             <column>last_login</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
@@ -391,6 +396,11 @@
                             <table>default_recipient</table>
                             <column>application_type</column>
                             <type>fi.hel.allu.model.querydsl.StringToApplicationType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>external_user_role</table>
+                            <column>role</column>
+                            <type>fi.hel.allu.model.querydsl.StringToExternalRoleType</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>

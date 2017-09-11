@@ -1,5 +1,6 @@
 package fi.hel.allu.model.domain;
 
+import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.util.TimeUtil;
 
 import java.time.ZonedDateTime;
@@ -17,7 +18,9 @@ public class ExternalUser {
   private String emailAddress;
   private String token;
   private boolean active;
+  private ZonedDateTime expirationTime;
   private ZonedDateTime lastLogin;
+  private List<ExternalRoleType> assignedRoles = Collections.emptyList();
   private List<Integer> connectedCustomers = Collections.emptyList();
 
   public ExternalUser() {
@@ -31,7 +34,9 @@ public class ExternalUser {
       String emailAddress,
       String token,
       boolean active,
+      ZonedDateTime expirationTime,
       ZonedDateTime lastLogin,
+      List<ExternalRoleType> assignedRoles,
       List<Integer> connectedCustomers) {
     this.id = id;
     setUsername(username);
@@ -39,7 +44,9 @@ public class ExternalUser {
     this.emailAddress = emailAddress;
     this.token = token;
     this.active = active;
+    this.expirationTime = expirationTime;
     this.lastLogin = lastLogin;
+    this.assignedRoles = assignedRoles;
     this.connectedCustomers = connectedCustomers;
   }
 
@@ -120,6 +127,19 @@ public class ExternalUser {
   }
 
   /**
+   * Returns the expiration time of the user i.e. the time user is not allowed to access the system anymore.
+   *
+   * @return  the expiration time of the user i.e. the time user is not allowed to access the system anymore.
+   */
+  public ZonedDateTime getExpirationTime() {
+    return expirationTime;
+  }
+
+  public void setExpirationTime(ZonedDateTime expirationTime) {
+    this.expirationTime = expirationTime;
+  }
+
+  /**
    * Returns last time the user logged in
    */
   public ZonedDateTime getLastLogin() {
@@ -128,6 +148,19 @@ public class ExternalUser {
 
   public void setLastLogin(ZonedDateTime lastLogin) {
     this.lastLogin = lastLogin;
+  }
+
+  /**
+   * Returns the role types user has.
+   *
+   * @return  the role types user has.
+   */
+  public List<ExternalRoleType> getAssignedRoles() {
+    return assignedRoles;
+  }
+
+  public void setAssignedRoles(List<ExternalRoleType> assignedRoles) {
+    this.assignedRoles = assignedRoles;
   }
 
   /**

@@ -15,7 +15,9 @@ public class ExternalUserMapper {
         user.getEmailAddress(),
         user.getToken(),
         user.getActive(),
+        user.getExpirationTime(),
         user.getLastLogin(),
+        user.getAssignedRoles(),
         user.getConnectedCustomers());
   }
 
@@ -27,7 +29,9 @@ public class ExternalUserMapper {
         userJson.getEmailAddress(),
         userJson.getToken(),
         userJson.getActive(),
+        userJson.getExpirationTime(),
         userJson.getLastLogin(),
+        userJson.getAssignedRoles(),
         userJson.getConnectedCustomers());
   }
 }
