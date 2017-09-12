@@ -39,7 +39,7 @@ export class ApplicationHistoryComponent implements OnInit {
       this.meta = meta;
       this.formatter.setMeta(meta);
       this.history = this.historyHub.applicationHistory(this.applicationState.application.id);
-      this.userHub.getActiveUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
+      this.userHub.getAllUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
     },
     err => NotificationService.errorMessage(findTranslation('history.error.metadata')));
   }
