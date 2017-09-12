@@ -17,7 +17,7 @@ module.exports.swaggerClient = function swaggerClient() {
     usePromise: true,
     authorizations: {
       // TODO: replace with something else than this hard coded pre-generated JWT. Perhaps another environment variable or secret key, which can be used to generate the secret?
-      api_key: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4MTg5MzQyOTYsInN1YiI6InRlc3RzdWJqZWN0IiwicHVibGljQWxsdVJvbGVzIjpbIlJPTEVfSU5URVJOQUwiXX0.2bapNVFXNkgJ16mSo_ur9vfHXw5eiraYDFoPOxbx83McKP7Y0e7wAzbV-BFUlnjTFdESjxYaMGNI4YEmYlOvPg'
+      api_key: 'Bearer eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4OTM0NTYwMDAsInN1YiI6ImV4dGVybmFsX3Rlc3R1c2VyX2ludGVybmFsIiwicHVibGljQWxsdVJvbGVzIjpbIlJPTEVfSU5URVJOQUwiXX0.pTeql_K1W980UrVyEHYMzLcfqAxtId44Twla7l1XS1gtjWJ8gRViCqzP9JqeoK2iMsgBc94V7j_li75zdCO5CA'
     }
   })).then(client => prepareClient(client));
 }

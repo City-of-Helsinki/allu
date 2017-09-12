@@ -803,7 +803,7 @@ public class ApplicationProperties {
    * @return url for fetching given external user from model service.
    */
   public String getExternalUserByUserNameUrl() {
-    return getModelServiceUrl("/exteranlusers/username/{username}");
+    return getModelServiceUrl("/externalusers/username/{username}");
   }
 
   /**

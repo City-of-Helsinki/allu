@@ -318,6 +318,35 @@ create SEQUENCE allu.TP_application_type_sequence START 1600001;
 create SEQUENCE allu.VL_application_type_sequence START 1600001;
 create SEQUENCE allu.MP_application_type_sequence START 1600001;
 
+-- User of the external service
+create table allu.external_user (
+  id serial primary key,
+  username text not null unique,
+  name text not null,
+  email_address text not null,
+  token text not null,
+  active boolean not null,
+  expiration_time timestamp with time zone,
+  last_login timestamp with time zone
+);
+
+-- Roles external service users have
+create table allu.external_user_role (
+  id serial primary key,
+  external_user_id integer references allu.external_user(id),
+  role text );
+
+-- Customers linked to the external service user
+create table allu.external_user_customer (
+  id serial primary key,
+  external_user_id integer not null references allu.external_user(id),
+  customer_id integer not null references allu.customer(id)
+);
+
+-- insert external-service user, which will be shown as the user responsible for adding attachments, comments, tags or changes
+insert into allu.user values (DEFAULT, 'rajapinta', 'Rajapinta', 'rajapinta@no-mail.fi', 'Tittelitön', false, null);
+
+-- TODO: remove predefined allu.user rows from database scripts before moving to production
 insert into allu.user values (DEFAULT, 'admin', 'admin user', 'admin@no-mail.fi', 'administrator', true, null);
 insert into allu.user_role values (DEFAULT , currval(pg_get_serial_sequence('allu.user', 'id')), 'ROLE_ADMIN');
 
@@ -401,6 +430,10 @@ insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_se
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'SHORT_TERM_RENTAL');
 insert into allu.user_application_type values (DEFAULT, currval(pg_get_serial_sequence('allu.user', 'id')), 'NOTE');
 
+-- TODO: remove predefined allu.external_user rows from database scripts before moving to production
+insert into allu.external_user values (DEFAULT, 'external_testuser_internal', 'Internal User', 'internal@nomail.fi', 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4OTM0NTYwMDAsInN1YiI6ImV4dGVybmFsX3Rlc3R1c2VyX2ludGVybmFsIiwicHVibGljQWxsdVJvbGVzIjpbIlJPTEVfSU5URVJOQUwiXX0.pTeql_K1W980UrVyEHYMzLcfqAxtId44Twla7l1XS1gtjWJ8gRViCqzP9JqeoK2iMsgBc94V7j_li75zdCO5CA', true, '2030-01-01 02:00:00.000000 +02:00', null);
+insert into allu.external_user values (DEFAULT, 'external_testuser_partner', 'Partner User', 'partner@nomail.fi', 'eyJhbGciOiJIUzUxMiJ9.eyJleHAiOjE4OTM0NTYwMDAsInN1YiI6ImV4dGVybmFsX3Rlc3R1c2VyX3BhcnRuZXIiLCJwdWJsaWNBbGx1Um9sZXMiOlsiUk9MRV9UUlVTVEVEX1BBUlRORVIiXX0.cW0cD8JXWHAcvSMgEKf4TgkBypCD-GLdGeUWRyPeXjffcuZr9rW0HBSOx9g8hiZbyFzyrIUjdDmVBUCqtt-Grw', true, '2030-01-01 02:00:00.000000 +02:00', null);
+
 insert into allu.default_text (application_type, text_type, text_value) values
   ('CABLE_REPORT', 'ELECTRICITY', 'Sijainti johtokartalla epävarma.'),
   ('CABLE_REPORT', 'ELECTRICITY', 'Kohteessa 10, 20, 30kV kaapeli.'),
@@ -441,28 +474,3 @@ insert into allu.default_text (application_type, text_type, text_value) values
   ('CABLE_REPORT', 'OTHER', 'Liitosalueella vesihuolto näytöt tekee Johtotieto Oy. puh. 044 587 1114.'),
   ('CABLE_REPORT', 'OTHER', 'Liitosalueella sähköverkon näytöt tekee Kaivulupa.fi. puh. 0800 133 544'),
   ('CABLE_REPORT', 'OTHER', 'Kiinteistön alueella sijaitsevissa johdoissa puutteita.');
-
--- User of the external service
-create table allu.external_user (
-  id serial primary key,
-  username text not null unique,
-  name text not null,
-  email_address text not null,
-  token text not null,
-  active boolean not null,
-  expiration_time timestamp with time zone,
-  last_login timestamp with time zone
-);
-
--- Roles external service users have
-create table allu.external_user_role (
-  id serial primary key,
-  external_user_id integer references allu.external_user(id),
-  role text );
-
--- Customers linked to the external service user
-create table allu.external_user_customer (
-  id serial primary key,
-  external_user_id integer not null references allu.external_user(id),
-  customer_id integer not null references allu.customer(id)
-);

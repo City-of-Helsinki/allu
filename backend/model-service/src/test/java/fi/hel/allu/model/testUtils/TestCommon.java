@@ -247,6 +247,9 @@ public class TestCommon {
       "delete from allu.user_city_district",
       "delete from allu.user",
       "delete from allu.default_text",
-      "delete from allu.default_recipient"
+      "delete from allu.default_recipient",
+      "delete from allu.external_user_customer",
+      "delete from allu.external_user_role",
+      "delete from allu.external_user",
    };
 }

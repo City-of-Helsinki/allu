@@ -11,7 +11,8 @@ public class IdentityServiceExt implements IdentityServiceInterface {
 
   @Override
   public String getUsername() {
-    // TODO: fix when proper authentication is added to external-service
-    return "admin";
+    // This is hard coded user, which will be shown in Allu UI as the user who has for example added attachments, comments, tags or changes
+    // to the application
+    return "rajapinta";
   }
 }
