@@ -1,5 +1,7 @@
 {
   "type": "AREA_RENTAL",
+  "notBillable": "true",
+  "notBillableReason": "Reima on hyvä jätkä",
   "kindsWithSpecifiers": {"PROPERTY_RENOVATION" : []},
   "name": "Aluevuokraus",
   "decisionPublicityType": "PUBLIC",

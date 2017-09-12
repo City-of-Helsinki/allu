@@ -55,6 +55,8 @@ public class Application {
   private Integer calculatedPrice;
   private Integer priceOverride;
   private String priceOverrideReason;
+  private Boolean notBillable;
+  private String notBillableReason;
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
 
   /**
@@ -343,6 +345,32 @@ public class Application {
 
   public void setPriceOverrideReason(String priceOverrideReason) {
     this.priceOverrideReason = priceOverrideReason;
+  }
+
+  /**
+   * Is this application not meant to be billed?
+   *
+   * @return true if the application is not billable
+   */
+  public Boolean getNotBillable() {
+    return notBillable;
+  }
+
+  public void setNotBillable(Boolean notBillable) {
+    this.notBillable = notBillable;
+  }
+
+  /**
+   * Why is this application not billable?
+   *
+   * @return Explanation for not billing.
+   */
+  public String getNotBillableReason() {
+    return notBillableReason;
+  }
+
+  public void setNotBillableReason(String notBillableReason) {
+    this.notBillableReason = notBillableReason;
   }
 
   /**

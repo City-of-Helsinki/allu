@@ -59,6 +59,7 @@ public class ApplicationJsonSpec {
           locationJson.setStartTime(ZonedDateTime.now().minusDays(1));
           locationJson.setEndTime(ZonedDateTime.now());
           applicationJson.setLocations(Collections.singletonList(locationJson));
+          applicationJson.setNotBillable(false);
         });
         context("Without added errors", () -> {
           it("should validate ok", () -> {

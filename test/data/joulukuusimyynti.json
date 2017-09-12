@@ -1,6 +1,8 @@
 {
   "type": "NOTE",
   "kindsWithSpecifiers": {"CHRISTMAS_TREE_SALES_AREA": []},
+  "notBillable": "true",
+  "notBillableReason": "Ei nyt jouluna kehtaa laskuttaa",
   "locations": [
     {
       "startTime": "2017-01-11T22:00:00.000Z",

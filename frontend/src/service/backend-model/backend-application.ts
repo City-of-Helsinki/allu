@@ -36,4 +36,6 @@ export interface BackendApplication {
   priceOverrideReason: string;
   applicationTags: Array<BackendApplicationTag>;
   comments?: Array<BackendComment>;
+  notBillable: boolean;
+  notBillableReason?: string;
 }

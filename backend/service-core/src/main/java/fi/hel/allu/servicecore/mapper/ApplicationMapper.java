@@ -7,8 +7,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
@@ -81,6 +81,8 @@ public class ApplicationMapper {
     applicationDomain.setCalculatedPrice(applicationJson.getCalculatedPrice());
     applicationDomain.setPriceOverride(applicationJson.getPriceOverride());
     applicationDomain.setPriceOverrideReason(applicationJson.getPriceOverrideReason());
+    applicationDomain.setNotBillable(applicationJson.getNotBillable());
+    applicationDomain.setNotBillableReason(applicationJson.getNotBillableReason());
     return applicationDomain;
   }
 
@@ -162,6 +164,8 @@ public class ApplicationMapper {
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setPriceOverride(application.getPriceOverride());
     applicationJson.setPriceOverrideReason(application.getPriceOverrideReason());
+    applicationJson.setNotBillable(application.getNotBillable());
+    applicationJson.setNotBillableReason(application.getNotBillableReason());
     applicationJson.setCustomersWithContacts(createCustomerWithContactsJson(application));
 
     return applicationJson;

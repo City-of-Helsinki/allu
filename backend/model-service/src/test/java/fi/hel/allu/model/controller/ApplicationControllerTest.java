@@ -257,6 +257,7 @@ public class ApplicationControllerTest {
     newApplication.setMetadataVersion(1);
     newApplication.setKindsWithSpecifiers(
         Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
+    newApplication.setNotBillable(false);
     Event event = new Event();
     event.setDescription("Eventti");
     event.setEcoCompass(true);

@@ -87,6 +87,7 @@ public class PricingServiceTest {
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
     addDummyCustomer(application, CustomerType.PERSON);
+    application.setNotBillable(false);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
     List<Integer> fixedLocationIds = Arrays.asList(makePair("Kansalaistori", "A"), makePair("Kansalaistori", "C"))
@@ -185,6 +186,7 @@ public class PricingServiceTest {
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.KESKUSKATU_SALES, Collections.emptyList()));
     addDummyCustomer(application, CustomerType.PERSON);
+    application.setNotBillable(false);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();
     location.setAreaOverride(135.5);
@@ -240,6 +242,7 @@ public class PricingServiceTest {
     application
         .setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.URBAN_FARMING, Collections.emptyList()));
     application.setMetadataVersion(1);
+    application.setNotBillable(false);
     addDummyCustomer(application, CustomerType.PERSON);
     application = applicationDao.insert(application);
     Location location = newLocationWithDefaults();

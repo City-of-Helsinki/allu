@@ -377,6 +377,7 @@ public class ProjectControllerTest {
     application.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OTHER, Collections.emptyList()));
     application.setMetadataVersion(1);
     application.setName("short term test");
+    application.setNotBillable(false);
     return application;
   }
 

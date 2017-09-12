@@ -60,7 +60,7 @@ public class ApplicationExtMapper {
     applicationJson.setKindsWithSpecifiers(applicationExt.getKindsWithSpecifiers());
     applicationJson.setDecisionDistributionType(DistributionType.EMAIL);
     applicationJson.setDecisionPublicityType(PublicityType.PUBLIC);
-
+    applicationJson.setNotBillable(false);
     return applicationJson;
   }
 

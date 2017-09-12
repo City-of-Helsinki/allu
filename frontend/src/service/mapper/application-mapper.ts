@@ -46,6 +46,8 @@ export class ApplicationMapper {
     application.priceOverrideReason = backendApplication.priceOverrideReason;
     application.applicationTags = ApplicationTagMapper.mapBackendList(backendApplication.applicationTags);
     application.comments = CommentMapper.mapBackendList(backendApplication.comments);
+    application.notBillable = backendApplication.notBillable;
+    application.notBillableReason = backendApplication.notBillableReason;
     return application;
   }
 
@@ -76,7 +78,9 @@ export class ApplicationMapper {
       calculatedPrice: application.calculatedPrice,
       priceOverride: application.priceOverride,
       priceOverrideReason: application.priceOverrideReason,
-      applicationTags: ApplicationTagMapper.mapFrontendList(application.applicationTags)
+      applicationTags: ApplicationTagMapper.mapFrontendList(application.applicationTags),
+      notBillable: application.notBillable,
+      notBillableReason: application.notBillableReason
     };
   }
 

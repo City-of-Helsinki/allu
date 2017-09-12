@@ -59,6 +59,7 @@ public class TestCommon {
     app.setDecisionTime(ZonedDateTime.now());
     app.setName(name);
     app.setHandler(user.getId());
+    app.setNotBillable(false);
     return app;
   }
 

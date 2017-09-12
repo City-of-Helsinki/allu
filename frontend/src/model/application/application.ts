@@ -48,7 +48,9 @@ export class Application {
     public priceOverride?: number,
     public priceOverrideReason?: string,
     public applicationTags?: Array<ApplicationTag>,
-    public comments?: Array<Comment>) {
+    public comments?: Array<Comment>,
+    public notBillable: boolean = false,
+    public notBillableReason?: string) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

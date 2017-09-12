@@ -10,6 +10,7 @@
   "status": null,
   "type": "EVENT",
   "kindsWithSpecifiers": {"OUTDOOREVENT": []},
+  "notBillable": "false",
   "applicationTags": [
     {
       "addedBy": 1,

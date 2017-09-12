@@ -2,7 +2,6 @@ package fi.hel.allu.servicecore.service;
 
 
 import fi.hel.allu.common.domain.types.*;
-import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.common.types.PublicityType;
@@ -207,6 +206,7 @@ public abstract class MockServices {
     applicationJson.setProject(createProjectJson(null));
     applicationJson.setExtension(createOutdoorEventJson());
     applicationJson.setKind(ApplicationKind.OUTDOOREVENT);
+    applicationJson.setNotBillable(false);
     return applicationJson;
   }
 
