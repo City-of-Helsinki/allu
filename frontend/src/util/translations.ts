@@ -152,7 +152,13 @@ export const translations = {
         FINAL_INSPECTION_DONE: 'Loppukatselmus suoritettu',
         WAITING: 'Odottaa lisätietoa',
         COMPENSATION_CLARIFICATION: 'Hyvitysselvitys',
-        PAYMENT_BASIS_CORRECTION: 'Maksuperusteet korjattava'
+        PAYMENT_BASIS_CORRECTION: 'Maksuperusteet korjattava',
+        OPERATIONAL_CONDITION_REPORTED: 'Toiminnallinen kunto ilmoitettu',
+        OPERATIONAL_CONDITION_ACCEPTED: 'Toiminnallinen kunto hyväksytty',
+        OPERATIONAL_CONDITION_REJECTED: 'Toiminnallinen kunto hylätty',
+        WORK_READY_REPORTED: 'Työn valmistuminen ilmoitettu',
+        WORK_READY_ACCEPTED: 'Työn valmistuminen hyväksytty',
+        WORK_READY_REJECTED: 'Työn valmistuminen hylätty'
       }
     },
     publicityType: {
