@@ -46,7 +46,7 @@
         <input inputBoxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä" [mdDatepicker]="endDatePicker"/>
         <md-datepicker-toggle mdSuffix [for]="endDatePicker" inputBoxSuffix></md-datepicker-toggle>
         <md-datepicker #endDatePicker></md-datepicker>
-        <field-error [form]="searchForm" field="startDate" hasError="required">
+        <field-error [form]="searchForm" field="endDate" hasError="required">
           {{'application.common.field.validityEndTimeMissing' | translation}}
         </field-error>
       </input-box>

@@ -136,8 +136,8 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   searchUpdated(filter: SearchbarFilter) {
     this.locationForm.patchValue({
-      startTime: filter.uiStartDate,
-      endTime: filter.uiEndDate,
+      startTime: filter.startDate,
+      endTime: filter.endDate,
       streetAddress: filter.search
     });
   }

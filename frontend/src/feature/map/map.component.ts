@@ -138,7 +138,7 @@ export class MapComponent implements OnInit, OnDestroy {
     featureGroup.eachLayer(l => {
       if (l instanceof Circle) {
         // Convert circle to polygon since GeoJSON does not support circle
-        features.addLayer(this.mapState.polygonFromCircle(l.getLatLng(), l.getRadius()));
+        features.addLayer(l.toPolygon());
       } else {
         features.addLayer(l);
       }

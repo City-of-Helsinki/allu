@@ -15,11 +15,11 @@ import {Geocoordinates} from '../../model/common/geocoordinates';
 import {pathStyle} from './map-draw-styles';
 import {MapPopup} from './map-popup';
 import {MapLayerService} from './map-layer.service';
-import GeoJSONOptions = L.GeoJSONOptions;
 import '../../js/leaflet/draw-transform';
 import '../../js/leaflet/draw-intersect';
 import '../../js/leaflet/draw-line';
 import {NotificationService} from '../notification/notification.service';
+import GeoJSONOptions = L.GeoJSONOptions;
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
@@ -159,11 +159,6 @@ export class MapState {
       .do(bounds => this.map.fitBounds(bounds));
   }
 
-  public polygonFromCircle(center: L.LatLng, radius: number): L.Polygon {
-    let poly = this.mapUtil.polygonFromCircle(this.latLngToLayerPoint(center), radius);
-    return L.polygon(poly.map(pnt => this.layerPointToLatLng(pnt)));
-  }
-
   // For some reason leaflet does not show layer after angular route change
   // unless it is removed and added back
   selectDefaultLayer(): void {
@@ -292,14 +287,6 @@ export class MapState {
         allLayers.addLayer(currentLayer);
         return allLayers;
       }, L.featureGroup());
-  }
-
-  private latLngToLayerPoint(latLng: L.LatLng): L.Point {
-    return this.map.latLngToLayerPoint(latLng);
-  }
-
-  private layerPointToLatLng(point: L.Point): L.LatLng {
-    return this.map.layerPointToLatLng(point);
   }
 
   private showMeasurements(layers: L.FeatureGroup) {

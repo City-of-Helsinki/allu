@@ -1,6 +1,7 @@
 import {BackendLocation} from '../backend-model/backend-location';
 import {Location} from '../../model/common/location';
 import {PostalAddress} from '../../model/common/postal-address';
+import {TimeUtil} from '../../util/time.util';
 
 export class LocationMapper {
   public static mapBackendList(backendLocations: Array<BackendLocation>): Array<Location> {
@@ -21,8 +22,8 @@ export class LocationMapper {
         backendLocation.id,
         backendLocation.locationKey,
         backendLocation.locationVersion,
-        backendLocation.startTime,
-        backendLocation.endTime,
+        TimeUtil.dateFromBackend(backendLocation.startTime),
+        TimeUtil.dateFromBackend(backendLocation.endTime),
         backendLocation.geometry,
         backendLocation.area,
         backendLocation.areaOverride,
@@ -41,8 +42,8 @@ export class LocationMapper {
       id: location.id,
       locationKey: location.locationKey,
       locationVersion: location.locationVersion,
-      startTime: location.startTime,
-      endTime: location.endTime,
+      startTime: TimeUtil.dateToBackend(location.startTime),
+      endTime: TimeUtil.dateToBackend(location.endTime),
       geometry: location.geometry,
       area: location.area,
       areaOverride: location.areaOverride,
