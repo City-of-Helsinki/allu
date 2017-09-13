@@ -6,6 +6,8 @@ import {AdminComponent} from './admin.component';
 import {DefaultAttachmentsComponent} from './default-attachment/default-attachments.component';
 import {DefaultAttachmentComponent} from './default-attachment/default-attachment.component';
 import {DefaultRecipientsComponent} from './default-recipients/default-recipients.component';
+import {ExternalUserListComponent} from './external-user/external-user-list.component';
+import {ExternalUserComponent} from './external-user/external-user.component';
 
 const attachmentChildRoutes = [
   { path: '', component: DefaultAttachmentsComponent },
@@ -19,6 +21,11 @@ export const adminRoutes: Routes = [
     { path: 'user-list', component: UserListComponent },
     { path: 'user', component: UserComponent },
     { path: 'user/:userName', component: UserComponent },
+    { path: 'external-users', children: [
+      { path: '', component: ExternalUserListComponent },
+      { path: 'new', component: ExternalUserComponent },
+      { path: ':id', component: ExternalUserComponent }
+    ]},
     { path: 'default-attachments', data: {attachmentType: 'DEFAULT'}, children: attachmentChildRoutes },
     { path: 'default-images', data: {attachmentType: 'DEFAULT_IMAGE'}, children: attachmentChildRoutes },
     { path: 'default-recipients', component: DefaultRecipientsComponent}

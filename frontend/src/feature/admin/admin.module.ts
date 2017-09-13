@@ -16,6 +16,10 @@ import {DefaultRecipientsComponent} from './default-recipients/default-recipient
 import {RecipientsByTypeComponent} from './default-recipients/recipients-by-type.component';
 import {DefaultRecipientService} from '../../service/recipients/default-recipient.service';
 import {DefaultRecipientHub} from '../../service/recipients/default-recipient-hub';
+import {ExternalUserListComponent} from './external-user/external-user-list.component';
+import {ExternalUserHub} from '../../service/user/external-user-hub';
+import {ExternalUserService} from '../../service/user/external-user-service';
+import {ExternalUserComponent} from './external-user/external-user.component';
 
 @NgModule({
   imports: [
@@ -33,6 +37,8 @@ import {DefaultRecipientHub} from '../../service/recipients/default-recipient-hu
     AdminNavComponent,
     UserListComponent,
     UserComponent,
+    ExternalUserListComponent,
+    ExternalUserComponent,
     DefaultAttachmentsComponent,
     DefaultAttachmentComponent,
     DefaultRecipientsComponent,
@@ -40,7 +46,9 @@ import {DefaultRecipientHub} from '../../service/recipients/default-recipient-hu
   ],
   providers: [
     DefaultRecipientService,
-    DefaultRecipientHub
+    DefaultRecipientHub,
+    ExternalUserHub,
+    ExternalUserService
   ]
 })
 export class AdminModule {}

@@ -44,7 +44,7 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
       testCustomer.setActive(true);
       testUser = new ExternalUser(
           null,
-          "external_uuusername",
+          "uuusername",
           "Testiyritys OyAb liittymä",
           "nothing@testiyritys.net",
           "testtoken",
@@ -90,7 +90,7 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
       });
       context("insert with connected customers", () -> {
         it("should work", () -> {
-          testUser.setUsername("external_connected_test");
+          testUser.setUsername("connected_test");
           testUser.setConnectedCustomers(Arrays.asList(insertedCustomer1.getId(), insertedCustomer2.getId()));
           insertedUser = externalUserDao.insert(testUser);
           assertEquals(testUser.getName(), insertedUser.getName());
@@ -103,7 +103,7 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
       });
       context("insert with roles", () -> {
         it("should work", () -> {
-          testUser.setUsername("external_roles_test");
+          testUser.setUsername("roles_test");
           testUser.setAssignedRoles(Arrays.asList(ExternalRoleType.ROLE_INTERNAL, ExternalRoleType.ROLE_TRUSTED_PARTNER));
           insertedUser = externalUserDao.insert(testUser);
           assertEquals(testUser.getName(), insertedUser.getName());
@@ -122,9 +122,9 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
           assertEquals(1, updatedUser.get().getAssignedRoles().size());
         });
         it("should complain if duplicate username", () -> {
-          testUser.setUsername("external_updateduplicate");
+          testUser.setUsername("updateduplicate");
           externalUserDao.insert(testUser);
-          insertedUser.setUsername("external_updateduplicate");
+          insertedUser.setUsername("updateduplicate");
           assertThrows(NonUniqueException.class).when(() -> externalUserDao.update(insertedUser));
         });
         it("should update last login", () -> {

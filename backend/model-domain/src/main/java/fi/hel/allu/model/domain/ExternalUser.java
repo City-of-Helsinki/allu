@@ -68,9 +68,6 @@ public class ExternalUser {
   }
 
   public void setUsername(String username) {
-    if (!username.startsWith("external_")) {
-      throw new IllegalArgumentException("External service user name has to begin with external_");
-    }
     this.username = username;
   }
 

@@ -45,6 +45,14 @@ export class CustomerService {
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')));
   }
 
+  public findByCustomerIds(ids: Array<number>): Observable<Array<Customer>> {
+    let url = CUSTOMERS_URL + '/findByIds';
+    return this.authHttp.post(url, JSON.stringify(ids))
+      .map(response => response.json())
+      .map(customers => customers.map(c => CustomerMapper.mapBackend(c)))
+      .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')));
+  }
+
   public findContactById(id: number): Observable<Contact> {
     let url = CONTACTS_URL + '/' + id;
     return this.authHttp.get(url)

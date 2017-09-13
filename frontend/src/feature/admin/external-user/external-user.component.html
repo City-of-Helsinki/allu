@@ -1,0 +1,100 @@
+<div class="main-content">
+    <div class="row">
+        <div class="col m6">
+            <form [formGroup]="userForm" (ngSubmit)="save()">
+                <md-card>
+                    <md-card-title>Rajapintakäyttäjän tiedot</md-card-title>
+                    <md-card-content>
+                        <div class="row">
+                            <div class="col s12">
+                                <md-form-field class="input-full-width">
+                                    <input mdInput type="text" formControlName="username" placeholder="Käyttäjänimi*"/>
+                                    <md-hint>
+                                        <field-error [form]="userForm" field="username" hasError="required">{{'common.field.usernameMissing' | translation}}</field-error>
+                                    </md-hint>
+                                </md-form-field>
+                            </div>
+                            <div class="col s12">
+                                <md-form-field class="input-full-width">
+                                    <input mdInput type="text" formControlName="name" placeholder="Nimi*"/>
+                                    <md-hint>
+                                        <field-error [form]="userForm" field="name" hasError="required">{{'common.field.nameMissing' | translation}}</field-error>
+                                    </md-hint>
+                                </md-form-field>
+                            </div>
+                            <div class="col s12">
+                                <md-form-field class="input-full-width">
+                                    <input mdInput type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
+                                    <md-hint>
+                                        <field-error [form]="userForm" field="emailAddress" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
+                                    </md-hint>
+                                </md-form-field>
+                            </div>
+                            <div class="col s12">
+                                <md-checkbox formControlName="active" class="checkbox-matching-height">Aktiivinen</md-checkbox>
+                            </div>
+                            <div class="col s12">
+                                <md-form-field class="input-full-width customer-name-search">
+                                    <input mdInput type="text" placeholder="Lisää asiakas"
+                                           formControlName="customerName" [mdAutocomplete]="nameSearch"/>
+                                    <md-autocomplete #nameSearch="mdAutocomplete">
+                                        <md-option *ngFor="let customer of matchingNameCustomers | async"
+                                                   (onSelectionChange)="addCustomer(customer.id)">
+                                            {{ customer.name }}
+                                        </md-option>
+                                    </md-autocomplete>
+                                </md-form-field>
+                                <md-list dense>
+                                    <md-list-item *ngFor="let customer of connectedCustomers | async">
+                                        <span class="customer-name">{{customer.name}}</span>
+                                        <button type="button" md-icon-button mdSuffix (click)="removeCustomer(customer.id)">
+                                            <md-icon>remove_circle</md-icon>
+                                        </button>
+                                    </md-list-item>
+                                </md-list>
+                            </div>
+                        </div>
+                    </md-card-content>
+                    <md-card-subtitle>
+                        <span>Asiakasavaimeen vaikuttavat tiedot</span>
+                        <md-icon mdTooltip="{{'externalUser.tooltip.tokenChanges' | translation}}" color="primary">info_outline</md-icon>
+                    </md-card-subtitle>
+                    <md-card-content>
+                        <div class="row">
+                            <div class="col s12">
+                                <md-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit" class="input-full-width">
+                                    <md-option *ngFor="let role of roles" [value]="role">
+                                        {{['externalUser.role', role] | translation}}
+                                    </md-option>
+                                </md-select>
+                            </div>
+                            <div class="col s12">
+                                <md-form-field class="input-full-width">
+                                    <input mdInput type="text" formControlName="expirationTime" placeholder="Voimassaolo*"
+                                           [mdDatepicker]="expirationTimePicker"/>
+                                    <md-datepicker-toggle mdSuffix [for]="expirationTimePicker" [disabled]="readonly"></md-datepicker-toggle>
+                                    <md-datepicker #expirationTimePicker></md-datepicker>
+                                    <md-hint>
+                                        <field-error [form]="userForm" field="expirationTime" hasError="required">
+                                            {{'externalUser.field.expirationTimeMissing' | translation}}
+                                        </field-error>
+                                    </md-hint>
+                                </md-form-field>
+                            </div>
+                            <div class="col s12">
+                                <md-form-field class="input-full-width">
+                                    <textarea mdInput type="text" formControlName="token" placeholder="Asiakasavain"></textarea>
+                                </md-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col m12">
+                                <button md-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna</button>
+                            </div>
+                        </div>
+                    </md-card-content>
+                </md-card>
+            </form>
+        </div>
+    </div>
+</div>

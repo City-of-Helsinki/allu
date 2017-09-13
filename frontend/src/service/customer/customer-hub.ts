@@ -19,6 +19,12 @@ export class CustomerHub {
    */
   public fetchAllCustomers = () => this.customerService.fetchAllCustomers();
 
+
+  /**
+   * Fetches customers by given ids
+   */
+  public findByCustomerIds = (ids: Array<number>) => this.customerService.findByCustomerIds(ids);
+
   /**
    * Fetches customer by given id
    */

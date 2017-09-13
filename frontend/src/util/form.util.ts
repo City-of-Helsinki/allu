@@ -15,4 +15,9 @@ export class FormUtil {
       }
     }
   }
+
+  public static contains(formArray: FormArray, condition: (val: any) => boolean) {
+    const values = formArray.value;
+    return values ? values.some(condition) : false;
+  }
 }

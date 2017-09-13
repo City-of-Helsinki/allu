@@ -32,6 +32,12 @@ public class CustomerController {
     return new ResponseEntity<>(customerService.findCustomerById(id), HttpStatus.OK);
   }
 
+  @RequestMapping(value = "/findByIds", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<CustomerJson>> findByIds(@RequestBody List<Integer> ids) {
+    return new ResponseEntity<>(customerService.getCustomersById(ids), HttpStatus.OK);
+  }
+
   @RequestMapping(method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<CustomerJson>> findAll() {

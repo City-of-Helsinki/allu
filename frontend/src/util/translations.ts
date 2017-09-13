@@ -270,6 +270,7 @@ export const translations = {
     }
   },
   customer: {
+    nameLabel: 'Nimi',
     type: {
       COMPANY: {
         name: 'Yritys',
@@ -421,6 +422,30 @@ export const translations = {
       ROLE_ADMIN: 'Ylläpito'
     }
   },
+  externalUser: {
+    nav: 'RAJAPINTAKÄYTTÄJÄT',
+    username: 'Käyttäjänimi',
+    name: 'Nimi',
+    email: 'Sähköposti',
+    lastLogin: 'Viimeisin kirjautuminen',
+    roles: 'Roolit',
+    expirationTime: 'Voimassa',
+    role: {
+      ROLE_INTERNAL: 'Sisäinen',
+      ROLE_TRUSTED_PARTNER: 'Luotettu kumppani'
+    },
+    field: {
+      expirationTimeMissing: 'Voimassaoloaika puuttuu'
+    },
+    actions: {
+      saved: 'Rajapintakäyttäjä tallennettu.',
+      customerTokenGenerated: 'Asiakasavain luotiin uudestaan. <br> Luotu avain tulee toimittaa asiakkaalle kirjatumista varten.'
+    },
+    tooltip: {
+      tokenChanges: 'Alla olevien kenttiä muokkaus aiheuttaa asiakkaan avaimen uudelleen luomisen. ' +
+      'Uusi avain on toimitettava asiakkaalle kirjautumista varten.'
+    }
+  },
   defaultText: {
     actions: {
       saved: 'Vakiotekstit tallennettu'
@@ -450,6 +475,7 @@ export const translations = {
   },
   common: {
     field: {
+      usernameMissing: 'Käyttäjänimi puuttuu',
       nameMissing: 'Nimi puuttuu',
       emailInvalid: 'Virheellinen sähköpostiosoite',
       postalCode: 'Tarkista postinumero'
