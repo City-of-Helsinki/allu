@@ -31,7 +31,7 @@ export class ContactModalComponent implements OnInit {
   }
 
   onSubmit(contact: Contact) {
-    this.customerHub.saveCustomerWithContacts(contact.customerId, undefined, [contact])
+    this.customerHub.saveContactsForCustomer(contact.customerId, [contact])
       .subscribe(
         saved => {
           NotificationService.message(findTranslation('contact.action.save'));

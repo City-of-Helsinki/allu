@@ -48,18 +48,16 @@ export class CustomerComponent implements OnInit {
   }
 
   removeFromRegistry(formValues: CustomerWithContactsForm): void {
-    let customerId = formValues.customer.id;
     let customer = CustomerForm.toCustomer(formValues.customer);
     customer.active = false;
-    this.save(customerId, customer, this.contactChanges()).subscribe(
+    this.save(customer, this.contactChanges()).subscribe(
       c => this.notifyAndNavigateToCustomers(findTranslation('customer.action.removeFromRegistry')),
       error => NotificationService.error(error)
     );
   }
 
   onSubmit(formValues: CustomerWithContactsForm): void {
-    let customerId = formValues.customer.id;
-    this.save(customerId, this.customerChanges(), this.contactChanges()).subscribe(
+    this.save(this.customerChanges(), this.contactChanges()).subscribe(
         customer => this.notifyAndNavigateToCustomers(findTranslation('customer.action.save')),
         error => NotificationService.error(error)
     );
@@ -69,8 +67,9 @@ export class CustomerComponent implements OnInit {
     return this.form.valid && this.form.dirty;
   }
 
-  private save(customerId: number, customer: Customer, contacts: Array<Contact>): Observable<CustomerWithContacts> {
-    return this.customerHub.saveCustomerWithContacts(customerId, customer, contacts);
+  private save(customer: Customer, contacts: Array<Contact>): Observable<CustomerWithContacts> {
+    const customerWithContacts = new CustomerWithContacts(undefined, customer, contacts);
+    return this.customerHub.saveCustomerWithContacts(customerWithContacts);
   }
 
   private notifyAndNavigateToCustomers(message: string): void {
@@ -79,9 +78,7 @@ export class CustomerComponent implements OnInit {
   }
 
   private customerChanges(): Customer {
-    return this.customerForm.dirty
-      ? CustomerForm.toCustomer(this.customerForm.value)
-      : undefined;
+    return CustomerForm.toCustomer(this.customerForm.value);
   }
 
   private contactChanges(): Array<Contact> {

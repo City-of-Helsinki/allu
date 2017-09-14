@@ -90,6 +90,7 @@ public class CustomerService {
       createdCustomerWithContacts.setContacts(contacts);
     }
 
+    createdCustomerWithContacts.setRoleType(customerWithContactsJson.getRoleType());
     return createdCustomerWithContacts;
   }
 
@@ -129,6 +130,7 @@ public class CustomerService {
 
   public CustomerWithContactsJson updateCustomerWithContacts(int customerId, CustomerWithContactsJson customerWithContactsJson) {
     CustomerWithContactsJson updatedCustomerWithContactsJson = new CustomerWithContactsJson();
+    updatedCustomerWithContactsJson.setRoleType(customerWithContactsJson.getRoleType());
     if (customerWithContactsJson.getCustomer() != null) {
       CustomerJson updatedCustomer = customerWithContactsJson.getCustomer();
       updatedCustomer.setId(customerId);

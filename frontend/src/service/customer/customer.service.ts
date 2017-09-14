@@ -69,9 +69,8 @@ export class CustomerService {
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetchContacts')));
   }
 
-  public saveCustomerWithContacts(customerId: number, customer: Customer, contacts: Array<Contact>): Observable<CustomerWithContacts> {
-     let customerWithContacts = new CustomerWithContacts(undefined, customer, contacts);
-     return Some(customerId)
+  public saveCustomerWithContacts(customerWithContacts: CustomerWithContacts): Observable<CustomerWithContacts> {
+     return Some(customerWithContacts.customerId)
      .map(id => this.updateCustomer(id, customerWithContacts))
      .orElse(this.createCustomer(customerWithContacts))
      .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.save')));

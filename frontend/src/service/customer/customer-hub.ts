@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {CustomerService} from './customer.service';
 import {Contact} from '../../model/customer/contact';
 import {CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
-import {Customer} from '../../model/customer/customer';
+import {CustomerWithContacts} from '../../model/customer/customer-with-contacts';
 
 @Injectable()
 export class CustomerHub {
@@ -35,11 +35,18 @@ export class CustomerHub {
    */
   public findContactById = (id: number) => this.customerService.findContactById(id);
 
+
+  /**
+   * Saves contacts for given customer
+   */
+  public saveContactsForCustomer = (customerId: number, contacts: Array<Contact>) =>
+    this.customerService.saveCustomerWithContacts(new CustomerWithContacts(undefined, undefined, contacts));
+
   /**
    * Saves customer with his / hers contacts
    */
-  public saveCustomerWithContacts = (customerId: number, customer: Customer, contacts: Array<Contact>) =>
-    this.customerService.saveCustomerWithContacts(customerId, customer, contacts);
+  public saveCustomerWithContacts = (customerWithContacts: CustomerWithContacts) =>
+    this.customerService.saveCustomerWithContacts(customerWithContacts);
 
   /**
    * Fetches all contacts of given customer

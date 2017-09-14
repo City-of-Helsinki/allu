@@ -17,6 +17,7 @@ import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {NumberUtil} from '../../util/number.util';
 import {ObjectUtil} from '../../util/object.util';
+import {CustomerHub} from '../customer/customer-hub';
 
 @Injectable()
 export class ApplicationState {
@@ -31,6 +32,7 @@ export class ApplicationState {
 
   constructor(private router: Router,
               private applicationHub: ApplicationHub,
+              private customerHub: CustomerHub,
               private projectHub: ProjectHub,
               private attachmentHub: AttachmentHub,
               private commentHub: CommentHub) {
@@ -82,12 +84,6 @@ export class ApplicationState {
 
   get pendingAttachments(): Observable<Array<AttachmentInfo>> {
     return this.pendingAttachments$.asObservable();
-  }
-
-  get allAttachmentsSnapshot(): Array<AttachmentInfo> {
-    let pending = this.pendingAttachments$.getValue();
-    let saved = this.attachments$.getValue();
-    return pending.concat(saved);
   }
 
   get allAttachments(): Observable<Array<AttachmentInfo>> {
@@ -178,7 +174,8 @@ export class ApplicationState {
   }
 
   save(application: Application): Observable<Application> {
-    return this.applicationHub.save(application)
+    return this.saveCustomersAndContacts(application)
+      .switchMap(app => this.applicationHub.save(app))
       .switchMap(app => this.savePending(app))
       .switchMap(app => this.saved(app));
   }
@@ -205,6 +202,15 @@ export class ApplicationState {
         app.applicationTags = savedTags;
         return app;
       }).do(app => this.application$.next(app));
+  }
+
+  private saveCustomersAndContacts(application: Application): Observable<Application> {
+    return Observable.forkJoin(application.customersWithContacts.map(cwc =>
+      this.customerHub.saveCustomerWithContacts(cwc))
+    ).map(savedCustomersWithContacts => {
+      application.customersWithContacts = savedCustomersWithContacts;
+      return application;
+    });
   }
 
   private savePending(application: Application) {
