@@ -36,6 +36,20 @@ public class ExternalUser {
       boolean active,
       ZonedDateTime expirationTime,
       ZonedDateTime lastLogin,
+      List<Integer> connectedCustomers) {
+    // for QueryDSL Projections.constructor
+    this(id, username, name, emailAddress, token, active, expirationTime, lastLogin, Collections.emptyList(), connectedCustomers);
+  }
+
+  public ExternalUser(
+      Integer id,
+      String username,
+      String name,
+      String emailAddress,
+      String token,
+      boolean active,
+      ZonedDateTime expirationTime,
+      ZonedDateTime lastLogin,
       List<ExternalRoleType> assignedRoles,
       List<Integer> connectedCustomers) {
     this.id = id;

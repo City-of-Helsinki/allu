@@ -18,10 +18,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
@@ -40,23 +37,29 @@ public class ExternalUserDao {
 
   @Transactional(readOnly = true)
   public Optional<ExternalUser> findById(int id) {
-    // the query returns only one results at most
-    return getSelectJoin()
+    Optional<ExternalUser> externalUserOpt = getSelectJoin()
         .where(externalUser.id.eq(id))
         .transform(getGroupBy()).values().stream().findFirst();
+    externalUserOpt.ifPresent(e -> addRoles(e));
+    return externalUserOpt;
   }
 
   @Transactional(readOnly = true)
   public Optional<ExternalUser> findByUsername(String username) {
     // the query returns only one results at most
-    return getSelectJoin()
+    Optional<ExternalUser> externalUserOpt = getSelectJoin()
         .where(externalUser.username.eq(username))
         .transform(getGroupBy()).values().stream().findFirst();
+    externalUserOpt.ifPresent(e -> addRoles(e));
+    return externalUserOpt;
   }
 
   @Transactional(readOnly = true)
   public List<ExternalUser> findAll() {
-    return new ArrayList<>(getSelectJoin().transform(getGroupBy()).values());
+    Collection<ExternalUser> externalUsers = getSelectJoin().transform(getGroupBy()).values();
+    // This will be slow if there's many external users. This is not expected in the near future
+    externalUsers.forEach(e -> addRoles(e));
+    return new ArrayList<>(externalUsers);
   }
 
   @Transactional
@@ -129,7 +132,6 @@ public class ExternalUserDao {
         externalUser.active,
         externalUser.expirationTime,
         externalUser.lastLogin,
-        list(externalUserRole.role),
         list(externalUserCustomer.customerId)));
   }
 
@@ -138,8 +140,15 @@ public class ExternalUserDao {
         .select(externalUserBean, externalUserCustomer.customerId)
         .from(externalUser)
         .leftJoin(externalUserCustomer)
-        .on(externalUser.id.eq(externalUserCustomer.externalUserId))
-        .leftJoin(externalUserRole)
-        .on(externalUser.id.eq(externalUserRole.externalUserId));
+        .on(externalUser.id.eq(externalUserCustomer.externalUserId));
+  }
+
+  private void addRoles(ExternalUser externalUser) {
+    externalUser.setAssignedRoles(
+        queryFactory
+            .select(externalUserRole.role)
+            .from(externalUserRole)
+            .where(externalUserRole.externalUserId.eq(externalUser.getId()))
+            .fetch());
   }
 }

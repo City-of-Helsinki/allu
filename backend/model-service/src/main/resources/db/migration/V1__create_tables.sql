@@ -333,8 +333,8 @@ create table allu.external_user (
 -- Roles external service users have
 create table allu.external_user_role (
   id serial primary key,
-  external_user_id integer references allu.external_user(id),
-  role text );
+  external_user_id integer not null references allu.external_user(id),
+  role text not null);
 
 -- Customers linked to the external service user
 create table allu.external_user_customer (

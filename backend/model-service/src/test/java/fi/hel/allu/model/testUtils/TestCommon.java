@@ -239,6 +239,9 @@ public class TestCommon {
       "delete from allu.distribution_entry",
       "delete from allu.application",
       "delete from allu.project",
+      "delete from allu.external_user_customer",
+      "delete from allu.external_user_role",
+      "delete from allu.external_user",
       "delete from allu.customer",
       "delete from allu.outdoor_pricing",
       "delete from allu.fixed_location",
@@ -248,8 +251,5 @@ public class TestCommon {
       "delete from allu.user",
       "delete from allu.default_text",
       "delete from allu.default_recipient",
-      "delete from allu.external_user_customer",
-      "delete from allu.external_user_role",
-      "delete from allu.external_user",
    };
 }

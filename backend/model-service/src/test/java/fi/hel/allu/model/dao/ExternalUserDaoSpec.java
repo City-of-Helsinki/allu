@@ -95,6 +95,7 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
           insertedUser = externalUserDao.insert(testUser);
           assertEquals(testUser.getName(), insertedUser.getName());
           assertEquals(2, insertedUser.getConnectedCustomers().size());
+          assertEquals(0, insertedUser.getAssignedRoles().size());
           assertTrue(insertedUser.getConnectedCustomers().containsAll(Arrays.asList(insertedCustomer1.getId(), insertedCustomer2.getId())));
         });
         it("should complain if duplicate username", () -> {
@@ -103,6 +104,8 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
       });
       context("insert with roles", () -> {
         it("should work", () -> {
+          testUser.setUsername("roles_test2");
+          externalUserDao.insert(testUser);
           testUser.setUsername("roles_test");
           testUser.setAssignedRoles(Arrays.asList(ExternalRoleType.ROLE_INTERNAL, ExternalRoleType.ROLE_TRUSTED_PARTNER));
           insertedUser = externalUserDao.insert(testUser);
@@ -120,6 +123,20 @@ public class ExternalUserDaoSpec extends SpeccyTestBase {
           assertTrue(updatedUser.isPresent());
           assertEquals(1, updatedUser.get().getConnectedCustomers().size());
           assertEquals(1, updatedUser.get().getAssignedRoles().size());
+        });
+        it("should work when done twice", () -> {
+          insertedUser.setConnectedCustomers(Arrays.asList(insertedCustomer1.getId()));
+          insertedUser.setAssignedRoles(Arrays.asList(ExternalRoleType.ROLE_TRUSTED_PARTNER));
+          externalUserDao.update(insertedUser);
+          Optional<ExternalUser> updatedUserOpt = externalUserDao.findById(insertedUser.getId());
+          ExternalUser updatedUser = updatedUserOpt.get();
+          updatedUser.setConnectedCustomers(Arrays.asList(insertedCustomer1.getId(), insertedCustomer2.getId()));
+          updatedUser.setAssignedRoles(Arrays.asList(ExternalRoleType.ROLE_INTERNAL, ExternalRoleType.ROLE_TRUSTED_PARTNER));
+          externalUserDao.update(updatedUser);
+          updatedUserOpt = externalUserDao.findById(insertedUser.getId());
+          assertTrue(updatedUserOpt.isPresent());
+          assertEquals(2, updatedUserOpt.get().getConnectedCustomers().size());
+          assertEquals(2, updatedUserOpt.get().getAssignedRoles().size());
         });
         it("should complain if duplicate username", () -> {
           testUser.setUsername("updateduplicate");
