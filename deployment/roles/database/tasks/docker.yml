@@ -33,6 +33,10 @@
 - name: extract tar from Docker gzipped image
   command: gunzip -f /tmp/allu_database.tar.gz
 
+- name: start Docker services on remote host
+  service: name=docker state=started
+  become: yes
+
 - name: stop and remove existing container from Docker
   docker_container:
     name: allu_database_container

@@ -5,6 +5,15 @@
 - name: install docker-py dependency for managing Docker with Ansible
   pip: name=docker-py
 
+- name: check does Docker daemon already exist
+  stat:
+    path: /var/lib/docker
+  register: dockerPresent
+
+- name: shut down Docker, if it's installed. Start-up is done by roles that need Docker
+  service: name=docker state=stopped
+  when: dockerPresent.stat.exists
+
 - name: copy Docker deb-package to target host
   copy: src=docker-ce_17.03.1-ce-0-ubuntu-xenial_amd64.deb dest=/tmp/docker.deb
 
