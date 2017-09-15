@@ -1,0 +1,3 @@
+runs_in_production: true
+
+oauth2_redirect_uri: http://TBD/oauth2/

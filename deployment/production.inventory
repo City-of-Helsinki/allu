@@ -1,0 +1,20 @@
+[webservers]
+10.138.10.93
+
+[dbservers]
+# databaseEndpoint is used to configure the location of database server in backend.yml. Just leave it when changing IP address
+databaseEndpoint ansible_host=10.138.10.91
+
+[backendservers]
+# backendEndpoint is used to configure the proxypass target of front server in frontend.yml. Just leave it when changing IP address
+backendEndpoint ansible_host=10.138.10.92
+
+[searchservers]
+# searchEndpoint is used to configure the location of ElasticSearch server in search-service.yml. Just leave it when changing IP address
+searchEndpoint ansible_host=10.138.10.91
+
+[production:children]
+webservers
+dbservers
+backendservers
+searchservers
