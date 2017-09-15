@@ -4,7 +4,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {CableReportForm, OrdererIndexForm} from './cable-report.form';
+import {CableReportForm, OrdererIdForm} from './cable-report.form';
 import {ApplicationState} from '../../../../service/application/application-state';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
@@ -45,7 +45,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
         endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       workDescription: [''],
-      ordererIndex: [OrdererIndexForm.createDefault(), Validators.required]
+      ordererId: [OrdererIdForm.createDefault(), Validators.required]
     });
   }
 

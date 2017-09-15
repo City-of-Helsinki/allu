@@ -430,8 +430,6 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
     VALUES (currval('allu.structure_meta_id_seq'), 'phone', 'Puhelin', 'STRING', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'active', 'Kontakti käytössä', 'BOOLEAN', null, null);
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'orderer', 'Johtoselvityksen tilaaja', 'BOOLEAN', null, null);
 
 
 -- Postal address
@@ -553,16 +551,6 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'additionalInfo', 'Lisätietoja', 'STRING', null, null);
 
--- OrdererIndex
-INSERT INTO allu.structure_meta (type_name, version) VALUES ('OrdererIndex', 1);
-
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'type', 'Asiakkuuden tyyppi', 'ENUMERATION', null,
-        (select id from allu.structure_meta where type_name = 'CustomerRoleType' and version = 1));
-INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'),  'index', 'Tilaajan indeksi', 'INTEGER', null, null);
-
-
 -- CABLE_REPORT
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('CABLE_REPORT', 1);
 
@@ -593,8 +581,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'), 'validityTime', 'Voimassaoloaika', 'DATETIME', null, null);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
-    VALUES (currval('allu.structure_meta_id_seq'), 'ordererIndex', 'Tilaajaindeksi', 'STRUCTURE', null,
-    (select id from allu.structure_meta where type_name = 'OrdererIndex' and version = 1));
+    VALUES (currval('allu.structure_meta_id_seq'), 'orderer', 'Johtoselvityksen tilaaja', 'INTEGER', null, null);
 
 -----------------------------------
 -- Excavation announcement metadata

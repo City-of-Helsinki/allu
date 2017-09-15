@@ -9,6 +9,11 @@ import {Note} from '../../model/application/note/note';
 import {TrafficArrangement} from '../../model/application/traffic-arrangement/traffic-arrangement';
 import {PlacementContract} from '../../model/application/placement-contract/placement-contract';
 import {AreaRental} from '../../model/application/area-rental/area-rental';
+import {OrdererId} from '../../model/application/cable-report/orderer-id';
+import {Application} from '../../model/application/application';
+import {Some} from '../../util/option';
+import {CustomerWithContacts} from '../../model/customer/customer-with-contacts';
+import {ArrayUtil} from '../../util/array-util';
 
 export class ApplicationExtensionMapper {
   public static mapBackend(backendExtension: any): ApplicationExtension {
@@ -54,7 +59,7 @@ export class ApplicationExtensionMapper {
           backendExtension.workDescription,
           backendExtension.mapExtractCount,
           backendExtension.infoEntries,
-          backendExtension.ordererIndex
+          OrdererId.ofId(backendExtension.orderer)
         );
       case ApplicationType.EXCAVATION_ANNOUNCEMENT:
         return new ExcavationAnnouncement(
@@ -110,25 +115,25 @@ export class ApplicationExtensionMapper {
     }
   }
 
-  public static mapFrontend(applicationTypeData: ApplicationExtension): any {
-      const applicationType: string = applicationTypeData.applicationType;
+  public static mapFrontend(application: Application): any {
+      const applicationType: string = application.type;
       switch (ApplicationType[applicationType]) {
           case ApplicationType.EVENT:
-            return this.mapFrontendEvent(<Event> applicationTypeData);
+            return this.mapFrontendEvent(<Event> application.extension);
           case ApplicationType.SHORT_TERM_RENTAL:
-            return this.mapFrontendShortTermRental(<ShortTermRental> applicationTypeData);
+            return this.mapFrontendShortTermRental(<ShortTermRental>  application.extension);
           case ApplicationType.CABLE_REPORT:
-            return this.mapFrontendCableReport(<CableReport> applicationTypeData);
+            return this.mapFrontendCableReport(application);
           case ApplicationType.EXCAVATION_ANNOUNCEMENT:
-            return this.mapFrontendExcavationAnnouncement(<ExcavationAnnouncement> applicationTypeData);
+            return this.mapFrontendExcavationAnnouncement(<ExcavationAnnouncement>  application.extension);
           case ApplicationType.NOTE:
-            return this.mapFrontendNote(<Note> applicationTypeData);
+            return this.mapFrontendNote(<Note>  application.extension);
           case ApplicationType.TEMPORARY_TRAFFIC_ARRANGEMENTS:
-            return this.mapFrontendTrafficArrangement(<TrafficArrangement> applicationTypeData);
+            return this.mapFrontendTrafficArrangement(<TrafficArrangement>  application.extension);
           case ApplicationType.PLACEMENT_CONTRACT:
-            return this.mapFrontendPlacementContract(<PlacementContract> applicationTypeData);
+            return this.mapFrontendPlacementContract(<PlacementContract>  application.extension);
           case ApplicationType.AREA_RENTAL:
-            return this.mapFrontendAreaRental(<AreaRental> applicationTypeData);
+            return this.mapFrontendAreaRental(<AreaRental>  application.extension);
           default:
               throw new Error('No mapping from backend for ' + applicationType);
       }
@@ -168,7 +173,10 @@ export class ApplicationExtensionMapper {
     };
   }
 
-  private static mapFrontendCableReport(cableReport: CableReport): any {
+  private static mapFrontendCableReport(application: Application): any {
+    const cableReport = <CableReport> application.extension;
+    const ordererId = Some(cableReport.ordererId.id)
+      .orElse(this.getOrdererId(cableReport.ordererId, application.customersWithContacts));
     return {
       applicationType: cableReport.applicationType,
       validityTime: TimeUtil.dateToBackend(cableReport.validityTime),
@@ -182,8 +190,15 @@ export class ApplicationExtensionMapper {
       workDescription: cableReport.workDescription,
       mapExtractCount: cableReport.mapExtractCount,
       infoEntries: cableReport.infoEntries,
-      ordererIndex: cableReport.ordererIndex
+      orderer: ordererId
     };
+  }
+
+  private static getOrdererId(ordererId: OrdererId, customersWithContacts: Array<CustomerWithContacts>): number {
+    return Some(ArrayUtil.first(customersWithContacts.filter(cwc => cwc.uiRoleType === ordererId.customerRoleType)))
+      .map(cwc => cwc.contacts[ordererId.index])
+      .map(orderer => orderer.id)
+      .orElse(undefined);
   }
 
   private static mapFrontendExcavationAnnouncement(excavation: ExcavationAnnouncement): any {

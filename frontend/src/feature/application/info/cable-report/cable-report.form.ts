@@ -5,7 +5,7 @@ import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
 import {TimeUtil} from '../../../../util/time.util';
 import {ApplicationStatus} from '../../../../model/application/application-status';
-import {OrdererIndex} from '../../../../model/application/cable-report/orderer-index';
+import {OrdererId} from '../../../../model/application/cable-report/orderer-id';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 
 export class CableReportForm implements ApplicationForm {
@@ -20,7 +20,7 @@ export class CableReportForm implements ApplicationForm {
     public reportTimes?: TimePeriod,
     public workDescription?: string,
     public cableInfo?: CableInfoForm,
-    public ordererIndex?: OrdererIndexForm
+    public ordererId?: OrdererIdForm
   ) {}
 
   static to(form: CableReportForm, validityTime: Date): CableReport {
@@ -33,7 +33,7 @@ export class CableReportForm implements ApplicationForm {
     cableReport.emergencyWork = form.emergencyWork;
     cableReport.propertyConnectivity = form.propertyConnectivity;
     cableReport.workDescription = form.workDescription;
-    cableReport.ordererIndex = OrdererIndexForm.to(form.ordererIndex);
+    cableReport.ordererId = OrdererIdForm.to(form.ordererId);
     return CableInfoForm.to(form.cableInfo, cableReport);
   }
 
@@ -50,7 +50,7 @@ export class CableReportForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
       CableInfoForm.from(cableReport),
-      OrdererIndexForm.from(cableReport.ordererIndex)
+      OrdererIdForm.from(cableReport.ordererId)
     );
   }
 
@@ -87,21 +87,22 @@ export class CableInfoForm {
   }
 }
 
-export class OrdererIndexForm {
+export class OrdererIdForm {
   constructor(
-    public customerRoleType: string,
-    public index: number
+    public id?: number,
+    public customerRoleType?: string,
+    public index?: number
   ) {}
 
-  static to(form: OrdererIndexForm): OrdererIndex {
-    return form ? new OrdererIndex(form.customerRoleType, form.index) : undefined;
+  static to(form: OrdererIdForm): OrdererId {
+    return form ? OrdererId.of(form.id, form.customerRoleType, form.index) : undefined;
   }
 
-  static from(ordererIndex: OrdererIndex): OrdererIndexForm {
-    return ordererIndex ? new OrdererIndexForm(ordererIndex.customerRoleType, ordererIndex.index) : OrdererIndexForm.createDefault();
+  static from(ordererId: OrdererId): OrdererIdForm {
+    return ordererId ? new OrdererIdForm(ordererId.id, ordererId.customerRoleType, ordererId.index) : OrdererIdForm.createDefault();
   }
 
   static createDefault() {
-    return new OrdererIndexForm(CustomerRoleType[CustomerRoleType.APPLICANT], 0);
+    return new OrdererIdForm(undefined, CustomerRoleType[CustomerRoleType.APPLICANT], 0);
   }
 }

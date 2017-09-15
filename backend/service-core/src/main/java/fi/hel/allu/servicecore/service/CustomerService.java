@@ -141,15 +141,15 @@ public class CustomerService {
       Map<Boolean, List<ContactJson>> newOldContacts =
           customerWithContactsJson.getContacts().stream().collect(Collectors.partitioningBy(c -> c.getId() != null));
       ArrayList<ContactJson> allContacts = new ArrayList<>();
-      if (!newOldContacts.get(false).isEmpty()) {
-        List<ContactJson> newContacts = contactService.createContacts(newOldContacts.get(false));
-        searchService.insertContacts(newContacts);
-        allContacts.addAll(newContacts);
-      }
       if (!newOldContacts.get(true).isEmpty()) {
         List<ContactJson> oldContacts = contactService.updateContacts(newOldContacts.get(true));
         searchService.updateContacts(oldContacts);
         allContacts.addAll(oldContacts);
+      }
+      if (!newOldContacts.get(false).isEmpty()) {
+        List<ContactJson> newContacts = contactService.createContacts(newOldContacts.get(false));
+        searchService.insertContacts(newContacts);
+        allContacts.addAll(newContacts);
       }
       updatedCustomerWithContactsJson.setContacts(allContacts);
     }

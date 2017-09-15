@@ -46,6 +46,8 @@ public class DecisionService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private LocationService locationService;
+  private CustomerService customerService;
+  private ContactService contactService;
   private ApplicationServiceComposer applicationServiceComposer;
   private final ZoneId zoneId;
   private final Locale locale;
@@ -76,11 +78,15 @@ public class DecisionService {
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
       LocationService locationService,
-      ApplicationServiceComposer applicationServiceComposer) {
+      ApplicationServiceComposer applicationServiceComposer,
+      CustomerService customerService,
+      ContactService contactService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.locationService = locationService;
     this.applicationServiceComposer = applicationServiceComposer;
+    this.customerService = customerService;
+    this.contactService = contactService;
     zoneId = ZoneId.of("Europe/Helsinki");
     locale = new Locale("fi", "FI");
     dateTimeFormatter = DateTimeFormatter.ofPattern("d.M.uuuu");
@@ -279,9 +285,9 @@ public class DecisionService {
   private Optional<Pair<CustomerJson, ContactJson>> cableReportOrderer(
       ApplicationJson applicationJson) {
     CableReportJson cableReport = (CableReportJson)applicationJson.getExtension();
-    OrdererIndexJson index = cableReport.getOrdererIndex();
-    return CableReportMapper.getCustomerJsonWithOrderer(index, applicationJson.getCustomersWithContacts())
-        .map(cwc -> Pair.of(cwc.getCustomer(), CableReportMapper.getOrdererJson(index.getIndex(), cwc)));
+    return Optional.ofNullable(cableReport.getOrderer())
+        .map(id -> contactService.findById(id))
+        .map(contact -> Pair.of(customerService.findCustomerById(contact.getCustomerId()), contact));
   }
   /*
    * Find the customer and contact that left the cable report and return them

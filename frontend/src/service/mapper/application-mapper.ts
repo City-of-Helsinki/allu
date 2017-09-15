@@ -68,7 +68,7 @@ export class ApplicationMapper {
       recurringEndTime: TimeUtil.dateToBackend(application.recurringEndTime),
       customersWithContacts: CustomerMapper.mapFrontendCustomersWithContacts(application.customersWithContacts),
       locations: LocationMapper.mapFrontendList(application.locations),
-      extension: ApplicationExtensionMapper.mapFrontend(application.extension),
+      extension: ApplicationExtensionMapper.mapFrontend(application),
       decisionTime: TimeUtil.dateToBackend(application.decisionTime),
       decisionMaker: application.decisionMaker,
       decisionDistributionType: application.decisionDistributionType,

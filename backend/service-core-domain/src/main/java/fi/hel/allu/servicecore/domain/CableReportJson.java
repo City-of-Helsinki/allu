@@ -18,7 +18,7 @@ public class CableReportJson extends ApplicationExtensionJson {
   private Boolean emergencyWork;
   private Boolean propertyConnectivity;
   private ZonedDateTime validityTime;
-  private OrdererIndexJson ordererIndex;
+  private Integer orderer;
 
   @Override
   public ApplicationType getApplicationType() {
@@ -158,15 +158,15 @@ public class CableReportJson extends ApplicationExtensionJson {
 
   /**
    * In Finnish: Tilaaja
-   * Identifier of a person who ordered the application
+   * Identifier of a person (contact) who ordered the application
    * Currently in use only for cable report (Johtoselvityksen tilaaja)
    * Only one contact per application can be marked as orderer.
    */
-  public OrdererIndexJson getOrdererIndex() {
-    return ordererIndex;
+  public Integer getOrderer() {
+    return orderer;
   }
 
-  public void setOrdererIndex(OrdererIndexJson ordererIndex) {
-    this.ordererIndex = ordererIndex;
+  public void setOrderer(Integer orderer) {
+    this.orderer = orderer;
   }
 }

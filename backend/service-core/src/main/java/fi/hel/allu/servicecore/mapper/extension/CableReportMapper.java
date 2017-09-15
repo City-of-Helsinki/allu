@@ -26,7 +26,7 @@ public class CableReportMapper {
     cableReportJson.setEmergencyWork(cableReport.getEmergencyWork());
     cableReportJson.setPropertyConnectivity(cableReport.getPropertyConnectivity());
     cableReportJson.setValidityTime(cableReport.getValidityTime());
-    cableReportJson.setOrdererIndex(createOrdererIndex(cableReport.getOrderer(), application.getCustomersWithContacts()));
+    cableReportJson.setOrderer(cableReport.getOrderer());
     return ApplicationExtensionMapper.modelToJson(cableReport, cableReportJson);
   }
 
@@ -45,62 +45,8 @@ public class CableReportMapper {
     cableReport.setEmergencyWork(json.getEmergencyWork());
     cableReport.setPropertyConnectivity(json.getPropertyConnectivity());
     cableReport.setValidityTime(json.getValidityTime());
-    cableReport.setOrderer(getOrdererJson(json.getOrdererIndex(), customersWithContactsJson).map(contact -> contact.getId()).orElse(null));
+    cableReport.setOrderer(json.getOrderer());
     return ApplicationExtensionMapper.jsonToModel(json, cableReport);
-  }
-
-  /**
-   * Method for getting orderer (contact) from customer by given index
-   * @param index orderer's index
-   * @param cwc CustomerWithContactsJson structure containing all customers contacts
-   * @return orderer (contact) from given index
-   */
-  public static ContactJson getOrdererJson(Integer index, CustomerWithContactsJson cwc) {
-    return cwc.getContacts().get(index);
-  }
-
-  /**
-   * Method for getting customer structure which contains orderer
-   * @param ordererIndex OrdererIndexJson which identifies orderer from customer structure
-   * @param customersWithContactsJson list of CustomerWithContactsJson
-   * @return Optional of CustomerWithContactsJson which contains orderer or empty Optional when not found
-   */
-  public static Optional<CustomerWithContactsJson> getCustomerJsonWithOrderer(OrdererIndexJson ordererIndex,
-                                                                              List<CustomerWithContactsJson> customersWithContactsJson) {
-    return Optional.ofNullable(ordererIndex)
-        .flatMap(index -> customersWithContactsJson.stream()
-          .filter(cwc -> cwc.getRoleType().equals(index.getCustomerRoleType()))
-          .findFirst());
-  }
-
-  private static Optional<ContactJson> getOrdererJson(OrdererIndexJson ordererIndex, List<CustomerWithContactsJson> customersWithContactsJson) {
-    return Optional.ofNullable(ordererIndex)
-        .flatMap(index -> getCustomerJsonWithOrderer(index, customersWithContactsJson))
-        .map(cwc -> getOrdererJson(ordererIndex.getIndex(), cwc));
-  }
-
-  private static OrdererIndexJson createOrdererIndex(Integer ordererId, List<CustomerWithContacts> customersWithContacts) {
-    Optional<CustomerWithContacts> customerWithOrderer = Optional.ofNullable(ordererId)
-        .flatMap(id -> customersWithContacts.stream()
-        .filter(cwc -> cwc.getContacts().stream().anyMatch(c -> c.getId() == id))
-        .findFirst());
-
-    return customerWithOrderer
-        .map(customer -> createOrdererIndex(ordererId, customer))
-        .orElse(null);
-  }
-
-  private static OrdererIndexJson createOrdererIndex(Integer ordererId, CustomerWithContacts customerWithContacts) {
-    OrdererIndexJson indexJson = new OrdererIndexJson();
-    indexJson.setCustomerRoleType(customerWithContacts.getRoleType());
-
-    List<Contact> contacts = customerWithContacts.getContacts();
-    Integer index = IntStream.range(0, contacts.size())
-        .filter(i -> ordererId.equals(contacts.get(i).getId()))
-        .findFirst().orElseThrow(() -> new IllegalStateException("No orderer found from cable report"));
-
-    indexJson.setIndex(index);
-    return indexJson;
   }
 
   private static CableInfoEntryJson createCableInfoEntryJson(CableInfoEntry cableInfoEntry) {
