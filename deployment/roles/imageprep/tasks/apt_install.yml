@@ -10,6 +10,16 @@
     path: /var/lib/docker
   register: dockerPresent
 
+- name: remove existing docker containers, if executed in test enviroment
+  shell: docker rm -f $(docker ps -qa --no-trunc)
+  when: "dockerPresent.stat.exists and ('test' in group_names or 'staging' in group_names)"
+  ignore_errors: yes
+
+- name: remove existing docker images, if executed in test enviroment
+  shell: docker rmi $(docker images -a -q --no-trunc)
+  when: "dockerPresent.stat.exists and ('test' in group_names or 'staging' in group_names)"
+  ignore_errors: yes
+
 - name: shut down Docker, if it's installed. Start-up is done by roles that need Docker
   service: name=docker state=stopped
   when: dockerPresent.stat.exists

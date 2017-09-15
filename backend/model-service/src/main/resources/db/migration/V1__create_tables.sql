@@ -343,7 +343,7 @@ create table allu.external_user_customer (
   customer_id integer not null references allu.customer(id)
 );
 
--- insert external-service user, which will be shown as the user responsible for adding attachments, comments, tags or changes
+-- insert external-service user, which will be shown as the user responsible for adding attachments, comments, tags or changes etc
 insert into allu.user values (DEFAULT, 'rajapinta', 'Rajapinta', 'rajapinta@no-mail.fi', 'Tittelitön', false, null);
 
 -- TODO: remove predefined allu.user rows from database scripts before moving to production
