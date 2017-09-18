@@ -83,6 +83,7 @@ public class ApplicationMapper {
     applicationDomain.setPriceOverrideReason(applicationJson.getPriceOverrideReason());
     applicationDomain.setNotBillable(applicationJson.getNotBillable());
     applicationDomain.setNotBillableReason(applicationJson.getNotBillableReason());
+    applicationDomain.setInvoiceRecipientId(applicationJson.getInvoiceRecipientId());
     return applicationDomain;
   }
 
@@ -167,6 +168,7 @@ public class ApplicationMapper {
     applicationJson.setNotBillable(application.getNotBillable());
     applicationJson.setNotBillableReason(application.getNotBillableReason());
     applicationJson.setCustomersWithContacts(createCustomerWithContactsJson(application));
+    applicationJson.setInvoiceRecipientId(application.getInvoiceRecipientId());
 
     return applicationJson;
   }

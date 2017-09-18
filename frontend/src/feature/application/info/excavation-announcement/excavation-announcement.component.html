@@ -1,19 +1,17 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
     <div class="row">
         <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
-                  [readonly]="readonly" [showCopyToBilling]="true"
-                  [showPropertyDeveloper]="true" [contactRequired]="true"></customer>
+                  [readonly]="readonly" [showPropertyDeveloper]="true" [contactRequired]="true"></customer>
     </div>
 
     <div class="row" *ngIf="hasPropertyDeveloper">
         <customer [parentForm]="applicationForm" [customerWithContacts]="application.propertyDeveloper"
-                  [readonly]="readonly" [showCopyToBilling]="true"></customer>
+                  [readonly]="readonly"></customer>
     </div>
 
     <div class="row">
         <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
-                  [readonly]="readonly" [showCopyToBilling]="true"
-                  [showRepresentative]="true" [contactRequired]="true"></customer>
+                  [readonly]="readonly" [showRepresentative]="true" [contactRequired]="true"></customer>
     </div>
 
     <div class="row" *ngIf="hasRepresentative">

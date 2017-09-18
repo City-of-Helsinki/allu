@@ -38,4 +38,5 @@ export interface BackendApplication {
   comments?: Array<BackendComment>;
   notBillable: boolean;
   notBillableReason?: string;
+  invoiceRecipientId?: number;
 }

@@ -76,6 +76,7 @@ public class ApplicationJson {
   private String notBillableReason;
   @NotEmpty
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
+  private Integer invoiceRecipientId;
 
   /**
   /**
@@ -430,6 +431,18 @@ public class ApplicationJson {
 
   public void setKindsWithSpecifiers(Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers) {
     this.kindsWithSpecifiers = kindsWithSpecifiers;
+  }
+
+  /**
+   * Customer who is invoiced for this application
+   * @return Id of the invoiced customer
+   */
+  public Integer getInvoiceRecipientId() {
+    return invoiceRecipientId;
+  }
+
+  public void setInvoiceRecipientId(Integer invoiceRecipientId) {
+    this.invoiceRecipientId = invoiceRecipientId;
   }
 
   /**

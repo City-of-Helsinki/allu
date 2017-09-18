@@ -27,7 +27,6 @@ export class CustomerComponent implements OnInit, OnDestroy {
   @Input() readonly: boolean;
   @Input() showRepresentative = false;
   @Input() showPropertyDeveloper = false;
-  @Input() showCopyToBilling = false;
   @Input() contactRequired = false;
 
   @ViewChild('contacts') contacts: ContactComponent;

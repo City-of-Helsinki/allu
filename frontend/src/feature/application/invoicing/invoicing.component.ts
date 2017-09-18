@@ -8,6 +8,7 @@ import {InvoiceRow} from '../../../model/application/invoice/invoice-row';
 import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
+import {Application} from '../../../model/application/application';
 
 @Component({
   selector: 'invoicing',
@@ -29,8 +30,8 @@ export class InvoicingComponent implements OnInit {
 
   onSubmit(form: FormGroup): void {
     let value: InvoicingForm = form.value;
-    // TODO: Save other invoice information
-    this.saveInvoiceRows(value)
+    this.saveInvoiceRecipient(value)
+      .switchMap(app => this.saveInvoiceRows(value))
       .subscribe(
         rows => NotificationService.message(findTranslation('invoice.action.save')),
         error => NotificationService.errorMessage(error));
@@ -42,6 +43,13 @@ export class InvoicingComponent implements OnInit {
       .subscribe(
         rows => NotificationService.message(findTranslation('invoice.action.cancel')),
         error => NotificationService.error(error));
+  }
+
+  private saveInvoiceRecipient(form: InvoicingForm): Observable<Application> {
+    let application = this.applicationState.application;
+    const invoiceRecipientId = form.invoicingInfo.invoicingAddress.id;
+    application.invoiceRecipientId = invoiceRecipientId;
+    return this.applicationState.save(application);
   }
 
   private saveInvoiceRows(form: InvoicingForm): Observable<Array<InvoiceRow>> {

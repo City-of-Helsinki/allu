@@ -50,7 +50,8 @@ export class Application {
     public applicationTags?: Array<ApplicationTag>,
     public comments?: Array<Comment>,
     public notBillable: boolean = false,
-    public notBillableReason?: string) {
+    public notBillableReason?: string,
+    public invoiceRecipientId?: number) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];

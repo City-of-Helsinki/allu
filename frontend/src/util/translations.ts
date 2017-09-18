@@ -271,6 +271,9 @@ export const translations = {
   },
   customer: {
     nameLabel: 'Nimi',
+    invoiceRecipient: 'Laskun saaja',
+    handledByRepresentative: 'Asiaa hoitaa asiamies',
+    hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
     type: {
       COMPANY: {
         name: 'Yritys',
@@ -649,14 +652,15 @@ export const translations = {
     },
     partition: {
       NONE: 'Ei ositusta',
-      SIX_MONTHS: '6kk'
+      MONTH: '1kk'
     },
     action: {
       save: 'Lasku tallennettu',
       cancel: 'Laskun muutokset peruttu'
     },
     error: {
-      save: 'Laskun tallentaminen epäonnistui'
+      save: 'Laskun tallentaminen epäonnistui',
+      invoiceRecipientSave: 'Laskun maksajan tallentaminen epäonnistui'
     },
     field: {
       workIdMissing: 'Työnumero puuttuu',

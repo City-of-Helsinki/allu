@@ -48,6 +48,7 @@ export class ApplicationMapper {
     application.comments = CommentMapper.mapBackendList(backendApplication.comments);
     application.notBillable = backendApplication.notBillable;
     application.notBillableReason = backendApplication.notBillableReason;
+    application.invoiceRecipientId = backendApplication.invoiceRecipientId;
     return application;
   }
 
@@ -80,7 +81,8 @@ export class ApplicationMapper {
       priceOverrideReason: application.priceOverrideReason,
       applicationTags: ApplicationTagMapper.mapFrontendList(application.applicationTags),
       notBillable: application.notBillable,
-      notBillableReason: application.notBillableReason
+      notBillableReason: application.notBillableReason,
+      invoiceRecipientId: application.invoiceRecipientId
     };
   }
 

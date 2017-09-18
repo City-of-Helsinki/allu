@@ -37,7 +37,6 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.hasRepresentativeCtrl = this.fb.control(false);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
-
     this.appChanges = this.applicationState.applicationChanges.subscribe(app => this.onApplicationChange(app));
 
     UrlUtil.urlPathContains(this.route.parent, 'summary')
@@ -131,7 +130,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.showTerms = app.status === ApplicationStatus[ApplicationStatus.HANDLING];
     this.applicationForm.patchValue({
       hasPropertyDeveloper: app.propertyDeveloper.customerId,
-      hasRepresentative: app.representative.customerId
+      hasRepresentative: app.representative.customerId,
+      invoiceRecipientId: app.invoiceRecipientId
     });
   }
 }

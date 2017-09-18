@@ -96,7 +96,8 @@ create table allu.application (
     price_override integer,
     price_override_reason text,
     not_billable boolean not null,
-    not_billable_reason text);
+    not_billable_reason text,
+    invoice_recipient_id integer references allu.customer(id));
 
 create table allu.application_kind (
   id serial primary key,

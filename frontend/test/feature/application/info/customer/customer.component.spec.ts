@@ -1,4 +1,4 @@
-import {async, ComponentFixture, fakeAsync, TestBed} from '@angular/core/testing';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MdCardModule} from '@angular/material';
@@ -35,6 +35,7 @@ describe('CustomerComponent', () => {
   let comp: CustomerComponent;
   let fixture: ComponentFixture<CustomerComponent>;
   let page: CustomerPage;
+  let parentForm: FormGroup;
 
   class CustomerPage {
     cardTitle: HTMLElement;
@@ -46,6 +47,7 @@ describe('CustomerComponent', () => {
     customerCityInput: HTMLInputElement;
     customerPhoneInput: HTMLInputElement;
     customerEmailInput: HTMLInputElement;
+    invoiceRecipientRadio: HTMLInputElement;
 
     addPageElements() {
       let debugElement = fixture.debugElement;
@@ -75,19 +77,20 @@ describe('CustomerComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CustomerComponent);
     comp = fixture.componentInstance;
-    comp.parentForm = new FormGroup({});
+    const fb = new FormBuilder();
+    parentForm = fb.group({});
+    comp.parentForm = parentForm;
     comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT);
     comp.readonly = false;
     page = new CustomerPage();
+    // fixture.detectChanges();
     page.addPageElements();
   });
 
-  it('should show header text from input', () => {
+  it('should show header text from input', fakeAsync(() => {
     fixture.detectChanges();
-    fixture.whenStable().then(result => {
-      expect(page.cardTitle.textContent).toContain(headerText);
-    });
-  });
+    expect(page.cardTitle.textContent).toContain(headerText);
+  }));
 
   it('should fill the form with input customer', fakeAsync(() => {
     let customer = new Customer();
@@ -104,29 +107,25 @@ describe('CustomerComponent', () => {
     comp.readonly = false;
     comp.ngOnInit();
     fixture.detectChanges();
-    fixture.whenStable().then(result => {
-      expect(page.registryKeyInput.value).toEqual(customer.registryKey);
-      expect(page.customerNameInput.value).toEqual(customer.name);
-      expect(page.registryKeyInput.value).toEqual(customer.registryKey);
-      expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
-      expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
-      expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
-      expect(page.customerPhoneInput.value).toEqual(customer.phone);
-      expect(page.customerEmailInput.value).toEqual(customer.email);
-    });
+    tick();
+    expect(page.customerNameInput.value).toEqual(customer.name);
+    expect(page.registryKeyInput.value).toEqual(customer.registryKey);
+    expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
+    expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
+    expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
+    expect(page.customerPhoneInput.value).toEqual(customer.phone);
+    expect(page.customerEmailInput.value).toEqual(customer.email);
   }));
 
   it('should disable fields if readonly', () => {
     comp.readonly = true;
     fixture.detectChanges();
-    fixture.whenStable().then(result => {
-      expect(page.customerNameInput.disabled).toBeTruthy();
-      expect(page.registryKeyInput.disabled).toBeTruthy();
-      expect(page.customerAddressInput.disabled).toBeTruthy();
-      expect(page.customerPostalCodeInput.disabled).toBeTruthy();
-      expect(page.customerCityInput.disabled).toBeTruthy();
-      expect(page.customerPhoneInput.disabled).toBeTruthy();
-      expect(page.customerEmailInput.disabled).toBeTruthy();
-    });
+    expect(page.customerNameInput.disabled).toBeTruthy();
+    expect(page.registryKeyInput.disabled).toBeTruthy();
+    expect(page.customerAddressInput.disabled).toBeTruthy();
+    expect(page.customerPostalCodeInput.disabled).toBeTruthy();
+    expect(page.customerCityInput.disabled).toBeTruthy();
+    expect(page.customerPhoneInput.disabled).toBeTruthy();
+    expect(page.customerEmailInput.disabled).toBeTruthy();
   });
 });

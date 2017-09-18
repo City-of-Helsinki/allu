@@ -14,19 +14,16 @@
                 <customer-info [form]="customerForm" [allowSearch]="true"
                                (customerChange)="onCustomerChange($event)"></customer-info>
                 <div class="row form-group">
-                    <div class="col m6" *ngIf="showCopyToBilling && !readonly">
-                        <md-checkbox>Kopioi tiedot laskutusosoitteeksi</md-checkbox>
-                    </div>
                     <div class="col m6 height-fix-bottom" *ngIf="showRepresentative">
                         <md-checkbox [checked]="parentForm.value.hasRepresentative" [disabled]="readonly"
                                      (change)="onRepresentativeChange($event.checked)">
-                            Asiaa hoitaa asiamies
+                            {{'customer.handledByRepresentative' | translation}}
                         </md-checkbox>
                     </div>
                     <div class="col m6 height-fix-bottom" *ngIf="showPropertyDeveloper">
                         <md-checkbox [checked]="parentForm.value.hasPropertyDeveloper" [disabled]="readonly"
                                      (change)="onPropertyDeveloperChange($event.checked)">
-                            Hakemuksella on rakennuttaja
+                            {{'customer.hasPropertyDeveloper' | translation}}
                         </md-checkbox>
                     </div>
                 </div>
