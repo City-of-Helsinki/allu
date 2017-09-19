@@ -1,6 +1,11 @@
 import {Some, Option} from './option';
 import {StringUtil} from './string.util';
 export const translations = {
+  logout: {
+    header: 'Olet kirjautunut ulos',
+    infoText: 'Kirjauduit ulos Allusta, mutta saatat olla edelleen kirjautuneena Helsingin kaupungin järjestelmään. ' +
+    'Jos et pääse kirjautumaan Alluun uudella käyttäjätunnuksella, poista selaimen keksit.'
+  },
   application: {
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',

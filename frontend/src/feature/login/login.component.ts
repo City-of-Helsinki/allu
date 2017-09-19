@@ -5,10 +5,12 @@ import {AuthService} from '../../service/authorization/auth.service';
 
 @Component({
   selector: 'login',
-  template: require('./login.component.html')
+  template: require('./login.component.html'),
+  styles: [require('./login.component.scss')]
 })
 export class Login implements OnInit {
 
+  showLogoutInfo = false;
 
   constructor(private router: Router, private route: ActivatedRoute, private authentication: AuthService) {
     console.log('Login: ' + router.routerState.snapshot.url);
@@ -30,7 +32,10 @@ export class Login implements OnInit {
     // login page is handling also logout in case user navigates to login page with logout URL
     UrlUtil.urlPathContains(this.route, 'logout')
       .filter(logout => logout)
-      .subscribe(logout => this.authentication.logout());
+      .subscribe(logout =>  {
+        this.authentication.logout();
+        this.showLogoutInfo = true;
+      });
   }
 }
 
