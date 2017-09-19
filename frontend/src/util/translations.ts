@@ -664,7 +664,8 @@ export const translations = {
     },
     field: {
       workIdMissing: 'Työnumero puuttuu',
-      invoiceReferenceMissing: 'Laskutusviite puuttuu'
+      invoiceReferenceMissing: 'Laskutusviite puuttuu',
+      notBillableReasonMissing: 'Korvauksettomuuden peruste puuttuu'
     },
     row: {
       field: {

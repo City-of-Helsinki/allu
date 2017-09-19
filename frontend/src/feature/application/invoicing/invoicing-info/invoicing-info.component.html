@@ -6,11 +6,21 @@
         </md-card-title>
         <md-card-content>
             <div class="row">
-                <div class="col m6" formGroupName="invoicingAddress">
+                <div class="col m6">
                     <customer-info [form]="invoicingAddressForm" [allowSearch]="true"></customer-info>
                     <div class="row form-group">
-                        <div class="col m12">
-                            <md-checkbox formControlName="noInvoicing">Ei laskuteta</md-checkbox>
+                        <div class="col m12 height-fix-bottom">
+                            <md-checkbox formControlName="notBillable">Ei laskuteta</md-checkbox>
+                        </div>
+                        <div class="col m12" *ngIf="invoicingInfoForm.value.notBillable">
+                            <md-form-field class="input-full-width">
+                                <input mdInput type="text" formControlName="notBillableReason" placeholder="Perustelu*"/>
+                                <md-hint>
+                                    <field-error [form]="invoicingInfoForm" field="notBillableReason" hasError="required">
+                                        {{'invoice.field.notBillableReasonMissing' | translation}}
+                                    </field-error>
+                                </md-hint>
+                            </md-form-field>
                         </div>
                     </div>
                 </div>

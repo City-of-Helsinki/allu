@@ -1,7 +1,6 @@
 import {PostalAddress} from '../../common/postal-address';
 import {CustomerType} from '../../customer/customer-type';
 import {InvoicePartition} from './ivoice-partition';
-import {TimeUtil} from '../../../util/time.util';
 
 export class InvoicingInfo {
   constructor(
@@ -16,15 +15,8 @@ export class InvoicingInfo {
     public invoiceReference?: string,
     public deposit?: number,
     public partition?: InvoicePartition,
-    public readyForInvoicing?: Date) {
+    public notBillable?: boolean,
+    public notBillableReason?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
-  }
-
-  get uiReadyForInvoicing() {
-    return TimeUtil.getUiDateString(this.readyForInvoicing);
-  }
-
-  set uiReadyForInvoicing(dateString: string) {
-    this.readyForInvoicing = TimeUtil.getDateFromUi(dateString);
   }
 }

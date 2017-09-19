@@ -13,7 +13,8 @@ export class InvoicingInfoForm {
     public invoiceReference?: string,
     public deposit?: number,
     public partition?: string,
-    public readyForInvoicing?: string) {
+    public notBillable?: boolean,
+    public notBillableReason?: string) {
     this.invoicingAddress = invoicingAddress || new InvoicingAddressForm();
   }
 
@@ -25,7 +26,8 @@ export class InvoicingInfoForm {
       info.invoiceReference,
       info.deposit,
       info.partition ? InvoicePartition[info.partition] : undefined,
-      info.uiReadyForInvoicing
+      info.notBillable,
+      info.notBillableReason
     );
   }
 
@@ -37,7 +39,8 @@ export class InvoicingInfoForm {
     info.invoiceReference = form.invoiceReference;
     info.deposit = form.deposit;
     info.partition = form.partition ? InvoicePartition[form.partition] : undefined;
-    info.uiReadyForInvoicing = form.readyForInvoicing;
+    info.notBillable = form.notBillable;
+    info.notBillableReason = form.notBillableReason;
     return info;
   }
 
@@ -48,7 +51,9 @@ export class InvoicingInfoForm {
       workId: ['', Validators.required],
       invoiceReference: ['', Validators.required],
       deposit: [undefined],
-      partition: ['']
+      partition: [''],
+      notBillable: [false],
+      notBillableReason: [undefined]
     });
   }
 

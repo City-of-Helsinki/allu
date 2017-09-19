@@ -58,8 +58,7 @@ export class InvoicingAddressForm {
         city: ['']
       }),
       email: ['', emailValidator],
-      phone: ['', Validators.minLength(2)],
-      noInvoicing: [false]
+      phone: ['', Validators.minLength(2)]
     });
   }
 }

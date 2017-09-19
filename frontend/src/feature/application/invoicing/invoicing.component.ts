@@ -30,7 +30,7 @@ export class InvoicingComponent implements OnInit {
 
   onSubmit(form: FormGroup): void {
     let value: InvoicingForm = form.value;
-    this.saveInvoiceRecipient(value)
+    this.saveApplicationInfo(value)
       .switchMap(app => this.saveInvoiceRows(value))
       .subscribe(
         rows => NotificationService.message(findTranslation('invoice.action.save')),
@@ -45,10 +45,12 @@ export class InvoicingComponent implements OnInit {
         error => NotificationService.error(error));
   }
 
-  private saveInvoiceRecipient(form: InvoicingForm): Observable<Application> {
+  private saveApplicationInfo(form: InvoicingForm): Observable<Application> {
     let application = this.applicationState.application;
-    const invoiceRecipientId = form.invoicingInfo.invoicingAddress.id;
-    application.invoiceRecipientId = invoiceRecipientId;
+    const invoicingInfo = form.invoicingInfo;
+    application.invoiceRecipientId = invoicingInfo.invoicingAddress.id;
+    application.notBillable = invoicingInfo.notBillable;
+    application.notBillableReason = invoicingInfo.notBillableReason;
     return this.applicationState.save(application);
   }
 
