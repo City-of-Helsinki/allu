@@ -40,7 +40,7 @@ describe('Note application', () => {
       'contacts': [pekkaContactNew]
     };
 
-    let nuupuryOptions = TestUtil.getPostOptions('/customers/withcontacts', nuupuryCustomerWithContactsNew);
+    let nuupuryOptions = TestUtil.getPostOptions('/api/customers/withcontacts', nuupuryCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
     .then(token => TestUtil.addAuthorization(nuupuryOptions, token))
     .then(() => rp(nuupuryOptions))
@@ -121,7 +121,7 @@ describe('Note application', () => {
     };
 
 
-    let options = TestUtil.getPostOptions('/applications', note);
+    let options = TestUtil.getPostOptions('/api/applications', note);
     TestUtil.login('kasittelija')
     .then(token => TestUtil.addAuthorization(options, token))
     .then(() => rp(options))

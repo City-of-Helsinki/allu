@@ -73,8 +73,8 @@ describe('Placement contract application', () => {
       'contacts': [representativeContactNew]
     };
 
-    let applicantOptions = TestUtil.getPostOptions('/customers/withcontacts', applicantCustomerWithContactsNew);
-    let representativeOptions = TestUtil.getPostOptions('/customers/withcontacts', representativeCustomerWithContactsNew);
+    let applicantOptions = TestUtil.getPostOptions('/api/customers/withcontacts', applicantCustomerWithContactsNew);
+    let representativeOptions = TestUtil.getPostOptions('/api/customers/withcontacts', representativeCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
       .then(token => {
         TestUtil.addAuthorization(applicantOptions, token);
@@ -168,7 +168,7 @@ describe('Placement contract application', () => {
       };
 
 
-    let options = TestUtil.getPostOptions('/applications', placementContract);
+    let options = TestUtil.getPostOptions('/api/applications', placementContract);
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))

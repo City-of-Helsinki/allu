@@ -71,8 +71,8 @@ describe('Excavation announcement application', () => {
       'contacts': [contractorContactNew]
     };
 
-    let applicantOptions = TestUtil.getPostOptions('/customers/withcontacts', applicantCustomerWithContactsNew);
-    let contractorOptions = TestUtil.getPostOptions('/customers/withcontacts', contractorCustomerWithContactsNew);
+    let applicantOptions = TestUtil.getPostOptions('/api/customers/withcontacts', applicantCustomerWithContactsNew);
+    let contractorOptions = TestUtil.getPostOptions('/api/customers/withcontacts', contractorCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
       .then(token => {
         TestUtil.addAuthorization(applicantOptions, token);
@@ -214,7 +214,7 @@ describe('Excavation announcement application', () => {
     ;
 
 
-    let options = TestUtil.getPostOptions('/applications', excavationAnnouncement);
+    let options = TestUtil.getPostOptions('/api/applications', excavationAnnouncement);
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))

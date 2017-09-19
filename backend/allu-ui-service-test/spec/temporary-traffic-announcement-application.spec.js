@@ -73,8 +73,8 @@ describe('Temporary traffic announcement application', () => {
       'contacts': [vainoContactNew]
     };
 
-    let lasseOptions = TestUtil.getPostOptions('/customers/withcontacts', lasseCustomerWithContactsNew);
-    let liikenneOptions = TestUtil.getPostOptions('/customers/withcontacts', liikenneCustomerWithContactsNew);
+    let lasseOptions = TestUtil.getPostOptions('/api/customers/withcontacts', lasseCustomerWithContactsNew);
+    let liikenneOptions = TestUtil.getPostOptions('/api/customers/withcontacts', liikenneCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
       .then(token => {
         TestUtil.addAuthorization(lasseOptions, token);
@@ -177,7 +177,7 @@ describe('Temporary traffic announcement application', () => {
       };
 
 
-    let options = TestUtil.getPostOptions('/applications', temporaryTrafficAnnouncement);
+    let options = TestUtil.getPostOptions('/api/applications', temporaryTrafficAnnouncement);
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))

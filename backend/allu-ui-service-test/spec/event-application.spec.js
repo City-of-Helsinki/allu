@@ -72,8 +72,8 @@ describe('Event application', () => {
       'contacts': [tervaContactNew]
     };
 
-    let herneOptions = TestUtil.getPostOptions('/customers/withcontacts', herneCustomerWithContactsNew);
-    let tervaOptions = TestUtil.getPostOptions('/customers/withcontacts', tervaCustomerWithContactsNew);
+    let herneOptions = TestUtil.getPostOptions('/api/customers/withcontacts', herneCustomerWithContactsNew);
+    let tervaOptions = TestUtil.getPostOptions('/api/customers/withcontacts', tervaCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
       .then(token => {
         TestUtil.addAuthorization(herneOptions, token);
@@ -225,7 +225,7 @@ describe('Event application', () => {
         'decisionTime': null
       };
 
-      let options = TestUtil.getPostOptions('/applications', hernesaari);
+      let options = TestUtil.getPostOptions('/api/applications', hernesaari);
       TestUtil.login('kasittelija')
         .then(token => TestUtil.addAuthorization(options, token))
         .then(() => rp(options))
@@ -435,7 +435,7 @@ describe('Event application', () => {
         'decisionTime': null
       };
 
-      let options = TestUtil.getPostOptions('/applications', tervasaari);
+      let options = TestUtil.getPostOptions('/api/applications', tervasaari);
       TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))

@@ -35,7 +35,7 @@ function tryToCreateUsers() {
     'active':true
   };
 
-  let options = getPostOptions('/users', kasittelija);
+  let options = getPostOptions('/api/users', kasittelija);
 
   return login('admin')
     .then((token) => { addAuthorization(options, token); return rp(options); })
@@ -43,7 +43,7 @@ function tryToCreateUsers() {
 }
 
 function login(username) {
-  let options = getPostOptions('/auth/login', {'userName': username});
+  let options = getPostOptions('/api/auth/login', {'userName': username});
   return rp(options);
 }
 

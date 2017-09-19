@@ -73,8 +73,8 @@ describe('Area rental application', () => {
       'contacts': [contractorContactNew]
     };
 
-    let applicantOptions = TestUtil.getPostOptions('/customers/withcontacts', applicantCustomerWithContactsNew);
-    let contractorOptions = TestUtil.getPostOptions('/customers/withcontacts', contractorCustomerWithContactsNew);
+    let applicantOptions = TestUtil.getPostOptions('/api/customers/withcontacts', applicantCustomerWithContactsNew);
+    let contractorOptions = TestUtil.getPostOptions('/api/customers/withcontacts', contractorCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
       .then(token => {
         TestUtil.addAuthorization(applicantOptions, token);
@@ -271,7 +271,7 @@ describe('Area rental application', () => {
     };
 
 
-    let options = TestUtil.getPostOptions('/applications', areaRental);
+    let options = TestUtil.getPostOptions('/api/applications', areaRental);
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))

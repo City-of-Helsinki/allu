@@ -40,7 +40,7 @@ describe('Short term rental application', () => {
       'contacts': [applicantNew]
     };
 
-    let applicantOptions = TestUtil.getPostOptions('/customers/withcontacts', applicantCustomerWithContactsNew);
+    let applicantOptions = TestUtil.getPostOptions('/api/customers/withcontacts', applicantCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
       .then(token => {
         TestUtil.addAuthorization(applicantOptions, token);
@@ -125,7 +125,7 @@ describe('Short term rental application', () => {
       };
 
 
-    let options = TestUtil.getPostOptions('/applications', shortTermRentalApplication);
+    let options = TestUtil.getPostOptions('/api/applications', shortTermRentalApplication);
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))

@@ -73,8 +73,8 @@ describe('Cable report application', () => {
       'contacts': [propertyDeveloperContactNew]
     };
 
-    let applicantOptions = TestUtil.getPostOptions('/customers/withcontacts', applicantCustomerWithContactsNew);
-    let propertyDeveloperOptions = TestUtil.getPostOptions('/customers/withcontacts', propertyDeveloperCustomerWithContactsNew);
+    let applicantOptions = TestUtil.getPostOptions('/api/customers/withcontacts', applicantCustomerWithContactsNew);
+    let propertyDeveloperOptions = TestUtil.getPostOptions('/api/customers/withcontacts', propertyDeveloperCustomerWithContactsNew);
     return TestUtil.login('kasittelija')
       .then(token => {
         TestUtil.addAuthorization(applicantOptions, token);
@@ -168,7 +168,7 @@ describe('Cable report application', () => {
     }
 
 
-    let options = TestUtil.getPostOptions('/applications', cableReport);
+    let options = TestUtil.getPostOptions('/api/applications', cableReport);
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))

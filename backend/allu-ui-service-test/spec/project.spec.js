@@ -18,7 +18,7 @@ describe('Project', () => {
     };
 
 
-    let options = TestUtil.getPostOptions('/projects', project);
+    let options = TestUtil.getPostOptions('/api/projects', project);
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))
