@@ -2,9 +2,9 @@ package fi.hel.allu.sap.model;
 
 import com.greghaskins.spectrum.Spectrum;
 
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.domain.InvoiceUnit;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.sap.mapper.AlluMapper;
 
 import org.junit.runner.RunWith;
@@ -16,9 +16,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
-import static com.greghaskins.spectrum.Spectrum.*;
+import static com.greghaskins.spectrum.Spectrum.beforeEach;
+import static com.greghaskins.spectrum.Spectrum.describe;
+import static com.greghaskins.spectrum.Spectrum.it;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -58,48 +59,61 @@ public class SapSpec {
       describe("Mapper test", () -> {
 
         describe("Single InvoiceRow", () -> {
-          final Supplier<InvoiceRow> invoiceRow = let(
-              () -> dummyInvoiceRow(1234, 12.34, "Row text", InvoiceUnit.MONTH));
+          final InvoiceRow invoiceRow = dummyInvoiceRow(1234, 12.34, "Row text", InvoiceUnit.MONTH);
 
           describe("Mapped to SAP LineItem", () -> {
 
-            final Supplier<LineItem> lineItem = let(() -> AlluMapper.mapToSAP(invoiceRow.get()));
+            final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow);
 
             it("Has the proper net price", () -> {
-              final int netPrice = (int) (Double.parseDouble(lineItem.get().getNetPrice()) * 100);
-              assertEquals(invoiceRow.get().getNetPrice(), netPrice);
+              final int netPrice = (int) (Double.parseDouble(lineItem.getNetPrice()) * 100);
+              assertEquals(invoiceRow.getNetPrice(), netPrice);
             });
 
             it("Has the proper line text", () -> {
-              assertEquals(invoiceRow.get().getRowText(), lineItem.get().getLineText1());
+              assertEquals(invoiceRow.getRowText(), lineItem.getLineText1());
             });
 
             it("Has the right quantity", () -> {
-              final double quantity = Double.parseDouble(lineItem.get().getQuantity());
-              final double diff = quantity - invoiceRow.get().getQuantity();
-              assertTrue(Math.abs(diff) < 0.000001);
+              final double quantity = Double.parseDouble(lineItem.getQuantity());
+              assertEquals(invoiceRow.getQuantity(), quantity, 0.000001);
             });
 
             it("Has the pre-set order item number", () -> {
-              assertEquals("2831300000", lineItem.get().getOrderItemNumber());
+              assertEquals("2831300000", lineItem.getOrderItemNumber());
             });
           });
         });
 
         describe("A single bill", () -> {
-          final Supplier<List<InvoiceRow>> invoiceRows = let(() -> dummyInvoiceRows());
-          final Supplier<Application> application = let(() -> dummyApplication());
+          final List<InvoiceRow> invoiceRows = dummyInvoiceRows();
+          final Application application = dummyApplication();
 
           describe("Mapped to SAP SalesOrder", () -> {
-            final Supplier<SalesOrder> salesOrder = let(
-                () -> AlluMapper.mapToSAP(application.get(), invoiceRows.get()));
+            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, invoiceRows);
 
             it("All lines are in", () -> {
-              assertEquals(salesOrder.get().getLineItems().size(), invoiceRows.get().size());
+              assertEquals(invoiceRows.size(), salesOrder.getLineItems().size());
             });
 
             it("The name matches", () -> {
-              assertEquals(salesOrder.get().getBillTextL1(), application.get().getName());
+              assertEquals(application.getName(), salesOrder.getBillTextL1());
+            });
+
+            describe("Customer was mapped properly", () -> {
+              final Customer applicationCustomer = application.getCustomersWithContacts().stream()
+                  .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT).map(cwc -> cwc.getCustomer())
+                  .findFirst().orElseThrow(() -> new AssertionError("Application didn't have customer"));
+
+              it("Customer name matches", () -> {
+                assertEquals(applicationCustomer.getName(), salesOrder.getOrderParty().getInfoName1());
+              });
+
+              it("Customer street matches", () -> {
+                assertEquals(applicationCustomer.getPostalAddress().getStreetAddress(),
+                    salesOrder.getOrderParty().getInfoAddress1());
+              });
+
             });
           });
         });
@@ -135,7 +149,16 @@ public class SapSpec {
   private Application dummyApplication() {
     final Application application = new Application();
     application.setName("Dummy Application");
+    application.setType(ApplicationType.EVENT);
+    application.setCustomersWithContacts(
+        Collections.singletonList(new CustomerWithContacts(CustomerRoleType.APPLICANT, dummyCustomer(), null)));
     return application;
   }
 
+  private Customer dummyCustomer() {
+    final Customer customer = new Customer();
+    customer.setName("Dummy C. Ustomer");
+    customer.setPostalAddress(new PostalAddress("DummyStreet 12 A", "01230", "Dumville"));
+    return customer;
+  }
 }

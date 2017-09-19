@@ -1,5 +1,8 @@
 package fi.hel.allu.sap.mapper;
 
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.CustomerRoleType;
+import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.InvoiceRow;
@@ -9,6 +12,7 @@ import fi.hel.allu.sap.model.OrderParty;
 import fi.hel.allu.sap.model.SalesOrder;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -16,34 +20,59 @@ import java.util.stream.Collectors;
  */
 public class AlluMapper {
 
-  // Allu-specific constant values for various SAP fields:
+  /*
+   * Allu-specific constant values for various SAP fields:
+   */
   private static final String ALLU_ORDER_ITEM_NUMBER = "2831300000";
-  private static final String ALLU_SENDER_ID = "ID292";
-  private static final String ALLU_ORDER_TYPE = "ZYHD";
+  private static final String ALLU_SENDER_ID = "ID341";
+  // Civil law orders ("Yksityisoikeudellinen tilauslaji")
+  private static final String ALLU_ORDER_TYPE_CIVIL = "ZTY1";
+  // Public law orders ("Julkisoikeudellinen tilauslaji")
+  private static final String ALLU_ORDER_TYPE_PUBLIC = "ZTJ1";
   private static final String ALLU_SALES_ORG = "2800";
   private static final String ALLU_DISTRIBUTION_CHANNEL = "10";
   private static final String ALLU_DIVISION = "10";
-  private static final String ALLU_SALES_OFFICE = "2805";
+  // Sales office for civil law matters
+  private static final String ALLU_SALES_OFFICE_CIVIL = "2805";
+  // Sales office code for public law matters
+  private static final String ALLU_SALES_OFFICE_PUBLIC = "2808";
   private static final String ALLU_PAYMENT_TERM = "N143";
 
-  public static SalesOrder mapToSAP(Application application, List<InvoiceRow> invoiceRows) {
+  /**
+   * Map an application and its invoice rows to SAP SalesOrder
+   *
+   * @param application
+   * @param invoiceRows
+   * @return
+   */
+  public static SalesOrder mapToSalesOrder(Application application, List<InvoiceRow> invoiceRows) {
     SalesOrder salesOrder = new SalesOrder();
     salesOrder.setBillTextL1(application.getName());
     salesOrder.setDistributionChannel(ALLU_DISTRIBUTION_CHANNEL);
     salesOrder.setDivision(ALLU_DIVISION);
-    salesOrder.setLineItems(invoiceRows.stream().map(row -> mapToSAP(row)).collect(Collectors.toList()));
-    salesOrder.setOrderParty(null); // TODO
-    salesOrder.setOrderType(ALLU_ORDER_TYPE);
+    salesOrder.setLineItems(invoiceRows.stream().map(row -> mapToLineItem(row)).collect(Collectors.toList()));
+    Customer orderer = Optional.ofNullable(application.getCustomersWithContacts())
+        .orElseThrow(() -> new IllegalArgumentException("Application's customersWithContacts is null")).stream()
+        .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT).map(cwc -> cwc.getCustomer()).findAny()
+        .orElseThrow(() -> new IllegalArgumentException("Application doesn't have applicant"));
+    salesOrder.setOrderParty(mapToOrderParty(orderer));
+    salesOrder.setOrderType(mapToOrderType(application.getType()));
     salesOrder.setPaymentTerm(ALLU_PAYMENT_TERM);
     salesOrder.setPoNumber(application.getApplicationId());
-    salesOrder.setReferenceText(null); // TODO: probably not used
-    salesOrder.setSalesOffice(ALLU_SALES_OFFICE);
+    salesOrder.setReferenceText(application.getApplicationId());
+    salesOrder.setSalesOffice(mapToSalesOffice(application.getType()));
     salesOrder.setSalesOrg(ALLU_SALES_ORG);
     salesOrder.setSenderId(ALLU_SENDER_ID);
     return salesOrder;
   }
 
-  public static LineItem mapToSAP(InvoiceRow invoiceRow) {
+  /**
+   * Map Allu InvoiceRow into a SAP LineItem
+   *
+   * @param invoiceRow
+   * @return
+   */
+  public static LineItem mapToLineItem(InvoiceRow invoiceRow) {
     LineItem lineItem = new LineItem();
     lineItem.setLineText1(invoiceRow.getRowText());
     lineItem.setMaterial("27100000"); // TODO: from application type
@@ -54,10 +83,53 @@ public class AlluMapper {
     return lineItem;
   }
 
-  public static OrderParty mapToSap(Customer customer) {
+  /**
+   * Map an Allu Customer into a SAP OrderParty
+   *
+   * @param customer
+   * @return
+   */
+  public static OrderParty mapToOrderParty(Customer customer) {
     OrderParty orderParty = new OrderParty();
-    orderParty.setSapCustomerId(null); // TODO: Sap ID for customer!
+    orderParty.setSapCustomerId("99999"); // TODO: Sap ID for customer!
+    orderParty.setInfoName1(customer.getName());
+    Optional.ofNullable(customer.getPostalAddress()).ifPresent(postalAddress -> {
+      Optional.ofNullable(postalAddress.getStreetAddress()).ifPresent(sa -> orderParty.setInfoAddress1(sa));
+      Optional.ofNullable(postalAddress.getPostalCode()).ifPresent(poc -> orderParty.setInfoPoCode(poc));
+      Optional.ofNullable(postalAddress.getCity()).ifPresent(c -> orderParty.setInfoCity(c));
+    });
+    if (customer.getType() == CustomerType.PERSON) {
+      orderParty.setInfoCustomerId(customer.getRegistryKey());
+    } else {
+      orderParty.setInfoCustomerYid(customer.getRegistryKey());
+    }
     return orderParty;
+  }
+
+  /*
+   * Map ApplicationType to proper sales offce
+   */
+  private static String mapToSalesOffice(ApplicationType type) {
+    switch (type) {
+      case AREA_RENTAL:
+      case EXCAVATION_ANNOUNCEMENT:
+        return ALLU_SALES_OFFICE_PUBLIC;
+      default:
+        return ALLU_SALES_OFFICE_CIVIL;
+    }
+  }
+
+  /*
+   * Map ApplicationType to proper order type
+   */
+  private static String mapToOrderType(ApplicationType type) {
+    switch (type) {
+      case AREA_RENTAL:
+      case EXCAVATION_ANNOUNCEMENT:
+        return ALLU_ORDER_TYPE_PUBLIC;
+      default:
+        return ALLU_ORDER_TYPE_CIVIL;
+    }
   }
 
   private static String mapToSapUnit(InvoiceUnit unit) {
