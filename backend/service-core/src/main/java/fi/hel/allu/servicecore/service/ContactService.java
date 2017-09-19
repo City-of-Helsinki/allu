@@ -110,19 +110,6 @@ public class ContactService {
     return updatedContactJsons;
   }
 
-  public List<ContactJson> createMissingContacts(int customerId, List<ContactJson> contacts) {
-    contacts.forEach(c -> c.setCustomerId(customerId));
-    // create new contacts (the ones with missing id)
-    Map<Boolean, List<ContactJson>> newOldContacts = contacts.stream().collect(Collectors.partitioningBy(c -> c.getId() != null));
-    List<ContactJson> allContacts = new ArrayList<>(newOldContacts.get(true));
-    if (!newOldContacts.get(false).isEmpty()) {
-      List<ContactJson> addedContacts = createContacts(newOldContacts.get(false));
-      allContacts.addAll(addedContacts);
-    }
-
-    return allContacts;
-  }
-
   public List<ContactJson> getContactsById(List<Integer> contactIds) {
     Contact[] contacts = restTemplate.postForObject(
         applicationProperties.getContactsByIdUrl(),

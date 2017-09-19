@@ -162,8 +162,6 @@ public class ApplicationService {
    * @return Application with possibly updated information from backend.
    */
   Application createApplication(ApplicationJson newApplication) {
-    newApplication.setCustomersWithContacts(
-        newApplication.getCustomersWithContacts().stream().map(cwc -> createMissingCustomerWithContacts(cwc)).collect(Collectors.toList()));
     newApplication.setApplicationTags(tagsWithUserInfo(newApplication.getApplicationTags()));
     Application applicationModel = restTemplate.postForObject(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_CREATE),
@@ -178,18 +176,6 @@ public class ApplicationService {
     return findApplicationById(applicationModel.getId());
   }
 
-  private CustomerWithContactsJson createMissingCustomerWithContacts(CustomerWithContactsJson customerWithContactsJson) {
-    CustomerWithContactsJson cwcJson = new CustomerWithContactsJson();
-    cwcJson.setRoleType(customerWithContactsJson.getRoleType());
-    if (customerWithContactsJson.getCustomer().getId() == null) {
-      cwcJson.setCustomer(customerService.createCustomer(customerWithContactsJson.getCustomer()));
-    } else {
-      cwcJson.setCustomer(customerWithContactsJson.getCustomer());
-    }
-    cwcJson.setContacts(contactService.createMissingContacts(cwcJson.getCustomer().getId(), customerWithContactsJson.getContacts()));
-    return cwcJson;
-  }
-
   /**
    * Update the given application by calling back-end service.
    *
@@ -197,9 +183,6 @@ public class ApplicationService {
    * @return Updated application
    */
   Application updateApplication(int applicationId, ApplicationJson applicationJson) {
-    applicationJson.setCustomersWithContacts(
-        applicationJson.getCustomersWithContacts().stream().map(cwc -> createMissingCustomerWithContacts(cwc)).collect(Collectors.toList()));
-
     if (applicationJson.getLocations() != null) {
       List<LocationJson> locationJsons = locationService.updateApplicationLocations(applicationId,
           applicationJson.getLocations());

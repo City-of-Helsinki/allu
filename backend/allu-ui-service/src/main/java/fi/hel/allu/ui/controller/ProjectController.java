@@ -81,7 +81,7 @@ public class ProjectController {
    */
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
-  public ResponseEntity<ProjectJson> insert(@Valid @RequestBody(required = true) ProjectJson project) {
+  public ResponseEntity<ProjectJson> insert(@Valid @RequestBody ProjectJson project) {
     return new ResponseEntity<>(projectServiceComposer.insert(project), HttpStatus.OK);
   }
 
@@ -93,7 +93,7 @@ public class ProjectController {
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<ProjectJson> update(@PathVariable int id, @Valid @RequestBody(required = true) ProjectJson project) {
+  public ResponseEntity<ProjectJson> update(@PathVariable int id, @Valid @RequestBody ProjectJson project) {
     return new ResponseEntity<>(projectServiceComposer.update(id, project), HttpStatus.OK);
   }
 
