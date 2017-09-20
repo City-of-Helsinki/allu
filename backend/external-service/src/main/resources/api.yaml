@@ -104,6 +104,29 @@ paths:
           description: The progress was saved successfully.
       security:
         - api_key: []
+    get:
+      tags:
+        - applications
+      summary: Query the inspection status of application progress
+      description: Requires ROLE_INTERNAL or ROLE_TRUSTED_PARTNER
+      operationId: applicationsGetProgressStatus
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: path
+          name: id
+          description: The unique identifier of the application
+          required: true
+          type: integer
+      responses:
+        '200':
+          description: The application's progress inspection status
+          schema:
+            $ref: '#/definitions/ApplicationProgressStatusExt'
+      security:
+        - api_key: []
   /v1/customers:
     post:
       tags:
@@ -774,3 +797,33 @@ definitions:
         description: Date of winter time operability
         type: string
         format: date-time
+  InspectionStatus:
+    description: Status of inspection; was something approved or not.
+    type: object
+    properties:
+      state:
+        description: The state the inspection is in
+        type: string
+        enum:
+          - NOT_INSPECTED
+          - ACCEPTED
+          - REJECTED
+      comment:
+        description: Inspector's comment.
+        type: string
+  ApplicationProgressStatusExt:
+    description: >-
+      Object for getting information about application's progress
+      approval status.
+    type: object
+    properties:
+      workFinishedStatus:
+        description: >-
+          Information on the approval/rejection of application's
+          "work finished" progress report
+        $ref: '#/definitions/InspectionStatus'
+      winterTimeOperationStatus:
+        description: >-
+          Information on the approval/rejection of application's
+          "winter time operability" progress report.
+        $ref: '#/definitions/InspectionStatus'

@@ -2,6 +2,7 @@ package fi.hel.allu.external.controller;
 
 import fi.hel.allu.external.domain.ApplicationExt;
 import fi.hel.allu.external.domain.ApplicationProgressReportExt;
+import fi.hel.allu.external.domain.ApplicationProgressStatusExt;
 import fi.hel.allu.external.mapper.ApplicationExtMapper;
 import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -63,5 +64,12 @@ public class ApplicationController {
     // (5 days ago .. now).
     applicationServiceExt.reportProgress(id, progress);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/progress", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL','ROLE_TRUSTED_PARTNER')")
+  public ResponseEntity<ApplicationProgressStatusExt> getProgressStatus(@PathVariable int id) {
+    // TODO: ROLE_TRUSTED_PARTNER should only be allowed to check own applications
+    return new ResponseEntity<>(applicationServiceExt.getProgressStatus(id), HttpStatus.OK);
   }
 }

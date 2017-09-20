@@ -258,6 +258,18 @@ describe('Application', () => {
         console.log('Error', err);
         done.fail(err);
       });
-    })
+    });
+    it('should be able to read progress approval status for appication', (done) => {
+      TestUtil.swaggerClient()
+      .then(client => client.apis.applications.applicationsGetProgressStatus({id: applicationId}))
+      .then(progressStatus => {
+        expect(progressStatus.obj.workFinishedStatus.state).toBe('NOT_INSPECTED');
+      })
+      .then(done)
+      .catch(err => {
+        console.log('Error', err);
+        done.fail(err);
+      });
+    });
   });
 });
