@@ -23,7 +23,7 @@
                     <td>{{user.emailAddress}}</td>
                     <td>{{user.uiLastLogin}}</td>
                     <td>
-                        <span *ngFor="let role of user.assignedRoles; let last=last">
+                        <span *ngFor="let role of user.uiAssignedRoles; let last=last">
                             {{['externalUser.role', role] | translation | commaSeparated: last}}
                         </span>
                     <td>{{user.uiExpirationTime}}</td>
