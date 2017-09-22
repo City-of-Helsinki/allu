@@ -87,7 +87,7 @@ describe('Temporary traffic announcement application', () => {
   }
 
   beforeAll(done => {
-    TestUtil.tryToCreateUsers().then(createCustomers).then(done);
+    TestUtil.tryRetryPromise(1, TestUtil.tryToCreateUsers).then(createCustomers, done.fail).then(done);
   });
 
   it('Create', done => {
@@ -181,7 +181,7 @@ describe('Temporary traffic announcement application', () => {
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))
-      .then(done);
+      .then(done, done.fail);
   });
 
 });

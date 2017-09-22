@@ -5,6 +5,11 @@ TestUtil.assertEnv();
 
 describe('Project', () => {
 
+
+  beforeAll(done => {
+    TestUtil.tryRetryPromise(1, TestUtil.tryToCreateUsers).then(done, done.fail);
+  });
+
   it('Create', done => {
 
     const project = {
@@ -22,7 +27,7 @@ describe('Project', () => {
     TestUtil.login('kasittelija')
       .then(token => TestUtil.addAuthorization(options, token))
       .then(() => rp(options))
-      .then(done);
+      .then(done, done.fail);
   });
 
 });
