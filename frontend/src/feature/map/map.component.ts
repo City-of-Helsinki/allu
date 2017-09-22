@@ -13,6 +13,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {Location} from '../../model/common/location';
 import {Circle} from 'leaflet';
 import {MapState, ShapeAdded} from '../../service/map/map-state';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'map',
@@ -36,7 +37,8 @@ export class MapComponent implements OnInit, OnDestroy {
   constructor(
     private mapService: MapService,
     private mapHub: MapHub,
-    private projectHub: ProjectHub) {}
+    private projectHub: ProjectHub,
+    private router: Router) {}
 
   ngOnInit() {
     this.mapState = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
@@ -148,7 +150,10 @@ export class MapComponent implements OnInit, OnDestroy {
   }
 
   private applicationPopup(application: Application): MapPopup {
-    let header = application.name;
+    let header = L.DomUtil.create('h1', 'popup-header clickable');
+    header.innerHTML = application.name;
+    header.onclick = (event: MouseEvent) => this.router.navigate(['applications', application.id, 'summary']);
+
     let contentRows = [
       application.applicationId,
       findTranslation(['application.type', application.type]),
