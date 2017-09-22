@@ -13,6 +13,18 @@
             group=allu
             mode="u=rwx,g=rx,o=rx"
 
+- name: add maproxy token filter
+  template: src=filter.py dest=/home/allu/mapproxy/python/filter.py
+            owner=allu
+            group=allu
+            mode="u=rwx,g=rx,o=rx"
+
+- name: add mapproxy python init file for making directory importable
+  copy: src=__init__.py dest=/home/allu/mapproxy/python/__init__.py
+        owner=allu
+        group=allu
+        mode="u=rwx,g=rx,o=rx"
+
 - name: add mapproxy python server configuration
   copy: src=config.py dest=/home/allu/mapproxy/python/config.py
         owner=allu
