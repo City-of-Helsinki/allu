@@ -31,20 +31,21 @@ public class EventPricing extends Pricing {
   public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     long dailyCharge = pricingConfig.getBaseCharge();
-    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), BASE_FEE_TEXT, 0);
+    addInvoiceRow(InvoiceRowTag.EventBaseFee(), InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), BASE_FEE_TEXT, 0);
 
     dailyCharge += calculateStructureExtras(pricingConfig, structureArea);
     dailyCharge += calculateAreaExtras(pricingConfig, area);
-    addInvoiceRow(InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), DAY_TOTAL_FEE_TEXT, 0);
+    addInvoiceRow(InvoiceRowTag.EventDailyFee(), InvoiceUnit.PIECE, 0, priceInCents(dailyCharge), DAY_TOTAL_FEE_TEXT,
+        0);
 
     long totalCharge = dailyCharge * eventDays;
-    addInvoiceRow(InvoiceUnit.DAY, eventDays, priceInCents(dailyCharge),
+    addInvoiceRow(InvoiceRowTag.EventMultipleDayFee(), InvoiceUnit.DAY, eventDays, priceInCents(dailyCharge),
         String.format(MULTIPLE_DAY_FEE_TEXT, eventDays, priceInCents(dailyCharge) / 100.0), priceInCents(totalCharge));
     if (pricingConfig.getDurationDiscountLimit() != 0 && eventDays > pricingConfig.getDurationDiscountLimit()) {
       int discountDays = eventDays - pricingConfig.getDurationDiscountLimit();
       long dailyDiscount = Math.round(dailyCharge * pricingConfig.getDurationDiscountPercent() / 100.0);
       long discount = dailyDiscount * discountDays;
-      addInvoiceRow(InvoiceUnit.DAY, discountDays, -priceInCents(dailyDiscount),
+      addInvoiceRow(InvoiceRowTag.EventLongEventDiscount(), InvoiceUnit.DAY, discountDays, -priceInCents(dailyDiscount),
           String.format(LONG_EVENT_DISCOUNT_TEXT, pricingConfig.getDurationDiscountLimit()),
           -priceInCents(discount));
       totalCharge -= discount;
@@ -53,7 +54,8 @@ public class EventPricing extends Pricing {
       long dailyBuildFee = Math.round(dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
       long buildFees = buildDays * dailyBuildFee;
       totalCharge += buildFees;
-      addInvoiceRow(InvoiceUnit.DAY, buildDays, priceInCents(dailyBuildFee), BUILD_DAY_FEE_TEXT,
+      addInvoiceRow(InvoiceRowTag.EventBuildDayFee(), InvoiceUnit.DAY, buildDays, priceInCents(dailyBuildFee),
+          BUILD_DAY_FEE_TEXT,
           priceInCents(buildFees));
     }
 
@@ -123,20 +125,22 @@ public class EventPricing extends Pricing {
       paymentPercentage = 0;
       if (heavyStructure) {
         long structureFee = fullPrice / 2;
-        addInvoiceRow(InvoiceUnit.PIECE, 1, priceInCents(structureFee), HEAVY_STRUCTURE_TEXT,
+        addInvoiceRow(InvoiceRowTag.EventHeavyStructures(), InvoiceUnit.PIECE, 1, priceInCents(structureFee),
+            HEAVY_STRUCTURE_TEXT,
             priceInCents(structureFee));
         paymentPercentage += 50;
       }
       if (salesActivity) {
         long salesFee = fullPrice / 2;
-        addInvoiceRow(InvoiceUnit.PIECE, 1, priceInCents(salesFee), SALES_ACTIVITY_TEXT, priceInCents(salesFee));
+        addInvoiceRow(InvoiceRowTag.EventSalesActivity(), InvoiceUnit.PIECE, 1, priceInCents(salesFee),
+            SALES_ACTIVITY_TEXT, priceInCents(salesFee));
         paymentPercentage += 50;
       }
     }
     if (ecoCompass) {
       // 30 percent discount from full price (incl. extra fees)
       long ecoDiscount = -fullPrice * paymentPercentage / 100 * 30 / 100;
-      addInvoiceRow(InvoiceUnit.PIECE, 1, priceInCents(ecoDiscount), ECO_COMPASS_TEXT,
+      addInvoiceRow(InvoiceRowTag.EventEcoCompass(), InvoiceUnit.PIECE, 1, priceInCents(ecoDiscount), ECO_COMPASS_TEXT,
           priceInCents(ecoDiscount));
       paymentPercentage = paymentPercentage * 7 / 10;
     }

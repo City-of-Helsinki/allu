@@ -126,7 +126,7 @@ public class PricingService {
       locations = locationDao.findByApplication(application.getId());
     }
     for (Location l : locations) {
-      pricing.addLocationPrice(l.getEffectiveArea(), locationDao.getPaymentClass(l.getId()));
+      pricing.addLocationPrice(l.getLocationKey(), l.getEffectiveArea(), locationDao.getPaymentClass(l.getId()));
     }
     application.setCalculatedPrice(pricing.getPriceInCents());
     invoiceRows.addAll(pricing.getInvoiceRows());

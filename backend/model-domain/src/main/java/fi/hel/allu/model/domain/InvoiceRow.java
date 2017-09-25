@@ -1,12 +1,26 @@
 package fi.hel.allu.model.domain;
 
 public class InvoiceRow {
+  private String tag;
   private boolean manuallySet;
   private InvoiceUnit unit;
   private double quantity;
   private String rowText;
   private int unitPrice;
   private int netPrice;
+
+  /**
+   * Get the invoice row's tag that can be used to refer to single invoice row
+   * within invoice. Tag must be generated systematically so that database
+   * migrations are possible.
+   */
+  public String getTag() {
+    return tag;
+  }
+
+  public void setTag(String tag) {
+    this.tag = tag;
+  }
 
   /**
    * Was the row manually set? Manually set rows don't get overridden when

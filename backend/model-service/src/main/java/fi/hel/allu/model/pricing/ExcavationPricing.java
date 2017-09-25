@@ -22,12 +22,13 @@ public class ExcavationPricing extends Pricing {
   public ExcavationPricing(Application application) {
     this.application = application;
     setPriceInCents(HANDLING_FEE);
-    addInvoiceRow(InvoiceUnit.PIECE, 1, HANDLING_FEE, HANDLING_FEE_TEXT, HANDLING_FEE);
+    addInvoiceRow(InvoiceRowTag.ExcavationAnnonuncementHandlingFee(), InvoiceUnit.PIECE, 1, HANDLING_FEE,
+        HANDLING_FEE_TEXT, HANDLING_FEE);
   }
 
 
   @Override
-  public void addLocationPrice(double locationArea, int paymentClass) {
+  public void addLocationPrice(int locationKey, double locationArea, int paymentClass) {
     int dailyFee;
     if (locationArea < SMALL_AREA_LIMIT) {
       dailyFee = SMALL_AREA_DAILY_FEE;
@@ -45,7 +46,8 @@ public class ExcavationPricing extends Pricing {
     int days = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
         ChronoUnit.DAYS);
     int totalPrice = days * dailyFee;
-    addInvoiceRow(InvoiceUnit.DAY, days, dailyFee, String.format(AREA_FEE_TEXT, paymentClass), totalPrice);
+    addInvoiceRow(InvoiceRowTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)), InvoiceUnit.DAY, days,
+        dailyFee, String.format(AREA_FEE_TEXT, paymentClass), totalPrice);
     setPriceInCents(totalPrice + getPriceInCents());
   }
 }

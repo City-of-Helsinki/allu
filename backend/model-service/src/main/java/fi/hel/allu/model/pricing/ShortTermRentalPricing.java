@@ -85,40 +85,46 @@ public class ShortTermRentalPricing extends Pricing {
     case ART:
       // Free event
       setPriceInCents(0);
-      addInvoiceRow(InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.ART, 0);
+      addInvoiceRow(InvoiceRowTag.ShortTermRentalArt(), InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.ART, 0);
       break;
     case SMALL_ART_AND_CULTURE:
       // Free event
       setPriceInCents(0);
-      addInvoiceRow(InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.SMALL_ART_AND_CULTURE, 0);
+      addInvoiceRow(InvoiceRowTag.ShortTermRentalSmallArtAndCulture(), InvoiceUnit.PIECE, 1.0, 0, InvoiceLines.SMALL_ART_AND_CULTURE, 0);
       break;
     case BENJI:
       // 320 EUR/day
-      updatePricePerUnit(ChronoUnit.DAYS, BENJI_DAILY_PRICE, InvoiceLines.BENJI);
+        updatePricePerUnit(InvoiceRowTag.ShortTermRentalBenji(), ChronoUnit.DAYS, BENJI_DAILY_PRICE,
+            InvoiceLines.BENJI);
       break;
     case BRIDGE_BANNER:
       // Non-commercial organizer: 150 EUR/week
       // Commercial organizer: 750 EUR/week
       if (isCommercial()) {
-        updatePricePerUnit(ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL, InvoiceLines.BANDEROL_COMMERCIAL);
+          updatePricePerUnit(InvoiceRowTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
+              BRIDGE_BANNER_WEEKLY_PRICE_COMMERCIAL, InvoiceLines.BANDEROL_COMMERCIAL);
       } else {
-        updatePricePerUnit(ChronoUnit.WEEKS, BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL,
+          updatePricePerUnit(InvoiceRowTag.ShortTermRentalBridgeBanner(), ChronoUnit.WEEKS,
+              BRIDGE_BANNER_WEEKLY_PRICE_NONCOMMERCIAL,
             InvoiceLines.BANDEROL_NONCOMMERCIAL);
       }
       break;
     case CIRCUS:
-      updatePricePerUnit(ChronoUnit.DAYS, CIRCUS_DAILY_PRICE, InvoiceLines.CIRCUS);
+        updatePricePerUnit(InvoiceRowTag.ShortTermRentalCircus(), ChronoUnit.DAYS, CIRCUS_DAILY_PRICE,
+            InvoiceLines.CIRCUS);
       break;
     case DOG_TRAINING_EVENT:
       // Associations: 50 EUR/event
       // Companies: 100 EUR/event
       if (customerIsCompany) {
         setPriceInCents(DOG_TRAINING_EVENT_COMPANY_PRICE);
-        addInvoiceRow(InvoiceUnit.PIECE, 1, DOG_TRAINING_EVENT_COMPANY_PRICE, InvoiceLines.DOG_TRAINING_EVENT_COM,
+          addInvoiceRow(InvoiceRowTag.ShortTermRentalDogTrainingEvent(), InvoiceUnit.PIECE, 1,
+              DOG_TRAINING_EVENT_COMPANY_PRICE, InvoiceLines.DOG_TRAINING_EVENT_COM,
             DOG_TRAINING_EVENT_COMPANY_PRICE);
       } else {
         setPriceInCents(DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
-        addInvoiceRow(InvoiceUnit.PIECE, 1, DOG_TRAINING_EVENT_ASSOCIATION_PRICE, InvoiceLines.DOG_TRAINING_EVENT_ORG,
+          addInvoiceRow(InvoiceRowTag.ShortTermRentalDogTrainingEvent(), InvoiceUnit.PIECE, 1,
+              DOG_TRAINING_EVENT_ASSOCIATION_PRICE, InvoiceLines.DOG_TRAINING_EVENT_ORG,
             DOG_TRAINING_EVENT_ASSOCIATION_PRICE);
       }
       break;
@@ -126,9 +132,11 @@ public class ShortTermRentalPricing extends Pricing {
       // Associations: 100 EUR/year
       // Companies: 200 EUR/year
       if (customerIsCompany) {
-        updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_COMPANY, InvoiceLines.DOG_TRAINING_FIELD_COM);
+          updatePricePerUnit(InvoiceRowTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
+              DOG_TRAINING_FIELD_YEARLY_COMPANY, InvoiceLines.DOG_TRAINING_FIELD_COM);
       } else {
-        updatePricePerUnit(ChronoUnit.YEARS, DOG_TRAINING_FIELD_YEARLY_ASSOCIATION,
+          updatePricePerUnit(InvoiceRowTag.ShortTermRentalDogTrainingField(), ChronoUnit.YEARS,
+              DOG_TRAINING_FIELD_YEARLY_ASSOCIATION,
             InvoiceLines.DOG_TRAINING_FIELD_ORG);
       }
       break;
@@ -136,22 +144,26 @@ public class ShortTermRentalPricing extends Pricing {
       // 1..14 days: 50 EUR/day/starting 10 sqm
       // 50% discount from 15. day onwards
       updatePriceByTimeAndArea(KESKUSKATU_SALES_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true,
-          InvoiceLines.KESKUSKATU_SALES_SHORT, InvoiceLines.KESKUSKATU_SALES_LONG);
+            InvoiceLines.KESKUSKATU_SALES_SHORT, InvoiceLines.KESKUSKATU_SALES_LONG,
+            InvoiceRowTag.ShortTermRentalKeskuskatuSales(), InvoiceRowTag.ShortTermRentalKeskuskatuSalesLong());
       break;
     case OTHER:
       // Handler should set the price override
       setPriceInCents(0);
-      addInvoiceRow(InvoiceUnit.PIECE, 1, 0, InvoiceLines.OTHER_SHORT_TERM_RENTAL, 0);
+        addInvoiceRow(InvoiceRowTag.ShortTermRentalOther(), InvoiceUnit.PIECE, 1, 0,
+            InvoiceLines.OTHER_SHORT_TERM_RENTAL, 0);
       break;
     case PROMOTION_OR_SALES:
       // 0.8 x 3.0 sqm: free of charge
       // bigger: 150 EUR/year
       ShortTermRental str = (ShortTermRental) application.getExtension();
       if (str != null && Optional.ofNullable(str.getLargeSalesArea()).orElse(false) == true) {
-        updatePricePerUnit(ChronoUnit.YEARS, PROMOTION_OR_SALES_LARGE_YEARLY, InvoiceLines.PROMOTION_OR_SALES_LARGE);
+          updatePricePerUnit(InvoiceRowTag.ShortTermRentalPromotionOrSales(), ChronoUnit.YEARS,
+              PROMOTION_OR_SALES_LARGE_YEARLY, InvoiceLines.PROMOTION_OR_SALES_LARGE);
       } else {
         // free of charge
-        addInvoiceRow(InvoiceUnit.PIECE, 1, 0, InvoiceLines.PROMOTION_OR_SALES_SMALL, 0);
+          addInvoiceRow(InvoiceRowTag.ShortTermRentalPromotionOrSales(), InvoiceUnit.PIECE, 1, 0,
+              InvoiceLines.PROMOTION_OR_SALES_SMALL, 0);
         setPriceInCents(0);
       }
       break;
@@ -159,15 +171,18 @@ public class ShortTermRentalPricing extends Pricing {
       // 1..14 days: 50 EUR/day/starting 10 sqm
       // 50% discount from 15. day onwards
       updatePriceByTimeAndArea(SEASON_SALE_TEN_SQM_PRICE, ChronoUnit.DAYS, 10, true, InvoiceLines.SEASON_SALES_SHORT,
-          InvoiceLines.SEASON_SALES_LONG);
+            InvoiceLines.SEASON_SALES_LONG, InvoiceRowTag.ShortTermRentalSeasonSale(),
+            InvoiceRowTag.ShortTermRentalSeasonSaleLong());
       break;
     case STORAGE_AREA:
       // 0.50 EUR/sqm/month
-      updatePriceByTimeAndArea(STORAGE_AREA_MONTHLY_PRICE, ChronoUnit.DAYS, 1, false, InvoiceLines.STORAGE_AREA, null);
+        updatePriceByTimeAndArea(STORAGE_AREA_MONTHLY_PRICE, ChronoUnit.DAYS, 1, false, InvoiceLines.STORAGE_AREA, null,
+            InvoiceRowTag.ShortTermRentalStorageArea(), null);
       break;
     case SUMMER_THEATER:
       // 120 EUR/month
-      updatePricePerUnit(ChronoUnit.MONTHS, SUMMER_THEATER_YEARLY_PRICE, InvoiceLines.SUMMER_THEATER);
+        updatePricePerUnit(InvoiceRowTag.ShortTermRentalSummerTheater(), ChronoUnit.MONTHS, SUMMER_THEATER_YEARLY_PRICE,
+            InvoiceLines.SUMMER_THEATER);
       break;
     case URBAN_FARMING:
       updateUrbanFarmingPrice();
@@ -182,11 +197,13 @@ public class ShortTermRentalPricing extends Pricing {
    * calculated as [centsPerUnit] * [starting units] and stored into
    * application.
    */
-  private void updatePricePerUnit(ChronoUnit chronoUnit, int centsPerUnit, String invoiceRowText) {
+  private void updatePricePerUnit(InvoiceRowTag invoiceRowTag, ChronoUnit chronoUnit, int centsPerUnit,
+      String invoiceRowText) {
     final int units = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
         chronoUnit);
     int priceInCents = centsPerUnit * units;
-    addInvoiceRow(InvoiceUnit.fromChronoUnit(chronoUnit), units, centsPerUnit, invoiceRowText, priceInCents);
+    addInvoiceRow(invoiceRowTag, InvoiceUnit.fromChronoUnit(chronoUnit), units, centsPerUnit, invoiceRowText,
+        priceInCents);
     setPriceInCents(priceInCents);
   }
 
@@ -210,7 +227,8 @@ public class ShortTermRentalPricing extends Pricing {
    */
   private void updatePriceByTimeAndArea(int priceInCents,
       ChronoUnit pricePeriod, int priceArea, boolean longTermDiscount,
-      String invoiceRowText, String invoiceRowTextLongTerm) {
+      String invoiceRowText, String invoiceRowTextLongTerm, InvoiceRowTag invoiceRowTag,
+      InvoiceRowTag invoiceRowTagLongTerm) {
     final int numTimeUnits = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(),
         application.getEndTime(), pricePeriod);
 
@@ -218,13 +236,15 @@ public class ShortTermRentalPricing extends Pricing {
     // How many time units are charged full price?
     int fullPriceUnits = longTermDiscount ? Math.min(numTimeUnits, LONG_TERM_DISCOUNT_LIMIT) : numTimeUnits;
     long price = numAreaUnits * fullPriceUnits * priceInCents;
-    addInvoiceRow(InvoiceUnit.fromChronoUnit(pricePeriod), fullPriceUnits, numAreaUnits * priceInCents, invoiceRowText, (int) price);
+    addInvoiceRow(invoiceRowTag, InvoiceUnit.fromChronoUnit(pricePeriod), fullPriceUnits, numAreaUnits * priceInCents,
+        invoiceRowText, (int) price);
 
     if (longTermDiscount == true && numTimeUnits > LONG_TERM_DISCOUNT_LIMIT) {
       // 50% discount for extra days
       final int numDiscountUnits = numTimeUnits - LONG_TERM_DISCOUNT_LIMIT;
       long discountPrice = numAreaUnits * numDiscountUnits * priceInCents / 2;
-      addInvoiceRow(InvoiceUnit.fromChronoUnit(pricePeriod), numDiscountUnits, numAreaUnits * priceInCents / 2,
+      addInvoiceRow(invoiceRowTagLongTerm, InvoiceUnit.fromChronoUnit(pricePeriod), numDiscountUnits,
+          numAreaUnits * priceInCents / 2,
           invoiceRowTextLongTerm, (int) discountPrice);
       price += discountPrice;
     }
@@ -241,7 +261,8 @@ public class ShortTermRentalPricing extends Pricing {
     double billableArea = applicationArea == 0.0 ? 0.0 : Math.ceil(applicationArea);
     int netPrice = URBAN_FARMING_TERM_PRICE * (int) billableArea * numTerms;
 
-    addInvoiceRow(InvoiceUnit.SQUARE_METER, billableArea, URBAN_FARMING_TERM_PRICE * numTerms,
+    addInvoiceRow(InvoiceRowTag.ShortTermRentalUrbanFarming(), InvoiceUnit.SQUARE_METER, billableArea,
+        URBAN_FARMING_TERM_PRICE * numTerms,
         InvoiceLines.URBAN_FARMING, netPrice);
     setPriceInCents(netPrice);
   }

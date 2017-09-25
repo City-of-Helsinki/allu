@@ -16,8 +16,10 @@ public abstract class Pricing {
     return invoiceRows;
   }
 
-  protected void addInvoiceRow(InvoiceUnit unit, double quantity, int unitPrice, String explanation, int netPrice) {
+  protected void addInvoiceRow(InvoiceRowTag tag, InvoiceUnit unit, double quantity, int unitPrice, String explanation,
+      int netPrice) {
     InvoiceRow row = new InvoiceRow();
+    row.setTag(tag.toString());
     row.setUnit(unit);
     row.setQuantity(quantity);
     row.setUnitPrice(unitPrice);
@@ -37,10 +39,11 @@ public abstract class Pricing {
   /**
    * Add a single location's price with given area and payment class
    *
+   * @param locationKey the location's key (unique within application).
    * @param locationArea Location's area in square meters
    * @param paymentClass Payment class: 1,2, or 3.
    */
-  public void addLocationPrice(double locationArea, int paymentClass) {
+  public void addLocationPrice(int locationKey, double locationArea, int paymentClass) {
     throw new NotImplementedException("Location price with payment class not implemented in " + this.getClass());
   }
 

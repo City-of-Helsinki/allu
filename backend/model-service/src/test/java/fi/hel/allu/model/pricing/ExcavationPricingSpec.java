@@ -29,21 +29,21 @@ public class ExcavationPricingSpec {
         });
         context("On price class 2, with area of 65 sqm", () -> {
           it("should cost 3 * 32.50 +  180 EUR", () -> {
-            exc.addLocationPrice(65.0, 2);
+            exc.addLocationPrice(1, 65.0, 2);
             assertEquals(3 * 3250 + 18000, exc.getPriceInCents());
           });
         });
 
         context("On price class 1, with area of 121 sqm", () -> {
           it("should cost 3 * 80 +  180 EUR", () -> {
-            exc.addLocationPrice(121.0, 1);
+            exc.addLocationPrice(1, 121.0, 1);
             assertEquals(3 * 8000 + 18000, exc.getPriceInCents());
           });
         });
 
         context("On price class 3, with area of 21 sqm", () -> {
           it("should cost 3 * 12.50 +  180 EUR", () -> {
-            exc.addLocationPrice(21.0, 3);
+            exc.addLocationPrice(1, 21.0, 3);
             assertEquals(3 * 1250 + 18000, exc.getPriceInCents());
           });
         });

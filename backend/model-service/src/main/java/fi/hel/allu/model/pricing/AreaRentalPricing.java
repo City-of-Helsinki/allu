@@ -41,7 +41,8 @@ public class AreaRentalPricing extends Pricing {
     case SNOW_WORK:
     case PUBLIC_EVENT:
       setPriceInCents(SHORT_TERM_HANDLING_FEE);
-      addInvoiceRow(InvoiceUnit.PIECE, 1, SHORT_TERM_HANDLING_FEE, SHORT_TERM_HANDLING_EXPLANATION, SHORT_TERM_HANDLING_FEE);
+        addInvoiceRow(InvoiceRowTag.AreaRentalHandlingFee(), InvoiceUnit.PIECE, 1, SHORT_TERM_HANDLING_FEE,
+            SHORT_TERM_HANDLING_EXPLANATION, SHORT_TERM_HANDLING_FEE);
       break;
     case PROPERTY_RENOVATION:
     case NEW_BUILDING_CONSTRUCTION:
@@ -49,7 +50,8 @@ public class AreaRentalPricing extends Pricing {
     case STORAGE_AREA:
     case OTHER:
       setPriceInCents(LONG_TERM_HANDLING_FEE);
-      addInvoiceRow(InvoiceUnit.PIECE, 1, LONG_TERM_HANDLING_FEE, LONG_TERM_HANDLING_EXPLANATION, LONG_TERM_HANDLING_FEE);
+        addInvoiceRow(InvoiceRowTag.AreaRentalHandlingFee(), InvoiceUnit.PIECE, 1, LONG_TERM_HANDLING_FEE,
+            LONG_TERM_HANDLING_EXPLANATION, LONG_TERM_HANDLING_FEE);
       break;
     default:
       throw new IllegalArgumentException("Bad application kind for area rental: " + kind);
@@ -57,7 +59,7 @@ public class AreaRentalPricing extends Pricing {
   }
 
   @Override
-  public void addLocationPrice(double locationArea, int paymentClass) {
+  public void addLocationPrice(int locationKey, double locationArea, int paymentClass) {
     if (paymentClass < 1 || paymentClass > 3) {
       throw new IllegalArgumentException(String.format("Bad payment class %d", paymentClass));
     }
@@ -66,7 +68,8 @@ public class AreaRentalPricing extends Pricing {
     int numDays = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
         ChronoUnit.DAYS);
     int netPrice = dailyPrice * numDays;
-    addInvoiceRow(InvoiceUnit.DAY, numDays, dailyPrice, DAILY_PRICE_EXPLANATION, netPrice);
+    addInvoiceRow(InvoiceRowTag.AreaRentalDailyFee(Integer.toString(locationKey)), InvoiceUnit.DAY, numDays, dailyPrice,
+        DAILY_PRICE_EXPLANATION, netPrice);
     setPriceInCents(netPrice + getPriceInCents());
   }
 }
