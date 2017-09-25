@@ -24,6 +24,18 @@ public class UserController {
     this.userService = userService;
   }
 
+  /**
+   * Check is caller autheticated properly and return HTTP 200, if ok. Otherwise authentication fails before execution of this method, which
+   * tells caller that authentication is not properly done.
+   *
+   * @return  Nothing.
+   */
+  @RequestMapping(value = "/isauthenticated", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION','ROLE_PROCESS_APPLICATION','ROLE_DECISION','ROLE_SUPERVISE','ROLE_INVOICING','ROLE_VIEW','ROLE_ADMIN')")
+  public ResponseEntity<Void> checkToken() {
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
   @RequestMapping(method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
   public ResponseEntity<List<UserJson>> getUsers() {
