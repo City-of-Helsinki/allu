@@ -47,6 +47,10 @@ export class AuthService {
     this.currentUser.clearUser();
   }
 
+  get token(): string {
+    return localStorage.getItem('jwt');
+  }
+
   private storeJwt(token: string): void {
     localStorage.setItem('jwt', token);
   }

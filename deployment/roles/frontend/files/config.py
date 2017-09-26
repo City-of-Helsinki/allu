@@ -11,5 +11,4 @@ import sys
 sys.path.append('/home/allu/mapproxy/python/')
 from filter import TokenAuthFilter
 application = make_wsgi_app(r'/home/allu/mapproxy/configuration/mapproxy.yaml')
-# TODO: to enable Token based authentication, remove this TODO and comment from the line below
-# application = TokenAuthFilter(application)
+application = TokenAuthFilter(application)

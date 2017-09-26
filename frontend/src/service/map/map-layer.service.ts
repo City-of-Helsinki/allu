@@ -1,39 +1,25 @@
 import {ApplicationType} from '../../model/application/type/application-type';
 import {EnumUtil} from '../../util/enum.util';
 import {findTranslation} from '../../util/translations';
+import '../../js/leaflet/wms-authentication';
+import {AuthService} from '../authorization/auth.service';
+import {Injectable} from '@angular/core';
 
-const OVERLAYS: L.Control.LayersObject = {
-  kaupunkikartta: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true}),
-  ortoilmakuva: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true}),
-  kiinteistokartta: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true}),
-  ajantasaasemakaava: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_ajantasaasemakaava', format: 'image/png', transparent: true}),
-  opaskartta: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_opaskartta', format: 'image/png', transparent: true}),
-  kaupunginosajako: L.tileLayer.wms('/wms?',
-    {layers: 'helsinki_kaupunginosajako', format: 'image/png', transparent: true})
-  // working URL for accessing Helsinki maps directly (requires authentication)
-  // testi: new L.tileLayer.wms('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
-  //   {layers: 'helsinki:Kaupunkikartta'}),
-  // TMS works, but unfortunately seems to use somehow invalid CRS. Thus, WMS is used. Left here for possible future use
-  // testi: new L.TileLayer('http://10.176.127.67:8080/tms/1.0.0/helsinki_kaupunkikartta/EPSG_3879/{z}/{x}/{y}.png',
-  //   { tms: true }),
-};
-
+@Injectable()
 export class MapLayerService {
   _applicationLayers: {[key: string]: L.FeatureGroup} = {};
+  _overlays: L.Control.LayersObject = {};
 
-  constructor() {
+  constructor(private authService: AuthService) {
+    this.initOverlays();
+
     EnumUtil.enumValues(ApplicationType)
       .map(type => findTranslation(['application.type', type]))
       .forEach(type => this._applicationLayers[type] = L.featureGroup());
   }
 
   get overlays(): L.Control.LayersObject {
-    return OVERLAYS;
+    return this._overlays;
   }
 
   get applicationLayers(): {[key: string]: L.FeatureGroup} {
@@ -42,5 +28,29 @@ export class MapLayerService {
 
   get applicationLayerArray(): Array<L.FeatureGroup> {
     return Object.keys(this._applicationLayers).map(k => this._applicationLayers[k]);
+  }
+
+  private initOverlays(): void {
+    const token = this.authService.token;
+    this._overlays = {
+      kaupunkikartta: L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: token}),
+      ortoilmakuva: L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: token}),
+      kiinteistokartta: L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token: token}),
+      ajantasaasemakaava: L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_ajantasaasemakaava', format: 'image/png', transparent: true, token: token}),
+      opaskartta: L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_opaskartta', format: 'image/png', transparent: true, token: token}),
+      kaupunginosajako: L.tileLayer.wmsAuth('/wms?',
+        {layers: 'helsinki_kaupunginosajako', format: 'image/png', transparent: true, token: token})
+      // working URL for accessing Helsinki maps directly (requires authentication)
+      // testi: new L.tileLayer.wms('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
+      //   {layers: 'helsinki:Kaupunkikartta'}),
+      // TMS works, but unfortunately seems to use somehow invalid CRS. Thus, WMS is used. Left here for possible future use
+      // testi: new L.TileLayer('http://10.176.127.67:8080/tms/1.0.0/helsinki_kaupunkikartta/EPSG_3879/{z}/{x}/{y}.png',
+      //   { tms: true }),
+    };
   }
 }

@@ -46,7 +46,8 @@
     "src/typings/leaflet-translations/index.d.ts",
     "src/typings/finnish-ssn/index.d.ts",
     "src/typings/leaflet-intersect/index.d.ts",
-    "src/typings/leaflet-circle-to-poly/index.d.ts"
+    "src/typings/leaflet-circle-to-poly/index.d.ts",
+    "src/typings/leaflet-wms-auth/index.d.ts"
   ],
   "awesomeTypescriptLoaderOptions": {
     "resolveGlobs": true,

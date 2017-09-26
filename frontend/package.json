@@ -91,7 +91,8 @@
     "systemjs": "0.19.25",
     "zone.js": "0.8.16",
     "moment": "2.14.1",
-    "finnish-ssn": "1.1.1"
+    "finnish-ssn": "1.1.1",
+    "superagent": "3.6.0"
   },
   "devDependencies": {
     "angular2-hmr": "0.5.5",
