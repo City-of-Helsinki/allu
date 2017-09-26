@@ -5,12 +5,12 @@
 declare namespace L {
   export namespace TileLayer {
     export class WMSAuth extends TileLayer.WMS {
+      wmsParams: WMSParams;
+      options: WMSAuthOptions;
+
       constructor(baseUrl: string, options: WMSOptions);
 
       setParams(params: WMSParams, noRedraw?: boolean): this;
-
-      wmsParams: WMSParams;
-      options: WMSAuthOptions;
     }
   }
 
