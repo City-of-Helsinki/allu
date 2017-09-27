@@ -34,7 +34,6 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
       tile.crossOrigin = '';
     }
 
-    console.log('this.token', this.token);
     request
       .get(url)
       .set('Authorization', 'Bearer ' + this.token)
