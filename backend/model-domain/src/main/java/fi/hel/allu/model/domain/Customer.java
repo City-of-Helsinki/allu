@@ -20,6 +20,7 @@ public class Customer implements PostalAddressItem {
   private String email;
   private String phone;
   private String registryKey;
+  private String ovt;
   private boolean isActive = true;
 
   public Integer getId() {
@@ -108,6 +109,17 @@ public class Customer implements PostalAddressItem {
 
   public void setRegistryKey(String registryKey) {
     this.registryKey = registryKey;
+  }
+
+  /**
+   * E-invoice identifier of the customer (OVT-tunnus).
+   */
+  public String getOvt() {
+    return ovt;
+  }
+
+  public void setOvt(String ovt) {
+    this.ovt = ovt;
   }
 
   /**

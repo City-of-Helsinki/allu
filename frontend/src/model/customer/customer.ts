@@ -6,6 +6,7 @@ export class Customer {
     public type?: string,
     public name?: string,
     public registryKey?: string,
+    public ovt?: string,
     public postalAddress?: PostalAddress,
     public email?: string,
     public phone?: string,

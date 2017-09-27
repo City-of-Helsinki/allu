@@ -283,32 +283,38 @@ export const translations = {
       COMPANY: {
         name: 'Yritys',
         nameLabel: 'Yrityksen nimi',
-        id: 'Y-tunnus'
+        id: 'Y-tunnus',
+        ovt: 'OVT-tunnus'
       },
       ASSOCIATION: {
         name: 'Yhdistys',
         nameLabel: 'Yhdistyksen nimi',
-        id: 'Y-tunnus'
+        id: 'Y-tunnus',
+        ovt: 'OVT-tunnus'
       },
       PERSON: {
         name: 'Yksityishenkilö',
         nameLabel: 'Henkilön nimi',
-        id: 'Henkilötunnus'
+        id: 'Henkilötunnus',
+        ovt: 'OVT-tunnus'
       },
       PROPERTY: {
         name: 'Kiinteistö',
         nameLabel: 'Kiinteistön nimi',
-        id: 'Kiinteistötunnus'
+        id: 'Kiinteistötunnus',
+        ovt: 'OVT-tunnus'
       },
       OTHER: {
         name: 'Muu',
-        nameLabel: 'Hakijan nimi',
-        id: 'Y-tunnus'
+        nameLabel: 'Asiakkaan nimi',
+        id: 'Y-tunnus',
+        ovt: 'OVT-tunnus'
       },
       DEFAULT: {
-        name: 'Hakija',
-        nameLabel: 'Hakijan nimi',
-        id: 'Y-tunnus'
+        name: 'Asiakas',
+        nameLabel: 'Asiakkaan nimi',
+        id: 'Y-tunnus',
+        ovt: 'OVT-tunnus'
       }
     },
     role: {
@@ -331,6 +337,8 @@ export const translations = {
       nameShort: 'Nimi on liian lyhyt',
       registryKeyMissing: 'Tunniste puuttuu',
       registryKeyShort: 'Tunniste on liian lyhyt',
+      ovtShort: 'OVT-tunnus liian lyhyt',
+      ovtLong: 'OVT-tunnus liian pitkä',
       emailInvalid: 'Virheellinen sähköpostiosoite',
       phoneShort: 'Puhelinnumero on liian lyhyt',
       invalidSsn: 'Virheellinen henkilötunnus'

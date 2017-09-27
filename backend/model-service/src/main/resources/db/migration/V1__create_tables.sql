@@ -10,6 +10,7 @@ create table allu.customer (
     type text not null,
     name text not null,
     registry_key text,
+    ovt text,
     email text,
     phone text,
     is_active boolean not null);

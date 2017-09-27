@@ -263,6 +263,7 @@ public class ApplicationMapper {
     customerJson.setType(customer.getType());
     customerJson.setName(customer.getName());
     customerJson.setRegistryKey(getVisibleRegistryKey(customer.getType(), customer.getRegistryKey()));
+    customerJson.setOvt(customer.getOvt());
     customerJson.setPhone(customer.getPhone());
     customerJson.setEmail(customer.getEmail());
     customerJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(customer.getPostalAddress()));
@@ -276,6 +277,7 @@ public class ApplicationMapper {
     customerModel.setType(customerJson.getType());
     customerModel.setName(customerJson.getName());
     customerModel.setRegistryKey(customerJson.getRegistryKey());
+    customerModel.setOvt(customerJson.getOvt());
     customerModel.setPhone(customerJson.getPhone());
     customerModel.setEmail(customerJson.getEmail());
     customerModel.setPostalAddress(ApplicationCommonMapper.createPostalAddressModel(customerJson.getPostalAddress()));

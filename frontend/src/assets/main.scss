@@ -160,11 +160,6 @@ input:-webkit-autofill:active {
   padding: 5px 0px;
   margin-bottom: 0px;
 
-  .ng-invalid.ng-dirty label.mat-input-placeholder,
-  .ng-invalid.ng-touched label.mat-input-placeholder {
-    color: mat-color($allu-warn, 500);
-  }
-
   .form-group-label {
     font-weight: bold;
     margin-bottom: 5px;

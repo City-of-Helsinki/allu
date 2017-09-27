@@ -19,6 +19,7 @@ public class CustomerExt {
   private String email;
   private String phone;
   private String registryKey;
+  private String ovt;
 
   public Integer getId() {
     return id;
@@ -104,5 +105,16 @@ public class CustomerExt {
 
   public void setRegistryKey(String registryKey) {
     this.registryKey = registryKey;
+  }
+
+  /**
+   * E-invoice identifier of the customer (OVT-tunnus).
+   */
+  public String getOvt() {
+    return ovt;
+  }
+
+  public void setOvt(String ovt) {
+    this.ovt = ovt;
   }
 }

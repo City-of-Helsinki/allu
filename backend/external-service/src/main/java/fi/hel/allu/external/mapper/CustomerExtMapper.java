@@ -12,6 +12,7 @@ public class CustomerExtMapper {
     customerJson.setName(customerExt.getName());
     customerJson.setType(customerExt.getType());
     customerJson.setRegistryKey(customerExt.getRegistryKey());
+    customerJson.setOvt(customerExt.getOvt());
     customerJson.setEmail(customerExt.getEmail());
     customerJson.setPhone(customerExt.getPhone());
     if (customerExt.getPostalAddress() != null) {
@@ -30,6 +31,7 @@ public class CustomerExtMapper {
     customerExt.setName(customerJson.getName());
     customerExt.setType(customerJson.getType());
     customerExt.setRegistryKey(customerJson.getRegistryKey());
+    customerExt.setOvt(customerJson.getOvt());
     customerExt.setEmail(customerJson.getEmail());
     customerExt.setPhone(customerJson.getPhone());
     if (customerJson.getPostalAddress() != null) {

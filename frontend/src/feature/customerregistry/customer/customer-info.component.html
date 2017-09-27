@@ -35,7 +35,7 @@
                 </md-hint>
             </md-form-field>
         </div>
-        <div class="col m6">
+        <div class="col" [ngClass]="{'m6': form.value.type==='PERSON', 'm3': form.value.type!=='PERSON'}">
             <md-form-field class="input-full-width" [inputWarning]="registryKeyControl">
                 <input mdInput type="text" formControlName="registryKey"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"
@@ -52,6 +52,17 @@
                     <field-error [form]="form" field="registryKey" hasError="required">{{'customer.field.registryKeyMissing' | translation}}</field-error>
                     <field-error [form]="form" field="registryKey" hasError="minlength">{{'customer.field.registryKeyShort' | translation}}</field-error>
                     <field-error [form]="form" field="registryKey" hasError="invalidSsn">{{'customer.field.invalidSsn' | translation}}</field-error>
+                </md-hint>
+            </md-form-field>
+        </div>
+        <div class="col m3" *ngIf="form.value.type!=='PERSON'">
+            <md-form-field class="input-full-width">
+                <input mdInput type="text" formControlName="ovt"
+                       placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'ovt'] | translation}}"/>
+
+                <md-hint>
+                    <field-error [form]="form" field="ovt" hasError="minlength">{{'customer.field.ovtShort' | translation}}</field-error>
+                    <field-error [form]="form" field="ovt" hasError="maxlength">{{'customer.field.ovtLong' | translation}}</field-error>
                 </md-hint>
             </md-form-field>
         </div>

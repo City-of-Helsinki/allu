@@ -528,6 +528,9 @@ definitions:
       registryKey:
         description: Registry key of the customer. Either business id (Y-tunnus) for companies or social security number (henkilötunnus) for persons
         type: string
+      ovt:
+        description: E-invoice identifier of the customer (OVT-tunnus).
+        type: string
   ContactExt:
     description: Customer contact information
     type: object

@@ -9,6 +9,7 @@ export class CustomerForm {
     public type?: string,
     public name?: string,
     public registryKey?: string,
+    public ovt?: string,
     public country?: string,
     public postalAddress?: PostalAddress,
     public email?: string,
@@ -22,6 +23,7 @@ export class CustomerForm {
       customer.type,
       customer.name,
       customer.registryKey,
+      customer.ovt,
       'Suomi',
       customer.postalAddress || new PostalAddress(),
       customer.email,
@@ -36,6 +38,7 @@ export class CustomerForm {
     customer.type = form.type;
     customer.name = form.name;
     customer.registryKey = form.registryKey;
+    customer.ovt = form.ovt;
     customer.postalAddress = form.postalAddress;
     customer.email = form.email;
     customer.phone = form.phone;
@@ -51,6 +54,7 @@ export class CustomerForm {
       detailsId: undefined,
       name: ['', [Validators.required, Validators.minLength(2)]],
       registryKey: ['', [Validators.required, Validators.minLength(2)]],
+      ovt: ['', [Validators.minLength(12), Validators.maxLength(17)]],
       country: ['Suomi'],
       postalAddress: fb.group({
         streetAddress: [''],
