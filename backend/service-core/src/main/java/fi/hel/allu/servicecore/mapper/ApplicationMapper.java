@@ -326,7 +326,12 @@ public class ApplicationMapper {
   public CustomerES createCustomerES(CustomerJson customerJson) {
     if (customerJson != null) {
       return new CustomerES(
-          customerJson.getId(), customerJson.getName(), customerJson.getRegistryKey(), customerJson.getType(), customerJson.isActive());
+          customerJson.getId(),
+          customerJson.getName(),
+          customerJson.getRegistryKey(),
+          customerJson.getOvt(),
+          customerJson.getType(),
+          customerJson.isActive());
     } else {
       return null;
     }

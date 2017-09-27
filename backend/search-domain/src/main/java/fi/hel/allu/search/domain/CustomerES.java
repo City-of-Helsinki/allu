@@ -9,6 +9,7 @@ public class CustomerES {
   private Integer id;
   private String name;
   private String registryKey;
+  private String ovt;
   private CustomerType type;
   private boolean isActive;
 
@@ -16,10 +17,11 @@ public class CustomerES {
     // JSON serialization
   }
 
-  public CustomerES(Integer id, String name, String registryKey, CustomerType type, boolean isActive) {
+  public CustomerES(Integer id, String name, String registryKey, String ovt, CustomerType type, boolean isActive) {
     this.id = id;
     this.name = name;
     this.registryKey = registryKey;
+    this.ovt = ovt;
     this.type = type;
     this.isActive = isActive;
   }
@@ -57,6 +59,17 @@ public class CustomerES {
 
   public void setRegistryKey(String registryKey) {
     this.registryKey = registryKey;
+  }
+
+  /**
+   * E-invoice identifier of the customer (OVT-tunnus).
+   */
+  public String getOvt() {
+    return ovt;
+  }
+
+  public void setOvt(String ovt) {
+    this.ovt = ovt;
   }
 
   /**
