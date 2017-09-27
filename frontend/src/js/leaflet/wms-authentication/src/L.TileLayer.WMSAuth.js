@@ -2,7 +2,14 @@
 
 const request = require('superagent');
 
-L.TileLayer.WMSAuth = L.TileLayer.WMS.include({
+L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
+  token: undefined,
+
+  initialize: function (url, options) {
+    this.token = options.token;
+    delete options.token; // need to delete property so it is not added as url parameters by parent class
+    L.TileLayer.WMS.prototype.initialize.call(this, url, options);
+  },
   // @method createTile(coords: Object, done?: Function): HTMLElement
   // Called only internally, overrides GridLayer's [`createTile()`](#gridlayer-createtile)
   // to return an `<img>` HTML element with the appropiate image URL given `coords`. The `done`
@@ -27,9 +34,10 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.include({
       tile.crossOrigin = '';
     }
 
+    console.log('this.token', this.token);
     request
       .get(url)
-      .set('Authorization', 'Bearer ' + this.options.token)
+      .set('Authorization', 'Bearer ' + this.token)
       .responseType('blob')
       .then(
         function(res) {
