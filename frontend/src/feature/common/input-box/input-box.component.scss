@@ -36,10 +36,15 @@ select {
   }
 }
 
+.input-box-content.button {
+  border: none;
+}
+
 .input-raised > .input-box-content {
   box-shadow: 0 2px 4px 0 #757575;
 }
 
+.input-box-content-item,
 .input-box-content > input,
 .input-box-content > select,
 .input-box-content > .select-wrapper input.select-dropdown {
@@ -56,9 +61,14 @@ select {
   &:first-child:last-child {
     border-radius: 6px 6px 6px 6px;
   }
+
+  &:last-child {
+    border-radius: 0 6px 6px 0;
+  }
 }
 
-.input-box-content > [inputBoxSuffix] {
-  border-radius: 0 6px 6px 0;
-  margin-right: 5px;
+.input-box-content > button {
+  @extend .input-box-content-item;
+  flex: 0;
+  min-width: 47px;
 }

@@ -1,8 +1,11 @@
 <form [formGroup]="searchForm">
   <div *ngIf="barType === 'SIMPLE'" class="search-box">
-    <div class="input-with-addon input-raised">
-      <button type="button" (click)="showMore()" class="input-addon-item addon-btn"><md-icon>subject</md-icon></button>
+    <input-box class="input-raised">
+      <button type="button" md-raised-button mdPrefix class="toggle-sidebar fill" (click)="showMore()" inputBoxPrefix>
+        <md-icon>subject</md-icon>
+      </button>
       <input type="text" formControlName="address"
+             inputBoxInput
              class="input-addon-field last-item"
              placeholder="Hae osoitteella"
              (keyup.enter)="addressSelected(searchForm.value.address)"
@@ -13,7 +16,7 @@
           {{ address.uiStreetAddress }}
         </md-option>
       </md-autocomplete>
-    </div>
+    </input-box>
   </div>
 
   <div *ngIf="barType === 'BAR'" class="row">

@@ -48,6 +48,11 @@ application-list {
 
 md-sidenav {
   width: 400px;
+  box-shadow: 0 2px 20px 0 #757575;
+}
+
+.mat-drawer-backdrop.mat-drawer-shown {
+  visibility: hidden !important;
 }
 
 .sidenav-header {
@@ -68,4 +73,8 @@ md-sidenav {
   .material-icons {
     color: mat-contrast($allu-accent, 800);
   }
+}
+
+button.btn-right:focus {
+  outline: none;
 }

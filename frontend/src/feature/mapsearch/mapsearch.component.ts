@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, ViewEncapsulation} from '@angular/core';
 
 @Component({
   selector: 'mapsearch',
@@ -6,7 +6,8 @@ import {Component} from '@angular/core';
   template: require('./mapsearch.component.html'),
   styles: [
     require('./mapsearch.component.scss')
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class MapSearchComponent {
