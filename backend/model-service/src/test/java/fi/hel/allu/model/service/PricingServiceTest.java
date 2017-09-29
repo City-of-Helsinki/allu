@@ -253,6 +253,20 @@ public class PricingServiceTest {
     checkPrice(application, 133800);
   }
 
+  @Test
+  public void testTotalPrice() {
+    List<InvoiceRow> rows = Arrays.asList(
+        new InvoiceRow("TAG1", null, false, InvoiceUnit.PIECE, 5.0, "Row 1", 1230, 6150),
+        new InvoiceRow("TAG2", null, false, InvoiceUnit.DAY, 3.0, "Row 2", 22000, 66000),
+        new InvoiceRow("TAG3", null, false, InvoiceUnit.SQUARE_METER, 123.5, "Row 3", 200, 24700),
+        new InvoiceRow(null, "TAG1", true, InvoiceUnit.MULTIPLY, 0.8, "20% discount", 0, 0),
+        new InvoiceRow(null, "TAG1", true, InvoiceUnit.MULTIPLY, 0.9, "10% discount", 0, 0),
+        new InvoiceRow(null, "TAG2", true, InvoiceUnit.MULTIPLY, 1.2, "20% extra fee", 0, 0),
+        new InvoiceRow(null, null, true, InvoiceUnit.MULTIPLY, 0.9, "10% discount", 0, 0));
+    // The total price should be
+    // (61.50 * 0.8 * 0.9 + 660.00 * 1.2 + 247.00) * 0.9 = 974.95 EUR
+    assertEquals(97495, pricingService.totalPrice(rows));
+  }
   /*
    * Verify that the sum of invoice lines matches the application's calculated
    * price

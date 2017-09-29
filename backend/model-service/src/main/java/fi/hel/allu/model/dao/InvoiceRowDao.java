@@ -2,7 +2,6 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.QBean;
-import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QInvoiceRow.invoiceRow;
@@ -67,18 +65,5 @@ public class InvoiceRowDao {
         throw new QueryException("Failed to insert the rows, numInserts=" + numInserts);
       }
     }
-  }
-
-  /**
-   * Get the sum application's total price, e.g., the sum of all netPrices for
-   * the application.
-   *
-   * @param applicationId application's database ID
-   * @return application's total price in cents.
-   */
-  @Transactional(readOnly = true)
-  public int getTotalPrice(int applicationId) {
-    return Optional.ofNullable(queryFactory.select(SQLExpressions.sum(invoiceRow.netPrice)).from(invoiceRow)
-        .where(invoiceRow.applicationId.eq(applicationId)).fetchOne()).orElse(0);
   }
 }

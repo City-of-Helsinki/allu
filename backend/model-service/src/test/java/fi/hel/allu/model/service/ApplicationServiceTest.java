@@ -74,7 +74,7 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     Application application = Mockito.mock(Application.class);
     Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
-    Mockito.when(invoiceRowDao.getTotalPrice(APP_ID)).thenReturn(TOTAL_PRICE);
+    Mockito.when(pricingService.totalPrice(Mockito.anyListOf(InvoiceRow.class))).thenReturn(TOTAL_PRICE);
 
     applicationService.setManualInvoiceRows(APP_ID, Arrays.asList(new InvoiceRow()));
 

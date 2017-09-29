@@ -96,7 +96,7 @@ public class ApplicationService {
     List<InvoiceRow> invoiceRows = new ArrayList<>();
     pricingService.updatePrice(application, invoiceRows);
     invoiceRowDao.setInvoiceRows(id, invoiceRows, false);
-    application.setCalculatedPrice(invoiceRowDao.getTotalPrice(id));
+    application.setCalculatedPrice(pricingService.totalPrice(invoiceRowDao.getInvoiceRows(id)));
     Application result = applicationDao.update(id, application);
     return result;
   }
@@ -190,7 +190,7 @@ public class ApplicationService {
     invoiceRowDao.setInvoiceRows(applicationId,
         invoiceRows.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()), true);
     Application application = findById(applicationId);
-    application.setCalculatedPrice(invoiceRowDao.getTotalPrice(applicationId));
+    application.setCalculatedPrice(pricingService.totalPrice(invoiceRowDao.getInvoiceRows(applicationId)));
     applicationDao.update(applicationId, application);
     return invoiceRowDao.getInvoiceRows(applicationId);
   }

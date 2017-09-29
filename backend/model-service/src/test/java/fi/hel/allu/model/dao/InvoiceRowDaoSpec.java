@@ -1,10 +1,12 @@
 package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.domain.InvoiceUnit;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,7 +20,9 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(Spectrum.class)
 @SpringBootTest(classes = ModelApplication.class)
@@ -134,14 +138,6 @@ public class InvoiceRowDaoSpec extends SpeccyTestBase {
               });
             });
 
-            describe("getTotalPrice", ()-> {
-              it("Should calculate the correct total price for the application", () -> {
-                final List<InvoiceRow> rows = invoiceRowDao.getInvoiceRows(appId1.get());
-                final int expectedPrice = rows.stream().mapToInt(r -> r.getNetPrice()).sum();
-                assertEquals(expectedPrice, invoiceRowDao.getTotalPrice(appId1.get()));
-              });
-            });
-
           });
         });
       });
@@ -153,6 +149,8 @@ public class InvoiceRowDaoSpec extends SpeccyTestBase {
     for (int r = 1; r <= numRows; ++r) {
       InvoiceRow row = new InvoiceRow();
       row.setRowText(String.format("%s (%d)", text, r));
+      row.setTag(String.format("tag-%d", r));
+      row.setReferredTag(String.format("ref-%d", r));
       row.setUnitPrice(r * 100);
       row.setNetPrice(r * 200);
       row.setUnit(InvoiceUnit.SQUARE_METER);
@@ -166,6 +164,8 @@ public class InvoiceRowDaoSpec extends SpeccyTestBase {
     int r = 1;
     for (InvoiceRow row : rows) {
       assertTrue(row.getRowText().startsWith(text));
+      assertEquals(String.format("tag-%d", r), row.getTag());
+      assertEquals(String.format("ref-%d", r), row.getReferredTag());
       assertEquals(r * 100, row.getUnitPrice());
       assertEquals(r * 200, row.getNetPrice());
       assertEquals(InvoiceUnit.SQUARE_METER, row.getUnit());

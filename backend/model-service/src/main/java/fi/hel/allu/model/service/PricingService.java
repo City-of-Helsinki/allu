@@ -7,10 +7,7 @@ import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.PricingDao;
-import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.Event;
-import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.domain.Location;
+import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.pricing.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -70,6 +65,45 @@ public class PricingService {
     } else if (application.getType() == ApplicationType.AREA_RENTAL) {
       updateAreaRentalPrice(application, invoiceRows);
     }
+  }
+
+  /**
+   * Calculate the total price of given invoice rows
+   *
+   * @param invoiceRows
+   * @return total price in cents
+   */
+  public int totalPrice(List<InvoiceRow> invoiceRows) {
+    // To cope with floating-point rounding errors, 100 in sum = 1 cent:
+    long sum = 0;
+    double totalMultiplier = 1.0;
+    // Store row-specific multipliers here:
+    Map<String, Double> rowMultipliers = new HashMap<>();
+    for (InvoiceRow row : invoiceRows) {
+      if (row.getUnit() != InvoiceUnit.MULTIPLY) {
+        // Normal row, just add to sum
+        sum += (long) row.getNetPrice() * 100;
+      } else if (row.getReferredTag() == null) {
+        // Multiplying row without target: will affect the whole result
+        totalMultiplier *= row.getQuantity();
+      } else {
+        // Multiplying row with target: update the target row's multiplier
+        rowMultipliers.put(row.getReferredTag(),
+            row.getQuantity() * rowMultipliers.getOrDefault(row.getReferredTag(), 1.0));
+      }
+    }
+    // Handle row multipliers: add (K-1) x net price
+    for (InvoiceRow row: invoiceRows) {
+      final Double multiplier = rowMultipliers.get(row.getTag());
+      if (multiplier != null) {
+        final Double correction = (multiplier - 1.0) * ((long) row.getNetPrice() * 100);
+        sum += correction;
+      }
+    }
+    // Finally, global multiplier
+    sum *= totalMultiplier;
+    // Convert to cents (assumes sum >= 0):
+    return (int) ((sum + 50) / 100);
   }
 
   /*

@@ -237,6 +237,7 @@ create table allu.invoice_row (
     application_id integer not null references allu.application(id) on delete cascade,
     row_number integer not null,
     tag text,
+    referred_tag text,
     manually_set boolean not null,
     unit text not null,
     quantity double precision not null,
