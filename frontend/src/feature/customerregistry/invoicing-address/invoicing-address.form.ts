@@ -1,8 +1,8 @@
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {PostalAddress} from '../../../model/common/postal-address';
 import {InvoicingAddress} from '../../../model/customer/invoicing-address';
 import {CustomerType} from '../../../model/customer/customer-type';
-import {emailValidator, postalCodeValidator} from '../../../util/complex-validator';
+import {CustomerForm} from '../customer/customer.form';
 
 export class InvoicingAddressForm {
   constructor(
@@ -13,8 +13,7 @@ export class InvoicingAddressForm {
     public country?: string,
     public postalAddress?: PostalAddress,
     public email?: string,
-    public phone?: string,
-    public noInvoicing?: boolean) {
+    public phone?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
   }
 
@@ -27,8 +26,7 @@ export class InvoicingAddressForm {
       'Suomi',
       invoicingAddress.postalAddress || new PostalAddress(),
       invoicingAddress.email,
-      invoicingAddress.phone,
-      invoicingAddress.noInvoicing
+      invoicingAddress.phone
     );
   }
 
@@ -41,24 +39,10 @@ export class InvoicingAddressForm {
     address.postalAddress = form.postalAddress;
     address.email = form.email;
     address.phone = form.phone;
-    address.noInvoicing = form.noInvoicing;
     return address;
   }
 
   static initialForm(fb: FormBuilder): any {
-    return fb.group({
-      id: undefined,
-      type: [undefined],
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      registryKey: ['', [Validators.required, Validators.minLength(2)]],
-      country: ['Suomi'],
-      postalAddress: fb.group({
-        streetAddress: [''],
-        postalCode: ['', postalCodeValidator],
-        city: ['']
-      }),
-      email: ['', emailValidator],
-      phone: ['', Validators.minLength(2)]
-    });
+    return CustomerForm.initialForm(fb);
   }
 }

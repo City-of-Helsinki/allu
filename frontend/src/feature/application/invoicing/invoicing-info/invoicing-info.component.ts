@@ -28,13 +28,14 @@ export class InvoicingInfoComponent implements OnInit {
   private notBillableReasonCtrl: FormControl;
 
   constructor(private fb: FormBuilder, private applicationState: ApplicationState, private customerHub: CustomerHub) {
+  }
+
+  ngOnInit(): void {
     this.invoicingInfoForm = InvoicingInfoForm.initialForm(this.fb);
     this.invoicingAddressForm = <FormGroup>this.invoicingInfoForm.get('invoicingAddress');
     this.notBillableCtrl = <FormControl>this.invoicingInfoForm.get('notBillable');
     this.notBillableReasonCtrl = <FormControl>this.invoicingInfoForm.get('notBillableReason');
-  }
 
-  ngOnInit(): void {
     this.parentForm.addControl('invoicingInfo', this.invoicingInfoForm);
     this.patchInfo(this.applicationState.application);
     Some(this.applicationState.application.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));

@@ -9,8 +9,7 @@ export class InvoicingAddress {
     public registryKey?: string,
     public postalAddress?: PostalAddress,
     public email?: string,
-    public phone?: string,
-    public noInvoicing?: boolean) {
+    public phone?: string) {
     this.postalAddress = postalAddress || new PostalAddress();
   }
 }
