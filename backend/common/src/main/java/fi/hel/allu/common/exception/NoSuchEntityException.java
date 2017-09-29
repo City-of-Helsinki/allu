@@ -25,6 +25,14 @@ public class NoSuchEntityException extends RuntimeException {
   }
 
   /*
+ * Create with message and missing entity's id
+ */
+  public NoSuchEntityException(String message, int missingEntityId) {
+    super(message);
+    this.missingEntityId = Integer.toString(missingEntityId);
+  }
+
+  /*
    * The id of the entity that was tried to access
    */
   public String getMissingEntityId() {

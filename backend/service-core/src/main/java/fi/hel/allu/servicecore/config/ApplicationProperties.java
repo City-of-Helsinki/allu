@@ -821,6 +821,41 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for retrieving supervision task by id.
+   */
+  public String getSupervisionTaskByIdUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}");
+  }
+
+  /**
+   * @return url for retrieving supervision tasks by application id.
+   */
+  public String getSupervisionTaskByApplicationIdUrl() {
+    return getModelServiceUrl("/supervisiontask/application/{id}");
+  }
+
+  /**
+   * @return url for creating new supervision task-
+   */
+  public String getSupervisionTaskCreateUrl() {
+    return getModelServiceUrl("/supervisiontask");
+  }
+
+  /**
+   * @return url for updating existing supervision task-
+   */
+  public String getSupervisionTaskUpdateUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}");
+  }
+
+  /**
+   * @return url for deleting existing supervision task-
+   */
+  public String getSupervisionTaskDeleteUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}");
+  }
+
+  /**
    * @return  the base URL for model service.
    */
   private String modelServiceBaseUrl() {

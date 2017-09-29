@@ -275,6 +275,21 @@
                             <column>last_login</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task</table>
+                            <column>creation_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task</table>
+                            <column>planned_finishing_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task</table>
+                            <column>actual_finishing_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
                         <!-- Map enumeration types -->
                         <!-- NOTE that if you add new kind of typeMapping type, you have to configure it in JdbcConfiguration class! -->
                         <typeMapping>
@@ -401,6 +416,16 @@
                             <table>external_user_role</table>
                             <column>role</column>
                             <type>fi.hel.allu.model.querydsl.StringToExternalRoleType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToSupervisionTaskType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>supervision_task</table>
+                            <column>status</column>
+                            <type>fi.hel.allu.model.querydsl.StringToSupervisionTaskStatusType</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>

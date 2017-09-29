@@ -312,6 +312,20 @@ create table allu.default_recipient (
   application_type text not null
 );
 
+create table allu.supervision_task (
+  id serial primary key,
+  application_id integer not null references allu.application(id) on delete cascade,
+  type text not null,
+  creator_id integer references allu.user(id),
+  handler_id integer references allu.user(id),
+  creation_time timestamp with time zone not null,
+  planned_finishing_time timestamp with time zone not null,
+  actual_finishing_time timestamp with time zone,
+  status text not null,
+  description text,
+  result text
+);
+
 create SEQUENCE allu.KP_application_type_sequence START 1600001;
 create SEQUENCE allu.AL_application_type_sequence START 1600001;
 create SEQUENCE allu.LJ_application_type_sequence START 1600001;

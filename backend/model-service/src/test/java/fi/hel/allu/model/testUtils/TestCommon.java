@@ -224,6 +224,7 @@ public class TestCommon {
 
   private static final String[] DELETE_ALL_DATA = new String[] {
       "delete from allu.decision",
+      "delete from allu.application_customer_contact",
       "delete from allu.contact",
       "delete from allu.default_attachment_application_type",
       "delete from allu.default_attachment",
@@ -237,6 +238,7 @@ public class TestCommon {
       "delete from allu.field_change",
       "delete from allu.change_history",
       "delete from allu.distribution_entry",
+      "delete from allu.supervision_task",
       "delete from allu.application",
       "delete from allu.project",
       "delete from allu.external_user_customer",

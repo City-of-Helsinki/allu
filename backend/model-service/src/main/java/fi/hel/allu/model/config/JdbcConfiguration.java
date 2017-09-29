@@ -59,6 +59,8 @@ public class JdbcConfiguration {
     configuration.register(new StringToDistributionType());
     configuration.register(new StringToPublicityType());
     configuration.register(new StringToExternalRoleType());
+    configuration.register(new StringToSupervisionTaskType());
+    configuration.register(new StringToSupervisionTaskStatusType());
     return configuration;
   }
 
