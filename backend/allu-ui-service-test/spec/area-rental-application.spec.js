@@ -5,6 +5,12 @@ TestUtil.assertEnv();
 
 describe('Area rental application', () => {
 
+  let area1StartTime = TestUtil.getISODateString(10);
+  let area1EndTime = TestUtil.getISODateString(20);
+
+  let area2StartTime = TestUtil.getISODateString(15);
+  let area2EndTime = TestUtil.getISODateString(25);
+
   let reimaCustomersWithContactsCreated;
   let bulvaaniCustomersWithContactsCreated;
 
@@ -107,8 +113,8 @@ describe('Area rental application', () => {
         {
           'locationKey': 1,
           'locationVersion': 1,
-          'startTime': '2017-01-01T22:00:00Z',
-          'endTime': '2017-12-30T22:00:00Z',
+          'startTime': area1StartTime,
+          'endTime': area1EndTime,
           'geometry': {
             'type': 'GeometryCollection',
             'crs': {
@@ -167,8 +173,8 @@ describe('Area rental application', () => {
         {
           'locationKey': 2,
           'locationVersion': 1,
-          'startTime': '2017-03-31T21:00:00Z',
-          'endTime': '2017-04-29T21:00:00Z',
+          'startTime': area2StartTime,
+          'endTime': area2EndTime,
           'geometry': {
             'type': 'GeometryCollection',
             'crs': {

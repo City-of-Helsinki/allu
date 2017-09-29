@@ -5,6 +5,21 @@ TestUtil.assertEnv();
 
 describe('Event application', () => {
 
+  let application1StartTime = TestUtil.getISODateString(-15);
+  let application1EndTime = TestUtil.getISODateString(1);
+  let event1StartTime = TestUtil.getISODateString(-13);
+  let event1EndTime = TestUtil.getISODateString(0);
+  let structure1StartTime = application1StartTime;
+  let structure1EndTime = application1EndTime;
+
+  let application2StartTime = TestUtil.getISODateString(-30);
+  let application2EndTime = TestUtil.getISODateString(-16);
+  let event2StartTime = TestUtil.getISODateString(-29);
+  let event2EndTime = TestUtil.getISODateString(-17);
+  let structure2StartTime = application2StartTime;
+  let structure2EndTime = application2EndTime;
+
+
   let herneCustomersWithContactsCreated;
   let tervaCustomersWithContactsCreated;
 
@@ -122,8 +137,8 @@ describe('Event application', () => {
         'locations': [
           {
             'id': null,
-            'startTime': '2016-12-22T22:00:00Z',
-            'endTime': '2016-12-26T22:00:00Z',
+            'startTime': application1StartTime,
+            'endTime': application1EndTime,
             'geometry': {
               'type': 'GeometryCollection',
               'crs': {
@@ -207,8 +222,8 @@ describe('Event application', () => {
           'nature': 'PUBLIC_FREE',
           'description': 'Hernekeittopäivä pakolliseksi kansallisella tasolla',
           'url': 'http://www.hernerokka.fi',
-          'eventStartTime': '2016-12-23T22:00:00Z',
-          'eventEndTime': '2016-12-25T22:00:00Z',
+          'eventStartTime': event1StartTime,
+          'eventEndTime': event1EndTime,
           'attendees': 5,
           'entryFee': 0,
           'ecoCompass': false,
@@ -218,8 +233,8 @@ describe('Event application', () => {
           'marketingProviders': 'Tapahtumassa ei luultavimmin ole markkinointitoimintaa',
           'structureArea': 54.0,
           'structureDescription': 'Paikalle rakennetaan linna',
-          'structureStartTime': '2016-12-22T22:00:00Z',
-          'structureEndTime': '2016-12-26T22:00:00Z',
+          'structureStartTime': structure1StartTime,
+          'structureEndTime': structure1EndTime,
           'timeExceptions': 'Pyhäpäivinä tauko'
         },
         'decisionTime': null
@@ -264,8 +279,8 @@ describe('Event application', () => {
         'locations': [
           {
             'id': null,
-            'startTime': '2016-11-20T22:00:00Z',
-            'endTime': '2016-12-20T22:00:00Z',
+            'startTime': application2StartTime,
+            'endTime': application2EndTime,
             'geometry': {
               'type': 'GeometryCollection',
               'crs': {
@@ -417,8 +432,8 @@ describe('Event application', () => {
           'nature': 'PUBLIC_FREE',
           'description': 'Tutustutaan tervan nykyiseen käyttöön',
           'url': 'http://www.terva.fi',
-          'eventStartTime': '2016-11-22T22:00:00Z',
-          'eventEndTime': '2016-12-19T22:00:00Z',
+          'eventStartTime': event2StartTime,
+          'eventEndTime': event2EndTime,
           'attendees': 1200,
           'entryFee': 0,
           'ecoCompass': true,
@@ -428,8 +443,8 @@ describe('Event application', () => {
           'marketingProviders': 'Markkinoidaan tervaa ja myydään tynnyreitä',
           'structureArea': 205.0,
           'structureDescription': 'Paikalla tervan polttohauta',
-          'structureStartTime': '2016-11-20T22:00:00Z',
-          'structureEndTime': '2016-12-20T22:00:00Z',
+          'structureStartTime': structure2StartTime,
+          'structureEndTime': structure2EndTime,
           'timeExceptions': 'Tapahtuma-ajalla ei ole poikkeuksia'
         },
         'decisionTime': null

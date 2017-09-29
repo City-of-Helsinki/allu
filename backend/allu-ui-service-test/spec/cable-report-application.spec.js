@@ -5,6 +5,9 @@ TestUtil.assertEnv();
 
 describe('Cable report application', () => {
 
+  let applicationStartTime = TestUtil.getISODateString(0);
+  let applicationEndTime = TestUtil.getISODateString(30);
+
   let applicantCustomersWithContactsCreated;
   let propertyDeveloperCustomersWithContactsCreated;
 
@@ -116,8 +119,8 @@ describe('Cable report application', () => {
       },
       'locations': [
         {
-          'startTime': '2017-01-22T22:00:00.000Z',
-          'endTime': '2017-01-29T22:00:00.000Z',
+          'startTime': applicationStartTime,
+          'endTime': applicationEndTime,
           'additionalInfo': 'Näiltä nurkin pitäisi kaivella',
           'underpass': false,
           'postalAddress': {},

@@ -5,6 +5,9 @@ TestUtil.assertEnv();
 
 describe('Short term rental application', () => {
 
+  let applicationStartTime = TestUtil.getISODateString(-10);
+  let applicationEndTime = TestUtil.getISODateString(10);
+
   let applicantCustomersWithContactsCreated;
 
   function createCustomers() {
@@ -76,8 +79,8 @@ describe('Short term rental application', () => {
         'locations': [
           {
             'id': null,
-            'startTime': '2016-12-23T22:00:00Z',
-            'endTime': '2016-12-25T22:00:00Z',
+            'startTime': applicationStartTime,
+            'endTime': applicationEndTime,
             'geometry': {
               'type': 'GeometryCollection',
               'crs': {

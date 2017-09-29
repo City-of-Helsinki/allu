@@ -5,6 +5,9 @@ TestUtil.assertEnv();
 
 describe('Placement contract application', () => {
 
+  let applicationStartTime = TestUtil.getISODateString(-100);
+  let applicationEndTime = TestUtil.getISODateString(100);
+
   let applicantWithContactsCreated;
   let representativeCustomersWithContactsCreated;
 
@@ -102,8 +105,8 @@ describe('Placement contract application', () => {
         'customersWithContacts':[applicantWithContactsCreated, representativeCustomersWithContactsCreated],
         'locations': [
           {
-            'startTime': '2017-02-28T21:00:00.000Z',
-            'endTime': '2017-05-01T21:00:00.000Z',
+            'startTime': applicationStartTime,
+            'endTime': applicationEndTime,
             'geometry': {
               'type': 'GeometryCollection',
               'crs': {

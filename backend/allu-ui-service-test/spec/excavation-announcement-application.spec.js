@@ -5,6 +5,14 @@ TestUtil.assertEnv();
 
 describe('Excavation announcement application', () => {
 
+  let applicationStartTime = TestUtil.getISODateString(-5);
+  let applicationEndTime = TestUtil.getISODateString(0);
+  let guaranteeEndTime = TestUtil.getISODateString(365*2);
+  let customerStartTime = applicationStartTime;
+  let customerEndTime = applicationEndTime;
+  let customerWinterTimeOperation = null;
+  let customerWorkFinished = TestUtil.getISODateString(-1);
+
   let applicantCustomersWithContactsCreated;
   let contractorCustomersWithContactsCreated;
 
@@ -106,8 +114,8 @@ describe('Excavation announcement application', () => {
         'locations': [
           {
             'id': null,
-            'startTime': '2017-01-01T05:00:00Z',
-            'endTime': '2017-03-31T22:00:00Z',
+            'startTime': applicationStartTime,
+            'endTime': applicationEndTime,
             'geometry': {
               'type': 'GeometryCollection',
               'crs': {
@@ -200,11 +208,11 @@ describe('Excavation announcement application', () => {
         ],
         'extension': {
           'applicationType': 'EXCAVATION_ANNOUNCEMENT',
-          'guaranteeEndTime': '2019-03-31T22:00:00Z',
-          'customerStartTime': '2017-01-01T05:00:00Z',
-          'customerEndTime': '2017-03-30T22:00:00Z',
-          'customerWinterTimeOperation': '2017-03-10T22:00:00Z',
-          'customerWorkFinished': '2017-03-30T22:00:00Z',
+          'guaranteeEndTime': guaranteeEndTime,
+          'customerStartTime': customerStartTime,
+          'customerEndTime': customerEndTime,
+          'customerWinterTimeOperation': customerWinterTimeOperation,
+          'customerWorkFinished': customerWorkFinished,
           'additionalInfo': 'Automaagisesti tehty kaivuilmoitus',
           'traffixArrangements': 'Mannerheimintie kokonaan poikki. Koittakaa selvitä!',
           'trafficArrangementImpedimentType': 'SIGNIFICANT_IMPEDIMENT',

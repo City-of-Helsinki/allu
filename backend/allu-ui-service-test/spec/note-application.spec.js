@@ -5,6 +5,9 @@ TestUtil.assertEnv();
 
 describe('Note application', () => {
 
+  let applicationStartTime = TestUtil.getISODateString(-1);
+  let applicationEndTime = TestUtil.getISODateString(30);
+
   let nuupuryCustomersWithContactsCreated;
 
   function createCustomers() {
@@ -60,8 +63,8 @@ describe('Note application', () => {
       'notBillableReason': 'Ei nyt jouluna kehtaa laskuttaa',
       'locations': [
         {
-          'startTime': '2017-01-11T22:00:00.000Z',
-          'endTime': '2017-01-14T22:00:00.000Z',
+          'startTime': applicationStartTime,
+          'endTime': applicationEndTime,
           'fixedLocationIds': [],
           'geometry': {
             'crs': {

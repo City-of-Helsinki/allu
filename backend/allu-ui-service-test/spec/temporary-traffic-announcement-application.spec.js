@@ -5,6 +5,9 @@ TestUtil.assertEnv();
 
 describe('Temporary traffic announcement application', () => {
 
+  let applicationStartTime = TestUtil.getISODateString(13);
+  let applicationEndTime = TestUtil.getISODateString(33);
+
   let lasseCustomersWithContactsCreated;
   let liikenneCustomersWithContactsCreated;
 
@@ -102,8 +105,8 @@ describe('Temporary traffic announcement application', () => {
         'customersWithContacts':[lasseCustomersWithContactsCreated, liikenneCustomersWithContactsCreated],
         'locations': [
           {
-            'startTime': '2017-03-31T21:00:00.000Z',
-            'endTime': '2017-04-01T21:00:00.000Z',
+            'startTime': applicationStartTime,
+            'endTime': applicationEndTime,
             'geometry': {
               'type': 'GeometryCollection',
               'crs': {

@@ -6,7 +6,7 @@ module.exports.tryToCreateUsers = tryToCreateUsers;
 module.exports.addAuthorization = addAuthorization;
 module.exports.getPostOptions = getPostOptions;
 module.exports.tryRetryPromise = tryRetryPromise;
-
+module.exports.getISODateString = getISODateString;
 
 module.exports.assertEnv = function() {
   // If tested server is not available for some reason, tests wait awhile. To support waiting, Jasmine async timeout has to be increased
@@ -97,4 +97,14 @@ function getGetOptions(path, body) {
 
 function addAuthorization(options, token) {
   options.headers = { 'Authorization': 'Bearer ' + token };
+}
+
+/**
+ * Returns ISO date string (such as 2017-01-01T22:00:00Z) of current date adjusted with the given day offset.
+ *
+ * @param dayOffset   Day offset where positive is future and negative is past.
+ */
+function getISODateString(dayOffset) {
+  let milliOffset = dayOffset * 24 * 60 * 60 * 1000;
+  return new Date(Date.now() + milliOffset).toISOString();
 }
