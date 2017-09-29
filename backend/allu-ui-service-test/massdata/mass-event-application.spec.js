@@ -156,6 +156,9 @@ describe('Event application mass insert', () => {
       let optionsFactory = function(token) {
         return () => {
           console.log(++callCounter);
+
+          setApplicationDates(eventApplication, callCounter % 100);
+
           const maxY = 6682117;
           const minY = 6672549;
           const xAddition = 22;
@@ -189,4 +192,13 @@ function repeatRequest(times, optionsFactory) {
       return repeatRequest(--times, optionsFactory);
     }
   })
+}
+
+function setApplicationDates(eventApplication, offsetBase) {
+  eventApplication.locations[0].startTime = TestUtil.getISODateString(offsetBase);
+  eventApplication.locations[0].endTime = TestUtil.getISODateString(offsetBase + 1);
+  eventApplication.extension.eventStartTime = eventApplication.locations[0].startTime;
+  eventApplication.extension.eventEndTime = eventApplication.locations[0].endTime;
+  eventApplication.extension.structureStartTime = eventApplication.locations[0].startTime;
+  eventApplication.extension.structureEndTime = eventApplication.locations[0].endTime;
 }
