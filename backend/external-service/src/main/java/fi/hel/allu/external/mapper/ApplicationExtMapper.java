@@ -6,6 +6,7 @@ import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.common.types.PublicityType;
 import fi.hel.allu.external.domain.*;
 import fi.hel.allu.external.mapper.extension.ExcavationAnnouncementExtMapper;
+import fi.hel.allu.external.mapper.extension.PlacementContractExtMapper;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
@@ -115,6 +116,8 @@ public class ApplicationExtMapper {
     switch (application.getType()) {
       case EXCAVATION_ANNOUNCEMENT:
         return ExcavationAnnouncementExtMapper.extToJson((ExcavationAnnouncementExt) application.getExtension());
+      case PLACEMENT_CONTRACT:
+        return PlacementContractExtMapper.extToJson((PlacementContractExt) application.getExtension());
       default:
         throw new IllegalArgumentException("No model to json mapper for extension type " + application.getType());
     }
@@ -129,6 +132,8 @@ public class ApplicationExtMapper {
     switch (application.getType()) {
       case EXCAVATION_ANNOUNCEMENT:
         return ExcavationAnnouncementExtMapper.jsonToExt((ExcavationAnnouncementJson) application.getExtension());
+      case PLACEMENT_CONTRACT:
+        return PlacementContractExtMapper.jsonToExt((PlacementContractJson) application.getExtension());
       default:
         throw new IllegalArgumentException("No model to json mapper for extension type " + application.getType());
     }
