@@ -2,9 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {ApplicationState} from '../../../service/application/application-state';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
-import {InvoiceRowForm} from './invoice-row.form';
+import {ChargeBasisEntryForm} from './charge-basis-entry.form';
 import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
-import {InvoiceRow} from '../../../model/application/invoice/invoice-row';
+import {ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-entry';
 import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
@@ -54,20 +54,20 @@ export class InvoicingComponent implements OnInit {
     return this.applicationState.save(application);
   }
 
-  private saveInvoiceRows(form: InvoicingForm): Observable<Array<InvoiceRow>> {
-    let invoiceRows = this.toInvoiceRows(form.pendingInvoiceRows, form.acceptedInvoiceRows);
-    return this.invoiceHub.saveInvoiceRows(this.applicationId, invoiceRows);
+  private saveInvoiceRows(form: InvoicingForm): Observable<Array<ChargeBasisEntry>> {
+    let chargeBasisEntries = this.toChargeBasisEntries(form.pendingInvoiceRows, form.acceptedInvoiceRows);
+    return this.invoiceHub.saveInvoiceRows(this.applicationId, chargeBasisEntries);
   }
 
-  private toInvoiceRows(pending: Array<InvoiceRowForm>, accepted: Array<InvoiceRowForm>): Array<InvoiceRow> {
-    let pendingRows = pending.map(row => InvoiceRowForm.toInvoiceRow(row));
-    let acceptedRows = accepted.map(row => InvoiceRowForm.toInvoiceRow(row));
+  private toChargeBasisEntries(pending: Array<ChargeBasisEntryForm>, accepted: Array<ChargeBasisEntryForm>): Array<ChargeBasisEntry> {
+    let pendingRows = pending.map(row => ChargeBasisEntryForm.toChargeBasisEntry(row));
+    let acceptedRows = accepted.map(row => ChargeBasisEntryForm.toChargeBasisEntry(row));
     return pendingRows.concat(acceptedRows);
   }
 }
 
 interface InvoicingForm {
   invoicingInfo: InvoicingInfoForm;
-  pendingInvoiceRows: Array<InvoiceRowForm>;
-  acceptedInvoiceRows: Array<InvoiceRowForm>;
+  pendingInvoiceRows: Array<ChargeBasisEntryForm>;
+  acceptedInvoiceRows: Array<ChargeBasisEntryForm>;
 }

@@ -4,9 +4,9 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.Application;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.domain.InvoiceUnit;
 import fi.hel.allu.sap.model.LineItem;
 import fi.hel.allu.sap.model.OrderParty;
 import fi.hel.allu.sap.model.SalesOrder;
@@ -39,18 +39,19 @@ public class AlluMapper {
   private static final String ALLU_PAYMENT_TERM = "N143";
 
   /**
-   * Map an application and its invoice rows to SAP SalesOrder
+   * Map an application and its charge basis entries to SAP SalesOrder
    *
    * @param application
-   * @param invoiceRows
+   * @param chargeBasisEntries
    * @return
    */
-  public static SalesOrder mapToSalesOrder(Application application, List<InvoiceRow> invoiceRows) {
+  public static SalesOrder mapToSalesOrder(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
     SalesOrder salesOrder = new SalesOrder();
     salesOrder.setBillTextL1(application.getName());
     salesOrder.setDistributionChannel(ALLU_DISTRIBUTION_CHANNEL);
     salesOrder.setDivision(ALLU_DIVISION);
-    salesOrder.setLineItems(invoiceRows.stream().map(row -> mapToLineItem(row)).collect(Collectors.toList()));
+    salesOrder.setLineItems(
+        chargeBasisEntries.stream().map(entry -> mapToLineItem(entry)).collect(Collectors.toList()));
     Customer orderer = Optional.ofNullable(application.getCustomersWithContacts())
         .orElseThrow(() -> new IllegalArgumentException("Application's customersWithContacts is null")).stream()
         .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT).map(cwc -> cwc.getCustomer()).findAny()
@@ -67,19 +68,19 @@ public class AlluMapper {
   }
 
   /**
-   * Map Allu InvoiceRow into a SAP LineItem
+   * Map Allu ChargeBasisEntry into a SAP LineItem
    *
-   * @param invoiceRow
+   * @param chargeBasisEntry
    * @return
    */
-  public static LineItem mapToLineItem(InvoiceRow invoiceRow) {
+  public static LineItem mapToLineItem(ChargeBasisEntry chargeBasisEntry) {
     LineItem lineItem = new LineItem();
-    lineItem.setLineText1(invoiceRow.getRowText());
+    lineItem.setLineText1(chargeBasisEntry.getText());
     lineItem.setMaterial("27100000"); // TODO: from application type
-    lineItem.setNetPrice(String.format("%.02f", (double) invoiceRow.getNetPrice() / 100));
+    lineItem.setNetPrice(String.format("%.02f", (double) chargeBasisEntry.getNetPrice() / 100));
     lineItem.setOrderItemNumber(ALLU_ORDER_ITEM_NUMBER);
-    lineItem.setQuantity(String.format("%.02f", invoiceRow.getQuantity()));
-    lineItem.setUnit(mapToSapUnit(invoiceRow.getUnit()));
+    lineItem.setQuantity(String.format("%.02f", chargeBasisEntry.getQuantity()));
+    lineItem.setUnit(mapToSapUnit(chargeBasisEntry.getUnit()));
     return lineItem;
   }
 
@@ -132,7 +133,7 @@ public class AlluMapper {
     }
   }
 
-  private static String mapToSapUnit(InvoiceUnit unit) {
+  private static String mapToSapUnit(ChargeBasisUnit unit) {
     switch (unit) {
     case DAY:
       return "PV";

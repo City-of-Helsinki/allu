@@ -96,8 +96,8 @@ public class PricingServiceTest {
     location.setFixedLocationIds(fixedLocationIds);
     location.setApplicationId(application.getId());
     locationDao.insert(location);
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
+    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
+    pricingService.updatePrice(application, chargeBasisEntries);
     assertEquals(283500, application.getCalculatedPrice().intValue());
     checkPrice(application, 283500);
   }
@@ -255,32 +255,32 @@ public class PricingServiceTest {
 
   @Test
   public void testTotalPrice() {
-    List<InvoiceRow> rows = Arrays.asList(
-        new InvoiceRow("TAG1", null, false, InvoiceUnit.PIECE, 5.0, "Row 1", 1230, 6150),
-        new InvoiceRow("TAG2", null, false, InvoiceUnit.DAY, 3.0, "Row 2", 22000, 66000),
-        new InvoiceRow("TAG3", null, false, InvoiceUnit.SQUARE_METER, 123.5, "Row 3", 200, 24700),
-        new InvoiceRow(null, "TAG1", true, InvoiceUnit.MULTIPLY, 0.8, "20% discount", 0, 0),
-        new InvoiceRow(null, "TAG1", true, InvoiceUnit.MULTIPLY, 0.9, "10% discount", 0, 0),
-        new InvoiceRow(null, "TAG2", true, InvoiceUnit.MULTIPLY, 1.2, "20% extra fee", 0, 0),
-        new InvoiceRow(null, null, true, InvoiceUnit.MULTIPLY, 0.9, "10% discount", 0, 0));
+    List<ChargeBasisEntry> entries = Arrays.asList(
+        new ChargeBasisEntry("TAG1", null, false, ChargeBasisUnit.PIECE, 5.0, "Entry 1", 1230, 6150),
+        new ChargeBasisEntry("TAG2", null, false, ChargeBasisUnit.DAY, 3.0, "Entry 2", 22000, 66000),
+        new ChargeBasisEntry("TAG3", null, false, ChargeBasisUnit.SQUARE_METER, 123.5, "Entry 3", 200, 24700),
+        new ChargeBasisEntry(null, "TAG1", true, ChargeBasisUnit.MULTIPLY, 0.8, "20% discount", 0, 0),
+        new ChargeBasisEntry(null, "TAG1", true, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", 0, 0),
+        new ChargeBasisEntry(null, "TAG2", true, ChargeBasisUnit.MULTIPLY, 1.2, "20% extra fee", 0, 0),
+        new ChargeBasisEntry(null, null, true, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", 0, 0));
     // The total price should be
     // (61.50 * 0.8 * 0.9 + 660.00 * 1.2 + 247.00) * 0.9 = 974.95 EUR
-    assertEquals(97495, pricingService.totalPrice(rows));
+    assertEquals(97495, pricingService.totalPrice(entries));
   }
   /*
    * Verify that the sum of invoice lines matches the application's calculated
    * price
    */
   private void checkPrice(Application application, int expectedPrice) {
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
+    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
 
-    pricingService.updatePrice(application, invoiceRows);
+    pricingService.updatePrice(application, chargeBasisEntries);
 
     assertEquals(expectedPrice, application.getCalculatedPrice().intValue());
-    int invoiced = invoiceRows.stream().mapToInt(row -> row.getNetPrice()).sum();
+    int invoiced = chargeBasisEntries.stream().mapToInt(entry -> entry.getNetPrice()).sum();
     assertEquals(application.getCalculatedPrice().intValue(), invoiced);
-    for (InvoiceRow invoiceRow : invoiceRows) {
-      double error = Math.abs(invoiceRow.getNetPrice() - invoiceRow.getUnitPrice() * invoiceRow.getQuantity());
+    for (ChargeBasisEntry chargeBasisEntry : chargeBasisEntries) {
+      double error = Math.abs(chargeBasisEntry.getNetPrice() - chargeBasisEntry.getUnitPrice() * chargeBasisEntry.getQuantity());
       assertTrue(error < 0.00001);
     }
   }

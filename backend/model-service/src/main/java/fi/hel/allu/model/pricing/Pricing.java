@@ -1,8 +1,8 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.exception.NotImplementedException;
-import fi.hel.allu.model.domain.InvoiceRow;
-import fi.hel.allu.model.domain.InvoiceUnit;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.ChargeBasisUnit;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,22 +10,22 @@ import java.util.List;
 public abstract class Pricing {
 
   private int priceInCents = 0;
-  private List<InvoiceRow> invoiceRows = new ArrayList<>();
+  private List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
 
-  public List<InvoiceRow> getInvoiceRows() {
-    return invoiceRows;
+  public List<ChargeBasisEntry> getChargeBasisEntries() {
+    return chargeBasisEntries;
   }
 
-  protected void addInvoiceRow(InvoiceRowTag tag, InvoiceUnit unit, double quantity, int unitPrice, String explanation,
-      int netPrice) {
-    InvoiceRow row = new InvoiceRow();
-    row.setTag(tag.toString());
-    row.setUnit(unit);
-    row.setQuantity(quantity);
-    row.setUnitPrice(unitPrice);
-    row.setRowText(explanation);
-    row.setNetPrice(netPrice);
-    invoiceRows.add(row);
+  protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
+      String explanation, int netPrice) {
+    ChargeBasisEntry entry = new ChargeBasisEntry();
+    entry.setTag(tag.toString());
+    entry.setUnit(unit);
+    entry.setQuantity(quantity);
+    entry.setUnitPrice(unitPrice);
+    entry.setText(explanation);
+    entry.setNetPrice(netPrice);
+    chargeBasisEntries.add(entry);
   }
 
   public int getPriceInCents() {

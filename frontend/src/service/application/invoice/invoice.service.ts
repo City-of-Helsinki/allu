@@ -3,10 +3,10 @@ import {Observable} from 'rxjs/Observable';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {ErrorHandler} from '../../error/error-handler.service';
 import {findTranslation} from '../../../util/translations';
-import {InvoiceRow} from '../../../model/application/invoice/invoice-row';
-import {InvoiceRowMapper} from '../../mapper/invoice-row-mapper';
+import {ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-entry';
+import {ChargeBasisEntryMapper} from '../../mapper/charge-basis-entry-mapper';
 
-const INVOICE_ROWS_URL = '/api/applications/:appId/invoice-rows';
+const INVOICE_ROWS_URL = '/api/applications/:appId/charge-basis';
 
 @Injectable()
 export class InvoiceService {
@@ -14,19 +14,19 @@ export class InvoiceService {
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
   }
 
-  getInvoiceRows(applicationId: number): Observable<Array<InvoiceRow>> {
+  getInvoiceRows(applicationId: number): Observable<Array<ChargeBasisEntry>> {
     let url = INVOICE_ROWS_URL.replace(':appId', String(applicationId));
     return this.authHttp.get(url)
       .map(response => response.json())
-      .map(rows => InvoiceRowMapper.mapBackendArray(rows))
+      .map(rows => ChargeBasisEntryMapper.mapBackendArray(rows))
       .catch(error => this.errorHandler.handle(error, findTranslation('invoice.row.error.fetch')));
   }
 
-  saveInvoiceRows(applicationId: number, rows: Array<InvoiceRow>): Observable<Array<InvoiceRow>> {
+  saveInvoiceRows(applicationId: number, rows: Array<ChargeBasisEntry>): Observable<Array<ChargeBasisEntry>> {
     let url = INVOICE_ROWS_URL.replace(':appId', String(applicationId));
-    return this.authHttp.put(url, JSON.stringify(InvoiceRowMapper.mapFrontendArray(rows)))
+    return this.authHttp.put(url, JSON.stringify(ChargeBasisEntryMapper.mapFrontendArray(rows)))
       .map(response => response.json())
-      .map(savedRows => InvoiceRowMapper.mapBackendArray(savedRows))
+      .map(savedRows => ChargeBasisEntryMapper.mapBackendArray(savedRows))
       .catch(error => this.errorHandler.handle(error, findTranslation('invoice.row.error.save')));
   }
 }

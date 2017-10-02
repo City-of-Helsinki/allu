@@ -1,0 +1,175 @@
+package fi.hel.allu.model.dao;
+
+import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.ChargeBasisUnit;
+import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
+import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
+@RunWith(Spectrum.class)
+@SpringBootTest(classes = ModelApplication.class)
+@WebAppConfiguration
+public class ChargeBasisDaoSpec extends SpeccyTestBase {
+
+  @Autowired
+  private ChargeBasisDao chargeBasisDao;
+
+  {
+    describe("ChargeBasisDao", () -> {
+      beforeEach(() -> {
+        testCommon.deleteAllData();
+      });
+
+      context("when DB is empty", ()-> {
+        describe("getChargeBasis", () -> {
+          it("should get empty result", () -> {
+            List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(123);
+            assertEquals(0, entries.size());
+            });
+        });
+      });
+
+      context("when application does not exist", () -> {
+        describe("setChargeBasis", () -> {
+          it("should throw error", () -> {
+            assertThrows(RuntimeException.class)
+                .when(() -> chargeBasisDao.setChargeBasis(123, generateTestEntries(12, "Fail"), true));
+          });
+        });
+
+        context("when application exists", ()-> {
+          final Supplier<Integer> appId1 = let(() -> testCommon.insertApplication("Hakemus", "Käsittelijä"));
+          final Supplier<Integer> appId2 = let(() -> testCommon.insertApplication("Ansökning", "Handläggare"));
+
+          describe("setChargeBasis", () -> {
+            it("shouldn't throw error with valid entries",
+                () -> chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(15, "test"), true));
+
+            it("shouldn't throw error with empty list",
+                    () -> chargeBasisDao.setChargeBasis(appId2.get(), Collections.emptyList(), false));
+          });
+
+          context("when setting two entries for two separate applications", () -> {
+            final int NUM_1ST_ENTRIES = 12;
+            final int NUM_2ND_ENTRIES = 23;
+            beforeEach(() -> {
+              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(NUM_1ST_ENTRIES, "First entries"), true);
+              chargeBasisDao.setChargeBasis(appId2.get(), generateTestEntries(NUM_2ND_ENTRIES, "Second entries"), true);
+            });
+
+            describe("getChargeBasis", () -> {
+
+              final Supplier<List<ChargeBasisEntry>> first = let(() -> chargeBasisDao.getChargeBasis(appId1.get()));
+              final Supplier<List<ChargeBasisEntry>> second = let(() -> chargeBasisDao.getChargeBasis(appId2.get()));
+
+              it("Returns right number of entries", () -> {
+                assertEquals(NUM_1ST_ENTRIES, first.get().size());
+                assertEquals(NUM_2ND_ENTRIES, second.get().size());
+              });
+
+              it("Returns the right entries", () -> {
+                checkTestEntries(first.get(), "First entries");
+                checkTestEntries(second.get(), "Second entries");
+              });
+            });
+          });
+
+          context("when setting both manual and calculated entries", () -> {
+            final int NUM_MANUAL_ENTRIES = 12;
+            final int NUM_CALCULATED_ENTRIES = 23;
+            final String MANUAL_ENTRY_PREFIX = "Manual entries";
+            final String CALCULATED_ENTRY_PREFIX = "Calculated entries";
+
+            beforeEach(() -> {
+              chargeBasisDao.setChargeBasis(appId1.get(), generateTestEntries(NUM_MANUAL_ENTRIES, MANUAL_ENTRY_PREFIX),
+                  true);
+              chargeBasisDao.setChargeBasis(appId1.get(),
+                  generateTestEntries(NUM_CALCULATED_ENTRIES, CALCULATED_ENTRY_PREFIX),
+                      false);
+            });
+
+            describe("getChargeBasis", () -> {
+              it("Should return both manual and calculated entries", () -> {
+                final List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
+                assertEquals(NUM_MANUAL_ENTRIES+NUM_CALCULATED_ENTRIES, entries.size());
+                checkTestEntries(entries.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()),
+                    MANUAL_ENTRY_PREFIX);
+                checkTestEntries(entries.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
+                    CALCULATED_ENTRY_PREFIX);
+              });
+
+              context("when clearing manual entries", () -> {
+                it("should leave the calculated entries in place", () -> {
+                  chargeBasisDao.setChargeBasis(appId1.get(), Collections.emptyList(), true);
+                  final List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
+                  assertEquals(NUM_CALCULATED_ENTRIES, entries.size());
+                  checkTestEntries(entries.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
+                      CALCULATED_ENTRY_PREFIX);
+                });
+              });
+
+              context("when clearing calculated entries", () -> {
+                it("should leave the manual entries in place", () -> {
+                  chargeBasisDao.setChargeBasis(appId1.get(), Collections.emptyList(), false);
+                  final List<ChargeBasisEntry> entries = chargeBasisDao.getChargeBasis(appId1.get());
+                  assertEquals(NUM_MANUAL_ENTRIES, entries.size());
+                  checkTestEntries(entries.stream().filter(r -> r.getManuallySet() == false).collect(Collectors.toList()),
+                      MANUAL_ENTRY_PREFIX);
+                });
+              });
+            });
+
+          });
+        });
+      });
+    });
+  }
+
+  private List<ChargeBasisEntry> generateTestEntries(int numEntries, String text) {
+    List<ChargeBasisEntry> entries = new ArrayList<>();
+    for (int r = 1; r <= numEntries; ++r) {
+      ChargeBasisEntry entry = new ChargeBasisEntry();
+      entry.setText(String.format("%s (%d)", text, r));
+      entry.setTag(String.format("tag-%d", r));
+      entry.setReferredTag(String.format("ref-%d", r));
+      entry.setUnitPrice(r * 100);
+      entry.setNetPrice(r * 200);
+      entry.setUnit(ChargeBasisUnit.SQUARE_METER);
+      entry.setQuantity(r * 20.0);
+      entries.add(entry);
+    }
+    return entries;
+  }
+
+  private void checkTestEntries(final Collection<ChargeBasisEntry> entries, String text) {
+    int r = 1;
+    for (ChargeBasisEntry entry : entries) {
+      assertTrue(entry.getText().startsWith(text));
+      assertEquals(String.format("tag-%d", r), entry.getTag());
+      assertEquals(String.format("ref-%d", r), entry.getReferredTag());
+      assertEquals(r * 100, entry.getUnitPrice());
+      assertEquals(r * 200, entry.getNetPrice());
+      assertEquals(ChargeBasisUnit.SQUARE_METER, entry.getUnit());
+      assertTrue(Math.abs(r * 20.0 - entry.getQuantity()) < 0.00001);
+      ++r;
+    }
+  }
+
+}

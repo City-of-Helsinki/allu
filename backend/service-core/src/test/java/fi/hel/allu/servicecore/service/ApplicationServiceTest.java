@@ -3,10 +3,11 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,13 +27,16 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import static org.geolatte.geom.builder.DSL.*;
+import static org.geolatte.geom.builder.DSL.c;
+import static org.geolatte.geom.builder.DSL.polygon;
+import static org.geolatte.geom.builder.DSL.ring;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -225,26 +229,26 @@ public class ApplicationServiceTest extends MockServices {
   }
 
   @Test
-  public void testGetInvoiceRows() {
-    InvoiceRow row = new InvoiceRow();
-    row.setRowText("Row row row your boat");
-    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(InvoiceRow[].class), Mockito.anyInt()))
-        .then(invocation -> new ResponseEntity<>(new InvoiceRow[] { row }, HttpStatus.OK));
+  public void testGetChargeBasis() {
+    ChargeBasisEntry entry = new ChargeBasisEntry();
+    entry.setText("Row row row your boat");
+    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(ChargeBasisEntry[].class), Mockito.anyInt()))
+        .then(invocation -> new ResponseEntity<>(new ChargeBasisEntry[] { entry }, HttpStatus.OK));
 
-    List<InvoiceRow> result = applicationService.getInvoiceRows(99);
+    List<ChargeBasisEntry> result = applicationService.getChargeBasis(99);
 
     assertEquals(1, result.size());
-    assertEquals("Row row row your boat", result.get(0).getRowText());
+    assertEquals("Row row row your boat", result.get(0).getText());
   }
 
   @Test
-  public void testSetInvoiceRows() {
+  public void testSetChargeBasis() {
     Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
-        Mockito.eq(InvoiceRow[].class), Mockito.eq(99)))
-        .then(invocation -> new ResponseEntity<>(new InvoiceRow[] {}, HttpStatus.OK));
+        Mockito.eq(ChargeBasisEntry[].class), Mockito.eq(99)))
+        .then(invocation -> new ResponseEntity<>(new ChargeBasisEntry[] {}, HttpStatus.OK));
 
-    applicationService.setInvoiceRows(99, Collections.emptyList());
+    applicationService.setChargeBasis(99, Collections.emptyList());
     Mockito.verify(restTemplate).exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
-        Mockito.eq(InvoiceRow[].class), Mockito.eq(99));
+        Mockito.eq(ChargeBasisEntry[].class), Mockito.eq(99));
   }
 }

@@ -58,25 +58,26 @@ public class SapSpec {
 
       describe("Mapper test", () -> {
 
-        describe("Single InvoiceRow", () -> {
-          final InvoiceRow invoiceRow = dummyInvoiceRow(1234, 12.34, "Row text", InvoiceUnit.MONTH);
+        describe("Single ChargeBasisEntry", () -> {
+          final ChargeBasisEntry chargeBasisEntry = dummyChargeBasisEntry(1234, 12.34, "Entry text",
+              ChargeBasisUnit.MONTH);
 
           describe("Mapped to SAP LineItem", () -> {
 
-            final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow);
+            final LineItem lineItem = AlluMapper.mapToLineItem(chargeBasisEntry);
 
             it("Has the proper net price", () -> {
               final int netPrice = (int) (Double.parseDouble(lineItem.getNetPrice()) * 100);
-              assertEquals(invoiceRow.getNetPrice(), netPrice);
+              assertEquals(chargeBasisEntry.getNetPrice(), netPrice);
             });
 
             it("Has the proper line text", () -> {
-              assertEquals(invoiceRow.getRowText(), lineItem.getLineText1());
+              assertEquals(chargeBasisEntry.getText(), lineItem.getLineText1());
             });
 
             it("Has the right quantity", () -> {
               final double quantity = Double.parseDouble(lineItem.getQuantity());
-              assertEquals(invoiceRow.getQuantity(), quantity, 0.000001);
+              assertEquals(chargeBasisEntry.getQuantity(), quantity, 0.000001);
             });
 
             it("Has the pre-set order item number", () -> {
@@ -86,14 +87,14 @@ public class SapSpec {
         });
 
         describe("A single bill", () -> {
-          final List<InvoiceRow> invoiceRows = dummyInvoiceRows();
+          final List<ChargeBasisEntry> chargeBasisEntries = dummyChargeBasisEntries();
           final Application application = dummyApplication();
 
           describe("Mapped to SAP SalesOrder", () -> {
-            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, invoiceRows);
+            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, chargeBasisEntries);
 
             it("All lines are in", () -> {
-              assertEquals(invoiceRows.size(), salesOrder.getLineItems().size());
+              assertEquals(chargeBasisEntries.size(), salesOrder.getLineItems().size());
             });
 
             it("The name matches", () -> {
@@ -131,19 +132,20 @@ public class SapSpec {
     return lineItem;
   }
 
-  private List<InvoiceRow> dummyInvoiceRows() {
-    return Arrays.asList(dummyInvoiceRow(1234, 12.34, "Row text", InvoiceUnit.MONTH),
-        dummyInvoiceRow(2345, 1, "Other row text", InvoiceUnit.SQUARE_METER),
-        dummyInvoiceRow(54321, 13.12, "Yet another row text", InvoiceUnit.HOUR));
+  private List<ChargeBasisEntry> dummyChargeBasisEntries() {
+    return Arrays.asList(dummyChargeBasisEntry(1234, 12.34, "Entry text", ChargeBasisUnit.MONTH),
+        dummyChargeBasisEntry(2345, 1, "Other entry text", ChargeBasisUnit.SQUARE_METER),
+        dummyChargeBasisEntry(54321, 13.12, "Yet another entry text", ChargeBasisUnit.HOUR));
   }
 
-  private InvoiceRow dummyInvoiceRow(int netPrice, double quantity, String rowText, InvoiceUnit invoiceUnit) {
-    final InvoiceRow invoiceRow = new InvoiceRow();
-    invoiceRow.setNetPrice(netPrice);
-    invoiceRow.setQuantity(quantity);
-    invoiceRow.setRowText(rowText);
-    invoiceRow.setUnit(invoiceUnit);
-    return invoiceRow;
+  private ChargeBasisEntry dummyChargeBasisEntry(int netPrice, double quantity, String text,
+      ChargeBasisUnit chargeBasisUnit) {
+    final ChargeBasisEntry chargeBasisEntry = new ChargeBasisEntry();
+    chargeBasisEntry.setNetPrice(netPrice);
+    chargeBasisEntry.setQuantity(quantity);
+    chargeBasisEntry.setText(text);
+    chargeBasisEntry.setUnit(chargeBasisUnit);
+    return chargeBasisEntry;
   }
 
   private Application dummyApplication() {

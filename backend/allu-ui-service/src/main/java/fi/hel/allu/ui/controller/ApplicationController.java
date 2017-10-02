@@ -3,7 +3,7 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
@@ -275,31 +275,30 @@ public class ApplicationController {
   }
 
   /**
-   * Get the invoice rows for an application
+   * Get the charge basis for an application
    *
-   * @param id
-   *          the application ID
-   * @return the invoice rows for the application
+   * @param id the application ID
+   * @return the charge basis entries for the application
    */
-  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.GET)
+  @RequestMapping(value = "/{id}/charge-basis", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
-    return new ResponseEntity<>(applicationServiceComposer.getInvoiceRows(id), HttpStatus.OK);
+  public ResponseEntity<List<ChargeBasisEntry>> getChargeBasis(@PathVariable int id) {
+    return new ResponseEntity<>(applicationServiceComposer.getChargeBasis(id), HttpStatus.OK);
   }
 
   /**
-   * Set the manual invoice rows for an application
+   * Set the manual charge basis entries for an application
    *
    * @param id the application ID
-   * @param invoiceRows the invoice rows to store. Only rows that are marked as
-   *          manually set will be used
-   * @return the new invoice rows for the application
+   * @param chargeBasisEntries the charge basis entries to store. Only entries
+   *          that are marked as manually set will be used
+   * @return the new charge basis entries for the application
    */
-  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.PUT)
+  @RequestMapping(value = "/{id}/charge-basis", method = RequestMethod.PUT)
   @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
-  public ResponseEntity<List<InvoiceRow>> setInvoiceRows(@PathVariable int id,
-      @Valid @RequestBody List<InvoiceRow> invoiceRows) {
-    return new ResponseEntity<>(applicationServiceComposer.setInvoiceRows(id, invoiceRows), HttpStatus.OK);
+  public ResponseEntity<List<ChargeBasisEntry>> setChargeBasis(@PathVariable int id,
+      @Valid @RequestBody List<ChargeBasisEntry> chargeBasisEntries) {
+    return new ResponseEntity<>(applicationServiceComposer.setChargeBasis(id, chargeBasisEntries), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/tags", method = RequestMethod.PUT)

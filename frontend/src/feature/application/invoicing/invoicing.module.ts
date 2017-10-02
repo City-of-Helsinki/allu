@@ -8,7 +8,7 @@ import {InvoiceRowsComponent} from './invoice-rows.component';
 import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
 import {InvoiceService} from '../../../service/application/invoice/invoice.service';
 import {InvoiceCommentsComponent} from './invoice-comments.component';
-import {InvoiceRowModalComponent} from './invoice-row-modal.component';
+import {ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
 import {InvoicingInfoComponent} from './invoicing-info/invoicing-info.component';
 
 @NgModule({
@@ -23,14 +23,14 @@ import {InvoicingInfoComponent} from './invoicing-info/invoicing-info.component'
     InvoicingInfoComponent,
     InvoiceRowsComponent,
     InvoiceCommentsComponent,
-    InvoiceRowModalComponent
+    ChargeBasisEntryModalComponent
   ],
   providers: [
     InvoiceHub,
     InvoiceService
   ],
   entryComponents: [
-    InvoiceRowModalComponent
+    ChargeBasisEntryModalComponent
   ]
 })
 export class InvoicingModule {}

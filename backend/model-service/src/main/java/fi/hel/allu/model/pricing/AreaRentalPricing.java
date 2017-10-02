@@ -2,7 +2,7 @@ package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.InvoiceUnit;
+import fi.hel.allu.model.domain.ChargeBasisUnit;
 
 import java.time.temporal.ChronoUnit;
 
@@ -41,7 +41,7 @@ public class AreaRentalPricing extends Pricing {
     case SNOW_WORK:
     case PUBLIC_EVENT:
       setPriceInCents(SHORT_TERM_HANDLING_FEE);
-        addInvoiceRow(InvoiceRowTag.AreaRentalHandlingFee(), InvoiceUnit.PIECE, 1, SHORT_TERM_HANDLING_FEE,
+        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, SHORT_TERM_HANDLING_FEE,
             SHORT_TERM_HANDLING_EXPLANATION, SHORT_TERM_HANDLING_FEE);
       break;
     case PROPERTY_RENOVATION:
@@ -50,7 +50,7 @@ public class AreaRentalPricing extends Pricing {
     case STORAGE_AREA:
     case OTHER:
       setPriceInCents(LONG_TERM_HANDLING_FEE);
-        addInvoiceRow(InvoiceRowTag.AreaRentalHandlingFee(), InvoiceUnit.PIECE, 1, LONG_TERM_HANDLING_FEE,
+        addChargeBasisEntry(ChargeBasisTag.AreaRentalHandlingFee(), ChargeBasisUnit.PIECE, 1, LONG_TERM_HANDLING_FEE,
             LONG_TERM_HANDLING_EXPLANATION, LONG_TERM_HANDLING_FEE);
       break;
     default:
@@ -68,7 +68,7 @@ public class AreaRentalPricing extends Pricing {
     int numDays = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
         ChronoUnit.DAYS);
     int netPrice = dailyPrice * numDays;
-    addInvoiceRow(InvoiceRowTag.AreaRentalDailyFee(Integer.toString(locationKey)), InvoiceUnit.DAY, numDays, dailyPrice,
+    addChargeBasisEntry(ChargeBasisTag.AreaRentalDailyFee(Integer.toString(locationKey)), ChargeBasisUnit.DAY, numDays, dailyPrice,
         DAILY_PRICE_EXPLANATION, netPrice);
     setPriceInCents(netPrice + getPriceInCents());
   }

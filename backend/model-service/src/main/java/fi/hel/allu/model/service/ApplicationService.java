@@ -4,7 +4,7 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.InvoiceRowDao;
+import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.domain.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,14 +26,14 @@ public class ApplicationService {
 
   private ApplicationDao applicationDao;
   private PricingService pricingService;
-  private InvoiceRowDao invoiceRowDao;
+  private ChargeBasisDao chargeBasisDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-      InvoiceRowDao invoiceRowDao) {
+      ChargeBasisDao chargeBasisDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
-    this.invoiceRowDao = invoiceRowDao;
+    this.chargeBasisDao = chargeBasisDao;
   }
 
   /**
@@ -93,10 +93,10 @@ public class ApplicationService {
    */
   @Transactional
   public Application update(int id, Application application) {
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
-    invoiceRowDao.setInvoiceRows(id, invoiceRows, false);
-    application.setCalculatedPrice(pricingService.totalPrice(invoiceRowDao.getInvoiceRows(id)));
+    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
+    pricingService.updatePrice(application, chargeBasisEntries);
+    chargeBasisDao.setChargeBasis(id, chargeBasisEntries, false);
+    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisDao.getChargeBasis(id)));
     Application result = applicationDao.update(id, application);
     return result;
   }
@@ -133,10 +133,10 @@ public class ApplicationService {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
-    List<InvoiceRow> invoiceRows = new ArrayList<>();
-    pricingService.updatePrice(application, invoiceRows);
+    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
+    pricingService.updatePrice(application, chargeBasisEntries);
     Application result = applicationDao.insert(application);
-    invoiceRowDao.setInvoiceRows(result.getId(), invoiceRows, false);
+    chargeBasisDao.setChargeBasis(result.getId(), chargeBasisEntries, false);
     return result;
   }
 
@@ -178,21 +178,21 @@ public class ApplicationService {
   }
 
   /**
-   * Set the manually set invoice rows for application.
+   * Set the manually set charge basis entries for application.
    *
-   * @param applicartionId  application's database id
-   * @param invoiceRows     Invoice rows to set (only the ones marked as manually
-   *                        set are used)
-   * @return Application's invoice rows after operation
+   * @param applicationId application's database id
+   * @param chargeBasisEntries The charge basis entries to set (only the ones
+   *          marked as manually set are used)
+   * @return Application's charge basis entries after operation
    */
   @Transactional
-  public List<InvoiceRow> setManualInvoiceRows(int applicationId, List<InvoiceRow> invoiceRows) {
-    invoiceRowDao.setInvoiceRows(applicationId,
-        invoiceRows.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()), true);
+  public List<ChargeBasisEntry> setManualChargeBasis(int applicationId, List<ChargeBasisEntry> chargeBasisEntries) {
+    chargeBasisDao.setChargeBasis(applicationId,
+        chargeBasisEntries.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()), true);
     Application application = findById(applicationId);
-    application.setCalculatedPrice(pricingService.totalPrice(invoiceRowDao.getInvoiceRows(applicationId)));
+    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisDao.getChargeBasis(applicationId)));
     applicationDao.update(applicationId, application);
-    return invoiceRowDao.getInvoiceRows(applicationId);
+    return chargeBasisDao.getChargeBasis(applicationId);
   }
 
   /**

@@ -1,4 +1,4 @@
-export enum InvoiceUnit {
+export enum ChargeBasisUnit {
   PIECE,
   SQUARE_METER,
   HOUR,

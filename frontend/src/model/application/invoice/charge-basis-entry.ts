@@ -1,18 +1,18 @@
-import {InvoiceUnit} from './invoice-unit';
+import {ChargeBasisUnit} from './charge-basis-unit';
 import {NumberUtil} from '../../../util/number.util';
 
 export const DEFAULT_FEE_CENTS = 50000;
 
-export class InvoiceRow {
+export class ChargeBasisEntry {
   constructor(
-    public unit?: InvoiceUnit,
+    public unit?: ChargeBasisUnit,
     public quantity?: number,
-    public rowText?: string,
+    public text?: string,
     public unitPrice?: number,
     public netPrice?: number,
     public manuallySet?: boolean
   ) {
-    quantity = quantity || InvoiceUnit.PIECE;
+    quantity = quantity || ChargeBasisUnit.PIECE;
   }
 
   get unitPriceEuro(): number {

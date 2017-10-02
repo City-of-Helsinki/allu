@@ -1,6 +1,6 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -27,7 +27,7 @@ public class EventPricingTest {
     // Verify that EcoCompass gives 30% discount
     bill.applyDiscounts(true, null, false, false);
     assertEquals(252000, bill.getPriceInCents());
-    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPriceInCents());
+    verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
     // Verify that 100% discount works:
     bill.applyDiscounts(false, "SportsEvent", false, false);
     assertEquals(0, bill.getPriceInCents());
@@ -54,7 +54,7 @@ public class EventPricingTest {
     bill.accumulatePrice(bc, 20, 4, 20, 5000.0);
     assertEquals(3562500L, bill.getPriceInCents()); // The price should be 35625
                                                   // EUR
-    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPriceInCents());
+    verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
   }
 
   @Test
@@ -69,7 +69,7 @@ public class EventPricingTest {
     bill.accumulatePrice(bc, 25, 3, 455.0, 1000.0);
     assertEquals(997500, bill.getPriceInCents()); // The price should be 9975
                                                   // EUR
-    verifyInvoicePrice(bill.getInvoiceRows(), bill.getPriceInCents());
+    verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
   }
 
   @Test(expected = IllegalStateException.class)
@@ -86,8 +86,8 @@ public class EventPricingTest {
     pricingConfiguration.setStructureExtraCharges(new Long[] { Long.valueOf(1234L) });
   }
 
-  private void verifyInvoicePrice(List<InvoiceRow> invoiceRows, int expectedPrice) {
-    int invoicePrices = invoiceRows.stream().mapToInt(ir -> ir.getNetPrice()).sum();
+  private void verifyInvoicePrice(List<ChargeBasisEntry> chargeBasisEntries, int expectedPrice) {
+    int invoicePrices = chargeBasisEntries.stream().mapToInt(ir -> ir.getNetPrice()).sum();
     assertEquals(expectedPrice, invoicePrices);
   }
 }

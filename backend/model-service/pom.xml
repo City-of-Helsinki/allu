@@ -373,9 +373,9 @@
                             <type>fi.hel.allu.model.querydsl.StringToDefaultTextType</type>
                         </typeMapping>
                         <typeMapping>
-                            <table>invoice_row</table>
+                            <table>charge_basis</table>
                             <column>unit</column>
-                            <type>fi.hel.allu.model.querydsl.StringToInvoiceUnit</type>
+                            <type>fi.hel.allu.model.querydsl.StringToChargeBasisUnit</type>
                         </typeMapping>
                         <typeMapping>
                             <table>attachment</table>

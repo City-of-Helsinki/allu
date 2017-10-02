@@ -51,7 +51,7 @@ public class JdbcConfiguration {
     configuration.register(new StringToAttributeDataType());
     configuration.register(new StringToStatusType());
     configuration.register(new StringToDefaultTextType());
-    configuration.register(new StringToInvoiceUnit());
+    configuration.register(new StringToChargeBasisUnit());
     configuration.register(new StringToAttachmentType());
     configuration.register(new StringToApplicationTagType());
     configuration.register(new StringToCommentType());

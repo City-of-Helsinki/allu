@@ -1,7 +1,7 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.InvoiceUnit;
+import fi.hel.allu.model.domain.ChargeBasisUnit;
 
 import java.time.temporal.ChronoUnit;
 
@@ -22,7 +22,7 @@ public class ExcavationPricing extends Pricing {
   public ExcavationPricing(Application application) {
     this.application = application;
     setPriceInCents(HANDLING_FEE);
-    addInvoiceRow(InvoiceRowTag.ExcavationAnnonuncementHandlingFee(), InvoiceUnit.PIECE, 1, HANDLING_FEE,
+    addChargeBasisEntry(ChargeBasisTag.ExcavationAnnonuncementHandlingFee(), ChargeBasisUnit.PIECE, 1, HANDLING_FEE,
         HANDLING_FEE_TEXT, HANDLING_FEE);
   }
 
@@ -46,7 +46,7 @@ public class ExcavationPricing extends Pricing {
     int days = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
         ChronoUnit.DAYS);
     int totalPrice = days * dailyFee;
-    addInvoiceRow(InvoiceRowTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)), InvoiceUnit.DAY, days,
+    addChargeBasisEntry(ChargeBasisTag.ExcavationAnnouncementDailyFee(Integer.toString(locationKey)), ChargeBasisUnit.DAY, days,
         dailyFee, String.format(AREA_FEE_TEXT, paymentClass), totalPrice);
     setPriceInCents(totalPrice + getPriceInCents());
   }

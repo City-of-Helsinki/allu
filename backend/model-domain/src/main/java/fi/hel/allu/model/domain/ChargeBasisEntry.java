@@ -1,34 +1,34 @@
 package fi.hel.allu.model.domain;
 
-public class InvoiceRow {
+public class ChargeBasisEntry {
   private String tag;
   private String referredTag;
   private boolean manuallySet;
-  private InvoiceUnit unit;
+  private ChargeBasisUnit unit;
   private double quantity;
-  private String rowText;
+  private String text;
   private int unitPrice;
   private int netPrice;
 
-  public InvoiceRow() {
+  public ChargeBasisEntry() {
     // for deserialization
   }
 
-  public InvoiceRow(String tag, String referredTag, boolean manuallySet, InvoiceUnit unit, double quantity,
-      String rowText, int unitPrice, int netPrice) {
+  public ChargeBasisEntry(String tag, String referredTag, boolean manuallySet, ChargeBasisUnit unit, double quantity,
+      String text, int unitPrice, int netPrice) {
     this.tag = tag;
     this.referredTag = referredTag;
     this.manuallySet = manuallySet;
     this.unit = unit;
     this.quantity = quantity;
-    this.rowText = rowText;
+    this.text = text;
     this.unitPrice = unitPrice;
     this.netPrice = netPrice;
   }
 
   /**
-   * Get the invoice row's tag that can be used to refer to single invoice row
-   * within invoice. Tag must be generated systematically so that database
+   * Get the tag that can be used to refer to single charge basis entry within
+   * application. Tag must be generated systematically so that database
    * migrations are possible.
    */
   public String getTag() {
@@ -40,9 +40,9 @@ public class InvoiceRow {
   }
 
   /**
-   * Get the tag of the invoice row that this manually set invoice row refers
-   * to. Used to manipulate the value of calculated row by applying a multiplier
-   * to it.
+   * Get the tag of the charge basis entry that this manually set entry refers
+   * to. Used to manipulate the value of calculated entry by applying a
+   * multiplier to it.
    */
   public String getReferredTag() {
     return referredTag;
@@ -53,13 +53,10 @@ public class InvoiceRow {
   }
 
   /**
-   * Get the invoice tag of the (automatic) invoice row that this (manual) row
-   */
-  /**
-   * Was the row manually set? Manually set rows don't get overridden when
+   * Was the entry manually set? Manually set entries don't get overridden when
    * pricing is recalculated.
    *
-   * @return true if row was manually set
+   * @return true if entry was manually set
    */
   public boolean getManuallySet() {
     return manuallySet;
@@ -70,18 +67,18 @@ public class InvoiceRow {
   }
 
   /**
-   * Get the unit for the row
+   * Get the unit for the entry
    */
-  public InvoiceUnit getUnit() {
+  public ChargeBasisUnit getUnit() {
     return unit;
   }
 
-  public void setUnit(InvoiceUnit unit) {
+  public void setUnit(ChargeBasisUnit unit) {
     this.unit = unit;
   }
 
   /**
-   * Get the amount of units for the row
+   * Get the amount of units for the entry
    */
   public double getQuantity() {
     return quantity;
@@ -92,14 +89,14 @@ public class InvoiceRow {
   }
 
   /**
-   * Get the invoice row's explanatory text
+   * Get the entry's explanatory text
    */
-  public String getRowText() {
-    return rowText;
+  public String getText() {
+    return text;
   }
 
-  public void setRowText(String rowText) {
-    this.rowText = rowText;
+  public void setText(String text) {
+    this.text = text;
   }
 
   /**
@@ -114,7 +111,7 @@ public class InvoiceRow {
   }
 
   /**
-   * Get the row's net price in cents. Can be negative. <em>To avoid possible
+   * Get the entry's net price in cents. Can be negative. <em>To avoid possible
    * rounding errors, this is not a calculated value</em>.
    */
   public int getNetPrice() {

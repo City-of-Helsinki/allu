@@ -28,7 +28,7 @@ public class ApplicationController {
 
   private DecisionDao decisionDao;
 
-  private InvoiceRowDao invoiceRowDao;
+  private ChargeBasisDao chargeBasisDao;
 
   private HistoryDao historyDao;
 
@@ -39,13 +39,13 @@ public class ApplicationController {
       ApplicationService applicationService,
       AttachmentDao attachmentDao,
       DecisionDao decisionDao,
-      InvoiceRowDao invoiceRowDao,
+      ChargeBasisDao chargeBasisDao,
       HistoryDao historyDao,
       DistributionEntryDao distributionEntryDao) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
-    this.invoiceRowDao = invoiceRowDao;
+    this.chargeBasisDao = chargeBasisDao;
     this.historyDao = historyDao;
     this.distributionEntryDao = distributionEntryDao;
   }
@@ -201,28 +201,28 @@ public class ApplicationController {
   }
 
   /**
-   * Get the invoice rows for an application
+   * Get the charge basis entries for an application
    *
    * @param id the application ID
-   * @return the invoice rows for the application
+   * @return the charge basis entries for the application
    */
-  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.GET)
-  public ResponseEntity<List<InvoiceRow>> getInvoiceRows(@PathVariable int id) {
-    return new ResponseEntity<>(invoiceRowDao.getInvoiceRows(id), HttpStatus.OK);
+  @RequestMapping(value = "/{id}/charge-basis", method = RequestMethod.GET)
+  public ResponseEntity<List<ChargeBasisEntry>> getChargeBasis(@PathVariable int id) {
+    return new ResponseEntity<>(chargeBasisDao.getChargeBasis(id), HttpStatus.OK);
   }
 
   /**
-   * Set the invoice rows for an application
+   * Set the charge basis entries for an application
    *
    * @param id the application ID
-   * @param invoiceRows invoice rows for the application. Only the rows that are
-   *          marked as manually set will be stored.
-   * @return the invoice rows for the application
+   * @param chargeBasisEntries the charge basis entries for the application.
+   *          Only the entries that are marked as manually set will be stored.
+   * @return the charge basis entries for the application
    */
-  @RequestMapping(value = "/{id}/invoice-rows", method = RequestMethod.PUT)
-  public ResponseEntity<List<InvoiceRow>> setManualInvoiceRows(@PathVariable int id,
-      @RequestBody List<InvoiceRow> invoiceRows) {
-    return new ResponseEntity<>(applicationService.setManualInvoiceRows(id, invoiceRows), HttpStatus.OK);
+  @RequestMapping(value = "/{id}/charge-basis", method = RequestMethod.PUT)
+  public ResponseEntity<List<ChargeBasisEntry>> setManualChargeBasis(@PathVariable int id,
+      @RequestBody List<ChargeBasisEntry> chargeBasisEntries) {
+    return new ResponseEntity<>(applicationService.setManualChargeBasis(id, chargeBasisEntries), HttpStatus.OK);
   }
 
   /**

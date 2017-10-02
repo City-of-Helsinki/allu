@@ -1,18 +1,18 @@
 <h1 md-dialog-title>Uusi laskurivi</h1>
-<form [formGroup]="invoiceRowForm" (ngSubmit)="onSubmit(invoiceRowForm.value)">
+<form [formGroup]="chargeBasisEntryForm" (ngSubmit)="onSubmit(chargeBasisEntryForm.value)">
     <div md-dialog-content>
         <div class="row form-group">
             <div class="col m12">
                 <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="rowText"
-                           placeholder="Laiminlyöntimaksu*" [mdAutocomplete]="rowText"/>
-                    <md-autocomplete #rowText="mdAutocomplete">
-                        <md-option *ngFor="let rowText of matchingRowTexts | async" [value]="rowText">
-                            {{rowText}}
+                    <input mdInput type="text" formControlName="text"
+                           placeholder="Laiminlyöntimaksu*" [mdAutocomplete]="text"/>
+                    <md-autocomplete #text="mdAutocomplete">
+                        <md-option *ngFor="let text of matchingTexts | async" [value]="text">
+                            {{text}}
                         </md-option>
                     </md-autocomplete>
                     <md-error>
-                        <field-error [form]="invoiceRowForm" field="rowText" hasError="required">
+                        <field-error [form]="chargeBasisEntryForm" field="text" hasError="required">
                             {{'invoice.row.field.rowTextMissing' | translation}}
                         </field-error>
                     </md-error>
@@ -25,7 +25,7 @@
                     <input mdInput type="number" formControlName="quantity" placeholder="Kesto*"/>
                     <div mdSuffix>pv</div>
                     <md-error>
-                        <field-error [form]="invoiceRowForm" field="quantity" hasError="required">
+                        <field-error [form]="chargeBasisEntryForm" field="quantity" hasError="required">
                             {{'invoice.row.field.quantityMissing' | translation}}
                         </field-error>
                     </md-error>
@@ -34,7 +34,7 @@
         </div>
     </div>
     <div md-dialog-actions>
-        <button type="submit" md-raised-button color="primary" [disabled]="!invoiceRowForm.valid">TALLENNA</button>
+        <button type="submit" md-raised-button color="primary" [disabled]="!chargeBasisEntryForm.valid">TALLENNA</button>
         <button type="button" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
     </div>
 </form>

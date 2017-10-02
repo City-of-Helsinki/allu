@@ -1,7 +1,7 @@
-export interface BackendInvoiceRow {
+export interface BackendChargeBasisEntry {
   unit: string;
   quantity: number;
-  rowText: string;
+  text: string;
   unitPrice: number;
   netPrice: number;
   manuallySet: boolean;

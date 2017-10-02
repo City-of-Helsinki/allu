@@ -5,6 +5,7 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -92,29 +93,29 @@ public class ApplicationService {
   }
 
   /**
-   * Get the invoice rows for an application
+   * Get the charge basis entries for an application
    *
    * @param id the application ID
-   * @return the invoice rows for the application
+   * @return the charge basis entries for the application
    */
-  public List<InvoiceRow> getInvoiceRows(int id) {
-    ResponseEntity<InvoiceRow[]> restResult = restTemplate.getForEntity(applicationProperties.getInvoiceRowsUrl(),
-        InvoiceRow[].class, id);
+  public List<ChargeBasisEntry> getChargeBasis(int id) {
+    ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.getForEntity(applicationProperties.getChargeBasisUrl(),
+        ChargeBasisEntry[].class, id);
     return Arrays.asList(restResult.getBody());
   }
 
   /**
-   * Set the manual invoice rows for an application
+   * Set the manual charge basis entries for an application
    *
-   * @param id             the application ID
-   * @param invoiceRows    the invoice rows to store. Only rows that are marked as
-   *                       manually set will be used
-   * @return the new invoice rows for the application
+   * @param id the application ID
+   * @param chargeBasisEntries the charge basis entries to store. Only entries
+   *          that are marked as manually set will be used
+   * @return the new charge basis entries for the application
    */
-  public List<InvoiceRow> setInvoiceRows(int id, List<InvoiceRow> invoiceRows) {
-    HttpEntity<List<InvoiceRow>> requestEntity = new HttpEntity<>(invoiceRows);
-    ResponseEntity<InvoiceRow[]> restResult = restTemplate.exchange(applicationProperties.setInvoiceRowsUrl(),
-        HttpMethod.PUT, requestEntity, InvoiceRow[].class, id);
+  public List<ChargeBasisEntry> setChargeBasis(int id, List<ChargeBasisEntry> chargeBasisEntries) {
+    HttpEntity<List<ChargeBasisEntry>> requestEntity = new HttpEntity<>(chargeBasisEntries);
+    ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.exchange(applicationProperties.setChargeBasisUrl(),
+        HttpMethod.PUT, requestEntity, ChargeBasisEntry[].class, id);
     return Arrays.asList(restResult.getBody());
   }
 

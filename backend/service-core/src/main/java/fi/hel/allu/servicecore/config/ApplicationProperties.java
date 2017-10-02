@@ -492,17 +492,17 @@ public class ApplicationProperties {
 
 
   /**
-   * @return url for getting the invoice rows for an application
+   * @return url for getting the charge basis entries for an application
    */
-  public String getInvoiceRowsUrl() {
-    return getModelServiceUrl("/applications/{id}/invoice-rows");
+  public String getChargeBasisUrl() {
+    return getModelServiceUrl("/applications/{id}/charge-basis");
   }
 
   /**
-   * @return url for setting the invoice rows for an application
+   * @return url for setting the charge basis entries for an application
    */
-  public String setInvoiceRowsUrl() {
-    return getModelServiceUrl("/applications/{id}/invoice-rows");
+  public String setChargeBasisUrl() {
+    return getModelServiceUrl("/applications/{id}/charge-basis");
   }
 
   /**

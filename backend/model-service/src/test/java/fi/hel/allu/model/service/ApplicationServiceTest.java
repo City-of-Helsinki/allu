@@ -2,10 +2,10 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.InvoiceRowDao;
+import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ApplicationTag;
-import fi.hel.allu.model.domain.InvoiceRow;
+import fi.hel.allu.model.domain.ChargeBasisEntry;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -26,16 +26,16 @@ public class ApplicationServiceTest {
   @Mock
   private PricingService pricingService;
   @Mock
-  private InvoiceRowDao invoiceRowDao;
+  private ChargeBasisDao chargeBasisDao;
 
   private ApplicationService applicationService;
 
-  private List<InvoiceRow> storedRows;
+  private List<ChargeBasisEntry> storedEntries;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    applicationService = new ApplicationService(applicationDao, pricingService, invoiceRowDao);
+    applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisDao);
   }
 
   @Test
@@ -47,9 +47,9 @@ public class ApplicationServiceTest {
     Application newApp = new Application();
     newApp.setName("Foo");
     applicationService.insert(newApp);
-    Mockito.verify(pricingService).updatePrice(Mockito.eq(newApp), Mockito.anyListOf(InvoiceRow.class));
+    Mockito.verify(pricingService).updatePrice(Mockito.eq(newApp), Mockito.anyListOf(ChargeBasisEntry.class));
     Mockito.verify(applicationDao).insert(Mockito.eq(newApp));
-    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(112), Mockito.anyListOf(InvoiceRow.class),
+    Mockito.verify(chargeBasisDao).setChargeBasis(Mockito.eq(112), Mockito.anyListOf(ChargeBasisEntry.class),
         Mockito.eq(false));
   }
 
@@ -62,9 +62,9 @@ public class ApplicationServiceTest {
     Application application = new Application();
     application.setName("Foo");
     applicationService.update(123, application);
-    Mockito.verify(pricingService).updatePrice(Mockito.eq(application), Mockito.anyListOf(InvoiceRow.class));
+    Mockito.verify(pricingService).updatePrice(Mockito.eq(application), Mockito.anyListOf(ChargeBasisEntry.class));
     Mockito.verify(applicationDao).update(Mockito.eq(123), Mockito.eq(application));
-    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(123), Mockito.anyListOf(InvoiceRow.class),
+    Mockito.verify(chargeBasisDao).setChargeBasis(Mockito.eq(123), Mockito.anyListOf(ChargeBasisEntry.class),
         Mockito.eq(false));
   }
 
@@ -74,12 +74,12 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     Application application = Mockito.mock(Application.class);
     Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
-    Mockito.when(pricingService.totalPrice(Mockito.anyListOf(InvoiceRow.class))).thenReturn(TOTAL_PRICE);
+    Mockito.when(pricingService.totalPrice(Mockito.anyListOf(ChargeBasisEntry.class))).thenReturn(TOTAL_PRICE);
 
-    applicationService.setManualInvoiceRows(APP_ID, Arrays.asList(new InvoiceRow()));
+    applicationService.setManualChargeBasis(APP_ID, Arrays.asList(new ChargeBasisEntry()));
 
-    // Should have set new manually set rows
-    Mockito.verify(invoiceRowDao).setInvoiceRows(Mockito.eq(APP_ID), Mockito.anyListOf(InvoiceRow.class),
+    // Should have set new manually set entries
+    Mockito.verify(chargeBasisDao).setChargeBasis(Mockito.eq(APP_ID), Mockito.anyListOf(ChargeBasisEntry.class),
         Mockito.eq(true));
     // Should have set new calculated price
     Mockito.verify(application).setCalculatedPrice(TOTAL_PRICE);

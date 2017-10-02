@@ -48,55 +48,54 @@ public class PricingService {
   /**
    * Calculate and store the event price for the application
    *
-   * @param application
-   *          The application for which the pricing is calculated. New pricing
-   *          is stored in the application.
-   * @param invoiceRows
-   *          List where to store the invoice rows from the price calculation.
+   * @param application The application for which the pricing is calculated. New
+   *          pricing is stored in the application.
+   * @param chargeBasisEntries List where to store the charge basis entries from
+   *          the price calculation.
    */
   @Transactional
-  public void updatePrice(Application application, List<InvoiceRow> invoiceRows) {
+  public void updatePrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
     if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
-      updateShortTermRentalPrice(application, invoiceRows);
+      updateShortTermRentalPrice(application, chargeBasisEntries);
     } else if (application.hasTypeAndKind(ApplicationType.EVENT, ApplicationKind.OUTDOOREVENT)) {
-      updateOutdoorEventPrice(application, invoiceRows);
+      updateOutdoorEventPrice(application, chargeBasisEntries);
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      updateExcavationAnnouncementPrice(application, invoiceRows);
+      updateExcavationAnnouncementPrice(application, chargeBasisEntries);
     } else if (application.getType() == ApplicationType.AREA_RENTAL) {
-      updateAreaRentalPrice(application, invoiceRows);
+      updateAreaRentalPrice(application, chargeBasisEntries);
     }
   }
 
   /**
-   * Calculate the total price of given invoice rows
+   * Calculate the total price of given charge basis entries
    *
-   * @param invoiceRows
+   * @param chargeBasisEntries
    * @return total price in cents
    */
-  public int totalPrice(List<InvoiceRow> invoiceRows) {
+  public int totalPrice(List<ChargeBasisEntry> chargeBasisEntries) {
     // To cope with floating-point rounding errors, 100 in sum = 1 cent:
     long sum = 0;
     double totalMultiplier = 1.0;
-    // Store row-specific multipliers here:
-    Map<String, Double> rowMultipliers = new HashMap<>();
-    for (InvoiceRow row : invoiceRows) {
-      if (row.getUnit() != InvoiceUnit.MULTIPLY) {
-        // Normal row, just add to sum
-        sum += (long) row.getNetPrice() * 100;
-      } else if (row.getReferredTag() == null) {
-        // Multiplying row without target: will affect the whole result
-        totalMultiplier *= row.getQuantity();
+    // Store entry-specific multipliers here:
+    Map<String, Double> entryMultipliers = new HashMap<>();
+    for (ChargeBasisEntry entry : chargeBasisEntries) {
+      if (entry.getUnit() != ChargeBasisUnit.MULTIPLY) {
+        // Normal entry, just add to sum
+        sum += (long) entry.getNetPrice() * 100;
+      } else if (entry.getReferredTag() == null) {
+        // Multiplying entry without target: will affect the whole result
+        totalMultiplier *= entry.getQuantity();
       } else {
-        // Multiplying row with target: update the target row's multiplier
-        rowMultipliers.put(row.getReferredTag(),
-            row.getQuantity() * rowMultipliers.getOrDefault(row.getReferredTag(), 1.0));
+        // Multiplying entry with target: update the target entry's multiplier
+        entryMultipliers.put(entry.getReferredTag(),
+            entry.getQuantity() * entryMultipliers.getOrDefault(entry.getReferredTag(), 1.0));
       }
     }
-    // Handle row multipliers: add (K-1) x net price
-    for (InvoiceRow row: invoiceRows) {
-      final Double multiplier = rowMultipliers.get(row.getTag());
+    // Handle entry multipliers: add (K-1) x net price
+    for (ChargeBasisEntry entry : chargeBasisEntries) {
+      final Double multiplier = entryMultipliers.get(entry.getTag());
       if (multiplier != null) {
-        final Double correction = (multiplier - 1.0) * ((long) row.getNetPrice() * 100);
+        final Double correction = (multiplier - 1.0) * ((long) entry.getNetPrice() * 100);
         sum += correction;
       }
     }
@@ -109,52 +108,54 @@ public class PricingService {
   /*
    * Calculate price for outdoor event
    */
-  private void updateOutdoorEventPrice(Application application, List<InvoiceRow> invoiceRows) {
+  private void updateOutdoorEventPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
     Event event = (Event) application.getExtension();
     // check that application is not new
     if (application.getId() != null && event != null) {
       EventPricing pricing = new EventPricing();
       int priceInCents = calculateEventPrice(application, event, pricing);
       application.setCalculatedPrice(priceInCents);
-      // pass the invoice rows to caller
-      invoiceRows.addAll(pricing.getInvoiceRows());
+      // pass the charge basis entries to caller
+      chargeBasisEntries.addAll(pricing.getChargeBasisEntries());
     }
   }
 
   /*
    * Calculate price for short term rental application
    */
-  private void updateShortTermRentalPrice(Application application, List<InvoiceRow> invoiceRows) {
+  private void updateShortTermRentalPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
     List<Location> locations = Collections.emptyList();
     if (application.getId() != null) {
       locations = locationDao.findByApplication(application.getId());
     }
-    // TODO: should we handle different locations as their own invoice rows? This works anyway as long as only area rentals have multiple locations
+    // TODO: should we handle different locations as their own charge basis
+    // items? This works anyway as long as only area rentals have multiple
+    // locations
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, applicationArea, isCompany(application));
     pricing.calculatePrice();
     application.setCalculatedPrice(pricing.getPriceInCents());
-    invoiceRows.addAll(pricing.getInvoiceRows());
+    chargeBasisEntries.addAll(pricing.getChargeBasisEntries());
   }
 
   /*
    * Calculate price for area rental
    */
-  private void updateAreaRentalPrice(Application application, List<InvoiceRow> invoiceRows) {
-    updatePrice(application, invoiceRows, new AreaRentalPricing(application));
+  private void updateAreaRentalPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
+    updatePrice(application, chargeBasisEntries, new AreaRentalPricing(application));
   }
 
   /*
    * Calculate price for excavation announcement
    */
-  private void updateExcavationAnnouncementPrice(Application application, List<InvoiceRow> invoiceRows) {
-    updatePrice(application, invoiceRows, new ExcavationPricing(application));
+  private void updateExcavationAnnouncementPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
+    updatePrice(application, chargeBasisEntries, new ExcavationPricing(application));
   }
 
   /*
    * Calculate price using the common addLocationPrice
    */
-  private void updatePrice(Application application, List<InvoiceRow> invoiceRows, Pricing pricing) {
+  private void updatePrice(Application application, List<ChargeBasisEntry> chargeBasisEntries, Pricing pricing) {
     List<Location> locations = Collections.emptyList();
     if (application.getId() != null) {
       locations = locationDao.findByApplication(application.getId());
@@ -163,7 +164,7 @@ public class PricingService {
       pricing.addLocationPrice(l.getLocationKey(), l.getEffectiveArea(), locationDao.getPaymentClass(l.getId()));
     }
     application.setCalculatedPrice(pricing.getPriceInCents());
-    invoiceRows.addAll(pricing.getInvoiceRows());
+    chargeBasisEntries.addAll(pricing.getChargeBasisEntries());
   }
 
   /*

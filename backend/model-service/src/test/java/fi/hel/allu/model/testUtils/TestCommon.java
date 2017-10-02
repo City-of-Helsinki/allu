@@ -231,7 +231,7 @@ public class TestCommon {
       "delete from allu.default_attachment",
       "delete from allu.application_attachment",
       "delete from allu.attachment",
-      "delete from allu.invoice_row",
+      "delete from allu.charge_basis",
       "delete from allu.application_tag",
       "delete from allu.location_flids",
       "delete from allu.location_geometry",

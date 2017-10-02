@@ -232,16 +232,16 @@ create table allu.default_attachment_application_type (
   application_type text not null
 );
 
-create table allu.invoice_row (
+create table allu.charge_basis (
     id serial primary key,
     application_id integer not null references allu.application(id) on delete cascade,
-    row_number integer not null,
+    entry_number integer not null,
     tag text,
     referred_tag text,
     manually_set boolean not null,
     unit text not null,
     quantity double precision not null,
-    row_text text not null,
+    text text not null,
     unit_price integer not null,
     net_price integer not null);
 
