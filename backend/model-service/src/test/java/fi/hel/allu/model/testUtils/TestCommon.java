@@ -77,6 +77,7 @@ public class TestCommon {
    */
   public Application dummyOutdoorApplication(String name, String handler) {
     Application app = dummyBasicApplication(name, handler);
+    app.setStatus(StatusType.FINISHED);
     app.setType(ApplicationType.EVENT);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
     app.setApplicationId("TP1600001");

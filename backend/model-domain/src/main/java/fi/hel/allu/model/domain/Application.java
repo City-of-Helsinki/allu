@@ -59,6 +59,7 @@ public class Application {
   private String notBillableReason;
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
   private Integer invoiceRecipientId;
+  private Boolean activeAfterValidity;
 
   /**
    * in Finnish: Hakemuksen tunniste

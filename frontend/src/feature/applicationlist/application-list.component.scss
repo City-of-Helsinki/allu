@@ -6,8 +6,15 @@
   .searchresults {
     overflow-y: auto;
   }
-
-  md-card {
-    margin: 10px 0;
-  }
 }
+
+.mat-list .mat-list-item .mat-list-text > h1.mat-line {
+  font-size: 18px;
+  font-weight: 400;
+  color: mat-color($allu-primary, 500);
+}
+
+.mat-divider {
+  border-top-color: mat-color($allu-primary, 200);
+}
+

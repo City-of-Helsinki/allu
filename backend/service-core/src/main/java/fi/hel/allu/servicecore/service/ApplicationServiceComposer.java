@@ -186,18 +186,16 @@ public class ApplicationServiceComposer {
   public ApplicationJson changeStatus(int applicationId, StatusType newStatus) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
+    if (StatusType.HANDLING.equals(newStatus) && application.getHandler() == null) {
+      updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(applicationId));
+    }
+
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
     logger.debug("found application {}, current status {}, handler {}",
         applicationJson.getId(), applicationJson.getStatus(), applicationJson.getHandler());
-    if (StatusType.HANDLING.equals(newStatus) && application.getHandler() == null) {
-      updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(applicationId));
-      applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
-    }
-    applicationJson.setStatus(newStatus);
-    // TODO: add person who made the decision to somewhere
-    ApplicationJson result = updateApplicationNoTracking(applicationId, applicationJson);
+
     applicationHistoryService.addStatusChange(applicationId, newStatus);
-    return result;
+    return applicationJson;
   }
 
   /**
@@ -316,5 +314,7 @@ public class ApplicationServiceComposer {
     applicationHistoryService.addFieldChanges(applicationId, oldApplication, updatedApplication);
     return updatedApplication;
   }
+
+
 
 }

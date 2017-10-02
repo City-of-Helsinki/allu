@@ -1,14 +1,12 @@
-<div class="row">
-  <div class="col s12 searchresults">
-      <md-card (click)="jobClick(application)" *ngFor="let application of applications | async">
-        <md-card-content>
-            <md-card-title>{{application.name}}</md-card-title>
+<md-list>
+    <ng-container *ngFor="let application of applications | async">
+        <md-divider></md-divider>
+        <md-list-item  (click)="jobClick(application)" >
+            <h1 mdLine class="clickable">{{application.name}}</h1>
+            <div mdLine>{{['application.type', application.type] | translation}}</div>
+            <div mdLine>{{['application.status', application.status] | translation}}</div>
+            <div mdLine>{{application.uiStartTime}} - {{application.uiEndTime}}</div>
+        </md-list-item>
+    </ng-container>
+</md-list>
 
-            <md-card-content>
-                <div class="info-field">{{['application.type', application.type] | translation}}</div>
-                <div class="info-field">{{application.uiStartTime}} - {{application.uiEndTime}}</div>
-            </md-card-content>
-        </md-card-content>
-      </md-card>
-  </div>
-</div>

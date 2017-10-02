@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
@@ -202,6 +203,32 @@ public class ApplicationControllerTest {
     assertEquals("Small application 1", results[0].getName());
   }
 
+  @Test
+  public void testFindNonFinishedAfterEndTime() throws Exception {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
+    newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
+    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
+    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
+
+    // Inserted application has PENDING status
+    Application inserted = insertApplicationWithGeometry(
+        newApplication,
+        geometryCollection,
+        "katu 1",
+        newApplication.getStartTime(),
+        newApplication.getEndTime());
+
+    LocationSearchCriteria lsc = new LocationSearchCriteria();
+    lsc.setIntersects(geometry);
+    lsc.setAfter(ZonedDateTime.parse("2016-11-02T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2016-11-03T08:00:00+02:00[Europe/Helsinki]"));
+
+    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
+    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    assertEquals("Pending application was not found after end time", 1, results.length);
+  }
+
   /**
    * Test that reading an application's attachment list works
    *
@@ -288,12 +315,13 @@ public class ApplicationControllerTest {
     newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-08-03T10:15:30+02:00"));
     Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
     GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
-    insertApplicationWithGeometry(
+    Application inserted = insertApplicationWithGeometry(
         newApplication,
         geometryCollection,
         "katu 1",
         newApplication.getStartTime(),
         newApplication.getEndTime());
+    setApplicationToFinished(inserted.getId());
 
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     // test period completely outside recurring period, before recurring period
@@ -484,5 +512,8 @@ public class ApplicationControllerTest {
     }
   }
 
-
+  private void setApplicationToFinished(Integer id) throws Exception {
+    String uri = "/applications/{id}/status/finished".replace("{id}", id.toString());
+    wtc.perform(put(uri)).andExpect(status().isOk());
+  }
 }

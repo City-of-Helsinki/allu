@@ -94,13 +94,16 @@ public class ApplicationDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Application> findByLocation(LocationSearchCriteria lsc) {
+  public List<Application> findActiveByLocation(LocationSearchCriteria lsc) {
     ZonedDateTime recurringStartTime = RecurringApplication.BEGINNING_1972_DATE;
     ZonedDateTime recurringEndTime = RecurringApplication.MAX_END_TIME;
 
     BooleanExpression strictStartEndTimeCondition = null;
     if (lsc.getAfter() != null) {
-      strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, application.endTime.after(lsc.getAfter()));
+      BooleanExpression beforeOrUnfinished = application.endTime.after(lsc.getAfter())
+          .or(application.endTime.before(ZonedDateTime.now())
+              .and(application.status.notIn(StatusType.FINISHED, StatusType.CANCELLED)));
+      strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, beforeOrUnfinished);
       recurringStartTime = lsc.getAfter();
     }
     if (lsc.getBefore() != null) {

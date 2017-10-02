@@ -73,6 +73,26 @@ public class LocationService {
     updateApplicationAndProject(applicationId);
   }
 
+  @Transactional(readOnly = true)
+  public List<Location> findByApplicationId(Integer applicationId) {
+    return this.locationDao.findByApplication(applicationId);
+  }
+
+  /**
+   * Tries to find single location for application.
+   * If application contains none or more than one locations exception is thrown
+   */
+  @Transactional(readOnly = true)
+  public Location findSingleByApplicationId(Integer applicationId) {
+    List<Location> locations = findByApplicationId(applicationId);
+    if (locations.size() == 1) {
+      return locations.get(0);
+    } else {
+      throw new IllegalStateException("Application contains " + locations.size()
+          + " locations where single location was expected");
+    }
+  }
+
   private int getApplicationId(List<Location> locations) {
     List<Integer> ids = locations.stream().map(l -> l.getApplicationId()).distinct().collect(Collectors.toList());
     if (ids.size() != 1) {

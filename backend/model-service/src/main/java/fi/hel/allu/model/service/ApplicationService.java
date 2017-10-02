@@ -70,7 +70,7 @@ public class ApplicationService {
    */
   @Transactional(readOnly = true)
   public List<Application> findByLocation(LocationSearchCriteria lsc) {
-    return applicationDao.findByLocation(lsc);
+    return applicationDao.findActiveByLocation(lsc);
   }
 
   /**

@@ -216,6 +216,18 @@ public class ApplicationService {
   }
 
   Application changeApplicationStatus(int applicationId, StatusType statusType) {
+    HttpEntity<Integer> userIdRequest = getUserIdRequest(statusType);
+
+    ResponseEntity<Application> responseEntity = restTemplate.exchange(
+        applicationProperties.getApplicationStatusUpdateUrl(statusType),
+        HttpMethod.PUT,
+        userIdRequest,
+        Application.class,
+        applicationId);
+    return responseEntity.getBody();
+  }
+
+  private HttpEntity<Integer> getUserIdRequest(StatusType statusType) {
     HttpEntity<Integer> requestEntity;
     if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType)) {
       UserJson currentUser = userService.getCurrentUser();
@@ -223,14 +235,7 @@ public class ApplicationService {
     } else {
       requestEntity = new HttpEntity<>((Integer) null);
     }
-
-    ResponseEntity<Application> responseEntity = restTemplate.exchange(
-        applicationProperties.getApplicationStatusUpdateUrl(statusType),
-        HttpMethod.PUT,
-        requestEntity,
-        Application.class,
-        applicationId);
-    return responseEntity.getBody();
+    return requestEntity;
   }
 
   private void mapLocationQueryToSearchCriteria(LocationQueryJson query, LocationSearchCriteria lsc) {

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewEncapsulation} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
@@ -10,7 +10,8 @@ import {MapHub} from '../../service/map/map-hub';
   template: require('./application-list.component.html'),
   styles: [
     require('./application-list.component.scss')
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 
 export class ApplicationListComponent implements OnInit, OnDestroy {
