@@ -14,7 +14,8 @@ import org.springframework.validation.annotation.Validated;
     include = JsonTypeInfo.As.EXISTING_PROPERTY,
     property = "applicationType")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = ExcavationAnnouncementExt.class, name = "EXCAVATION_ANNOUNCEMENT")
+    @JsonSubTypes.Type(value = ExcavationAnnouncementExt.class, name = "EXCAVATION_ANNOUNCEMENT"),
+    @JsonSubTypes.Type(value = PlacementContractExt.class, name = "PLACEMENT_CONTRACT")
 })
 public abstract class ApplicationExtensionExt {
 

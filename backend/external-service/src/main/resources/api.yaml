@@ -788,6 +788,22 @@ definitions:
             type: string
           trafficArrangementImpedimentType:
             $ref: '#/definitions/TrafficArrangementImpedimentType'
+  PlacementContractExt:
+    description: Extends ApplicationExtensionExt. Excavation announcement data.
+    type: object
+    allOf:
+      - $ref: '#/definitions/ApplicationExtensionExt'
+      - type: object
+        properties:
+          diaryNumber:
+            description: Diary number
+            type: string
+          additionalInfo:
+            description: Additional information
+            type: string
+          generalTerms:
+            description: General terms
+            type: string
   ApplicationProgressReportExt:
     description: Object for reporting application progress
     type: object
