@@ -327,6 +327,24 @@ create table allu.supervision_task (
   result text
 );
 
+create table allu.invoice (
+  id serial primary key,
+  application_id integer not null references allu.application(id) on delete cascade,
+  invoicable_time timestamp with time zone not null,
+  invoiced boolean not null default false
+);
+
+create table allu.invoice_row (
+  id serial primary key,
+  invoice_id integer not null references allu.invoice(id) on delete cascade,
+  row_number integer not null,
+  unit text not null,
+  quantity double precision not null,
+  text text not null,
+  unit_price integer not null,
+  net_price integer not null
+);
+
 create SEQUENCE allu.KP_application_type_sequence START 1600001;
 create SEQUENCE allu.AL_application_type_sequence START 1600001;
 create SEQUENCE allu.LJ_application_type_sequence START 1600001;

@@ -290,6 +290,11 @@
                             <column>actual_finishing_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>invoice</table>
+                            <column>invoicable_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
                         <!-- Map enumeration types -->
                         <!-- NOTE that if you add new kind of typeMapping type, you have to configure it in JdbcConfiguration class! -->
                         <typeMapping>
@@ -426,6 +431,11 @@
                             <table>supervision_task</table>
                             <column>status</column>
                             <type>fi.hel.allu.model.querydsl.StringToSupervisionTaskStatusType</type>
+                        </typeMapping>
+                        <typeMapping>
+                            <table>invoice_row</table>
+                            <column>unit</column>
+                            <type>fi.hel.allu.model.querydsl.StringToChargeBasisUnit</type>
                         </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
