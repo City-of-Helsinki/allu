@@ -47,14 +47,18 @@ export class ApplicationService {
   }
 
   public getApplicationsByLocation(query: ApplicationLocationQuery): Observable<Array<Application>> {
-    let searchUrl = APPLICATIONS_URL + SEARCH_LOCATION;
+    if (query.statusTypes && query.statusTypes.length) {
+      let searchUrl = APPLICATIONS_URL + SEARCH_LOCATION;
 
-    return this.authHttp.post(
-      searchUrl,
-      JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query)))
-      .map(response => response.json())
-      .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
+      return this.authHttp.post(
+        searchUrl,
+        JSON.stringify(ApplicationLocationQueryMapper.mapFrontend(query)))
+        .map(response => response.json())
+        .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
+        .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
+    } else {
+      return Observable.of([]);
+    }
   }
 
   public searchApplications(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {

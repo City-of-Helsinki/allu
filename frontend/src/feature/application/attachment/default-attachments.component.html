@@ -5,9 +5,9 @@
             <selection-group [ngModel]="selectedAttachments" (select)="onSelect($event)"
                              *ngIf="defaultAttachments">
                 <div class="col m3" *ngFor="let attachment of defaultAttachments">
-                    <selection-item [item]="attachment"
-                                    selectType="CHECKBOX"
-                                    itemLabel="{{attachment.name}}"></selection-item>
+                    <selection-item [item]="attachment" selectType="CHECKBOX">
+                        {{attachment.name}}
+                    </selection-item>
                     <button md-icon-button (click)="download(attachment)"><md-icon>file_download</md-icon></button>
                 </div>
             </selection-group>

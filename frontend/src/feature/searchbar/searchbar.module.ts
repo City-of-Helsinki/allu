@@ -3,6 +3,7 @@ import {ReactiveFormsModule, FormsModule} from '@angular/forms';
 import {MdToolbarModule, MdInputModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {SearchbarComponent} from './searchbar.component';
+import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 
 @NgModule({
   imports: [
@@ -10,7 +11,8 @@ import {SearchbarComponent} from './searchbar.component';
     FormsModule,
     AlluCommonModule,
     MdToolbarModule,
-    MdInputModule
+    MdInputModule,
+    SelectionGroupModule
   ],
   declarations: [
     SearchbarComponent

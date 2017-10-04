@@ -2,15 +2,27 @@
 
 .btn-chip {
   display: inline-block;
-  padding: 8px 12px;
   margin: 2px 0px;
   border-radius: 24px;
   font-size: 13px;
   line-height: 16px;
   height: 32px;
   background-color: $allu-chip-dark;
-  color: mat-contrast($allu-primary, 500);
   border-width: 0px;
+
+  .mat-checkbox-inner-container {
+    display: none;
+  }
+
+  .mat-checkbox-layout {
+    padding: 8px 12px;
+  }
+
+  .mat-checkbox-layout .mat-checkbox-label {
+    color: mat-contrast($allu-primary, 500);
+    text-align: center;
+    line-height: 16px;
+  }
 }
 
 .btn-chip.selected {

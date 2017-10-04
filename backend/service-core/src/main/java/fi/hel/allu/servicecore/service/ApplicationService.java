@@ -83,8 +83,7 @@ public class ApplicationService {
    * @return list of found applications with details
    */
   public List<Application> findApplicationByLocation(LocationQueryJson query) {
-    LocationSearchCriteria lsc = new LocationSearchCriteria();
-    mapLocationQueryToSearchCriteria(query, lsc);
+    LocationSearchCriteria lsc = applicationMapper.createLocationSearchCriteria(query);
     ResponseEntity<Application[]> applicationResult = restTemplate.postForEntity(
         applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_FIND_BY_LOCATION),
         lsc,
@@ -237,12 +236,6 @@ public class ApplicationService {
       requestEntity = new HttpEntity<>((Integer) null);
     }
     return requestEntity;
-  }
-
-  private void mapLocationQueryToSearchCriteria(LocationQueryJson query, LocationSearchCriteria lsc) {
-    lsc.setIntersects(query.getIntersectingGeometry());
-    lsc.setAfter(query.getAfter());
-    lsc.setBefore(query.getBefore());
   }
 
   private List<ApplicationTagJson> tagsWithUserInfo(List<ApplicationTagJson> tags) {

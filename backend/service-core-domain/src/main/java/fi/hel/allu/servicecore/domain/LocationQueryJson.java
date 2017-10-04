@@ -1,7 +1,9 @@
 package fi.hel.allu.servicecore.domain;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import org.geolatte.geom.Geometry;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -22,6 +24,7 @@ public class LocationQueryJson {
 
   private ZonedDateTime after;
   private ZonedDateTime before;
+  private List<StatusType> statusTypes;
 
   /**
    * Get the geometry to use in intersection search.
@@ -85,4 +88,14 @@ public class LocationQueryJson {
     this.before = before;
   }
 
+  /**
+   * Application status types which are used in search.
+   */
+  public List<StatusType> getStatusTypes() {
+    return statusTypes;
+  }
+
+  public void setStatusTypes(List<StatusType> statusTypes) {
+    this.statusTypes = statusTypes;
+  }
 }

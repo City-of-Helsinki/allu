@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 
 import static org.geolatte.geom.builder.DSL.c;
@@ -185,6 +186,7 @@ public class ApplicationControllerTest {
     createLocationTestApplications();
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     lsc.setIntersects(bigArea);
+    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
     ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
     Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(3, results.length);
@@ -197,10 +199,39 @@ public class ApplicationControllerTest {
     lsc.setIntersects(bigArea);
     lsc.setAfter(ZonedDateTime.parse("2016-11-02T08:00:00+02:00[Europe/Helsinki]"));
     lsc.setBefore(ZonedDateTime.parse("2016-11-03T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
     ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
     Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
     assertEquals(1, results.length);
     assertEquals("Small application 1", results[0].getName());
+  }
+
+  @Test
+  public void testFindByStatus() throws Exception {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application1", "Test Handler1");
+    newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
+    newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
+    Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
+    GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
+    Application inserted = insertApplicationWithGeometry(newApplication, geometryCollection, "katu 1",
+        newApplication.getStartTime(), newApplication.getEndTime());
+    setApplicationToFinished(inserted.getId());
+
+    Application withNonMatchinStatus = testCommon.dummyOutdoorApplication("Test Application2", "Test Handler2");
+    withNonMatchinStatus.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
+    withNonMatchinStatus.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
+    Application insertedNonMatching = insertApplicationWithGeometry(withNonMatchinStatus, geometryCollection, "katu 1",
+        withNonMatchinStatus.getStartTime(), withNonMatchinStatus.getEndTime());
+
+    LocationSearchCriteria lsc = new LocationSearchCriteria();
+    lsc.setIntersects(geometry);
+    lsc.setAfter(ZonedDateTime.parse("2015-01-01T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setBefore(ZonedDateTime.parse("2015-12-24T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setStatusTypes(Arrays.asList(StatusType.FINISHED));
+    ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
+    Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
+    assertEquals(1, results.length);
+    assertEquals(newApplication.getName(), results[0].getName());
   }
 
   @Test
@@ -212,17 +243,14 @@ public class ApplicationControllerTest {
     GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
 
     // Inserted application has PENDING status
-    Application inserted = insertApplicationWithGeometry(
-        newApplication,
-        geometryCollection,
-        "katu 1",
-        newApplication.getStartTime(),
-        newApplication.getEndTime());
+    insertApplicationWithGeometry(newApplication, geometryCollection, "katu 1",
+        newApplication.getStartTime(), newApplication.getEndTime());
 
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     lsc.setIntersects(geometry);
     lsc.setAfter(ZonedDateTime.parse("2016-11-02T08:00:00+02:00[Europe/Helsinki]"));
     lsc.setBefore(ZonedDateTime.parse("2016-11-03T08:00:00+02:00[Europe/Helsinki]"));
+    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
 
     ResultActions resultActions = wtc.perform(post("/applications/search"), lsc).andExpect(status().isOk());
     Application[] results = wtc.parseObjectFromResult(resultActions, Application[].class);
@@ -313,6 +341,7 @@ public class ApplicationControllerTest {
     newApplication.setStartTime(ZonedDateTime.parse("2015-06-03T10:15:30+02:00"));
     newApplication.setEndTime(ZonedDateTime.parse("2015-08-03T10:15:30+02:00"));
     newApplication.setRecurringEndTime(ZonedDateTime.parse("2020-08-03T10:15:30+02:00"));
+    newApplication.setStatus(StatusType.FINISHED);
     Geometry geometry = polygon(3879, ring(c(25480000, 6672000), c(25491000, 6672000), c(25485000, 6670000), c(25480000, 6672000)));
     GeometryCollection geometryCollection = new GeometryCollection(new Geometry[] { geometry });
     Application inserted = insertApplicationWithGeometry(
@@ -324,14 +353,14 @@ public class ApplicationControllerTest {
     setApplicationToFinished(inserted.getId());
 
     LocationSearchCriteria lsc = new LocationSearchCriteria();
-    // test period completely outside recurring period, before recurring period
     lsc.setIntersects(geometry);
+    lsc.setStatusTypes(Arrays.asList(StatusType.FINISHED));
+
+    // test period completely outside recurring period, before recurring period
     lsc.setAfter(ZonedDateTime.parse("2015-01-02T08:00:00+02:00[Europe/Helsinki]"));
     lsc.setBefore(ZonedDateTime.parse("2015-05-03T08:00:00+02:00[Europe/Helsinki]"));
     testRecurring(lsc, 0);
     // test period completely outside recurring period, after recurring period
-    lsc = new LocationSearchCriteria();
-    lsc.setIntersects(geometry);
     lsc.setAfter(ZonedDateTime.parse("2015-09-02T08:00:00+02:00[Europe/Helsinki]"));
     lsc.setBefore(ZonedDateTime.parse("2015-10-03T08:00:00+02:00[Europe/Helsinki]"));
     testRecurring(lsc, 0);
@@ -399,6 +428,7 @@ public class ApplicationControllerTest {
 
     LocationSearchCriteria lsc = new LocationSearchCriteria();
     lsc.setIntersects(geometry);
+    lsc.setStatusTypes(Arrays.asList(StatusType.PENDING));
     // test period completely outside recurring period
     lsc.setAfter(ZonedDateTime.parse("2015-01-02T08:00:00+02:00[Europe/Helsinki]"));
     lsc.setBefore(ZonedDateTime.parse("2015-05-03T08:00:00+02:00[Europe/Helsinki]"));

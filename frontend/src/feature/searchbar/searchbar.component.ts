@@ -2,13 +2,15 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 
-import {SearchbarFilter} from '../../service/searchbar-filter';
 import {MapHub} from '../../service/map/map-hub';
 import {PostalAddress} from '../../model/common/postal-address';
 import {Observable} from 'rxjs';
 import {NotificationService} from '../../service/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {StringUtil} from '../../util/string.util';
+import {EnumUtil} from '../../util/enum.util';
+import {ApplicationStatus} from '../../model/application/application-status';
+import {MapSearchFilter} from '../../service/map-search-filter';
 
 enum BarType {
   SIMPLE,
@@ -24,63 +26,57 @@ enum BarType {
   ]
 })
 export class SearchbarComponent implements OnInit, OnDestroy {
-  @Input() filter: Observable<SearchbarFilter> = Observable.empty();
   @Input() datesRequired: boolean = false;
   @Input() barType: string = BarType[BarType.BAR];
 
-  @Output() searchUpdated = new EventEmitter<SearchbarFilter>();
   @Output() onShowAdvanced = new EventEmitter<boolean>();
 
   searchForm: FormGroup;
   addressControl: FormControl;
   matchingAddresses: Observable<Array<PostalAddress>>;
+  statusTypes = EnumUtil.enumValues(ApplicationStatus);
 
   private coordinateSubscription: Subscription;
+  private searchFilterSubscription: Subscription;
 
   constructor(private fb: FormBuilder, private mapHub: MapHub) {
     this.addressControl = this.fb.control('');
     this.searchForm = this.fb.group({
       address: this.addressControl,
-      startDate: this.datesRequired ? [undefined, Validators.required] : [undefined],
-      endDate: this.datesRequired ? [undefined, Validators.required] : [undefined]
+      startDate: this.datesRequired ? [undefined, Validators.required] : undefined,
+      endDate: this.datesRequired ? [undefined, Validators.required] : undefined,
+      statusTypes: [[]]
     });
   }
 
   ngOnInit(): void {
-    this.filter.subscribe(filter => {
-      this.searchForm.patchValue({
-        address: filter.search,
-        startDate: filter.startDate,
-        endDate: filter.endDate
-      });
-    });
+    this.searchFilterSubscription = this.mapHub.searchFilter()
+      .subscribe(filter => this.searchForm.patchValue(filter, {emitEvent: false}));
 
     this.coordinateSubscription = this.mapHub.coordinates()
       .filter(coords => !coords.isDefined())
       .subscribe(coords => NotificationService.message('Osoitetta ei löytynyt', 4000));
 
     this.searchForm.valueChanges.subscribe(form => this.notifySearchUpdated(form));
-    this.notifySearchUpdated(this.searchForm.value);
 
     this.matchingAddresses = this.addressControl.valueChanges
       .debounceTime(300)
       .filter(searchTerm => !!searchTerm && searchTerm.length >= 3)
-      .switchMap(searchTerm => this.mapHub.addressSearch(searchTerm))
+      .switchMap(searchTerm => this.mapHub.findMatchingAddresses(searchTerm))
       .map(matching => matching.sort(ArrayUtil.naturalSort((address: PostalAddress) => address.uiStreetAddress)));
   }
 
   ngOnDestroy(): void {
     this.coordinateSubscription.unsubscribe();
+    this.searchFilterSubscription.unsubscribe();
   }
 
-  public notifySearchUpdated(form: {address: string, startDate: Date, endDate: Date}): void {
-    let filter = new SearchbarFilter(form.address, form.startDate, form.endDate);
-    this.searchUpdated.emit(filter);
+  public notifySearchUpdated(filter: MapSearchFilter): void {
     this.mapHub.addSearchFilter(filter);
   }
 
   public addressSelected(streetAddress: string) {
-    this.mapHub.addSearch(StringUtil.capitalize(streetAddress));
+    this.mapHub.coordinateSearch(StringUtil.capitalize(streetAddress));
     this.searchForm.patchValue({address: streetAddress});
   }
 

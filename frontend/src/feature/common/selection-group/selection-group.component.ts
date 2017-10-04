@@ -24,7 +24,7 @@ const ID_FIELD = 'id';
 export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor, AfterViewInit {
   @Output() select = new EventEmitter<SelectionEvent>();
 
-  @ContentChildren(SelectionItemComponent) selectionItems: QueryList<SelectionItemComponent> = new QueryList<SelectionItemComponent>();
+  @ContentChildren(SelectionItemComponent, {descendants: true}) selectionItems: QueryList<SelectionItemComponent>;
 
   private selectedItems$ = new BehaviorSubject<Array<any>>([]);
   private eventSubscription: Subscription;
@@ -40,10 +40,14 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
   }
 
   ngAfterViewInit(): void {
-    this.selectedItemsSubscription = this.selectedItems$.subscribe(items =>
+    // Defer setting the value in order to avoid the "Expression
+    // has changed after it was checked" errors from Angular.
+    Promise.resolve().then(() => {
+      this.selectedItemsSubscription = this.selectedItems$.subscribe(items =>
         this.selectionItems.forEach(item => {
           item.selected = items.some(i => this.isSame(i, item.item));
         }));
+    });
   }
 
   writeValue(items: Array<any>): void {

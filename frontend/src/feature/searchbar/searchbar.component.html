@@ -88,5 +88,13 @@
         <md-datepicker #endDatePicker></md-datepicker>
       </md-form-field>
     </div>
+    <div class="col s12">
+      <selection-group formControlName="statusTypes">
+        <span class="label-small">Tilat</span>
+        <selection-item *ngFor="let status of statusTypes" [item]="status">
+          {{['application.status', status] | translation}}
+        </selection-item>
+      </selection-group>
+    </div>
   </div>
 </form>

@@ -16,9 +16,9 @@
                     <div class="col m12">
                         <selection-group formControlName="applicationTypes">
                             <span class="label-small">Hakemustyypit</span>
-                            <selection-item *ngFor="let type of applicationTypes"
-                                            [item]="type"
-                                            itemLabel="{{['application.type', type] | translation}}"></selection-item>
+                            <selection-item *ngFor="let type of applicationTypes" [item]="type">
+                                {{['application.type', type] | translation}}
+                            </selection-item>
                         </selection-group>
                     </div>
                 </div>

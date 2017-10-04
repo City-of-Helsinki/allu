@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, Input, ViewEncapsulation} from '@angular/core';
 import {SelectionEventService} from './selection-event.service';
 
 type SelectType = 'CHECKBOX' | 'CHIP';
@@ -8,22 +8,17 @@ type SelectType = 'CHECKBOX' | 'CHIP';
   template: require('./selection-item.component.html'),
   styles: [
     require('./selection-item.component.scss')
-  ]
+  ],
+  encapsulation: ViewEncapsulation.None
 })
 export class SelectionItemComponent {
 
   @Input() item: any;
-  @Input() itemLabel: string;
   @Input() selectType: SelectType = 'CHECKBOX';
 
   selected = false;
 
   constructor(private selectionService: SelectionEventService) {}
-
-  toggle(): void {
-    this.selected = !this.selected;
-    this.notify();
-  }
 
   notify(): void {
     this.selectionService.next({item: this.item, selected: this.selected});

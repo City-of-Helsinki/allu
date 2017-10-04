@@ -6,6 +6,7 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.BooleanTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
@@ -95,44 +96,16 @@ public class ApplicationDao {
 
   @Transactional(readOnly = true)
   public List<Application> findActiveByLocation(LocationSearchCriteria lsc) {
-    ZonedDateTime recurringStartTime = RecurringApplication.BEGINNING_1972_DATE;
-    ZonedDateTime recurringEndTime = RecurringApplication.MAX_END_TIME;
-
-    BooleanExpression strictStartEndTimeCondition = null;
-    if (lsc.getAfter() != null) {
-      BooleanExpression beforeOrUnfinished = application.endTime.after(lsc.getAfter())
-          .or(application.endTime.before(ZonedDateTime.now())
-              .and(application.status.notIn(StatusType.FINISHED, StatusType.CANCELLED)));
-      strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, beforeOrUnfinished);
-      recurringStartTime = lsc.getAfter();
-    }
-    if (lsc.getBefore() != null) {
-      strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, application.startTime.before(lsc.getBefore()));
-      recurringEndTime = lsc.getBefore();
-    }
-
-    RecurringApplication recurringApplication =
-        new RecurringApplication(recurringStartTime, recurringEndTime, recurringEndTime);
-    BooleanExpression recurringCondition =
-        // application start and recurring end time has to intersect search period
-        application.startTime.before(TimeUtil.millisToZonedDateTime(recurringApplication.getEndTime()))
-            .and(application.recurringEndTime.after(TimeUtil.millisToZonedDateTime(recurringApplication.getStartTime())))
-            // recurring period checks
-            .and(overlapsPeriod(recurringApplication.getPeriod1Start(), recurringApplication.getPeriod1End())
-                .or(overlapsPeriod(recurringApplication.getPeriod2Start(), recurringApplication.getPeriod2End()))
-            );
-    BooleanExpression geometryExpression = locationGeometry.geometry.intersects(lsc.getIntersects());
-
-    List<StatusType> hiddenStatus = new ArrayList<>(Collections.singletonList(StatusType.CANCELLED));
+    BooleanExpression strictStartEndTimeCondition = strictStartEndTimeCondition(lsc);
+    BooleanExpression recurringCondition = recurringCondition(lsc);
+    BooleanExpression statusExpression = statusCondition(lsc);
+    BooleanExpression geometryExpression = statusExpression.and(locationGeometry.geometry.intersects(lsc.getIntersects()));
 
     if (strictStartEndTimeCondition != null) {
       // Time based where conditions are used only if at least start or end time is defined in search query.
       // Both recurring and start/end time conditions are checked, because only recurring applications have recurring_period rows in database
       recurringCondition = recurringCondition.or(strictStartEndTimeCondition);
       geometryExpression = geometryExpression.and(recurringCondition);
-    } else {
-      // No time limits given --> hide also FINISHED applications
-      hiddenStatus.add(StatusType.FINISHED);
     }
 
     BooleanExpression condition =
@@ -141,12 +114,45 @@ public class ApplicationDao {
             .join(location).on(locationGeometry.locationId.eq(location.id))
             .join(application).on(location.applicationId.eq(application.id))
             .leftJoin(recurringPeriod).on(recurringPeriod.applicationId.eq(application.id))
-            .where(geometryExpression.and(application.status.notIn(hiddenStatus))));
+            .where(geometryExpression));
 
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(condition).fetch();
 
     return populateDependencies(applications);
+  }
+
+  private BooleanExpression strictStartEndTimeCondition(LocationSearchCriteria lsc) {
+    BooleanExpression strictStartEndTimeCondition = null;
+    if (lsc.getAfter() != null) {
+      BooleanExpression beforeOrUnfinished = application.endTime.after(lsc.getAfter())
+          .or(application.endTime.before(ZonedDateTime.now())
+              .and(application.status.notIn(StatusType.FINISHED, StatusType.CANCELLED)));
+      strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, beforeOrUnfinished);
+    }
+    if (lsc.getBefore() != null) {
+      strictStartEndTimeCondition = andExpression(strictStartEndTimeCondition, application.startTime.before(lsc.getBefore()));
+    }
+    return strictStartEndTimeCondition;
+  }
+
+  private BooleanExpression recurringCondition(LocationSearchCriteria lsc) {
+    ZonedDateTime recurringStartTime = Optional.ofNullable(lsc.getAfter()).orElse(RecurringApplication.BEGINNING_1972_DATE);
+    ZonedDateTime recurringEndTime = Optional.ofNullable(lsc.getBefore()).orElse(RecurringApplication.MAX_END_TIME);
+    RecurringApplication recurringApplication = new RecurringApplication(recurringStartTime, recurringEndTime, recurringEndTime);
+        // application start and recurring end time has to intersect search period
+    return application.startTime.before(TimeUtil.millisToZonedDateTime(recurringApplication.getEndTime()))
+            .and(application.recurringEndTime.after(TimeUtil.millisToZonedDateTime(recurringApplication.getStartTime())))
+            // recurring period checks
+            .and(overlapsPeriod(recurringApplication.getPeriod1Start(), recurringApplication.getPeriod1End())
+                .or(overlapsPeriod(recurringApplication.getPeriod2Start(), recurringApplication.getPeriod2End())));
+  }
+
+  private BooleanExpression statusCondition(LocationSearchCriteria lsc) {
+    return Optional.ofNullable(lsc.getStatusTypes())
+        .filter(types -> !types.isEmpty())
+        .map(statusTypes -> application.status.in(statusTypes))
+        .orElse(Expressions.TRUE);
   }
 
   /**

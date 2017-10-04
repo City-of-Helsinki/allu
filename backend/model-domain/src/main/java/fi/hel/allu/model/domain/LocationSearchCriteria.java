@@ -1,7 +1,10 @@
 package fi.hel.allu.model.domain;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import fi.hel.allu.common.domain.types.StatusType;
 import org.geolatte.geom.Geometry;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -18,6 +21,7 @@ public class LocationSearchCriteria {
 
   private ZonedDateTime after;
   private ZonedDateTime before;
+  private List<StatusType> statusTypes;
 
   /**
    * If non-null, the search should find locations that intersect with this
@@ -55,4 +59,14 @@ public class LocationSearchCriteria {
     this.before = before;
   }
 
+  /**
+   * Application status types which are used in search.
+   */
+  public List<StatusType> getStatusTypes() {
+    return statusTypes;
+  }
+
+  public void setStatusTypes(List<StatusType> statusTypes) {
+    this.statusTypes = statusTypes;
+  }
 }

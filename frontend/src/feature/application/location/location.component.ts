@@ -1,11 +1,10 @@
 import {AfterViewInit, Component, OnDestroy, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {NavigationStart, Router} from '@angular/router';
 import '../../../rxjs-extensions.ts';
 import {Observable} from 'rxjs/Observable';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {MapUtil} from '../../../service/map/map.util';
-import {SearchbarFilter} from '../../../service/searchbar-filter';
 import {MapHub} from '../../../service/map/map-hub';
 import {Some} from '../../../util/option';
 import {ApplicationType, hasSingleKind} from '../../../model/application/type/application-type';
@@ -31,8 +30,9 @@ import {NumberUtil} from '../../../util/number.util';
 import {LocationForm} from './location-form';
 import {LocationState} from '../../../service/application/location-state';
 import {Location} from '../../../model/common/location';
-import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {KindsWithSpecifiers} from '../../../model/application/type/application-specifier';
+import {defaultFilter, MapSearchFilter} from '../../../service/map-search-filter';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'type',
@@ -54,8 +54,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   progressStep: ProgressStep;
   kindsSelected = false;
   districts: Observable<Array<CityDistrict>>;
-  searchbarFilter$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
   multipleLocations: boolean = false;
+
+  private routeEventSubscription: Subscription;
+  private searchFilterSubscription: Subscription;
+  private shapeSubscription: Subscription;
+  private editedLocationSubscription: Subscription;
 
   constructor(
     private applicationState: ApplicationState,
@@ -91,17 +95,24 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   };
 
   ngOnInit() {
+    this.mapHub.addSearchFilter(defaultFilter);
+
+    this.routeEventSubscription = this.router.events
+      .filter(e => e instanceof NavigationStart)
+      .subscribe(navEvent => this.mapHub.addSearchFilter(defaultFilter));
+
     this.application = this.applicationState.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     this.kindsSelected = this.application.kinds.length > 0;
     this.loadFixedLocations();
 
     this.progressStep = ProgressStep.LOCATION;
-    this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
+    this.searchFilterSubscription = this.mapHub.searchFilter().subscribe(filter => this.searchUpdated(filter));
+    this.shapeSubscription = this.mapHub.shape().subscribe(shape => this.shapeAdded(shape));
     this.districts = this.mapHub.districts();
 
     this.initForm();
-    this.mapHub.editedLocation().subscribe(loc => this.editLocation(loc));
+    this.editedLocationSubscription = this.mapHub.editedLocation().subscribe(loc => this.editLocation(loc));
 
     this.areaCtrl.valueChanges.subscribe(id => this.onAreaChange(id));
     this.sectionsCtrl.valueChanges
@@ -110,14 +121,14 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
+    this.routeEventSubscription.unsubscribe();
+    this.searchFilterSubscription.unsubscribe();
+    this.shapeSubscription.unsubscribe();
+    this.editedLocationSubscription.unsubscribe();
   }
 
   ngAfterViewInit(): void {
     this.mapHub.selectApplication(this.application);
-  }
-
-  get searchbarFilter() {
-    return this.searchbarFilter$.asObservable();
   }
 
   onApplicationTypeChange(type: ApplicationType) {
@@ -134,12 +145,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.resetFixedLocations();
   }
 
-  searchUpdated(filter: SearchbarFilter) {
+  searchUpdated(filter: MapSearchFilter) {
     this.locationForm.patchValue({
+      streetAddress: filter.address,
       startTime: filter.startDate,
-      endTime: filter.endDate,
-      streetAddress: filter.search
-    });
+      endTime: filter.endDate
+    }, {emitEvent: false});
   }
 
   store(form: LocationForm): void {
@@ -196,7 +207,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private editLocation(loc: Location): void {
     if (!!loc) {
       this.locationForm.patchValue(LocationForm.from(loc));
-      this.searchbarFilter$.next(this.createFilter(loc));
+      this.mapHub.addSearchFilter(this.createFilter(loc));
     }
   }
 
@@ -263,7 +274,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       let formValues = LocationForm.from(this.application.firstLocation);
       this.locationForm.patchValue(formValues);
       this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
-      this.searchbarFilter$.next(this.createFilter(this.application.firstLocation));
+      this.mapHub.addSearchFilter(this.createFilter(this.application.firstLocation));
     }
   }
 
@@ -299,17 +310,17 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       }).orElse(undefined);
   }
 
-  private createFilter(location: Location): SearchbarFilter {
-    return new SearchbarFilter(
-      location.postalAddress.streetAddress,
-      location.startTime,
-      location.endTime
-    );
+  private createFilter(location: Location): MapSearchFilter {
+    return {
+      address: location.postalAddress.streetAddress,
+      startDate: location.startTime,
+      endDate: location.endTime
+    };
   }
 
   private resetForm(): void {
     this.locationForm.reset(LocationForm.from(new Location()));
-    this.searchbarFilter$.next(new SearchbarFilter());
+    this.mapHub.addSearchFilter({address: undefined, startDate: undefined, endDate: undefined});
   }
 
   private sortedAreaSectionsFrom(area: FixedLocationArea): Array<FixedLocationSection> {

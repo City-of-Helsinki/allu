@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Observable} from 'rxjs/Observable';
 import {Geocoordinates} from '../../model/common/geocoordinates';
 import '../../rxjs-extensions.ts';
 
@@ -9,51 +8,48 @@ import {Application} from '../../model/application/application';
 import {Option} from '../../util/option';
 import {ApplicationService} from '../application/application.service';
 import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
-import {SearchbarFilter} from '../searchbar-filter';
 import {LocationService} from '../location.service';
-import {UIStateHub} from '../ui-state/ui-state-hub';
 import {CityDistrict} from '../../model/common/city-district';
 import {ArrayUtil} from '../../util/array-util';
 import {FixedLocationArea} from '../../model/common/fixed-location-area';
 import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Location} from '../../model/common/location';
+import {NotificationService} from '../notification/notification.service';
+import {defaultFilter, MapSearchFilter} from '../map-search-filter';
 
 
 @Injectable()
 export class MapHub {
   private coordinates$ = new Subject<Option<Geocoordinates>>();
-  private search$ = new Subject<string>();
+  private addressSearch$ = new Subject<string>();
+  private mapSearchFilter$ = new BehaviorSubject<MapSearchFilter>(defaultFilter);
   private applicationSelection$ = new Subject<Application>();
   private applications$ = new Subject<Array<Application>>();
   private editedLocation$ = new BehaviorSubject<Location>(undefined);
   private locationsToDraw$ = new BehaviorSubject<Array<Location>>([]);
-  private searchBar$ = new BehaviorSubject<SearchbarFilter>(new SearchbarFilter());
-  private mapView$ = new Subject<GeoJSON.GeometryObject>();
   private shape$ = new Subject<GeoJSON.FeatureCollection<GeoJSON.GeometryObject>>();
   private fixedLocations$ = new BehaviorSubject<Array<FixedLocationArea>>([]);
   private selectedFixedLocations$ = new Subject<Array<FixedLocationSection>>();
   private cityDistricts$ = new BehaviorSubject<Array<CityDistrict>>([]);
   private drawingAllowed$ = new BehaviorSubject<boolean>(true);
 
-  constructor(private applicationService: ApplicationService,
-              private locationService: LocationService,
-              private uiState: UIStateHub) {
-    // Waits until searchBar and mapView observables produce value and combines them (latest)
-    // as a query which is added to applicationSearch subject
-    Observable.combineLatest(
-      this.searchBar$.asObservable(),
-      this.mapView$.asObservable(),
-      this.toApplicationLocationQuery)
-      .debounceTime(100)
-      .subscribe(query => this.applicationService.getApplicationsByLocation(query)
-        .subscribe(applications => this.applications$.next(applications)));
+  constructor(private applicationService: ApplicationService, private locationService: LocationService) {
+    this.mapSearchFilter$.asObservable()
+      .debounceTime(300)
+      .filter(filter => !!filter.geometry)
+      .map(filter => this.toApplicationLocationQuery(filter))
+      .switchMap(query => this.applicationService.getApplicationsByLocation(query))
+      .subscribe(applications => this.applications$.next(applications));
 
     // When search changes fetches new coordinates and adds them to coordinates observable
-    this.search()
+    this.addressSearch$.asObservable()
+      .filter(search => !!search)
+      .debounceTime(300)
+      .distinctUntilChanged()
       .switchMap(term => this.locationService.geocode(term))
       .subscribe(
         coordinates => this.coordinates$.next(coordinates),
-        err => this.uiState.addError(err)
+        err => NotificationService.error(err)
       );
 
     this.locationService.getFixedLocations().subscribe(fls => this.fixedLocations$.next(fls));
@@ -67,11 +63,6 @@ export class MapHub {
   }
 
   /**
-   * Used to notify new geocoordinates are available
-   */
-  public coordinates = () => this.coordinates$.asObservable();
-
-  /**
    * Used for notifying about visible applications in map
    */
   public applications = () => this.applications$.asObservable();
@@ -79,7 +70,12 @@ export class MapHub {
   /**
    * Used for adding new search terms
    */
-  public addSearch = (search: string) => this.search$.next(search);
+  public coordinateSearch = (search: string) => this.addressSearch$.next(search);
+
+  /**
+   * Used to notify new geocoordinates are available
+   */
+  public coordinates = () => this.coordinates$.asObservable();
 
   /**
    * Used to notify that new application (for centering and zooming) has been selected
@@ -102,12 +98,20 @@ export class MapHub {
   /**
    * Used to notify changes in address search bar
    */
-  public addSearchFilter = (filter: SearchbarFilter) => this.searchBar$.next(filter);
+  public addSearchFilter = (filter: MapSearchFilter) => {
+    const current = this.mapSearchFilter$.getValue();
+    this.mapSearchFilter$.next({...current, ...filter});
+  }
+
+  public searchFilter = () => this.mapSearchFilter$.asObservable();
 
   /**
    * Used to notify changes in map's currently visible area
    */
-  public addMapView = (geometry: GeoJSON.GeometryObject) => this.mapView$.next(geometry);
+  public addMapView = (geometry: GeoJSON.GeometryObject) => {
+    const current = this.mapSearchFilter$.getValue();
+    this.mapSearchFilter$.next({...current, geometry: geometry});
+  }
 
   /**
    * Used to notify that new shape has been added to map
@@ -181,9 +185,9 @@ export class MapHub {
   public districtsById = (ids: Array<number>) => this.districts().map(ds => ds.filter(d => ids.indexOf(d.id) >= 0));
 
   /**
-   * Search addresses matching with partial search term
+   * Finds addresses matching with partial search term
    */
-  public addressSearch = (searchTerm: string) => this.locationService.search(searchTerm);
+  public findMatchingAddresses = (searchTerm: string) => this.locationService.search(searchTerm);
 
   /**
    * Observable to notify map if drawing should be allowed
@@ -191,18 +195,12 @@ export class MapHub {
   public drawingAllowed = () => this.drawingAllowed$;
   public setDrawingAllowed = (allowed: boolean) => this.drawingAllowed().next(allowed);
 
-  /**
-   * Used to notify about new address search terms
-   */
-  private search = () => this.search$.asObservable()
-    .filter(search => !!search)
-    .debounceTime(300)
-    .distinctUntilChanged();
 
-  private toApplicationLocationQuery(searchBar: SearchbarFilter, mapView: GeoJSON.GeometryObject) {
+  private toApplicationLocationQuery(filter: MapSearchFilter) {
     return new ApplicationLocationQuery(
-      searchBar.startDate,
-      searchBar.endDate,
-      mapView);
+      filter.startDate,
+      filter.endDate,
+      filter.statusTypes,
+      filter.geometry);
   }
 }
