@@ -1,8 +1,9 @@
-
 const rp = require('request-promise');
 
+module.exports.beforeAll = beforeAll;
 module.exports.login = login;
 module.exports.tryToCreateUsers = tryToCreateUsers;
+module.exports.checkSearchService = checkSearchService;
 module.exports.addAuthorization = addAuthorization;
 module.exports.getPostOptions = getPostOptions;
 module.exports.tryRetryPromise = tryRetryPromise;
@@ -17,6 +18,18 @@ module.exports.assertEnv = function() {
     console.error('TEST_TARGET=http://localhost:3000 npm test');
     process.exit(255);
   }
+}
+
+function beforeAll(beforeAllFn) {
+  return tryRetryPromise(tryToCreateUsers, 10, 10000)
+    .then(() => tryRetryPromise(checkSearchService, 10, 10000))
+    .then(beforeAllFn);
+}
+
+function checkSearchService() {
+  let customerSearch = getPostOptions('/api/customers/search', {queryParameters: [{fieldName: "active", fieldValue: "true"}]});
+  return login('kasittelija')
+    .then(token => request(customerSearch, token));
 }
 
 function tryToCreateUsers() {
@@ -46,8 +59,8 @@ function tryToCreateUsers() {
   let loginToken;
   return login('admin')
     .then(token => loginToken = token)
-    .then(() => { addAuthorization(findUserOptions, loginToken); return rp(findUserOptions); })
-    .then(() => { /* do nothing, user exists */ }, () => { addAuthorization(createUserOptions, loginToken); return rp(createUserOptions); });
+    .then(() => request(findUserOptions, loginToken))
+    .catch(() => request(createUserOptions, loginToken));
 }
 
 function login(username) {
@@ -58,24 +71,35 @@ function login(username) {
 /**
  * Tries to repeatedly execute promise created by the factory function.
  *
- * @param counter         Counter
- * @param promiseFactory  Function that generates the Promise which may have to be retried.
+ * @param fn  Function that generates the Promise which may have to be retried.
+ * @param times how many times are tried before giving up
+ * @param delay how much delay between each try
  * @return {Promise.<T>}
  */
-function tryRetryPromise(counter, promiseFactory) {
-  const maxCount = 12;
-  if (counter > maxCount) {
-    console.error('Waited server too long, giving up after ' + maxCount + ' retries');
-    return Promise.reject('too many retries');
-  } else {
-    return promiseFactory().catch((error) => {
-      console.log('waiting for retry...', counter);
-      return new Promise((resolve) => setTimeout(resolve, 10000))
-        .then(() => console.log('... wait done'))
-        .then(() => tryRetryPromise(++counter, promiseFactory));
-    });
-  }
-}
+function tryRetryPromise(fn, times, delay) {
+  let counter = 1;
+  return new Promise(function(resolve, reject){
+    let error;
+    const attempt = function() {
+      if (counter > times) {
+        console.error('Waited server too long, giving up after ' + counter + ' retries');
+        reject(error.message);
+      } else {
+        fn().then(resolve)
+          .catch((e) => {
+            error = e;
+            console.log('waiting for retry...', counter);
+            ++counter;
+            setTimeout(() => {
+              console.log('... retrying');
+              attempt();
+            }, delay);
+          });
+      }
+    };
+    attempt();
+  });
+};
 
 function getPostOptions(path, body) {
   return {
@@ -98,6 +122,12 @@ function getGetOptions(path, body) {
 function addAuthorization(options, token) {
   options.headers = { 'Authorization': 'Bearer ' + token };
 }
+
+function request(options, token) {
+  addAuthorization(options, token);
+  return rp(options);
+}
+
 
 /**
  * Returns ISO date string (such as 2017-01-01T22:00:00Z) of current date adjusted with the given day offset.

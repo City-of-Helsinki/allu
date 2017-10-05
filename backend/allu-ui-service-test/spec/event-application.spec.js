@@ -100,10 +100,11 @@ describe('Event application', () => {
       .then(cwc => tervaCustomersWithContactsCreated = cwc);
   }
 
-  beforeAll(done =>  {
-    TestUtil.tryRetryPromise(1, TestUtil.tryToCreateUsers).then(createCustomers, done.fail).then(done);
+  beforeAll(done => {
+    TestUtil.beforeAll(createCustomers)
+    .then(done)
+    .catch(err => done.fail(err));
   });
-
 
   describe('Hernesaari', () => {
 

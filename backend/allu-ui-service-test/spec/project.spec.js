@@ -7,7 +7,7 @@ describe('Project', () => {
 
 
   beforeAll(done => {
-    TestUtil.tryRetryPromise(1, TestUtil.tryToCreateUsers).then(done, done.fail);
+    TestUtil.tryRetryPromise(TestUtil.tryToCreateUsers, 10, 10000).then(done, done.fail);
   });
 
   it('Create', done => {

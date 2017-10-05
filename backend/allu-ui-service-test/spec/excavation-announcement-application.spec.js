@@ -93,7 +93,9 @@ describe('Excavation announcement application', () => {
   }
 
   beforeAll(done => {
-    TestUtil.tryRetryPromise(1, TestUtil.tryToCreateUsers).then(createCustomers, done.fail).then(done);
+    TestUtil.beforeAll(createCustomers)
+    .then(done)
+    .catch(err => done.fail(err));
   });
 
   it('Create', done => {
