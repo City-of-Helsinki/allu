@@ -3,9 +3,9 @@ package fi.hel.allu.model.dao;
 import com.greghaskins.spectrum.Spectrum;
 import com.greghaskins.spectrum.Variable;
 
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.ModelApplication;
-import fi.hel.allu.model.domain.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
@@ -17,6 +17,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
@@ -56,6 +57,10 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
         it("update should throw error", () -> {
           assertThrows(NoSuchEntityException.class).when(() -> invoiceDao.update(99, TEST_INVOICE));
         });
+
+        it("findByApplication returns empty list", () -> {
+          assertTrue(invoiceDao.findByApplication(123).isEmpty());
+        });
       });
 
       context("When application exists", () -> {
@@ -86,6 +91,14 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
           it("can delete the invoice", () -> {
             invoiceDao.delete(invoiceId.get());
             assertFalse(invoiceDao.find(invoiceId.get()).isPresent());
+          });
+
+          it("can find all inserted with findByApplication", () -> {
+            int otherId = invoiceDao.insert(appId.get(), otherInvoice());
+            List<Invoice> result = invoiceDao.findByApplication(appId.get());
+            assertEquals(2, result.size());
+            assertTrue(result.stream().anyMatch(i -> i.getId().equals(invoiceId.get())));
+            assertTrue(result.stream().anyMatch(i -> i.getId().equals(otherId)));
           });
         });
       });

@@ -1,8 +1,8 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChargeBasisUnit;
 import fi.hel.allu.model.domain.ShortTermRental;
 
 import java.time.temporal.ChronoUnit;
@@ -202,7 +202,7 @@ public class ShortTermRentalPricing extends Pricing {
     final int units = (int) CalendarUtil.startingUnitsBetween(application.getStartTime(), application.getEndTime(),
         chronoUnit);
     int priceInCents = centsPerUnit * units;
-    addChargeBasisEntry(chargeBasisTag, ChargeBasisUnit.fromChronoUnit(chronoUnit), units, centsPerUnit, chargeBasisText,
+    addChargeBasisEntry(chargeBasisTag, toChargeBasisUnit(chronoUnit), units, centsPerUnit, chargeBasisText,
         priceInCents);
     setPriceInCents(priceInCents);
   }
@@ -218,7 +218,7 @@ public class ShortTermRentalPricing extends Pricing {
 
   /**
    * Update price based on application time and area
-   * 
+   *
    * @param priceInCents unit price in cents
    * @param pricePeriod billing time unit
    * @param priceArea billing area unit in square meters
@@ -241,14 +241,14 @@ public class ShortTermRentalPricing extends Pricing {
     // How many time units are charged full price?
     int fullPriceUnits = longTermDiscount ? Math.min(numTimeUnits, LONG_TERM_DISCOUNT_LIMIT) : numTimeUnits;
     long price = numAreaUnits * fullPriceUnits * priceInCents;
-    addChargeBasisEntry(chargeBasisTag, ChargeBasisUnit.fromChronoUnit(pricePeriod), fullPriceUnits, numAreaUnits * priceInCents,
+    addChargeBasisEntry(chargeBasisTag, toChargeBasisUnit(pricePeriod), fullPriceUnits, numAreaUnits * priceInCents,
         chargeBasisText, (int) price);
 
     if (longTermDiscount == true && numTimeUnits > LONG_TERM_DISCOUNT_LIMIT) {
       // 50% discount for extra days
       final int numDiscountUnits = numTimeUnits - LONG_TERM_DISCOUNT_LIMIT;
       long discountPrice = numAreaUnits * numDiscountUnits * priceInCents / 2;
-      addChargeBasisEntry(chargeBasisTagLongTerm, ChargeBasisUnit.fromChronoUnit(pricePeriod), numDiscountUnits,
+      addChargeBasisEntry(chargeBasisTagLongTerm, toChargeBasisUnit(pricePeriod), numDiscountUnits,
           numAreaUnits * priceInCents / 2,
           chargeBasisTextLongTerm, (int) discountPrice);
       price += discountPrice;

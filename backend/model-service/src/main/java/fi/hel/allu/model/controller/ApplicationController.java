@@ -34,6 +34,7 @@ public class ApplicationController {
 
   private DistributionEntryDao distributionEntryDao;
 
+  private InvoiceDao invoiceDao;
   @Autowired
   public ApplicationController(
       ApplicationService applicationService,
@@ -41,13 +42,15 @@ public class ApplicationController {
       DecisionDao decisionDao,
       ChargeBasisDao chargeBasisDao,
       HistoryDao historyDao,
-      DistributionEntryDao distributionEntryDao) {
+      DistributionEntryDao distributionEntryDao,
+      InvoiceDao invoiceDao) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
     this.chargeBasisDao = chargeBasisDao;
     this.historyDao = historyDao;
     this.distributionEntryDao = distributionEntryDao;
+    this.invoiceDao = invoiceDao;
   }
 
   /**
@@ -274,5 +277,16 @@ public class ApplicationController {
   public ResponseEntity<Void> markReminderSent(@RequestBody List<Integer> applicationIds) {
     applicationService.markReminderSent(applicationIds);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  /**
+   * Get the invoice data for application
+   *
+   * @param id The appication's database ID
+   * @return all invoices for given application ID
+   */
+  @RequestMapping(value = "/{id}/invoices", method = RequestMethod.GET)
+  public ResponseEntity<List<Invoice>> getInvoices(@PathVariable int id) {
+    return new ResponseEntity<>(invoiceDao.findByApplication(id), HttpStatus.OK);
   }
 }

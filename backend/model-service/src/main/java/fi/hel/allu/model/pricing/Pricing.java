@@ -1,9 +1,10 @@
 package fi.hel.allu.model.pricing;
 
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.exception.NotImplementedException;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.domain.ChargeBasisUnit;
 
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,6 +46,30 @@ public abstract class Pricing {
    */
   public void addLocationPrice(int locationKey, double locationArea, int paymentClass) {
     throw new NotImplementedException("Location price with payment class not implemented in " + this.getClass());
+  }
+
+  /**
+   * Convert a chrono unit to a chage basis unit
+   *
+   * @param unit
+   * @return
+   */
+  protected ChargeBasisUnit toChargeBasisUnit(ChronoUnit unit) {
+    switch (unit) {
+      case DAYS:
+        return ChargeBasisUnit.DAY;
+      case HOURS:
+        return ChargeBasisUnit.HOUR;
+      case WEEKS:
+        return ChargeBasisUnit.WEEK;
+      case MONTHS:
+        return ChargeBasisUnit.MONTH;
+      case YEARS:
+        return ChargeBasisUnit.YEAR;
+      default:
+        // Unknown units are handled as pieces
+        return ChargeBasisUnit.PIECE;
+    }
   }
 
 }

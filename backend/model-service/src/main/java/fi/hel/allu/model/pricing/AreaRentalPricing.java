@@ -1,8 +1,8 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChargeBasisUnit;
 
 import java.time.temporal.ChronoUnit;
 
