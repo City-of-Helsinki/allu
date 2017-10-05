@@ -1,5 +1,5 @@
 import {PostalAddress} from '../../../../model/common/postal-address';
-import {FormBuilder, Validators} from '@angular/forms';
+import {FormBuilder} from '@angular/forms';
 import {InvoicingInfo} from '../../../../model/application/invoice/invoicing-info';
 import {CustomerType} from '../../../../model/customer/customer-type';
 import {InvoicePartition} from '../../../../model/application/invoice/ivoice-partition';
@@ -48,8 +48,8 @@ export class InvoicingInfoForm {
     return fb.group({
       id: undefined,
       invoicingAddress: InvoicingAddressForm.initialForm(fb),
-      workId: ['', Validators.required],
-      invoiceReference: ['', Validators.required],
+      workId: [''],
+      invoiceReference: [''],
       deposit: [undefined],
       partition: [''],
       notBillable: [false],

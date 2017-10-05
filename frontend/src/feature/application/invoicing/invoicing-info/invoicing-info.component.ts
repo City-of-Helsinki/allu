@@ -9,6 +9,8 @@ import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {Some} from '../../../../util/option';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Application} from '../../../../model/application/application';
+import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
+import {InvoicingAddressForm} from '../../../customerregistry/invoicing-address/invoicing-address.form';
 
 @Component({
   selector: 'invoicing-info',
@@ -42,6 +44,16 @@ export class InvoicingInfoComponent implements OnInit {
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
   }
 
+  public invoiceRecipientChange(recipient: InvoicingAddressForm) {
+    if (recipient.id) {
+      this.disableCustomerEdit();
+    }
+  }
+
+  get billable(): boolean {
+    return !this.notBillableCtrl.value;
+  }
+
   private patchInfo(application: Application): void {
     this.invoicingInfoForm.patchValue({
       notBillable: application.notBillable,
@@ -50,6 +62,7 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   private findAndPatchCustomer(id: number): void {
+    this.disableCustomerEdit();
     this.customerHub.findCustomerById(id)
       .subscribe(customer => this.invoicingAddressForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
@@ -57,8 +70,16 @@ export class InvoicingInfoComponent implements OnInit {
   private onNotBillableChange(notBillable: boolean) {
     if (notBillable) {
       this.notBillableReasonCtrl.setValidators([Validators.required]);
+      this.invoicingInfoForm.removeControl('invoicingAddress');
     } else {
       this.notBillableReasonCtrl.clearValidators();
+      this.invoicingInfoForm.addControl('invoicingAddress', this.invoicingAddressForm);
     }
+  }
+
+  private disableCustomerEdit(): void {
+    Object.keys(this.invoicingAddressForm.controls)
+      .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
+      .forEach(key => this.invoicingAddressForm.get(key).disable({emitEvent: false}));
   }
 }

@@ -10,8 +10,7 @@ import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
-
-const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
+import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
 
 @Component({
   selector: 'customer',

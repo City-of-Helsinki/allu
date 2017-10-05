@@ -11,6 +11,7 @@ import {ComplexValidator} from '../../../util/complex-validator';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerSearchQuery} from '../../../service/mapper/query/customer-query-parameters-mapper';
 
+export const ALWAYS_ENABLED_FIELDS = ['id', 'type', 'name', 'registryKey', 'representative'];
 const REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2)];
 const PERSON_REGISTRY_KEY_VALIDATORS = [Validators.required, Validators.minLength(2), ComplexValidator.invalidSsnWarning];
 const DEBOUNCE_TIME_MS = 300;

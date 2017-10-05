@@ -7,12 +7,13 @@
         <md-card-content>
             <div class="row">
                 <div class="col m6">
-                    <customer-info [form]="invoicingAddressForm" [allowSearch]="true"></customer-info>
+                    <customer-info [form]="invoicingAddressForm" [allowSearch]="true" *ngIf="billable"
+                        (customerChange)="invoiceRecipientChange($event)"></customer-info>
                     <div class="row form-group">
                         <div class="col m12 height-fix-bottom">
                             <md-checkbox formControlName="notBillable">Ei laskuteta</md-checkbox>
                         </div>
-                        <div class="col m12" *ngIf="invoicingInfoForm.value.notBillable">
+                        <div class="col m12" *ngIf="!billable">
                             <md-form-field class="input-full-width">
                                 <input mdInput type="text" formControlName="notBillableReason" placeholder="Perustelu*"/>
                                 <md-hint>
@@ -24,28 +25,18 @@
                         </div>
                     </div>
                 </div>
-                <div class="col m4">
+                <div class="col m4" *ngIf="billable">
                     <div class="row form-group">
                         <div class="col m12">
                             <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="workId" placeholder="Työnumero*"/>
-                                <md-hint>
-                                    <field-error [form]="invoicingInfoForm" field="workId" hasError="required">
-                                        {{'invoice.field.workIdMissing' | translation}}
-                                    </field-error>
-                                </md-hint>
+                                <input mdInput type="text" formControlName="workId" placeholder="Työnumero"/>
                             </md-form-field>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m12">
                             <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="invoiceReference" placeholder="Laskutusviite*"/>
-                                <md-hint>
-                                    <field-error [form]="invoicingInfoForm" field="invoiceReference" hasError="required">
-                                        {{'invoice.field.invoiceReferenceMissing' | translation}}
-                                    </field-error>
-                                </md-hint>
+                                <input mdInput type="text" formControlName="invoiceReference" placeholder="Laskutusviite"/>
                             </md-form-field>
                         </div>
                     </div>

@@ -9,6 +9,7 @@ import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Application} from '../../../model/application/application';
+import {Some} from '../../../util/option';
 
 @Component({
   selector: 'invoicing',
@@ -48,9 +49,9 @@ export class InvoicingComponent implements OnInit {
   private saveApplicationInfo(form: InvoicingForm): Observable<Application> {
     let application = this.applicationState.application;
     const invoicingInfo = form.invoicingInfo;
-    application.invoiceRecipientId = invoicingInfo.invoicingAddress.id;
+    application.invoiceRecipientId = Some(invoicingInfo.invoicingAddress).map(recipient => recipient.id).orElse(undefined);
     application.notBillable = invoicingInfo.notBillable;
-    application.notBillableReason = invoicingInfo.notBillableReason;
+    application.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;
     return this.applicationState.save(application);
   }
 
