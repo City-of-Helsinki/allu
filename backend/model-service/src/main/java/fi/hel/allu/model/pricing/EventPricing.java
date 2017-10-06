@@ -1,6 +1,6 @@
 package fi.hel.allu.model.pricing;
 
-import fi.hel.allu.model.domain.ChargeBasisUnit;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 
 public class EventPricing extends Pricing {
 

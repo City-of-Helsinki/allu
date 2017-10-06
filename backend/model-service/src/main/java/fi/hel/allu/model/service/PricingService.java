@@ -2,6 +2,7 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.CustomerDao;

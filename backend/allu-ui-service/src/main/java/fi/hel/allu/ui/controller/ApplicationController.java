@@ -8,6 +8,7 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.AttachmentService;
 import fi.hel.allu.servicecore.service.DecisionService;
+import fi.hel.allu.servicecore.service.InvoiceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,6 +35,9 @@ public class ApplicationController {
 
   @Autowired
   private DecisionService decisionService;
+
+  @Autowired
+  private InvoiceService invoiceService;
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_CREATE_APPLICATION')")
@@ -307,4 +311,17 @@ public class ApplicationController {
      @Valid @RequestBody List<ApplicationTagJson> tags) {
     return new ResponseEntity<>(applicationServiceComposer.updateTags(id, tags), HttpStatus.OK);
   }
+
+  /**
+   * Get the invoice data for application
+   *
+   * @param id The appication's database ID
+   * @return all invoices for given application ID
+   */
+  @RequestMapping(value = "/{id}/invoices", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW,ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<InvoiceJson>> getInvoices(@PathVariable int id) {
+    return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
+  }
+
 }

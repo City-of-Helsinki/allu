@@ -1,11 +1,11 @@
 package fi.hel.allu.sap.mapper;
 
 import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.domain.ChargeBasisUnit;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.sap.model.LineItem;
 import fi.hel.allu.sap.model.OrderParty;

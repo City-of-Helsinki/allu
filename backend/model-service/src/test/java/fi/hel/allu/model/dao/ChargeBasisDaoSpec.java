@@ -2,9 +2,9 @@ package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
 
+import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
-import fi.hel.allu.model.domain.ChargeBasisUnit;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 
 import org.junit.runner.RunWith;

@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QInvoice.invoice;
@@ -73,6 +74,20 @@ public class InvoiceDao {
       theInvoice.setRows(rows);
       return Optional.of(theInvoice);
     }
+  }
+
+  /**
+   * Find all invoices for an application
+   */
+  @Transactional(readOnly = true)
+  public List<Invoice> findByApplication(int applicationId) {
+    return queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.applicationId.eq(applicationId)).fetch()
+        .stream()
+        .map(id -> find(id))
+        .filter(Optional::isPresent)
+        .map(Optional::get)
+        .collect(Collectors.toList());
   }
 
   /**

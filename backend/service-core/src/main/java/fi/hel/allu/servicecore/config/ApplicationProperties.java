@@ -856,7 +856,14 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return  the base URL for model service.
+   * @return URL for finding invoices for application
+   */
+  public String getFindApplicationInvoicesUrl() {
+    return getModelServiceUrl("/applications/{id}/invoices");
+  }
+
+  /**
+   * @return the base URL for model service.
    */
   private String modelServiceBaseUrl() {
     return PATH_PREFIX + modelServiceHost + ":" + modelServicePort;

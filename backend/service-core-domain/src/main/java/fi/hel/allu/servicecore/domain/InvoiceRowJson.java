@@ -1,18 +1,15 @@
-package fi.hel.allu.model.domain;
+package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 
-/**
- * One line in an invoice
- */
-public class InvoiceRow {
+public class InvoiceRowJson {
   private ChargeBasisUnit unit;
   private double quantity;
   private String text;
   private int unitPrice;
   private int netPrice;
 
-  public InvoiceRow(ChargeBasisUnit unit, double quantity, String text, int unitPrice, int netPrice) {
+  public InvoiceRowJson(ChargeBasisUnit unit, double quantity, String text, int unitPrice, int netPrice) {
     this.unit = unit;
     this.quantity = quantity;
     this.text = text;
@@ -20,7 +17,7 @@ public class InvoiceRow {
     this.netPrice = netPrice;
   }
 
-  public InvoiceRow() {
+  public InvoiceRowJson() {
     // for deserialization
   }
 
@@ -37,7 +34,7 @@ public class InvoiceRow {
 
   /**
    * Get the amount of units on this row
-   * 
+   *
    * @return
    */
   public double getQuantity() {
