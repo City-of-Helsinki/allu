@@ -1,6 +1,6 @@
 <img src="assets/svg/allu-logo.svg">
-<navbar></navbar>
-<div class="nav-controls">
+<navbar *ngIf="authenticated"></navbar>
+<div class="nav-controls" *ngIf="authenticated">
     <a [routerLink]="['/logout']">KIRJAUDU ULOS</a>
 </div>
 

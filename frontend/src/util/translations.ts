@@ -3,8 +3,8 @@ import {StringUtil} from './string.util';
 export const translations = {
   logout: {
     header: 'Olet kirjautunut ulos',
-    infoText: 'Kirjauduit ulos Allusta, mutta saatat olla edelleen kirjautuneena Helsingin kaupungin järjestelmään. ' +
-    'Jos et pääse kirjautumaan Alluun uudella käyttäjätunnuksella, poista selaimen keksit.'
+    infoText: 'Kirjauduit ulos Allu järjestelmästä. ' +
+    'Mikäli haluat varmistaa ulos kirjautumisen myös Helsingin kaupungin AD tunnistuksesta tyhjennä selaimen tiedot.'
   },
   application: {
     error: {

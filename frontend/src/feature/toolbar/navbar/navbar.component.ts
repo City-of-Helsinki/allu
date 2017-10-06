@@ -1,6 +1,5 @@
 import {Component} from '@angular/core';
 import {CurrentUser} from '../../../service/user/current-user';
-import {AuthService} from '../../../service/authorization/auth.service';
 import {Observable} from 'rxjs/Observable';
 
 @Component({
@@ -11,10 +10,7 @@ import {Observable} from 'rxjs/Observable';
   ]
 })
 export class NavbarComponent {
-  authenticated: () => boolean;
-
-  constructor(authService: AuthService, private currentUser: CurrentUser) {
-    this.authenticated = () => authService.authenticated();
+  constructor(private currentUser: CurrentUser) {
   }
 
   hasRole(role: string): Observable<boolean> {
