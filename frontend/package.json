@@ -40,6 +40,7 @@
     "webdriver:start": "npm run webdriver-manager start",
     "lint": "npm run tslint 'src/**/*.ts'",
     "test": "karma start",
+    "test-with-report": "karma start --reporters junit,dots,coverage,mocha",
     "ci": "npm run e2e && npm run test",
     "docs": "npm run typedoc -- --options typedoc.json --exclude '**/*.spec.ts' ./src/",
     "start": "npm run server:dev",
