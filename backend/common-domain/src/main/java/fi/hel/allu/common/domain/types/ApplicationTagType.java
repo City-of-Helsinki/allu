@@ -8,10 +8,10 @@ public enum ApplicationTagType {
   STATEMENT_REQUESTED,                // lausunnolla
   DEPOSIT_REQUESTED,                  // vakuus määritetty
   DEPOSIT_PAID,                       // vakuus suoritettu
-  PRELIMINARY_INSPECTION_REQUESTED,   // aloituskatselmointipyyntö lähetetty
-  PRELIMINARY_INSPECTION_DONE,        // aloituskatselmus suoritettu
-  FINAL_INSPECTION_AGREED,            // loppukatselmus sovittu
-  FINAL_INSPECTION_DONE,              // loppukatselmus suoritettu
+  PRELIMINARY_SUPERVISION_REQUESTED,  // Aloitusvalvontapyyntö lähetetty
+  PRELIMINARY_SUPERVISION_DONE,       // Aloitusvalvonta suoritettu
+  SUPERVISION_REQUESTED,              // Valvontapyyntö lähetetty
+  SUPERVISION_DONE,                   // Valvonta suoritettu
   WAITING,                            // odottaa. Hakemus odottaa lisätietoa, esimerkiksi selvitystä, mikä estää hakemuksen etenemisen
   COMPENSATION_CLARIFICATION,         // hyvitysselvitys. käytetään esim. hyvityslaskujen selvittämisen aikana
   PAYMENT_BASIS_CORRECTION,           // maksuperusteet korjattava

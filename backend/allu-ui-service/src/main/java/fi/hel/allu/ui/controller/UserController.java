@@ -1,5 +1,6 @@
 package fi.hel.allu.ui.controller;
 
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +54,12 @@ public class UserController {
   public ResponseEntity<UserJson> findByUserName(@PathVariable String userName) {
     UserJson user = userService.findUserByUserName(userName);
     return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/role/{roleType}", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<UserJson>> findByRole(@PathVariable RoleType roleType) {
+    return new ResponseEntity<>(userService.findUserByRole(roleType), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/current", method = RequestMethod.GET)

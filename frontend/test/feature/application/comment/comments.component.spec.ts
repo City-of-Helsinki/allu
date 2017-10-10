@@ -144,7 +144,7 @@ describe('CommentsComponent', () => {
     fixture.whenStable().then(val => {
       let commentEl = de.query(By.css('comment'));
       commentEl.triggerEventHandler('onRemove', COMMENT_ONE);
-      expect(applicationState.removeComment).toHaveBeenCalledWith(COMMENT_ONE);
+      expect(applicationState.removeComment).toHaveBeenCalledWith(COMMENT_ONE.id);
       expect(NotificationService.message).toHaveBeenCalledTimes(1);
     });
 

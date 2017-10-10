@@ -91,13 +91,11 @@ export class TimeUtil {
   /**
    * Returns whether first argument is before second
    *
-   * @param first date as string
-   * @param second date as string
-   * @returns {boolean} true when first date is before second or given strings are undefined, otherwise false.
+   * @returns {boolean} true when first date is before second or given dates are undefined, otherwise false.
    */
-  public static isBefore(first: string, second: string): boolean {
-    if (!!first && !!second) {
-      return TimeUtil.toMoment(first).isBefore(TimeUtil.toMoment(second));
+  public static isBefore(first: Date, second: Date): boolean {
+    if (first && second) {
+      return moment(first).isBefore(moment(second));
     } else {
       return true;
     }

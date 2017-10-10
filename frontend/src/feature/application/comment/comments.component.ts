@@ -50,7 +50,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
     if (comment.id === undefined) {
       this.comments.splice(index, 1);
     } else {
-      this.applicationState.removeComment(comment)
+      this.applicationState.removeComment(comment.id)
         .subscribe(status => {
             NotificationService.message(this.translateType(comment.type) + ' poistettu');
             this.comments.splice(index, 1);

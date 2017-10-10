@@ -56,9 +56,11 @@ public class SupervisionTaskService {
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
-  public SupervisionTaskJson insert(SupervisionTaskJson supervisionTask) {
+  public SupervisionTaskJson insert(SupervisionTaskJson supervisionTaskJson) {
+    SupervisionTask task = SupervisionTaskMapper.mapToModel(supervisionTaskJson);
+    task.setCreatorId(userService.getCurrentUser().getId());
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.postForEntity(
-        applicationProperties.getSupervisionTaskCreateUrl(), SupervisionTaskMapper.mapToModel(supervisionTask), SupervisionTask.class);
+        applicationProperties.getSupervisionTaskCreateUrl(), task, SupervisionTask.class);
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 

@@ -104,6 +104,17 @@ public class UserDao {
     return users;
   }
 
+  @Transactional(readOnly = true)
+  public List<User> findByRole(RoleType roleType) {
+    List<User> users = queryFactory.select(userBean).from(QUser.user)
+        .innerJoin(userRole).on(user.id.eq(userRole.userId))
+        .where(userRole.role.eq(roleType.name()))
+        .fetchResults().getResults();
+    List<Integer> userIds = users.stream().map(user -> user.getId()).collect(Collectors.toList());
+    mapUsersRolesTypes(users, getRoles(userIds), getApplicationTypes(userIds), getCityDistricts(userIds));
+    return users;
+  }
+
   @Transactional
   public User insert(User userData) {
     try {

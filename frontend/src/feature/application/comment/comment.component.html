@@ -38,7 +38,7 @@
             <button md-raised-button type="button" color="primary" (click)="save()">TALLENNA</button>
             <button md-raised-button type="button" color="primary" (click)="remove()">PERUUTA</button>
         </div>
-        <div class="row" *ngIf="comment.id !== undefined">
+        <div class="row" *ngIf="canEdit">
             <div *ngIf="edit">
                 <button md-raised-button type="button" color="primary" (click)="save()">TALLENNA</button>
                 <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>

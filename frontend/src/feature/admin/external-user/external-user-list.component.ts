@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
-import {User} from '../../../model/common/user';
+import {User} from '../../../model/user/user';
 import {ExternalUser} from '../../../model/common/external-user';
 import {ExternalUserHub} from '../../../service/user/external-user-hub';
 

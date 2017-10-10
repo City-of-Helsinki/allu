@@ -19,6 +19,7 @@ import {
   MdTooltipModule,
   MdListModule
 } from '@angular/material';
+import {FlexLayoutModule} from '@angular/flex-layout';
 import 'materialize-css';
 import 'angular2-materialize';
 import {MaterializeModule} from 'angular2-materialize';
@@ -80,6 +81,7 @@ import {AvailableToDirective} from '../../service/authorization/available-to.dir
     MdProgressBarModule,
     MdTooltipModule,
     MdListModule,
+    FlexLayoutModule,
     MaterializeModule,
     AutoCompletionDirective,
     AutoCompletionListComponent,

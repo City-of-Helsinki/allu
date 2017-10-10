@@ -151,10 +151,10 @@ export const translations = {
         STATEMENT_REQUESTED: 'Lausunnolla',
         DEPOSIT_REQUESTED: 'Vakuus määritetty',
         DEPOSIT_PAID: 'Vakuus suoritettu',
-        PRELIMINARY_INSPECTION_REQUESTED: 'Aloituskatselmuspyyntö lähetetty',
-        PRELIMINARY_INSPECTION_DONE: 'Aloituskatselmus suoritettu',
-        FINAL_INSPECTION_AGREED: 'Loppukatselmus sovittu',
-        FINAL_INSPECTION_DONE: 'Loppukatselmus suoritettu',
+        PRELIMINARY_SUPERVISION_REQUESTED: 'Aloitusvalvontapyyntö lähetetty',
+        PRELIMINARY_SUPERVISION_DONE: 'Aloitusvalvonta suoritettu',
+        SUPERVISION_REQUESTED: 'Valvontapyyntö lähetetty',
+        SUPERVISION_DONE: 'Valvonta suoritettu',
         WAITING: 'Odottaa lisätietoa',
         COMPENSATION_CLARIFICATION: 'Hyvitysselvitys',
         PAYMENT_BASIS_CORRECTION: 'Maksuperusteet korjattava',
@@ -164,6 +164,12 @@ export const translations = {
         WORK_READY_REPORTED: 'Työn valmistuminen ilmoitettu',
         WORK_READY_ACCEPTED: 'Työn valmistuminen hyväksytty',
         WORK_READY_REJECTED: 'Työn valmistuminen hylätty'
+      },
+      action: {
+        PRELIMINARY_SUPERVISION_REQUESTED: 'Aloitusvalvontapyyntö',
+        PRELIMINARY_SUPERVISION_DONE: 'Aloitusvalvonta suoritettu',
+        SUPERVISION_REQUESTED: 'Valvontapyyntö',
+        SUPERVISION_DONE: 'Valvonta suoritettu'
       }
     },
     publicityType: {
@@ -499,6 +505,15 @@ export const translations = {
     boolean: {
       'true': 'Kyllä',
       'false': 'Ei'
+    },
+    action: {
+      remove: 'poistettu'
+    },
+    button: {
+      save: 'TALLENNA',
+      cancel: 'PERUUTA',
+      remove: 'POISTA',
+      edit: 'MUOKKAA'
     }
   },
   map: {
@@ -634,6 +649,8 @@ export const translations = {
       INVOICING: 'Laskutuksen kommentti',
       RETURN: 'Valmisteluun palauttajan kommentti',
       REJECT: 'Hylkääjän kommentti',
+      PRELIMINARY_SUPERVISION: 'Aloitusvalvonta',
+      SUPERVISION: 'Valvonta',
       PROPOSE_APPROVAL: 'Ehdotettu hyväksyttäväksi',
       PROPOSE_REJECT: 'Ehdotettu hylättäväksi'
     },
@@ -641,6 +658,43 @@ export const translations = {
       fetch: 'Kommenttien hakeminen epäonnistui',
       save: 'Kommentin tallentaminen epäonnistui',
       remove: 'Kommentin poistaminen epäonnistui'
+    }
+  },
+  supervision: {
+    title: 'Valvonnan tehtävät',
+    addTask: 'LISÄÄ VALVONTAPYYNTÖ',
+    task: {
+      newTask: 'Uusi valvonnan tehtävä',
+      description: 'Tehtävän kuvaus',
+      response: 'Tehtävän kuittaus',
+      createdBy: 'Luonut',
+      type: {
+        title: 'Toimenpide',
+        PRELIMINARY_SUPERVISION: 'Aloitusvalvonta',
+        OPERATIONAL_CONDITION: 'Toiminnallisen kunnon valvonta',
+        SUPERVISION: 'Valvonta',
+        FINAL_SUPERVISION: 'Loppuvalvonta',
+        WARRANTY: 'Takuuvalvonta'
+      },
+      status: {
+        OPEN: 'Avoin',
+        APPROVED: 'Hyväksytty',
+        REJECTED: 'Hylätty'
+      },
+      handler: 'Valvoja',
+      plannedFinishingTime: 'Ajankohta',
+      action: {
+        save: 'Valvontatehtävä tallennettu',
+        remove: 'Valvontatehtävä poistettu'
+      },
+      error: {
+        save: 'Valvonnan merkinnän tallentaminen epäonnistui',
+        remove: 'Valvonnan merkinnän poistaminen epäonnistui'
+      },
+      field: {
+        plannedFinishingTimeInThePast: 'Ajankohta ei voi olla menneisyydessä',
+        plannedFinishingTimeMissing: 'Ajankohta puuttuu'
+      }
     }
   },
   invoice: {
@@ -735,12 +789,14 @@ const toKey = (path: string | Array<string>): Option<Array<string>> => {
   });
 };
 
+type Path = string | Array<string>;
+
 /**
  * Finds translation for given path
  * @param path path to translation eg. application.status.HANDLED
  * @returns translation if found with path, otherwise returns path
  */
-export const findTranslation = (path: string | Array<string>): string => {
+export const findTranslation = (path: Path): string => {
   return toKey(path)
     .map(pathParts => pathParts.reduce((acc: any, cur: any) => Some(acc[cur]).orElse(pathParts.join('.')) , translations))
     .orElse('');

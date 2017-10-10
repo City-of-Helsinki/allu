@@ -1,0 +1,245 @@
+import {DebugElement} from '@angular/core';
+import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
+import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
+import {By} from '@angular/platform-browser';
+import {SupervisionTaskStore} from '../../../../src/service/supervision/supervision-task-store';
+import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
+import {ApplicationStateMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {AvailableToDirective} from '../../../../src/service/authorization/available-to.directive';
+import {SupervisionTask} from '../../../../src/model/application/supervision/supervision-task';
+import {Observable} from 'rxjs/Observable';
+import {Subject} from 'rxjs/Subject';
+import {SupervisionTaskComponent} from '../../../../src/feature/application/supervision/supervision-task.component';
+import {ApplicationState} from '../../../../src/service/application/application-state';
+import {CurrentUser} from '../../../../src/service/user/current-user';
+import {ComplexValidator} from '../../../../src/util/complex-validator';
+import {User} from '../../../../src/model/user/user';
+import {SupervisionTaskType} from '../../../../src/model/application/supervision/supervision-task-type';
+import {NotificationService} from '../../../../src/service/notification/notification.service';
+import {ErrorInfo} from '../../../../src/service/ui-state/error-info';
+import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
+import {findTranslation} from '../../../../src/util/translations';
+
+const supervisor = new User(2, 'supervisor', 'supervisor');
+
+const taskForm = {
+  id: [undefined],
+  applicationId: [undefined],
+  type: [undefined, Validators.required],
+  creatorId: [undefined],
+  creatorName: [undefined],
+  handlerId: [undefined, Validators.required],
+  handlerName: [undefined],
+  creationTime: [undefined],
+  plannedFinishingTime: [undefined, [Validators.required, ComplexValidator.inThePast]],
+  actualFinishingTime: [undefined],
+  status: [undefined],
+  description: [undefined],
+  result: [undefined]
+};
+
+const validTask = {
+  type: SupervisionTaskType[SupervisionTaskType.SUPERVISION],
+  handlerId: supervisor.id,
+  plannedFinishingTime: new Date(),
+  description: 'some description here'
+};
+
+class SupervisionTaskStoreMock {
+  public tasks$ = new Subject<Array<SupervisionTask>>();
+
+  get tasks(): Observable<Array<SupervisionTask>> {
+    return this.tasks$.asObservable();
+  }
+
+  saveTask(applicationId: number, task: SupervisionTask): Observable<SupervisionTask> {
+    return Observable.of(task);
+  }
+
+  removeTask(applicationId: number, taskId: number): Observable<HttpResponse> {
+    return Observable.of(new HttpResponse(HttpStatus.OK));
+  }
+}
+
+describe('SupervisionComponent', () => {
+  let comp: SupervisionTaskComponent;
+  let fixture: ComponentFixture<SupervisionTaskComponent>;
+  let applicationState: ApplicationStateMock;
+  let supervisionTaskStore: SupervisionTaskStoreMock;
+  let de: DebugElement;
+  let currentUserMock = CurrentUserMock.create(true, true);
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        AlluCommonModule,
+        FormsModule,
+        ReactiveFormsModule
+      ],
+      declarations: [
+        SupervisionTaskComponent
+      ],
+      providers: [
+        {provide: ApplicationState, useClass: ApplicationStateMock},
+        {provide: SupervisionTaskStore, useClass: SupervisionTaskStoreMock},
+        {provide: CurrentUser, useValue: currentUserMock}
+      ]
+    })
+      .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
+      .compileComponents();
+  }));
+
+  beforeEach(() => {
+    supervisionTaskStore = TestBed.get(SupervisionTaskStore) as SupervisionTaskStoreMock;
+    applicationState = TestBed.get(ApplicationState) as ApplicationStateMock;
+    fixture = TestBed.createComponent(SupervisionTaskComponent);
+    comp = fixture.componentInstance;
+    de = fixture.debugElement;
+
+    comp.form = new FormBuilder().group(taskForm);
+    comp.supervisors = [supervisor];
+    comp.ngOnInit();
+    fixture.detectChanges();
+  });
+
+  it('should initialize', () => {
+    expect(de.query(By.css('form'))).toBeDefined();
+  });
+
+  it('should keep form enabled for new task', () => {
+    expect(comp.form.enabled).toEqual(true, 'Form for new task was disabled');
+  });
+
+  it('should disable form for existing task', fakeAsync(() => {
+    patchValueAndInit({id: 1});
+    expect(comp.form.disabled).toEqual(true, 'Form for existing task was enabled');
+  }));
+
+  it('should save valid task', fakeAsync(() => {
+    spyOn(supervisionTaskStore, 'saveTask').and.callThrough();
+    spyOn(NotificationService, 'translateMessage');
+
+    patchValueAndInit(validTask);
+    const saveBtn = de.query(By.css('#save')).nativeElement;
+    saveBtn.click();
+    detectAndTick();
+    expect(supervisionTaskStore.saveTask).toHaveBeenCalled();
+    expect(NotificationService.translateMessage).toHaveBeenCalled();
+  }));
+
+  it('should handle save error', fakeAsync(() => {
+    const errorInfo = ErrorInfo.of(new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR), 'expected');
+    spyOn(supervisionTaskStore, 'saveTask').and.returnValue(Observable.throw(errorInfo));
+    spyOn(NotificationService, 'translateError');
+
+    patchValueAndInit(validTask);
+    const saveBtn = de.query(By.css('#save')).nativeElement;
+    saveBtn.click();
+    detectAndTick();
+    expect(supervisionTaskStore.saveTask).toHaveBeenCalled();
+    expect(NotificationService.translateError).toHaveBeenCalled();
+  }));
+
+  it('should change to edit mode', fakeAsync(() => {
+    patchValueAndInit({id: 1});
+    const editBtn = de.query(By.css('#edit')).nativeElement;
+    expect(comp.form.disabled).toEqual(true, 'Form was enabled');
+    expect(editBtn).toBeDefined('No edit button');
+    editBtn.click();
+    detectAndTick();
+    expect(comp.form.enabled).toEqual(true, 'Form was disabled after edit');
+  }));
+
+  it('should cancel edit changes', fakeAsync(() => {
+    patchValueAndInit({id: 1});
+    const editBtn = de.query(By.css('#edit')).nativeElement;
+    editBtn.click();
+    detectAndTick();
+    const valueBeforeReset = comp.form.value;
+    comp.form.patchValue(validTask);
+    detectAndTick();
+    const cancelBtn = de.query(By.css('#cancel')).nativeElement;
+    cancelBtn.click();
+    detectAndTick();
+    expect(comp.form.value).toEqual(valueBeforeReset, 'Form was not reset correctly');
+  }));
+
+  it('should remove new on cancel', fakeAsync(() => {
+    const onRemove = comp.onRemove;
+    spyOn(onRemove, 'emit');
+    patchValueAndInit({});
+    const cancelBtn = de.query(By.css('#cancel')).nativeElement;
+    cancelBtn.click();
+    detectAndTick();
+    expect(onRemove.emit).toHaveBeenCalled();
+  }));
+
+  it('should remove existing', fakeAsync(() => {
+    const onRemove = comp.onRemove;
+    spyOn(onRemove, 'emit');
+    spyOn(NotificationService, 'translateMessage');
+    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
+
+    patchValueAndInit({id: 1});
+    const removeBtn = de.query(By.css('#remove')).nativeElement;
+    removeBtn.click();
+    detectAndTick();
+    expect(supervisionTaskStore.removeTask).toHaveBeenCalled();
+    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(onRemove.emit).toHaveBeenCalled();
+  }));
+
+  it('should handle remove failure', fakeAsync(() => {
+    const errorInfo = ErrorInfo.of(new HttpResponse(HttpStatus.INTERNAL_SERVER_ERROR), 'expected');
+    const onRemove = comp.onRemove;
+    spyOn(NotificationService, 'translateError');
+    spyOn(onRemove, 'emit');
+    spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.throw(errorInfo));
+
+    patchValueAndInit({id: 1});
+    const removeBtn = de.query(By.css('#remove')).nativeElement;
+    removeBtn.click();
+    detectAndTick();
+
+    expect(supervisionTaskStore.removeTask).toHaveBeenCalled();
+    expect(NotificationService.translateError).toHaveBeenCalled();
+    expect(onRemove.emit).not.toHaveBeenCalled();
+  }));
+
+  it('should disallow editing by other users', fakeAsync(() => {
+    const myself = new User(1);
+    currentUserMock.user$.next(myself);
+    patchValueAndInit({id: 1, creatorId: myself.id});
+    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(2);
+    patchValueAndInit({creatorId: 2});
+    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(0);
+  }));
+
+  it('should display error when planned finishing time is in the past', fakeAsync(() => {
+    const dateInput = de.query(By.css('[formControlName="plannedFinishingTime"]')).nativeElement;
+    let date = new Date();
+    date.setFullYear(2000);
+    dateInput.value = date;
+    dateInput.dispatchEvent(new Event('input'));
+    dateInput.dispatchEvent(new Event('blur'));
+    detectAndTick();
+    const error = de.query(By.css('.mat-error')).nativeElement;
+    expect(error).toBeDefined();
+    expect(error.textContent).toMatch(findTranslation('supervision.task.field.plannedFinishingTimeInThePast'));
+  }));
+
+  afterEach(() => {
+    comp.ngOnDestroy();
+  });
+
+  function patchValueAndInit(val: any): void {
+    comp.form.patchValue(val);
+    comp.ngOnInit();
+    detectAndTick();
+  }
+
+  function detectAndTick(): void {
+    fixture.detectChanges();
+    tick();
+  }
+});

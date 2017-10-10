@@ -2,12 +2,14 @@ import {Injectable} from '@angular/core';
 import {UserMapper} from '../mapper/user-mapper';
 import {Observable} from 'rxjs/Observable';
 import {HttpUtil} from '../../util/http.util';
-import {User} from '../../model/common/user';
+import {User} from '../../model/user/user';
 import {UIStateHub} from '../ui-state/ui-state-hub';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
+import {RoleType} from '../../model/user/role-type';
 
 const ACTIVE_USERS_URL = '/api/users/active';
 const USERS_URL = '/api/users';
+const USERS_BY_ROLE_URL = '/api/users/role/:roleType';
 const USER_URL = '/api/users/userName';
 const CURRENT_USER_URL = '/api/users/current';
 
@@ -18,6 +20,14 @@ export class UserService {
 
   public getActiveUsers(): Observable<Array<User>> {
     return this.authHttp.get(ACTIVE_USERS_URL)
+      .map(response => response.json())
+      .map(users => users.map(user => UserMapper.mapBackend(user)))
+      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
+  public getByRole(role: RoleType): Observable<Array<User>> {
+    const url = USERS_BY_ROLE_URL.replace(':roleType', RoleType[role]);
+    return this.authHttp.get(url)
       .map(response => response.json())
       .map(users => users.map(user => UserMapper.mapBackend(user)))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));

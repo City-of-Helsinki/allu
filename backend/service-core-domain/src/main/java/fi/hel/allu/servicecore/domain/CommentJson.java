@@ -1,11 +1,9 @@
 package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.types.CommentType;
-
 import org.hibernate.validator.constraints.NotBlank;
 
 import javax.validation.constraints.NotNull;
-
 import java.time.ZonedDateTime;
 
 /**

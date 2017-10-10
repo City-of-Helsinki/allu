@@ -29,7 +29,7 @@ export const visibleItemsByApplicationType: ApplicationTypeVisibleItems = {
   'PLACEMENT_CONTRACT': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
   'EVENT': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
   'SHORT_TERM_RENTAL': visibleForAll.concat('INVOICING', 'SUPERVISION', 'DECISION'),
-  'NOTE': visibleForAll.concat('SUPERVISION')
+  'NOTE': visibleForAll
 };
 
 export function visibleFor(appType: string, sidebarItemType: SidebarItemType) {

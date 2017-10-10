@@ -16,6 +16,7 @@ import {DefaultAttachmentInfo} from '../../../model/application/attachment/defau
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Option, Some} from '../../../util/option';
+import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 
 @Component({
   selector: 'application',
@@ -35,11 +36,13 @@ export class ApplicationComponent implements OnInit {
               private router: Router,
               private applicationState: ApplicationState,
               private attachmentHub: AttachmentHub,
-              private mapHub: MapHub) {
+              private mapHub: MapHub,
+              private supervisionTaskStore: SupervisionTaskStore) {
   }
 
   ngOnInit(): void {
     this.application = this.applicationState.application;
+    Some(this.application.id).do(id => this.supervisionTaskStore.loadTasks(id));
     this.verifyTypeExists(ApplicationType[this.application.type]);
 
     UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
@@ -79,7 +82,8 @@ export class ApplicationComponent implements OnInit {
   sidebar(summary: boolean): Observable<Array<SidebarItem>> {
     return Observable.combineLatest(
       this.attachmentCount(),
-      this.commentCount(),
+      this.applicationState.comments.map(comments => comments.length),
+      this.supervisionTaskStore.tasks.map(supervisions => supervisions.length),
       this.createSidebar(summary));
   }
 
@@ -91,13 +95,8 @@ export class ApplicationComponent implements OnInit {
     );
   }
 
-  private commentCount(): Observable<number> {
-    return this.applicationState.comments
-      .map(comments => comments.length);
-  }
-
-  private createSidebar(summary: boolean): (a: number, c: number) => Array<SidebarItem> {
-    return (attachmentCount: number, commentCount: number) => {
+  private createSidebar(summary: boolean): (a: number, c: number, s: number) => Array<SidebarItem> {
+    return (attachmentCount: number, commentCount: number, supervisionCount: number) => {
       let sidebar: Array<SidebarItem> = [
         { type: 'BASIC_INFO'},
         { type: 'ATTACHMENTS', count: attachmentCount }
@@ -107,6 +106,7 @@ export class ApplicationComponent implements OnInit {
         this.sidebarItem('COMMENTS', commentCount).do(item => sidebar.push(item));
         this.sidebarItem('HISTORY').do(item => sidebar.push(item));
         this.sidebarItem('DECISION').do(item => sidebar.push(item));
+        this.sidebarItem('SUPERVISION', supervisionCount).do(item => sidebar.push(item));
         this.sidebarItem('INVOICING').do(item => sidebar.push(item));
       }
       return sidebar;

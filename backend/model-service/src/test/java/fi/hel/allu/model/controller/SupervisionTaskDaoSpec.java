@@ -55,7 +55,7 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
       newSupervisionTask = new SupervisionTask(
           null,
           testApplication.getId(),
-          SupervisionTaskType.INSPECTION,
+          SupervisionTaskType.SUPERVISION,
           null,
           null,
           testTime,

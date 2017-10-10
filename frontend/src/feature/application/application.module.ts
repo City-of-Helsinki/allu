@@ -40,6 +40,7 @@ import {PricingInfoComponent} from './info/pricing-info/pricing-info.component';
 import {InvoicingModule} from './invoicing/invoicing.module';
 import {RecurringComponent} from './info/recurring/recurring.component';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
+import {SupervisionModule} from './supervision/supervision.module';
 
 @NgModule({
   imports: [
@@ -63,7 +64,8 @@ import {CustomerRegistryModule} from '../customerregistry/customer-registry.modu
     TermsModule,
     DistributionModule,
     InvoicingModule,
-    CustomerRegistryModule
+    CustomerRegistryModule,
+    SupervisionModule
   ],
   declarations: [
     ApplicationComponent,

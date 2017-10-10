@@ -94,6 +94,9 @@ export class ApplicationState {
     );
   }
 
+  /**
+   * Observable for comments other than supervision
+   */
   get comments(): Observable<Array<Comment>> {
     return this.comments$.asObservable();
   }
@@ -151,8 +154,8 @@ export class ApplicationState {
       .do(c => this.loadComments(this.application.id).subscribe());
   }
 
-  removeComment(comment: Comment): Observable<HttpResponse> {
-    return this.commentHub.removeComment(comment.id)
+  removeComment(commentId: number): Observable<HttpResponse> {
+    return this.commentHub.removeComment(commentId)
       .do(c => this.loadComments(this.application.id).subscribe());
   }
 

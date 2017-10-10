@@ -1,5 +1,6 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.User;
@@ -34,6 +35,11 @@ public class UserController {
   public ResponseEntity<User> findById(@PathVariable int id) {
     User user = userDao.findById(id).orElseThrow(() -> new NoSuchEntityException("No such user", Integer.toString(id)));
     return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/role/{roleType}", method = RequestMethod.GET)
+  public ResponseEntity<List<User>> findByRole(@PathVariable RoleType roleType) {
+    return new ResponseEntity<>(userDao.findByRole(roleType), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/userName/{userName}", method = RequestMethod.GET)

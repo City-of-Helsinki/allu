@@ -1,4 +1,4 @@
-import {AbstractControl, FormGroup, ValidatorFn, Validators} from '@angular/forms';
+import {AbstractControl, FormGroup, ValidationErrors, ValidatorFn, Validators} from '@angular/forms';
 import {Some} from './option';
 import {TimeUtil} from './time.util';
 import {NumberUtil} from './number.util';
@@ -71,7 +71,7 @@ export class ComplexValidator {
       let start = this.fieldValue(fg, startField);
       let end = this.fieldValue(fg, endField);
 
-      if (!!start && !!end) {
+      if (start && end) {
         let valid = !TimeUtil.isBefore(end, start);
 
         // undefined means valid field
@@ -81,6 +81,13 @@ export class ComplexValidator {
     };
 
     return new ComplexValidator(validationFn);
+  }
+
+  static inThePast(fc: AbstractControl): ValidationErrors {
+    let now =  new Date();
+    now.setHours(0, 0, 0, 0); // start of the day
+    const inThePast = fc.value && TimeUtil.isBefore(fc.value, now);
+    return inThePast ? { inThePast: fc.value } : undefined;
   }
 
   private static fieldValue(group: FormGroup, fieldName: string) {

@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
 import {UserHub} from '../../../service/user/user-hub';
-import {User} from '../../../model/common/user';
+import {User} from '../../../model/user/user';
 import {translations} from '../../../util/translations';
 
 @Component({

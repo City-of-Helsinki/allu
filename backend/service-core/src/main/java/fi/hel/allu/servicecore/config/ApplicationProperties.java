@@ -300,6 +300,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to fetch users with given role from model service.
+   */
+  public String getUsersByRoleUrl() {
+    return getModelServiceUrl("/users/role/{roleType}");
+  }
+
+  /**
    * @return url to fetch given user from model service.
    */
   public String getUserByIdUrl() {

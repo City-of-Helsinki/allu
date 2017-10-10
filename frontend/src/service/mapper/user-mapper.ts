@@ -1,5 +1,5 @@
 import {BackendUser} from '../backend-model/backend-user';
-import {User} from '../../model/common/user';
+import {User} from '../../model/user/user';
 import {TimeUtil} from '../../util/time.util';
 
 export class UserMapper {

@@ -3,13 +3,13 @@ export enum ApplicationTagType {
   STATEMENT_REQUESTED,                // lausunnolla
   DEPOSIT_REQUESTED,                  // vakuus määritetty
   DEPOSIT_PAID,                       // vakuus suoritettu
-  PRELIMINARY_INSPECTION_REQUESTED,   // aloituskatselmointipyyntö lähetetty
-  PRELIMINARY_INSPECTION_DONE,        // aloituskatselmus suoritettu
-  FINAL_INSPECTION_AGREED,            // loppukatselmus sovittu
-  FINAL_INSPECTION_DONE,              // loppukatselmus suoritettu
+  PRELIMINARY_SUPERVISION_REQUESTED,  // Aloitusvalvontapyyntö lähetetty
+  PRELIMINARY_SUPERVISION_DONE,       // Aloitusvalvonta suoritettu
+  SUPERVISION_REQUESTED,              // Valvontapyyntö lähetetty
+  SUPERVISION_DONE,                   // Valvonta suoritettu
   WAITING,                            // odottaa. Hakemus odottaa lisätietoa, esimerkiksi selvitystä, mikä estää hakemuksen etenemisen
   COMPENSATION_CLARIFICATION,         // hyvitysselvitys. käytetään esim. hyvityslaskujen selvittämisen aikana
-  PAYMENT_BASIS_CORRECTION,            // maksuperusteet korjattava
+  PAYMENT_BASIS_CORRECTION,           // maksuperusteet korjattava
   OPERATIONAL_CONDITION_REPORTED,     // toiminnallinen kunto ilmoitettu
   OPERATIONAL_CONDITION_ACCEPTED,     // toiminnallinen kunto hyväksytty
   OPERATIONAL_CONDITION_REJECTED,     // toiminnallinen kunto hylätty
@@ -17,3 +17,8 @@ export enum ApplicationTagType {
   WORK_READY_ACCEPTED,                // työn valmistuminen hyväksytty
   WORK_READY_REJECTED                 // työn valmistuminen hylätty
 }
+
+export const supervisionRequestTypes = [
+  ApplicationTagType.PRELIMINARY_SUPERVISION_REQUESTED,
+  ApplicationTagType.SUPERVISION_REQUESTED
+];

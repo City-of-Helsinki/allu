@@ -1,7 +1,6 @@
-import {Component, Input, Output, EventEmitter, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Application} from '../../../model/application/application';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
 
 @Component({
@@ -17,7 +16,21 @@ export class TagBarComponent implements OnInit {
   @Output() onTagChange = new EventEmitter<Array<ApplicationTag>>();
 
   tags: Array<ApplicationTag> = [];
-  tagTypes = EnumUtil.enumValues(ApplicationTagType);
+  tagTypes = [
+    ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
+    ApplicationTagType.STATEMENT_REQUESTED,
+    ApplicationTagType.DEPOSIT_REQUESTED,
+    ApplicationTagType.DEPOSIT_PAID,
+    ApplicationTagType.WAITING,
+    ApplicationTagType.COMPENSATION_CLARIFICATION,
+    ApplicationTagType.PAYMENT_BASIS_CORRECTION,
+    ApplicationTagType.OPERATIONAL_CONDITION_REPORTED,
+    ApplicationTagType.OPERATIONAL_CONDITION_ACCEPTED,
+    ApplicationTagType.OPERATIONAL_CONDITION_REJECTED,
+    ApplicationTagType.WORK_READY_REPORTED,
+    ApplicationTagType.WORK_READY_ACCEPTED,
+    ApplicationTagType.WORK_READY_REJECTED
+  ].map(type => ApplicationTagType[type]);
 
   constructor() {}
 

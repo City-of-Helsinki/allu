@@ -9,7 +9,7 @@ import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {ApplicationHub} from '../../service/application/application-hub';
 import {UserHub} from '../../service/user/user-hub';
-import {User} from '../../model/common/user';
+import {User} from '../../model/user/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {Sort} from '../../model/common/sort';
 import {MapHub} from '../../service/map/map-hub';

@@ -6,7 +6,7 @@ import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQue
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {User} from '../../../model/common/user';
+import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
 import {ApplicationTagType} from '../../../model/application/tag/application-tag-type';
 import {Observable} from 'rxjs';

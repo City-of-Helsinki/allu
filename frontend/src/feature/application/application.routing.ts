@@ -12,6 +12,7 @@ import {ApplicationHistoryComponent} from './history/application-history.compone
 import {DecisionPreviewComponent} from './decision-preview/decision-preview.component';
 import {InvoicingComponent} from './invoicing/invoicing.component';
 import {DecisionComponent} from '../decision/decision.component';
+import {SupervisionComponent} from './supervision/supervision.component';
 
 export const applicationTabs: Routes = [
   { path: '', redirectTo: 'info', pathMatch: 'full' },
@@ -20,6 +21,7 @@ export const applicationTabs: Routes = [
   { path: 'comments', component: CommentsComponent, canActivate: [AuthGuard] },
   { path: 'history', component: ApplicationHistoryComponent, canActivate: [AuthGuard] },
   { path: 'decision-preview', component: DecisionPreviewComponent, canActivate: [AuthGuard] },
+  { path: 'supervision', component: SupervisionComponent, canActivate: [AuthGuard] },
   { path: 'invoicing', component: InvoicingComponent, canActivate: [AuthGuard] }
 ];
 

@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {UserService} from './user-service';
-import {User} from '../../model/common/user';
+import {User} from '../../model/user/user';
+import {RoleType} from '../../model/user/role-type';
 
 @Injectable()
 export class UserHub {
@@ -11,6 +12,10 @@ export class UserHub {
    */
   public getActiveUsers = () => this.userService.getActiveUsers();
 
+  /**
+   * Fetches customers which have give role
+   */
+  public getByRole = (role: RoleType) => this.userService.getByRole(role);
 
   /**
    * Fetches all users

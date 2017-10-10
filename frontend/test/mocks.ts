@@ -5,9 +5,11 @@ import {CurrentUser} from '../src/service/user/current-user';
 import {Application} from '../src/model/application/application';
 import {Contact} from '../src/model/customer/contact';
 import {Subject} from 'rxjs/Subject';
+import {User} from '../src/model/user/user';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 export class ApplicationStateMock {
-  private _application: Application = new Application();
+  private _application: Application = new Application(1);
 
   get application() {
     return this._application;
@@ -26,6 +28,7 @@ export class CustomerHubMock {
 export class CurrentUserMock {
   public allowHasRole = true;
   public allowHasType = true;
+  public user$ = new BehaviorSubject(new User(1));
 
   public static create(allowHasRole: boolean, allowHasType: boolean) {
     const mock = new CurrentUserMock();
@@ -40,6 +43,10 @@ export class CurrentUserMock {
 
   public hasApplicationType(types: Array<string>): Observable<boolean> {
     return Observable.of(this.allowHasType);
+  }
+
+  get user(): Observable<User> {
+    return this.user$.asObservable();
   }
 }
 

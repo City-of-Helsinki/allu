@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.domain.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
@@ -51,6 +52,12 @@ public class UserService {
     ResponseEntity<User> userResults = restTemplate.getForEntity(
         applicationProperties.getUserByUserNameUrl(), User.class, userName);
     return UserMapper.mapToUserJson(userResults.getBody());
+  }
+
+  public List<UserJson> findUserByRole(RoleType role) {
+    ResponseEntity<User[]> userResults = restTemplate.getForEntity(
+        applicationProperties.getUsersByRoleUrl(), User[].class, role);
+    return mapUsers(userResults.getBody());
   }
 
   public UserJson findUserById(int id) {

@@ -2,7 +2,7 @@ import {Location} from '../common/location';
 import {ApplicationExtension} from './type/application-extension';
 import {AttachmentInfo} from './attachment/attachment-info';
 import {TimeUtil} from '../../util/time.util';
-import {User} from '../common/user';
+import {User} from '../user/user';
 import {Some} from '../../util/option';
 import {Project} from '../project/project';
 import {ApplicationTag} from './tag/application-tag';

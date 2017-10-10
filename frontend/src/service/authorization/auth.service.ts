@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {Headers, Http, URLSearchParams} from '@angular/http';
 import {JwtHelper} from 'angular2-jwt/angular2-jwt';
 import {Observable} from 'rxjs/Observable';
-import {User} from '../../model/common/user';
+import {User} from '../../model/user/user';
 import {CurrentUser} from '../user/current-user';
 
 const LOGIN_URL = '/api/auth/login';

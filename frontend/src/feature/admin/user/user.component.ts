@@ -11,7 +11,7 @@ import {Some} from '../../../util/option';
 import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {CityDistrict} from '../../../model/common/city-district';
-import {User} from '../../../model/common/user';
+import {User} from '../../../model/user/user';
 
 @Component({
   selector: 'user',

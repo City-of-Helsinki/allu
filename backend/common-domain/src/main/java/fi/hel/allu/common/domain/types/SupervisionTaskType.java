@@ -2,23 +2,23 @@ package fi.hel.allu.common.domain.types;
 
 public enum SupervisionTaskType {
   /**
-   * Aloituskatselmus
+   * Aloitusvalvonta
    */
-  PRELIMINARY_INSPECTION,
-  /**
-   * Loppukatselmus
-   */
-  FINAL_INSPECTION,
+  PRELIMINARY_SUPERVISION,
   /**
    * Talvityön toiminnallinen kunto
    */
   OPERATIONAL_CONDITION,
   /**
-   * Työ valmis
+   * Valvonta
    */
-  WORK_READY,
+  SUPERVISION,
   /**
-   * Katselmus
+   * Loppuvalvonta
    */
-  INSPECTION
+  FINAL_SUPERVISION,
+  /**
+   * Takuuvalvonta
+   */
+  WARRANTY
 }

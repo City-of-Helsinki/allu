@@ -1,22 +1,31 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.model.querydsl.ExcludingMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QSupervisionTask.supervisionTask;
+import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
 public class SupervisionTaskDao {
+
+  /** Fields that won't be updated in regular updates */
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(supervisionTask.id, supervisionTask.creationTime);
+
   @Autowired
   private SQLQueryFactory queryFactory;
 
@@ -36,13 +45,17 @@ public class SupervisionTaskDao {
 
   @Transactional
   public SupervisionTask insert(SupervisionTask st) {
+    st.setCreationTime(ZonedDateTime.now());
+    st.setStatus(SupervisionTaskStatusType.OPEN);
     Integer id = queryFactory.insert(supervisionTask).populate(st).executeWithKey(supervisionTask.id);
     return findById(id).get();
   }
 
   @Transactional
   public SupervisionTask update(SupervisionTask st) {
-    long changed = queryFactory.update(supervisionTask).populate(st).where(supervisionTask.id.eq(st.getId())).execute();
+    long changed = queryFactory.update(supervisionTask)
+        .populate(st, new ExcludingMapper(WITH_NULL_BINDINGS, UPDATE_READ_ONLY_FIELDS))
+        .where(supervisionTask.id.eq(st.getId())).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Failed to update supervision task", st.getId());
     }

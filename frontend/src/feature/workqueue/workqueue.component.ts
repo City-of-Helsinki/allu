@@ -12,7 +12,7 @@ import {EnumUtil} from '../../util/enum.util';
 import {Sort} from '../../model/common/sort';
 import {HandlerModalComponent} from './handlerModal/handler-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
-import {User} from '../../model/common/user';
+import {User} from '../../model/user/user';
 import {UserHub} from '../../service/user/user-hub';
 import {DialogCloseReason} from '../common/dialog-close-value';
 import {WorkQueueHub} from './workqueue-search/workqueue-hub';

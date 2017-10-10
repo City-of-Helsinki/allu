@@ -6,7 +6,7 @@ import {HistoryHub} from '../../../service/history/history-hub';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationChange} from '../../../model/application/application-change/application-change';
 import {UserHub} from '../../../service/user/user-hub';
-import {User} from '../../../model/common/user';
+import {User} from '../../../model/user/user';
 import {ApplicationHistoryDetailsComponent} from './application-history-details.component';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';

@@ -4,7 +4,6 @@ import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
-
 import fi.hel.allu.servicecore.domain.StatusCommentJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +25,11 @@ public class CommentService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
+
+  private static Set<CommentType> allowedUserCommentTypes = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(
+      CommentType.INTERNAL,
+      CommentType.INVOICING
+  )));
 
   @Autowired
   public CommentService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
@@ -86,8 +88,8 @@ public class CommentService {
    *          Rejection reason
    * @return the added comment
    */
-  public CommentJson addReturnComment(int applicationId, String text) {
-    return addCommentUnchecked(applicationId, newCommentJson(CommentType.RETURN, text));
+  public CommentJson addReturnComment(int applicationId, String reason) {
+    return addCommentUnchecked(applicationId, newCommentJson(CommentType.RETURN, reason));
   }
 
   /**
@@ -173,7 +175,7 @@ public class CommentService {
    * Make sure that the given comment type is valid for insert or update
    */
   private void validateCommentType(CommentType type) {
-    if (type != CommentType.INTERNAL && type != CommentType.INVOICING) {
+    if (!allowedUserCommentTypes.contains(type)) {
       throw new IllegalArgumentException("CommentType " + type.name() + " not allowed!");
     }
   }

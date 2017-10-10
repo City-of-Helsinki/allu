@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {NgModule, LOCALE_ID} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {APP_BASE_HREF} from '@angular/common';
 import {Http, HttpModule} from '@angular/http';
@@ -99,7 +99,8 @@ import {ConfigService} from '../../service/config/config.service';
     },
       deps: [Http]
     },
-    { provide: DateAdapter, useClass: AlluDateAdapter }
+    { provide: DateAdapter, useClass: AlluDateAdapter },
+    { provide: LOCALE_ID, useValue: 'fi-FI' }
   ]
 })
 export class AlluModule {}

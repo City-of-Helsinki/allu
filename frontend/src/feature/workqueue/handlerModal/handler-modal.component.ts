@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 
-import {User} from '../../../model/common/user';
+import {User} from '../../../model/user/user';
 import {UserHub} from '../../../service/user/user-hub';
 import {CurrentUser} from '../../../service/user/current-user';
 import {DialogCloseReason, DialogCloseValue} from '../../common/dialog-close-value';

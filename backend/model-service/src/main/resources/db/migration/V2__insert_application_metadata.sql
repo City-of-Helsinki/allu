@@ -220,13 +220,13 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'DEPOSIT_PAID', 'Vakuus suoritettu', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_INSPECTION_REQUESTED', 'Aloituskatselmuspyyntö lähetetty', 'ENUM_VALUE');
+    VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_SUPERVISION_REQUESTED', 'Aloitusvalvontapyyntö lähetetty', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_INSPECTION_DONE', 'Aloituskatselmus suoritettu', 'ENUM_VALUE');
+    VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_SUPERVISION_DONE', 'Aloitusvalvonta suoritettu', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'FINAL_INSPECTION_AGREED', 'Loppukatselmus sovittu', 'ENUM_VALUE');
+    VALUES (currval('allu.structure_meta_id_seq'),  'SUPERVISION_REQUESTED', 'Valvontapyyntö lähetetty', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
-    VALUES (currval('allu.structure_meta_id_seq'),  'FINAL_INSPECTION_DONE', 'Loppukatselmus suoritettu', 'ENUM_VALUE');
+    VALUES (currval('allu.structure_meta_id_seq'),  'SUPERVISION_DONE', 'Valvonta suoritettu', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'WAITING', 'Odottaa lisätietoa', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
@@ -324,6 +324,10 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'REJECT', 'Hylkääjän kommentti', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'INTERNAL', 'Sisäinen kommentti', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_SUPERVISION', 'Aloitusvalvonta', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'SUPERVISION', 'Valvonta', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'PROPOSE_APPROVAL', 'Ehdota hyväksymistä', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
@@ -872,6 +876,7 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, li
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type, list_type, structure_attribute)
     VALUES (currval('allu.structure_meta_id_seq'),  'user', 'Kommentoija', 'STRUCTURE', null,
         (select id from allu.structure_meta where type_name = 'User' and version = 1));
+
 
 --------------
 -- Application

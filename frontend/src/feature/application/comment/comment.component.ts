@@ -2,6 +2,8 @@ import {Component, OnInit, Input, Output, EventEmitter} from '@angular/core';
 
 import {Comment} from '../../../model/application/comment/comment';
 import {manualCommentNames} from '../../../model/application/comment/comment-type';
+import {Some} from '../../../util/option';
+import {CurrentUser} from '../../../service/user/current-user';
 
 @Component({
   selector: 'comment',
@@ -17,13 +19,18 @@ export class CommentComponent implements OnInit {
 
   _edit = false;
   commentTypes = manualCommentNames;
+  canEdit: false;
 
   private originalComment: Comment;
 
-  constructor() {}
+  constructor(private currentUser: CurrentUser) {}
 
   ngOnInit() {
     this._edit = this.comment.id === undefined;
+
+    this.currentUser.user.subscribe(current => {
+      this.canEdit = Some(this.comment.user).map(user => user.id === current.id).orElse(false);
+    });
   }
 
   remove(): void {

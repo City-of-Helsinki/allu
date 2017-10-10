@@ -2,7 +2,7 @@ import {AfterContentInit, Component, Input} from '@angular/core';
 import {MdDialogRef} from '@angular/material';
 
 import {ApplicationChange} from '../../../model/application/application-change/application-change';
-import {User} from '../../../model/common/user';
+import {User} from '../../../model/user/user';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {ApplicationFieldChange} from '../../../model/application/application-change/application-field-change';
 import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
