@@ -1,4 +1,4 @@
-package fi.hel.allu.model.domain;
+package fi.hel.allu.model.domain.user;
 
 import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.util.TimeUtil;

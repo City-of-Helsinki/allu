@@ -1,6 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.ExternalUser;
+import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ExternalUserJson;
 import fi.hel.allu.servicecore.mapper.ExternalUserMapper;

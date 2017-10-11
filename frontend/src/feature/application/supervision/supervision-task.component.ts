@@ -11,6 +11,10 @@ import {EnumUtil} from '../../../util/enum.util';
 import {SupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
 import {SupervisionTaskStatusType} from '../../../model/application/supervision/supervision-task-status-type';
 import {NumberUtil} from '../../../util/number.util';
+import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
+import {RoleType} from '../../../model/user/role-type';
+import {ArrayUtil} from '../../../util/array-util';
+import {UserHub} from '../../../service/user/user-hub';
 
 @Component({
   selector: 'supervision-task',
@@ -32,20 +36,18 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   constructor(private applicationState: ApplicationState,
               private supervisionTaskStore: SupervisionTaskStore,
-              private currentUser: CurrentUser) {
+              private currentUser: CurrentUser,
+              private userHub: UserHub) {
   }
 
   ngOnInit(): void {
     const formValue = this.form.value;
     if (formValue.id) {
       this.form.disable();
+    } else {
+      this.preferredSupervisor();
     }
-    this.currentUser.user.subscribe(current => {
-      this.canEdit = Some(formValue.creatorId)
-        .filter(creatorId => NumberUtil.isDefined(creatorId))
-        .map(creatorId => creatorId === current.id)
-        .orElse(true);
-    });
+    this.currentUserCanEdit(formValue.creatorId);
   }
 
   ngOnDestroy(): void {
@@ -93,5 +95,22 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   edit(): void {
     this.form.enable();
     this.originalEntry = this.form.value;
+  }
+
+  private currentUserCanEdit(creatorId: number): void {
+    this.currentUser.user.subscribe(current => {
+      this.canEdit = Some(creatorId)
+        .filter(id => NumberUtil.isDefined(id))
+        .map(id => id === current.id)
+        .orElse(true);
+    });
+  }
+
+  private preferredSupervisor(): void {
+    const app = this.applicationState.application;
+    const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
+    this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))
+      .filter(preferred => !!preferred)
+      .subscribe(preferred => this.form.patchValue({handlerId: preferred.id}));
   }
 }

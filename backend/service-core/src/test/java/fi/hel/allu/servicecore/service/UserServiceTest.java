@@ -1,6 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.model.domain.User;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
 import org.junit.Assert;

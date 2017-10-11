@@ -4,24 +4,6 @@ import {Some} from '../../util/option';
 
 export class Location {
 
-  constructor()
-  constructor(
-    id: number,
-    locationKey: number,
-    locationVersion: number,
-    startTime: Date,
-    endTime: Date,
-    geometry: GeoJSON.GeometryCollection,
-    area: number,
-    areaOverride: number,
-    postalAddress: PostalAddress,
-    fixedLocationIds: Array<number>,
-    cityDistrictId: number,
-    cityDistrictIdOverride: number,
-    paymentTariff: number,
-    paymentTariffOverride: number,
-    underpass: boolean,
-    info: string)
   constructor(
     public id?: number,
     public locationKey?: number,

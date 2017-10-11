@@ -1,6 +1,7 @@
 package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.RoleType;
+import fi.hel.allu.common.domain.UserSearchCriteria;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,12 @@ public class UserController {
   public ResponseEntity<UserJson> getCurrentUser() {
     UserJson user = userService.getCurrentUser();
     return new ResponseEntity<>(user, HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<List<UserJson>> search(@RequestBody UserSearchCriteria usc) {
+    return new ResponseEntity<>(userService.search(usc), HttpStatus.OK);
   }
 
   @RequestMapping(method = RequestMethod.POST)

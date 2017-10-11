@@ -293,6 +293,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to searching customers
+   */
+  public String getUserSearchUrl() {
+    return getModelServiceUrl("/users/search");
+  }
+
+  /**
    * @return url to fetch given user from model service.
    */
   public String getUserByUserNameUrl() {

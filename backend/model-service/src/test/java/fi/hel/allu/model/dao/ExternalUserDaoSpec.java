@@ -6,7 +6,7 @@ import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.exception.NonUniqueException;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Customer;
-import fi.hel.allu.model.domain.ExternalUser;
+import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

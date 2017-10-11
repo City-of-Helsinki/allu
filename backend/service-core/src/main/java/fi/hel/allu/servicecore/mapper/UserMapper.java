@@ -1,6 +1,6 @@
 package fi.hel.allu.servicecore.mapper;
 
-import fi.hel.allu.model.domain.User;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.servicecore.domain.UserJson;
 
 /**

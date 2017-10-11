@@ -1,6 +1,7 @@
 import {BackendUser} from '../backend-model/backend-user';
 import {User} from '../../model/user/user';
 import {TimeUtil} from '../../util/time.util';
+import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 
 export class UserMapper {
 
@@ -34,5 +35,13 @@ export class UserMapper {
       assignedRoles: user.assignedRoles,
       cityDistrictIds: user.cityDistrictIds
     } : undefined;
+  }
+
+  public static mapSearchCriteria(searchCriteria: UserSearchCriteria): any {
+    return {
+      roleType: searchCriteria.uiRoleType,
+      applicationType: searchCriteria.uiApplicationType,
+      cityDistrictId: searchCriteria.cityDistrictId
+    };
   }
 }

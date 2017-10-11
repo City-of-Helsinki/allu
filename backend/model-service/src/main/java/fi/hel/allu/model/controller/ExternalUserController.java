@@ -2,7 +2,7 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ExternalUserDao;
-import fi.hel.allu.model.domain.ExternalUser;
+import fi.hel.allu.model.domain.user.ExternalUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

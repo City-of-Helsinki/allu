@@ -8,7 +8,7 @@ import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Location;
-import fi.hel.allu.model.domain.User;
+import fi.hel.allu.model.domain.user.User;
 
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;

@@ -6,23 +6,34 @@ import {User} from '../../model/user/user';
 import {UIStateHub} from '../ui-state/ui-state-hub';
 import {AuthHttp} from 'angular2-jwt/angular2-jwt';
 import {RoleType} from '../../model/user/role-type';
+import {UserSearchCriteria} from '../../model/user/user-search-criteria';
+import {ErrorHandler} from '../error/error-handler.service';
+import {findTranslation} from '../../util/translations';
 
 const ACTIVE_USERS_URL = '/api/users/active';
 const USERS_URL = '/api/users';
+const USER_SEARCH_URL = '/api/users/search';
 const USERS_BY_ROLE_URL = '/api/users/role/:roleType';
-const USER_URL = '/api/users/userName';
+const USER_BY_USERNAME_URL = '/api/users/userName';
 const CURRENT_USER_URL = '/api/users/current';
 
 @Injectable()
 export class UserService {
 
-  constructor(private authHttp: AuthHttp, private uiState: UIStateHub) {}
+  constructor(private authHttp: AuthHttp, private uiState: UIStateHub, private errorHandler: ErrorHandler) {}
 
   public getActiveUsers(): Observable<Array<User>> {
     return this.authHttp.get(ACTIVE_USERS_URL)
       .map(response => response.json())
       .map(users => users.map(user => UserMapper.mapBackend(user)))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+  }
+
+  public search(searchCriteria: UserSearchCriteria): Observable<Array<User>> {
+    return this.authHttp.post(USER_SEARCH_URL, UserMapper.mapSearchCriteria(searchCriteria))
+      .map(response => response.json())
+      .map(users => users.map(user => UserMapper.mapBackend(user)))
+      .catch(error => this.errorHandler.handle(error, findTranslation('user.error.search')));
   }
 
   public getByRole(role: RoleType): Observable<Array<User>> {
@@ -41,7 +52,7 @@ export class UserService {
   }
 
   public getUser(userName: string): Observable<User> {
-    let url = USER_URL + '/' + userName;
+    let url = USER_BY_USERNAME_URL + '/' + userName;
     return this.authHttp.get(url)
       .map(response => UserMapper.mapBackend(response.json()))
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));

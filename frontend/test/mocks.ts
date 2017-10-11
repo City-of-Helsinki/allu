@@ -7,9 +7,17 @@ import {Contact} from '../src/model/customer/contact';
 import {Subject} from 'rxjs/Subject';
 import {User} from '../src/model/user/user';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Location} from '../src/model/common/location';
 
 export class ApplicationStateMock {
-  private _application: Application = new Application(1);
+  private _application: Application;
+
+  constructor() {
+    this._application = new Application(1);
+    let location = new Location(1);
+    location.cityDistrictId = 1;
+    this._application.locations.push(location);
+  }
 
   get application() {
     return this._application;

@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 import {UserService} from './user-service';
 import {User} from '../../model/user/user';
 import {RoleType} from '../../model/user/role-type';
+import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 
 @Injectable()
 export class UserHub {
@@ -11,6 +12,12 @@ export class UserHub {
    * Fetches all active users.
    */
   public getActiveUsers = () => this.userService.getActiveUsers();
+
+  /**
+   * Searches users by given criteria
+   * @param {UserSearchCriteria} criteria
+   */
+  public searchUsers = (criteria: UserSearchCriteria) => this.userService.search(criteria);
 
   /**
    * Fetches customers which have give role

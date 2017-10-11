@@ -10,7 +10,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.types.ExternalRoleType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.exception.NonUniqueException;
-import fi.hel.allu.model.domain.ExternalUser;
+import fi.hel.allu.model.domain.user.ExternalUser;
 import fi.hel.allu.model.postgres.ExceptionResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;

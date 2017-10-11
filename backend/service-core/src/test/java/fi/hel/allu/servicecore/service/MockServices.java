@@ -9,6 +9,7 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;

@@ -19,6 +19,8 @@ import {NotificationService} from '../../../../src/service/notification/notifica
 import {ErrorInfo} from '../../../../src/service/ui-state/error-info';
 import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
 import {findTranslation} from '../../../../src/util/translations';
+import {UserHub} from '../../../../src/service/user/user-hub';
+import {UserSearchCriteria} from '../../../../src/model/user/user-search-criteria';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -45,6 +47,10 @@ const validTask = {
   description: 'some description here'
 };
 
+class UserHubMock {
+  searchUsers(criteria: UserSearchCriteria) { return Observable.of([]); };
+}
+
 class SupervisionTaskStoreMock {
   public tasks$ = new Subject<Array<SupervisionTask>>();
 
@@ -68,6 +74,7 @@ describe('SupervisionComponent', () => {
   let supervisionTaskStore: SupervisionTaskStoreMock;
   let de: DebugElement;
   let currentUserMock = CurrentUserMock.create(true, true);
+  let userHub: UserHubMock;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -82,7 +89,8 @@ describe('SupervisionComponent', () => {
       providers: [
         {provide: ApplicationState, useClass: ApplicationStateMock},
         {provide: SupervisionTaskStore, useClass: SupervisionTaskStoreMock},
-        {provide: CurrentUser, useValue: currentUserMock}
+        {provide: CurrentUser, useValue: currentUserMock},
+        {provide: UserHub, useClass: UserHubMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
@@ -92,6 +100,7 @@ describe('SupervisionComponent', () => {
   beforeEach(() => {
     supervisionTaskStore = TestBed.get(SupervisionTaskStore) as SupervisionTaskStoreMock;
     applicationState = TestBed.get(ApplicationState) as ApplicationStateMock;
+    userHub = TestBed.get(UserHub) as UserHubMock;
     fixture = TestBed.createComponent(SupervisionTaskComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
@@ -226,6 +235,13 @@ describe('SupervisionComponent', () => {
     const error = de.query(By.css('.mat-error')).nativeElement;
     expect(error).toBeDefined();
     expect(error.textContent).toMatch(findTranslation('supervision.task.field.plannedFinishingTimeInThePast'));
+  }));
+
+  it('should preset supervisor when creating new task', fakeAsync(() => {
+    const preferredSupervisor = new User(52);
+    spyOn(userHub, 'searchUsers').and.returnValue(Observable.of([preferredSupervisor]));
+    patchValueAndInit({});
+    expect(comp.form.value.handlerId).toEqual(preferredSupervisor.id);
   }));
 
   afterEach(() => {

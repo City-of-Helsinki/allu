@@ -1,7 +1,8 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.RoleType;
-import fi.hel.allu.model.domain.User;
+import fi.hel.allu.model.domain.user.User;
+import fi.hel.allu.common.domain.UserSearchCriteria;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.UserMapper;
@@ -40,6 +41,12 @@ public class UserService {
   public List<UserJson> findAllUsers() {
     ResponseEntity<User[]> userResults = restTemplate.getForEntity(
         applicationProperties.getUserListingUrl(), User[].class);
+    return mapUsers(userResults.getBody());
+  }
+
+  public List<UserJson> search(UserSearchCriteria usc) {
+    ResponseEntity<User[]> userResults = restTemplate.postForEntity(
+        applicationProperties.getUserSearchUrl(), usc, User[].class);
     return mapUsers(userResults.getBody());
   }
 

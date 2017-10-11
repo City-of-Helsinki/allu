@@ -2,7 +2,7 @@ package fi.hel.allu.model.controller;
 
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.UserDao;
-import fi.hel.allu.model.domain.User;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.testUtils.TestCommon;
 import fi.hel.allu.model.testUtils.WebTestCommon;
 import org.junit.Assert;

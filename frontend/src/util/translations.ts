@@ -442,6 +442,9 @@ export const translations = {
       ROLE_INVOICING: 'Laskutus',
       ROLE_VIEW: 'Katselu',
       ROLE_ADMIN: 'Ylläpito'
+    },
+    error: {
+      search: 'Käyttäjien etsiminen epäonnistui'
     }
   },
   externalUser: {

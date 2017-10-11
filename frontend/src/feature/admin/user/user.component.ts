@@ -70,7 +70,7 @@ export class UserComponent implements OnInit {
     this.submitted = true;
     this.userHub.saveUser(user).subscribe(savedUser => {
       this.submitted = false;
-      this.userForm.setValue(savedUser);
+      this.userForm.patchValue(savedUser);
       this.router.navigate(['/admin/user-list']);
     });
   }

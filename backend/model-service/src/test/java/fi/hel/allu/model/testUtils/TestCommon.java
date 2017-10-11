@@ -7,6 +7,7 @@ import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.ProjectDao;
 import fi.hel.allu.model.dao.UserDao;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.user.User;
 import fi.hel.allu.model.service.LocationService;
 
 import org.geolatte.geom.Geometry;
