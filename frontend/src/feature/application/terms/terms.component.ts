@@ -1,7 +1,7 @@
 import {Component, OnInit, Input} from '@angular/core';
 import {FormBuilder, FormGroup, FormControl} from '@angular/forms';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {MdDialogRef, MdDialog} from '@angular/material';
+import {MatDialogRef, MatDialog} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import {DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG} from '../default-text/default-text-modal.component';
 import {DefaultText} from '../../../model/application/cable-report/default-text';
@@ -27,10 +27,10 @@ export class TermsComponent implements OnInit {
   defaultTexts: Array<DefaultText> = [];
 
   private termsControl: FormControl;
-  private dialogRef: MdDialogRef<DefaultTextModalComponent>;
+  private dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
   constructor(private fb: FormBuilder,
-              private dialog: MdDialog,
+              private dialog: MatDialog,
               private applicationHub: ApplicationHub) {}
 
   ngOnInit(): void {

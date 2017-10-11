@@ -1,7 +1,7 @@
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MdCardModule} from '@angular/material';
+import {MatCardModule} from '@angular/material';
 import {ContactComponent} from '../../../../../src/feature/application/info/contact/contact.component';
 import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
 import {ApplicationState} from '../../../../../src/service/application/application-state';
@@ -53,7 +53,7 @@ describe('ContactComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AlluCommonModule, ReactiveFormsModule, MdCardModule],
+      imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
       declarations: [ContactComponent],
       providers: [
         {provide: ApplicationState, useClass: ApplicationStateMock},

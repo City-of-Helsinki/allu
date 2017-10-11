@@ -3,9 +3,9 @@
     <div class="col m12 col-centered">
         <div fileDrop (onFileDrop)="onFileDrop($event)" (onFileOver)="fileOverDropzone($event)"
              class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
-            <button md-raised-button type="button" color="primary" (click)="addNewAttachment()">
+            <button mat-raised-button type="button" color="primary" (click)="addNewAttachment()">
                 LISÄÄ LIITE
-                <md-icon>file_upload</md-icon>
+                <mat-icon>file_upload</mat-icon>
             </button>
         </div>
     </div>
@@ -17,14 +17,14 @@
         </li>
 
         <li *ngFor="let attachment of commonAttachments; let i = index;">
-            <md-card class="slim-card">
+            <mat-card class="slim-card">
                 <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
                     <div class="clickable" (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
                 </div>
                 <div *ngIf="attachment.id !== undefined">
                     <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
                 </div>
-                <md-card-content class="card-content">
+                <mat-card-content class="card-content">
                     <div>
                         <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
                     </div>
@@ -38,8 +38,8 @@
                     <div>
                         {{attachment.description}}
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </li>
         <li>
             <default-attachments [selectedAttachments]="defaultAttachments" [applicationType]="application.type"

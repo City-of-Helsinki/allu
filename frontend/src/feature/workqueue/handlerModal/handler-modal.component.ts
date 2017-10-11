@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 
 import {User} from '../../../model/user/user';
 import {UserHub} from '../../../service/user/user-hub';
@@ -15,7 +15,7 @@ export class HandlerModalComponent implements OnInit {
   allUsers: Array<User>;
   selectedUser: User;
 
-  constructor(public dialogRef: MdDialogRef<HandlerModalComponent>,
+  constructor(public dialogRef: MatDialogRef<HandlerModalComponent>,
               private userHub: UserHub,
               private currentUser: CurrentUser) { }
 

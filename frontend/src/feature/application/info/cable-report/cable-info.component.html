@@ -1,45 +1,49 @@
-<md-card>
-    <md-card-title>Johtotiedot</md-card-title>
-    <md-card-content>
+<mat-card>
+    <mat-card-title>Johtotiedot</mat-card-title>
+    <mat-card-content>
         <div [formGroup]="cableInfoForm">
             <div class="row form-group">
                 <div class="col m4">
-                    <md-select formControlName="selectedCableInfoTypes" [multiple]="true"
-                               placeholder="Valitse tyyppi*" class="input-full-width">
-                        <md-option *ngFor="let type of cableInfoTypes" value="{{type}}">{{['defaultText.type', type] | translation}}</md-option>
-                    </md-select>
+                    <mat-form-field class="input-full-width">
+                        <mat-select formControlName="selectedCableInfoTypes" [multiple]="true"
+                                   placeholder="Valitse tyyppi*" class="input-full-width">
+                            <mat-option *ngFor="let type of cableInfoTypes" value="{{type}}">{{['defaultText.type', type] | translation}}</mat-option>
+                        </mat-select>
+                    </mat-form-field>
                 </div>
                 <div class="col m2">
-                    <md-form-field class="input-full-width">
-                        <input mdInput type="number" formControlName="mapExtractCount" placeholder="Karttaotteiden määrä"/>
-                    </md-form-field>
+                    <mat-form-field class="input-full-width">
+                        <input matInput type="number" formControlName="mapExtractCount" placeholder="Karttaotteiden määrä"/>
+                    </mat-form-field>
                 </div>
             </div>
             <div formArrayName="cableInfoEntries" class="row form-group">
                 <div class="col m8" *ngFor="let infoEntry of cableInfoForm.controls.cableInfoEntries.controls; let index=index">
                     <div [formGroupName]="index" class="no-border" *ngIf="isSelected(index)">
-                        <md-card-subtitle>{{['defaultText.type', infoEntry.value.type] | translation}}</md-card-subtitle>
+                        <mat-card-subtitle>{{['defaultText.type', infoEntry.value.type] | translation}}</mat-card-subtitle>
 
                         <div *ngIf="!readonly" class="col m10">
-                            <md-select class="input-full-width" placeholder="Vakiotekstit" (change)="addDefaultText(index, $event.value)">
-                                <md-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]" [value]="defaultText.text">
-                                    {{defaultText.text}}
-                                </md-option>
-                            </md-select>
+                            <mat-form-field class="input-full-width">
+                                <mat-select class="input-full-width" placeholder="Vakiotekstit" (change)="addDefaultText(index, $event.value)">
+                                    <mat-option *ngFor="let defaultText of defaultTexts[infoEntry.value.type]" [value]="defaultText.text">
+                                        {{defaultText.text}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div *ngIf="!readonly" class="col m2">
-                            <button md-raised-button type="button" color="primary"
+                            <button mat-raised-button type="button" color="primary"
                                     (click)="editDefaultTexts(infoEntry.value.type)">MUOKKAA</button>
                         </div>
 
                         <div class="col m12">
-                            <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" placeholder="Lisätietoja"></textarea>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="additionalInfo" placeholder="Lisätietoja"></textarea>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </md-card-content>
-</md-card>
+    </mat-card-content>
+</mat-card>

@@ -16,12 +16,12 @@
         [class.selected]="i===locationState.editIndex" class="clickable row-highlight"
         (click)="editLocation(i)">
         <th>
-            <button type="button" *ngIf="!readonly" md-icon-button (click)="remove()"><md-icon>clear</md-icon></button>
-            <md-icon class="icon-middle" *ngIf="location.underpass"
-                     [mdTooltip]="'location.underpass' | translation"
-                     mdTooltipPosition="above">
+            <button type="button" *ngIf="!readonly" mat-icon-button (click)="remove()"><mat-icon>clear</mat-icon></button>
+            <mat-icon class="icon-middle" *ngIf="location.underpass"
+                     [matTooltip]="'location.underpass' | translation"
+                     matTooltipPosition="above">
                 call_missed_outgoing
-            </md-icon>
+            </mat-icon>
         </th>
         <td>{{location.locationKey}}</td>
         <td>{{location.uiStartTime}}</td>

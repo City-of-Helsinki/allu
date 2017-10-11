@@ -21,72 +21,72 @@
 
     <div class="row">
         <div class="col m12">
-            <md-card>
-                <md-card-title>Johtoselvityksen tiedot</md-card-title>
-                <md-card-content>
+            <mat-card>
+                <mat-card-title>Johtoselvityksen tiedot</mat-card-title>
+                <mat-card-content>
                     <div class="row form-group">
                         <div class="col m12">
-                            <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="workDescription" placeholder="Työn kuvaus"></textarea>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="workDescription" placeholder="Työn kuvaus"></textarea>
+                            </mat-form-field>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div formGroupName="reportTimes">
                             <div class="col m3">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Arvioitu aloitus*"
-                                           [mdDatepicker]="startTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #startTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="startTime" placeholder="Arvioitu aloitus*"
+                                           [matDatepicker]="startTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #startTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="applicationForm" field="reportTimes" hasError="startBeforeEnd">
                                             {{'application.cableReport.field.startBeforeEnd' | translation}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                             <div class="col m3">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Arvioitu lopetus*"
-                                           [mdDatepicker]="endTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="endTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #endTimePicker></md-datepicker>
-                                </md-form-field>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="endTime" placeholder="Arvioitu lopetus*"
+                                           [matDatepicker]="endTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #endTimePicker></mat-datepicker>
+                                </mat-form-field>
                             </div>
                         </div>
                         <div class="col m3">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="validityTime" placeholder="Voimassaolo" [mdDatepicker]="validityTimePicker"/>
-                                <md-datepicker-toggle mdSuffix [for]="validityTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                <md-datepicker #validityTimePicker></md-datepicker>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="validityTime" placeholder="Voimassaolo" [matDatepicker]="validityTimePicker"/>
+                                <mat-datepicker-toggle matSuffix [for]="validityTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                <mat-datepicker #validityTimePicker></mat-datepicker>
+                            </mat-form-field>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m2">
-                            <md-checkbox formControlName="cableSurveyRequired">Johtokartoitettava</md-checkbox>
+                            <mat-checkbox formControlName="cableSurveyRequired">Johtokartoitettava</mat-checkbox>
                         </div>
                         <div class="col m2">
-                            <md-checkbox formControlName="mapUpdated">Kartta päivitetty</md-checkbox>
+                            <mat-checkbox formControlName="mapUpdated">Kartta päivitetty</mat-checkbox>
                         </div>
                         <div class="col m2">
-                            <md-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</md-checkbox>
+                            <mat-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</mat-checkbox>
                         </div>
                     </div>
                     <div class="row form-group">
                         <div class="col m2">
-                            <md-checkbox formControlName="constructionWork">Rakentaminen</md-checkbox>
+                            <mat-checkbox formControlName="constructionWork">Rakentaminen</mat-checkbox>
                         </div>
                         <div class="col m2">
-                            <md-checkbox formControlName="maintenanceWork">Kunnossapito</md-checkbox>
+                            <mat-checkbox formControlName="maintenanceWork">Kunnossapito</mat-checkbox>
                         </div>
                         <div class="col m2">
-                            <md-checkbox formControlName="emergencyWork">Hätätyö</md-checkbox>
+                            <mat-checkbox formControlName="emergencyWork">Hätätyö</mat-checkbox>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
     </div>
 

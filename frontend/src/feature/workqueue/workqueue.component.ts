@@ -2,7 +2,7 @@ import {Component, OnDestroy, OnInit, ViewContainerRef} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {ConnectableObservable, Subscription} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {MdDialog, MdDialogConfig, MdDialogRef, MdTabChangeEvent} from '@angular/material';
+import {MatDialog, MatDialogConfig, MatDialogRef, MatTabChangeEvent} from '@angular/material';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
@@ -31,7 +31,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   applications: ConnectableObservable<Array<Application>>;
   tabs = EnumUtil.enumValues(WorkQueueTab);
   tab = WorkQueueTab.OWN;
-  dialogRef: MdDialogRef<HandlerModalComponent>;
+  dialogRef: MatDialogRef<HandlerModalComponent>;
   private selectedApplicationIds = new Array<number>();
   private applicationQuery = new BehaviorSubject<ApplicationSearchQuery>(new ApplicationSearchQuery());
   private sort: Sort;
@@ -40,7 +40,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
 
   constructor(private applicationHub: ApplicationHub,
               private workqueueHub: WorkQueueHub,
-              private dialog: MdDialog,
+              private dialog: MatDialog,
               private viewContainerRef: ViewContainerRef,
               private userHub: UserHub,
               private currentUser: CurrentUser) { }
@@ -75,7 +75,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     this.selectedApplicationIds = applicationIds;
   }
 
-  tabSelected(event: MdTabChangeEvent) {
+  tabSelected(event: MatTabChangeEvent) {
     this.tab = WorkQueueTab[this.tabs[event.index]];
   }
 
@@ -85,7 +85,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   openHandlerModal() {
-    let config = new MdDialogConfig();
+    let config = new MatDialogConfig();
     config.viewContainerRef = this.viewContainerRef;
 
     this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, config);

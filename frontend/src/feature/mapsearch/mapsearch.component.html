@@ -1,8 +1,8 @@
-<md-sidenav-container>
-    <md-sidenav mode="over" [opened]="sidenavOpen">
+<mat-sidenav-container>
+    <mat-sidenav mode="over" [opened]="sidenavOpen">
         <div class="sidenav-header flex-container">
             <h1 class="flex-item">Tarkennettu haku</h1>
-            <button type="button" class="btn-right" (click)="hideAdvancedSearch()"><md-icon>clear</md-icon></button>
+            <button type="button" class="btn-right" (click)="hideAdvancedSearch()"><mat-icon>clear</mat-icon></button>
         </div>
         <div class="row">
             <div class="col m12">
@@ -14,21 +14,21 @@
                 <application-list>Ladataan hakemuksia</application-list>
             </div>
         </div>
-    </md-sidenav>
+    </mat-sidenav>
     <div class="mapcontainer">
         <div *ngIf="!sidenavOpen" class="map-overlay">
             <searchbar barType="SIMPLE" (onShowAdvanced)="showAdvancedSearch()"></searchbar>
         </div>
         <map [zoom]="true" [draw]="true" [selection]="true">Ladataan karttaa</map>
         <div class="map-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-            <button md-fab color="accent" [routerLink]="['/applications/location']"
-                    mdTooltip="Uusi hakemus" mdTooltipPosition="above">
-                <md-icon>filter_none</md-icon>
+            <button mat-fab color="accent" [routerLink]="['/applications/location']"
+                    matTooltip="Uusi hakemus" matTooltipPosition="above">
+                <mat-icon>filter_none</mat-icon>
             </button>
-            <button md-fab color="accent" [routerLink]="['/projects/edit']"
-                    mdTooltip="Uusi hanke" mdTooltipPosition="above">
-                <md-icon>line_style</md-icon>
+            <button mat-fab color="accent" [routerLink]="['/projects/edit']"
+                    matTooltip="Uusi hanke" matTooltipPosition="above">
+                <mat-icon>line_style</mat-icon>
             </button>
         </div>
     </div>
-</md-sidenav-container>
+</mat-sidenav-container>

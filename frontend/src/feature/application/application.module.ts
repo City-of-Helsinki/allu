@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {RouterModule} from '@angular/router';
-import {MdCardModule, MdToolbarModule, MdDialogModule, MdSlideToggleModule} from '@angular/material';
+import {MatCardModule, MatToolbarModule, MatDialogModule, MatSlideToggleModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -48,10 +48,10 @@ import {SupervisionModule} from './supervision/supervision.module';
     RouterModule.forChild(applicationRoutes),
     FormsModule,
     ReactiveFormsModule,
-    MdCardModule,
-    MdToolbarModule,
-    MdDialogModule,
-    MdSlideToggleModule,
+    MatCardModule,
+    MatToolbarModule,
+    MatDialogModule,
+    MatSlideToggleModule,
     MapModule,
     ProgressBarModule,
     LocationModule,

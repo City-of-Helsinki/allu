@@ -1,13 +1,15 @@
-<h1 md-dialog-title>Siirrä käsittelijälle</h1>
-<div md-dialog-content>
+<h1 mat-dialog-title>Siirrä käsittelijälle</h1>
+<div mat-dialog-content>
     <div class="col s2">
-        <md-select [(ngModel)]="selectedUser" class="input-full-width" placeholder="Hakemuksen käsittelijä" >
-            <md-option value="">Ei käsittelijää</md-option>
-            <md-option *ngFor="let user of allUsers" [value]="user">{{user.realName}}</md-option>
-        </md-select>
+        <mat-form-field class="input-full-width">
+            <mat-select [(ngModel)]="selectedUser" class="input-full-width" placeholder="Hakemuksen käsittelijä" >
+                <mat-option value="">Ei käsittelijää</mat-option>
+                <mat-option *ngFor="let user of allUsers" [value]="user">{{user.realName}}</mat-option>
+            </mat-select>
+        </mat-form-field>
     </div>
 </div>
-<div md-dialog-actions>
-    <button md-raised-button type="button" color="primary" (click)="confirm()">Hyväksy</button>
-    <button md-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
+<div mat-dialog-actions>
+    <button mat-raised-button type="button" color="primary" (click)="confirm()">Hyväksy</button>
+    <button mat-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
 </div>

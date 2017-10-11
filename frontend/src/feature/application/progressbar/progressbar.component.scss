@@ -1,7 +1,7 @@
 @import '../../../assets/colors';
 
 :host {
-  md-toolbar {
+  mat-toolbar {
     background: mat-color($allu-primary, 50);
     color: mat-color($allu-primary, 500);
     margin-bottom: 0px;

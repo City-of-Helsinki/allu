@@ -1,15 +1,15 @@
 <div class="main-content">
-    <md-card>
-        <md-card-title>
+    <mat-card>
+        <mat-card-title>
             <h1>{{['attachment.type', attachmentType] | translation}}</h1>
-        </md-card-title>
-        <md-card-content>
+        </mat-card-title>
+        <mat-card-content>
             <form [formGroup]="attachmentForm">
                 <div class="row">
                     <div class="col m5">
-                        <md-form-field class="input-full-width">
-                            <input mdInput type="text" formControlName="name" placeholder="Nimi">
-                        </md-form-field>
+                        <mat-form-field class="input-full-width">
+                            <input matInput type="text" formControlName="name" placeholder="Nimi">
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="row">
@@ -24,20 +24,22 @@
                 </div>
                 <div class="row">
                     <div class="col m6">
-                        <md-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
-                            <md-option *ngFor="let area of areas | async" [value]="area.id">
-                                {{area.name}}
-                            </md-option>
-                        </md-select>
+                        <mat-form-field class="input-full-width">
+                            <mat-select formControlName="fixedLocationId" class="input-full-width" placeholder="Alue">
+                                <mat-option *ngFor="let area of areas | async" [value]="area.id">
+                                    {{area.name}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col m6" *ngIf="!file">
                         <div fileDrop (onFileDrop)="attachmentSelected($event)" (onFileOver)="fileOverDropzone($event)"
                              class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
-                            <button md-raised-button type="button" color="primary" (click)="realFileInput.click()">
+                            <button mat-raised-button type="button" color="primary" (click)="realFileInput.click()">
                                 LISÄÄ LIITE
-                                <md-icon>file_upload</md-icon>
+                                <mat-icon>file_upload</mat-icon>
                             </button>
                         </div>
 
@@ -46,22 +48,22 @@
                     </div>
                     <div class="col m6" *ngIf="file">
                         <div class="file-download-card">
-                            <button type="button" md-icon-button (click)="download()">
-                                <md-icon color="primary">attach_file</md-icon>
+                            <button type="button" mat-icon-button (click)="download()">
+                                <mat-icon color="primary">attach_file</mat-icon>
                             </button>
                             <span>{{attachmentForm.value.name}}</span>
                         </div>
-                        <button type="button" md-icon-button (click)="remove()" color="accent"><md-icon>clear</md-icon></button>
+                        <button type="button" mat-icon-button (click)="remove()" color="accent"><mat-icon>clear</mat-icon></button>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col m12">
-                        <button md-raised-button type="button" color="primary"
+                        <button mat-raised-button type="button" color="primary"
                                 (click)="save()" [disabled]="!attachmentForm.valid">TALLENNA</button>
-                        <button md-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
+                        <button mat-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
                     </div>
                 </div>
             </form>
-        </md-card-content>
-    </md-card>
+        </mat-card-content>
+    </mat-card>
 </div>

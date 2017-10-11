@@ -1,10 +1,10 @@
-<h1 md-dialog-title>Asiakastiedot</h1>
+<h1 mat-dialog-title>Asiakastiedot</h1>
 <form [formGroup]="customerForm" (ngSubmit)="onSubmit(customerForm.value)">
-    <div md-dialog-content>
+    <div mat-dialog-content>
         <customer-info [form]="customerForm"></customer-info>
     </div>
-    <div md-dialog-actions>
-        <button type="submit" md-raised-button color="primary" [disabled]="!customerForm.valid">TALLENNA</button>
-        <button type="button" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    <div mat-dialog-actions>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!customerForm.valid">TALLENNA</button>
+        <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
     </div>
 </form>

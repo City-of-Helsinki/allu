@@ -1,17 +1,17 @@
 <form [formGroup]="recurringForm">
-    <md-radio-group formControlName="type" class="vertical-radio-group">
-        <md-radio-button value="none" class="recurring-radio-button">Ei toistu</md-radio-button>
-        <md-radio-button value="forNow" class="recurring-radio-button">Toistaiseksi vuosittain toistuva</md-radio-button>
-        <md-radio-button value="until" class="recurring-radio-button">
+    <mat-radio-group formControlName="type" class="vertical-radio-group">
+        <mat-radio-button value="none" class="recurring-radio-button">Ei toistu</mat-radio-button>
+        <mat-radio-button value="forNow" class="recurring-radio-button">Toistaiseksi vuosittain toistuva</mat-radio-button>
+        <mat-radio-button value="until" class="recurring-radio-button">
             <span>Toistuu vuosittain</span>
             <span>
-                <md-form-field floatPlaceholder="never" class="error-overflow">
-                    <input type="number" mdInput formControlName="endYear" placeholder="Loppuvuosi"
+                <mat-form-field floatPlaceholder="never" class="error-overflow">
+                    <input type="number" matInput formControlName="endYear" placeholder="Loppuvuosi"
                            class="year-input" min="{{minYear}}" max="{{maxYear}}" step="1"/>
-                    <md-error>{{'application.field.recurringEndYearNotBetween' | translation}}</md-error>
-                </md-form-field>
+                    <mat-error>{{'application.field.recurringEndYearNotBetween' | translation}}</mat-error>
+                </mat-form-field>
             </span>
             <span>asti</span>
-        </md-radio-button>
-    </md-radio-group>
+        </mat-radio-button>
+    </mat-radio-group>
 </form>

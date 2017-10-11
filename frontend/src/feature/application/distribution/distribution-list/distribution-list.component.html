@@ -4,8 +4,8 @@
             <thead>
             <tr>
                 <th>
-                    <button type="button" md-icon-button (click)="add()" *ngIf="!readonly">
-                        <md-icon>add</md-icon>
+                    <button type="button" mat-icon-button (click)="add()" *ngIf="!readonly">
+                        <mat-icon>add</mat-icon>
                     </button>
                 </th>
                 <th>Nimi</th>
@@ -18,18 +18,18 @@
                 <td>
                     <div *ngIf="!readonly">
                         <span>
-                            <button type="button" md-icon-button (click)="remove(i)">
-                                <md-icon>clear</md-icon>
+                            <button type="button" mat-icon-button (click)="remove(i)">
+                                <mat-icon>clear</mat-icon>
                             </button>
                         </span>
                         <span *ngIf="!distribution.value.edit">
-                            <button type="button" md-icon-button (click)="edit(distribution)">
-                                <md-icon>edit</md-icon>
+                            <button type="button" mat-icon-button (click)="edit(distribution)">
+                                <mat-icon>edit</mat-icon>
                             </button>
                         </span>
                         <span *ngIf="distribution.value.edit">
-                            <button type="button" md-icon-button (click)="save(distribution)" [disabled]="!distributionRows.controls[i].valid">
-                                <md-icon>save</md-icon>
+                            <button type="button" mat-icon-button (click)="save(distribution)" [disabled]="!distributionRows.controls[i].valid">
+                                <mat-icon>save</mat-icon>
                             </button>
                         </span>
                     </div>

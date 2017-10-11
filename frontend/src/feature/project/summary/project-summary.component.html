@@ -1,8 +1,8 @@
 <div class="row">
     <div class="col m6">
-        <md-card>
-            <md-card-title>Hankkeen perustiedot</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Hankkeen perustiedot</mat-card-title>
+            <mat-card-content>
                 <div class="row">
                     <div class="col m6 info-field-group">
                         <div>
@@ -49,12 +49,12 @@
                 </div>
                 <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
                     <div class="col m12">
-                        <button md-raised-button type="button" color="primary"
+                        <button mat-raised-button type="button" color="primary"
                                 [routerLink]="['/projects', project.id, 'edit']">MUOKKAA</button>
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
     <div class="col m6">
         <div class="mapcontainer">
@@ -64,9 +64,9 @@
 </div>
 <div class="row">
     <div class="col m3">
-        <md-card>
-            <md-card-title>Hakemukset</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Hakemukset</mat-card-title>
+            <mat-card-content>
                 <div class="row">
                     <div class="col m12 info-field-group">
                         <label class="info-label">Aktiivisia</label>
@@ -89,13 +89,13 @@
                         </div>
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
     <div class="col m3">
-        <md-card>
-            <md-card-title>Liittyvät hankkeet</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Liittyvät hankkeet</mat-card-title>
+            <mat-card-content>
                 <div class="row">
                     <div class="col m12 info-field-group">
                         <div *ngIf="parentProjects.length === 0 && childProjects.length === 0">Hankkeeseen ei liity muita hankkeita</div>
@@ -111,25 +111,25 @@
                         </div>
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
     <div class="col m6">
-        <md-card>
-            <md-card-title>Historia</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Historia</mat-card-title>
+            <mat-card-content>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
 </div>
 <div class="row">
     <div class="col m12">
-        <md-card>
-            <md-card-title>Sisäiset kommentit</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Sisäiset kommentit</mat-card-title>
+            <mat-card-content>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam gravida venenatis accumsan.
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
 </div>

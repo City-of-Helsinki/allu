@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {Router} from '@angular/router';
-import {MdDialog} from '@angular/material';
+import {MatDialog} from '@angular/material';
 
 import {Application} from '../../model/application/application';
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
@@ -29,7 +29,7 @@ export class DecisionActionsComponent {
   constructor(private applicationState: ApplicationState,
               private decisionHub: DecisionHub,
               private router: Router,
-              private dialog: MdDialog) {}
+              private dialog: MatDialog) {}
 
   public decisionProposal(proposalType: string): void {
     let dialogRef = this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, DECISION_PROPOSAL_MODAL_CONFIG);

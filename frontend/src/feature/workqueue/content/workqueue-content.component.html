@@ -3,7 +3,7 @@
     <thead>
     <tr>
         <th>
-            <md-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></md-checkbox>
+            <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
         </th>
         <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
         <th sortBy="applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
@@ -24,7 +24,7 @@
             [class.row-highlight]="i===hoveredRowIndex" (click)="goToApplication($event.target.cellIndex, row.application)"
             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
             <td>
-                <md-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></md-checkbox>
+                <mat-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></mat-checkbox>
             </td>
             <td class="clickable">{{row.application.handler?.realName}}</td>
             <td class="clickable">{{row.application.applicationId}}</td>
@@ -41,7 +41,7 @@
             <td class="clickable">{{row.application.uiStartTime}}</td>
             <td class="clickable">
                     <span *ngIf="row.application.comments.length">
-                        <button md-raised-button type="button" color="primary" (click)="showComments(row.application.id)">NÄYTÄ</button>
+                        <button mat-raised-button type="button" color="primary" (click)="showComments(row.application.id)">NÄYTÄ</button>
                     </span>
             </td>
         </tr>
@@ -52,12 +52,12 @@
             <td></td>
             <td colspan="1" class="row-title">Tunnisteet</td>
             <td colspan="10">
-                <md-chip-list>
-                    <md-chip *ngFor="let tag of row.application.applicationTags" [selected]="tagSelected(tag.type)"
+                <mat-chip-list>
+                    <mat-chip *ngFor="let tag of row.application.applicationTags" [selected]="tagSelected(tag.type)"
                              class="accent-chip slim-chip" color="accent">
                         {{['application.tag.type', tag.type] | translation}}
-                    </md-chip>
-                </md-chip-list>
+                    </mat-chip>
+                </mat-chip-list>
             </td>
         </tr>
     </ng-container>

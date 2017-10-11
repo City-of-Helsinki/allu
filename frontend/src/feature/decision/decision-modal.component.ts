@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup} from '@angular/forms';
 
 import {ApplicationStatusChange} from '../../model/application/application-status-change';
@@ -24,7 +24,7 @@ export class DecisionModalComponent implements OnInit {
 
   decisionForm: FormGroup;
 
-  constructor(public dialogRef: MdDialogRef<DecisionModalComponent>,
+  constructor(public dialogRef: MatDialogRef<DecisionModalComponent>,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {

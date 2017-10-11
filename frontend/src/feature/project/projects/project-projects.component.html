@@ -1,20 +1,20 @@
 <div class="row valign-wrapper" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
     <div class="col s6 valign">
-        <a md-raised-button type="button" color="primary"
+        <a mat-raised-button type="button" color="primary"
            routerLink="/projects/edit" [queryParams]="{parentProject: project.id}">UUSI</a>
-        <button md-raised-button type="button" color="primary" (click)="remove()">POISTA</button>
+        <button mat-raised-button type="button" color="primary" (click)="remove()">POISTA</button>
     </div>
     <div class="col s6 valign-wrapper">
         <div class="col s2 valign input-field-label">Liitä hanke:</div>
         <div class="col s10">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" [readonly]="readonly"
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" [readonly]="readonly"
                        [autocompletion]="matchingProjects"
                        minTermLength="1"
                        nameField="idWithName"
                        (onSearchChange)="onIdentifierSearchChange($event)"
                        (onSelection)="add($event)" placeholder="Hankkeen tunnus"/>
-            </md-form-field>
+            </mat-form-field>
         </div>
     </div>
 </div>
@@ -24,7 +24,7 @@
             <thead>
             <tr>
                 <th>
-                    <md-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></md-checkbox>
+                    <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
                 </th>
                 <th>Lisääjä</th>
                 <th sortBy="id" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
@@ -39,7 +39,7 @@
             <tbody>
             <tr *ngFor="let row of sortedProjectRows" class="clickable row-highlight" (click)="goToInfo($event.target.cellIndex, row)">
                 <td>
-                    <md-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></md-checkbox>
+                    <mat-checkbox [ngModel]="row.selected" (change)="checkSingle(row)"></mat-checkbox>
                 </td>
                 <td>-</td>
                 <td>{{row.content.id}} <br></td>

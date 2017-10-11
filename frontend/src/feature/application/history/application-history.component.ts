@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
-import {MdDialog} from '@angular/material';
+import {MatDialog} from '@angular/material';
 
 import {HistoryHub} from '../../../service/history/history-hub';
 import {ApplicationState} from '../../../service/application/application-state';
@@ -31,7 +31,7 @@ export class ApplicationHistoryComponent implements OnInit {
               private applicationHub: ApplicationHub,
               private historyHub: HistoryHub,
               private userHub: UserHub,
-              private dialog: MdDialog,
+              private dialog: MatDialog,
               protected formatter: ApplicationHistoryFormatter) {}
 
   ngOnInit(): void {

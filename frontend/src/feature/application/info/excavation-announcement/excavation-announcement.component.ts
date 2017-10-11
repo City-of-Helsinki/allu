@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
-import {MdDatepicker} from '@angular/material';
+import {MatDatepicker} from '@angular/material';
 import {Application} from '../../../../model/application/application';
 import {ApplicationHub} from '../../../../service/application/application-hub';
 import {AbstractControlWarn, ComplexValidator} from '../../../../util/complex-validator';
@@ -59,7 +59,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.applicationForm.patchValue({cableReportId: application.id});
   }
 
-  onValidityEndTimePickerClick(picker: MdDatepicker<Date>): void {
+  onValidityEndTimePickerClick(picker: MatDatepicker<Date>): void {
     if (this.validityEndTimeCtrl.warnings.inWinterTime) {
       Some(this.validityEndTimeCtrl.value)
         .map(date => TimeUtil.toWinterTimeEnd(date))

@@ -50,8 +50,8 @@ html, body{
 
 // Set up a default font and some padding to provide breathing room
 body {
-  font-family: $md-font-family;
-  font-size: $md-body-font-size-base;
+  font-family: $mat-font-family;
+  font-size: $mat-body-font-size-base;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -140,7 +140,7 @@ button.btn-huge {
   text-align: center;
 }
 
-md-dialog-container {
+mat-dialog-container {
   background: white;
   overflow: visible !important;
 }

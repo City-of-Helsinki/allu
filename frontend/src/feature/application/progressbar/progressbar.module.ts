@@ -1,12 +1,12 @@
 import {NgModule} from '@angular/core';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {ProgressbarComponent} from './progressbar.component';
-import {MdProgressBarModule} from '@angular/material';
+import {MatProgressBarModule} from '@angular/material';
 
 @NgModule({
   imports: [
     AlluCommonModule,
-    MdProgressBarModule
+    MatProgressBarModule
   ],
   declarations: [
     ProgressbarComponent

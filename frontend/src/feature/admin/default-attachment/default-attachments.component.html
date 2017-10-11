@@ -1,7 +1,7 @@
 <div class="main-content">
     <div class="row loose">
         <div class=" col s12">
-            <a md-raised-button type="button" color="primary" [routerLink]="['new']">UUSI</a>
+            <a mat-raised-button type="button" color="primary" [routerLink]="['new']">UUSI</a>
         </div>
     </div>
     <div class="row">
@@ -18,7 +18,7 @@
                 <tbody>
                 <tr *ngFor="let row of attachmentRows" class="clickable row-highlight" (click)="goToDetails($event.target.cellIndex, row)">
                     <td>
-                        <button md-icon-button type="button" color="primary" (click)="remove(row)"><md-icon>clear</md-icon></button>
+                        <button mat-icon-button type="button" color="primary" (click)="remove(row)"><mat-icon>clear</mat-icon></button>
                     </td>
                     <td>{{row.content.name}}</td>
                     <td>{{translateArray('application.type', row.content.applicationTypes) | commaSeparated}}</td>

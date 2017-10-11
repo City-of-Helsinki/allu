@@ -21,12 +21,12 @@
             </input-box>
         </div>
         <div class="col s3">
-            <button md-raised-button type="button" color="primary" (click)="search()">HAE</button>
+            <button mat-raised-button type="button" color="primary" (click)="search()">HAE</button>
         </div>
     </div>
     <div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
         <div class="col s12">
-            <button md-raised-button type="button" color="primary" (click)="newCustomer()">Lisää uusi asiakas</button>
+            <button mat-raised-button type="button" color="primary" (click)="newCustomer()">Lisää uusi asiakas</button>
         </div>
     </div>
     <div class="row" *ngIf="(customers | async)?.length > 0">

@@ -4,8 +4,8 @@
             <table class="bordered responsive-table">
                 <thead>
                     <th>
-                        <button type="button" md-icon-button (click)="add()" *ngIf="!readonly">
-                            <md-icon>add</md-icon>
+                        <button type="button" mat-icon-button (click)="add()" *ngIf="!readonly">
+                            <mat-icon>add</mat-icon>
                         </button>
                     </th>
                 </thead>
@@ -13,18 +13,18 @@
                     <tr [formGroupName]="i" *ngFor="let row of recipientRows.controls; let i=index" class="clickable row-highlight">
                         <td>
                             <span>
-                                <button type="button" md-icon-button (click)="remove(i)">
-                                    <md-icon>clear</md-icon>
+                                <button type="button" mat-icon-button (click)="remove(i)">
+                                    <mat-icon>clear</mat-icon>
                                 </button>
                             </span>
                             <span *ngIf="row.disabled">
-                                    <button type="button" md-icon-button (click)="edit(row)">
-                                        <md-icon>edit</md-icon>
+                                    <button type="button" mat-icon-button (click)="edit(row)">
+                                        <mat-icon>edit</mat-icon>
                                     </button>
                                 </span>
                             <span *ngIf="row.enabled">
-                                    <button type="button" md-icon-button (click)="save(row)" [disabled]="!row.valid">
-                                        <md-icon>save</md-icon>
+                                    <button type="button" mat-icon-button (click)="save(row)" [disabled]="!row.valid">
+                                        <mat-icon>save</mat-icon>
                                     </button>
                                 </span>
                         </td>

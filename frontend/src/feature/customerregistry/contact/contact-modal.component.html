@@ -1,57 +1,57 @@
-<h1 md-dialog-title>Yhteyshenkilö</h1>
+<h1 mat-dialog-title>Yhteyshenkilö</h1>
 <form [formGroup]="contactForm" (ngSubmit)="onSubmit(contactForm.value)">
-    <div md-dialog-content>
+    <div mat-dialog-content>
         <div class="row form-group">
             <div class="col m6">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
-                    <md-hint>
+                <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
+                    <mat-hint>
                         <field-error [form]="contactForm" field="name" hasError="required">{{'contact.field.nameMissing' | translation}}</field-error>
-                    </md-hint>
-                </md-form-field>
+                    </mat-hint>
+                </mat-form-field>
             </div>
         </div>
         <div class="row form-group">
             <div class="col m6">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
-                </md-form-field>
+                <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+                </mat-form-field>
             </div>
             <div class="col m3">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
-                    <md-hint>
+                <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                    <mat-hint>
                         <field-error [form]="contactForm" field="postalCode" hasError="pattern">{{'common.field.postalCode' | translation}}</field-error>
-                    </md-hint>
-                </md-form-field>
+                    </mat-hint>
+                </mat-form-field>
             </div>
             <div class="col m3">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
-                </md-form-field>
+                <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+                </mat-form-field>
             </div>
         </div>
         <div class="row form-group">
             <div class="col m6">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
-                    <md-hint>
+                <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                    <mat-hint>
                         <field-error [form]="contactForm" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
-                    </md-hint>
-                </md-form-field>
+                    </mat-hint>
+                </mat-form-field>
             </div>
             <div class="col m6">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
-                    <md-hint>
+                <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                    <mat-hint>
                         <field-error [form]="contactForm" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
-                    </md-hint>
-                </md-form-field>
+                    </mat-hint>
+                </mat-form-field>
             </div>
         </div>
     </div>
-    <div md-dialog-actions>
-        <button type="submit" md-raised-button color="primary" [disabled]="!contactForm.valid">TALLENNA</button>
-        <button type="button" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    <div mat-dialog-actions>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!contactForm.valid">TALLENNA</button>
+        <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
     </div>
 </form>

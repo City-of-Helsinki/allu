@@ -4,43 +4,43 @@
        (click)="tabChange(item.type)">
         <div [ngSwitch]="item.type">
             <div *ngSwitchCase="'BASIC_INFO'">
-                <md-icon class="mat-icon-36">list</md-icon>
+                <mat-icon class="mat-icon-36">list</mat-icon>
                 <div>Perustiedot</div>
             </div>
             <div *ngSwitchCase="'ATTACHMENTS'">
-                <md-icon class="mat-icon-36">attach_file</md-icon>
+                <mat-icon class="mat-icon-36">attach_file</mat-icon>
                 <div>Liitteet ({{item.count}})</div>
             </div>
             <div *ngSwitchCase="'INVOICING'">
-                <md-icon class="mat-icon-36">euro_symbol</md-icon>
+                <mat-icon class="mat-icon-36">euro_symbol</mat-icon>
                 <div>Laskutus</div>
             </div>
             <div *ngSwitchCase="'COMMENTS'">
-                <md-icon class="mat-icon-36">chat_bubble_outline</md-icon>
+                <mat-icon class="mat-icon-36">chat_bubble_outline</mat-icon>
                 <div>Kommentit ({{item.count}})</div>
             </div>
             <div *ngSwitchCase="'EMAIL'">
-                <md-icon class="mat-icon-36">email</md-icon>
+                <mat-icon class="mat-icon-36">email</mat-icon>
                 <div>Sähköposti</div>
             </div>
             <div *ngSwitchCase="'HISTORY'">
-                <md-icon class="mat-icon-36">history</md-icon>
+                <mat-icon class="mat-icon-36">history</mat-icon>
                 <div>Historia</div>
             </div>
             <div *ngSwitchCase="'DECISION'">
-                <md-icon class="mat-icon-36">pageview</md-icon>
+                <mat-icon class="mat-icon-36">pageview</mat-icon>
                 <div>Päätös</div>
             </div>
             <div *ngSwitchCase="'SUPERVISION'">
-                <md-icon class="mat-icon-36">search</md-icon>
+                <mat-icon class="mat-icon-36">search</mat-icon>
                 <div>Valvonta ({{item.count}})</div>
             </div>
             <div *ngSwitchCase="'APPLICATIONS'">
-                <md-icon class="mat-icon-36">filter_none</md-icon>
+                <mat-icon class="mat-icon-36">filter_none</mat-icon>
                 <div>Hakemukset ({{item.count}})</div>
             </div>
             <div *ngSwitchCase="'PROJECTS'">
-                <md-icon class="mat-icon-36">line_style</md-icon>
+                <mat-icon class="mat-icon-36">line_style</mat-icon>
                 <div>Hankkeet ({{item.count}})</div>
             </div>
         </div>

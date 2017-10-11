@@ -1,110 +1,114 @@
 <form [formGroup]="form">
     <div class="row form-group">
         <div class="col m6">
-            <md-select class="input-full-width" formControlName="type" placeholder="Valitse tyyppi*">
-                <md-option *ngFor="let type of customerTypes" [value]="type">
-                    {{['customer.type', type, 'name'] | translation}}
-                </md-option>
-            </md-select>
-            <small>
-                <field-error [form]="form" field="type" hasError="required">{{'customer.field.typeMissing' | translation}}</field-error>
-            </small>
+            <mat-form-field class="input-full-width">
+                <mat-select class="input-full-width" formControlName="type" placeholder="Valitse tyyppi*">
+                    <mat-option *ngFor="let type of customerTypes" [value]="type">
+                        {{['customer.type', type, 'name'] | translation}}
+                    </mat-option>
+                </mat-select>
+                <small>
+                    <field-error [form]="form" field="type" hasError="required">{{'customer.field.typeMissing' | translation}}</field-error>
+                </small>
+            </mat-form-field>
         </div>
         <div class="col m6">
-            <md-select class="input-full-width" formControlName="country" placeholder="Maa">
-                <md-option value="Suomi">Suomi</md-option>
-            </md-select>
+            <mat-form-field class="input-full-width">
+                <mat-select class="input-full-width" formControlName="country" placeholder="Maa">
+                    <mat-option value="Suomi">Suomi</mat-option>
+                </mat-select>
+            </mat-form-field>
         </div>
     </div>
     <div class="row form-group">
         <div class="col m6">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" formControlName="name"
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="name"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
-                       [mdAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
-                <md-autocomplete #nameSearch="mdAutocomplete">
-                    <md-option *ngFor="let customer of matchingNameCustomers | async"
+                       [matAutocomplete]="nameSearch" (keyup)="resetFormIfExisting()"/>
+                <mat-autocomplete #nameSearch="matAutocomplete">
+                    <mat-option *ngFor="let customer of matchingNameCustomers | async"
                                [value]="customer.name" (click)="customerSelected(customer)">
                         {{ customer.name }}
-                    </md-option>
-                </md-autocomplete>
+                    </mat-option>
+                </mat-autocomplete>
 
-                <md-hint>
+                <mat-hint>
                     <field-error [form]="form" field="name" hasError="required">{{'customer.field.nameMissing' | translation}}</field-error>
                     <field-error [form]="form" field="name" hasError="minlength">{{'customer.field.nameShort' | translation}}</field-error>
-                </md-hint>
-            </md-form-field>
+                </mat-hint>
+            </mat-form-field>
         </div>
         <div class="col" [ngClass]="{'m6': form.value.type==='PERSON', 'm3': form.value.type!=='PERSON'}">
-            <md-form-field class="input-full-width" [inputWarning]="registryKeyControl">
-                <input mdInput type="text" formControlName="registryKey"
+            <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
+                <input matInput type="text" formControlName="registryKey"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"
-                       [mdAutocomplete]="registryKeySearch"/>
+                       [matAutocomplete]="registryKeySearch"/>
 
-                <md-autocomplete #registryKeySearch="mdAutocomplete">
-                    <md-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
+                <mat-autocomplete #registryKeySearch="matAutocomplete">
+                    <mat-option *ngFor="let customer of matchingRegistryKeyCustomers | async"
                                [value]="customer.registryKey" (click)="customerSelected(customer)">
                         {{ customer.name }} ({{ customer.registryKey}})
-                    </md-option>
-                </md-autocomplete>
+                    </mat-option>
+                </mat-autocomplete>
 
-                <md-hint>
+                <mat-hint>
                     <field-error [form]="form" field="registryKey" hasError="required">{{'customer.field.registryKeyMissing' | translation}}</field-error>
                     <field-error [form]="form" field="registryKey" hasError="minlength">{{'customer.field.registryKeyShort' | translation}}</field-error>
                     <field-error [form]="form" field="registryKey" hasError="invalidSsn">{{'customer.field.invalidSsn' | translation}}</field-error>
-                </md-hint>
-            </md-form-field>
+                </mat-hint>
+            </mat-form-field>
         </div>
         <div class="col m3" *ngIf="form.value.type!=='PERSON'">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" formControlName="ovt"
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="ovt"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'ovt'] | translation}}"/>
 
-                <md-hint>
+                <mat-hint>
                     <field-error [form]="form" field="ovt" hasError="minlength">{{'customer.field.ovtShort' | translation}}</field-error>
                     <field-error [form]="form" field="ovt" hasError="maxlength">{{'customer.field.ovtLong' | translation}}</field-error>
-                </md-hint>
-            </md-form-field>
+                </mat-hint>
+            </mat-form-field>
         </div>
     </div>
     <div formGroupName="postalAddress" class="row form-group">
         <div class="col m6">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
-            </md-form-field>
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
+            </mat-form-field>
         </div>
         <div class="col m3">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
-                <md-hint>
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                <mat-hint>
                     <field-error [form]="form.get('postalAddress')" field="postalCode" hasError="pattern">
                         {{'common.field.postalCode' | translation}}
                     </field-error>
-                </md-hint>
-            </md-form-field>
+                </mat-hint>
+            </mat-form-field>
         </div>
         <div class="col m3">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
-            </md-form-field>
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+            </mat-form-field>
         </div>
     </div>
     <div class="row form-group">
         <div class="col m6">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
-                <md-hint>
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                <mat-hint>
                     <field-error [form]="form" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
-                </md-hint>
-            </md-form-field>
+                </mat-hint>
+            </mat-form-field>
         </div>
         <div class="col m6">
-            <md-form-field class="input-full-width">
-                <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
-                <md-hint>
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                <mat-hint>
                     <field-error [form]="form" field="phone" hasError="minLength">{{'customer.field.phoneShort' | translation}}</field-error>
-                </md-hint>
-            </md-form-field>
+                </mat-hint>
+            </mat-form-field>
         </div>
     </div>
 </form>

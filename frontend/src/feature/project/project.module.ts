@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MdCardModule} from '@angular/material';
+import {MatCardModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {MapModule} from '../map/map.module';
@@ -24,7 +24,7 @@ import {ProjectState} from '../../service/project/project-state';
     RouterModule.forChild(projectRoutes),
     FormsModule,
     ReactiveFormsModule,
-    MdCardModule,
+    MatCardModule,
     MapModule,
     SidebarModule
   ],

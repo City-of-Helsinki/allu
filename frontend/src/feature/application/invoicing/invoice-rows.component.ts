@@ -1,6 +1,6 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-entry';
 import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
@@ -27,10 +27,10 @@ export class InvoiceRowsComponent implements OnInit, OnDestroy {
   acceptedInvoiceRows: FormArray;
 
   private rowSubscription = new Subscription();
-  private dialogRef: MdDialogRef<ChargeBasisEntryModalComponent>;
+  private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
 
 
-  constructor(private fb: FormBuilder, private dialog: MdDialog, private invoiceHub: InvoiceHub) {
+  constructor(private fb: FormBuilder, private dialog: MatDialog, private invoiceHub: InvoiceHub) {
     this.pendingInvoiceRows = fb.array([]);
     this.acceptedInvoiceRows = fb.array([]);
   }

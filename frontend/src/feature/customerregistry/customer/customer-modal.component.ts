@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {CustomerHub} from '../../../service/customer/customer-hub';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
@@ -19,7 +19,7 @@ export class CustomerModalComponent implements OnInit {
 
   customerForm: FormGroup;
 
-  constructor(public dialogRef: MdDialogRef<CustomerModalComponent>,
+  constructor(public dialogRef: MatDialogRef<CustomerModalComponent>,
               private customerHub: CustomerHub,
               fb: FormBuilder) {
     this.customerForm = CustomerForm.initialForm(fb);

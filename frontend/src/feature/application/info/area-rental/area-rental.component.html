@@ -21,101 +21,101 @@
 
     <div class="row">
         <div class="col m12">
-            <md-card>
-                <md-card-title>Aluevuokrauksen voimassaolo</md-card-title>
-                <md-card-content>
+            <mat-card>
+                <mat-card-title>Aluevuokrauksen voimassaolo</mat-card-title>
+                <mat-card-content>
                     <div class="row form-group">
                         <div formGroupName="validityTimes" class="col s6">
                             <div class="col s6">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                           [mdDatepicker]="startTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #startTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                           [matDatepicker]="startTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #startTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
                                             {{'application.common.field.validityStartTimeMissing' | translation}}
                                         </field-error>
                                         <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
                                             {{'application.common.field.validityStartBeforeEnd' | translation}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                             <div class="col s6">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                           [mdDatepicker]="endTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="endTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #endTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                           [matDatepicker]="endTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #endTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                                             {{'application.common.field.validityEndTimeMissing' | translation}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                         </div>
                         <div class="col s3">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="workFinished" placeholder="Työ valmis"
-                                       [mdDatepicker]="workFinishedPicker"/>
-                                <md-datepicker-toggle mdSuffix [for]="workFinished" [disabled]="readonly"></md-datepicker-toggle>
-                                <md-datepicker #workFinishedPicker></md-datepicker>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="workFinished" placeholder="Työ valmis"
+                                       [matDatepicker]="workFinishedPicker"/>
+                                <mat-datepicker-toggle matSuffix [for]="workFinished" [disabled]="readonly"></mat-datepicker-toggle>
+                                <mat-datepicker #workFinishedPicker></mat-datepicker>
+                            </mat-form-field>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
     </div>
 
     <div class="row">
         <div class="col m12">
-        <md-card>
-            <md-card-title>Aluevuokrauksen tiedot</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Aluevuokrauksen tiedot</mat-card-title>
+            <mat-card-content>
                 <div class="row">
                     <div class="col m2">
-                        <md-checkbox formControlName="pksCard">Pks-kortti</md-checkbox>
+                        <mat-checkbox formControlName="pksCard">Pks-kortti</mat-checkbox>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col m12">
-                        <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="trafficArrangements"
+                        <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="trafficArrangements"
                                           placeholder="Suoritettavat liikennejärjestelyt"></textarea>
-                        </md-form-field>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col m12">
-                        <md-button-toggle-group formControlName="trafficArrangementImpedimentType">
-                            <md-button-toggle value="NO_IMPEDIMENT">
+                        <mat-button-toggle-group formControlName="trafficArrangementImpedimentType">
+                            <mat-button-toggle value="NO_IMPEDIMENT">
                                 {{'application.trafficArrangementImpedimentType.NO_IMPEDIMENT' | translation}}
-                            </md-button-toggle>
-                            <md-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
+                            </mat-button-toggle>
+                            <mat-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
                                 {{'application.trafficArrangementImpedimentType.INSIGNIFICANT_IMPEDIMENT' | translation}}
-                            </md-button-toggle>
-                            <md-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
+                            </mat-button-toggle>
+                            <mat-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
                                 {{'application.trafficArrangementImpedimentType.IMPEDIMENT_FOR_HEAVY_TRAFFIC' | translation}}
-                            </md-button-toggle>
-                            <md-button-toggle value="SIGNIFICANT_IMPEDIMENT">
+                            </mat-button-toggle>
+                            <mat-button-toggle value="SIGNIFICANT_IMPEDIMENT">
                                 {{'application.trafficArrangementImpedimentType.SIGNIFICANT_IMPEDIMENT' | translation}}
-                            </md-button-toggle>
-                        </md-button-toggle-group>
+                            </mat-button-toggle>
+                        </mat-button-toggle-group>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col m12">
-                        <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="additionalInfo"
+                        <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="additionalInfo"
                                           placeholder="Lisätiedot"></textarea>
-                        </md-form-field>
+                        </mat-form-field>
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
     </div>
 

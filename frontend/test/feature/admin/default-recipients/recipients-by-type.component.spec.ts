@@ -43,7 +43,7 @@ describe('RecipientsByTypeComponent', () => {
 
     getButtonFromRow(index: number, buttonIcon: string) {
       return page.rows[index].queryAll(By.css('button'))
-        .filter(btn => btn.query(By.css('md-icon')).nativeElement.textContent === buttonIcon)
+        .filter(btn => btn.query(By.css('mat-icon')).nativeElement.textContent === buttonIcon)
         .map(btn => btn.nativeElement)[0];
     }
   }

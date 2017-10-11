@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
-import {MdCardModule} from '@angular/material';
+import {MatCardModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {SidebarComponent} from './sidebar.component';
 
@@ -8,7 +8,7 @@ import {SidebarComponent} from './sidebar.component';
   imports: [
     AlluCommonModule,
     RouterModule,
-    MdCardModule
+    MatCardModule
   ],
   declarations: [
     SidebarComponent

@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {ReactiveFormsModule, FormsModule} from '@angular/forms';
-import {MdToolbarModule, MdInputModule} from '@angular/material';
+import {MatToolbarModule, MatInputModule} from '@angular/material';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {SearchbarComponent} from './searchbar.component';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
@@ -10,8 +10,8 @@ import {SelectionGroupModule} from '../common/selection-group/selection-group.mo
     ReactiveFormsModule,
     FormsModule,
     AlluCommonModule,
-    MdToolbarModule,
-    MdInputModule,
+    MatToolbarModule,
+    MatInputModule,
     SelectionGroupModule
   ],
   declarations: [

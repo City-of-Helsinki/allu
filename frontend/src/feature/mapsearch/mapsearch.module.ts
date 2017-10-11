@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {CommonModule} from '@angular/common';
-import {MdToolbarModule, MdCardModule, MdSidenavModule, MdTooltipModule} from '@angular/material';
+import {MatToolbarModule, MatCardModule, MatSidenavModule, MatTooltipModule} from '@angular/material';
 import {MapModule} from '../map/map.module';
 import {MapSearchComponent} from './mapsearch.component';
 import {SearchBarModule} from '../searchbar/searchbar.module';
@@ -13,10 +13,10 @@ import {AlluCommonModule} from '../common/allu-common.module';
   imports: [
     CommonModule,
     RouterModule,
-    MdToolbarModule,
-    MdCardModule,
-    MdSidenavModule,
-    MdTooltipModule,
+    MatToolbarModule,
+    MatCardModule,
+    MatSidenavModule,
+    MatTooltipModule,
     AlluCommonModule,
     MapModule,
     SearchBarModule

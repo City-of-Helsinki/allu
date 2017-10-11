@@ -1,18 +1,18 @@
-<h1 md-dialog-title>
+<h1 mat-dialog-title>
     {{['decision.type', status, 'title'] | translation }}
 </h1>
-<div md-dialog-content>
+<div mat-dialog-content>
     <form [formGroup]="decisionForm">
         <div class="row">
             <div class="col s12" *ngIf="status !== 'DECISION'">
-                <md-form-field class="input-full-width">
-                    <textarea mdInput mdTextareaAutosize formControlName="comment" placeholder="Perustelut"></textarea>
-                </md-form-field>
+                <mat-form-field class="input-full-width">
+                    <textarea matInput matTextareaAutosize formControlName="comment" placeholder="Perustelut"></textarea>
+                </mat-form-field>
             </div>
             <div class="col s12">
-                <md-form-field class="input-full-width">
-                    <textarea mdInput mdTextareaAutosize formControlName="emailMessage" placeholder="Sähköpostiviesti"></textarea>
-                </md-form-field>
+                <mat-form-field class="input-full-width">
+                    <textarea matInput matTextareaAutosize formControlName="emailMessage" placeholder="Sähköpostiviesti"></textarea>
+                </mat-form-field>
             </div>
             <div class="col s12">
                 <h2>Päätöksen jakelu</h2>
@@ -21,7 +21,7 @@
         </div>
     </form>
 </div>
-<div md-dialog-actions>
-    <button md-raised-button type="button" color="primary" (click)="confirm()">{{['decision.type', status, 'confirmText'] | translation }}</button>
-    <button md-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
+<div mat-dialog-actions>
+    <button mat-raised-button type="button" color="primary" (click)="confirm()">{{['decision.type', status, 'confirmText'] | translation }}</button>
+    <button mat-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
 </div>

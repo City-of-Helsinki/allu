@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {ConnectableObservable} from 'rxjs';
 import {Subscription} from 'rxjs/Subscription';
 import '../../../rxjs-extensions.ts';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 
 import {Application} from '../../../model/application/application';
 import {Sort} from '../../../model/common/sort';
@@ -33,11 +33,11 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   private applicationSubscription: Subscription;
   private searchSubscription: Subscription;
-  private dialogRef: MdDialogRef<CommentsModalComponent>;
+  private dialogRef: MatDialogRef<CommentsModalComponent>;
 
   constructor(private router: Router,
               private mapHub: MapHub,
-              private dialog: MdDialog,
+              private dialog: MatDialog,
               private workQueueHub: WorkQueueHub) {}
 
   ngOnInit(): void {

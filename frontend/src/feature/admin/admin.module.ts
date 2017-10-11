@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MdCardModule, MdExpansionModule, MdSlideToggleModule} from '@angular/material';
+import {MatCardModule, MatExpansionModule, MatSlideToggleModule} from '@angular/material';
 
 import {AlluCommonModule} from '../common/allu-common.module';
 import {adminRoutes} from './admin.routing';
@@ -27,9 +27,9 @@ import {ExternalUserComponent} from './external-user/external-user.component';
     RouterModule.forChild(adminRoutes),
     FormsModule,
     ReactiveFormsModule,
-    MdCardModule,
-    MdExpansionModule,
-    MdSlideToggleModule,
+    MatCardModule,
+    MatExpansionModule,
+    MatSlideToggleModule,
     SelectionGroupModule
   ],
   declarations: [

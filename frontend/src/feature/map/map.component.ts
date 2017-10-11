@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
+import {Component, Input, Output, EventEmitter, OnInit, OnDestroy, AfterViewInit} from '@angular/core';
 
 import {MapHub} from '../../service/map/map-hub';
 import {Application} from '../../model/application/application';
@@ -20,7 +20,7 @@ import {Router} from '@angular/router';
   template: require('./map.component.html'),
   styles: []
 })
-export class MapComponent implements OnInit, OnDestroy {
+export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() draw: boolean = false;
   @Input() edit: boolean = false;
   @Input() zoom: boolean = false;
@@ -41,6 +41,13 @@ export class MapComponent implements OnInit, OnDestroy {
     private router: Router) {}
 
   ngOnInit() {
+  }
+
+  /**
+   * Use after view init for map initialization
+   * since map div might not be available during ngOnInit
+   */
+  ngAfterViewInit(): void {
     this.mapState = this.mapService.create(this.draw, this.edit, this.zoom, this.selection, this.showOnlyApplicationArea);
     this.initSubscriptions();
     Some(this.projectId).do(id => this.drawProject(id));

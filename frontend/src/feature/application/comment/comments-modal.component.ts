@@ -1,5 +1,5 @@
 import {Component, OnInit, Input} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
 import {CommentHub} from '../../../service/application/comment/comment-hub';
@@ -16,7 +16,7 @@ export class CommentsModalComponent implements OnInit {
   @Input() applicationId: number;
   comments: Observable<Array<Comment>>;
 
-  constructor(public dialogRef: MdDialogRef<CommentsModalComponent>,
+  constructor(public dialogRef: MatDialogRef<CommentsModalComponent>,
               private commentHub: CommentHub) {
   }
 

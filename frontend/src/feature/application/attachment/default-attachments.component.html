@@ -1,6 +1,6 @@
-<md-card *ngIf="defaultAttachments?.length > 0">
-    <md-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</md-card-title>
-    <md-card-content>
+<mat-card *ngIf="defaultAttachments?.length > 0">
+    <mat-card-title>{{['attachment.selectionTitle', attachmentType] | translation}}</mat-card-title>
+    <mat-card-content>
         <div class="row" *ngIf="isAllowedToEdit">
             <selection-group [ngModel]="selectedAttachments" (select)="onSelect($event)"
                              *ngIf="defaultAttachments">
@@ -8,15 +8,15 @@
                     <selection-item [item]="attachment" selectType="CHECKBOX">
                         {{attachment.name}}
                     </selection-item>
-                    <button md-icon-button (click)="download(attachment)"><md-icon>file_download</md-icon></button>
+                    <button mat-icon-button (click)="download(attachment)"><mat-icon>file_download</mat-icon></button>
                 </div>
             </selection-group>
         </div>
         <div class="row" *ngIf="!isAllowedToEdit">
             <div class="col m3" *ngFor="let attachment of defaultAttachments">
                 <span>{{attachment.name}}</span>
-                <button md-icon-button (click)="download(attachment)"><md-icon>file_download</md-icon></button>
+                <button mat-icon-button (click)="download(attachment)"><mat-icon>file_download</mat-icon></button>
             </div>
         </div>
-    </md-card-content>
-</md-card>
+    </mat-card-content>
+</mat-card>

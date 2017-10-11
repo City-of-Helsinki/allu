@@ -1,7 +1,7 @@
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MdCardModule} from '@angular/material';
+import {MatCardModule} from '@angular/material';
 
 import {CustomerInfoComponent} from '../../../../src/feature/customerregistry/customer/customer-info.component';
 import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
@@ -47,7 +47,7 @@ describe('CustomerInfoComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AlluCommonModule, ReactiveFormsModule, MdCardModule],
+      imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
       declarations: [CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},

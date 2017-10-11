@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
 import {ApplicationHub} from '../../../service/application/application-hub';
@@ -28,7 +28,7 @@ export class DefaultTextModalComponent implements OnInit {
   changed = new Set<number>();
   translations = translations;
 
-  constructor(public dialogRef: MdDialogRef<DefaultTextModalComponent>,
+  constructor(public dialogRef: MatDialogRef<DefaultTextModalComponent>,
               private fb: FormBuilder,
               private applicationHub: ApplicationHub) {
     this.defaultTexts = fb.array([]);

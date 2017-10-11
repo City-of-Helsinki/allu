@@ -1,6 +1,6 @@
 import {NgModule} from '@angular/core';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {MdRadioModule} from '@angular/material';
+import {MatRadioModule} from '@angular/material';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {DistributionComponent} from './distribution.component';
 import {DistributionListComponent} from './distribution-list/distribution-list.component';
@@ -10,7 +10,7 @@ import {DistributionListComponent} from './distribution-list/distribution-list.c
     FormsModule,
     ReactiveFormsModule,
     AlluCommonModule,
-    MdRadioModule
+    MatRadioModule
   ],
   declarations: [
     DistributionComponent,

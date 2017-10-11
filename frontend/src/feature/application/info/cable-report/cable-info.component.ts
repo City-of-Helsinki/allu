@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 import '../../../../rxjs-extensions';
 
@@ -30,11 +30,11 @@ export class CableInfoComponent implements OnInit {
   translations = translations;
   cableInfoTypes = EnumUtil.enumValues(DefaultTextType);
   defaultTexts: DefaultTextMap = {};
-  dialogRef: MdDialogRef<DefaultTextModalComponent>;
+  dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
   constructor(private applicationHub: ApplicationHub,
               private fb: FormBuilder,
-              private dialog: MdDialog) {
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {

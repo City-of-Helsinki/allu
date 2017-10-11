@@ -1,5 +1,5 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../../util/enum.util';
 import {NegligencePaymentType} from '../../../model/application/invoice/negligence-payment-type';
@@ -28,7 +28,7 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
   textCtrl: FormControl;
   matchingTexts: Observable<Array<string>>;
 
-  constructor(public dialogRef: MdDialogRef<ChargeBasisEntryModalComponent>, private fb: FormBuilder) {
+  constructor(public dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {

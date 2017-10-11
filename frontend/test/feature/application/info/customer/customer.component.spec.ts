@@ -1,7 +1,7 @@
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
-import {MdCardModule} from '@angular/material';
+import {MatCardModule} from '@angular/material';
 
 import {CustomerComponent} from '../../../../../src/feature/application/info/customer/customer.component';
 import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
@@ -51,7 +51,7 @@ describe('CustomerComponent', () => {
 
     addPageElements() {
       let debugElement = fixture.debugElement;
-      this.cardTitle = debugElement.query(By.css('md-card-title')).nativeElement;
+      this.cardTitle = debugElement.query(By.css('mat-card-title')).nativeElement;
       this.countryInput = debugElement.query(By.css('[formControlName="country"]')).nativeElement;
       this.customerNameInput = debugElement.query(By.css('[formControlName="name"]')).nativeElement;
       this.registryKeyInput = debugElement.query(By.css('[formControlName="registryKey"]')).nativeElement;
@@ -65,7 +65,7 @@ describe('CustomerComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports: [AlluCommonModule, ReactiveFormsModule, MdCardModule],
+      imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
       declarations: [CustomerComponent, ContactComponentMock, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},

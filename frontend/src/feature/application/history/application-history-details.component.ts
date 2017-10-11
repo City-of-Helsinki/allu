@@ -1,5 +1,5 @@
 import {AfterContentInit, Component, Input} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 
 import {ApplicationChange} from '../../../model/application/application-change/application-change';
 import {User} from '../../../model/user/user';
@@ -22,7 +22,7 @@ export class ApplicationHistoryDetailsComponent implements AfterContentInit {
 
   fieldChanges: Array<ApplicationFieldChange>;
 
-  constructor(public dialogRef: MdDialogRef<ApplicationHistoryDetailsComponent>, private formatter: ApplicationHistoryFormatter) {}
+  constructor(public dialogRef: MatDialogRef<ApplicationHistoryDetailsComponent>, private formatter: ApplicationHistoryFormatter) {}
 
   ngAfterContentInit(): void {
     this.formatter.setMeta(this.meta);

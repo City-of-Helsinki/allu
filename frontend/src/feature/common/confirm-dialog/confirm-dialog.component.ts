@@ -1,5 +1,5 @@
 import {Component, Inject, Input} from '@angular/core';
-import {MD_DIALOG_DATA, MdDialogRef} from '@angular/material';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
 @Component({
   selector: 'confirm-dialog',
@@ -15,8 +15,8 @@ export class ConfirmDialogComponent {
   title = 'Haluatko varmasti suorittaa toiminnon';
   description = '';
 
-  constructor(public dialogRef: MdDialogRef<ConfirmDialogComponent>,
-              @Inject(MD_DIALOG_DATA) public data: {title: string, description: string}) {
+  constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: {title: string, description: string}) {
     this.title = data.title || this.title;
     this.description = data.description || this.description;
   }

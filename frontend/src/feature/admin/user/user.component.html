@@ -6,50 +6,56 @@
                 <div class="row">
                     <div class="col m12">
                         <div class="col s12">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="userName" placeholder="Käyttäjänimi"/>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="userName" placeholder="Käyttäjänimi"/>
+                            </mat-form-field>
                         </div>
                         <div class="col s12">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="realName" placeholder="Nimi"/>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="realName" placeholder="Nimi"/>
+                            </mat-form-field>
                         </div>
                         <div class="col s12">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="emailAddress" placeholder="Sähköpostiosoite"/>
+                            </mat-form-field>
                         </div>
                         <div class="col s12">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="title" placeholder="Tehtävänimike"/>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="title" placeholder="Tehtävänimike"/>
+                            </mat-form-field>
                         </div>
                         <div class="col s12 checkbox-height">
-                            <md-checkbox formControlName="isActive">Aktiivinen</md-checkbox>
+                            <mat-checkbox formControlName="isActive">Aktiivinen</mat-checkbox>
                         </div>
                         <div class="col s12">
-                            <md-select formControlName="allowedApplicationTypes" [multiple]="true"
-                                       placeholder="Sallitut hakemustyypit" class="input-full-width">
-                                <md-option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</md-option>
-                            </md-select>
+                            <mat-form-field class="input-full-width">
+                                <mat-select formControlName="allowedApplicationTypes" [multiple]="true"
+                                            placeholder="Sallitut hakemustyypit" class="input-full-width">
+                                    <mat-option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div class="col s12">
-                            <md-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit" class="input-full-width">
-                                <md-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole() | async">{{translations.user.role['ROLE_ADMIN']}}</md-option>
-                                <md-option *ngFor="let role of roles" [value]="role">{{translations.user.role[role]}}</md-option>
-                            </md-select>
+                            <mat-form-field class="input-full-width">
+                                <mat-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit" class="input-full-width">
+                                    <mat-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole() | async">{{translations.user.role['ROLE_ADMIN']}}</mat-option>
+                                    <mat-option *ngFor="let role of roles" [value]="role">{{translations.user.role[role]}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div class="col s12">
-                            <md-select formControlName="cityDistrictIds" [multiple]="true" placeholder="Kaupunginosat" class="input-full-width">
-                                <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
-                            </md-select>
+                            <mat-form-field class="input-full-width">
+                                <mat-select formControlName="cityDistrictIds" [multiple]="true" placeholder="Kaupunginosat" class="input-full-width">
+                                    <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col m12">
-                        <button md-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna</button>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="!userForm.valid || submitted">Tallenna</button>
                     </div>
                 </div>
             </form>

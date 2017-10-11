@@ -1,5 +1,5 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {MdDialogRef} from '@angular/material';
+import {MatDialogRef} from '@angular/material';
 import {CustomerHub} from '../../../service/customer/customer-hub';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {findTranslation} from '../../../util/translations';
@@ -19,7 +19,7 @@ export class ContactModalComponent implements OnInit {
 
   contactForm: FormGroup;
 
-  constructor(public dialogRef: MdDialogRef<ContactModalComponent>,
+  constructor(public dialogRef: MatDialogRef<ContactModalComponent>,
               private customerHub: CustomerHub,
               fb: FormBuilder) {
     this.contactForm = Contact.formGroup(fb);

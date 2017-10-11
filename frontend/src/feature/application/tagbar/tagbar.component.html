@@ -2,21 +2,21 @@
     <div class="item-bar-content">
         <span class="single-line" *ngIf="application.startTime">{{application.uiStartTime}} - {{application.uiEndTime}}</span>
         <span>Tunnisteet:</span>
-        <md-chip-list>
-            <md-chip class="accent-chip slim-chip" color="accent" selected="true" *ngFor="let tag of application.applicationTags; let i = index;">
+        <mat-chip-list>
+            <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of application.applicationTags; let i = index;">
                 {{['application.tag.type', tag.type] | translation}}
-                <button md-icon-button (click)="remove(i)"><md-icon>remove_circle_outline</md-icon></button>
-            </md-chip>
-        </md-chip-list>
+                <button mat-icon-button (click)="remove(i)"><mat-icon>remove_circle_outline</mat-icon></button>
+            </mat-chip>
+        </mat-chip-list>
         <span class="single-line">
-            <md-chip class="slim-chip chip-outline" color="primary" selected="true">
+            <mat-chip class="slim-chip chip-outline" color="primary" selected="true">
                 Lisää tunniste
-                <button md-icon-button [mdMenuTriggerFor]="menu"><md-icon>add_circle_outline</md-icon></button>
-            </md-chip>
+                <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>
+            </mat-chip>
 
         </span>
     </div>
 </div>
-<md-menu x-position="before" #menu="mdMenu">
-    <button md-menu-item *ngFor="let type of tagTypes" (click)="add(type)">{{['application.tag.type', type] | translation}}</button>
-</md-menu>
+<mat-menu x-position="before" #menu="matMenu">
+    <button mat-menu-item *ngFor="let type of tagTypes" (click)="add(type)">{{['application.tag.type', type] | translation}}</button>
+</mat-menu>

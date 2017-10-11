@@ -1,161 +1,161 @@
 <form [formGroup]="eventForm">
     <div class="row">
         <div class="col m12">
-            <md-card>
-                <md-card-title>Tapahtuman tiedot</md-card-title>
-                <md-card-content>
+            <mat-card>
+                <mat-card-title>Tapahtuman tiedot</mat-card-title>
+                <mat-card-content>
                     <div class="row form-group">
                         <div class="col m6">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="name" placeholder="Tapahtuman nimi*"/>
-                                <md-hint>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="name" placeholder="Tapahtuman nimi*"/>
+                                <mat-hint>
                                     <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
                                     <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
-                                </md-hint>
-                            </md-form-field>
+                                </mat-hint>
+                            </mat-form-field>
                         </div>
                         <div formGroupName="eventTimes">
                             <div class="col m3">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Tapahtuman alkupäivämäärä*"
-                                           [mdDatepicker]="startTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #startTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="startTime" placeholder="Tapahtuman alkupäivämäärä*"
+                                           [matDatepicker]="startTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #startTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
                                             {{translations.application.event.field.eventStartTimeMissing}}
                                         </field-error>
                                         <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
                                             {{translations.application.event.field.startBeforeEnd}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                             <div class="col m3">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Tapahtuman loppupäivämäärä*"
-                                           [mdDatepicker]="endTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="endTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #endTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="endTime" placeholder="Tapahtuman loppupäivämäärä*"
+                                           [matDatepicker]="endTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #endTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
                                             {{translations.application.event.field.eventEndTimeMissing}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                         </div>
                         <div class="col m12">
-                            <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="description" placeholder="Tapahtuman kuvaus*"></textarea>
-                                <md-hint>
+                            <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="description" placeholder="Tapahtuman kuvaus*"></textarea>
+                                <mat-hint>
                                     <field-error [form]="eventForm" field="description" hasError="required">
                                         {{translations.application.event.field.descriptionMissing}}
                                     </field-error>
-                                </md-hint>
-                            </md-form-field>
+                                </mat-hint>
+                            </mat-form-field>
                         </div>
                         <div class="col m12">
-                            <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="timeExceptions" placeholder="Tapahtuma-ajan poikkeukset"></textarea>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="timeExceptions" placeholder="Tapahtuma-ajan poikkeukset"></textarea>
+                            </mat-form-field>
                         </div>
                         <div class="col m6">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="url" placeholder="Tapahtuman www-sivu"/>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="url" placeholder="Tapahtuman www-sivu"/>
+                            </mat-form-field>
                         </div>
                         <div class="col m3">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="number" formControlName="attendees"
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="number" formControlName="attendees"
                                        step="1" min="0" placeholder="Yleisömäärä"/>
-                                <md-hint>
+                                <mat-hint>
                                     <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
                                         {{translations.application.event.field.attendeesGreaterThanOrEqual}}
                                     </field-error>
-                                </md-hint>
-                            </md-form-field>
+                                </mat-hint>
+                            </mat-form-field>
                         </div>
                         <div class="col m3">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="number" formControlName="entryFee"
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="number" formControlName="entryFee"
                                        step="any" min="0" placeholder="Osallistumismaksu, jos urheilutapahtuma"/>
-                                <md-hint>
+                                <mat-hint>
                                     <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
                                         {{translations.application.event.field.eventEntryFeeThanOrEqual}}
                                     </field-error>
-                                </md-hint>
-                            </md-form-field>
+                                </mat-hint>
+                            </mat-form-field>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
     </div>
 
     <div class="row">
         <div class="col m12">
-            <md-card>
-                <md-card-title>Rakenteet</md-card-title>
-                <md-card-content>
+            <mat-card>
+                <mat-card-title>Rakenteet</mat-card-title>
+                <mat-card-content>
                     <div class="row">
                         <div class="col m3 input-field-checkbox">
-                            <md-checkbox #structureArea [disabled]="readonly" [checked]="eventForm.value.structureArea">
+                            <mat-checkbox #structureArea [disabled]="readonly" [checked]="eventForm.value.structureArea">
                                 Tapahtuma sisältää rakenteita
-                            </md-checkbox>
+                            </mat-checkbox>
                         </div>
                         <div class="col m3" [hidden]="!structureArea.checked">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="number" formControlName="structureArea" step="any" min="0"
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="number" formControlName="structureArea" step="any" min="0"
                                        placeholder="Rakenteiden kokonaisneliömäärä"/>
-                                <md-hint>
+                                <mat-hint>
                                     <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
                                         {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
                                     </field-error>
-                                </md-hint>
-                            </md-form-field>
+                                </mat-hint>
+                            </mat-form-field>
                         </div>
                         <div class="col m12" [hidden]="!structureArea.checked">
-                            <md-form-field class="input-full-width">
-                            <textarea mdInput mdTextareaAutosize formControlName="structureDescription"
+                            <mat-form-field class="input-full-width">
+                            <textarea matInput matTextareaAutosize formControlName="structureDescription"
                                       placeholder="Rakenteiden kuvaus"></textarea>
-                            </md-form-field>
+                            </mat-form-field>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col m3 input-field-checkbox">
-                            <md-checkbox #structureTimes [disabled]="readonly"
+                            <mat-checkbox #structureTimes [disabled]="readonly"
                                          [checked]="eventForm.value.structureTimes.startTime || eventForm.value.structureTimes.endTime">
                                 Tapahtuma vaatii erillisiä rakennus- tai purkupäiviä
-                            </md-checkbox>
+                            </mat-checkbox>
                         </div>
 
                         <div formGroupName="structureTimes" [hidden]="!structureTimes.checked">
                             <div class="col m3">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Rakennuspäivämäärä"
-                                           [mdDatepicker]="structureStartTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="structureStartTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #structureStartTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="startTime" placeholder="Rakennuspäivämäärä"
+                                           [matDatepicker]="structureStartTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="structureStartTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #structureStartTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
                                             {{translations.application.event.field.startBeforeEnd}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                             <div class="col m3">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Purkupäivämäärä"
-                                           [mdDatepicker]="structureEndTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="structureEndTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #structureEndTimePicker></md-datepicker>
-                                </md-form-field>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="endTime" placeholder="Purkupäivämäärä"
+                                           [matDatepicker]="structureEndTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="structureEndTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #structureEndTimePicker></mat-datepicker>
+                                </mat-form-field>
                             </div>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
     </div>
 
@@ -173,33 +173,33 @@
 
     <div class="row">
         <div class="col m12">
-            <md-card>
-                <md-card-title>Myyntitoiminta</md-card-title>
-                <md-card-content>
+            <mat-card>
+                <mat-card-title>Myyntitoiminta</mat-card-title>
+                <mat-card-content>
                     <div class="row form-group">
                         <div class="col m12 input-field-checkbox">
-                            <md-checkbox #marketingProviders [disabled]="readonly" [checked]="eventForm.value.marketingProviders">
+                            <mat-checkbox #marketingProviders [disabled]="readonly" [checked]="eventForm.value.marketingProviders">
                                 Tapahtuma sisältää myynti- tai mainostoimintaa
-                            </md-checkbox>
+                            </mat-checkbox>
                         </div>
                         <div class="col m12" [hidden]="!marketingProviders.checked">
-                            <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="marketingProviders"
+                            <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="marketingProviders"
                                           placeholder="Myynti- tai mainostoiminnan kuvaus"></textarea>
-                            </md-form-field>
+                            </mat-form-field>
                         </div>
                         <div class="col m12 input-field-checkbox">
-                            <md-checkbox #foodSales formControlName="foodSales">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua</md-checkbox>
+                            <mat-checkbox #foodSales formControlName="foodSales">Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua</mat-checkbox>
                         </div>
                         <div class="col m12" [hidden]="!foodSales.checked">
-                            <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="foodProviders"
+                            <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="foodProviders"
                                           placeholder="Tapahtuma sisältää elintarvikemyyntiä tai tarjoilua"></textarea>
-                            </md-form-field>
+                            </mat-form-field>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
     </div>
 </form>

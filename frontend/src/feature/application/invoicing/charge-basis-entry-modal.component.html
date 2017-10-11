@@ -1,40 +1,40 @@
-<h1 md-dialog-title>Uusi laskurivi</h1>
+<h1 mat-dialog-title>Uusi laskurivi</h1>
 <form [formGroup]="chargeBasisEntryForm" (ngSubmit)="onSubmit(chargeBasisEntryForm.value)">
-    <div md-dialog-content>
+    <div mat-dialog-content>
         <div class="row form-group">
             <div class="col m12">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="text" formControlName="text"
-                           placeholder="Laiminlyöntimaksu*" [mdAutocomplete]="text"/>
-                    <md-autocomplete #text="mdAutocomplete">
-                        <md-option *ngFor="let text of matchingTexts | async" [value]="text">
+                <mat-form-field class="input-full-width">
+                    <input matInput type="text" formControlName="text"
+                           placeholder="Laiminlyöntimaksu*" [matAutocomplete]="text"/>
+                    <mat-autocomplete #text="matAutocomplete">
+                        <mat-option *ngFor="let text of matchingTexts | async" [value]="text">
                             {{text}}
-                        </md-option>
-                    </md-autocomplete>
-                    <md-error>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <mat-error>
                         <field-error [form]="chargeBasisEntryForm" field="text" hasError="required">
                             {{'invoice.row.field.rowTextMissing' | translation}}
                         </field-error>
-                    </md-error>
-                </md-form-field>
+                    </mat-error>
+                </mat-form-field>
             </div>
         </div>
         <div class="row">
             <div class="col m8">
-                <md-form-field class="input-full-width">
-                    <input mdInput type="number" formControlName="quantity" placeholder="Kesto*"/>
-                    <div mdSuffix>pv</div>
-                    <md-error>
+                <mat-form-field class="input-full-width">
+                    <input matInput type="number" formControlName="quantity" placeholder="Kesto*"/>
+                    <div matSuffix>pv</div>
+                    <mat-error>
                         <field-error [form]="chargeBasisEntryForm" field="quantity" hasError="required">
                             {{'invoice.row.field.quantityMissing' | translation}}
                         </field-error>
-                    </md-error>
-                </md-form-field>
+                    </mat-error>
+                </mat-form-field>
             </div>
         </div>
     </div>
-    <div md-dialog-actions>
-        <button type="submit" md-raised-button color="primary" [disabled]="!chargeBasisEntryForm.valid">TALLENNA</button>
-        <button type="button" md-raised-button color="primary" (click)="cancel()">PERUUTA</button>
+    <div mat-dialog-actions>
+        <button type="submit" mat-raised-button color="primary" [disabled]="!chargeBasisEntryForm.valid">TALLENNA</button>
+        <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
     </div>
 </form>

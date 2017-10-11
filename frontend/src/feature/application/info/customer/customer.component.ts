@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {CustomerModalComponent} from '../../../customerregistry/customer/customer-modal.component';
 import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
@@ -33,9 +33,9 @@ export class CustomerComponent implements OnInit, OnDestroy {
   customerWithContactsForm: FormGroup;
   customerForm: FormGroup;
 
-  private dialogRef: MdDialogRef<CustomerModalComponent>;
+  private dialogRef: MatDialogRef<CustomerModalComponent>;
 
-  constructor(private fb: FormBuilder, private dialog: MdDialog) {
+  constructor(private fb: FormBuilder, private dialog: MatDialog) {
   }
 
   ngOnInit(): void {

@@ -21,220 +21,220 @@
 
     <div class="row">
         <div class="col m6">
-            <md-card>
-                <md-card-title>Kaivuilmoituksen voimassaolo</md-card-title>
-                <md-card-content>
+            <mat-card>
+                <mat-card-title>Kaivuilmoituksen voimassaolo</mat-card-title>
+                <mat-card-content>
                     <div class="row form-group">
                         <div formGroupName="validityTimes">
                             <div class="col s6">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
-                                           [mdDatepicker]="startTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="startTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #startTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus*"
+                                           [matDatepicker]="startTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #startTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="startTime" hasError="required">
                                             {{'application.common.field.validityStartTimeMissing' | translation}}
                                         </field-error>
                                         <field-error [form]="applicationForm" field="validityTimes" hasError="startBeforeEnd">
                                             {{'application.common.field.validityStartBeforeEnd' | translation}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                             <div class="col s6">
-                                <md-form-field class="input-full-width" [inputWarning]="validityEndTimeCtrl">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
-                                           [mdDatepicker]="endTimePicker"/>
-                                    <button type="button" md-icon-button [disabled]="readonly" mdSuffix (click)="onValidityEndTimePickerClick(endTimePicker)">
-                                        <md-icon [color]="validityEndTimeIcon.color"
-                                                 [mdTooltipDisabled]="validityEndTimeIcon.tooltipDisabled"
-                                                 mdTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}}"
-                                                 mdTooltipPosition="above">
+                                <mat-form-field class="input-full-width" [inputWarning]="validityEndTimeCtrl">
+                                    <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus*"
+                                           [matDatepicker]="endTimePicker"/>
+                                    <button type="button" mat-icon-button [disabled]="readonly" matSuffix (click)="onValidityEndTimePickerClick(endTimePicker)">
+                                        <mat-icon [color]="validityEndTimeIcon.color"
+                                                 [matTooltipDisabled]="validityEndTimeIcon.tooltipDisabled"
+                                                 matTooltip="{{'application.excavationAnnouncement.setToWinterTimeEnd' | translation}}"
+                                                 matTooltipPosition="above">
                                             {{validityEndTimeIcon.icon}}
-                                        </md-icon>
+                                        </mat-icon>
                                     </button>
-                                    <md-datepicker #endTimePicker></md-datepicker>
-                                    <md-hint>
+                                    <mat-datepicker #endTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="required">
                                             {{'application.common.field.validityEndTimeMissing' | translation}}
                                         </field-error>
                                         <field-error [form]="applicationForm.get('validityTimes')" field="endTime" hasError="inWinterTime">
                                             <span>{{'application.excavationAnnouncement.field.inWinterTime' | translation}}</span>
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                         </div>
                         <div formGroupName="unauthorizedWork">
                             <div class="col s6">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
-                                           [mdDatepicker]="unauthorizedStartTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="unauthorizedStartTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #unauthorizedStartTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="startTime" placeholder="Luvattoman kaivun aloitus"
+                                           [matDatepicker]="unauthorizedStartTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="unauthorizedStartTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #unauthorizedStartTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="applicationForm" field="unauthorizedWork" hasError="startBeforeEnd">
                                             {{'application.excavationAnnouncement.field.unauthorizedWorkStartBeforeEnd' | translation}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                             <div class="col s6">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
-                                           [mdDatepicker]="unauthorizedEndTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="unauthorizedEndTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #unauthorizedEndTimePicker></md-datepicker>
-                                </md-form-field>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="endTime" placeholder="Luvattoman kaivun lopetus"
+                                           [matDatepicker]="unauthorizedEndTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="unauthorizedEndTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #unauthorizedEndTimePicker></mat-datepicker>
+                                </mat-form-field>
                             </div>
                         </div>
                         <div class="col s6">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"
-                                       [mdDatepicker]="winterTimeOperationPicker"/>
-                                <md-datepicker-toggle mdSuffix [for]="winterTimeOperationPicker" [disabled]="readonly"></md-datepicker-toggle>
-                                <md-datepicker #winterTimeOperationPicker></md-datepicker>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="winterTimeOperation" placeholder="Talvityön toiminn. kunto"
+                                       [matDatepicker]="winterTimeOperationPicker"/>
+                                <mat-datepicker-toggle matSuffix [for]="winterTimeOperationPicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                <mat-datepicker #winterTimeOperationPicker></mat-datepicker>
+                            </mat-form-field>
                         </div>
                         <div class="col s6">
-                            <md-form-field class="input-full-width">
-                                <input mdInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput readonly type="text" formControlName="workFinished" placeholder="Työ valmis"/>
+                            </mat-form-field>
                         </div>
                         <div class="col s6">
-                            <md-form-field class="input-full-width">
-                                <input mdInput readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput readonly type="text" formControlName="guaranteeEndTime" placeholder="Takuu päättyy (katutyö)"/>
+                            </mat-form-field>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
         <div class="col m6">
-            <md-card>
-                <md-card-title>Asiakkaan ilmoittama voimassaolo</md-card-title>
-                <md-card-content>
+            <mat-card>
+                <mat-card-title>Asiakkaan ilmoittama voimassaolo</mat-card-title>
+                <mat-card-content>
                     <div class="row form-group">
                         <div formGroupName="customerValidityTimes">
                             <div class="col s6">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus"
-                                           [mdDatepicker]="customerStartTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="customerStartTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #customerStartTimePicker></md-datepicker>
-                                    <md-hint>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="startTime" placeholder="Voimassaolon aloitus"
+                                           [matDatepicker]="customerStartTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="customerStartTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #customerStartTimePicker></mat-datepicker>
+                                    <mat-hint>
                                         <field-error [form]="applicationForm" field="customerValidityTimes" hasError="startBeforeEnd">
                                             {{'application.common.field.validityStartBeforeEnd' | translation}}
                                         </field-error>
-                                    </md-hint>
-                                </md-form-field>
+                                    </mat-hint>
+                                </mat-form-field>
                             </div>
                             <div class="col s6">
-                                <md-form-field class="input-full-width">
-                                    <input mdInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus"
-                                           [mdDatepicker]="customerEndTimePicker"/>
-                                    <md-datepicker-toggle mdSuffix [for]="customerEndTimePicker" [disabled]="readonly"></md-datepicker-toggle>
-                                    <md-datepicker #customerEndTimePicker></md-datepicker>
-                                </md-form-field>
+                                <mat-form-field class="input-full-width">
+                                    <input matInput type="text" formControlName="endTime" placeholder="Voimassaolon lopetus"
+                                           [matDatepicker]="customerEndTimePicker"/>
+                                    <mat-datepicker-toggle matSuffix [for]="customerEndTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                    <mat-datepicker #customerEndTimePicker></mat-datepicker>
+                                </mat-form-field>
                             </div>
                         </div>
                         <div class="col s6">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="customerWinterTimeOperation" placeholder="Talvityön toiminn. kunto"
-                                       [mdDatepicker]="customerWinterTimeOperationPicker"/>
-                                <md-datepicker-toggle mdSuffix [for]="customerWinterTimeOperationPicker" [disabled]="readonly"></md-datepicker-toggle>
-                                <md-datepicker #customerWinterTimeOperationPicker></md-datepicker>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="customerWinterTimeOperation" placeholder="Talvityön toiminn. kunto"
+                                       [matDatepicker]="customerWinterTimeOperationPicker"/>
+                                <mat-datepicker-toggle matSuffix [for]="customerWinterTimeOperationPicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                <mat-datepicker #customerWinterTimeOperationPicker></mat-datepicker>
+                            </mat-form-field>
                         </div>
                         <div class="col s6">
-                            <md-form-field class="input-full-width">
-                                <input mdInput type="text" formControlName="customerWorkFinished" placeholder="Työ valmis"
-                                       [mdDatepicker]="customerWorkFinishedPicker"/>
-                                <md-datepicker-toggle mdSuffix [for]="customerWorkFinishedPicker" [disabled]="readonly"></md-datepicker-toggle>
-                                <md-datepicker #customerWorkFinishedPicker></md-datepicker>
-                            </md-form-field>
+                            <mat-form-field class="input-full-width">
+                                <input matInput type="text" formControlName="customerWorkFinished" placeholder="Työ valmis"
+                                       [matDatepicker]="customerWorkFinishedPicker"/>
+                                <mat-datepicker-toggle matSuffix [for]="customerWorkFinishedPicker" [disabled]="readonly"></mat-datepicker-toggle>
+                                <mat-datepicker #customerWorkFinishedPicker></mat-datepicker>
+                            </mat-form-field>
                         </div>
                     </div>
-                </md-card-content>
-            </md-card>
+                </mat-card-content>
+            </mat-card>
         </div>
     </div>
 
     <div class="row">
         <div class="col m12">
-        <md-card>
-            <md-card-title>Kaivuilmoituksen tiedot</md-card-title>
-            <md-card-content>
+        <mat-card>
+            <mat-card-title>Kaivuilmoituksen tiedot</mat-card-title>
+            <mat-card-content>
                 <div class="row form-group">
                     <div class="col m6">
-                        <md-form-field class="input-full-width">
-                            <input mdInput type="text" formControlName="cableReportIdentifier"
+                        <mat-form-field class="input-full-width">
+                            <input matInput type="text" formControlName="cableReportIdentifier"
                                    placeholder="Johtoselvitys"
-                                   [mdAutocomplete]="cableReportSearch"/>
-                            <md-autocomplete #cableReportSearch="mdAutocomplete">
-                                <md-option *ngFor="let application of matchingApplications | async"
+                                   [matAutocomplete]="cableReportSearch"/>
+                            <mat-autocomplete #cableReportSearch="matAutocomplete">
+                                <mat-option *ngFor="let application of matchingApplications | async"
                                            [value]="application.applicationId" (click)="setCableReport(application)">
                                     {{ application.applicationId }}
-                                </md-option>
-                            </md-autocomplete>
-                        </md-form-field>
+                                </mat-option>
+                            </mat-autocomplete>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col m2">
-                        <md-checkbox formControlName="pksCard">Pks-kortti</md-checkbox>
+                        <mat-checkbox formControlName="pksCard">Pks-kortti</mat-checkbox>
                     </div>
                     <div class="col m2">
-                        <md-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</md-checkbox>
+                        <mat-checkbox formControlName="propertyConnectivity">Tontti- / Kiinteistöliitos</mat-checkbox>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col m2">
-                        <md-checkbox formControlName="constructionWork">Rakentaminen</md-checkbox>
+                        <mat-checkbox formControlName="constructionWork">Rakentaminen</mat-checkbox>
                     </div>
                     <div class="col m2">
-                        <md-checkbox formControlName="maintenanceWork">Kunnossapito</md-checkbox>
+                        <mat-checkbox formControlName="maintenanceWork">Kunnossapito</mat-checkbox>
                     </div>
                     <div class="col m2">
-                        <md-checkbox formControlName="emergencyWork">Hätätyö</md-checkbox>
+                        <mat-checkbox formControlName="emergencyWork">Hätätyö</mat-checkbox>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col m12">
-                        <md-form-field class="input-full-width">
-                                <textarea mdInput mdTextareaAutosize formControlName="trafficArrangements"
+                        <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize formControlName="trafficArrangements"
                                           placeholder="Suoritettavat liikennejärjestelyt"></textarea>
-                        </md-form-field>
+                        </mat-form-field>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col m12">
-                        <md-button-toggle-group formControlName="trafficArrangementImpedimentType">
-                            <md-button-toggle value="NO_IMPEDIMENT">
+                        <mat-button-toggle-group formControlName="trafficArrangementImpedimentType">
+                            <mat-button-toggle value="NO_IMPEDIMENT">
                                 {{'application.trafficArrangementImpedimentType.NO_IMPEDIMENT' | translation}}
-                            </md-button-toggle>
-                            <md-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
+                            </mat-button-toggle>
+                            <mat-button-toggle value="INSIGNIFICANT_IMPEDIMENT">
                                 {{'application.trafficArrangementImpedimentType.INSIGNIFICANT_IMPEDIMENT' | translation}}
-                            </md-button-toggle>
-                            <md-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
+                            </mat-button-toggle>
+                            <mat-button-toggle value="IMPEDIMENT_FOR_HEAVY_TRAFFIC">
                                 {{'application.trafficArrangementImpedimentType.IMPEDIMENT_FOR_HEAVY_TRAFFIC' | translation}}
-                            </md-button-toggle>
-                            <md-button-toggle value="SIGNIFICANT_IMPEDIMENT">
+                            </mat-button-toggle>
+                            <mat-button-toggle value="SIGNIFICANT_IMPEDIMENT">
                                 {{'application.trafficArrangementImpedimentType.SIGNIFICANT_IMPEDIMENT' | translation}}
-                            </md-button-toggle>
-                        </md-button-toggle-group>
+                            </mat-button-toggle>
+                        </mat-button-toggle-group>
                     </div>
                 </div>
                 <div class="row form-group">
                     <div class="col m12">
-                        <md-form-field class="input-full-width">
-                            <textarea mdInput mdTextareaAutosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
-                        </md-form-field>
+                        <mat-form-field class="input-full-width">
+                            <textarea matInput matTextareaAutosize formControlName="additionalInfo" placeholder="Lisätiedot"></textarea>
+                        </mat-form-field>
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
     </div>
 

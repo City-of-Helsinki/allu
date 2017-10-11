@@ -4,72 +4,80 @@
     <form [formGroup]="queryForm">
       <div class="row">
         <div class="col m4 s6">
-          <md-form-field class="input-full-width">
-            <input mdInput type="text" formControlName="applicationId" placeholder="Hakemuksen tunnus"/>
-          </md-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="applicationId" placeholder="Hakemuksen tunnus"/>
+          </mat-form-field>
         </div>
         <div class="col m2 s6">
-          <md-select formControlName="type" [multiple]="true" placeholder="Hakemuksen tyyppi" class="input-full-width">
-            <md-option *ngFor="let option of applicationTypeStrings" [value]="option">
-              {{ ['application.type', option] | translation }}
-            </md-option>
-          </md-select>
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="type" [multiple]="true" placeholder="Hakemuksen tyyppi" class="input-full-width">
+              <mat-option *ngFor="let option of applicationTypeStrings" [value]="option">
+                {{ ['application.type', option] | translation }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="col m2 s6">
-          <md-select formControlName="status" [multiple]="true" placeholder="Hakemuksen tila" class="input-full-width">
-            <md-option *ngFor="let option of applicationStatusStrings" [value]="option">
-              {{ ['application.status', option] | translation }}
-            </md-option>
-          </md-select>
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="status" [multiple]="true" placeholder="Hakemuksen tila" class="input-full-width">
+              <mat-option *ngFor="let option of applicationStatusStrings" [value]="option">
+                {{ ['application.status', option] | translation }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="col m2 s6">
-          <md-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
-            <md-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</md-option>
-          </md-select>
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
+              <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="col m2 s6">
-          <md-select formControlName="handler" [multiple]="true" placeholder="Hakemuksen käsittelijä" class="input-full-width">
-            <md-option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</md-option>
-          </md-select>
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="handler" [multiple]="true" placeholder="Hakemuksen käsittelijä" class="input-full-width">
+              <mat-option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <div class="col m4 s6">
-          <md-form-field class="input-full-width">
-            <input mdInput type="text" formControlName="address" placeholder="Osoite"/>
-          </md-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="address" placeholder="Osoite"/>
+          </mat-form-field>
         </div>
         <div class="col m2 s6">
-          <md-form-field class="input-full-width">
-            <input mdInput type="text" formControlName="applicant" placeholder="Hakija"/>
-          </md-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="applicant" placeholder="Hakija"/>
+          </mat-form-field>
         </div>
         <div class="col m2 s6">
-          <md-form-field class="input-full-width">
-            <input mdInput type="text" formControlName="contact" placeholder="Yhteyshenkilö"/>
-          </md-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="contact" placeholder="Yhteyshenkilö"/>
+          </mat-form-field>
         </div>
         <div class="col m2 s6">
-          <md-form-field class="input-full-width">
-            <input mdInput type="text" formControlName="freeText" placeholder="Vapaa tekstihaku"/>
-          </md-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="freeText" placeholder="Vapaa tekstihaku"/>
+          </mat-form-field>
         </div>
         <div class="col m1 s6">
-          <md-form-field class="input-full-width">
-            <input mdInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
-                   [mdDatepicker]="startTimePicker"/>
-            <md-datepicker-toggle mdSuffix [for]="startTimePicker"></md-datepicker-toggle>
-            <md-datepicker #startTimePicker></md-datepicker>
-          </md-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
+                   [matDatepicker]="startTimePicker"/>
+            <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startTimePicker></mat-datepicker>
+          </mat-form-field>
         </div>
         <div class="col m1 s6">
-          <md-form-field class="input-full-width">
-            <input mdInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
-                   [mdDatepicker]="endTimePicker"/>
-            <md-datepicker-toggle mdSuffix [for]="endTimePicker"></md-datepicker-toggle>
-            <md-datepicker #endTimePicker></md-datepicker>
-          </md-form-field>
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
+                   [matDatepicker]="endTimePicker"/>
+            <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
+            <mat-datepicker #endTimePicker></mat-datepicker>
+          </mat-form-field>
         </div>
         <div class="col m12 s12">
-          <button (click)="search()" md-raised-button type="button" color="primary">HAE</button>
+          <button (click)="search()" mat-raised-button type="button" color="primary">HAE</button>
         </div>
       </div>
     </form>

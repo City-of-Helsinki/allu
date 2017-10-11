@@ -1,10 +1,10 @@
 <ul>
     <li *ngFor="let proposal of proposals | async">
-        <md-card>
-            <md-card-title>
+        <mat-card>
+            <mat-card-title>
                 {{['comment.type', proposal.type] | translation}}
-            </md-card-title>
-            <md-card-content>
+            </mat-card-title>
+            <mat-card-content>
                 <div class="row">
                     <div class="col m12">
                         <div class="save-info">
@@ -18,7 +18,7 @@
                         {{proposal.text}}
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </li>
 </ul>

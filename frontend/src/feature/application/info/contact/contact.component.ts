@@ -4,7 +4,7 @@ import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {Contact} from '../../../../model/customer/contact';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
-import {MdDialog, MdDialogRef} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
 import {Observable} from 'rxjs';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
@@ -38,10 +38,10 @@ export class ContactComponent implements OnInit {
   matchingContacts: Observable<Array<Contact>>;
   showOrderer: boolean = false;
 
-  private dialogRef: MdDialogRef<ContactModalComponent>;
+  private dialogRef: MatDialogRef<ContactModalComponent>;
 
   constructor(private fb: FormBuilder,
-              private dialog: MdDialog,
+              private dialog: MatDialog,
               private customerHub: CustomerHub,
               private applicationState: ApplicationState) {}
 

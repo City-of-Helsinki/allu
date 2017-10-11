@@ -1,10 +1,10 @@
 <form [formGroup]="form" (ngSubmit)="save()">
-    <md-card>
-        <md-card-title>
+    <mat-card>
+        <mat-card-title>
             <div *ngIf="form.value.id">{{['supervision.task.type', form.value.type] | translation}}</div>
             <div *ngIf="!form.value.id">{{'supervision.task.newTask' | translation}}</div>
-        </md-card-title>
-        <md-card-content>
+        </mat-card-title>
+        <mat-card-content>
             <div fxLayout="row" fxLayout.lt-md="column" fxLayoutWrap>
                 <div fxFlex="100" *ngIf="form.disabled">
                     <div class="save-info">
@@ -14,65 +14,69 @@
                 <div fxFlex="80">
                     <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="0.75rem" fxLayoutWrap>
                         <div fxFlex="30">
-                            <md-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width" formControlName="type">
-                                <md-option *ngFor="let type of taskTypes" [value]="type">
-                                    {{['supervision.task.type', type] | translation}}
-                                </md-option>
-                            </md-select>
+                            <mat-form-field class="input-full-width">
+                                <mat-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width" formControlName="type">
+                                    <mat-option *ngFor="let type of taskTypes" [value]="type">
+                                        {{['supervision.task.type', type] | translation}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div fxFlex="30">
-                            <md-select [placeholder]="'supervision.task.handler' | translation" class="input-full-width" formControlName="handlerId">
-                                <md-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
-                                    {{supervisor.realName}}
-                                </md-option>
-                            </md-select>
+                            <mat-form-field class="input-full-width">
+                                <mat-select [placeholder]="'supervision.task.handler' | translation" class="input-full-width" formControlName="handlerId">
+                                    <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
+                                        {{supervisor.realName}}
+                                    </mat-option>
+                                </mat-select>
+                            </mat-form-field>
                         </div>
                         <div fxFlex="30">
-                            <md-form-field class="input-full-width">
-                                <input mdInput formControlName="plannedFinishingTime"
+                            <mat-form-field class="input-full-width">
+                                <input matInput formControlName="plannedFinishingTime"
                                        [placeholder]="'supervision.task.plannedFinishingTime' | translation"
-                                       [mdDatepicker]="plannedFinishingTimePicker">
-                                <md-datepicker-toggle mdSuffix [for]="plannedFinishingTimePicker" [disabled]="form.disabled"></md-datepicker-toggle>
-                                <md-datepicker #plannedFinishingTimePicker></md-datepicker>
-                                <md-error *ngIf="form.get('plannedFinishingTime').hasError('inThePast')">
+                                       [matDatepicker]="plannedFinishingTimePicker">
+                                <mat-datepicker-toggle matSuffix [for]="plannedFinishingTimePicker" [disabled]="form.disabled"></mat-datepicker-toggle>
+                                <mat-datepicker #plannedFinishingTimePicker></mat-datepicker>
+                                <mat-error *ngIf="form.get('plannedFinishingTime').hasError('inThePast')">
                                     {{'supervision.task.field.plannedFinishingTimeInThePast' | translation}}
-                                </md-error>
-                                <md-error *ngIf="form.get('plannedFinishingTime').hasError('required')">
+                                </mat-error>
+                                <mat-error *ngIf="form.get('plannedFinishingTime').hasError('required')">
                                     {{'supervision.task.field.plannedFinishingTimeMissing' | translation}}
-                                </md-error>
-                            </md-form-field>
+                                </mat-error>
+                            </mat-form-field>
                         </div>
                     </div>
                 </div>
                 <div fxFlex="100">
-                    <md-form-field class="input-full-width">
-                        <textarea mdInput mdTextareaAutosize  formControlName="description"
+                    <mat-form-field class="input-full-width">
+                        <textarea matInput matTextareaAutosize  formControlName="description"
                                   [placeholder]="'supervision.task.description' | translation"></textarea>
-                    </md-form-field>
+                    </mat-form-field>
                 </div>
             </div>
             <div fxLayout="row" fxLayout.sm="column" *ngIf="canEdit">
                 <div fxFlex="100">
                     <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
                         <ng-container *ngIf="form.enabled">
-                            <button id="save" md-raised-button type="submit" color="primary" [disabled]="!form.valid">
+                            <button id="save" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
                                 {{'common.button.save' | translation}}
                             </button>
-                            <button id="cancel" md-raised-button type="button" color="primary" (click)="cancel()">
+                            <button id="cancel" mat-raised-button type="button" color="primary" (click)="cancel()">
                                 {{'common.button.cancel' | translation}}
                             </button>
                         </ng-container>
                         <ng-container *ngIf="form.disabled">
-                            <button id="edit" md-raised-button type="button" color="primary" (click)="edit()">
+                            <button id="edit" mat-raised-button type="button" color="primary" (click)="edit()">
                                 {{'common.button.edit' | translation}}
                             </button>
-                            <button id="remove" md-raised-button type="button" color="primary" (click)="remove()">
+                            <button id="remove" mat-raised-button type="button" color="primary" (click)="remove()">
                                 {{'common.button.remove' | translation}}
                             </button>
                         </ng-container>
                     </ng-container>
                 </div>
             </div>
-        </md-card-content>
-    </md-card>
+        </mat-card-content>
+    </mat-card>
 </form>

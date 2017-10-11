@@ -36,7 +36,7 @@ import {CustomerHub} from '../../service/customer/customer-hub';
 import {CustomerService} from '../../service/customer/customer.service';
 import {CustomerRegistryModule} from '../customerregistry/customer-registry.module';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {DateAdapter} from '@angular/material';
+import {DateAdapter, MATERIAL_COMPATIBILITY_MODE} from '@angular/material';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
 import {ConfigService} from '../../service/config/config.service';
@@ -100,7 +100,8 @@ import {ConfigService} from '../../service/config/config.service';
       deps: [Http]
     },
     { provide: DateAdapter, useClass: AlluDateAdapter },
-    { provide: LOCALE_ID, useValue: 'fi-FI' }
+    { provide: LOCALE_ID, useValue: 'fi-FI' },
+    {provide: MATERIAL_COMPATIBILITY_MODE, useValue: true}
   ]
 })
 export class AlluModule {}

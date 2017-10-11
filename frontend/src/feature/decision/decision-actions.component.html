@@ -3,12 +3,12 @@
     <div class="action-row" *ngSwitchCase="'HANDLING'">
         <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
             <div class="action-item">
-                <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decisionProposal('PROPOSE_APPROVAL')">
+                <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decisionProposal('PROPOSE_APPROVAL')">
                     {{'decision.proposal.PROPOSE_APPROVAL' | translation}}
                 </button>
             </div>
             <div class="action-item">
-                <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decisionProposal('PROPOSE_REJECT')">
+                <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decisionProposal('PROPOSE_REJECT')">
                     {{'decision.proposal.PROPOSE_REJECT' | translation}}
                 </button>
             </div>
@@ -18,20 +18,20 @@
         <ng-container *ngIf="application.type === 'CABLE_REPORT'">
             <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
                 <div class="action-item">
-                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
+                    <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
                 </div>
             </ng-container>
         </ng-container>
         <ng-container *ngIf="application.type !== 'CABLE_REPORT'">
             <ng-container *availableTo="['ROLE_DECISION']">
                 <div class="action-item">
-                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
+                    <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('DECISION')">Hyväksy</button>
                 </div>
                 <div class="action-item">
-                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('RETURNED_TO_PREPARATION')">Palauta</button>
+                    <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('RETURNED_TO_PREPARATION')">Palauta</button>
                 </div>
                 <div class="action-item">
-                    <button md-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('REJECTED')">Hylkää</button>
+                    <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decision('REJECTED')">Hylkää</button>
                 </div>
             </ng-container>
         </ng-container>

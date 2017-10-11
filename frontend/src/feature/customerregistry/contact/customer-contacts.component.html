@@ -3,64 +3,64 @@
         <ng-container *ngFor="let contact of contacts.controls; let index=index">
             <div class="col m6 loose" *ngIf="contact.value.active">
                 <div [formGroupName]="index" class="no-border">
-                    <md-card>
-                        <md-card-title>Yhteyshenkilö</md-card-title>
-                        <md-card-content>
+                    <mat-card>
+                        <mat-card-title>Yhteyshenkilö</mat-card-title>
+                        <mat-card-content>
                             <div class="row form-group">
                                 <div class="col m6">
-                                    <md-form-field class="input-full-width">
-                                        <input mdInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
-                                        <md-hint>
+                                    <mat-form-field class="input-full-width">
+                                        <input matInput type="text" formControlName="name" placeholder="Yhteyshenkilön nimi*"/>
+                                        <mat-hint>
                                             <field-error [form]="contact" field="name" hasError="required">{{'contact.field.nameMissing' | translation}}</field-error>
-                                        </md-hint>
-                                    </md-form-field>
+                                        </mat-hint>
+                                    </mat-form-field>
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <div class="col m6">
-                                    <md-form-field class="input-full-width">
-                                        <input mdInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
-                                    </md-form-field>
+                                    <mat-form-field class="input-full-width">
+                                        <input matInput type="text" formControlName="streetAddress" placeholder="Katuosoite"/>
+                                    </mat-form-field>
                                 </div>
                                 <div class="col m3">
-                                    <md-form-field class="input-full-width">
-                                        <input mdInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
-                                        <md-hint>
+                                    <mat-form-field class="input-full-width">
+                                        <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
+                                        <mat-hint>
                                             <field-error [form]="contact" field="postalCode" hasError="pattern">{{'common.field.postalCode' | translation}}</field-error>
-                                        </md-hint>
-                                    </md-form-field>
+                                        </mat-hint>
+                                    </mat-form-field>
                                 </div>
                                 <div class="col m3">
-                                    <md-form-field class="input-full-width">
-                                        <input mdInput type="text" formControlName="city" placeholder="Toimipaikka"/>
-                                    </md-form-field>
+                                    <mat-form-field class="input-full-width">
+                                        <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
+                                    </mat-form-field>
                                 </div>
                             </div>
                             <div class="row form-group">
                                 <div class="col m6">
-                                    <md-form-field class="input-full-width">
-                                        <input mdInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
-                                        <md-hint>
+                                    <mat-form-field class="input-full-width">
+                                        <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
+                                        <mat-hint>
                                             <field-error [form]="contact" field="email" hasError="pattern">{{'common.field.emailInvalid' | translation}}</field-error>
-                                        </md-hint>
-                                    </md-form-field>
+                                        </mat-hint>
+                                    </mat-form-field>
                                 </div>
                                 <div class="col m6">
-                                    <md-form-field class="input-full-width">
-                                        <input mdInput type="text" formControlName="phone" placeholder="Puhelin"/>
-                                        <md-hint>
+                                    <mat-form-field class="input-full-width">
+                                        <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
+                                        <mat-hint>
                                             <field-error [form]="contact" field="phone" hasError="minlength">{{'contact.field.phoneShort' | translation}}</field-error>
-                                        </md-hint>
-                                    </md-form-field>
+                                        </mat-hint>
+                                    </mat-form-field>
                                 </div>
                             </div>
                             <div class="row form-group" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
                                 <div class="col m12">
-                                    <button md-raised-button type="button" color="primary" (click)="removeContact(index, contact.value)">POISTA</button>
+                                    <button mat-raised-button type="button" color="primary" (click)="removeContact(index, contact.value)">POISTA</button>
                                 </div>
                             </div>
-                        </md-card-content>
-                    </md-card>
+                        </mat-card-content>
+                    </mat-card>
                 </div>
             </div>
         </ng-container>

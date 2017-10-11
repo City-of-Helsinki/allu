@@ -1,22 +1,22 @@
 <form [formGroup]="parentForm">
     <div class="row">
-        <md-card>
-            <md-card-title>
+        <mat-card>
+            <mat-card-title>
                 Laskurivit
-                <button md-icon-button (click)="newRow()" class="align-with-text"><md-icon>add</md-icon></button>
-            </md-card-title>
-            <md-card-content>
+                <button mat-icon-button (click)="newRow()" class="align-with-text"><mat-icon>add</mat-icon></button>
+            </mat-card-title>
+            <mat-card-content>
                 <div *ngIf="pendingInvoiceRows.controls.length === 0">
                     Ei hyväksymättömiä laskurivejä
                 </div>
                 <div formArrayName="pendingInvoiceRows">
                     <div *ngFor="let row of pendingInvoiceRows.controls; let i=index;" class="row">
-                        <md-card class="slim-card">
-                            <md-card-content>
+                        <mat-card class="slim-card">
+                            <mat-card-content>
                                 <div class="invoice-row">
                                     <div class="row-controls">
-                                        <button md-icon-button (click)="acceptRow(i)"><md-icon class="angle-45">send</md-icon></button>
-                                        <button md-icon-button *ngIf="row.value.manuallySet" (click)="editRow(i)"><md-icon>edit</md-icon></button>
+                                        <button mat-icon-button (click)="acceptRow(i)"><mat-icon class="angle-45">send</mat-icon></button>
+                                        <button mat-icon-button *ngIf="row.value.manuallySet" (click)="editRow(i)"><mat-icon>edit</mat-icon></button>
                                     </div>
                                     <div class="row-header">{{row.value.text}}</div>
                                     <div class="row-content">
@@ -25,26 +25,26 @@
                                         <div class="row-field-md row-field-highlight">{{row.value.netPrice}} €</div>
                                     </div>
                                 </div>
-                            </md-card-content>
-                        </md-card>
+                            </mat-card-content>
+                        </mat-card>
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
     <div class="row">
-        <md-card>
-            <md-card-title>
+        <mat-card>
+            <mat-card-title>
                 Laskutuksessa
-            </md-card-title>
-            <md-card-content>
+            </mat-card-title>
+            <mat-card-content>
                 <div *ngIf="acceptedInvoiceRows.controls.length === 0">
                     Ei hyväksyttyjä laskurivejä
                 </div>
                 <div formArrayName="acceptedInvoiceRows">
                     <div *ngFor="let row of acceptedInvoiceRows.controls; let i=index" class="row">
-                        <md-card class="slim-card">
-                            <md-card-content>
+                        <mat-card class="slim-card">
+                            <mat-card-content>
                                 <div class="invoice-row">
                                     <div class="row-controls">
                                     </div>
@@ -55,11 +55,11 @@
                                         <div class="row-field-md row-field-highlight">{{row.value.netPrice}} €</div>
                                     </div>
                                 </div>
-                            </md-card-content>
-                        </md-card>
+                            </mat-card-content>
+                        </mat-card>
                     </div>
                 </div>
-            </md-card-content>
-        </md-card>
+            </mat-card-content>
+        </mat-card>
     </div>
 </form>

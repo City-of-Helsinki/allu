@@ -1,21 +1,21 @@
 <form [formGroup]="searchForm">
   <div *ngIf="barType === 'SIMPLE'" class="search-box">
     <input-box class="input-raised">
-      <button type="button" md-raised-button mdPrefix class="toggle-sidebar fill" (click)="showMore()" inputBoxPrefix>
-        <md-icon>subject</md-icon>
+      <button type="button" mat-raised-button matPrefix class="toggle-sidebar fill" (click)="showMore()" inputBoxPrefix>
+        <mat-icon>subject</mat-icon>
       </button>
       <input type="text" formControlName="address"
              inputBoxInput
              class="input-addon-field last-item"
              placeholder="Hae osoitteella"
              (keyup.enter)="addressSelected(searchForm.value.address)"
-             [mdAutocomplete]="addressSearch"/>
-      <md-autocomplete #addressSearch="mdAutocomplete">
-        <md-option *ngFor="let address of matchingAddresses | async"
+             [matAutocomplete]="addressSearch"/>
+      <mat-autocomplete #addressSearch="matAutocomplete">
+        <mat-option *ngFor="let address of matchingAddresses | async"
                    [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
           {{ address.uiStreetAddress }}
-        </md-option>
-      </md-autocomplete>
+        </mat-option>
+      </mat-autocomplete>
     </input-box>
   </div>
 
@@ -25,20 +25,20 @@
         <input type="text" formControlName="address"
                inputBoxInput placeholder="Hae osoitteella"
                (keyup.enter)="addressSelected(searchForm.value.address)"
-               [mdAutocomplete]="addressSearch"/>
+               [matAutocomplete]="addressSearch"/>
       </input-box>
-      <md-autocomplete #addressSearch="mdAutocomplete">
-        <md-option *ngFor="let address of matchingAddresses | async"
+      <mat-autocomplete #addressSearch="matAutocomplete">
+        <mat-option *ngFor="let address of matchingAddresses | async"
                    [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
           {{ address.uiStreetAddress }}
-        </md-option>
-      </md-autocomplete>
+        </mat-option>
+      </mat-autocomplete>
     </div>
     <div class="col s2">
       <input-box class="input-raised">
-        <input inputBoxInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä" [mdDatepicker]="startDatePicker"/>
-        <md-datepicker-toggle mdSuffix [for]="startDatePicker" inputBoxSuffix></md-datepicker-toggle>
-        <md-datepicker #startDatePicker></md-datepicker>
+        <input inputBoxInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä" [matDatepicker]="startDatePicker"/>
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
         <field-error [form]="searchForm" field="startDate" hasError="required">
           {{'application.common.field.validityStartTimeMissing' | translation}}
         </field-error>
@@ -46,9 +46,9 @@
     </div>
     <div class="col s2">
       <input-box class="input-raised">
-        <input inputBoxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä" [mdDatepicker]="endDatePicker"/>
-        <md-datepicker-toggle mdSuffix [for]="endDatePicker" inputBoxSuffix></md-datepicker-toggle>
-        <md-datepicker #endDatePicker></md-datepicker>
+        <input inputBoxInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä" [matDatepicker]="endDatePicker"/>
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
         <field-error [form]="searchForm" field="endDate" hasError="required">
           {{'application.common.field.validityEndTimeMissing' | translation}}
         </field-error>
@@ -58,35 +58,35 @@
 
   <div *ngIf="barType === 'ADVANCED'">
     <div class="col s12">
-      <md-form-field class="input-full-width">
-        <input mdInput type="text" formControlName="address"
+      <mat-form-field class="input-full-width">
+        <input matInput type="text" formControlName="address"
                placeholder="Hae osoitteella"
                (keyup.enter)="addressSelected(searchForm.value.address)"
-               [mdAutocomplete]="addressSearch"/>
-        <md-autocomplete #addressSearch="mdAutocomplete">
-          <md-option *ngFor="let address of matchingAddresses | async"
+               [matAutocomplete]="addressSearch"/>
+        <mat-autocomplete #addressSearch="matAutocomplete">
+          <mat-option *ngFor="let address of matchingAddresses | async"
                      [value]="address.uiStreetAddress" (click)="addressSelected(address.uiStreetAddress)">
             {{ address.uiStreetAddress }}
-          </md-option>
-        </md-autocomplete>
-      </md-form-field>
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
     </div>
 
     <div class="input-field col s6">
-      <md-form-field class="input-full-width">
-        <input mdInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
-               [mdDatepicker]="startDatePicker"/>
-        <md-datepicker-toggle mdSuffix [for]="startDatePicker" inputBoxSuffix></md-datepicker-toggle>
-        <md-datepicker #startDatePicker></md-datepicker>
-      </md-form-field>
+      <mat-form-field class="input-full-width">
+        <input matInput type="text" formControlName="startDate" placeholder="Alkupäivämäärä"
+               [matDatepicker]="startDatePicker"/>
+        <mat-datepicker-toggle matSuffix [for]="startDatePicker" inputBoxSuffix></mat-datepicker-toggle>
+        <mat-datepicker #startDatePicker></mat-datepicker>
+      </mat-form-field>
     </div>
     <div class="input-field col s6">
-      <md-form-field class="input-full-width">
-        <input mdInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
-               [mdDatepicker]="endDatePicker"/>
-        <md-datepicker-toggle mdSuffix [for]="endDatePicker" inputBoxSuffix></md-datepicker-toggle>
-        <md-datepicker #endDatePicker></md-datepicker>
-      </md-form-field>
+      <mat-form-field class="input-full-width">
+        <input matInput type="text" formControlName="endDate" placeholder="Loppupäivämäärä"
+               [matDatepicker]="endDatePicker"/>
+        <mat-datepicker-toggle matSuffix [for]="endDatePicker" inputBoxSuffix></mat-datepicker-toggle>
+        <mat-datepicker #endDatePicker></mat-datepicker>
+      </mat-form-field>
     </div>
     <div class="col s12">
       <selection-group formControlName="statusTypes">
