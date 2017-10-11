@@ -6,7 +6,7 @@ export class SupervisionTask {
   constructor(
     public id?: number,
     public applicationId?: number,
-    public type?: SupervisionTaskType,
+    public type: SupervisionTaskType = SupervisionTaskType.PRELIMINARY_SUPERVISION,
     public creator?: User,
     public handler?: User,
     public creationTime?: Date,
@@ -14,8 +14,8 @@ export class SupervisionTask {
     public actualFinishingTime?: Date,
     public status?: SupervisionTaskStatusType,
     public description?: string,
-    public result?: string) {}
-
+    public result?: string) {
+  }
 
   get uiType(): string {
     return SupervisionTaskType[this.type];

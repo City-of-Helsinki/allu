@@ -6,7 +6,6 @@ import {User} from '../../../model/user/user';
 import {RoleType} from '../../../model/user/role-type';
 import {TimeUtil} from '../../../util/time.util';
 import {SupervisionTask} from '../../../model/application/supervision/supervision-task';
-import {SupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {ComplexValidator} from '../../../util/complex-validator';
 import {SupervisionTaskForm} from './supervision-task-form';
@@ -32,7 +31,7 @@ export class SupervisionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.supervisionTaskSubscription = this.supervisionTaskStore.tasks
-      .map(tasks => tasks.sort((l, r) => TimeUtil.compareTo(l.creationTime, r.creationTime))) // chronological order by create time
+      .map(tasks => tasks.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // latest first
       .subscribe(tasks => {
         FormUtil.clearArray(this.supervisionTasks);
         tasks.forEach(task => this.addNew(task));
@@ -46,7 +45,6 @@ export class SupervisionComponent implements OnInit, OnDestroy {
   }
 
   addNew(task: SupervisionTask = new SupervisionTask()): void {
-    task.type = task.type || SupervisionTaskType.SUPERVISION;
     task.plannedFinishingTime = task.plannedFinishingTime || new Date();
     const formGroup = this.fb.group({
       id: [undefined],
@@ -64,7 +62,12 @@ export class SupervisionComponent implements OnInit, OnDestroy {
       result: [undefined]
     });
     formGroup.patchValue(SupervisionTaskForm.from(task));
-    this.supervisionTasks.push(formGroup);
+
+    if (task.id === undefined) {
+      this.supervisionTasks.insert(0, formGroup);
+    } else {
+      this.supervisionTasks.push(formGroup);
+    }
   }
 
   remove(index: number): void {
