@@ -61,6 +61,10 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
         it("findByApplication returns empty list", () -> {
           assertTrue(invoiceDao.findByApplication(123).isEmpty());
         });
+
+        it("deleteByApplication doesn't throw", () -> {
+          invoiceDao.deleteByApplication(123);
+        });
       });
 
       context("When application exists", () -> {
@@ -100,6 +104,14 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
             assertTrue(result.stream().anyMatch(i -> i.getId().equals(invoiceId.get())));
             assertTrue(result.stream().anyMatch(i -> i.getId().equals(otherId)));
           });
+
+          it("can delete all inserted with deleteByApplication", () -> {
+            int otherId = invoiceDao.insert(appId.get(), otherInvoice());
+            invoiceDao.deleteByApplication(appId.get());
+            assertFalse(invoiceDao.find(invoiceId.get()).isPresent());
+            assertFalse(invoiceDao.find(otherId).isPresent());
+          });
+
         });
       });
     });

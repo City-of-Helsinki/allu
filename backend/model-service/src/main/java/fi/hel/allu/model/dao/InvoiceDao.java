@@ -122,6 +122,17 @@ public class InvoiceDao {
     }
   }
 
+  /**
+   * Delete all invoices for given application
+   *
+   * @param applicationId
+   */
+  @Transactional
+  public void deleteByApplication(int applicationId) {
+    queryFactory.select(invoice.id).from(invoice).where(invoice.applicationId.eq(applicationId)).fetch()
+        .forEach(id -> delete(id));
+  }
+
   private void deleteRows(int invoiceId) {
     queryFactory.delete(invoiceRow).where(invoiceRow.invoiceId.eq(invoiceId)).execute();
   }

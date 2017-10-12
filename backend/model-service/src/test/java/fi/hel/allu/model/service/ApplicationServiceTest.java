@@ -1,6 +1,7 @@
 package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.domain.Application;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.times;
 
 public class ApplicationServiceTest {
 
@@ -27,15 +29,15 @@ public class ApplicationServiceTest {
   private PricingService pricingService;
   @Mock
   private ChargeBasisDao chargeBasisDao;
+  @Mock
+  private InvoiceService invoiceService;
 
   private ApplicationService applicationService;
-
-  private List<ChargeBasisEntry> storedEntries;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisDao);
+    applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisDao, invoiceService);
   }
 
   @Test
@@ -97,6 +99,33 @@ public class ApplicationServiceTest {
     List<ApplicationTag> saved = applicationService.updateTags(APP_ID, tagList);
     Mockito.verify(applicationDao).updateTags(APP_ID, tagList);
     assertEquals(tag, saved.get(0));
+  }
+
+  @Test
+  public void testChangeStatusToDecision() {
+    final int APP_ID = 123;
+    final int UID = 234;
+    applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
+    Mockito.verify(invoiceService).createInvoices(APP_ID);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID);
+  }
+
+  @Test
+  public void testChangeStatusToRejected() {
+    final int APP_ID = 123;
+    final int UID = 234;
+    applicationService.changeApplicationStatus(APP_ID, StatusType.REJECTED, UID);
+    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID);
+  }
+
+  @Test
+  public void testChangeStatusToOther() {
+    final int APP_ID = 123;
+    final int UID = 234;
+    applicationService.changeApplicationStatus(APP_ID, StatusType.FINISHED, UID);
+    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID);
+    Mockito.verify(applicationDao).updateStatus(APP_ID, StatusType.FINISHED);
   }
 
 }

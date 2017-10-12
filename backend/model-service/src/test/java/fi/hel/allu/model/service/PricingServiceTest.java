@@ -23,6 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -250,20 +251,38 @@ public class PricingServiceTest {
     checkPrice(application, 133800);
   }
 
+  // Invoincing-related test data:
+  private static final ChargeBasisEntry[] TEST_ENTRIES = new ChargeBasisEntry[] {
+      new ChargeBasisEntry("TAG1", null, false, ChargeBasisUnit.PIECE, 5.0, "Entry 1", 1230, 6150),
+      new ChargeBasisEntry("TAG2", null, false, ChargeBasisUnit.DAY, 3.0, "Entry 2", 22000, 66000),
+      new ChargeBasisEntry("TAG3", null, false, ChargeBasisUnit.SQUARE_METER, 123.5, "Entry 3", 200, 24700),
+      new ChargeBasisEntry(null, "TAG1", true, ChargeBasisUnit.MULTIPLY, 0.8, "20% discount", 0, 0),
+      new ChargeBasisEntry(null, "TAG1", true, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", 0, 0),
+      new ChargeBasisEntry(null, "TAG2", true, ChargeBasisUnit.MULTIPLY, 1.2, "20% extra fee", 0, 0),
+      new ChargeBasisEntry(null, null, true, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", 0, 0)
+  };
+
+  // The total price should be
+  // (61.50 * 0.8 * 0.9 + 660.00 * 1.2 + 247.00) * 0.9 = 974.95 EUR
+  private static final int TEST_ENTRIES_PRICE = 97495;
+
   @Test
   public void testTotalPrice() {
-    List<ChargeBasisEntry> entries = Arrays.asList(
-        new ChargeBasisEntry("TAG1", null, false, ChargeBasisUnit.PIECE, 5.0, "Entry 1", 1230, 6150),
-        new ChargeBasisEntry("TAG2", null, false, ChargeBasisUnit.DAY, 3.0, "Entry 2", 22000, 66000),
-        new ChargeBasisEntry("TAG3", null, false, ChargeBasisUnit.SQUARE_METER, 123.5, "Entry 3", 200, 24700),
-        new ChargeBasisEntry(null, "TAG1", true, ChargeBasisUnit.MULTIPLY, 0.8, "20% discount", 0, 0),
-        new ChargeBasisEntry(null, "TAG1", true, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", 0, 0),
-        new ChargeBasisEntry(null, "TAG2", true, ChargeBasisUnit.MULTIPLY, 1.2, "20% extra fee", 0, 0),
-        new ChargeBasisEntry(null, null, true, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", 0, 0));
+    List<ChargeBasisEntry> entries = Arrays.asList(TEST_ENTRIES);
+    assertEquals(TEST_ENTRIES_PRICE, pricingService.totalPrice(entries));
+  }
+
+  @Test
+  public void testSingleInvoice()
+  {
+    List<ChargeBasisEntry> entries = Arrays.asList(TEST_ENTRIES);
     // The total price should be
     // (61.50 * 0.8 * 0.9 + 660.00 * 1.2 + 247.00) * 0.9 = 974.95 EUR
-    assertEquals(97495, pricingService.totalPrice(entries));
+    List<InvoiceRow> rows = pricingService.toSingleInvoice(entries);
+    assertFalse(rows.isEmpty());
+    assertEquals(TEST_ENTRIES_PRICE, rows.stream().mapToInt(r -> r.getNetPrice()).sum());
   }
+
   /*
    * Verify that the sum of invoice lines matches the application's calculated
    * price

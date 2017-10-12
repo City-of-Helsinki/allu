@@ -27,13 +27,15 @@ public class ApplicationService {
   private ApplicationDao applicationDao;
   private PricingService pricingService;
   private ChargeBasisDao chargeBasisDao;
+  private InvoiceService invoiceService;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-      ChargeBasisDao chargeBasisDao) {
+      ChargeBasisDao chargeBasisDao, InvoiceService invoiceService) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisDao = chargeBasisDao;
+    this.invoiceService = invoiceService;
   }
 
   /**
@@ -159,10 +161,14 @@ public class ApplicationService {
    */
   @Transactional
   public Application changeApplicationStatus(int applicationId, StatusType statusType, Integer userId) {
-    if (StatusType.DECISION.equals(statusType) || StatusType.REJECTED.equals(statusType)) {
-      return applicationDao.updateDecision(applicationId, statusType, userId);
-    } else {
-      return applicationDao.updateStatus(applicationId, statusType);
+    switch (statusType) {
+      case DECISION:
+        invoiceService.createInvoices(applicationId);
+        // the fall-through is intentional here
+      case REJECTED:
+        return applicationDao.updateDecision(applicationId, statusType, userId);
+      default:
+        return applicationDao.updateStatus(applicationId, statusType);
     }
   }
 

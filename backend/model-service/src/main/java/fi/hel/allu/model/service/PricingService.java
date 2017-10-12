@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -74,36 +76,21 @@ public class PricingService {
    * @return total price in cents
    */
   public int totalPrice(List<ChargeBasisEntry> chargeBasisEntries) {
-    // To cope with floating-point rounding errors, 100 in sum = 1 cent:
-    long sum = 0;
-    double totalMultiplier = 1.0;
-    // Store entry-specific multipliers here:
-    Map<String, Double> entryMultipliers = new HashMap<>();
-    for (ChargeBasisEntry entry : chargeBasisEntries) {
-      if (entry.getUnit() != ChargeBasisUnit.MULTIPLY) {
-        // Normal entry, just add to sum
-        sum += (long) entry.getNetPrice() * 100;
-      } else if (entry.getReferredTag() == null) {
-        // Multiplying entry without target: will affect the whole result
-        totalMultiplier *= entry.getQuantity();
-      } else {
-        // Multiplying entry with target: update the target entry's multiplier
-        entryMultipliers.put(entry.getReferredTag(),
-            entry.getQuantity() * entryMultipliers.getOrDefault(entry.getReferredTag(), 1.0));
-      }
-    }
-    // Handle entry multipliers: add (K-1) x net price
-    for (ChargeBasisEntry entry : chargeBasisEntries) {
-      final Double multiplier = entryMultipliers.get(entry.getTag());
-      if (multiplier != null) {
-        final Double correction = (multiplier - 1.0) * ((long) entry.getNetPrice() * 100);
-        sum += correction;
-      }
-    }
-    // Finally, global multiplier
-    sum *= totalMultiplier;
-    // Convert to cents (assumes sum >= 0):
-    return (int) ((sum + 50) / 100);
+    return new ChargeBasisCalc(chargeBasisEntries).toInvoiceRows().stream()
+        .map(row -> BigDecimal.valueOf(row.getNetPrice()))
+        .reduce((b1, b2) -> b1.add(b2)).orElse(BigDecimal.ZERO)
+        .setScale(0, RoundingMode.UP).intValue();
+  }
+
+  /**
+   * Generate a single (i.e., non-repeating) invoice from the given charge basis
+   * entries.
+   *
+   * @param entries charge basis entries to use
+   * @return resulting invoice rows
+   */
+  public List<InvoiceRow> toSingleInvoice(List<ChargeBasisEntry> entries) {
+    return new ChargeBasisCalc(entries).toInvoiceRows();
   }
 
   /*
@@ -238,4 +225,5 @@ public class PricingService {
     return customerDao.findByIds(application.getCustomersWithContacts().stream().map(cwc -> cwc.getCustomer().getId()).collect(Collectors.toList()))
         .stream().filter(a -> a.getType() == CustomerType.COMPANY).findFirst().isPresent();
   }
+
 }

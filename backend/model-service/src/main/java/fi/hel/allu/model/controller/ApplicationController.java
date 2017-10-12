@@ -4,6 +4,7 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.*;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.InvoiceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -34,7 +35,7 @@ public class ApplicationController {
 
   private DistributionEntryDao distributionEntryDao;
 
-  private InvoiceDao invoiceDao;
+  private InvoiceService invoiceService;
   @Autowired
   public ApplicationController(
       ApplicationService applicationService,
@@ -43,14 +44,14 @@ public class ApplicationController {
       ChargeBasisDao chargeBasisDao,
       HistoryDao historyDao,
       DistributionEntryDao distributionEntryDao,
-      InvoiceDao invoiceDao) {
+      InvoiceService invoiceService) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
     this.chargeBasisDao = chargeBasisDao;
     this.historyDao = historyDao;
     this.distributionEntryDao = distributionEntryDao;
-    this.invoiceDao = invoiceDao;
+    this.invoiceService = invoiceService;
   }
 
   /**
@@ -287,6 +288,6 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/{id}/invoices", method = RequestMethod.GET)
   public ResponseEntity<List<Invoice>> getInvoices(@PathVariable int id) {
-    return new ResponseEntity<>(invoiceDao.findByApplication(id), HttpStatus.OK);
+    return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
   }
 }
