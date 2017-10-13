@@ -10,14 +10,14 @@ import {
   MatDialogModule,
   MatIconModule,
   MatInputModule,
+  MatListModule,
   MatNativeDateModule,
+  MatProgressBarModule,
   MatRadioModule,
   MatSelectModule,
   MatTabsModule,
   MatToolbarModule,
-  MatProgressBarModule,
-  MatTooltipModule,
-  MatListModule
+  MatTooltipModule
 } from '@angular/material';
 import {FlexLayoutModule} from '@angular/flex-layout';
 import 'materialize-css';

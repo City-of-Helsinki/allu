@@ -1,8 +1,8 @@
-import {Component, OnDestroy, OnInit, ViewContainerRef} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Observable} from 'rxjs/Observable';
 import {ConnectableObservable, Subscription} from 'rxjs';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {MatDialog, MatDialogConfig, MatDialogRef, MatTabChangeEvent} from '@angular/material';
+import {MatDialog, MatDialogRef, MatTabChangeEvent} from '@angular/material';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
@@ -10,7 +10,7 @@ import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {EnumUtil} from '../../util/enum.util';
 import {Sort} from '../../model/common/sort';
-import {HandlerModalComponent} from './handlerModal/handler-modal.component';
+import {HANDLER_MODAL_CONFIG, HandlerModalComponent} from '../common/handlerModal/handler-modal.component';
 import {CurrentUser} from '../../service/user/current-user';
 import {User} from '../../model/user/user';
 import {UserHub} from '../../service/user/user-hub';
@@ -41,7 +41,6 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   constructor(private applicationHub: ApplicationHub,
               private workqueueHub: WorkQueueHub,
               private dialog: MatDialog,
-              private viewContainerRef: ViewContainerRef,
               private userHub: UserHub,
               private currentUser: CurrentUser) { }
 
@@ -85,10 +84,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   openHandlerModal() {
-    let config = new MatDialogConfig();
-    config.viewContainerRef = this.viewContainerRef;
-
-    this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, config);
+    this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, HANDLER_MODAL_CONFIG);
 
     this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {

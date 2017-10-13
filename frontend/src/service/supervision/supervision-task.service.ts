@@ -7,8 +7,12 @@ import {ErrorHandler} from '../error/error-handler.service';
 import {findTranslation} from '../../util/translations';
 import {HttpResponse} from '../../util/http-response';
 import {HttpUtil} from '../../util/http.util';
+import {SupervisionWorkItem} from '../../model/application/supervision/supervision-work-item';
+import {SupervisionSearchMapper} from './supervision-work-item-mapper';
+import {SupervisionTaskSearchCriteria} from '../../model/application/supervision/supervision-task-search-criteria';
 
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
+const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';
 const SUPERVISION_TASK_APP_URL = SUPERVISION_TASK_URL + '/application/:appId';
 
 @Injectable()
@@ -45,5 +49,12 @@ export class SupervisionTaskService {
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervisiontask.error.remove')));
+  }
+
+  search(searchCriteria: SupervisionTaskSearchCriteria): Observable<Array<SupervisionWorkItem>> {
+    return this.authHttp.post(SUPERVISION_TASK_SEARCH_URL,
+      JSON.stringify(SupervisionSearchMapper.mapSearchCriteria(searchCriteria)))
+      .map(response => SupervisionSearchMapper.mapWorkItemList(response.json()))
+      .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.fetch')));
   }
 }

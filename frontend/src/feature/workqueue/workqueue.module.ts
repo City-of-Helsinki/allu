@@ -1,16 +1,16 @@
 import {NgModule} from '@angular/core';
-import {ReactiveFormsModule, FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {MatButtonToggleModule, MatChipsModule} from '@angular/material';
 
 import {WorkQueueComponent} from './workqueue.component';
 import {AlluCommonModule} from '../common/allu-common.module';
 import {WorkQueueFilterComponent} from './filter/workqueue-filter.component';
 import {WorkQueueContentComponent} from './content/workqueue-content.component';
-import {HandlerModalComponent} from './handlerModal/handler-modal.component';
 import {WorkQueueService} from './workqueue-search/workqueue.service';
 import {WorkQueueHub} from './workqueue-search/workqueue-hub';
 import {SelectionGroupModule} from '../common/selection-group/selection-group.module';
 import {CommentsModalComponent} from '../application/comment/comments-modal.component';
+import {HandlerModalModule} from '../common/handlerModal/handler-modal.module';
 
 @NgModule({
   imports: [
@@ -19,13 +19,13 @@ import {CommentsModalComponent} from '../application/comment/comments-modal.comp
     AlluCommonModule,
     MatButtonToggleModule,
     MatChipsModule,
-    SelectionGroupModule
+    SelectionGroupModule,
+    HandlerModalModule
   ],
   declarations: [
     WorkQueueComponent,
     WorkQueueFilterComponent,
     WorkQueueContentComponent,
-    HandlerModalComponent,
     CommentsModalComponent
   ],
   providers: [

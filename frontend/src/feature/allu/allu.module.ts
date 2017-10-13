@@ -40,6 +40,7 @@ import {DateAdapter, MATERIAL_COMPATIBILITY_MODE} from '@angular/material';
 import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
 import {ConfigService} from '../../service/config/config.service';
+import {SupervisionWorkqueueModule} from '../supervision-workqueue/supervision-workqueue.module';
 
 
 @NgModule({
@@ -57,6 +58,7 @@ import {ConfigService} from '../../service/config/config.service';
     MapSearchModule,
     LocationModule.forRoot(),
     WorkQueueModule,
+    SupervisionWorkqueueModule,
     DecisionModule,
     SearchModule,
     AdminModule,

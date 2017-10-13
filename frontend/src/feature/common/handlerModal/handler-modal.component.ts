@@ -4,7 +4,9 @@ import {MatDialogRef} from '@angular/material';
 import {User} from '../../../model/user/user';
 import {UserHub} from '../../../service/user/user-hub';
 import {CurrentUser} from '../../../service/user/current-user';
-import {DialogCloseReason, DialogCloseValue} from '../../common/dialog-close-value';
+import {DialogCloseReason, DialogCloseValue} from '../dialog-close-value';
+
+export const HANDLER_MODAL_CONFIG = {width: '400px'};
 
 @Component({
   selector: 'handler-modal',

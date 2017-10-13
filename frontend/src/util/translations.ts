@@ -6,6 +6,15 @@ export const translations = {
     infoText: 'Kirjauduit ulos Allu järjestelmästä. ' +
     'Mikäli haluat varmistaa ulos kirjautumisen myös Helsingin kaupungin AD tunnistuksesta tyhjennä selaimen tiedot.'
   },
+  nav: {
+    home: 'ETUSIVU',
+    workqueue: 'TYÖJONO',
+    supervisionTasks: 'VALVONTATEHTÄVÄT',
+    applications: 'HAKEMUKSET',
+    projects: 'HANKKEET',
+    customers: 'ASIAKKAAT',
+    admin: 'YLLÄPITO'
+  },
   application: {
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
@@ -698,6 +707,26 @@ export const translations = {
         plannedFinishingTimeInThePast: 'Ajankohta ei voi olla menneisyydessä',
         plannedFinishingTimeMissing: 'Ajankohta puuttuu'
       }
+    }
+  },
+  supervisionWorkqueue: {
+    title: 'VALVONTATEHTÄVÄT',
+    filter: {
+      taskTypes: 'Toimenpide',
+      applicationId: 'Hakemustunnus',
+      applicationStatus: 'Hakemuksen tila',
+      applicationType: 'Hakemustyyppi',
+      after: 'Jälkeen',
+      before: 'Ennen'
+    },
+    content: {
+      taskType: 'Toimenpide',
+      applicationId: 'Hakemustunnus',
+      applicationStatus: 'Hakemuksen tila',
+      creator: 'Valvontapyynnön jättäjä',
+      plannedFinishingTime: 'Ajankohta',
+      address: 'Osoite',
+      project: 'Hanke'
     }
   },
   invoice: {

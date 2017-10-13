@@ -1,5 +1,5 @@
 export interface BackendPostalAddress {
-  streetAddress: string;
-  postalCode: string;
-  city: string;
+  streetAddress?: string;
+  postalCode?: string;
+  city?: string;
 }
