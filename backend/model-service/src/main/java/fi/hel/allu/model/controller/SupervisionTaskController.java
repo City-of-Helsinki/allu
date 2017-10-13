@@ -3,6 +3,7 @@ package fi.hel.allu.model.controller;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.SupervisionTask;
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,5 +50,10 @@ public class SupervisionTaskController {
   public ResponseEntity<Void> delete(@PathVariable int id) {
     supervisionTaskDao.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  public ResponseEntity<List<SupervisionTask>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria) {
+    return new ResponseEntity<>(supervisionTaskDao.search(searchCriteria), HttpStatus.OK);
   }
 }

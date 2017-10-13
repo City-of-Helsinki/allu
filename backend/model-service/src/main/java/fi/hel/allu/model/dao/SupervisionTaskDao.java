@@ -2,7 +2,10 @@ package fi.hel.allu.model.dao;
 
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQueryFactory;
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.SupervisionTask;
@@ -15,8 +18,10 @@ import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QSupervisionTask.supervisionTask;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
@@ -70,5 +75,38 @@ public class SupervisionTaskDao {
     } else {
       throw new IllegalStateException("Attempted to delete processed supervision task with current state " + st.getStatus());
     }
+  }
+
+  @Transactional
+  public List<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria) {
+    BooleanExpression conditions = conditions(searchCriteria)
+        .reduce((left, right) -> left.and(right))
+        .orElse(Expressions.TRUE);
+
+    return queryFactory.select(supervisionTaskBean)
+        .from(supervisionTask)
+        .join(application).on(supervisionTask.applicationId.eq(application.id))
+        .where(conditions)
+        .fetch();
+  }
+
+  private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria) {
+    return Stream.of(
+        Optional.of(supervisionTask.status.eq(SupervisionTaskStatusType.OPEN)),
+        values(searchCriteria.getTaskTypes()).map(supervisionTask.type::in),
+        Optional.ofNullable(searchCriteria.getHandlerId()).map(supervisionTask.handlerId::eq),
+        Optional.ofNullable(searchCriteria.getAfter()).map(supervisionTask.plannedFinishingTime::goe),
+        Optional.ofNullable(searchCriteria.getBefore()).map(supervisionTask.plannedFinishingTime::loe),
+        Optional.ofNullable(searchCriteria.getApplicationId()).map(application.applicationId::startsWith),
+        values(searchCriteria.getApplicationTypes()).map(application.type::in),
+        values(searchCriteria.getApplicationStatus()).map(application.status::in)
+    ).filter(opt -> opt.isPresent())
+     .map(opt -> opt.get());
+  }
+
+
+  private <T> Optional<List<T>> values(List<T> valueList) {
+    return Optional.ofNullable(valueList)
+        .filter(values -> !values.isEmpty());
   }
 }

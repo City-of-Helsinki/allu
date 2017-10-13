@@ -1,6 +1,7 @@
 package fi.hel.allu.model.controller;
 
 import com.greghaskins.spectrum.Spectrum;
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.util.TimeUtil;
@@ -16,7 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,78 +41,172 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
   @Autowired
   private SupervisionTaskDao supervisionTaskDao;
 
-  private SupervisionTask newSupervisionTask;
-  private SupervisionTask testSupervisionTask;
-  private Application testApplication;
+  private SupervisionTask existingSupervisionTask;
+  private Application outdoorApp;
+  private Application shortTermApp;
   private ZonedDateTime testTime = ZonedDateTime.now();
 
   {
     beforeEach(() -> {
       wtc.setup();
-
-      Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Handlaaja");
-      ResultActions resultActions = wtc.perform(post("/applications"), newApplication).andExpect(status().isOk());
-      testApplication = wtc.parseObjectFromResult(resultActions, Application.class);
-
-
-      newSupervisionTask = new SupervisionTask(
-          null,
-          testApplication.getId(),
-          SupervisionTaskType.SUPERVISION,
-          null,
-          null,
-          testTime,
-          testTime.plusDays(1),
-          null,
-          SupervisionTaskStatusType.OPEN,
-          "just testing",
-          null);
-      testSupervisionTask = supervisionTaskDao.insert(newSupervisionTask);
+      outdoorApp = insertApplication(testCommon.dummyOutdoorApplication("existing", "Handlaaja"));
+      existingSupervisionTask = supervisionTaskDao.insert(
+          createTask(outdoorApp.getId(), SupervisionTaskType.SUPERVISION, outdoorApp.getHandler()));
+      shortTermApp = insertApplication(testCommon.dummyBridgeBannerApplication("other", "otherUser"));
     });
 
     describe("Supervision task", () -> {
       context("Find", () -> {
         it("Find by id", () -> {
-          Optional<SupervisionTask> st = supervisionTaskDao.findById(testSupervisionTask.getId());
+          Optional<SupervisionTask> st = supervisionTaskDao.findById(existingSupervisionTask.getId());
           assertTrue(st.isPresent());
+          assertTaskEquals(existingSupervisionTask, st.get());
         });
+
         it("Find non-existent by id", () -> {
           Optional<SupervisionTask> st = supervisionTaskDao.findById(12345);
           assertFalse(st.isPresent());
         });
+
         it("Find by application id", () -> {
-          List<SupervisionTask> supervisionTaskList = supervisionTaskDao.findByApplicationId(testApplication.getId());
+          List<SupervisionTask> supervisionTaskList = supervisionTaskDao.findByApplicationId(outdoorApp.getId());
           assertEquals(1, supervisionTaskList.size());
+          assertTaskEquals(existingSupervisionTask, supervisionTaskList.get(0));
         });
+
         it("Find by missing application id", () -> {
           List<SupervisionTask> supervisionTaskList = supervisionTaskDao.findByApplicationId(12345);
           assertEquals(0, supervisionTaskList.size());
         });
       });
+
       it("Create", () -> {
-        assertEquals(newSupervisionTask.getType(), testSupervisionTask.getType());
-        assertEquals(newSupervisionTask.getStatus(), testSupervisionTask.getStatus());
+        SupervisionTask newTask = createTask(outdoorApp.getId(), SupervisionTaskType.SUPERVISION, outdoorApp.getHandler());
+        SupervisionTask created = supervisionTaskDao.insert(newTask);
+
+        assertEquals(newTask.getType(), created.getType());
+        assertEquals(newTask.getStatus(), created.getStatus());
         assertEquals(
-            TimeUtil.dateToMillis(newSupervisionTask.getPlannedFinishingTime()),
-            TimeUtil.dateToMillis(testSupervisionTask.getPlannedFinishingTime()));
+            TimeUtil.dateToMillis(newTask.getPlannedFinishingTime()),
+            TimeUtil.dateToMillis(created.getPlannedFinishingTime()));
       });
+
       it("Update", () -> {
-        testSupervisionTask.setResult("Testing was ok!");
-        testSupervisionTask.setStatus(SupervisionTaskStatusType.APPROVED);
-        testSupervisionTask.setActualFinishingTime(testSupervisionTask.getPlannedFinishingTime().plusDays(1));
-        SupervisionTask updatedST = supervisionTaskDao.update(testSupervisionTask);
-        assertEquals(testSupervisionTask.getResult(), updatedST.getResult());
-        assertEquals(testSupervisionTask.getStatus(), updatedST.getStatus());
+        existingSupervisionTask.setResult("Testing was ok!");
+        existingSupervisionTask.setStatus(SupervisionTaskStatusType.APPROVED);
+        existingSupervisionTask.setActualFinishingTime(existingSupervisionTask.getPlannedFinishingTime().plusDays(1));
+        SupervisionTask updatedST = supervisionTaskDao.update(existingSupervisionTask);
+        assertEquals(existingSupervisionTask.getResult(), updatedST.getResult());
+        assertEquals(existingSupervisionTask.getStatus(), updatedST.getStatus());
         assertEquals(
-            TimeUtil.dateToMillis(testSupervisionTask.getActualFinishingTime()), TimeUtil.dateToMillis(updatedST.getActualFinishingTime()));
+            TimeUtil.dateToMillis(existingSupervisionTask.getActualFinishingTime()), TimeUtil.dateToMillis(updatedST.getActualFinishingTime()));
       });
+
       it("Delete", () -> {
-        supervisionTaskDao.delete(testSupervisionTask.getId());
-        Optional<SupervisionTask> deletedST = supervisionTaskDao.findById(testSupervisionTask.getId());
+        supervisionTaskDao.delete(existingSupervisionTask.getId());
+        Optional<SupervisionTask> deletedST = supervisionTaskDao.findById(existingSupervisionTask.getId());
         assertFalse(deletedST.isPresent());
       });
-    });
 
+      context("Search", () -> {
+        it("Find all when empty criteria", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          supervisionTaskDao.insert(taskForOther);
+
+          List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria());
+          assertEquals(2, result.size());
+        });
+
+        it("Find by application id", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          SupervisionTask inserted = supervisionTaskDao.insert(taskForOther);
+
+          SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+          search.setApplicationId(shortTermApp.getApplicationId());
+          List<SupervisionTask> result = supervisionTaskDao.search(search);
+          assertEquals(1, result.size());
+          assertTaskEquals(inserted, result.get(0));
+        });
+
+        it("Find by task type", () -> {
+          SupervisionTask otherTask = createTask(outdoorApp.getId(), SupervisionTaskType.WARRANTY, outdoorApp.getHandler());
+          supervisionTaskDao.insert(otherTask);
+
+          SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+          search.setTaskTypes(Arrays.asList(SupervisionTaskType.WARRANTY));
+          assertEquals(1, supervisionTaskDao.search(search).size());
+          search.setTaskTypes(Arrays.asList(SupervisionTaskType.WARRANTY, SupervisionTaskType.SUPERVISION));
+          assertEquals(2, supervisionTaskDao.search(search).size());
+        });
+
+        it("Find by application type", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          supervisionTaskDao.insert(taskForOther);
+
+          SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+          search.setApplicationTypes(Arrays.asList(shortTermApp.getType()));
+          assertEquals(1, supervisionTaskDao.search(search).size());
+          search.setApplicationTypes(Arrays.asList(shortTermApp.getType(), outdoorApp.getType()));
+          assertEquals(2, supervisionTaskDao.search(search).size());
+        });
+
+        it("Find by dates", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          taskForOther.setPlannedFinishingTime(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
+          supervisionTaskDao.insert(taskForOther);
+
+          SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+          search.setAfter(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
+          assertEquals(2, supervisionTaskDao.search(search).size()); // added + existing
+          search.setBefore(ZonedDateTime.of(2017, 5, 5, 0, 0, 0, 0, ZoneId.systemDefault()));
+          assertEquals(1, supervisionTaskDao.search(search).size()); // added
+          search.setAfter(null);
+          assertEquals(1, supervisionTaskDao.search(search).size()); // added
+        });
+
+        it("Find by application status", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
+          supervisionTaskDao.insert(taskForOther);
+
+          SupervisionTaskSearchCriteria search = new SupervisionTaskSearchCriteria();
+          search.setApplicationStatus(Arrays.asList(shortTermApp.getStatus()));
+          assertEquals(2, supervisionTaskDao.search(search).size());
+        });
+      });
+    });
   }
 
+  private void assertTaskEquals(SupervisionTask expected, SupervisionTask actual) {
+    assertEquals(expected.getId(), actual.getId());
+    assertEquals(expected.getApplicationId(), actual.getApplicationId());
+    assertEquals(expected.getType(), actual.getType());
+    assertEquals(expected.getCreatorId(), actual.getCreatorId());
+    assertEquals(expected.getHandlerId(), actual.getHandlerId());
+    assertEquals(expected.getCreationTime(), actual.getCreationTime());
+    assertEquals(expected.getPlannedFinishingTime(), actual.getPlannedFinishingTime());
+    assertEquals(expected.getActualFinishingTime(), actual.getActualFinishingTime());
+    assertEquals(expected.getStatus(), actual.getStatus());
+    assertEquals(expected.getDescription(), actual.getDescription());
+    assertEquals(expected.getResult(), actual.getResult());
+  }
+
+  private Application insertApplication(Application application) throws Exception {
+    ResultActions resultActions = wtc.perform(post("/applications"), application).andExpect(status().isOk());
+    return wtc.parseObjectFromResult(resultActions, Application.class);
+  }
+
+  private SupervisionTask createTask(Integer appId, SupervisionTaskType type, Integer handlerId) {
+    return new SupervisionTask(
+        null,
+        appId,
+        type,
+        null,
+        handlerId,
+        testTime,
+        testTime.plusDays(1),
+        null,
+        SupervisionTaskStatusType.OPEN,
+        "just testing",
+        null);
+  }
 }

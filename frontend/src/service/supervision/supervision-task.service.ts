@@ -14,7 +14,8 @@ const SUPERVISION_TASK_APP_URL = SUPERVISION_TASK_URL + '/application/:appId';
 @Injectable()
 export class SupervisionTaskService {
 
-  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {}
+  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
+  }
 
   findTasksByApplicationId(applicationId: number): Observable<Array<SupervisionTask>> {
     let url = SUPERVISION_TASK_APP_URL.replace(':appId', String(applicationId));

@@ -863,6 +863,13 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for searching supervision tasks by given criteria
+   */
+  public String getSupervisionTaskSearchUrl() {
+    return getModelServiceUrl("/supervisiontask/search");
+  }
+
+  /**
    * @return url for deleting existing supervision task-
    */
   public String getSupervisionTaskDeleteUrl() {

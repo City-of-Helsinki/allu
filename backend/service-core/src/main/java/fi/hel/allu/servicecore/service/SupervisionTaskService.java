@@ -1,9 +1,13 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.SupervisionTaskJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -16,7 +20,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SupervisionTaskService {
@@ -24,12 +30,15 @@ public class SupervisionTaskService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private UserService userService;
+  private ApplicationServiceComposer applicationServiceComposer;
 
   @Autowired
-  public SupervisionTaskService(ApplicationProperties applicationProperties, RestTemplate restTemplate, UserService userService) {
+  public SupervisionTaskService(ApplicationProperties applicationProperties, RestTemplate restTemplate,
+                                UserService userService, ApplicationServiceComposer applicationServiceComposer) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.userService = userService;
+    this.applicationServiceComposer = applicationServiceComposer;
   }
 
 
@@ -68,18 +77,40 @@ public class SupervisionTaskService {
     restTemplate.delete(applicationProperties.getSupervisionTaskByIdUrl(), id);
   }
 
+  public List<SupervisionWorkItemJson> search(SupervisionTaskSearchCriteria searchCriteria) {
+    ResponseEntity<SupervisionTask[]> response = restTemplate.postForEntity(
+        applicationProperties.getSupervisionTaskSearchUrl(), searchCriteria, SupervisionTask[].class);
+    return toWorkItems(Arrays.asList(response.getBody()));
+  }
+
   private List<SupervisionTaskJson> getFullyPopulatedJson(List<SupervisionTask> supervisionTasks) {
-    Map<Integer, UserJson> idToUser = supervisionTasks.stream()
-        .map(st -> Arrays.asList(st.getCreatorId(), st.getHandlerId()))
-        .flatMap(pair -> pair.stream())
+    return SupervisionTaskMapper.maptoJson(supervisionTasks, idToUser(supervisionTasks));
+  }
+
+  private List<SupervisionWorkItemJson> toWorkItems(List<SupervisionTask> tasks) {
+    Map<Integer, UserJson> userById = idToUser(tasks);
+    Map<Integer, ApplicationJson> applicationById = idToApplication(tasks);
+    return tasks.stream().map(task ->
+        SupervisionTaskMapper.mapToWorkItem(
+            task,
+            applicationById.get(task.getApplicationId()),
+            userById.get(task.getCreatorId()),
+            userById.get(task.getHandlerId()))
+    ).collect(Collectors.toList());
+  }
+
+  private Map<Integer, UserJson> idToUser(List<SupervisionTask> supervisionTasks) {
+    return supervisionTasks.stream()
+        .flatMap(st -> Stream.of(st.getCreatorId(), st.getHandlerId()))
         .filter(number -> number != null)
         .distinct()
         .collect(Collectors.toMap(id -> id, id -> userService.findUserById(id)));
-    return mapSupervisionTasks(supervisionTasks, idToUser);
   }
 
-  private List<SupervisionTaskJson> mapSupervisionTasks(List<SupervisionTask> supervisionTasks, Map<Integer, UserJson> idToUser) {
-    return supervisionTasks.stream().map(st -> SupervisionTaskMapper.mapToJson(st, idToUser)).collect(Collectors.toList());
+  private Map<Integer, ApplicationJson> idToApplication(List<SupervisionTask> tasks) {
+    return tasks.stream()
+        .map(SupervisionTask::getApplicationId)
+        .distinct()
+        .collect(Collectors.toMap(Function.identity(), appId -> applicationServiceComposer.findApplicationById(appId)));
   }
-
 }

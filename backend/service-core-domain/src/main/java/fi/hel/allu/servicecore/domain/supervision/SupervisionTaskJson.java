@@ -1,7 +1,8 @@
-package fi.hel.allu.servicecore.domain;
+package fi.hel.allu.servicecore.domain.supervision;
 
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.servicecore.domain.UserJson;
 
 import java.time.ZonedDateTime;
 

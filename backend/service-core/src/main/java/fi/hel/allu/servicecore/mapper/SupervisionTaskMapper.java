@@ -1,12 +1,22 @@
 package fi.hel.allu.servicecore.mapper;
 
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.servicecore.domain.SupervisionTaskJson;
+import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class SupervisionTaskMapper {
+  public static List<SupervisionTaskJson> maptoJson(List<SupervisionTask> tasks, Map<Integer, UserJson> idToUser) {
+    return tasks.stream().map(st -> SupervisionTaskMapper.mapToJson(st, idToUser)).collect(Collectors.toList());
+  }
+
   public static SupervisionTaskJson mapToJson(SupervisionTask supervisionTask, Map<Integer, UserJson> idToUser) {
     return new SupervisionTaskJson(
         supervisionTask.getId(),
@@ -36,5 +46,23 @@ public class SupervisionTaskMapper {
         supervisionTaskJson.getDescription(),
         supervisionTaskJson.getResult()
     );
+  }
+
+  public static SupervisionWorkItemJson mapToWorkItem(SupervisionTask task, ApplicationJson application,
+                                                      UserJson creator, UserJson handler) {
+    SupervisionWorkItemJson workItem = new SupervisionWorkItemJson();
+    workItem.setId(task.getId());
+    workItem.setType(task.getType());
+    workItem.setApplicationId(task.getApplicationId());
+    workItem.setApplicationIdText(application.getApplicationId());
+    workItem.setApplicationStatus(application.getStatus());
+    workItem.setCreator(creator);
+    workItem.setPlannedFinishingTime(task.getPlannedFinishingTime());
+    application.getLocations().stream().findFirst()
+        .ifPresent(loc -> workItem.setAddress(loc.getPostalAddress()));
+    Optional.ofNullable(application.getProject())
+        .ifPresent(project -> workItem.setProjectName(project.getName()));
+    workItem.setHandler(handler);
+    return workItem;
   }
 }

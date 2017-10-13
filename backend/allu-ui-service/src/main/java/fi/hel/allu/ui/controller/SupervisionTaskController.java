@@ -1,6 +1,8 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.servicecore.domain.SupervisionTaskJson;
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
+import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -48,5 +50,11 @@ public class SupervisionTaskController {
   public ResponseEntity<Void> delete(@PathVariable int id) {
     supervisionTaskService.delete(id);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/search", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<SupervisionWorkItemJson>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria) {
+    return new ResponseEntity<>(supervisionTaskService.search(searchCriteria), HttpStatus.OK);
   }
 }
