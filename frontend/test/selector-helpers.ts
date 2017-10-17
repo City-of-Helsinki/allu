@@ -7,3 +7,9 @@ export function getMdIconButton(debugElement: DebugElement, buttonIcon: string) 
     .filter(btn => btn.query(By.css('mat-icon')).nativeElement.textContent === buttonIcon)
     .map(btn => btn.nativeElement));
 }
+
+export function getButtonWithText(debugElement: DebugElement, text: string) {
+  return ArrayUtil.first(debugElement.queryAll(By.css('button'))
+    .filter(btn => btn.nativeElement.textContent === text)
+    .map(btn => btn.nativeElement));
+}

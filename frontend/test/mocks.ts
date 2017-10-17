@@ -8,6 +8,7 @@ import {Subject} from 'rxjs/Subject';
 import {User} from '../src/model/user/user';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Location} from '../src/model/common/location';
+import {RoleType} from '../src/model/user/role-type';
 
 export class ApplicationStateMock {
   private _application: Application;
@@ -56,6 +57,12 @@ export class CurrentUserMock {
   get user(): Observable<User> {
     return this.user$.asObservable();
   }
+}
+
+const supervisor = new User(1, 'supervisor', 'super visor');
+
+export class UserHubMock {
+  public getByRole = (role: RoleType) => Observable.of([supervisor]);
 }
 
 /**

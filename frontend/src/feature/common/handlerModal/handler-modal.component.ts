@@ -1,12 +1,11 @@
-import {Component, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import {Component, Inject, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 
 import {User} from '../../../model/user/user';
-import {UserHub} from '../../../service/user/user-hub';
 import {CurrentUser} from '../../../service/user/current-user';
 import {DialogCloseReason, DialogCloseValue} from '../dialog-close-value';
 
-export const HANDLER_MODAL_CONFIG = {width: '400px'};
+export const HANDLER_MODAL_CONFIG = {width: '400px', data: {}};
 
 @Component({
   selector: 'handler-modal',
@@ -16,14 +15,16 @@ export const HANDLER_MODAL_CONFIG = {width: '400px'};
 export class HandlerModalComponent implements OnInit {
   allUsers: Array<User>;
   selectedUser: User;
+  type: HandlerModalType;
 
   constructor(public dialogRef: MatDialogRef<HandlerModalComponent>,
-              private userHub: UserHub,
+              @Inject(MAT_DIALOG_DATA) public data: HandlerModalData,
               private currentUser: CurrentUser) { }
 
   ngOnInit(): void {
     this.currentUser.user.subscribe(u => this.selectedUser = u);
-    this.userHub.getActiveUsers().subscribe(users => this.allUsers = users);
+    this.allUsers = this.data.users || [this.selectedUser];
+    this.type = this.data.type || 'HANDLER';
   }
 
   confirm() {
@@ -34,3 +35,10 @@ export class HandlerModalComponent implements OnInit {
     this.dialogRef.close(new DialogCloseValue(DialogCloseReason.CANCEL, undefined));
   }
 }
+
+export type HandlerModalType = 'HANDLER' | 'SUPERVISOR';
+
+export interface HandlerModalData {
+  type: HandlerModalType;
+  users: Array<User>;
+};

@@ -78,6 +78,24 @@ public class SupervisionTaskDao {
   }
 
   @Transactional
+  public int updateHandler(int handler, List<Integer> tasks) {
+    return (int) queryFactory
+        .update(supervisionTask)
+        .set(supervisionTask.handlerId, handler)
+        .where(supervisionTask.id.in(tasks))
+        .execute();
+  }
+
+  @Transactional
+  public int removeHandler(List<Integer> tasks) {
+    return (int) queryFactory
+        .update(supervisionTask)
+        .setNull(supervisionTask.handlerId)
+        .where(supervisionTask.id.in(tasks))
+        .execute();
+  }
+
+  @Transactional
   public List<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria) {
     BooleanExpression conditions = conditions(searchCriteria)
         .reduce((left, right) -> left.and(right))

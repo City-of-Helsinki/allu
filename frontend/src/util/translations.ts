@@ -522,6 +522,7 @@ export const translations = {
       remove: 'poistettu'
     },
     button: {
+      ok: 'HYVÄKSY',
       save: 'TALLENNA',
       cancel: 'PERUUTA',
       remove: 'POISTA',
@@ -697,11 +698,15 @@ export const translations = {
       plannedFinishingTime: 'Ajankohta',
       action: {
         save: 'Valvontatehtävä tallennettu',
-        remove: 'Valvontatehtävä poistettu'
+        remove: 'Valvontatehtävä poistettu',
+        handlerChanged: 'Valvoja vaihdettu valituille tehtäville',
+        hanlerRemoved: 'Valvoja poistettu valituilta tehtäviltä'
       },
       error: {
         save: 'Valvonnan merkinnän tallentaminen epäonnistui',
-        remove: 'Valvonnan merkinnän poistaminen epäonnistui'
+        remove: 'Valvonnan merkinnän poistaminen epäonnistui',
+        handlerChange: 'Valvoja vaihtaminen epäonnistui',
+        hanlerRemove: 'Valvoja poistaminen tehtäviltä epäonnistui'
       },
       field: {
         plannedFinishingTimeInThePast: 'Ajankohta ei voi olla menneisyydessä',
@@ -805,6 +810,18 @@ export const translations = {
         ADD: 'lisätty',
         REMOVE: 'poistettu'
       }
+    }
+  },
+  handlerModal: {
+    HANDLER: {
+      title: 'Siirrä käsittelijälle',
+      selectedUser: 'Käsittelijä',
+      noSelectedUser: 'Ei käsittelijää'
+    },
+    SUPERVISOR: {
+      title: 'Siirrä valvojalle',
+      selectedUser: 'Valvoja',
+      noSelectedUser: 'Ei valvojaa'
     }
   },
   config: {

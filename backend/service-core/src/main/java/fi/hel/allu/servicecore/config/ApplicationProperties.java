@@ -877,6 +877,20 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to update handler of supervision task.
+   */
+  public String getSupervisionTaskHandlerUpdateUrl() {
+    return getModelServiceUrl("/supervisiontask/handler/{handlerId}");
+  }
+
+  /**
+   * @return url to remove handler of supervision task.
+   */
+  public String getSupervisionTaskHandlerRemoveUrl() {
+    return getModelServiceUrl("/supervisiontask/handler/remove");
+  }
+
+  /**
    * @return URL for finding invoices for application
    */
   public String getFindApplicationInvoicesUrl() {

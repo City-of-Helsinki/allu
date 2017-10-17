@@ -84,7 +84,15 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   }
 
   openHandlerModal() {
-    this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, HANDLER_MODAL_CONFIG);
+    const config = {
+      ...HANDLER_MODAL_CONFIG,
+      data: {
+        type: 'HANDLER',
+        users : this.handlers
+      }
+    };
+
+    this.dialogRef = this.dialog.open<HandlerModalComponent>(HandlerModalComponent, config);
 
     this.dialogRef.afterClosed().subscribe(dialogCloseValue => {
       if (dialogCloseValue.reason === DialogCloseReason.OK) {

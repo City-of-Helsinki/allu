@@ -1,10 +1,19 @@
 <div class="main-content work-queue-controls">
   <supervision-workqueue-filter></supervision-workqueue-filter>
 
-  <div class="row">
-    <div class="col s12">
+  <div fxLayout='row' class="work-queue-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+    <div fxFlex="25">
+      <button mat-raised-button type="button" color="primary" class="in-front"
+              [disabled]="noneSelected" (click)="moveSelectedToSelf()">OMAKSI</button>
+      <button mat-raised-button type="button" color="primary" class="in-front"
+              [disabled]="noneSelected" (click)="openHandlerModal()">SIIRRÄ</button>
+    </div>
+  </div>
+
+  <div fxLayout='row'>
+    <div fxFlex>
       <div class="labels-solid labels-end">
-        <mat-tab-group (selectChange)="tabSelected($event)">
+        <mat-tab-group (selectChange)="tabSelected($event)" headerPosition="end">
           <mat-tab *ngFor="let tab of tabs">
             <ng-template mat-tab-label>{{['workqueue.tab', tab] | translation}}</ng-template>
             <supervision-workqueue-content></supervision-workqueue-content>

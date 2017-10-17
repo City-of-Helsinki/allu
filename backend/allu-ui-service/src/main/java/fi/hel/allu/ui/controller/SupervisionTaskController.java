@@ -57,4 +57,18 @@ public class SupervisionTaskController {
   public ResponseEntity<List<SupervisionWorkItemJson>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria) {
     return new ResponseEntity<>(supervisionTaskService.search(searchCriteria), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/handler/{id}", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE')")
+  public ResponseEntity<Void> updateHandler(@PathVariable int id, @RequestBody(required = true) List<Integer> taskIds) {
+    supervisionTaskService.updateHandler(id, taskIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE')")
+  public ResponseEntity<Void> removeHandler(@RequestBody(required = true) List<Integer> taskIds) {
+    supervisionTaskService.removeHandler(taskIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

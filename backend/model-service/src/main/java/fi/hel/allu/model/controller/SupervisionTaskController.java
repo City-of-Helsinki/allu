@@ -56,4 +56,16 @@ public class SupervisionTaskController {
   public ResponseEntity<List<SupervisionTask>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria) {
     return new ResponseEntity<>(supervisionTaskDao.search(searchCriteria), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
+  public ResponseEntity<Void> updateHandler(@PathVariable int handlerId, @RequestBody List<Integer> tasks) {
+    supervisionTaskDao.updateHandler(handlerId, tasks);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/handler/remove", method = RequestMethod.PUT)
+  public ResponseEntity<Void> removeHandler(@RequestBody List<Integer> tasks) {
+    supervisionTaskDao.removeHandler(tasks);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

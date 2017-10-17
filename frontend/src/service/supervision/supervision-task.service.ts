@@ -14,6 +14,7 @@ import {SupervisionTaskSearchCriteria} from '../../model/application/supervision
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
 const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';
 const SUPERVISION_TASK_APP_URL = SUPERVISION_TASK_URL + '/application/:appId';
+const SUPERVISION_TASK_HANDLER_URL = SUPERVISION_TASK_URL + '/handler';
 
 @Injectable()
 export class SupervisionTaskService {
@@ -56,5 +57,17 @@ export class SupervisionTaskService {
       JSON.stringify(SupervisionSearchMapper.mapSearchCriteria(searchCriteria)))
       .map(response => SupervisionSearchMapper.mapWorkItemList(response.json()))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.fetch')));
+  }
+
+  changeHandler(handlerId: number, taskIds: Array<number>): Observable<HttpResponse> {
+    let url = SUPERVISION_TASK_HANDLER_URL + '/' + handlerId;
+    return this.authHttp.put(url, JSON.stringify(taskIds))
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
+  }
+
+  removeHandler(taskIds: Array<number>): Observable<HttpResponse> {
+    let url = SUPERVISION_TASK_HANDLER_URL + '/remove';
+    return this.authHttp.put(url, JSON.stringify(taskIds))
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 }

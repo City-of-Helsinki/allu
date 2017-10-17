@@ -1,15 +1,20 @@
-<h1 mat-dialog-title>Siirrä käsittelijälle</h1>
+<h1 mat-dialog-title>{{['handlerModal', type, 'title'] | translation}}</h1>
 <div mat-dialog-content>
     <div class="col s2">
         <mat-form-field class="input-full-width">
-            <mat-select [(ngModel)]="selectedUser" class="input-full-width" placeholder="Hakemuksen käsittelijä" >
-                <mat-option value="">Ei käsittelijää</mat-option>
+            <mat-select [(ngModel)]="selectedUser" class="input-full-width"
+                        [placeholder]="['handlerModal', type, 'selectedUser'] | translation" >
+                <mat-option value="">{{['handlerModal', type, 'noSelectedUser'] | translation}}</mat-option>
                 <mat-option *ngFor="let user of allUsers" [value]="user">{{user.realName}}</mat-option>
             </mat-select>
         </mat-form-field>
     </div>
 </div>
 <div mat-dialog-actions>
-    <button mat-raised-button type="button" color="primary" (click)="confirm()">Hyväksy</button>
-    <button mat-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
+    <button mat-raised-button type="button" color="primary" (click)="confirm()">
+        {{'common.button.ok' | translation}}
+    </button>
+    <button mat-raised-button type="button" color="primary" (click)="cancel()">
+        {{'common.button.cancel' | translation}}
+    </button>
 </div>

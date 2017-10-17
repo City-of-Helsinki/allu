@@ -27,6 +27,12 @@ export class ArrayUtil {
     }
   }
 
+  static containSame(left: Array<any>, right: Array<any>): boolean {
+    const lengthEqual = left.length === right.length;
+    const allItems = left.every(lItem => right.indexOf(lItem) >= 0);
+    return lengthEqual && allItems;
+  }
+
   static numberArrayEqual(left: Array<number>, right: Array<number>): boolean {
     return ArrayUtil.compareNumeric(left.slice(), right.slice()) === 0;
   }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import '../../../rxjs-extensions.ts';
 import {SupervisionTaskSearchCriteria} from '../../../model/application/supervision/supervision-task-search-criteria';
@@ -10,6 +10,7 @@ import {EnumUtil} from '../../../util/enum.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {WorkQueueTab} from '../../workqueue/workqueue-tab';
 import {CurrentUser} from '../../../service/user/current-user';
+import {Subscription} from 'rxjs/Subscription';
 
 interface SupervisionTaskSearchCriteriaForm {
   taskTypes: Array<string>;
@@ -28,11 +29,14 @@ interface SupervisionTaskSearchCriteriaForm {
     require('./workqueue-filter.component.scss')
   ]
 })
-export class WorkQueueFilterComponent implements OnInit {
+export class WorkQueueFilterComponent implements OnInit, OnDestroy {
   queryForm: FormGroup;
   taskTypes = EnumUtil.enumValues(SupervisionTaskType);
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   applicationStatusTypes = EnumUtil.enumValues(ApplicationStatus);
+
+  private changeSubscription: Subscription;
+  private formSubscription: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -50,14 +54,20 @@ export class WorkQueueFilterComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.queryForm.valueChanges
+    this.formSubscription = this.queryForm.valueChanges
+      .distinctUntilChanged()
       .debounceTime(300)
       .subscribe(values => this.search(values));
 
-    this.store.changes
+    this.changeSubscription = this.store.changes
       .map(change => change.tab)
       .distinctUntilChanged()
       .subscribe(tab => this.onTabChange(tab));
+  }
+
+  ngOnDestroy(): void {
+    this.formSubscription.unsubscribe();
+    this.changeSubscription.unsubscribe();
   }
 
   search(form: SupervisionTaskSearchCriteriaForm): void {
@@ -69,7 +79,7 @@ export class WorkQueueFilterComponent implements OnInit {
     criteria.applicationTypes = form.applicationTypes.map(type => ApplicationType[type]);
     criteria.applicationStatus = form.applicationStatus.map(s => ApplicationStatus[s]);
     criteria.handlerId = form.handlerId;
-    this.store.update({search: criteria});
+    this.store.searchChange(criteria);
   }
 
   private onTabChange(tab: WorkQueueTab): void {

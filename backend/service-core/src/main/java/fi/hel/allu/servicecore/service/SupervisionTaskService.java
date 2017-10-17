@@ -83,6 +83,25 @@ public class SupervisionTaskService {
     return toWorkItems(Arrays.asList(response.getBody()));
   }
 
+  /**
+   * Updates handler for given supervision tasks.
+   *
+   * @param updatedHandler Handler to be set.
+   * @param taskIds Supervision tasks to be updated.
+   */
+  public void updateHandler(int updatedHandler, List<Integer> taskIds) {
+    restTemplate.put(applicationProperties.getSupervisionTaskHandlerUpdateUrl(), taskIds, updatedHandler);
+  }
+
+  /**
+   * Removes handler from given supervision tasks.
+   *
+   * @param taskIds Supervision tasks to be updated.
+   */
+  public void removeHandler(List<Integer> taskIds) {
+    restTemplate.put(applicationProperties.getSupervisionTaskHandlerRemoveUrl(), taskIds);
+  }
+
   private List<SupervisionTaskJson> getFullyPopulatedJson(List<SupervisionTask> supervisionTasks) {
     return SupervisionTaskMapper.maptoJson(supervisionTasks, idToUser(supervisionTasks));
   }

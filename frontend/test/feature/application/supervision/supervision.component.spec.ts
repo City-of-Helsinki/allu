@@ -7,16 +7,14 @@ import {SupervisionComponent} from '../../../../src/feature/application/supervis
 import {SupervisionTaskStore} from '../../../../src/service/supervision/supervision-task-store';
 import {UserHub} from '../../../../src/service/user/user-hub';
 import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
-import {availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {availableToDirectiveMockMeta, CurrentUserMock, UserHubMock} from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/service/authorization/available-to.directive';
-import {RoleType} from '../../../../src/model/user/role-type';
 import {SupervisionTask} from '../../../../src/model/application/supervision/supervision-task';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {findTranslation} from '../../../../src/util/translations';
 import {getMdIconButton} from '../../../selector-helpers';
 
-const supervisor = new User(1, 'supervisor', 'super visor');
 const firstTask = new SupervisionTask(1);
 
 @Component({
@@ -34,10 +32,6 @@ class SupervisionTaskStoreMock {
   get tasks(): Observable<Array<SupervisionTask>> {
     return this.tasks$.asObservable();
   }
-}
-
-class UserHubMock {
-  public getByRole = (role: RoleType) => Observable.of([supervisor]);
 }
 
 describe('SupervisionComponent', () => {
