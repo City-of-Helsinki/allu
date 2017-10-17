@@ -17,13 +17,12 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @RunWith(Spectrum.class)
 @SpringBootTest(classes = ModelApplication.class)
@@ -64,6 +63,14 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
 
         it("deleteByApplication doesn't throw", () -> {
           invoiceDao.deleteByApplication(123);
+        });
+
+        it("findPending returns empty list", () -> {
+          assertTrue(invoiceDao.findPending().isEmpty());
+        });
+
+        it("markAsSent doesn't throw", () -> {
+          invoiceDao.markSent(Arrays.asList(1, 2, 44, 9010));
         });
       });
 
@@ -112,6 +119,37 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
             assertFalse(invoiceDao.find(otherId).isPresent());
           });
 
+        });
+
+        context("When two billable invoices and two non-billables exist", () -> {
+          beforeEach(() -> {
+            Invoice tmp = testInvoice();
+            tmp.setInvoicableTime(ZonedDateTime.now().minusDays(2));
+            tmp.setInvoiced(false);
+            invoiceDao.insert(appId.get(), tmp);
+            tmp.setInvoicableTime(ZonedDateTime.now().minusDays(1));
+            invoiceDao.insert(appId.get(), tmp);
+            tmp.setInvoiced(true);
+            invoiceDao.insert(appId.get(), tmp);
+            tmp.setInvoicableTime(ZonedDateTime.now().plusDays(2));
+            tmp.setInvoiced(false);
+            invoiceDao.insert(appId.get(), tmp);
+          });
+
+          it("findPending returns two invoices, both are invoicable", () -> {
+            final List<Invoice> invoices = invoiceDao.findPending();
+            assertEquals(2, invoices.size());
+            invoices.forEach(
+                i -> assertTrue(i.getInvoicableTime().isBefore(ZonedDateTime.now()) && i.isInvoiced() == false));
+          });
+
+          it("One of pending invoices can be marked as sent", () -> {
+            final Integer invoiceId = invoiceDao.findPending().get(0).getId();
+            invoiceDao.markSent(Collections.singletonList(invoiceId));
+            final List<Invoice> invoices = invoiceDao.findPending();
+            assertEquals(1, invoices.size());
+            assertNotEquals(invoiceId, invoices.get(0).getId());
+          });
         });
       });
     });

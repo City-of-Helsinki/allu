@@ -28,6 +28,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>fi.hel.allu</groupId>
+      <artifactId>sap-interface</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <!-- support for conditional processing of logback configuration file -->
       <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>

@@ -2,6 +2,7 @@ package fi.hel.allu.sap.model;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 import java.util.List;
 
@@ -10,6 +11,8 @@ import java.util.List;
  * Finnish.
  */
 @XmlRootElement(name = "SBO_SalesOrder")
+@XmlType(propOrder = { "senderId", "orderType", "salesOrg", "distributionChannel", "division", "salesOffice",
+    "poNumber", "billTextL1", "referenceText", "paymentTerm", "orderParty", "lineItems" })
 public class SalesOrder {
 
   private String senderId;
@@ -30,11 +33,11 @@ public class SalesOrder {
 
   private String referenceText;
 
-  private List<LineItem> lineItems;
+  private String paymentTerm;
 
   private OrderParty orderParty;
 
-  private String paymentTerm;
+  private List<LineItem> lineItems;
 
   /**
    * Lähettäjätunnus (muoto IDXXX), pakollinen
@@ -150,15 +153,15 @@ public class SalesOrder {
   }
 
   /**
-   * Rivitason tiedot
+   * Maksuehto (4 merkkiä), valinnainen
    */
-  @XmlElement(name = "LineItem", required = true)
-  public List<LineItem> getLineItems() {
-    return lineItems;
+  @XmlElement(name = "PMNTTERM")
+  public String getPaymentTerm() {
+    return paymentTerm;
   }
 
-  public void setLineItems(List<LineItem> lineItems) {
-    this.lineItems = lineItems;
+  public void setPaymentTerm(String paymentTerm) {
+    this.paymentTerm = paymentTerm;
   }
 
   /**
@@ -174,15 +177,15 @@ public class SalesOrder {
   }
 
   /**
-   * Maksuehto (4 merkkiä), valinnainen
+   * Rivitason tiedot
    */
-  @XmlElement(name = "PMNTTERM")
-  public String getPaymentTerm() {
-    return paymentTerm;
+  @XmlElement(name = "LineItem", required = true)
+  public List<LineItem> getLineItems() {
+    return lineItems;
   }
 
-  public void setPaymentTerm(String paymentTerm) {
-    this.paymentTerm = paymentTerm;
+  public void setLineItems(List<LineItem> lineItems) {
+    this.lineItems = lineItems;
   }
 
 }

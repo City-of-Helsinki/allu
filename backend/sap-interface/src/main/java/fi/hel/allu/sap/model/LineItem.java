@@ -2,12 +2,14 @@ package fi.hel.allu.sap.model;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * XML Mapping for a SAP line item. Field comments from specification, thus in
  * Finnish.
  */
 @XmlRootElement(name = "LineItem")
+@XmlType(propOrder = { "material", "quantity", "unit", "netPrice", "lineText1", "orderItemNumber" })
 public class LineItem {
 
   private String material;

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -131,6 +132,28 @@ public class InvoiceDao {
   public void deleteByApplication(int applicationId) {
     queryFactory.select(invoice.id).from(invoice).where(invoice.applicationId.eq(applicationId)).fetch()
         .forEach(id -> delete(id));
+  }
+
+  /**
+   * Retrieve the list of invoices waiting to be sent
+   *
+   * @return list of invoices
+   */
+  @Transactional(readOnly = true)
+  public List<Invoice> findPending() {
+    return queryFactory.select(invoice.id).from(invoice)
+        .where(invoice.invoicableTime.before(ZonedDateTime.now()).and(invoice.invoiced.ne(true))).fetch().stream()
+        .map(id -> find(id)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+  }
+
+  /**
+   * Mark given invoices as sent
+   *
+   * @param invoiceIds the database IDs of the invoices
+   */
+  @Transactional
+  public void markSent(List<Integer> invoiceIds) {
+    queryFactory.update(invoice).set(invoice.invoiced, true).where(invoice.id.in(invoiceIds)).execute();
   }
 
   private void deleteRows(int invoiceId) {

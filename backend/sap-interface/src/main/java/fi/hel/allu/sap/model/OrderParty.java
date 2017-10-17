@@ -2,12 +2,15 @@ package fi.hel.allu.sap.model;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
 /**
  * XML Mapping for a SAP Order party. Field comments from specification, thus in
  * Finnish.
  */
 @XmlRootElement(name = "OrderParty")
+@XmlType(propOrder = { "sapCustomerId", "infoCustomerId", "infoCustomerYid", "infoCustomerOvt", "infoName1",
+    "infoAddress1", "infoPoCode", "infoCity" })
 public class OrderParty {
   private String sapCustomerId;
   private String infoCustomerId;

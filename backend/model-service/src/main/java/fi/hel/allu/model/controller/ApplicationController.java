@@ -290,4 +290,25 @@ public class ApplicationController {
   public ResponseEntity<List<Invoice>> getInvoices(@PathVariable int id) {
     return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
   }
+
+  /**
+   * Get list of invoices that are ready to be sent to SAP
+   *
+   * @return list of invoices
+   */
+  @RequestMapping(value = "/invoices/ready-to-send", method = RequestMethod.GET)
+  public ResponseEntity<List<Invoice>> getPendingInvoices() {
+    return new ResponseEntity<>(invoiceService.findPending(), HttpStatus.OK);
+  }
+
+  /**
+   * Mark given invoices as sent.
+   *
+   * @param invoiceIds list of invoice IDs
+   */
+  @RequestMapping(value = "/invoices/mark-as-sent", method = RequestMethod.POST)
+  public ResponseEntity<Void> markInvoicesSent(@RequestBody List<Integer> invoiceIds) {
+    invoiceService.markSent(invoiceIds);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

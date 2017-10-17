@@ -42,4 +42,25 @@ public class InvoiceService {
     invoiceDao.deleteByApplication(applicationId);
     invoiceDao.insert(applicationId, invoice);
   }
+
+  /**
+   * Retrieve the list of invoices waiting to be sent
+   *
+   * @return list of invoices
+   */
+  @Transactional(readOnly = true)
+  public List<Invoice> findPending() {
+    return invoiceDao.findPending();
+  }
+
+  /**
+   * Mark given invoices as sent
+   *
+   * @param invoiceIds the database IDs of the invoices
+   */
+  @Transactional
+  public void markSent(List<Integer> invoiceIds) {
+    invoiceDao.markSent(invoiceIds);
+  }
+
 }

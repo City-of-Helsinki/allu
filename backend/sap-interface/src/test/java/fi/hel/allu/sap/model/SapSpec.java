@@ -7,11 +7,9 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.sap.mapper.AlluMapper;
+import fi.hel.allu.sap.marshaller.AlluMarshaller;
 
 import org.junit.runner.RunWith;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Marshaller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,12 +29,7 @@ public class SapSpec {
     describe("SAP model", () -> {
 
       describe("Marshalling test", () -> {
-        final JAXBContext jc = JAXBContext.newInstance("fi.hel.allu.sap.model");
-        final Marshaller m = jc.createMarshaller();
-        beforeEach(() -> {
-          m.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-        });
-
+        final AlluMarshaller alluMarshaller = new AlluMarshaller();
         final SalesOrderContainer container = new SalesOrderContainer();
 
         beforeEach(() -> {
@@ -52,33 +45,33 @@ public class SapSpec {
         });
 
         it("marshalling doesn't throw", () -> {
-          m.marshal(container, System.out);
+          alluMarshaller.marshal(container, System.out);
           assertTrue(true);
         });
       });
 
       describe("Mapper test", () -> {
 
-        describe("Single ChargeBasisEntry", () -> {
-          final ChargeBasisEntry chargeBasisEntry = dummyChargeBasisEntry(1234, 12.34, "Entry text",
+        describe("Single InvoiceRow", () -> {
+          final InvoiceRow invoiceRow = dummyInvoiceRow(1234, 12.34, "Entry text",
               ChargeBasisUnit.MONTH);
 
           describe("Mapped to SAP LineItem", () -> {
 
-            final LineItem lineItem = AlluMapper.mapToLineItem(chargeBasisEntry);
+            final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow);
 
             it("Has the proper net price", () -> {
               final int netPrice = (int) (Double.parseDouble(lineItem.getNetPrice()) * 100);
-              assertEquals(chargeBasisEntry.getNetPrice(), netPrice);
+              assertEquals(invoiceRow.getNetPrice(), netPrice);
             });
 
             it("Has the proper line text", () -> {
-              assertEquals(chargeBasisEntry.getText(), lineItem.getLineText1());
+              assertEquals(invoiceRow.getText(), lineItem.getLineText1());
             });
 
             it("Has the right quantity", () -> {
               final double quantity = Double.parseDouble(lineItem.getQuantity());
-              assertEquals(chargeBasisEntry.getQuantity(), quantity, 0.000001);
+              assertEquals(invoiceRow.getQuantity(), quantity, 0.000001);
             });
 
             it("Has the pre-set order item number", () -> {
@@ -88,14 +81,14 @@ public class SapSpec {
         });
 
         describe("A single bill", () -> {
-          final List<ChargeBasisEntry> chargeBasisEntries = dummyChargeBasisEntries();
+          final List<InvoiceRow> invoiceRows = dummyInvoiceRows();
           final Application application = dummyApplication();
 
           describe("Mapped to SAP SalesOrder", () -> {
-            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, chargeBasisEntries);
+            final SalesOrder salesOrder = AlluMapper.mapToSalesOrder(application, invoiceRows);
 
             it("All lines are in", () -> {
-              assertEquals(chargeBasisEntries.size(), salesOrder.getLineItems().size());
+              assertEquals(invoiceRows.size(), salesOrder.getLineItems().size());
             });
 
             it("The name matches", () -> {
@@ -133,20 +126,20 @@ public class SapSpec {
     return lineItem;
   }
 
-  private List<ChargeBasisEntry> dummyChargeBasisEntries() {
-    return Arrays.asList(dummyChargeBasisEntry(1234, 12.34, "Entry text", ChargeBasisUnit.MONTH),
-        dummyChargeBasisEntry(2345, 1, "Other entry text", ChargeBasisUnit.SQUARE_METER),
-        dummyChargeBasisEntry(54321, 13.12, "Yet another entry text", ChargeBasisUnit.HOUR));
+  private List<InvoiceRow> dummyInvoiceRows() {
+    return Arrays.asList(dummyInvoiceRow(1234, 12.34, "Entry text", ChargeBasisUnit.MONTH),
+        dummyInvoiceRow(2345, 1, "Other entry text", ChargeBasisUnit.SQUARE_METER),
+        dummyInvoiceRow(54321, 13.12, "Yet another entry text", ChargeBasisUnit.HOUR));
   }
 
-  private ChargeBasisEntry dummyChargeBasisEntry(int netPrice, double quantity, String text,
+  private InvoiceRow dummyInvoiceRow(int netPrice, double quantity, String text,
       ChargeBasisUnit chargeBasisUnit) {
-    final ChargeBasisEntry chargeBasisEntry = new ChargeBasisEntry();
-    chargeBasisEntry.setNetPrice(netPrice);
-    chargeBasisEntry.setQuantity(quantity);
-    chargeBasisEntry.setText(text);
-    chargeBasisEntry.setUnit(chargeBasisUnit);
-    return chargeBasisEntry;
+    final InvoiceRow invoiceRow = new InvoiceRow();
+    invoiceRow.setNetPrice(netPrice);
+    invoiceRow.setQuantity(quantity);
+    invoiceRow.setText(text);
+    invoiceRow.setUnit(chargeBasisUnit);
+    return invoiceRow;
   }
 
   private Application dummyApplication() {

@@ -14,16 +14,19 @@ public class ApplicationProperties {
   private String modelServicePort;
   private List<String> emailAllowedAddresses;
   private String emailSenderAddress;
+  private String invoiceDestDir;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
                                @Value("${model.service.port}") @NotEmpty String modelServicePort,
                                @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
-                               @Value("${email.sender.address}") @NotEmpty String emailSenderAddress) {
+      @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
+      @Value("${invoice.destdir}") @NotEmpty String invoiceDestDir) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.emailAllowedAddresses = emailAllowedAddresses;
     this.emailSenderAddress = emailSenderAddress;
+    this.invoiceDestDir = invoiceDestDir;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -47,6 +50,27 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url to get list of applications by their ids
+   */
+  public String getFindApplicationsUrl() {
+    return getModelServiceUrl("/applications/find");
+  }
+
+  /**
+   * @return url to get list of pending invoices
+   */
+  public String getPendingInvoicesUrl() {
+    return getModelServiceUrl("/applications/invoices/ready-to-send");
+  }
+
+  /**
+   * @return url to mark invoices as sent
+   */
+  public String getMarkInvoicesSentUrl() {
+    return getModelServiceUrl("/applications/invoices/mark-as-sent");
+  }
+
+  /**
    * @return list of allowed email recipients.
    */
   public List<String> getEmailAllowedAddresses() {
@@ -60,5 +84,14 @@ public class ApplicationProperties {
    */
   public String getEmailSenderAddress() {
     return emailSenderAddress;
+  }
+
+  /**
+   * Get the directory where generated invoices should be put
+   *
+   * @return directory path
+   */
+  public String getInvoiceDestDir() {
+    return invoiceDestDir;
   }
 }
