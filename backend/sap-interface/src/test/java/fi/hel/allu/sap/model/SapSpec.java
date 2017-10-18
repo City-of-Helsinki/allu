@@ -58,7 +58,7 @@ public class SapSpec {
 
           describe("Mapped to SAP LineItem", () -> {
 
-            final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow);
+            final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow, "DUMMY_MATERIAL");
 
             it("Has the proper net price", () -> {
               final int netPrice = (int) (Double.parseDouble(lineItem.getNetPrice()) * 100);
