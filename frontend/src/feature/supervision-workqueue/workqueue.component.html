@@ -1,7 +1,8 @@
 <div class="main-content work-queue-controls">
   <supervision-workqueue-filter></supervision-workqueue-filter>
 
-  <div fxLayout='row' class="work-queue-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+  <div fxLayout='row' class="work-queue-action-buttons"
+       *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE']">
     <div fxFlex="25">
       <button mat-raised-button type="button" color="primary" class="in-front"
               [disabled]="noneSelected" (click)="moveSelectedToSelf()">OMAKSI</button>
