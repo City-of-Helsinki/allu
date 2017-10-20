@@ -22,22 +22,19 @@
       "node_modules/@types"
     ],
     "types": [
+      "node",
       "core-js",
       "jasmine"
     ]
   },
   "exclude": [
-    "node_modules",
-    "typings/main.d.ts",
-    "typings/main"
+    "node_modules"
   ],
   "filesGlob": [
     "./src/**/*.ts",
     "./test/**/*.ts",
     "./src/js/**/*.js",
     "!./node_modules/**/*.ts",
-    "src/custom-typings.d.ts",
-    "typings/browser.d.ts",
     "src/typings/leaflet-proj/index.d.ts",
     "src/typings/file-saver/index.d.ts",
     "src/typings/leaflet-draw-drag/index.d.ts",

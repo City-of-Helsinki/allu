@@ -1,3 +1,4 @@
+const webpack = require('webpack');
 const helpers = require('./helpers');
 const webpackMerge = require('webpack-merge'); // used to merge webpack configs
 const commonConfig = require('./webpack.common.js'); // the settings that are common to prod and dev
@@ -12,12 +13,12 @@ const DefinePlugin = require('webpack/lib/DefinePlugin');
  */
 const ENV = process.env.ENV = process.env.NODE_ENV = 'development';
 const HMR = helpers.hasProcessFlag('hot');
-const METADATA = webpackMerge(commonConfig.metadata, {
+const METADATA = {
   host: 'localhost',
   port: 3000,
   ENV: ENV,
   HMR: HMR
-});
+};
 
 /**
  * Webpack configuration
@@ -25,20 +26,6 @@ const METADATA = webpackMerge(commonConfig.metadata, {
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = webpackMerge(commonConfig, {
-
-  /**
-   * Merged metadata from webpack.common.js for index.html
-   *
-   * See: (custom attribute)
-   */
-  metadata: METADATA,
-
-  /**
-   * Switch loaders to debug mode.
-   *
-   * See: http://webpack.github.io/docs/configuration.html#debug
-   */
-  debug: true,
 
   /**
    * Developer tool to enhance debugging
@@ -61,6 +48,8 @@ module.exports = webpackMerge(commonConfig, {
      * See: http://webpack.github.io/docs/configuration.html#output-path
      */
     path: helpers.root('dist'),
+
+    // publicPath: '/assets/',
 
     /**
      * Specifies the name of each output file on disk.
@@ -107,20 +96,8 @@ module.exports = webpackMerge(commonConfig, {
         'NODE_ENV': JSON.stringify(METADATA.ENV),
         'HMR': METADATA.HMR,
       }
-    })
+    }),
   ],
-
-  /**
-   * Static analysis linter for TypeScript advanced options configuration
-   * Description: An extensible linter for the TypeScript language.
-   *
-   * See: https://github.com/wbuchwalter/tslint-loader
-   */
-  tslint: {
-    emitErrors: false,
-    failOnHint: true,
-    resourcePath: 'src'
-  },
 
   /**
    * Webpack Development Server configuration
@@ -131,6 +108,7 @@ module.exports = webpackMerge(commonConfig, {
    * See: https://webpack.github.io/docs/webpack-dev-server.html
    */
   devServer: {
+    contentBase: helpers.root('dist'),
     port: METADATA.port,
     host: METADATA.host,
     historyApiFallback: true,
@@ -139,26 +117,21 @@ module.exports = webpackMerge(commonConfig, {
       poll: 1000
     },
     proxy: {
-      /** Use backend from test environment */
-      '/api/*': {
-        target: 'http://185.26.48.184:9000',
-        rewrite: function(req) {
-          req.url = req.url.replace(/^\/api/, '');
-        },
+      /** Use backend from local environment */
+      '/api': {
+        target: 'http://localhost:9000',
+        pathRewrite: {'/api/': ''},
         secure: false,
         changeOrigin: true
       },
       /** Use maps from test environment */
-      '/wms?*': {
+      '/wms': {
         target: 'http://185.26.49.172',
-        rewrite: function(req) {
-          req.url = req.url.replace(/^\/wms/, '/wms');
-        },
+        pathRewrite: {'/wms/': '/wms'},
         secure: false,
         changeOrigin: true
       }
     },
-    outputPath: helpers.root('dist')
   },
 
   /*
@@ -168,12 +141,10 @@ module.exports = webpackMerge(commonConfig, {
    * See: https://webpack.github.io/docs/configuration.html#node
    */
   node: {
-    global: 'window',
-    crypto: 'empty',
+    global: true,
     process: true,
     module: false,
     clearImmediate: false,
     setImmediate: false
   }
-
 });

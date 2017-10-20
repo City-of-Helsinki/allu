@@ -1,4 +1,4 @@
-var L = global.L || require('js/leaflet/draw-transform/index');
+var L = global.L || require('leaflet');
 require('leaflet-draw');
 require('leaflet-path-transform');
 

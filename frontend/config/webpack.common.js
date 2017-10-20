@@ -23,14 +23,6 @@ const METADATA = {
  * See: http://webpack.github.io/docs/configuration.html#cli
  */
 module.exports = {
-
-  /*
-   * Static metadata for index.html
-   *
-   * See: (custom attribute)
-   */
-  metadata: METADATA,
-
   /*
    * Cache generated modules and chunks to improve performance for multiple incremental builds.
    * This is enabled by default in watch mode.
@@ -45,30 +37,23 @@ module.exports = {
    * See: http://webpack.github.io/docs/configuration.html#entry
    */
   entry: {
-    'polyfills': './src/polyfills.ts',
     'vendor': './src/vendor.ts',
-    'main': './src/main.ts'
+    'polyfills': './src/polyfills.ts',
+    'app': './src/main.ts'
   },
 
-  /*
-   * Options affecting the resolving of modules.
-   *
-   * See: http://webpack.github.io/docs/configuration.html#resolve
-   */
   resolve: {
-
     /*
      * An array of extensions that should be used to resolve modules.
      *
      * See: http://webpack.github.io/docs/configuration.html#resolve-extensions
      */
-    extensions: ['', '.ts', '.js'],
+    extensions: ['.ts', '.js'],
 
-    // Make sure root is src
-    root: helpers.root('src'),
-
-    // remove other default values
-    modulesDirectories: ['node_modules'],
+    modules: [
+      helpers.root('src'),
+      'node_modules'
+    ],
 
     alias: {
       leafletcss: 'leaflet/dist/leaflet.css',
@@ -80,7 +65,6 @@ module.exports = {
       filesaver: 'file-saver/FileSaver.js',
       finnishSsn: 'finnish-ssn/dist/finnish-ssn.min.js'
     }
-
   },
 
   /*
@@ -91,28 +75,14 @@ module.exports = {
   module: {
 
     noParse: [/[\/\\]node_modules[\/\\]proj4[\/\\]dist[\/\\]proj4\.js$/],
-    /*
-     * An array of applied pre and post loaders.
-     *
-     * See: http://webpack.github.io/docs/configuration.html#module-preloaders-module-postloaders
-     */
-    preLoaders: [
 
+    rules: [
       /*
-       * Tslint loader support for *.ts files
-       *
-       * See: https://github.com/wbuchwalter/tslint-loader
-       */
-       // { test: /\.ts$/, loader: 'tslint-loader', exclude: [ helpers.root('node_modules') ] },
-
-      /*
-       * Source map loader support for *.js files
-       * Extracts SourceMaps for source files that as added as sourceMappingURL comment.
-       *
-       * See: https://github.com/webpack/source-map-loader
+       * Preloaders
        */
       {
         test: /\.js$/,
+        enforce: 'pre',
         loader: 'source-map-loader',
         exclude: [
           // these packages have problems with their sourcemaps
@@ -123,23 +93,23 @@ module.exports = {
       },
       {
         test: /\.ts$/,
-        loader: "tslint",
+        enforce: 'pre',
+        loader: 'tslint-loader',
+        options: {
+          emitErrors: false,
+          failOnHint: true,
+          resourcePath: 'src',
+          tsConfigFile: helpers.root('tsconfig.json')
+        },
         exclude: [
           // skip external modules
           helpers.root('node_modules')
         ]
       },
-    ],
 
-    /*
-     * An array of automatically applied loaders.
-     *
-     * IMPORTANT: The loaders here are resolved relative to the resource which they are applied to.
-     * This means they are not resolved relative to the configuration file.
-     *
-     * See: http://webpack.github.io/docs/configuration.html#module-loaders
-     */
-    loaders: [
+      /*
+       * Normal Loaders
+       */
 
       /*
        * Typescript loader support for .ts and Angular 2 async routes via .async.ts
@@ -150,16 +120,6 @@ module.exports = {
         test: /\.ts$/,
         loader: 'awesome-typescript-loader',
         exclude: [/\.(spec|e2e)\.ts$/]
-      },
-
-      /*
-       * Json loader support for *.json files.
-       *
-       * See: https://github.com/webpack/json-loader
-       */
-      {
-        test: /\.json$/,
-        loader: 'json-loader'
       },
 
       /*
@@ -188,7 +148,7 @@ module.exports = {
       {
         test: /\.scss$/,
         exclude: /node_modules/,
-        loaders: ['raw-loader','sass-loader']
+        use: ['raw-loader','sass-loader']
       },
 
       /* Raw loader support for *.html
@@ -198,12 +158,10 @@ module.exports = {
        */
       {
         test: /\.html$/,
-        loader: 'raw-loader',
+        use: 'raw-loader',
         exclude: [helpers.root('src/index.html')]
       }
-
     ]
-
   },
 
   /*
@@ -214,16 +172,6 @@ module.exports = {
   plugins: [
 
     /*
-     * Plugin: OccurenceOrderPlugin
-     * Description: Varies the distribution of the ids to get the smallest id length
-     * for often used ids.
-     *
-     * See: https://webpack.github.io/docs/list-of-plugins.html#occurrenceorderplugin
-     * See: https://github.com/webpack/docs/wiki/optimization#minimize
-     */
-    new webpack.optimize.OccurenceOrderPlugin(true),
-
-    /*
      * Plugin: CommonsChunkPlugin
      * Description: Shares common code between the pages.
      * It identifies common modules and put them into a commons chunk.
@@ -232,7 +180,7 @@ module.exports = {
      * See: https://github.com/webpack/docs/wiki/optimization#multi-page-app
      */
     new webpack.optimize.CommonsChunkPlugin({
-      name: helpers.reverse(['polyfills', 'vendor'])
+      name: ['app', 'polyfills', 'vendor']
     }),
 
     /*
@@ -258,15 +206,22 @@ module.exports = {
      */
     new HtmlWebpackPlugin({
       template: 'src/index.html',
-      chunksSortMode: helpers.packageSort(['polyfills', 'vendor', 'main'])
+      title: METADATA.title,
+      metadata: METADATA
     }),
 
     new webpack.ProvidePlugin({
-      $: "jquery",
-      jQuery: "jquery",
-      "window.jQuery": "jquery",
-      Hammer: "hammerjs/hammer"
-    })
+      $: 'jquery',
+      jQuery: 'jquery',
+      'window.jQuery': 'jquery',
+      Hammer: 'hammerjs/hammer'
+    }),
+
+    new webpack.ContextReplacementPlugin(
+      /angular(\\|\/)core(\\|\/)@angular/,
+      helpers.root('src'),
+      {}
+    )
   ],
 
   /*
@@ -276,11 +231,9 @@ module.exports = {
    * See: https://webpack.github.io/docs/configuration.html#node
    */
   node: {
-    global: 'window',
-    crypto: 'empty',
+    global: true,
     module: false,
     clearImmediate: false,
     setImmediate: false
   }
-
 };

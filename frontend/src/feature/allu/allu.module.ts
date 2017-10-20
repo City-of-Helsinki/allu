@@ -23,7 +23,6 @@ import {SearchModule} from '../search/search.module';
 import {ToolbarModule} from '../toolbar/toolbar.module';
 import {LoginModule} from '../login/login.module';
 import {UserHub} from '../../service/user/user-hub';
-import {UserService} from '../../service/user/user-service';
 import {AdminModule} from '../admin/admin.module';
 import {ProjectModule} from '../project/project.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
@@ -41,6 +40,7 @@ import {AlluDateAdapter} from '../../util/allu-date-adapter';
 import {CurrentUser} from '../../service/user/current-user';
 import {ConfigService} from '../../service/config/config.service';
 import {SupervisionWorkqueueModule} from '../supervision-workqueue/supervision-workqueue.module';
+import {UserService} from '../../service/user/user-service';
 
 
 @NgModule({
