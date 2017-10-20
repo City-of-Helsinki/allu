@@ -1,9 +1,12 @@
 package fi.hel.allu.model.controller;
 
 import com.greghaskins.spectrum.Spectrum;
+import com.querydsl.core.types.OrderSpecifier;
+
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
@@ -11,9 +14,15 @@ import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.WebTestCommon;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.ResultActions;
 
@@ -24,7 +33,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.greghaskins.spectrum.Spectrum.it;
-import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static com.greghaskins.spectrum.dsl.specification.Specification.beforeEach;
+import static com.greghaskins.spectrum.dsl.specification.Specification.context;
+import static com.greghaskins.spectrum.dsl.specification.Specification.describe;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -109,12 +120,46 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
       });
 
       context("Search", () -> {
+
+        context("Sort order", () -> {
+          final Sort sort = new Sort(new Order(Direction.ASC, "applicationId"),
+              new Order(Direction.DESC, "actualFinishingTime"));
+
+          it("Can convert to QueryDSL ordering", () -> {
+            OrderSpecifier<?>[] orders = SupervisionTaskDao.toOrder(sort);
+            assertEquals(2, orders.length);
+          });
+
+          it("Throws exception on invalid sort key", () -> {
+            assertThrows(NoSuchEntityException.class).when(() -> SupervisionTaskDao.toOrder(new Sort("noSuchKey")));
+          });
+
+        });
+
         it("Find all when empty criteria", () -> {
           SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION, shortTermApp.getHandler());
           supervisionTaskDao.insert(taskForOther);
 
           List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria());
           assertEquals(2, result.size());
+        });
+
+        it("Sort by creationTime when empty criteria", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION,
+              shortTermApp.getHandler());
+          supervisionTaskDao.insert(taskForOther);
+
+          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "creationTime"));
+          List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.size());
+          assertFalse(result.get(0).getCreationTime().isAfter(result.get(1).getCreationTime()));
+
+          pageRequest = new PageRequest(0, 10, new Sort(Direction.DESC, "creationTime"));
+          result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.size());
+          assertFalse(result.get(1).getCreationTime().isAfter(result.get(0).getCreationTime()));
         });
 
         it("Find by application id", () -> {

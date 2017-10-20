@@ -1,23 +1,29 @@
 package fi.hel.allu.model.dao;
 
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.ComparableExpressionBase;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
+
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.querydsl.core.types.Projections.bean;
@@ -30,6 +36,9 @@ public class SupervisionTaskDao {
 
   /** Fields that won't be updated in regular updates */
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(supervisionTask.id, supervisionTask.creationTime);
+
+  final static Map<String, Path<?>> COLUMNS = supervisionTask.getColumns().stream()
+      .collect(Collectors.toMap(c -> c.getMetadata().getName(), c -> c));
 
   @Autowired
   private SQLQueryFactory queryFactory;
@@ -97,15 +106,41 @@ public class SupervisionTaskDao {
 
   @Transactional
   public List<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria) {
+    return search(searchCriteria, null);
+  }
+
+  @Transactional
+  public List<SupervisionTask> search(SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
     BooleanExpression conditions = conditions(searchCriteria)
         .reduce((left, right) -> left.and(right))
         .orElse(Expressions.TRUE);
 
-    return queryFactory.select(supervisionTaskBean)
+    SQLQuery<SupervisionTask> q = queryFactory.select(supervisionTaskBean)
         .from(supervisionTask)
         .join(application).on(supervisionTask.applicationId.eq(application.id))
-        .where(conditions)
-        .fetch();
+        .where(conditions);
+
+    if (pageRequest != null) {
+      q = q.orderBy(toOrder(pageRequest.getSort()));
+    }
+
+    return q.fetch();
+  }
+
+  /**
+   * Convert given sort criteria to OrderSpecifiers
+   *
+   * @param sort
+   * @return
+   */
+  public static OrderSpecifier<?>[] toOrder(Sort sort) {
+    List<OrderSpecifier<?>> order = new ArrayList<>();
+    sort.forEach(o -> {
+      ComparableExpressionBase<?> path = (ComparableExpressionBase<?>) Optional.ofNullable(COLUMNS.get(o.getProperty()))
+          .orElseThrow(() -> new NoSuchEntityException("Bad sort key: " + o.getProperty()));
+      order.add(o.isDescending() ? path.desc() : path.asc());
+    });
+    return order.toArray(new OrderSpecifier<?>[order.size()]);
   }
 
   private Stream<BooleanExpression> conditions(SupervisionTaskSearchCriteria searchCriteria) {
@@ -127,4 +162,6 @@ public class SupervisionTaskDao {
     return Optional.ofNullable(valueList)
         .filter(values -> !values.isEmpty());
   }
+
+
 }

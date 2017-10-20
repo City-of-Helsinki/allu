@@ -4,13 +4,17 @@ import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.service.SupervisionTaskService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -54,8 +58,9 @@ public class SupervisionTaskController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<SupervisionWorkItemJson>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria) {
-    return new ResponseEntity<>(supervisionTaskService.search(searchCriteria), HttpStatus.OK);
+  public ResponseEntity<Page<SupervisionWorkItemJson>> search(
+      @Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria, Pageable pageRequest) {
+    return new ResponseEntity<>(supervisionTaskService.search(searchCriteria, pageRequest), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/handler/{id}", method = RequestMethod.PUT)

@@ -1,15 +1,20 @@
 package fi.hel.allu.model.controller;
 
+import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.SupervisionTask;
-import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 
 @RestController
@@ -53,8 +58,9 @@ public class SupervisionTaskController {
   }
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
-  public ResponseEntity<List<SupervisionTask>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria) {
-    return new ResponseEntity<>(supervisionTaskDao.search(searchCriteria), HttpStatus.OK);
+  public ResponseEntity<Page<SupervisionTask>> search(@Valid @RequestBody SupervisionTaskSearchCriteria searchCriteria,
+      Pageable pageRequest) {
+    return new ResponseEntity<>(new PageImpl<>(supervisionTaskDao.search(searchCriteria, pageRequest)), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/handler/{handlerId}", method = RequestMethod.PUT)
