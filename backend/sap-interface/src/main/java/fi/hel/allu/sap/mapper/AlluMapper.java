@@ -1,11 +1,9 @@
 package fi.hel.allu.sap.mapper;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
-import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.Event;
 import fi.hel.allu.model.domain.InvoiceRow;
 import fi.hel.allu.sap.model.LineItem;
 import fi.hel.allu.sap.model.OrderParty;
@@ -50,8 +48,9 @@ public class AlluMapper {
     salesOrder.setBillTextL1(application.getName());
     salesOrder.setDistributionChannel(ALLU_DISTRIBUTION_CHANNEL);
     salesOrder.setDivision(ALLU_DIVISION);
+    final String sapMaterial = mapToSapMaterial(application);
     salesOrder.setLineItems(
-        invoiceRows.stream().map(entry -> mapToLineItem(entry)).collect(Collectors.toList()));
+        invoiceRows.stream().map(entry -> mapToLineItem(entry, sapMaterial)).collect(Collectors.toList()));
     Customer orderer = Optional.ofNullable(application.getCustomersWithContacts())
         .orElseThrow(() -> new IllegalArgumentException("Application's customersWithContacts is null")).stream()
         .filter(cwc -> cwc.getRoleType() == CustomerRoleType.APPLICANT).map(cwc -> cwc.getCustomer()).findAny()
@@ -73,10 +72,10 @@ public class AlluMapper {
    * @param invoiceRow
    * @return
    */
-  public static LineItem mapToLineItem(InvoiceRow invoiceRow) {
+  public static LineItem mapToLineItem(InvoiceRow invoiceRow, String sapMaterial) {
     LineItem lineItem = new LineItem();
     lineItem.setLineText1(invoiceRow.getText());
-    lineItem.setMaterial("27100000"); // TODO: from application type
+    lineItem.setMaterial(sapMaterial);
     lineItem.setNetPrice(String.format("%.02f", (double) invoiceRow.getNetPrice() / 100));
     lineItem.setOrderItemNumber(ALLU_ORDER_ITEM_NUMBER);
     lineItem.setQuantity(String.format("%.02f", invoiceRow.getQuantity()));
@@ -151,6 +150,73 @@ public class AlluMapper {
       return "V";
     default:
       return "?";
+    }
+  }
+
+  // Material definitions for SAP (from 2017-10-16_Pelkat_Allun_nimikkeet.xlsx)
+
+  private static String SAP_MATERIAL_AREA_RENTAL = "27100029";
+  private static String SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT = "27100030";
+  private static String SAP_MATERIAL_FREE_EVENT = "27100024";
+  private static String SAP_MATERIAL_NONFREE_EVENT = "27100025";
+  private static String SAP_MATERIAL_CLOSED_EVENT = "27100026";
+  private static String SAP_MATERIAL_PROMOTION = "27100020";
+  private static String SAP_MATERIAL_BRIDGE_BANNER = "27100002";
+  private static String SAP_MATERIAL_PROMOTION_OR_SALES = "27100018";
+  private static String SAP_MATERIAL_URBAN_FARMING = "27100028";
+  private static String SAP_MATERIAL_KESKUSKATU_SALES = "27100006";
+  private static String SAP_MATERIAL_SUMMER_THEATER = "27100005";
+  private static String SAP_MATERIAL_DOG_TRAINING_EVENT = "27100011";
+  private static String SAP_MATERIAL_SEASON_SALE = "27100021";
+  private static String SAP_MATERIAL_CIRCUS = "27100022";
+  private static String SAP_MATERIAL_DEPOSIT = "27100001";
+  private static String SAP_MATERIAL_OTHER_RENTAL = "27100017";
+
+  private static String mapToSapMaterial(Application application) {
+    if (application.getType() == null) {
+      return null;
+    }
+    switch (application.getType()) {
+      case AREA_RENTAL:
+        return SAP_MATERIAL_AREA_RENTAL;
+      case EXCAVATION_ANNOUNCEMENT:
+        return SAP_MATERIAL_EXCAVATION_ANNOUNCEMENT;
+      default:
+        // Don't do anything, will be decided in next switch
+    }
+    switch (Optional.ofNullable(application.getKind()).orElse(ApplicationKind.OTHER)) {
+      case OUTDOOREVENT:
+        Event evt = (Event) application.getExtension();
+        switch (evt.getNature()) {
+          case PUBLIC_FREE:
+            return SAP_MATERIAL_FREE_EVENT;
+          case PUBLIC_NONFREE:
+            return SAP_MATERIAL_NONFREE_EVENT;
+          case CLOSED:
+            return SAP_MATERIAL_CLOSED_EVENT;
+          case PROMOTION:
+            return SAP_MATERIAL_PROMOTION;
+        }
+      case BRIDGE_BANNER:
+        return SAP_MATERIAL_BRIDGE_BANNER;
+      case PROMOTION_OR_SALES:
+        return SAP_MATERIAL_PROMOTION_OR_SALES;
+      case URBAN_FARMING:
+        return SAP_MATERIAL_URBAN_FARMING;
+      case KESKUSKATU_SALES:
+        return SAP_MATERIAL_KESKUSKATU_SALES;
+      case SUMMER_THEATER:
+        return SAP_MATERIAL_SUMMER_THEATER;
+      case DOG_TRAINING_EVENT:
+        return SAP_MATERIAL_DOG_TRAINING_EVENT;
+      case PROMOTION:
+        return SAP_MATERIAL_PROMOTION;
+      case SEASON_SALE:
+        return SAP_MATERIAL_SEASON_SALE;
+      case CIRCUS:
+        return SAP_MATERIAL_CIRCUS;
+      default:
+        return SAP_MATERIAL_OTHER_RENTAL;
     }
   }
 }
