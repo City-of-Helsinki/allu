@@ -1,7 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
-import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -9,13 +8,22 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
+import fi.hel.allu.servicecore.util.RestResponsePage;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -77,10 +85,28 @@ public class SupervisionTaskService {
     restTemplate.delete(applicationProperties.getSupervisionTaskByIdUrl(), id);
   }
 
-  public List<SupervisionWorkItemJson> search(SupervisionTaskSearchCriteria searchCriteria) {
-    ResponseEntity<SupervisionTask[]> response = restTemplate.postForEntity(
-        applicationProperties.getSupervisionTaskSearchUrl(), searchCriteria, SupervisionTask[].class);
-    return toWorkItems(Arrays.asList(response.getBody()));
+  public Page<SupervisionWorkItemJson> search(SupervisionTaskSearchCriteria searchCriteria,
+      Pageable pageRequest) {
+    ParameterizedTypeReference<RestResponsePage<SupervisionTask>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionTask>>() {
+    };
+
+    UriComponentsBuilder builder = UriComponentsBuilder
+        .fromUriString(applicationProperties.getSupervisionTaskSearchUrl())
+        .queryParam("page", pageRequest.getPageNumber()).queryParam("size", pageRequest.getPageSize());
+    pageRequest.getSort()
+        .forEach(o -> builder.queryParam("sort", o.getProperty() + (o.isDescending() ? ",desc" : ",asc")));
+    URI targetUri = builder.build().toUri();
+    ResponseEntity<RestResponsePage<SupervisionTask>> response =
+        restTemplate.exchange(targetUri, HttpMethod.POST, new HttpEntity<>(searchCriteria), typeref);
+
+    final Page<SupervisionTask> responsePage = response.getBody();
+    final PageRequest responsePageRequest =
+        new PageRequest(responsePage.getNumber(), Math.max(1, responsePage.getNumberOfElements()),
+            responsePage.getSort());
+
+    final Page<SupervisionWorkItemJson> result = new PageImpl<>(
+        toWorkItems(responsePage.getContent()), responsePageRequest, responsePage.getTotalElements());
+    return result;
   }
 
   /**
