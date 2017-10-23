@@ -217,6 +217,27 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
           search.setApplicationStatus(Arrays.asList(shortTermApp.getStatus()));
           assertEquals(2, supervisionTaskDao.search(search).size());
         });
+
+        context("Paging tests", () -> {
+          beforeEach(() -> {
+            for (int i = 0; i < 100; ++i) {
+              SupervisionTask task_i = createTask(shortTermApp.getId(), SupervisionTaskType.SUPERVISION,
+                  shortTermApp.getHandler());
+              task_i.setDescription(String.format("00 - Task %03d", i));
+              supervisionTaskDao.insert(task_i);
+            }
+          });
+
+          it("Returns only 15 results when asked", () -> {
+            SupervisionTaskSearchCriteria searchCriteria = new SupervisionTaskSearchCriteria();
+            PageRequest pageRequest = new PageRequest(2, 15, Direction.ASC, "description");
+            List<SupervisionTask> results = supervisionTaskDao.search(searchCriteria, pageRequest);
+            assertEquals(15, results.size());
+            for (int i = 0; i < 15; ++i) {
+              assertEquals(String.format("00 - Task %03d", i + 30), results.get(i).getDescription());
+            }
+          });
+        });
       });
     });
   }
