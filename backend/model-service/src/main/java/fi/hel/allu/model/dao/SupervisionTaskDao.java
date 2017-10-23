@@ -120,11 +120,28 @@ public class SupervisionTaskDao {
         .join(application).on(supervisionTask.applicationId.eq(application.id))
         .where(conditions);
 
-    if (pageRequest != null) {
-      q = q.orderBy(toOrder(pageRequest.getSort()));
-    }
+    q = handlePageRequest(q, pageRequest);
 
     return q.fetch();
+  }
+
+  /*
+   * Add sort and paging to query from the given pageRequest.
+   */
+  private SQLQuery<SupervisionTask> handlePageRequest(SQLQuery<SupervisionTask> query, Pageable pageRequest) {
+    if (pageRequest == null) {
+      return query;
+    }
+    if (pageRequest.getSort() != null) {
+      query = query.orderBy(toOrder(pageRequest.getSort()));
+    }
+    if (pageRequest.getOffset() != 0) {
+      query = query.offset(pageRequest.getOffset());
+    }
+    if (pageRequest.getPageSize() != 0) {
+      query = query.limit(pageRequest.getPageSize());
+    }
+    return query;
   }
 
   /**
