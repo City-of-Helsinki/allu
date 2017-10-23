@@ -189,7 +189,7 @@ public class PricingService {
     }
 
     // ... apply discounts...
-    pricing.applyDiscounts(event.isEcoCompass(), event.getNoPriceReason(),
+    pricing.applyDiscounts(event.isEcoCompass(), application.getNotBillable(),
         event.isHeavyStructure(), event.isSalesActivity());
     // ... and get the final price
     return pricing.getPriceInCents();

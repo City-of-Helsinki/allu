@@ -35,7 +35,6 @@ public class EventMapper {
     eventJson.setEntryFee(event.getEntryFee());
     eventJson.setFoodProviders(event.getFoodProviders());
     eventJson.setMarketingProviders(event.getMarketingProviders());
-    eventJson.setNoPriceReason(event.getNoPriceReason());
     eventJson.setSalesActivity(event.isSalesActivity());
     eventJson.setHeavyStructure(event.isHeavyStructure());
     eventJson.setFoodSales(event.isFoodSales());
@@ -56,7 +55,6 @@ public class EventMapper {
     }
     event.setFoodSales(eventJson.isFoodSales());
     event.setMarketingProviders(eventJson.getMarketingProviders());
-    event.setNoPriceReason(eventJson.getNoPriceReason());
     event.setSalesActivity(eventJson.isSalesActivity());
     event.setHeavyStructure(eventJson.isHeavyStructure());
     event.setFoodProviders(eventJson.getFoodProviders());

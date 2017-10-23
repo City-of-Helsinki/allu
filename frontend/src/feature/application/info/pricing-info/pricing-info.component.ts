@@ -1,8 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup} from '@angular/forms';
+import {FormControl, FormGroup} from '@angular/forms';
 import {EventNature} from '../../../../model/application/event/event-nature';
 import {EnumUtil} from '../../../../util/enum.util';
-import {NoPriceReason} from '../../../../model/application/no-price-reason';
+import {findTranslation} from '../../../../util/translations';
+import {NotBillableReason} from '../../../../model/application/not-billable-reason';
+import {Observable} from 'rxjs/Observable';
+import {Some} from '../../../../util/option';
 
 @Component({
   selector: 'pricing-info',
@@ -16,25 +19,45 @@ export class PricingInfoComponent implements OnInit {
   @Input() kind: string;
 
   eventNatures = EnumUtil.enumValues(EventNature).filter(nature => nature !== 'PROMOTION');
-  noPriceReasons = EnumUtil.enumValues(NoPriceReason);
+  notBillableReasons = EnumUtil.enumValues(NotBillableReason)
+    .map(reason => findTranslation(['application.event.notBillableReason', reason]));
+  matchingReasons: Observable<Array<string>>;
+
+  private notBillableCtrl: FormControl;
+  private notBillableReasonCtrl: FormControl;
 
   ngOnInit(): void {
+    this.notBillableCtrl = <FormControl>this.form.get('notBillable');
+    this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
+
+    this.notBillableCtrl.valueChanges.subscribe(notBillable => this.notBillableChange(notBillable));
+
+    this.matchingReasons = this.notBillableReasonCtrl.valueChanges
+      .startWith(undefined)
+      .map(reason => this.filterReasons(reason));
   }
 
   eventNatureChange(nature: string): void {
     if (EventNature.PUBLIC_FREE !== EventNature[nature]) {
-      this.form.patchValue({noPrice: false});
-      this.noPriceChange(true);
+      this.form.patchValue({notBillable: false});
+      this.notBillableChange(true);
     }
   }
 
-  noPriceChange(noPrice: boolean): void {
-    if (noPrice) {
+  notBillableChange(notBillable: boolean): void {
+    if (notBillable) {
       this.form.patchValue({
         salesActivity: false,
         heavyStructure: false,
-        noPriceReason: undefined
+        notBillableReason: undefined
       });
     }
+  }
+
+  private filterReasons(value: string): string[] {
+    return Some(value)
+      .map(val => this.notBillableReasons
+        .filter(reason => reason.toUpperCase().indexOf(val.toUpperCase()) === 0))
+      .orElse(this.notBillableReasons.slice());
   }
 }

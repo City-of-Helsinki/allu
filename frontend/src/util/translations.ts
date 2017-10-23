@@ -216,7 +216,7 @@ export const translations = {
         PUBLIC_NONFREE: 'Maksullinen',
         CLOSED: 'Suljettu'
       },
-      noPriceReason: {
+      notBillableReason: {
         CHARITY: 'Hyväntekeväisyys- tai kansalaisjärjestö tai oppilaitoksen tapahtuma',
         ART_OR_CULTURE: 'Taide- tai kulttuuritapahtuma',
         NO_FEE_SPORTING: 'Avoin ja maksuton urheilutapahtuma',

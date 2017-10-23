@@ -119,9 +119,9 @@ public class EventPricing extends Pricing {
     return total;
   }
 
-  public void applyDiscounts(boolean ecoCompass, String noPriceReason, boolean heavyStructure, boolean salesActivity) {
+  public void applyDiscounts(boolean ecoCompass, boolean notBillable, boolean heavyStructure, boolean salesActivity) {
     paymentPercentage = 100;
-    if (noPriceReason != null) {
+    if (notBillable) {
       paymentPercentage = 0;
       if (heavyStructure) {
         long structureFee = fullPrice / 2;

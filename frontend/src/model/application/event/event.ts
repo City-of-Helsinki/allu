@@ -11,7 +11,6 @@ export class Event extends ApplicationExtension {
               public timeExceptions?: string,
               public attendees?: number,
               public entryFee?: number,
-              public noPriceReason?: string,
               public salesActivity?: boolean,
               public heavyStructure?: boolean,
               public ecoCompass?: boolean,

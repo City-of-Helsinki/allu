@@ -154,7 +154,6 @@ public abstract class MockServices {
     eventJson.setTimeExceptions("Mock exceptions");
     eventJson.setFoodSales(true);
     eventJson.setStructureArea(100);
-    eventJson.setNoPriceReason("Mock pricing");
     eventJson.setEntryFee(1233);
     eventJson.setFoodProviders("Mock foodProviders");
     eventJson.setStructureDescription("Structure description");

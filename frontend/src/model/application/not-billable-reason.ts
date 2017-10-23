@@ -1,4 +1,4 @@
-export enum NoPriceReason {
+export enum NotBillableReason {
   CHARITY,
   ART_OR_CULTURE,
   NO_FEE_SPORTING,

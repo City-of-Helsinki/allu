@@ -207,6 +207,7 @@ public class DecisionService {
       decisionJson.setDeciderName(decider.getRealName());
     }
     decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
+    decisionJson.setPriceReason(application.getNotBillableReason());
     Integer priceInCents = (application.getPriceOverride() != null) ? application.getPriceOverride()
         : application.getCalculatedPrice();
     if (priceInCents != null) {
@@ -249,7 +250,6 @@ public class DecisionService {
       decisionJson.setSportsWithHeavyStructures(ej.isHeavyStructure());
       decisionJson.setHasEkokompassi(ej.isEcoCompass());
       decisionJson.setEventNature(eventNature(ej.getNature()));
-      decisionJson.setPriceReason(ej.getNoPriceReason());
     }
   }
 

@@ -39,6 +39,8 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     application.priceOverrideEuro = form.event.priceOverride;
     application.priceOverrideReason = form.event.priceOverrideReason;
     application.type = ApplicationType[ApplicationType.EVENT];
+    application.notBillable = form.event.notBillable;
+    application.notBillableReason = form.event.notBillableReason;
     application.extension = EventDetailsForm.toEvent(form.event, ApplicationType.EVENT);
     return application;
   }

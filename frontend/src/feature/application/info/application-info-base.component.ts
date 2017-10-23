@@ -71,10 +71,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
   onSubmit(form: FormGroup) {
     this.submitPending = true;
-    // Enable so that all fields user should not edit are saved also
-    // eg. representative, contractor, representative etc.
-    form.enable();
-    let value = form.value;
+
+    let value = form.getRawValue();
     let application = this.update(value);
     application.extension.terms = value.terms;
 

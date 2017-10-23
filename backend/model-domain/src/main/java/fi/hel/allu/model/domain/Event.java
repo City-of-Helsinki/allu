@@ -17,7 +17,6 @@ public class Event extends ApplicationExtension {
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
-  private String noPriceReason;
   private boolean salesActivity;
   private boolean heavyStructure;
   private boolean foodSales;
@@ -100,17 +99,6 @@ public class Event extends ApplicationExtension {
 
   public void setEcoCompass(boolean ecoCompass) {
     this.ecoCompass = ecoCompass;
-  }
-
-  /**
-   * in Finnish: Hinnoitteluperusteet
-   */
-  public String getNoPriceReason() {
-    return noPriceReason;
-  }
-
-  public void setNoPriceReason(String noPriceReason) {
-    this.noPriceReason = noPriceReason;
   }
 
   /**

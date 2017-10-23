@@ -25,20 +25,20 @@ public class EventPricingTest {
     assertEquals(360000, bill.getPriceInCents()); // The price should be 3600
                                                   // EUR
     // Verify that EcoCompass gives 30% discount
-    bill.applyDiscounts(true, null, false, false);
+    bill.applyDiscounts(true, false, false, false);
     assertEquals(252000, bill.getPriceInCents());
     verifyInvoicePrice(bill.getChargeBasisEntries(), bill.getPriceInCents());
     // Verify that 100% discount works:
-    bill.applyDiscounts(false, "SportsEvent", false, false);
+    bill.applyDiscounts(false, true, false, false);
     assertEquals(0, bill.getPriceInCents());
     // Verify that sports event with heavy structures gets only 50% discount:
-    bill.applyDiscounts(false, "SportsEvent", true, false);
+    bill.applyDiscounts(false, true, true, false);
     assertEquals(180000, bill.getPriceInCents());
     // Verify that commercial activities also gives 50%:
-    bill.applyDiscounts(false, "SportsEvent", false, true);
+    bill.applyDiscounts(false, true, false, true);
     assertEquals(180000, bill.getPriceInCents());
     // Commercial activities and heavy structures --> no discount:
-    bill.applyDiscounts(false, "SportsEvent", true, true);
+    bill.applyDiscounts(false, true, true, true);
     assertEquals(360000, bill.getPriceInCents());
   }
 

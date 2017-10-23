@@ -22,7 +22,6 @@ public class EventJson extends ApplicationExtensionJson {
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
-  private String noPriceReason;
   private boolean salesActivity;
   private boolean heavyStructure;
   private boolean foodSales;
@@ -125,17 +124,6 @@ public class EventJson extends ApplicationExtensionJson {
 
   public void setEcoCompass(boolean ecoCompass) {
     this.ecoCompass = ecoCompass;
-  }
-
-  /**
-   * in Finnish: Hinnoitteluperusteet
-   */
-  public String getNoPriceReason() {
-    return noPriceReason;
-  }
-
-  public void setNoPriceReason(String noPriceReason) {
-    this.noPriceReason = noPriceReason;
   }
 
   /**
