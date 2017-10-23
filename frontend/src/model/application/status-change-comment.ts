@@ -10,6 +10,8 @@ export class StatusChangeComment {
         return new StatusChangeComment(undefined, commentText);
       case ApplicationStatus.REJECTED:
         return new StatusChangeComment(CommentType.REJECT, commentText);
+      case ApplicationStatus.RETURNED_TO_PREPARATION:
+        return new StatusChangeComment(CommentType.RETURN, commentText);
       default:
         throw new Error('Invalid application status ' + ApplicationStatus[status] + ' for mapping to comment type');
     }
