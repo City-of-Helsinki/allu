@@ -83,7 +83,7 @@
           <div class="row" form-group>
             <div class="col m12" *ngIf="multipleLocations">
               <button mat-raised-button type="button" color="primary" [disabled]="!locationForm.valid" (click)="store(locationForm.value)">TALLENNA</button>
-              <button mat-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
+              <button mat-raised-button type="button" color="primary" (click)="cancelArea()">PERUUTA</button>
             </div>
           </div>
           <div class="row" *ngIf="multipleLocations">
@@ -102,7 +102,7 @@
         <mat-card-content>
           <div class="row">
             <div class="col m2">
-              <a mat-raised-button type="button" color="primary" [routerLink]="['/home']">PERUUTA</a>
+              <a mat-raised-button type="button" color="primary" [routerLink]="cancelLink()">PERUUTA</a>
             </div>
             <div class="col m4 offset-m6">
               <button mat-raised-button type="submit" color="primary" [disabled]="!submitAllowed">{{id ? "YHTEENVETOON" : "PERUSTIEDOT"}}</button>

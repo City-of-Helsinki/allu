@@ -158,9 +158,15 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.resetForm();
   }
 
-  cancel(): void {
+  cancelArea(): void {
     this.locationState.cancelEditing();
     this.resetForm();
+  }
+
+  cancelLink(): Array<string> {
+    return Some(this.application.id)
+      .map(id => ['/applications', id, 'summary'])
+      .orElse(['/home']);
   }
 
   onSubmit(form: LocationForm) {
