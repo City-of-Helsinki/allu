@@ -13,6 +13,7 @@ create table allu.customer (
     ovt text,
     email text,
     phone text,
+    sap_customer_number text,
     is_active boolean not null);
 
 create table allu.city_district (
