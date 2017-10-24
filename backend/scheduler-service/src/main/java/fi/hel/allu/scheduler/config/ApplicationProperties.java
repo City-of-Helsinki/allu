@@ -12,21 +12,60 @@ public class ApplicationProperties {
 
   private String modelServiceHost;
   private String modelServicePort;
+  private String extServiceHost;
+  private String extServicePort;
   private List<String> emailAllowedAddresses;
   private String emailSenderAddress;
   private String invoiceDestDir;
+  private boolean customerUpdateEnabled;
+  private String customerSourceDir;
+  private String customerArchiveDir;
+  private String failedCustomerUpdateDir;
+  private String sapFtpCustomerHost;
+  private int sapFtpCustomerPort;
+  private String sapFtpCustomerUser;
+  private String sapFtpCustomerPassword;
+  private String sapFtpCustomerDirectory;
+  private String sapFtpCustomerArchive;
+  private String externalServiceAuthenticationToken;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
                                @Value("${model.service.port}") @NotEmpty String modelServicePort,
+                               @Value("${ext.service.host}") @NotEmpty String extServiceHost,
+                               @Value("${ext.service.port}") @NotEmpty String extServicePort,
                                @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
-      @Value("${invoice.destdir}") @NotEmpty String invoiceDestDir) {
+      @Value("${invoice.destdir}") @NotEmpty String invoiceDestDir,
+      @Value("${customer.update.enabled}") boolean customerUpdateEnabled,
+      @Value("${customer.sourcedir}") @NotEmpty String customerSourceDir,
+      @Value("${customer.archivedir}") @NotEmpty String customerArchiveDir,
+      @Value("${customer.failedupdatedir}") @NotEmpty String failedCustomerUpdateDir,
+      @Value("${sap.ftp.customer.host}") @NotEmpty String sapFtpCustomerHost,
+      @Value("${sap.ftp.customer.port}") @NotEmpty int sapFtpCustomerPort,
+      @Value("${sap.ftp.customer.user}") @NotEmpty String sapFtpCustomerUser,
+      @Value("${sap.ftp.customer.password}") @NotEmpty String sapFtpCustomerPassword,
+      @Value("${sap.ftp.customer.directory}") @NotEmpty String sapFtpCustomerDirectory,
+      @Value("${sap.ftp.customer.archive}") @NotEmpty String sapFtpCustomerArchive,
+      @Value("${ext.service.token}") @NotEmpty String externalServiceAuthenticationToken) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.emailAllowedAddresses = emailAllowedAddresses;
     this.emailSenderAddress = emailSenderAddress;
     this.invoiceDestDir = invoiceDestDir;
+    this.customerUpdateEnabled = customerUpdateEnabled;
+    this.customerSourceDir = customerSourceDir;
+    this.customerArchiveDir = customerArchiveDir;
+    this.failedCustomerUpdateDir = failedCustomerUpdateDir;
+    this.extServiceHost = extServiceHost;
+    this.extServicePort = extServicePort;
+    this.sapFtpCustomerHost = sapFtpCustomerHost;
+    this.sapFtpCustomerPort = sapFtpCustomerPort;
+    this.sapFtpCustomerUser = sapFtpCustomerUser;
+    this.sapFtpCustomerPassword = sapFtpCustomerPassword;
+    this.sapFtpCustomerDirectory = sapFtpCustomerDirectory;
+    this.sapFtpCustomerArchive = sapFtpCustomerArchive;
+    this.externalServiceAuthenticationToken = externalServiceAuthenticationToken;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -34,6 +73,11 @@ public class ApplicationProperties {
   private String getModelServiceUrl(String path) {
     return PATH_PREFIX + modelServiceHost + ":" + modelServicePort + path;
   }
+
+  private String getExtServiceUrl(String path) {
+    return PATH_PREFIX + extServiceHost + ":" + extServicePort + path;
+  }
+
 
   /**
    * @return url to check applications that are close to a notification deadline
@@ -54,6 +98,13 @@ public class ApplicationProperties {
    */
   public String getFindApplicationsUrl() {
     return getModelServiceUrl("/applications/find");
+  }
+
+  /**
+   * @return url to update customer
+   */
+  public String getCustomerUpdateUrl() {
+    return getExtServiceUrl("/v1/customers/sap");
   }
 
   /**
@@ -93,5 +144,55 @@ public class ApplicationProperties {
    */
   public String getInvoiceDestDir() {
     return invoiceDestDir;
+  }
+
+  /**
+   * Get source directory for customer update files.
+   */
+  public String getCustomerSourceDir() {
+    return customerSourceDir;
+  }
+
+  /**
+   * Get archive directory for customer update files.
+   */
+  public String getCustomerArchiveDir() {
+    return customerArchiveDir;
+  }
+
+  public String getFailedCustomerUpdateDir() {
+    return failedCustomerUpdateDir;
+  }
+
+  public String getSapFtpCustomerHost() {
+    return sapFtpCustomerHost;
+  }
+
+  public int getSapFtpCustomerPort() {
+    return sapFtpCustomerPort;
+  }
+
+  public String getSapFtpCustomerUser() {
+    return sapFtpCustomerUser;
+  }
+
+  public String getSapFtpCustomerPassword() {
+    return sapFtpCustomerPassword;
+  }
+
+  public String getSapFtpCustomerDirectory() {
+    return sapFtpCustomerDirectory;
+  }
+
+  public String getSapFtpCustomerArchive() {
+    return sapFtpCustomerArchive;
+  }
+
+  public String getExternalServiceAuthenticationToken() {
+    return externalServiceAuthenticationToken;
+  }
+
+  public boolean isCustomerUpdateEnabled() {
+    return customerUpdateEnabled;
   }
 }

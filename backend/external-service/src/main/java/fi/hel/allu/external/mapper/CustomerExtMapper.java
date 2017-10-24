@@ -2,6 +2,8 @@ package fi.hel.allu.external.mapper;
 
 import fi.hel.allu.external.domain.CustomerExt;
 import fi.hel.allu.external.domain.PostalAddressExt;
+import fi.hel.allu.sap.model.DEBMAS06;
+import fi.hel.allu.sap.model.E1KNA1M;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.PostalAddressJson;
 
@@ -46,5 +48,26 @@ public class CustomerExtMapper {
   public static CustomerJson mergeCustomerJson(CustomerJson currentCustomerJson, CustomerExt customerExt) {
     // TODO: update current customerJson with the customerExt data
     return null;
+  }
+
+  public static void updateWithSapFields(E1KNA1M sapCustomerData, CustomerJson customerJson) {
+    customerJson.setSapCustomerNumber(sapCustomerData.getKunnr());
+    customerJson.setRegistryKey(getRegistryKey(sapCustomerData));
+    customerJson.setName(sapCustomerData.getName1());
+    customerJson.setInvoicingProhibited(isInvoicingProhibited(sapCustomerData));
+    PostalAddressJson postalAddress = customerJson.getPostalAddress() != null ? customerJson.getPostalAddress() : new PostalAddressJson();
+    postalAddress.setStreetAddress(sapCustomerData.getStras());
+    postalAddress.setCity(sapCustomerData.getOrt01());
+    postalAddress.setPostalCode(sapCustomerData.getPstlz());
+    customerJson.setPostalAddress(postalAddress);
+  }
+
+  private static boolean isInvoicingProhibited(E1KNA1M basicInformation) {
+    return "X".equals(basicInformation.getSperr());
+  }
+
+  private static String getRegistryKey(E1KNA1M basicInformation) {
+    // Business ID in stcd1, personal identification number in stcd2
+    return basicInformation.getStcd1() != null ? basicInformation.getStcd1() : basicInformation.getStcd2();
   }
 }

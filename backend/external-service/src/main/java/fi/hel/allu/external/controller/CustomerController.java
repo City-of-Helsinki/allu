@@ -1,19 +1,24 @@
 package fi.hel.allu.external.controller;
 
-import fi.hel.allu.external.domain.CustomerExt;
-import fi.hel.allu.external.domain.CustomerWithContactsExt;
-import fi.hel.allu.external.mapper.CustomerExtMapper;
-import fi.hel.allu.servicecore.service.ContactService;
-import fi.hel.allu.servicecore.service.CustomerService;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-import java.util.List;
-import java.util.stream.Collectors;
+import fi.hel.allu.external.domain.CustomerExt;
+import fi.hel.allu.external.domain.CustomerWithContactsExt;
+import fi.hel.allu.external.mapper.CustomerExtMapper;
+import fi.hel.allu.sap.model.DEBMAS06;
+import fi.hel.allu.sap.model.E1KNA1M;
+import fi.hel.allu.servicecore.domain.CustomerJson;
+import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
 
 /**
  * Public interface for managing customer information.
@@ -59,6 +64,20 @@ public class CustomerController {
     return new ResponseEntity<>(
         CustomerExtMapper.mapCustomerExt(customerService.createCustomer(CustomerExtMapper.mapCustomerJson(customer))),
         HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/sap", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_INTERNAL')")
+  public ResponseEntity<Void> importSapCustomer(@RequestBody E1KNA1M sapCustomer) {
+    Integer id = getAlluID(sapCustomer);
+    CustomerJson customerJson = customerService.findCustomerById(id);
+    CustomerExtMapper.updateWithSapFields(sapCustomer, customerJson);
+    customerService.updateCustomer(id, customerJson);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  private Integer getAlluID(E1KNA1M sapCustomer) {
+    return Integer.valueOf(sapCustomer.getE1knvvm().getEikto());
   }
 
   @RequestMapping(method = RequestMethod.PUT)
