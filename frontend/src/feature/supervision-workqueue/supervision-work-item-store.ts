@@ -7,11 +7,14 @@ import {Observable} from 'rxjs/Observable';
 import {SupervisionTaskService} from '../../service/supervision/supervision-task.service';
 import {HttpResponse} from '../../util/http-response';
 import {ArrayUtil} from '../../util/array-util';
+import {Page} from '../../model/common/page';
+import {Sort} from '../../model/common/sort';
 
 const initialState: SupervisionWorkqueueState = {
   tab: WorkQueueTab.OWN,
   search: new SupervisionTaskSearchCriteria(),
-  items: [],
+  sort: new Sort(),
+  page: new Page<SupervisionWorkItem>(),
   selectedItems: [],
   allSelected: false
 };
@@ -21,9 +24,10 @@ export class SupervisionWorkItemStore {
   private store = new BehaviorSubject<SupervisionWorkqueueState>(initialState);
 
   constructor(private service: SupervisionTaskService) {
-    this.changes.map(state => state.search)
-      .distinctUntilChanged()
-      .subscribe(search => this.refresh());
+    Observable.merge(
+      this.changes.map(state => state.search).distinctUntilChanged(),
+      this.changes.map(state => state.sort).distinctUntilChanged()
+    ).subscribe(changes => this.refresh());
   }
 
   get changes(): Observable<SupervisionWorkqueueState> {
@@ -38,19 +42,23 @@ export class SupervisionWorkItemStore {
     this.update({search: search});
   }
 
-  public itemsChange(items: Array<SupervisionWorkItem>) {
+  public sortChange(sort: Sort) {
+    this.update({sort: sort});
+  }
+
+  public pageChange(page: Page<SupervisionWorkItem>) {
     const selected = this.store.getValue().selectedItems;
-    const itemIds = items.map(item => item.id);
+    const itemIds = this.itemIds(page);
     this.update({
-      items: items,
+      page: page,
       allSelected: this.allSelected(itemIds, selected)
     });
   }
 
   public toggleAll(checked: boolean) {
     if (checked) {
-      const items = this.store.getValue().items.map(item => item.id);
-      this.selectedItems(items);
+      const itemIds = this.itemIds(this.store.getValue().page);
+      this.selectedItems(itemIds);
     } else {
       this.selectedItems([]);
     }
@@ -77,7 +85,7 @@ export class SupervisionWorkItemStore {
   }
 
   private selectedItems(selected: Array<number>) {
-    const itemIds = this.store.getValue().items.map(item => item.id);
+    const itemIds = this.itemIds(this.store.getValue().page);
     this.update({
       selectedItems: selected,
       allSelected: this.allSelected(itemIds, selected)
@@ -91,20 +99,26 @@ export class SupervisionWorkItemStore {
 
   private refresh(): void {
     const search = this.store.getValue().search;
+    const sort = this.store.getValue().sort;
     this.selectedItems([]);
-    this.service.search(search).subscribe(items => this.itemsChange(items));
+    this.service.search(search, sort).subscribe(page => this.pageChange(page));
   }
 
   private allSelected(items: Array<number>, selected: Array<number>): boolean {
     const hasItems = items.length > 0;
     return hasItems && ArrayUtil.containSame(items, selected);
   }
+
+  private itemIds(page: Page<SupervisionWorkItem>): Array<number> {
+    return page.content.map(item => item.id);
+  }
 }
 
 export interface SupervisionWorkqueueState {
   tab?: WorkQueueTab;
   search?: SupervisionTaskSearchCriteria;
-  items?: Array<SupervisionWorkItem>;
+  sort?: Sort;
+  page?: Page<SupervisionWorkItem>;
   selectedItems?: Array<number>;
   allSelected?: boolean;
 }

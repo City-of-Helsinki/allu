@@ -20,7 +20,7 @@ export class SortByDirective implements OnInit {
 
     // Add icon
     this.iconEl = this.renderer.createElement(this.tableHeaderEl, 'i');
-    this.iconEl.className = 'material-icons icon-middle';
+    this.iconEl.className = 'material-icons sort-icon';
     this.iconEl.innerHTML = '';
   }
 

@@ -5,6 +5,8 @@ import {Observable} from 'rxjs/Observable';
 import {SupervisionWorkItem} from '../../../model/application/supervision/supervision-work-item';
 import {MatCheckboxChange} from '@angular/material';
 import {Subscription} from 'rxjs/Subscription';
+import {Page} from '../../../model/common/page';
+import {Sort} from '../../../model/common/sort';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -14,16 +16,20 @@ import {Subscription} from 'rxjs/Subscription';
 export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   workItems: Observable<Array<SupervisionWorkItem>>;
+  page: Observable<Page<SupervisionWorkItem>>;
   allSelected: boolean = false;
+  sort = new Sort();
 
   private selectedItems: Array<number> = [];
   private selectedItemsSubscription: Subscription;
   private allSelectedSubscription: Subscription;
+  private sortSubscription: Subscription;
 
   constructor(private store: SupervisionWorkItemStore) {}
 
   ngOnInit(): void {
-    this.workItems = this.store.changes.map(state => state.items).distinctUntilChanged();
+    this.page = this.store.changes.map(state => state.page).distinctUntilChanged();
+    this.workItems = this.page.map(p => p.content);
 
     this.selectedItemsSubscription = this.store.changes.map(state => state.selectedItems)
       .distinctUntilChanged()
@@ -32,11 +38,16 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
     this.allSelectedSubscription = this.store.changes.map(state => state.allSelected)
       .distinctUntilChanged()
       .subscribe(allSelected => this.allSelected = allSelected);
+
+    this.sortSubscription = this.store.changes.map(state => state.sort)
+      .distinctUntilChanged()
+      .subscribe(sort => this.sort = sort);
   }
 
   ngOnDestroy(): void {
     this.selectedItemsSubscription.unsubscribe();
     this.allSelectedSubscription.unsubscribe();
+    this.sortSubscription.unsubscribe();
   }
 
   selected(id: number): boolean {
@@ -49,5 +60,9 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   checkSingle(change: MatCheckboxChange, taskId: number) {
     this.store.toggleSingle(taskId, change.checked);
+  }
+
+  sortBy(sort: Sort) {
+    this.store.sortChange(sort);
   }
 }

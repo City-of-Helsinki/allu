@@ -10,11 +10,12 @@ import {SupervisionWorkItem} from '../../../src/model/application/supervision/su
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '../../../src/feature/supervision-workqueue/content/workqueue-content.component';
+import {Page} from '../../../src/model/common/page';
 
-const defaultItems = [
+const defaultItems = new Page([
   new SupervisionWorkItem(1),
   new SupervisionWorkItem(2)
-];
+]);
 
 describe('SupervisionWorkqueueContentComponent', () => {
   let comp: WorkQueueContentComponent;
@@ -48,7 +49,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
-    store.changeSubject.next({...store.changeSubject.getValue(), items: defaultItems});
+    store.changeSubject.next({...store.changeSubject.getValue(), page: defaultItems});
     comp.ngOnInit();
     fixture.detectChanges();
   });
@@ -58,7 +59,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
   });
 
   it('should show content', fakeAsync(() => {
-    expect(de.queryAll(By.css('tr.clickable')).length).toEqual(defaultItems.length);
+    expect(de.queryAll(By.css('tr.clickable')).length).toEqual(defaultItems.content.length);
   }));
 
   it('should check all selected checkbox based on state', fakeAsync(() => {
@@ -76,7 +77,8 @@ describe('SupervisionWorkqueueContentComponent', () => {
   it('should check item checkboxes based on state', fakeAsync(() => {
     expect(de.queryAll(By.css('td .mat-checkbox-checked')).length).toEqual(0);
 
-    store.changeSubject.next({...store.changeSubject.getValue(), selectedItems: defaultItems.map(item => item.id)});
+    const selected = defaultItems.content.map(item => item.id);
+    store.changeSubject.next({...store.changeSubject.getValue(), selectedItems: selected});
     fixture.detectChanges();
     tick();
     expect(de.queryAll(By.css('td .mat-checkbox-checked')).length).toEqual(2);
@@ -88,6 +90,6 @@ describe('SupervisionWorkqueueContentComponent', () => {
     checkbox.click();
     fixture.detectChanges();
     tick();
-    expect(store.toggleSingle).toHaveBeenCalledWith(defaultItems[0].id, true);
+    expect(store.toggleSingle).toHaveBeenCalledWith(defaultItems.content[0].id, true);
   }));
 });

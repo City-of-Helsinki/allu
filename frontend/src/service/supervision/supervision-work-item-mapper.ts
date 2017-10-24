@@ -12,12 +12,6 @@ import {
 import {ApplicationType} from '../../model/application/type/application-type';
 
 export class SupervisionSearchMapper {
-  static mapWorkItemList(workItems: Array<BackendSupervisionWorkItem>): Array<SupervisionWorkItem> {
-    return (workItems)
-      ? workItems.map(task => SupervisionSearchMapper.mapWorkItem(task))
-      : [];
-  }
-
   static mapWorkItem(backendWorkItem: BackendSupervisionWorkItem): SupervisionWorkItem {
     let workItem = new SupervisionWorkItem();
     workItem.id = backendWorkItem.id;

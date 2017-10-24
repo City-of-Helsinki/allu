@@ -8,6 +8,7 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 import fi.hel.allu.servicecore.mapper.SupervisionTaskMapper;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
 import fi.hel.allu.servicecore.util.RestResponsePage;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,12 +91,7 @@ public class SupervisionTaskService {
     ParameterizedTypeReference<RestResponsePage<SupervisionTask>> typeref = new ParameterizedTypeReference<RestResponsePage<SupervisionTask>>() {
     };
 
-    UriComponentsBuilder builder = UriComponentsBuilder
-        .fromUriString(applicationProperties.getSupervisionTaskSearchUrl())
-        .queryParam("page", pageRequest.getPageNumber()).queryParam("size", pageRequest.getPageSize());
-    pageRequest.getSort()
-        .forEach(o -> builder.queryParam("sort", o.getProperty() + (o.isDescending() ? ",desc" : ",asc")));
-    URI targetUri = builder.build().toUri();
+    URI targetUri = PageRequestBuilder.fromUriString(applicationProperties.getSupervisionTaskSearchUrl(), pageRequest);
     ResponseEntity<RestResponsePage<SupervisionTask>> response =
         restTemplate.exchange(targetUri, HttpMethod.POST, new HttpEntity<>(searchCriteria), typeref);
 

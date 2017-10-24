@@ -5,11 +5,14 @@ import {SupervisionTaskSearchCriteria} from '../../../src/model/application/supe
 import {SupervisionWorkItem} from '../../../src/model/application/supervision/supervision-work-item';
 import {HttpResponse, HttpStatus} from '../../../src/util/http-response';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {Page} from '../../../src/model/common/page';
+import {Sort} from '../../../src/model/common/sort';
 
 const initialState: SupervisionWorkqueueState = {
   tab: WorkQueueTab.OWN,
   search: new SupervisionTaskSearchCriteria(),
-  items: [],
+  page: new Page<SupervisionWorkItem>(),
+  sort: new Sort(),
   selectedItems: [],
   allSelected: false
 };
@@ -27,7 +30,7 @@ export class SupervisionWorkItemStoreMock {
   public searchChange(search: SupervisionTaskSearchCriteria) {
   }
 
-  public itemsChange(items: Array<SupervisionWorkItem>) {
+  public pageChange(page: Page<SupervisionWorkItem>) {
   }
 
   public toggleAll(checked: boolean) {

@@ -4,13 +4,13 @@
             <thead>
             <tr>
                 <th><mat-checkbox [checked]="allSelected" (change)="checkAll($event)"></mat-checkbox></th>
-                <th>{{'supervisionWorkqueue.content.taskType' | translation}}</th>
-                <th>{{'supervisionWorkqueue.content.applicationId' | translation}}</th>
-                <th>{{'supervisionWorkqueue.content.address' | translation}}</th>
-                <th>{{'supervisionWorkqueue.content.plannedFinishingTime' | translation}}</th>
-                <th>{{'supervisionWorkqueue.content.applicationStatus' | translation}}</th>
-                <th>{{'supervisionWorkqueue.content.project' | translation}}</th>
-                <th>{{'supervisionWorkqueue.content.creator' | translation}}</th>
+                <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.taskType' | translation}}</th>
+                <th sortBy="application.applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.applicationId' | translation}}</th>
+                <th sortBy="streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.address' | translation}}</th>
+                <th sortBy="plannedFinishingTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.plannedFinishingTime' | translation}}</th>
+                <th sortBy="application.status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.applicationStatus' | translation}}</th>
+                <th sortBy="project.name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.project' | translation}}</th>
+                <th sortBy="user.realName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'supervisionWorkqueue.content.creator' | translation}}</th>
             </tr>
             </thead>
             <tbody>

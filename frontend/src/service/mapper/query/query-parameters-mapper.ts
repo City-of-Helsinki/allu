@@ -1,7 +1,8 @@
 import {BackendQueryParameter, BackendQuerySort} from '../../backend-model/backend-query-parameters';
-import {Direction} from '../../../model/common/sort';
+import {Direction, Sort} from '../../../model/common/sort';
 import {Some} from '../../../util/option';
 import {SearchQuery} from '../../../model/common/search-query';
+import {RequestOptionsArgs} from '@angular/http';
 
 export const enumFields = [
   'status',
@@ -23,6 +24,15 @@ export const START_TIME_FIELD = 'startTime';
 export const END_TIME_FIELD = 'endTime';
 
 export class QueryParametersMapper {
+  public static mapSortToQueryParameters(sort: Sort): RequestOptionsArgs {
+    if (sort) {
+      let sortParam = [sort.field];
+      sortParam = Some(sort.direction).map(dir => sortParam.concat(Direction[dir].toLowerCase())).orElse(sortParam);
+      return {params: {sort: sortParam.join(',')}};
+    }
+    return {};
+  }
+
   public static mapSort(query: SearchQuery): BackendQuerySort {
     return (query.sort && query.sort.field && query.sort.direction !== undefined) ?
     {

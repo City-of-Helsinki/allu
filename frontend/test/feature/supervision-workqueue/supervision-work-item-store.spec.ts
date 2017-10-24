@@ -6,10 +6,11 @@ import {HttpResponse, HttpStatus} from '../../../src/util/http-response';
 import {SupervisionWorkItemStore} from '../../../src/feature/supervision-workqueue/supervision-work-item-store';
 import {SupervisionTaskService} from '../../../src/service/supervision/supervision-task.service';
 import {WorkQueueTab} from '../../../src/feature/workqueue/workqueue-tab';
+import {Page} from '../../../src/model/common/page';
 
 class SupervisionTaskServiceMock {
-  search(searchCriteria: SupervisionTaskSearchCriteria): Observable<Array<SupervisionWorkItem>> {
-    return Observable.of([]);
+  search(searchCriteria: SupervisionTaskSearchCriteria): Observable<Page<SupervisionWorkItem>> {
+    return Observable.of(new Page<SupervisionWorkItem>());
   }
 
   changeHandler(handlerId: number, taskIds: Array<number>): Observable<HttpResponse> {
@@ -55,22 +56,22 @@ describe('supervision-work-item-store', () => {
 
   it('should notify items change', fakeAsync(() => {
     let result;
-    const items = [new SupervisionWorkItem(1), new SupervisionWorkItem(2)];
-    store.itemsChange(items);
-    store.changes.map(state => state.items).subscribe(change => result = change);
+    const page = new Page([new SupervisionWorkItem(1), new SupervisionWorkItem(2)]);
+    store.pageChange(page);
+    store.changes.map(state => state.page).subscribe(change => result = change);
     tick();
-    expect(result).toEqual(items);
+    expect(result).toEqual(page);
   }));
 
   it('should select item', fakeAsync(() => {
     let result;
-    const items = initWithItems();
+    const page = initWithItems();
     store.changes.map(state => state.selectedItems).subscribe(change => result = change);
-    store.toggleSingle(items[0].id, true);
+    store.toggleSingle(page.content[0].id, true);
     tick();
     expect(result.length).toEqual(1);
-    expect(result[0]).toEqual(items[0].id);
-    store.toggleSingle(items[0].id, false);
+    expect(result[0]).toEqual(page.content[0].id);
+    store.toggleSingle(page.content[0].id, false);
     expect(result.length).toEqual(0);
   }));
 
@@ -95,13 +96,13 @@ describe('supervision-work-item-store', () => {
   it('should not show all selected after item is deselected', fakeAsync(() => {
     let selected;
     let allSelected;
-    const items = initWithItems();
+    const page = initWithItems();
     store.changes.map(state => state.selectedItems).subscribe(change => selected = change);
     store.changes.map(state => state.allSelected).subscribe(change => allSelected = change);
     store.toggleAll(true);
     tick();
 
-    store.toggleSingle(items[0].id, false);
+    store.toggleSingle(page.content[0].id, false);
     tick();
     expect(selected.length).toEqual(1);
     expect(allSelected).toEqual(false);
@@ -143,11 +144,11 @@ describe('supervision-work-item-store', () => {
     expect(taskService.removeHandler).toHaveBeenCalledWith(selected);
   }));
 
-  function initWithItems(): Array<SupervisionWorkItem> {
-    const items = [new SupervisionWorkItem(1), new SupervisionWorkItem(2)];
-    store.itemsChange(items);
+  function initWithItems(): Page<SupervisionWorkItem> {
+    const page = new Page([new SupervisionWorkItem(1), new SupervisionWorkItem(2)]);
+    store.pageChange(page);
     tick();
-    return items;
+    return page;
   }
 });
 

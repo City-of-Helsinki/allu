@@ -12,6 +12,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.common.PathUtil;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
@@ -28,7 +29,11 @@ import java.util.stream.Stream;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplication.application;
+import static fi.hel.allu.QLocation.location;
+import static fi.hel.allu.QPostalAddress.postalAddress;
+import static fi.hel.allu.QProject.project;
 import static fi.hel.allu.QSupervisionTask.supervisionTask;
+import static fi.hel.allu.QUser.user;
 import static fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling.WITH_NULL_BINDINGS;
 
 @Repository
@@ -37,8 +42,7 @@ public class SupervisionTaskDao {
   /** Fields that won't be updated in regular updates */
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(supervisionTask.id, supervisionTask.creationTime);
 
-  final static Map<String, Path<?>> COLUMNS = supervisionTask.getColumns().stream()
-      .collect(Collectors.toMap(c -> c.getMetadata().getName(), c -> c));
+  final static Map<String, Path<?>> COLUMNS = orderByColumns();
 
   @Autowired
   private SQLQueryFactory queryFactory;
@@ -117,7 +121,11 @@ public class SupervisionTaskDao {
 
     SQLQuery<SupervisionTask> q = queryFactory.select(supervisionTaskBean)
         .from(supervisionTask)
-        .join(application).on(supervisionTask.applicationId.eq(application.id))
+        .leftJoin(application).on(supervisionTask.applicationId.eq(application.id))
+        .leftJoin(location).on(location.applicationId.eq(application.id))
+        .leftJoin(postalAddress).on(location.postalAddressId.eq(postalAddress.id))
+        .leftJoin(project).on(application.projectId.eq(project.id))
+        .leftJoin(user).on(supervisionTask.creatorId.eq(user.id))
         .where(conditions);
 
     q = handlePageRequest(q, pageRequest);
@@ -180,5 +188,16 @@ public class SupervisionTaskDao {
         .filter(values -> !values.isEmpty());
   }
 
+  private static Map<String, Path<?>> orderByColumns() {
+    Map<String, Path<?>> cols = supervisionTask.getColumns().stream()
+        .collect(Collectors.toMap(c -> c.getMetadata().getName(), c -> c));
 
+    cols.put(PathUtil.pathNameWithParent(application.type), application.type);
+    cols.put(PathUtil.pathNameWithParent(application.status), application.type);
+    cols.put(PathUtil.pathNameWithParent(application.applicationId), application.applicationId);
+    cols.put(PathUtil.pathNameWithParent(project.name), project.name);
+    cols.put(PathUtil.pathNameWithParent(user.realName), user.realName);
+    cols.put(PathUtil.pathName(postalAddress.streetAddress), postalAddress.streetAddress);
+    return cols;
+  }
 }
