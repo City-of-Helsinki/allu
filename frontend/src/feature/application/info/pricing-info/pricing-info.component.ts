@@ -6,6 +6,7 @@ import {findTranslation} from '../../../../util/translations';
 import {NotBillableReason} from '../../../../model/application/not-billable-reason';
 import {Observable} from 'rxjs/Observable';
 import {Some} from '../../../../util/option';
+import {ApplicationKind} from '../../../../model/application/type/application-kind';
 
 @Component({
   selector: 'pricing-info',
@@ -27,14 +28,15 @@ export class PricingInfoComponent implements OnInit {
   private notBillableReasonCtrl: FormControl;
 
   ngOnInit(): void {
-    this.notBillableCtrl = <FormControl>this.form.get('notBillable');
-    this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
+    if (ApplicationKind.OUTDOOREVENT === ApplicationKind[this.kind]) {
+      this.notBillableCtrl = <FormControl>this.form.get('notBillable');
+      this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
+      this.notBillableCtrl.valueChanges.subscribe(notBillable => this.notBillableChange(notBillable));
 
-    this.notBillableCtrl.valueChanges.subscribe(notBillable => this.notBillableChange(notBillable));
-
-    this.matchingReasons = this.notBillableReasonCtrl.valueChanges
-      .startWith(undefined)
-      .map(reason => this.filterReasons(reason));
+      this.matchingReasons = this.notBillableReasonCtrl.valueChanges
+        .startWith(undefined)
+        .map(reason => this.filterReasons(reason));
+    }
   }
 
   eventNatureChange(nature: string): void {
