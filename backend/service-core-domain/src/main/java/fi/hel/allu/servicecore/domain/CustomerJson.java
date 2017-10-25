@@ -20,6 +20,7 @@ public class CustomerJson {
   private String registryKey;
   private String ovt;
   private boolean active;
+  private String sapCustomerNumber;
 
   /**
    * in Finnish: Tietokantatunniste
@@ -119,4 +120,17 @@ public class CustomerJson {
   public void setActive(boolean active) {
     this.active = active;
   }
+
+  /**
+   * SAP Customer Number (KUNNR)
+   *
+   */
+  public String getSapCustomerNumber() {
+    return sapCustomerNumber;
+  }
+
+  public void setSapCustomerNumber(String sapCustomerNumber) {
+    this.sapCustomerNumber = sapCustomerNumber;
+  }
+
 }

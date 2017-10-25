@@ -22,6 +22,7 @@ public class Customer implements PostalAddressItem {
   private String registryKey;
   private String ovt;
   private boolean isActive = true;
+  private String sapCustomerNumber;
 
   public Integer getId() {
     return id;
@@ -133,6 +134,18 @@ public class Customer implements PostalAddressItem {
     isActive = active;
   }
 
+  /**
+   * SAP Customer number (KUNNR)
+   * @return
+   */
+  public String getSapCustomerNumber() {
+    return sapCustomerNumber;
+  }
+
+  public void setSapCustomerNumber(String sapCustomerNumber) {
+    this.sapCustomerNumber = sapCustomerNumber;
+  }
+
   public void setActive(boolean active) {
     // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
     setIsActive(active);
@@ -152,4 +165,5 @@ public class Customer implements PostalAddressItem {
   public int hashCode() {
     return id != null ? id.hashCode() : 0;
   }
+
 }
