@@ -75,7 +75,7 @@
                             <div class="col m6 info-field-group">
                                 <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
                             </div>
-                            <div class="col m6 info-field-group">{{translations.application.status[application.status]}}</div>
+                            <div class="col m6 info-field-group">{{['application.status', application.status] | translation}}</div>
                         </div>
                     </div>
                     <div class="col m12 info-field-group">
@@ -85,7 +85,7 @@
                             <div class="col m6 info-field-group">
                                 <a [routerLink]="['/applications', application.id, 'summary']">{{application.applicationId}}</a>
                             </div>
-                            <div class="col m6 info-field-group">{{translations.application.status[application.status]}}</div>
+                            <div class="col m6 info-field-group">{{['application.status', application.status] | translation}}</div>
                         </div>
                     </div>
                 </div>

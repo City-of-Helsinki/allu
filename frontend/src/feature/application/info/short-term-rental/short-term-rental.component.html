@@ -19,7 +19,7 @@
                             <input matInput type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
                             <mat-hint>
                                 <field-error [form]="applicationForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
-                                <field-error [form]="applicationForm" field="name" hasError="minlength">{{'translations.application.field.nameShort' | translation}}</field-error>
+                                <field-error [form]="applicationForm" field="name" hasError="minlength">{{'application.field.nameShort' | translation}}</field-error>
                             </mat-hint>
                         </mat-form-field>
                     </div>

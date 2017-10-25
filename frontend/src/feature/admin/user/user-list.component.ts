@@ -4,7 +4,6 @@ import {Observable} from 'rxjs/Observable';
 
 import {UserHub} from '../../../service/user/user-hub';
 import {User} from '../../../model/user/user';
-import {translations} from '../../../util/translations';
 
 @Component({
   selector: 'user-list',
@@ -14,7 +13,6 @@ import {translations} from '../../../util/translations';
 export class UserListComponent implements OnInit {
 
   users: Observable<Array<User>>;
-  translations = translations;
 
   constructor(private userHub: UserHub, private router: Router) {}
 

@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Event} from '../../../../../model/application/event/event';
 import {EventDetailsForm} from './event-details.form';
-import {translations} from '../../../../../util/translations';
 import {ComplexValidator} from '../../../../../util/complex-validator';
 import {EnumUtil} from '../../../../../util/enum.util';
 import {BillingType} from '../../../../../model/application/billing-type';
@@ -25,7 +24,6 @@ export class EventDetailsComponent implements OnInit {
   eventForm: FormGroup;
   applicationId: number;
   billingTypes = EnumUtil.enumValues(BillingType);
-  translations = translations;
 
   constructor(private applicationState: ApplicationState, private fb: FormBuilder) {
   }

@@ -9,8 +9,8 @@
                             <mat-form-field class="input-full-width">
                                 <input matInput type="text" formControlName="name" placeholder="Tapahtuman nimi*"/>
                                 <mat-hint>
-                                    <field-error [form]="eventForm" field="name" hasError="required">{{translations.application.field.nameMissing}}</field-error>
-                                    <field-error [form]="eventForm" field="name" hasError="minlength">{{translations.application.field.nameShort}}</field-error>
+                                    <field-error [form]="eventForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
+                                    <field-error [form]="eventForm" field="name" hasError="minlength">{{'application.field.nameShort' | translation}}</field-error>
                                 </mat-hint>
                             </mat-form-field>
                         </div>
@@ -23,10 +23,10 @@
                                     <mat-datepicker #startTimePicker></mat-datepicker>
                                     <mat-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="startTime" hasError="required">
-                                            {{translations.application.event.field.eventStartTimeMissing}}
+                                            {{'application.event.field.eventStartTimeMissing' | translation}}
                                         </field-error>
                                         <field-error [form]="eventForm" field="eventTimes" hasError="startBeforeEnd">
-                                            {{translations.application.event.field.startBeforeEnd}}
+                                            {{'application.event.field.startBeforeEnd' | translation}}
                                         </field-error>
                                     </mat-hint>
                                 </mat-form-field>
@@ -39,7 +39,7 @@
                                     <mat-datepicker #endTimePicker></mat-datepicker>
                                     <mat-hint>
                                         <field-error [form]="eventForm.get('eventTimes')" field="endTime" hasError="required">
-                                            {{translations.application.event.field.eventEndTimeMissing}}
+                                            {{'application.event.field.eventEndTimeMissing' | translation}}
                                         </field-error>
                                     </mat-hint>
                                 </mat-form-field>
@@ -50,7 +50,7 @@
                                 <textarea matInput matTextareaAutosize formControlName="description" placeholder="Tapahtuman kuvaus*"></textarea>
                                 <mat-hint>
                                     <field-error [form]="eventForm" field="description" hasError="required">
-                                        {{translations.application.event.field.descriptionMissing}}
+                                        {{'application.event.field.descriptionMissing' | translation}}
                                     </field-error>
                                 </mat-hint>
                             </mat-form-field>
@@ -71,7 +71,7 @@
                                        step="1" min="0" placeholder="Yleisömäärä"/>
                                 <mat-hint>
                                     <field-error [form]="eventForm" field="attendees" hasError="greaterThanOrEqual">
-                                        {{translations.application.event.field.attendeesGreaterThanOrEqual}}
+                                        {{'application.event.field.attendeesGreaterThanOrEqual' | translation}}
                                     </field-error>
                                 </mat-hint>
                             </mat-form-field>
@@ -82,7 +82,7 @@
                                        step="any" min="0" placeholder="Osallistumismaksu, jos urheilutapahtuma"/>
                                 <mat-hint>
                                     <field-error [form]="eventForm" field="entryFee" hasError="greaterThanOrEqual">
-                                        {{translations.application.event.field.eventEntryFeeThanOrEqual}}
+                                        {{'application.event.field.eventEntryFeeThanOrEqual' | translation}}
                                     </field-error>
                                 </mat-hint>
                             </mat-form-field>
@@ -110,7 +110,7 @@
                                        placeholder="Rakenteiden kokonaisneliömäärä"/>
                                 <mat-hint>
                                     <field-error [form]="eventForm" field="structureArea" hasError="greaterThanOrEqual">
-                                        {{translations.application.event.field.structureAreaGreaterThanOrEqual}}
+                                        {{'application.event.field.structureAreaGreaterThanOrEqual' | translation}}
                                     </field-error>
                                 </mat-hint>
                             </mat-form-field>
@@ -139,7 +139,7 @@
                                     <mat-datepicker #structureStartTimePicker></mat-datepicker>
                                     <mat-hint>
                                         <field-error [form]="eventForm" field="structureTimes" hasError="startBeforeEnd">
-                                            {{translations.application.event.field.startBeforeEnd}}
+                                            {{'application.event.field.startBeforeEnd' | translation}}
                                         </field-error>
                                     </mat-hint>
                                 </mat-form-field>

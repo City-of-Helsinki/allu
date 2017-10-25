@@ -24,12 +24,12 @@
                     <td>{{user.uiLastLogin}}</td>
                     <td>
                     <span *ngFor="let role of user.assignedRoles; let last=last">
-                        {{translations.user.role[role] | commaSeparated: last}}
+                        {{['user.role', role] | translation | commaSeparated: last}}
                     </span>
                     </td>
                     <td>
                     <span *ngFor="let applicationType of user.allowedApplicationTypes; let last=last">
-                        {{translations.application.type[applicationType] | commaSeparated: last}}
+                        {{['application.type', applicationType] | translation | commaSeparated: last}}
                     </span>
                     </td>
                 </tr>

@@ -8,7 +8,6 @@ import {MatDialog, MatDialogRef} from '@angular/material';
 
 import {Application} from '../../../model/application/application';
 import {Sort} from '../../../model/common/sort';
-import {translations} from '../../../util/translations';
 import {MapHub} from '../../../service/map/map-hub';
 import {CommentsModalComponent} from '../../application/comment/comments-modal.component';
 import {WorkQueueHub} from '../workqueue-search/workqueue-hub';
@@ -27,7 +26,6 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   applicationRows: Array<ApplicationRow>;
   allSelected = false;
   sort = new Sort(undefined, undefined);
-  translations = translations;
   hoveredRowIndex = undefined;
   selectedTags: Array<string> = [];
 

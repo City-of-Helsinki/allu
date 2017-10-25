@@ -5,7 +5,6 @@ import {Observable} from 'rxjs/Observable';
 
 import {UserHub} from '../../../service/user/user-hub';
 import {MapHub} from '../../../service/map/map-hub';
-import {translations} from '../../../util/translations';
 import {CurrentUser} from '../../../service/user/current-user';
 import {Some} from '../../../util/option';
 import {EnumUtil} from '../../../util/enum.util';
@@ -23,7 +22,6 @@ import {User} from '../../../model/user/user';
 export class UserComponent implements OnInit {
   userForm: FormGroup;
   submitted = false;
-  translations = translations;
   applicationTypes = EnumUtil.enumValues(ApplicationType);
   roles = [
     'ROLE_CREATE_APPLICATION',

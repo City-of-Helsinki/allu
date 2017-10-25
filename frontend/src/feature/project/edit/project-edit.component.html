@@ -10,7 +10,7 @@
                                 <mat-form-field class="input-full-width">
                                     <input matInput type="text" formControlName="ownerName" [readonly]="readonly" placeholder="Hankkeen omistaja"/>
                                     <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{translations.project.field.ownerNameMissing}}</field-error>
+                                        <field-error [form]="projectInfoForm" field="ownerName" hasError="required">{{'project.field.ownerNameMissing' | translation}}</field-error>
                                     </mat-hint>
                                 </mat-form-field>
 
@@ -19,7 +19,9 @@
                                 <mat-form-field class="input-full-width">
                                     <input matInput type="text" formControlName="contactName" [readonly]="readonly" placeholder="Yhteyshenkilö"/>
                                     <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="contactName" hasError="required">{{translations.project.field.contactNameMissing}}</field-error>
+                                        <field-error [form]="projectInfoForm" field="contactName" hasError="required">
+                                            {{'project.field.contactNameMissing' | translation}}
+                                        </field-error>
                                     </mat-hint>
                                 </mat-form-field>
                             </div>
@@ -29,7 +31,7 @@
                                 <mat-form-field class="input-full-width">
                                     <input matInput type="text" formControlName="email" [readonly]="readonly" placeholder="Sähköposti"/>
                                     <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="email" hasError="required">{{translations.common.field.emailInvalid}}</field-error>
+                                        <field-error [form]="projectInfoForm" field="email" hasError="required">{{'common.field.emailInvalid' | translation}}</field-error>
                                     </mat-hint>
                                 </mat-form-field>
                             </div>
@@ -44,7 +46,7 @@
                                 <mat-form-field class="input-full-width">
                                     <input matInput type="text" formControlName="name" [readonly]="readonly" placeholder="Hankkeen nimi"/>
                                     <mat-hint>
-                                        <field-error [form]="projectInfoForm" field="name" hasError="required">{{translations.project.field.nameMissing}}</field-error>
+                                        <field-error [form]="projectInfoForm" field="name" hasError="required">{{'project.field.nameMissing' | translation}}</field-error>
                                     </mat-hint>
                                 </mat-form-field>
                             </div>
@@ -107,8 +109,8 @@
                                             {{application.name}} <br>
                                             <span>{{application.id}}</span>
                                         </td>
-                                        <td>{{ translations.application.type[application.type] }}</td>
-                                        <td>{{ translations.application.status[application.status] }}</td>
+                                        <td>{{['application.type', application.type] | translation}}</td>
+                                        <td>{{['application.status', application.status] | translation}}</td>
                                         <td>{{application.customer.name}}<br></td>
                                         <td>ei tuettuna</td>
                                         <td>{{ application.startTime | date:format }}</td>

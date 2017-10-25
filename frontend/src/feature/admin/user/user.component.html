@@ -32,15 +32,15 @@
                             <mat-form-field class="input-full-width">
                                 <mat-select formControlName="allowedApplicationTypes" [multiple]="true"
                                             placeholder="Sallitut hakemustyypit" class="input-full-width">
-                                    <mat-option *ngFor="let type of applicationTypes" [value]="type">{{translations.application.type[type]}}</mat-option>
+                                    <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
                         <div class="col s12">
                             <mat-form-field class="input-full-width">
                                 <mat-select formControlName="assignedRoles" [multiple]="true" placeholder="Roolit" class="input-full-width">
-                                    <mat-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole() | async">{{translations.user.role['ROLE_ADMIN']}}</mat-option>
-                                    <mat-option *ngFor="let role of roles" [value]="role">{{translations.user.role[role]}}</mat-option>
+                                    <mat-option value="ROLE_ADMIN" [disabled]="!canRemoveAdminRole() | async">{{'user.role.ROLE_ADMIN' | translation}}</mat-option>
+                                    <mat-option *ngFor="let role of roles" [value]="role">{{['user.role', role] | translation}}</mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>

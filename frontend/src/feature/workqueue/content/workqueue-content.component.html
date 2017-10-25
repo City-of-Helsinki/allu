@@ -27,8 +27,8 @@
             </td>
             <td class="clickable">{{row.application.handler?.realName}}</td>
             <td class="clickable">{{row.application.applicationId}}</td>
-            <td class="clickable">{{translations.application.type[row.application.type]}}</td>
-            <td class="clickable status-text">{{translations.application.status[row.application.status]}}</td>
+            <td class="clickable">{{['application.type', row.application.type] | translation}}</td>
+            <td class="clickable status-text">{{['application.status', row.application.status] | translation}}</td>
             <td class="clickable">
                 {{row.application.project?.name}} <br>
                 <span>{{row.application.project?.id}}</span>

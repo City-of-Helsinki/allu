@@ -4,7 +4,6 @@ import {FormGroup, FormBuilder, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
-import {translations} from '../../../util/translations';
 import {Application} from '../../../model/application/application';
 import {ApplicationHub} from '../../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
@@ -27,7 +26,6 @@ export class ProjectEditComponent {
   applications = new Array<Application>();
   applicationSearch = new Subject<string>();
   matchingApplications: Observable<Array<Application>>;
-  translations = translations;
 
   private parentProject: number;
 
