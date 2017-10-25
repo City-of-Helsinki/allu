@@ -4,13 +4,14 @@ import {By} from '@angular/platform-browser';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
 import {SupervisionWorkItemStore} from '../../../src/feature/supervision-workqueue/supervision-work-item-store';
 import {AvailableToDirective} from '../../../src/service/authorization/available-to.directive';
-import {availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
+import {availableToDirectiveMockMeta, CurrentUserMock, RouterMock} from '../../mocks';
 import {CurrentUser} from '../../../src/service/user/current-user';
 import {SupervisionWorkItem} from '../../../src/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../../src/feature/common/allu-common.module';
 import {WorkQueueContentComponent} from '../../../src/feature/supervision-workqueue/content/workqueue-content.component';
 import {Page} from '../../../src/model/common/page';
+import {Router} from '@angular/router';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),
@@ -36,7 +37,8 @@ describe('SupervisionWorkqueueContentComponent', () => {
       providers: [
         FormBuilder,
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},
-        {provide: CurrentUser, useValue: currentUserMock}
+        {provide: CurrentUser, useValue: currentUserMock},
+        {provide: Router, useClass: RouterMock}
       ]
     })
       .overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))

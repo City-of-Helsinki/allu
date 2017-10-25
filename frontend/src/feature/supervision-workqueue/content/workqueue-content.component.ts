@@ -7,6 +7,7 @@ import {MatCheckboxChange} from '@angular/material';
 import {Subscription} from 'rxjs/Subscription';
 import {Page} from '../../../model/common/page';
 import {Sort} from '../../../model/common/sort';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'supervision-workqueue-content',
@@ -25,7 +26,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   private allSelectedSubscription: Subscription;
   private sortSubscription: Subscription;
 
-  constructor(private store: SupervisionWorkItemStore) {}
+  constructor(private store: SupervisionWorkItemStore, private router: Router) {}
 
   ngOnInit(): void {
     this.page = this.store.changes.map(state => state.page).distinctUntilChanged();
@@ -64,5 +65,12 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
 
   sortBy(sort: Sort) {
     this.store.sortChange(sort);
+  }
+
+  toApplicationTaskView(applicationId: number, col: number): void {
+    // undefined and 0 should not trigger navigation
+    if (col) {
+      this.router.navigate(['applications', applicationId, 'summary', 'supervision']);
+    }
   }
 }

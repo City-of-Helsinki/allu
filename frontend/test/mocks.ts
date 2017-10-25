@@ -9,6 +9,7 @@ import {User} from '../src/model/user/user';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Location} from '../src/model/common/location';
 import {RoleType} from '../src/model/user/role-type';
+import {NavigationExtras} from '@angular/router';
 
 export class ApplicationStateMock {
   private _application: Application;
@@ -64,6 +65,12 @@ const supervisor = new User(1, 'supervisor', 'super visor');
 export class UserHubMock {
   public getByRole = (role: RoleType) => Observable.of([supervisor]);
 }
+
+export class RouterMock {
+  public navigate(commands: any[], extras?: NavigationExtras): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+};
 
 /**
  * Function to create mock metadata which can be used to override directive in test components

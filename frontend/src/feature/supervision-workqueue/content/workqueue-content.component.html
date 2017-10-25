@@ -14,15 +14,16 @@
             </tr>
             </thead>
             <tbody>
-            <tr *ngFor="let item of workItems | async; let i=index;" class="clickable row-highlight">
+            <tr *ngFor="let item of workItems | async" class="clickable row-highlight"
+                (click)="toApplicationTaskView(item.applicationId, $event.target.cellIndex)">
                 <td><mat-checkbox [checked]="selected(item.id)" (change)="checkSingle($event, item.id)"></mat-checkbox></td>
-                <td class="clickable">{{['supervision.task.type', item.uiType] | translation}}</td>
-                <td class="clickable">{{item.applicationIdText}}</td>
-                <td class="clickable">{{item.address?.streetAddress}}</td>
-                <td class="clickable">{{item.plannedFinishingTime | date:'shortDate'}}</td>
-                <td class="clickable">{{['application.status', item.uiApplicationStatus] | translation}}</td>
-                <td class="clickable">{{item.projectName}}</td>
-                <td class="clickable">{{item.creator?.realName}}</td>
+                <td>{{['supervision.task.type', item.uiType] | translation}}</td>
+                <td>{{item.applicationIdText}}</td>
+                <td>{{item.address?.streetAddress}}</td>
+                <td>{{item.plannedFinishingTime | date:'shortDate'}}</td>
+                <td>{{['application.status', item.uiApplicationStatus] | translation}}</td>
+                <td>{{item.projectName}}</td>
+                <td>{{item.creator?.realName}}</td>
             </tr>
             </tbody>
         </table>
