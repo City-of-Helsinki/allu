@@ -2,7 +2,7 @@
 <application-type (onTypeChange)="onApplicationTypeChange($event)"
                   (onKindSpecifierChange)="onKindSpecifierChange($event)"></application-type>
 
-<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" [hidden]="!kindsSelected">
+<form [formGroup]="locationForm" (ngSubmit)="onSubmit(locationForm.value)" *ngIf="kindsSelected">
   <div class="row">
     <div class="col m12">
       <mat-card>
