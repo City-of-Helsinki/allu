@@ -35,10 +35,10 @@ public class InvoiceService {
   }
 
   @Transactional
-  public void createInvoices(int applicationId) {
+  public void createInvoices(int applicationId, boolean sapIdPending) {
     List<ChargeBasisEntry> chargeBasisEntries = chargeBasisDao.getChargeBasis(applicationId);
     List<InvoiceRow> invoiceRows = pricingService.toSingleInvoice(chargeBasisEntries);
-    Invoice invoice = new Invoice(null, applicationId, ZonedDateTime.now(), false, invoiceRows);
+    Invoice invoice = new Invoice(null, applicationId, ZonedDateTime.now(), false, sapIdPending, invoiceRows);
     invoiceDao.deleteByApplication(applicationId);
     invoiceDao.insert(applicationId, invoice);
   }

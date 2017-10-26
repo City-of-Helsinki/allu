@@ -20,5 +20,6 @@ public enum ApplicationTagType {
   OPERATIONAL_CONDITION_REJECTED,     // toiminnallinen kunto hylätty
   WORK_READY_REPORTED,                // työn valmistuminen ilmoitettu
   WORK_READY_ACCEPTED,                // työn valmistuminen hyväksytty
-  WORK_READY_REJECTED                 // työn valmistuminen hylätty
+  WORK_READY_REJECTED,                // työn valmistuminen hylätty
+  SAP_ID_MISSING                      // laskutettavan sap-tunnus ei tiedossa
 }

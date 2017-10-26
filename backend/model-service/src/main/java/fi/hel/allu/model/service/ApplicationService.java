@@ -1,16 +1,20 @@
 package fi.hel.allu.model.service;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.*;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -28,14 +32,16 @@ public class ApplicationService {
   private PricingService pricingService;
   private ChargeBasisDao chargeBasisDao;
   private InvoiceService invoiceService;
+  private CustomerDao customerDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-      ChargeBasisDao chargeBasisDao, InvoiceService invoiceService) {
+      ChargeBasisDao chargeBasisDao, InvoiceService invoiceService, CustomerDao customerDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
     this.chargeBasisDao = chargeBasisDao;
     this.invoiceService = invoiceService;
+    this.customerDao = customerDao;
   }
 
   /**
@@ -147,6 +153,7 @@ public class ApplicationService {
    *
    * @param id application's database ID.
    */
+  @Transactional
   public void deleteNote(int id) {
     applicationDao.deleteNote(id);
   }
@@ -163,7 +170,14 @@ public class ApplicationService {
   public Application changeApplicationStatus(int applicationId, StatusType statusType, Integer userId) {
     switch (statusType) {
       case DECISION:
-        invoiceService.createInvoices(applicationId);
+        Customer invoicee = applicationDao.getInvoiceeId(applicationId).flatMap(id -> customerDao.findById(id))
+            .orElseThrow(() -> new NoSuchEntityException("No customer exists"));
+        final boolean sapIdPending = StringUtils.isEmpty(invoicee.getSapCustomerNumber());
+        invoiceService.createInvoices(applicationId, sapIdPending);
+        if (sapIdPending) {
+          applicationDao.addTag(applicationId,
+              new ApplicationTag(null, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
+        }
         // the fall-through is intentional here
       case REJECTED:
         return applicationDao.updateDecision(applicationId, statusType, userId);

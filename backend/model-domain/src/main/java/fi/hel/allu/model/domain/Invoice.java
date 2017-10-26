@@ -12,14 +12,16 @@ public class Invoice {
   private Integer applicationId;
   private ZonedDateTime invoicableTime;
   private boolean invoiced;
+  private boolean sapIdPending;
   private List<InvoiceRow> rows;
 
   public Invoice(Integer id, Integer applicationId, ZonedDateTime invoicableTime, boolean invoiced,
-      List<InvoiceRow> rows) {
+      boolean sapIdPending, List<InvoiceRow> rows) {
     this.id = id;
     this.applicationId = applicationId;
     this.invoicableTime = invoicableTime;
     this.invoiced = invoiced;
+    this.sapIdPending = sapIdPending;
     setRows(rows);
   }
 
@@ -73,6 +75,20 @@ public class Invoice {
 
   public void setInvoiced(boolean invoiced) {
     this.invoiced = invoiced;
+  }
+
+  /**
+   * Is this invoice waiting for invoicee's SAP ID?
+   *
+   * @return true if invoice can't be sent because invoicee's SAP ID is not
+   *         known.
+   */
+  public boolean isSapIdPending() {
+    return sapIdPending;
+  }
+
+  public void setSapIdPending(boolean sapIdPending) {
+    this.sapIdPending = sapIdPending;
   }
 
   /**

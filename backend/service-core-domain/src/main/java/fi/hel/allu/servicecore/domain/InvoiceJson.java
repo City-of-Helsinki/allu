@@ -10,15 +10,18 @@ public class InvoiceJson {
   private Integer applicationId;
   private ZonedDateTime invoicableTime;
   private boolean invoiced;
+  private boolean sapIdPending;
   @NotNull
   private List<InvoiceRowJson> rows;
 
   public InvoiceJson(Integer id, Integer applicationId, ZonedDateTime invoicableTime, boolean invoiced,
+      boolean sapIdPending,
       List<InvoiceRowJson> rows) {
     this.id = id;
     this.applicationId = applicationId;
     this.invoicableTime = invoicableTime;
     this.invoiced = invoiced;
+    this.sapIdPending = sapIdPending;
     this.rows = rows;
   }
 
@@ -72,6 +75,20 @@ public class InvoiceJson {
 
   public void setInvoiced(boolean invoiced) {
     this.invoiced = invoiced;
+  }
+
+  /**
+   * Is this invoice waiting for invoicee's SAP ID?
+   *
+   * @return true if invoice can't be sent because invoicee's SAP ID is not
+   *         known.
+   */
+  public boolean isSapIdPending() {
+    return sapIdPending;
+  }
+
+  public void setSapIdPending(boolean sapIdPending) {
+    this.sapIdPending = sapIdPending;
   }
 
   /**

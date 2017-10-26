@@ -25,6 +25,7 @@ public class InvoiceMapper {
         invoice.getApplicationId(),
         invoice.getInvoicableTime(),
         invoice.isInvoiced(),
+        invoice.isSapIdPending(),
         mapToJson(invoice.getRows()));
   }
 

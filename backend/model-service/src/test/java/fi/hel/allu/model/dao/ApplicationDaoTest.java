@@ -186,6 +186,32 @@ public class ApplicationDaoTest {
   }
 
   @Test
+  public void testAddApplicationTag() {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    newApplication.setApplicationTags(
+        Collections.singletonList(createApplicationTag(ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED)));
+    Application application = applicationDao.insert(newApplication);
+    // Add same tag twice, only one should be added
+    applicationDao.addTag(application.getId(), createApplicationTag(ApplicationTagType.SAP_ID_MISSING));
+    applicationDao.addTag(application.getId(), createApplicationTag(ApplicationTagType.SAP_ID_MISSING));
+    Application afterAdd = applicationDao.findByIds(Collections.singletonList(application.getId())).get(0);
+    assertEquals(2, afterAdd.getApplicationTags().size());
+    assertEquals(1, afterAdd.getApplicationTags().stream()
+        .filter(t -> ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED.equals(t.getType())).count());
+    assertEquals(1, afterAdd.getApplicationTags().stream()
+        .filter(t -> ApplicationTagType.SAP_ID_MISSING.equals(t.getType())).count());
+  }
+
+  @Test
+  public void testGetInvoiceeId() {
+    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+    final int CUSTOMER_ID = newApplication.getCustomersWithContacts().get(0).getCustomer().getId();
+    newApplication.setInvoiceRecipientId(CUSTOMER_ID);
+    Application application = applicationDao.insert(newApplication);
+    assertEquals(CUSTOMER_ID, applicationDao.getInvoiceeId(application.getId()).get().intValue());
+  }
+
+  @Test
   public void testUpdateApplicationTags() {
     Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
     newApplication.setApplicationTags(Collections.singletonList(

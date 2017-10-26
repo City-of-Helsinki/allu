@@ -6,7 +6,6 @@ import com.querydsl.core.types.Path;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.BooleanTemplate;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
@@ -377,6 +376,7 @@ public class ApplicationDao {
    * @param status          New status (cannot change status to either decision state).
    * @return  Updated application.
    */
+  @Transactional
   public Application updateStatus(int applicationId, StatusType status) {
     if (StatusType.DECISION.equals(status) || StatusType.REJECTED.equals(status)) {
       throw new IllegalArgumentException("Cannot set status to any decision state. Use updateDecision()");
@@ -444,6 +444,33 @@ public class ApplicationDao {
     return findTagsByApplicationId(id);
   }
 
+  /**
+   * Add single tag to application
+   *
+   * @param applicationId Application's database ID
+   * @param applicationTag Tag to add
+   */
+  @Transactional
+  public void addTag(int applicationId, ApplicationTag tag) {
+    if (queryFactory.select(applicationTag.all()).from(applicationTag)
+        .where(applicationTag.applicationId.eq(applicationId).and(applicationTag.type.eq(tag.getType())))
+        .fetchCount() == 0) {
+      insertSingleTag(applicationId, tag);
+    }
+  }
+
+  /**
+   * Return the given application's invoiceable customer's database ID
+   *
+   * @param applicationId Application's database ID
+   * @return customer's database ID or empty optional
+   */
+  @Transactional(readOnly = true)
+  public Optional<Integer> getInvoiceeId(int applicationId) {
+    return Optional.ofNullable(queryFactory.select(application.invoiceRecipientId).from(application)
+        .where(application.id.eq(applicationId)).fetchOne());
+  }
+
   String createApplicationId(ApplicationType applicationType) {
     long seqValue = applicationSequenceDao
         .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));
@@ -489,9 +516,13 @@ public class ApplicationDao {
   private void replaceApplicationTags(Integer applicationId, List<ApplicationTag> tags) {
     queryFactory.delete(applicationTag).where(applicationTag.applicationId.eq(applicationId)).execute();
     if (tags != null && !tags.isEmpty()) {
-      tags.forEach(tag -> tag.setApplicationId(applicationId));
-      tags.forEach(tag -> queryFactory.insert(applicationTag).populate(tag).execute());
+      tags.forEach(tag -> insertSingleTag(applicationId, tag));
     }
+  }
+
+  private void insertSingleTag(int applicationId, ApplicationTag tag) {
+    tag.setApplicationId(applicationId);
+    queryFactory.insert(applicationTag).populate(tag).execute();
   }
 
   private void replaceRecurringPeriods(Application application) {

@@ -163,7 +163,7 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
 
   private static Invoice testInvoice() {
     Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-15T08:00:00+02:00[Europe/Helsinki]"), false,
-        null);
+        false, null);
     invoice.setRows(Arrays.asList(
         new InvoiceRow(ChargeBasisUnit.PIECE, 3.141, "One Pie", 12300, -99999),
         new InvoiceRow(ChargeBasisUnit.DAY, 14, "A Forthnight", 300, 4200)));
@@ -172,7 +172,7 @@ public class InvoiceDaoSpec extends SpeccyTestBase {
 
   private static Invoice otherInvoice() {
     Invoice invoice = new Invoice(null, null, ZonedDateTime.parse("2017-12-07T08:00:00+02:00[Europe/Helsinki]"), true,
-        null);
+        false, null);
     invoice.setRows(Arrays.asList(
         new InvoiceRow(ChargeBasisUnit.MONTH, 12, "A Whole year", 12000, 144000),
         new InvoiceRow(ChargeBasisUnit.WEEK, 2, "Two weeks", 1230, 2460),

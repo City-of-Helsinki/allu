@@ -142,7 +142,9 @@ public class InvoiceDao {
   @Transactional(readOnly = true)
   public List<Invoice> findPending() {
     return queryFactory.select(invoice.id).from(invoice)
-        .where(invoice.invoicableTime.before(ZonedDateTime.now()).and(invoice.invoiced.ne(true))).fetch().stream()
+        .where(invoice.invoicableTime.before(ZonedDateTime.now()).and(invoice.invoiced.ne(true))
+            .and(invoice.sapIdPending.isFalse()))
+        .fetch().stream()
         .map(id -> find(id)).filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
   }
 

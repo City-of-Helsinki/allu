@@ -245,6 +245,8 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'WORK_READY_ACCEPTED',  'Työn valmistuminen hyväksytty', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'WORK_READY_REJECTED',  'Työn valmistuminen hylätty', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'SAP_ID_MISSING',  'Laskutettavan SAP-tunnus ei tiedossa', 'ENUM_VALUE');
 
 -- ApplicationType
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('ApplicationType', 1);

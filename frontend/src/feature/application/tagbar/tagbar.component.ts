@@ -29,7 +29,8 @@ export class TagBarComponent implements OnInit {
     ApplicationTagType.OPERATIONAL_CONDITION_REJECTED,
     ApplicationTagType.WORK_READY_REPORTED,
     ApplicationTagType.WORK_READY_ACCEPTED,
-    ApplicationTagType.WORK_READY_REJECTED
+    ApplicationTagType.WORK_READY_REJECTED,
+    ApplicationTagType.SAP_ID_MISSING
   ].map(type => ApplicationTagType[type]);
 
   constructor() {}

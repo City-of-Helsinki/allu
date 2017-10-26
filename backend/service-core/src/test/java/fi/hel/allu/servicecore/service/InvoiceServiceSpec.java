@@ -54,10 +54,10 @@ public class InvoiceServiceSpec {
 
   private Invoice[] mockInvoices() {
     return new Invoice[] {
-        new Invoice(1, APPLICATION_ID, ZonedDateTime.parse("2017-12-05T09:15:30+02:00"), false,
+        new Invoice(1, APPLICATION_ID, ZonedDateTime.parse("2017-12-05T09:15:30+02:00"), false, false,
             Arrays.asList(new InvoiceRow(ChargeBasisUnit.DAY, 1, "One day", 1000, 1000),
                 new InvoiceRow(ChargeBasisUnit.DAY, 2, "Two days", 1000, 2000))),
-        new Invoice(2, APPLICATION_ID, ZonedDateTime.parse("2018-01-15T09:15:30+02:00"), false,
+        new Invoice(2, APPLICATION_ID, ZonedDateTime.parse("2018-01-15T09:15:30+02:00"), false, false,
             Collections.singletonList(new InvoiceRow(ChargeBasisUnit.WEEK, 1, "One week", 1000, 1000))) };
   }
 }

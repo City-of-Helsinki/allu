@@ -485,6 +485,13 @@ definitions:
       - WAITING
       - COMPENSATION_CLARIFICATION
       - PAYMENT_BASIS_CORRECTION
+      - OPERATIONAL_CONDITION_REPORTED
+      - OPERATIONAL_CONDITION_ACCEPTED
+      - OPERATIONAL_CONDITION_REJECTED
+      - WORK_READY_REPORTED
+      - WORK_READY_ACCEPTED
+      - WORK_READY_REJECTED
+      - SAP_ID_MISSING
   CustomerRoleType:
     description: Application customer role
     type: string

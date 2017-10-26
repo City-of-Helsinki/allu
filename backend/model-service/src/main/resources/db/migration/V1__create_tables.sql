@@ -332,7 +332,8 @@ create table allu.invoice (
   id serial primary key,
   application_id integer not null references allu.application(id) on delete cascade,
   invoicable_time timestamp with time zone not null,
-  invoiced boolean not null default false
+  invoiced boolean not null default false,
+  sap_id_pending boolean not null default false
 );
 
 create table allu.invoice_row (

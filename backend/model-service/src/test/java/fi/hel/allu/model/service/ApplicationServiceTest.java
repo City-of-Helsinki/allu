@@ -4,12 +4,15 @@ import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.ChargeBasisDao;
+import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.ApplicationTag;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.Customer;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -17,6 +20,7 @@ import org.mockito.MockitoAnnotations;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.times;
@@ -31,13 +35,16 @@ public class ApplicationServiceTest {
   private ChargeBasisDao chargeBasisDao;
   @Mock
   private InvoiceService invoiceService;
+  @Mock
+  private CustomerDao customerDao;
 
   private ApplicationService applicationService;
 
   @Before
   public void setUp() {
     MockitoAnnotations.initMocks(this);
-    applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisDao, invoiceService);
+    applicationService = new ApplicationService(applicationDao, pricingService, chargeBasisDao, invoiceService,
+        customerDao);
   }
 
   @Test
@@ -102,12 +109,35 @@ public class ApplicationServiceTest {
   }
 
   @Test
-  public void testChangeStatusToDecision() {
+  public void testChangeStatusToDecisionWithSapIdWontSetTag() {
     final int APP_ID = 123;
     final int UID = 234;
+    final Integer IID = 345;
+    final Customer customer = new Customer();
+    customer.setSapCustomerNumber("SAP_123");
+    Mockito.when(applicationDao.getInvoiceeId(APP_ID)).thenReturn(Optional.of(IID));
+    Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
-    Mockito.verify(invoiceService).createInvoices(APP_ID);
+    Mockito.verify(invoiceService).createInvoices(APP_ID, false);
     Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID);
+    Mockito.verify(applicationDao, times(0)).addTag(Mockito.anyInt(), Mockito.any());
+  }
+
+  @Test
+  public void testChangeStatusToDecisionWithoutSapIdSetsTag() {
+    final int APP_ID = 123;
+    final int UID = 234;
+    final Integer IID = 345;
+    final Customer customer = new Customer();
+    customer.setSapCustomerNumber("");
+    Mockito.when(applicationDao.getInvoiceeId(APP_ID)).thenReturn(Optional.of(IID));
+    Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
+    applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
+    Mockito.verify(invoiceService).createInvoices(APP_ID, true);
+    Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.DECISION, UID);
+    ArgumentCaptor<ApplicationTag> tagCaptor = ArgumentCaptor.forClass(ApplicationTag.class);
+    Mockito.verify(applicationDao, times(1)).addTag(Mockito.eq(APP_ID), tagCaptor.capture());
+    assertEquals(ApplicationTagType.SAP_ID_MISSING, tagCaptor.getValue().getType());
   }
 
   @Test
@@ -115,7 +145,7 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     final int UID = 234;
     applicationService.changeApplicationStatus(APP_ID, StatusType.REJECTED, UID);
-    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID);
+    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID, false);
     Mockito.verify(applicationDao).updateDecision(APP_ID, StatusType.REJECTED, UID);
   }
 
@@ -124,7 +154,7 @@ public class ApplicationServiceTest {
     final int APP_ID = 123;
     final int UID = 234;
     applicationService.changeApplicationStatus(APP_ID, StatusType.FINISHED, UID);
-    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID);
+    Mockito.verify(invoiceService, times(0)).createInvoices(APP_ID, false);
     Mockito.verify(applicationDao).updateStatus(APP_ID, StatusType.FINISHED);
   }
 
