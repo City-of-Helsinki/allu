@@ -1,0 +1,37 @@
+<form [formGroup]="form" (ngSubmit)="confirm()">
+    <h2 mat-dialog-title>{{['supervisionApprovalModal', type, 'title'] | translation}}</h2>
+    <mat-dialog-content>
+        <div fxLayout="column">
+            <div fxFlex>
+                <mat-form-field class="input-full-width">
+                    <textarea matInput matTextareaAutosize formControlName="result" required
+                              [placeholder]="'supervision.task.result' | translation"></textarea>
+                    <mat-error *ngIf="form.get('result').hasError('required')">
+                        {{'supervision.task.field.resultMissing' | translation}}
+                    </mat-error>
+                </mat-form-field>
+                <mat-form-field *ngIf="showNewSupervisionDate">
+                    <input matInput formControlName="newSupervisionDate" required
+                           [placeholder]="'supervision.task.newSupervisionDate' | translation"
+                           [matDatepicker]="newSupervisionDatePicker">
+                    <mat-datepicker-toggle matSuffix [for]="newSupervisionDatePicker" [disabled]="form.disabled"></mat-datepicker-toggle>
+                    <mat-datepicker #newSupervisionDatePicker></mat-datepicker>
+                    <mat-error *ngIf="form.get('newSupervisionDate').hasError('required')">
+                        {{'supervision.task.field.newSupervisionDateMissing' | translation}}
+                    </mat-error>
+                    <mat-error *ngIf="form.get('newSupervisionDate').hasError('inThePast')">
+                        {{'supervision.task.field.newSupervisionDateInThePast' | translation}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+        </div>
+    </mat-dialog-content>
+    <mat-dialog-actions>
+        <button mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
+            {{'common.button.save' | translation}}
+        </button>
+        <button mat-raised-button type="button" color="primary" (click)="cancel()">
+            {{'common.button.cancel' | translation}}
+        </button>
+    </mat-dialog-actions>
+</form>

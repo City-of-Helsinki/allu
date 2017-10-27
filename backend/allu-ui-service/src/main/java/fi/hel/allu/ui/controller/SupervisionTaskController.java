@@ -8,14 +8,20 @@ import fi.hel.allu.servicecore.service.SupervisionTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
+import java.time.ZonedDateTime;
+import java.util.Date;
 import java.util.List;
+
+import static org.springframework.format.annotation.DateTimeFormat.ISO.*;
 
 @RestController
 @RequestMapping("/supervisiontask")
@@ -75,5 +81,22 @@ public class SupervisionTaskController {
   public ResponseEntity<Void> removeHandler(@RequestBody(required = true) List<Integer> taskIds) {
     supervisionTaskService.removeHandler(taskIds);
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/approve", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<SupervisionTaskJson> approve(@PathVariable int id, @Valid @RequestBody SupervisionTaskJson supervisionTask) {
+    supervisionTask.setId(id);
+    return new ResponseEntity<>(supervisionTaskService.approve(supervisionTask), HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/{id}/reject", method = RequestMethod.PUT)
+  @PreAuthorize("hasAnyRole('ROLE_SUPERVISE')")
+  public ResponseEntity<SupervisionTaskJson> reject(
+      @PathVariable int id,
+      @Valid @RequestBody SupervisionTaskJson supervisionTask,
+      @RequestParam(value = "newDate", required = true) @DateTimeFormat(iso = DATE_TIME) ZonedDateTime newDate) {
+    supervisionTask.setId(id);
+    return new ResponseEntity<>(supervisionTaskService.reject(supervisionTask, newDate), HttpStatus.OK);
   }
 }

@@ -12,6 +12,7 @@ const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
 export const WINTER_TIME_START = moment('1972-12-01');
 export const WINTER_TIME_END = moment('1972-05-14');
+const DAYS_IN_WEEK = 7;
 
 
 /**
@@ -41,6 +42,11 @@ export class TimeUtil {
 
   public static yearFromDate(date: Date): number {
     return date ? moment(date).year() : undefined;
+  }
+
+  public static datePlusWeeks(date: Date, plusWeeks: number): Date {
+    const asWeeks = DAYS_IN_WEEK * plusWeeks;
+    return date ? moment(date).day(asWeeks).toDate() : undefined;
   }
 
   public static dateWithYear(date: Date, year: number): Date {

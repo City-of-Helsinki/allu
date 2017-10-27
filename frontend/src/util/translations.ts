@@ -680,8 +680,11 @@ export const translations = {
     task: {
       newTask: 'Uusi valvonnan tehtävä',
       description: 'Tehtävän kuvaus',
-      response: 'Tehtävän kuittaus',
+      result: 'Valvojan merkinnät',
       createdBy: 'Luonut',
+      approve: 'HYVÄKSY',
+      reject: 'HYLKÄÄ',
+      newSupervisionDate: 'Uusi valvonta-aika',
       type: {
         title: 'Toimenpide',
         PRELIMINARY_SUPERVISION: 'Aloitusvalvonta',
@@ -697,21 +700,29 @@ export const translations = {
       },
       handler: 'Valvoja',
       plannedFinishingTime: 'Ajankohta',
+      actualFinishingTime: 'Valmistunut',
       action: {
         save: 'Valvontatehtävä tallennettu',
         remove: 'Valvontatehtävä poistettu',
+        approve: 'Valvontatehtävä hyväksytty',
+        reject: 'Valvontatehtävä hylätty',
         handlerChanged: 'Valvoja vaihdettu valituille tehtäville',
         hanlerRemoved: 'Valvoja poistettu valituilta tehtäviltä'
       },
       error: {
-        save: 'Valvonnan merkinnän tallentaminen epäonnistui',
-        remove: 'Valvonnan merkinnän poistaminen epäonnistui',
-        handlerChange: 'Valvoja vaihtaminen epäonnistui',
-        hanlerRemove: 'Valvoja poistaminen tehtäviltä epäonnistui'
+        save: 'Valvontatehtävän tallentaminen epäonnistui',
+        remove: 'Valvontatehtävän poistaminen epäonnistui',
+        approve: 'Valvontatehtävän hyväksyminen epäonnistui',
+        reject: 'Valvontatehtävän hylkääminen epäonnistui',
+        handlerChange: 'Valvojan vaihtaminen epäonnistui',
+        hanlerRemove: 'Valvojan poistaminen tehtäviltä epäonnistui'
       },
       field: {
         plannedFinishingTimeInThePast: 'Ajankohta ei voi olla menneisyydessä',
-        plannedFinishingTimeMissing: 'Ajankohta puuttuu'
+        plannedFinishingTimeMissing: 'Ajankohta puuttuu',
+        resultMissing: 'Valvojan merkinnät puuttuvat',
+        newSupervisionDateMissing: 'Uusi valvonta-aika puuttuu',
+        newSupervisionDateInThePast: 'Uusi valvonta-aika ei voi olla menneisyydessä'
       }
     }
   },
@@ -733,6 +744,14 @@ export const translations = {
       plannedFinishingTime: 'Ajankohta',
       address: 'Osoite',
       project: 'Hanke'
+    }
+  },
+  supervisionApprovalModal: {
+    APPROVE: {
+      title: 'Hyväksy valvontatehtävä'
+    },
+    REJECT: {
+      title: 'Hylkää valvontatehtävä'
     }
   },
   invoice: {

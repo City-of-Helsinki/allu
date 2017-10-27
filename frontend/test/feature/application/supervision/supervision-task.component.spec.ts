@@ -21,6 +21,7 @@ import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
 import {findTranslation} from '../../../../src/util/translations';
 import {UserHub} from '../../../../src/service/user/user-hub';
 import {UserSearchCriteria} from '../../../../src/model/user/user-search-criteria';
+import {SupervisionTaskStatusType} from '../../../../src/model/application/supervision/supervision-task-status-type';
 
 const supervisor = new User(2, 'supervisor', 'supervisor');
 
@@ -67,7 +68,7 @@ class SupervisionTaskStoreMock {
   }
 }
 
-describe('SupervisionComponent', () => {
+describe('SupervisionTaskComponent', () => {
   let comp: SupervisionTaskComponent;
   let fixture: ComponentFixture<SupervisionTaskComponent>;
   let applicationState: ApplicationStateMock;
@@ -217,10 +218,12 @@ describe('SupervisionComponent', () => {
 
   it('should disallow editing by other users', fakeAsync(() => {
     const myself = new User(1);
-    currentUserMock.user$.next(myself);
+    const other = new User(2);
     patchValueAndInit({id: 1, creatorId: myself.id});
     expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(2);
-    patchValueAndInit({creatorId: 2});
+
+    spyOn(currentUserMock, 'isCurrentUser').and.returnValue(Observable.of(false));
+    patchValueAndInit({creatorId: other.id});
     expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(0);
   }));
 
@@ -242,6 +245,23 @@ describe('SupervisionComponent', () => {
     spyOn(userHub, 'searchUsers').and.returnValue(Observable.of([preferredSupervisor]));
     patchValueAndInit({});
     expect(comp.form.value.handlerId).toEqual(preferredSupervisor.id);
+  }));
+
+  it('should display task result when available', fakeAsync(() => {
+    patchValueAndInit({result: 'TestResult'});
+    const resultInput = de.query(By.css('[formControlName="result"]')).nativeElement;
+    expect(resultInput.value).toEqual('TestResult');
+  }));
+
+  it('should show approval buttons only for handler which the task is assigned to', fakeAsync(() => {
+    patchValueAndInit({status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
+    expect(de.query(By.css('#approve'))).toBeDefined();
+    expect(de.query(By.css('#reject'))).toBeDefined();
+
+    spyOn(currentUserMock, 'isCurrentUser').and.returnValue(Observable.of(false));
+    patchValueAndInit({handlerId: 1});
+    expect(de.query(By.css('#approve'))).toBeNull();
+    expect(de.query(By.css('#reject'))).toBeNull();
   }));
 
   afterEach(() => {

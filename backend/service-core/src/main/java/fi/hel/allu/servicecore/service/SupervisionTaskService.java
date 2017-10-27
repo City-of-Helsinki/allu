@@ -1,6 +1,7 @@
 package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -25,6 +26,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
+import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +76,26 @@ public class SupervisionTaskService {
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
+  public SupervisionTaskJson approve(SupervisionTaskJson supervisionTask) {
+    supervisionTask.setStatus(SupervisionTaskStatusType.APPROVED);
+    supervisionTask.setActualFinishingTime(ZonedDateTime.now());
+    SupervisionTaskJson updated = update(supervisionTask);
+    // TODO: remove tag
+    return updated;
+  }
+
+  public SupervisionTaskJson reject(SupervisionTaskJson task, ZonedDateTime newSupervisionDate) {
+    task.setStatus(SupervisionTaskStatusType.REJECTED);
+    task.setActualFinishingTime(ZonedDateTime.now());
+    SupervisionTaskJson updated = update(task);
+    insert(SupervisionTaskMapper.mapRejectedToNewTask(task, newSupervisionDate));
+    // TODO: remove tag
+    // TODO: send email to customer about new supervision date and reason of rejection
+    return updated;
+  }
+
   public SupervisionTaskJson insert(SupervisionTaskJson supervisionTaskJson) {
+    // TODO: add tag
     SupervisionTask task = SupervisionTaskMapper.mapToModel(supervisionTaskJson);
     task.setCreatorId(userService.getCurrentUser().getId());
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.postForEntity(

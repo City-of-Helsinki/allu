@@ -31,4 +31,14 @@ export class SupervisionTaskStore {
     return this.supervisionTaskService.remove(taskId)
       .do(response => this.loadTasks(applicationId));
   }
+
+  approve(task: SupervisionTask): Observable<SupervisionTask> {
+    return this.supervisionTaskService.approve(task)
+      .do(saved => this.loadTasks(task.applicationId));
+  }
+
+  reject(task: SupervisionTask, newSupervisionDate: Date): Observable<SupervisionTask> {
+    return this.supervisionTaskService.reject(task, newSupervisionDate)
+      .do(saved => this.loadTasks(task.applicationId));
+  }
 }

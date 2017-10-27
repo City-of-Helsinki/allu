@@ -4,17 +4,23 @@ import {SupervisionTaskForm} from './supervision-task-form';
 import {ApplicationState} from '../../../service/application/application-state';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {User} from '../../../model/user/user';
-import {Some} from '../../../util/option';
 import {CurrentUser} from '../../../service/user/current-user';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {EnumUtil} from '../../../util/enum.util';
 import {SupervisionTaskType} from '../../../model/application/supervision/supervision-task-type';
 import {SupervisionTaskStatusType} from '../../../model/application/supervision/supervision-task-status-type';
-import {NumberUtil} from '../../../util/number.util';
 import {UserSearchCriteria} from '../../../model/user/user-search-criteria';
 import {RoleType} from '../../../model/user/role-type';
 import {ArrayUtil} from '../../../util/array-util';
 import {UserHub} from '../../../service/user/user-hub';
+import {
+  SUPERVISION_APPROVAL_MODAL_CONFIG,
+  SupervisionApprovalModalComponent,
+  SupervisionApprovalModalType,
+  SupervisionApprovalResult
+} from './supervision-approval-modal.component';
+import {MatDialog, MatDialogRef} from '@angular/material';
+import {SupervisionTask} from '../../../model/application/supervision/supervision-task';
 
 @Component({
   selector: 'supervision-task',
@@ -31,13 +37,15 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   taskTypes = EnumUtil.enumValues(SupervisionTaskType);
   statusTypes = EnumUtil.enumValues(SupervisionTaskStatusType);
   canEdit = false;
+  canApprove = false;
 
   private originalEntry: SupervisionTaskForm;
 
   constructor(private applicationState: ApplicationState,
-              private supervisionTaskStore: SupervisionTaskStore,
+              private store: SupervisionTaskStore,
               private currentUser: CurrentUser,
-              private userHub: UserHub) {
+              private userHub: UserHub,
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -48,6 +56,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
       this.preferredSupervisor();
     }
     this.currentUserCanEdit(formValue.creatorId);
+    this.currentUserCanApprove(formValue.handlerId, formValue.status);
   }
 
   ngOnDestroy(): void {
@@ -56,7 +65,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   remove(): void {
     const task = this.form.value;
     if (task.id) {
-      this.supervisionTaskStore.removeTask(this.applicationState.application.id, task.id)
+      this.store.removeTask(this.applicationState.application.id, task.id)
         .subscribe(
           status => {
             this.onRemove.emit();
@@ -71,7 +80,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   save(): void {
     const formValue = <SupervisionTaskForm>this.form.value;
     this.form.disable();
-    this.supervisionTaskStore.saveTask(this.applicationState.application.id, SupervisionTaskForm.to(formValue))
+    this.store.saveTask(this.applicationState.application.id, SupervisionTaskForm.to(formValue))
       .subscribe(
         c => NotificationService.translateMessage('supervision.task.action.save'),
         error => {
@@ -97,12 +106,59 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.originalEntry = this.form.value;
   }
 
+  approve(): void {
+    this.openModal('APPROVE').afterClosed()
+      .filter(result => !!result)
+      .map(result => this.taskWithResult(SupervisionTaskStatusType.APPROVED, result))
+      .switchMap(task => this.store.approve(task))
+      .subscribe(
+        saved => NotificationService.translateMessage('supervision.task.action.approve'),
+        err => NotificationService.translateMessage('supervision.task.error.approve'));
+  }
+
+  reject(): void {
+    this.openModal('REJECT').afterClosed()
+      .filter(result => !!result)
+      .switchMap(result => this.store.reject(
+        this.taskWithResult(SupervisionTaskStatusType.REJECTED, result),
+        result.newSupervisionDate))
+      .subscribe(
+        saved => NotificationService.translateMessage('supervision.task.action.reject'),
+        err => NotificationService.translateMessage('supervision.task.error.reject'));
+  }
+
+  private taskWithResult(status: SupervisionTaskStatusType, result: SupervisionApprovalResult): SupervisionTask {
+    const formValue = <SupervisionTaskForm>this.form.value;
+    let task = SupervisionTaskForm.to(formValue);
+    task.status = status;
+    task.actualFinishingTime = new Date();
+    task.result = result.result;
+    return task;
+  }
+
+  private openModal(type: SupervisionApprovalModalType): MatDialogRef<SupervisionApprovalModalComponent> {
+    const config = {
+      ...SUPERVISION_APPROVAL_MODAL_CONFIG,
+      data: {
+        type: type
+      }
+    };
+
+    return this.dialog.open(SupervisionApprovalModalComponent, config);
+  }
+
   private currentUserCanEdit(creatorId: number): void {
-    this.currentUser.user.subscribe(current => {
-      this.canEdit = Some(creatorId)
-        .filter(id => NumberUtil.isDefined(id))
-        .map(id => id === current.id)
-        .orElse(true);
+    if (creatorId === undefined) {
+      this.canEdit = true;
+    } else {
+      this.currentUser.isCurrentUser(creatorId).subscribe(isCurrent => this.canEdit = isCurrent);
+    }
+  }
+
+  private currentUserCanApprove(handlerId: number, statusName: string): void {
+    const status = SupervisionTaskStatusType[statusName];
+    this.currentUser.isCurrentUser(handlerId).subscribe(isCurrent => {
+      this.canApprove = isCurrent && SupervisionTaskStatusType.OPEN === status;
     });
   }
 

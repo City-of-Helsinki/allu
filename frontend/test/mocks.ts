@@ -55,6 +55,10 @@ export class CurrentUserMock {
     return Observable.of(this.allowHasType);
   }
 
+  public isCurrentUser(id: number): Observable<boolean> {
+    return Observable.of(true);
+  };
+
   get user(): Observable<User> {
     return this.user$.asObservable();
   }

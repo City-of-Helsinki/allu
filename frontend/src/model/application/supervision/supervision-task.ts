@@ -12,7 +12,7 @@ export class SupervisionTask {
     public creationTime?: Date,
     public plannedFinishingTime?: Date,
     public actualFinishingTime?: Date,
-    public status?: SupervisionTaskStatusType,
+    public status: SupervisionTaskStatusType = SupervisionTaskStatusType.OPEN,
     public description?: string,
     public result?: string) {
   }

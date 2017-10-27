@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.mapper;
 
+import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
@@ -7,6 +8,7 @@ import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionTaskJson;
 import fi.hel.allu.servicecore.domain.supervision.SupervisionWorkItemJson;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -34,8 +36,8 @@ public class SupervisionTaskMapper {
 
   public static SupervisionTask mapToModel(SupervisionTaskJson supervisionTaskJson) {
     return new SupervisionTask(
-      supervisionTaskJson.getId(),
-      supervisionTaskJson.getApplicationId(),
+        supervisionTaskJson.getId(),
+        supervisionTaskJson.getApplicationId(),
         supervisionTaskJson.getType(),
         supervisionTaskJson.getCreator() == null ? null : supervisionTaskJson.getCreator().getId(),
         supervisionTaskJson.getHandler() == null ? null : supervisionTaskJson.getHandler().getId(),
@@ -64,5 +66,29 @@ public class SupervisionTaskMapper {
         .ifPresent(project -> workItem.setProjectName(project.getName()));
     workItem.setHandler(handler);
     return workItem;
+  }
+
+  public static SupervisionTaskJson mapRejectedToNewTask(SupervisionTaskJson rejected, ZonedDateTime newDate) {
+    UserJson creator = Optional.ofNullable(rejected.getHandler()).map(user -> userFromId(user.getId())).orElse(null);
+    UserJson handler = Optional.ofNullable(rejected.getHandler()).map(user -> userFromId(user.getId())).orElse(null);
+    return new SupervisionTaskJson(
+        null,
+        rejected.getApplicationId(),
+        rejected.getType(),
+        creator,
+        handler,
+        ZonedDateTime.now(),
+        newDate,
+        null,
+        SupervisionTaskStatusType.OPEN,
+        rejected.getResult(),
+        null
+    );
+  }
+
+  private static UserJson userFromId(int id) {
+    UserJson user = new UserJson();
+    user.setId(id);
+    return user;
   }
 }

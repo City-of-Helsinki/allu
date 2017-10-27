@@ -14,11 +14,14 @@ import {PageMapper} from '../common/page-mapper';
 import {Page} from '../../model/common/page';
 import {Sort} from '../../model/common/sort';
 import {QueryParametersMapper} from '../mapper/query/query-parameters-mapper';
+import {TimeUtil} from '../../util/time.util';
 
 const SUPERVISION_TASK_URL = '/api/supervisiontask';
 const SUPERVISION_TASK_SEARCH_URL = '/api/supervisiontask/search';
 const SUPERVISION_TASK_APP_URL = SUPERVISION_TASK_URL + '/application/:appId';
 const SUPERVISION_TASK_HANDLER_URL = SUPERVISION_TASK_URL + '/handler';
+const SUPERVISION_TASK_APPROVE_URL =  SUPERVISION_TASK_URL + '/:id/approve';
+const SUPERVISION_TASK_REJECT_URL =  SUPERVISION_TASK_URL + '/:id/reject';
 
 @Injectable()
 export class SupervisionTaskService {
@@ -74,5 +77,22 @@ export class SupervisionTaskService {
     let url = SUPERVISION_TASK_HANDLER_URL + '/remove';
     return this.authHttp.put(url, JSON.stringify(taskIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
+  }
+
+  approve(task: SupervisionTask): Observable<SupervisionTask> {
+    const url = SUPERVISION_TASK_APPROVE_URL.replace(':id', String(task.id));
+
+    return this.authHttp.put(url, JSON.stringify(SupervisionTaskMapper.mapFrontend(task)))
+      .map(response => SupervisionTaskMapper.mapBackend(response.json()))
+      .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.approve')));
+  }
+
+  reject(task: SupervisionTask, newSupervisionDate: Date) {
+    const url = SUPERVISION_TASK_REJECT_URL.replace(':id', String(task.id));
+    const options = {params: {'newDate': TimeUtil.dateToBackend(newSupervisionDate)}};
+
+    return this.authHttp.put(url, JSON.stringify(SupervisionTaskMapper.mapFrontend(task)), options)
+      .map(response => SupervisionTaskMapper.mapBackend(response.json()))
+      .catch(error => this.errorHandler.handle(error, findTranslation('supervision.task.error.reject')));
   }
 }

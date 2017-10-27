@@ -3,6 +3,7 @@ import {UserService} from './user-service';
 import {User} from '../../model/user/user';
 import {Observable} from 'rxjs/Observable';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
+import {NumberUtil} from '../../util/number.util';
 
 @Injectable()
 export class CurrentUser {
@@ -32,5 +33,13 @@ export class CurrentUser {
   public hasApplicationType(types: Array<string>): Observable<boolean> {
     return this.user
       .map(u => u.allowedApplicationTypes.reduce((prev, cur) => prev || types.some(type => type === cur), false));
+  }
+
+  public isCurrentUser(id: number): Observable<boolean> {
+    if (NumberUtil.isDefined(id)) {
+      return this.user.map(user => user.id === id);
+    } else {
+      return Observable.of(false);
+    }
   }
 }

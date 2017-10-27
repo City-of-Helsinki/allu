@@ -1,39 +1,44 @@
 <form [formGroup]="form" (ngSubmit)="save()">
     <mat-card>
         <mat-card-title>
-            <div *ngIf="form.value.id">{{['supervision.task.type', form.value.type] | translation}}</div>
+            <div *ngIf="form.value.id">
+                <span>{{['supervision.task.type', form.value.type] | translation}} - {{['supervision.task.status', form.value.status] | translation}}</span>
+                <span *ngIf="form.value.actualFinishingTime">- {{form.value.actualFinishingTime | date:'shortDate'}}</span>
+            </div>
             <div *ngIf="!form.value.id">{{'supervision.task.newTask' | translation}}</div>
         </mat-card-title>
         <mat-card-content>
             <div fxLayout="row" fxLayout.lt-md="column" fxLayoutWrap>
-                <div fxFlex="100" *ngIf="form.disabled">
+                <div fxFlex="100" *ngIf="form.value.id">
                     <div class="save-info">
-                        <span>{{'supervision.task.createdBy' | translation}}: {{form.value.creatorName}} {{form.value.creationTime | date:'short'}}</span>
+                        <div>{{'supervision.task.createdBy' | translation}}: {{form.value.creatorName}} {{form.value.creationTime | date:'short'}}</div>
                     </div>
                 </div>
-                <div fxFlex="80">
-                    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutGap="0.75rem" fxLayoutWrap>
-                        <div fxFlex="30">
+                <div fxFlex="100">
+                    <div fxLayout="row" fxLayout.lt-md="column" fxLayoutWrap class="spaced-out">
+                        <div fxFlex>
                             <mat-form-field class="input-full-width">
-                                <mat-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width" formControlName="type">
+                                <mat-select [placeholder]="'supervision.task.type.title' | translation" class="input-full-width"
+                                            formControlName="type" required>
                                     <mat-option *ngFor="let type of taskTypes" [value]="type">
                                         {{['supervision.task.type', type] | translation}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div fxFlex="30">
+                        <div fxFlex>
                             <mat-form-field class="input-full-width">
-                                <mat-select [placeholder]="'supervision.task.handler' | translation" class="input-full-width" formControlName="handlerId">
+                                <mat-select [placeholder]="'supervision.task.handler' | translation" class="input-full-width"
+                                            formControlName="handlerId" required>
                                     <mat-option *ngFor="let supervisor of supervisors" [value]="supervisor.id">
                                         {{supervisor.realName}}
                                     </mat-option>
                                 </mat-select>
                             </mat-form-field>
                         </div>
-                        <div fxFlex="30">
+                        <div fxFlex>
                             <mat-form-field class="input-full-width">
-                                <input matInput formControlName="plannedFinishingTime"
+                                <input matInput formControlName="plannedFinishingTime" required
                                        [placeholder]="'supervision.task.plannedFinishingTime' | translation"
                                        [matDatepicker]="plannedFinishingTimePicker">
                                 <mat-datepicker-toggle matSuffix [for]="plannedFinishingTimePicker" [disabled]="form.disabled"></mat-datepicker-toggle>
@@ -49,30 +54,52 @@
                     </div>
                 </div>
                 <div fxFlex="100">
-                    <mat-form-field class="input-full-width">
-                        <textarea matInput matTextareaAutosize  formControlName="description"
-                                  [placeholder]="'supervision.task.description' | translation"></textarea>
-                    </mat-form-field>
+                    <div fxLayout="row" fxLayoutWrap>
+                        <div fxFlex="100">
+                            <mat-form-field class="input-full-width">
+                                <textarea matInput matTextareaAutosize  formControlName="description"
+                                          [placeholder]="'supervision.task.description' | translation"></textarea>
+                            </mat-form-field>
+                        </div>
+                        <div fxFlex="100">
+                            <mat-form-field class="input-full-width" *ngIf="form.getRawValue().result">
+                                <textarea matInput matTextareaAutosize formControlName="result"
+                                          [placeholder]="'supervision.task.result' | translation"></textarea>
+                            </mat-form-field>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div fxLayout="row" fxLayout.sm="column" *ngIf="canEdit">
+            <div fxLayout="row" fxLayout.sm="column">
                 <div fxFlex="100">
-                    <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-                        <ng-container *ngIf="form.enabled">
-                            <button id="save" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
-                                {{'common.button.save' | translation}}
+                    <ng-container *ngIf="canApprove && form.disabled">
+                        <ng-container *availableTo="['ROLE_SUPERVISE']">
+                            <button id="approve" mat-raised-button type="button" color="primary" (click)="approve()">
+                                {{'supervision.task.approve' | translation}}
                             </button>
-                            <button id="cancel" mat-raised-button type="button" color="primary" (click)="cancel()">
-                                {{'common.button.cancel' | translation}}
+                            <button id="reject" mat-raised-button type="button" color="primary" (click)="reject()">
+                                {{'supervision.task.reject' | translation}}
                             </button>
                         </ng-container>
-                        <ng-container *ngIf="form.disabled">
-                            <button id="edit" mat-raised-button type="button" color="primary" (click)="edit()">
-                                {{'common.button.edit' | translation}}
-                            </button>
-                            <button id="remove" mat-raised-button type="button" color="primary" (click)="remove()">
-                                {{'common.button.remove' | translation}}
-                            </button>
+                    </ng-container>
+                    <ng-container *ngIf="canEdit">
+                        <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION', 'ROLE_SUPERVISE']">
+                            <ng-container *ngIf="form.enabled">
+                                <button id="save" mat-raised-button type="submit" color="primary" [disabled]="!form.valid">
+                                    {{'common.button.save' | translation}}
+                                </button>
+                                <button id="cancel" mat-raised-button type="button" color="primary" (click)="cancel()">
+                                    {{'common.button.cancel' | translation}}
+                                </button>
+                            </ng-container>
+                            <ng-container *ngIf="form.disabled">
+                                <button id="edit" mat-raised-button type="button" color="primary" (click)="edit()">
+                                    {{'common.button.edit' | translation}}
+                                </button>
+                                <button id="remove" mat-raised-button type="button" color="primary" (click)="remove()">
+                                    {{'common.button.remove' | translation}}
+                                </button>
+                            </ng-container>
                         </ng-container>
                     </ng-container>
                 </div>
