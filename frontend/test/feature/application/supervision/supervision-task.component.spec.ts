@@ -43,6 +43,8 @@ const taskForm = {
 
 const validTask = {
   type: SupervisionTaskType[SupervisionTaskType.SUPERVISION],
+  status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN],
+  creatorId: undefined,
   handlerId: supervisor.id,
   plannedFinishingTime: new Date(),
   description: 'some description here'
@@ -190,10 +192,11 @@ describe('SupervisionTaskComponent', () => {
     spyOn(NotificationService, 'translateMessage');
     spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.of(new HttpResponse(HttpStatus.OK)));
 
-    patchValueAndInit({id: 1});
+    patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     const removeBtn = de.query(By.css('#remove')).nativeElement;
     removeBtn.click();
     detectAndTick();
+
     expect(supervisionTaskStore.removeTask).toHaveBeenCalled();
     expect(NotificationService.translateMessage).toHaveBeenCalled();
     expect(onRemove.emit).toHaveBeenCalled();
@@ -206,7 +209,7 @@ describe('SupervisionTaskComponent', () => {
     spyOn(onRemove, 'emit');
     spyOn(supervisionTaskStore, 'removeTask').and.returnValue(Observable.throw(errorInfo));
 
-    patchValueAndInit({id: 1});
+    patchValueAndInit({id: 1, creatorId: undefined, status: SupervisionTaskStatusType[SupervisionTaskStatusType.OPEN]});
     const removeBtn = de.query(By.css('#remove')).nativeElement;
     removeBtn.click();
     detectAndTick();
@@ -220,7 +223,7 @@ describe('SupervisionTaskComponent', () => {
     const myself = new User(1);
     const other = new User(2);
     patchValueAndInit({id: 1, creatorId: myself.id});
-    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(2);
+    expect(de.queryAll(By.css('.mat-raised-button')).length).toEqual(1); // Only edit button
 
     spyOn(currentUserMock, 'isCurrentUser').and.returnValue(Observable.of(false));
     patchValueAndInit({creatorId: other.id});
