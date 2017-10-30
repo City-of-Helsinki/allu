@@ -7,8 +7,8 @@
                     <div class="row row-slim">
                         <div class="col m12">
                             <mat-form-field class="input-full-width">
-                                <mat-select formControlName="nature" placeholder="Tapahtuman luonne*" class="input-full-width"
-                                           (change)="eventNatureChange($event.value)">
+                                <mat-select formControlName="nature" placeholder="{{'application.event.nature.placeholder' | translation}}" required
+                                            class="input-full-width" (change)="eventNatureChange($event.value)">
                                     <mat-option *ngFor="let nature of eventNatures" [value]="nature">
                                         {{['application.event.nature', nature] | translation}}
                                     </mat-option>
@@ -20,22 +20,22 @@
                         </div>
                         <div class="row">
                             <div class="col m12 input-field-checkbox">
-                                <mat-checkbox formControlName="ecoCompass">Hakijalla Ekokompassi tapahtuma -sertifikaatti (-30 %)</mat-checkbox>
+                                <mat-checkbox formControlName="ecoCompass">{{'application.pricing.ecoCompass' | translation}}</mat-checkbox>
                             </div>
                             <div class="col m12 input-field-checkbox" [hidden]="form.value.nature !== 'PUBLIC_FREE'">
-                                <mat-checkbox formControlName="notBillable">Korvauksetta</mat-checkbox>
+                                <mat-checkbox formControlName="notBillable">{{'application.pricing.notBillable' | translation}}</mat-checkbox>
                             </div>
                             <div class="col m12 input-field-checkbox" *ngIf="form.value.notBillable">
-                                <mat-checkbox formControlName="salesActivity">Tapahtuma sisältää kaupallista toimintaa (+50%)</mat-checkbox>
+                                <mat-checkbox formControlName="salesActivity">{{'application.pricing.salesActivity' | translation}}</mat-checkbox>
                             </div>
                             <div class="col m12 input-field-checkbox" *ngIf="form.value.notBillable">
-                                <mat-checkbox formControlName="heavyStructure">Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (+50 %)</mat-checkbox>
+                                <mat-checkbox formControlName="heavyStructure">{{'application.pricing.heavyStructure' | translation}}</mat-checkbox>
                             </div>
                         </div>
                         <div class="col m12" *ngIf="form.value.notBillable">
                             <mat-form-field class="input-full-width">
                                 <input matInput type="text" formControlName="notBillableReason"
-                                       placeholder="Peruste korvauksettomuudelle" [matAutocomplete]="notBillableReason"/>
+                                       placeholder="{{'application.pricing.notBillableReason' | translation}}" [matAutocomplete]="notBillableReason"/>
                                 <mat-autocomplete #notBillableReason="matAutocomplete">
                                     <mat-option *ngFor="let reason of matchingReasons | async" [value]="reason">
                                         {{reason}}
@@ -49,24 +49,24 @@
             <div class="row form-group" *ngIf="kind==='BRIDGE_BANNER'">
                 <div class="col m6 no-padding">
                     <div class="col m12">
-                        <mat-checkbox formControlName="commercial">Kaupallinen</mat-checkbox>
+                        <mat-checkbox formControlName="commercial">{{'application.pricing.commercial' | translation}}</mat-checkbox>
                     </div>
                 </div>
                 <div *ngIf="kind==='PROMOTION_OR_SALES'" class="col m6 no-padding">
                     <div class="col m12">
-                        <mat-checkbox formControlName="largeSalesArea">Iso myyntialue (0,8 m x 3,0 m)</mat-checkbox>
+                        <mat-checkbox formControlName="largeSalesArea">{{'application.pricing.largeSalesArea' | translation}}</mat-checkbox>
                     </div>
                 </div>
             </div>
             <div class="row form-group">
                 <div class="col m3">
                     <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="calculatedPrice" placeholder="Hinta"/>
+                        <input matInput type="text" formControlName="calculatedPrice" placeholder="{{'application.pricing.calculatedPrice' | translation}}"/>
                     </mat-form-field>
                 </div>
                 <div class="col m3">
                     <mat-form-field class="input-full-width">
-                        <input matInput type="number" formControlName="priceOverride" placeholder="Käsittelijän asettama hinta"/>
+                        <input matInput type="number" formControlName="priceOverride" placeholder="{{'application.pricing.priceOverride' | translation}}"/>
                         <mat-hint>
                             <field-error [form]="form" field="priceOverride" hasError="greaterThanOrEqual">
                                 {{'application.common.field.priceOverrideGreaterThanOrEqual' | translation}}
@@ -76,7 +76,7 @@
                 </div>
                 <div class="col m3">
                     <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="priceOverrideReason" placeholder="Peruste poikkeavaan hintaan"/>
+                        <input matInput type="text" formControlName="priceOverrideReason" placeholder="{{'application.pricing.priceOverrideReason' | translation}}"/>
                     </mat-form-field>
                 </div>
             </div>

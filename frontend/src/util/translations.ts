@@ -154,6 +154,18 @@ export const translations = {
       GAS_PIPE: 'Kaasujohto',
       OTHER: 'Muu'
     },
+    pricing: {
+      ecoCompass: 'Hakijalla Ekokompassi tapahtuma -sertifikaatti (-30 %)',
+      notBillable: 'Korvauksetta',
+      salesActivity: 'Tapahtuma sisältää kaupallista toimintaa (veloitetaan 50% normaalista hinnasta)',
+      heavyStructure: 'Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (veloitetaan 50% normaalista hinnasta)',
+      notBillableReason: 'Peruste korvauksettomuudelle',
+      commercial: 'Kaupallinen',
+      largeSalesArea: 'Iso myyntialue (0,8 m x 3,0 m)',
+      calculatedPrice: 'Hinta',
+      priceOverride: 'Käsittelijän asettama hinta',
+      priceOverrideReason: 'Peruste poikkeavaan hintaan'
+    },
     tag: {
       type: {
         ADDITIONAL_INFORMATION_REQUESTED: 'Täydennyspyyntö lähetetty',
@@ -213,6 +225,7 @@ export const translations = {
         INVOICE: 'Lasku'
       },
       nature: {
+        placeholder: 'Tapahtuman luonne',
         PUBLIC_FREE: 'Avoin',
         PUBLIC_NONFREE: 'Maksullinen',
         CLOSED: 'Suljettu'
