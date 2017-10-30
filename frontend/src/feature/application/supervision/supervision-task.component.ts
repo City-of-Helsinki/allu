@@ -38,6 +38,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   statusTypes = EnumUtil.enumValues(SupervisionTaskStatusType);
   canEdit = false;
   canApprove = false;
+  canRemove = false;
 
   private originalEntry: SupervisionTaskForm;
 
@@ -57,6 +58,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     }
     this.currentUserCanEdit(formValue.creatorId);
     this.currentUserCanApprove(formValue.handlerId, formValue.status);
+    this.userCanRemove(formValue.status);
   }
 
   ngOnDestroy(): void {
@@ -160,6 +162,10 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
     this.currentUser.isCurrentUser(handlerId).subscribe(isCurrent => {
       this.canApprove = isCurrent && SupervisionTaskStatusType.OPEN === status;
     });
+  }
+
+  private userCanRemove(statusName: string): void {
+    this.canRemove = statusName === undefined || SupervisionTaskStatusType.OPEN === SupervisionTaskStatusType[statusName];
   }
 
   private preferredSupervisor(): void {

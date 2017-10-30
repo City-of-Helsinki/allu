@@ -460,6 +460,18 @@ public class ApplicationDao {
   }
 
   /**
+   * Removes all tags of given type from application
+   * @param applicationId Application's database ID
+   * @param tagType type of tag(s) to remove
+   */
+  @Transactional
+  public void removeTagByType(int applicationId, ApplicationTagType tagType) {
+    queryFactory.delete(applicationTag)
+        .where(applicationTag.applicationId.eq(applicationId).and(applicationTag.type.eq(tagType)))
+        .execute();
+  }
+
+  /**
    * Return the given application's invoiceable customer's database ID
    *
    * @param applicationId Application's database ID

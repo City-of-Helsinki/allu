@@ -5,7 +5,7 @@
         <mat-chip-list>
             <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of application.applicationTags; let i = index;">
                 {{['application.tag.type', tag.type] | translation}}
-                <button mat-icon-button (click)="remove(i)"><mat-icon>remove_circle_outline</mat-icon></button>
+                <button *ngIf="canBeRemoved(tag.type)" mat-icon-button (click)="remove(i)"><mat-icon>remove_circle_outline</mat-icon></button>
             </mat-chip>
         </mat-chip-list>
         <span class="single-line">
@@ -18,5 +18,5 @@
     </div>
 </div>
 <mat-menu x-position="before" #menu="matMenu">
-    <button mat-menu-item *ngFor="let type of tagTypes" (click)="add(type)">{{['application.tag.type', type] | translation}}</button>
+    <button mat-menu-item *ngFor="let type of manualTagTypes" (click)="add(type)">{{['application.tag.type', type] | translation}}</button>
 </mat-menu>

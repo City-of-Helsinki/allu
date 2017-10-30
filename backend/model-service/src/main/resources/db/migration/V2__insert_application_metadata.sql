@@ -224,9 +224,13 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_SUPERVISION_DONE', 'Aloitusvalvonta suoritettu', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_SUPERVISION_REJECTED', 'Aloitusvalvonta hylätty', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'SUPERVISION_REQUESTED', 'Valvontapyyntö lähetetty', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'SUPERVISION_DONE', 'Valvonta suoritettu', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'SUPERVISION_REJECTED', 'Valvonta hylätty', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'WAITING', 'Odottaa lisätietoa', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)

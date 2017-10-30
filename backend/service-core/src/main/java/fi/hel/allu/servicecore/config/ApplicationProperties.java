@@ -863,6 +863,20 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return url for approving supervision task.
+   */
+  public String getSupervisionTaskApproveUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}/approve");
+  }
+
+  /**
+   * @return url for rejecting supervision task.
+   */
+  public String getSupervisionTaskRejectUrl() {
+    return getModelServiceUrl("/supervisiontask/{id}/reject");
+  }
+
+  /**
    * @return url for searching supervision tasks by given criteria
    */
   public String getSupervisionTaskSearchUrl() {

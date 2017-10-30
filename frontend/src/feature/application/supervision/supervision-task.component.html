@@ -96,7 +96,7 @@
                                 <button id="edit" mat-raised-button type="button" color="primary" (click)="edit()">
                                     {{'common.button.edit' | translation}}
                                 </button>
-                                <button id="remove" mat-raised-button type="button" color="primary" (click)="remove()">
+                                <button *ngIf="canRemove" id="remove" mat-raised-button type="button" color="primary" (click)="remove()">
                                     {{'common.button.remove' | translation}}
                                 </button>
                             </ng-container>

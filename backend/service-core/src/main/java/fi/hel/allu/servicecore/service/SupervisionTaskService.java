@@ -23,14 +23,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.time.ZonedDateTime;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -76,30 +74,39 @@ public class SupervisionTaskService {
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
-  public SupervisionTaskJson approve(SupervisionTaskJson supervisionTask) {
-    supervisionTask.setStatus(SupervisionTaskStatusType.APPROVED);
-    supervisionTask.setActualFinishingTime(ZonedDateTime.now());
-    SupervisionTaskJson updated = update(supervisionTask);
-    // TODO: remove tag
-    return updated;
-  }
-
-  public SupervisionTaskJson reject(SupervisionTaskJson task, ZonedDateTime newSupervisionDate) {
-    task.setStatus(SupervisionTaskStatusType.REJECTED);
-    task.setActualFinishingTime(ZonedDateTime.now());
-    SupervisionTaskJson updated = update(task);
-    insert(SupervisionTaskMapper.mapRejectedToNewTask(task, newSupervisionDate));
-    // TODO: remove tag
-    // TODO: send email to customer about new supervision date and reason of rejection
-    return updated;
-  }
-
   public SupervisionTaskJson insert(SupervisionTaskJson supervisionTaskJson) {
-    // TODO: add tag
     SupervisionTask task = SupervisionTaskMapper.mapToModel(supervisionTaskJson);
     task.setCreatorId(userService.getCurrentUser().getId());
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.postForEntity(
         applicationProperties.getSupervisionTaskCreateUrl(), task, SupervisionTask.class);
+    return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
+  }
+
+  public SupervisionTaskJson approve(SupervisionTaskJson taskJson) {
+    HttpEntity<SupervisionTask> supervisionTaskHttpEntity = new HttpEntity<>(SupervisionTaskMapper.mapToModel(taskJson));
+    ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.exchange(
+        applicationProperties.getSupervisionTaskApproveUrl(),
+        HttpMethod.PUT,
+        supervisionTaskHttpEntity,
+        SupervisionTask.class,
+        taskJson.getId());
+    return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
+  }
+
+  public SupervisionTaskJson reject(SupervisionTaskJson taskJson, ZonedDateTime newSupervisionDate) {
+    HttpEntity<SupervisionTask> supervisionTaskHttpEntity = new HttpEntity<>(SupervisionTaskMapper.mapToModel(taskJson));
+
+    Map<String, Integer> uriParams = new HashMap<>();
+    uriParams.put("id", taskJson.getId());
+
+    URI uri = UriComponentsBuilder.fromHttpUrl(applicationProperties.getSupervisionTaskRejectUrl())
+        .queryParam("newDate", newSupervisionDate)
+        .buildAndExpand(uriParams).toUri();
+
+    ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.exchange(
+        uri, HttpMethod.PUT, supervisionTaskHttpEntity, SupervisionTask.class);
+
+    // TODO: send email to customer about new supervision date and reason of rejection
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 

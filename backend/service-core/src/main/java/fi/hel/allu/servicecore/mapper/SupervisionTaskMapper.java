@@ -67,28 +67,4 @@ public class SupervisionTaskMapper {
     workItem.setHandler(handler);
     return workItem;
   }
-
-  public static SupervisionTaskJson mapRejectedToNewTask(SupervisionTaskJson rejected, ZonedDateTime newDate) {
-    UserJson creator = Optional.ofNullable(rejected.getHandler()).map(user -> userFromId(user.getId())).orElse(null);
-    UserJson handler = Optional.ofNullable(rejected.getHandler()).map(user -> userFromId(user.getId())).orElse(null);
-    return new SupervisionTaskJson(
-        null,
-        rejected.getApplicationId(),
-        rejected.getType(),
-        creator,
-        handler,
-        ZonedDateTime.now(),
-        newDate,
-        null,
-        SupervisionTaskStatusType.OPEN,
-        rejected.getResult(),
-        null
-    );
-  }
-
-  private static UserJson userFromId(int id) {
-    UserJson user = new UserJson();
-    user.setId(id);
-    return user;
-  }
 }
