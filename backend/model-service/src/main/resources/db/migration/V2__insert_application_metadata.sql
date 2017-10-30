@@ -414,11 +414,36 @@ INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
 -- TrafficArrangementImpedimentType
 INSERT INTO allu.structure_meta (type_name, version) VALUES ('TrafficArrangementImpedimentType', 1);
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'NO_IMPEDIMENT', 'Ei haittaa', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'SIGNIFICANT_IMPEDIMENT', 'Merkittävä haitta', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'IMPEDIMENT_FOR_HEAVY_TRAFFIC', 'Haittaa raskasta liikennettä', 'ENUM_VALUE');
 INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
     VALUES (currval('allu.structure_meta_id_seq'),  'INSIGNIFICANT_IMPEDIMENT', 'Vähäinen haitta', 'ENUM_VALUE');
+
+-- SupervisionTaskType
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('SupervisionTaskType', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'PRELIMINARY_SUPERVISION', 'Aloitusvalvonta', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'OPERATIONAL_CONDITION', 'Toiminnallisen kunnon valvonta', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'SUPERVISION', 'Valvonta', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'FINAL_SUPERVISION', 'Loppuvalvonta', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'WARRANTY', 'Takuuvalvonta', 'ENUM_VALUE');
+
+-- SupervisionTaskStatusType
+INSERT INTO allu.structure_meta (type_name, version) VALUES ('SupervisionTaskStatusType', 1);
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'APPROVED', 'Hyväksytty', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'REJECTED', 'Hylätty', 'ENUM_VALUE');
+INSERT INTO allu.attribute_meta (structure_meta_id, name, ui_name, data_type)
+    VALUES (currval('allu.structure_meta_id_seq'),  'OPEN', 'Avoin', 'ENUM_VALUE');
+
 
 ------------------------
 -- Common metadata

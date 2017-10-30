@@ -6,7 +6,7 @@ public enum SupervisionTaskType {
    */
   PRELIMINARY_SUPERVISION,
   /**
-   * Talvityön toiminnallinen kunto
+   * Toiminnallisen kunnon valvonta
    */
   OPERATIONAL_CONDITION,
   /**
