@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.meta.AttributeDataType;
 import fi.hel.allu.model.domain.meta.AttributeMeta;
 import fi.hel.allu.model.domain.meta.StructureMeta;
 import fi.hel.allu.servicecore.domain.*;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -183,6 +184,30 @@ public class StructureMetaDaoTest {
     Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("PublicityType", 1, Collections.emptyMap());
     assertTrue(meta.isPresent());
     assertEnumAttributes(PublicityType.class, meta.get());
+  }
+
+  @Test
+  public void testTrafficArrangementImpedimentTypeEnumMeta() {
+    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("TrafficArrangementImpedimentType", 1,
+        Collections.emptyMap());
+    assertTrue(meta.isPresent());
+    assertEnumAttributes(TrafficArrangementImpedimentType.class, meta.get());
+  }
+
+  @Test
+  public void testSupervisionTaskTypeEnumMeta() {
+    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("SupervisionTaskType", 1,
+        Collections.emptyMap());
+    assertTrue(meta.isPresent());
+    assertEnumAttributes(SupervisionTaskType.class, meta.get());
+  }
+
+  @Test
+  public void testSupervisionTaskStatusTypeEnumMeta() {
+    Optional<StructureMeta> meta = structureMetaDao.findCompleteInternal("SupervisionTaskStatusType", 1,
+        Collections.emptyMap());
+    assertTrue(meta.isPresent());
+    assertEnumAttributes(SupervisionTaskStatusType.class, meta.get());
   }
 
   private void assertStructureAttributes(Class extensionJsonClass, StructureMeta sMeta) {
