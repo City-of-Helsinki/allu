@@ -4,11 +4,13 @@ import com.greghaskins.spectrum.Spectrum;
 import com.querydsl.core.types.OrderSpecifier;
 
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.domain.types.SupervisionTaskType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.ModelApplication;
+import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.SupervisionTaskDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.SupervisionTask;
@@ -49,6 +51,8 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
   @Autowired
   private WebTestCommon wtc;
+  @Autowired
+  private ApplicationDao applicationDao;
   @Autowired
   private SupervisionTaskDao supervisionTaskDao;
 
@@ -160,6 +164,48 @@ public class SupervisionTaskDaoSpec extends SpeccyTestBase {
 
           assertEquals(2, result.size());
           assertFalse(result.get(1).getCreationTime().isAfter(result.get(0).getCreationTime()));
+        });
+
+        it("Sort by type when empty criteria", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
+              shortTermApp.getHandler());
+          supervisionTaskDao.insert(taskForOther);
+          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "type"));
+          List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.size());
+          // Warranty ("Takuuvalvonta") should precede Supervision ("Valvonta"):
+          assertEquals(SupervisionTaskType.WARRANTY, result.get(0).getType());
+          assertEquals(SupervisionTaskType.SUPERVISION, result.get(1).getType());
+        });
+
+        it("Sort by application type when empty criteria", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
+              shortTermApp.getHandler());
+          supervisionTaskDao.insert(taskForOther);
+          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "application.type"));
+          List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.size());
+          // Short term rental ("Lyhytaikainen maanvuokraus") should precede
+          // Event ("Tapahtuma"):
+          assertEquals(shortTermApp.getId(), result.get(0).getApplicationId());
+          assertEquals(outdoorApp.getId(), result.get(1).getApplicationId());
+        });
+
+        it("Sort by application status when empty criteria", () -> {
+          SupervisionTask taskForOther = createTask(shortTermApp.getId(), SupervisionTaskType.WARRANTY,
+              shortTermApp.getHandler());
+          supervisionTaskDao.insert(taskForOther);
+          applicationDao.updateStatus(shortTermApp.getId(), StatusType.CANCELLED);
+          applicationDao.updateStatus(outdoorApp.getId(), StatusType.HANDLING);
+          Pageable pageRequest = new PageRequest(0, 10, new Sort(Direction.ASC, "application.status"));
+          List<SupervisionTask> result = supervisionTaskDao.search(new SupervisionTaskSearchCriteria(), pageRequest);
+
+          assertEquals(2, result.size());
+          // HANDLING ("Käsittelyssä") should precede CANCELLED ("Peruttu"):
+          assertEquals(outdoorApp.getId(), result.get(0).getApplicationId());
+          assertEquals(shortTermApp.getId(), result.get(1).getApplicationId());
         });
 
         it("Find by application id", () -> {

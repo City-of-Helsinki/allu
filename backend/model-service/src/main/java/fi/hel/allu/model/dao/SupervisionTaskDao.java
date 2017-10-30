@@ -9,6 +9,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.sql.SQLQuery;
 import com.querydsl.sql.SQLQueryFactory;
 
+import fi.hel.allu.QAttributeMeta;
+import fi.hel.allu.QStructureMeta;
 import fi.hel.allu.common.domain.SupervisionTaskSearchCriteria;
 import fi.hel.allu.common.domain.types.SupervisionTaskStatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -41,6 +43,13 @@ public class SupervisionTaskDao {
 
   /** Fields that won't be updated in regular updates */
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(supervisionTask.id, supervisionTask.creationTime);
+
+  final static QStructureMeta typeStructure = new QStructureMeta("typeStructure");
+  final static QAttributeMeta typeAttribute = new QAttributeMeta("typeAttribute");
+  final static QStructureMeta applTypeStructure = new QStructureMeta("applTypeStructure");
+  final static QAttributeMeta applTypeAttribute = new QAttributeMeta("applTypeAttribute");
+  final static QStructureMeta applStatusStructure = new QStructureMeta("applStatusStructure");
+  final static QAttributeMeta applStatusAttribute = new QAttributeMeta("applStatusAttribute");
 
   final static Map<String, Path<?>> COLUMNS = orderByColumns();
 
@@ -126,6 +135,15 @@ public class SupervisionTaskDao {
         .leftJoin(postalAddress).on(location.postalAddressId.eq(postalAddress.id))
         .leftJoin(project).on(application.projectId.eq(project.id))
         .leftJoin(user).on(supervisionTask.creatorId.eq(user.id))
+        .leftJoin(typeStructure).on(typeStructure.typeName.eq("SupervisionTaskType"))
+        .leftJoin(typeAttribute).on(typeAttribute.structureMetaId.eq(typeStructure.id)
+            .and(typeAttribute.name.eq(supervisionTask.type.stringValue())))
+        .leftJoin(applTypeStructure).on(applTypeStructure.typeName.eq("ApplicationType"))
+        .leftJoin(applTypeAttribute).on(applTypeAttribute.structureMetaId.eq(applTypeStructure.id)
+            .and(applTypeAttribute.name.eq(application.type.stringValue())))
+        .leftJoin(applStatusStructure).on(applStatusStructure.typeName.eq("StatusType"))
+        .leftJoin(applStatusAttribute).on(applStatusAttribute.structureMetaId.eq(applStatusStructure.id)
+            .and(applStatusAttribute.name.eq(application.status.stringValue())))
         .where(conditions);
 
     q = handlePageRequest(q, pageRequest);
@@ -192,8 +210,10 @@ public class SupervisionTaskDao {
     Map<String, Path<?>> cols = supervisionTask.getColumns().stream()
         .collect(Collectors.toMap(c -> c.getMetadata().getName(), c -> c));
 
-    cols.put(PathUtil.pathNameWithParent(application.type), application.type);
-    cols.put(PathUtil.pathNameWithParent(application.status), application.type);
+    // Override sorting for enum-column supervisionTask.type:
+    cols.put(supervisionTask.type.getMetadata().getName(), typeAttribute.uiName);
+    cols.put(PathUtil.pathNameWithParent(application.type), applTypeAttribute.uiName);
+    cols.put(PathUtil.pathNameWithParent(application.status), applStatusAttribute.uiName);
     cols.put(PathUtil.pathNameWithParent(application.applicationId), application.applicationId);
     cols.put(PathUtil.pathNameWithParent(project.name), project.name);
     cols.put(PathUtil.pathNameWithParent(user.realName), user.realName);
