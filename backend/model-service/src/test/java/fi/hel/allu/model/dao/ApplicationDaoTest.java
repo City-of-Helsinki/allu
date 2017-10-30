@@ -203,15 +203,6 @@ public class ApplicationDaoTest {
   }
 
   @Test
-  public void testGetInvoiceeId() {
-    Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
-    final int CUSTOMER_ID = newApplication.getCustomersWithContacts().get(0).getCustomer().getId();
-    newApplication.setInvoiceRecipientId(CUSTOMER_ID);
-    Application application = applicationDao.insert(newApplication);
-    assertEquals(CUSTOMER_ID, applicationDao.getInvoiceeId(application.getId()).get().intValue());
-  }
-
-  @Test
   public void testUpdateApplicationTags() {
     Application newApplication = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
     newApplication.setApplicationTags(Collections.singletonList(

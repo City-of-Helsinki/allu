@@ -115,7 +115,10 @@ public class ApplicationServiceTest {
     final Integer IID = 345;
     final Customer customer = new Customer();
     customer.setSapCustomerNumber("SAP_123");
-    Mockito.when(applicationDao.getInvoiceeId(APP_ID)).thenReturn(Optional.of(IID));
+    Application application = Mockito.mock(Application.class);
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
+    Mockito.when(application.getNotBillable()).thenReturn(false);
+    Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
     Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
     Mockito.verify(invoiceService).createInvoices(APP_ID, false);
@@ -130,7 +133,10 @@ public class ApplicationServiceTest {
     final Integer IID = 345;
     final Customer customer = new Customer();
     customer.setSapCustomerNumber("");
-    Mockito.when(applicationDao.getInvoiceeId(APP_ID)).thenReturn(Optional.of(IID));
+    Application application = Mockito.mock(Application.class);
+    Mockito.when(applicationDao.findByIds(Mockito.anyListOf(Integer.class))).thenReturn(Arrays.asList(application));
+    Mockito.when(application.getNotBillable()).thenReturn(false);
+    Mockito.when(application.getInvoiceRecipientId()).thenReturn(IID);
     Mockito.when(customerDao.findById(IID)).thenReturn(Optional.of(customer));
     applicationService.changeApplicationStatus(APP_ID, StatusType.DECISION, UID);
     Mockito.verify(invoiceService).createInvoices(APP_ID, true);
