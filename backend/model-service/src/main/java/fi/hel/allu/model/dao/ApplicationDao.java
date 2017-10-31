@@ -471,18 +471,6 @@ public class ApplicationDao {
         .execute();
   }
 
-  /**
-   * Return the given application's invoiceable customer's database ID
-   *
-   * @param applicationId Application's database ID
-   * @return customer's database ID or empty optional
-   */
-  @Transactional(readOnly = true)
-  public Optional<Integer> getInvoiceeId(int applicationId) {
-    return Optional.ofNullable(queryFactory.select(application.invoiceRecipientId).from(application)
-        .where(application.id.eq(applicationId)).fetchOne());
-  }
-
   String createApplicationId(ApplicationType applicationType) {
     long seqValue = applicationSequenceDao
         .getNextValue(ApplicationSequenceDao.APPLICATION_TYPE_PREFIX.of(applicationType));

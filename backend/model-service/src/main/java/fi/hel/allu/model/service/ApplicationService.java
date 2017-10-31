@@ -170,14 +170,7 @@ public class ApplicationService {
   public Application changeApplicationStatus(int applicationId, StatusType statusType, Integer userId) {
     switch (statusType) {
       case DECISION:
-        Customer invoicee = applicationDao.getInvoiceeId(applicationId).flatMap(id -> customerDao.findById(id))
-            .orElseThrow(() -> new NoSuchEntityException("No customer exists"));
-        final boolean sapIdPending = StringUtils.isEmpty(invoicee.getSapCustomerNumber());
-        invoiceService.createInvoices(applicationId, sapIdPending);
-        if (sapIdPending) {
-          applicationDao.addTag(applicationId,
-              new ApplicationTag(null, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
-        }
+        createInvoiceIfNeeded(applicationId, userId);
         // the fall-through is intentional here
       case REJECTED:
         return applicationDao.updateDecision(applicationId, statusType, userId);
@@ -258,5 +251,28 @@ public class ApplicationService {
   @Transactional(readOnly = true)
   public List<ApplicationWithContacts> findRelatedApplicationsWithContacts(List<Integer> contactIds) {
     return applicationDao.findRelatedApplicationsWithContacts(contactIds);
+  }
+
+  /*
+   * Create invoice for the given application if it's needed
+   */
+  private void createInvoiceIfNeeded(int applicationId, int userId) {
+    List<Application> applications = applicationDao.findByIds(Collections.singletonList(applicationId));
+    if (applications.isEmpty()) {
+      throw new NoSuchEntityException("No application found with ID " + applicationId);
+    }
+    Application application = applications.get(0);
+    if (application.getNotBillable() == true) {
+      return;
+    }
+    Customer invoicee = customerDao.findById(application.getInvoiceRecipientId())
+        .orElseThrow(() -> new NoSuchEntityException("No customer exists"));
+    final boolean sapIdPending = StringUtils.isEmpty(invoicee.getSapCustomerNumber());
+    invoiceService.createInvoices(applicationId, sapIdPending);
+    if (sapIdPending) {
+      applicationDao.addTag(applicationId,
+          new ApplicationTag(userId, ApplicationTagType.SAP_ID_MISSING, ZonedDateTime.now()));
+    }
+
   }
 }
