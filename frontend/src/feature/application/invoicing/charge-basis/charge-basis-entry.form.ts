@@ -1,6 +1,6 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ChargeBasisUnit} from '../../../model/application/invoice/charge-basis-unit';
-import {ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-entry';
+import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
+import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
 
 export class ChargeBasisEntryForm {
   constructor(
@@ -9,7 +9,9 @@ export class ChargeBasisEntryForm {
     public text?: string,
     public unitPrice?: number,
     public netPrice?: number,
-    public manuallySet?: boolean
+    public manuallySet?: boolean,
+    public tag?: string,
+    public referredTag?: string
   ) {}
 
   public static formGroup(fb: FormBuilder, entry: ChargeBasisEntry = new ChargeBasisEntry()): FormGroup {
@@ -19,7 +21,9 @@ export class ChargeBasisEntryForm {
       text: [entry.text, Validators.required],
       unitPrice: [entry.unitPriceEuro],
       netPrice: [entry.netPriceEuro],
-      manuallySet: [entry.manuallySet]
+      manuallySet: [entry.manuallySet],
+      tag: [entry.tag],
+      referredTag: [entry.referredTag]
     });
   }
 
@@ -43,7 +47,9 @@ export class ChargeBasisEntryForm {
       entry.text,
       entry.unitPriceEuro,
       entry.netPriceEuro,
-      entry.manuallySet
+      entry.manuallySet,
+      entry.tag,
+      entry.referredTag
     );
   }
 }

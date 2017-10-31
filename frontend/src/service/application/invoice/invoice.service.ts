@@ -14,19 +14,19 @@ export class InvoiceService {
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
   }
 
-  getInvoiceRows(applicationId: number): Observable<Array<ChargeBasisEntry>> {
+  getChargeBasisEntries(applicationId: number): Observable<Array<ChargeBasisEntry>> {
     let url = INVOICE_ROWS_URL.replace(':appId', String(applicationId));
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(rows => ChargeBasisEntryMapper.mapBackendArray(rows))
-      .catch(error => this.errorHandler.handle(error, findTranslation('invoice.row.error.fetch')));
+      .catch(error => this.errorHandler.handle(error, findTranslation('chargeBasis.error.fetch')));
   }
 
-  saveInvoiceRows(applicationId: number, rows: Array<ChargeBasisEntry>): Observable<Array<ChargeBasisEntry>> {
+  saveChargeBasisEntries(applicationId: number, entries: Array<ChargeBasisEntry>): Observable<Array<ChargeBasisEntry>> {
     let url = INVOICE_ROWS_URL.replace(':appId', String(applicationId));
-    return this.authHttp.put(url, JSON.stringify(ChargeBasisEntryMapper.mapFrontendArray(rows)))
+    return this.authHttp.put(url, JSON.stringify(ChargeBasisEntryMapper.mapFrontendArray(entries)))
       .map(response => response.json())
       .map(savedRows => ChargeBasisEntryMapper.mapBackendArray(savedRows))
-      .catch(error => this.errorHandler.handle(error, findTranslation('invoice.row.error.save')));
+      .catch(error => this.errorHandler.handle(error, findTranslation('chargeBasis.error.save')));
   }
 }

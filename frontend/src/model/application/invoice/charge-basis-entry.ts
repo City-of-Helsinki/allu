@@ -10,7 +10,9 @@ export class ChargeBasisEntry {
     public text?: string,
     public unitPrice?: number,
     public netPrice?: number,
-    public manuallySet?: boolean
+    public manuallySet?: boolean,
+    public tag?: string,
+    public referredTag?: string
   ) {
     quantity = quantity || ChargeBasisUnit.PIECE;
   }

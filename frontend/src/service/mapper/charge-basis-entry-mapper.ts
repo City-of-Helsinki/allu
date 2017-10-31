@@ -19,7 +19,9 @@ export class ChargeBasisEntryMapper {
       backendChargeBasisEntry.text,
       backendChargeBasisEntry.unitPrice,
       backendChargeBasisEntry.netPrice,
-      backendChargeBasisEntry.manuallySet
+      backendChargeBasisEntry.manuallySet,
+      backendChargeBasisEntry.tag,
+      backendChargeBasisEntry.referredTag
     );
   }
 
@@ -30,7 +32,9 @@ export class ChargeBasisEntryMapper {
       text: chargeBasisEntry.text,
       unitPrice: chargeBasisEntry.unitPrice,
       netPrice: chargeBasisEntry.netPrice,
-      manuallySet: chargeBasisEntry.manuallySet
+      manuallySet: chargeBasisEntry.manuallySet,
+      tag: chargeBasisEntry.tag,
+      referredTag: chargeBasisEntry.referredTag
     };
   }
 }

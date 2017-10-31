@@ -4,12 +4,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlluCommonModule} from '../../common/allu-common.module';
 import {CustomerRegistryModule} from '../../customerregistry/customer-registry.module';
 import {InvoicingComponent} from './invoicing.component';
-import {InvoiceRowsComponent} from './invoice-rows.component';
 import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
 import {InvoiceService} from '../../../service/application/invoice/invoice.service';
 import {InvoiceCommentsComponent} from './invoice-comments.component';
-import {ChargeBasisEntryModalComponent} from './charge-basis-entry-modal.component';
+import {ChargeBasisEntryModalComponent} from './charge-basis/charge-basis-entry-modal.component';
 import {InvoicingInfoComponent} from './invoicing-info/invoicing-info.component';
+import {ChargeBasisComponent} from './charge-basis/charge-basis.component';
 
 @NgModule({
   imports: [
@@ -21,7 +21,7 @@ import {InvoicingInfoComponent} from './invoicing-info/invoicing-info.component'
   declarations: [
     InvoicingComponent,
     InvoicingInfoComponent,
-    InvoiceRowsComponent,
+    ChargeBasisComponent,
     InvoiceCommentsComponent,
     ChargeBasisEntryModalComponent
   ],

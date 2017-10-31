@@ -1,14 +1,16 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {EnumUtil} from '../../../util/enum.util';
-import {NegligencePaymentType} from '../../../model/application/invoice/negligence-payment-type';
+import {EnumUtil} from '../../../../util/enum.util';
+import {NegligencePaymentType} from '../../../../model/application/invoice/negligence-payment-type';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
-import {findTranslation} from '../../../util/translations';
-import {ChargeBasisUnit} from '../../../model/application/invoice/charge-basis-unit';
-import {DEFAULT_FEE_CENTS, ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-entry';
+import {findTranslation} from '../../../../util/translations';
+import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
+import {ChargeBasisEntry, DEFAULT_FEE_CENTS} from '../../../../model/application/invoice/charge-basis-entry';
 import {Observable} from 'rxjs/Observable';
-import {StringUtil} from '../../../util/string.util';
+import {Some} from '../../../../util/option';
+
+export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '600PX', data: {}};
 
 @Component({
   selector: 'charge-basis-entry-modal',
@@ -24,7 +26,6 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
   chargeBasisEntryForm: FormGroup;
   negligencePaymentTypes = EnumUtil.enumValues(NegligencePaymentType)
     .map(t => findTranslation(['invoice.negligencePaymentType', t]));
-  chargeBasisUnits = EnumUtil.enumValues(ChargeBasisUnit);
   textCtrl: FormControl;
   matchingTexts: Observable<Array<string>>;
 
@@ -36,9 +37,9 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
     this.textCtrl = <FormControl>this.chargeBasisEntryForm.get('text');
 
     this.matchingTexts = this.textCtrl.valueChanges
+      .startWith(undefined)
       .debounceTime(300)
-      .map(text => StringUtil.toUppercase(text))
-      .map(text => this.negligencePaymentTypes.filter(types => StringUtil.toUppercase(types).indexOf(text) >= 0));
+      .map(text => this.filterNegligencePaymentTypes(text));
   }
 
   ngOnDestroy(): void {
@@ -54,5 +55,12 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
 
   cancel(): void {
     this.dialogRef.close(undefined);
+  }
+
+  private filterNegligencePaymentTypes(value: string): string[] {
+    return Some(value)
+      .map(val => this.negligencePaymentTypes
+        .filter(type => type.toUpperCase().indexOf(val.toUpperCase()) === 0))
+      .orElse(this.negligencePaymentTypes.slice());
   }
 }

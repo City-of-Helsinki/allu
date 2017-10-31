@@ -5,4 +5,6 @@ export interface BackendChargeBasisEntry {
   unitPrice: number;
   netPrice: number;
   manuallySet: boolean;
+  tag: string;
+  referredTag: string;
 }

@@ -7,29 +7,29 @@ import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class InvoiceHub {
-  private invoiceRows$ = new Subject<Array<ChargeBasisEntry>>();
+  private chargeBasisEntries$ = new Subject<Array<ChargeBasisEntry>>();
 
   constructor(private invoiceService: InvoiceService) {
   }
 
   /**
-   * Loads all invoice rows for given application
+   * Loads all charge basis entries for given application
    */
-  loadInvoiceRows = (applicationId: number) => this.invoiceService.getInvoiceRows(applicationId)
-    .do(loaded => this.invoiceRows$.next(loaded));
+  loadChargeBasisEntries = (applicationId: number) => this.invoiceService.getChargeBasisEntries(applicationId)
+    .do(loaded => this.chargeBasisEntries$.next(loaded));
 
   /**
-   * Saves given rows for application
-   * @returns all applications invoice rows
+   * Saves given charge basis entries for application
+   * @returns all applications charge basis entries
    */
-  saveInvoiceRows = (applicationId: number, rows: Array<ChargeBasisEntry>) =>
-    this.invoiceService.saveInvoiceRows(applicationId, rows)
-      .do(savedRows => this.invoiceRows$.next(savedRows));
+  saveChargeBasisEntries = (applicationId: number, rows: Array<ChargeBasisEntry>) =>
+    this.invoiceService.saveChargeBasisEntries(applicationId, rows)
+      .do(savedRows => this.chargeBasisEntries$.next(savedRows));
 
   /**
-   * Observable to get latest saved invoice rows
+   * Observable to get latest saved charge basis entries
    */
-  get invoiceRows(): Observable<Array<ChargeBasisEntry>> {
-    return this.invoiceRows$.asObservable();
+  get chargeBasisEntries(): Observable<Array<ChargeBasisEntry>> {
+    return this.chargeBasisEntries$.asObservable();
   }
 }

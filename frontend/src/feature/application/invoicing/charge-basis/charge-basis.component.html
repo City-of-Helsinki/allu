@@ -1,0 +1,31 @@
+<form [formGroup]="parentForm">
+    <div class="row">
+        <mat-card>
+            <mat-card-title>
+                {{'chargeBasis.title' | translation}}
+                <button mat-icon-button (click)="newRow()" class="align-with-text"><mat-icon>add</mat-icon></button>
+            </mat-card-title>
+            <mat-card-content>
+                <div formArrayName="chargeBasisEntries">
+                    <div *ngFor="let entry of chargeBasisEntries.controls; let i=index;" class="row">
+                        <mat-card class="slim-card">
+                            <mat-card-content>
+                                <div class="invoice-row">
+                                    <div class="row-controls">
+                                        <button mat-icon-button *ngIf="entry.value.manuallySet" (click)="editRow(i)"><mat-icon>edit</mat-icon></button>
+                                    </div>
+                                    <div class="row-header">{{entry.value.text}}</div>
+                                    <div class="row-content">
+                                        <div class="row-field-md">{{entry.value.quantity}} {{['invoice.unit', entry.value.unit] | translation}}</div>
+                                        <div class="row-field-md">á {{entry.value.unitPrice}} €</div>
+                                        <div class="row-field-md row-field-highlight">{{entry.value.netPrice}} €</div>
+                                    </div>
+                                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </div>
+                </div>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</form>

@@ -805,19 +805,21 @@ export const translations = {
       workIdMissing: 'Työnumero puuttuu',
       invoiceReferenceMissing: 'Laskutusviite puuttuu',
       notBillableReasonMissing: 'Korvauksettomuuden peruste puuttuu'
+    }
+  },
+  chargeBasis: {
+    title: 'Laskuperusteet',
+    newEntry: 'Uusi laskuperuste',
+    field: {
+      rowTextMissing: 'Laiminlyöntimaksu puuttuu',
+      quantityMissing: 'Kesto puuttuu'
     },
-    row: {
-      field: {
-        rowTextMissing: 'Laiminlyöntimaksu puuttuu',
-        quantityMissing: 'Kesto puuttuu'
-      },
-      action: {
-        accepted: 'Laskurivi hyväksytty laskutukseen'
-      },
-      error: {
-        fetch: 'Laskurivien hakeminen epäonnistui',
-        save: 'Laskurivien tallentaminen epäonnistui'
-      }
+    action: {
+      accepted: 'Laskurivi hyväksytty laskutukseen'
+    },
+    error: {
+      fetch: 'Laskurivien hakeminen epäonnistui',
+      save: 'Laskurivien tallentaminen epäonnistui'
     }
   },
   workqueue: {
