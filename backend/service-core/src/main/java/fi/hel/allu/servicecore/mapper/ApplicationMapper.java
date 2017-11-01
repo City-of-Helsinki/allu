@@ -269,6 +269,7 @@ public class ApplicationMapper {
     customerJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(customer.getPostalAddress()));
     customerJson.setActive(customer.isActive());
     customerJson.setSapCustomerNumber(customer.getSapCustomerNumber());
+    customerJson.setInvoicingProhibited(customer.isInvoicingProhibited());
     return customerJson;
   }
 
@@ -284,6 +285,7 @@ public class ApplicationMapper {
     customerModel.setPostalAddress(ApplicationCommonMapper.createPostalAddressModel(customerJson.getPostalAddress()));
     customerModel.setActive(customerJson.isActive());
     customerModel.setSapCustomerNumber(customerJson.getSapCustomerNumber());
+    customerModel.setInvoicingProhibited(customerJson.isInvoicingProhibited());
     return customerModel;
   }
 
