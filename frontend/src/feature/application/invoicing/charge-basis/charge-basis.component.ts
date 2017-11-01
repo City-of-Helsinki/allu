@@ -56,6 +56,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     let entry = ChargeBasisEntryForm.toChargeBasisEntry(this.chargeBasisEntries.at(index).value);
     this.openModal(entry)
       .subscribe(updatedEntry => {
+        console.log('updatedEntry', updatedEntry);
         this.updateEntry(updatedEntry, index);
         this.parentForm.markAsDirty();
       });

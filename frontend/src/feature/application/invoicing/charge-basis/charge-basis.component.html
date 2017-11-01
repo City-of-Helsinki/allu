@@ -16,9 +16,9 @@
                                     </div>
                                     <div class="row-header">{{entry.value.text}}</div>
                                     <div class="row-content">
-                                        <div class="row-field-md">{{entry.value.quantity}} {{['invoice.unit', entry.value.unit] | translation}}</div>
+                                        <div class="row-field-md">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}</div>
                                         <div class="row-field-md">á {{entry.value.unitPrice}} €</div>
-                                        <div class="row-field-md row-field-highlight">{{entry.value.netPrice}} €</div>
+                                        <div class="row-field-md row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
                                     </div>
                                 </div>
                             </mat-card-content>

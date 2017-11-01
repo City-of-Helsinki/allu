@@ -29,10 +29,10 @@ export class InvoicingComponent implements OnInit {
     this.applicationId = this.applicationState.application.id;
   }
 
-  onSubmit(form: FormGroup): void {
-    let value: InvoicingForm = form.value;
+  onSubmit(): void {
+    let value: InvoicingForm = this.invoicingForm.getRawValue();
     this.saveApplicationInfo(value)
-      .switchMap(app => this.saveInvoiceRows(value))
+      .switchMap(app => this.chargeBasisEntries(value))
       .subscribe(
         rows => NotificationService.message(findTranslation('invoice.action.save')),
         error => NotificationService.errorMessage(error));
@@ -55,7 +55,7 @@ export class InvoicingComponent implements OnInit {
     return this.applicationState.save(application);
   }
 
-  private saveInvoiceRows(form: InvoicingForm): Observable<Array<ChargeBasisEntry>> {
+  private chargeBasisEntries(form: InvoicingForm): Observable<Array<ChargeBasisEntry>> {
     let chargeBasisEntries = form.chargeBasisEntries.map(entry => ChargeBasisEntryForm.toChargeBasisEntry(entry));
     return this.invoiceHub.saveChargeBasisEntries(this.applicationId, chargeBasisEntries);
   }

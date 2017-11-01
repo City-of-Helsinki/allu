@@ -770,16 +770,7 @@ export const translations = {
     }
   },
   invoice: {
-    unit: {
-      PIECE: 'kpl',
-      SQUARE_METER: 'm²',
-      HOUR: 't',
-      DAY: 'pv',
-      WEEK: 'vk',
-      MONTH: 'kk',
-      YEAR: 'v'
-    },
-    negligencePaymentType: {
+    negligenceFeeType: {
       START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',
       AREA_UNCLEAN: 'Alue epäsiisti',
       ACTIONS_AGAINST_TRAFFIC_ARRANGEMENT: 'Liikennejärjestelypäätöksen vastainen toiminta',
@@ -810,6 +801,15 @@ export const translations = {
   chargeBasis: {
     title: 'Laskuperusteet',
     newEntry: 'Uusi laskuperuste',
+    unit: {
+      PIECE: 'kpl',
+      SQUARE_METER: 'm²',
+      HOUR: 't',
+      DAY: 'pv',
+      WEEK: 'vk',
+      MONTH: 'kk',
+      YEAR: 'v'
+    },
     field: {
       rowTextMissing: 'Laiminlyöntimaksu puuttuu',
       quantityMissing: 'Kesto puuttuu'

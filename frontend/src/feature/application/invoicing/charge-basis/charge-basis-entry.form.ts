@@ -19,8 +19,8 @@ export class ChargeBasisEntryForm {
       unit: [ChargeBasisUnit[entry.unit], Validators.required],
       quantity: [entry.quantity, Validators.required],
       text: [entry.text, Validators.required],
-      unitPrice: [entry.unitPriceEuro],
-      netPrice: [entry.netPriceEuro],
+      unitPrice: [entry.unitPriceEuro, Validators.required],
+      netPrice: [{value: entry.netPriceEuro, disabled: true}],
       manuallySet: [entry.manuallySet],
       tag: [entry.tag],
       referredTag: [entry.referredTag]

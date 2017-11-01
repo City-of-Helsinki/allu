@@ -17,6 +17,14 @@ export class ChargeBasisEntry {
     quantity = quantity || ChargeBasisUnit.PIECE;
   }
 
+  get uiUnit(): string {
+    return this.unit ? ChargeBasisUnit[this.unit] : undefined;
+  }
+
+  set uiUnit(unit: string) {
+    this.unit = unit ? ChargeBasisUnit[unit] : undefined;
+  }
+
   get unitPriceEuro(): number {
     return NumberUtil.toEuros(this.unitPrice);
   }

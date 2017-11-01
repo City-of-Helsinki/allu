@@ -1,4 +1,4 @@
-export enum NegligencePaymentType {
+export enum NegligenceFeeType {
   START_BEFORE_PERMIT, // Aloitus ennen luvan saantia
   AREA_UNCLEAN, // Alue epäsiisti
   ACTIONS_AGAINST_TRAFFIC_ARRANGEMENT, // Liikennejärjestelypäätöksen vastainen toiminta
