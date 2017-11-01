@@ -2,10 +2,14 @@ package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class EventPricing extends Pricing {
 
-  private static final String BASE_FEE_TEXT = "Päivän perustaksa";
-  private static final String DAY_TOTAL_FEE_TEXT = "Päivätaksa sisältäen rakenne- ja pinta-alalisät";
+  private static final String BASE_FEE_TEXT = "- Päivän perustaksa %1$.2f EUR/päivä";
+  private static final String STRUCTURE_EXTRA_FEE_TEXT = "- Rakennelisä %1$.2f EUR/päivä";
+  private static final String AREA_EXTRA_FEE_TEXT = "- Pinta-alalisä %1$.2f EUR/päivä";
   private static final String MULTIPLE_DAY_FEE_TEXT = "Maksu %1$d päivältä à %2$.2f EUR";
   private static final String LONG_EVENT_DISCOUNT_TEXT = "Alennus %1$d päivää ylittäviltä tapahtumapäiviltä";
   private static final String BUILD_DAY_FEE_TEXT = "Rakennus-/purkupäiviä";
@@ -30,17 +34,25 @@ public class EventPricing extends Pricing {
    */
   public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
+    List<String> explanation = new ArrayList<>();
     long dailyCharge = pricingConfig.getBaseCharge();
-    addChargeBasisEntry(ChargeBasisTag.EventBaseFee(), ChargeBasisUnit.PIECE, 0, priceInCents(dailyCharge), BASE_FEE_TEXT, 0);
+    explanation.add(String.format(BASE_FEE_TEXT, (priceInCents(dailyCharge) / 100.0)));
 
-    dailyCharge += calculateStructureExtras(pricingConfig, structureArea);
-    dailyCharge += calculateAreaExtras(pricingConfig, area);
-    addChargeBasisEntry(ChargeBasisTag.EventDailyFee(), ChargeBasisUnit.PIECE, 0, priceInCents(dailyCharge), DAY_TOTAL_FEE_TEXT,
-        0);
+    long structureExtras = calculateStructureExtras(pricingConfig, structureArea);
+    long areaExtras = calculateAreaExtras(pricingConfig, area);
+    if (structureExtras != 0) {
+    explanation.add(String.format(STRUCTURE_EXTRA_FEE_TEXT, (priceInCents(structureExtras) / 100.0)));
+    }
+    if (areaExtras != 0) {
+    explanation.add(String.format(AREA_EXTRA_FEE_TEXT, (priceInCents(areaExtras) / 100.0)));
+    }
+    dailyCharge += structureExtras + areaExtras;
 
     long totalCharge = dailyCharge * eventDays;
     addChargeBasisEntry(ChargeBasisTag.EventMultipleDayFee(), ChargeBasisUnit.DAY, eventDays, priceInCents(dailyCharge),
-        String.format(MULTIPLE_DAY_FEE_TEXT, eventDays, priceInCents(dailyCharge) / 100.0), priceInCents(totalCharge));
+        String.format(MULTIPLE_DAY_FEE_TEXT, eventDays, priceInCents(dailyCharge) / 100.0), priceInCents(totalCharge),
+        explanation);
+
     if (pricingConfig.getDurationDiscountLimit() != 0 && eventDays > pricingConfig.getDurationDiscountLimit()) {
       int discountDays = eventDays - pricingConfig.getDurationDiscountLimit();
       long dailyDiscount = Math.round(dailyCharge * pricingConfig.getDurationDiscountPercent() / 100.0);

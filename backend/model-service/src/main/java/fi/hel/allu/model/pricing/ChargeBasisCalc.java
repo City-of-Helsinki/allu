@@ -43,7 +43,9 @@ public class ChargeBasisCalc {
     BigDecimal totalPrice = BigDecimal.ZERO;
     for (ChargeBasisEntry se : simpleEntries) {
       invoiceRows.add(
-          new InvoiceRow(se.getUnit(), se.getQuantity(), se.getText(), se.getUnitPrice(), se.getNetPrice()));
+          new InvoiceRow(se.getUnit(), se.getQuantity(), se.getText(), se.getExplanation(),
+              se.getUnitPrice(),
+              se.getNetPrice()));
       BigDecimal rowPrice = BigDecimal.valueOf(se.getNetPrice());
       if(se.getTag() != null && !se.getTag().isEmpty()) {
         rowPrice = addMultiplierRows(invoiceRows, se.getTag(), rowPrice, " ");
@@ -59,7 +61,8 @@ public class ChargeBasisCalc {
     for (ChargeBasisEntry me : multiplierEntries.getOrDefault(tag, Collections.emptyList())) {
       final BigDecimal newTotalPrice = BigDecimal.valueOf(me.getQuantity()).multiply(totalPrice);
       final int diff = newTotalPrice.subtract(totalPrice).setScale(0, RoundingMode.UP).intValue();
-      invoiceRows.add(new InvoiceRow(ChargeBasisUnit.PIECE, 1, me.getText(), diff, diff));
+      invoiceRows
+          .add(new InvoiceRow(ChargeBasisUnit.PIECE, 1, me.getText(), me.getExplanation(), diff, diff));
       totalPrice = newTotalPrice;
     }
     return totalPrice;

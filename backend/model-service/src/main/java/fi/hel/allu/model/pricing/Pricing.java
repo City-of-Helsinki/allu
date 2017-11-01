@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.ChargeBasisEntry;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Pricing {
 
@@ -18,15 +19,21 @@ public abstract class Pricing {
   }
 
   protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
-      String explanation, int netPrice) {
+      String text, int netPrice, List<String> explanation) {
     ChargeBasisEntry entry = new ChargeBasisEntry();
     entry.setTag(tag.toString());
     entry.setUnit(unit);
     entry.setQuantity(quantity);
     entry.setUnitPrice(unitPrice);
-    entry.setText(explanation);
+    entry.setText(text);
     entry.setNetPrice(netPrice);
+    Optional.ofNullable(explanation).ifPresent(e -> entry.setExplanation(e.toArray(new String[e.size()])));
     chargeBasisEntries.add(entry);
+  }
+
+  protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
+      String text, int netPrice) {
+    addChargeBasisEntry(tag, unit, quantity, unitPrice, text, netPrice, null);
   }
 
   public int getPriceInCents() {

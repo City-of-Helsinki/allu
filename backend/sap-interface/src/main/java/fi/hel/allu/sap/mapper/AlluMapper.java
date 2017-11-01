@@ -75,12 +75,34 @@ public class AlluMapper {
   public static LineItem mapToLineItem(InvoiceRow invoiceRow, String sapMaterial) {
     LineItem lineItem = new LineItem();
     lineItem.setLineText1(invoiceRow.getText());
-    lineItem.setMaterial(sapMaterial);
-    lineItem.setNetPrice(String.format("%.02f", (double) invoiceRow.getNetPrice() / 100));
+    storeExplanation(lineItem, invoiceRow.getExplanation());
+    // Note: SAP's "Net price" is actually unit price
+    lineItem.setNetPrice(String.format("%.02f", (double) invoiceRow.getUnitPrice() / 100));
     lineItem.setOrderItemNumber(ALLU_ORDER_ITEM_NUMBER);
     lineItem.setQuantity(String.format("%.02f", invoiceRow.getQuantity()));
     lineItem.setUnit(mapToSapUnit(invoiceRow.getUnit()));
     return lineItem;
+  }
+
+  /*
+   * Store the explanation texts (max 5) to line item's line texts 2...6:
+   */
+  private static void storeExplanation(LineItem lineItem, final String[] explanation) {
+    switch (explanation.length) {
+      case 5:
+      default:
+        lineItem.setLineText6(explanation[4]);
+      case 4:
+        lineItem.setLineText5(explanation[3]);
+      case 3:
+        lineItem.setLineText4(explanation[2]);
+      case 2:
+        lineItem.setLineText3(explanation[1]);
+      case 1:
+        lineItem.setLineText2(explanation[0]);
+      case 0:
+        break;
+    }
   }
 
   /**
@@ -91,7 +113,7 @@ public class AlluMapper {
    */
   public static OrderParty mapToOrderParty(Customer customer) {
     OrderParty orderParty = new OrderParty();
-    orderParty.setSapCustomerId("99999"); // TODO: Sap ID for customer!
+    orderParty.setSapCustomerId(customer.getSapCustomerNumber());
     orderParty.setInfoName1(customer.getName());
     Optional.ofNullable(customer.getPostalAddress()).ifPresent(postalAddress -> {
       Optional.ofNullable(postalAddress.getStreetAddress()).ifPresent(sa -> orderParty.setInfoAddress1(sa));

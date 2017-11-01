@@ -9,13 +9,16 @@ public class InvoiceRow {
   private ChargeBasisUnit unit;
   private double quantity;
   private String text;
+  private String[] explanation;
   private int unitPrice;
   private int netPrice;
 
-  public InvoiceRow(ChargeBasisUnit unit, double quantity, String text, int unitPrice, int netPrice) {
+  public InvoiceRow(ChargeBasisUnit unit, double quantity, String text, String[] explanation, int unitPrice,
+      int netPrice) {
     this.unit = unit;
     this.quantity = quantity;
     this.text = text;
+    this.explanation = explanation;
     this.unitPrice = unitPrice;
     this.netPrice = netPrice;
   }
@@ -37,7 +40,7 @@ public class InvoiceRow {
 
   /**
    * Get the amount of units on this row
-   * 
+   *
    * @return
    */
   public double getQuantity() {
@@ -49,7 +52,7 @@ public class InvoiceRow {
   }
 
   /**
-   * Get the explanatory text for the row
+   * Get the text for the row
    */
   public String getText() {
     return text;
@@ -57,6 +60,18 @@ public class InvoiceRow {
 
   public void setText(String text) {
     this.text = text;
+  }
+
+  /**
+   * Get the explanation texts for the row (note: SAP only supports 5 pieces of
+   * explanatory texts per row)
+   */
+  public String[] getExplanation() {
+    return explanation == null ? new String[0] : explanation;
+  }
+
+  public void setExplanation(String[] explanation) {
+    this.explanation = explanation;
   }
 
   /**

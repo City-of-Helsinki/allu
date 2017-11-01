@@ -244,6 +244,7 @@ create table allu.charge_basis (
     unit text not null,
     quantity double precision not null,
     text text not null,
+    explanation text[],
     unit_price integer not null,
     net_price integer not null);
 
@@ -344,6 +345,7 @@ create table allu.invoice_row (
   unit text not null,
   quantity double precision not null,
   text text not null,
+  explanation text[],
   unit_price integer not null,
   net_price integer not null
 );

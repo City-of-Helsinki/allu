@@ -60,9 +60,9 @@ public class SapSpec {
 
             final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow, "DUMMY_MATERIAL");
 
-            it("Has the proper net price", () -> {
-              final int netPrice = (int) (Double.parseDouble(lineItem.getNetPrice()) * 100);
-              assertEquals(invoiceRow.getNetPrice(), netPrice);
+            it("Has the proper unit price", () -> {
+              final int unitPrice = (int) (Double.parseDouble(lineItem.getNetPrice()) * 100);
+              assertEquals(invoiceRow.getUnitPrice(), unitPrice);
             });
 
             it("Has the proper line text", () -> {
