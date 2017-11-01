@@ -14,7 +14,8 @@ create table allu.customer (
     email text,
     phone text,
     sap_customer_number text,
-    is_active boolean not null);
+    is_active boolean not null,
+    invoicing_prohibited boolean not null);
 
 create table allu.city_district (
   id serial primary key,

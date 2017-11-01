@@ -21,6 +21,7 @@ public class CustomerJson {
   private String ovt;
   private boolean active;
   private String sapCustomerNumber;
+  private boolean invoicingProhibited;
 
   /**
    * in Finnish: Tietokantatunniste
@@ -131,6 +132,18 @@ public class CustomerJson {
 
   public void setSapCustomerNumber(String sapCustomerNumber) {
     this.sapCustomerNumber = sapCustomerNumber;
+  }
+
+  /**
+   * SAP invoicing prohibited (SAP laskutuskielto)
+   * @return
+   */
+  public boolean isInvoicingProhibited() {
+    return invoicingProhibited;
+  }
+
+  public void setInvoicingProhibited(boolean invoicingProhibited) {
+    this.invoicingProhibited = invoicingProhibited;
   }
 
 }

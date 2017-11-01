@@ -23,6 +23,7 @@ public class Customer implements PostalAddressItem {
   private String ovt;
   private boolean isActive = true;
   private String sapCustomerNumber;
+  private boolean invoicingProhibited = false;
 
   public Integer getId() {
     return id;
@@ -134,6 +135,11 @@ public class Customer implements PostalAddressItem {
     isActive = active;
   }
 
+  public void setActive(boolean active) {
+    // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
+    setIsActive(active);
+  }
+
   /**
    * SAP Customer number (KUNNR)
    * @return
@@ -146,9 +152,15 @@ public class Customer implements PostalAddressItem {
     this.sapCustomerNumber = sapCustomerNumber;
   }
 
-  public void setActive(boolean active) {
-    // JSON deserialization expects setActive() whereas QueryDSL expects setIsActive(). Nice!
-    setIsActive(active);
+  /**
+   * SAP invoicing prohibited (SPERR)
+   */
+  public boolean isInvoicingProhibited() {
+    return invoicingProhibited;
+  }
+
+  public void setInvoicingProhibited(boolean invoicingProhibited) {
+    this.invoicingProhibited = invoicingProhibited;
   }
 
   @Override
