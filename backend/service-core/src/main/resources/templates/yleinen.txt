@@ -1,0 +1,15 @@
+Hei
+
+Tämän sähköpostiviestin liitteenä on päätös hakemuksestanne ${applicationId} liitteineen. Mikäli teillä on kysyttävää päätökseen liittyen ottakaa yhteyttä.
+
+${accompanyingMessage}
+
+Ystävällisin terveisin,
+Johtotietopalvelu
+
+Helsingin kaupunkiympäristön asukas- ja yrityspalvelut
+Alueiden käyttö ja -valvonta
+Puh. 09 310 31940
+johtotietopalvelu@hel.fi
+www.hel.fi/katuluvat
+

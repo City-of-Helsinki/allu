@@ -1,0 +1,15 @@
+Hei
+
+Tämän sähköpostiviestin liitteenä on tilaamanne johtoselvitys ${applicationId} liitteineen. Tutustukaa selvityksen sisältöön huolellisesti ja tilatkaa siinä mahdollisesti mainitut kaapelien maastonäytöt. Mikäli teillä on kysyttävää johtoselvitykseen liittyen ottakaa yhteyttä.
+
+${accompanyingMessage}
+
+Ystävällisin terveisin,
+Johtotietopalvelu
+
+Helsingin kaupunkiympäristön asukas- ja yrityspalvelut
+Alueiden käyttö ja -valvonta
+Puh. 09 310 31940
+johtotietopalvelu@hel.fi
+www.hel.fi/katuluvat
+
