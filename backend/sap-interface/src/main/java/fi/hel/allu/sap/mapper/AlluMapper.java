@@ -91,15 +91,15 @@ public class AlluMapper {
     switch (explanation.length) {
       case 5:
       default:
-        lineItem.setLineText6(explanation[4]);
+        lineItem.setLineText6("- " + explanation[4]);
       case 4:
-        lineItem.setLineText5(explanation[3]);
+        lineItem.setLineText5("- " + explanation[3]);
       case 3:
-        lineItem.setLineText4(explanation[2]);
+        lineItem.setLineText4("- " + explanation[2]);
       case 2:
-        lineItem.setLineText3(explanation[1]);
+        lineItem.setLineText3("- " + explanation[1]);
       case 1:
-        lineItem.setLineText2(explanation[0]);
+        lineItem.setLineText2("- " + explanation[0]);
       case 0:
         break;
     }

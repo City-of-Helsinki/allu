@@ -7,9 +7,9 @@ import java.util.List;
 
 public class EventPricing extends Pricing {
 
-  private static final String BASE_FEE_TEXT = "- Päivän perustaksa %1$.2f EUR/päivä";
-  private static final String STRUCTURE_EXTRA_FEE_TEXT = "- Rakennelisä %1$.2f EUR/päivä";
-  private static final String AREA_EXTRA_FEE_TEXT = "- Pinta-alalisä %1$.2f EUR/päivä";
+  private static final String BASE_FEE_TEXT = "Päivän perustaksa %1$.2f EUR/päivä";
+  private static final String STRUCTURE_EXTRA_FEE_TEXT = "Rakennelisä %1$.2f EUR/päivä";
+  private static final String AREA_EXTRA_FEE_TEXT = "Pinta-alalisä %1$.2f EUR/päivä";
   private static final String MULTIPLE_DAY_FEE_TEXT = "Maksu %1$d päivältä à %2$.2f EUR";
   private static final String LONG_EVENT_DISCOUNT_TEXT = "Alennus %1$d päivää ylittäviltä tapahtumapäiviltä";
   private static final String BUILD_DAY_FEE_TEXT = "Rakennus-/purkupäiviä";
