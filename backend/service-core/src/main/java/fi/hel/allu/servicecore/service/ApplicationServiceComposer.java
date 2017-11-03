@@ -1,12 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
-import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Service for composing different application related services together. The main purpose of this class is to avoid circular references
@@ -32,8 +30,7 @@ public class ApplicationServiceComposer {
   private SearchService searchService;
   private ApplicationJsonService applicationJsonService;
   private ApplicationHistoryService applicationHistoryService;
-  private AttachmentService attachmentService;
-  private AlluMailService alluMailService;
+  private MailComposerService mailComposerService;
   private UserService userService;
 
   @Autowired
@@ -43,16 +40,14 @@ public class ApplicationServiceComposer {
       SearchService searchService,
       ApplicationJsonService applicationJsonService,
       ApplicationHistoryService applicationHistoryService,
-      AttachmentService attachmentService,
-      @Lazy AlluMailService alluMailService,
+      @Lazy MailComposerService mailComposerService,
       UserService userService) {
     this.applicationService = applicationService;
     this.projectService = projectService;
     this.searchService = searchService;
     this.applicationJsonService = applicationJsonService;
     this.applicationHistoryService = applicationHistoryService;
-    this.attachmentService = attachmentService;
-    this.alluMailService = alluMailService;
+    this.mailComposerService = mailComposerService;
     this.userService = userService;
   }
 
@@ -244,34 +239,11 @@ public class ApplicationServiceComposer {
    */
   public void sendDecision(int applicationId, DecisionDetailsJson decisionDetailsJson)
   {
-    ApplicationJson application = replaceDistributionList(applicationId,
+    ApplicationJson applicationJson = replaceDistributionList(applicationId,
         decisionDetailsJson.getDecisionDistributionList());
-    String subject = String.format(subjectFor(application.getType()), application.getApplicationId());
-    List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
-        .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
-    Stream<Attachment> attachments = application.getAttachmentList().stream()
-        .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())));
-    alluMailService.sendDecision(applicationId, emailRecipients, subject,
-        String.format("%s.pdf", application.getApplicationId()), decisionDetailsJson.getMessageBody(),
-        attachments);
+    mailComposerService.sendDecision(applicationJson, decisionDetailsJson);
   }
 
-  private String subjectFor(ApplicationType type) {
-    switch (type) {
-    case AREA_RENTAL:
-      return "Aluevarauspäätös %s";
-    case CABLE_REPORT:
-      return "Johtoselvitys %s";
-    case EVENT:
-      return "Tapahtumapäätös %s";
-    case EXCAVATION_ANNOUNCEMENT:
-      return "Kaivuilmoitus %s";
-    case PLACEMENT_CONTRACT:
-      return "Sijoitussopimus %s";
-    default:
-      return "Päätös %s";
-    }
-  }
 
   /*
    * Replaces distribution list of an application.
