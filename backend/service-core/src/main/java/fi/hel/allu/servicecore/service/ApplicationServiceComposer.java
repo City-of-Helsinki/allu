@@ -4,11 +4,9 @@ import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.mail.model.MailMessage.Attachment;
 import fi.hel.allu.model.domain.Application;
-import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 import fi.hel.allu.servicecore.service.applicationhistory.ApplicationHistoryService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -212,28 +210,6 @@ public class ApplicationServiceComposer {
   private List<ApplicationJson> getFullyPopulatedApplications(List<Integer> ids) {
     List<Application> foundApplications = applicationService.findApplicationsById(ids);
     return foundApplications.stream().map(a -> applicationJsonService.getFullyPopulatedApplication(a)).collect(Collectors.toList());
-  }
-
-  /**
-   * Get the charge basis entries for an application
-   *
-   * @param id the application ID
-   * @return the charge basis entries for the application
-   */
-  public List<ChargeBasisEntry> getChargeBasis(int id) {
-    return applicationService.getChargeBasis(id);
-  }
-
-  /**
-   * Set the manual charge basis entries for an application
-   *
-   * @param id the application ID
-   * @param chargeBasisEntries the charge basis entries to store. Only entries
-   *          that are marked as manually set will be used
-   * @return the new charge basis entries for the application
-   */
-  public List<ChargeBasisEntry> setChargeBasis(int id, List<ChargeBasisEntry> chargeBasisEntries) {
-    return applicationService.setChargeBasis(id, chargeBasisEntries);
   }
 
   /**

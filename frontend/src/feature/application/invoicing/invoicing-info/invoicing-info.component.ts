@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {CustomerType} from '../../../../model/customer/customer-type';
 import {EnumUtil} from '../../../../util/enum.util';
@@ -11,6 +11,9 @@ import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Application} from '../../../../model/application/application';
 import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
 import {InvoicingAddressForm} from '../../../customerregistry/invoicing-address/invoicing-address.form';
+import {NotificationService} from '../../../../service/notification/notification.service';
+import {findTranslation} from '../../../../util/translations';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
   selector: 'invoicing-info',
@@ -19,12 +22,10 @@ import {InvoicingAddressForm} from '../../../customerregistry/invoicing-address/
 })
 export class InvoicingInfoComponent implements OnInit {
 
-  @Input() parentForm: FormGroup;
-
   customerTypes = EnumUtil.enumValues(CustomerType);
   invoicePartitions = EnumUtil.enumValues(InvoicePartition);
-  invoicingInfoForm: FormGroup;
-  invoicingAddressForm: FormGroup;
+  infoForm: FormGroup;
+  addressForm: FormGroup;
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
@@ -33,15 +34,25 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.invoicingInfoForm = InvoicingInfoForm.initialForm(this.fb);
-    this.invoicingAddressForm = <FormGroup>this.invoicingInfoForm.get('invoicingAddress');
-    this.notBillableCtrl = <FormControl>this.invoicingInfoForm.get('notBillable');
-    this.notBillableReasonCtrl = <FormControl>this.invoicingInfoForm.get('notBillableReason');
+    this.infoForm = InvoicingInfoForm.initialForm(this.fb);
+    this.addressForm = <FormGroup>this.infoForm.get('invoicingAddress');
+    this.notBillableCtrl = <FormControl>this.infoForm.get('notBillable');
+    this.notBillableReasonCtrl = <FormControl>this.infoForm.get('notBillableReason');
 
-    this.parentForm.addControl('invoicingInfo', this.invoicingInfoForm);
     this.patchInfo(this.applicationState.application);
     Some(this.applicationState.application.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
+  }
+
+  onSubmit(): void {
+    this.saveApplicationInfo()
+      .subscribe(
+        rows => NotificationService.message(findTranslation('invoice.action.save')),
+        error => NotificationService.errorMessage(error));
+  }
+
+  cancel(): void {
+    this.infoForm.reset();
   }
 
   public invoiceRecipientChange(recipient: InvoicingAddressForm) {
@@ -55,7 +66,7 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   private patchInfo(application: Application): void {
-    this.invoicingInfoForm.patchValue({
+    this.infoForm.patchValue({
       notBillable: application.notBillable,
       notBillableReason: application.notBillableReason
     });
@@ -64,22 +75,35 @@ export class InvoicingInfoComponent implements OnInit {
   private findAndPatchCustomer(id: number): void {
     this.disableCustomerEdit();
     this.customerHub.findCustomerById(id)
-      .subscribe(customer => this.invoicingAddressForm.patchValue(CustomerForm.fromCustomer(customer)));
+      .subscribe(customer => this.addressForm.patchValue(CustomerForm.fromCustomer(customer)));
   }
 
   private onNotBillableChange(notBillable: boolean) {
     if (notBillable) {
       this.notBillableReasonCtrl.setValidators([Validators.required]);
-      this.invoicingInfoForm.removeControl('invoicingAddress');
+      this.infoForm.removeControl('invoicingAddress');
     } else {
       this.notBillableReasonCtrl.clearValidators();
-      this.invoicingInfoForm.addControl('invoicingAddress', this.invoicingAddressForm);
+      this.infoForm.addControl('invoicingAddress', this.addressForm);
     }
   }
 
   private disableCustomerEdit(): void {
-    Object.keys(this.invoicingAddressForm.controls)
+    Object.keys(this.addressForm.controls)
       .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
-      .forEach(key => this.invoicingAddressForm.get(key).disable({emitEvent: false}));
+      .forEach(key => this.addressForm.get(key).disable({emitEvent: false}));
+  }
+
+  private saveApplicationInfo(): Observable<Application> {
+    let application = this.applicationState.application;
+
+    const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
+    application.notBillable = invoicingInfo.notBillable;
+    application.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;
+
+    const invoicingAddress: InvoicingAddressForm = this.addressForm.getRawValue();
+    application.invoiceRecipientId = Some(invoicingAddress).map(recipient => recipient.id).orElse(undefined);
+
+    return this.applicationState.save(application);
   }
 }

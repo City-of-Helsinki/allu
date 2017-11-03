@@ -227,28 +227,4 @@ public class ApplicationServiceTest extends MockServices {
     assertNotNull(response.get(1).getCustomersWithContacts().get(0).getCustomer().getId());
     assertEquals("MockName2", response.get(1).getName());
   }
-
-  @Test
-  public void testGetChargeBasis() {
-    ChargeBasisEntry entry = new ChargeBasisEntry();
-    entry.setText("Row row row your boat");
-    Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(ChargeBasisEntry[].class), Mockito.anyInt()))
-        .then(invocation -> new ResponseEntity<>(new ChargeBasisEntry[] { entry }, HttpStatus.OK));
-
-    List<ChargeBasisEntry> result = applicationService.getChargeBasis(99);
-
-    assertEquals(1, result.size());
-    assertEquals("Row row row your boat", result.get(0).getText());
-  }
-
-  @Test
-  public void testSetChargeBasis() {
-    Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
-        Mockito.eq(ChargeBasisEntry[].class), Mockito.eq(99)))
-        .then(invocation -> new ResponseEntity<>(new ChargeBasisEntry[] {}, HttpStatus.OK));
-
-    applicationService.setChargeBasis(99, Collections.emptyList());
-    Mockito.verify(restTemplate).exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
-        Mockito.eq(ChargeBasisEntry[].class), Mockito.eq(99));
-  }
 }

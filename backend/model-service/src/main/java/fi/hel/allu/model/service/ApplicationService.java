@@ -5,17 +5,14 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
-import fi.hel.allu.model.dao.ChargeBasisDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.*;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -30,16 +27,16 @@ public class ApplicationService {
 
   private ApplicationDao applicationDao;
   private PricingService pricingService;
-  private ChargeBasisDao chargeBasisDao;
+  private ChargeBasisService chargeBasisService;
   private InvoiceService invoiceService;
   private CustomerDao customerDao;
 
   @Autowired
   public ApplicationService(ApplicationDao applicationDao, PricingService pricingService,
-      ChargeBasisDao chargeBasisDao, InvoiceService invoiceService, CustomerDao customerDao) {
+    ChargeBasisService chargeBasisService, InvoiceService invoiceService, CustomerDao customerDao) {
     this.applicationDao = applicationDao;
     this.pricingService = pricingService;
-    this.chargeBasisDao = chargeBasisDao;
+    this.chargeBasisService = chargeBasisService;
     this.invoiceService = invoiceService;
     this.customerDao = customerDao;
   }
@@ -101,10 +98,9 @@ public class ApplicationService {
    */
   @Transactional
   public Application update(int id, Application application) {
-    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
-    pricingService.updatePrice(application, chargeBasisEntries);
-    chargeBasisDao.setChargeBasis(id, chargeBasisEntries, false);
-    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisDao.getChargeBasis(id)));
+    List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
+    chargeBasisService.setCalculatedChargeBasis(id, chargeBasisEntries);
+    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(id)));
     Application result = applicationDao.update(id, application);
     return result;
   }
@@ -141,10 +137,10 @@ public class ApplicationService {
     if (application.getId() != null) {
       throw new IllegalArgumentException("Id must be null for insert");
     }
-    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
-    pricingService.updatePrice(application, chargeBasisEntries);
+    List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
+    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisEntries));
     Application result = applicationDao.insert(application);
-    chargeBasisDao.setChargeBasis(result.getId(), chargeBasisEntries, false);
+    chargeBasisService.setCalculatedChargeBasis(result.getId(), chargeBasisEntries);
     return result;
   }
 
@@ -191,24 +187,6 @@ public class ApplicationService {
   }
 
   /**
-   * Set the manually set charge basis entries for application.
-   *
-   * @param applicationId application's database id
-   * @param chargeBasisEntries The charge basis entries to set (only the ones
-   *          marked as manually set are used)
-   * @return Application's charge basis entries after operation
-   */
-  @Transactional
-  public List<ChargeBasisEntry> setManualChargeBasis(int applicationId, List<ChargeBasisEntry> chargeBasisEntries) {
-    chargeBasisDao.setChargeBasis(applicationId,
-        chargeBasisEntries.stream().filter(r -> r.getManuallySet() == true).collect(Collectors.toList()), true);
-    Application application = findById(applicationId);
-    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisDao.getChargeBasis(applicationId)));
-    applicationDao.update(applicationId, application);
-    return chargeBasisDao.getChargeBasis(applicationId);
-  }
-
-  /**
    * Find applications that are ending in the given time range and don't already
    * have a notification sent
    *
@@ -251,6 +229,17 @@ public class ApplicationService {
   @Transactional(readOnly = true)
   public List<ApplicationWithContacts> findRelatedApplicationsWithContacts(List<Integer> contactIds) {
     return applicationDao.findRelatedApplicationsWithContacts(contactIds);
+  }
+
+  /**
+   * Updates applications pricing for specified application
+   * @param applicationId id of application to update
+   */
+  @Transactional
+  public void updateApplicationPricing(int applicationId) {
+    Application application = findById(applicationId);
+    application.setCalculatedPrice(pricingService.totalPrice(chargeBasisService.getChargeBasis(applicationId)));
+    applicationDao.update(applicationId, application);
   }
 
   /*

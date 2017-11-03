@@ -5,6 +5,7 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 import fi.hel.allu.model.querydsl.ExcludingMapper.NullHandling;
@@ -15,8 +16,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplicationComment.applicationComment;
 import static fi.hel.allu.QChargeBasis.chargeBasis;
 
 @Repository

@@ -22,7 +22,8 @@
         <div fxLayout="row" fxLayoutWrap class="spaced-out">
             <div fxFlex="20">
                 <mat-form-field class="input-full-width">
-                    <input matInput type="number" formControlName="quantity" placeholder="Määrä" required/>
+                    <input matInput type="number" formControlName="quantity"  required
+                           placeholder="{{'chargeBasis.quantity' | translation}}"/>
                     <mat-error>
                         <field-error [form]="chargeBasisEntryForm" field="quantity" hasError="required">
                             {{'chargeBasis.field.quantityMissing' | translation}}
@@ -46,7 +47,8 @@
             </div>
             <div fxFlex="20">
                 <mat-form-field class="input-full-width">
-                    <input matInput type="number" formControlName="unitPrice" placeholder="Yksikköhinta" required/>
+                    <input matInput type="number" formControlName="unitPrice" required
+                           placeholder="{{'chargeBasis.unitPrice' | translation}}"/>
                     <div matSuffix>€</div>
                     <mat-error>
                         <field-error [form]="chargeBasisEntryForm" field="unitPrice" hasError="required">
@@ -57,7 +59,7 @@
             </div>
             <div fxFlex="20">
                 <mat-form-field class="input-full-width">
-                    <input matInput type="number" formControlName="netPrice" placeholder="Kokonaishinta"/>
+                    <input matInput type="number" formControlName="netPrice" placeholder="{{'chargeBasis.netPrice' | translation}}"/>
                     <div matSuffix>€</div>
                 </mat-form-field>
             </div>

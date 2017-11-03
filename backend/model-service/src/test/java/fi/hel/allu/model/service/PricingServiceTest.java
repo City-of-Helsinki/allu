@@ -94,9 +94,8 @@ public class PricingServiceTest {
     location.setFixedLocationIds(fixedLocationIds);
     location.setApplicationId(application.getId());
     locationDao.insert(location);
-    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
-    pricingService.updatePrice(application, chargeBasisEntries);
-    assertEquals(283500, application.getCalculatedPrice().intValue());
+    List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
+    assertEquals(283500, pricingService.totalPrice(chargeBasisEntries));
     checkPrice(application, 283500);
   }
 
@@ -288,13 +287,11 @@ public class PricingServiceTest {
    * price
    */
   private void checkPrice(Application application, int expectedPrice) {
-    List<ChargeBasisEntry> chargeBasisEntries = new ArrayList<>();
+    List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
 
-    pricingService.updatePrice(application, chargeBasisEntries);
-
-    assertEquals(expectedPrice, application.getCalculatedPrice().intValue());
+    assertEquals(expectedPrice, pricingService.totalPrice(chargeBasisEntries));
     int invoiced = chargeBasisEntries.stream().mapToInt(entry -> entry.getNetPrice()).sum();
-    assertEquals(application.getCalculatedPrice().intValue(), invoiced);
+    assertEquals(expectedPrice, invoiced);
     for (ChargeBasisEntry chargeBasisEntry : chargeBasisEntries) {
       double error = Math.abs(chargeBasisEntry.getNetPrice() - chargeBasisEntry.getUnitPrice() * chargeBasisEntry.getQuantity());
       assertTrue(error < 0.00001);

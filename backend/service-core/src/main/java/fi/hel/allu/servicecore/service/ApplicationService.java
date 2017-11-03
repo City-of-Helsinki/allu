@@ -92,33 +92,6 @@ public class ApplicationService {
   }
 
   /**
-   * Get the charge basis entries for an application
-   *
-   * @param id the application ID
-   * @return the charge basis entries for the application
-   */
-  public List<ChargeBasisEntry> getChargeBasis(int id) {
-    ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.getForEntity(applicationProperties.getChargeBasisUrl(),
-        ChargeBasisEntry[].class, id);
-    return Arrays.asList(restResult.getBody());
-  }
-
-  /**
-   * Set the manual charge basis entries for an application
-   *
-   * @param id the application ID
-   * @param chargeBasisEntries the charge basis entries to store. Only entries
-   *          that are marked as manually set will be used
-   * @return the new charge basis entries for the application
-   */
-  public List<ChargeBasisEntry> setChargeBasis(int id, List<ChargeBasisEntry> chargeBasisEntries) {
-    HttpEntity<List<ChargeBasisEntry>> requestEntity = new HttpEntity<>(chargeBasisEntries);
-    ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.exchange(applicationProperties.setChargeBasisUrl(),
-        HttpMethod.PUT, requestEntity, ChargeBasisEntry[].class, id);
-    return Arrays.asList(restResult.getBody());
-  }
-
-  /**
    * Replaces distribution list of the given application.
    *
    * @param id                      Id of the application.

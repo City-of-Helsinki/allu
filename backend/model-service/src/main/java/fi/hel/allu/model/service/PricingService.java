@@ -2,7 +2,6 @@ package fi.hel.allu.model.service;
 
 import fi.hel.allu.common.domain.types.ApplicationKind;
 import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.types.EventNature;
 import fi.hel.allu.model.dao.CustomerDao;
@@ -49,23 +48,23 @@ public class PricingService {
   }
 
   /**
-   * Calculate and store the event price for the application
+   * Calculate basis for application pricing
    *
-   * @param application The application for which the pricing is calculated. New
-   *          pricing is stored in the application.
-   * @param chargeBasisEntries List where to store the charge basis entries from
-   *          the price calculation.
+   * @param application The application for which the pricing is calculated.
+   * @return List containing charge basis for application
    */
   @Transactional
-  public void updatePrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
+  public List<ChargeBasisEntry> calculateChargeBasis(Application application) {
     if (application.getType() == ApplicationType.SHORT_TERM_RENTAL) {
-      updateShortTermRentalPrice(application, chargeBasisEntries);
+      return updateShortTermRentalPrice(application);
     } else if (application.hasTypeAndKind(ApplicationType.EVENT, ApplicationKind.OUTDOOREVENT)) {
-      updateOutdoorEventPrice(application, chargeBasisEntries);
+      return updateOutdoorEventPrice(application);
     } else if (application.getType() == ApplicationType.EXCAVATION_ANNOUNCEMENT) {
-      updateExcavationAnnouncementPrice(application, chargeBasisEntries);
+      return updateExcavationAnnouncementPrice(application);
     } else if (application.getType() == ApplicationType.AREA_RENTAL) {
-      updateAreaRentalPrice(application, chargeBasisEntries);
+      return updateAreaRentalPrice(application);
+    } else {
+      return Collections.emptyList();
     }
   }
 
@@ -96,22 +95,23 @@ public class PricingService {
   /*
    * Calculate price for outdoor event
    */
-  private void updateOutdoorEventPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
+  private List<ChargeBasisEntry> updateOutdoorEventPrice(Application application) {
     Event event = (Event) application.getExtension();
     // check that application is not new
     if (application.getId() != null && event != null) {
       EventPricing pricing = new EventPricing();
       int priceInCents = calculateEventPrice(application, event, pricing);
-      application.setCalculatedPrice(priceInCents);
       // pass the charge basis entries to caller
-      chargeBasisEntries.addAll(pricing.getChargeBasisEntries());
+      return pricing.getChargeBasisEntries();
+    } else {
+      return Collections.emptyList();
     }
   }
 
   /*
    * Calculate price for short term rental application
    */
-  private void updateShortTermRentalPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
+  private List<ChargeBasisEntry> updateShortTermRentalPrice(Application application) {
     List<Location> locations = Collections.emptyList();
     if (application.getId() != null) {
       locations = locationDao.findByApplication(application.getId());
@@ -122,28 +122,27 @@ public class PricingService {
     double applicationArea = locations.stream().mapToDouble(l -> l.getEffectiveArea()).sum();
     ShortTermRentalPricing pricing = new ShortTermRentalPricing(application, applicationArea, isCompany(application));
     pricing.calculatePrice();
-    application.setCalculatedPrice(pricing.getPriceInCents());
-    chargeBasisEntries.addAll(pricing.getChargeBasisEntries());
+    return pricing.getChargeBasisEntries();
   }
 
   /*
    * Calculate price for area rental
    */
-  private void updateAreaRentalPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
-    updatePrice(application, chargeBasisEntries, new AreaRentalPricing(application));
+  private List<ChargeBasisEntry> updateAreaRentalPrice(Application application) {
+    return calculateChargeBasis(application, new AreaRentalPricing(application));
   }
 
   /*
    * Calculate price for excavation announcement
    */
-  private void updateExcavationAnnouncementPrice(Application application, List<ChargeBasisEntry> chargeBasisEntries) {
-    updatePrice(application, chargeBasisEntries, new ExcavationPricing(application));
+  private List<ChargeBasisEntry> updateExcavationAnnouncementPrice(Application application) {
+    return calculateChargeBasis(application, new ExcavationPricing(application));
   }
 
   /*
    * Calculate price using the common addLocationPrice
    */
-  private void updatePrice(Application application, List<ChargeBasisEntry> chargeBasisEntries, Pricing pricing) {
+  private  List<ChargeBasisEntry> calculateChargeBasis(Application application, Pricing pricing) {
     List<Location> locations = Collections.emptyList();
     if (application.getId() != null) {
       locations = locationDao.findByApplication(application.getId());
@@ -151,8 +150,7 @@ public class PricingService {
     for (Location l : locations) {
       pricing.addLocationPrice(l.getLocationKey(), l.getEffectiveArea(), locationDao.getPaymentClass(l.getId()));
     }
-    application.setCalculatedPrice(pricing.getPriceInCents());
-    chargeBasisEntries.addAll(pricing.getChargeBasisEntries());
+    return pricing.getChargeBasisEntries();
   }
 
   /*

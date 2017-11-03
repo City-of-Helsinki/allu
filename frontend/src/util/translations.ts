@@ -810,16 +810,19 @@ export const translations = {
       MONTH: 'kk',
       YEAR: 'v'
     },
+    quantity: 'Määrä',
+    unitPrice: 'Yksikköhinta',
+    netPrice: 'Kokonaishinta',
     field: {
       rowTextMissing: 'Laiminlyöntimaksu puuttuu',
-      quantityMissing: 'Kesto puuttuu'
+      quantityMissing: 'Määrä puuttuu'
     },
     action: {
-      accepted: 'Laskurivi hyväksytty laskutukseen'
+      save: 'Laskuperusteet tallennettu'
     },
     error: {
-      fetch: 'Laskurivien hakeminen epäonnistui',
-      save: 'Laskurivien tallentaminen epäonnistui'
+      fetch: 'Laskuperusteiden hakeminen epäonnistui',
+      save: 'Laskuperusteiden tallentaminen epäonnistui'
     }
   },
   workqueue: {

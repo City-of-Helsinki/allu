@@ -1,23 +1,15 @@
-<form [formGroup]="invoicingForm" (ngSubmit)="onSubmit()">
-    <div class="row">
-        <div class="col m12">
-            <invoicing-info [parentForm]="invoicingForm"></invoicing-info>
-        </div>
+<div fxLayout="row" fxLayoutWrap>
+    <div fxFlex="100">
+        <invoicing-info></invoicing-info>
     </div>
-    <div class="row">
-        <div class="col m12">
-            <charge-basis [parentForm]="invoicingForm" [applicationId]="applicationId"></charge-basis>
-        </div>
+</div>
+<div fxLayout="row" fxLayoutWrap>
+    <div fxFlex="100">
+        <charge-basis [applicationId]="applicationId"></charge-basis>
     </div>
-    <div class="row" *ngIf="invoicingForm.dirty">
-        <div class="col m12">
-            <button type="submit" mat-raised-button color="primary" [disabled]="!invoicingForm.valid">TALLENNA</button>
-            <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
-        </div>
-    </div>
-</form>
-<div class="row">
-    <div class="col m12">
+</div>
+<div fxLayout="row" fxLayoutWrap>
+    <div fxFlex="100">
         <invoice-comments [applicationId]="applicationId"></invoice-comments>
     </div>
 </div>

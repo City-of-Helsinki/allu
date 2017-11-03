@@ -9,6 +9,7 @@ import {NotificationService} from '../../../../service/notification/notification
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
+import {FormUtil} from '../../../../util/form.util';
 
 
 @Component({
@@ -20,8 +21,8 @@ import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basi
 })
 export class ChargeBasisComponent implements OnInit, OnDestroy {
 
-  @Input() parentForm: FormGroup;
   @Input() applicationId: number;
+  form: FormGroup;
   chargeBasisEntries: FormArray;
 
   private rowSubscription = new Subscription();
@@ -30,10 +31,12 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   constructor(private fb: FormBuilder, private dialog: MatDialog, private invoiceHub: InvoiceHub) {
     this.chargeBasisEntries = fb.array([]);
+    this.form = this.fb.group({
+      chargeBasisEntries: this.chargeBasisEntries
+    });
   }
 
   ngOnInit(): void {
-    this.parentForm.addControl('chargeBasisEntries', this.chargeBasisEntries);
     this.invoiceHub.loadChargeBasisEntries(this.applicationId)
       .subscribe(entries => {}, error => NotificationService.error(error));
 
@@ -45,35 +48,46 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.rowSubscription.unsubscribe();
   }
 
-  newRow(): void {
-    this.openModal(new ChargeBasisEntry(ChargeBasisUnit.DAY)).subscribe(entry => {
-      this.addEntry(entry);
-      this.parentForm.markAsDirty();
-    });
+  newEntry(): void {
+    this.openModal(new ChargeBasisEntry(ChargeBasisUnit.DAY))
+      .switchMap(entry => this.addEntry(entry))
+      .subscribe(
+        saved => NotificationService.translateMessage('chargeBasis.action.save'),
+        error => NotificationService.error(error)
+      );
   }
 
-  editRow(index: number): void {
-    let entry = ChargeBasisEntryForm.toChargeBasisEntry(this.chargeBasisEntries.at(index).value);
-    this.openModal(entry)
-      .subscribe(updatedEntry => {
-        console.log('updatedEntry', updatedEntry);
-        this.updateEntry(updatedEntry, index);
-        this.parentForm.markAsDirty();
-      });
+  editEntry(index: number): void {
+    const entryForm = <FormGroup>this.chargeBasisEntries.at(index);
+    this.openModal(ChargeBasisEntryForm.toChargeBasisEntry(entryForm.getRawValue()))
+      .switchMap(updatedEntry => this.updateEntry(updatedEntry, index))
+      .subscribe(
+          saved => NotificationService.translateMessage('chargeBasis.action.save'),
+          error => NotificationService.error(error)
+        );
+  }
+
+  removeEntry(index: number): void {
+    this.chargeBasisEntries.removeAt(index);
+    this.saveEntries().subscribe(
+      saved => NotificationService.translateMessage('chargeBasis.action.save'),
+      error => NotificationService.error(error)
+    );
   }
 
   private entriesUpdated(entries: Array<ChargeBasisEntry>): void {
-    this.chargeBasisEntries = this.fb.array([]);
-    this.parentForm.setControl('chargeBasisEntries', this.chargeBasisEntries);
-    entries.forEach(entry => this.addEntry(entry));
+    FormUtil.clearArray(this.chargeBasisEntries);
+    entries.forEach(entry => this.chargeBasisEntries.push(ChargeBasisEntryForm.formGroup(this.fb, entry)));
   }
 
-  private addEntry(entry: ChargeBasisEntry): void {
+  private addEntry(entry: ChargeBasisEntry): Observable<Array<ChargeBasisEntry>> {
     this.chargeBasisEntries.push(ChargeBasisEntryForm.formGroup(this.fb, entry));
+    return this.saveEntries();
   }
 
-  private updateEntry(entry: ChargeBasisEntry, index: number): void {
+  private updateEntry(entry: ChargeBasisEntry, index: number): Observable<Array<ChargeBasisEntry>> {
     this.chargeBasisEntries.at(index).patchValue(ChargeBasisEntryForm.toFormValue(entry));
+    return this.saveEntries();
   }
 
   private openModal(entry?: ChargeBasisEntry): Observable<ChargeBasisEntry> {
@@ -86,5 +100,10 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
     this.dialogRef.componentInstance.chargeBasisEntry = entry;
     return this.dialogRef.afterClosed()
       .filter(r => !!r);
+  }
+
+  private saveEntries(): Observable<Array<ChargeBasisEntry>> {
+    const entries = this.chargeBasisEntries.getRawValue().map(value => ChargeBasisEntryForm.toChargeBasisEntry(value));
+    return this.invoiceHub.saveChargeBasisEntries(this.applicationId, entries);
   }
 }

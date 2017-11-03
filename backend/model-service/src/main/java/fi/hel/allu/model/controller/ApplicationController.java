@@ -29,8 +29,6 @@ public class ApplicationController {
 
   private DecisionDao decisionDao;
 
-  private ChargeBasisDao chargeBasisDao;
-
   private HistoryDao historyDao;
 
   private DistributionEntryDao distributionEntryDao;
@@ -41,14 +39,12 @@ public class ApplicationController {
       ApplicationService applicationService,
       AttachmentDao attachmentDao,
       DecisionDao decisionDao,
-      ChargeBasisDao chargeBasisDao,
       HistoryDao historyDao,
       DistributionEntryDao distributionEntryDao,
       InvoiceService invoiceService) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
-    this.chargeBasisDao = chargeBasisDao;
     this.historyDao = historyDao;
     this.distributionEntryDao = distributionEntryDao;
     this.invoiceService = invoiceService;
@@ -202,31 +198,6 @@ public class ApplicationController {
     byte[] bytes = decisionDao.getDecision(id)
         .orElseThrow(() -> new NoSuchEntityException("Decision not found", Integer.toString(id)));
     return new ResponseEntity<>(bytes, HttpStatus.OK);
-  }
-
-  /**
-   * Get the charge basis entries for an application
-   *
-   * @param id the application ID
-   * @return the charge basis entries for the application
-   */
-  @RequestMapping(value = "/{id}/charge-basis", method = RequestMethod.GET)
-  public ResponseEntity<List<ChargeBasisEntry>> getChargeBasis(@PathVariable int id) {
-    return new ResponseEntity<>(chargeBasisDao.getChargeBasis(id), HttpStatus.OK);
-  }
-
-  /**
-   * Set the charge basis entries for an application
-   *
-   * @param id the application ID
-   * @param chargeBasisEntries the charge basis entries for the application.
-   *          Only the entries that are marked as manually set will be stored.
-   * @return the charge basis entries for the application
-   */
-  @RequestMapping(value = "/{id}/charge-basis", method = RequestMethod.PUT)
-  public ResponseEntity<List<ChargeBasisEntry>> setManualChargeBasis(@PathVariable int id,
-      @RequestBody List<ChargeBasisEntry> chargeBasisEntries) {
-    return new ResponseEntity<>(applicationService.setManualChargeBasis(id, chargeBasisEntries), HttpStatus.OK);
   }
 
   /**
