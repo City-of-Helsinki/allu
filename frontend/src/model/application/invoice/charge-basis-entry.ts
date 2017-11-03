@@ -12,7 +12,8 @@ export class ChargeBasisEntry {
     public netPrice?: number,
     public manuallySet?: boolean,
     public tag?: string,
-    public referredTag?: string
+    public referredTag?: string,
+    public explanation: string[] = []
   ) {
     quantity = quantity || ChargeBasisUnit.PIECE;
   }

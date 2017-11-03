@@ -7,4 +7,5 @@ export interface BackendChargeBasisEntry {
   manuallySet: boolean;
   tag: string;
   referredTag: string;
+  explanation: string[];
 }

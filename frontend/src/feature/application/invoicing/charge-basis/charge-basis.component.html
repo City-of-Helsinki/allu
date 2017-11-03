@@ -6,26 +6,31 @@
         </mat-card-title>
         <mat-card-content>
             <div formArrayName="chargeBasisEntries">
-                <div *ngFor="let entry of chargeBasisEntries.controls; let i=index;" class="row">
-                    <mat-card class="slim-card">
-                        <mat-card-content>
-                            <div class="invoice-row">
-                                <div class="row-controls">
-                                    <ng-container *ngIf="entry.value.manuallySet">
-                                        <button mat-icon-button (click)="editEntry(i)"><mat-icon>edit</mat-icon></button>
-                                        <button mat-icon-button (click)="removeEntry(i)"><mat-icon>clear</mat-icon></button>
-                                    </ng-container>
+                <ul>
+                    <li *ngFor="let entry of chargeBasisEntries.controls; let i=index;">
+                        <mat-card class="slim-card">
+                            <mat-card-content>
+                                <div fxLayout="row" fxLayout.sm="column" fxLayoutWrap>
+                                    <div fxFlex="5">
+                                        <ng-container *ngIf="entry.value.manuallySet">
+                                            <button mat-icon-button (click)="editEntry(i)"><mat-icon>edit</mat-icon></button>
+                                            <button mat-icon-button (click)="removeEntry(i)"><mat-icon>clear</mat-icon></button>
+                                        </ng-container>
+                                    </div>
+                                    <div fxFlex="35" class="row-header">{{entry.value.text}}</div>
+                                    <div fxFlex="20">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}</div>
+                                    <div fxFlex="20">à {{entry.value.unitPrice}} €</div>
+                                    <div fxFlex="20" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
+                                    <div fxFlex="95" fxFlexOffset="5">
+                                        <span *ngFor="let explanationEntry of entry.value.explanation; let last=last;">
+                                            {{explanationEntry | commaSeparated:last}}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div class="row-header">{{entry.value.text}}</div>
-                                <div class="row-content">
-                                    <div class="row-field-md">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}</div>
-                                    <div class="row-field-md">à {{entry.value.unitPrice}} €</div>
-                                    <div class="row-field-md row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
-                                </div>
-                            </div>
-                        </mat-card-content>
-                    </mat-card>
-                </div>
+                            </mat-card-content>
+                        </mat-card>
+                    </li>
+                </ul>
             </div>
         </mat-card-content>
     </mat-card>

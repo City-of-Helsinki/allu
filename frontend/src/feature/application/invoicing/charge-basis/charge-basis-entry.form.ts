@@ -11,7 +11,8 @@ export class ChargeBasisEntryForm {
     public netPrice?: number,
     public manuallySet?: boolean,
     public tag?: string,
-    public referredTag?: string
+    public referredTag?: string,
+    public explanation: string[] = []
   ) {}
 
   public static formGroup(fb: FormBuilder, entry: ChargeBasisEntry = new ChargeBasisEntry()): FormGroup {
@@ -23,7 +24,8 @@ export class ChargeBasisEntryForm {
       netPrice: [{value: entry.netPriceEuro, disabled: true}],
       manuallySet: [entry.manuallySet],
       tag: [entry.tag],
-      referredTag: [entry.referredTag]
+      referredTag: [entry.referredTag],
+      explanation: [entry.explanation]
     });
   }
 
@@ -37,6 +39,7 @@ export class ChargeBasisEntryForm {
     entry.unitPriceEuro = form.unitPrice;
     entry.netPriceEuro = form.netPrice;
     entry.manuallySet = form.manuallySet;
+    entry.explanation = form.explanation;
     return entry;
   }
 
@@ -49,7 +52,8 @@ export class ChargeBasisEntryForm {
       entry.netPriceEuro,
       entry.manuallySet,
       entry.tag,
-      entry.referredTag
+      entry.referredTag,
+      entry.explanation
     );
   }
 }

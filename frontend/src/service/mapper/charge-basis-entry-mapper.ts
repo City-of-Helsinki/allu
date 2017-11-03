@@ -21,7 +21,8 @@ export class ChargeBasisEntryMapper {
       backendChargeBasisEntry.netPrice,
       backendChargeBasisEntry.manuallySet,
       backendChargeBasisEntry.tag,
-      backendChargeBasisEntry.referredTag
+      backendChargeBasisEntry.referredTag,
+      backendChargeBasisEntry.explanation
     );
   }
 
@@ -34,7 +35,8 @@ export class ChargeBasisEntryMapper {
       netPrice: chargeBasisEntry.netPrice,
       manuallySet: chargeBasisEntry.manuallySet,
       tag: chargeBasisEntry.tag,
-      referredTag: chargeBasisEntry.referredTag
+      referredTag: chargeBasisEntry.referredTag,
+      explanation: chargeBasisEntry.explanation || []
     };
   }
 }

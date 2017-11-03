@@ -1,44 +1,10 @@
-.invoice-row {
-  display: flex;
 
-  .row-controls {
-    float: left;
-    display: inline-flex;
-    flex-direction: row;
-    width: 5%;
-  }
+.row-header {
+  font-weight: bold;
+}
 
-  .row-header {
-    float: left;
-    display: inline-flex;
-    flex-direction: row;
-    width: 35%;
-    font-weight: bold;
-  }
-
-  .row-content {
-    float: right;
-    display: inline-flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 60%;
-
-    .row-field-sm {
-      width: 10%;
-    }
-
-    .row-field-md {
-      width: 20%;
-    }
-
-    .row-field-lg {
-      width: 40%;
-    }
-
-    .row-field-highlight {
-      font-weight: bold;
-    }
-  }
+.row-field-highlight {
+  font-weight: bold;
 }
 
 .mat-icon.angle-45 {
