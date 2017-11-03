@@ -9,6 +9,7 @@ public class ChargeBasisEntry {
   private ChargeBasisUnit unit;
   private double quantity;
   private String text;
+  private String[] explanation;
   private int unitPrice;
   private int netPrice;
 
@@ -17,13 +18,14 @@ public class ChargeBasisEntry {
   }
 
   public ChargeBasisEntry(String tag, String referredTag, boolean manuallySet, ChargeBasisUnit unit, double quantity,
-      String text, int unitPrice, int netPrice) {
+      String text, String[] explanation, int unitPrice, int netPrice) {
     this.tag = tag;
     this.referredTag = referredTag;
     this.manuallySet = manuallySet;
     this.unit = unit;
     this.quantity = quantity;
     this.text = text;
+    this.explanation = explanation;
     this.unitPrice = unitPrice;
     this.netPrice = netPrice;
   }
@@ -91,7 +93,7 @@ public class ChargeBasisEntry {
   }
 
   /**
-   * Get the entry's explanatory text
+   * Get the entry's text
    */
   public String getText() {
     return text;
@@ -99,6 +101,18 @@ public class ChargeBasisEntry {
 
   public void setText(String text) {
     this.text = text;
+  }
+
+  /**
+   * Get the explanation texts for the row (note: SAP only supports 5 pieces of
+   * explanatory texts per row)
+   */
+  public String[] getExplanation() {
+    return explanation == null ? new String[0] : explanation;
+  }
+
+  public void setExplanation(String[] explanation) {
+    this.explanation = explanation;
   }
 
   /**
