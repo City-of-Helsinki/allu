@@ -35,7 +35,7 @@ public class AlluMailServiceSpec {
   private AlluMailService alluMailService;
 
   {
-    describe("Decision service", () -> {
+    describe("Mail sending service", () -> {
       beforeEach(() -> {
         MockitoAnnotations.initMocks(this);
         alluMailService = new AlluMailService(applicationProperties, decisionService, javaMailSender);
@@ -51,8 +51,7 @@ public class AlluMailServiceSpec {
           Mockito.when(applicationProperties.getEmailSenderAddress())
               .thenReturn("Allu Aluevaraus <noreply@allu.invalid>");
           Mockito.when(javaMailSender.createMimeMessage()).thenReturn(mockMimeMessage.get());
-          Mockito.when(decisionService.getDecision(Mockito.anyInt()))
-              .thenReturn("BODY".getBytes());
+          Mockito.when(decisionService.getDecision(Mockito.anyInt())).thenReturn("BODY".getBytes());
         });
 
         it("Should fail with forbidden email", () -> {
@@ -84,7 +83,9 @@ public class AlluMailServiceSpec {
           Assert.assertEquals("eka", contentCaptor.getValue().getBodyPart(2).getFileName());
           Assert.assertEquals("toka", contentCaptor.getValue().getBodyPart(3).getFileName());
         });
+
       });
     });
   }
+
 }
