@@ -241,6 +241,7 @@ create table allu.charge_basis (
     tag text,
     referred_tag text,
     manually_set boolean not null,
+    type text not null,
     unit text not null,
     quantity double precision not null,
     text text not null,

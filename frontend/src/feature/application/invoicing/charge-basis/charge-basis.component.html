@@ -11,17 +11,17 @@
                         <mat-card class="slim-card">
                             <mat-card-content>
                                 <div fxLayout="row" fxLayout.sm="column" fxLayoutWrap>
-                                    <div fxFlex="5">
+                                    <div fxFlex="90px">
                                         <ng-container *ngIf="entry.value.manuallySet">
                                             <button mat-icon-button (click)="editEntry(i)"><mat-icon>edit</mat-icon></button>
                                             <button mat-icon-button (click)="removeEntry(i)"><mat-icon>clear</mat-icon></button>
                                         </ng-container>
                                     </div>
-                                    <div fxFlex="35" class="row-header">{{entry.value.text}}</div>
+                                    <div fxFlex="30" class="row-header">{{entry.value.text}}</div>
                                     <div fxFlex="20">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}</div>
                                     <div fxFlex="20">à {{entry.value.unitPrice}} €</div>
                                     <div fxFlex="20" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
-                                    <div fxFlex="95" fxFlexOffset="5">
+                                    <div fxFlex="90" fxFlexOffset="90px">
                                         <span *ngFor="let explanationEntry of entry.value.explanation; let last=last;">
                                             {{explanationEntry | commaSeparated:last}}
                                         </span>

@@ -1,9 +1,11 @@
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
+import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
 
 export class ChargeBasisEntryForm {
   constructor(
+    public type?: string,
     public unit?: string,
     public quantity?: number,
     public text?: string,
@@ -17,6 +19,7 @@ export class ChargeBasisEntryForm {
 
   public static formGroup(fb: FormBuilder, entry: ChargeBasisEntry = new ChargeBasisEntry()): FormGroup {
     return fb.group({
+      type: [ChargeBasisType[entry.type], Validators.required],
       unit: [ChargeBasisUnit[entry.unit], Validators.required],
       quantity: [entry.quantity, Validators.required],
       text: [entry.text, Validators.required],
@@ -31,6 +34,7 @@ export class ChargeBasisEntryForm {
 
   public static toChargeBasisEntry(form: ChargeBasisEntryForm): ChargeBasisEntry {
     let entry = new ChargeBasisEntry(
+      ChargeBasisType[form.type],
       ChargeBasisUnit[form.unit],
       form.quantity,
       form.text
@@ -45,6 +49,7 @@ export class ChargeBasisEntryForm {
 
   public static toFormValue(entry: ChargeBasisEntry): ChargeBasisEntryForm {
     return new ChargeBasisEntryForm(
+      ChargeBasisType[entry.type],
       ChargeBasisUnit[entry.unit],
       entry.quantity,
       entry.text,

@@ -1,10 +1,12 @@
 import {ChargeBasisUnit} from './charge-basis-unit';
 import {NumberUtil} from '../../../util/number.util';
+import {ChargeBasisType} from './charge-basis-type';
 
 export const DEFAULT_FEE_CENTS = 50000;
 
 export class ChargeBasisEntry {
   constructor(
+    public type?: ChargeBasisType,
     public unit?: ChargeBasisUnit,
     public quantity?: number,
     public text?: string,

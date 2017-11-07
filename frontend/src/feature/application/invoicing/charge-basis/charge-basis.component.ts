@@ -8,7 +8,6 @@ import {CHARGE_BASIS_ENTRY_MODAL_CONFIG, ChargeBasisEntryModalComponent} from '.
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
-import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 import {FormUtil} from '../../../../util/form.util';
 
 
@@ -49,7 +48,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   newEntry(): void {
-    this.openModal(new ChargeBasisEntry(ChargeBasisUnit.DAY))
+    this.openModal()
       .switchMap(entry => this.addEntry(entry))
       .subscribe(
         saved => NotificationService.translateMessage('chargeBasis.action.save'),
@@ -91,13 +90,9 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   private openModal(entry?: ChargeBasisEntry): Observable<ChargeBasisEntry> {
-    const config = {
-      ...CHARGE_BASIS_ENTRY_MODAL_CONFIG,
-      data: {invoiceRow: entry}
-    };
+    const config = { ...CHARGE_BASIS_ENTRY_MODAL_CONFIG, data: { entry: entry } };
 
     this.dialogRef = this.dialog.open<ChargeBasisEntryModalComponent>(ChargeBasisEntryModalComponent, config);
-    this.dialogRef.componentInstance.chargeBasisEntry = entry;
     return this.dialogRef.afterClosed()
       .filter(r => !!r);
   }

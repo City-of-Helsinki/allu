@@ -1,5 +1,5 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import {Component, Inject, OnDestroy, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {EnumUtil} from '../../../../util/enum.util';
 import {ChargeBasisEntryForm} from './charge-basis-entry.form';
@@ -11,6 +11,7 @@ import {Some} from '../../../../util/option';
 import {NegligenceFeeType} from '../../../../model/application/invoice/negligence-fee-type';
 import {Subscription} from 'rxjs/Subscription';
 import {NumberUtil} from '../../../../util/number.util';
+import {ChargeBasisType, manualChargeBasisTypes} from '../../../../model/application/invoice/charge-basis-type';
 
 export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '800PX', data: {}};
 
@@ -22,30 +23,32 @@ export const CHARGE_BASIS_ENTRY_MODAL_CONFIG = {width: '800PX', data: {}};
   ]
 })
 export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
-
-  @Input() chargeBasisEntry: ChargeBasisEntry = new ChargeBasisEntry(ChargeBasisUnit.DAY);
-
   chargeBasisEntryForm: FormGroup;
   negligenceFeeTypes = EnumUtil.enumValues(NegligenceFeeType).map(t => findTranslation(['invoice.negligenceFeeType', t]));
+  chargeBasisTypes = manualChargeBasisTypes.map(type => ChargeBasisType[type]);
   unitTypes = EnumUtil.enumValues(ChargeBasisUnit);
+
   textCtrl: FormControl;
+  typeCtrl: FormControl;
   matchingTexts: Observable<Array<string>>;
 
   private formSubscription: Subscription;
 
-  constructor(public dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>, private fb: FormBuilder) {
+  constructor(public dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>,
+              @Inject(MAT_DIALOG_DATA) public data: ChargeBasisEntryModalData,
+              private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
-    this.chargeBasisEntryForm = ChargeBasisEntryForm.formGroup(this.fb, this.chargeBasisEntry);
+    let entry = this.data.entry || new ChargeBasisEntry(ChargeBasisType.NEGLIGENCE_FEE, ChargeBasisUnit.DAY);
+    this.chargeBasisEntryForm = ChargeBasisEntryForm.formGroup(this.fb, entry);
+    this.typeCtrl = <FormControl>this.chargeBasisEntryForm.get('type');
     this.textCtrl = <FormControl>this.chargeBasisEntryForm.get('text');
 
     this.formSubscription = this.chargeBasisEntryForm.valueChanges.subscribe(entryForm => this.updateNetPrice(entryForm));
-
-    this.matchingTexts = this.textCtrl.valueChanges
-      .startWith(undefined)
-      .debounceTime(300)
-      .map(text => this.filterNegligenceFeeTypes(text));
+    this.matchingTexts = this.typeCtrl.valueChanges
+      .startWith(ChargeBasisType[entry.type])
+      .switchMap(type => this.onTypeChange(type));
   }
 
   ngOnDestroy(): void {
@@ -62,6 +65,17 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
     this.dialogRef.close(undefined);
   }
 
+  private onTypeChange(type: string): Observable<string[]> {
+    if (ChargeBasisType.NEGLIGENCE_FEE === ChargeBasisType[type]) {
+      return this.textCtrl.valueChanges
+        .startWith(undefined)
+        .debounceTime(300)
+        .map(text => this.filterNegligenceFeeTypes(text));
+    } else {
+      return Observable.of([]);
+    }
+  }
+
   private filterNegligenceFeeTypes(value: string): string[] {
     return Some(value)
       .map(val => this.negligenceFeeTypes
@@ -76,4 +90,8 @@ export class ChargeBasisEntryModalComponent implements OnInit, OnDestroy {
       this.chargeBasisEntryForm.patchValue({netPrice: undefined}, {emitEvent: false});
     }
   }
+}
+
+export interface ChargeBasisEntryModalData {
+  entry: ChargeBasisEntry;
 }

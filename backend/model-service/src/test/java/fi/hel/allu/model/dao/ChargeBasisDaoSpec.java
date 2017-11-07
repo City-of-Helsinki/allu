@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import com.greghaskins.spectrum.Spectrum;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
@@ -151,6 +152,7 @@ public class ChargeBasisDaoSpec extends SpeccyTestBase {
       entry.setReferredTag(String.format("ref-%d", r));
       entry.setUnitPrice(r * 100);
       entry.setNetPrice(r * 200);
+      entry.setType(ChargeBasisType.CALCULATED);
       entry.setUnit(ChargeBasisUnit.SQUARE_METER);
       entry.setQuantity(r * 20.0);
       entries.add(entry);

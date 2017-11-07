@@ -1,11 +1,16 @@
 package fi.hel.allu.model.domain;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
+import fi.hel.allu.common.types.ChargeBasisType;
+
+import javax.validation.constraints.NotNull;
 
 public class ChargeBasisEntry {
   private String tag;
   private String referredTag;
   private boolean manuallySet;
+  @NotNull
+  private ChargeBasisType type;
   private ChargeBasisUnit unit;
   private double quantity;
   private String text;
@@ -17,11 +22,12 @@ public class ChargeBasisEntry {
     // for deserialization
   }
 
-  public ChargeBasisEntry(String tag, String referredTag, boolean manuallySet, ChargeBasisUnit unit, double quantity,
-      String text, String[] explanation, int unitPrice, int netPrice) {
+  public ChargeBasisEntry(String tag, String referredTag, boolean manuallySet, ChargeBasisType type,
+    ChargeBasisUnit unit, double quantity, String text, String[] explanation, int unitPrice, int netPrice) {
     this.tag = tag;
     this.referredTag = referredTag;
     this.manuallySet = manuallySet;
+    this.type = type;
     this.unit = unit;
     this.quantity = quantity;
     this.text = text;
@@ -68,6 +74,17 @@ public class ChargeBasisEntry {
 
   public void setManuallySet(boolean manuallySet) {
     this.manuallySet = manuallySet;
+  }
+
+  /**
+   * Type of this charge basis entry
+   */
+  public ChargeBasisType getType() {
+    return type;
+  }
+
+  public void setType(ChargeBasisType type) {
+    this.type = type;
   }
 
   /**

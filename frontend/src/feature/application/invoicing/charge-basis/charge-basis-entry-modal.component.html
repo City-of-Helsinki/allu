@@ -1,11 +1,22 @@
 <form [formGroup]="chargeBasisEntryForm" (ngSubmit)="onSubmit()">
     <h2 mat-dialog-title>{{'chargeBasis.newEntry' | translation}}</h2>
     <div mat-dialog-content>
-        <div fxLayout="row">
+        <div fxLayout="row" fxLayoutWrap>
+            <div fxFlex="50">
+                <mat-form-field class="input-full-width">
+                    <mat-select [placeholder]="'chargeBasis.type.title' | translation" class="input-full-width"
+                                formControlName="type" required>
+                        <mat-option *ngFor="let type of chargeBasisTypes" [value]="type">
+                            {{['chargeBasis.type', type, 'title'] | translation}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
             <div fxFlex="100">
                 <mat-form-field class="input-full-width">
                     <input matInput type="text" formControlName="text" required
-                           placeholder="Laiminlyöntimaksu" [matAutocomplete]="text"/>
+                           placeholder="{{['chargeBasis.type', chargeBasisEntryForm.value.type, 'basis'] | translation}}"
+                           [matAutocomplete]="text"/>
                     <mat-autocomplete #text="matAutocomplete">
                         <mat-option *ngFor="let text of matchingTexts | async" [value]="text">
                             {{text}}

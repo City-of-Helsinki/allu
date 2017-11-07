@@ -441,6 +441,11 @@
                             <column>unit</column>
                             <type>fi.hel.allu.model.querydsl.StringToChargeBasisUnit</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>charge_basis</table>
+                            <column>type</column>
+                            <type>fi.hel.allu.model.querydsl.StringToChargeBasisType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

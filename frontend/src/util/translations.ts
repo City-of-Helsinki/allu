@@ -801,6 +801,25 @@ export const translations = {
   chargeBasis: {
     title: 'Laskuperusteet',
     newEntry: 'Uusi laskuperuste',
+    type: {
+      title: 'Laskuperusteen tyyppi',
+      CALCULATED: {
+        title: 'Laskettu',
+        basis: 'Peruste'
+      },
+      NEGLIGENCE_FEE: {
+        title: 'Laiminlyöntimaksu',
+        basis: 'Laiminlyöntimaksun peruste'
+      },
+      ADDITIONAL_FEE: {
+        title: 'Ylimääräinen maksu',
+        basis: 'Ylimääräisen maksun peruste'
+      },
+      DISCOUNT: {
+        title: 'Alennus',
+        basis: 'Alennusperuste'
+      }
+    },
     unit: {
       PIECE: 'kpl',
       SQUARE_METER: 'm²',
@@ -814,7 +833,7 @@ export const translations = {
     unitPrice: 'Yksikköhinta',
     netPrice: 'Kokonaishinta',
     field: {
-      rowTextMissing: 'Laiminlyöntimaksu puuttuu',
+      rowTextMissing: 'Laskuperuste puuttuu',
       quantityMissing: 'Määrä puuttuu'
     },
     action: {

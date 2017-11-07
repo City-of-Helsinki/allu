@@ -2,6 +2,7 @@ package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import fi.hel.allu.common.exception.NotImplementedException;
+import fi.hel.allu.common.types.ChargeBasisType;
 import fi.hel.allu.model.domain.ChargeBasisEntry;
 
 import java.time.temporal.ChronoUnit;
@@ -22,6 +23,7 @@ public abstract class Pricing {
       String text, int netPrice, List<String> explanation) {
     ChargeBasisEntry entry = new ChargeBasisEntry();
     entry.setTag(tag.toString());
+    entry.setType(ChargeBasisType.CALCULATED);
     entry.setUnit(unit);
     entry.setQuantity(quantity);
     entry.setUnitPrice(unitPrice);
