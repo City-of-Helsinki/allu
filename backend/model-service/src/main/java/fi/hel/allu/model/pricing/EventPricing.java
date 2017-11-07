@@ -2,7 +2,10 @@ package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class EventPricing extends Pricing {
@@ -13,13 +16,15 @@ public class EventPricing extends Pricing {
   private static final String MULTIPLE_DAY_FEE_TEXT = "Maksu %1$d päivältä à %2$.2f EUR";
   private static final String LONG_EVENT_DISCOUNT_TEXT = "Alennus %1$d päivää ylittäviltä tapahtumapäiviltä";
   private static final String BUILD_DAY_FEE_TEXT = "Rakennus-/purkupäiviä";
-  private static final String HEAVY_STRUCTURE_TEXT = "Raskaita rakenteita +50%";
-  private static final String SALES_ACTIVITY_TEXT = "Myyntitoimintaa +50%";
+  private static final String EVENT_TYPE_DISCOUNT = "Alennus tapahtuman luonteen vuoksi";
+  private static final String FREE_EVENT_TEXT = "Korvauksetta, -100%";
+  private static final String HEAVY_STRUCTURE_TEXT = "Raskaita rakenteita, +50%";
+  private static final String SALES_ACTIVITY_TEXT = "Myyntitoimintaa, +50%";
   private static final String ECO_COMPASS_TEXT = "Ekokompassi-alennus -30%";
 
-  // Privately store the price in 1/100 of cents, convert to cents on
+  // Privately store the price in euros, convert to cents on
   // extraction:
-  private long fullPrice = 0;
+  private BigDecimal fullPrice = BigDecimal.ZERO;
   // What percentage of the full price must be paid after discounts?
   private int paymentPercentage = 100;
 
@@ -35,65 +40,65 @@ public class EventPricing extends Pricing {
   public void accumulatePrice(PricingConfiguration pricingConfig, int eventDays, int buildDays, double structureArea,
       double area) {
     List<String> explanation = new ArrayList<>();
-    long dailyCharge = pricingConfig.getBaseCharge();
-    explanation.add(String.format(BASE_FEE_TEXT, (priceInCents(dailyCharge) / 100.0)));
+    // daily charge is in euros:
+    BigDecimal dailyCharge = BigDecimal.valueOf(pricingConfig.getBaseCharge(), 4);
+    explanation.add(String.format(BASE_FEE_TEXT, dailyCharge.doubleValue()));
 
-    long structureExtras = calculateStructureExtras(pricingConfig, structureArea);
-    long areaExtras = calculateAreaExtras(pricingConfig, area);
-    if (structureExtras != 0) {
-    explanation.add(String.format(STRUCTURE_EXTRA_FEE_TEXT, (priceInCents(structureExtras) / 100.0)));
+    BigDecimal structureExtras = calculateStructureExtras(pricingConfig, structureArea);
+    BigDecimal areaExtras = calculateAreaExtras(pricingConfig, area);
+    if (structureExtras.compareTo(BigDecimal.ZERO) != 0) {
+      explanation.add(String.format(STRUCTURE_EXTRA_FEE_TEXT, structureExtras.doubleValue()));
     }
-    if (areaExtras != 0) {
-    explanation.add(String.format(AREA_EXTRA_FEE_TEXT, (priceInCents(areaExtras) / 100.0)));
+    if (areaExtras.compareTo(BigDecimal.ZERO) != 0) {
+      explanation.add(String.format(AREA_EXTRA_FEE_TEXT, areaExtras.doubleValue()));
     }
-    dailyCharge += structureExtras + areaExtras;
+    dailyCharge = dailyCharge.add(structureExtras.add(areaExtras));
 
-    long totalCharge = dailyCharge * eventDays;
+    BigDecimal totalCharge = dailyCharge.multiply(BigDecimal.valueOf(eventDays));
     addChargeBasisEntry(ChargeBasisTag.EventMultipleDayFee(), ChargeBasisUnit.DAY, eventDays, priceInCents(dailyCharge),
-        String.format(MULTIPLE_DAY_FEE_TEXT, eventDays, priceInCents(dailyCharge) / 100.0), priceInCents(totalCharge),
+        String.format(MULTIPLE_DAY_FEE_TEXT, eventDays, dailyCharge.doubleValue()), priceInCents(totalCharge),
         explanation);
 
     if (pricingConfig.getDurationDiscountLimit() != 0 && eventDays > pricingConfig.getDurationDiscountLimit()) {
       int discountDays = eventDays - pricingConfig.getDurationDiscountLimit();
-      long dailyDiscount = Math.round(dailyCharge * pricingConfig.getDurationDiscountPercent() / 100.0);
-      long discount = dailyDiscount * discountDays;
+      BigDecimal dailyDiscount = dailyCharge
+          .multiply(BigDecimal.valueOf(pricingConfig.getDurationDiscountPercent(), 2));
+      BigDecimal discount = dailyDiscount.multiply(BigDecimal.valueOf(discountDays));
       addChargeBasisEntry(ChargeBasisTag.EventLongEventDiscount(), ChargeBasisUnit.DAY, discountDays, -priceInCents(dailyDiscount),
           String.format(LONG_EVENT_DISCOUNT_TEXT, pricingConfig.getDurationDiscountLimit()),
           -priceInCents(discount));
-      totalCharge -= discount;
+      totalCharge = totalCharge.subtract(discount);
     }
     if (buildDays != 0 && pricingConfig.getBuildDiscountPercent() != 0) {
-      long dailyBuildFee = Math.round(dailyCharge * (100 - pricingConfig.getBuildDiscountPercent()) / 100.0);
-      long buildFees = buildDays * dailyBuildFee;
-      totalCharge += buildFees;
+      BigDecimal dailyBuildFee = dailyCharge
+          .multiply(BigDecimal.valueOf(100 - pricingConfig.getBuildDiscountPercent(), 2));
+      BigDecimal buildFees = BigDecimal.valueOf(buildDays).multiply(dailyBuildFee);
+      totalCharge = totalCharge.add(buildFees);
       addChargeBasisEntry(ChargeBasisTag.EventBuildDayFee(), ChargeBasisUnit.DAY, buildDays, priceInCents(dailyBuildFee),
           BUILD_DAY_FEE_TEXT,
           priceInCents(buildFees));
     }
 
-    fullPrice += totalCharge;
+    fullPrice = fullPrice.add(totalCharge);
   }
 
-  private int priceInCents(long internalPrice) {
-    // Divide by 100 to convert internal price units to price in cents.
-    int absVal = (int) ((Math.abs(internalPrice) + 50) / 100);
-    return (internalPrice < 0) ? -absVal : absVal;
+  private int priceInCents(BigDecimal priceInEuros) {
+    return priceInEuros.scaleByPowerOfTen(2).setScale(0, RoundingMode.HALF_UP).intValue();
   }
-
   /**
    * Get the calculated price in cents.
    */
   @Override
   public int getPriceInCents() {
-    return Math.round(fullPrice / 100 * paymentPercentage / 100);
+    return priceInCents(fullPrice.multiply(BigDecimal.valueOf(paymentPercentage, 2)));
   }
 
-  private long calculateStructureExtras(PricingConfiguration pricingConfig, double structureArea) {
+  private BigDecimal calculateStructureExtras(PricingConfiguration pricingConfig, double structureArea) {
     Long[] structureExtraCharges = pricingConfig.getStructureExtraCharges();
     if (structureExtraCharges == null) {
-      return 0; // No extra charges for structures
+      return BigDecimal.ZERO; // No extra charges for structures
     }
-    long total = 0L;
+    BigDecimal total = BigDecimal.ZERO;
     Double[] structureExtraChargeLimits = pricingConfig.getStructureExtraChargeLimits();
     // BillableArea is per starting 10 sq. meters
     double billableStructures = Math.ceil(structureArea / 10.0) * 10.0;
@@ -106,17 +111,18 @@ public class EventPricing extends Pricing {
       }
       double billingMultiplier = (upperLimit - lowerLimit) / 10.0; // charge is
                                                                    // per 10 sqm
-      total += (long) (0.5 + structureExtraCharges[i] * billingMultiplier);
+      total = total
+          .add(BigDecimal.valueOf(structureExtraCharges[i], 4).multiply(BigDecimal.valueOf(billingMultiplier)));
     }
     return total;
   }
 
-  private long calculateAreaExtras(PricingConfiguration pricingConfig, double area) {
+  private BigDecimal calculateAreaExtras(PricingConfiguration pricingConfig, double area) {
     Long[] areaExtraCharges = pricingConfig.getAreaExtraCharges();
     if (areaExtraCharges == null) {
-      return 0; // no extra tax for areas
+      return BigDecimal.ZERO; // no extra tax for areas
     }
-    long total = 0L;
+    BigDecimal total = BigDecimal.ZERO;
     Double[] areaExtraChargeLimits = pricingConfig.getAreaExtraChargeLimits();
     // billing is per starting full square meter:
     double billableArea = Math.ceil(area);
@@ -126,7 +132,8 @@ public class EventPricing extends Pricing {
       if (i+1 < areaExtraChargeLimits.length) {
         upperLimit = Math.min(upperLimit, areaExtraChargeLimits[i+1]);
       }
-      total += (long) (0.5 + areaExtraCharges[i] * (upperLimit - lowerLimit));
+      total = total
+          .add(BigDecimal.valueOf(areaExtraCharges[i], 4).multiply(BigDecimal.valueOf(upperLimit - lowerLimit)));
     }
     return total;
   }
@@ -134,26 +141,22 @@ public class EventPricing extends Pricing {
   public void applyDiscounts(boolean ecoCompass, boolean notBillable, boolean heavyStructure, boolean salesActivity) {
     paymentPercentage = 100;
     if (notBillable) {
+      List<String> explanation = new ArrayList<>(Collections.singletonList(FREE_EVENT_TEXT));
       paymentPercentage = 0;
       if (heavyStructure) {
-        long structureFee = fullPrice / 2;
-        addChargeBasisEntry(ChargeBasisTag.EventHeavyStructures(), ChargeBasisUnit.PIECE, 1, priceInCents(structureFee),
-            HEAVY_STRUCTURE_TEXT,
-            priceInCents(structureFee));
+        explanation.add(HEAVY_STRUCTURE_TEXT);
         paymentPercentage += 50;
       }
       if (salesActivity) {
-        long salesFee = fullPrice / 2;
-        addChargeBasisEntry(ChargeBasisTag.EventSalesActivity(), ChargeBasisUnit.PIECE, 1, priceInCents(salesFee),
-            SALES_ACTIVITY_TEXT, priceInCents(salesFee));
+        explanation.add(SALES_ACTIVITY_TEXT);
         paymentPercentage += 50;
       }
+      addChargeBasisEntry(null, ChargeBasisUnit.PERCENT, paymentPercentage - 100.0, 0, EVENT_TYPE_DISCOUNT, 0,
+          explanation);
     }
     if (ecoCompass) {
       // 30 percent discount from full price (incl. extra fees)
-      long ecoDiscount = -fullPrice * paymentPercentage / 100 * 30 / 100;
-      addChargeBasisEntry(ChargeBasisTag.EventEcoCompass(), ChargeBasisUnit.PIECE, 1, priceInCents(ecoDiscount), ECO_COMPASS_TEXT,
-          priceInCents(ecoDiscount));
+      addChargeBasisEntry(null, ChargeBasisUnit.PERCENT, -30.0, 0, ECO_COMPASS_TEXT, 0);
       paymentPercentage = paymentPercentage * 7 / 10;
     }
   }

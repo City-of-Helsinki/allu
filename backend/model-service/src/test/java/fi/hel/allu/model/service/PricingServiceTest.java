@@ -8,6 +8,7 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.LocationDao;
 import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.pricing.ChargeBasisCalc;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -258,10 +259,14 @@ public class PricingServiceTest {
       new ChargeBasisEntry("TAG2", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.DAY, 3.0, "Entry 2",
           new String[] { "Other entry", "Second item" }, 22000, 66000),
       new ChargeBasisEntry("TAG3", null, false, ChargeBasisType.CALCULATED, ChargeBasisUnit.SQUARE_METER, 123.5, "Entry 3", null, 200, 24700),
-      new ChargeBasisEntry(null, "TAG1", true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.MULTIPLY, 0.8, "20% discount", null, 0, 0),
-      new ChargeBasisEntry(null, "TAG1", true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", null, 0, 0),
-      new ChargeBasisEntry(null, "TAG2", true, ChargeBasisType.ADDITIONAL_FEE, ChargeBasisUnit.MULTIPLY, 1.2, "20% extra fee", null, 0, 0),
-      new ChargeBasisEntry(null, null, true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.MULTIPLY, 0.9, "10% discount", null, 0, 0)
+      new ChargeBasisEntry(null, "TAG1", true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.PERCENT, -20.0, "20% discount",
+          null, 0, 0),
+      new ChargeBasisEntry(null, "TAG1", true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.PERCENT, -10.0, "10% discount",
+          null, 0, 0),
+      new ChargeBasisEntry(null, "TAG2", true, ChargeBasisType.ADDITIONAL_FEE, ChargeBasisUnit.PERCENT, 20.0,
+          "20% extra fee", null, 0, 0),
+      new ChargeBasisEntry(null, null, true, ChargeBasisType.DISCOUNT, ChargeBasisUnit.PERCENT, -10.0, "10% discount",
+          null, 0, 0)
   };
 
   // The total price should be
@@ -293,12 +298,14 @@ public class PricingServiceTest {
     List<ChargeBasisEntry> chargeBasisEntries = pricingService.calculateChargeBasis(application);
 
     assertEquals(expectedPrice, pricingService.totalPrice(chargeBasisEntries));
-    int invoiced = chargeBasisEntries.stream().mapToInt(entry -> entry.getNetPrice()).sum();
+    ChargeBasisCalc cbc = new ChargeBasisCalc(chargeBasisEntries);
+    List<InvoiceRow> invoiceRows = cbc.toInvoiceRows();
+    int invoiced = invoiceRows.stream().mapToInt(entry -> entry.getNetPrice()).sum();
     assertEquals(expectedPrice, invoiced);
-    for (ChargeBasisEntry chargeBasisEntry : chargeBasisEntries) {
-      double error = Math.abs(chargeBasisEntry.getNetPrice() - chargeBasisEntry.getUnitPrice() * chargeBasisEntry.getQuantity());
+    invoiceRows.stream().forEach(r -> {
+      double error = Math.abs(r.getNetPrice() - r.getUnitPrice() * r.getQuantity());
       assertTrue(error < 0.00001);
-    }
+    });
   }
 
  private Location newLocationWithDefaults() {

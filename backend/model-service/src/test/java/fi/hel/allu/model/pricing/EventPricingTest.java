@@ -1,6 +1,7 @@
 package fi.hel.allu.model.pricing;
 
 import fi.hel.allu.model.domain.ChargeBasisEntry;
+import fi.hel.allu.model.domain.InvoiceRow;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -87,7 +88,8 @@ public class EventPricingTest {
   }
 
   private void verifyInvoicePrice(List<ChargeBasisEntry> chargeBasisEntries, int expectedPrice) {
-    int invoicePrices = chargeBasisEntries.stream().mapToInt(ir -> ir.getNetPrice()).sum();
+    List<InvoiceRow> invoiceRows = new ChargeBasisCalc(chargeBasisEntries).toInvoiceRows();
+    int invoicePrices = invoiceRows.stream().mapToInt(ir -> ir.getNetPrice()).sum();
     assertEquals(expectedPrice, invoicePrices);
   }
 }

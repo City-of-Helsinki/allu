@@ -18,9 +18,15 @@
                                         </ng-container>
                                     </div>
                                     <div fxFlex="30" class="row-header">{{entry.value.text}}</div>
-                                    <div fxFlex="20">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}</div>
-                                    <div fxFlex="20">à {{entry.value.unitPrice}} €</div>
-                                    <div fxFlex="20" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
+                                    <div fxFlex ="60" *ngIf="entry.value.unit==='PERCENT'; else normalEntry">
+                                        <div fxFlex="66"></div>
+                                        <div fxFlex="33" class="row-field-highlight">{{entry.value.quantity}} %</div>
+                                    </div>
+                                    <ng-template #normalEntry>
+                                        <div fxFlex="20">{{entry.value.quantity}} {{['chargeBasis.unit', entry.value.unit] | translation}}</div>
+                                        <div fxFlex="20">à {{entry.value.unitPrice}} €</div>
+                                        <div fxFlex="20" class="row-field-highlight">{{entry.getRawValue().netPrice}} €</div>
+                                    </ng-template>
                                     <div fxFlex="90" fxFlexOffset="90px">
                                         <span *ngFor="let explanationEntry of entry.value.explanation; let last=last;">
                                             {{explanationEntry | commaSeparated:last}}

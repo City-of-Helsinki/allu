@@ -12,14 +12,14 @@ import java.util.*;
  * Utility class for calculating from charge basis entries
  */
 public class ChargeBasisCalc {
-  /* Global multipliers don't refer to any tag, i.e. they refer to empty tag: */
+  /* Global changers don't refer to any tag, i.e. they refer to empty tag: */
   private static final String EMPTY_TAG = "";
 
   /* Simple entries (i.e., entries that don't alter some other) */
   private List<ChargeBasisEntry> simpleEntries = new ArrayList<>();
 
-  /* Multiplying entries by tag (global or line-specific) */
-  private Map<String, List<ChargeBasisEntry>> multiplierEntries = new HashMap<>();
+  /* Percent change entries by tag (global or line-specific) */
+  private Map<String, List<ChargeBasisEntry>> percentEntries = new HashMap<>();
 
   /**
    * Construct a new calculation instance. Goes through the given charge basis
@@ -29,9 +29,9 @@ public class ChargeBasisCalc {
    */
   public ChargeBasisCalc(Iterable<ChargeBasisEntry> chargeBasisEntries) {
     chargeBasisEntries.forEach(e -> {
-      if (e.getUnit() == ChargeBasisUnit.MULTIPLY) {
+      if (e.getUnit() == ChargeBasisUnit.PERCENT) {
         String referredTag = Optional.ofNullable(e.getReferredTag()).orElse(EMPTY_TAG);
-        multiplierEntries.computeIfAbsent(referredTag, k -> new ArrayList<>()).add(e);
+        percentEntries.computeIfAbsent(referredTag, k -> new ArrayList<>()).add(e);
       } else {
         simpleEntries.add(e);
       }
@@ -48,18 +48,18 @@ public class ChargeBasisCalc {
               se.getNetPrice()));
       BigDecimal rowPrice = BigDecimal.valueOf(se.getNetPrice());
       if(se.getTag() != null && !se.getTag().isEmpty()) {
-        rowPrice = addMultiplierRows(invoiceRows, se.getTag(), rowPrice, " ");
+        rowPrice = addPercentRows(invoiceRows, se.getTag(), rowPrice, " ");
       }
       totalPrice = totalPrice.add(rowPrice);
     }
-    addMultiplierRows(invoiceRows, EMPTY_TAG, totalPrice, "");
+    addPercentRows(invoiceRows, EMPTY_TAG, totalPrice, "");
     return invoiceRows;
   }
 
-  private BigDecimal addMultiplierRows(List<InvoiceRow> invoiceRows, String tag, BigDecimal totalPrice,
+  private BigDecimal addPercentRows(List<InvoiceRow> invoiceRows, String tag, BigDecimal totalPrice,
       String rowTextPrefix) {
-    for (ChargeBasisEntry me : multiplierEntries.getOrDefault(tag, Collections.emptyList())) {
-      final BigDecimal newTotalPrice = BigDecimal.valueOf(me.getQuantity()).multiply(totalPrice);
+    for (ChargeBasisEntry me : percentEntries.getOrDefault(tag, Collections.emptyList())) {
+      final BigDecimal newTotalPrice = BigDecimal.valueOf((100.0 + me.getQuantity()) / 100.0).multiply(totalPrice);
       final int diff = newTotalPrice.subtract(totalPrice).setScale(0, RoundingMode.UP).intValue();
       invoiceRows
           .add(new InvoiceRow(ChargeBasisUnit.PIECE, 1, me.getText(), me.getExplanation(), diff, diff));
