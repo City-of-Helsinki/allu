@@ -31,12 +31,8 @@ public class ChargeBasisTag {
     return new ChargeBasisTag(TagText.EvtBDF);
   }
 
-  public static ChargeBasisTag EventHeavyStructures() {
-    return new ChargeBasisTag(TagText.EvtHS);
-  }
-
-  public static ChargeBasisTag EventSalesActivity() {
-    return new ChargeBasisTag(TagText.EvtSA);
+  public static ChargeBasisTag EventFreeEventDiscount() {
+    return new ChargeBasisTag(TagText.EvtFED);
   }
 
   public static ChargeBasisTag EventEcoCompass() {
@@ -140,10 +136,8 @@ private enum TagText {
     EvtLED,
     // Event, Buid day fee
     EvtBDF,
-    // Event, Heavy structures
-    EvtHS,
-    // Event, Sales activity
-    EvtSA,
+    // Event, Free event discount
+    EvtFED,
     // Event, Eco compass
     EvtEC,
     // Area rental, Daily fee

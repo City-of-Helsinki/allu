@@ -22,7 +22,7 @@ public abstract class Pricing {
   protected void addChargeBasisEntry(ChargeBasisTag tag, ChargeBasisUnit unit, double quantity, int unitPrice,
       String text, int netPrice, List<String> explanation) {
     ChargeBasisEntry entry = new ChargeBasisEntry();
-    entry.setTag(tag.toString());
+    entry.setTag(tag == null ? null : tag.toString());
     entry.setType(ChargeBasisType.CALCULATED);
     entry.setUnit(unit);
     entry.setQuantity(quantity);
