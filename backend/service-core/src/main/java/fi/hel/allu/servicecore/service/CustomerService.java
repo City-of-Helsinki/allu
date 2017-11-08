@@ -219,4 +219,13 @@ public class CustomerService {
         .collect(Collectors.toList());
   }
 
+  public List<CustomerJson> findInvoiceRecipientsWithoutSapNumber() {
+    ResponseEntity<Customer[]> customerResult =
+        restTemplate.getForEntity(applicationProperties.getInvoiceRecipientsWithoutSAPNumberUrl(), Customer[].class);
+    return Arrays.stream(customerResult.getBody())
+        .map(customer -> applicationMapper.createCustomerJson(customer))
+        .collect(Collectors.toList());
+
+  }
+
 }

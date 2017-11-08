@@ -1,8 +1,12 @@
 package fi.hel.allu.ui.controller;
 
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.service.ContactService;
-import fi.hel.allu.servicecore.service.CustomerService;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,9 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
-
-import java.util.List;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
 
 /**
  * Controller for managing customer information.
@@ -92,5 +96,21 @@ public class CustomerController {
       @PathVariable int id,
       @Valid @RequestBody CustomerWithContactsJson customerWithContactsJson) {
     return new ResponseEntity<>(customerService.updateCustomerWithContacts(id, customerWithContactsJson), HttpStatus.OK);
+  }
+
+  /**
+   * Creates CSV containing invoice recipients without SAP customer number.
+   */
+  @RequestMapping(value = "/saporder.csv", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INVOICING')")
+  public ResponseEntity<Void> getSapCustomerOrderCSV(HttpServletResponse response) throws IOException {
+    response.setContentType("text/csv; charset=utf-8");
+    response.setHeader("Content-Disposition", "attachment; filename=" + getCustomerCSVFileName());
+    new CustomerCsvWriter(response.getWriter(), customerService.findInvoiceRecipientsWithoutSapNumber()).write();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  private String getCustomerCSVFileName() {
+    return "allu_customers_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".csv";
   }
 }

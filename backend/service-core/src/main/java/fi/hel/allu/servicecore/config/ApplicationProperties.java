@@ -646,6 +646,14 @@ public class ApplicationProperties {
   }
 
   /**
+   * @return URL for getting invoice recipients without SAP number.
+   */
+  public String getInvoiceRecipientsWithoutSAPNumberUrl() {
+    return getModelServiceUrl("/customers/sap_id_missing");
+  }
+
+
+  /**
    * @return url to send customer search queries.
    */
   public String getCustomerSearchUrl() {

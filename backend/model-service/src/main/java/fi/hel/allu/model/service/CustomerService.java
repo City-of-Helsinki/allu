@@ -196,6 +196,10 @@ public class CustomerService {
     return newContacts;
   }
 
+  public List<Customer> findInvoiceRecipientsWithoutSAPNumber() {
+    return customerDao.findInvoiceRecipientsWithoutSAPNumber();
+  }
+
   /*
    * Add a change item to given user's change history. Compare oldData with
    * newData and log all differences between them. Prefix the key names with

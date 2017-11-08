@@ -116,4 +116,13 @@ public class CustomerController {
   public ResponseEntity<List<ChangeHistoryItem>> getChanges(@PathVariable int id) {
     return new ResponseEntity<>(customerService.getCustomerChanges(id), HttpStatus.OK);
   }
+
+  /**
+   * Returns invoice recipients without SAP customer number
+   * @return
+   */
+  @RequestMapping(value = "/sap_id_missing", method = RequestMethod.GET)
+  public ResponseEntity<List<Customer>> findInvoiceRecipientsWithoutSAPNumber() {
+    return new ResponseEntity<>(customerService.findInvoiceRecipientsWithoutSAPNumber(), HttpStatus.OK);
+  }
 }
