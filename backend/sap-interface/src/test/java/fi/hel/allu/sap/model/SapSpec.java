@@ -58,7 +58,8 @@ public class SapSpec {
 
           describe("Mapped to SAP LineItem", () -> {
 
-            final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow, "DUMMY_MATERIAL");
+            final String MATERIAL = "DUMMY_MATERIAL";
+            final LineItem lineItem = AlluMapper.mapToLineItem(invoiceRow, MATERIAL);
 
             it("Has the proper unit price", () -> {
               final int unitPrice = (int) (Double.parseDouble(lineItem.getNetPrice()) * 100);
@@ -76,6 +77,10 @@ public class SapSpec {
 
             it("Has the pre-set order item number", () -> {
               assertEquals("2831300000", lineItem.getOrderItemNumber());
+            });
+
+            it("Has the requested material code", () -> {
+              assertEquals(MATERIAL, lineItem.getMaterial());
             });
           });
         });
