@@ -81,6 +81,7 @@ public class AlluMapper {
     lineItem.setOrderItemNumber(ALLU_ORDER_ITEM_NUMBER);
     lineItem.setQuantity(String.format("%.02f", invoiceRow.getQuantity()));
     lineItem.setUnit(mapToSapUnit(invoiceRow.getUnit()));
+    lineItem.setMaterial(sapMaterial);
     return lineItem;
   }
 
@@ -157,7 +158,7 @@ public class AlluMapper {
   private static String mapToSapUnit(ChargeBasisUnit unit) {
     switch (unit) {
     case DAY:
-      return "PV";
+      return "PVÄ";
     case HOUR:
       return "T";
     case MONTH:
