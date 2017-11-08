@@ -48,8 +48,6 @@ public class DecisionJson {
   private String totalRent;
   private int vatPercentage;
   private String priceReason;
-  private boolean hasCommercialActivities;
-  private boolean sportsWithHeavyStructures;
   private boolean hasEkokompassi;
   private boolean separateBill;
 
@@ -306,22 +304,6 @@ public class DecisionJson {
 
   public void setPriceReason(String priceReason) {
     this.priceReason = priceReason;
-  }
-
-  public boolean isHasCommercialActivities() {
-    return hasCommercialActivities;
-  }
-
-  public void setHasCommercialActivities(boolean hasCommercialActivities) {
-    this.hasCommercialActivities = hasCommercialActivities;
-  }
-
-  public boolean isSportsWithHeavyStructures() {
-    return sportsWithHeavyStructures;
-  }
-
-  public void setSportsWithHeavyStructures(boolean sportsWithHeavyStructures) {
-    this.sportsWithHeavyStructures = sportsWithHeavyStructures;
   }
 
   public boolean isHasEkokompassi() {

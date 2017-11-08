@@ -35,8 +35,6 @@ public class EventMapper {
     eventJson.setEntryFee(event.getEntryFee());
     eventJson.setFoodProviders(event.getFoodProviders());
     eventJson.setMarketingProviders(event.getMarketingProviders());
-    eventJson.setSalesActivity(event.isSalesActivity());
-    eventJson.setHeavyStructure(event.isHeavyStructure());
     eventJson.setFoodSales(event.isFoodSales());
     return ApplicationExtensionMapper.modelToJson(event, eventJson);
   }
@@ -55,8 +53,6 @@ public class EventMapper {
     }
     event.setFoodSales(eventJson.isFoodSales());
     event.setMarketingProviders(eventJson.getMarketingProviders());
-    event.setSalesActivity(eventJson.isSalesActivity());
-    event.setHeavyStructure(eventJson.isHeavyStructure());
     event.setFoodProviders(eventJson.getFoodProviders());
     event.setEntryFee(eventJson.getEntryFee());
     event.setEcoCompass(eventJson.isEcoCompass());

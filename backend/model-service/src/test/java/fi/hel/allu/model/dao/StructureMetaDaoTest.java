@@ -42,7 +42,7 @@ public class StructureMetaDaoTest {
     assertTrue(structureMeta.isPresent());
     // Check that there's one event-specific attribute in the metadata
     assertEquals(1,
-        structureMeta.get().getAttributes().stream().filter(a -> a.getName().equals("/extension/heavyStructure"))
+        structureMeta.get().getAttributes().stream().filter(a -> a.getName().equals("/extension/foodSales"))
             .count());
   }
 
