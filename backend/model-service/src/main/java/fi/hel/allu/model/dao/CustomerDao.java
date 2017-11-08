@@ -1,5 +1,12 @@
 package fi.hel.allu.model.dao;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
@@ -8,7 +15,10 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
+import fi.hel.allu.QApplication;
+import fi.hel.allu.QApplicationTag;
 import fi.hel.allu.QPostalAddress;
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
@@ -17,13 +27,6 @@ import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.model.domain.PostalAddress;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
@@ -182,4 +185,17 @@ public class CustomerDao {
 
     return findById(id).get();
   }
+
+  @Transactional(readOnly = true)
+  public List<Customer> findInvoiceRecipientsWithoutSAPNumber() {
+    QApplicationTag tag = QApplicationTag.applicationTag;
+    QApplication application = QApplication.application;
+    List<Integer> customerIds = queryFactory
+        .select(application.invoiceRecipientId)
+        .from(application)
+        .join(tag).on(tag.applicationId.eq(application.id))
+        .where(tag.type.eq(ApplicationTagType.SAP_ID_MISSING)).
+        fetch();
+      return findByIds(customerIds);
+    }
 }

@@ -143,6 +143,13 @@ public class TestCommon {
     return note;
   }
 
+  public ApplicationTag dummyTag(ApplicationTagType tagType) {
+    ApplicationTag tag = new ApplicationTag();
+    tag.setType(tagType);
+    tag.setCreationTime(ZonedDateTime.now());
+    return tag;
+  }
+
   /**
    * Create and insert a dummy application into database.
    *

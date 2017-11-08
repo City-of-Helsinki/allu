@@ -1,6 +1,8 @@
 package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
+
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.ModelApplication;
@@ -150,6 +152,15 @@ public class CustomerDaoSpec extends SpeccyTestBase {
         });
       });
 
+      it("should find invoice recipients without sap number", () -> {
+          Application application = testCommon.dummyOutdoorApplication("Test Application", "Test Handler");
+          application.setInvoiceRecipientId(insertedCustomer.getId());
+          insertedApplication = applicationDao.insert(application);
+          applicationDao.addTag(insertedApplication.getId(), testCommon.dummyTag(ApplicationTagType.SAP_ID_MISSING));
+          List<Customer> customers = customerDao.findInvoiceRecipientsWithoutSAPNumber();
+          assertEquals(1, customers.size());
+          assertEquals(insertedCustomer.getId(), customers.get(0).getId());
+      });
     });
   }
 }
