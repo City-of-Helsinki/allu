@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class ChargeBasisService {
@@ -33,7 +35,7 @@ public class ChargeBasisService {
   public List<ChargeBasisEntry> getChargeBasis(int applicationId) {
     ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.getForEntity(applicationProperties.getChargeBasisUrl(),
         ChargeBasisEntry[].class, applicationId);
-    return Arrays.asList(restResult.getBody());
+    return sortEntries(Arrays.asList(restResult.getBody()));
   }
 
   /**
@@ -48,6 +50,38 @@ public class ChargeBasisService {
     HttpEntity<List<ChargeBasisEntry>> requestEntity = new HttpEntity<>(chargeBasisEntries);
     ResponseEntity<ChargeBasisEntry[]> restResult = restTemplate.exchange(applicationProperties.setChargeBasisUrl(),
         HttpMethod.PUT, requestEntity, ChargeBasisEntry[].class, applicationId);
-    return Arrays.asList(restResult.getBody());
+    return sortEntries(Arrays.asList(restResult.getBody()));
   }
+
+  /**
+   * Get sorted charge basis entries for an application
+   * Entries are sorted so that entries referring to other entry come right after the entry they are referring to
+   *
+   * @param entries charge basis entries to sort
+   * @return the charge basis entries for the application
+   */
+  private List<ChargeBasisEntry> sortEntries(List<ChargeBasisEntry> entries) {
+    Predicate<ChargeBasisEntry> refersToEntry = e -> e.getReferredTag() != null;
+
+    Stream<ChargeBasisEntry> referred = entries.stream().filter(refersToEntry.negate());
+
+    Map<String, List<ChargeBasisEntry>> referring = entries.stream()
+        .filter(refersToEntry)
+        .collect(Collectors.groupingBy(ChargeBasisEntry::getReferredTag));
+
+    return referred
+        .map(ref -> concat(ref, referring.get(ref.getTag())))
+        .flatMap(List::stream)
+        .collect(Collectors.toList());
+  }
+
+  private <T> List<T> concat(T item, List<T> items) {
+    List<T> result = new ArrayList<>();
+    result.add(item);
+    if (items != null) {
+      result.addAll(items);
+    }
+    return result;
+  }
+
 }

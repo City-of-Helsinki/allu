@@ -56,6 +56,42 @@ public class ChargeBasisServiceTest {
         Mockito.verify(restTemplate).exchange(Mockito.anyString(), Mockito.eq(HttpMethod.PUT), Mockito.any(),
             Mockito.eq(ChargeBasisEntry[].class), Mockito.eq(99));
       });
+
+      it("Retrieves sorted charge basis entries", () -> {
+        ChargeBasisEntry entry1 = createEntryWithTag("tag1");
+        ChargeBasisEntry entry1ReferringTo1 = createEntryWithReferredTag(entry1.getTag());
+        ChargeBasisEntry entry2ReferringTo1 = createEntryWithReferredTag(entry1.getTag());
+
+        ChargeBasisEntry entry2 = createEntryWithTag("tag2");
+        ChargeBasisEntry entry2ReferringTo2 = createEntryWithReferredTag(entry2.getTag());
+
+        Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(ChargeBasisEntry[].class), Mockito.anyInt()))
+            .then(invocation -> new ResponseEntity<>(new ChargeBasisEntry[] {
+                entry2,  entry2ReferringTo1, entry1ReferringTo1, entry1, entry2ReferringTo2
+            }, HttpStatus.OK));
+
+        List<ChargeBasisEntry> result = chargeBasisService.getChargeBasis(99);
+
+        assertEquals(5, result.size());
+        // Main level is not sorted (eg. entry2 is before entry1 in this test)
+        assertEquals(entry2, result.get(0));
+        assertEquals(entry2ReferringTo2, result.get(1));
+        assertEquals(entry1, result.get(2));
+        assertEquals(entry2ReferringTo1, result.get(3));
+        assertEquals(entry1ReferringTo1, result.get(4));
+      });
     });
+  }
+
+  private ChargeBasisEntry createEntryWithTag(String tag) {
+    ChargeBasisEntry entry = new ChargeBasisEntry();
+    entry.setTag(tag);
+    return entry;
+  }
+
+  private ChargeBasisEntry createEntryWithReferredTag(String refersTo) {
+    ChargeBasisEntry entry = new ChargeBasisEntry();
+    entry.setReferredTag(refersTo);
+    return entry;
   }
 }

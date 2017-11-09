@@ -41,8 +41,6 @@ export class ChargeBasisDiscountComponent implements OnInit, OnDestroy {
     this.unitCtrl.valueChanges
       .takeUntil(this.destroy)
       .subscribe(unit => this.unitChanges(unit));
-
-    this.unitCtrl.updateValueAndValidity();
   }
 
   ngOnDestroy(): void {

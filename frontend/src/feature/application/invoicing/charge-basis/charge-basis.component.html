@@ -8,16 +8,13 @@
             <div formArrayName="chargeBasisEntries">
                 <ul>
                     <li *ngFor="let entry of chargeBasisEntries.controls; let i=index;">
-                        <mat-card class="slim-card">
+                        <mat-card class="slim-card" [class.indented]="entry.value.referredTag">
                             <mat-card-content>
                                 <div fxLayout="row" fxLayout.sm="column" fxLayoutWrap>
                                     <div fxFlex="90px">
                                         <ng-container *ngIf="entry.value.manuallySet">
                                             <button mat-icon-button (click)="editEntry(i)"><mat-icon>edit</mat-icon></button>
                                             <button mat-icon-button (click)="removeEntry(i)"><mat-icon>clear</mat-icon></button>
-                                        </ng-container>
-                                        <ng-container *ngIf="!entry.value.manuallySet">
-                                            <button mat-icon-button (click)="discount(i)"><mat-icon>euro_symbol</mat-icon></button>
                                         </ng-container>
                                     </div>
                                     <div fxFlex="30" class="row-header">{{entry.value.text}}</div>
