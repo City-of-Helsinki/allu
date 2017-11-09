@@ -108,8 +108,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       customerWinterTimeOperation: [undefined],
       customerWorkFinished: [undefined],
       calculatedPrice: [0],
-      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
-      priceOverrideReason: [''],
       cableReportIdentifier: this.cableReportIdentifierCtrl, // to store identifier showed to user
       cableReportId: [undefined],
       additionalInfo: [''],

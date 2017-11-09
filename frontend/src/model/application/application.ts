@@ -45,8 +45,6 @@ export class Application {
     public decisionDistributionList?: Array<DistributionEntry>,
     public attachmentList?: Array<AttachmentInfo>,
     public calculatedPrice?: number,
-    public priceOverride?: number,
-    public priceOverrideReason?: string,
     public applicationTags?: Array<ApplicationTag>,
     public comments?: Array<Comment>,
     public notBillable: boolean = false,
@@ -112,14 +110,6 @@ export class Application {
 
   set calculatedPriceEuro(priceInEuros: number) {
     this.calculatedPrice = this.toCents(priceInEuros);
-  }
-
-  get priceOverrideEuro(): number {
-    return this.toEuros(this.priceOverride);
-  }
-
-  set priceOverrideEuro(overrideInEuros: number) {
-    this.priceOverride = this.toCents(overrideInEuros);
   }
 
   get waiting(): boolean {

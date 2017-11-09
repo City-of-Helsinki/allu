@@ -64,8 +64,6 @@ export class EventDetailsComponent implements OnInit {
       foodProviders: [''],
       marketingProviders: [''],
       calculatedPrice: [0],
-      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
-      priceOverrideReason: [''],
       structureArea: [undefined, ComplexValidator.greaterThanOrEqual(0)],
       structureDescription: [''],
       structureTimes: this.fb.group({

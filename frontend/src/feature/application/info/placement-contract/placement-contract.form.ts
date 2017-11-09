@@ -8,8 +8,6 @@ export class PlacementContractForm implements ApplicationForm {
     public validityTimes?: TimePeriod,
     public diaryNumber?: string,
     public calculatedPrice?: number,
-    public priceOverride?: number,
-    public priceOverrideReason?: string,
     public additionalInfo?: string,
     public generalTerms?: string
   ) {}
@@ -27,8 +25,6 @@ export class PlacementContractForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       contract.diaryNumber,
       application.calculatedPriceEuro,
-      application.priceOverrideEuro,
-      application.priceOverrideReason,
       contract.additionalInfo,
       contract.generalTerms);
   }

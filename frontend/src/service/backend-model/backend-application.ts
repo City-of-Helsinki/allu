@@ -32,8 +32,6 @@ export interface BackendApplication {
   decisionDistributionList?: Array<BackendDistributionEntry>;
   attachmentList: Array<BackendAttachmentInfo>;
   calculatedPrice: number;
-  priceOverride: number;
-  priceOverrideReason: string;
   applicationTags: Array<BackendApplicationTag>;
   comments?: Array<BackendComment>;
   notBillable: boolean;

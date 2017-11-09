@@ -36,8 +36,6 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
     application.startTime = form.event.structureTimes.startTime || form.event.eventTimes.startTime;
     application.endTime = form.event.structureTimes.endTime || form.event.eventTimes.endTime;
     application.calculatedPriceEuro = form.event.calculatedPrice;
-    application.priceOverrideEuro = form.event.priceOverride;
-    application.priceOverrideReason = form.event.priceOverrideReason;
     application.type = ApplicationType[ApplicationType.EVENT];
     application.notBillable = form.event.notBillable;
     application.notBillableReason = form.event.notBillableReason;

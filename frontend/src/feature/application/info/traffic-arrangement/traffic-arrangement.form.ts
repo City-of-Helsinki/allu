@@ -9,8 +9,6 @@ export class TrafficArrangementForm implements ApplicationForm {
     public pksCard?: boolean,
     public workFinished?: Date,
     public calculatedPrice?: number,
-    public priceOverride?: number,
-    public priceOverrideReason?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string
@@ -32,8 +30,6 @@ export class TrafficArrangementForm implements ApplicationForm {
       arrangement.pksCard,
       arrangement.workFinished,
       application.calculatedPriceEuro,
-      application.priceOverrideEuro,
-      application.priceOverrideReason,
       arrangement.trafficArrangements,
       arrangement.trafficArrangementImpedimentType,
       arrangement.additionalInfo

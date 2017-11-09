@@ -49,8 +49,6 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
       diaryNumber: [''],
       calculatedPrice: [0],
-      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
-      priceOverrideReason: [''],
       additionalInfo: [''],
       generalTerms: ['']
     });
