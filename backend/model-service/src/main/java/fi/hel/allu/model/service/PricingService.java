@@ -17,7 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -187,8 +189,7 @@ public class PricingService {
     }
 
     // ... apply discounts...
-    pricing.applyDiscounts(event.isEcoCompass(), application.getNotBillable(),
-        event.isHeavyStructure(), event.isSalesActivity());
+    pricing.applyDiscounts(event.isEcoCompass());
     // ... and get the final price
     return pricing.getPriceInCents();
   }

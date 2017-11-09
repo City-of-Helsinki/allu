@@ -17,8 +17,6 @@ public class Event extends ApplicationExtension {
   private int attendees;
   private int entryFee;
   private boolean ecoCompass;
-  private boolean salesActivity;
-  private boolean heavyStructure;
   private boolean foodSales;
   private String foodProviders;
   private String marketingProviders;
@@ -99,28 +97,6 @@ public class Event extends ApplicationExtension {
 
   public void setEcoCompass(boolean ecoCompass) {
     this.ecoCompass = ecoCompass;
-  }
-
-  /**
-   * in Finnish: Sisältää myynti tai markkinointitoimintaa
-   */
-  public boolean isSalesActivity() {
-    return salesActivity;
-  }
-
-  public void setSalesActivity(boolean salesActivity) {
-    this.salesActivity = salesActivity;
-  }
-
-  /**
-   * in Finnish: Sisältää raskaita rakenteita
-   */
-  public boolean isHeavyStructure() {
-    return heavyStructure;
-  }
-
-  public void setHeavyStructure(boolean heavyStructure) {
-    this.heavyStructure = heavyStructure;
   }
 
   /**

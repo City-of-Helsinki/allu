@@ -5,7 +5,6 @@ import fi.hel.allu.common.domain.types.ChargeBasisUnit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class EventPricing extends Pricing {
@@ -16,10 +15,6 @@ public class EventPricing extends Pricing {
   private static final String MULTIPLE_DAY_FEE_TEXT = "Maksu %1$d päivältä à %2$.2f EUR";
   private static final String LONG_EVENT_DISCOUNT_TEXT = "Alennus %1$d päivää ylittäviltä tapahtumapäiviltä";
   private static final String BUILD_DAY_FEE_TEXT = "Rakennus-/purkupäiviä";
-  private static final String EVENT_TYPE_DISCOUNT = "Alennus tapahtuman luonteen vuoksi";
-  private static final String FREE_EVENT_TEXT = "Korvauksetta, -100%";
-  private static final String HEAVY_STRUCTURE_TEXT = "Raskaita rakenteita, +50%";
-  private static final String SALES_ACTIVITY_TEXT = "Myyntitoimintaa, +50%";
   private static final String ECO_COMPASS_TEXT = "Ekokompassi-alennus -30%";
 
   // Privately store the price in euros, convert to cents on
@@ -138,22 +133,8 @@ public class EventPricing extends Pricing {
     return total;
   }
 
-  public void applyDiscounts(boolean ecoCompass, boolean notBillable, boolean heavyStructure, boolean salesActivity) {
+  public void applyDiscounts(boolean ecoCompass) {
     paymentPercentage = 100;
-    if (notBillable) {
-      List<String> explanation = new ArrayList<>(Collections.singletonList(FREE_EVENT_TEXT));
-      paymentPercentage = 0;
-      if (heavyStructure) {
-        explanation.add(HEAVY_STRUCTURE_TEXT);
-        paymentPercentage += 50;
-      }
-      if (salesActivity) {
-        explanation.add(SALES_ACTIVITY_TEXT);
-        paymentPercentage += 50;
-      }
-      addChargeBasisEntry(null, ChargeBasisUnit.PERCENT, paymentPercentage - 100.0, 0, EVENT_TYPE_DISCOUNT, 0,
-          explanation);
-    }
     if (ecoCompass) {
       // 30 percent discount from full price (incl. extra fees)
       addChargeBasisEntry(null, ChargeBasisUnit.PERCENT, -30.0, 0, ECO_COMPASS_TEXT, 0);

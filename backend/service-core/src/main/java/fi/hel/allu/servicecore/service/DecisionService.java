@@ -10,7 +10,6 @@ import fi.hel.allu.pdf.domain.DecisionJson;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 
-import fi.hel.allu.servicecore.mapper.extension.CableReportMapper;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -246,8 +245,6 @@ public class DecisionService {
       decisionJson.setStructureArea(String.format("%.0f", ej.getStructureArea()));
       decisionJson.setStructureDescription(ej.getStructureDescription());
       decisionJson.setEventUrl(ej.getUrl());
-      decisionJson.setHasCommercialActivities(ej.isSalesActivity());
-      decisionJson.setSportsWithHeavyStructures(ej.isHeavyStructure());
       decisionJson.setHasEkokompassi(ej.isEcoCompass());
       decisionJson.setEventNature(eventNature(ej.getNature()));
     }
