@@ -9,3 +9,11 @@
 .spaced-out [fxFlex]:not(:first-child):not(:last-child)  {
   padding: 0 0.75rem;
 }
+
+.spaced-out [fxFlex]:first-child {
+  padding-right: 0.75rem;
+}
+
+.spaced-out [fxFlex]:last-child {
+  padding-left: 0.75rem;
+}

@@ -10,7 +10,11 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Location} from '../src/model/common/location';
 import {RoleType} from '../src/model/user/role-type';
 import {NavigationExtras} from '@angular/router';
+import {ChargeBasisEntry} from '../src/model/application/invoice/charge-basis-entry';
 
+/**
+ * Mock for application state
+ */
 export class ApplicationStateMock {
   private _application: Application;
 
@@ -26,6 +30,9 @@ export class ApplicationStateMock {
   }
 }
 
+/**
+ * Mock for customer hub
+ */
 export class CustomerHubMock {
   public orderer$ = new Subject<Contact>();
 
@@ -35,6 +42,9 @@ export class CustomerHubMock {
   ordererWasSelected(orderer) {};
 }
 
+/**
+ * Mock for Current user service
+ */
 export class CurrentUserMock {
   public allowHasRole = true;
   public allowHasType = true;
@@ -66,15 +76,38 @@ export class CurrentUserMock {
 
 const supervisor = new User(1, 'supervisor', 'super visor');
 
+/**
+ * Mock for user hub
+ */
 export class UserHubMock {
   public getByRole = (role: RoleType) => Observable.of([supervisor]);
 }
 
+/**
+ * Mock for angular's router
+ */
 export class RouterMock {
   public navigate(commands: any[], extras?: NavigationExtras): Promise<boolean> {
     return Promise.resolve(true);
   }
 };
+
+/**
+ * Mock for InvoiceHub
+ */
+export class InvoiceHubMock {
+  public loadChargeBasisEntries(applicationId: number): Observable<Array<ChargeBasisEntry>> {
+    return Observable.empty();
+  }
+
+  public saveChargeBasisEntries(applicationId: number, rows: Array<ChargeBasisEntry>): Observable<Array<ChargeBasisEntry>> {
+    return Observable.empty();
+  }
+
+  get chargeBasisEntries(): Observable<Array<ChargeBasisEntry>> {
+    return Observable.empty();
+  }
+}
 
 /**
  * Function to create mock metadata which can be used to override directive in test components

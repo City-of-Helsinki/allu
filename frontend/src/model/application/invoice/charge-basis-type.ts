@@ -6,7 +6,7 @@ export enum ChargeBasisType {
 }
 
 export const manualChargeBasisTypes = [
-   // TODO: Add when implemented ChargeBasisType.DISCOUNT,
+  ChargeBasisType.DISCOUNT,
   ChargeBasisType.NEGLIGENCE_FEE,
   ChargeBasisType.ADDITIONAL_FEE
 ];

@@ -12,69 +12,10 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div fxFlex="100">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="text" required
-                           placeholder="{{['chargeBasis.type', chargeBasisEntryForm.value.type, 'basis'] | translation}}"
-                           [matAutocomplete]="text"/>
-                    <mat-autocomplete #text="matAutocomplete">
-                        <mat-option *ngFor="let text of matchingTexts | async" [value]="text">
-                            {{text}}
-                        </mat-option>
-                    </mat-autocomplete>
-                    <mat-error>
-                        <field-error [form]="chargeBasisEntryForm" field="text" hasError="required">
-                            {{'chargeBasis.field.rowTextMissing' | translation}}
-                        </field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
         </div>
-        <div fxLayout="row" fxLayoutWrap class="spaced-out">
-            <div fxFlex="20">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="number" formControlName="quantity"  required
-                           placeholder="{{'chargeBasis.quantity' | translation}}"/>
-                    <mat-error>
-                        <field-error [form]="chargeBasisEntryForm" field="quantity" hasError="required">
-                            {{'chargeBasis.field.quantityMissing' | translation}}
-                        </field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div fxFlex="10">
-                <mat-form-field class="input-full-width">
-                    <mat-select formControlName="unit" required>
-                        <mat-option *ngFor="let unit of unitTypes" [value]="unit">
-                            {{['chargeBasis.unit', unit] | translation}}
-                        </mat-option>
-                    </mat-select>
-                    <mat-error>
-                        <field-error [form]="chargeBasisEntryForm" field="unit" hasError="required">
-                            {{'chargeBasis.field.unitMissing' | translation}}
-                        </field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div fxFlex="20">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="number" formControlName="unitPrice" required
-                           placeholder="{{'chargeBasis.unitPrice' | translation}}"/>
-                    <div matSuffix>€</div>
-                    <mat-error>
-                        <field-error [form]="chargeBasisEntryForm" field="unitPrice" hasError="required">
-                            {{'chargeBasis.field.quantityMissing' | translation}}
-                        </field-error>
-                    </mat-error>
-                </mat-form-field>
-            </div>
-            <div fxFlex="20">
-                <mat-form-field class="input-full-width">
-                    <input matInput type="number" formControlName="netPrice" placeholder="{{'chargeBasis.netPrice' | translation}}"/>
-                    <div matSuffix>€</div>
-                </mat-form-field>
-            </div>
-        </div>
+        <charge-basis-discount [form]="chargeBasisEntryForm" *ngIf="chargeBasisEntryForm.value.type === 'DISCOUNT'"></charge-basis-discount>
+        <charge-basis-negligence-fee [form]="chargeBasisEntryForm" *ngIf="chargeBasisEntryForm.value.type === 'NEGLIGENCE_FEE'"></charge-basis-negligence-fee>
+        <charge-basis-additional-fee [form]="chargeBasisEntryForm" *ngIf="chargeBasisEntryForm.value.type === 'ADDITIONAL_FEE'"></charge-basis-additional-fee>
     </div>
     <div mat-dialog-actions>
         <button type="submit" mat-raised-button color="primary" [disabled]="!chargeBasisEntryForm.valid">

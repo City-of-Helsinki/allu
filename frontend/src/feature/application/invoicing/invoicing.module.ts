@@ -10,6 +10,9 @@ import {ChargeBasisEntryModalComponent} from './charge-basis/charge-basis-entry-
 import {InvoicingInfoComponent} from './invoicing-info/invoicing-info.component';
 import {ChargeBasisComponent} from './charge-basis/charge-basis.component';
 import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
+import {ChargeBasisDiscountComponent} from './charge-basis/discount/charge-basis-discount.component';
+import {ChargeBasisNegligenceFeeComponent} from './charge-basis/negligence-fee/charge-basis-negligence-fee.component';
+import {ChargeBasisAdditionalFeeComponent} from './charge-basis/additional-fee/charge-basis-additional-fee.component';
 
 @NgModule({
   imports: [
@@ -23,7 +26,10 @@ import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
     InvoicingInfoComponent,
     ChargeBasisComponent,
     InvoiceCommentsComponent,
-    ChargeBasisEntryModalComponent
+    ChargeBasisEntryModalComponent,
+    ChargeBasisDiscountComponent,
+    ChargeBasisNegligenceFeeComponent,
+    ChargeBasisAdditionalFeeComponent
   ],
   providers: [
     InvoiceHub,

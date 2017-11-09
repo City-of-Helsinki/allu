@@ -821,20 +821,34 @@ export const translations = {
       }
     },
     unit: {
+      placeholder: 'Yksikkö',
       PIECE: 'kpl',
       SQUARE_METER: 'm²',
       HOUR: 't',
       DAY: 'pv',
       WEEK: 'vk',
       MONTH: 'kk',
-      YEAR: 'v'
+      YEAR: 'v',
+      PERCENT: '%'
+    },
+    discountUnit: {
+      PERCENT: '%',
+      PIECE: '€'
     },
     quantity: 'Määrä',
     unitPrice: 'Yksikköhinta',
+    discount: 'Alennus',
     netPrice: 'Kokonaishinta',
+    discountFor: {
+      placeholder: 'Alennuksen kohde',
+      wholeInvoice: 'Koko lasku'
+    },
     field: {
       rowTextMissing: 'Laskuperuste puuttuu',
-      quantityMissing: 'Määrä puuttuu'
+      quantityMissing: 'Määrä puuttuu',
+      unitPriceMissing: 'Yksikköhinta puuttuu',
+      discountMissing: 'Alennus puuttuu',
+      discountPercentageMissing: 'Alennusprosentti puuttuu'
     },
     action: {
       save: 'Laskuperusteet tallennettu'

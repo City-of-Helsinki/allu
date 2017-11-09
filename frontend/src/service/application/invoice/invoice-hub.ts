@@ -3,11 +3,11 @@ import '../../../rxjs-extensions.ts';
 import {InvoiceService} from './invoice.service';
 import {ChargeBasisEntry} from '../../../model/application/invoice/charge-basis-entry';
 import {Observable} from 'rxjs/Observable';
-import {Subject} from 'rxjs/Subject';
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class InvoiceHub {
-  private chargeBasisEntries$ = new Subject<Array<ChargeBasisEntry>>();
+  private chargeBasisEntries$ = new BehaviorSubject<Array<ChargeBasisEntry>>([]);
 
   constructor(private invoiceService: InvoiceService) {
   }

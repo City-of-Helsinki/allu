@@ -44,6 +44,8 @@ export class ChargeBasisEntryForm {
     entry.netPriceEuro = form.netPrice;
     entry.manuallySet = form.manuallySet;
     entry.explanation = form.explanation;
+    entry.tag = form.tag;
+    entry.referredTag = form.referredTag;
     return entry;
   }
 
