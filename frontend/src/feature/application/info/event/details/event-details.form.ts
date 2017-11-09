@@ -12,10 +12,6 @@ export class EventDetailsForm {
               public timeExceptions?: string,
               public attendees?: number,
               public entryFee?: number,
-              public notBillable?: boolean,
-              public notBillableReason?: string,
-              public salesActivity?: boolean,
-              public heavyStructure?: boolean,
               public ecoCompass?: boolean,
               public foodSales?: boolean,
               public foodProviders?: string,
@@ -40,10 +36,6 @@ export class EventDetailsForm {
       event.timeExceptions,
       event.attendees,
       event.entryFee,
-      application.notBillable,
-      application.notBillableReason,
-      event.salesActivity,
-      event.heavyStructure,
       event.ecoCompass,
       event.foodSales,
       event.foodProviders,
@@ -66,8 +58,6 @@ export class EventDetailsForm {
     event.eventEndTime = form.eventTimes.endTime;
     event.timeExceptions = form.timeExceptions;
     event.attendees = form.attendees;
-    event.salesActivity = form.salesActivity;
-    event.heavyStructure = form.heavyStructure;
     event.ecoCompass = form.ecoCompass;
     event.foodSales = form.foodSales;
     event.foodProviders = form.foodProviders;
