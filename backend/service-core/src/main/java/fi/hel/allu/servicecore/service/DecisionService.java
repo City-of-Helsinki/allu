@@ -207,8 +207,7 @@ public class DecisionService {
     }
     decisionJson.setAppealInstructions("[Muutoksenhakuohjeet]");
     decisionJson.setPriceReason(application.getNotBillableReason());
-    Integer priceInCents = (application.getPriceOverride() != null) ? application.getPriceOverride()
-        : application.getCalculatedPrice();
+    Integer priceInCents = application.getCalculatedPrice();
     if (priceInCents != null) {
       NumberFormat decimalFormat = NumberFormat.getCurrencyInstance(locale);
       decisionJson.setTotalRent(decimalFormat.format(priceInCents / 100.0));

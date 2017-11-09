@@ -69,8 +69,6 @@ public class ApplicationJson {
   @Valid
   private List<CommentJson> comments;
   private Integer calculatedPrice;
-  private Integer priceOverride;
-  private String priceOverrideReason;
   @NotNull
   private Boolean notBillable;
   private String notBillableReason;
@@ -365,32 +363,6 @@ public class ApplicationJson {
 
   public void setCalculatedPrice(Integer calculatedPrice) {
     this.calculatedPrice = calculatedPrice;
-  }
-
-  /**
-   * Get the manually overridden price
-   *
-   * @return overridden price in cents
-   */
-  public Integer getPriceOverride() {
-    return priceOverride;
-  }
-
-  public void setPriceOverride(Integer priceOverride) {
-    this.priceOverride = priceOverride;
-  }
-
-  /**
-   * Get the explanation text for manual price override
-   *
-   * @return price override reason
-   */
-  public String getPriceOverrideReason() {
-    return priceOverrideReason;
-  }
-
-  public void setPriceOverrideReason(String priceOverrideReason) {
-    this.priceOverrideReason = priceOverrideReason;
   }
 
   /**

@@ -79,8 +79,6 @@ public class ApplicationMapper {
           .map(dEntry -> createDistributionEntryModel(dEntry)).collect(Collectors.toList()));
     }
     applicationDomain.setCalculatedPrice(applicationJson.getCalculatedPrice());
-    applicationDomain.setPriceOverride(applicationJson.getPriceOverride());
-    applicationDomain.setPriceOverrideReason(applicationJson.getPriceOverrideReason());
     applicationDomain.setNotBillable(applicationJson.getNotBillable());
     applicationDomain.setNotBillableReason(applicationJson.getNotBillableReason());
     applicationDomain.setInvoiceRecipientId(applicationJson.getInvoiceRecipientId());
@@ -163,8 +161,6 @@ public class ApplicationMapper {
           .map(dEntry -> createDistributionEntryJson(dEntry)).collect(Collectors.toList()));
     }
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
-    applicationJson.setPriceOverride(application.getPriceOverride());
-    applicationJson.setPriceOverrideReason(application.getPriceOverrideReason());
     applicationJson.setNotBillable(application.getNotBillable());
     applicationJson.setNotBillableReason(application.getNotBillableReason());
     applicationJson.setCustomersWithContacts(createCustomerWithContactsJson(application));
