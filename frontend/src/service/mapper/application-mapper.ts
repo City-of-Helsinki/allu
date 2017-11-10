@@ -42,8 +42,6 @@ export class ApplicationMapper {
       ? backendApplication.attachmentList.map((attachment) => AttachmentInfoMapper.mapBackend(attachment))
       : undefined;
     application.calculatedPrice = backendApplication.calculatedPrice;
-    application.priceOverride = backendApplication.priceOverride;
-    application.priceOverrideReason = backendApplication.priceOverrideReason;
     application.applicationTags = ApplicationTagMapper.mapBackendList(backendApplication.applicationTags);
     application.comments = CommentMapper.mapBackendList(backendApplication.comments);
     application.notBillable = backendApplication.notBillable;
@@ -77,8 +75,6 @@ export class ApplicationMapper {
       decisionDistributionList: DistributionMapper.mapFrontendList(application.decisionDistributionList),
       attachmentList: undefined, // attachmentList not mapped, because it cannot be updated in the backend through application
       calculatedPrice: application.calculatedPrice,
-      priceOverride: application.priceOverride,
-      priceOverrideReason: application.priceOverrideReason,
       applicationTags: ApplicationTagMapper.mapFrontendList(application.applicationTags),
       notBillable: application.notBillable,
       notBillableReason: application.notBillableReason,

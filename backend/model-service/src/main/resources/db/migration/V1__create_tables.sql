@@ -96,8 +96,6 @@ create table allu.application (
     decision_time timestamp with time zone,
     decision_maker integer references allu.user,
     calculated_price integer,
-    price_override integer,
-    price_override_reason text,
     not_billable boolean not null,
     not_billable_reason text,
     invoice_recipient_id integer references allu.customer(id));

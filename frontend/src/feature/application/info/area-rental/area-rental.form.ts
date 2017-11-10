@@ -9,8 +9,6 @@ export class AreaRentalForm implements ApplicationForm {
     public pksCard?: boolean,
     public workFinished?: string,
     public calculatedPrice?: number,
-    public priceOverride?: number,
-    public priceOverrideReason?: string,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
     public additionalInfo?: string
@@ -32,8 +30,6 @@ export class AreaRentalForm implements ApplicationForm {
       areaRental.pksCard,
       areaRental.uiWorkFinished,
       application.calculatedPriceEuro,
-      application.priceOverrideEuro,
-      application.priceOverrideReason,
       areaRental.trafficArrangements,
       areaRental.trafficArrangementImpedimentType,
       areaRental.additionalInfo

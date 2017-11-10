@@ -44,21 +44,6 @@
                         <input matInput type="text" formControlName="calculatedPrice" placeholder="{{'application.pricing.calculatedPrice' | translation}}"/>
                     </mat-form-field>
                 </div>
-                <div class="col m3">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="number" formControlName="priceOverride" placeholder="{{'application.pricing.priceOverride' | translation}}"/>
-                        <mat-hint>
-                            <field-error [form]="form" field="priceOverride" hasError="greaterThanOrEqual">
-                                {{'application.common.field.priceOverrideGreaterThanOrEqual' | translation}}
-                            </field-error>
-                        </mat-hint>
-                    </mat-form-field>
-                </div>
-                <div class="col m3">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="priceOverrideReason" placeholder="{{'application.pricing.priceOverrideReason' | translation}}"/>
-                    </mat-form-field>
-                </div>
             </div>
         </mat-card-content>
     </mat-card>

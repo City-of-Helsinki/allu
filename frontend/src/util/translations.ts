@@ -162,9 +162,7 @@ export const translations = {
       notBillableReason: 'Peruste korvauksettomuudelle',
       commercial: 'Kaupallinen',
       largeSalesArea: 'Iso myyntialue (0,8 m x 3,0 m)',
-      calculatedPrice: 'Hinta',
-      priceOverride: 'Käsittelijän asettama hinta',
-      priceOverrideReason: 'Peruste poikkeavaan hintaan'
+      calculatedPrice: 'Hinta'
     },
     tag: {
       type: {
@@ -217,8 +215,7 @@ export const translations = {
       field: {
         validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
         validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
-        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta',
-        priceOverrideGreaterThanOrEqual: 'Hinta ei voi olla negatiivinen'
+        validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
       }
     },
     event: {
@@ -253,8 +250,7 @@ export const translations = {
         startBeforeEnd: 'Loppumispäivä ei voi olla ennen alkamispäivää',
         attendeesGreaterThanOrEqual: 'Yleisömäärä ei voi olla negatiivinen',
         eventEntryFeeThanOrEqual: 'Osallistumismaksu ei voi negatiivinen',
-        structureAreaGreaterThanOrEqual: 'Rakenteiden kokonaisneliömäärä ei voi olla negatiivinen',
-        priceOverrideGreaterThanOrEqual: 'Hinta ei voi olla negatiivinen'
+        structureAreaGreaterThanOrEqual: 'Rakenteiden kokonaisneliömäärä ei voi olla negatiivinen'
       }
     },
     shortTermRental: {

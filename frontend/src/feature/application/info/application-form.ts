@@ -9,8 +9,6 @@ export interface ApplicationForm {
   invoiceRecipientId?: number;
   terms?: string;
   calculatedPrice?: number;
-  priceOverride?: number;
-  priceOverrideReason?: string;
   communication?: CommunicationForm;
 }
 

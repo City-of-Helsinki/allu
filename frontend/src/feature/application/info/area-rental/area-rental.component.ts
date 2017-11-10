@@ -50,8 +50,6 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
       pksCard: [false],
       workFinished: [undefined],
       calculatedPrice: [0],
-      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
-      priceOverrideReason: [''],
       trafficArrangements: [''],
       trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']

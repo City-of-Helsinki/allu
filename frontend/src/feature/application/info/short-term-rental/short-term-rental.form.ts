@@ -12,8 +12,6 @@ export class ShortTermRentalForm implements ApplicationForm {
     public commercial?: boolean,
     public largeSalesArea?: boolean,
     public calculatedPrice?: number,
-    public priceOverride?: number,
-    public priceOverrideReason?: string,
     public applicant?: CustomerWithContactsForm) {}
 
   static from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
@@ -23,9 +21,7 @@ export class ShortTermRentalForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       rental.commercial,
       rental.largeSalesArea,
-      application.calculatedPriceEuro,
-      application.priceOverrideEuro,
-      application.priceOverrideReason
+      application.calculatedPriceEuro
     );
   }
 

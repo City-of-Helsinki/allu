@@ -19,9 +19,8 @@ export class EventDetailsForm {
               public structureArea?: number,
               public structureDescription?: string,
               public structureTimes?: TimePeriod,
-              public calculatedPrice?: number,
-              public priceOverride?: number,
-              public priceOverrideReason?: string) {
+              public calculatedPrice?: number
+            ) {
     this.eventTimes = eventTimes || new TimePeriod();
     this.structureTimes = structureTimes || new TimePeriod();
   }
@@ -43,9 +42,7 @@ export class EventDetailsForm {
       event.structureArea,
       event.structureDescription,
       new TimePeriod(event.structureStartTime, event.structureEndTime),
-      application.calculatedPriceEuro,
-      application.priceOverrideEuro,
-      application.priceOverrideReason);
+      application.calculatedPriceEuro);
   }
 
   static toEvent(form: EventDetailsForm, type: ApplicationType): Event {

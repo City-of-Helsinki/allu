@@ -49,8 +49,6 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
       commercial: [false],
       largeSalesArea: [false],
       calculatedPrice: [0],
-      priceOverride: [undefined, ComplexValidator.greaterThanOrEqual(0)],
-      priceOverrideReason: [''],
       rentalTimes: this.fb.group({
         startTime: [undefined, Validators.required],
         endTime: [undefined, Validators.required]

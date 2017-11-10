@@ -53,13 +53,10 @@ public class Application {
   private Integer decisionMaker;
   private List<DistributionEntry> decisionDistributionList = new ArrayList<>();
   private Integer calculatedPrice;
-  private Integer priceOverride;
-  private String priceOverrideReason;
   private Boolean notBillable;
   private String notBillableReason;
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
   private Integer invoiceRecipientId;
-  private Boolean activeAfterValidity;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -321,32 +318,6 @@ public class Application {
 
   public void setCalculatedPrice(Integer calculatedPrice) {
     this.calculatedPrice = calculatedPrice;
-  }
-
-  /**
-   * Get the manually overridden price
-   *
-   * @return overridden price in cents
-   */
-  public Integer getPriceOverride() {
-    return priceOverride;
-  }
-
-  public void setPriceOverride(Integer priceOverride) {
-    this.priceOverride = priceOverride;
-  }
-
-  /**
-   * Get the explanation text for manual price override
-   *
-   * @return price override reason
-   */
-  public String getPriceOverrideReason() {
-    return priceOverrideReason;
-  }
-
-  public void setPriceOverrideReason(String priceOverrideReason) {
-    this.priceOverrideReason = priceOverrideReason;
   }
 
   /**
