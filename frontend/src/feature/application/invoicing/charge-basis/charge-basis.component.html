@@ -18,7 +18,7 @@
                                         </ng-container>
                                     </div>
                                     <div fxFlex="30" class="row-header">{{entry.value.text}}</div>
-                                    <div fxFlex="20" fxFlexOffset="40" class="row-field-highlight" *ngIf="entry.value.type==='DISCOUNT'; else normalEntry">
+                                    <div fxFlex="20" fxFlexOffset="40" class="row-field-highlight" *ngIf="showMinimal(entry.value); else normalEntry">
                                         <span *ngIf="entry.value.unit==='PERCENT'">{{entry.value.quantity}} %</span>
                                         <span *ngIf="entry.value.unit==='PIECE'">{{entry.value.unitPrice}} €</span>
                                     </div>

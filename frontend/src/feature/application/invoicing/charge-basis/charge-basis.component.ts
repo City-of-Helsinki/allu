@@ -9,6 +9,8 @@ import {NotificationService} from '../../../../service/notification/notification
 import {Subscription} from 'rxjs/Subscription';
 import {Observable} from 'rxjs/Observable';
 import {FormUtil} from '../../../../util/form.util';
+import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
+import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 
 
 @Component({
@@ -72,6 +74,11 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
       saved => NotificationService.translateMessage('chargeBasis.action.save'),
       error => NotificationService.error(error)
     );
+  }
+
+  showMinimal(value: ChargeBasisEntryForm): boolean {
+    return value.type === ChargeBasisType[ChargeBasisType.DISCOUNT]
+      || value.unit === ChargeBasisUnit[ChargeBasisUnit.PERCENT];
   }
 
   private entriesUpdated(entries: Array<ChargeBasisEntry>): void {
