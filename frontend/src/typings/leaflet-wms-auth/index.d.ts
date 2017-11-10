@@ -23,6 +23,12 @@ declare namespace L {
     version?: string;
     crs?: CRS;
     uppercase?: boolean;
+    timeout?: TimeoutOptions;
+  }
+
+  export interface TimeoutOptions {
+    response?: number; // Wait x milliseconds for the server to start sending
+    deadline?: number; // but allow y milliseconds for the tile to finish loading.
   }
 
   export namespace tileLayer {

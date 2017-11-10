@@ -4,6 +4,12 @@ import {findTranslation} from '../../util/translations';
 import '../../js/leaflet/wms-authentication';
 import {AuthService} from '../authorization/auth.service';
 import {Injectable} from '@angular/core';
+import TimeoutOptions = L.TimeoutOptions;
+
+const timeout: TimeoutOptions = {
+  response: 10000,
+  deadline: 60000
+};
 
 @Injectable()
 export class MapLayerService {
@@ -34,17 +40,17 @@ export class MapLayerService {
     const token = this.authService.token;
     this._overlays = {
       kaupunkikartta: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: token}),
+        {layers: 'helsinki_karttasarja', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       ortoilmakuva: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: token}),
+        {layers: 'helsinki_ortoilmakuva', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       kiinteistokartta: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token: token}),
+        {layers: 'helsinki_kiinteistokartta', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       ajantasaasemakaava: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_ajantasaasemakaava', format: 'image/png', transparent: true, token: token}),
+        {layers: 'helsinki_ajantasaasemakaava', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       opaskartta: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_opaskartta', format: 'image/png', transparent: true, token: token}),
+        {layers: 'helsinki_opaskartta', format: 'image/png', transparent: true, token: token, timeout: timeout}),
       kaupunginosajako: L.tileLayer.wmsAuth('/wms?',
-        {layers: 'helsinki_kaupunginosajako', format: 'image/png', transparent: true, token: token})
+        {layers: 'helsinki_kaupunginosajako', format: 'image/png', transparent: true, token: token, timeout: timeout})
       // working URL for accessing Helsinki maps directly (requires authentication)
       // testi: new L.tileLayer.wms('http://kartta.hel.fi/ws/geoserver/helsinki/wms?helsinki',
       //   {layers: 'helsinki:Kaupunkikartta'}),

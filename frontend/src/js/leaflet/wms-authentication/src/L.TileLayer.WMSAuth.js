@@ -4,9 +4,15 @@ const request = require('superagent');
 
 L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
   token: undefined,
+  timeoutOptions: {
+    response: 10000,  // Wait 10 seconds for the server to start sending,
+    deadline: 60000, // but allow 1 minute for the file to finish loading.
+  },
 
   initialize: function (url, options) {
     this.token = options.token;
+    this.timeoutOptions = Object.assign(this.timeoutOptions, options.timeout);
+    delete options.timeout;
     delete options.token; // need to delete property so it is not added as url parameters by parent class
     L.TileLayer.WMS.prototype.initialize.call(this, url, options);
   },
@@ -34,17 +40,22 @@ L.TileLayer.WMSAuth = L.TileLayer.WMS.extend({
       tile.crossOrigin = '';
     }
 
+    const self = this;
     request
       .get(url)
+      .timeout(this.timeoutOptions)
       .set('Authorization', 'Bearer ' + this.token)
       .responseType('blob')
       .then(
         function(res) {
           tile.src = URL.createObjectURL(res.body);
-          L.TileLayer.WMS.prototype._tileOnLoad.call(this, done, tile);
+          L.TileLayer.WMS.prototype._tileOnLoad.call(self, done, tile);
         },
         function(err) {
-          L.TileLayer.WMS.prototype._tileOnError.call(this, done, tile, err);
+          if (err.timeout) {
+            console.error('Fetching map tile took too long');
+          }
+          L.TileLayer.WMS.prototype._tileOnError.call(self, done, tile, err);
         }
       );
     return tile;

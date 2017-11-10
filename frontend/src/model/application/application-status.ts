@@ -11,5 +11,5 @@ export enum ApplicationStatus {
 }
 
 export function canBeEdited(status: ApplicationStatus): boolean {
-  return status >= ApplicationStatus.DECISIONMAKING;
+  return status < ApplicationStatus.DECISIONMAKING;
 }
