@@ -119,7 +119,7 @@ public class ApplicationService {
             .collect(Collectors.toList());
 
     ResponseEntity<ApplicationTag[]> response = restTemplate.exchange(
-            applicationProperties.getUpdateTagsUrl(),
+            applicationProperties.getTagsUrl(),
             HttpMethod.PUT,
             new HttpEntity<>(tagsWithUserInfo),
             ApplicationTag[].class,
@@ -127,6 +127,17 @@ public class ApplicationService {
     return applicationMapper.createTagJson(Arrays.asList(response.getBody()));
   }
 
+  /**
+   * Fetches tags for specified application
+   *
+   * @param id id of application which tags are fetched for
+   * @return tags for specified application
+   */
+  public List<ApplicationTagJson> findTagsByApplicationId(int id) {
+    ResponseEntity<ApplicationTag[]> tagsResult = restTemplate.getForEntity(
+        applicationProperties.getTagsUrl(), ApplicationTag[].class, id);
+    return applicationMapper.createTagJson(Arrays.asList(tagsResult.getBody()));
+  }
 
   /**
    * Create applications by calling backend service.

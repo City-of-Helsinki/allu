@@ -156,6 +156,17 @@ public class ApplicationController {
   }
 
   /**
+   * Fetches tags for specified application
+   *
+   * @param id id of application which tags are fetched for
+   * @return tags for specified application
+   */
+  @RequestMapping(value = "/{id}/tags", method = RequestMethod.GET)
+  public ResponseEntity<List<ApplicationTag>> findTagsByApplicationId(@PathVariable int id) {
+    return new ResponseEntity<>(applicationService.findTagsByApplicationId(id), HttpStatus.OK);
+  }
+
+  /**
    * Find attachments for an application
    *
    * @param id The application id

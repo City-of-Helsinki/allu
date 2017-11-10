@@ -460,6 +460,17 @@ public class ApplicationDao {
   }
 
   /**
+   * Fetches tags for specified application
+   */
+  @Transactional(readOnly = true)
+  public List<ApplicationTag> findTagsByApplicationId(Integer applicationId) {
+    return queryFactory.select(applicationTagBean)
+        .from(applicationTag)
+        .where(applicationTag.applicationId.eq(applicationId))
+        .fetch();
+  }
+
+  /**
    * Removes all tags of given type from application
    * @param applicationId Application's database ID
    * @param tagType type of tag(s) to remove
@@ -505,12 +516,6 @@ public class ApplicationDao {
         .on(applicationKind.id.eq(kindSpecifier.kindId)).where(applicationKind.applicationId.eq(applicationId))
         .transform(groupBy(applicationKind.kind).as(list(kindSpecifier.specifier)));
     return m;
-  }
-
-  private List<ApplicationTag> findTagsByApplicationId(Integer applicationId) {
-    List<ApplicationTag> applicationTags =
-        queryFactory.select(applicationTagBean).from(applicationTag).where(applicationTag.applicationId.eq(applicationId)).fetch();
-    return applicationTags;
   }
 
   private void replaceApplicationTags(Integer applicationId, List<ApplicationTag> tags) {

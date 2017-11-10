@@ -79,6 +79,7 @@ public class SupervisionTaskService {
     task.setCreatorId(userService.getCurrentUser().getId());
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.postForEntity(
         applicationProperties.getSupervisionTaskCreateUrl(), task, SupervisionTask.class);
+    applicationServiceComposer.refreshSearchTags(task.getApplicationId());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -90,6 +91,7 @@ public class SupervisionTaskService {
         supervisionTaskHttpEntity,
         SupervisionTask.class,
         taskJson.getId());
+    applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
@@ -106,12 +108,15 @@ public class SupervisionTaskService {
     ResponseEntity<SupervisionTask> supervisionTasksResult = restTemplate.exchange(
         uri, HttpMethod.PUT, supervisionTaskHttpEntity, SupervisionTask.class);
 
+    applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
     // TODO: send email to customer about new supervision date and reason of rejection
     return getFullyPopulatedJson(Collections.singletonList(supervisionTasksResult.getBody())).get(0);
   }
 
   public void delete(int id) {
+    SupervisionTaskJson taskJson = findById(id);
     restTemplate.delete(applicationProperties.getSupervisionTaskByIdUrl(), id);
+    applicationServiceComposer.refreshSearchTags(taskJson.getApplicationId());
   }
 
   public Page<SupervisionWorkItemJson> search(SupervisionTaskSearchCriteria searchCriteria,

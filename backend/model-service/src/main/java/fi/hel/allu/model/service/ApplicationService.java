@@ -187,6 +187,17 @@ public class ApplicationService {
   }
 
   /**
+   * Fetches tags for specified application
+   *
+   * @param applicationId id of application which tags are fetched for
+   * @return List of tags for specified application
+   */
+  @Transactional(readOnly = true)
+  public List<ApplicationTag> findTagsByApplicationId(Integer applicationId) {
+    return applicationDao.findTagsByApplicationId(applicationId);
+  }
+
+  /**
    * Find applications that are ending in the given time range and don't already
    * have a notification sent
    *

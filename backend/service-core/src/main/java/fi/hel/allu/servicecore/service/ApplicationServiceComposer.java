@@ -220,6 +220,15 @@ public class ApplicationServiceComposer {
   }
 
   /**
+   * Updates search service with current tags for specified application
+   * @param id id of application
+   */
+  public void refreshSearchTags(int id) {
+    List<ApplicationTagJson> tags = applicationService.findTagsByApplicationId(id);
+    searchService.updateTags(id, tags);
+  }
+
+  /**
    * Get change items for an application
    *
    * @param applicationId

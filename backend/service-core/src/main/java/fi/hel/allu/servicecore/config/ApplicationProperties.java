@@ -731,9 +731,9 @@ public class ApplicationProperties {
   }
 
   /**
-   * Model-service path to update tags
+   * Model-service path to tags (get, put)
    */
-  public String getUpdateTagsUrl() {
+  public String getTagsUrl() {
     return getModelServiceUrl("/applications/{id}/tags");
   }
 
