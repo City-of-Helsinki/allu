@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 @Service
 public class InvoicingService {
   private static final Logger logger = LoggerFactory.getLogger(InvoicingService.class);
+  private static String INVOICE_FILE_PREFIX = "MTIL_IN_ID341_";
 
   private RestTemplate restTemplate;
   private ApplicationProperties applicationProperties;
@@ -68,7 +69,7 @@ public class InvoicingService {
       if (!Files.isDirectory(dir)) {
         Files.createDirectories(dir);
       }
-      Path file = Files.createTempFile(dir, "invoice", ".xml");
+      Path file = Files.createTempFile(dir, INVOICE_FILE_PREFIX, ".xml");
       try (OutputStream outputStream = Files.newOutputStream(file)) {
         AlluMarshaller alluMarshaller = new AlluMarshaller();
         alluMarshaller.marshal(salesOrderContainer, outputStream);

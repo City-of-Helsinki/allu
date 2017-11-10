@@ -58,7 +58,8 @@ public class AlluMapper {
     salesOrder.setOrderParty(mapToOrderParty(orderer));
     salesOrder.setOrderType(mapToOrderType(application.getType()));
     salesOrder.setPaymentTerm(ALLU_PAYMENT_TERM);
-    salesOrder.setPoNumber(application.getApplicationId());
+    // TODO: customerReference into PoNumber
+    salesOrder.setPoNumber(orderer.getName());
     salesOrder.setReferenceText(application.getApplicationId());
     salesOrder.setSalesOffice(mapToSalesOffice(application.getType()));
     salesOrder.setSalesOrg(ALLU_SALES_ORG);
