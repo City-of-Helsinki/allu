@@ -21,7 +21,7 @@ export class ChargeBasisEntryForm {
     return fb.group({
       type: [ChargeBasisType[entry.type], Validators.required],
       unit: [ChargeBasisUnit[entry.unit], Validators.required],
-      quantity: [entry.quantity, Validators.required],
+      quantity: [entry.uiQuantity, Validators.required],
       text: [entry.text, Validators.required],
       unitPrice: [entry.unitPriceEuro, Validators.required],
       netPrice: [{value: entry.netPriceEuro, disabled: true}],
@@ -35,13 +35,12 @@ export class ChargeBasisEntryForm {
   public static toChargeBasisEntry(form: ChargeBasisEntryForm): ChargeBasisEntry {
     let entry = new ChargeBasisEntry(
       ChargeBasisType[form.type],
-      ChargeBasisUnit[form.unit],
-      form.quantity,
-      form.text
+      ChargeBasisUnit[form.unit]
     );
 
+    entry.uiQuantity = form.quantity;
+    entry.text = form.text;
     entry.unitPriceEuro = form.unitPrice;
-    entry.netPriceEuro = form.netPrice;
     entry.manuallySet = form.manuallySet;
     entry.explanation = form.explanation;
     entry.tag = form.tag;
@@ -53,7 +52,7 @@ export class ChargeBasisEntryForm {
     return new ChargeBasisEntryForm(
       ChargeBasisType[entry.type],
       ChargeBasisUnit[entry.unit],
-      entry.quantity,
+      entry.uiQuantity,
       entry.text,
       entry.unitPriceEuro,
       entry.netPriceEuro,

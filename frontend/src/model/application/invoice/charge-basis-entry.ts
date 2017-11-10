@@ -20,31 +20,35 @@ export class ChargeBasisEntry {
     quantity = quantity || ChargeBasisUnit.PIECE;
   }
 
-  get uiUnit(): string {
-    return this.unit ? ChargeBasisUnit[this.unit] : undefined;
+  get uiQuantity(): number {
+    return this.negateQuantity() ? -this.quantity : this.quantity;
   }
 
-  set uiUnit(unit: string) {
-    this.unit = unit ? ChargeBasisUnit[unit] : undefined;
+  set uiQuantity(quantity: number) {
+    this.quantity = this.negateQuantity() ? -quantity : quantity;
+    this.netPrice = this.quantity * this.unitPrice;
   }
 
   get unitPriceEuro(): number {
-    return NumberUtil.toEuros(this.unitPrice);
+    const unitPrice = NumberUtil.toEuros(this.unitPrice);
+    return this.negatePrice() ? -unitPrice : unitPrice;
   }
 
   set unitPriceEuro(euros: number) {
-    this.unitPrice = NumberUtil.toCents(euros);
+    const unitPrice = NumberUtil.toCents(euros);
+    this.unitPrice = this.negatePrice() ? -unitPrice : unitPrice;
+    this.netPrice = this.quantity * this.unitPrice;
   }
 
   get netPriceEuro(): number {
     return NumberUtil.toEuros(this.netPrice);
   }
 
-  set netPriceEuro(euros: number) {
-    this.netPrice =  NumberUtil.toCents(euros);
+  private negatePrice(): boolean {
+    return this.type === ChargeBasisType.DISCOUNT && this.unit === ChargeBasisUnit.PIECE;
   }
 
-  updateNetPrice(): void {
-    this.netPrice = this.unitPrice * this.quantity;
+  private negateQuantity(): boolean {
+    return this.type === ChargeBasisType.DISCOUNT && this.unit === ChargeBasisUnit.PERCENT;
   }
 }
