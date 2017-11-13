@@ -176,16 +176,29 @@ public class ApplicationServiceComposer {
     return resultList;
   }
 
+  /**
+   * Change application's status to new status
+   * @param applicationId application to change
+   * @param newStatus new status for application
+   * @return updated application
+   */
   public ApplicationJson changeStatus(int applicationId, StatusType newStatus) {
+    return changeStatus(applicationId, newStatus, null);
+  }
+
+  /**
+   * Change application's status to new status
+   * @param applicationId application to change
+   * @param newStatus new status for application
+   * @param newHandler assign application to new handler
+   * @return updated application
+   */
+  public ApplicationJson changeStatus(int applicationId, StatusType newStatus, Integer newHandler) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
-    if (StatusType.HANDLING.equals(newStatus) && application.getHandler() == null) {
-      updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(applicationId));
-    }
+    changeHandlerOnStatusChange(application, newHandler);
 
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
-    logger.debug("found application {}, current status {}, handler {}",
-        applicationJson.getId(), applicationJson.getStatus(), applicationJson.getHandler());
 
     applicationHistoryService.addStatusChange(applicationId, newStatus);
     return applicationJson;
@@ -273,5 +286,11 @@ public class ApplicationServiceComposer {
   }
 
 
-
+  private void changeHandlerOnStatusChange(Application application, Integer newHandler) {
+    if (newHandler != null) {
+      updateApplicationHandler(newHandler, Collections.singletonList(application.getId()));
+    } else if (StatusType.HANDLING.equals(application.getStatus()) && application.getHandler() == null) {
+      updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
+    }
+  }
 }

@@ -10,8 +10,6 @@ import {TimeUtil} from '../../util/time.util';
 import {ApplicationTagMapper} from './application-tag-mapper';
 import {CommentMapper} from '../application/comment/comment-mapper';
 import {DistributionMapper} from './distribution-mapper';
-import {StatusChangeComment} from '../../model/application/status-change-comment';
-import {CommentType} from '../../model/application/comment/comment-type';
 
 export class ApplicationMapper {
 
@@ -80,12 +78,5 @@ export class ApplicationMapper {
       notBillableReason: application.notBillableReason,
       invoiceRecipientId: application.invoiceRecipientId
     };
-  }
-
-  public static mapComment(comment: StatusChangeComment) {
-    return comment ? {
-      type: comment.type ? CommentType[comment.type] : undefined,
-      comment: comment.comment
-    } : undefined;
   }
 }

@@ -417,6 +417,7 @@ export const translations = {
     }
   },
   decision: {
+    selectHandler: 'Valitse käsittelijä',
     type: {
       DECISION: {
         title: 'Päätä hakemus',
@@ -434,9 +435,20 @@ export const translations = {
         confirmation: 'Hakemus hylätty'
       }
     },
+    field: {
+      handlerMissing: 'Käsittelijä puuttuuu'
+    },
     proposal: {
-      PROPOSE_APPROVAL: 'Ehdota hyväksymistä',
-      PROPOSE_REJECT: 'Ehdota hylkäystä'
+      selectDecisionMaker: 'Valitse päättäjä',
+      comment: 'Perustelut',
+      type: {
+        PROPOSE_APPROVAL: 'Ehdota hyväksymistä',
+        PROPOSE_REJECT: 'Ehdota hylkäystä'
+      },
+      field: {
+        commentMissing: 'Perustelut puuttuva',
+        handlerMissing: 'Päättäjä puuttuu'
+      }
     },
     distribution: {
       type: {

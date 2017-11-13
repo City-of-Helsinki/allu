@@ -14,10 +14,11 @@ import {CommentHub} from './comment/comment-hub';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {SidebarItemType} from '../../feature/sidebar/sidebar-item';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
-import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {NumberUtil} from '../../util/number.util';
 import {ObjectUtil} from '../../util/object.util';
 import {CustomerHub} from '../customer/customer-hub';
+import {ApplicationStatus} from '../../model/application/application-status';
+import {StatusChangeInfo} from '../../model/application/status-change-info';
 
 @Injectable()
 export class ApplicationState {
@@ -188,9 +189,9 @@ export class ApplicationState {
       .do(response => this.reset());
   }
 
-  changeStatus(statusChange: ApplicationStatusChange): Observable<Application> {
-    statusChange.id = statusChange.id || this.application.id;
-    return this.applicationHub.changeStatus(statusChange)
+  changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
+    const appId = id || this.application.id;
+    return this.applicationHub.changeStatus(appId, status, changeInfo)
       .do(application => this.application = application);
   }
 

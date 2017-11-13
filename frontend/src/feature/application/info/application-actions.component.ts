@@ -3,7 +3,6 @@ import {FormGroup} from '@angular/forms';
 import {Router} from '@angular/router';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationHub} from '../../../service/application/application-hub';
-import {ApplicationStatusChange} from '../../../model/application/application-status-change';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {MaterializeUtil} from '../../../util/materialize.util';
@@ -59,8 +58,8 @@ export class ApplicationActionsComponent implements OnInit {
   }
 
   moveToHandling(): void {
-    this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.HANDLING)).
-      subscribe(app => {
+    this.applicationHub.changeStatus(this.applicationId, ApplicationStatus.HANDLING)
+      .subscribe(app => {
         MaterializeUtil.toast(findTranslation('application.statusChange.HANDLING'));
         this.applicationState.application = app;
         this.router.navigate(['/applications', this.applicationId, 'edit']);
@@ -83,7 +82,7 @@ export class ApplicationActionsComponent implements OnInit {
 
   cancel(): void {
     if (this.applicationState.application.statusEnum < ApplicationStatus.DECISION) {
-      this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.CANCELLED))
+      this.applicationHub.changeStatus(this.applicationId, ApplicationStatus.CANCELLED)
         .subscribe(app => {
             MaterializeUtil.toast(findTranslation('application.statusChange.CANCELLED'));
             this.applicationState.application = app;
@@ -96,7 +95,7 @@ export class ApplicationActionsComponent implements OnInit {
   private moveToDecisionMaking(): Observable<Application> {
 
     if (this.shouldMoveToDecisionMaking()) {
-      return this.applicationHub.changeStatus(new ApplicationStatusChange(this.applicationId, ApplicationStatus.DECISIONMAKING))
+      return this.applicationHub.changeStatus(this.applicationId, ApplicationStatus.DECISIONMAKING)
         .map(app => {
           MaterializeUtil.toast(findTranslation('application.statusChange.DECISIONMAKING'));
           this.applicationState.application = app;

@@ -38,7 +38,7 @@ export class MapHub {
       .debounceTime(300)
       .filter(filter => !!filter.geometry)
       .map(filter => this.toApplicationLocationQuery(filter))
-      .switchMap(query => this.applicationService.getApplicationsByLocation(query))
+      .switchMap(query => this.applicationService.getByLocation(query))
       .subscribe(applications => this.applications$.next(applications));
 
     // When search changes fetches new coordinates and adds them to coordinates observable

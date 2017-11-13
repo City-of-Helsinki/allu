@@ -3,19 +3,18 @@ import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 
 import {Application} from '../../model/application/application';
-import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {findTranslation} from '../../util/translations';
 import {NotificationService} from '../../service/notification/notification.service';
-import {DECISION_MODAL_CONFIG, DecisionModalComponent} from './decision-modal.component';
-import {DecisionConfirmation} from '../../model/decision/decision-confirmation';
+import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
 import {Observable} from 'rxjs';
 import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {DecisionHub} from '../../service/decision/decision-hub';
-import {DecisionDetails} from '../../model/decision/decision-details';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
 import {ApplicationState} from '../../service/application/application-state';
-import {StatusChangeComment} from '../../model/application/status-change-comment';
+import {StatusChangeInfo} from '../../model/application/status-change-info';
+import {Some} from '../../util/option';
+import {DecisionDetails} from '../../model/decision/decision-details';
 
 @Component({
   selector: 'decision-actions',
@@ -24,7 +23,7 @@ import {StatusChangeComment} from '../../model/application/status-change-comment
 })
 export class DecisionActionsComponent {
   @Input() application: Application;
-  @Output() onDecisionConfirm = new EventEmitter<ApplicationStatusChange>();
+  @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
   constructor(private applicationState: ApplicationState,
               private decisionHub: DecisionHub,
@@ -42,40 +41,38 @@ export class DecisionActionsComponent {
   public decision(status: string): void {
     let dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, DECISION_MODAL_CONFIG);
     let component = dialogRef.componentInstance;
-    component.applicationId = this.application.id;
     component.status = status;
     component.distributionList = this.application.decisionDistributionList;
     dialogRef.afterClosed()
       .subscribe((result: DecisionConfirmation) => this.decisionConfirmed(result));
   }
 
-  public decisionConfirmed(confirm: DecisionConfirmation) {
-    if (!!confirm) {
-      this.changeStatus(confirm.statusChange)
-        .switchMap(app => this.sendDecision(app.id, confirm.decisionDetails))
+  public decisionConfirmed(confirmation: DecisionConfirmation) {
+    if (!!confirmation) {
+      this.changeStatus(confirmation)
+        .switchMap(app => this.sendDecision(app.id, confirmation))
         .subscribe(
           result => this.router.navigateByUrl('/workqueue'),
           error => NotificationService.error(error));
     }
   }
 
-  private proposalConfirmed(comment: StatusChangeComment) {
-    if (comment) {
-      const statusChange = new ApplicationStatusChange(this.application.id, ApplicationStatus.DECISIONMAKING, comment);
-      this.applicationState.changeStatus(statusChange)
+  private proposalConfirmed(changeInfo: StatusChangeInfo) {
+    if (changeInfo) {
+      this.applicationState.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(app => {
           this.applicationState.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
           NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
           this.applicationState.application = app;
           this.application = app;
-          this.onDecisionConfirm.emit(statusChange);
+          this.onDecisionConfirm.emit(changeInfo);
         }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
     }
   }
 
-  private changeStatus(statusChange: ApplicationStatusChange): Observable<Application> {
-    statusChange.id = this.application.id;
-    return this.applicationState.changeStatus(statusChange)
+  private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
+    const changeInfo = new StatusChangeInfo(undefined, confirmation.comment, confirmation.handler);
+    return this.applicationState.changeStatus(this.application.id, confirmation.status, changeInfo)
       .do(application => this.statusChanged(application));
   }
 
@@ -84,11 +81,11 @@ export class DecisionActionsComponent {
     NotificationService.message(findTranslation(['decision.type', this.application.status, 'confirmation']));
   }
 
-  private sendDecision(applicationId: number, decisionDetails: DecisionDetails): Observable<HttpResponse> {
-    if (decisionDetails.hasEmails()) {
-      return this.decisionHub.sendDecision(applicationId, decisionDetails);
-    } else {
-      return Observable.of(new HttpResponse(HttpStatus.OK));
-    }
+  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<HttpResponse> {
+    return Some(confirmation.distributionList)
+      .filter(distribution => distribution.length > 0)
+      .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
+      .map(details => this.decisionHub.sendDecision(appId, details))
+      .orElse(Observable.of(new HttpResponse(HttpStatus.OK)));
   }
 }

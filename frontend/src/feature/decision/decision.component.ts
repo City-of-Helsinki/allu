@@ -6,7 +6,7 @@ import {Decision} from '../../model/decision/Decision';
 import {stepFrom} from '../application/progressbar/progress-step';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationState} from '../../service/application/application-state';
-import {ApplicationStatusChange} from '../../model/application/application-status-change';
+import {StatusChangeInfo} from '../../model/application/status-change-info';
 
 @Component({
   selector: 'decision',
@@ -32,7 +32,7 @@ export class DecisionComponent implements OnInit {
       .subscribe(decision => this.providePdf(decision));
   }
 
-  onDecisionConfirm(statusChange: ApplicationStatusChange): void {
+  onDecisionConfirm(changeInfo: StatusChangeInfo): void {
     this.decisionHub.fetch(this.application.id)
       .subscribe(decision => this.providePdf(decision));
   }

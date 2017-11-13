@@ -3,8 +3,6 @@ import {Subject} from 'rxjs/Subject';
 import '../../rxjs-extensions.ts';
 
 import {Application} from '../../model/application/application';
-import {ApplicationLocationQuery} from '../../model/search/ApplicationLocationQuery';
-import {ApplicationStatusChange} from '../../model/application/application-status-change';
 import {ApplicationService} from './application.service';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {StructureMeta} from '../../model/application/meta/structure-meta';
@@ -12,8 +10,8 @@ import {DefaultText} from '../../model/application/cable-report/default-text';
 import {DefaultTextService} from './default-text.service';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {ApplicationTag} from '../../model/application/tag/application-tag';
-
-export type ApplicationSearch = ApplicationLocationQuery | number;
+import {ApplicationStatus} from '../../model/application/application-status';
+import {StatusChangeInfo} from '../../model/application/status-change-info';
 
 @Injectable()
 export class ApplicationHub {
@@ -28,12 +26,12 @@ export class ApplicationHub {
   /**
    * Fetches single application
    */
-  public getApplication = (id: number) => this.applicationService.getApplication(id);
+  public getApplication = (id: number) => this.applicationService.get(id);
 
   /**
    * Fetches applications based on given search query
    */
-  public searchApplications = (searchQuery: ApplicationSearchQuery) => this.applicationService.searchApplications(searchQuery);
+  public searchApplications = (searchQuery: ApplicationSearchQuery) => this.applicationService.search(searchQuery);
 
   /**
    * Loads metadata for given application type
@@ -46,35 +44,36 @@ export class ApplicationHub {
   /**
    * Saves given application (new / update) and returns saved application
    */
-  public save = (application: Application) => this.applicationService.saveApplication(application);
+  public save = (application: Application) => this.applicationService.save(application);
 
   /**
    * Deletes given application (only NOTE-types can be deleted)
    */
-  public delete = (id: number) => this.applicationService.deleteApplication(id);
+  public delete = (id: number) => this.applicationService.remove(id);
 
   /**
    * Changes applications status according to statusChange.
    * Returns updated application.
    */
-  public changeStatus = (statusChange: ApplicationStatusChange) => this.applicationService.applicationStatusChange(statusChange);
+  public changeStatus = (appId: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo) =>
+    this.applicationService.statusChange(appId, status, changeInfo);
 
   /**
    * Changes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
    */
   public changeHandler =
-    (handler: number, applicationIds: Array<number>) => this.applicationService.applicationHandlerChange(handler, applicationIds);
+    (handler: number, applicationIds: Array<number>) => this.applicationService.handlerChange(handler, applicationIds);
 
   /**
    * Removes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
    */
   public removeHandler =
-    (applicationIds: Array<number>) => this.applicationService.applicationHandlerRemove(applicationIds);
+    (applicationIds: Array<number>) => this.applicationService.handlerRemove(applicationIds);
 
   /**
    * Saves tags for application specified by id
    */
-  public saveTags = (id: number, tags: Array<ApplicationTag>) => this.applicationService.saveApplicationTags(id, tags);
+  public saveTags = (id: number, tags: Array<ApplicationTag>) => this.applicationService.saveTags(id, tags);
 
   public loadDefaultTexts = (applicationType: ApplicationType) => this.defaultTextService.load(applicationType);
 

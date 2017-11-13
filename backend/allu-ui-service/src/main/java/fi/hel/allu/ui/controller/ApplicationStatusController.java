@@ -2,7 +2,7 @@ package fi.hel.allu.ui.controller;
 
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
-import fi.hel.allu.servicecore.domain.StatusCommentJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.CommentService;
 import fi.hel.allu.servicecore.service.DecisionService;
@@ -50,9 +50,10 @@ public class ApplicationStatusController {
     @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
     public ResponseEntity<ApplicationJson> changeStatusToDecisionMaking(
-            @PathVariable int id, @RequestBody(required = false) StatusCommentJson comment) {
-        Optional.ofNullable(comment).ifPresent(c -> commentService.addDecisionProposalComment(id, c));
-        return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.DECISIONMAKING), HttpStatus.OK);
+            @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
+        commentService.addDecisionProposalComment(id, info);
+        return new ResponseEntity<>(applicationServiceComposer.changeStatus(
+            id, StatusType.DECISIONMAKING, info.getHandler()), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/decision", method = RequestMethod.PUT)
@@ -65,16 +66,17 @@ public class ApplicationStatusController {
 
     @RequestMapping(value = "/{id}/status/rejected", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-    public ResponseEntity<ApplicationJson> changeStatusToRejected(@PathVariable int id, @RequestBody StatusCommentJson comment) {
-        commentService.addRejectComment(id, comment.getComment());
+    public ResponseEntity<ApplicationJson> changeStatusToRejected(@PathVariable int id, @RequestBody StatusChangeInfoJson changeInfo) {
+        commentService.addRejectComment(id, changeInfo.getComment());
         return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.REJECTED), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/toPreparation", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-    public ResponseEntity<ApplicationJson> changeStatusToReturnedToPreparation(@PathVariable int id, @RequestBody StatusCommentJson comment) {
-        commentService.addReturnComment(id, comment.getComment());
-        return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.RETURNED_TO_PREPARATION), HttpStatus.OK);
+    public ResponseEntity<ApplicationJson> changeStatusToReturnedToPreparation(@PathVariable int id, @RequestBody StatusChangeInfoJson changeInfo) {
+        commentService.addReturnComment(id, changeInfo.getComment());
+        return new ResponseEntity<>(applicationServiceComposer.changeStatus(
+            id, StatusType.RETURNED_TO_PREPARATION, changeInfo.getHandler()), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/finished", method = RequestMethod.PUT)

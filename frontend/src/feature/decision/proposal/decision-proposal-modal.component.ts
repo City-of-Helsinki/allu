@@ -2,7 +2,11 @@ import {Component, Input, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CommentType} from '../../../model/application/comment/comment-type';
-import {StatusChangeComment} from '../../../model/application/status-change-comment';
+import {StatusChangeInfo} from '../../../model/application/status-change-info';
+import {Observable} from 'rxjs/Observable';
+import {User} from '../../../model/user/user';
+import {UserHub} from '../../../service/user/user-hub';
+import {RoleType} from '../../../model/user/role-type';
 
 export const DECISION_PROPOSAL_MODAL_CONFIG = {width: '800px'};
 
@@ -16,17 +20,24 @@ export class DecisionProposalModalComponent implements OnInit {
 
   proposalForm: FormGroup;
 
-  constructor(public dialogRef: MatDialogRef<DecisionProposalModalComponent>,
+  handlers: Observable<Array<User>>;
+
+  constructor(private dialogRef: MatDialogRef<DecisionProposalModalComponent>,
+              private userHub: UserHub,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.proposalForm = this.fb.group({
-      comment: ['', Validators.required]
+      comment: ['', Validators.required],
+      handler: [undefined, Validators.required]
     });
+
+    this.handlers = this.userHub.getByRole(RoleType.ROLE_DECISION);
   }
 
   confirm() {
-    this.dialogRef.close(new StatusChangeComment(CommentType[this.proposal], this.proposalForm.value.comment));
+    const formValue = this.proposalForm.value;
+    this.dialogRef.close(new StatusChangeInfo(CommentType[this.proposal], formValue.comment, formValue.handler));
   }
 
   cancel() {

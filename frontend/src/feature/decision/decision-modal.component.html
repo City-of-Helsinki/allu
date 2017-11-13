@@ -3,18 +3,31 @@
 </h1>
 <div mat-dialog-content>
     <form [formGroup]="decisionForm">
-        <div class="row">
-            <div class="col s12" *ngIf="status !== 'DECISION'">
+        <div fxLayout="row" fxLayoutWrap>
+            <div fxFlex="100" *ngIf="status !== 'DECISION'">
                 <mat-form-field class="input-full-width">
                     <textarea matInput matTextareaAutosize formControlName="comment" placeholder="Perustelut"></textarea>
                 </mat-form-field>
             </div>
-            <div class="col s12">
+            <div fxFlex="50" *ngIf="status === 'RETURNED_TO_PREPARATION'">
+                <mat-form-field class="input-full-width">
+                    <mat-select [placeholder]="'decision.selectHandler' | translation" class="input-full-width"
+                                formControlName="handler" required>
+                        <mat-option *ngFor="let handler of handlers | async" [value]="handler.id">
+                            {{handler.realName}}
+                        </mat-option>
+                    </mat-select>
+                    <mat-error *ngIf="decisionForm.get('handler').hasError('required')">
+                        {{'decision.field.handlerMissing' | translation}}
+                    </mat-error>
+                </mat-form-field>
+            </div>
+            <div fxFlex="100">
                 <mat-form-field class="input-full-width">
                     <textarea matInput matTextareaAutosize formControlName="emailMessage" placeholder="Sähköpostiviesti"></textarea>
                 </mat-form-field>
             </div>
-            <div class="col s12">
+            <div fxFlex="100">
                 <h2>Päätöksen jakelu</h2>
                 <distribution-list [form]="decisionForm" [distributionList]="distributionList"></distribution-list>
             </div>
@@ -22,6 +35,10 @@
     </form>
 </div>
 <div mat-dialog-actions>
-    <button mat-raised-button type="button" color="primary" (click)="confirm()">{{['decision.type', status, 'confirmText'] | translation }}</button>
-    <button mat-raised-button type="button" color="primary" (click)="cancel()">Peruuta</button>
+    <button mat-raised-button type="button" color="primary" (click)="confirm()">
+        {{['decision.type', status, 'confirmText'] | translation | uppercase }}
+    </button>
+    <button mat-raised-button type="button" color="primary" (click)="cancel()">
+        {{'common.button.cancel' | translation}}
+    </button>
 </div>

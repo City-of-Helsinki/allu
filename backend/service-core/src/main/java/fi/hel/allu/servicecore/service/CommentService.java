@@ -4,7 +4,7 @@ import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.CommentJson;
-import fi.hel.allu.servicecore.domain.StatusCommentJson;
+import fi.hel.allu.servicecore.domain.StatusChangeInfoJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +101,7 @@ public class CommentService {
    *          comments for decision
    * @return the added comment
    */
-  public CommentJson addDecisionProposalComment(int applicationId, StatusCommentJson comment) {
+  public CommentJson addDecisionProposalComment(int applicationId, StatusChangeInfoJson comment) {
     return addCommentUnchecked(applicationId, newCommentJson(comment.getType(), comment.getComment()));
   }
 

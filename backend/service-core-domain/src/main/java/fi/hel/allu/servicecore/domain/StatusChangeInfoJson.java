@@ -2,10 +2,14 @@ package fi.hel.allu.servicecore.domain;
 
 import fi.hel.allu.common.types.CommentType;
 
-public class StatusCommentJson {
+/**
+ * Class containing additional info related to changing application's status
+ */
+public class StatusChangeInfoJson {
 
     private CommentType type;
     private String comment;
+    private Integer handler;
 
     /**
      * Type of comment
@@ -27,5 +31,16 @@ public class StatusCommentJson {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    /**
+     * Id of the new handler for application which status is changed
+     */
+    public Integer getHandler() {
+        return handler;
+    }
+
+    public void setHandler(Integer handler) {
+        this.handler = handler;
     }
 }
