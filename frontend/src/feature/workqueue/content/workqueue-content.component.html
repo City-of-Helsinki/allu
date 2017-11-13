@@ -46,7 +46,7 @@
         </tr>
         <tr *ngIf="row.application.applicationTags.length"
             class="bottom-row clickable" [class.row-highlight]="i===hoveredRowIndex"
-            (click)="goToSummary($event.target.cellIndex, row.application)"
+            (click)="goToApplication($event.target.cellIndex, row.application)"
             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
             <td></td>
             <td colspan="1" class="row-title">Tunnisteet</td>
