@@ -24,7 +24,7 @@ export class CommentsModalComponent implements OnInit {
     this.comments = this.commentHub.getComments(this.applicationId)
       .catch(err => {
         NotificationService.error(err);
-        return Observable.empty();
+        return Observable.of([]);
       });
   }
 

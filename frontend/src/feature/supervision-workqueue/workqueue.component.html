@@ -14,7 +14,7 @@
   <div fxLayout='row'>
     <div fxFlex>
       <div class="labels-solid labels-end">
-        <mat-tab-group (selectChange)="tabSelected($event)" headerPosition="end">
+        <mat-tab-group (selectedTabChange)="tabSelected($event)" headerPosition="end">
           <mat-tab *ngFor="let tab of tabs">
             <ng-template mat-tab-label>{{['workqueue.tab', tab] | translation}}</ng-template>
             <supervision-workqueue-content></supervision-workqueue-content>

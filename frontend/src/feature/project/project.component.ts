@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Project} from '../../model/project/project';
-import {SidebarItem} from '../sidebar/sidebar-item';
+import {SidebarItem, SidebarItemType} from '../sidebar/sidebar-item';
 import {Observable} from 'rxjs';
 import {ProjectState} from '../../service/project/project-state';
 
@@ -27,9 +27,9 @@ export class ProjectComponent implements OnInit {
       this.applicationCount(),
       this.projectCount(),
       (apps, projects) => [
-        { type: 'BASIC_INFO'},
-        { type: 'APPLICATIONS', count: apps},
-        { type: 'PROJECTS', count: projects }
+        this.sidebarItem('BASIC_INFO'),
+        this.sidebarItem('APPLICATIONS', apps),
+        this.sidebarItem('PROJECTS', projects)
       ]
     );
   }
@@ -44,5 +44,9 @@ export class ProjectComponent implements OnInit {
   applicationCount(): Observable<number> {
     return this.projectState.applications
       .map(applications => applications.length);
+  }
+
+  private sidebarItem(type: SidebarItemType, count?: number): SidebarItem {
+    return {type: type, count: count};
   }
 }

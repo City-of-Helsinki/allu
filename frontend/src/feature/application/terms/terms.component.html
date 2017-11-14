@@ -5,7 +5,7 @@
             <div class="row">
                 <div *ngIf="!readonly" class="col s6">
                     <mat-form-field class="input-full-width">
-                        <mat-select class="input-full-width" placeholder="Vakiotekstit" (change)="addDefaultText(index, $event.value)">
+                        <mat-select class="input-full-width" placeholder="Vakiotekstit" (selectionChange)="addDefaultText(index, $event.value)">
                             <mat-option *ngFor="let defaultText of defaultTexts" [value]="defaultText.text">
                                 {{defaultText.text}}
                             </mat-option>

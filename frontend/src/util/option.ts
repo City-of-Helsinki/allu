@@ -4,7 +4,7 @@ export interface Option<A> {
   map<B>(fn: (a: A) => B): Option<B>;
   do(fn: (a: A) => any): void;
   filter(predicate: (a: A) => boolean): Option<A>;
-  orElse<B>(val: B): B;
+  orElse(val: A): A;
 }
 
 export function Some<T>(val: T): Option<T> {
@@ -50,7 +50,7 @@ export class SomeOpt<T> implements Option<T> {
   }
 }
 
-export class NoneOpt implements Option<never> {
+export class NoneOpt implements Option<any> {
   constructor() {}
 
   isDefined(): boolean {
@@ -68,7 +68,7 @@ export class NoneOpt implements Option<never> {
   do(fn: (a: any) => any): void {}
 
 
-  filter(predicate: (a: never) => boolean): Option<never> {
+  filter(predicate: (a: never) => boolean): Option<any> {
     return None();
   }
 

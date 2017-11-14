@@ -27,7 +27,6 @@ describe('ContactComponent', () => {
   let page: ContactPage;
   let parentForm: FormGroup;
   let applicationStateMock: ApplicationStateMock;
-  let customerHubMock: CustomerHubMock;
 
   class ContactPage {
     public contacts: Array<DebugElement>;
@@ -63,7 +62,6 @@ describe('ContactComponent', () => {
     }).compileComponents();
 
     applicationStateMock = TestBed.get(ApplicationState) as ApplicationStateMock;
-    customerHubMock = TestBed.get(CustomerHub) as CustomerHubMock;
   }));
 
   beforeEach(() => {

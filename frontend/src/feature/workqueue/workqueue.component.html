@@ -12,7 +12,7 @@
   <div class="row">
     <div class="col s12">
       <div class="labels-solid labels-end">
-        <mat-tab-group (selectChange)="tabSelected($event)">
+        <mat-tab-group (selectedTabChange)="tabSelected($event)">
           <mat-tab *ngFor="let tab of tabs">
             <ng-template mat-tab-label>{{['workqueue.tab', tab] | translation}}</ng-template>
             <workqueue-content

@@ -13,9 +13,9 @@ import {DecisionHub} from '../../../service/decision/decision-hub';
 })
 export class DecisionPreviewComponent implements OnInit {
 
-  private pdfUrl: SafeResourceUrl;
-  private pdfDownloadUrl: SafeUrl;
-  private pdfLoaded: boolean;
+  pdfUrl: SafeResourceUrl;
+  pdfDownloadUrl: SafeUrl;
+  pdfLoaded: boolean;
 
   constructor(private sanitizer: DomSanitizer,
               private applicationState: ApplicationState,

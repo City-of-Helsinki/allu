@@ -16,7 +16,7 @@ import {MapHub} from '../../service/map/map-hub';
 
 export class ApplicationListComponent implements OnInit, OnDestroy {
 
-  private applications: Observable<Array<Application>>;
+  applications: Observable<Array<Application>>;
 
   constructor(private mapHub: MapHub) {
   }

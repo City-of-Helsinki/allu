@@ -298,7 +298,11 @@ export const translations = {
     },
     error: {
       saveFailed: 'Projektin tallentaminen epäonnistui',
-      searchFailed: 'Projektien hakeminen epäonnistui'
+      searchFailed: 'Projektien hakeminen epäonnistui',
+      fetchFailed: 'Projektin hakeminen epäonnistui',
+      applicationFetchFailed: 'Projektin hakemusten hakeminen epäonnistui',
+      updateParentFailed: 'Projektin päivitys epäonnistui',
+      removeParentFailed: 'Projektin poistaminen epäonnistui'
     }
   },
   customer: {

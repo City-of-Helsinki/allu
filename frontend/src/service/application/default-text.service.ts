@@ -5,11 +5,10 @@ import {Observable} from 'rxjs/Observable';
 import {DefaultText} from '../../model/application/cable-report/default-text';
 import {HttpStatus} from '../../util/http-response';
 import {HttpUtil} from '../../util/http.util';
-import {UIStateHub} from '../ui-state/ui-state-hub';
-import {ErrorInfo} from '../ui-state/error-info';
-import {ErrorType} from '../ui-state/error-type';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {DefaultTextMapper} from '../mapper/default-text-mapper';
+import {ErrorHandler} from '../error/error-handler.service';
+import {findTranslation} from '../../util/translations';
 
 const DEFAULT_TEXTS_URL = '/api/defaulttext';
 const DEFAULT_TEXTS_BY_APPLICATION_TYPE_URL = DEFAULT_TEXTS_URL + '/applicationtype/:appType';
@@ -17,7 +16,7 @@ const DEFAULT_TEXTS_BY_APPLICATION_TYPE_URL = DEFAULT_TEXTS_URL + '/applicationt
 @Injectable()
 export class DefaultTextService {
 
-  constructor(private authHttp: AuthHttp,  private uiState: UIStateHub) {
+  constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {
   }
 
   public load(applicationType: ApplicationType): Observable<Array<DefaultText>> {
@@ -25,7 +24,7 @@ export class DefaultTextService {
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(texts => texts.map(text => DefaultTextMapper.mapBackend(text)))
-      .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
+      .catch(err => this.errorHandler.handle(err));
   }
 
   public save(text: DefaultText): Observable<DefaultText> {
@@ -33,11 +32,11 @@ export class DefaultTextService {
       let url = DEFAULT_TEXTS_URL + '/' + text.id;
       return this.authHttp.put(url, JSON.stringify(DefaultTextMapper.mapFrontend(text)))
         .map(response => DefaultTextMapper.mapBackend(response.json()))
-        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.DEFAULT_TEXT_SAVE_FAILED, HttpUtil.extractMessage(err))));
+        .catch(err => this.errorHandler.handle(err, findTranslation('defaultText.error.saveFailed')));
     } else {
       return this.authHttp.post(DEFAULT_TEXTS_URL, JSON.stringify(DefaultTextMapper.mapFrontend(text)))
         .map(response => DefaultTextMapper.mapBackend(response.json()))
-        .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.DEFAULT_TEXT_SAVE_FAILED, HttpUtil.extractMessage(err))));
+        .catch(err => this.errorHandler.handle(err, findTranslation('defaultText.error.saveFailed')));
     }
   }
 
@@ -45,6 +44,6 @@ export class DefaultTextService {
     let url = DEFAULT_TEXTS_URL + '/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response))
-      .catch(err => this.uiState.addError(new ErrorInfo(ErrorType.DEFAULT_TEXT_SAVE_FAILED, HttpUtil.extractMessage(err))));
+      .catch(err => this.errorHandler.handle(err, findTranslation('defaultText.error.saveFailed')));
   }
 }

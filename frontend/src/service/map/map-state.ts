@@ -97,15 +97,13 @@ export class MapState {
       rectangle: {
         shapeOptions: pathStyle.DEFAULT_DRAW
       },
-      polyline: false,
-      marker: false,
       bufferPolyline: {
         shapeOptions: pathStyle.DEFAULT_DRAW,
         polyOptions: {
           shapeOptions: pathStyle.DEFAULT_DRAW
         }
       }
-    } : false;
+    } : undefined;
 
     let edit = controlsEnabled ? { selectedPathOptions: pathStyle.DEFAULT_EDIT } : false;
 
@@ -180,7 +178,7 @@ export class MapState {
     if (geometryCollection.geometries.length) {
       style = style || {};
       let featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
-      style.pointToLayer = (point, latlng) => L.marker(latlng, alluIcon);
+      style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon});
       let geoJSON = L.geoJSON(featureCollection, style);
       this.drawGeoJSON(geoJSON, drawLayer, popup);
     }

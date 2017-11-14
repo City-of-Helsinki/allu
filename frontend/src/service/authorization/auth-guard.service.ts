@@ -1,16 +1,13 @@
 import {Injectable} from '@angular/core';
-import {ActivatedRouteSnapshot, RouterStateSnapshot, CanActivate} from '@angular/router';
-import {JwtHelper} from 'angular2-jwt/angular2-jwt';
+import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 import {AuthService} from './auth.service';
 import {ConfigService} from '../config/config.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  private jwtHelper: JwtHelper;
 
   constructor(private authService: AuthService, private configService: ConfigService) {
-    this.jwtHelper = new JwtHelper();
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Observable<boolean> {

@@ -15,6 +15,7 @@ import {AlluCommonModule} from '../../../src/feature/common/allu-common.module';
 import {HandlerModalModule} from '../../../src/feature/common/handlerModal/handler-modal.module';
 import {NotificationService} from '../../../src/service/notification/notification.service';
 import {getButtonWithText} from '../../selector-helpers';
+import {Page} from '../../../src/model/common/page';
 
 const defaultItems = [
   new SupervisionWorkItem(1),
@@ -39,7 +40,6 @@ describe('SupervisionWorkqueueComponent', () => {
   let comp: WorkQueueComponent;
   let fixture: ComponentFixture<WorkQueueComponent>;
   let store: SupervisionWorkItemStoreMock;
-  let userHub: UserHubMock;
   let dialog: MatDialog;
   let de: DebugElement;
   let currentUserMock = CurrentUserMock.create(true, true);
@@ -69,13 +69,12 @@ describe('SupervisionWorkqueueComponent', () => {
 
   beforeEach(() => {
     store = TestBed.get(SupervisionWorkItemStore) as SupervisionWorkItemStoreMock;
-    userHub = TestBed.get(UserHub) as UserHubMock;
     dialog = TestBed.get(MatDialog);
     fixture = TestBed.createComponent(WorkQueueComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
-    store.changeSubject.next({...store.changeSubject.getValue(), items: defaultItems});
+    store.changeSubject.next({...store.changeSubject.getValue(), page: new Page(defaultItems)});
     comp.ngOnInit();
     fixture.detectChanges();
   });

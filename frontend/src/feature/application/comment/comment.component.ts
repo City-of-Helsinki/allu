@@ -19,7 +19,7 @@ export class CommentComponent implements OnInit {
 
   _edit = false;
   commentTypes = manualCommentNames;
-  canEdit: false;
+  canEdit = false;
 
   private originalComment: Comment;
 

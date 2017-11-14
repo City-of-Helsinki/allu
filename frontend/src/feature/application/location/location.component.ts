@@ -165,7 +165,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
 
   cancelLink(): Array<string> {
     return Some(this.application.id)
-      .map(id => ['/applications', id, 'summary'])
+      .map(id => ['/applications', String(id), 'summary'])
       .orElse(['/home']);
   }
 

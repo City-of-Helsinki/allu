@@ -20,7 +20,8 @@ export class CableReportForm implements ApplicationForm {
     public reportTimes?: TimePeriod,
     public workDescription?: string,
     public cableInfo?: CableInfoForm,
-    public ordererId?: OrdererIdForm
+    public ordererId?: OrdererIdForm,
+    public calculatedPrice?: number
   ) {}
 
   static to(form: CableReportForm, validityTime: Date): CableReport {
@@ -50,7 +51,8 @@ export class CableReportForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       cableReport.workDescription,
       CableInfoForm.from(cableReport),
-      OrdererIdForm.from(cableReport.ordererId)
+      OrdererIdForm.from(cableReport.ordererId),
+      application.calculatedPriceEuro
     );
   }
 

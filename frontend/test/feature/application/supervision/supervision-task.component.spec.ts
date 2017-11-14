@@ -73,7 +73,6 @@ class SupervisionTaskStoreMock {
 describe('SupervisionTaskComponent', () => {
   let comp: SupervisionTaskComponent;
   let fixture: ComponentFixture<SupervisionTaskComponent>;
-  let applicationState: ApplicationStateMock;
   let supervisionTaskStore: SupervisionTaskStoreMock;
   let de: DebugElement;
   let currentUserMock = CurrentUserMock.create(true, true);
@@ -102,7 +101,6 @@ describe('SupervisionTaskComponent', () => {
 
   beforeEach(() => {
     supervisionTaskStore = TestBed.get(SupervisionTaskStore) as SupervisionTaskStoreMock;
-    applicationState = TestBed.get(ApplicationState) as ApplicationStateMock;
     userHub = TestBed.get(UserHub) as UserHubMock;
     fixture = TestBed.createComponent(SupervisionTaskComponent);
     comp = fixture.componentInstance;

@@ -15,10 +15,10 @@ import {StatusChangeInfo} from '../../model/application/status-change-info';
 })
 export class DecisionComponent implements OnInit {
   application: Application;
-  private progressStep: number;
-  private pdfUrl: SafeResourceUrl;
-  private pdfDownloadUrl: SafeUrl;
-  private pdfLoaded: boolean;
+  progressStep: number;
+  pdfUrl: SafeResourceUrl;
+  pdfDownloadUrl: SafeUrl;
+  pdfLoaded: boolean;
 
   constructor(
     private sanitizer: DomSanitizer,

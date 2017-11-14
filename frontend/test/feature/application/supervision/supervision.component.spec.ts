@@ -39,7 +39,6 @@ describe('SupervisionComponent', () => {
   let fixture: ComponentFixture<SupervisionComponent>;
   let supervisionTaskStore: SupervisionTaskStoreMock;
   let de: DebugElement;
-  let userHub: UserHubMock;
   let currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
@@ -61,7 +60,6 @@ describe('SupervisionComponent', () => {
 
   beforeEach(() => {
     supervisionTaskStore = TestBed.get(SupervisionTaskStore) as SupervisionTaskStoreMock;
-    userHub = TestBed.get(UserHub) as UserHubMock;
     fixture = TestBed.createComponent(SupervisionComponent);
     comp = fixture.componentInstance;
     de = fixture.debugElement;

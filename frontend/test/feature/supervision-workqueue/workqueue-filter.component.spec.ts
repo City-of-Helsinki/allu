@@ -12,11 +12,12 @@ import {AlluCommonModule} from '../../../src/feature/common/allu-common.module';
 import {WorkQueueFilterComponent} from '../../../src/feature/supervision-workqueue/filter/workqueue-filter.component';
 import {findTranslation} from '../../../src/util/translations';
 import {WorkQueueTab} from '../../../src/feature/workqueue/workqueue-tab';
+import {Page} from '../../../src/model/common/page';
 
-const defaultItems = [
+const defaultItems = new Page([
   new SupervisionWorkItem(1),
   new SupervisionWorkItem(2)
-];
+]);
 
 describe('SupervisionWorkqueueFilterComponent', () => {
   let comp: WorkQueueFilterComponent;
@@ -50,7 +51,7 @@ describe('SupervisionWorkqueueFilterComponent', () => {
     comp = fixture.componentInstance;
     de = fixture.debugElement;
 
-    store.changeSubject.next({...store.changeSubject.getValue(), items: defaultItems});
+    store.changeSubject.next({...store.changeSubject.getValue(), page: defaultItems});
     comp.ngOnInit();
     fixture.detectChanges();
   });

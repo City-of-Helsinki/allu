@@ -1,4 +1,4 @@
-import { Directive, EventEmitter, ElementRef, HostListener, Output } from '@angular/core';
+import { Directive, EventEmitter, HostListener, Output } from '@angular/core';
 
 @Directive({selector: '[fileDrop]'})
 export class FileDropDirective {
@@ -6,10 +6,8 @@ export class FileDropDirective {
   @Output() onFileDrop = new EventEmitter<FileList>();
   @Output() onFileOver = new EventEmitter<boolean>();
 
-  private element: ElementRef;
 
-  public constructor(element: ElementRef) {
-    this.element = element;
+  public constructor() {
   }
 
   @HostListener('drop', ['$event'])
