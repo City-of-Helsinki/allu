@@ -371,14 +371,14 @@ export const translations = {
       invalidSsn: 'Virheellinen henkilötunnus'
     },
     action: {
-      save: 'Hakija tallennettu',
-      removeFromRegistry: 'Hakija poistettu rekisteristä'
+      save: 'Asiakas tallennettu',
+      removeFromRegistry: 'Asiakas poistettu rekisteristä'
     },
     error: {
-      fetch: 'Hakijan hakeminen epäonnistui',
+      fetch: 'Asiakkaan hakeminen epäonnistui',
       fetchContacts: 'Asiakkaan yhteyshenkilöiden hakeminen epäonnistui',
-      save: 'Hakijan tallentaminen epäonnistui',
-      remove: 'Hakijan poistaminen rekisteristä epäonnistui'
+      save: 'Asiakkaan tallentaminen epäonnistui',
+      remove: 'Asiakkaan poistaminen rekisteristä epäonnistui'
     }
   },
   contact: {

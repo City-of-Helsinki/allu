@@ -2,68 +2,30 @@
     <mat-card>
         <mat-card-title>
             Laskutustiedot
-            <button mat-icon-button type="button" class="align-with-text"><mat-icon>mode_edit</mat-icon></button>
+            <button mat-icon-button type="button" class="align-with-text" *ngIf="canBeEdited()" (click)="editCustomer()">
+                <mat-icon>mode_edit</mat-icon>
+            </button>
         </mat-card-title>
         <mat-card-content>
-            <div class="row">
-                <div class="col m6">
-                    <customer-info [form]="addressForm" [allowSearch]="true" *ngIf="billable"
-                                   (customerChange)="invoiceRecipientChange($event)"></customer-info>
-                    <div class="row form-group">
-                        <div class="col m12 height-fix-bottom">
-                            <mat-checkbox formControlName="notBillable">Ei laskuteta</mat-checkbox>
-                        </div>
-                        <div class="col m12" *ngIf="!billable">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="notBillableReason" placeholder="Perustelu*"/>
-                                <mat-hint>
-                                    <field-error [form]="infoForm" field="notBillableReason" hasError="required">
-                                        {{'invoice.field.notBillableReasonMissing' | translation}}
-                                    </field-error>
-                                </mat-hint>
-                            </mat-form-field>
-                        </div>
-                    </div>
+            <customer-info [form]="recipientForm" [allowSearch]="true" *ngIf="billable"
+                           (customerChange)="invoiceRecipientChange($event)"></customer-info>
+            <div fxLayout="row">
+                <div fxFlex="100" class="height-fix-bottom">
+                    <mat-checkbox formControlName="notBillable">Ei laskuteta</mat-checkbox>
                 </div>
-                <div class="col m4" *ngIf="billable">
-                    <div class="row form-group">
-                        <div class="col m12">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="workId" placeholder="Työnumero"/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col m12">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="invoiceReference" placeholder="Laskutusviite"/>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col m12">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="number" formControlName="deposit" placeholder="Vakuus"/>
-                                <div matSuffix>€</div>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="row form-group">
-                        <div class="col m12">
-                            <mat-form-field class="input-full-width">
-                                <mat-select class="input-full-width" formControlName="partition" placeholder="Laskun ositus">
-                                    <mat-option selected value="">{{'invoice.partition.NONE' | translation}}</mat-option>
-                                    <mat-option *ngFor="let partition of invoicePartitions" [value]="partition">
-                                        {{['invoice.partition', partition] | translation}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
-                    </div>
+                <div fxFlex="100" *ngIf="!billable">
+                    <mat-form-field class="input-full-width">
+                        <input matInput type="text" formControlName="notBillableReason" placeholder="Perustelu*"/>
+                        <mat-hint>
+                            <field-error [form]="infoForm" field="notBillableReason" hasError="required">
+                                {{'invoice.field.notBillableReasonMissing' | translation}}
+                            </field-error>
+                        </mat-hint>
+                    </mat-form-field>
                 </div>
             </div>
             <div fxLayout="row">
-                <div fxFlex="100" *ngIf="infoForm.dirty">
+                <div fxFlex *ngIf="infoForm.dirty">
                     <button type="submit" mat-raised-button color="primary" [disabled]="!infoForm.valid">TALLENNA</button>
                     <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
                 </div>

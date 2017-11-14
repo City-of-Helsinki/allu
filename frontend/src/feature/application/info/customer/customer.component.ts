@@ -5,7 +5,7 @@ import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {CustomerModalComponent} from '../../../customerregistry/customer/customer-modal.component';
+import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '../../../customerregistry/customer/customer-modal.component';
 import {Customer} from '../../../../model/customer/customer';
 import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
@@ -60,10 +60,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   edit(): void {
-    this.dialogRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, {
-      disableClose: false,
-      width: '800px'
-    });
+    this.dialogRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, CUSTOMER_MODAL_CONFIG);
     this.dialogRef.componentInstance.customerId = this.customerForm.value.id;
     this.dialogRef.afterClosed()
       .filter(customer => !!customer)

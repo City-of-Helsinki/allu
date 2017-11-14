@@ -69,21 +69,41 @@ export class CustomerService {
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetchContacts')));
   }
 
+  public saveCustomer(customer: Customer): Observable<Customer> {
+    return Some(customer.id)
+      .map(id => this.updateCustomer(id, customer))
+      .orElse(this.createCustomer(customer))
+      .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.save')));
+  }
+
   public saveCustomerWithContacts(customerWithContacts: CustomerWithContacts): Observable<CustomerWithContacts> {
      return Some(customerWithContacts.customerId)
-     .map(id => this.updateCustomer(id, customerWithContacts))
-     .orElse(this.createCustomer(customerWithContacts))
+     .map(id => this.updateCustomerWithContacts(id, customerWithContacts))
+     .orElse(this.createCustomerWithContacts(customerWithContacts))
      .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.save')));
   }
 
-  private updateCustomer(customerId: number, customer: CustomerWithContacts): Observable<CustomerWithContacts> {
+  private updateCustomer(id: number, customer: Customer): Observable<Customer> {
+    const url = CUSTOMERS_URL + '/' + id;
+    return this.authHttp.put(url, JSON.stringify(CustomerMapper.mapFrontend(customer)))
+      .map(response => response.json())
+      .map(saved => CustomerMapper.mapBackend(saved));
+  }
+
+  private createCustomer(customer: Customer): Observable<Customer> {
+    return this.authHttp.post(CUSTOMERS_URL, JSON.stringify(CustomerMapper.mapFrontend(customer)))
+      .map(response => response.json())
+      .map(saved => CustomerMapper.mapBackend(saved));
+  }
+
+  private updateCustomerWithContacts(customerId: number, customer: CustomerWithContacts): Observable<CustomerWithContacts> {
     let url = CUSTOMERS_URL + '/' + customerId + WITH_CONTACTS;
     return this.authHttp.put(url, JSON.stringify(CustomerMapper.mapFrontendWithContacts(customer)))
       .map(response => response.json())
       .map(customerWithContacts => CustomerMapper.mapBackendWithContacts(customerWithContacts));
   }
 
-  private createCustomer(customer: CustomerWithContacts): Observable<CustomerWithContacts> {
+  private createCustomerWithContacts(customer: CustomerWithContacts): Observable<CustomerWithContacts> {
     let url = CUSTOMERS_URL + WITH_CONTACTS;
     return this.authHttp.post(url, JSON.stringify(CustomerMapper.mapFrontendWithContacts(customer)))
       .map(response => response.json())

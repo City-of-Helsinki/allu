@@ -3,6 +3,7 @@ import {CustomerService} from './customer.service';
 import {Contact} from '../../model/customer/contact';
 import {CustomerSearchQuery} from '../mapper/query/customer-query-parameters-mapper';
 import {CustomerWithContacts} from '../../model/customer/customer-with-contacts';
+import {Customer} from '../../model/customer/customer';
 
 @Injectable()
 export class CustomerHub {
@@ -35,6 +36,10 @@ export class CustomerHub {
    */
   public findContactById = (id: number) => this.customerService.findContactById(id);
 
+  /**
+   * Saves single customer
+   */
+  public saveCustomer = (customer: Customer) => this.customerService.saveCustomer(customer);
 
   /**
    * Saves contacts for given customer

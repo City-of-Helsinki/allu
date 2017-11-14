@@ -7,6 +7,8 @@ import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 
+export const CUSTOMER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};
+
 @Component({
   selector: 'customer-modal',
   template: require('./customer-modal.component.html'),

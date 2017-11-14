@@ -13,14 +13,14 @@ import {CustomerForm} from '../customer/customer.form';
 export class InvoicingAddressComponent implements OnInit {
   @Input() parentForm: FormGroup;
 
-  invoicingAddressForm: FormGroup;
+  invoiceRecipientForm: FormGroup;
   customerTypes = EnumUtil.enumValues(CustomerType);
 
   constructor(private fb: FormBuilder) {
-    this.invoicingAddressForm = CustomerForm.initialForm(this.fb);
-    this.invoicingAddressForm.addControl('invoiced', this.fb.control(true));
+    this.invoiceRecipientForm = CustomerForm.initialForm(this.fb);
+    this.invoiceRecipientForm.addControl('invoiced', this.fb.control(true));
 
-    Some(this.parentForm).do(parent => parent.addControl('invoicing', this.invoicingAddressForm));
+    Some(this.parentForm).do(parent => parent.addControl('invoicing', this.invoiceRecipientForm));
   }
 
   ngOnInit(): void {
