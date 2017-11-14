@@ -79,8 +79,8 @@
                         <span *ngIf="!project.active">INAKTIIVINEN</span>
                     </td>
                     <td>{{districtNames(project.cityDistricts) | async | commaSeparated}}</td>
-                    <td>{{project.startTime | date:format}}</td>
-                    <td>{{project.endTime | date:format}}</td>
+                    <td>{{project.startTime | date:'shortDate'}}</td>
+                    <td>{{project.endTime | date:'shortDate'}}</td>
                 </tr>
                 </tbody>
             </table>

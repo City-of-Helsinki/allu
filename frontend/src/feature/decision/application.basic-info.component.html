@@ -21,7 +21,7 @@
                 </div>
                 <div class="col l6 m12 info-field">
                     <mat-card-subtitle class="card-subtitle-slim">Arvioitu aloitus</mat-card-subtitle>
-                    <div>{{application.startTime | date:format }}</div>
+                    <div>{{application.startTime | date:'shortDate'}}</div>
                 </div>
                 <div class="col l6 m12 info-field">
                     <mat-card-subtitle class="card-subtitle-slim">Hakemuksen nimi</mat-card-subtitle>
@@ -29,7 +29,7 @@
                 </div>
                 <div class="col l6 m12 info-field">
                     <mat-card-subtitle class="card-subtitle-slim">Arvioitu päättyminen</mat-card-subtitle>
-                    <div>{{application.endTime | date:format }}</div>
+                    <div>{{application.endTime |  date:'shortDate' }}</div>
                 </div>
                 <div class="col l6 m12 info-field">
                     <mat-card-subtitle class="card-subtitle-slim">Sijainti</mat-card-subtitle>

@@ -49,8 +49,8 @@
                     <span *ngIf="!row.content.active">Inaktiivinen</span>
                 </td>
                 <td>{{districtNames(row.content.cityDistricts) | async | commaSeparated}}</td>
-                <td>{{ row.content.startTime | date:dateFormat }}</td>
-                <td>{{ row.content.endTime | date:dateFormat }}</td>
+                <td>{{ row.content.startTime | date:'shortDate' }}</td>
+                <td>{{ row.content.endTime | date:'shortDate' }}</td>
                 <td>
                     <i *ngIf="isChild(row.content.parentId)" class="material-icons">arrow_downward</i>
                     <i *ngIf="!isChild(row.content.parentId)" class="material-icons">arrow_upward</i>

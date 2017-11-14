@@ -8,12 +8,12 @@
                         <div>
                             <label class="info-label">Arvioitu aloitus</label>
                             <div *ngIf="!project.startTime">-</div>
-                            <div *ngIf="project.startTime" class="info-field">{{project.startTime | date:dateFormat}}</div>
+                            <div *ngIf="project.startTime" class="info-field">{{project.startTime | date:'shortDate'}}</div>
                         </div>
                         <div>
                             <label class="info-label">Arvioitu päättyminen</label>
                             <div *ngIf="!project.endTime">-</div>
-                            <div *ngIf="project.endTime" class="info-field">{{project.endTime | date:dateFormat}}</div>
+                            <div *ngIf="project.endTime" class="info-field">{{project.endTime | date:'shortDate'}}</div>
                         </div>
                         <div>
                             <label class="info-label">Asiakkaan tyonro/viite</label>

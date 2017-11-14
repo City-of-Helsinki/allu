@@ -113,7 +113,7 @@
                                         <td>{{['application.status', application.status] | translation}}</td>
                                         <td>{{application.customer.name}}<br></td>
                                         <td>ei tuettuna</td>
-                                        <td>{{ application.startTime | date:format }}</td>
+                                        <td>{{ application.startTime | date:'shortDate' }}</td>
                                         <td></td>
                                     </tr>
                                     </tbody>

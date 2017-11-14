@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {Project} from '../../../model/project/project';
 import {Application} from '../../../model/application/application';
-import {TimeUtil, UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
+import {TimeUtil} from '../../../util/time.util';
 import {ApplicationStatus} from '../../../model/application/application-status';
 import {ProjectState} from '../../../service/project/project-state';
 
@@ -21,7 +21,6 @@ export class ProjectSummaryComponent implements OnInit {
   history: Observable<Array<string>>; // TODO: history
   isActive: boolean;
   districts: Observable<Array<string>>;
-  dateFormat = UI_PIPE_DATE_FORMAT;
 
   constructor(private projectState: ProjectState) {}
 

@@ -1,5 +1,6 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, registerLocaleData} from '@angular/common';
+import localeFi from '@angular/common/locales/fi';
 import {
   MatAutocompleteModule,
   MatButtonModule,
@@ -103,3 +104,5 @@ import {AvailableToDirective} from '../../service/authorization/available-to.dir
   ]
 })
 export class AlluCommonModule {}
+
+registerLocaleData(localeFi);
