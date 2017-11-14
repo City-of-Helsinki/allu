@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-
 import {
   ApplicationType,
   hasMultipleKinds,
@@ -30,7 +29,7 @@ export class TypeComponent implements OnInit {
   @Output() onKindSpecifierChange = new EventEmitter<KindsWithSpecifiers>();
 
   multipleKinds = false;
-  applicationTypes = EnumUtil.enumValues(ApplicationType);
+  applicationTypes = [ApplicationType.EVENT, ApplicationType.SHORT_TERM_RENTAL].map(t => ApplicationType[t]);
   availableKinds: string[] = [];
   availableKindsWithSpecifiers: ApplicationKindEntry[] = [];
   form: FormGroup;
@@ -46,6 +45,8 @@ export class TypeComponent implements OnInit {
     this.initForm();
 
     if (this.typeChangeDisabled) {
+      // Show all values although only event and short term rental can be selected
+      this.applicationTypes = EnumUtil.enumValues(ApplicationType);
       this.form.disable();
     }
 
