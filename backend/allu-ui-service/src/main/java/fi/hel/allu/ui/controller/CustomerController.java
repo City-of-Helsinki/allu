@@ -25,6 +25,8 @@ import fi.hel.allu.servicecore.service.CustomerService;
 @RequestMapping("/customers")
 public class CustomerController {
 
+  private static final String CUSTOMER_EXPORT_FILENAME = "allu_customers_";
+
   @Autowired
   CustomerService customerService;
   @Autowired
@@ -105,12 +107,24 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ROLE_INVOICING')")
   public ResponseEntity<Void> getSapCustomerOrderCSV(HttpServletResponse response) throws IOException {
     response.setContentType("text/csv; charset=utf-8");
-    response.setHeader("Content-Disposition", "attachment; filename=" + getCustomerCSVFileName());
+    response.setHeader("Content-Disposition", "attachment; filename=" + getCustomerExportFileName() + ".csv");
     new CustomerCsvWriter(response.getWriter(), customerService.findInvoiceRecipientsWithoutSapNumber()).write();
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
-  private String getCustomerCSVFileName() {
-    return "allu_customers_" + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")) + ".csv";
+  /**
+   * Creates CSV containing invoice recipients without SAP customer number.
+   */
+  @RequestMapping(value = "/saporder.xlsx", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_INVOICING')")
+  public ResponseEntity<Void> getSapCustomerOrderExcel(HttpServletResponse response) throws IOException {
+    response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    response.setHeader("Content-Disposition", "attachment; filename=" + getCustomerExportFileName() + ".xlsx");
+    new CustomerExcelWriter(response.getOutputStream(), customerService.findInvoiceRecipientsWithoutSapNumber()).write();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  private String getCustomerExportFileName() {
+    return CUSTOMER_EXPORT_FILENAME + LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
   }
 }
