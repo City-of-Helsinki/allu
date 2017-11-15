@@ -23,9 +23,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import fi.hel.allu.external.domain.CustomerExt;
+import fi.hel.allu.external.domain.PostalAddressExt;
 import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
 import fi.hel.allu.sap.model.DEBMAS06;
 import fi.hel.allu.sap.model.E1KNA1M;
@@ -47,6 +50,9 @@ public class SapCustomerService {
   @Autowired
   public SapCustomerService(RestTemplate restTemplate, ApplicationProperties applicationProperties, FtpService ftpService) {
     this.restTemplate = restTemplate;
+    // Needed for PATCH support
+    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+    restTemplate.setRequestFactory(requestFactory);
     this.applicationProperties = applicationProperties;
     this.ftpService = ftpService;
   }
@@ -113,11 +119,13 @@ public class SapCustomerService {
 
   private boolean updateCustomer(E1KNA1M sapCustomerData) {
     try {
+      CustomerExt customer = mapCustomerExt(sapCustomerData);
       restTemplate.exchange(
           applicationProperties.getCustomerUpdateUrl(),
-          HttpMethod.PUT,
-          new HttpEntity<>(sapCustomerData, createAuthenticationHeader()), Void.class);
+          HttpMethod.PATCH,
+          new HttpEntity<>(customer, createAuthenticationHeader()), Void.class);
     } catch (Exception e) {
+      logger.warn("Failed to update customer", e);
       return false;
     }
     return true;
@@ -175,4 +183,32 @@ public class SapCustomerService {
     return applicationProperties.isCustomerUpdateEnabled();
   }
 
+
+  private CustomerExt mapCustomerExt(E1KNA1M sapCustomerData) {
+    CustomerExt customer = new CustomerExt();
+    customer.setId(getAlluId(sapCustomerData));
+    customer.setSapCustomerNumber(sapCustomerData.getKunnr());
+    customer.setRegistryKey(getRegistryKey(sapCustomerData));
+    customer.setName(sapCustomerData.getName1());
+    customer.setInvoicingProhibited(isInvoicingProhibited(sapCustomerData));
+    PostalAddressExt postalAddress = new PostalAddressExt();
+    postalAddress.setStreetAddress(sapCustomerData.getStras());
+    postalAddress.setCity(sapCustomerData.getOrt01());
+    postalAddress.setPostalCode(sapCustomerData.getPstlz());
+    customer.setPostalAddress(postalAddress);
+    return customer;
+  }
+
+  private Integer getAlluId(E1KNA1M sapCustomerData) {
+    return Integer.valueOf(sapCustomerData.getE1knvvm().getEikto());
+  }
+
+  private static boolean isInvoicingProhibited(E1KNA1M basicInformation) {
+    return "X".equals(basicInformation.getSperr());
+  }
+
+  private static String getRegistryKey(E1KNA1M basicInformation) {
+    // Business ID in stcd1, personal identification number in stcd2
+    return basicInformation.getStcd1() != null ? basicInformation.getStcd1() : basicInformation.getStcd2();
+  }
 }

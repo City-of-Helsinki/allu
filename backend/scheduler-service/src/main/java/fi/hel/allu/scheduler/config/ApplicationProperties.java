@@ -104,7 +104,7 @@ public class ApplicationProperties {
    * @return url to update customer
    */
   public String getCustomerUpdateUrl() {
-    return getExtServiceUrl("/v1/customers/sap");
+    return getExtServiceUrl("/v1/customers");
   }
 
   /**

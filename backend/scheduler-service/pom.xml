@@ -33,6 +33,11 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>fi.hel.allu</groupId>
+      <artifactId>external-domain</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <!-- support for conditional processing of logback configuration file -->
       <groupId>org.codehaus.janino</groupId>
       <artifactId>janino</artifactId>
@@ -42,6 +47,10 @@
       <artifactId>commons-net</artifactId>
       <version>3.5</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+  </dependency>
   </dependencies>
   <build>
     <plugins>

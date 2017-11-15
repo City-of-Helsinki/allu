@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 import fi.hel.allu.external.domain.CustomerExt;
 import fi.hel.allu.external.domain.CustomerWithContactsExt;
 import fi.hel.allu.external.mapper.CustomerExtMapper;
-import fi.hel.allu.sap.model.DEBMAS06;
-import fi.hel.allu.sap.model.E1KNA1M;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
@@ -66,18 +64,16 @@ public class CustomerController {
         HttpStatus.OK);
   }
 
-  @RequestMapping(value = "/sap", method = RequestMethod.PUT)
+  /**
+   * Updates customer's properties which have non null value in request JSON.
+   */
+  @RequestMapping(method = RequestMethod.PATCH)
   @PreAuthorize("hasAnyRole('ROLE_INTERNAL')")
-  public ResponseEntity<Void> importSapCustomer(@RequestBody E1KNA1M sapCustomer) {
-    Integer id = getAlluID(sapCustomer);
-    CustomerJson customerJson = customerService.findCustomerById(id);
-    CustomerExtMapper.updateWithSapFields(sapCustomer, customerJson);
-    customerService.updateCustomer(id, customerJson);
+  public ResponseEntity<Void> merge(@RequestBody CustomerExt customer) {
+    CustomerJson customerJson = customerService.findCustomerById(customer.getId());
+    CustomerExtMapper.mergeCustomerJson(customerJson, customer);
+    customerService.updateCustomer(customerJson.getId(), customerJson);
     return new ResponseEntity<>(HttpStatus.OK);
-  }
-
-  private Integer getAlluID(E1KNA1M sapCustomer) {
-    return Integer.valueOf(sapCustomer.getE1knvvm().getEikto());
   }
 
   @RequestMapping(method = RequestMethod.PUT)
