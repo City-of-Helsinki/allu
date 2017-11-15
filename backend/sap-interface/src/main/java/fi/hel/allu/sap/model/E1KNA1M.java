@@ -3,6 +3,9 @@ package fi.hel.allu.sap.model;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+/**
+ * SAP Customer basic data
+ */
 @XmlRootElement(name = "E1KNA1M")
 public class E1KNA1M {
 
@@ -19,6 +22,9 @@ public class E1KNA1M {
 
   private E1KNVVM e1knvvm;
 
+  /**
+   * Customer sales data.
+   */
   @XmlElement(name = "E1KNVVM", required = true)
   public E1KNVVM getE1knvvm() {
     return e1knvvm;

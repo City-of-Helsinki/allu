@@ -164,34 +164,59 @@ public class ApplicationProperties {
     return failedCustomerUpdateDir;
   }
 
+  /**
+   * FTP server host for SAP customer update
+   */
   public String getSapFtpCustomerHost() {
     return sapFtpCustomerHost;
   }
 
+  /**
+   * FTP server port for SAP customer update
+   */
   public int getSapFtpCustomerPort() {
     return sapFtpCustomerPort;
   }
 
+  /**
+   * FTP user name for SAP customer update
+   */
   public String getSapFtpCustomerUser() {
     return sapFtpCustomerUser;
   }
 
+  /**
+   * FTP user password for SAP customer update
+   */
   public String getSapFtpCustomerPassword() {
     return sapFtpCustomerPassword;
   }
 
+  /**
+   * FTP server directory of SAP customer files
+   */
   public String getSapFtpCustomerDirectory() {
     return sapFtpCustomerDirectory;
   }
 
+  /**
+   * FTP server directory where files are moved after successful transfer
+   */
   public String getSapFtpCustomerArchive() {
     return sapFtpCustomerArchive;
   }
 
+  /**
+   * External API authentication token for system user
+   */
   public String getExternalServiceAuthenticationToken() {
     return externalServiceAuthenticationToken;
   }
 
+  /**
+   * Value indicating whether SAP customer update
+   * is enabled.
+   */
   public boolean isCustomerUpdateEnabled() {
     return customerUpdateEnabled;
   }
