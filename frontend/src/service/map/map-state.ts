@@ -86,6 +86,9 @@ export class MapState {
     let items = editedItems || this.editedItems;
 
     let draw = controlsEnabled ? {
+      // todo: this <false>false can be removed when typescript compiler allows type parameter of | false
+      polyline: <false>false,
+      marker: <false>false,
       polygon: {
         shapeOptions: pathStyle.DEFAULT_DRAW,
         allowIntersection: false,
