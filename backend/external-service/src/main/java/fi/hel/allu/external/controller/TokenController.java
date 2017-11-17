@@ -32,14 +32,23 @@ public class TokenController {
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Properties> create(@RequestHeader(AUTH_HEADER_NAME) String auth,
       @RequestParam(GRANT_TYPE) String grantType) {
-    // Check authorization header and request grant type:
-    if (auth == null || !auth.startsWith(AUTH_KEY_BASIC)
-        || !auth.substring(AUTH_KEY_BASIC.length()).equals(applicationProperties.getServiceAuth())
-        || !CLIENT_CREDENTIALS.equals(grantType)) {
-      return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+
+    if (applicationProperties.getServiceAuth().equals(basicAuthToken(auth)) && CLIENT_CREDENTIALS.equals(grantType)) {
+      return new ResponseEntity<>(serverTokenAuthenticationService.createServiceToken(), HttpStatus.OK);
+    } else {
+      return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    return new ResponseEntity<>(serverTokenAuthenticationService.createServiceToken(), HttpStatus.OK);
   }
 
+  /*
+   * Check that given Authorization: header is Basic kind and return its token
+   */
+  private String basicAuthToken(String auth) {
+    if (auth == null || !auth.startsWith(AUTH_KEY_BASIC)) {
+      return null;
+    } else {
+      return auth.substring(AUTH_KEY_BASIC.length());
+    }
+  }
 }
