@@ -538,6 +538,12 @@ definitions:
       ovt:
         description: E-invoice identifier of the customer (OVT-tunnus).
         type: string
+      sapCustomerNumber:
+        description: SAP number of the customer
+        type: string
+      invoicingProhibited:
+        description: SAP invoicing prohibited
+        type: boolean
   ContactExt:
     description: Customer contact information
     type: object
