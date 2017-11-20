@@ -1,5 +1,25 @@
 package fi.hel.allu.scheduler.service;
 
+import fi.hel.allu.external.domain.CustomerExt;
+import fi.hel.allu.external.domain.PostalAddressExt;
+import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
+import fi.hel.allu.sap.model.DEBMAS06;
+import fi.hel.allu.sap.model.E1KNA1M;
+import fi.hel.allu.scheduler.config.ApplicationProperties;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import javax.xml.bind.JAXBException;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -14,26 +34,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import javax.xml.bind.JAXBException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
-
-import fi.hel.allu.external.domain.CustomerExt;
-import fi.hel.allu.external.domain.PostalAddressExt;
-import fi.hel.allu.sap.marshaller.AlluUnmarshaller;
-import fi.hel.allu.sap.model.DEBMAS06;
-import fi.hel.allu.sap.model.E1KNA1M;
-import fi.hel.allu.scheduler.config.ApplicationProperties;
-
 /**
  * Service for updating customer with data from SAP.
  */
@@ -45,16 +45,19 @@ public class SapCustomerService {
   private RestTemplate restTemplate;
   private ApplicationProperties applicationProperties;
   private FtpService ftpService;
+  private AuthenticationService authenticationService;
 
 
   @Autowired
-  public SapCustomerService(RestTemplate restTemplate, ApplicationProperties applicationProperties, FtpService ftpService) {
+  public SapCustomerService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
+      FtpService ftpService, AuthenticationService authenticationService) {
     this.restTemplate = restTemplate;
     // Needed for PATCH support
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
     restTemplate.setRequestFactory(requestFactory);
     this.applicationProperties = applicationProperties;
     this.ftpService = ftpService;
+    this.authenticationService = authenticationService;
   }
 
   /**
@@ -132,9 +135,10 @@ public class SapCustomerService {
   }
 
   private HttpHeaders createAuthenticationHeader() {
+    authenticationService.requestToken();
     return new HttpHeaders() {{
       setContentType(MediaType.APPLICATION_JSON);
-      set(AUTHORIZATION, "Bearer " + applicationProperties.getExternalServiceAuthenticationToken());
+        set(AUTHORIZATION, "Bearer " + authenticationService.getBearerToken());
     }};
   }
 
