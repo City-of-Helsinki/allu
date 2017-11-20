@@ -2,6 +2,9 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
 import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
+import {StringUtil} from '../../../../util/string.util';
+
+const EMPTY = '';
 
 export class ChargeBasisEntryForm {
   constructor(
@@ -13,22 +16,25 @@ export class ChargeBasisEntryForm {
     public netPrice?: number,
     public manuallySet?: boolean,
     public tag?: string,
-    public referredTag?: string,
+    public referredTag: string = EMPTY,
     public explanation: string[] = []
-  ) {}
+  ) {
+    this.referredTag = referredTag || EMPTY;
+  }
 
   public static formGroup(fb: FormBuilder, entry: ChargeBasisEntry = new ChargeBasisEntry()): FormGroup {
+    const formValue = ChargeBasisEntryForm.toFormValue(entry);
     return fb.group({
-      type: [ChargeBasisType[entry.type], Validators.required],
-      unit: [ChargeBasisUnit[entry.unit], Validators.required],
-      quantity: [entry.uiQuantity, Validators.required],
-      text: [entry.text, Validators.required],
-      unitPrice: [entry.unitPriceEuro, Validators.required],
-      netPrice: [{value: entry.netPriceEuro, disabled: true}],
-      manuallySet: [entry.manuallySet],
-      tag: [entry.tag],
-      referredTag: [entry.referredTag],
-      explanation: [entry.explanation]
+      type: [formValue.type, Validators.required],
+      unit: [formValue.unit, Validators.required],
+      quantity: [formValue.quantity, Validators.required],
+      text: [formValue.text, Validators.required],
+      unitPrice: [formValue.unitPrice, Validators.required],
+      netPrice: [{value: formValue.netPrice, disabled: true}],
+      manuallySet: [formValue.manuallySet],
+      tag: [formValue.tag],
+      referredTag: [formValue.referredTag],
+      explanation: [formValue.explanation]
     });
   }
 
@@ -44,7 +50,7 @@ export class ChargeBasisEntryForm {
     entry.manuallySet = form.manuallySet;
     entry.explanation = form.explanation;
     entry.tag = form.tag;
-    entry.referredTag = form.referredTag;
+    entry.referredTag = StringUtil.isEmpty(form.referredTag) ? undefined : form.referredTag;
     return entry;
   }
 
