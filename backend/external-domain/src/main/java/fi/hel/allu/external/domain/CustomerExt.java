@@ -20,6 +20,8 @@ public class CustomerExt {
   private String phone;
   private String registryKey;
   private String ovt;
+  private String sapCustomerNumber;
+  private Boolean invoicingProhibited;
 
   public Integer getId() {
     return id;
@@ -116,5 +118,29 @@ public class CustomerExt {
 
   public void setOvt(String ovt) {
     this.ovt = ovt;
+  }
+
+  /**
+   * SAP Customer Number (KUNNR)
+   */
+  public String getSapCustomerNumber() {
+    return sapCustomerNumber;
+  }
+
+  public void setSapCustomerNumber(String sapCustomerNumber) {
+    this.sapCustomerNumber = sapCustomerNumber;
+  }
+
+  /**
+   * SAP invoicing prohibited (SAP laskutuskielto)
+   *
+   * @return
+   */
+  public Boolean getInvoicingProhibited() {
+    return invoicingProhibited;
+  }
+
+  public void setInvoicingProhibited(Boolean invoicingProhibited) {
+    this.invoicingProhibited = invoicingProhibited;
   }
 }

@@ -25,4 +25,15 @@ public class ObjectFactory {
     return new SalesOrderContainer();
   }
 
+  public DEBMAS06 createDEBMAS06() {
+    return new DEBMAS06();
+  }
+
+  public IDOC createIDOC() {
+    return new IDOC();
+  }
+
+  public E1KNA1M createE1KNA1M() {
+    return new E1KNA1M();
+  }
 }
