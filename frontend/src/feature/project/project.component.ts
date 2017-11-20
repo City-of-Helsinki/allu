@@ -17,36 +17,30 @@ export class ProjectComponent implements OnInit {
 
   ngOnInit(): void {
     this.project = this.projectState.project;
-    this.sidebar().subscribe(items => {
-      this.sidebarItems = items;
-    });
+    this.sidebarItems = this.sidebar();
   }
 
-  sidebar(): Observable<Array<SidebarItem>> {
-    return Observable.combineLatest(
-      this.applicationCount(),
-      this.projectCount(),
-      (apps, projects) => [
-        this.sidebarItem('BASIC_INFO'),
-        this.sidebarItem('APPLICATIONS', apps),
-        this.sidebarItem('PROJECTS', projects)
-      ]
-    );
+  sidebar(): Array<SidebarItem> {
+    return [
+      this.sidebarItem('BASIC_INFO'),
+      this.sidebarItem('APPLICATIONS', this.applicationCount),
+      this.sidebarItem('PROJECTS', this.projectCount)
+    ];
   }
 
-  projectCount(): Observable<number> {
+  private get projectCount(): Observable<number> {
     return Observable.combineLatest(
       this.projectState.childProjects,
       this.projectState.parentProjects,
       (childs, parents) => childs.length + parents.length);
   }
 
-  applicationCount(): Observable<number> {
+  private get applicationCount(): Observable<number> {
     return this.projectState.applications
       .map(applications => applications.length);
   }
 
-  private sidebarItem(type: SidebarItemType, count?: number): SidebarItem {
+  private sidebarItem(type: SidebarItemType, count?: Observable<number>): SidebarItem {
     return {type: type, count: count};
   }
 }

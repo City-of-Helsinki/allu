@@ -9,15 +9,18 @@
             </div>
             <div *ngSwitchCase="'ATTACHMENTS'">
                 <mat-icon class="mat-icon-36">attach_file</mat-icon>
-                <div>Liitteet ({{item.count}})</div>
+                <div>Liitteet ({{item.count | async}})</div>
             </div>
             <div *ngSwitchCase="'INVOICING'">
+                <div class="oval-18 oval-warn top-right" *ngIf="item.warn | async"
+                     [matTooltip]="'application.field.invoiceRecipientMissing' | translation"
+                     matTooltipPosition="above">!</div>
                 <mat-icon class="mat-icon-36">euro_symbol</mat-icon>
                 <div>Laskutus</div>
             </div>
             <div *ngSwitchCase="'COMMENTS'">
                 <mat-icon class="mat-icon-36">chat_bubble_outline</mat-icon>
-                <div>Kommentit ({{item.count}})</div>
+                <div>Kommentit ({{item.count | async}})</div>
             </div>
             <div *ngSwitchCase="'EMAIL'">
                 <mat-icon class="mat-icon-36">email</mat-icon>
@@ -33,15 +36,15 @@
             </div>
             <div *ngSwitchCase="'SUPERVISION'">
                 <mat-icon class="mat-icon-36">search</mat-icon>
-                <div>Valvonta ({{item.count}})</div>
+                <div>Valvonta ({{item.count | async}})</div>
             </div>
             <div *ngSwitchCase="'APPLICATIONS'">
                 <mat-icon class="mat-icon-36">filter_none</mat-icon>
-                <div>Hakemukset ({{item.count}})</div>
+                <div>Hakemukset ({{item.count | async}})</div>
             </div>
             <div *ngSwitchCase="'PROJECTS'">
                 <mat-icon class="mat-icon-36">line_style</mat-icon>
-                <div>Hankkeet ({{item.count}})</div>
+                <div>Hankkeet ({{item.count | async }})</div>
             </div>
         </div>
     </a>

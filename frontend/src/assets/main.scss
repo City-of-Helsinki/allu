@@ -10,6 +10,7 @@
 @import "card";
 @import "table";
 @import "accordion";
+@import "notification/oval";
 @import '../feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../feature/common/input-box/input-box.component.theme';
 
@@ -24,6 +25,7 @@
 @include modal-theme($allu-theme);
 @include card-theme($allu-theme);
 @include table-theme($allu-theme);
+@include oval-theme($allu-theme);
 
 // Reset
 html,

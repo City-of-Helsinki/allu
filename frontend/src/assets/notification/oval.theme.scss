@@ -1,0 +1,10 @@
+@import '~@angular/material/theming';
+
+@mixin oval-theme($theme) {
+  $warn: map-get($theme, warn);
+
+  .oval-warn {
+    background-color: mat-color($warn);
+    color: white;
+  }
+}

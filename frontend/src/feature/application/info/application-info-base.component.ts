@@ -37,7 +37,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.hasRepresentativeCtrl = this.fb.control(false);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
-    this.appChanges = this.applicationState.applicationChanges.subscribe(app => this.onApplicationChange(app));
+    this.appChanges = this.applicationState.changes.subscribe(app => this.onApplicationChange(app));
 
     UrlUtil.urlPathContains(this.route.parent, 'summary')
       .filter(contains => contains)

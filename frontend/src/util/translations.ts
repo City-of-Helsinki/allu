@@ -209,7 +209,8 @@ export const translations = {
     field: {
       nameMissing: 'Tapahtuman nimi puuttuu',
       nameShort: 'Tapahtuman nimi on liian lyhyt',
-      recurringEndYearNotBetween: 'Virheellinen toistuvuuden päättymisvuosi'
+      recurringEndYearNotBetween: 'Virheellinen toistuvuuden päättymisvuosi',
+      invoiceRecipientMissing: 'Laskutettavaa asiakasta ei ole valittu'
     },
     common: {
       field: {
@@ -287,6 +288,12 @@ export const translations = {
         validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
         validityStartBeforeEnd: 'Voimassaolon lopetus ei voi olla ennen aloitusta'
       }
+    },
+    button: {
+      copy: 'Kopioi uudeksi',
+      toSummary: 'Yhteenvetoon',
+      toHandling: 'Käsittelyyn',
+      toDecision: 'Päättämiseen'
     }
   },
   project: {
@@ -554,7 +561,8 @@ export const translations = {
       save: 'TALLENNA',
       cancel: 'PERUUTA',
       remove: 'POISTA',
-      edit: 'MUOKKAA'
+      edit: 'MUOKKAA',
+      home: 'Etusivulle'
     }
   },
   map: {

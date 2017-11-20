@@ -7,9 +7,9 @@ import {ApplicationType} from '../../../model/application/type/application-type'
 import {Application} from '../../../model/application/application';
 import {ApplicationState} from '../../../service/application/application-state';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
-import {SidebarItem, SidebarItemType, visibleFor} from '../../sidebar/sidebar-item';
+import {SidebarItem, visibleFor} from '../../sidebar/sidebar-item';
 import {ProgressStep, stepFrom} from '../progressbar/progress-step';
-import {ApplicationStatus} from '../../../model/application/application-status';
+import {ApplicationStatus, inHandling} from '../../../model/application/application-status';
 import {AttachmentHub} from '../attachment/attachment-hub';
 import {MapHub} from '../../../service/map/map-hub';
 import {DefaultAttachmentInfo} from '../../../model/application/attachment/default-attachment-info';
@@ -17,6 +17,7 @@ import {NotificationService} from '../../../service/notification/notification.se
 import {findTranslation} from '../../../util/translations';
 import {Option, Some} from '../../../util/option';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
+import {NumberUtil} from '../../../util/number.util';
 
 @Component({
   selector: 'application',
@@ -53,9 +54,7 @@ export class ApplicationComponent implements OnInit {
         attachments => attachments.forEach(a => this.applicationState.addAttachment(a)),
         err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
 
-      this.sidebar(summary).subscribe(
-        items => this.sidebarItems = items,
-        err => console.log('Failed to load sidebar statistics'));
+      this.sidebarItems = this.createSidebar(summary);
     });
   }
 
@@ -79,15 +78,24 @@ export class ApplicationComponent implements OnInit {
     }
   }
 
-  sidebar(summary: boolean): Observable<Array<SidebarItem>> {
-    return Observable.combineLatest(
-      this.attachmentCount(),
-      this.applicationState.comments.map(comments => comments.length),
-      this.supervisionTaskStore.tasks.map(supervisions => supervisions.length),
-      this.createSidebar(summary));
+  private createSidebar(summary: boolean): Array<SidebarItem> {
+      let sidebar: Array<SidebarItem> = [
+        { type: 'BASIC_INFO' },
+        { type: 'ATTACHMENTS', count: this.attachmentCount }
+      ];
+
+      if (summary) {
+        this.sidebarItem({type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
+        this.sidebarItem({type: 'HISTORY'}).do(item => sidebar.push(item));
+        this.sidebarItem({type: 'DECISION'}).do(item => sidebar.push(item));
+        this.sidebarItem({type: 'SUPERVISION', count: this.taskCount}).do(item => sidebar.push(item));
+        this.sidebarItem({type: 'INVOICING', warn: this.invoicingWarn})
+          .do(item => sidebar.push(item));
+      }
+      return sidebar;
   }
 
-  private attachmentCount(): Observable<number> {
+  private get attachmentCount(): Observable<number> {
     return Observable.combineLatest(
       this.applicationState.attachments,
       this.applicationState.pendingAttachments,
@@ -95,22 +103,21 @@ export class ApplicationComponent implements OnInit {
     );
   }
 
-  private createSidebar(summary: boolean): (a: number, c: number, s: number) => Array<SidebarItem> {
-    return (attachmentCount: number, commentCount: number, supervisionCount: number) => {
-      let sidebar: Array<SidebarItem> = [
-        { type: 'BASIC_INFO'},
-        { type: 'ATTACHMENTS', count: attachmentCount }
-      ];
+  private get commentCount(): Observable<number> {
+    return this.applicationState.comments.map(comments => comments.length);
+  }
 
-      if (summary) {
-        this.sidebarItem('COMMENTS', commentCount).do(item => sidebar.push(item));
-        this.sidebarItem('HISTORY').do(item => sidebar.push(item));
-        this.sidebarItem('DECISION').do(item => sidebar.push(item));
-        this.sidebarItem('SUPERVISION', supervisionCount).do(item => sidebar.push(item));
-        this.sidebarItem('INVOICING').do(item => sidebar.push(item));
-      }
-      return sidebar;
-    };
+  private get taskCount(): Observable<number> {
+    return this.supervisionTaskStore.tasks.map(supervisions => supervisions.length);
+  }
+
+  private get invoicingWarn(): Observable<boolean> {
+    const noRecipient = (app: Application) => !NumberUtil.isDefined(app.invoiceRecipientId);
+    const isBillable = (app: Application) => !app.notBillable;
+    return this.applicationState.changes.map(app =>
+      noRecipient(app)
+      && isBillable(app)
+      && inHandling(app.statusEnum));
   }
 
   private defaultAttachmentsForArea(applicationType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
@@ -122,9 +129,9 @@ export class ApplicationComponent implements OnInit {
     }
   }
 
-  private sidebarItem(type: SidebarItemType, count?: number): Option<SidebarItem> {
-    return Some(visibleFor(this.application.type, type))
+  private sidebarItem(item: SidebarItem): Option<SidebarItem> {
+    return Some(visibleFor(this.application.type, item.type))
       .filter(visible => visible)
-      .map(visible => { return {type: type, count: count}; });
+      .map(visible => item);
   }
 }

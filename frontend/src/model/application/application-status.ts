@@ -13,3 +13,7 @@ export enum ApplicationStatus {
 export function canBeEdited(status: ApplicationStatus): boolean {
   return status < ApplicationStatus.DECISIONMAKING;
 }
+
+export function inHandling(status: ApplicationStatus): boolean {
+  return [ApplicationStatus.HANDLING, ApplicationStatus.RETURNED_TO_PREPARATION].some(s => s === status);
+}

@@ -9,7 +9,7 @@
         <mat-card-content>
             <customer-info [form]="recipientForm" [allowSearch]="true" *ngIf="billable"
                            (customerChange)="invoiceRecipientChange($event)"></customer-info>
-            <div fxLayout="row">
+            <div fxLayout="row" fxLayoutWrap>
                 <div fxFlex="100" class="height-fix-bottom">
                     <mat-checkbox formControlName="notBillable">Ei laskuteta</mat-checkbox>
                 </div>

@@ -11,12 +11,15 @@ import {Location} from '../src/model/common/location';
 import {RoleType} from '../src/model/user/role-type';
 import {NavigationExtras} from '@angular/router';
 import {ChargeBasisEntry} from '../src/model/application/invoice/charge-basis-entry';
+import {HttpResponse, HttpStatus} from '../src/util/http-response';
+import {ApplicationStatus} from '../src/model/application/application-status';
+import {StatusChangeInfo} from '../src/model/application/status-change-info';
 
 /**
  * Mock for application state
  */
 export class ApplicationStateMock {
-  private _application: Application;
+  public _application: Application;
 
   constructor() {
     this._application = new Application(1);
@@ -27,6 +30,26 @@ export class ApplicationStateMock {
 
   get application() {
     return this._application;
+  }
+
+  set application(value: Application) {
+    this._application = value;
+  }
+
+  get changes(): Observable<Application> {
+    return Observable.of(this._application);
+  }
+
+  set applicationCopy(app: Application) {
+    this._application = app;
+  }
+
+  delete(id: number): Observable<HttpResponse> {
+    return Observable.of(new HttpResponse(HttpStatus.OK));
+  }
+
+  changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
+    return Observable.of(this._application);
   }
 }
 

@@ -65,7 +65,7 @@ export class ApplicationState {
     this.isCopy = true;
   }
 
-  get applicationChanges(): Observable<Application> {
+  get changes(): Observable<Application> {
     return this.application$.asObservable();
   }
 

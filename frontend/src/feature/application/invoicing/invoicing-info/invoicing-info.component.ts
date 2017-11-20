@@ -131,8 +131,9 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   private saveCustomer(): Observable<Customer> {
+    const billable = !this.notBillableCtrl.value;
     const customer = CustomerForm.toCustomer(this.recipientForm.getRawValue());
-    if (this.recipientForm.dirty) {
+    if (billable && this.recipientForm.dirty) {
       return this.customerHub.saveCustomer(customer);
     } else {
       return Observable.of(customer);

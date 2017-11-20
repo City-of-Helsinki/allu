@@ -1,6 +1,9 @@
+import {Observable} from 'rxjs/Observable';
+
 export interface SidebarItem {
   type: SidebarItemType;
-  count?: number;
+  warn?: Observable<boolean>;
+  count?: Observable<number>;
 }
 
 export type SidebarItemType =

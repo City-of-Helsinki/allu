@@ -10,6 +10,6 @@ export function getMdIconButton(debugElement: DebugElement, buttonIcon: string) 
 
 export function getButtonWithText(debugElement: DebugElement, text: string) {
   return ArrayUtil.first(debugElement.queryAll(By.css('button'))
-    .filter(btn => btn.nativeElement.textContent === text)
-    .map(btn => btn.nativeElement));
+    .map(btn => btn.nativeElement)
+    .filter(btnEle => btnEle.textContent.trim() === text));
 }
