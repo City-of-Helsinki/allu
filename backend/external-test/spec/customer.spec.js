@@ -21,7 +21,9 @@ describe('Customer', () => {
       'email': 'testemail@test.fi',
       'phone': '010 1010',
       'registryKey': '1234-123',
-      'ovt': '00371234123'
+      'ovt': '00371234123',
+      'sapCustomerNumber': '12345',
+      'invoicingProhibited' : false
     };
   });
 
