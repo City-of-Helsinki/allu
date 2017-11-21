@@ -1,0 +1,5 @@
+Allussa uusia SAP-asiakkuuksia lisättäväksi ${nrOfCustomers} kappaletta.
+
+Listaus lisättävistä asiakkaista löytyy osoitteesta ${customerOrderUrl}.
+
+Tämän sähköpostin lähettäjä on tekninen osoite.

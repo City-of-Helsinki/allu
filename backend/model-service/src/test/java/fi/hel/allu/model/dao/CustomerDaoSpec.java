@@ -157,7 +157,7 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           application.setInvoiceRecipientId(insertedCustomer.getId());
           insertedApplication = applicationDao.insert(application);
           applicationDao.addTag(insertedApplication.getId(), testCommon.dummyTag(ApplicationTagType.SAP_ID_MISSING));
-          List<Customer> customers = customerDao.findInvoiceRecipientsWithoutSAPNumber();
+          List<Customer> customers = customerDao.findInvoiceRecipientsWithoutSapNumber();
           assertEquals(1, customers.size());
           assertEquals(insertedCustomer.getId(), customers.get(0).getId());
       });

@@ -84,4 +84,12 @@ public class CustomerController {
         CustomerExtMapper.mapCustomerExt(customerService.updateCustomer(customer.getId(), CustomerExtMapper.mapCustomerJson(customer))),
         HttpStatus.OK);
   }
+
+  @RequestMapping(value="/saporder/count", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
+  public ResponseEntity<Integer> getNumberOfInvoiceRecipientsWithoutSapNumber() {
+    Integer result = customerService.getNumberInvoiceRecipientsWithoutSapNumber();
+    return new ResponseEntity<>(result, HttpStatus.OK);
+  }
+
 }

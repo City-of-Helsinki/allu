@@ -122,7 +122,17 @@ public class CustomerController {
    * @return
    */
   @RequestMapping(value = "/sap_id_missing", method = RequestMethod.GET)
-  public ResponseEntity<List<Customer>> findInvoiceRecipientsWithoutSAPNumber() {
-    return new ResponseEntity<>(customerService.findInvoiceRecipientsWithoutSAPNumber(), HttpStatus.OK);
+  public ResponseEntity<List<Customer>> findInvoiceRecipientsWithoutSapNumber() {
+    return new ResponseEntity<>(customerService.findInvoiceRecipientsWithoutSapNumber(), HttpStatus.OK);
   }
+
+  /**
+   * Returns number of invoice recipients without SAP customer number
+   * @return
+   */
+  @RequestMapping(value = "/sap_id_missing/count", method = RequestMethod.GET)
+  public ResponseEntity<Integer> getNumberOfInvoiceRecipientsWithoutSapNumber() {
+    return new ResponseEntity<>(customerService.getNumberInvoiceRecipientsWithoutSapNumber(), HttpStatus.OK);
+  }
+
 }
