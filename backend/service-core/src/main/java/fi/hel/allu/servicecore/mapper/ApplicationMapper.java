@@ -1,46 +1,37 @@
 package fi.hel.allu.servicecore.mapper;
 
+import java.time.ZonedDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.github.wnameless.json.flattener.JsonFlattener;
-
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.common.domain.types.CustomerType;
-import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.extension.*;
-import fi.hel.allu.servicecore.service.UserService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Component
 public class ApplicationMapper {
   private static final Logger logger = LoggerFactory.getLogger(ApplicationMapper.class);
 
-  private UserService userService;
+  private CustomerMapper customerMapper;
 
   @Autowired
-  public ApplicationMapper(UserService userService) {
-    this.userService = userService;
+  public ApplicationMapper(CustomerMapper customerMapper) {
+    this.customerMapper = customerMapper;
   }
-
-  private Set<RoleType> canSeeSsn = new HashSet<>(Arrays.asList(
-          RoleType.ROLE_CREATE_APPLICATION,
-          RoleType.ROLE_PROCESS_APPLICATION,
-          RoleType.ROLE_INVOICING));
 
   /**
    * Create a new <code>Application</code> model-domain object from given ui-domain object
@@ -61,7 +52,7 @@ public class ApplicationMapper {
     applicationDomain.setStartTime(applicationJson.getStartTime());
     applicationDomain.setEndTime(applicationJson.getEndTime());
     applicationDomain.setRecurringEndTime(applicationJson.getRecurringEndTime());
-    applicationDomain.setCustomersWithContacts(createCustomerWithContactsModel(applicationJson.getCustomersWithContacts()));
+    applicationDomain.setCustomersWithContacts(customerMapper.createWithContactsModel(applicationJson.getCustomersWithContacts()));
     applicationDomain.setHandler(applicationJson.getHandler() != null ? applicationJson.getHandler().getId() : null);
     applicationDomain.setType(applicationJson.getType());
     applicationDomain.setKindsWithSpecifiers(applicationJson.getKindsWithSpecifiers());
@@ -114,8 +105,8 @@ public class ApplicationMapper {
     applicationES.setDecisionTime(TimeUtil.dateToMillis(applicationJson.getDecisionTime()));
     applicationES.setApplicationTypeData(createApplicationTypeDataES(applicationJson));
     applicationES.setLocations(createLocationES(applicationJson.getLocations()));
-    Map<CustomerRoleType, CustomerWithContactsES> roleToCwcES =
-        applicationJson.getCustomersWithContacts().stream().collect(Collectors.toMap(cwc -> cwc.getRoleType(), cwc -> createCustomerWithContactsES(cwc)));
+    Map<CustomerRoleType, CustomerWithContactsES> roleToCwcES = applicationJson.getCustomersWithContacts().stream()
+        .collect(Collectors.toMap(cwc -> cwc.getRoleType(), cwc -> customerMapper.createWithContactsES(cwc)));
     applicationES.setCustomers(new RoleTypedCustomerES(roleToCwcES));
     if (applicationJson.getProject() != null) {
       applicationES.setProjectId(applicationJson.getProject().getId());
@@ -123,12 +114,6 @@ public class ApplicationMapper {
     return applicationES;
   }
 
-  private CustomerWithContactsES createCustomerWithContactsES(CustomerWithContactsJson customerWithContactsJson) {
-    CustomerWithContactsES customerWithContactsES = new CustomerWithContactsES();
-    customerWithContactsES.setCustomer(createCustomerES(customerWithContactsJson.getCustomer()));
-    customerWithContactsES.setContacts(createContactES(customerWithContactsJson.getContacts()));
-    return customerWithContactsES;
-  }
 
   /**
    * Transfer the information from the given model-domain object to given ui-domain object. Does not handle references to other objects like
@@ -163,7 +148,7 @@ public class ApplicationMapper {
     applicationJson.setCalculatedPrice(application.getCalculatedPrice());
     applicationJson.setNotBillable(application.getNotBillable());
     applicationJson.setNotBillableReason(application.getNotBillableReason());
-    applicationJson.setCustomersWithContacts(createCustomerWithContactsJson(application));
+    applicationJson.setCustomersWithContacts(customerMapper.createWithContactsJson(application));
     applicationJson.setInvoiceRecipientId(application.getInvoiceRecipientId());
 
     return applicationJson;
@@ -253,100 +238,6 @@ public class ApplicationMapper {
     return flatList;
   }
 
-  public CustomerJson createCustomerJson(Customer customer) {
-    CustomerJson customerJson = new CustomerJson();
-    customerJson.setId(customer.getId());
-    customerJson.setType(customer.getType());
-    customerJson.setName(customer.getName());
-    customerJson.setRegistryKey(getVisibleRegistryKey(customer.getType(), customer.getRegistryKey()));
-    customerJson.setOvt(customer.getOvt());
-    customerJson.setPhone(customer.getPhone());
-    customerJson.setEmail(customer.getEmail());
-    customerJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(customer.getPostalAddress()));
-    customerJson.setActive(customer.isActive());
-    customerJson.setSapCustomerNumber(customer.getSapCustomerNumber());
-    customerJson.setInvoicingProhibited(customer.isInvoicingProhibited());
-    return customerJson;
-  }
-
-  public Customer createCustomerModel(CustomerJson customerJson) {
-    Customer customerModel = new Customer();
-    customerModel.setId(customerJson.getId());
-    customerModel.setType(customerJson.getType());
-    customerModel.setName(customerJson.getName());
-    customerModel.setRegistryKey(customerJson.getRegistryKey());
-    customerModel.setOvt(customerJson.getOvt());
-    customerModel.setPhone(customerJson.getPhone());
-    customerModel.setEmail(customerJson.getEmail());
-    customerModel.setPostalAddress(ApplicationCommonMapper.createPostalAddressModel(customerJson.getPostalAddress()));
-    customerModel.setActive(customerJson.isActive());
-    customerModel.setSapCustomerNumber(customerJson.getSapCustomerNumber());
-    customerModel.setInvoicingProhibited(customerJson.isInvoicingProhibited());
-    return customerModel;
-  }
-
-  /**
-   * Map the given Contact object into ContactJson
-   *
-   * @param c Contact object
-   * @return Ui-domain Contact representation of the parameter
-   */
-  public ContactJson createContactJson(Contact c) {
-    ContactJson json = new ContactJson();
-    json.setId(c.getId());
-    json.setCustomerId(c.getCustomerId());
-    json.setName(c.getName());
-    if (c.getPostalAddress() != null) {
-      // TODO: refactor when contact starts using PostalAddressJson
-      json.setStreetAddress(c.getPostalAddress().getStreetAddress());
-      json.setPostalCode(c.getPostalAddress().getPostalCode());
-      json.setCity(c.getPostalAddress().getCity());
-    }
-    json.setEmail(c.getEmail());
-    json.setPhone(c.getPhone());
-    json.setActive(c.isActive());
-    return json;
-  }
-
-  public Contact createContactModel(ContactJson json) {
-    Contact contact = new Contact();
-    contact.setId(json.getId());
-    contact.setCustomerId(json.getCustomerId());
-    contact.setName(json.getName());
-    if (json.getStreetAddress() != null || json.getPostalCode() != null || json.getCity() != null) {
-      // TODO: refactor when contact starts using PostalAddressJson
-      contact.setPostalAddress(new PostalAddress(json.getStreetAddress(), json.getPostalCode(), json.getCity()));
-    }
-    contact.setEmail(json.getEmail());
-    contact.setPhone(json.getPhone());
-    contact.setIsActive(json.isActive());
-    return contact;
-  }
-
-  public CustomerES createCustomerES(CustomerJson customerJson) {
-    if (customerJson != null) {
-      return new CustomerES(
-          customerJson.getId(),
-          customerJson.getName(),
-          customerJson.getRegistryKey(),
-          customerJson.getOvt(),
-          customerJson.getType(),
-          customerJson.isActive());
-    } else {
-      return null;
-    }
-  }
-
-  public List<ContactES> createContactES(List<ContactJson> contacts) {
-    if (contacts != null) {
-      return contacts.stream()
-          .map(c -> new ContactES(c.getId(), c.getName(), c.isActive()))
-          .collect(Collectors.toList());
-    } else {
-      return null;
-    }
-  }
-
   public DistributionEntry createDistributionEntryModel(DistributionEntryJson distributionEntryJson) {
     DistributionEntry distributionEntry = new DistributionEntry();
     distributionEntry.setDistributionType(distributionEntryJson.getDistributionType());
@@ -418,47 +309,5 @@ public class ApplicationMapper {
     distributionEntryJson.setEmail(distributionEntry.getEmail());
     distributionEntryJson.setPostalAddress(ApplicationCommonMapper.createPostalAddressJson(distributionEntry.getPostalAddress()));
     return distributionEntryJson;
-  }
-
-  private List<CustomerWithContactsJson> createCustomerWithContactsJson(Application application) {
-    List<CustomerWithContacts> customersWithContacts = application.getCustomersWithContacts();
-    List<CustomerWithContactsJson> customerWithContactsJsons = new ArrayList<>();
-
-    customersWithContacts.forEach(cwc -> {
-      CustomerWithContactsJson customerWithContactsJson = new CustomerWithContactsJson();
-      customerWithContactsJson.setContacts(cwc.getContacts().stream()
-              .map(c -> createContactJson(c))
-              .collect(Collectors.toList()));
-      customerWithContactsJson.setCustomer(createCustomerJson(cwc.getCustomer()));
-      customerWithContactsJson.setRoleType(cwc.getRoleType());
-      customerWithContactsJsons.add(customerWithContactsJson);
-    });
-    return customerWithContactsJsons;
-  }
-
-  private List<CustomerWithContacts> createCustomerWithContactsModel(List<CustomerWithContactsJson> customersWithContactsJson) {
-    List<CustomerWithContacts> customerWithContacts = new ArrayList<>();
-    customersWithContactsJson.forEach(cwcJson -> {
-      customerWithContacts.add(new CustomerWithContacts(
-          cwcJson.getRoleType(),
-          createCustomerModel(cwcJson.getCustomer()),
-          cwcJson.getContacts().stream().map(cJson -> createContactModel(cJson)).collect(Collectors.toList())));
-    });
-    return customerWithContacts;
-  }
-
-  static final String SSN_REPLACEMENT = "***********";
-
-  private String getVisibleRegistryKey(CustomerType type, String registryKey) {
-    if (!userCanSeeSsn() && CustomerType.PERSON.equals(type)) {
-      return SSN_REPLACEMENT;
-    } else {
-      return registryKey;
-    }
-  }
-
-  private boolean userCanSeeSsn() {
-    UserJson user = userService.getCurrentUser();
-    return user.getAssignedRoles().stream().anyMatch(canSeeSsn::contains);
   }
 }

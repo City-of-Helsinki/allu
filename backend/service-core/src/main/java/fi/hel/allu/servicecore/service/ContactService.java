@@ -9,6 +9,7 @@ import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.ContactJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class ContactService {
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
-  private ApplicationMapper applicationMapper;
+  private CustomerMapper customerMapper;
   private SearchService searchService;
   private UserService userService;
 
@@ -35,12 +36,12 @@ public class ContactService {
   public ContactService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
-      ApplicationMapper applicationMapper,
+      CustomerMapper customerMapper,
       SearchService searchService,
       UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
-    this.applicationMapper = applicationMapper;
+    this.customerMapper = customerMapper;
     this.searchService = searchService;
     this.userService = userService;
   }
@@ -50,7 +51,7 @@ public class ContactService {
         applicationProperties.getContactByIdUrl(),
         Contact.class,
         id);
-    return applicationMapper.createContactJson(locationResult.getBody());
+    return customerMapper.createContactJson(locationResult.getBody());
   }
 
   public List<ContactJson> findByCustomer(int customerId) {
@@ -59,7 +60,7 @@ public class ContactService {
         Contact[].class,
         customerId);
     List<ContactJson> results =
-        Arrays.stream(contactResult.getBody()).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
+        Arrays.stream(contactResult.getBody()).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
     return results;
   }
 
@@ -81,20 +82,20 @@ public class ContactService {
 
   public List<ContactJson> createContacts(List<ContactJson> contactJsons) {
     ContactChange contactChange = new ContactChange(userService.getCurrentUser().getId(),
-        contactJsons.stream().map(cJson -> applicationMapper.createContactModel(cJson)).collect(Collectors.toList()));
+        contactJsons.stream().map(cJson -> customerMapper.createContactModel(cJson)).collect(Collectors.toList()));
     Contact[] contacts = restTemplate.postForObject(
         applicationProperties.getContactCreateUrl(),
         contactChange,
         Contact[].class);
     List<ContactJson> createdContactJsons =
-        Arrays.stream(contacts).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
+        Arrays.stream(contacts).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
     searchService.insertContacts(createdContactJsons);
     return createdContactJsons;
   }
 
   public List<ContactJson> updateContacts(List<ContactJson> contactJsons) {
     ContactChange contactChange = new ContactChange(userService.getCurrentUser().getId(),
-        contactJsons.stream().map(cJson -> applicationMapper.createContactModel(cJson)).collect(Collectors.toList()));
+        contactJsons.stream().map(cJson -> customerMapper.createContactModel(cJson)).collect(Collectors.toList()));
     HttpEntity<ContactChange> requestEntity = new HttpEntity<>(contactChange);
     ResponseEntity<Contact[]> response = restTemplate.exchange(
         applicationProperties.getContactUpdateUrl(),
@@ -102,7 +103,7 @@ public class ContactService {
         requestEntity,
         Contact[].class);
     List<ContactJson> updatedContactJsons =
-        Arrays.stream(response.getBody()).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
+        Arrays.stream(response.getBody()).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
     searchService.updateContacts(updatedContactJsons);
     List<ApplicationWithContactsES> applicationWithContactsESs =
         findRelatedApplicationsWithContacts(updatedContactJsons.stream().map(cJson -> cJson.getId()).collect(Collectors.toList()));
@@ -115,7 +116,7 @@ public class ContactService {
         applicationProperties.getContactsByIdUrl(),
         contactIds,
         Contact[].class);
-    List<ContactJson> resultList = Arrays.stream(contacts).map(c -> applicationMapper.createContactJson(c)).collect(Collectors.toList());
+    List<ContactJson> resultList = Arrays.stream(contacts).map(c -> customerMapper.createContactJson(c)).collect(Collectors.toList());
     SearchService.orderByIdList(contactIds, resultList, (contact) -> contact.getId());
     return resultList;
   }

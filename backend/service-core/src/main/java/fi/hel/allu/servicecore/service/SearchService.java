@@ -5,6 +5,7 @@ import fi.hel.allu.search.domain.*;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,7 @@ public class SearchService {
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
   private ApplicationMapper applicationMapper;
+  private CustomerMapper customerMapper;
   private ProjectMapper projectMapper;
 
   @Autowired
@@ -27,10 +29,12 @@ public class SearchService {
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
       ApplicationMapper applicationMapper,
+      CustomerMapper customerMapper,
       ProjectMapper projectMapper) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
     this.applicationMapper = applicationMapper;
+    this.customerMapper = customerMapper;
     this.projectMapper = projectMapper;
   }
 
@@ -118,7 +122,7 @@ public class SearchService {
   public void insertCustomer(CustomerJson customerJson) {
     restTemplate.postForObject(
         applicationProperties.getCustomerSearchCreateUrl(),
-        applicationMapper.createCustomerES(customerJson),
+        customerMapper.createCustomerES(customerJson),
         Void.class);
   }
 
@@ -128,7 +132,9 @@ public class SearchService {
    * @param customerJsons Customers to be updated.
    */
   public void updateCustomers(List<CustomerJson> customerJsons) {
-    List<CustomerES> customers = customerJsons.stream().map(a -> applicationMapper.createCustomerES(a)).collect(Collectors.toList());
+    List<CustomerES> customers = customerJsons.stream()
+        .map(a -> customerMapper.createCustomerES(a))
+        .collect(Collectors.toList());
     restTemplate.put(
         applicationProperties.getCustomersSearchUpdateUrl(),
         customers);
@@ -142,7 +148,9 @@ public class SearchService {
   public void insertContacts(List<ContactJson> contactJson) {
     restTemplate.postForObject(
         applicationProperties.getContactSearchCreateUrl(),
-        contactJson.stream().map(cJson -> new ContactES(cJson.getId(), cJson.getName(), cJson.isActive())).collect(Collectors.toList()),
+        contactJson.stream()
+            .map(cJson -> new ContactES(cJson.getId(), cJson.getName(), cJson.isActive()))
+            .collect(Collectors.toList()),
         Void.class);
   }
 
@@ -152,7 +160,7 @@ public class SearchService {
    * @param contactJsons Contacts to be updated.
    */
   public void updateContacts(List<ContactJson> contactJsons) {
-    List<ContactES> contacts = applicationMapper.createContactES(contactJsons);
+    List<ContactES> contacts = customerMapper.createContactES(contactJsons);
     restTemplate.put(
         applicationProperties.getContactSearchUpdateUrl(),
         contacts);

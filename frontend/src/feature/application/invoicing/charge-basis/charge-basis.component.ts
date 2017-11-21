@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {ChargeBasisEntry} from '../../../../model/application/invoice/charge-basis-entry';
@@ -11,6 +11,7 @@ import {Observable} from 'rxjs/Observable';
 import {FormUtil} from '../../../../util/form.util';
 import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
+import {ApplicationState} from '../../../../service/application/application-state';
 
 
 @Component({
@@ -21,16 +22,18 @@ import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basi
   ]
 })
 export class ChargeBasisComponent implements OnInit, OnDestroy {
-
-  @Input() applicationId: number;
   form: FormGroup;
   chargeBasisEntries: FormArray;
+  calculatedPrice: Observable<number>;
 
   private rowSubscription = new Subscription();
   private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
 
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog, private invoiceHub: InvoiceHub) {
+  constructor(private fb: FormBuilder,
+              private dialog: MatDialog,
+              private invoiceHub: InvoiceHub,
+              private applicationState: ApplicationState) {
     this.chargeBasisEntries = fb.array([]);
     this.form = this.fb.group({
       chargeBasisEntries: this.chargeBasisEntries
@@ -38,11 +41,13 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.invoiceHub.loadChargeBasisEntries(this.applicationId)
+    this.invoiceHub.loadChargeBasisEntries(this.applicationState.application.id)
       .subscribe(entries => {}, error => NotificationService.error(error));
 
     this.rowSubscription = this.invoiceHub.chargeBasisEntries
       .subscribe(entries => this.entriesUpdated(entries));
+
+    this.calculatedPrice = this.applicationState.changes.map(app => app.calculatedPriceEuro);
   }
 
   ngOnDestroy(): void {
@@ -106,6 +111,8 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   private saveEntries(): Observable<Array<ChargeBasisEntry>> {
     const entries = this.chargeBasisEntries.getRawValue().map(value => ChargeBasisEntryForm.toChargeBasisEntry(value));
-    return this.invoiceHub.saveChargeBasisEntries(this.applicationId, entries);
+    const appId = this.applicationState.application.id;
+    return this.invoiceHub.saveChargeBasisEntries(appId, entries)
+      .do(e => this.applicationState.load(appId).subscribe());
   }
 }

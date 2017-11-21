@@ -6,14 +6,14 @@
   padding: 0 0.75rem;
 }
 
-.spaced-out [fxFlex]:not(:first-child):not(:last-child)  {
+.spaced-out [ng-reflect-flex]:not(:first-child):not(:last-child)  {
   padding: 0 0.75rem;
 }
 
-.spaced-out [fxFlex]:first-child {
+.spaced-out [ng-reflect-flex]:first-child {
   padding-right: 0.75rem;
 }
 
-.spaced-out [fxFlex]:last-child {
+.spaced-out [ng-reflect-flex]:last-child {
   padding-left: 0.75rem;
 }

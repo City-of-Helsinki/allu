@@ -5,7 +5,6 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {CustomerForm} from './customer.form';
 import {findTranslation} from '../../../util/translations';
 import {NotificationService} from '../../../service/notification/notification.service';
-import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
 
 export const CUSTOMER_MODAL_CONFIG = {width: '800PX', disableClose: false, data: {}};
 
@@ -34,11 +33,11 @@ export class CustomerModalComponent implements OnInit {
 
   onSubmit(customerForm: CustomerForm) {
     let customer = CustomerForm.toCustomer(customerForm);
-    this.customerHub.saveCustomerWithContacts(new CustomerWithContacts(undefined, customer, []))
+    this.customerHub.saveCustomer(customer)
       .subscribe(
         saved => {
           NotificationService.message(findTranslation('customer.action.save'));
-          this.dialogRef.close(saved.customer);
+          this.dialogRef.close(saved);
         }, error => NotificationService.error(error));
   }
 

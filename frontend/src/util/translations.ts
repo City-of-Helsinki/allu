@@ -317,6 +317,8 @@ export const translations = {
     invoiceRecipient: 'Laskun saaja',
     handledByRepresentative: 'Asiaa hoitaa asiamies',
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
+    sapCustomerNumber: 'Sap-numero',
+    invoicingProhibited: 'Laskutuskielto',
     type: {
       COMPANY: {
         name: 'Yritys',

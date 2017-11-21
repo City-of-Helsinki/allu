@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.service;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.domain.UserJson;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,7 +42,7 @@ public class CustomerServiceTest extends MockServices {
     initSaveMocks();
     initSearchMocks();
     customerService = new CustomerService(
-        props, restTemplate, new ApplicationMapper(userService), Mockito.mock(SearchService.class),
+        props, restTemplate, new CustomerMapper(userService), Mockito.mock(SearchService.class),
         Mockito.mock(ContactService.class), userService);
     when(userService.getCurrentUser()).thenReturn(new UserJson());
   }

@@ -7,6 +7,7 @@ import fi.hel.allu.model.domain.ChargeBasisEntry;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -53,6 +54,8 @@ public class ApplicationServiceTest extends MockServices {
   protected ContactService contactService;
   @Mock
   protected UserService userService;
+  @Mock
+  private CustomerMapper customerMapper;
 
   private ApplicationService applicationService;
 
@@ -67,7 +70,7 @@ public class ApplicationServiceTest extends MockServices {
 
   @Before
   public void setUp() {
-    applicationMapper = new ApplicationMapper(userService);
+    applicationMapper = new ApplicationMapper(customerMapper);
 
     initSaveMocks();
     initSearchMocks();

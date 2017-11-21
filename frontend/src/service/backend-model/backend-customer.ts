@@ -10,4 +10,6 @@ export interface BackendCustomer {
   email: string;
   phone: string;
   active: boolean;
+  sapCustomerNumber?: string;
+  invoicingProhibited?: boolean;
 }

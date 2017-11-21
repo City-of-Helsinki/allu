@@ -5,6 +5,7 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.domain.types.RoleType;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.CustomerWithContactsES;
 import fi.hel.allu.search.domain.ESFlatValue;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.UserService;
@@ -21,19 +22,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ApplicationMapperTest {
 
   @Mock
-  private UserService userService;
+  private CustomerMapper customerMapper;
 
   private ApplicationMapper applicationMapper;
 
   @Before
   public void setup() {
-    applicationMapper = new ApplicationMapper(userService);
+    applicationMapper = new ApplicationMapper(customerMapper);
+    when(customerMapper.createWithContactsES(any(CustomerWithContactsJson.class))).thenReturn(new CustomerWithContactsES());
   }
 
 
@@ -56,46 +60,6 @@ public class ApplicationMapperTest {
     Map<String, ESFlatValue> valueMap = applicationTypeData.stream().collect(Collectors.toMap(ESFlatValue::getFieldName, esFlatValue -> esFlatValue));
     Assert.assertEquals(1, valueMap.size());
     Assert.assertEquals(testValue, valueMap.get("EVENT-testValue").getStrValue());
-  }
-
-  @Test
-  public void testRegistrykeyShouldBeHiddenFromPersonCustomerIfNotAllowed() {
-    Customer customer = createCustomer(CustomerType.PERSON);
-    UserJson user = new UserJson();
-    user.setAssignedRoles(Collections.singletonList(RoleType.ROLE_VIEW));
-    when(userService.getCurrentUser()).thenReturn(user);
-
-    CustomerJson resultCustomer = applicationMapper.createCustomerJson(customer);
-    Assert.assertEquals(ApplicationMapper.SSN_REPLACEMENT, resultCustomer.getRegistryKey());
-  }
-
-  @Test
-  public void testRegistrykeyShouldNotBeErasedFromOtherCustomerEvenIfNotAllowed() {
-    Customer customer = createCustomer(CustomerType.COMPANY);
-    UserJson user = new UserJson();
-    user.setAssignedRoles(Collections.singletonList(RoleType.ROLE_VIEW));
-    when(userService.getCurrentUser()).thenReturn(user);
-
-    CustomerJson resultCustomer = applicationMapper.createCustomerJson(customer);
-    Assert.assertEquals(customer.getRegistryKey(), resultCustomer.getRegistryKey());
-  }
-
-  @Test
-  public void testRegistrykeyShouldNotBeErasedFromPersonCustomerIfAllowed() {
-    Customer customer = createCustomer(CustomerType.PERSON);
-    UserJson user = new UserJson();
-    user.setAssignedRoles(Collections.singletonList(RoleType.ROLE_PROCESS_APPLICATION));
-    when(userService.getCurrentUser()).thenReturn(user);
-
-    CustomerJson resultCustomer = applicationMapper.createCustomerJson(customer);
-    Assert.assertEquals(customer.getRegistryKey(), resultCustomer.getRegistryKey());
-  }
-
-  private Customer createCustomer(CustomerType type) {
-    Customer customer = new Customer();
-    customer.setType(type);
-    customer.setRegistryKey("KEY");
-    return customer;
   }
 
   public static class TestEventJson extends ApplicationExtensionJson {

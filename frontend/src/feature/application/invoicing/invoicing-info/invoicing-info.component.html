@@ -7,7 +7,7 @@
             </button>
         </mat-card-title>
         <mat-card-content>
-            <customer-info [form]="recipientForm" [allowSearch]="true" *ngIf="billable"
+            <customer-info *ngIf="billable" [form]="recipientForm" [allowSearch]="true" [showInvoicingInfo]="true"
                            (customerChange)="invoiceRecipientChange($event)"></customer-info>
             <div fxLayout="row" fxLayoutWrap>
                 <div fxFlex="100" class="height-fix-bottom">

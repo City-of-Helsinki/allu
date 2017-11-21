@@ -10,7 +10,9 @@ export class Customer {
     public postalAddress?: PostalAddress,
     public email?: string,
     public phone?: string,
-    public active = true) {
+    public active = true,
+    public sapCustomerNumber?: string,
+    public invoicingProhibited = false) {
     this.postalAddress = postalAddress || new PostalAddress();
   }
 }

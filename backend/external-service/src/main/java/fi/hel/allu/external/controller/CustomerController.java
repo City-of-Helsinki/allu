@@ -72,7 +72,7 @@ public class CustomerController {
   public ResponseEntity<Void> merge(@RequestBody CustomerExt customer) {
     CustomerJson customerJson = customerService.findCustomerById(customer.getId());
     CustomerExtMapper.mergeCustomerJson(customerJson, customer);
-    customerService.updateCustomer(customerJson.getId(), customerJson);
+    customerService.updateCustomerWithInvoicingInfo(customerJson.getId(), customerJson);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

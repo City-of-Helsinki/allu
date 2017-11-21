@@ -15,7 +15,7 @@ export class NumberUtil {
   }
 
   static toEuros(cents: number): number {
-    return NumberUtil.isDefined(cents) ? cents / CENTS : undefined;
+    return NumberUtil.isDefined(cents) ? Math.round(cents / CENTS) : undefined;
   }
 
   static toCents(euros: number): number {

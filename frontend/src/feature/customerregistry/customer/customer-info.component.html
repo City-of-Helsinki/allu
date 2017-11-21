@@ -1,6 +1,6 @@
 <form [formGroup]="form">
-    <div class="row form-group">
-        <div class="col m6">
+    <div fxLayout="row" fxLayoutWrap class="spaced-out">
+        <div fxFlex="50">
             <mat-form-field class="input-full-width">
                 <mat-select class="input-full-width" formControlName="type" placeholder="Valitse tyyppi*">
                     <mat-option *ngFor="let type of customerTypes" [value]="type">
@@ -12,7 +12,7 @@
                 </small>
             </mat-form-field>
         </div>
-        <div class="col m6">
+        <div fxFlex="50">
             <mat-form-field class="input-full-width">
                 <mat-select class="input-full-width" formControlName="country" placeholder="Maa">
                     <mat-option value="Suomi">Suomi</mat-option>
@@ -20,8 +20,8 @@
             </mat-form-field>
         </div>
     </div>
-    <div class="row form-group">
-        <div class="col m6">
+    <div fxLayout="row" fxLayoutWrap class="spaced-out">
+        <div fxFlex="50">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="name"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'nameLabel'] | translation}}*"
@@ -39,7 +39,7 @@
                 </mat-hint>
             </mat-form-field>
         </div>
-        <div class="col" [ngClass]="{'m6': form.value.type==='PERSON', 'm3': form.value.type!=='PERSON'}">
+        <div [fxFlex]="form.value.type==='PERSON' ? 50 : 25">
             <mat-form-field class="input-full-width" [inputWarning]="registryKeyControl">
                 <input matInput type="text" formControlName="registryKey"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'id'] | translation}}*"
@@ -59,7 +59,7 @@
                 </mat-hint>
             </mat-form-field>
         </div>
-        <div class="col m3" *ngIf="form.value.type!=='PERSON'">
+        <div fxFlex="25" *ngIf="form.value.type!=='PERSON'">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="ovt"
                        placeholder="{{['customer.type', form.value.type || 'DEFAULT', 'ovt'] | translation}}"/>
@@ -71,13 +71,13 @@
             </mat-form-field>
         </div>
     </div>
-    <div formGroupName="postalAddress" class="row form-group">
-        <div class="col m6">
+    <div fxLayout="row" fxLayoutWrap class="spaced-out" formGroupName="postalAddress">
+        <div fxFlex="50">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="streetAddress" placeholder="Osoite"/>
             </mat-form-field>
         </div>
-        <div class="col m3">
+        <div fxFlex="25">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="postalCode" placeholder="Postinumero"/>
                 <mat-hint>
@@ -87,14 +87,14 @@
                 </mat-hint>
             </mat-form-field>
         </div>
-        <div class="col m3">
+        <div fxFlex="25">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="city" placeholder="Toimipaikka"/>
             </mat-form-field>
         </div>
     </div>
-    <div class="row form-group">
-        <div class="col m6">
+    <div fxLayout="row" fxLayoutWrap class="spaced-out">
+        <div fxFlex="50">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="email" placeholder="Sähköpostiosoite"/>
                 <mat-hint>
@@ -102,13 +102,23 @@
                 </mat-hint>
             </mat-form-field>
         </div>
-        <div class="col m6">
+        <div fxFlex="50">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
                 <mat-hint>
                     <field-error [form]="form" field="phone" hasError="minLength">{{'customer.field.phoneShort' | translation}}</field-error>
                 </mat-hint>
             </mat-form-field>
+        </div>
+    </div>
+    <div fxLayout="row" fxLayoutWrap class="spaced-out" *ngIf="showInvoicingInfo && existingCustomer">
+        <div fxFlex="50">
+            <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="sapCustomerNumber" placeholder="Sap-numero"/>
+            </mat-form-field>
+        </div>
+        <div fxFlex="25" class="checkbox-matching-height">
+            <mat-checkbox formControlName="invoicingProhibited">Laskutuskielto</mat-checkbox>
         </div>
     </div>
 </form>

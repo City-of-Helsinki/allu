@@ -24,6 +24,7 @@ const DEBOUNCE_TIME_MS = 300;
 export class CustomerInfoComponent {
   @Input() form: FormGroup;
   @Input() allowSearch: boolean = false;
+  @Input() showInvoicingInfo: boolean = false;
 
   @Output() customerChange = new EventEmitter<Customer>();
 
@@ -88,6 +89,10 @@ export class CustomerInfoComponent {
       this.form.enable();
       this.customerChange.emit(new Customer());
     }
+  }
+
+  get existingCustomer(): boolean {
+    return NumberUtil.isDefined(this.form.value.id);
   }
 
   private updateRegistryKeyValidators(type: CustomerType): void {

@@ -6,8 +6,8 @@ import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerChange;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ChangeHistoryMapper;
+import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +26,7 @@ public class CustomerService {
 
   private ApplicationProperties applicationProperties;
   private RestTemplate restTemplate;
-  private ApplicationMapper applicationMapper;
+  private CustomerMapper customerMapper;
   private SearchService searchService;
   private ContactService contactService;
   private UserService userService;
@@ -35,13 +35,13 @@ public class CustomerService {
   public CustomerService(
       ApplicationProperties applicationProperties,
       RestTemplate restTemplate,
-      ApplicationMapper applicationMapper,
+      CustomerMapper customerMapper,
       SearchService searchService,
       ContactService contactService,
       UserService userService) {
     this.applicationProperties = applicationProperties;
     this.restTemplate = restTemplate;
-    this.applicationMapper = applicationMapper;
+    this.customerMapper = customerMapper;
     this.searchService = searchService;
     this.contactService = contactService;
     this.userService = userService;
@@ -56,12 +56,12 @@ public class CustomerService {
    */
   public CustomerJson createCustomer(CustomerJson customerJson) {
     CustomerChange customerChange = new CustomerChange(userService.getCurrentUser().getId(),
-        applicationMapper.createCustomerModel(customerJson));
+        customerMapper.createCustomerModel(customerJson));
     Customer customerModel = restTemplate.postForObject(
         applicationProperties.getCustomerCreateUrl(),
         customerChange,
         Customer.class);
-    CustomerJson createdCustomer = applicationMapper.createCustomerJson(customerModel);
+    CustomerJson createdCustomer = customerMapper.createCustomerJson(customerModel);
     // all created customers will be set active
     createdCustomer.setActive(true);
     searchService.insertCustomer(createdCustomer);
@@ -95,39 +95,20 @@ public class CustomerService {
   }
 
   /**
-   * Update the given customer. Customer is updated if the id is given.
-   *
-   * @param customerJson customer that is going to be updated
+   * Updates customer with given data but preserving existing invoicing info
+   * @return updated customer
    */
   public CustomerJson updateCustomer(int customerId, CustomerJson customerJson) {
-    CustomerChange customerChange = new CustomerChange(userService.getCurrentUser().getId(),
-        applicationMapper.createCustomerModel(customerJson));
-    HttpEntity<CustomerChange> requestEntity = new HttpEntity<>(customerChange);
-    ResponseEntity<Customer> response = restTemplate.exchange(
-        applicationProperties.getCustomerUpdateUrl(),
-        HttpMethod.PUT,
-        requestEntity,
-        Customer.class,
-        customerId);
-    CustomerJson updatedCustomer = applicationMapper.createCustomerJson(response.getBody());
-    searchService.updateCustomers(Collections.singletonList(updatedCustomer));
-    // update search index of applications having this customer
-    ParameterizedTypeReference<Map<Integer, List<CustomerRoleType>>> typeRef =
-        new ParameterizedTypeReference<Map<Integer, List<CustomerRoleType>>>() {};
-    ResponseEntity<Map<Integer, List<CustomerRoleType>>> applicationIdToCustomerRoleType =
-        restTemplate.exchange(
-            applicationProperties.getCustomerApplicationsUrl(),
-            HttpMethod.GET,
-            new HttpEntity<>((Integer) null), // dummy request entity, not used for anything. Just satisfying interface requirements
-            typeRef,
-            customerId);
-    if (applicationIdToCustomerRoleType.getBody().size() != 0) {
-      searchService.updateCustomerOfApplications(updatedCustomer, applicationIdToCustomerRoleType.getBody());
-    }
-
-    return updatedCustomer;
+    CustomerJson existing = findCustomerById(customerId);
+    customerJson.setSapCustomerNumber(existing.getSapCustomerNumber());
+    customerJson.setInvoicingProhibited(existing.isInvoicingProhibited());
+    return updateCustomerWithInvoicingInfo(customerId, customerJson);
   }
 
+  /**
+   * Updates customer and customer's contacts
+   * @return updated customer and contacts
+   */
   public CustomerWithContactsJson updateCustomerWithContacts(int customerId, CustomerWithContactsJson customerWithContactsJson) {
     CustomerWithContactsJson updatedCustomerWithContactsJson = new CustomerWithContactsJson();
     updatedCustomerWithContactsJson.setRoleType(customerWithContactsJson.getRoleType());
@@ -157,17 +138,52 @@ public class CustomerService {
     return updatedCustomerWithContactsJson;
   }
 
+  /**
+   * Update the given customer. Customer is updated if the id is given.
+   * Updates also invoicing info (sap-id and invoicing prohibited)
+   *
+   * @param customerJson customer that is going to be updated
+   */
+  public CustomerJson updateCustomerWithInvoicingInfo(int customerId, CustomerJson customerJson) {
+    CustomerChange customerChange = new CustomerChange(userService.getCurrentUser().getId(),
+        customerMapper.createCustomerModel(customerJson));
+    HttpEntity<CustomerChange> requestEntity = new HttpEntity<>(customerChange);
+    ResponseEntity<Customer> response = restTemplate.exchange(
+        applicationProperties.getCustomerUpdateUrl(),
+        HttpMethod.PUT,
+        requestEntity,
+        Customer.class,
+        customerId);
+    CustomerJson updatedCustomer = customerMapper.createCustomerJson(response.getBody());
+    searchService.updateCustomers(Collections.singletonList(updatedCustomer));
+    // update search index of applications having this customer
+    ParameterizedTypeReference<Map<Integer, List<CustomerRoleType>>> typeRef =
+        new ParameterizedTypeReference<Map<Integer, List<CustomerRoleType>>>() {};
+    ResponseEntity<Map<Integer, List<CustomerRoleType>>> applicationIdToCustomerRoleType =
+        restTemplate.exchange(
+            applicationProperties.getCustomerApplicationsUrl(),
+            HttpMethod.GET,
+            new HttpEntity<>((Integer) null), // dummy request entity, not used for anything. Just satisfying interface requirements
+            typeRef,
+            customerId);
+    if (applicationIdToCustomerRoleType.getBody().size() != 0) {
+      searchService.updateCustomerOfApplications(updatedCustomer, applicationIdToCustomerRoleType.getBody());
+    }
+
+    return updatedCustomer;
+  }
+
   public CustomerJson findCustomerById(int customerId) {
     ResponseEntity<Customer> customerResult =
         restTemplate.getForEntity(applicationProperties.getCustomerByIdUrl(), Customer.class, customerId);
-    return applicationMapper.createCustomerJson(customerResult.getBody());
+    return customerMapper.createCustomerJson(customerResult.getBody());
   }
 
   public List<CustomerJson> findCustomerByBusinessId(String businessId) {
     ResponseEntity<Customer[]> customerResult =
         restTemplate.getForEntity(applicationProperties.getCustomerByBusinessIdUrl(), Customer[].class, businessId);
     return Arrays.stream(customerResult.getBody())
-        .map(customer -> applicationMapper.createCustomerJson(customer))
+        .map(customer -> customerMapper.createCustomerJson(customer))
         .collect(Collectors.toList());
   }
 
@@ -177,7 +193,7 @@ public class CustomerService {
             applicationProperties.getCustomersUrl(),
             Customer[].class);
     return Arrays.stream(customerResult.getBody())
-        .map(customer -> applicationMapper.createCustomerJson(customer))
+        .map(customer -> customerMapper.createCustomerJson(customer))
         .collect(Collectors.toList());
   }
 
@@ -201,7 +217,7 @@ public class CustomerService {
         applicationProperties.getCustomersByIdUrl(),
         customerIds,
         Customer[].class);
-    List<CustomerJson> resultList = Arrays.asList(customers).stream().map(a -> applicationMapper.createCustomerJson(a)).collect(Collectors.toList());
+    List<CustomerJson> resultList = Arrays.asList(customers).stream().map(a -> customerMapper.createCustomerJson(a)).collect(Collectors.toList());
     SearchService.orderByIdList(customerIds, resultList, (customer) -> customer.getId());
     return resultList;
   }
@@ -223,7 +239,7 @@ public class CustomerService {
     ResponseEntity<Customer[]> customerResult =
         restTemplate.getForEntity(applicationProperties.getInvoiceRecipientsWithoutSAPNumberUrl(), Customer[].class);
     return Arrays.stream(customerResult.getBody())
-        .map(customer -> applicationMapper.createCustomerJson(customer))
+        .map(customer -> customerMapper.createCustomerJson(customer))
         .collect(Collectors.toList());
 
   }

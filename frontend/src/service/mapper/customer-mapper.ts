@@ -25,7 +25,9 @@ export class CustomerMapper {
         postalAddress,
         backendCustomer.email,
         backendCustomer.phone,
-        backendCustomer.active);
+        backendCustomer.active,
+        backendCustomer.sapCustomerNumber,
+        backendCustomer.invoicingProhibited);
     } else {
       return undefined;
     }
