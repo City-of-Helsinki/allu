@@ -2,19 +2,21 @@ import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {
   ApplicationType,
+  creatableTypes,
   hasMultipleKinds,
   kindEntryByTypeAndKind,
   typeEntryByType
 } from '../../../model/application/type/application-type';
 import {ApplicationKindEntry} from '../../../model/application/type/application-kind';
 import {ApplicationState} from '../../../service/application/application-state';
-import {EnumUtil} from '../../../util/enum.util';
 import {
   fromKindsWithSpecifiers,
   KindsWithSpecifiers,
   SpecifierEntry,
   toKindsWithSpecifiers
 } from '../../../model/application/type/application-specifier';
+import {EnumUtil} from '../../../util/enum.util';
+import {ArrayUtil} from '../../../util/array-util';
 
 @Component({
   selector: 'application-type',
@@ -29,7 +31,7 @@ export class TypeComponent implements OnInit {
   @Output() onKindSpecifierChange = new EventEmitter<KindsWithSpecifiers>();
 
   multipleKinds = false;
-  applicationTypes = [ApplicationType.EVENT, ApplicationType.SHORT_TERM_RENTAL].map(t => ApplicationType[t]);
+  applicationTypes = creatableTypes.map(t => ApplicationType[t]);
   availableKinds: string[] = [];
   availableKindsWithSpecifiers: ApplicationKindEntry[] = [];
   form: FormGroup;
@@ -48,6 +50,7 @@ export class TypeComponent implements OnInit {
       // Show all values although only event and short term rental can be selected
       this.applicationTypes = EnumUtil.enumValues(ApplicationType);
       this.form.disable();
+      this.kindsCtrl.updateValueAndValidity();
     }
 
     this.typeCtrl.valueChanges.subscribe(type => this.typeSelection(type));
@@ -106,7 +109,7 @@ export class TypeComponent implements OnInit {
     this.availableKindsWithSpecifiers = this.getAvailableSpecifiers(application.type, selectedKinds);
 
     this.multipleKinds = hasMultipleKinds(application.typeEnum);
-    this.kindsCtrl = this.fb.control(selectedKinds);
+    this.kindsCtrl = this.fb.control(this.multipleKinds ? selectedKinds : ArrayUtil.first(selectedKinds));
     this.specifiersCtrl = this.fb.control(selectedSpecifiers);
 
     this.form = this.fb.group({
