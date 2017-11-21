@@ -22,7 +22,6 @@ public class ApplicationProperties {
   private String customerArchiveDir;
   private String failedCustomerUpdateDir;
   private String sapFtpCustomerHost;
-  private int sapFtpCustomerPort;
   private String sapFtpCustomerUser;
   private String sapFtpCustomerPassword;
   private String sapFtpCustomerDirectory;
@@ -42,7 +41,6 @@ public class ApplicationProperties {
       @Value("${customer.archivedir}") @NotEmpty String customerArchiveDir,
       @Value("${customer.failedupdatedir}") @NotEmpty String failedCustomerUpdateDir,
       @Value("${sap.ftp.customer.host}") @NotEmpty String sapFtpCustomerHost,
-      @Value("${sap.ftp.customer.port}") @NotEmpty int sapFtpCustomerPort,
       @Value("${sap.ftp.customer.user}") @NotEmpty String sapFtpCustomerUser,
       @Value("${sap.ftp.customer.password}") @NotEmpty String sapFtpCustomerPassword,
       @Value("${sap.ftp.customer.directory}") @NotEmpty String sapFtpCustomerDirectory,
@@ -60,7 +58,6 @@ public class ApplicationProperties {
     this.extServiceHost = extServiceHost;
     this.extServicePort = extServicePort;
     this.sapFtpCustomerHost = sapFtpCustomerHost;
-    this.sapFtpCustomerPort = sapFtpCustomerPort;
     this.sapFtpCustomerUser = sapFtpCustomerUser;
     this.sapFtpCustomerPassword = sapFtpCustomerPassword;
     this.sapFtpCustomerDirectory = sapFtpCustomerDirectory;
@@ -176,13 +173,6 @@ public class ApplicationProperties {
    */
   public String getSapFtpCustomerHost() {
     return sapFtpCustomerHost;
-  }
-
-  /**
-   * FTP server port for SAP customer update
-   */
-  public int getSapFtpCustomerPort() {
-    return sapFtpCustomerPort;
   }
 
   /**
