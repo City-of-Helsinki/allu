@@ -103,7 +103,7 @@ public class CustomerController {
   /**
    * Creates CSV containing invoice recipients without SAP customer number.
    */
-  @RequestMapping(value = "/saporder.csv", method = RequestMethod.GET)
+  @RequestMapping(value = "/saporder/csv", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INVOICING')")
   public ResponseEntity<Void> getSapCustomerOrderCSV(HttpServletResponse response) throws IOException {
     response.setContentType("text/csv; charset=utf-8");
@@ -115,7 +115,7 @@ public class CustomerController {
   /**
    * Creates CSV containing invoice recipients without SAP customer number.
    */
-  @RequestMapping(value = "/saporder.xlsx", method = RequestMethod.GET)
+  @RequestMapping(value = "/saporder/xlsx", method = RequestMethod.GET)
   @PreAuthorize("hasAnyRole('ROLE_INVOICING')")
   public ResponseEntity<Void> getSapCustomerOrderExcel(HttpServletResponse response) throws IOException {
     response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");

@@ -41,6 +41,7 @@ import {CurrentUser} from '../../service/user/current-user';
 import {ConfigService} from '../../service/config/config.service';
 import {SupervisionWorkqueueModule} from '../supervision-workqueue/supervision-workqueue.module';
 import {UserService} from '../../service/user/user-service';
+import {DownloadModule} from '../download/download.module';
 
 
 @NgModule({
@@ -63,7 +64,8 @@ import {UserService} from '../../service/user/user-service';
     SearchModule,
     AdminModule,
     SidebarModule,
-    CustomerRegistryModule
+    CustomerRegistryModule,
+    DownloadModule
   ],
   declarations: [
     AlluComponent,

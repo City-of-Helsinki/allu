@@ -565,6 +565,9 @@ export const translations = {
       remove: 'POISTA',
       edit: 'MUOKKAA',
       home: 'Etusivulle'
+    },
+    error: {
+      downloadFailed: 'Tiedoston lataus epäonnistui'
     }
   },
   map: {
