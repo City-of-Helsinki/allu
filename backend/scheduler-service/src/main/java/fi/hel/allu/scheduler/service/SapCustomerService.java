@@ -44,13 +44,13 @@ public class SapCustomerService {
 
   private RestTemplate restTemplate;
   private ApplicationProperties applicationProperties;
-  private FtpService ftpService;
+  private SftpService ftpService;
   private AuthenticationService authenticationService;
 
 
   @Autowired
   public SapCustomerService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
-      FtpService ftpService, AuthenticationService authenticationService) {
+      SftpService ftpService, AuthenticationService authenticationService) {
     this.restTemplate = restTemplate;
     // Needed for PATCH support
     HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -74,7 +74,7 @@ public class SapCustomerService {
   }
 
   private boolean downloadFilesFromFtp() {
-    return ftpService.downloadFiles(applicationProperties.getSapFtpCustomerHost(), applicationProperties.getSapFtpCustomerPort(),
+    return ftpService.downloadFiles(applicationProperties.getSapFtpCustomerHost(),
         applicationProperties.getSapFtpCustomerUser(), applicationProperties.getSapFtpCustomerPassword(),
         applicationProperties.getSapFtpCustomerDirectory(), applicationProperties.getSapFtpCustomerArchive(), getCustomerSourceDirectory().toString());
   }
