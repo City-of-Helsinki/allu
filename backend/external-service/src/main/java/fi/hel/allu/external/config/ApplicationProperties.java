@@ -9,10 +9,13 @@ import org.springframework.stereotype.Component;
 public class ApplicationProperties {
 
   private String jwtSecret;
+  private String serviceAuth;
 
   @Autowired
-  public ApplicationProperties(@Value("${jwt.secret}") @NotEmpty String jwtSecret) {
+  public ApplicationProperties(@Value("${jwt.secret}") @NotEmpty String jwtSecret,
+      @Value("${service.authkey}") @NotEmpty String serviceAuth) {
     this.jwtSecret = jwtSecret;
+    this.serviceAuth = serviceAuth;
   }
 
   /**
@@ -22,5 +25,14 @@ public class ApplicationProperties {
    */
   public String getJwtSecret() {
     return jwtSecret;
+  }
+
+  /**
+   * Return the auth token for the service user
+   *
+   * @return auth token
+   */
+  public String getServiceAuth() {
+    return serviceAuth;
   }
 }

@@ -27,7 +27,7 @@ public class ApplicationProperties {
   private String sapFtpCustomerPassword;
   private String sapFtpCustomerDirectory;
   private String sapFtpCustomerArchive;
-  private String externalServiceAuthenticationToken;
+  private String serviceAuth;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
@@ -47,7 +47,7 @@ public class ApplicationProperties {
       @Value("${sap.ftp.customer.password}") @NotEmpty String sapFtpCustomerPassword,
       @Value("${sap.ftp.customer.directory}") @NotEmpty String sapFtpCustomerDirectory,
       @Value("${sap.ftp.customer.archive}") @NotEmpty String sapFtpCustomerArchive,
-      @Value("${ext.service.token}") @NotEmpty String externalServiceAuthenticationToken) {
+      @Value("${service.authkey}") @NotEmpty String serviceAuth) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.emailAllowedAddresses = emailAllowedAddresses;
@@ -65,7 +65,7 @@ public class ApplicationProperties {
     this.sapFtpCustomerPassword = sapFtpCustomerPassword;
     this.sapFtpCustomerDirectory = sapFtpCustomerDirectory;
     this.sapFtpCustomerArchive = sapFtpCustomerArchive;
-    this.externalServiceAuthenticationToken = externalServiceAuthenticationToken;
+    this.serviceAuth = serviceAuth;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -98,6 +98,13 @@ public class ApplicationProperties {
    */
   public String getFindApplicationsUrl() {
     return getModelServiceUrl("/applications/find");
+  }
+
+  /**
+   * @return url to get authentication token
+   */
+  public String getTokenRequestUrl() {
+    return getExtServiceUrl("/token");
   }
 
   /**
@@ -207,17 +214,19 @@ public class ApplicationProperties {
   }
 
   /**
-   * External API authentication token for system user
-   */
-  public String getExternalServiceAuthenticationToken() {
-    return externalServiceAuthenticationToken;
-  }
-
-  /**
    * Value indicating whether SAP customer update
    * is enabled.
    */
   public boolean isCustomerUpdateEnabled() {
     return customerUpdateEnabled;
+  }
+
+  /**
+   * Get the auth token for the service user
+   *
+   * @return auth token
+   */
+  public String getServiceAuth() {
+    return serviceAuth;
   }
 }
