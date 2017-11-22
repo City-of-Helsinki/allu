@@ -16,7 +16,11 @@ public class ApplicationProperties {
   private String extServicePort;
   private List<String> emailAllowedAddresses;
   private String emailSenderAddress;
-  private String invoiceDestDir;
+  private String invoiceArchiveDir;
+  private String sapFtpInvoiceHost;
+  private String sapFtpInvoiceUser;
+  private String sapFtpInvoicePassword;
+  private String sapFtpInvoiceDirectory;
   private boolean customerUpdateEnabled;
   private String customerSourceDir;
   private String customerArchiveDir;
@@ -35,7 +39,11 @@ public class ApplicationProperties {
                                @Value("${ext.service.port}") @NotEmpty String extServicePort,
                                @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
-      @Value("${invoice.destdir}") @NotEmpty String invoiceDestDir,
+      @Value("${invoice.archivedir}") @NotEmpty String invoiceArchiveDir,
+      @Value("${sap.ftp.invoice.host}") @NotEmpty String sapFtpInvoiceHost,
+      @Value("${sap.ftp.invoice.user}") @NotEmpty String sapFtpInvoiceUser,
+      @Value("${sap.ftp.invoice.password}") @NotEmpty String sapFtpInvoicePassword,
+      @Value("${sap.ftp.invoice.directory}") @NotEmpty String sapFtpInvoiceDirectory,
       @Value("${customer.update.enabled}") boolean customerUpdateEnabled,
       @Value("${customer.sourcedir}") @NotEmpty String customerSourceDir,
       @Value("${customer.archivedir}") @NotEmpty String customerArchiveDir,
@@ -50,7 +58,11 @@ public class ApplicationProperties {
     this.modelServicePort = modelServicePort;
     this.emailAllowedAddresses = emailAllowedAddresses;
     this.emailSenderAddress = emailSenderAddress;
-    this.invoiceDestDir = invoiceDestDir;
+    this.invoiceArchiveDir = invoiceArchiveDir;
+    this.sapFtpInvoiceHost = sapFtpInvoiceHost;
+    this.sapFtpInvoiceUser = sapFtpInvoiceUser;
+    this.sapFtpInvoicePassword = sapFtpInvoicePassword;
+    this.sapFtpInvoiceDirectory = sapFtpInvoiceDirectory;
     this.customerUpdateEnabled = customerUpdateEnabled;
     this.customerSourceDir = customerSourceDir;
     this.customerArchiveDir = customerArchiveDir;
@@ -142,12 +154,40 @@ public class ApplicationProperties {
   }
 
   /**
-   * Get the directory where generated invoices should be put
+   * Get the local directory where sent invoices should be archived
    *
    * @return directory path
    */
-  public String getInvoiceDestDir() {
-    return invoiceDestDir;
+  public String getInvoiceArchiveDir() {
+    return invoiceArchiveDir;
+  }
+
+  /**
+   * FTP server host for SAP invoice upload
+   */
+  public String getSapFtpInvoiceHost() {
+    return sapFtpInvoiceHost;
+  }
+
+  /**
+   * FTP user name for SAP invoice upload
+   */
+  public String getSapFtpInvoiceUser() {
+    return sapFtpInvoiceUser;
+  }
+
+  /**
+   * FTP user password for SAP invoice upload
+   */
+  public String getSapFtpInvoicePassword() {
+    return sapFtpInvoicePassword;
+  }
+
+  /**
+   * FTP server directory of SAP invoice upload
+   */
+  public String getSapFtpInvoiceDirectory() {
+    return sapFtpInvoiceDirectory;
   }
 
   /**

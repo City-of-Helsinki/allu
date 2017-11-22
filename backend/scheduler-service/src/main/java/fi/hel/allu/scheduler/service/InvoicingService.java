@@ -12,8 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.FileSystemUtils;
 import org.springframework.web.client.RestTemplate;
 
+import javax.annotation.PostConstruct;
 import javax.xml.bind.JAXBException;
 
 import java.io.IOException;
@@ -21,10 +23,9 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,15 +35,25 @@ import java.util.stream.Collectors;
 @Service
 public class InvoicingService {
   private static final Logger logger = LoggerFactory.getLogger(InvoicingService.class);
-  private static String INVOICE_FILE_PREFIX = "MTIL_IN_ID341_";
+  private static final String INVOICE_FILE_PREFIX = "MTIL_IN_ID341_";
+  private static final DateTimeFormatter INVOICE_DATETIME_FORMATTER = DateTimeFormatter
+      .ofPattern("yyyyMMddHHmmssSSS");
 
   private RestTemplate restTemplate;
   private ApplicationProperties applicationProperties;
+  private SftpService sftpService;
 
   @Autowired
-  public InvoicingService(RestTemplate restTemplate, ApplicationProperties applicationProperties) {
+  public InvoicingService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
+      SftpService sftpService) {
     this.restTemplate = restTemplate;
     this.applicationProperties = applicationProperties;
+    this.sftpService = sftpService;
+  }
+
+  @PostConstruct
+  public void createDirectories() throws IOException {
+    Files.createDirectories(Paths.get(applicationProperties.getInvoiceArchiveDir()));
   }
 
   public void sendInvoices() {
@@ -59,26 +70,41 @@ public class InvoicingService {
         .collect(Collectors.toList());
     SalesOrderContainer salesOrderContainer = new SalesOrderContainer();
     salesOrderContainer.setSalesOrders(salesOrders);
-    sendToSap(salesOrderContainer);
-    markInvoicesSent(invoices.stream().map(i -> i.getId()).collect(Collectors.toList()));
+    if (sendToSap(salesOrderContainer)) {
+      markInvoicesSent(invoices.stream().map(i -> i.getId()).collect(Collectors.toList()));
+    }
   }
 
-  private void sendToSap(SalesOrderContainer salesOrderContainer) {
-    Path dir = Paths.get(applicationProperties.getInvoiceDestDir());
+  private boolean sendToSap(SalesOrderContainer salesOrderContainer) {
+    return writeToTempFile(salesOrderContainer).map(dir -> {
+      boolean sentOk = sftpService.uploadFiles(
+          applicationProperties.getSapFtpInvoiceHost(),
+          applicationProperties.getSapFtpInvoiceUser(),
+          applicationProperties.getSapFtpInvoicePassword(),
+          dir.toString(),
+          applicationProperties.getInvoiceArchiveDir(),
+          applicationProperties.getSapFtpInvoiceDirectory());
+      FileSystemUtils.deleteRecursively(dir.toFile());
+      return sentOk;
+    }).orElse(false);
+  }
+
+  private Optional<Path> writeToTempFile(SalesOrderContainer salesOrderContainer) {
     try {
-      if (!Files.isDirectory(dir)) {
-        Files.createDirectories(dir);
-      }
-      Path file = Files.createTempFile(dir, INVOICE_FILE_PREFIX, ".xml");
+      Path dir = Files.createTempDirectory("allu_temp");
+      Path file = Files.createFile(
+          dir.resolve(INVOICE_FILE_PREFIX + ZonedDateTime.now().format(INVOICE_DATETIME_FORMATTER) + ".xml"));
       try (OutputStream outputStream = Files.newOutputStream(file)) {
         AlluMarshaller alluMarshaller = new AlluMarshaller();
         alluMarshaller.marshal(salesOrderContainer, outputStream);
+        return Optional.of(dir);
       } catch (JAXBException e) {
         logger.error("Error in marshalling invoice XML", e);
       }
     } catch (IOException e) {
-      logger.error("Error creating the invoice file in " + dir.toString(), e);
+      logger.error("Error creating the temporary invoice file", e);
     }
+    return Optional.empty();
   }
 
   private List<Invoice> getPendingInvoices() {

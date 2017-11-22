@@ -50,6 +50,7 @@ public class SftpService {
       moveFiles(localDirectoryObject, remoteDirectoryObject, localArchiveDirectoryObject);
     } catch (IOException ex) {
       logger.warn("Failed to upload files.", ex);
+      return false;
     }
     finally {
       manager.close();
