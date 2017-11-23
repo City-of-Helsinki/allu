@@ -2,15 +2,15 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
-import {SupervisionWorkItemStore} from '../../../src/feature/supervision-workqueue/supervision-work-item-store';
-import {AvailableToDirective} from '../../../src/service/authorization/available-to.directive';
+import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
+import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock, RouterMock} from '../../mocks';
-import {CurrentUser} from '../../../src/service/user/current-user';
-import {SupervisionWorkItem} from '../../../src/model/application/supervision/supervision-work-item';
+import {CurrentUser} from '../../../src/app/service/user/current-user';
+import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
-import {AlluCommonModule} from '../../../src/feature/common/allu-common.module';
-import {WorkQueueContentComponent} from '../../../src/feature/supervision-workqueue/content/workqueue-content.component';
-import {Page} from '../../../src/model/common/page';
+import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
+import {WorkQueueContentComponent} from '../../../src/app/feature/supervision-workqueue/content/workqueue-content.component';
+import {Page} from '../../../src/app/model/common/page';
 import {Router} from '@angular/router';
 
 const defaultItems = new Page([

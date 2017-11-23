@@ -2,17 +2,17 @@ import {DebugElement} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {AlluCommonModule} from '../../../../../../src/feature/common/allu-common.module';
+import {AlluCommonModule} from '../../../../../../src/app/feature/common/allu-common.module';
 import {ChargeBasisDiscountComponent}
-  from '../../../../../../src/feature/application/invoicing/charge-basis/discount/charge-basis-discount.component';
+  from '../../../../../../src/app/feature/application/invoicing/charge-basis/discount/charge-basis-discount.component';
 import {InvoiceHubMock} from '../../../../../mocks';
-import {InvoiceHub} from '../../../../../../src/service/application/invoice/invoice-hub';
-import {ChargeBasisEntryForm} from '../../../../../../src/feature/application/invoicing/charge-basis/charge-basis-entry.form';
+import {InvoiceHub} from '../../../../../../src/app/service/application/invoice/invoice-hub';
+import {ChargeBasisEntryForm} from '../../../../../../src/app/feature/application/invoicing/charge-basis/charge-basis-entry.form';
 import {Observable} from 'rxjs/Observable';
-import {ChargeBasisEntry} from '../../../../../../src/model/application/invoice/charge-basis-entry';
-import {ChargeBasisType} from '../../../../../../src/model/application/invoice/charge-basis-type';
-import {ChargeBasisUnit} from '../../../../../../src/model/application/invoice/charge-basis-unit';
-import {findTranslation} from '../../../../../../src/util/translations';
+import {ChargeBasisEntry} from '../../../../../../src/app/model/application/invoice/charge-basis-entry';
+import {ChargeBasisType} from '../../../../../../src/app/model/application/invoice/charge-basis-type';
+import {ChargeBasisUnit} from '../../../../../../src/app/model/application/invoice/charge-basis-unit';
+import {findTranslation} from '../../../../../../src/app/util/translations';
 
 describe('ChargeBasisDiscountComponent', () => {
   let comp: ChargeBasisDiscountComponent;

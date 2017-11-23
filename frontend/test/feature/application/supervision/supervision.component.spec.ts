@@ -2,17 +2,17 @@ import {Component, DebugElement, EventEmitter, Input, Output} from '@angular/cor
 import {FormBuilder, FormGroup, FormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {User} from '../../../../src/model/user/user';
-import {SupervisionComponent} from '../../../../src/feature/application/supervision/supervision.component';
-import {SupervisionTaskStore} from '../../../../src/service/supervision/supervision-task-store';
-import {UserHub} from '../../../../src/service/user/user-hub';
-import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
+import {User} from '../../../../src/app/model/user/user';
+import {SupervisionComponent} from '../../../../src/app/feature/application/supervision/supervision.component';
+import {SupervisionTaskStore} from '../../../../src/app/service/supervision/supervision-task-store';
+import {UserHub} from '../../../../src/app/service/user/user-hub';
+import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
 import {availableToDirectiveMockMeta, CurrentUserMock, UserHubMock} from '../../../mocks';
-import {AvailableToDirective} from '../../../../src/service/authorization/available-to.directive';
-import {SupervisionTask} from '../../../../src/model/application/supervision/supervision-task';
+import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
+import {SupervisionTask} from '../../../../src/app/model/application/supervision/supervision-task';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
-import {findTranslation} from '../../../../src/util/translations';
+import {findTranslation} from '../../../../src/app/util/translations';
 import {getMdIconButton} from '../../../selector-helpers';
 
 const firstTask = new SupervisionTask(1);

@@ -1,7 +1,7 @@
-import './../src/service/ui-state/error-type.ts';
-import {ErrorType, message} from '../src/service/ui-state/error-type';
-import {translations} from '../src/util/translations';
-import {EnumUtil} from '../src/util/enum.util';
+import './../src/app/service/ui-state/error-type.ts';
+import {ErrorType, message} from '../src/app/service/ui-state/error-type';
+import {translations} from '../src/app/util/translations';
+import {EnumUtil} from '../src/app/util/enum.util';
 
 describe('ErrorType', () => {
   it('should return expected message', () =>

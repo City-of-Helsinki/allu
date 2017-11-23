@@ -1,0 +1,92 @@
+import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Router} from '@angular/router';
+import {MatDialog} from '@angular/material';
+import {Observable} from 'rxjs/Observable';
+
+import {Application} from '../../model/application/application';
+import {ApplicationStatus} from '../../model/application/application-status';
+import {findTranslation} from '../../util/translations';
+import {NotificationService} from '../../service/notification/notification.service';
+import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
+import {HttpResponse, HttpStatus} from '../../util/http-response';
+import {DecisionHub} from '../../service/decision/decision-hub';
+import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
+import {ApplicationState} from '../../service/application/application-state';
+import {StatusChangeInfo} from '../../model/application/status-change-info';
+import {Some} from '../../util/option';
+import {DecisionDetails} from '../../model/decision/decision-details';
+
+
+@Component({
+  selector: 'decision-actions',
+  templateUrl: './decision-actions.component.html',
+  styleUrls: ['./decision-actions.component.scss']
+})
+export class DecisionActionsComponent {
+  @Input() application: Application;
+  @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
+
+  constructor(private applicationState: ApplicationState,
+              private decisionHub: DecisionHub,
+              private router: Router,
+              private dialog: MatDialog) {}
+
+  public decisionProposal(proposalType: string): void {
+    const dialogRef = this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, DECISION_PROPOSAL_MODAL_CONFIG);
+    const component = dialogRef.componentInstance;
+    component.proposal = proposalType;
+    dialogRef.afterClosed()
+      .subscribe(proposal => this.proposalConfirmed(proposal));
+  }
+
+  public decision(status: string): void {
+    const dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, DECISION_MODAL_CONFIG);
+    const component = dialogRef.componentInstance;
+    component.status = status;
+    component.distributionList = this.application.decisionDistributionList;
+    dialogRef.afterClosed()
+      .subscribe((result: DecisionConfirmation) => this.decisionConfirmed(result));
+  }
+
+  public decisionConfirmed(confirmation: DecisionConfirmation) {
+    if (!!confirmation) {
+      this.changeStatus(confirmation)
+        .switchMap(app => this.sendDecision(app.id, confirmation))
+        .subscribe(
+          result => this.router.navigateByUrl('/workqueue'),
+          error => NotificationService.error(error));
+    }
+  }
+
+  private proposalConfirmed(changeInfo: StatusChangeInfo) {
+    if (changeInfo) {
+      this.applicationState.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
+        .subscribe(app => {
+          this.applicationState.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
+          NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
+          this.applicationState.application = app;
+          this.application = app;
+          this.onDecisionConfirm.emit(changeInfo);
+        }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
+    }
+  }
+
+  private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
+    const changeInfo = new StatusChangeInfo(undefined, confirmation.comment, confirmation.handler);
+    return this.applicationState.changeStatus(this.application.id, confirmation.status, changeInfo)
+      .do(application => this.statusChanged(application));
+  }
+
+  private statusChanged(application: Application): void {
+    this.application = application;
+    NotificationService.message(findTranslation(['decision.type', this.application.status, 'confirmation']));
+  }
+
+  private sendDecision(appId: number, confirmation: DecisionConfirmation): Observable<HttpResponse> {
+    return Some(confirmation.distributionList)
+      .filter(distribution => distribution.length > 0)
+      .map(distribution => new DecisionDetails(distribution, confirmation.emailMessage))
+      .map(details => this.decisionHub.sendDecision(appId, details))
+      .orElse(Observable.of(new HttpResponse(HttpStatus.OK)));
+  }
+}

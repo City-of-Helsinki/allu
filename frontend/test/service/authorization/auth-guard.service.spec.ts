@@ -1,12 +1,12 @@
-import {AuthGuard} from '../../../src/service/authorization/auth-guard.service';
-import {AuthService} from '../../../src/service/authorization/auth.service';
-import {ConfigService} from '../../../src/service/config/config.service';
 import {TestBed} from '@angular/core/testing';
-import {User} from '../../../src/model/user/user';
 import {Observable} from 'rxjs/Observable';
-import {UiConfiguration} from '../../../src/model/config/ui-configuration';
 import {ActivatedRouteSnapshot} from '@angular/router';
 import {REDIRECT_URL} from '../../../src/util/local-storage';
+import {User} from '../../../src/app/model/user/user';
+import {UiConfiguration} from '../../../src/app/model/config/ui-configuration';
+import {AuthGuard} from '../../../src/app/service/authorization/auth-guard.service';
+import {AuthService} from '../../../src/app/service/authorization/auth.service';
+import {ConfigService} from '../../../src/app/service/config/config.service';
 
 class AuthServiceMock {
   authenticated(): boolean {

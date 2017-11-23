@@ -1,0 +1,74 @@
+@import '../../../../assets/variables';
+
+:host {
+  position: relative;
+  top: 10px;
+}
+
+// Base input styling
+input[type="text"] {
+  display: block;
+  margin: 0;
+  width: 100%;
+  appearance: none;
+  box-shadow: none;
+  border: none;
+}
+
+input[type="text"]:focus {
+  outline: none;
+}
+
+select {
+  display: block;
+}
+
+.input-box-content {
+  position: relative;
+  display: flex;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px 6px;
+  align-items: center;
+
+  .has-error {
+    position: absolute;
+    font-size: 75%;
+  }
+}
+
+.input-box-content.button {
+  border: none;
+}
+
+.input-raised > .input-box-content {
+  box-shadow: 0 2px 4px 0 #757575;
+}
+
+.input-box-content-item,
+.input-box-content > input,
+.input-box-content > select,
+.input-box-content > .select-wrapper input.select-dropdown {
+  flex: 1;
+  margin: 0;
+  width: 100%;
+  height: 47px !important;
+  padding: 0 10px;
+
+  &:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+
+  &:first-child:last-child {
+    border-radius: 6px 6px 6px 6px;
+  }
+
+  &:last-child {
+    border-radius: 0 6px 6px 0;
+  }
+}
+
+.input-box-content > button {
+  @extend .input-box-content-item;
+  flex: 0;
+  min-width: 47px;
+}

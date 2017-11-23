@@ -1,4 +1,4 @@
-import {ArrayUtil} from '../../src/util/array-util';
+import {ArrayUtil} from '../../src/app/util/array-util';
 
 describe('Array util', () => {
   it('should sort alphabetical values', () => {

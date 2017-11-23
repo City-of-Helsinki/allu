@@ -1,9 +1,12 @@
-import {enableProdMode} from '@angular/core';
-import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
-import {AlluModule} from './feature/allu/allu.module';
+import { enableProdMode } from '@angular/core';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 
-if (process.env.ENV === 'production') {
+import { environment } from './environments/environment';
+import {AlluModule} from './app/feature/allu/allu.module';
+
+if (environment.production) {
   enableProdMode();
 }
 
-platformBrowserDynamic().bootstrapModule(AlluModule).catch(err => console.error(err));
+platformBrowserDynamic().bootstrapModule(AlluModule)
+  .catch(err => console.log(err));

@@ -1,12 +1,12 @@
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {SupervisionTaskSearchCriteria} from '../../../src/model/application/supervision/supervision-task-search-criteria';
+import {SupervisionTaskSearchCriteria} from '../../../src/app/model/application/supervision/supervision-task-search-criteria';
 import {Observable} from 'rxjs/Observable';
-import {SupervisionWorkItem} from '../../../src/model/application/supervision/supervision-work-item';
-import {HttpResponse, HttpStatus} from '../../../src/util/http-response';
-import {SupervisionWorkItemStore} from '../../../src/feature/supervision-workqueue/supervision-work-item-store';
-import {SupervisionTaskService} from '../../../src/service/supervision/supervision-task.service';
-import {WorkQueueTab} from '../../../src/feature/workqueue/workqueue-tab';
-import {Page} from '../../../src/model/common/page';
+import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
+import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
+import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
+import {SupervisionTaskService} from '../../../src/app/service/supervision/supervision-task.service';
+import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
+import {Page} from '../../../src/app/model/common/page';
 
 class SupervisionTaskServiceMock {
   search(searchCriteria: SupervisionTaskSearchCriteria): Observable<Page<SupervisionWorkItem>> {

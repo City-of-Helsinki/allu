@@ -1,6 +1,6 @@
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
-import {ArrayUtil} from '../src/util/array-util';
+import {ArrayUtil} from '../src/app/util/array-util';
 
 export function getMdIconButton(debugElement: DebugElement, buttonIcon: string) {
   return ArrayUtil.first(debugElement.queryAll(By.css('button'))

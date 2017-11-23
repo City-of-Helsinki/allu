@@ -1,6 +1,6 @@
-import '../src/util/option.ts';
-import {Some, None} from '../src/util/option';
-import {NoneOpt} from '../src/util/option';
+import '../src/app/util/option.ts';
+import {Some, None} from '../src/app/util/option';
+import {NoneOpt} from '../src/app/util/option';
 
 describe('Option', () => {
   it('Should be defined according to class', () => {

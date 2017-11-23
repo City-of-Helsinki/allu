@@ -1,5 +1,5 @@
 import moment = require('moment');
-import {TimeUtil, WINTER_TIME_END} from '../../src/util/time.util';
+import {TimeUtil, WINTER_TIME_END} from '../../src/app/util/time.util';
 
 describe('Time util', () => {
   it('should show is in winter time', () => {

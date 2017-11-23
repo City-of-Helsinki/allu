@@ -3,15 +3,15 @@ import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
 
-import {CustomerComponent} from '../../../../../src/feature/application/info/customer/customer.component';
-import {AlluCommonModule} from '../../../../../src/feature/common/allu-common.module';
-import {CustomerHub} from '../../../../../src/service/customer/customer-hub';
-import {CustomerInfoComponent} from '../../../../../src/feature/customerregistry/customer/customer-info.component';
-import {Customer} from '../../../../../src/model/customer/customer';
-import {CustomerWithContacts} from '../../../../../src/model/customer/customer-with-contacts';
-import {CustomerRoleType} from '../../../../../src/model/customer/customer-role-type';
+import {CustomerComponent} from '../../../../../src/app/feature/application/info/customer/customer.component';
+import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
+import {CustomerHub} from '../../../../../src/app/service/customer/customer-hub';
+import {CustomerInfoComponent} from '../../../../../src/app/feature/customerregistry/customer/customer-info.component';
+import {Customer} from '../../../../../src/app/model/customer/customer';
+import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
+import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {Component, Input} from '@angular/core';
-import {Contact} from '../../../../../src/model/customer/contact';
+import {Contact} from '../../../../../src/app/model/customer/contact';
 import {CustomerHubMock} from '../../../../mocks';
 
 const headerText = 'Hakija';

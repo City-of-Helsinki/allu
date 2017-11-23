@@ -1,0 +1,79 @@
+@import '../../../../assets/colors';
+
+// deep makes styles available for child components
+:host /deep/ {
+  .input-field label {
+    top: .5rem;
+  }
+
+  input[type=text] input[type=number] {
+    height: 2rem;
+  }
+
+  .no-padding-right {
+    padding-right: 0;
+  }
+
+  .align-left {
+    padding-left: 0;
+  }
+
+  padding-top: 10px;
+
+  .input-field {
+    min-height: 50px;
+
+    textarea.materialize-textarea {
+      padding-bottom: 0;
+      padding-top: 4px;
+    }
+
+    textarea.textarea {
+      padding-top: 4px;
+    }
+
+    label {
+      top: .5rem;
+    }
+  }
+
+  .country-select {
+    margin-top: 15px;
+  }
+
+  .no-padding {
+    padding: 0;
+  }
+
+  .height-fix-top {
+    height: 3rem;
+    margin-top: 26px;
+  }
+
+  .height-fix-bottom {
+    margin-bottom: 5px;
+  }
+
+  .mapcontainer {
+    height: 49vh;
+    position: relative;
+  }
+
+  .materialize-textarea {
+    border-bottom: 2px solid $allu-field-border-ok;
+    color: $allu-field-text-ok;
+  }
+
+  input[type="checkbox"]:disabled:checked:after + label:after {
+    background-color: $allu-field-border-ok;
+    border-color: $allu-field-border-ok;
+  }
+
+  .summary-checkbox {
+    color: $allu-field-border-ok;
+  }
+
+  .no-border {
+    border-left: none;
+  }
+}

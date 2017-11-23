@@ -12,10 +12,10 @@ import {
   ResponseType
 } from '@angular/http';
 import {MockBackend} from '@angular/http/testing';
-import {DefaultRecipient} from '../../../src/model/common/default-recipient';
-import {DefaultRecipientService} from '../../../src/service/recipients/default-recipient.service';
-import {ErrorHandler} from '../../../src/service/error/error-handler.service';
-import {HttpResponse, HttpStatus} from '../../../src/util/http-response';
+import {DefaultRecipient} from '../../../src/app/model/common/default-recipient';
+import {DefaultRecipientService} from '../../../src/app/service/recipients/default-recipient.service';
+import {ErrorHandler} from '../../../src/app/service/error/error-handler.service';
+import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {RECIPIENT_NEW, RECIPIENT_ONE, RECIPIENT_TWO} from './default-recipient-mock-values';
 
 const ERROR_RESPONSE = new Response(new ResponseOptions({

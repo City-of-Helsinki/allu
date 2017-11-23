@@ -1,0 +1,19 @@
+@import '../../../assets/colors';
+
+mat-card {
+  margin: 0 10px 10px;
+}
+
+.work-queue-controls {
+  background-color: mat-color($allu-primary, 50);
+
+  .in-front {
+    z-index: 100;
+  }
+}
+
+.work-queue-action-buttons {
+  padding: 0 0.75rem;
+  position: relative;
+  top: 35px;
+}

@@ -1,4 +1,4 @@
-import {ObjectUtil} from '../../src/util/object.util';
+import {ObjectUtil} from '../../src/app/util/object.util';
 describe('Object util', () => {
   it('should clone normal properties', () => {
     const original = {

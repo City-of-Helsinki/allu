@@ -1,8 +1,8 @@
 import {Component} from '@angular/core';
 import {async, TestBed} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
-import {CurrentUser} from '../../../src/service/user/current-user';
-import {AvailableToDirective} from '../../../src/service/authorization/available-to.directive';
+import {CurrentUser} from '../../../src/app/service/user/current-user';
+import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
 
 @Component({

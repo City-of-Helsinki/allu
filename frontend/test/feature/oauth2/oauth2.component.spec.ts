@@ -2,8 +2,8 @@ import {RouterMock} from '../../mocks';
 import {Router} from '@angular/router';
 import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {FormBuilder} from '@angular/forms';
-import {Oauth2Component} from '../../../src/feature/oauth2/oauth2.component';
 import {REDIRECT_URL} from '../../../src/util/local-storage';
+import {Oauth2Component} from '../../../src/app/feature/oauth2/oauth2.component';
 
 
 describe('Oauth2Component', () => {

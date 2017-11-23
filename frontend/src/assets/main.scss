@@ -11,8 +11,8 @@
 @import "table";
 @import "accordion";
 @import "notification/oval";
-@import '../feature/common/auto-completion/auto-completion-list.component.theme';
-@import '../feature/common/input-box/input-box.component.theme';
+@import '../app/feature/common/auto-completion/auto-completion-list.component.theme';
+@import '../app/feature/common/input-box/input-box.component.theme';
 
 // Theme components
 @include angular-material-theme($allu-theme);

@@ -2,12 +2,12 @@
 <html lang="">
 <head>
 
-  <title><%= htmlWebpackPlugin.options.metadata.title %></title>
+  <title>Allu</title>
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="<%= htmlWebpackPlugin.options.metadata.title %>">
+  <meta name="description" content="Allu">
 
   <!-- use http://www.favicon-generator.org/ to replace files in public/icon-->
   <link rel="apple-touch-icon" sizes="57x57" href="/assets/icon/apple-icon-57x57.png">
@@ -29,11 +29,6 @@
   <meta name="theme-color" content="#00bcd4">
   <!-- end favicon -->
 
-
-  <!-- base url -->
-  <base href="<%= htmlWebpackPlugin.options.metadata.baseUrl %>">
-
-
 </head>
 
 <body>
@@ -41,11 +36,6 @@
   <allu>
     Loading...
   </allu>
-
-  <% if (htmlWebpackPlugin.options.metadata.ENV === 'development') { %>
-  <!-- Webpack Dev Server reload -->
-  <script src="/webpack-dev-server.js"></script>
-  <% } %>
 
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 

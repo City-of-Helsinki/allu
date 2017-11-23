@@ -12,11 +12,11 @@ import {
   ResponseType
 } from '@angular/http';
 import {MockBackend} from '@angular/http/testing';
-import {CommentService} from '../../../../src/service/application/comment/comment.service';
-import {Comment} from '../../../../src/model/application/comment/comment';
-import {CommentType} from '../../../../src/model/application/comment/comment-type';
-import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
-import {ErrorHandler} from '../../../../src/service/error/error-handler.service';
+import {CommentService} from '../../../../src/app/service/application/comment/comment.service';
+import {Comment} from '../../../../src/app/model/application/comment/comment';
+import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
+import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
+import {ErrorHandler} from '../../../../src/app/service/error/error-handler.service';
 
 const COMMENTS_URL = '/api/comments';
 const COMMENTS_APP_URL = COMMENTS_URL + '/applications/:appId';

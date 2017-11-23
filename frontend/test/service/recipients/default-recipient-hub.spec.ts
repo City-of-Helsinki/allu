@@ -1,10 +1,10 @@
-import {DefaultRecipientHub} from '../../../src/service/recipients/default-recipient-hub';
+import {DefaultRecipientHub} from '../../../src/app/service/recipients/default-recipient-hub';
 import {fakeAsync, TestBed, tick} from '@angular/core/testing';
-import {DefaultRecipientService} from '../../../src/service/recipients/default-recipient.service';
-import {DefaultRecipient} from '../../../src/model/common/default-recipient';
-import {ApplicationType} from '../../../src/model/application/type/application-type';
+import {DefaultRecipientService} from '../../../src/app/service/recipients/default-recipient.service';
+import {DefaultRecipient} from '../../../src/app/model/common/default-recipient';
+import {ApplicationType} from '../../../src/app/model/application/type/application-type';
 import {Observable} from 'rxjs/Observable';
-import {HttpResponse, HttpStatus} from '../../../src/util/http-response';
+import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {RECIPIENT_ONE, RECIPIENT_TWO, RECIPIENT_NEW, RECIPIENTS_ALL} from './default-recipient-mock-values';
 
 class DefaultRecipientServiceMock {

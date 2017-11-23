@@ -2,14 +2,14 @@ import {DebugElement} from '@angular/core';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
-import {RecipientsByTypeComponent} from '../../../../src/feature/admin/default-recipients/recipients-by-type.component';
-import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
-import {DefaultRecipientHub} from '../../../../src/service/recipients/default-recipient-hub';
-import {ApplicationType} from '../../../../src/model/application/type/application-type';
+import {RecipientsByTypeComponent} from '../../../../src/app/feature/admin/default-recipients/recipients-by-type.component';
+import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
+import {DefaultRecipientHub} from '../../../../src/app/service/recipients/default-recipient-hub';
+import {ApplicationType} from '../../../../src/app/model/application/type/application-type';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {DefaultRecipient} from '../../../../src/model/common/default-recipient';
+import {DefaultRecipient} from '../../../../src/app/model/common/default-recipient';
 import {RECIPIENT_ONE, RECIPIENT_TWO} from '../../../service/recipients/default-recipient-mock-values';
-import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
+import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
 import {Observable} from 'rxjs/Observable';
 
 class DefaultRecipientHubMock {

@@ -1,4 +1,4 @@
-import {MapUtil} from '../src/service/map/map.util';
+import {MapUtil} from '../src/app/service/map/map.util';
 import {DirectGeometryObject} from 'geojson';
 
 describe('MapService', () => {

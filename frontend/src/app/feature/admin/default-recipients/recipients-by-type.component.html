@@ -1,0 +1,45 @@
+<form [formGroup]="form">
+    <div class="row" formArrayName="recipientRows">
+        <div class=" col s12">
+            <table class="bordered responsive-table">
+                <thead>
+                    <th>
+                        <button type="button" mat-icon-button (click)="add()">
+                            <mat-icon>add</mat-icon>
+                        </button>
+                    </th>
+                </thead>
+                <tbody>
+                    <tr [formGroupName]="i" *ngFor="let row of recipientRows.controls; let i=index" class="clickable row-highlight">
+                        <td>
+                            <span>
+                                <button type="button" mat-icon-button (click)="remove(i)">
+                                    <mat-icon>clear</mat-icon>
+                                </button>
+                            </span>
+                            <span *ngIf="row.disabled">
+                                    <button type="button" mat-icon-button (click)="edit(row)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </span>
+                            <span *ngIf="row.enabled">
+                                    <button type="button" mat-icon-button (click)="save(row)" [disabled]="!row.valid">
+                                        <mat-icon>save</mat-icon>
+                                    </button>
+                                </span>
+                        </td>
+                        <td>
+                            <div *ngIf="row.disabled" class="left-align">{{row.value.email}}</div>
+                            <input-box *ngIf="row.enabled">
+                                <input inputBoxInput type="text" formControlName="email" placeholder="Sähköposti*"/>
+                                <field-error [form]="recipientRows.controls[i]" field="email" hasError="pattern">
+                                    {{'common.field.emailInvalid' | translation}}
+                                </field-error>
+                            </input-box>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</form>

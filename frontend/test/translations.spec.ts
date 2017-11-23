@@ -1,6 +1,6 @@
-import {ApplicationSpecifier} from '../src/model/application/type/application-specifier';
-import {EnumUtil} from '../src/util/enum.util';
-import {translations, findTranslation} from '../src/util/translations';
+import {ApplicationSpecifier} from '../src/app/model/application/type/application-specifier';
+import {EnumUtil} from '../src/app/util/enum.util';
+import {translations, findTranslation} from '../src/app/util/translations';
 
 describe('translations', () => {
   it('should have translations for all application specifiers', () => {

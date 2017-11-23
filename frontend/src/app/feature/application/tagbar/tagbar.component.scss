@@ -1,0 +1,13 @@
+@import '../../../../assets/colors';
+
+.item-bar .item-bar-content > span:first-of-type {
+    padding: 0 40px 0 5px;
+}
+
+.single-line {
+    white-space: nowrap;
+}
+
+mat-chip {
+    height: 40px;
+}

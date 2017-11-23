@@ -1,0 +1,32 @@
+@import '../../../../assets/colors';
+
+:host {
+  mat-toolbar {
+    background: mat-color($allu-primary, 50);
+    color: mat-color($allu-primary, 500);
+    margin-bottom: 0px;
+  }
+
+  .progress-label p {
+    color: mat-color($allu-primary, 300);
+    font-weight: bold;
+  }
+
+  .progress {
+    background-color: mat-color($allu-accent, 50);
+
+    .determinate {
+      background-color: mat-color($allu-accent, A100);
+    }
+  }
+
+  p {
+    font-size: .8rem;
+    margin-bottom: 0;
+  }
+}
+
+.application-status-text {
+  font-size: 16px;
+  white-space: nowrap;
+}

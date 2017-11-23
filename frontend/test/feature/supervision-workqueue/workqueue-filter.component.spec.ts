@@ -2,17 +2,17 @@ import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 import {DebugElement} from '@angular/core';
 import {By} from '@angular/platform-browser';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
-import {SupervisionWorkItemStore} from '../../../src/feature/supervision-workqueue/supervision-work-item-store';
-import {AvailableToDirective} from '../../../src/service/authorization/available-to.directive';
+import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
+import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock} from '../../mocks';
-import {CurrentUser} from '../../../src/service/user/current-user';
-import {SupervisionWorkItem} from '../../../src/model/application/supervision/supervision-work-item';
+import {CurrentUser} from '../../../src/app/service/user/current-user';
+import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormBuilder, ReactiveFormsModule} from '@angular/forms';
-import {AlluCommonModule} from '../../../src/feature/common/allu-common.module';
-import {WorkQueueFilterComponent} from '../../../src/feature/supervision-workqueue/filter/workqueue-filter.component';
-import {findTranslation} from '../../../src/util/translations';
-import {WorkQueueTab} from '../../../src/feature/workqueue/workqueue-tab';
-import {Page} from '../../../src/model/common/page';
+import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
+import {WorkQueueFilterComponent} from '../../../src/app/feature/supervision-workqueue/filter/workqueue-filter.component';
+import {findTranslation} from '../../../src/app/util/translations';
+import {WorkQueueTab} from '../../../src/app/feature/workqueue/workqueue-tab';
+import {Page} from '../../../src/app/model/common/page';
 
 const defaultItems = new Page([
   new SupervisionWorkItem(1),

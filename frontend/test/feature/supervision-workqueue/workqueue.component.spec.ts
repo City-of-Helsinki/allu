@@ -1,21 +1,21 @@
-import {WorkQueueComponent} from '../../../src/feature/supervision-workqueue/workqueue.component';
+import {WorkQueueComponent} from '../../../src/app/feature/supervision-workqueue/workqueue.component';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
 import {Component, DebugElement} from '@angular/core';
 import {SupervisionWorkItemStoreMock} from './supervision-work-item-store.mock';
-import {SupervisionWorkItemStore} from '../../../src/feature/supervision-workqueue/supervision-work-item-store';
-import {AvailableToDirective} from '../../../src/service/authorization/available-to.directive';
+import {SupervisionWorkItemStore} from '../../../src/app/feature/supervision-workqueue/supervision-work-item-store';
+import {AvailableToDirective} from '../../../src/app/service/authorization/available-to.directive';
 import {availableToDirectiveMockMeta, CurrentUserMock, UserHubMock} from '../../mocks';
-import {CurrentUser} from '../../../src/service/user/current-user';
-import {UserHub} from '../../../src/service/user/user-hub';
+import {CurrentUser} from '../../../src/app/service/user/current-user';
+import {UserHub} from '../../../src/app/service/user/user-hub';
 import {MatDialog} from '@angular/material';
-import {SupervisionWorkItem} from '../../../src/model/application/supervision/supervision-work-item';
+import {SupervisionWorkItem} from '../../../src/app/model/application/supervision/supervision-work-item';
 import {FormsModule} from '@angular/forms';
-import {AlluCommonModule} from '../../../src/feature/common/allu-common.module';
-import {HandlerModalModule} from '../../../src/feature/common/handlerModal/handler-modal.module';
-import {NotificationService} from '../../../src/service/notification/notification.service';
+import {AlluCommonModule} from '../../../src/app/feature/common/allu-common.module';
+import {HandlerModalModule} from '../../../src/app/feature/common/handlerModal/handler-modal.module';
+import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {getButtonWithText} from '../../selector-helpers';
-import {Page} from '../../../src/model/common/page';
+import {Page} from '../../../src/app/model/common/page';
 
 const defaultItems = [
   new SupervisionWorkItem(1),

@@ -3,17 +3,17 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {Observable} from 'rxjs/Observable';
 import {FormsModule} from '@angular/forms';
-import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
-import {CommentsComponent} from '../../../../src/feature/application/comment/comments.component';
-import {ApplicationState} from '../../../../src/service/application/application-state';
-import {CommentType} from '../../../../src/model/application/comment/comment-type';
-import {Comment} from '../../../../src/model/application/comment/comment';
+import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
+import {CommentsComponent} from '../../../../src/app/feature/application/comment/comments.component';
+import {ApplicationState} from '../../../../src/app/service/application/application-state';
+import {CommentType} from '../../../../src/app/model/application/comment/comment-type';
+import {Comment} from '../../../../src/app/model/application/comment/comment';
 import {Subject} from 'rxjs/Subject';
-import {ErrorInfo} from '../../../../src/service/ui-state/error-info';
-import {NotificationService} from '../../../../src/service/notification/notification.service';
-import {HttpResponse, HttpStatus} from '../../../../src/util/http-response';
+import {ErrorInfo} from '../../../../src/app/service/ui-state/error-info';
+import {NotificationService} from '../../../../src/app/service/notification/notification.service';
+import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
 import {availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
-import {AvailableToDirective} from '../../../../src/service/authorization/available-to.directive';
+import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
 
 
 const COMMENT_ONE = new Comment(

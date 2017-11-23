@@ -1,19 +1,19 @@
 import {Directive} from '@angular/core';
 import {MetadataOverride} from '@angular/core/testing';
 import {Observable} from 'rxjs/Observable';
-import {CurrentUser} from '../src/service/user/current-user';
-import {Application} from '../src/model/application/application';
-import {Contact} from '../src/model/customer/contact';
+import {Application} from '../src/app/model/application/application';
+import {Location} from '../src/app/model/common/location';
+import {HttpResponse, HttpStatus} from '../src/app/util/http-response';
+import {ApplicationStatus} from '../src/app/model/application/application-status';
+import {StatusChangeInfo} from '../src/app/model/application/status-change-info';
 import {Subject} from 'rxjs/Subject';
-import {User} from '../src/model/user/user';
+import {Contact} from '../src/app/model/customer/contact';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
-import {Location} from '../src/model/common/location';
-import {RoleType} from '../src/model/user/role-type';
+import {User} from '../src/app/model/user/user';
+import {RoleType} from '../src/app/model/user/role-type';
 import {NavigationExtras, UrlTree} from '@angular/router';
-import {ChargeBasisEntry} from '../src/model/application/invoice/charge-basis-entry';
-import {HttpResponse, HttpStatus} from '../src/util/http-response';
-import {ApplicationStatus} from '../src/model/application/application-status';
-import {StatusChangeInfo} from '../src/model/application/status-change-info';
+import {ChargeBasisEntry} from '../src/app/model/application/invoice/charge-basis-entry';
+import {CurrentUser} from '../src/app/service/user/current-user';
 
 /**
  * Mock for application state

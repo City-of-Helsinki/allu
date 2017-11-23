@@ -3,10 +3,10 @@ import {By} from '@angular/platform-browser';
 import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
 
-import {CustomerInfoComponent} from '../../../../src/feature/customerregistry/customer/customer-info.component';
-import {AlluCommonModule} from '../../../../src/feature/common/allu-common.module';
-import {CustomerHub} from '../../../../src/service/customer/customer-hub';
-import {CustomerType} from '../../../../src/model/customer/customer-type';
+import {CustomerInfoComponent} from '../../../../src/app/feature/customerregistry/customer/customer-info.component';
+import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
+import {CustomerHub} from '../../../../src/app/service/customer/customer-hub';
+import {CustomerType} from '../../../../src/app/model/customer/customer-type';
 import {DebugElement} from '@angular/core';
 
 class CustomerHubMock {
