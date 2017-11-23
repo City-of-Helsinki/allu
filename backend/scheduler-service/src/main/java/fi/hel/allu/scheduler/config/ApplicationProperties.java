@@ -27,6 +27,9 @@ public class ApplicationProperties {
   private String sapFtpCustomerDirectory;
   private String sapFtpCustomerArchive;
   private String serviceAuth;
+  private String customerNotificationReceiverEmail;
+  private String customerNotificationSubject;
+  private String uiBaseUrl;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
@@ -45,7 +48,10 @@ public class ApplicationProperties {
       @Value("${sap.ftp.customer.password}") @NotEmpty String sapFtpCustomerPassword,
       @Value("${sap.ftp.customer.directory}") @NotEmpty String sapFtpCustomerDirectory,
       @Value("${sap.ftp.customer.archive}") @NotEmpty String sapFtpCustomerArchive,
-      @Value("${service.authkey}") @NotEmpty String serviceAuth) {
+      @Value("${service.authkey}") @NotEmpty String serviceAuth,
+      @Value("${customer.notification.receiveremail}") String customerNotificationReceiverEmail,
+      @Value("${customer.notification.subject}") @NotEmpty String customerNotificationSubject,
+      @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
     this.emailAllowedAddresses = emailAllowedAddresses;
@@ -63,6 +69,9 @@ public class ApplicationProperties {
     this.sapFtpCustomerDirectory = sapFtpCustomerDirectory;
     this.sapFtpCustomerArchive = sapFtpCustomerArchive;
     this.serviceAuth = serviceAuth;
+    this.customerNotificationReceiverEmail = customerNotificationReceiverEmail;
+    this.customerNotificationSubject = customerNotificationSubject;
+    this.uiBaseUrl = uiBaseUrl;
   }
 
   private static final String PATH_PREFIX = "http://";
@@ -219,4 +228,33 @@ public class ApplicationProperties {
   public String getServiceAuth() {
     return serviceAuth;
   }
+
+  /**
+   * Get receiver email for SAP customer notifications
+   */
+  public String getCustomerNotificationReceiverEmail() {
+    return customerNotificationReceiverEmail;
+  }
+
+  /**
+   * Get subject for SAP customer notification email
+   */
+  public String getCustomerNotificationMailSubject() {
+    return customerNotificationSubject;
+  }
+
+  /**
+   * Get URL for downloading SAP customer order excel
+   */
+  public String getCustomerDownloadUrl() {
+    return uiBaseUrl + "/download/customers/saporder/xlsx";
+  }
+
+  /**
+   * @return url for getting number of invoice recipients without SAP number.
+   */
+  public String getNrOfInvoiceRecipientsWithoutSapNumberUrl() {
+    return getExtServiceUrl("/v1/customers/saporder/count");
+  }
+
 }

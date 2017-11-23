@@ -237,11 +237,15 @@ public class CustomerService {
 
   public List<CustomerJson> findInvoiceRecipientsWithoutSapNumber() {
     ResponseEntity<Customer[]> customerResult =
-        restTemplate.getForEntity(applicationProperties.getInvoiceRecipientsWithoutSAPNumberUrl(), Customer[].class);
+        restTemplate.getForEntity(applicationProperties.getInvoiceRecipientsWithoutSapNumberUrl(), Customer[].class);
     return Arrays.stream(customerResult.getBody())
         .map(customer -> customerMapper.createCustomerJson(customer))
         .collect(Collectors.toList());
 
+  }
+
+  public Integer getNumberInvoiceRecipientsWithoutSapNumber() {
+    return restTemplate.getForEntity(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl(), Integer.class).getBody();
   }
 
 }

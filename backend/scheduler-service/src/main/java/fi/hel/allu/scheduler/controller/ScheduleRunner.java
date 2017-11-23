@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 
 import fi.hel.allu.scheduler.service.ApplicantReminderService;
 import fi.hel.allu.scheduler.service.InvoicingService;
+import fi.hel.allu.scheduler.service.SapCustomerNotificationService;
 import fi.hel.allu.scheduler.service.SapCustomerService;
 
 
@@ -17,13 +18,15 @@ public class ScheduleRunner {
   private ApplicantReminderService applicantReminderService;
   private InvoicingService invoicingService;
   private SapCustomerService sapCustomerService;
+  private SapCustomerNotificationService sapCustomerNotificationService;
 
   @Autowired
   public ScheduleRunner(ApplicantReminderService applicantReminderService, InvoicingService invoicingService,
-      SapCustomerService sapCustomerService) {
+      SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
     this.sapCustomerService = sapCustomerService;
+    this.sapCustomerNotificationService = sapCustomerNotificationService;
   }
 
   @Scheduled(cron = "${applicantReminder.cronstring}")
@@ -41,5 +44,10 @@ public class ScheduleRunner {
     if (sapCustomerService.isUpdateEnabled()) {
       sapCustomerService.updateCustomers();
     }
+  }
+
+  @Scheduled(cron = "${customer.notification.cronstring}")
+  public void sendCustomerNotifications() {
+    sapCustomerNotificationService.sendSapCustomerNotificationEmails();
   }
 }

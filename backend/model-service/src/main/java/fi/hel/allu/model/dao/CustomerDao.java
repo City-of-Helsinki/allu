@@ -187,7 +187,12 @@ public class CustomerDao {
   }
 
   @Transactional(readOnly = true)
-  public List<Customer> findInvoiceRecipientsWithoutSAPNumber() {
+  public List<Customer> findInvoiceRecipientsWithoutSapNumber() {
+    List<Integer> customerIds = findInvoiceRecipientIdsWithoutSapNumber();
+    return findByIds(customerIds);
+  }
+
+  private List<Integer> findInvoiceRecipientIdsWithoutSapNumber() {
     QApplicationTag tag = QApplicationTag.applicationTag;
     QApplication application = QApplication.application;
     List<Integer> customerIds = queryFactory
@@ -196,6 +201,12 @@ public class CustomerDao {
         .join(tag).on(tag.applicationId.eq(application.id))
         .where(tag.type.eq(ApplicationTagType.SAP_ID_MISSING)).
         fetch();
-      return findByIds(customerIds);
-    }
+    return customerIds;
+  }
+
+  @Transactional(readOnly = true)
+  public Integer getNumberOfInvoiceRecipientsWithoutSapNumber() {
+    return findInvoiceRecipientIdsWithoutSapNumber().size();
+  }
+
 }

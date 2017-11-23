@@ -196,8 +196,12 @@ public class CustomerService {
     return newContacts;
   }
 
-  public List<Customer> findInvoiceRecipientsWithoutSAPNumber() {
-    return customerDao.findInvoiceRecipientsWithoutSAPNumber();
+  public List<Customer> findInvoiceRecipientsWithoutSapNumber() {
+    return customerDao.findInvoiceRecipientsWithoutSapNumber();
+  }
+
+  public Integer getNumberInvoiceRecipientsWithoutSapNumber() {
+    return customerDao.getNumberOfInvoiceRecipientsWithoutSapNumber();
   }
 
   /*
