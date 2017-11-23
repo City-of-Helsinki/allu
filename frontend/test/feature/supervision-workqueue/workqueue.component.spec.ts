@@ -26,14 +26,14 @@ const defaultItems = [
   selector: 'supervision-workqueue-content',
   template: ''
 })
-class WorkqueueContentComponentMock {
+class MockWorkqueueContentComponent {
 }
 
 @Component({
   selector: 'supervision-workqueue-filter',
   template: ''
 })
-class WorkqueueFilterComponentMock {
+class MockWorkqueueFilterComponent {
 }
 
 describe('SupervisionWorkqueueComponent', () => {
@@ -42,7 +42,7 @@ describe('SupervisionWorkqueueComponent', () => {
   let store: SupervisionWorkItemStoreMock;
   let dialog: MatDialog;
   let de: DebugElement;
-  let currentUserMock = CurrentUserMock.create(true, true);
+  const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
@@ -53,8 +53,8 @@ describe('SupervisionWorkqueueComponent', () => {
       ],
       declarations: [
         WorkQueueComponent,
-        WorkqueueContentComponentMock,
-        WorkqueueFilterComponentMock
+        MockWorkqueueContentComponent,
+        MockWorkqueueFilterComponent
       ],
       providers: [
         {provide: SupervisionWorkItemStore, useClass: SupervisionWorkItemStoreMock},

@@ -23,10 +23,10 @@ export class DistributionListComponent implements OnInit {
 
   constructor(private fb: FormBuilder) {
     this.distributionRows = fb.array([]);
-    this.form.addControl('distributionRows', this.distributionRows);
   }
 
   ngOnInit(): void {
+    this.form.addControl('distributionRows', this.distributionRows);
     this.distributionList
       .map(d => this.createDistribution(d))
       .forEach(row => this.distributionRows.push(row));

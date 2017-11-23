@@ -22,7 +22,7 @@ export class DefaultText {
 
   // Creates a map (texts by type) from array of DefaultTexts
   static groupByType(texts: Array<DefaultText>): DefaultTextMap {
-    let result = texts.reduce((map: DefaultTextMap, text) => {
+    const result = texts.reduce((map: DefaultTextMap, text) => {
       map[DefaultTextType[text.type]] = Some(map[DefaultTextType[text.type]])
         .map(textsForType => textsForType.concat(text))
         .orElse([text]);

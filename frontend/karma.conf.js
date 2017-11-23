@@ -22,7 +22,7 @@ module.exports = function (config) {
     },
     junitReporter: {
       outputDir: 'reports', // results will be saved as $outputDir/$browserName.xml
-      suite: 'test-results.xml', // suite will become the package name attribute in xml testsuite element
+      outputFile: 'test-results.xml',
       useBrowserName: true // add browser name to report and classes names
     },
     angularCli: {

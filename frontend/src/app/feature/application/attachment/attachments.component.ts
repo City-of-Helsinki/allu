@@ -41,14 +41,14 @@ export class AttachmentsComponent implements OnInit {
   }
 
   addNewAttachment(attachment?: AttachmentInfo): void {
-    let att = attachment || new AttachmentInfo();
+    const att = attachment || new AttachmentInfo();
     att.creationTime = new Date();
     this.editableAttachments.push(att);
   }
 
   onFileDrop(fileList: FileList) {
     for (let i = 0; i < fileList.length; ++i) {
-      let file = fileList.item(i);
+      const file = fileList.item(i);
       this.addNewAttachment(AttachmentInfo.fromFile(file));
     }
   }
@@ -71,7 +71,7 @@ export class AttachmentsComponent implements OnInit {
 
   remove(attachment: AttachmentInfo, index?: number) {
     if (isCommon(attachment.type)) {
-      let dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      const dialogRef = this.dialog.open(ConfirmDialogComponent, {
         data: {title: 'Haluatko varmasti poistaa liitteen', description: attachment.name}
       });
       dialogRef.afterClosed()

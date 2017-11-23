@@ -9,10 +9,10 @@ export class MapUtil {
 
   public featureCollectionToGeometryCollection(
     featureCollection: GeoJSON.FeatureCollection<GeoJSON.GeometryObject>): GeoJSON.GeometryCollection {
-    let geometryCollection: GeoJSON.GeometryCollection = undefined;
+    let geometryCollection: GeoJSON.GeometryCollection;
     if (featureCollection && featureCollection.features) {
-      let features = featureCollection.features;
-      let geometries: GeoJSON.GeometryObject[] = features.map(f => f.geometry);
+      const features = featureCollection.features;
+      const geometries: GeoJSON.GeometryObject[] = features.map(f => f.geometry);
       geometryCollection = {
         type: 'GeometryCollection',
         crs: {
@@ -28,8 +28,8 @@ export class MapUtil {
   public geometryCollectionToFeatureCollection(
     geometryCollection: GeoJSON.GeometryCollection): GeoJSON.FeatureCollection<GeoJSON.GeometryObject> {
     if (geometryCollection && geometryCollection.geometries) {
-      let geometries: GeoJSON.GeometryObject[] = geometryCollection.geometries;
-      let features: GeoJSON.Feature<GeoJSON.GeometryObject>[] = geometries.map(g => this.createFeature(g, undefined));
+      const geometries: GeoJSON.GeometryObject[] = geometryCollection.geometries;
+      const features: GeoJSON.Feature<GeoJSON.GeometryObject>[] = geometries.map(g => this.createFeature(g, undefined));
       return {
         type: 'FeatureCollection',
         features: features
@@ -40,7 +40,7 @@ export class MapUtil {
   }
 
   public featureToGeometry(feature: GeoJSON.Feature<GeoJSON.GeometryObject>) {
-    let geometry = this.createGeometry(feature);
+    const geometry = this.createGeometry(feature);
     geometry.crs = {
       properties: {
         name: 'EPSG:3879'
@@ -63,21 +63,21 @@ export class MapUtil {
   }
 
   public wgs84ToEpsg3879(coordinate: Array<number>): Array<number> {
-    let myProj = this.getEPSG3879();
-    let projected = myProj.projection.project(L.latLng(coordinate[1], coordinate[0]));
+    const myProj = this.getEPSG3879();
+    const projected = myProj.projection.project(L.latLng(coordinate[1], coordinate[0]));
     return [projected.x, projected.y];
   }
 
   public epsg3879ToWgs84(coordinate: Array<number>): Array<number> {
-    let myProj = this.getEPSG3879();
-    let projected = myProj.projection.unproject(L.point(coordinate[0], coordinate[1]));
+    const myProj = this.getEPSG3879();
+    const projected = myProj.projection.unproject(L.point(coordinate[0], coordinate[1]));
     return [projected.lng, projected.lat];
   }
 
   private createCrsEPSG3879(): L.Proj.CRS {
-    let crsName = 'EPSG:3879';
-    let bounds = L.bounds([25440000, 6630000], [25571072, 6761072]);
-    let projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
+    const crsName = 'EPSG:3879';
+    const bounds = L.bounds([25440000, 6630000], [25571072, 6761072]);
+    const projDef = '+proj=tmerc +lat_0=0 +lon_0=25 +k=1 +x_0=25500000 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs';
     return new L.Proj.CRS(crsName, projDef, {
       resolutions: [256, 128, 64, 32, 16, 8, 4, 2, 1, 0.5, 0.25, 0.125, 0.0625, 0.03125],
       bounds: bounds

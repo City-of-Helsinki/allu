@@ -931,7 +931,7 @@ export const translations = {
 
 const toKey = (path: string | Array<string>): Option<Array<string>> => {
   return Some(path).map(p => {
-    let pathString = StringUtil.toPath(p, '.');
+    const pathString = StringUtil.toPath(p, '.');
     return pathString.split('.');
   });
 };

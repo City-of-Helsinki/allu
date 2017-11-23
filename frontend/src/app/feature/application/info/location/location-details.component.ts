@@ -21,7 +21,7 @@ export class LocationDetailsComponent implements OnInit, AfterViewInit {
 
   area: string;
   sections: string;
-  multipleLocations: boolean = false;
+  multipleLocations = false;
 
   constructor(private mapHub: MapHub, private locationState: LocationState) {
   }

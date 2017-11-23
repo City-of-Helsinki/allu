@@ -6,7 +6,7 @@ import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {ContactModalComponent} from '../../../customerregistry/contact/contact-modal.component';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
@@ -36,7 +36,7 @@ export class ContactComponent implements OnInit {
   contacts: FormArray;
   availableContacts: Observable<Array<Contact>>;
   matchingContacts: Observable<Array<Contact>>;
-  showOrderer: boolean = false;
+  showOrderer = false;
 
   private dialogRef: MatDialogRef<ContactModalComponent>;
 
@@ -101,7 +101,7 @@ export class ContactComponent implements OnInit {
    * Resets form values if form contained existing contact
    */
   resetContactIfExisting(index: number): void {
-    let contactCtrl = this.contacts.at(index);
+    const contactCtrl = this.contacts.at(index);
     if (NumberUtil.isDefined(contactCtrl.value.id)) {
       contactCtrl.reset({
         name: contactCtrl.value.name,
@@ -119,8 +119,8 @@ export class ContactComponent implements OnInit {
   }
 
   addContact(contact: Contact = new Contact()): void {
-    let fg = Contact.formGroup(this.fb, contact);
-    let nameControl = fg.get('name');
+    const fg = Contact.formGroup(this.fb, contact);
+    const nameControl = fg.get('name');
     this.matchingContacts = nameControl.valueChanges
       .debounceTime(300)
       .switchMap(name => this.onNameSearchChange(name));
@@ -178,7 +178,7 @@ export class ContactComponent implements OnInit {
   }
 
   private disableContactEdit(index: number): void {
-    let contactCtrl = <FormGroup>this.contacts.at(index);
+    const contactCtrl = <FormGroup>this.contacts.at(index);
     Object.keys(contactCtrl.controls)
       .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
       .forEach(key => contactCtrl.get(key).disable());

@@ -22,8 +22,8 @@ export class DecisionHub {
   /**
    * Sends decision to its recepients based on distribution
    * @param applicationId application id of decision
-   * @param decisionDetails containing message and distribution
+   * @param decisionDetails containing messageToReadable and distribution
    */
   public sendDecision = (applicationId: number, decisionDetails: DecisionDetails) =>
-    this.decisionService.sendDecision(applicationId, decisionDetails);
+    this.decisionService.sendDecision(applicationId, decisionDetails)
 }

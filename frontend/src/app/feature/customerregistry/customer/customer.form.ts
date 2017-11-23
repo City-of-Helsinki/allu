@@ -37,7 +37,7 @@ export class CustomerForm {
   }
 
   static toCustomer(form: CustomerForm): Customer {
-    let customer = new Customer();
+    const customer = new Customer();
     customer.id = form.id;
     customer.type = form.type;
     customer.name = form.name;

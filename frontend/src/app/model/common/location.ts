@@ -24,7 +24,7 @@ export class Location {
     this.postalAddress = postalAddress || new PostalAddress();
     this.fixedLocationIds = fixedLocationIds || [];
     this.underpass = underpass || false;
-  };
+  }
 
   get uiArea(): number {
     return this.area ? Math.ceil(this.area) : undefined;
@@ -73,7 +73,7 @@ export class Location {
   }
 
   public copyAsNew(): Location {
-    let loc = new Location();
+    const loc = new Location();
     loc.id = undefined;
     loc.locationKey = undefined;
     loc.locationVersion = undefined;

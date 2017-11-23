@@ -13,7 +13,7 @@ export class FileDropDirective {
   @HostListener('drop', ['$event'])
   public onDrop(event: any): void {
     this.preventDefault(event);
-    let files = this.getFiles(event);
+    const files = this.getFiles(event);
     this.onFileDrop.emit(files);
     this.onFileOver.emit(false);
   }

@@ -50,7 +50,7 @@ export class ApplicationService {
 
   public getByLocation(query: ApplicationLocationQuery): Observable<Array<Application>> {
     if (query.statusTypes && query.statusTypes.length) {
-      let searchUrl = APPLICATIONS_URL + SEARCH_LOCATION;
+      const searchUrl = APPLICATIONS_URL + SEARCH_LOCATION;
 
       return this.authHttp.post(
         searchUrl,
@@ -64,7 +64,7 @@ export class ApplicationService {
   }
 
   public search(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
-    let searchUrl = APPLICATIONS_URL + SEARCH;
+    const searchUrl = APPLICATIONS_URL + SEARCH;
 
     return this.authHttp.post(
       searchUrl,
@@ -76,7 +76,7 @@ export class ApplicationService {
 
   public save(application: Application): Observable<Application> {
     if (application.id) {
-      let url = APPLICATIONS_URL + '/' + application.id;
+      const url = APPLICATIONS_URL + '/' + application.id;
 
       return this.authHttp.put(url,
         JSON.stringify(ApplicationMapper.mapFrontend(application)))
@@ -104,7 +104,7 @@ export class ApplicationService {
   }
 
   public statusChange(appId: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
-    let url = STATUS_URL
+    const url = STATUS_URL
       .replace(':appId', String(appId))
       .replace(':statusPart', this.statusToUrl.get(status));
 
@@ -114,19 +114,19 @@ export class ApplicationService {
   }
 
   public handlerChange(handler: number, applicationIds: Array<number>): Observable<any> {
-    let url = APPLICATIONS_URL + '/handler/' + handler;
+    const url = APPLICATIONS_URL + '/handler/' + handler;
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
   public handlerRemove(applicationIds: Array<number>): Observable<any> {
-    let url = APPLICATIONS_URL + '/handler/remove';
+    const url = APPLICATIONS_URL + '/handler/remove';
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
   public saveTags(appId: number, tags: Array<ApplicationTag>): Observable<Array<ApplicationTag>> {
-    let url = TAGS_URL.replace(':appId', String(appId));
+    const url = TAGS_URL.replace(':appId', String(appId));
     return this.authHttp.put(url, JSON.stringify(ApplicationTagMapper.mapFrontendList(tags)))
       .map(response => ApplicationTagMapper.mapBackend(response.json()))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.tagUpdateFailed')));

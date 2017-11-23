@@ -31,7 +31,7 @@ export class Sort {
   }
 
   public sortFn():  (a, b) => number {
-    let sort = (left, right) => {
+    const sort = (left, right) => {
       if (left[this.field] > right[this.field]) {
         return 1;
       }

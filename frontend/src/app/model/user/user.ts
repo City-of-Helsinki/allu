@@ -10,7 +10,7 @@ export class User {
     public lastLogin?: Date,
     public allowedApplicationTypes: Array<string> = [],
     public assignedRoles: Array<string> = [],
-    public cityDistrictIds: Array<number> = []) {};
+    public cityDistrictIds: Array<number> = []) {}
 
   hasRole(role: string): boolean {
     return this.assignedRoles.indexOf(role) >= 0;

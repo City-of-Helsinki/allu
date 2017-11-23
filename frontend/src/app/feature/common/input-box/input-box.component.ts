@@ -1,11 +1,10 @@
-import {AfterContentInit, Component, ContentChild, Directive, ElementRef, Input, ViewEncapsulation} from '@angular/core';
+import {
+  AfterContentInit, Component, ContentChild, Directive, ElementRef, HostBinding, HostListener, Input,
+  ViewEncapsulation
+} from '@angular/core';
 
 @Directive({
-  selector: 'input[inputBoxInput], select[inputBoxInput]',
-  host: {
-    '(blur)': '_onBlur()',
-    '(focus)': '_onFocus()'
-  }
+  selector: 'input[inputBoxInput], select[inputBoxInput]'
 })
 export class InputBoxInputDirective {
   focused = false;
@@ -14,9 +13,9 @@ export class InputBoxInputDirective {
 
   focus() { this._elementRef.nativeElement.focus(); }
 
-  _onFocus() { this.focused = true; }
+  @HostListener('focus') _onFocus() { this.focused = true; }
 
-  _onBlur() { this.focused = false; }
+  @HostListener('blur') _onBlur() { this.focused = false; }
 }
 
 @Component({
@@ -25,15 +24,14 @@ export class InputBoxInputDirective {
   styleUrls: [
     './input-box.component.scss'
   ],
-  encapsulation: ViewEncapsulation.None,
-  host: {
-    '[class.input-box-focused]': '_inputChild.focused'
-  }
+  encapsulation: ViewEncapsulation.None
 })
 export class InputBoxComponent implements AfterContentInit {
   @Input() placeholder: string;
 
   @ContentChild(InputBoxInputDirective) _inputChild: InputBoxInputDirective;
+
+  @HostBinding('class.input-box-focused') focused = false;
 
   constructor() { }
 
@@ -41,5 +39,6 @@ export class InputBoxComponent implements AfterContentInit {
     if (!this._inputChild) {
       throw new Error('Input box requires input with attribute inputBoxInput inside it');
     }
+    this.focused = this._inputChild.focused;
   }
 }

@@ -33,7 +33,7 @@ export class LocationService {
     private uiState: UIStateHub) {}
 
   public geocode(address: string): Observable<Option<Geocoordinates>> {
-    let searchUrl = this.geocodeUrl(address);
+    const searchUrl = this.geocodeUrl(address);
 
     return this.authHttp.get(searchUrl)
       .map(response => response.json())
@@ -57,7 +57,7 @@ export class LocationService {
   }
 
   public search(searchTerm: string): Observable<Array<PostalAddress>> {
-    let searchUrl = ADDRESS_URL + SEARCH_URL + '/' + searchTerm;
+    const searchUrl = ADDRESS_URL + SEARCH_URL + '/' + searchTerm;
     return this.authHttp.get(searchUrl)
       .map(response => response.json())
       .map(json => json.map(address => PostalAddress.fromBackend(address)))
@@ -65,14 +65,14 @@ export class LocationService {
   }
 
   private geocodeUrl(address: string) {
-    let streetAddress = StreetAddress.fromAddressString(address);
+    const streetAddress = StreetAddress.fromAddressString(address);
     return ADDRESS_URL + GEOCODE_URL
       + '/' + streetAddress.streetName
       + '/' + streetAddress.streetNumber;
   }
 
   private handleGeocodeError(errorResponse: any): Observable<Option<Geocoordinates>> {
-    let httpError = HttpUtil.extractHttpResponse(errorResponse);
+    const httpError = HttpUtil.extractHttpResponse(errorResponse);
     return httpError.status === HttpStatus.NOT_FOUND
       ? Observable.of(None())
       : Observable.throw(new ErrorInfo(ErrorType.GEOLOCATION_SEARCH_FAILED, httpError.message));

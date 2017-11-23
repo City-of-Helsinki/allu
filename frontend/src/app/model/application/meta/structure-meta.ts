@@ -18,8 +18,8 @@ export class StructureMeta {
   }
 
   private getAttribute(...path: string[]): AttributeMeta {
-    let fullPath = StringUtil.toPath(path, '/');
-    let currentAttributeName = fullPath.replace( /\d+/g, '*');
+    const fullPath = StringUtil.toPath(path, '/');
+    const currentAttributeName = fullPath.replace( /\d+/g, '*');
     let attributeMeta = ArrayUtil.first(this.attributes, this.attributeMatcher(currentAttributeName));
     if (!attributeMeta) {
       attributeMeta = new AttributeMeta('unknown', fullPath, AttributeDataType[AttributeDataType.STRING], undefined);

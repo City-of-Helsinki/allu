@@ -38,7 +38,7 @@ export class CustomerService {
   }
 
   public findCustomerById(id: number): Observable<Customer> {
-    let url = CUSTOMERS_URL + '/' + id;
+    const url = CUSTOMERS_URL + '/' + id;
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(customer => CustomerMapper.mapBackend(customer))
@@ -46,7 +46,7 @@ export class CustomerService {
   }
 
   public findByCustomerIds(ids: Array<number>): Observable<Array<Customer>> {
-    let url = CUSTOMERS_URL + '/findByIds';
+    const url = CUSTOMERS_URL + '/findByIds';
     return this.authHttp.post(url, JSON.stringify(ids))
       .map(response => response.json())
       .map(customers => customers.map(c => CustomerMapper.mapBackend(c)))
@@ -54,7 +54,7 @@ export class CustomerService {
   }
 
   public findContactById(id: number): Observable<Contact> {
-    let url = CONTACTS_URL + '/' + id;
+    const url = CONTACTS_URL + '/' + id;
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(contact => ContactMapper.mapBackend(contact))
@@ -62,7 +62,7 @@ export class CustomerService {
   }
 
   public findCustomerContacts(customerId: number): Observable<Array<Contact>> {
-    let url = CONTACTS_FOR_CUSTOMER_URL.replace(':customerId', String(customerId));
+    const url = CONTACTS_FOR_CUSTOMER_URL.replace(':customerId', String(customerId));
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(contacts => contacts.map(contact => ContactMapper.mapBackend(contact)))
@@ -97,14 +97,14 @@ export class CustomerService {
   }
 
   private updateCustomerWithContacts(customerId: number, customer: CustomerWithContacts): Observable<CustomerWithContacts> {
-    let url = CUSTOMERS_URL + '/' + customerId + WITH_CONTACTS;
+    const url = CUSTOMERS_URL + '/' + customerId + WITH_CONTACTS;
     return this.authHttp.put(url, JSON.stringify(CustomerMapper.mapFrontendWithContacts(customer)))
       .map(response => response.json())
       .map(customerWithContacts => CustomerMapper.mapBackendWithContacts(customerWithContacts));
   }
 
   private createCustomerWithContacts(customer: CustomerWithContacts): Observable<CustomerWithContacts> {
-    let url = CUSTOMERS_URL + WITH_CONTACTS;
+    const url = CUSTOMERS_URL + WITH_CONTACTS;
     return this.authHttp.post(url, JSON.stringify(CustomerMapper.mapFrontendWithContacts(customer)))
       .map(response => response.json())
       .map(customerWithContacts => CustomerMapper.mapBackendWithContacts(customerWithContacts));

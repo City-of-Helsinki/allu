@@ -10,7 +10,7 @@ export class ErrorHandler {
   constructor(private router: Router) {}
 
   handle(error: any, message?: string): Observable<any> {
-    let response = HttpUtil.extractHttpResponse(error);
+    const response = HttpUtil.extractHttpResponse(error);
     console.error('Status:', response.status, 'original message:', response.message);
 
     if (HttpStatus.UNAUTHORIZED === response.status) {

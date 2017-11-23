@@ -1,7 +1,7 @@
 import {BackendPostalAddress} from '../../service/backend-model/backend-postal-address';
 
 export class PostalAddress {
-  constructor(public streetAddress?: string, public postalCode?: string, public city?: string) {};
+  constructor(public streetAddress?: string, public postalCode?: string, public city?: string) {}
 
   public static fromBackend(backendPostalAddress: BackendPostalAddress): PostalAddress {
     return new PostalAddress(

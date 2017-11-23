@@ -21,7 +21,7 @@ const firstTask = new SupervisionTask(1);
   selector: 'supervision-task',
   template: ''
 })
-class SupervisionTaskComponentMock {
+class MockSupervisionTaskComponent {
   @Input() form: FormGroup;
   @Input() supervisors: Array<User> = [];
   @Output() onRemove = new EventEmitter<void>();
@@ -39,14 +39,14 @@ describe('SupervisionComponent', () => {
   let fixture: ComponentFixture<SupervisionComponent>;
   let supervisionTaskStore: SupervisionTaskStoreMock;
   let de: DebugElement;
-  let currentUserMock = CurrentUserMock.create(true, true);
+  const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, FormsModule],
       declarations: [
         SupervisionComponent,
-        SupervisionTaskComponentMock
+        MockSupervisionTaskComponent
       ],
       providers: [
         FormBuilder,

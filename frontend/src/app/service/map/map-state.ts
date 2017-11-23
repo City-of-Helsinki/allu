@@ -83,9 +83,9 @@ export class MapState {
   }
 
   public setDynamicControls(controlsEnabled: boolean, editedItems?: L.FeatureGroup): void {
-    let items = editedItems || this.editedItems;
+    const items = editedItems || this.editedItems;
 
-    let draw = controlsEnabled ? {
+    const draw = controlsEnabled ? {
       // todo: this <false>false can be removed when typescript compiler allows type parameter of | false
       polyline: <false>false,
       marker: <false>false,
@@ -108,9 +108,9 @@ export class MapState {
       }
     } : undefined;
 
-    let edit = controlsEnabled ? { selectedPathOptions: pathStyle.DEFAULT_EDIT } : false;
+    const edit = controlsEnabled ? { selectedPathOptions: pathStyle.DEFAULT_EDIT } : false;
 
-    let drawControl = new L.Control.Draw({
+    const drawControl = new L.Control.Draw({
       position: 'topright',
       draw: draw,
       intersectLayers: this.mapLayerService.applicationLayerArray,
@@ -132,7 +132,7 @@ export class MapState {
 
   public drawGeometry(geometries: Array<GeoJSON.GeometryCollection>, layerName: string,
                       style?: Object, popup?: MapPopup) {
-    let layer = this.drawnItems[layerName];
+    const layer = this.drawnItems[layerName];
     if (layer) {
       geometries.forEach(g => this.drawGeometryToLayer(g, layer, style, popup));
     } else {
@@ -180,9 +180,9 @@ export class MapState {
                               style?: GeoJSONOptions, popup?: MapPopup) {
     if (geometryCollection.geometries.length) {
       style = style || {};
-      let featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
+      const featureCollection = this.mapUtil.geometryCollectionToFeatureCollection(geometryCollection);
       style.pointToLayer = (point, latlng) => L.marker(latlng, {icon: alluIcon});
-      let geoJSON = L.geoJSON(featureCollection, style);
+      const geoJSON = L.geoJSON(featureCollection, style);
       this.drawGeoJSON(geoJSON, drawLayer, popup);
     }
   }
@@ -198,7 +198,7 @@ export class MapState {
     this.map = this.createMap();
     this.mapView$ = new BehaviorSubject(this.getCurrentMapView());
 
-    let editedItems = L.featureGroup();
+    const editedItems = L.featureGroup();
     editedItems.addTo(this.map);
     this.editedItems = editedItems;
 
@@ -216,7 +216,7 @@ export class MapState {
   }
 
   private createMap(): L.Map {
-    let mapOption = {
+    const mapOption = {
       zoomControl: false,
       center: L.latLng(60.1708763, 24.9424988), // Helsinki railway station
       scrollWheelZoom: this.config.zoom,
@@ -241,7 +241,7 @@ export class MapState {
   }
 
   private setupEventHandling(editedItems: L.FeatureGroup): void {
-    let self = this;
+    const self = this;
     this.map.on('draw:created', (e: any) => {
       editedItems.addLayer(e.layer);
       self.shapes$.next(new ShapeAdded(editedItems));
@@ -263,7 +263,7 @@ export class MapState {
   }
 
   private setupLayers(): void {
-    let groupedOverlays = {
+    const groupedOverlays = {
       Karttatasot: this.mapOverlayLayers,
       Hakemustyypit: this.drawnItems
     };
@@ -274,7 +274,7 @@ export class MapState {
   }
 
   private getCurrentMapView(): GeoJSON.GeometryObject {
-    let viewPoly = this.mapUtil.polygonFromBounds(this.map.getBounds());
+    const viewPoly = this.mapUtil.polygonFromBounds(this.map.getBounds());
     return this.mapUtil.featureToGeometry(viewPoly.toGeoJSON());
   }
 

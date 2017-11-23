@@ -14,7 +14,7 @@ import {Location} from '../../../model/common/location';
 })
 export class StoredLocationsComponent implements OnInit, OnDestroy {
 
-  @Input() readonly: boolean = false;
+  @Input() readonly = false;
 
   locations: Observable<Array<Location>>;
 

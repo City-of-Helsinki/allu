@@ -10,7 +10,7 @@ export class CustomerMapper {
 
   public static mapBackend(backendCustomer: BackendCustomer): Customer {
     if (backendCustomer) {
-      let postalAddress = undefined;
+      let postalAddress;
       if (backendCustomer.postalAddress) {
         postalAddress = new PostalAddress(
           backendCustomer.postalAddress.streetAddress, backendCustomer.postalAddress.postalCode, backendCustomer.postalAddress.city);

@@ -6,11 +6,11 @@ export class MapPopup {
   ) {}
 
   content(): HTMLElement {
-    let popup = L.DomUtil.create('div', 'popup-wrapper');
+    const popup = L.DomUtil.create('div', 'popup-wrapper');
     popup.appendChild(this.header);
-    let contentList = L.DomUtil.create('ul', 'popup-content', popup);
+    const contentList = L.DomUtil.create('ul', 'popup-content', popup);
     this.contentRows.forEach(row => {
-      let rowContent = L.DomUtil.create('li', undefined, contentList);
+      const rowContent = L.DomUtil.create('li', undefined, contentList);
       rowContent.innerHTML = row;
     });
 

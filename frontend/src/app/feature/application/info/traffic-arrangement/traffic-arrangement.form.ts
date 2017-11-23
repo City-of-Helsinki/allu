@@ -15,7 +15,7 @@ export class TrafficArrangementForm implements ApplicationForm {
   ) {}
 
   static to(form: TrafficArrangementForm): TrafficArrangement {
-    let arrangement = new TrafficArrangement();
+    const arrangement = new TrafficArrangement();
     arrangement.pksCard = form.pksCard;
     arrangement.workFinished = form.workFinished;
     arrangement.trafficArrangements = form.trafficArrangements;

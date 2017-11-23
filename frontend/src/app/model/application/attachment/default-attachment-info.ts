@@ -17,7 +17,7 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
     public fixedLocationId?: number
   ) {
     super(id, type, name, description, size, creationTime, handlerName, file);
-  };
+  }
 
   static fromForm(form: DefaultAttachmentInfoForm): DefaultAttachmentInfo {
     return new DefaultAttachmentInfo(

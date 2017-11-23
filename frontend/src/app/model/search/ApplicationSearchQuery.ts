@@ -37,7 +37,7 @@ export class ApplicationSearchQuery implements SearchQuery {
   }
 
   public static from(queryForm: ApplicationSearchQueryForm, sort?: Sort) {
-    let query = new ApplicationSearchQuery();
+    const query = new ApplicationSearchQuery();
     query.applicationId = queryForm.applicationId;
     query.type = queryForm.type;
     query.status = queryForm.status;
@@ -58,20 +58,20 @@ export class ApplicationSearchQuery implements SearchQuery {
   }
 
   public static forApplicationId(id: string): ApplicationSearchQuery {
-    let query = new ApplicationSearchQuery();
+    const query = new ApplicationSearchQuery();
     query.applicationId = id;
     return query;
   }
 
   public static forIdAndTypes(id: string, types: Array<string>): ApplicationSearchQuery {
-    let query = new ApplicationSearchQuery();
+    const query = new ApplicationSearchQuery();
     query.applicationId = id;
     query.type = types;
     return query;
   }
 
   public copy(): ApplicationSearchQuery {
-    let query = new ApplicationSearchQuery();
+    const query = new ApplicationSearchQuery();
     query.applicationId = this.applicationId;
     query.type = this.type;
     query.status = this.status;
@@ -88,7 +88,7 @@ export class ApplicationSearchQuery implements SearchQuery {
   }
 
   public withSort(sort: Sort): ApplicationSearchQuery {
-    let newQuery = this.copy();
+    const newQuery = this.copy();
     newQuery.sort = sort;
     return newQuery;
   }

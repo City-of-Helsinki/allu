@@ -84,7 +84,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   private initForm() {
-    let roleType = this.customerWithContacts.roleType;
+    const roleType = this.customerWithContacts.roleType;
     this.customerWithContactsForm = CustomerWithContactsForm.initialForm(this.fb, roleType);
     this.customerForm = <FormGroup>this.customerWithContactsForm.get('customer');
     this.parentForm.addControl(CustomerWithContactsForm.formName(roleType), this.customerWithContactsForm);

@@ -79,7 +79,7 @@ export class ApplicationComponent implements OnInit {
   }
 
   private createSidebar(summary: boolean): Array<SidebarItem> {
-      let sidebar: Array<SidebarItem> = [
+      const sidebar: Array<SidebarItem> = [
         { type: 'BASIC_INFO' },
         { type: 'ATTACHMENTS', count: this.attachmentCount }
       ];

@@ -41,7 +41,7 @@ export class ApplicationHistoryFormatter {
   }
 
   public toFormattedChange(fieldChange: ApplicationFieldChange): ApplicationFieldChange {
-    let dataType = this.meta.dataType(fieldChange.fieldName);
+    const dataType = this.meta.dataType(fieldChange.fieldName);
     return this.formatByDataType(dataType, fieldChange);
   }
 

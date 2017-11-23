@@ -29,7 +29,7 @@ export class ProjectSearchQuery implements SearchQuery {
   }
 
   static fromForm(form: ProjectSearchQueryForm, sort?: Sort): ProjectSearchQuery {
-    let query = new ProjectSearchQuery();
+    const query = new ProjectSearchQuery();
     query.id = form.id;
     query.startTime = form.startTime;
     query.endTime = form.endTime;
@@ -42,7 +42,7 @@ export class ProjectSearchQuery implements SearchQuery {
   }
 
   static fromProjectId(id: number): ProjectSearchQuery {
-    let query = new ProjectSearchQuery();
+    const query = new ProjectSearchQuery();
     query.id = id;
     return query;
   }

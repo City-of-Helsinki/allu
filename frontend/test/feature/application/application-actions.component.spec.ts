@@ -76,9 +76,9 @@ describe('ApplicationActionsComponent', () => {
   it('should copy application as new', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
-    let location = new Location(12, 12, 12, new Date());
+    const location = new Location(12, 12, 12, new Date());
 
-    let application = applicationState._application;
+    const application = applicationState._application;
     application.id = 1;
     application.attachmentList = [new AttachmentInfo(15, 'type', 'name'), new AttachmentInfo(10, 'type', 'name')];
     application.locations = [location];

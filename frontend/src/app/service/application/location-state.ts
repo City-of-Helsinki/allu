@@ -34,7 +34,7 @@ export class LocationState {
 
   storeLocation(location: Location): void {
     if (this.validLocation(location)) {
-      let current = this.locations$.getValue();
+      const current = this.locations$.getValue();
       let next;
       if (NumberUtil.isDefined(this._editIndex)) {
         current.splice(this.editIndex, 1, location);
@@ -49,7 +49,7 @@ export class LocationState {
   }
 
   removeLocation(index: number): void {
-    let current = this.locations$.getValue();
+    const current = this.locations$.getValue();
     current.splice(index, 1);
     this.locations$.next(current);
   }
@@ -70,8 +70,8 @@ export class LocationState {
   }
 
   private notifyOnChange(locations: Array<Location>): void {
-    let otherLocations = locations.slice(); // Copy array elements
-    let editedLocation = Some(this._editIndex)
+    const otherLocations = locations.slice(); // Copy array elements
+    const editedLocation = Some(this._editIndex)
       .map(index => otherLocations.splice(index, 1)[0]) // Splice returns removed value
       .orElse(undefined);
 

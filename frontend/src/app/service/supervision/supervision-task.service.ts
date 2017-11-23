@@ -30,7 +30,7 @@ export class SupervisionTaskService {
   }
 
   findTasksByApplicationId(applicationId: number): Observable<Array<SupervisionTask>> {
-    let url = SUPERVISION_TASK_APP_URL.replace(':appId', String(applicationId));
+    const url = SUPERVISION_TASK_APP_URL.replace(':appId', String(applicationId));
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(tasks => SupervisionTaskMapper.mapBackendList(tasks))
@@ -39,7 +39,7 @@ export class SupervisionTaskService {
 
   save(task: SupervisionTask): Observable<SupervisionTask> {
     if (task.id) {
-      let url = SUPERVISION_TASK_URL + '/' + task.id;
+      const url = SUPERVISION_TASK_URL + '/' + task.id;
       return this.authHttp.put(url,
         JSON.stringify(SupervisionTaskMapper.mapFrontend(task)))
         .map(response => SupervisionTaskMapper.mapBackend(response.json()))
@@ -53,7 +53,7 @@ export class SupervisionTaskService {
   }
 
   remove(id: number): Observable<HttpResponse> {
-    let url = SUPERVISION_TASK_URL + '/' + id;
+    const url = SUPERVISION_TASK_URL + '/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response))
       .catch(error => this.errorHandler.handle(error, findTranslation('supervisiontask.error.remove')));
@@ -68,13 +68,13 @@ export class SupervisionTaskService {
   }
 
   changeHandler(handlerId: number, taskIds: Array<number>): Observable<HttpResponse> {
-    let url = SUPERVISION_TASK_HANDLER_URL + '/' + handlerId;
+    const url = SUPERVISION_TASK_HANDLER_URL + '/' + handlerId;
     return this.authHttp.put(url, JSON.stringify(taskIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
   removeHandler(taskIds: Array<number>): Observable<HttpResponse> {
-    let url = SUPERVISION_TASK_HANDLER_URL + '/remove';
+    const url = SUPERVISION_TASK_HANDLER_URL + '/remove';
     return this.authHttp.put(url, JSON.stringify(taskIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }

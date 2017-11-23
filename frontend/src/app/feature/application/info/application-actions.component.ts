@@ -27,11 +27,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   @Input() status: string;
   @Input() submitPending: boolean;
 
-  showDecision: boolean = true;
-  decisionDisabled: boolean = false;
-  showHandling: boolean = true;
-  showDelete: boolean = false;
-  showCancel: boolean = false;
+  showDecision = true;
+  decisionDisabled = false;
+  showHandling = true;
+  showDelete = false;
+  showCancel = false;
 
   private applicationSub: Subscription;
 
@@ -54,7 +54,7 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   copyApplicationAsNew(): void {
-    let application = this.applicationState.application;
+    const application = this.applicationState.application;
     application.id = undefined;
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());

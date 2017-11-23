@@ -14,7 +14,7 @@ import {DistributionMapper} from './distribution-mapper';
 export class ApplicationMapper {
 
   public static mapBackend(backendApplication: BackendApplication): Application {
-    let application = new Application();
+    const application = new Application();
     application.id = backendApplication.id;
     application.applicationId = backendApplication.applicationId;
     application.project = ProjectMapper.mapBackend(backendApplication.project);

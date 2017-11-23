@@ -30,11 +30,11 @@ describe('RecipientsByTypeComponent', () => {
   let page: Page;
 
   class Page {
-    public rows: Array<DebugElement>;
-    public addNewButton: HTMLButtonElement;
-
     public static emailDivSelector = By.css('.left-align');
     public static emailInputSelector = By.css('input');
+
+    public rows: Array<DebugElement>;
+    public addNewButton: HTMLButtonElement;
 
     update() {
       this.addNewButton = de.query(By.css('th button')).nativeElement;
@@ -52,7 +52,7 @@ describe('RecipientsByTypeComponent', () => {
     fixture.detectChanges();
     tick();
     page.update();
-  };
+  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

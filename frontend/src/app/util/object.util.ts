@@ -5,7 +5,7 @@ export class ObjectUtil {
     } else {
       let key;
       let value;
-      let cloned = Object.create(source);
+      const cloned = Object.create(source);
 
       for (key in source) {
         if (source.hasOwnProperty(key)) {

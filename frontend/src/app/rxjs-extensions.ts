@@ -7,6 +7,7 @@ import 'rxjs/add/observable/concat';
 import 'rxjs/add/observable/zip';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/observable/from';
+import 'rxjs/add/observable/forkJoin';
 
 // Observable operators
 import 'rxjs/add/operator/catch';
@@ -22,4 +23,5 @@ import 'rxjs/add/operator/reduce';
 import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/last';
+import 'rxjs/add/operator/startWith';
 

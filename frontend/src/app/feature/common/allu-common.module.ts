@@ -38,12 +38,10 @@ import {AvailableToDirective} from '../../service/authorization/available-to.dir
 
 @NgModule({
   imports: [
-    MatToolbarModule,
-    MatButtonModule,
-    MatRadioModule,
     CommonModule,
-    MaterializeModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatButtonModule,
+    MatDialogModule
   ],
   declarations: [
     AutoCompletionDirective,

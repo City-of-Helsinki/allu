@@ -19,12 +19,12 @@ export class AuthService {
   }
 
   authenticated(): boolean {
-    let jwt = localStorage.getItem('jwt');
+    const jwt = localStorage.getItem('jwt');
     return !!jwt && !this.jwtHelper.isTokenExpired(jwt);
   }
 
   login(username: string): Observable<User> {
-    let body = JSON.stringify({ 'userName': username });
+    const body = JSON.stringify({ 'userName': username });
     return this.http.post(LOGIN_URL, body, { headers: this.contentHeaders })
       .switchMap(response => {
         this.storeJwt(response.text());
@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   loginOAuth(code: string): Observable<User> {
-    let searchParams = new URLSearchParams();
+    const searchParams = new URLSearchParams();
     searchParams.append('code', code);
     return this.http.get(OAUTH_URL, {headers: this.contentHeaders, search: searchParams})
       .switchMap(response => {

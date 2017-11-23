@@ -18,7 +18,7 @@ export class CommentService {
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {}
 
   getComments(applicationId: number): Observable<Array<Comment>> {
-    let url = COMMENTS_APP_URL.replace(':appId', String(applicationId));
+    const url = COMMENTS_APP_URL.replace(':appId', String(applicationId));
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(comments => comments.map(comment => CommentMapper.mapBackend(comment)))
@@ -27,13 +27,13 @@ export class CommentService {
 
   save(applicationId: number, comment: Comment): Observable<Comment> {
     if (comment.id) {
-      let url = COMMENTS_URL + '/' + comment.id;
+      const url = COMMENTS_URL + '/' + comment.id;
       return this.authHttp.put(url,
         JSON.stringify(CommentMapper.mapFrontend(comment)))
         .map(response => CommentMapper.mapBackend(response.json()))
         .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.save')));
     } else {
-      let url = COMMENTS_APP_URL.replace(':appId', String(applicationId));
+      const url = COMMENTS_APP_URL.replace(':appId', String(applicationId));
       return this.authHttp.post(url,
         JSON.stringify(CommentMapper.mapFrontend(comment)))
         .map(response => CommentMapper.mapBackend(response.json()))
@@ -42,7 +42,7 @@ export class CommentService {
   }
 
   remove(id: number): Observable<HttpResponse> {
-    let url = COMMENTS_URL + '/' + id;
+    const url = COMMENTS_URL + '/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response))
       .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')));

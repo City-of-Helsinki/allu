@@ -10,10 +10,10 @@ import {RECIPIENT_ONE, RECIPIENT_TWO, RECIPIENT_NEW, RECIPIENTS_ALL} from './def
 class DefaultRecipientServiceMock {
   getDefaultRecipients() {
     return Observable.of(RECIPIENTS_ALL);
-  };
-  saveDefaultRecipient(recipient: DefaultRecipient) {};
-  removeDefaultRecipient(id: number) {};
-};
+  }
+  saveDefaultRecipient(recipient: DefaultRecipient) {}
+  removeDefaultRecipient(id: number) {}
+}
 
 describe('DefaultRecipientHub', () => {
 

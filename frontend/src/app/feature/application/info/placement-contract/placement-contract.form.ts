@@ -13,7 +13,7 @@ export class PlacementContractForm implements ApplicationForm {
   ) {}
 
   static to(form: PlacementContractForm): PlacementContract {
-    let placementContract = new PlacementContract();
+    const placementContract = new PlacementContract();
     placementContract.diaryNumber = form.diaryNumber;
     placementContract.additionalInfo = form.additionalInfo;
     placementContract.generalTerms = form.generalTerms;

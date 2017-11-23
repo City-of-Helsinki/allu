@@ -36,7 +36,7 @@ export class ApplicationHub {
    * Loads metadata for given application type
    */
   public loadMetaData = (applicationType: string) => this.applicationService.loadMetadata(applicationType)
-    .do(meta => this.metaData$.next(meta));
+    .do(meta => this.metaData$.next(meta))
 
   public metaData = () => this.metaData$.asObservable();
 
@@ -55,19 +55,19 @@ export class ApplicationHub {
    * Returns updated application.
    */
   public changeStatus = (appId: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo) =>
-    this.applicationService.statusChange(appId, status, changeInfo);
+    this.applicationService.statusChange(appId, status, changeInfo)
 
   /**
    * Changes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
    */
   public changeHandler =
-    (handler: number, applicationIds: Array<number>) => this.applicationService.handlerChange(handler, applicationIds);
+    (handler: number, applicationIds: Array<number>) => this.applicationService.handlerChange(handler, applicationIds)
 
   /**
    * Removes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
    */
   public removeHandler =
-    (applicationIds: Array<number>) => this.applicationService.handlerRemove(applicationIds);
+    (applicationIds: Array<number>) => this.applicationService.handlerRemove(applicationIds)
 
   /**
    * Saves tags for application specified by id

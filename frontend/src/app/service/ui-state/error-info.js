@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * Class to wrap http errors with message
+ * Class to wrap http errors with messageToReadable
  */
 var ErrorInfo = /** @class */ (function () {
     function ErrorInfo(type, message, response) {

@@ -65,7 +65,7 @@ export class SelectionGroupComponent implements OnDestroy, ControlValueAccessor,
   private _onChange = (_: any) => {};
 
   private onSelectionEvent(event: SelectionEvent): void {
-    let current = this.selectedItems$.getValue();
+    const current = this.selectedItems$.getValue();
     let next;
     if (event.selected) {
       next = current.concat(event.item);

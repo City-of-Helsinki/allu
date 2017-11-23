@@ -16,7 +16,7 @@ export class MapService {
     selection: boolean = false,
     showOnlyApplicationArea: boolean = false
   ) {
-    let config: MapStateConfig = {
+    const config: MapStateConfig = {
       draw: draw,
       edit: edit,
       zoom: zoom,

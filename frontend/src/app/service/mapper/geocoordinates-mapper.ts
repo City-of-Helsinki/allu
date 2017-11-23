@@ -6,13 +6,13 @@ import {MapUtil} from '../map/map.util';
 export class GeocoordinatesMapper {
 
   public static mapBackend(backendGeocoordinates: BackendGeocoordinates, mapService: MapUtil): Geocoordinates {
-    let coordinates = mapService.epsg3879ToWgs84([backendGeocoordinates.x, backendGeocoordinates.y]);
+    const coordinates = mapService.epsg3879ToWgs84([backendGeocoordinates.x, backendGeocoordinates.y]);
     return Geocoordinates.fromArray(coordinates);
   }
 
   public static mapFrontend(geocoordinates: Geocoordinates, mapService: MapUtil): BackendGeocoordinates {
     if (geocoordinates) {
-      let coordinates = mapService.wgs84ToEpsg3879(geocoordinates.toArray());
+      const coordinates = mapService.wgs84ToEpsg3879(geocoordinates.toArray());
       return {
         x: coordinates[0],
         y: coordinates[1]

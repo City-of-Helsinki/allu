@@ -13,7 +13,7 @@ export class ComplexValidator {
   constructor(public validator: (validated: AbstractControl) => ValidationResult) {}
 
   static greaterThanOrEqual(value: number): ValidatorFn {
-    let validationFn = (fc: AbstractControl) => {
+    const validationFn = (fc: AbstractControl) => {
       // Need to use dirty here since input[type="number"] does not set touched unless arrows are clicked
       if (fc.dirty) {
         if (Number(fc.value) < value) {
@@ -27,9 +27,9 @@ export class ComplexValidator {
   }
 
   static betweenOrEmpty(min, max) {
-    let validationFn = (fc: AbstractControl) => {
+    const validationFn = (fc: AbstractControl) => {
       if (fc.dirty && NumberUtil.isDefined(fc.value)) {
-        let val = Number(fc.value);
+        const val = Number(fc.value);
         if (!NumberUtil.isBetween(val, min, max)) {
           return {between: {val}};
         }
@@ -67,12 +67,12 @@ export class ComplexValidator {
   }
 
   static startBeforeEnd(startField: string, endField: string) {
-    let validationFn = (fg: FormGroup) => {
-      let start = this.fieldValue(fg, startField);
-      let end = this.fieldValue(fg, endField);
+    const validationFn = (fg: FormGroup) => {
+      const start = this.fieldValue(fg, startField);
+      const end = this.fieldValue(fg, endField);
 
       if (start && end) {
-        let valid = !TimeUtil.isBefore(end, start);
+        const valid = !TimeUtil.isBefore(end, start);
 
         // undefined means valid field
         return valid  ? undefined : { startBeforeEnd: true };
@@ -84,7 +84,7 @@ export class ComplexValidator {
   }
 
   static inThePast(fc: AbstractControl): ValidationErrors {
-    let now =  new Date();
+    const now =  new Date();
     now.setHours(0, 0, 0, 0); // start of the day
     const inThePast = fc.value && TimeUtil.isBefore(fc.value, now);
     return inThePast ? { inThePast: fc.value } : undefined;

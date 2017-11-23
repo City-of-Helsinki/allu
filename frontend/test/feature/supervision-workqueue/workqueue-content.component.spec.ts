@@ -23,7 +23,7 @@ describe('SupervisionWorkqueueContentComponent', () => {
   let fixture: ComponentFixture<WorkQueueContentComponent>;
   let store: SupervisionWorkItemStoreMock;
   let de: DebugElement;
-  let currentUserMock = CurrentUserMock.create(true, true);
+  const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

@@ -45,8 +45,8 @@ export class ApplicationHistoryComponent implements OnInit {
   }
 
   showDetails(change: ApplicationChange) {
-    let dialogRef = this.dialog.open<ApplicationHistoryDetailsComponent>(ApplicationHistoryDetailsComponent);
-    let detailsComponent = dialogRef.componentInstance;
+    const dialogRef = this.dialog.open<ApplicationHistoryDetailsComponent>(ApplicationHistoryDetailsComponent);
+    const detailsComponent = dialogRef.componentInstance;
     detailsComponent.change = change;
     detailsComponent.user = this.handlers.get(change.userId);
     detailsComponent.meta = this.meta;

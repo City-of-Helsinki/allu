@@ -17,31 +17,45 @@ const downloadUrl = '/api/applications/attachments/:attachmentId/data';
 const defaultAttachmentGetUrl = '/api/applications/default-attachments';
 const defaultAttachmentUrlEdit = '/api/admin/attachments';
 
+export class ExtendedFileUploader extends FileUploader {
+  constructor(options: any, private meta: AttachmentInfo[]) {
+    super(options);
+  }
+
+  onBuildItemForm(fileItem: any, form: any): any {
+    const metaForItem = this.meta.shift();
+    const json = JSON.stringify([metaForItem]);
+    const blob = new Blob([json], {type: 'application/json'});
+    form.append('meta', blob);
+    super.onBuildItemForm(fileItem, form);
+  }
+}
+
 @Injectable()
 export class AttachmentService {
 
   constructor(private authHttp: AuthHttp) {}
 
   public uploadFiles(applicationId: number, attachments: AttachmentInfo[]): Observable<Array<AttachmentInfo>> {
-    let url = uploadUrl.replace('appId', String(applicationId));
+    const url = uploadUrl.replace('appId', String(applicationId));
     return this.upload(url, attachments);
   }
 
   remove(applicationId: number, attachmentId: number): Observable<HttpResponse> {
-    let url = uploadUrl.replace('appId', String(applicationId)) + '/' + attachmentId;
+    const url = uploadUrl.replace('appId', String(applicationId)) + '/' + attachmentId;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response));
   }
 
   download(attachmentId: number): Observable<Blob> {
-    let url = downloadUrl.replace(':attachmentId', String(attachmentId));
-    let options = {responseType: ResponseContentType.Blob };
+    const url = downloadUrl.replace(':attachmentId', String(attachmentId));
+    const options = {responseType: ResponseContentType.Blob };
     return this.authHttp.get(url, options)
       .map(response => response.blob());
   }
 
   getDefaultAttachmentInfo(id: number): Observable<DefaultAttachmentInfo> {
-    let url = defaultAttachmentGetUrl + '/' + id;
+    const url = defaultAttachmentGetUrl + '/' + id;
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
@@ -54,7 +68,7 @@ export class AttachmentService {
   }
 
   getDefaultAttachmentInfosByType(appType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
-    let url = defaultAttachmentGetUrl + '/applicationType/' + ApplicationType[appType];
+    const url = defaultAttachmentGetUrl + '/applicationType/' + ApplicationType[appType];
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
@@ -69,29 +83,29 @@ export class AttachmentService {
   }
 
   updateDefaultAttachmentInfo(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
-    let url = defaultAttachmentUrlEdit + '/' + attachment.id;
+    const url = defaultAttachmentUrlEdit + '/' + attachment.id;
     return this.authHttp.put(url, attachment)
       .map(response => response.json())
       .map(info => DefaultAttachmentInfoMapper.mapBackend(info));
   }
 
   removeDefaultAttachment(id: number): Observable<HttpResponse> {
-    let url = defaultAttachmentUrlEdit + '/' + id;
+    const url = defaultAttachmentUrlEdit + '/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response));
   }
 
   private upload(url: string, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
-    let uploadSubject = new Subject<Array<AttachmentInfo>>();
+    const uploadSubject = new Subject<Array<AttachmentInfo>>();
     if (attachments && attachments.length !== 0) {
-      let uploader = new ExtendedFileUploader({
+      const uploader = new ExtendedFileUploader({
         url: url,
         authToken: 'Bearer ' + localStorage.getItem('jwt')}, attachments);
-      let files = attachments.map(a => a.file);
+      const files = attachments.map(a => a.file);
 
       uploader.onSuccessItem = (item, response, status, headers) => {
-        let items = JSON.parse(response);
-        let infos = items.map(i => AttachmentInfoMapper.mapBackend(i));
+        const items = JSON.parse(response);
+        const infos = items.map(i => AttachmentInfoMapper.mapBackend(i));
         uploadSubject.next(infos);
       };
 
@@ -104,20 +118,5 @@ export class AttachmentService {
     }
 
     return uploadSubject.asObservable();
-  }
-}
-
-export class ExtendedFileUploader extends FileUploader {
-
-  constructor(options: any, private meta: AttachmentInfo[]) {
-    super(options);
-  }
-
-  onBuildItemForm(fileItem: any, form: any): any {
-    let metaForItem = this.meta.shift();
-    let json = JSON.stringify([metaForItem]);
-    let blob = new Blob([json], {type: 'application/json'});
-    form.append('meta', blob);
-    super.onBuildItemForm(fileItem, form);
   }
 }

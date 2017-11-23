@@ -53,7 +53,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   progressStep: ProgressStep;
   kindsSelected = false;
   districts: Observable<Array<CityDistrict>>;
-  multipleLocations: boolean = false;
+  multipleLocations = false;
 
   private routeEventSubscription: Subscription;
   private searchFilterSubscription: Subscription;
@@ -91,7 +91,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       underpass: [false],
       info: ['']
     });
-  };
+  }
 
   ngOnInit() {
     this.mapHub.addSearchFilter(defaultFilter);
@@ -276,7 +276,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.locationState.initLocations(this.application.locations);
 
     if (this.application.firstLocation) {
-      let formValues = LocationForm.from(this.application.firstLocation);
+      const formValues = LocationForm.from(this.application.firstLocation);
       this.locationForm.patchValue(formValues);
       this.districtName(formValues.cityDistrictId).subscribe(name => this.locationForm.patchValue({cityDistrictName: name}));
       this.mapHub.addSearchFilter(this.createFilter(this.application.firstLocation));

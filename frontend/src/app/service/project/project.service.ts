@@ -24,7 +24,7 @@ export class ProjectService {
   constructor(private authHttp: AuthHttp, private errorHandler: ErrorHandler) {}
 
   public searchProjects(searchQuery: ProjectSearchQuery): Observable<Array<Project>> {
-    let searchUrl = ProjectService.PROJECT_URL + ProjectService.SEARCH;
+    const searchUrl = ProjectService.PROJECT_URL + ProjectService.SEARCH;
 
     return this.authHttp.post(
       searchUrl,
@@ -43,7 +43,7 @@ export class ProjectService {
 
   public save(project: Project): Observable<Project> {
     if (project.id) {
-      let url = ProjectService.PROJECT_URL + '/' + project.id;
+      const url = ProjectService.PROJECT_URL + '/' + project.id;
 
       return this.authHttp.put(url,
         JSON.stringify(ProjectMapper.mapFrontend(project)))
@@ -62,7 +62,7 @@ export class ProjectService {
   }
 
   public updateProjectApplications(id: number, applicationIds: Array<number>): Observable<Project> {
-    let url = ProjectService.PROJECT_URL + '/' + id + '/applications';
+    const url = ProjectService.PROJECT_URL + '/' + id + '/applications';
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .map(response => ProjectMapper.mapBackend(response.json()))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.saveFailed')));
@@ -76,7 +76,7 @@ export class ProjectService {
   }
 
   public getProjectApplications(id: number): Observable<Array<Application>> {
-    let url = ProjectService.PROJECT_URL + '/' + id + '/applications';
+    const url = ProjectService.PROJECT_URL + '/' + id + '/applications';
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(json => json.map(app => ApplicationMapper.mapBackend(app)))
@@ -84,17 +84,17 @@ export class ProjectService {
   }
 
   public getChildProjects(id: number): Observable<Array<Project>> {
-    let url = [ProjectService.PROJECT_URL, id, ProjectService.CHILDREN].join('/');
+    const url = [ProjectService.PROJECT_URL, id, ProjectService.CHILDREN].join('/');
     return this.getProjects(url);
   }
 
   public getParentProjects(id: number): Observable<Array<Project>> {
-    let url = [ProjectService.PROJECT_URL, id, ProjectService.PARENTS].join('/');
+    const url = [ProjectService.PROJECT_URL, id, ProjectService.PARENTS].join('/');
     return this.getProjects(url);
   }
 
   public updateParent(id: number, parentId: number): Observable<Project> {
-    let url = [ProjectService.PROJECT_URL, id, 'parentProject', parentId].join('/');
+    const url = [ProjectService.PROJECT_URL, id, 'parentProject', parentId].join('/');
     return this.authHttp.put(url, '')
       .map(response => response.json())
       .map(project => ProjectMapper.mapBackend(project))
@@ -102,7 +102,7 @@ export class ProjectService {
   }
 
   public removeParent(ids: Array<number>): Observable<HttpResponse> {
-    let url = [ProjectService.PROJECT_URL, 'parent', 'remove'].join('/');
+    const url = [ProjectService.PROJECT_URL, 'parent', 'remove'].join('/');
     return this.authHttp.put(url, JSON.stringify(ids))
       .map(response => HttpUtil.extractHttpResponse(response))
       .catch(err => this.errorHandler.handle(err, findTranslation('project.error.removeParentFailed')));

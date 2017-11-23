@@ -22,7 +22,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
 
   constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
     super(fb, route, applicationState);
-  };
+  }
 
   ngOnInit(): any {
     super.ngOnInit();
@@ -50,11 +50,11 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   }
 
   protected update(form: CableReportForm): Application {
-    let application = super.update(form);
+    const application = super.update(form);
     application.name = 'Johtoselvitys'; // Cable reports have no name so set default
     application.startTime = form.reportTimes.startTime;
     application.endTime = form.reportTimes.endTime;
-    let extension = <CableReport>application.extension;
+    const extension = <CableReport>application.extension;
     application.extension = CableReportForm.to(form, extension.validityTime);
 
     application.singleLocation.startTime = application.startTime;

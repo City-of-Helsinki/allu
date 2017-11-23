@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {CustomerType} from '../../../model/customer/customer-type';
 import {EnumUtil} from '../../../util/enum.util';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
@@ -21,10 +21,10 @@ const DEBOUNCE_TIME_MS = 300;
   templateUrl: './customer-info.component.html',
   styleUrls: []
 })
-export class CustomerInfoComponent {
+export class CustomerInfoComponent implements OnInit, OnDestroy {
   @Input() form: FormGroup;
-  @Input() allowSearch: boolean = false;
-  @Input() showInvoicingInfo: boolean = false;
+  @Input() allowSearch = false;
+  @Input() showInvoicingInfo = false;
 
   @Output() customerChange = new EventEmitter<Customer>();
 

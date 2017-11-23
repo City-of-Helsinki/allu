@@ -16,7 +16,7 @@ export class AttachmentHub {
    * Uploads given attachments and adds them to given application
    */
   upload = (applicationId: number, attachments: AttachmentInfo[]) =>
-    this.attachmentService.uploadFiles(applicationId, attachments);
+    this.attachmentService.uploadFiles(applicationId, attachments)
 
   /**
    * Removes given attachment
@@ -44,14 +44,14 @@ export class AttachmentHub {
    */
   defaultAttachmentInfosBy = (applicationType: ApplicationType, attachmentType?: AttachmentType) =>
     this.attachmentService.getDefaultAttachmentInfosByType(applicationType)
-      .map(attachments => this.filterByAttachmentType(attachments, attachmentType));
+      .map(attachments => this.filterByAttachmentType(attachments, attachmentType))
 
   /**
    * Fetches default attachment infos which are for given application type and area
    */
   defaultAttachmentInfosByArea = (applicationType: ApplicationType, areaId: number) =>
     this.defaultAttachmentInfosBy(applicationType)
-      .map(attachments => attachments.filter((a: DefaultAttachmentInfo) => a.fixedLocationId === areaId));
+      .map(attachments => attachments.filter((a: DefaultAttachmentInfo) => a.fixedLocationId === areaId))
 
   /**
    * Saves given default attachment

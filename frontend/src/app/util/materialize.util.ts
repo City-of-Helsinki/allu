@@ -4,7 +4,7 @@ const defaultToastTime = 4000;
 
 export class MaterializeUtil {
   static toast(message: string, timeVisible?: number, cssClass?: string): void {
-    let visible = timeVisible || defaultToastTime;
+    const visible = timeVisible || defaultToastTime;
     materializeToast(message, visible);
   }
 }

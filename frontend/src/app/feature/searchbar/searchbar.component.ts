@@ -4,7 +4,7 @@ import {Subscription} from 'rxjs/Subscription';
 
 import {MapHub} from '../../service/map/map-hub';
 import {PostalAddress} from '../../model/common/postal-address';
-import {Observable} from 'rxjs';
+import {Observable} from 'rxjs/Observable';
 import {NotificationService} from '../../service/notification/notification.service';
 import {ArrayUtil} from '../../util/array-util';
 import {StringUtil} from '../../util/string.util';
@@ -16,7 +16,7 @@ enum BarType {
   SIMPLE,
   BAR,
   ADVANCED
-};
+}
 
 @Component({
   selector: 'searchbar',
@@ -24,7 +24,7 @@ enum BarType {
   styleUrls: ['./searchbar.component.scss']
 })
 export class SearchbarComponent implements OnInit, OnDestroy {
-  @Input() datesRequired: boolean = false;
+  @Input() datesRequired = false;
   @Input() barType: string = BarType[BarType.BAR];
 
   @Output() onShowAdvanced = new EventEmitter<boolean>();

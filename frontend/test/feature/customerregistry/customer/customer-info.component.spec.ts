@@ -17,7 +17,7 @@ describe('CustomerInfoComponent', () => {
   let comp: CustomerInfoComponent;
   let fixture: ComponentFixture<CustomerInfoComponent>;
   let page: CustomerInfoPage;
-  let fb = new FormBuilder();
+  const fb = new FormBuilder();
   let customerForm: FormGroup;
   let debugElement: DebugElement;
 

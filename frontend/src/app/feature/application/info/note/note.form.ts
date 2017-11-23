@@ -14,13 +14,13 @@ export class NoteForm implements ApplicationForm {
   ) {}
 
   static to(form: NoteForm): Note {
-    let note = new Note();
+    const note = new Note();
     note.description = form.description;
     return note;
   }
 
   static from(application: Application): NoteForm {
-    let note = <Note>application.extension || new Note();
+    const note = <Note>application.extension || new Note();
     return new NoteForm(
       application.name,
       new TimePeriod(application.startTime, application.endTime),

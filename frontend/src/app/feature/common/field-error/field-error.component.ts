@@ -37,7 +37,7 @@ export class FieldErrorComponent implements OnInit {
 
   private getField(): AbstractControlWarn {
     if (this.form) {
-      let field = <AbstractControlWarn>this.form.get(this.field);
+      const field = <AbstractControlWarn>this.form.get(this.field);
       if (field) {
         return field;
       }

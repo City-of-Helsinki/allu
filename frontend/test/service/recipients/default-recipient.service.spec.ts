@@ -25,7 +25,7 @@ const ERROR_RESPONSE = new Response(new ResponseOptions({
 
 class ErrorHandlerMock {
   handle(error: any, message?: string) {}
-};
+}
 
 describe('DefaultRecipientService', () => {
   let service: DefaultRecipientService;
@@ -78,7 +78,7 @@ describe('DefaultRecipientService', () => {
 
   it('save() recipient without id should create new', fakeAsync(() => {
     let result: DefaultRecipient;
-    let updatedRecipient: DefaultRecipient = new DefaultRecipient(RECIPIENT_ONE.id, RECIPIENT_ONE.email, RECIPIENT_ONE.applicationType);
+    const updatedRecipient: DefaultRecipient = new DefaultRecipient(RECIPIENT_ONE.id, RECIPIENT_ONE.email, RECIPIENT_ONE.applicationType);
     updatedRecipient.id = 10;
 
     service.saveDefaultRecipient(RECIPIENT_NEW).subscribe(r => result = r);

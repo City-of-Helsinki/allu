@@ -22,7 +22,7 @@ export class DecisionService {
 
   public fetch(applicationId: number): Observable<Decision> {
     console.log('Fetching pdf for application ' + applicationId);
-    let url = DECISION_URL.replace(':appId', String(applicationId));
+    const url = DECISION_URL.replace(':appId', String(applicationId));
 
     return this.authHttp.get(url, {responseType: ResponseContentType.Blob})
       .map(response => response.blob())
@@ -31,7 +31,7 @@ export class DecisionService {
 
   public preview(applicationId: number): Observable<Decision> {
     console.log('Fetching pdf preview for application ' + applicationId);
-    let url = DECISION_PREVIEW_URL.replace(':appId', String(applicationId));
+    const url = DECISION_PREVIEW_URL.replace(':appId', String(applicationId));
 
     return this.authHttp.get(url, {responseType: ResponseContentType.Blob})
       .map(response => response.blob())
@@ -39,7 +39,7 @@ export class DecisionService {
   }
 
   public sendDecision(applicationId: number, emailDetails: DecisionDetails): Observable<HttpResponse> {
-    let url = DECISION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
+    const url = DECISION_DISTRIBUTION_URL.replace(':appId', String(applicationId));
     return this.authHttp.post(url, JSON.stringify(DecisionDetailsMapper.mapFrontend(emailDetails)))
       .map(response => HttpUtil.extractHttpResponse(response))
       .catch(error => this.errorHandler.handle(error, findTranslation('decision.error.send')));

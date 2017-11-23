@@ -70,7 +70,7 @@ export class ApplicationState {
   }
 
   set tags(tags: Array<ApplicationTag>) {
-    let app = this.application;
+    const app = this.application;
     app.applicationTags = tags;
     this.application = app;
   }
@@ -107,7 +107,7 @@ export class ApplicationState {
   }
 
   addAttachment(attachment: AttachmentInfo) {
-    let current = this.pendingAttachments$.getValue();
+    const current = this.pendingAttachments$.getValue();
     this.pendingAttachments$.next(current.concat(attachment));
   }
 
@@ -122,7 +122,7 @@ export class ApplicationState {
     if (attachments.length === 0) {
       return this.loadAttachments(applicationId);
     } else {
-      let result = new Subject<Array<AttachmentInfo>>();
+      const result = new Subject<Array<AttachmentInfo>>();
       this.attachmentHub.upload(applicationId, attachments)
         .subscribe(
           items => result.next(items),
@@ -138,7 +138,7 @@ export class ApplicationState {
       return this.attachmentHub.remove(this.application.id, attachmentId)
         .do(response => this.loadAttachments(this.application.id).subscribe());
     } else {
-      let pending = this.pendingAttachments$.getValue();
+      const pending = this.pendingAttachments$.getValue();
       Some(index).do(i => this.pendingAttachments$.next(pending.splice(i, 1)));
       return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
     }
@@ -222,7 +222,7 @@ export class ApplicationState {
   }
 
   private savePendingAttachments(application: Application): Observable<Application> {
-    let result = new Subject<Application>();
+    const result = new Subject<Application>();
 
     this.saveAttachments(application.id, this.pendingAttachments$.getValue())
       .subscribe(

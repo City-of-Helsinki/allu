@@ -11,14 +11,14 @@ export class AttachmentInfo {
     public creationTime?: Date,
     public handlerName?: string,
     public file?: any
-  ) {};
+  ) {}
 
   get uiCreationTime(): string {
     return TimeUtil.getUiDateTimeString(this.creationTime);
   }
 
   static fromFile(file: File): AttachmentInfo {
-    let attachment = new AttachmentInfo();
+    const attachment = new AttachmentInfo();
     attachment.name = file.name;
     attachment.file = file;
     return attachment;

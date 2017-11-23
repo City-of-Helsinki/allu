@@ -20,7 +20,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private authenticate(route: ActivatedRouteSnapshot, redirectUrl: string): Observable<boolean> {
-    let code = route.queryParams['code'];
+    const code = route.queryParams['code'];
     if (code) {
       return this.authService.loginOAuth(code).map(response => true);
     } else {

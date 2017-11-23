@@ -20,7 +20,7 @@ const headerText = 'Hakija';
   selector: 'contact',
   template: ''
 })
-class ContactComponentMock {
+class MockContactComponent {
   @Input() parentForm: FormGroup;
   @Input() customerId: number;
   @Input() customerRoleType: string;
@@ -50,7 +50,7 @@ describe('CustomerComponent', () => {
     invoiceRecipientRadio: HTMLInputElement;
 
     addPageElements() {
-      let debugElement = fixture.debugElement;
+      const debugElement = fixture.debugElement;
       this.cardTitle = debugElement.query(By.css('mat-card-title')).nativeElement;
       this.countryInput = debugElement.query(By.css('[formControlName="country"]')).nativeElement;
       this.customerNameInput = debugElement.query(By.css('[formControlName="name"]')).nativeElement;
@@ -66,7 +66,7 @@ describe('CustomerComponent', () => {
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
-      declarations: [CustomerComponent, ContactComponentMock, CustomerInfoComponent],
+      declarations: [CustomerComponent, MockContactComponent, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerHub, useClass: CustomerHubMock}
@@ -93,7 +93,7 @@ describe('CustomerComponent', () => {
   }));
 
   it('should fill the form with input customer', fakeAsync(() => {
-    let customer = new Customer();
+    const customer = new Customer();
     customer.id = 1;
     customer.name = 'NameTest';
     customer.registryKey = '12345';

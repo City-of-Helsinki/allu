@@ -18,7 +18,7 @@ export class DistributionMapper {
   }
 
   static mapBackend(backendEntry: BackendDistributionEntry): DistributionEntry {
-    let postalAddress = Some(backendEntry.postalAddress)
+    const postalAddress = Some(backendEntry.postalAddress)
       .map(address => new PostalAddress(address.streetAddress, address.postalCode, address.city))
       .orElse(undefined);
 

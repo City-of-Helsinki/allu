@@ -46,7 +46,7 @@ export class EventDetailsForm {
   }
 
   static toEvent(form: EventDetailsForm, type: ApplicationType): Event {
-    let event = new Event();
+    const event = new Event();
     event.nature = form.nature;
     event.description = form.description;
     event.url = form.url;

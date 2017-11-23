@@ -38,12 +38,12 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
               route: ActivatedRoute,
               applicationState: ApplicationState) {
     super(fb, route, applicationState);
-  };
+  }
 
   ngOnInit(): any {
     super.ngOnInit();
-    let excavation = <ExcavationAnnouncement>this.application.extension || new ExcavationAnnouncement();
-    let form = ExcavationAnnouncementForm.from(this.application, excavation);
+    const excavation = <ExcavationAnnouncement>this.application.extension || new ExcavationAnnouncement();
+    const form = ExcavationAnnouncementForm.from(this.application, excavation);
     this.applicationForm.patchValue(form);
     this.patchRelatedCableReport(excavation);
 
@@ -70,7 +70,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   }
 
   protected update(form: ExcavationAnnouncementForm): Application {
-    let application = super.update(form);
+    const application = super.update(form);
     application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;

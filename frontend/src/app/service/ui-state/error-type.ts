@@ -20,12 +20,12 @@ const errorTypeToMessage: Map<ErrorType, string> = createMappings();
 /**
  * Given ErrorType is converted to readable form
  */
-export function message(errorType: ErrorType): string {
+export function messageToReadable(errorType: ErrorType): string {
   return errorTypeToMessage.get(errorType);
 }
 
 function createMappings(): Map<ErrorType, string> {
-  let map = new Map<ErrorType, string>();
+  const map = new Map<ErrorType, string>();
   map.set(ErrorType.GEOLOCATION_SEARCH_FAILED, translations.geolocation.error.searchFailed);
   map.set(ErrorType.APPLICATION_SEARCH_FAILED, translations.application.error.searchFailed);
   map.set(ErrorType.APPLICATION_WORKQUEUE_SEARCH_FAILED, translations.application.error.searchFailed);

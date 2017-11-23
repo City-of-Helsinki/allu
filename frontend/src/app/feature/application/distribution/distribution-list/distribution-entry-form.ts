@@ -14,7 +14,7 @@ export class DistributionEntryForm {
   ) {}
 
   static to(form: DistributionEntryForm): DistributionEntry {
-    let entry = new DistributionEntry(form.id, form.name);
+    const entry = new DistributionEntry(form.id, form.name);
     entry.uiType = form.type;
     entry.email = form.email;
     if (form.streetAddress) {
@@ -24,7 +24,7 @@ export class DistributionEntryForm {
   }
 
   static from(entry: DistributionEntry): DistributionEntryForm {
-    let form = new DistributionEntryForm(entry.id, entry.name, entry.uiType, entry.email);
+    const form = new DistributionEntryForm(entry.id, entry.name, entry.uiType, entry.email);
     Some(entry.postalAddress).do(address => {
       form.streetAddress = address.streetAddress;
       form.postalCode = address.postalCode;

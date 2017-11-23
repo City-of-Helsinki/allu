@@ -12,7 +12,7 @@ export class ArrayUtil {
 
   static first<T>(array: Array<T>, filterFn?: (item: T) => boolean): T {
     if (array) {
-      let filter = filterFn || ((item: T) => true);
+      const filter = filterFn || ((item: T) => true);
       return array.filter(filter)[0];
     } else {
       return undefined;
@@ -53,9 +53,9 @@ export class ArrayUtil {
 
   private static compareNumeric(left: Array<number>, right: Array<number>): number {
     while (left.length && right.length) {
-      let leftHead = left.shift();
-      let rightHead = right.shift();
-      let result = leftHead - rightHead;
+      const leftHead = left.shift();
+      const rightHead = right.shift();
+      const result = leftHead - rightHead;
       if (result) {
         return result; // We got difference between values since result <> 0
       }
@@ -69,7 +69,7 @@ export class ArrayUtil {
 
   private static toParts(full): Array<[number, string]> {
     if (!!full) {
-      let parts: Array<[number, string]> = [];
+      const parts: Array<[number, string]> = [];
       full.replace(DIGITS, (match, numbers, text) => parts.push([numbers || Infinity, text || '']));
       return parts;
     } else {
@@ -79,9 +79,9 @@ export class ArrayUtil {
 
   private static compareParts(left: Array<[number, string]>, right: Array<[number, string]>): number {
     while (left.length && right.length) {
-      let leftHead = left.shift();
-      let rightHead = right.shift();
-      let result = (leftHead[0] - rightHead[0]) || leftHead[1].localeCompare(rightHead[1], 'fi', { sensitivity: 'accent'});
+      const leftHead = left.shift();
+      const rightHead = right.shift();
+      const result = (leftHead[0] - rightHead[0]) || leftHead[1].localeCompare(rightHead[1], 'fi', { sensitivity: 'accent'});
       if (result) {
         return result; // We got difference between values since result <> 0
       }

@@ -19,7 +19,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
 
   constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
     super(fb, route, applicationState);
-  };
+  }
 
   ngOnInit(): any {
     super.ngOnInit();
@@ -30,7 +30,7 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   }
 
   protected update(form: EventForm): Application {
-    let application = super.update(form);
+    const application = super.update(form);
 
     application.name = form.event.name;
     application.startTime = form.event.structureTimes.startTime || form.event.eventTimes.startTime;

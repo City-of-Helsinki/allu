@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {UIState} from './ui-state';
 import {toast} from 'angular2-materialize';
 import {ErrorInfo} from './error-info';
-import {message} from './error-type';
+import {messageToReadable} from './error-type';
 
 /**
  * Class for handling UIState changes and notify
@@ -32,37 +32,37 @@ export class UIStateHub {
   public uiState = () => this.uiState$.asObservable();
 
   /**
-   * For adding a notification message
+   * For adding a notification messageToReadable
    */
   public addMessage(message: string) {
-    let currentState: UIState = this.uiState$.getValue();
+    const currentState: UIState = this.uiState$.getValue();
     this.uiState$.next(new UIState(message, currentState.error));
     return Observable.empty();
   }
 
   /**
-   * For clearing current notification message
+   * For clearing current notification messageToReadable
    */
   public clearMessage(): void {
-    let currentState: UIState = this.uiState$.getValue();
+    const currentState: UIState = this.uiState$.getValue();
     this.uiState$.next(new UIState(undefined, currentState.error));
   }
 
   /**
-   * For adding an error message
+   * For adding an error messageToReadable
    */
   public addError(error: ErrorInfo) {
-    let currentState: UIState = this.uiState$.getValue();
+    const currentState: UIState = this.uiState$.getValue();
     this.uiState$.next(new UIState(currentState.message, error));
-    this.displayedMessage$.next(message(error.type));
+    this.displayedMessage$.next(messageToReadable(error.type));
     return Observable.empty();
   }
 
   /**
-   * For clearing current error message
+   * For clearing current error messageToReadable
    */
   public clearError(): void {
-    let currentState: UIState = this.uiState$.getValue();
+    const currentState: UIState = this.uiState$.getValue();
     this.uiState$.next(new UIState(currentState.message, undefined));
   }
 

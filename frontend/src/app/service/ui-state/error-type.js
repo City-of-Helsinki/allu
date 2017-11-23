@@ -15,7 +15,7 @@ var ErrorType;
     ErrorType[ErrorType["DEFAULT_TEXT_SAVE_FAILED"] = 9] = "DEFAULT_TEXT_SAVE_FAILED";
 })(ErrorType = exports.ErrorType || (exports.ErrorType = {}));
 /**
- * Contains all mappings from ErrorType -> message
+ * Contains all mappings from ErrorType -> messageToReadable
  */
 var errorTypeToMessage = createMappings();
 /**

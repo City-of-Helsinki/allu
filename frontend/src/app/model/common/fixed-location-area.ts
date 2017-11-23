@@ -20,7 +20,7 @@ export class FixedLocationArea {
 
   hasSectionIds(sectionIds: Array<number>): boolean {
     if (sectionIds.length > 0) {
-      let areaSectionids = this.sections.map(s => s.id);
+      const areaSectionids = this.sections.map(s => s.id);
       return sectionIds.every(id => areaSectionids.indexOf(id) >= 0);
     } else {
       return false;

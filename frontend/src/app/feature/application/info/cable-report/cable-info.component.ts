@@ -58,7 +58,7 @@ export class CableInfoComponent implements OnInit {
 
   editDefaultTexts(type: string) {
     this.dialogRef = this.dialog.open<DefaultTextModalComponent>(DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG);
-    let comp = this.dialogRef.componentInstance;
+    const comp = this.dialogRef.componentInstance;
     comp.type = DefaultTextType[type];
     comp.applicationType = ApplicationType.CABLE_REPORT;
 
@@ -90,7 +90,7 @@ export class CableInfoComponent implements OnInit {
   }
 
   private createCableInfoEntry(type: string) {
-    let additionalInfo = Some(this.cableReport.infoEntries.find(entry => entry.type === type))
+    const additionalInfo = Some(this.cableReport.infoEntries.find(entry => entry.type === type))
       .map(entry => entry.additionalInfo)
       .orElse('') ;
 

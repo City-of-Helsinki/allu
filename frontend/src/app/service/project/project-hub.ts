@@ -33,13 +33,13 @@ export class ProjectHub {
    * Sets projects applications as given list of applications (empty array of id's removes all applications from project)
    */
   public updateProjectApplications = (id: number, applicationIds: Array<number>) =>
-    this.projectService.updateProjectApplications(id, applicationIds);
+    this.projectService.updateProjectApplications(id, applicationIds)
 
   /**
    * Adds single application to project
    */
   public addProjectApplication = (id: number, applicationId: number) =>
-    this.projectService.addProjectApplication(id, applicationId);
+    this.projectService.addProjectApplication(id, applicationId)
 
   /**
    * Fetches projects applications

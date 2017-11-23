@@ -45,17 +45,17 @@ export class CustomerHub {
    * Saves contacts for given customer
    */
   public saveContactsForCustomer = (customerId: number, contacts: Array<Contact>) =>
-    this.customerService.saveCustomerWithContacts(new CustomerWithContacts(undefined, undefined, contacts));
+    this.customerService.saveCustomerWithContacts(new CustomerWithContacts(undefined, undefined, contacts))
 
   /**
    * Saves customer with his / hers contacts
    */
   public saveCustomerWithContacts = (customerWithContacts: CustomerWithContacts) =>
-    this.customerService.saveCustomerWithContacts(customerWithContacts);
+    this.customerService.saveCustomerWithContacts(customerWithContacts)
 
   /**
    * Fetches all contacts of given customer
    */
   public findCustomerActiveContacts = (customerId: number) => this.customerService.findCustomerContacts(customerId)
-    .map(contacts => contacts.filter(c => c.active));
+    .map(contacts => contacts.filter(c => c.active))
 }

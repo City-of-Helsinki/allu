@@ -6,7 +6,7 @@ export class CommaSeparatedPipe implements PipeTransform {
     if (value instanceof Array) {
       return value.join(', ');
     } else {
-      let last = isLast && isLast === true;
+      const last = isLast && isLast === true;
       return last ? value : (value + ', ');
     }
   }

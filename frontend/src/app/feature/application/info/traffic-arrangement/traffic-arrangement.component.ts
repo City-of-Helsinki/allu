@@ -19,16 +19,16 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
 
   constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
     super(fb, route, applicationState);
-  };
+  }
 
   ngOnInit(): any {
     super.ngOnInit();
-    let arrangement = <TrafficArrangement>this.application.extension || new TrafficArrangement();
+    const arrangement = <TrafficArrangement>this.application.extension || new TrafficArrangement();
     this.applicationForm.patchValue(TrafficArrangementForm.from(this.application, arrangement));
   }
 
   protected update(form: TrafficArrangementForm): Application {
-    let application = super.update(form);
+    const application = super.update(form);
     application.name = 'Liikennejärjestely'; // Traffic arrangements have no name so set default
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;

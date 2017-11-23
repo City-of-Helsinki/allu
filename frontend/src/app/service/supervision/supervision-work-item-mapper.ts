@@ -13,7 +13,7 @@ import {ApplicationType} from '../../model/application/type/application-type';
 
 export class SupervisionSearchMapper {
   static mapWorkItem(backendWorkItem: BackendSupervisionWorkItem): SupervisionWorkItem {
-    let workItem = new SupervisionWorkItem();
+    const workItem = new SupervisionWorkItem();
     workItem.id = backendWorkItem.id;
     workItem.applicationId = backendWorkItem.applicationId;
     workItem.type = SupervisionTaskType[backendWorkItem.type];

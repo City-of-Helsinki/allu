@@ -23,7 +23,7 @@ export class ApplicationStateMock {
 
   constructor() {
     this._application = new Application(1);
-    let location = new Location(1);
+    const location = new Location(1);
     location.cityDistrictId = 1;
     this._application.locations.push(location);
   }

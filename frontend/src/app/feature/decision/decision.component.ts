@@ -38,7 +38,7 @@ export class DecisionComponent implements OnInit {
   }
 
   private providePdf(decision: Decision): void {
-    let url = URL.createObjectURL(decision.pdf);
+    const url = URL.createObjectURL(decision.pdf);
     this.pdfUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
     this.pdfDownloadUrl = this.sanitizer.bypassSecurityTrustUrl(url);
     this.pdfLoaded = true;

@@ -20,7 +20,7 @@ export class LocationForm {
     public info?: string) {}
 
   static from(location: Location): LocationForm {
-    let form = new LocationForm();
+    const form = new LocationForm();
     form.id = location.id;
     form.locationKey = location.locationKey;
     form.locationVersion = location.locationVersion;
@@ -43,7 +43,7 @@ export class LocationForm {
   }
 
   static to(form: LocationForm): Location {
-    let location = new Location();
+    const location = new Location();
     location.id = form.id;
     location.locationKey = form.locationKey;
     location.locationVersion = form.locationVersion;

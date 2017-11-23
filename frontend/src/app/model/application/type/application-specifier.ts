@@ -76,7 +76,7 @@ export interface KindsWithSpecifiers {
 
 export function toKindsWithSpecifiers(specifierEntries: Array<SpecifierEntry>) {
   return specifierEntries.reduce((prev: KindsWithSpecifiers, cur: SpecifierEntry) => {
-    let next = ObjectUtil.clone(prev);
+    const next = ObjectUtil.clone(prev);
     if (next[cur.kind] === undefined) {
       next[cur.kind] = [];
     }

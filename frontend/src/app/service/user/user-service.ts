@@ -51,7 +51,7 @@ export class UserService {
   }
 
   public getUser(userName: string): Observable<User> {
-    let url = USER_BY_USERNAME_URL + '/' + userName;
+    const url = USER_BY_USERNAME_URL + '/' + userName;
     return this.authHttp.get(url)
       .map(response => UserMapper.mapBackend(response.json()))
       .catch(err => this.errorHandler.handle(HttpUtil.extractMessage(err)));

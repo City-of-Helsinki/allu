@@ -42,8 +42,8 @@ export class AttachmentComponent implements OnInit {
   }
 
   save(): void {
-    let form = this.attachmentForm.value;
-    let attachment = AttachmentInfo.fromForm(form);
+    const form = this.attachmentForm.value;
+    const attachment = AttachmentInfo.fromForm(form);
     this.onSave.emit(attachment);
   }
 
@@ -53,7 +53,7 @@ export class AttachmentComponent implements OnInit {
 
   attachmentSelected(files: any[]): void {
     if (files && files.length > 0) {
-      let file = files[0];
+      const file = files[0];
       this.attachmentForm.patchValue({name: file.name, file: file});
     }
   }

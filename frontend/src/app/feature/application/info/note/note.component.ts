@@ -18,7 +18,7 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
 
   constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
     super(fb, route, applicationState);
-  };
+  }
 
   ngOnInit(): any {
     super.ngOnInit();
@@ -26,7 +26,7 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
   }
 
   protected update(form: NoteForm) {
-    let application = super.update(form);
+    const application = super.update(form);
     application.name = form.name;
     application.startTime = form.validityTimes.startTime;
     application.endTime = form.validityTimes.endTime;

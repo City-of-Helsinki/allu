@@ -48,7 +48,7 @@ export class DefaultTextModalComponent implements OnInit {
   }
 
   add(defaultText: DefaultText) {
-    let added = defaultText ? defaultText : DefaultText.ofType(this.applicationType, this.type);
+    const added = defaultText ? defaultText : DefaultText.ofType(this.applicationType, this.type);
     this.defaultTexts.push(this.createEntry(added));
   }
 
@@ -74,7 +74,7 @@ export class DefaultTextModalComponent implements OnInit {
   }
 
   confirm() {
-    let changed =  this.defaultTexts.controls
+    const changed =  this.defaultTexts.controls
       .filter(c => c.dirty)
       .map(c => c.value)
       .filter(value => !StringUtil.isEmpty(value.text));

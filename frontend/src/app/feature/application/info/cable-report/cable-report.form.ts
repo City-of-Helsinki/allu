@@ -8,63 +8,6 @@ import {ApplicationStatus} from '../../../../model/application/application-statu
 import {OrdererId} from '../../../../model/application/cable-report/orderer-id';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 
-export class CableReportForm implements ApplicationForm {
-  constructor(
-    public validityTime?: Date,
-    public cableSurveyRequired?: boolean,
-    public mapUpdated?: boolean,
-    public constructionWork?: boolean,
-    public maintenanceWork?: boolean,
-    public emergencyWork?: boolean,
-    public propertyConnectivity?: boolean,
-    public reportTimes?: TimePeriod,
-    public workDescription?: string,
-    public cableInfo?: CableInfoForm,
-    public ordererId?: OrdererIdForm,
-    public calculatedPrice?: number
-  ) {}
-
-  static to(form: CableReportForm, validityTime: Date): CableReport {
-    let cableReport = new CableReport();
-    cableReport.validityTime = validityTime;
-    cableReport.cableSurveyRequired = form.cableSurveyRequired;
-    cableReport.mapUpdated = form.mapUpdated;
-    cableReport.constructionWork = form.constructionWork;
-    cableReport.maintenanceWork = form.maintenanceWork;
-    cableReport.emergencyWork = form.emergencyWork;
-    cableReport.propertyConnectivity = form.propertyConnectivity;
-    cableReport.workDescription = form.workDescription;
-    cableReport.ordererId = OrdererIdForm.to(form.ordererId);
-    return CableInfoForm.to(form.cableInfo, cableReport);
-  }
-
-  static from(application: Application): CableReportForm {
-    let cableReport = <CableReport>application.extension || new CableReport();
-    return new CableReportForm(
-      this.validityTime(ApplicationStatus[application.status], cableReport),
-      cableReport.cableSurveyRequired,
-      cableReport.mapUpdated,
-      cableReport.constructionWork,
-      cableReport.maintenanceWork,
-      cableReport.emergencyWork,
-      cableReport.propertyConnectivity,
-      new TimePeriod(application.startTime, application.endTime),
-      cableReport.workDescription,
-      CableInfoForm.from(cableReport),
-      OrdererIdForm.from(cableReport.ordererId),
-      application.calculatedPriceEuro
-    );
-  }
-
-  private static validityTime(status: ApplicationStatus, cableReport: CableReport): Date {
-    if (status >= ApplicationStatus.DECISION) {
-      return cableReport.validityTime;
-    } else {
-      return TimeUtil.add(new Date(), 1, 'months');
-    }
-  }
-}
-
 export class CableInfoForm {
   constructor(
     public selectedCableInfoTypes?: Array<string>,
@@ -81,7 +24,7 @@ export class CableInfoForm {
   }
 
   static from(cableReport: CableReport): CableInfoForm {
-    let cableInfoForm = new CableInfoForm();
+    const cableInfoForm = new CableInfoForm();
     cableInfoForm.mapExtractCount = cableReport.mapExtractCount;
     cableInfoForm.cableInfoEntries = cableReport.infoEntries;
     cableInfoForm.selectedCableInfoTypes = cableReport.infoEntries.map(entry => entry.type);
@@ -106,5 +49,62 @@ export class OrdererIdForm {
 
   static createDefault() {
     return new OrdererIdForm(undefined, CustomerRoleType[CustomerRoleType.APPLICANT], 0);
+  }
+}
+
+export class CableReportForm implements ApplicationForm {
+  constructor(
+    public validityTime?: Date,
+    public cableSurveyRequired?: boolean,
+    public mapUpdated?: boolean,
+    public constructionWork?: boolean,
+    public maintenanceWork?: boolean,
+    public emergencyWork?: boolean,
+    public propertyConnectivity?: boolean,
+    public reportTimes?: TimePeriod,
+    public workDescription?: string,
+    public cableInfo?: CableInfoForm,
+    public ordererId?: OrdererIdForm,
+    public calculatedPrice?: number
+  ) {}
+
+  static to(form: CableReportForm, validityTime: Date): CableReport {
+    const cableReport = new CableReport();
+    cableReport.validityTime = validityTime;
+    cableReport.cableSurveyRequired = form.cableSurveyRequired;
+    cableReport.mapUpdated = form.mapUpdated;
+    cableReport.constructionWork = form.constructionWork;
+    cableReport.maintenanceWork = form.maintenanceWork;
+    cableReport.emergencyWork = form.emergencyWork;
+    cableReport.propertyConnectivity = form.propertyConnectivity;
+    cableReport.workDescription = form.workDescription;
+    cableReport.ordererId = OrdererIdForm.to(form.ordererId);
+    return CableInfoForm.to(form.cableInfo, cableReport);
+  }
+
+  static from(application: Application): CableReportForm {
+    const cableReport = <CableReport>application.extension || new CableReport();
+    return new CableReportForm(
+      this.validityTime(ApplicationStatus[application.status], cableReport),
+      cableReport.cableSurveyRequired,
+      cableReport.mapUpdated,
+      cableReport.constructionWork,
+      cableReport.maintenanceWork,
+      cableReport.emergencyWork,
+      cableReport.propertyConnectivity,
+      new TimePeriod(application.startTime, application.endTime),
+      cableReport.workDescription,
+      CableInfoForm.from(cableReport),
+      OrdererIdForm.from(cableReport.ordererId),
+      application.calculatedPriceEuro
+    );
+  }
+
+  private static validityTime(status: ApplicationStatus, cableReport: CableReport): Date {
+    if (status >= ApplicationStatus.DECISION) {
+      return cableReport.validityTime;
+    } else {
+      return TimeUtil.add(new Date(), 1, 'months');
+    }
   }
 }

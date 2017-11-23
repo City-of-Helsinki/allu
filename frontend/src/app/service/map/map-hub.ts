@@ -54,7 +54,7 @@ export class MapHub {
     this.locationService.getFixedLocations().subscribe(fls => this.fixedLocations$.next(fls));
 
     this.locationService.districts().subscribe(ds =>  {
-      let districts = ds
+      const districts = ds
         .filter(d => d.districtId !== 0) // Ignore 0 Aluemeri
         .sort(ArrayUtil.naturalSort((district: CityDistrict) => district.name));
       this.cityDistricts$.next(districts);
@@ -124,14 +124,14 @@ export class MapHub {
   public fixedLocationAreas = () => this.fixedLocations$.asObservable();
 
   public fixedLocationAreasByIds = (ids: Array<number>) => this.fixedLocationAreas()
-    .map(areas => areas.filter(a => ids.indexOf(a.id) >= 0));
+    .map(areas => areas.filter(a => ids.indexOf(a.id) >= 0))
 
   /**
    * Used for fetching fixed location area by id
    */
   public fixedLocationAreaById = (id: number) => this.fixedLocationAreas()
     .map(areas => areas.find(a => a.id === id))
-    .filter(area => !!area);
+    .filter(area => !!area)
 
   /**
    * Fetches areas containing given sections
@@ -139,7 +139,7 @@ export class MapHub {
   public fixedLocationAreaBySectionIds = (ids: Array<number>) => this.fixedLocationAreas()
     .map(areas => areas.filter(a => a.hasSectionIds(ids)))
     .filter(areas => areas.length > 0)
-    .map(areas => areas[0]);
+    .map(areas => areas[0])
 
   /**
    * Fetches all available fixed location sections
@@ -147,19 +147,19 @@ export class MapHub {
   public fixedLocationSections = () => this.fixedLocationAreas()
     .map(areas => areas
       .map(area => area.sections)
-      .reduce((acc, cur) => acc.concat(cur), []));
+      .reduce((acc, cur) => acc.concat(cur), []))
 
   /**
    * Used for fetching sections by given ids
    */
   public fixedLocationSectionsBy = (ids: Array<number>) => this.fixedLocationSections()
-    .map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0));
+    .map(fxs => fxs.filter(fx => ids.indexOf(fx.id) >= 0))
 
   /**
    * Adds fixed locations sections with given ids as selected
    */
   public selectFixedLocationSections = (sectionIds: Array<number>) => this.fixedLocationSectionsBy(sectionIds)
-    .subscribe(fxs => this.selectedFixedLocations$.next(fxs));
+    .subscribe(fxs => this.selectedFixedLocations$.next(fxs))
 
   /**
    * Observable to provide selected fixed locations
@@ -176,7 +176,7 @@ export class MapHub {
    */
   public districtById = (id: number) => this.districts()
     .map(ds => ds.find(d => d.id === id))
-    .filter(d => !!d);
+    .filter(d => !!d)
 
   /**
    * Used for fetching multiple city district by ids

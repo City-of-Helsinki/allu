@@ -4,6 +4,16 @@ import {TimeUtil} from '../../util/time.util';
 import {ApplicationFieldChange} from '../../model/application/application-change/application-field-change';
 import {BackendApplicationFieldChange} from '../backend-model/backend-application-field-change';
 
+class ApplicationFieldChangeMapper {
+  public static mapBackend(backendFieldChange: BackendApplicationFieldChange): ApplicationFieldChange {
+    return new ApplicationFieldChange(
+      backendFieldChange.fieldName,
+      backendFieldChange.oldValue,
+      backendFieldChange.newValue
+    );
+  }
+}
+
 export class ApplicationChangeMapper {
   public static mapBackend(backendChange: BackendApplicationChange): ApplicationChange {
     return new ApplicationChange(
@@ -12,16 +22,6 @@ export class ApplicationChangeMapper {
       backendChange.newStatus,
       TimeUtil.dateFromBackend(backendChange.changeTime),
       backendChange.fieldChanges ? backendChange.fieldChanges.map(fc => ApplicationFieldChangeMapper.mapBackend(fc)) : []
-    );
-  }
-}
-
-class ApplicationFieldChangeMapper {
-  public static mapBackend(backendFieldChange: BackendApplicationFieldChange): ApplicationFieldChange {
-    return new ApplicationFieldChange(
-      backendFieldChange.fieldName,
-      backendFieldChange.oldValue,
-      backendFieldChange.newValue
     );
   }
 }

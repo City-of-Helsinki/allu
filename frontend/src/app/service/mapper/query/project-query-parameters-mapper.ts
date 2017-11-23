@@ -15,7 +15,7 @@ export class ProjectQueryParametersMapper {
   }
 
   private static mapProjectParameters(query: ProjectSearchQuery): Array<BackendQueryParameter> {
-    let queryParameters: Array<BackendQueryParameter> = [];
+    const queryParameters: Array<BackendQueryParameter> = [];
     Some(query.id).do(id => QueryParametersMapper.mapParameter(queryParameters, 'id', id.toString()));
     QueryParametersMapper.mapDateParameter(queryParameters, START_TIME_FIELD, MIN_DATE, query.endTime);
     QueryParametersMapper.mapDateParameter(queryParameters, END_TIME_FIELD, query.startTime, MAX_DATE);
@@ -31,8 +31,8 @@ export class ProjectQueryParametersMapper {
     queryParameters: Array<BackendQueryParameter>,
     onlyActive: boolean) {
     if (onlyActive) {
-      let startTimeParameter = QueryParametersMapper.createDateParameter(START_TIME_FIELD, MIN_DATE, new Date());
-      let endTimeParameter = QueryParametersMapper.createDateParameter(END_TIME_FIELD, new Date(), MAX_DATE);
+      const startTimeParameter = QueryParametersMapper.createDateParameter(START_TIME_FIELD, MIN_DATE, new Date());
+      const endTimeParameter = QueryParametersMapper.createDateParameter(END_TIME_FIELD, new Date(), MAX_DATE);
       queryParameters.push(startTimeParameter);
       queryParameters.push(endTimeParameter);
     }

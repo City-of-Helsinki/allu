@@ -20,7 +20,7 @@ export class DefaultTextService {
   }
 
   public load(applicationType: ApplicationType): Observable<Array<DefaultText>> {
-    let url = DEFAULT_TEXTS_BY_APPLICATION_TYPE_URL.replace(':appType', ApplicationType[applicationType]);
+    const url = DEFAULT_TEXTS_BY_APPLICATION_TYPE_URL.replace(':appType', ApplicationType[applicationType]);
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(texts => texts.map(text => DefaultTextMapper.mapBackend(text)))
@@ -29,7 +29,7 @@ export class DefaultTextService {
 
   public save(text: DefaultText): Observable<DefaultText> {
     if (text.id) {
-      let url = DEFAULT_TEXTS_URL + '/' + text.id;
+      const url = DEFAULT_TEXTS_URL + '/' + text.id;
       return this.authHttp.put(url, JSON.stringify(DefaultTextMapper.mapFrontend(text)))
         .map(response => DefaultTextMapper.mapBackend(response.json()))
         .catch(err => this.errorHandler.handle(err, findTranslation('defaultText.error.saveFailed')));
@@ -41,7 +41,7 @@ export class DefaultTextService {
   }
 
   public remove(id: number): Observable<HttpStatus> {
-    let url = DEFAULT_TEXTS_URL + '/' + id;
+    const url = DEFAULT_TEXTS_URL + '/' + id;
     return this.authHttp.delete(url)
       .map(response => HttpUtil.extractHttpResponse(response))
       .catch(err => this.errorHandler.handle(err, findTranslation('defaultText.error.saveFailed')));

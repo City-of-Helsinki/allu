@@ -64,7 +64,7 @@ export class QueryParametersMapper {
     parameterName: string,
     parameterValue: Array<string>): void {
     if (parameterValue) {
-      let filteredParameterValue = parameterValue.filter(value => !!value);
+      const filteredParameterValue = parameterValue.filter(value => !!value);
       if (filteredParameterValue.length !== 0) {
         queryParameters.push(QueryParametersMapper.createArrayParameter(parameterName, filteredParameterValue));
       }
@@ -91,7 +91,7 @@ export class QueryParametersMapper {
   }
 
   public static removeExtraWhitespace(str: string): string {
-    let retVal = undefined;
+    let retVal;
     if (str) {
       retVal = str.trim();
       retVal = retVal.replace('\s+', ' ');

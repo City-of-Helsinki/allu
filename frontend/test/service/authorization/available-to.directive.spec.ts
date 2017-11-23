@@ -14,7 +14,7 @@ class TestComponent {}
 const AVAILABLE = 'AVAILABLE';
 
 describe('AvailableToDirective', () => {
-  let currentUserMock = CurrentUserMock.create(true, true);
+  const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

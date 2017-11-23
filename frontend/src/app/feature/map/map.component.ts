@@ -21,13 +21,13 @@ import {Router} from '@angular/router';
   styleUrls: []
 })
 export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Input() draw: boolean = false;
-  @Input() edit: boolean = false;
-  @Input() zoom: boolean = false;
-  @Input() selection: boolean = false;
+  @Input() draw = false;
+  @Input() edit = false;
+  @Input() zoom = false;
+  @Input() selection = false;
   @Input() applicationId: number;
   @Input() projectId: number;
-  @Input() showOnlyApplicationArea: boolean = false;
+  @Input() showOnlyApplicationArea = false;
 
   @Output() editedItemCountChanged = new EventEmitter<number>();
 
@@ -92,14 +92,14 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private applicationShouldBeDrawn(application: Application): boolean {
-    let allAreDrawn = !this.showOnlyApplicationArea && this.projectId === undefined;
-    let isSelectedApplication = this.showOnlyApplicationArea && application.id === this.applicationId;
+    const allAreDrawn = !this.showOnlyApplicationArea && this.projectId === undefined;
+    const isSelectedApplication = this.showOnlyApplicationArea && application.id === this.applicationId;
     return isSelectedApplication || allAreDrawn || application.belongsToProject(this.projectId);
   }
 
   private drawFocusedLocations(locations: Array<Location>): void {
     this.mapState.clearFocused();
-    let geometries = locations.map(loc => loc.geometry).filter(geometry => !!geometry);
+    const geometries = locations.map(loc => loc.geometry).filter(geometry => !!geometry);
     this.mapState.drawFocused(geometries);
   }
 
@@ -115,7 +115,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
     if (locations.some(loc => loc.hasFixedGeometry())) {
       this.mapState.setDynamicControls(false);
     } else {
-      let geometryCount = locations.reduce((cur, acc) => cur + acc.geometryCount(), 0);
+      const geometryCount = locations.reduce((cur, acc) => cur + acc.geometryCount(), 0);
       this.editedItemCountChanged.emit(geometryCount);
     }
   }
@@ -123,7 +123,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   private drawFixedLocations(fixedLocations: Array<FixedLocationSection>) {
     this.mapState.clearEdited();
 
-    let geometries = fixedLocations.map(fl => fl.geometry);
+    const geometries = fixedLocations.map(fl => fl.geometry);
     if (geometries.length > 0) {
       this.mapState.drawFixedLocations(geometries);
       this.mapState.fitEditedToView();
@@ -134,7 +134,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private addShape(shapeAdded: ShapeAdded) {
-    let shape = this.featuresToGeoJSON(shapeAdded.features);
+    const shape = this.featuresToGeoJSON(shapeAdded.features);
     this.mapHub.addShape(shape);
 
     if (shapeAdded.affectsControls) {
@@ -143,7 +143,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private featuresToGeoJSON(featureGroup: L.FeatureGroup): GeoJSON.FeatureCollection<GeoJSON.GeometryObject> {
-    let features = L.featureGroup();
+    const features = L.featureGroup();
     featureGroup.eachLayer(l => {
       if (l instanceof Circle) {
         // Convert circle to polygon since GeoJSON does not support circle
@@ -157,11 +157,11 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private applicationPopup(application: Application): MapPopup {
-    let header = L.DomUtil.create('h1', 'popup-header clickable');
+    const header = L.DomUtil.create('h1', 'popup-header clickable');
     header.innerHTML = application.name;
     header.onclick = (event: MouseEvent) => this.router.navigate(['applications', application.id, 'summary']);
 
-    let contentRows = [
+    const contentRows = [
       application.applicationId,
       findTranslation(['application.type', application.type]),
       application.uiStartTime + ' - ' + application.uiEndTime
@@ -170,7 +170,7 @@ export class MapComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   private initSubscriptions(): void {
-    let coordinateSubscription = this.mapHub.coordinates().subscribe((optCoords) =>
+    const coordinateSubscription = this.mapHub.coordinates().subscribe((optCoords) =>
       optCoords.map(coordinates => this.mapState.panToCoordinates(coordinates)));
 
     this.subscriptions = [

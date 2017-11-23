@@ -51,7 +51,7 @@ const validTask = {
 };
 
 class UserHubMock {
-  searchUsers(criteria: UserSearchCriteria) { return Observable.of([]); };
+  searchUsers(criteria: UserSearchCriteria) { return Observable.of([]); }
 }
 
 class SupervisionTaskStoreMock {
@@ -75,7 +75,7 @@ describe('SupervisionTaskComponent', () => {
   let fixture: ComponentFixture<SupervisionTaskComponent>;
   let supervisionTaskStore: SupervisionTaskStoreMock;
   let de: DebugElement;
-  let currentUserMock = CurrentUserMock.create(true, true);
+  const currentUserMock = CurrentUserMock.create(true, true);
   let userHub: UserHubMock;
 
   beforeEach(async(() => {
@@ -230,7 +230,7 @@ describe('SupervisionTaskComponent', () => {
 
   it('should display error when planned finishing time is in the past', fakeAsync(() => {
     const dateInput = de.query(By.css('[formControlName="plannedFinishingTime"]')).nativeElement;
-    let date = new Date();
+    const date = new Date();
     date.setFullYear(2000);
     dateInput.value = date;
     dateInput.dispatchEvent(new Event('input'));

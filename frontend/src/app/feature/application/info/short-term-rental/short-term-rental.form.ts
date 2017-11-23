@@ -26,7 +26,7 @@ export class ShortTermRentalForm implements ApplicationForm {
   }
 
   static to(form: ShortTermRentalForm): ShortTermRental {
-    let rental =  new ShortTermRental();
+    const rental =  new ShortTermRental();
     rental.description = form.description;
     rental.commercial = form.commercial;
     rental.largeSalesArea = form.largeSalesArea;

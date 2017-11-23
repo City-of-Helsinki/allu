@@ -72,8 +72,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   onSubmit(form: FormGroup) {
     this.submitPending = true;
 
-    let value = form.getRawValue();
-    let application = this.update(value);
+    const value = form.getRawValue();
+    const application = this.update(value);
     application.extension.terms = value.terms;
 
     this.applicationState.save(application)
@@ -100,7 +100,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
    * Updates application based on given form and returns updated application
    */
   protected update(form: ApplicationForm): Application {
-    let application = this.application;
+    const application = this.application;
     application.customersWithContacts = this.getCustomers(form);
 
     Some(form.communication).map(c => {
@@ -110,10 +110,10 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     });
     application.calculatedPriceEuro = form.calculatedPrice;
     return application;
-  };
+  }
 
   private getCustomers(form: ApplicationForm): Array<CustomerWithContacts> {
-    let customers = [];
+    const customers = [];
     Some(form.applicant).do(applicant => customers.push(CustomerWithContactsForm.toCustomerWithContacts(applicant)));
     Some(form.contractor).do(contractor => customers.push(CustomerWithContactsForm.toCustomerWithContacts(contractor)));
     Some(form.propertyDeveloper).do(pd => customers.push(CustomerWithContactsForm.toCustomerWithContacts(pd)));

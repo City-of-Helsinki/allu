@@ -20,7 +20,7 @@ export class SupervisionTaskForm {
   ) {}
 
   static from(task: SupervisionTask): SupervisionTaskForm {
-    let form = new SupervisionTaskForm();
+    const form = new SupervisionTaskForm();
     form.id = task.id;
     form.applicationId = task.applicationId;
     form.type = task.uiType;
@@ -42,7 +42,7 @@ export class SupervisionTaskForm {
   }
 
   static to(form: SupervisionTaskForm): SupervisionTask {
-    let task = new SupervisionTask();
+    const task = new SupervisionTask();
     task.id = form.id;
     task.applicationId = form.applicationId;
     task.uiType = form.type;
@@ -56,4 +56,4 @@ export class SupervisionTaskForm {
     task.result = form.result;
     return task;
   }
-};
+}

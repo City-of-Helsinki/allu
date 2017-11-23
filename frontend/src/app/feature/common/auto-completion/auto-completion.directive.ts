@@ -21,9 +21,9 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
   // Input for min length of search term which triggers search
   @Input() minTermLength = 3;
   // Name of the field which is used as id
-  @Input() idField: string = 'id';
+  @Input() idField = 'id';
   // Name of the field which is shown in the dropdown
-  @Input() nameField: string = 'name';
+  @Input() nameField = 'name';
   // Sort function to override default sorting (by name field)
   @Input() sortBy: (a, b) => number;
 
@@ -87,17 +87,17 @@ export class AutoCompletionDirective implements OnInit, OnDestroy {
   }
 
   private initDropdown() {
-    let factory = this.resolver.resolveComponentFactory(AutoCompletionListComponent);
+    const factory = this.resolver.resolveComponentFactory(AutoCompletionListComponent);
     this.listComponentRef = this.viewContainerRef.createComponent(factory);
 
-    let component = this.listComponentRef.instance;
+    const component = this.listComponentRef.instance;
     component.entries = this.autocompletion;
     component.idField = this.idField;
     component.nameField = this.nameField;
     component.sortBy = this.sortBy;
 
     component.onSelection.subscribe(selection => {
-      let name = selection[this.nameField] || selection;
+      const name = selection[this.nameField] || selection;
       this.inputEl.value = name;
       this.onSelection.emit(selection);
     });

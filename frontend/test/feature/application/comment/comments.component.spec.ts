@@ -32,7 +32,7 @@ const COMMENT_TWO = new Comment(
 
 class ApplicationStateMock {
   public comments$ = new Subject<Array<Comment>>();
-  get application() { return {id: 1}; };
+  get application() { return {id: 1}; }
   get comments() { return this.comments$.asObservable(); }
   saveComment(applicationId: number, comment: Comment) {}
   removeComment(comment: Comment) {}
@@ -42,7 +42,7 @@ class ApplicationStateMock {
   selector: 'comment',
   template: ''
 })
-class CommentComponentMock {
+class MockCommentComponent {
   @Input() comment = new Comment();
   @Output() onRemove = new EventEmitter<Comment>();
   @Output() onSave = new EventEmitter<Comment>();
@@ -53,14 +53,14 @@ describe('CommentsComponent', () => {
   let fixture: ComponentFixture<CommentsComponent>;
   let applicationState: ApplicationStateMock;
   let de: DebugElement;
-  let currentUserMock = CurrentUserMock.create(true, true);
+  const currentUserMock = CurrentUserMock.create(true, true);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       imports: [AlluCommonModule, FormsModule],
       declarations: [
         CommentsComponent,
-        CommentComponentMock
+        MockCommentComponent
       ],
       providers: [
         { provide: ApplicationState, useClass: ApplicationStateMock }
@@ -86,7 +86,7 @@ describe('CommentsComponent', () => {
   });
 
   it('should show header', () => {
-    let title = fixture.debugElement.query(By.css('h1.content-header')).nativeElement;
+    const title = fixture.debugElement.query(By.css('h1.content-header')).nativeElement;
     expect(title.textContent).toEqual('Kommentit');
   });
 
@@ -105,7 +105,7 @@ describe('CommentsComponent', () => {
   }));
 
   it('should handle adding new comment', fakeAsync(() => {
-    let btn = de.query(By.css('button')).nativeElement;
+    const btn = de.query(By.css('button')).nativeElement;
     btn.click();
     fixture.detectChanges();
     fixture.whenStable().then(val => {
@@ -119,7 +119,7 @@ describe('CommentsComponent', () => {
 
     fixture.detectChanges();
     fixture.whenStable().then(val => {
-      let commentEl = de.query(By.css('comment'));
+      const commentEl = de.query(By.css('comment'));
       commentEl.triggerEventHandler('onSave', COMMENT_ONE);
       expect(applicationState.saveComment).toHaveBeenCalledWith(applicationState.application.id, COMMENT_ONE);
       expect(NotificationService.message).toHaveBeenCalled();
@@ -142,7 +142,7 @@ describe('CommentsComponent', () => {
     spyOn(NotificationService, 'message');
     fixture.detectChanges();
     fixture.whenStable().then(val => {
-      let commentEl = de.query(By.css('comment'));
+      const commentEl = de.query(By.css('comment'));
       commentEl.triggerEventHandler('onRemove', COMMENT_ONE);
       expect(applicationState.removeComment).toHaveBeenCalledWith(COMMENT_ONE.id);
       expect(NotificationService.message).toHaveBeenCalledTimes(1);

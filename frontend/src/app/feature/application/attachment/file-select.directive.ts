@@ -1,6 +1,6 @@
 import {Directive, HostListener, ElementRef, Output, EventEmitter} from '@angular/core';
 
-@Directive({selector: '[file-select]'})
+@Directive({selector: '[fileSelect]'})
 export class FileSelectDirective {
 
   @Output() private attachmentsSelected = new EventEmitter();
@@ -13,8 +13,8 @@ export class FileSelectDirective {
 
   @HostListener('change')
   public onChange(): any {
-    let files = this.element.nativeElement.files;
-    let fileArray = [];
+    const files = this.element.nativeElement.files;
+    const fileArray = [];
     for (let i = 0; i < files.length; ++i) {
       fileArray.push(files[i]);
     }

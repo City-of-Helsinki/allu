@@ -30,11 +30,11 @@ export class EventDetailsComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    let application = this.applicationState.application;
+    const application = this.applicationState.application;
 
     this.applicationId = application.id;
 
-    let event = this.event(application);
+    const event = this.event(application);
     this.eventForm.patchValue(EventDetailsForm.fromEvent(application, event));
 
     if (this.readonly) {
@@ -76,7 +76,7 @@ export class EventDetailsComponent implements OnInit {
   }
 
   private event(application: Application): Event {
-    let event = <Event>application.extension || new Event();
+    const event = <Event>application.extension || new Event();
     event.eventStartTime = event.eventStartTime || application.startTime;
     event.eventEndTime = event.eventEndTime || application.endTime;
     event.applicationType = ApplicationType[ApplicationType.EVENT];

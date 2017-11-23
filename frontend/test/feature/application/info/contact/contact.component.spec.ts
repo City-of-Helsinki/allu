@@ -48,7 +48,7 @@ describe('ContactComponent', () => {
     fixture.detectChanges();
     tick();
     page.update();
-  };
+  }
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

@@ -41,7 +41,7 @@ export class TypeComponent implements OnInit {
   private specifiersCtrl: FormControl;
 
   constructor(private applicationState: ApplicationState, private fb: FormBuilder) {
-  };
+  }
 
   ngOnInit(): any {
     this.initForm();
@@ -56,14 +56,14 @@ export class TypeComponent implements OnInit {
     this.typeCtrl.valueChanges.subscribe(type => this.typeSelection(type));
     this.kindsCtrl.valueChanges.subscribe(kinds => this.kindSelection(kinds));
     this.specifiersCtrl.valueChanges.subscribe(specifiers => this.onSpecifierSelection(specifiers));
-  };
+  }
 
   typeSelection(type: string) {
     this.kindsCtrl.reset([]);
     this.availableKinds = this.getAvailableKinds(type);
     this.multipleKinds = hasMultipleKinds(ApplicationType[type]);
     this.onTypeChange.emit(ApplicationType[type]);
-  };
+  }
 
   kindSelection(kinds: string | Array<string>) {
     const selectedKinds = Array.isArray(kinds) ? kinds : [kinds];
@@ -75,7 +75,7 @@ export class TypeComponent implements OnInit {
       const kindsWithSpecifiers = toKindsWithSpecifiers(selectedKinds.map(kind => new SpecifierEntry(undefined, kind)));
       this.onKindSpecifierChange.emit(kindsWithSpecifiers);
     }
-  };
+  }
 
   onSpecifierSelection(specifierKeys: Array<string>) {
     const kindsWithSpecifiers = toKindsWithSpecifiers(specifierKeys.map(key => SpecifierEntry.fromKey(key)));

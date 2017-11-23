@@ -39,7 +39,7 @@ export class SortByDirective implements OnInit {
   }
 
   changeSort(): void {
-    let unsorted = this.localSort.field !== this.sortBy || this.localSort.direction === undefined;
+    const unsorted = this.localSort.field !== this.sortBy || this.localSort.direction === undefined;
 
     if (unsorted) {
       this.localSort = new Sort(this.sortBy, Direction.DESC);

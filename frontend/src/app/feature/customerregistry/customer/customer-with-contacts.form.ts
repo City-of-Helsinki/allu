@@ -35,7 +35,7 @@ export class CustomerWithContactsForm {
   }
 
   public static formName(roleType: CustomerRoleType): string {
-    let rtName = CustomerRoleType[roleType];
+    const rtName = CustomerRoleType[roleType];
     switch (roleType) {
       case CustomerRoleType.APPLICANT:
         return 'applicant';

@@ -176,12 +176,12 @@ export const applicationTypeEntries: Array<ApplicationTypeEntry> = [
 ];
 
 export function typeEntryByType(type: string): Option<ApplicationTypeEntry> {
-  let appType = ApplicationType[type];
+  const appType = ApplicationType[type];
   return Some(applicationTypeEntries.find(ts => ts.type === appType));
 }
 
 export function kindEntryByTypeAndKind(type: string, kind: string): Option<ApplicationKindEntry> {
-  let kindType = ApplicationKind[kind];
+  const kindType = ApplicationKind[kind];
   return typeEntryByType(type)
     .map(ts => ts.kindEntryByType(kindType));
 }

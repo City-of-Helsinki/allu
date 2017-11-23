@@ -12,7 +12,7 @@ export enum FieldChangeType {
   CONTACT,
   DISTRICT_ID,
   OTHER
-};
+}
 
 export enum FieldChangeOperationType {
   ADD,

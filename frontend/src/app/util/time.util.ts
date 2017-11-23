@@ -5,9 +5,9 @@ export const MIN_YEAR = 1972;
 export const MAX_YEAR = 9999;
 export const MIN_DATE: Date = new Date('1972-01-01T00:00:00');
 export const MAX_DATE: Date = new Date('9999-12-31T23:59:59');
-export const UI_PIPE_DATE_FORMAT: string = 'dd.MM.yyyy'; // Used by angular date pipe
-export const UI_DATE_FORMAT: string = 'DD.MM.YYYY';
-export const UI_DATE_TIME_FORMAT: string = 'DD.MM.YYYY HH:mm';
+export const UI_PIPE_DATE_FORMAT = 'dd.MM.yyyy'; // Used by angular date pipe
+export const UI_DATE_FORMAT = 'DD.MM.YYYY';
+export const UI_DATE_TIME_FORMAT = 'DD.MM.YYYY HH:mm';
 const HISTORY_DATE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 const HISTORY_DATE_FORMAT = 'DD.MM.YYYY';
 export const WINTER_TIME_START = moment('1972-12-01');
@@ -28,7 +28,7 @@ export class TimeUtil {
   }
 
   public static getDateFromUi(dateString: string): Date {
-    let m = this.toMoment(dateString);
+    const m = this.toMoment(dateString);
     return m ? m.toDate() : undefined;
   }
 
@@ -51,7 +51,7 @@ export class TimeUtil {
 
   public static dateWithYear(date: Date, year: number): Date {
     if (date && year) {
-      let baseDate = moment(date);
+      const baseDate = moment(date);
       return baseDate.year(year).toDate();
     } else {
       return undefined;
@@ -71,12 +71,12 @@ export class TimeUtil {
   }
 
   public static minimum(...dates: Date[]) {
-    let moments: Array<moment.Moment> = dates.map(date => moment(date));
+    const moments: Array<moment.Moment> = dates.map(date => moment(date));
     return moment.min(... moments).toDate();
   }
 
   public static maximum(...dates: Date[]) {
-    let moments: Array<moment.Moment> = dates.map(date => moment(date));
+    const moments: Array<moment.Moment> = dates.map(date => moment(date));
     return moment.max(... moments).toDate();
   }
 
@@ -137,10 +137,10 @@ export class TimeUtil {
 
   private static toMoment(dateString: string, format: string = UI_DATE_FORMAT): any {
     if (dateString) {
-      let m = moment(dateString, format);
+      const m = moment(dateString, format);
       return m.isValid() ? m : undefined;
     } else {
       return undefined;
-    };
+    }
   }
 }

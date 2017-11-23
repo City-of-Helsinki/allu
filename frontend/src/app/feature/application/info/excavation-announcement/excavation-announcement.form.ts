@@ -25,7 +25,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public trafficArrangementImpedimentType?: string) {}
 
   static to(form: ExcavationAnnouncementForm): ExcavationAnnouncement {
-    let ea = new ExcavationAnnouncement();
+    const ea = new ExcavationAnnouncement();
     ea.pksCard = form.pksCard;
     ea.constructionWork = form.constructionWork;
     ea.maintenanceWork = form.maintenanceWork;

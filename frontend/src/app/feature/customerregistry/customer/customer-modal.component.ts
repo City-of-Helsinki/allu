@@ -32,7 +32,7 @@ export class CustomerModalComponent implements OnInit {
   }
 
   onSubmit(customerForm: CustomerForm) {
-    let customer = CustomerForm.toCustomer(customerForm);
+    const customer = CustomerForm.toCustomer(customerForm);
     this.customerHub.saveCustomer(customer)
       .subscribe(
         saved => {

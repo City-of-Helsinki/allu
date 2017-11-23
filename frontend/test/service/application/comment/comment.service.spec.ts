@@ -49,7 +49,7 @@ const ERROR_RESPONSE = new Response(new ResponseOptions({
 
 class ErrorHandlerMock {
   handle(error: any, message?: string) {}
-};
+}
 
 describe('CommentService', () => {
   let commentService: CommentService;
@@ -58,7 +58,7 @@ describe('CommentService', () => {
   let lastConnection: any;
 
   beforeEach(() => {
-    let tb = TestBed.configureTestingModule({
+    const tb = TestBed.configureTestingModule({
       imports: [HttpModule],
       providers: [
         MockBackend,
@@ -106,7 +106,7 @@ describe('CommentService', () => {
 
   it('save() comment without id should create new', fakeAsync(() => {
     let result: Comment;
-    let updatedComment = COMMENT_NEW.copy();
+    const updatedComment = COMMENT_NEW.copy();
     updatedComment.id = 10;
 
     commentService.save(APP_ID, COMMENT_NEW).subscribe(r => result = r);

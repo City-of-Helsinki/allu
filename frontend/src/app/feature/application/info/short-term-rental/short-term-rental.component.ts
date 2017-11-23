@@ -19,16 +19,16 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
     super(fb, route, applicationState);
-  };
+  }
 
   ngOnInit(): any {
     super.ngOnInit();
-    let rental = <ShortTermRental>this.application.extension || new ShortTermRental();
+    const rental = <ShortTermRental>this.application.extension || new ShortTermRental();
     this.applicationForm.patchValue(ShortTermRentalForm.from(this.application, rental));
   }
 
   protected update(form: ShortTermRentalForm): Application {
-    let application = super.update(form);
+    const application = super.update(form);
     application.name = form.name;
     application.startTime = form.rentalTimes.startTime;
     application.endTime = form.rentalTimes.endTime;
