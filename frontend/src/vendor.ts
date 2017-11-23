@@ -4,12 +4,22 @@
 // run `typings install x` where `x` is your module
 
 // Angular 2
+import '@angular/common';
+import '@angular/compiler';
+import '@angular/core';
+import '@angular/http';
 import '@angular/platform-browser';
 import '@angular/platform-browser-dynamic';
-import '@angular/core';
-import '@angular/common';
-import '@angular/http';
+import '@angular/forms';
+import '@angular/animations';
 import '@angular/router';
+
+// Material
+import '@angular/cdk';
+import '@angular/material';
+
+// Flex layout
+import '@angular/flex-layout';
 
 // RxJS
 import 'rxjs';
@@ -29,6 +39,10 @@ import 'leafletdrawcss';
 import 'leafletgroupedlayercontrolcss';
 
 import 'leafletmeasurepathcss';
+
+// Leaflet
+import 'leaflet';
+import 'leaflet-draw';
 
 if ('production' === ENV) {
   // Production

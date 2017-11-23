@@ -8,6 +8,7 @@ const helpers = require('./helpers');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ForkCheckerPlugin = require('awesome-typescript-loader').ForkCheckerPlugin;
+const CommonsChunkPlugin = webpack.optimize.CommonsChunkPlugin;
 
 /*
  * Webpack Constants

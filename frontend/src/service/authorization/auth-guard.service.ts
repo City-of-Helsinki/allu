@@ -3,6 +3,7 @@ import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular
 import {Observable} from 'rxjs/Observable';
 import {AuthService} from './auth.service';
 import {ConfigService} from '../config/config.service';
+import {REDIRECT_URL} from '../../util/local-storage';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -14,15 +15,16 @@ export class AuthGuard implements CanActivate {
     if (this.authService.authenticated()) {
       return Observable.of(true);
     } else {
-      return this.authenticate(route);
+      return this.authenticate(route, state.url);
     }
   }
 
-  private authenticate(route: ActivatedRouteSnapshot): Observable<boolean> {
+  private authenticate(route: ActivatedRouteSnapshot, redirectUrl: string): Observable<boolean> {
     let code = route.queryParams['code'];
     if (code) {
       return this.authService.loginOAuth(code).map(response => true);
     } else {
+      localStorage.setItem(REDIRECT_URL, redirectUrl);
       this.redirectToOAuth();
       return Observable.of(false);
     }

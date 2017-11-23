@@ -9,7 +9,7 @@ import {User} from '../src/model/user/user';
 import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {Location} from '../src/model/common/location';
 import {RoleType} from '../src/model/user/role-type';
-import {NavigationExtras} from '@angular/router';
+import {NavigationExtras, UrlTree} from '@angular/router';
 import {ChargeBasisEntry} from '../src/model/application/invoice/charge-basis-entry';
 import {HttpResponse, HttpStatus} from '../src/util/http-response';
 import {ApplicationStatus} from '../src/model/application/application-status';
@@ -111,6 +111,10 @@ export class UserHubMock {
  */
 export class RouterMock {
   public navigate(commands: any[], extras?: NavigationExtras): Promise<boolean> {
+    return Promise.resolve(true);
+  }
+
+  navigateByUrl(url: string | UrlTree, extras?: NavigationExtras): Promise<boolean> {
     return Promise.resolve(true);
   }
 };
