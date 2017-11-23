@@ -68,7 +68,7 @@ public class CustomerController {
    * Updates customer's properties which have non null value in request JSON.
    */
   @RequestMapping(method = RequestMethod.PATCH)
-  @PreAuthorize("hasAnyRole('ROLE_INTERNAL')")
+  @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
   public ResponseEntity<Void> merge(@RequestBody CustomerExt customer) {
     CustomerJson customerJson = customerService.findCustomerById(customer.getId());
     CustomerExtMapper.mergeCustomerJson(customerJson, customer);
