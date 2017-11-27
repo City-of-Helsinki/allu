@@ -1,16 +1,23 @@
-<div fxLayout="row" fxLayoutWrap>
+<form [formGroup]="infoForm" (ngSubmit)="onSubmit()" novalidate>
+  <div fxLayout="row" fxLayoutWrap>
     <div fxFlex="100">
-        <invoicing-info></invoicing-info>
+      <invoicing-info [form]="infoForm"></invoicing-info>
     </div>
-</div>
-<div fxLayout="row" fxLayoutWrap>
+  </div>
+  <div fxLayout="row" fxLayoutWrap>
     <div fxFlex="100">
-        <charge-basis></charge-basis>
+      <charge-basis></charge-basis>
     </div>
-</div>
-<div fxLayout="row" fxLayoutWrap>
+  </div>
+  <div fxLayout="row" fxLayoutWrap>
     <div fxFlex="100">
-        <invoice-comments [applicationId]="applicationId"></invoice-comments>
+      <invoice-comments [applicationId]="applicationId"></invoice-comments>
     </div>
-</div>
-
+  </div>
+  <div class="footer" fxLayout="row" fxFlexAlign="center center">
+    <div fxFlex fxFlexAlign="center">
+      <button type="submit" mat-raised-button color="primary" [disabled]="!(infoForm.valid && infoForm.dirty)">TALLENNA</button>
+      <button type="button" mat-raised-button color="primary" [disabled]="!infoForm.dirty" (click)="cancel()">PERUUTA</button>
+    </div>
+  </div>
+</form>

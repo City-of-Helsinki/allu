@@ -1,35 +1,54 @@
-<form [formGroup]="infoForm" (ngSubmit)="onSubmit()" novalidate>
-    <mat-card>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div fxLayout="row" fxLayoutWrap class="spaced-out">
+    <div fxFlex="50" *ngIf="billable">
+      <mat-card>
         <mat-card-title>
-            Laskutustiedot
-            <button mat-icon-button type="button" class="align-with-text" *ngIf="canBeEdited()" (click)="editCustomer()">
+          <div fxLayout="row" fxFlexAlign="space-between">
+            <div fxFlex>
+              {{'invoice.info.address' | translation}}
+              <button mat-icon-button type="button" class="align-with-text" *ngIf="canBeEdited()" (click)="editCustomer()">
                 <mat-icon>mode_edit</mat-icon>
-            </button>
+              </button>
+            </div>
+            <div fxFlex *ngIf="invoicingProhibited" class="align-right">
+              <mat-icon color="accent" class="align-with-text">
+                report_problem
+              </mat-icon>
+              <span class="title-normal">{{'customer.invoicingProhibited' | translation}}</span>
+            </div>
+          </div>
         </mat-card-title>
         <mat-card-content>
-            <customer-info *ngIf="billable" [form]="recipientForm" [allowSearch]="true" [showInvoicingInfo]="true"
-                           (customerChange)="invoiceRecipientChange($event)"></customer-info>
-            <div fxLayout="row" fxLayoutWrap>
-                <div fxFlex="100" class="height-fix-bottom">
-                    <mat-checkbox formControlName="notBillable">Ei laskuteta</mat-checkbox>
-                </div>
-                <div fxFlex="100" *ngIf="!billable">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" formControlName="notBillableReason" placeholder="Perustelu*"/>
-                        <mat-hint>
-                            <field-error [form]="infoForm" field="notBillableReason" hasError="required">
-                                {{'invoice.field.notBillableReasonMissing' | translation}}
-                            </field-error>
-                        </mat-hint>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div fxLayout="row">
-                <div fxFlex *ngIf="infoForm.dirty">
-                    <button type="submit" mat-raised-button color="primary" [disabled]="!infoForm.valid">TALLENNA</button>
-                    <button type="button" mat-raised-button color="primary" (click)="cancel()">PERUUTA</button>
-                </div>
-            </div>
+          <customer-info [form]="recipientForm" [allowSearch]="true" [showInvoicingInfo]="true"
+                         (customerChange)="invoiceRecipientChange($event)"></customer-info>
         </mat-card-content>
-    </mat-card>
+      </mat-card>
+    </div>
+    <div fxFlex="50">
+      <mat-card>
+        <mat-card-title>
+          {{'invoice.info.depositAndOthers' | translation}}
+        </mat-card-title>
+        <mat-card-content>
+          <div fxLayout="row" fxLayoutWrap>
+            <div fxFlex class="height-fix-bottom">
+              <mat-checkbox formControlName="notBillable">Ei laskuteta</mat-checkbox>
+            </div>
+          </div>
+          <div fxLayout="row">
+            <div fxFlex *ngIf="!billable">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="notBillableReason" placeholder="Perustelu*"/>
+                <mat-hint>
+                  <field-error [form]="form" field="notBillableReason" hasError="required">
+                    {{'invoice.field.notBillableReasonMissing' | translation}}
+                  </field-error>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
 </form>

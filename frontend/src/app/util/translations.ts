@@ -318,7 +318,7 @@ export const translations = {
     handledByRepresentative: 'Asiaa hoitaa asiamies',
     hasPropertyDeveloper: 'Hakemuksella on rakennuttaja',
     sapCustomerNumber: 'Sap-numero',
-    invoicingProhibited: 'Laskutuskielto',
+    invoicingProhibited: 'Asiakkaalla laskutuskielto',
     type: {
       COMPANY: {
         name: 'Yritys',
@@ -795,6 +795,10 @@ export const translations = {
     }
   },
   invoice: {
+    info: {
+      address: 'Laskutusosoite',
+      depositAndOthers: 'Vakuus ja muut tiedot'
+    },
     negligenceFeeType: {
       START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',
       AREA_UNCLEAN: 'Alue epäsiisti',
@@ -810,11 +814,11 @@ export const translations = {
       MONTH: '1kk'
     },
     action: {
-      save: 'Lasku tallennettu',
-      cancel: 'Laskun muutokset peruttu'
+      save: 'Laskutustiedot tallennettu',
+      cancel: 'Laskutustietojen muutokset peruttu'
     },
     error: {
-      save: 'Laskun tallentaminen epäonnistui',
+      save: 'Laskutustietojen tallentaminen epäonnistui',
       invoiceRecipientSave: 'Laskun maksajan tallentaminen epäonnistui'
     },
     field: {

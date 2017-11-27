@@ -10,10 +10,10 @@
   padding: 0 0.75rem;
 }
 
-.spaced-out [ng-reflect-flex]:first-child {
+.spaced-out [ng-reflect-flex]:first-child:not(:only-child) {
   padding-right: 0.75rem;
 }
 
-.spaced-out [ng-reflect-flex]:last-child {
+.spaced-out [ng-reflect-flex]:last-child:not(:only-child) {
   padding-left: 0.75rem;
 }

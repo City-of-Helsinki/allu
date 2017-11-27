@@ -102,7 +102,7 @@
                 </mat-hint>
             </mat-form-field>
         </div>
-        <div fxFlex="50">
+        <div fxFlex="25">
             <mat-form-field class="input-full-width">
                 <input matInput type="text" formControlName="phone" placeholder="Puhelin"/>
                 <mat-hint>
@@ -110,15 +110,10 @@
                 </mat-hint>
             </mat-form-field>
         </div>
-    </div>
-    <div fxLayout="row" fxLayoutWrap class="spaced-out" *ngIf="showInvoicingInfo && existingCustomer">
-        <div fxFlex="50">
-            <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="sapCustomerNumber" placeholder="Sap-numero"/>
-            </mat-form-field>
-        </div>
-        <div fxFlex="25" class="checkbox-matching-height">
-            <mat-checkbox formControlName="invoicingProhibited">Laskutuskielto</mat-checkbox>
+        <div fxFlex="25" *ngIf="showInvoicingInfo && existingCustomer">
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" formControlName="sapCustomerNumber" placeholder="Sap-numero"/>
+          </mat-form-field>
         </div>
     </div>
 </form>

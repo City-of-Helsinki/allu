@@ -129,6 +129,23 @@ h1.content-header {
   height: 48px;
 }
 
+.mat-icon.align-with-text {
+  margin-top: 6px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 100vw;
+  min-height: 60px;
+  text-align: center;
+  background-color: mat-color($allu-primary, 50);
+  box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.15);
+  margin: 0;
+}
+
+
 button.btn-huge {
   width: 165px;
   height: 165px;
@@ -141,7 +158,6 @@ button.btn-huge {
     line-height: 165px;
   }
 }
-
 
 .col.col-centered {
   text-align: center;
