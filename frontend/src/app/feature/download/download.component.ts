@@ -21,7 +21,7 @@ export class DownloadComponent implements OnInit {
 
     this.downloadService.download(downloadUrl)
       .subscribe(file => {
-        filesaver.saveAs(file, file.name);
+        filesaver.saveAs(file.content, file.name);
         this.router.navigate(['home']);
       }, err => NotificationService.error(err));
   }
