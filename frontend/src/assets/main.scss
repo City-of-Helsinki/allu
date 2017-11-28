@@ -15,6 +15,8 @@
 @import '../app/feature/common/input-box/input-box.component.theme';
 @import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
 
+@import '../app/js/leaflet/draw-line/src/L.Toolbar.css';
+
 // Theme components
 @include angular-material-theme($allu-theme);
 @include auto-completion-list-theme($allu-theme);

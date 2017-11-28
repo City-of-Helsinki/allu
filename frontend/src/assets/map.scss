@@ -15,11 +15,13 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
 
 .leaflet-popup-content-wrapper {
   padding: 0 0 1px;
+
+  .leaflet-popup-content {
+    margin: 0;
+  }
 }
 
 .leaflet-popup-content {
-  margin: 0;
-
   h1.popup-header {
     font-size: 15px;
     line-height: 20px;
@@ -29,6 +31,7 @@ input[type="checkbox"]:checked.leaflet-control-layers-selector {
     border-top-right-radius: 12px;
     padding: 5px 16px;
     font-weight: bold;
+    margin: -1px;
   }
 
   .popup-content {
@@ -53,7 +56,7 @@ img.leaflet-marker-icon {
   cursor: pointer;
 }
 /* Change cursor when over entire map */
-.leaflet-container {
+.map.leaflet-container {
   cursor: default;
 }
 
