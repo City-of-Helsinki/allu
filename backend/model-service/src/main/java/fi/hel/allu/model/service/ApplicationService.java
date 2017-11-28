@@ -90,6 +90,17 @@ public class ApplicationService {
   }
 
   /**
+   * Returns application ids of the applications having given invoice recipient.
+   *
+   * @param id id of the invoice recipient.
+   * @return List of application ids. Never <code>null</code>.
+   */
+  @Transactional(readOnly = true)
+  public List<Integer> findByInvoiceRecipient(int id) {
+    return applicationDao.findByInvoiceRecipient(id);
+  }
+
+  /**
    * Update existing application
    *
    * @param id

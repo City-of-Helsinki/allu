@@ -1,5 +1,15 @@
 package fi.hel.allu.external.service;
 
+import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.ApplicationType;
 import fi.hel.allu.common.types.CommentType;
@@ -10,16 +20,8 @@ import fi.hel.allu.external.domain.InspectionStatus.State;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.CommentService;
+import fi.hel.allu.servicecore.service.InvoiceService;
 import fi.hel.allu.servicecore.service.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Service class for application-related operations that are only needed in
@@ -34,6 +36,8 @@ public class ApplicationServiceExt {
   private UserService userService;
   @Autowired
   private CommentService commentService;
+  @Autowired
+  private InvoiceService invoiceService;
 
   public void reportProgress(int applicationId, ApplicationProgressReportExt applicationProgressReportExt) {
     Optional<ZonedDateTime> workFinished = Optional.ofNullable(applicationProgressReportExt.getWorkFinished());
@@ -128,4 +132,22 @@ public class ApplicationServiceExt {
       dest.add(tag);
     }
   }
+
+  public void releaseCustomersInvoices(Integer customerId) {
+    List<Integer> applicationIds = applicationServiceComposer.findApplicationIdsByInvoiceRecipientId(customerId);
+    applicationIds.forEach(id -> applicationServiceComposer.removeTagFromApplication(id, ApplicationTagType.SAP_ID_MISSING));
+    applicationIds.forEach(id -> releaseInvoicesOfApplication(id));
+  }
+
+  private void releaseInvoicesOfApplication(Integer applicationId) {
+    List<InvoiceJson> invoicesToRelease = invoiceService.findByApplication(applicationId);
+    invoicesToRelease.forEach(i -> releaseInvoice(i));
+  }
+
+  private void releaseInvoice(InvoiceJson invoice) {
+    if (invoice.isSapIdPending()) {
+      invoiceService.releasePendingInvoice(invoice.getId());
+    }
+  }
+
 }

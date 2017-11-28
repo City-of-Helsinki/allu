@@ -1,5 +1,6 @@
 package fi.hel.allu.servicecore.service;
 
+import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.*;
@@ -267,6 +268,7 @@ public class ApplicationServiceComposer {
   }
 
 
+
   /*
    * Replaces distribution list of an application.
    *
@@ -292,5 +294,15 @@ public class ApplicationServiceComposer {
     } else if (StatusType.HANDLING.equals(application.getStatus()) && application.getHandler() == null) {
       updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
     }
+  }
+
+  public List<Integer> findApplicationIdsByInvoiceRecipientId(int customerId) {
+    return applicationService.findApplicationIdsByInvoiceRecipient(customerId);
+  }
+
+  public void removeTagFromApplication(int id, ApplicationTagType tagType) {
+    List<ApplicationTagJson> updatedTags = applicationService.findTagsByApplicationId(id).stream()
+        .filter(t -> !t.getType().equals(tagType)).collect(Collectors.toList());
+    updateTags(id, updatedTags);
   }
 }

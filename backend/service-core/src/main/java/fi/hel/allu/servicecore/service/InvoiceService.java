@@ -37,4 +37,8 @@ public class InvoiceService {
 
     return Arrays.stream(foundInvoices).map(InvoiceMapper::mapToJson).collect(Collectors.toList());
   }
+
+  public void releasePendingInvoice(Integer invoiceId) {
+    restTemplate.put(applicationProperties.getReleasePendingInvoiceUrl(), null, invoiceId);
+  }
 }

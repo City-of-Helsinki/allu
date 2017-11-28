@@ -957,4 +957,18 @@ public class ApplicationProperties {
   public List<String> getAnonymousAccessPaths() {
     return anonymousAccessPaths;
   }
+
+  /**
+   * @return URL for finding application ids having given invoice recipient
+   */
+  public String getInvoiceRecipientsApplicationsUrl() {
+    return getModelServiceUrl("/customers/invoicerecipients/{id}/applications");
+  }
+
+  /**
+   * @return URL for releasing pending invoice
+   */
+  public String getReleasePendingInvoiceUrl() {
+    return getModelServiceUrl("/applications/invoices/{id}/release-pending");
+  }
 }

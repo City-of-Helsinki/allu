@@ -293,4 +293,10 @@ public class ApplicationController {
     invoiceService.markSent(invoiceIds);
     return new ResponseEntity<>(HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/invoices/{id}/release-pending",  method = RequestMethod.PUT)
+  public ResponseEntity<Void> releasePendingInvoice(@PathVariable Integer id) {
+    invoiceService.releasePending(id);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

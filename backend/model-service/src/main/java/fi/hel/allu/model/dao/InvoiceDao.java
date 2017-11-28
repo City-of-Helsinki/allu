@@ -158,6 +158,15 @@ public class InvoiceDao {
     queryFactory.update(invoice).set(invoice.invoiced, true).where(invoice.id.in(invoiceIds)).execute();
   }
 
+  /**
+   * Release pending invoice with given invoice id
+   *
+   */
+  @Transactional
+  public void releasePendingInvoice(Integer invoiceId) {
+    queryFactory.update(invoice).set(invoice.sapIdPending, Boolean.FALSE).where(invoice.id.eq(invoiceId)).execute();
+  }
+
   private void deleteRows(int invoiceId) {
     queryFactory.delete(invoiceRow).where(invoiceRow.invoiceId.eq(invoiceId)).execute();
   }

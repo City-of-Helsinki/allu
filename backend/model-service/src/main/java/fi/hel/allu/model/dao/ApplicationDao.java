@@ -11,6 +11,7 @@ import com.querydsl.sql.SQLExpressions;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.SQLInsertClause;
 
+import fi.hel.allu.QApplication;
 import fi.hel.allu.common.domain.types.*;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.util.RecurringApplication;
@@ -610,6 +611,16 @@ public class ApplicationDao {
   private BooleanExpression overlapsPeriod(long periodStart, long periodEnd) {
     return recurringPeriod.periodStartTime.before(TimeUtil.millisToZonedDateTime(periodEnd))
         .and(recurringPeriod.periodEndTime.after(TimeUtil.millisToZonedDateTime(periodStart)));
+  }
+
+  public List<Integer> findByInvoiceRecipient(int invoiceRecipientId) {
+    QApplication application = QApplication.application;
+    List<Integer> applicationIds = queryFactory
+        .select(application.id)
+        .from(application)
+        .where(application.invoiceRecipientId.eq(invoiceRecipientId)).
+        fetch();
+    return applicationIds;
   }
 
 }

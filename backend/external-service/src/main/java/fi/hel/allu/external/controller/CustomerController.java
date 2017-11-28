@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import fi.hel.allu.external.domain.CustomerExt;
 import fi.hel.allu.external.domain.CustomerWithContactsExt;
 import fi.hel.allu.external.mapper.CustomerExtMapper;
+import fi.hel.allu.external.service.ApplicationServiceExt;
 import fi.hel.allu.servicecore.domain.CustomerJson;
 import fi.hel.allu.servicecore.service.ContactService;
 import fi.hel.allu.servicecore.service.CustomerService;
@@ -29,6 +31,8 @@ public class CustomerController {
   CustomerService customerService;
   @Autowired
   ContactService contactService;
+  @Autowired
+  ApplicationServiceExt applicationService;
 
   /**
    * Returns list of customers with their related contacts connected to the current interface user.
@@ -66,14 +70,23 @@ public class CustomerController {
 
   /**
    * Updates customer's properties which have non null value in request JSON.
+   *
    */
   @RequestMapping(method = RequestMethod.PATCH)
   @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
   public ResponseEntity<Void> merge(@RequestBody CustomerExt customer) {
     CustomerJson customerJson = customerService.findCustomerById(customer.getId());
+    boolean addsSapNumber = addsSapNumber(customerJson, customer);
     CustomerExtMapper.mergeCustomerJson(customerJson, customer);
     customerService.updateCustomerWithInvoicingInfo(customerJson.getId(), customerJson);
+    if (addsSapNumber) {
+      applicationService.releaseCustomersInvoices(customer.getId());
+    }
     return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  private boolean addsSapNumber(CustomerJson customerOld, CustomerExt customerNew) {
+    return StringUtils.isBlank(customerOld.getSapCustomerNumber()) && StringUtils.isNotBlank(customerNew.getSapCustomerNumber());
   }
 
   @RequestMapping(method = RequestMethod.PUT)

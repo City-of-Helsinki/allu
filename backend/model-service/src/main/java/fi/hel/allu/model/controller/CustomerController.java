@@ -71,6 +71,17 @@ public class CustomerController {
   }
 
   /**
+   * Returns application ids of the applications having given customer as invoice recipient.
+   *
+   * @param id    id of the customer whose related applications are returned.
+   * @return  List of application ids. Never <code>null</code>.
+   */
+  @RequestMapping(value = "/invoicerecipients/{id}/applications", method = RequestMethod.GET)
+  public ResponseEntity<List<Integer>> findApplicationIdsByInvoiceRecipient(@PathVariable int id) {
+    return new ResponseEntity<>(applicationService.findByInvoiceRecipient(id), HttpStatus.OK);
+  }
+
+  /**
    * Find all customers in the database
    *
    * @return list of customers
