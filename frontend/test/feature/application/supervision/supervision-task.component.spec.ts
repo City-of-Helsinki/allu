@@ -4,13 +4,13 @@ import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/t
 import {By} from '@angular/platform-browser';
 import {SupervisionTaskStore} from '../../../../src/app/service/supervision/supervision-task-store';
 import {AlluCommonModule} from '../../../../src/app/feature/common/allu-common.module';
-import {ApplicationStateMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
 import {SupervisionTask} from '../../../../src/app/model/application/supervision/supervision-task';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {SupervisionTaskComponent} from '../../../../src/app/feature/application/supervision/supervision-task.component';
-import {ApplicationState} from '../../../../src/app/service/application/application-state';
+import {ApplicationStore} from '../../../../src/app/service/application/application-store';
 import {CurrentUser} from '../../../../src/app/service/user/current-user';
 import {ComplexValidator} from '../../../../src/app/util/complex-validator';
 import {User} from '../../../../src/app/model/user/user';
@@ -89,7 +89,7 @@ describe('SupervisionTaskComponent', () => {
         SupervisionTaskComponent
       ],
       providers: [
-        {provide: ApplicationState, useClass: ApplicationStateMock},
+        {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: SupervisionTaskStore, useClass: SupervisionTaskStoreMock},
         {provide: CurrentUser, useValue: currentUserMock},
         {provide: UserHub, useClass: UserHubMock}

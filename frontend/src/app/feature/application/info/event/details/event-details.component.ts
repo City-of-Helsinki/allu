@@ -7,7 +7,7 @@ import {EnumUtil} from '../../../../../util/enum.util';
 import {BillingType} from '../../../../../model/application/billing-type';
 import {EventNature} from '../../../../../model/application/event/event-nature';
 import {ApplicationType} from '../../../../../model/application/type/application-type';
-import {ApplicationState} from '../../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../../service/application/application-store';
 import {Application} from '../../../../../model/application/application';
 import {ApplicationKind} from '../../../../../model/application/type/application-kind';
 
@@ -25,12 +25,12 @@ export class EventDetailsComponent implements OnInit {
   applicationId: number;
   billingTypes = EnumUtil.enumValues(BillingType);
 
-  constructor(private applicationState: ApplicationState, private fb: FormBuilder) {
+  constructor(private applicationStore: ApplicationStore, private fb: FormBuilder) {
   }
 
   ngOnInit(): void {
     this.initForm();
-    const application = this.applicationState.application;
+    const application = this.applicationStore.application;
 
     this.applicationId = application.id;
 

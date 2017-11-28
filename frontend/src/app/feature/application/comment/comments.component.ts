@@ -2,7 +2,7 @@ import {Component, OnInit, OnDestroy} from '@angular/core';
 import {Subscription} from 'rxjs/Subscription';
 
 import {Application} from '../../../model/application/application';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {Comment} from '../../../model/application/comment/comment';
 import {findTranslation} from '../../../util/translations';
 import {TimeUtil} from '../../../util/time.util';
@@ -19,11 +19,11 @@ export class CommentsComponent implements OnInit, OnDestroy {
   comments = [];
   commentSubsciption: Subscription;
 
-  constructor(private applicationState: ApplicationState) {}
+  constructor(private applicationStore: ApplicationStore) {}
 
   ngOnInit() {
-    this.application = this.applicationState.application;
-    this.commentSubsciption = this.applicationState.comments
+    this.application = this.applicationStore.application;
+    this.commentSubsciption = this.applicationStore.comments
       .map(comments => comments.sort((l, r) => TimeUtil.compareTo(r.createTime, l.createTime))) // sort latest first
       .subscribe(
         comments => this.comments = comments,
@@ -39,7 +39,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
   }
 
   save(index: number, comment: Comment): void {
-    this.applicationState.saveComment(this.application.id, comment).subscribe(c => {
+    this.applicationStore.saveComment(this.application.id, comment).subscribe(c => {
         NotificationService.message(this.translateType(c.type) + ' tallennettu');
         this.comments.splice(index, 1, c);
       },
@@ -50,7 +50,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
     if (comment.id === undefined) {
       this.comments.splice(index, 1);
     } else {
-      this.applicationState.removeComment(comment.id)
+      this.applicationStore.removeComment(comment.id)
         .subscribe(status => {
             NotificationService.message(this.translateType(comment.type) + ' poistettu');
             this.comments.splice(index, 1);

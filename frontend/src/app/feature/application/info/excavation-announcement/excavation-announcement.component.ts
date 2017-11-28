@@ -10,7 +10,7 @@ import {ExcavationAnnouncementForm} from './excavation-announcement.form';
 import {ApplicationSearchQuery} from '../../../../model/search/ApplicationSearchQuery';
 import {ExcavationAnnouncement} from '../../../../model/application/excavation-announcement/excavation-announcement';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {NumberUtil} from '../../../../util/number.util';
@@ -36,8 +36,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   constructor(private applicationHub: ApplicationHub,
               fb: FormBuilder,
               route: ActivatedRoute,
-              applicationState: ApplicationState) {
-    super(fb, route, applicationState);
+              applicationStore: ApplicationStore) {
+    super(fb, route, applicationStore);
   }
 
   ngOnInit(): any {
@@ -118,7 +118,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     this.validityEndTimeCtrl = <AbstractControlWarn>this.applicationForm.get(['validityTimes', 'endTime']);
     this.validityEndTimeCtrl.statusChanges.subscribe(status => this.onValidityEndTimeChange(status));
 
-    if (this.applicationState.isNew) {
+    if (this.applicationStore.isNew) {
       this.validityEndTimeCtrl.markAsDirty(); // To trigger validation
     }
   }

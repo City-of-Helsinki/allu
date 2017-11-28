@@ -11,7 +11,7 @@ import {Observable} from 'rxjs/Observable';
 import {FormUtil} from '../../../../util/form.util';
 import {ChargeBasisType} from '../../../../model/application/invoice/charge-basis-type';
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 
 
 @Component({
@@ -33,7 +33,7 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
               private invoiceHub: InvoiceHub,
-              private applicationState: ApplicationState) {
+              private applicationStore: ApplicationStore) {
     this.chargeBasisEntries = fb.array([]);
     this.form = this.fb.group({
       chargeBasisEntries: this.chargeBasisEntries
@@ -41,13 +41,13 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.invoiceHub.loadChargeBasisEntries(this.applicationState.application.id)
+    this.invoiceHub.loadChargeBasisEntries(this.applicationStore.application.id)
       .subscribe(entries => {}, error => NotificationService.error(error));
 
     this.rowSubscription = this.invoiceHub.chargeBasisEntries
       .subscribe(entries => this.entriesUpdated(entries));
 
-    this.calculatedPrice = this.applicationState.changes.map(app => app.calculatedPriceEuro);
+    this.calculatedPrice = this.applicationStore.changes.map(app => app.calculatedPriceEuro);
   }
 
   ngOnDestroy(): void {
@@ -111,8 +111,8 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
 
   private saveEntries(): Observable<Array<ChargeBasisEntry>> {
     const entries = this.chargeBasisEntries.getRawValue().map(value => ChargeBasisEntryForm.toChargeBasisEntry(value));
-    const appId = this.applicationState.application.id;
+    const appId = this.applicationStore.application.id;
     return this.invoiceHub.saveChargeBasisEntries(appId, entries)
-      .do(e => this.applicationState.load(appId).subscribe());
+      .do(e => this.applicationStore.load(appId).subscribe());
   }
 }

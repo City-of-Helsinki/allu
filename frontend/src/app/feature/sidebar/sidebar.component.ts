@@ -1,6 +1,6 @@
 import {Component, Input} from '@angular/core';
 import {itemPaths, SidebarItem, SidebarItemType} from './sidebar-item';
-import {ApplicationState} from '../../service/application/application-state';
+import {ApplicationStore} from '../../service/application/application-store';
 
 @Component({
   selector: 'sidebar',
@@ -13,9 +13,9 @@ export class SidebarComponent {
   @Input() items: Array<SidebarItem> = [{type: 'BASIC_INFO'}];
   itemPaths = itemPaths;
 
-  constructor(private applicationState: ApplicationState) {}
+  constructor(private applicationStore: ApplicationStore) {}
 
   tabChange(type: SidebarItemType): void {
-    this.applicationState.notifyTabChange(type);
+    this.applicationStore.notifyTabChange(type);
   }
 }

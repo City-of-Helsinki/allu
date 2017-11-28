@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Subscription} from 'rxjs/Subscription';
 import {Application} from '../../../model/application/application';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationForm} from './application-form';
 import {ApplicationStatus, canBeEdited} from '../../../model/application/application-status';
@@ -29,7 +29,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
   constructor(protected fb: FormBuilder,
               protected route: ActivatedRoute,
-              protected applicationState: ApplicationState) {}
+              protected applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -37,18 +37,18 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.hasRepresentativeCtrl = this.fb.control(false);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
-    this.appChanges = this.applicationState.changes.subscribe(app => this.onApplicationChange(app));
+    this.appChanges = this.applicationStore.changes.subscribe(app => this.onApplicationChange(app));
 
     UrlUtil.urlPathContains(this.route.parent, 'summary')
       .filter(contains => contains)
       .forEach(summary => {
-        this.readonly = summary || !canBeEdited(this.applicationState.application.statusEnum);
+        this.readonly = summary || !canBeEdited(this.applicationStore.application.statusEnum);
       });
 
-    this.tabChanges = this.applicationState.tabChange.subscribe(tab => {
+    this.tabChanges = this.applicationStore.tabChange.subscribe(tab => {
       if (!this.readonly) {
         this.applicationForm.enable();
-        this.applicationState.application = this.update(this.applicationForm.value);
+        this.applicationStore.application = this.update(this.applicationForm.value);
       }
     });
   }
@@ -76,7 +76,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     const application = this.update(value);
     application.extension.terms = value.terms;
 
-    this.applicationState.save(application)
+    this.applicationStore.save(application)
       .subscribe(
         app => {
           NotificationService.message(findTranslation('application.action.saved'));

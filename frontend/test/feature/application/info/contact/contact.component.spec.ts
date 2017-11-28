@@ -4,8 +4,8 @@ import {FormBuilder, FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {MatCardModule} from '@angular/material';
 import {ContactComponent} from '../../../../../src/app/feature/application/info/contact/contact.component';
 import {AlluCommonModule} from '../../../../../src/app/feature/common/allu-common.module';
-import {ApplicationState} from '../../../../../src/app/service/application/application-state';
-import {ApplicationStateMock, CustomerHubMock} from '../../../../mocks';
+import {ApplicationStore} from '../../../../../src/app/service/application/application-store';
+import {ApplicationStoreMock, CustomerHubMock} from '../../../../mocks';
 import {CustomerHub} from '../../../../../src/app/service/customer/customer-hub';
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {CustomerWithContactsForm} from '../../../../../src/app/feature/customerregistry/customer/customer-with-contacts.form';
@@ -26,7 +26,7 @@ describe('ContactComponent', () => {
   let fixture: ComponentFixture<ContactComponent>;
   let page: ContactPage;
   let parentForm: FormGroup;
-  let applicationStateMock: ApplicationStateMock;
+  let applicationStoreMock: ApplicationStoreMock;
 
   class ContactPage {
     public contacts: Array<DebugElement>;
@@ -55,13 +55,13 @@ describe('ContactComponent', () => {
       imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
       declarations: [ContactComponent],
       providers: [
-        {provide: ApplicationState, useClass: ApplicationStateMock},
+        {provide: ApplicationStore, useClass: applicationStoreMock},
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerHub, useClass: CustomerHubMock}
       ]
     }).compileComponents();
 
-    applicationStateMock = TestBed.get(ApplicationState) as ApplicationStateMock;
+    applicationStoreMock = TestBed.get(ApplicationStore) as ApplicationStoreMock;
   }));
 
   beforeEach(() => {
@@ -157,7 +157,7 @@ describe('ContactComponent', () => {
   function reInitWithCableReport() {
     const app = new Application();
     app.type = ApplicationType[ApplicationType.CABLE_REPORT];
-    spyOnProperty(applicationStateMock, 'application', 'get').and.returnValue(app);
+    spyOnProperty(applicationStoreMock, 'application', 'get').and.returnValue(app);
     while (comp.contacts.length) {
       comp.contacts.removeAt(0);
     }

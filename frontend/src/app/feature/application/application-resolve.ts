@@ -4,28 +4,28 @@ import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
-import {ApplicationState} from '../../service/application/application-state';
+import {ApplicationStore} from '../../service/application/application-store';
 import {NotificationService} from '../../service/notification/notification.service';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
-  constructor(private applicationState: ApplicationState, private router: Router) {}
+  constructor(private applicationStore: ApplicationStore, private router: Router) {}
 
   resolve(route: ActivatedRouteSnapshot): Observable<Application> {
     Some(route.queryParams)
       .map((params: {relatedProject}) => params.relatedProject)
-      .do(relatedProject => this.applicationState.relatedProject = relatedProject);
+      .do(relatedProject => this.applicationStore.relatedProject = relatedProject);
 
     return Some(route.params['id'])
       .map(id => Number(id))
-      .map(id => this.applicationState.load(id)
+      .map(id => this.applicationStore.load(id)
         .do(app => this.loadComments(id))
         .catch(err => this.handleError(err)))
       .orElse(this.newOrCopy());
   }
 
   private loadComments(id: number) {
-    this.applicationState.loadComments(id).subscribe(
+    this.applicationStore.loadComments(id).subscribe(
       comments => {},
       err => console.error('Failed to load comments for application', id, '.')
     );
@@ -38,11 +38,11 @@ export class ApplicationResolve implements Resolve<Application> {
   }
 
   private newOrCopy(): Observable<Application> {
-    if (this.applicationState.isCopy) {
-      this.applicationState.isCopy = false;
+    if (this.applicationStore.isCopy) {
+      this.applicationStore.isCopy = false;
     } else {
-      this.applicationState.reset();
+      this.applicationStore.reset();
     }
-    return Observable.of(this.applicationState.application);
+    return Observable.of(this.applicationStore.application);
   }
 }

@@ -8,7 +8,7 @@ import {MapHub} from '../../../service/map/map-hub';
 import {Some} from '../../../util/option';
 import {ApplicationType, hasSingleKind} from '../../../model/application/type/application-type';
 import {drawingAllowedForKind} from '../../../model/application/type/application-kind';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {ApplicationExtension} from '../../../model/application/type/application-extension';
 import {CableReport} from '../../../model/application/cable-report/cable-report';
 import {Event} from '../../../model/application/event/event';
@@ -61,7 +61,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
   private editedLocationSubscription: Subscription;
 
   constructor(
-    private applicationState: ApplicationState,
+    private applicationStore: ApplicationStore,
     private locationState: LocationState,
     private mapService: MapUtil,
     private router: Router,
@@ -100,7 +100,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .filter(e => e instanceof NavigationStart)
       .subscribe(navEvent => this.mapHub.addSearchFilter(defaultFilter));
 
-    this.application = this.applicationState.application;
+    this.application = this.applicationStore.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     this.kindsSelected = this.application.kinds.length > 0;
     this.loadFixedLocations();
@@ -174,12 +174,12 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
     this.application.updateDatesFromLocations();
 
     if (this.application.id) {
-      this.applicationState.save(this.application)
+      this.applicationStore.save(this.application)
         .subscribe(
           app => NotificationService.message(findTranslation('application.action.saved')),
           err => NotificationService.error(err));
     } else {
-      this.applicationState.application = this.application;
+      this.applicationStore.application = this.application;
       this.router.navigate(['/applications/edit']);
     }
   }

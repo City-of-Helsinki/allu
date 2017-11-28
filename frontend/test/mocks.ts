@@ -18,7 +18,7 @@ import {CurrentUser} from '../src/app/service/user/current-user';
 /**
  * Mock for application state
  */
-export class ApplicationStateMock {
+export class ApplicationStoreMock {
   public _application: Application;
 
   constructor() {

@@ -5,7 +5,7 @@ import {DecisionHub} from '../../service/decision/decision-hub';
 import {Decision} from '../../model/decision/Decision';
 import {stepFrom} from '../application/progressbar/progress-step';
 import {ApplicationStatus} from '../../model/application/application-status';
-import {ApplicationState} from '../../service/application/application-state';
+import {ApplicationStore} from '../../service/application/application-store';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 
 @Component({
@@ -22,11 +22,11 @@ export class DecisionComponent implements OnInit {
 
   constructor(
     private sanitizer: DomSanitizer,
-    private applicationState: ApplicationState,
+    private applicationStore: ApplicationStore,
     private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    this.application = this.applicationState.application;
+    this.application = this.applicationStore.application;
     this.progressStep = stepFrom(ApplicationStatus[this.application.status]);
     this.decisionHub.fetch(this.application.id)
       .subscribe(decision => this.providePdf(decision));

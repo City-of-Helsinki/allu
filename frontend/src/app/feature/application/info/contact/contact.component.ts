@@ -10,7 +10,7 @@ import {Observable} from 'rxjs/Observable';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {OrdererIdForm} from '../cable-report/cable-report.form';
 
@@ -43,11 +43,11 @@ export class ContactComponent implements OnInit {
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
               private customerHub: CustomerHub,
-              private applicationState: ApplicationState) {}
+              private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
     this.initContacts();
-    this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationState.application.typeEnum;
+    this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationStore.application.typeEnum;
 
     if (this.readonly) {
       this.contacts.disable();

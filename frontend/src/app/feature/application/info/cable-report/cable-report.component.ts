@@ -5,7 +5,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {CableReportForm, OrdererIdForm} from './cable-report.form';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {ApplicationStatus} from '../../../../model/application/application-status';
@@ -20,8 +20,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
 
   showCableInfo = false;
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
-    super(fb, route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
+    super(fb, route, applicationStore);
   }
 
   ngOnInit(): any {

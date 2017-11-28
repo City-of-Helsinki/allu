@@ -3,7 +3,7 @@ import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
@@ -16,8 +16,8 @@ import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
 })
 export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
-    super(fb, route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
+    super(fb, route, applicationStore);
   }
 
   ngOnInit(): any {

@@ -3,7 +3,7 @@ import {Observable} from 'rxjs/Observable';
 import {MatDialog} from '@angular/material';
 
 import {HistoryHub} from '../../../service/history/history-hub';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {ApplicationChange} from '../../../model/application/application-change/application-change';
 import {UserHub} from '../../../service/user/user-hub';
 import {User} from '../../../model/user/user';
@@ -27,7 +27,7 @@ export class ApplicationHistoryComponent implements OnInit {
   handlers = new Map<number, User>();
   meta: StructureMeta;
 
-  constructor(private applicationState: ApplicationState,
+  constructor(private applicationStore: ApplicationStore,
               private applicationHub: ApplicationHub,
               private historyHub: HistoryHub,
               private userHub: UserHub,
@@ -35,10 +35,10 @@ export class ApplicationHistoryComponent implements OnInit {
               protected formatter: ApplicationHistoryFormatter) {}
 
   ngOnInit(): void {
-    this.applicationHub.loadMetaData(this.applicationState.application.type).subscribe(meta => {
+    this.applicationHub.loadMetaData(this.applicationStore.application.type).subscribe(meta => {
       this.meta = meta;
       this.formatter.setMeta(meta);
-      this.history = this.historyHub.applicationHistory(this.applicationState.application.id);
+      this.history = this.historyHub.applicationHistory(this.applicationStore.application.id);
       this.userHub.getAllUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
     },
     err => NotificationService.errorMessage(findTranslation('history.error.metadata')));

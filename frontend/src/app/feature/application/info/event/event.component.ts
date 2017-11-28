@@ -5,7 +5,7 @@ import {Application} from '../../../../model/application/application';
 import {EventDetailsForm} from './details/event-details.form';
 import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 
 
@@ -17,8 +17,8 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class EventComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
-    super(fb, route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
+    super(fb, route, applicationStore);
   }
 
   ngOnInit(): any {

@@ -21,7 +21,7 @@ import {ApplicationStatus} from '../../model/application/application-status';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 
 @Injectable()
-export class ApplicationState {
+export class ApplicationStore {
   public relatedProject: number;
   public isCopy = false;
 

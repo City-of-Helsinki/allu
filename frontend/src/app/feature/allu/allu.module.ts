@@ -27,7 +27,7 @@ import {UserHub} from '../../service/user/user-hub';
 import {AdminModule} from '../admin/admin.module';
 import {ProjectModule} from '../project/project.module';
 import {SidebarModule} from '../sidebar/sidebar.module';
-import {ApplicationState} from '../../service/application/application-state';
+import {ApplicationStore} from '../../service/application/application-store';
 import {Oauth2Component} from '../oauth2/oauth2.component';
 import {ErrorHandler} from '../../service/error/error-handler.service';
 import {DefaultTextService} from '../../service/application/default-text.service';
@@ -84,7 +84,7 @@ import {DownloadModule} from '../download/download.module';
     MapHub,
     UIStateHub,
     AuthGuard,
-    ApplicationState,
+    ApplicationStore,
     LocationState,
     ErrorHandler,
     DefaultTextService,

@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Application} from '../../../model/application/application';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 
 @Component({
   selector: 'application-info',
@@ -12,9 +12,9 @@ export class ApplicationInfoComponent implements OnInit {
 
   application: Application;
 
-  constructor(private applicationState: ApplicationState) {}
+  constructor(private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
-    this.application = this.applicationState.application;
+    this.application = this.applicationStore.application;
   }
 }

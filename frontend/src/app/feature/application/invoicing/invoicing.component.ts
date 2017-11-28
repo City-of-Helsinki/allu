@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {NotificationService} from '../../../service/notification/notification.service';
@@ -22,13 +22,13 @@ export class InvoicingComponent implements OnInit {
   private recipientForm: FormGroup;
   private notBillableCtrl: FormControl;
 
-  constructor(private applicationState: ApplicationState,
+  constructor(private applicationStore: ApplicationStore,
               private fb: FormBuilder,
               private customerHub: CustomerHub) {
   }
 
   ngOnInit(): void {
-    this.applicationId = this.applicationState.application.id;
+    this.applicationId = this.applicationStore.application.id;
     this.infoForm = InvoicingInfoForm.initialForm(this.fb);
     this.recipientForm = <FormGroup>this.infoForm.get('invoiceRecipient');
     this.notBillableCtrl = <FormControl>this.infoForm.get('notBillable');
@@ -46,7 +46,7 @@ export class InvoicingComponent implements OnInit {
   }
 
   private saveApplicationInfo(): Observable<Application> {
-    const application = this.applicationState.application;
+    const application = this.applicationStore.application;
 
     const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
     application.notBillable = invoicingInfo.notBillable;
@@ -56,7 +56,7 @@ export class InvoicingComponent implements OnInit {
     return this.saveCustomer()
       .switchMap(customer => {
         application.invoiceRecipientId = customer.id;
-        return this.applicationState.save(application);
+        return this.applicationStore.save(application);
       });
   }
 
