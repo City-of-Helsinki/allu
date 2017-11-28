@@ -35,6 +35,7 @@ import {InputBoxComponent, InputBoxInputDirective} from './input-box/input-box.c
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InputWarningDirective} from './validation/input-warning.directive';
 import {AvailableToDirective} from '../../service/authorization/available-to.directive';
+import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 
 @NgModule({
   imports: [
@@ -56,7 +57,8 @@ import {AvailableToDirective} from '../../service/authorization/available-to.dir
     InputBoxComponent,
     InputBoxInputDirective,
     InputWarningDirective,
-    AvailableToDirective
+    AvailableToDirective,
+    BottomBarComponent
   ],
   exports: [
     CommonModule,
@@ -91,7 +93,8 @@ import {AvailableToDirective} from '../../service/authorization/available-to.dir
     InputBoxComponent,
     InputBoxInputDirective,
     InputWarningDirective,
-    AvailableToDirective
+    AvailableToDirective,
+    BottomBarComponent
   ],
   entryComponents: [
     AutoCompletionListComponent,

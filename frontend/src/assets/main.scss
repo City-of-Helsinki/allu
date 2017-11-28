@@ -13,6 +13,7 @@
 @import "notification/oval";
 @import '../app/feature/common/auto-completion/auto-completion-list.component.theme';
 @import '../app/feature/common/input-box/input-box.component.theme';
+@import '../app/feature/common/bottom-bar/bottom-bar.component.theme';
 
 // Theme components
 @include angular-material-theme($allu-theme);
@@ -26,6 +27,7 @@
 @include card-theme($allu-theme);
 @include table-theme($allu-theme);
 @include oval-theme($allu-theme);
+@include bottom-bar-theme($allu-theme);
 
 // Reset
 html,
@@ -132,19 +134,6 @@ h1.content-header {
 .mat-icon.align-with-text {
   margin-top: 6px;
 }
-
-.footer {
-  position: fixed;
-  bottom: 0px;
-  left: 0px;
-  width: 100vw;
-  min-height: 60px;
-  text-align: center;
-  background-color: mat-color($allu-primary, 50);
-  box-shadow: 0 -2px 4px 0 rgba(0, 0, 0, 0.15);
-  margin: 0;
-}
-
 
 button.btn-huge {
   width: 165px;

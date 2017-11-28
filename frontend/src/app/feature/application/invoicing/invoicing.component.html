@@ -14,10 +14,10 @@
       <invoice-comments [applicationId]="applicationId"></invoice-comments>
     </div>
   </div>
-  <div class="footer" fxLayout="row" fxFlexAlign="center center">
+  <bottom-bar fxLayout="row" fxFlexAlign="center center">
     <div fxFlex fxFlexAlign="center">
       <button type="submit" mat-raised-button color="primary" [disabled]="!(infoForm.valid && infoForm.dirty)">TALLENNA</button>
       <button type="button" mat-raised-button color="primary" [disabled]="!infoForm.dirty" (click)="cancel()">PERUUTA</button>
     </div>
-  </div>
+  </bottom-bar>
 </form>

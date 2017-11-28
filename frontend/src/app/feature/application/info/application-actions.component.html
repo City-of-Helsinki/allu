@@ -1,43 +1,39 @@
-<mat-card>
-    <mat-card-title>Toiminnot</mat-card-title>
-    <mat-card-content>
-        <div class="button-row">
-            <div class="left-aligned" *ngIf="readonly">
-                <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-                    <button mat-raised-button type="button" color="primary" [routerLink]="['/applications', applicationId, 'edit']">
-                        {{'common.button.edit' | translation | uppercase}}
-                    </button>
-                    <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
-                        {{'application.button.copy' | translation | uppercase}}
-                    </button>
-                    <button *ngIf="showDelete" mat-raised-button type="button" color="primary" (click)="delete()">
-                        {{'common.button.remove' | translation | uppercase}}
-                    </button>
-                </div>
-            </div>
-            <div class="right-aligned">
-                <div *ngIf="!readonly">
-                    <button type="submit" mat-raised-button color="primary" [disabled]="submitPending || !form.valid">
-                        {{'application.button.toSummary' | translation | uppercase}}
-                    </button>
-                </div>
-                <div *ngIf="readonly">
-                    <button mat-raised-button type="button" color="primary" [routerLink]="['/']">
-                        {{'common.button.home' | translation | uppercase}}
-                    </button>
-                    <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-                        <button *ngIf="showCancel" mat-raised-button type="button" color="primary" (click)="cancel()">
-                            {{'common.button.cancel' | translation | uppercase}}
-                        </button>
-                        <button *ngIf="showHandling" mat-raised-button type="button" color="primary" (click)="moveToHandling()">
-                            {{'application.button.toHandling' | translation | uppercase}}
-                        </button>
-                        <button *ngIf="showDecision" [disabled]="decisionDisabled" mat-raised-button type="button" color="primary" (click)="toDecisionmaking()">
-                            {{'application.button.toDecision' | translation | uppercase}}
-                        </button>
-                    </ng-container>
-                </div>
-            </div>
-        </div>
-    </mat-card-content>
-</mat-card>
+<bottom-bar fxLayout="row" fxFlexAlign="space-between">
+  <div fxFlex fxFlexAlign="center" *ngIf="readonly">
+    <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+      <button mat-raised-button type="button" color="primary" [routerLink]="['/applications', applicationId, 'edit']">
+        {{'common.button.edit' | translation | uppercase}}
+      </button>
+      <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
+        {{'application.button.copy' | translation | uppercase}}
+      </button>
+      <button *ngIf="showDelete" mat-raised-button type="button" color="primary" (click)="delete()">
+        {{'common.button.remove' | translation | uppercase}}
+      </button>
+    </div>
+  </div>
+  <div fxFlex></div>
+  <div fxFlex fxFlexAlign="center">
+    <div *ngIf="!readonly">
+      <button type="submit" mat-raised-button color="primary" [disabled]="submitPending || !form.valid">
+        {{'application.button.toSummary' | translation | uppercase}}
+      </button>
+    </div>
+    <div *ngIf="readonly">
+      <button mat-raised-button type="button" color="primary" [routerLink]="['/']">
+        {{'common.button.home' | translation | uppercase}}
+      </button>
+      <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+        <button *ngIf="showCancel" mat-raised-button type="button" color="primary" (click)="cancel()">
+          {{'common.button.cancel' | translation | uppercase}}
+        </button>
+        <button *ngIf="showHandling" mat-raised-button type="button" color="primary" (click)="moveToHandling()">
+          {{'application.button.toHandling' | translation | uppercase}}
+        </button>
+        <button *ngIf="showDecision" [disabled]="decisionDisabled" mat-raised-button type="button" color="primary" (click)="toDecisionmaking()">
+          {{'application.button.toDecision' | translation | uppercase}}
+        </button>
+      </ng-container>
+    </div>
+  </div>
+</bottom-bar>

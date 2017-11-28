@@ -1,0 +1,9 @@
+@import '~@angular/material/theming';
+
+@mixin bottom-bar-theme($theme) {
+  $primary: map-get($theme, primary);
+
+  .bottom-bar {
+    background-color: mat-color($allu-primary, 50);
+  }
+}
