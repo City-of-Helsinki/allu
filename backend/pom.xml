@@ -68,6 +68,7 @@
                         <include>**/*Test.java</include>
                         <include>**/*Spec.java</include>
                     </includes>
+                  <argLine>-Duser.language=en</argLine>
                 </configuration>
             </plugin>
             <plugin>

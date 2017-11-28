@@ -1,11 +1,10 @@
 package fi.hel.allu.pdfcreator.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -23,6 +22,10 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
 
 public class JsonConverterTest {
 
@@ -96,15 +99,16 @@ public class JsonConverterTest {
       "called <xsl:value-of select=\"title\"/> costs <xsl:value-of select=\"price\"/> EUR.\n" +
       "</xsl:for-each></xsl:template></xsl:stylesheet>";
 
-  final static String expectedText =
-      "A CD by Bob Dylan called Empire Burlesque costs 10.9 EUR.\n"+
-      "A CD by Bonnie Tyler called Hide your heart costs 9.9 EUR.\n";
+  final static String [] expectedLines = new String[] {
+      "A CD by Bob Dylan called Empire Burlesque costs 10.9 EUR.",
+      "A CD by Bonnie Tyler called Hide your heart costs 9.9 EUR."
+  };
 
   @Test
-  public void testStylesheet() throws TransformerException
-  {
+  public void testStylesheet() throws TransformerException {
     InputStream stylesheetStream = new ByteArrayInputStream(testXslt.getBytes());
     String text = jsonConverter.applyStylesheet(testXml, stylesheetStream);
-    assertEquals(expectedText, text);
+    String[] lines = text.split("\\r?\\n");
+    assertArrayEquals(expectedLines, lines);
   }
 }
