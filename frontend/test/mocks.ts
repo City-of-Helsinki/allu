@@ -14,12 +14,15 @@ import {RoleType} from '../src/app/model/user/role-type';
 import {NavigationExtras, UrlTree} from '@angular/router';
 import {ChargeBasisEntry} from '../src/app/model/application/invoice/charge-basis-entry';
 import {CurrentUser} from '../src/app/service/user/current-user';
+import {ApplicationState} from '../src/app/service/application/application-store';
+import {Comment} from '../src/app/model/application/comment/comment';
 
 /**
  * Mock for application state
  */
 export class ApplicationStoreMock {
   public _application: Application;
+  public comments$ = new Subject<Array<Comment>>();
 
   constructor() {
     this._application = new Application(1);
@@ -28,16 +31,20 @@ export class ApplicationStoreMock {
     this._application.locations.push(location);
   }
 
-  get application() {
-    return this._application;
+  get snapshot(): ApplicationState {
+    return {application: this._application};
   }
 
-  set application(value: Application) {
+  get application() {
+    return Observable.of(this._application);
+  }
+
+  applicationChange(value: Application) {
     this._application = value;
   }
 
-  get changes(): Observable<Application> {
-    return Observable.of(this._application);
+  get changes(): Observable<ApplicationState> {
+    return Observable.of({application: this._application});
   }
 
   set applicationCopy(app: Application) {
@@ -51,6 +58,12 @@ export class ApplicationStoreMock {
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     return Observable.of(this._application);
   }
+
+  get comments() { return this.comments$.asObservable(); }
+
+  saveComment(applicationId: number, comment: Comment) {}
+
+  removeComment(comment: Comment) {}
 }
 
 /**
@@ -60,9 +73,9 @@ export class CustomerHubMock {
   public orderer$ = new Subject<Contact>();
 
   searchCustomersByField(fieldName: string, term: string) {}
-  findCustomerActiveContacts(customerId: number) {};
-  get orderer() { return this.orderer$.asObservable(); };
-  ordererWasSelected(orderer) {};
+  findCustomerActiveContacts(customerId: number) {}
+  get orderer() { return this.orderer$.asObservable(); }
+  ordererWasSelected(orderer) {}
 }
 
 /**
@@ -90,7 +103,7 @@ export class CurrentUserMock {
 
   public isCurrentUser(id: number): Observable<boolean> {
     return Observable.of(true);
-  };
+  }
 
   get user(): Observable<User> {
     return this.user$.asObservable();
@@ -117,7 +130,7 @@ export class RouterMock {
   navigateByUrl(url: string | UrlTree, extras?: NavigationExtras): Promise<boolean> {
     return Promise.resolve(true);
   }
-};
+}
 
 /**
  * Mock for InvoiceHub
@@ -150,5 +163,5 @@ export function availableToDirectiveMockMeta(mock: CurrentUserMock = new Current
       ]
     }
   };
-};
+}
 

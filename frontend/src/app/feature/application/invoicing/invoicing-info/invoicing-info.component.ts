@@ -45,12 +45,11 @@ export class InvoicingInfoComponent implements OnInit {
     this.notBillableCtrl = <FormControl>this.form.get('notBillable');
     this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
 
-    this.patchInfo(this.applicationStore.application);
-    Some(this.applicationStore.application.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
+    const app = this.applicationStore.snapshot.application;
+    this.patchInfo(app);
+    Some(app.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
   }
-
-
 
   invoiceRecipientChange(recipient: CustomerForm) {
     if (recipient.id) {

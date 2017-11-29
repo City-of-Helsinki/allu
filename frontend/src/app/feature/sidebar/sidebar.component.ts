@@ -16,6 +16,6 @@ export class SidebarComponent {
   constructor(private applicationStore: ApplicationStore) {}
 
   tabChange(type: SidebarItemType): void {
-    this.applicationStore.notifyTabChange(type);
+    this.applicationStore.changeTab(type);
   }
 }

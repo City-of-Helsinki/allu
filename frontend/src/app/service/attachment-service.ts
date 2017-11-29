@@ -14,6 +14,7 @@ import {HttpResponse} from '../util/http-response';
 
 const uploadUrl = '/api/applications/appId/attachments';
 const downloadUrl = '/api/applications/attachments/:attachmentId/data';
+const attachmentUrl = '/api/applications/:appId/attachments';
 const defaultAttachmentGetUrl = '/api/applications/default-attachments';
 const defaultAttachmentUrlEdit = '/api/admin/attachments';
 

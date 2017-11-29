@@ -14,7 +14,7 @@ export class ApplicationResolve implements Resolve<Application> {
   resolve(route: ActivatedRouteSnapshot): Observable<Application> {
     Some(route.queryParams)
       .map((params: {relatedProject}) => params.relatedProject)
-      .do(relatedProject => this.applicationStore.relatedProject = relatedProject);
+      .do(relatedProject => this.applicationStore.changeRelatedProject(relatedProject));
 
     return Some(route.params['id'])
       .map(id => Number(id))
@@ -38,11 +38,11 @@ export class ApplicationResolve implements Resolve<Application> {
   }
 
   private newOrCopy(): Observable<Application> {
-    if (this.applicationStore.isCopy) {
-      this.applicationStore.isCopy = false;
+    if (this.applicationStore.snapshot.isCopy) {
+      this.applicationStore.changeIsCopy(false);
     } else {
       this.applicationStore.reset();
     }
-    return Observable.of(this.applicationStore.application);
+    return Observable.of(this.applicationStore.snapshot.application);
   }
 }

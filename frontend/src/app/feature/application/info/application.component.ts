@@ -42,7 +42,7 @@ export class ApplicationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.application = this.applicationStore.application;
+    this.application = this.applicationStore.snapshot.application;
     Some(this.application.id).do(id => this.supervisionTaskStore.loadTasks(id));
     this.verifyTypeExists(ApplicationType[this.application.type]);
 
@@ -62,19 +62,6 @@ export class ApplicationComponent implements OnInit {
     if (type === undefined) {
       // No known type so navigate back to type selection
       this.router.navigateByUrl('applications/location');
-    }
-  }
-
-  onTagChange(tags: Array<ApplicationTag>): void {
-    if (this.readonly) {
-      // on readonly mode we should save tags immediately
-      this.applicationStore.saveTags(tags)
-        .subscribe(
-          app => {}, // Nothing to do with updated app
-          error => NotificationService.error(error)
-        );
-    } else {
-      this.applicationStore.tags = tags;
     }
   }
 
@@ -114,10 +101,10 @@ export class ApplicationComponent implements OnInit {
   private get invoicingWarn(): Observable<boolean> {
     const noRecipient = (app: Application) => !NumberUtil.isDefined(app.invoiceRecipientId);
     const isBillable = (app: Application) => !app.notBillable;
-    return this.applicationStore.changes.map(app =>
-      noRecipient(app)
-      && isBillable(app)
-      && inHandling(app.statusEnum));
+    return this.applicationStore.changes.map(change =>
+      noRecipient(change.application)
+      && isBillable(change.application)
+      && inHandling(change.application.statusEnum));
   }
 
   private defaultAttachmentsForArea(applicationType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {

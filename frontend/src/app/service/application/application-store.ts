@@ -20,16 +20,31 @@ import {CustomerHub} from '../customer/customer-hub';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 
+export interface ApplicationState {
+  application?: Application;
+  tags?: Array<ApplicationTag>;
+  pendingAttachments?: Array<AttachmentInfo>;
+  attachments?: Array<AttachmentInfo>;
+  comments?: Array<Comment>;
+  tab?: SidebarItemType;
+  relatedProject?: number;
+  isCopy?: boolean;
+}
+
+const initialState: ApplicationState = {
+  application: new Application(),
+  tags: [],
+  pendingAttachments: [],
+  attachments: [],
+  comments: [],
+  tab: 'BASIC_INFO',
+  relatedProject: undefined,
+  isCopy: false,
+};
+
 @Injectable()
 export class ApplicationStore {
-  public relatedProject: number;
-  public isCopy = false;
-
-  private application$ = new BehaviorSubject<Application>(new Application());
-  private pendingAttachments$ = new BehaviorSubject<Array<AttachmentInfo>>([]);
-  private attachments$ = new BehaviorSubject<Array<AttachmentInfo>>([]);
-  private comments$ = new BehaviorSubject<Array<Comment>>([]);
-  private tabChange$ = new Subject<SidebarItemType>();
+  private store = new BehaviorSubject<ApplicationState>(initialState);
 
   constructor(private router: Router,
               private applicationHub: ApplicationHub,
@@ -39,52 +54,80 @@ export class ApplicationStore {
               private commentHub: CommentHub) {
   }
 
+  get snapshot(): ApplicationState {
+    return this.store.getValue();
+  }
+
+  get changes(): Observable<ApplicationState> {
+    return this.store.asObservable()
+      .distinctUntilChanged();
+  }
+
   reset(): void {
-    this.application$.next(new Application());
-    this.pendingAttachments$.next([]);
-    this.attachments$.next([]);
-    this.comments$.next([]);
-    this.relatedProject = undefined;
-    this.isCopy = false;
+    this.store.next(initialState);
   }
 
-  get application(): Application {
-    return this.application$.getValue();
+  get application(): Observable<Application> {
+    return this.store.map(change => change.application).distinctUntilChanged();
   }
 
-  set application(value: Application) {
-    this.application$.next(value);
+  applicationChange(application: Application) {
+    this.store.next({
+      ...this.snapshot,
+      application: application
+    });
   }
 
   get isNew(): boolean {
-    return this.application.id === undefined;
+    return this.snapshot.application.id === undefined;
   }
 
-  set applicationCopy(app: Application) {
-    this.application = app;
-    this.isCopy = true;
+  set applicationCopy(application: Application) {
+    this.store.next({
+      ...this.snapshot,
+      application: application,
+      isCopy: true
+    });
   }
 
-  get changes(): Observable<Application> {
-    return this.application$.asObservable();
+  get tags(): Observable<Array<ApplicationTag>> {
+    return this.store.map(change => change.tags).distinctUntilChanged();
   }
 
-  set tags(tags: Array<ApplicationTag>) {
-    const app = this.application;
-    app.applicationTags = tags;
-    this.application = app;
+  changeTags(tags: Array<ApplicationTag>) {
+    this.store.next({...this.snapshot, tags});
   }
 
-  get tags(): Array<ApplicationTag> {
-    return this.application.applicationTags;
+  saveTags(tags: Array<ApplicationTag>) {
+    const applicationId = this.snapshot.application.id;
+    if (!NumberUtil.isDefined(applicationId)) {
+      throw new Error('Cannot save tags when application state has no saved application');
+    }
+
+    return this.applicationHub.saveTags(applicationId, tags)
+      .do(savedTags => this.changeTags(savedTags));
+  }
+
+  get comments(): Observable<Array<Comment>> {
+    return this.store.map(state => state.comments).distinctUntilChanged();
+  }
+
+  get tab(): Observable<SidebarItemType> {
+    return this.store.map(state => state.tab)
+      .skip(1)
+      .distinctUntilChanged();
+  }
+
+  changeTab(tab: SidebarItemType): void {
+    this.store.next({...this.snapshot, tab});
   }
 
   get attachments(): Observable<Array<AttachmentInfo>> {
-    return this.attachments$.asObservable();
+    return this.store.map(state => state.attachments).distinctUntilChanged();
   }
 
   get pendingAttachments(): Observable<Array<AttachmentInfo>> {
-    return this.pendingAttachments$.asObservable();
+    return this.store.map(state => state.pendingAttachments).distinctUntilChanged();
   }
 
   get allAttachments(): Observable<Array<AttachmentInfo>> {
@@ -95,91 +138,68 @@ export class ApplicationStore {
     );
   }
 
-  /**
-   * Observable for comments other than supervision
-   */
-  get comments(): Observable<Array<Comment>> {
-    return this.comments$.asObservable();
-  }
-
-  get tabChange(): Observable<SidebarItemType> {
-    return this.tabChange$.asObservable();
-  }
-
   addAttachment(attachment: AttachmentInfo) {
-    const current = this.pendingAttachments$.getValue();
-    this.pendingAttachments$.next(current.concat(attachment));
+    const current = this.snapshot.pendingAttachments.slice();
+    this.store.next({
+      ...this.snapshot,
+      pendingAttachments: current.concat(attachment)
+    });
   }
 
   saveAttachment(applicationId: number, attachment: AttachmentInfo): Observable<AttachmentInfo> {
     return this.saveAttachments(applicationId, [attachment])
       .filter(attachments => attachments.length > 0)
       .map(attachments => attachments[0]);
-
-  }
-
-  saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
-    if (attachments.length === 0) {
-      return this.loadAttachments(applicationId);
-    } else {
-      const result = new Subject<Array<AttachmentInfo>>();
-      this.attachmentHub.upload(applicationId, attachments)
-        .subscribe(
-          items => result.next(items),
-          error => result.error(error),
-          () => result.complete());
-
-      return result.switchMap(saved => this.loadAttachments(applicationId));
-    }
   }
 
   removeAttachment(attachmentId: number, index?: number): Observable<HttpResponse> {
     if (attachmentId) {
-      return this.attachmentHub.remove(this.application.id, attachmentId)
-        .do(response => this.loadAttachments(this.application.id).subscribe());
+      const appId = this.snapshot.application.id;
+      return this.attachmentHub.remove(appId, attachmentId)
+        .do(response => this.loadAttachments(appId).subscribe());
     } else {
-      const pending = this.pendingAttachments$.getValue();
-      Some(index).do(i => this.pendingAttachments$.next(pending.splice(i, 1)));
+      const pending = this.snapshot.pendingAttachments;
+      Some(index).do(i => this.store.next({...this.snapshot, pendingAttachments: pending.splice(i, 1)}));
       return Observable.of(new HttpResponse(HttpStatus.ACCEPTED));
     }
   }
 
-  loadAttachments(id: number): Observable<Array<AttachmentInfo>> {
-    return this.applicationHub.getApplication(id)
-      .map(app => app.attachmentList)
-      .do(attachments => this.attachments$.next(attachments));
+  loadAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
+    return this.applicationHub.getAttachments(applicationId)
+      .do(attachments => this.store.next({...this.snapshot, attachments}));
   }
 
   saveComment(applicationId: number, comment: Comment): Observable<Comment> {
     return this.commentHub.saveComment(applicationId, comment)
-      .do(c => this.loadComments(this.application.id).subscribe());
+      .do(c => this.loadComments(this.snapshot.application.id).subscribe());
   }
 
   removeComment(commentId: number): Observable<HttpResponse> {
     return this.commentHub.removeComment(commentId)
-      .do(c => this.loadComments(this.application.id).subscribe());
+      .do(c => this.loadComments(this.snapshot.application.id).subscribe());
   }
 
   loadComments(id: number): Observable<Array<Comment>> {
     return this.commentHub.getComments(id)
-      .do(comments => this.comments$.next(comments));
+      .do(comments => this.store.next({...this.snapshot, comments}));
   }
 
   load(id: number): Observable<Application> {
     return this.applicationHub.getApplication(id)
-      .do(app => {
-        this.attachments$.next(app.attachmentList);
-        this.application = app;
+      .do(application => {
+        this.store.next({
+          ...this.snapshot,
+          application,
+          attachments: application.attachmentList,
+          tags: application.applicationTags,
+          comments: application.comments
+        });
       });
-  }
-
-  notifyTabChange(tab: SidebarItemType): void {
-    this.tabChange$.next(tab);
   }
 
   save(application: Application): Observable<Application> {
     return this.saveCustomersAndContacts(application)
-      .switchMap(app => this.applicationHub.save(app))
+      .switchMap(app => this.saveApplication(app))
       .switchMap(app => this.savePending(app))
       .switchMap(app => this.saved(app));
   }
@@ -190,31 +210,47 @@ export class ApplicationStore {
   }
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
-    const appId = id || this.application.id;
+    const appId = id || this.snapshot.application.id;
     return this.applicationHub.changeStatus(appId, status, changeInfo)
-      .do(application => this.application = application);
+      .do(application => this.applicationChange(application));
   }
 
-  saveTags(tags: Array<ApplicationTag>) {
-    if (!NumberUtil.isDefined(this.application.id)) {
-      throw new Error('Cannot save tags when application state has no saved application');
-    }
+  changeRelatedProject(projectId: number) {
+    this.store.next({...this.snapshot, relatedProject: projectId});
+  }
 
-    return this.applicationHub.saveTags(this.application.id, tags)
-      .map(savedTags => {
-        const app = ObjectUtil.clone(this.application);
-        app.applicationTags = savedTags;
-        return app;
-      }).do(app => this.application$.next(app));
+  changeIsCopy(isCopy: boolean) {
+    this.store.next({...this.snapshot, isCopy});
+  }
+
+  private saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {
+    if (attachments.length === 0) {
+      return this.loadAttachments(applicationId);
+    } else {
+      const result = new Subject<Array<AttachmentInfo>>();
+      this.attachmentHub.upload(applicationId, attachments)
+        .subscribe(
+          items => result.next(items),
+          error => result.error(error),
+          () => result.complete());
+
+      return result.do(a => this.loadAttachments(applicationId).subscribe());
+    }
   }
 
   private saveCustomersAndContacts(application: Application): Observable<Application> {
+    const app = ObjectUtil.clone(application);
     return Observable.forkJoin(application.customersWithContacts.map(cwc =>
       this.customerHub.saveCustomerWithContacts(cwc))
     ).map(savedCustomersWithContacts => {
-      application.customersWithContacts = savedCustomersWithContacts;
-      return application;
+      app.customersWithContacts = savedCustomersWithContacts;
+      return app;
     });
+  }
+
+  private saveApplication(application: Application): Observable<Application> {
+    application.applicationTags = this.snapshot.tags;
+    return this.applicationHub.save(application);
   }
 
   private savePending(application: Application) {
@@ -224,26 +260,25 @@ export class ApplicationStore {
   private savePendingAttachments(application: Application): Observable<Application> {
     const result = new Subject<Application>();
 
-    this.saveAttachments(application.id, this.pendingAttachments$.getValue())
+    this.saveAttachments(application.id, this.snapshot.pendingAttachments)
       .subscribe(
         items => { /* Nothing to do with saved items */ },
         error => result.error(error),
         () => {
           result.next(application);
           result.complete();
-          this.pendingAttachments$.next([]);
+          this.store.next({...this.snapshot, pendingAttachments: []});
         });
 
     return result.asObservable();
   }
 
   private saved(application: Application): Observable<Application> {
-    console.log('Application saved');
-    this.application = application;
+    this.store.next({...this.snapshot, application, tags: application.applicationTags});
     // We had related project so navigate back to project page
-    Some(this.relatedProject)
-      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id).subscribe(project =>
-        this.router.navigate(['/projects', project.id])));
+    Some(this.snapshot.relatedProject)
+      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id)
+        .subscribe(project => this.router.navigate(['/projects', project.id])));
 
     this.router.navigate(['applications', application.id, 'summary']);
     return Observable.of(application);

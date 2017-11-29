@@ -15,6 +15,7 @@ import {getMdIconButton} from '../../../../selector-helpers';
 import {ApplicationType} from '../../../../../src/app/model/application/type/application-type';
 import {Application} from '../../../../../src/app/model/application/application';
 import {OrdererIdForm} from '../../../../../src/app/feature/application/info/cable-report/cable-report.form';
+import {CustomerWithContacts} from '../../../../../src/app/model/customer/customer-with-contacts';
 
 const CONTACT1 = new Contact(1, 1, 'contact1', 'address1');
 const CONTACT2 = new Contact(2, 1, 'contact2', 'address2');
@@ -26,7 +27,7 @@ describe('ContactComponent', () => {
   let fixture: ComponentFixture<ContactComponent>;
   let page: ContactPage;
   let parentForm: FormGroup;
-  let applicationStoreMock: ApplicationStoreMock;
+  let applicationStore: ApplicationStoreMock;
 
   class ContactPage {
     public contacts: Array<DebugElement>;
@@ -55,13 +56,11 @@ describe('ContactComponent', () => {
       imports: [AlluCommonModule, ReactiveFormsModule, MatCardModule],
       declarations: [ContactComponent],
       providers: [
-        {provide: ApplicationStore, useClass: applicationStoreMock},
+        {provide: ApplicationStore, useClass: ApplicationStoreMock},
         {provide: FormBuilder, useValue: new FormBuilder()},
         {provide: CustomerHub, useClass: CustomerHubMock}
       ]
     }).compileComponents();
-
-    applicationStoreMock = TestBed.get(ApplicationStore) as ApplicationStoreMock;
   }));
 
   beforeEach(() => {
@@ -72,7 +71,12 @@ describe('ContactComponent', () => {
     comp.parentForm = parentForm;
     comp.readonly = false;
     comp.customerRoleType = CustomerRoleType[CustomerRoleType.APPLICANT];
-    comp.contactList = CONTACTS_ALL;
+
+    applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
+    applicationStore._application.customersWithContacts = [
+      new CustomerWithContacts(CustomerRoleType.APPLICANT, undefined, CONTACTS_ALL)
+    ];
+
     fixture.detectChanges();
     page = new ContactPage();
   });
@@ -157,7 +161,7 @@ describe('ContactComponent', () => {
   function reInitWithCableReport() {
     const app = new Application();
     app.type = ApplicationType[ApplicationType.CABLE_REPORT];
-    spyOnProperty(applicationStoreMock, 'application', 'get').and.returnValue(app);
+    spyOnProperty(applicationStore, 'snapshot', 'get').and.returnValue({application: app});
     while (comp.contacts.length) {
       comp.contacts.removeAt(0);
     }

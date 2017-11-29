@@ -1,9 +1,13 @@
 <div class="row item-bar">
     <div class="item-bar-content">
-        <span class="single-line" *ngIf="application.startTime">{{application.uiStartTime}} - {{application.uiEndTime}}</span>
+        <ng-container *ngIf="application | async as app">
+          <span class="single-line" *ngIf="app.startTime">
+            {{app.uiStartTime}} - {{app.uiEndTime}}
+          </span>
+        </ng-container>
         <span>Tunnisteet:</span>
         <mat-chip-list>
-            <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of application.applicationTags; let i = index;">
+            <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of tags | async; let i = index;">
                 {{['application.tag.type', tag.type] | translation}}
                 <button *ngIf="canBeRemoved(tag.type)" mat-icon-button (click)="remove(i)"><mat-icon>remove_circle_outline</mat-icon></button>
             </mat-chip>
@@ -13,7 +17,6 @@
                 Lisää tunniste
                 <button mat-icon-button [matMenuTriggerFor]="menu"><mat-icon>add_circle_outline</mat-icon></button>
             </mat-chip>
-
         </span>
     </div>
 </div>

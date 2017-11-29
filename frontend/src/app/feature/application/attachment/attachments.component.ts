@@ -34,7 +34,7 @@ export class AttachmentsComponent implements OnInit {
               private dialog: MatDialog) {}
 
   ngOnInit() {
-    this.application = this.applicationStore.application;
+    this.application = this.applicationStore.snapshot.application;
     this.applicationStore.allAttachments
       .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
       .subscribe(sorted => this.setAttachments(sorted));

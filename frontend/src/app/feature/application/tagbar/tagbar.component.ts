@@ -1,7 +1,10 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {Application} from '../../../model/application/application';
+import {Component, Input, OnInit} from '@angular/core';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {ApplicationTagType, manualTagTypes} from '../../../model/application/tag/application-tag-type';
+import {Observable} from 'rxjs/Observable';
+import {ApplicationStore} from '../../../service/application/application-store';
+import {NotificationService} from '../../../service/notification/notification.service';
+import {Application} from '../../../model/application/application';
 
 @Component({
   selector: 'tagbar',
@@ -11,17 +14,17 @@ import {ApplicationTagType, manualTagTypes} from '../../../model/application/tag
   ]
 })
 export class TagBarComponent implements OnInit {
-  @Input() application: Application;
   @Input() readonly: boolean;
-  @Output() onTagChange = new EventEmitter<Array<ApplicationTag>>();
 
-  tags: Array<ApplicationTag> = [];
+  application: Observable<Application>;
+  tags: Observable<Array<ApplicationTag>>;
   manualTagTypes = manualTagTypes.map(type => ApplicationTagType[type]);
 
-  constructor() {}
+  constructor(private applicationStore: ApplicationStore) {}
 
   ngOnInit() {
-    this.tags = this.application.applicationTags || [];
+    this.application = this.applicationStore.application;
+    this.tags = this.applicationStore.tags;
   }
 
   canBeRemoved(typeName: string) {
@@ -29,14 +32,28 @@ export class TagBarComponent implements OnInit {
   }
 
   remove(index: number): void {
-    this.tags.splice(index, 1);
-    this.onTagChange.emit(this.tags);
+    const tags = this.applicationStore.snapshot.tags;
+    tags.splice(index, 1);
+    this.saveTags(tags);
   }
 
   add(type: string): void {
-    if (!this.tags.some(tag => tag.type === type)) {
-      this.tags.push(new ApplicationTag(type, undefined, new Date()));
-      this.onTagChange.emit(this.tags);
+    const tags = this.applicationStore.snapshot.tags;
+    if (!tags.some(tag => tag.type === type)) {
+      this.saveTags(tags.concat(new ApplicationTag(type, undefined, new Date())));
+    }
+  }
+
+  private saveTags(tags: Array<ApplicationTag>): void {
+    if (this.readonly) {
+      // on readonly mode we should save tags immediately
+      this.applicationStore.saveTags(tags)
+        .subscribe(
+          app => {}, // Nothing to do with updated app
+          error => NotificationService.error(error)
+        );
+    } else {
+      this.applicationStore.changeTags(tags);
     }
   }
 }

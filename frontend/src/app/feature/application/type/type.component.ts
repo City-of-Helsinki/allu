@@ -100,7 +100,7 @@ export class TypeComponent implements OnInit {
   }
 
   private initForm() {
-    const application = this.applicationStore.application;
+    const application = this.applicationStore.snapshot.application;
     const selectedKinds = application.uiKinds;
     const selectedSpecifiers = fromKindsWithSpecifiers(application.kindsWithSpecifiers);
 

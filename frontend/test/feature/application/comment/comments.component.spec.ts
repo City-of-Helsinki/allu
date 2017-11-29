@@ -12,7 +12,7 @@ import {Subject} from 'rxjs/Subject';
 import {ErrorInfo} from '../../../../src/app/service/ui-state/error-info';
 import {NotificationService} from '../../../../src/app/service/notification/notification.service';
 import {HttpResponse, HttpStatus} from '../../../../src/app/util/http-response';
-import {availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
+import {ApplicationStoreMock, availableToDirectiveMockMeta, CurrentUserMock} from '../../../mocks';
 import {AvailableToDirective} from '../../../../src/app/service/authorization/available-to.directive';
 
 
@@ -29,14 +29,6 @@ const COMMENT_TWO = new Comment(
   'Test comment two',
   new Date()
 );
-
-class ApplicationStoreMock {
-  public comments$ = new Subject<Array<Comment>>();
-  get application() { return {id: 1}; }
-  get comments() { return this.comments$.asObservable(); }
-  saveComment(applicationId: number, comment: Comment) {}
-  removeComment(comment: Comment) {}
-}
 
 @Component({
   selector: 'comment',
@@ -121,7 +113,7 @@ describe('CommentsComponent', () => {
     fixture.whenStable().then(val => {
       const commentEl = de.query(By.css('comment'));
       commentEl.triggerEventHandler('onSave', COMMENT_ONE);
-      expect(applicationStore.saveComment).toHaveBeenCalledWith(applicationStore.application.id, COMMENT_ONE);
+      expect(applicationStore.saveComment).toHaveBeenCalledWith(applicationStore._application.id, COMMENT_ONE);
       expect(NotificationService.message).toHaveBeenCalled();
       expect(de.queryAll(By.css('li')).length).toEqual(2, 'Was expecting 2 comments');
     });

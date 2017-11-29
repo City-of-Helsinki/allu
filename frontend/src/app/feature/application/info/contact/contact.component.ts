@@ -13,6 +13,8 @@ import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {OrdererIdForm} from '../cable-report/cable-report.form';
+import {Subject} from 'rxjs/Subject';
+import {FormUtil} from '../../../../util/form.util';
 
 const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 
@@ -26,9 +28,7 @@ const ALWAYS_ENABLED_FIELDS = ['id', 'name', 'customerId', 'orderer'];
 })
 export class ContactComponent implements OnInit {
   @Input() parentForm: FormGroup;
-  @Input() customerId: number;
   @Input() customerRoleType: string;
-  @Input() contactList: Array<Contact> = [];
   @Input() readonly: boolean;
   @Input() contactRequired = false;
 
@@ -39,6 +39,7 @@ export class ContactComponent implements OnInit {
   showOrderer = false;
 
   private dialogRef: MatDialogRef<ContactModalComponent>;
+  private customerIdChanges = new Subject<number>();
 
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
@@ -46,16 +47,15 @@ export class ContactComponent implements OnInit {
               private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
+    this.availableContacts = this.customerIdChanges.asObservable()
+      .switchMap(id => this.customerHub.findCustomerActiveContacts(id));
+
     this.initContacts();
-    this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationStore.application.typeEnum;
+    this.showOrderer = ApplicationType.CABLE_REPORT === this.applicationStore.snapshot.application.typeEnum;
 
     if (this.readonly) {
       this.contacts.disable();
     }
-
-    this.availableContacts = Some(this.customerId)
-      .map(id => this.customerHub.findCustomerActiveContacts(id))
-      .orElse(Observable.of([]));
   }
 
   contactSelected(contact: Contact, index: number): void {
@@ -165,8 +165,16 @@ export class ContactComponent implements OnInit {
     this.form = <FormGroup>this.parentForm.get(CustomerWithContactsForm.formName(CustomerRoleType[this.customerRoleType]));
     this.contacts = <FormArray>this.form.get('contacts');
     const defaultContactList = this.contactRequired ? [new Contact()] : [];
-    this.contactList = Some(this.contactList).filter(cl => cl.length > 0).orElse(defaultContactList);
-    this.contactList.forEach(contact => this.addContact(contact));
+    const roleType = CustomerRoleType[this.customerRoleType];
+
+    this.applicationStore.application
+      .map(app => app.customerWithContactsByRole(roleType))
+      .do(cwc => this.customerIdChanges.next(cwc.customerId))
+      .map(cwc => cwc.contacts.length > 0 ? cwc.contacts : defaultContactList)
+      .subscribe(contacts => {
+        FormUtil.clearArray(this.contacts);
+        contacts.forEach(contact => this.addContact(contact));
+      });
   }
 
   private resetContacts(): void {

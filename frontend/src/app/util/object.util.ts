@@ -2,6 +2,8 @@ export class ObjectUtil {
   static clone(source: any) {
     if (typeof source !== 'object') {
       return source;
+    } else if (source.constructor === Array) {
+      return source.map(val => ObjectUtil.clone(val));
     } else {
       let key;
       let value;

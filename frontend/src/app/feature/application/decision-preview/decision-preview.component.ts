@@ -22,7 +22,7 @@ export class DecisionPreviewComponent implements OnInit {
               private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    this.decisionHub.fetch(this.applicationStore.application.id)
+    this.decisionHub.fetch(this.applicationStore.snapshot.application.id)
         .subscribe(decision => this.providePdf(decision));
   }
   private providePdf(decision: Decision): void {

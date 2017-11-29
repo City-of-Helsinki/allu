@@ -35,10 +35,10 @@ export class ApplicationHistoryComponent implements OnInit {
               protected formatter: ApplicationHistoryFormatter) {}
 
   ngOnInit(): void {
-    this.applicationHub.loadMetaData(this.applicationStore.application.type).subscribe(meta => {
+    this.applicationHub.loadMetaData(this.applicationStore.snapshot.application.type).subscribe(meta => {
       this.meta = meta;
       this.formatter.setMeta(meta);
-      this.history = this.historyHub.applicationHistory(this.applicationStore.application.id);
+      this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id);
       this.userHub.getAllUsers().subscribe(users => users.forEach(user => this.handlers.set(user.id, user)));
     },
     err => NotificationService.errorMessage(findTranslation('history.error.metadata')));

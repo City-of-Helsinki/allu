@@ -64,7 +64,7 @@ export class DecisionActionsComponent {
         .subscribe(app => {
           this.applicationStore.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
           NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
-          this.applicationStore.application = app;
+          this.applicationStore.applicationChange(app);
           this.application = app;
           this.onDecisionConfirm.emit(changeInfo);
         }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));

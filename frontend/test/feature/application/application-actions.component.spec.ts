@@ -57,7 +57,7 @@ describe('ApplicationActionsComponent', () => {
     router = TestBed.get(Router) as RouterMock;
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
 
-    comp.applicationId = applicationId;
+    applicationStore._application.id  = applicationId;
     comp.form = form;
     comp.ngOnInit();
     fixture.detectChanges();
@@ -86,10 +86,10 @@ describe('ApplicationActionsComponent', () => {
     const copyAsNewBtn = getButtonWithText(de, findTranslation('application.button.copy').toUpperCase());
     copyAsNewBtn.click();
 
-    expect(applicationStore.application.id).toBeUndefined();
-    expect(applicationStore.application.attachmentList).toEqual([]);
-    expect(applicationStore.application.locations.length).toEqual(1);
-    expect(applicationStore.application.locations[0].startTime).toEqual(location.startTime);
+    expect(applicationStore._application.id).toBeUndefined();
+    expect(applicationStore._application.attachmentList).toEqual([]);
+    expect(applicationStore._application.locations.length).toEqual(1);
+    expect(applicationStore._application.locations[0].startTime).toEqual(location.startTime);
     expect(router.navigate).toHaveBeenCalledWith(['/applications/edit']);
   });
 
@@ -104,7 +104,7 @@ describe('ApplicationActionsComponent', () => {
     removeBtn.click();
     tickAndDetect();
 
-    expect(applicationStore.delete).toHaveBeenCalledWith(comp.applicationId);
+    expect(applicationStore.delete).toHaveBeenCalledWith(applicationId);
     expect(NotificationService.translateMessage).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/']);
   }));
@@ -143,7 +143,7 @@ describe('ApplicationActionsComponent', () => {
     cancelBtn.click();
     tickAndDetect();
 
-    expect(applicationStore.changeStatus).toHaveBeenCalledWith(comp.applicationId, ApplicationStatus.CANCELLED);
+    expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.CANCELLED);
     expect(NotificationService.translateMessage).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/workqueue']);
   }));
@@ -162,16 +162,16 @@ describe('ApplicationActionsComponent', () => {
     applicationStore._application.status = ApplicationStatus[ApplicationStatus.PENDING];
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.returnValue(Observable.of(applicationStore.application));
+    spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
     spyOn(NotificationService, 'translateMessage');
 
     const toHandlingBtn = getButtonWithText(de, findTranslation('application.button.toHandling').toUpperCase());
     toHandlingBtn.click();
     tickAndDetect();
 
-    expect(applicationStore.changeStatus).toHaveBeenCalledWith(comp.applicationId, ApplicationStatus.HANDLING);
+    expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.HANDLING);
     expect(NotificationService.translateMessage).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', comp.applicationId, 'edit']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationId, 'edit']);
   }));
 
   it('should show move to decision depending on status and type', () => {
@@ -226,16 +226,16 @@ describe('ApplicationActionsComponent', () => {
     applicationStore._application.invoiceRecipientId = 1;
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.returnValue(Observable.of(applicationStore.application));
+    spyOn(applicationStore, 'changeStatus').and.returnValue(Observable.of(applicationStore._application));
     spyOn(NotificationService, 'translateMessage');
 
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());
     decisionBtn.click();
     tickAndDetect();
 
-    expect(applicationStore.changeStatus).toHaveBeenCalledWith(comp.applicationId, ApplicationStatus.DECISIONMAKING);
+    expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.DECISIONMAKING);
     expect(NotificationService.translateMessage).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationStore.application.id, 'decision']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationStore._application.id, 'decision']);
   }));
 
   it('should navigate to decision making for other application types', fakeAsync(() => {
@@ -249,7 +249,7 @@ describe('ApplicationActionsComponent', () => {
     decisionBtn.click();
     tickAndDetect();
 
-    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationStore.application.id, 'decision']);
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationStore._application.id, 'decision']);
   }));
 
   function setAndInit(readonly: boolean) {

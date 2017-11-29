@@ -28,7 +28,7 @@ export class InvoicingComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.applicationId = this.applicationStore.application.id;
+    this.applicationId = this.applicationStore.snapshot.application.id;
     this.infoForm = InvoicingInfoForm.initialForm(this.fb);
     this.recipientForm = <FormGroup>this.infoForm.get('invoiceRecipient');
     this.notBillableCtrl = <FormControl>this.infoForm.get('notBillable');
@@ -46,7 +46,7 @@ export class InvoicingComponent implements OnInit {
   }
 
   private saveApplicationInfo(): Observable<Application> {
-    const application = this.applicationStore.application;
+    const application = this.applicationStore.snapshot.application;
 
     const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
     application.notBillable = invoicingInfo.notBillable;

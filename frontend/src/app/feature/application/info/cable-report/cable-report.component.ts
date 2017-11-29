@@ -26,8 +26,7 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
 
   ngOnInit(): any {
     super.ngOnInit();
-    this.applicationForm.patchValue(CableReportForm.from(this.application));
-    this.showCableInfo = ApplicationStatus[this.application.status] >= ApplicationStatus.HANDLING;
+
   }
 
 
@@ -47,6 +46,13 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
       workDescription: [''],
       ordererId: [OrdererIdForm.createDefault(), Validators.required]
     });
+  }
+
+  protected onApplicationChange(application: Application): void {
+    super.onApplicationChange(application);
+
+    this.applicationForm.patchValue(CableReportForm.from(application));
+    this.showCableInfo = ApplicationStatus[application.status] >= ApplicationStatus.HANDLING;
   }
 
   protected update(form: CableReportForm): Application {

@@ -9,8 +9,7 @@ export class NoteForm implements ApplicationForm {
     public name: string,
     public validityTimes: TimePeriod,
     public recurringEndYear?: number,
-    public description?: string,
-    public applicant?: CustomerWithContactsForm
+    public description?: string
   ) {}
 
   static to(form: NoteForm): Note {

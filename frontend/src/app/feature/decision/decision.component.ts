@@ -26,7 +26,7 @@ export class DecisionComponent implements OnInit {
     private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    this.application = this.applicationStore.application;
+    this.application = this.applicationStore.snapshot.application;
     this.progressStep = stepFrom(ApplicationStatus[this.application.status]);
     this.decisionHub.fetch(this.application.id)
       .subscribe(decision => this.providePdf(decision));

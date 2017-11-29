@@ -24,21 +24,6 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
 
   ngOnInit(): any {
     super.ngOnInit();
-    const contract = <PlacementContract>this.application.extension || new PlacementContract();
-    this.applicationForm.patchValue(PlacementContractForm.from(this.application, contract));
-  }
-
-  protected update(form: PlacementContractForm): Application {
-    const application = super.update(form);
-    application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
-    application.extension = PlacementContractForm.to(form);
-
-    application.singleLocation.startTime = application.startTime;
-    application.singleLocation.endTime = application.endTime;
-
-    return application;
   }
 
   protected initForm() {
@@ -52,5 +37,24 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
       additionalInfo: [''],
       generalTerms: ['']
     });
+  }
+
+  protected onApplicationChange(application: Application): void {
+    super.onApplicationChange(application);
+    const contract = <PlacementContract>application.extension || new PlacementContract();
+    this.applicationForm.patchValue(PlacementContractForm.from(application, contract));
+  }
+
+  protected update(form: PlacementContractForm): Application {
+    const application = super.update(form);
+    application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
+    application.extension = PlacementContractForm.to(form);
+
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
+
+    return application;
   }
 }

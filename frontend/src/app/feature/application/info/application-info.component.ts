@@ -15,6 +15,6 @@ export class ApplicationInfoComponent implements OnInit {
   constructor(private applicationStore: ApplicationStore) {}
 
   ngOnInit(): void {
-    this.application = this.applicationStore.application;
+    this.application = this.applicationStore.snapshot.application;
   }
 }

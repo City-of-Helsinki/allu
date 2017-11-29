@@ -7,6 +7,7 @@ import {ApplicationStore} from '../../../../service/application/application-stor
 import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
+import {Application} from '../../../../model/application/application';
 
 @Component({
   selector: 'note',
@@ -22,7 +23,23 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
 
   ngOnInit(): any {
     super.ngOnInit();
-    this.applicationForm.patchValue(NoteForm.from(this.application));
+  }
+
+  protected initForm() {
+    this.applicationForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      validityTimes: this.fb.group({
+        startTime: [undefined, Validators.required],
+        endTime: [undefined]
+      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
+      description: [''],
+      recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
+    });
+  }
+
+  protected onApplicationChange(application: Application): void {
+    super.onApplicationChange(application);
+    this.applicationForm.patchValue(NoteForm.from(application));
   }
 
   protected update(form: NoteForm) {
@@ -37,17 +54,5 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
     application.singleLocation.endTime = application.endTime;
 
     return application;
-  }
-
-  protected initForm() {
-    this.applicationForm = this.fb.group({
-      name: ['', [Validators.required, Validators.minLength(2)]],
-      validityTimes: this.fb.group({
-        startTime: [undefined, Validators.required],
-        endTime: [undefined]
-      }, ComplexValidator.startBeforeEnd('startTime', 'endTime')),
-      description: [''],
-      recurringEndYear: [undefined, ComplexValidator.betweenOrEmpty(MIN_YEAR, MAX_YEAR)]
-    });
   }
 }

@@ -26,12 +26,14 @@ export const applicationTabs: Routes = [
 ];
 
 export const applicationRoutes: Routes = [
-  { path: 'applications', canActivate: [AuthGuard], resolve: { application: ApplicationResolve},
+  { path: 'applications', canActivate: [AuthGuard],
     children: [
     { path: '', canActivate: [AuthGuard], redirectTo: 'search', pathMatch: 'full' },
     { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
-    { path: 'location', component: LocationComponent, canActivate: [AuthGuard]},
-    { path: 'edit', component: ApplicationComponent, canActivate: [AuthGuard], children: applicationTabs }
+    { path: 'location', component: LocationComponent, canActivate: [AuthGuard],
+      resolve: { application: ApplicationResolve} },
+    { path: 'edit', component: ApplicationComponent, canActivate: [AuthGuard],
+      resolve: { application: ApplicationResolve}, children: applicationTabs }
   ]},
   { path:  'applications/:id', canActivate: [AuthGuard], resolve: { application: ApplicationResolve},
     children: [

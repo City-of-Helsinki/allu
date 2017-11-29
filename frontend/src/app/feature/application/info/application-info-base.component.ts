@@ -1,7 +1,6 @@
 import {AfterContentInit, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
@@ -13,17 +12,20 @@ import {Some} from '../../../util/option';
 import {DistributionEntryForm} from '../distribution/distribution-list/distribution-entry-form';
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
 import {CustomerWithContacts} from '../../../model/customer/customer-with-contacts';
+import {Subject} from 'rxjs/Subject';
+import {Observable} from 'rxjs/Observable';
+import {SidebarItemType} from '../../sidebar/sidebar-item';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
 
-  application: Application;
   applicationForm: FormGroup;
   readonly: boolean;
   submitPending = false;
   showTerms = false;
+  applicationChanges: Observable<Application>;
 
-  private appChanges: Subscription;
-  private tabChanges: Subscription;
+  protected destroy = new Subject<boolean>();
+
   private hasPropertyDeveloperCtrl: FormControl;
   private hasRepresentativeCtrl: FormControl;
 
@@ -37,37 +39,34 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.hasRepresentativeCtrl = this.fb.control(false);
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
-    this.appChanges = this.applicationStore.changes.subscribe(app => this.onApplicationChange(app));
 
     UrlUtil.urlPathContains(this.route.parent, 'summary')
       .filter(contains => contains)
       .forEach(summary => {
-        this.readonly = summary || !canBeEdited(this.applicationStore.application.statusEnum);
+        this.readonly = summary || !canBeEdited(this.applicationStore.snapshot.application.statusEnum);
       });
-
-    this.tabChanges = this.applicationStore.tabChange.subscribe(tab => {
-      if (!this.readonly) {
-        this.applicationForm.enable();
-        this.applicationStore.application = this.update(this.applicationForm.value);
-      }
-    });
   }
 
   ngAfterContentInit(): void {
+    this.applicationChanges = this.applicationStore.application;
+
+    this.applicationChanges
+      .takeUntil(this.destroy)
+      .subscribe(app => this.onApplicationChange(app));
+
     if (this.readonly) {
       this.applicationForm.disable();
     }
+
+    this.applicationStore.tab
+      .takeUntil(this.destroy)
+      .subscribe(tab => this.onTabChange(tab));
   }
 
   ngOnDestroy(): any {
-    this.appChanges.unsubscribe();
-    this.tabChanges.unsubscribe();
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
-
-  /**
-   * Initializes application form
-   */
-  protected abstract initForm();
 
   onSubmit(form: FormGroup) {
     this.submitPending = true;
@@ -97,10 +96,27 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
   }
 
   /**
+   * Initializes application form
+   */
+  protected abstract initForm();
+
+  /**
+   * Handles application changes
+   */
+  protected onApplicationChange(application: Application): void {
+    this.showTerms = application.statusEnum >= ApplicationStatus.HANDLING;
+    this.applicationForm.patchValue({
+      hasPropertyDeveloper: application.propertyDeveloper.customerId,
+      hasRepresentative: application.representative.customerId,
+      invoiceRecipientId: application.invoiceRecipientId
+    });
+  }
+
+  /**
    * Updates application based on given form and returns updated application
    */
   protected update(form: ApplicationForm): Application {
-    const application = this.application;
+    const application = this.applicationStore.snapshot.application;
     application.customersWithContacts = this.getCustomers(form);
 
     Some(form.communication).map(c => {
@@ -108,7 +124,6 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
       application.decisionPublicityType = c.publicityType;
       application.decisionDistributionList = c.distributionRows.map(distribution => DistributionEntryForm.to(distribution));
     });
-    application.calculatedPriceEuro = form.calculatedPrice;
     return application;
   }
 
@@ -121,13 +136,10 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     return customers;
   }
 
-  private onApplicationChange(app: Application): void {
-    this.application = app;
-    this.showTerms = app.status === ApplicationStatus[ApplicationStatus.HANDLING];
-    this.applicationForm.patchValue({
-      hasPropertyDeveloper: app.propertyDeveloper.customerId,
-      hasRepresentative: app.representative.customerId,
-      invoiceRecipientId: app.invoiceRecipientId
-    });
+  private onTabChange(tab: SidebarItemType): void {
+    if (!this.readonly) {
+      this.applicationForm.enable();
+      this.applicationStore.applicationChange(this.update(this.applicationForm.getRawValue()));
+    }
   }
 }

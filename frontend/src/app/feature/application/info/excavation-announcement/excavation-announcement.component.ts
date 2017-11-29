@@ -42,10 +42,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   ngOnInit(): any {
     super.ngOnInit();
-    const excavation = <ExcavationAnnouncement>this.application.extension || new ExcavationAnnouncement();
-    const form = ExcavationAnnouncementForm.from(this.application, excavation);
-    this.applicationForm.patchValue(form);
-    this.patchRelatedCableReport(excavation);
 
     this.matchingApplications = this.cableReportIdentifierCtrl.valueChanges
       .debounceTime(300)
@@ -67,19 +63,6 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     } else {
       picker.open();
     }
-  }
-
-  protected update(form: ExcavationAnnouncementForm): Application {
-    const application = super.update(form);
-    application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
-    application.extension = ExcavationAnnouncementForm.to(form);
-
-    application.singleLocation.startTime = application.startTime;
-    application.singleLocation.endTime = application.endTime;
-
-    return application;
   }
 
   protected initForm() {
@@ -121,6 +104,28 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
     if (this.applicationStore.isNew) {
       this.validityEndTimeCtrl.markAsDirty(); // To trigger validation
     }
+  }
+
+  protected onApplicationChange(application: Application): void {
+    super.onApplicationChange(application);
+
+    const excavation = <ExcavationAnnouncement>application.extension || new ExcavationAnnouncement();
+    const form = ExcavationAnnouncementForm.from(application, excavation);
+    this.applicationForm.patchValue(form);
+    this.patchRelatedCableReport(excavation);
+  }
+
+  protected update(form: ExcavationAnnouncementForm): Application {
+    const application = super.update(form);
+    application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
+    application.extension = ExcavationAnnouncementForm.to(form);
+
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
+
+    return application;
   }
 
   private patchRelatedCableReport(excavation: ExcavationAnnouncement): void {

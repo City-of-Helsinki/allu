@@ -67,7 +67,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   remove(): void {
     const task = this.form.value;
     if (task.id) {
-      this.store.removeTask(this.applicationStore.application.id, task.id)
+      this.store.removeTask(this.applicationStore.snapshot.application.id, task.id)
         .subscribe(
           status => {
             this.onRemove.emit();
@@ -82,7 +82,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   save(): void {
     const formValue = <SupervisionTaskForm>this.form.value;
     this.form.disable();
-    this.store.saveTask(this.applicationStore.application.id, SupervisionTaskForm.to(formValue))
+    this.store.saveTask(this.applicationStore.snapshot.application.id, SupervisionTaskForm.to(formValue))
       .subscribe(
         c => NotificationService.translateMessage('supervision.task.action.save'),
         error => {
@@ -169,7 +169,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private preferredSupervisor(): void {
-    const app = this.applicationStore.application;
+    const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
     this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))
       .filter(preferred => !!preferred)

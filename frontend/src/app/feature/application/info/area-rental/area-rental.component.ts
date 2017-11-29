@@ -24,21 +24,6 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
 
   ngOnInit(): any {
     super.ngOnInit();
-    const areaRental = <AreaRental>this.application.extension || new AreaRental();
-    this.applicationForm.patchValue(AreaRentalForm.from(this.application, areaRental));
-  }
-
-  protected update(form: AreaRentalForm): Application {
-    const application = super.update(form);
-    application.name = 'Aluevuokraus'; // Area rentals have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
-    application.extension = AreaRentalForm.to(form);
-
-    application.firstLocation.startTime = application.startTime;
-    application.firstLocation.endTime = application.endTime;
-
-    return application;
   }
 
   protected initForm() {
@@ -54,5 +39,25 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
       trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']
     });
+  }
+
+  protected onApplicationChange(application: Application): void {
+    super.onApplicationChange(application);
+
+    const areaRental = <AreaRental>application.extension || new AreaRental();
+    this.applicationForm.patchValue(AreaRentalForm.from(application, areaRental));
+  }
+
+  protected update(form: AreaRentalForm): Application {
+    const application = super.update(form);
+    application.name = 'Aluevuokraus'; // Area rentals have no name so set default
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
+    application.extension = AreaRentalForm.to(form);
+
+    application.firstLocation.startTime = application.startTime;
+    application.firstLocation.endTime = application.endTime;
+
+    return application;
   }
 }

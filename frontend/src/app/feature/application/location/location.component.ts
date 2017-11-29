@@ -100,7 +100,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
       .filter(e => e instanceof NavigationStart)
       .subscribe(navEvent => this.mapHub.addSearchFilter(defaultFilter));
 
-    this.application = this.applicationStore.application;
+    this.application = this.applicationStore.snapshot.application;
     this.multipleLocations = this.application.type === ApplicationType[ApplicationType.AREA_RENTAL];
     this.kindsSelected = this.application.kinds.length > 0;
     this.loadFixedLocations();
@@ -179,7 +179,7 @@ export class LocationComponent implements OnInit, OnDestroy, AfterViewInit {
           app => NotificationService.message(findTranslation('application.action.saved')),
           err => NotificationService.error(err));
     } else {
-      this.applicationStore.application = this.application;
+      this.applicationStore.applicationChange(this.application);
       this.router.navigate(['/applications/edit']);
     }
   }

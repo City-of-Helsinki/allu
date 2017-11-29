@@ -79,4 +79,6 @@ export class ApplicationHub {
   public saveDefaultText = (text: DefaultText) => this.defaultTextService.save(text);
 
   public removeDefaultText = (id: number) => this.defaultTextService.remove(id);
+
+  public getAttachments = (id: number) => this.applicationService.getAttachments(id);
 }

@@ -23,23 +23,7 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
 
   ngOnInit(): any {
     super.ngOnInit();
-    const rental = <ShortTermRental>this.application.extension || new ShortTermRental();
-    this.applicationForm.patchValue(ShortTermRentalForm.from(this.application, rental));
   }
-
-  protected update(form: ShortTermRentalForm): Application {
-    const application = super.update(form);
-    application.name = form.name;
-    application.startTime = form.rentalTimes.startTime;
-    application.endTime = form.rentalTimes.endTime;
-    application.extension = ShortTermRentalForm.to(form);
-
-    application.singleLocation.startTime = application.startTime;
-    application.singleLocation.endTime = application.endTime;
-
-    return application;
-  }
-
 
   protected initForm() {
     this.applicationForm = this.fb.group({
@@ -54,5 +38,26 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
         endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
     });
+  }
+
+  protected onApplicationChange(application: Application): any {
+    super.onApplicationChange(application);
+
+    const rental = <ShortTermRental>application.extension || new ShortTermRental();
+    const formValue = ShortTermRentalForm.from(application, rental);
+    this.applicationForm.patchValue(formValue);
+  }
+
+  protected update(form: ShortTermRentalForm): Application {
+    const application = super.update(form);
+    application.name = form.name;
+    application.startTime = form.rentalTimes.startTime;
+    application.endTime = form.rentalTimes.endTime;
+    application.extension = ShortTermRentalForm.to(form);
+
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
+
+    return application;
   }
 }

@@ -22,7 +22,7 @@ export class CommentsComponent implements OnInit, OnDestroy {
   constructor(private applicationStore: ApplicationStore) {}
 
   ngOnInit() {
-    this.application = this.applicationStore.application;
+    this.application = this.applicationStore.snapshot.application;
     this.commentSubsciption = this.applicationStore.comments
       .map(comments => comments.sort((l, r) => TimeUtil.compareTo(r.createTime, l.createTime))) // sort latest first
       .subscribe(
