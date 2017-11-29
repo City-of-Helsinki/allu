@@ -446,6 +446,11 @@
                             <column>type</column>
                             <type>fi.hel.allu.model.querydsl.StringToChargeBasisType</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>deposit</table>
+                            <column>creation_time</column>
+                            <type>java.time.ZonedDateTime</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>
