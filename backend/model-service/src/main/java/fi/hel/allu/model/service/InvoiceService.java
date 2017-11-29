@@ -63,4 +63,13 @@ public class InvoiceService {
     invoiceDao.markSent(invoiceIds);
   }
 
+  /**
+   * Release pending invoice (sets sapIdPending to false)
+   * @param id
+   */
+  @Transactional
+  public void releasePending(Integer id) {
+    invoiceDao.releasePendingInvoice(id);
+  }
+
 }

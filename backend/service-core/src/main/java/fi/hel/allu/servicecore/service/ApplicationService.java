@@ -7,6 +7,7 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -239,6 +240,13 @@ public class ApplicationService {
       updatedTag.setCreationTime(ZonedDateTime.now());
     }
     return updatedTag;
+  }
+
+
+  public List<Integer> findApplicationIdsByInvoiceRecipient(int customerId) {
+    ParameterizedTypeReference<List<Integer>> typeRef =
+        new ParameterizedTypeReference<List<Integer>>() {};
+    return restTemplate.exchange(applicationProperties.getInvoiceRecipientsApplicationsUrl(), HttpMethod.GET, null, typeRef, customerId).getBody();
   }
 }
 
