@@ -2,6 +2,8 @@ package fi.hel.allu.scheduler.service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,9 +21,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class SftpService {
 
+  private static final int UNDEFINED_PORT = -1;
   private static final Integer SFTP_TIMEOUT = Integer.valueOf(10000);
-  private static final String CONNECTION_STRING = "sftp://%s:%s@%s/%s";
-
   private static final Logger logger = LoggerFactory.getLogger(SftpService.class);
 
   private  FileSystemOptions sftpOptions;
@@ -48,7 +49,7 @@ public class SftpService {
       FileObject localArchiveDirectoryObject = createLocalDirectoryObject(localArchiveDirectory);
       FileObject remoteDirectoryObject = createRemoteDirectoryObject(host, user, password, remoteDirectory);
       moveFiles(localDirectoryObject, remoteDirectoryObject, localArchiveDirectoryObject);
-    } catch (IOException ex) {
+    } catch (IOException | URISyntaxException ex) {
       logger.warn("Failed to upload files.", ex);
       return false;
     }
@@ -79,7 +80,7 @@ public class SftpService {
       FileObject remoteArchiveDirectoryObject = createRemoteDirectoryObject(host, user, password, remoteArchiveDirectory);
       FileObject localDirectoryObject  = createLocalDirectoryObject(localDirectory);
       moveFiles(remoteDirectoryObject, localDirectoryObject, remoteArchiveDirectoryObject);
-    } catch (IOException ex) {
+    } catch (IOException | URISyntaxException ex) {
       logger.warn("Failed to download files.", ex);
     }
     finally {
@@ -101,14 +102,14 @@ public class SftpService {
   private void moveFiles(FileObject sourceDirectory, FileObject targetDirectory, FileObject archiveDirectory) throws IOException {
     List<FileObject> files = Arrays.asList(sourceDirectory.getChildren()).stream().filter(f -> isFile(f)).collect(Collectors.toList());
     for (FileObject file : files) {
-      FileObject targetFile = manager.resolveFile(targetDirectory.getURL() + "/" + file.getName().getBaseName());
+      FileObject targetFile = manager.resolveFile(targetDirectory.getName().getURI() + "/" + file.getName().getBaseName());
       targetFile.copyFrom(file, Selectors.SELECT_SELF);
       archiveFile(file, archiveDirectory);
     }
   }
 
   private void archiveFile(FileObject file, FileObject archiveDirectory) throws FileSystemException {
-    FileObject targetFile = manager.resolveFile(archiveDirectory.getURL() + "/" + file.getName().getBaseName());
+    FileObject targetFile = manager.resolveFile(archiveDirectory.getName().getURI() + "/" + file.getName().getBaseName());
     file.moveTo(targetFile);
   }
 
@@ -130,7 +131,7 @@ public class SftpService {
   }
 
   private FileObject createRemoteDirectoryObject(String host, String user, String password,
-      String directory) throws IOException {
+      String directory) throws IOException, URISyntaxException {
     String connectionString = buildConnectionString(host, user, password, directory);
     FileObject remoteDirectoryObject = manager.resolveFile(connectionString, sftpOptions);
     if (!directoryExists(remoteDirectoryObject)) {
@@ -143,8 +144,9 @@ public class SftpService {
     return remoteDirectoryObject.exists() && remoteDirectoryObject.isFolder();
   }
 
-  private String buildConnectionString(String host, String user, String password, String remoteDirectory) {
-    return String.format(CONNECTION_STRING, user, password, host, remoteDirectory);
+  private String buildConnectionString(String host, String user, String password, String remoteDirectory) throws URISyntaxException {
+    // By default don't append port to URI. Port can be included in host if needed.
+    return new URI("sftp", user + ":" + password, host, UNDEFINED_PORT, remoteDirectory, null, null).toString();
   }
 
   private void initializeSftpOptions() throws FileSystemException {
