@@ -13,6 +13,7 @@ describe('Event application mass insert', () => {
   function createCustomers() {
     const herneContactNew = {
       'id': null,
+      'applicantId': null,
       'name': 'Heikki Herne',
       'streetAddress': 'Hernikka 1',
       'postalCode': '33000',
@@ -27,7 +28,7 @@ describe('Event application mass insert', () => {
       'customer': {
         'id': null,
         'type': 'COMPANY',
-        'person': null,
+        'representative': null,
         'name': 'Hakija Inc.',
         'registryKey': '7654321-6',
         'postalAddress': {
@@ -51,8 +52,11 @@ describe('Event application mass insert', () => {
       .then(cwc => herneCustomersWithContactsCreated = cwc);
   }
 
-  beforeAll(done =>  {
-    TestUtil.tryRetryPromise(1, TestUtil.tryToCreateUsers).then(createCustomers, done.fail).then(done);
+  beforeAll(done => {
+      TestUtil.tryRetryPromise(TestUtil.tryToCreateUsers, 10, 10000)
+      .then(createCustomers, done.fail)
+      .then(done)
+          .catch(err => done.fail(err));
   });
 
 
