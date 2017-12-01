@@ -24,4 +24,5 @@ import 'rxjs/add/operator/share';
 import 'rxjs/add/operator/takeUntil';
 import 'rxjs/add/operator/last';
 import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/skip';
 

@@ -2,7 +2,7 @@
     <div class="col m6">
         <mat-card class="customer-card">
             <mat-card-title>
-                {{['customer.role', customerWithContacts.uiRoleType, 'title'] | translation}}
+                {{['customer.role', roleType, 'title'] | translation}}
                 <button mat-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()" class="align-with-text">
                     <mat-icon>mode_edit</mat-icon>
                 </button>
@@ -31,7 +31,5 @@
         </mat-card>
     </div>
 </form>
-<contact #contacts [parentForm]="parentForm" [customerId]="customerWithContacts.customerId"
-         [contactList]="customerWithContacts.contacts" [customerRoleType]="customerWithContacts.uiRoleType"
-         [readonly]="readonly" [contactRequired]="contactRequired">
-</contact>
+<contact #contacts [parentForm]="parentForm" [customerRoleType]="roleType"
+         [readonly]="readonly" [contactRequired]="contactRequired"></contact>

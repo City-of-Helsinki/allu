@@ -19,6 +19,12 @@ describe('Object util', () => {
     expect(ObjectUtil.clone(original)).toEqual(original);
   });
 
+  it('should clone nested arrays', () => {
+    const original = [1];
+
+    expect(ObjectUtil.clone(original)).toEqual(original);
+  });
+
   it('should clone dates', () => {
     const original = {
       date: new Date()

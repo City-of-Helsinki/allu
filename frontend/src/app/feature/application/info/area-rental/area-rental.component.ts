@@ -4,7 +4,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {AreaRental} from '../../../../model/application/area-rental/area-rental';
 import {AreaRentalForm} from './area-rental.form';
@@ -18,27 +18,12 @@ import {AreaRentalForm} from './area-rental.form';
 })
 export class AreaRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
-    super(fb, route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
+    super(fb, route, applicationStore);
   }
 
   ngOnInit(): any {
     super.ngOnInit();
-    const areaRental = <AreaRental>this.application.extension || new AreaRental();
-    this.applicationForm.patchValue(AreaRentalForm.from(this.application, areaRental));
-  }
-
-  protected update(form: AreaRentalForm): Application {
-    const application = super.update(form);
-    application.name = 'Aluevuokraus'; // Area rentals have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
-    application.extension = AreaRentalForm.to(form);
-
-    application.firstLocation.startTime = application.startTime;
-    application.firstLocation.endTime = application.endTime;
-
-    return application;
   }
 
   protected initForm() {
@@ -54,5 +39,25 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
       trafficArrangementImpedimentType: ['', Validators.required],
       additionalInfo: ['']
     });
+  }
+
+  protected onApplicationChange(application: Application): void {
+    super.onApplicationChange(application);
+
+    const areaRental = <AreaRental>application.extension || new AreaRental();
+    this.applicationForm.patchValue(AreaRentalForm.from(application, areaRental));
+  }
+
+  protected update(form: AreaRentalForm): Application {
+    const application = super.update(form);
+    application.name = 'Aluevuokraus'; // Area rentals have no name so set default
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
+    application.extension = AreaRentalForm.to(form);
+
+    application.firstLocation.startTime = application.startTime;
+    application.firstLocation.endTime = application.endTime;
+
+    return application;
   }
 }

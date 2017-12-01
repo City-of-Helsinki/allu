@@ -4,7 +4,7 @@ import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {PlacementContract} from '../../../../model/application/placement-contract/placement-contract';
 import {PlacementContractForm} from './placement-contract.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
@@ -18,27 +18,12 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class PlacementContractComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
-    super(fb, route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
+    super(fb, route, applicationStore);
   }
 
   ngOnInit(): any {
     super.ngOnInit();
-    const contract = <PlacementContract>this.application.extension || new PlacementContract();
-    this.applicationForm.patchValue(PlacementContractForm.from(this.application, contract));
-  }
-
-  protected update(form: PlacementContractForm): Application {
-    const application = super.update(form);
-    application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
-    application.extension = PlacementContractForm.to(form);
-
-    application.singleLocation.startTime = application.startTime;
-    application.singleLocation.endTime = application.endTime;
-
-    return application;
   }
 
   protected initForm() {
@@ -52,5 +37,24 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
       additionalInfo: [''],
       generalTerms: ['']
     });
+  }
+
+  protected onApplicationChange(application: Application): void {
+    super.onApplicationChange(application);
+    const contract = <PlacementContract>application.extension || new PlacementContract();
+    this.applicationForm.patchValue(PlacementContractForm.from(application, contract));
+  }
+
+  protected update(form: PlacementContractForm): Application {
+    const application = super.update(form);
+    application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
+    application.startTime = form.validityTimes.startTime;
+    application.endTime = form.validityTimes.endTime;
+    application.extension = PlacementContractForm.to(form);
+
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
+
+    return application;
   }
 }

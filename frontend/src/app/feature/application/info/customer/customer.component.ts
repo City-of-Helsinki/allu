@@ -5,12 +5,18 @@ import {CustomerForm} from '../../../customerregistry/customer/customer.form';
 import {Some} from '../../../../util/option';
 import {NumberUtil} from '../../../../util/number.util';
 import {MatDialog, MatDialogRef} from '@angular/material';
-import {CUSTOMER_MODAL_CONFIG, CustomerModalComponent} from '../../../customerregistry/customer/customer-modal.component';
+import {
+  CUSTOMER_MODAL_CONFIG,
+  CustomerModalComponent
+} from '../../../customerregistry/customer/customer-modal.component';
 import {Customer} from '../../../../model/customer/customer';
-import {CustomerWithContacts} from '../../../../model/customer/customer-with-contacts';
 import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 import {ContactComponent} from '../contact/contact.component';
 import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer-info.component';
+import {CustomerRoleType} from '../../../../model/customer/customer-role-type';
+import {ApplicationStore} from '../../../../service/application/application-store';
+import {Subscription} from 'rxjs/Subscription';
+import {Application} from '../../../../model/application/application';
 
 @Component({
   selector: 'customer',
@@ -22,7 +28,7 @@ import {ALWAYS_ENABLED_FIELDS} from '../../../customerregistry/customer/customer
 })
 export class CustomerComponent implements OnInit, OnDestroy {
   @Input() parentForm: FormGroup;
-  @Input() customerWithContacts: CustomerWithContacts;
+  @Input() roleType = CustomerRoleType[CustomerRoleType.APPLICANT];
   @Input() readonly: boolean;
   @Input() showRepresentative = false;
   @Input() showPropertyDeveloper = false;
@@ -34,13 +40,14 @@ export class CustomerComponent implements OnInit, OnDestroy {
   customerForm: FormGroup;
 
   private dialogRef: MatDialogRef<CustomerModalComponent>;
+  private appSubscription: Subscription;
 
-  constructor(private fb: FormBuilder, private dialog: MatDialog) {
+  constructor(private fb: FormBuilder, private dialog: MatDialog, private applicationStore: ApplicationStore) {
   }
 
   ngOnInit(): void {
-    if (!this.customerWithContacts) {
-      throw Error('Missing input for customerWithContacts');
+    if (!this.roleType) {
+      throw Error('Missing input for roleType');
     }
 
     this.initForm();
@@ -48,15 +55,18 @@ export class CustomerComponent implements OnInit, OnDestroy {
     if (this.readonly) {
       this.customerForm.disable();
     }
+
+    this.appSubscription = this.applicationStore.application.subscribe(app => this.onApplicationChange(app));
   }
 
   ngOnDestroy(): void {
     this.contacts.onCustomerRemove();
-    this.parentForm.removeControl(CustomerWithContactsForm.formName(this.customerWithContacts.roleType));
+    this.parentForm.removeControl(CustomerWithContactsForm.formName(CustomerRoleType[this.roleType]));
+    this.appSubscription.unsubscribe();
   }
 
   canBeEdited(): boolean {
-    return NumberUtil.isDefined(this.customerForm.value.id) && !this.readonly;
+    return !this.readonly && Some(this.customerForm.value).map(val => val.id).orElse(false);
   }
 
   edit(): void {
@@ -68,10 +78,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   onCustomerChange(customer: Customer): void {
-    if (NumberUtil.isDefined(customer.id)) {
-      this.disableCustomerEdit();
-    }
-
+    this.disableEdit(customer);
     this.contacts.onCustomerChange(customer.id);
   }
 
@@ -84,23 +91,29 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   private initForm() {
-    const roleType = this.customerWithContacts.roleType;
+    const roleType = CustomerRoleType[this.roleType];
     this.customerWithContactsForm = CustomerWithContactsForm.initialForm(this.fb, roleType);
     this.customerForm = <FormGroup>this.customerWithContactsForm.get('customer');
     this.parentForm.addControl(CustomerWithContactsForm.formName(roleType), this.customerWithContactsForm);
-
-    Some(this.customerWithContacts)
-      .filter(cwc => NumberUtil.isDefined(cwc.customerId))
-      .map(cwc => CustomerForm.fromCustomer(cwc.customer))
-      .do(customer => {
-        this.customerForm.patchValue(customer);
-        this.disableCustomerEdit();
-      });
   }
 
-  private disableCustomerEdit(): void {
-    Object.keys(this.customerForm.controls)
-      .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
-      .forEach(key => this.customerForm.get(key).disable());
+  private disableEdit(customer: Customer): void {
+    if (NumberUtil.isDefined(customer.id)) {
+      Object.keys(this.customerForm.controls)
+        .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
+        .forEach(key => this.customerForm.get(key).disable());
+    }
+  }
+
+  private onApplicationChange(application: Application) {
+    Some(application.customerWithContactsByRole(CustomerRoleType[this.roleType]))
+      .map(cwc => cwc.customer)
+      .filter(customer => !!customer)
+      .map(customer => CustomerForm.fromCustomer(customer))
+      .do(customer => {
+        this.customerForm.patchValue(customer);
+        this.disableEdit(customer);
+      });
+
   }
 }

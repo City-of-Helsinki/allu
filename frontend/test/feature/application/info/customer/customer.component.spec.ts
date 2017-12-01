@@ -12,7 +12,8 @@ import {CustomerWithContacts} from '../../../../../src/app/model/customer/custom
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {Component, Input} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
-import {CustomerHubMock} from '../../../../mocks';
+import {ApplicationStoreMock, CustomerHubMock} from '../../../../mocks';
+import {ApplicationStore} from '../../../../../src/app/service/application/application-store';
 
 const headerText = 'Hakija';
 
@@ -36,6 +37,7 @@ describe('CustomerComponent', () => {
   let fixture: ComponentFixture<CustomerComponent>;
   let page: CustomerPage;
   let parentForm: FormGroup;
+  let applicationStore: ApplicationStoreMock;
 
   class CustomerPage {
     cardTitle: HTMLElement;
@@ -69,7 +71,8 @@ describe('CustomerComponent', () => {
       declarations: [CustomerComponent, MockContactComponent, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerHub, useClass: CustomerHubMock}
+        {provide: CustomerHub, useClass: CustomerHubMock},
+        {provide: ApplicationStore, useClass: ApplicationStoreMock}
       ]
     }).compileComponents();
   }));
@@ -80,10 +83,12 @@ describe('CustomerComponent', () => {
     const fb = new FormBuilder();
     parentForm = fb.group({});
     comp.parentForm = parentForm;
-    comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT);
     comp.readonly = false;
+
+    applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
+    applicationStore._application.customersWithContacts = [new CustomerWithContacts(CustomerRoleType.APPLICANT)];
+    fixture.detectChanges();
     page = new CustomerPage();
-    // fixture.detectChanges();
     page.addPageElements();
   });
 
@@ -103,7 +108,7 @@ describe('CustomerComponent', () => {
     customer.phone = 'phoneTest';
     customer.email = 'emailTest';
 
-    comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT, customer);
+    applicationStore._application.customersWithContacts = [new CustomerWithContacts(CustomerRoleType.APPLICANT, customer)];
     comp.readonly = false;
     comp.ngOnInit();
     fixture.detectChanges();
@@ -119,6 +124,7 @@ describe('CustomerComponent', () => {
 
   it('should disable fields if readonly', () => {
     comp.readonly = true;
+    comp.ngOnInit();
     fixture.detectChanges();
     expect(page.customerNameInput.disabled).toBeTruthy();
     expect(page.registryKeyInput.disabled).toBeTruthy();

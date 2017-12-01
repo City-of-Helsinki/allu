@@ -11,7 +11,7 @@ import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} fro
 import {HttpResponse, HttpStatus} from '../../util/http-response';
 import {DecisionHub} from '../../service/decision/decision-hub';
 import {DECISION_PROPOSAL_MODAL_CONFIG, DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
-import {ApplicationState} from '../../service/application/application-state';
+import {ApplicationStore} from '../../service/application/application-store';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {Some} from '../../util/option';
 import {DecisionDetails} from '../../model/decision/decision-details';
@@ -26,7 +26,7 @@ export class DecisionActionsComponent {
   @Input() application: Application;
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
 
-  constructor(private applicationState: ApplicationState,
+  constructor(private applicationStore: ApplicationStore,
               private decisionHub: DecisionHub,
               private router: Router,
               private dialog: MatDialog) {}
@@ -60,11 +60,11 @@ export class DecisionActionsComponent {
 
   private proposalConfirmed(changeInfo: StatusChangeInfo) {
     if (changeInfo) {
-      this.applicationState.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
+      this.applicationStore.changeStatus(this.application.id, ApplicationStatus.DECISIONMAKING, changeInfo)
         .subscribe(app => {
-          this.applicationState.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
+          this.applicationStore.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
           NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
-          this.applicationState.application = app;
+          this.applicationStore.applicationChange(app);
           this.application = app;
           this.onDecisionConfirm.emit(changeInfo);
         }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
@@ -73,7 +73,7 @@ export class DecisionActionsComponent {
 
   private changeStatus(confirmation: DecisionConfirmation): Observable<Application> {
     const changeInfo = new StatusChangeInfo(undefined, confirmation.comment, confirmation.handler);
-    return this.applicationState.changeStatus(this.application.id, confirmation.status, changeInfo)
+    return this.applicationStore.changeStatus(this.application.id, confirmation.status, changeInfo)
       .do(application => this.statusChanged(application));
   }
 

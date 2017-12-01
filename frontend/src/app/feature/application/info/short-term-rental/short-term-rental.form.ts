@@ -2,7 +2,6 @@ import {TimePeriod} from '../time-period';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 export class ShortTermRentalForm implements ApplicationForm {
   constructor(
@@ -11,8 +10,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     public rentalTimes?: TimePeriod,
     public commercial?: boolean,
     public largeSalesArea?: boolean,
-    public calculatedPrice?: number,
-    public applicant?: CustomerWithContactsForm) {}
+    public calculatedPrice?: number) {}
 
   static from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
     return new ShortTermRentalForm(

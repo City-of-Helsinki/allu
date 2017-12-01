@@ -18,10 +18,13 @@ import {ApplicationTag} from '../../model/application/tag/application-tag';
 import {ApplicationTagMapper} from '../mapper/application-tag-mapper';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {StatusChangeInfoMapper} from '../mapper/status-change-info-mapper';
+import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
+import {AttachmentInfoMapper} from '../mapper/attachment-info-mapper';
 
 const APPLICATIONS_URL = '/api/applications';
 const STATUS_URL = '/api/applications/:appId/status/:statusPart';
 const TAGS_URL = '/api/applications/:appId/tags';
+const ATTACHMENTS_URL = '/api/applications/:appId/attachments';
 const SEARCH = '/search';
 const SEARCH_LOCATION = '/search_location';
 const METADATA_URL = '/api/meta';
@@ -128,8 +131,15 @@ export class ApplicationService {
   public saveTags(appId: number, tags: Array<ApplicationTag>): Observable<Array<ApplicationTag>> {
     const url = TAGS_URL.replace(':appId', String(appId));
     return this.authHttp.put(url, JSON.stringify(ApplicationTagMapper.mapFrontendList(tags)))
-      .map(response => ApplicationTagMapper.mapBackend(response.json()))
+      .map(response => ApplicationTagMapper.mapBackendList(response.json()))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.tagUpdateFailed')));
+  }
+
+  getAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
+    const url = ATTACHMENTS_URL.replace(':appId', String(applicationId));
+    return this.authHttp.get(url)
+      .map(response => response.json())
+      .map(infos => infos.map(info => AttachmentInfoMapper.mapBackend(info)));
   }
 }
 

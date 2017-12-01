@@ -3,7 +3,7 @@ import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {CustomerType} from '../../../../model/customer/customer-type';
 import {EnumUtil} from '../../../../util/enum.util';
 import {InvoicePartition} from '../../../../model/application/invoice/ivoice-partition';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {CustomerHub} from '../../../../service/customer/customer-hub';
 import {Some} from '../../../../util/option';
 import {CustomerForm} from '../../../customerregistry/customer/customer.form';
@@ -35,7 +35,7 @@ export class InvoicingInfoComponent implements OnInit {
   private notBillableReasonCtrl: FormControl;
   private dialogRef: MatDialogRef<CustomerModalComponent>;
 
-  constructor(private applicationState: ApplicationState,
+  constructor(private applicationStore: ApplicationStore,
               private customerHub: CustomerHub,
               private dialog: MatDialog) {
   }
@@ -45,12 +45,11 @@ export class InvoicingInfoComponent implements OnInit {
     this.notBillableCtrl = <FormControl>this.form.get('notBillable');
     this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
 
-    this.patchInfo(this.applicationState.application);
-    Some(this.applicationState.application.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
+    const app = this.applicationStore.snapshot.application;
+    this.patchInfo(app);
+    Some(app.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
   }
-
-
 
   invoiceRecipientChange(recipient: CustomerForm) {
     if (recipient.id) {

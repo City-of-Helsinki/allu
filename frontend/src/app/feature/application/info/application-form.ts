@@ -2,6 +2,7 @@ import {DistributionEntryForm} from '../distribution/distribution-list/distribut
 import {CustomerWithContactsForm} from '../../customerregistry/customer/customer-with-contacts.form';
 
 export interface ApplicationForm {
+  name?: string;
   applicant?: CustomerWithContactsForm;
   contractor?: CustomerWithContactsForm;
   propertyDeveloper?: CustomerWithContactsForm;

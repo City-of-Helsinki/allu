@@ -1,21 +1,21 @@
-<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)" *ngIf="applicationChanges | async as application">
     <div class="row">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+        <customer [parentForm]="applicationForm" roleType="APPLICANT"
                   [readonly]="readonly" [showPropertyDeveloper]="true" [contactRequired]="true"></customer>
     </div>
 
     <div class="row" *ngIf="hasPropertyDeveloper">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.propertyDeveloper"
+        <customer [parentForm]="applicationForm" roleType="PROPERTY_DEVELOPER"
                   [readonly]="readonly"></customer>
     </div>
 
     <div class="row">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.contractor"
+        <customer [parentForm]="applicationForm" roleType="CONTRACTOR"
                   [readonly]="readonly" [showRepresentative]="true" [contactRequired]="true"></customer>
     </div>
 
     <div class="row" *ngIf="hasRepresentative">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
+        <customer [parentForm]="applicationForm" roleType="REPRESENTATIVE"
                   [readonly]="readonly"></customer>
     </div>
 
@@ -147,7 +147,6 @@
         <div class="col s12">
         <application-actions
             [readonly]="readonly"
-            [applicationId]="application.id"
             [form]="applicationForm"
             [submitPending]="submitPending"></application-actions>
         </div>

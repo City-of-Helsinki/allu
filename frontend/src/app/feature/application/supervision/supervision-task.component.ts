@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {SupervisionTaskForm} from './supervision-task-form';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {User} from '../../../model/user/user';
 import {CurrentUser} from '../../../service/user/current-user';
@@ -42,7 +42,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
 
   private originalEntry: SupervisionTaskForm;
 
-  constructor(private applicationState: ApplicationState,
+  constructor(private applicationStore: ApplicationStore,
               private store: SupervisionTaskStore,
               private currentUser: CurrentUser,
               private userHub: UserHub,
@@ -67,7 +67,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   remove(): void {
     const task = this.form.value;
     if (task.id) {
-      this.store.removeTask(this.applicationState.application.id, task.id)
+      this.store.removeTask(this.applicationStore.snapshot.application.id, task.id)
         .subscribe(
           status => {
             this.onRemove.emit();
@@ -82,7 +82,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   save(): void {
     const formValue = <SupervisionTaskForm>this.form.value;
     this.form.disable();
-    this.store.saveTask(this.applicationState.application.id, SupervisionTaskForm.to(formValue))
+    this.store.saveTask(this.applicationStore.snapshot.application.id, SupervisionTaskForm.to(formValue))
       .subscribe(
         c => NotificationService.translateMessage('supervision.task.action.save'),
         error => {
@@ -169,7 +169,7 @@ export class SupervisionTaskComponent implements OnInit, OnDestroy {
   }
 
   private preferredSupervisor(): void {
-    const app = this.applicationState.application;
+    const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_SUPERVISE, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
     this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))
       .filter(preferred => !!preferred)

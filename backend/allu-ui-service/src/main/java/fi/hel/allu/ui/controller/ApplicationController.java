@@ -130,6 +130,17 @@ public class ApplicationController {
   }
 
   /**
+   * Fetches attachments for application
+   * @param id application's id
+   * @return List of attachments for specified application
+   */
+  @RequestMapping(value = "/{id}/attachments", method = RequestMethod.GET)
+  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
+  public ResponseEntity<List<AttachmentInfoJson>> getAttachments(@PathVariable int id) {
+    return new ResponseEntity<>(attachmentService.findAttachmentsForApplication(id), HttpStatus.OK);
+  }
+
+  /**
    * Read attachment info by ID
    *
    * @param id

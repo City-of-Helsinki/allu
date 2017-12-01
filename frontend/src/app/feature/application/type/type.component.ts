@@ -8,7 +8,7 @@ import {
   typeEntryByType
 } from '../../../model/application/type/application-type';
 import {ApplicationKindEntry} from '../../../model/application/type/application-kind';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {
   fromKindsWithSpecifiers,
   KindsWithSpecifiers,
@@ -40,7 +40,7 @@ export class TypeComponent implements OnInit {
   private kindsCtrl: FormControl;
   private specifiersCtrl: FormControl;
 
-  constructor(private applicationState: ApplicationState, private fb: FormBuilder) {
+  constructor(private applicationStore: ApplicationStore, private fb: FormBuilder) {
   }
 
   ngOnInit(): any {
@@ -100,7 +100,7 @@ export class TypeComponent implements OnInit {
   }
 
   private initForm() {
-    const application = this.applicationState.application;
+    const application = this.applicationStore.snapshot.application;
     const selectedKinds = application.uiKinds;
     const selectedSpecifiers = fromKindsWithSpecifiers(application.kindsWithSpecifiers);
 

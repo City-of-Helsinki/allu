@@ -6,7 +6,7 @@ import {Application} from '../../../../model/application/application';
 import {ShortTermRentalForm} from './short-term-rental.form';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
-import {ApplicationState} from '../../../../service/application/application-state';
+import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 
 @Component({
@@ -17,29 +17,13 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class ShortTermRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationState: ApplicationState) {
-    super(fb, route, applicationState);
+  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
+    super(fb, route, applicationStore);
   }
 
   ngOnInit(): any {
     super.ngOnInit();
-    const rental = <ShortTermRental>this.application.extension || new ShortTermRental();
-    this.applicationForm.patchValue(ShortTermRentalForm.from(this.application, rental));
   }
-
-  protected update(form: ShortTermRentalForm): Application {
-    const application = super.update(form);
-    application.name = form.name;
-    application.startTime = form.rentalTimes.startTime;
-    application.endTime = form.rentalTimes.endTime;
-    application.extension = ShortTermRentalForm.to(form);
-
-    application.singleLocation.startTime = application.startTime;
-    application.singleLocation.endTime = application.endTime;
-
-    return application;
-  }
-
 
   protected initForm() {
     this.applicationForm = this.fb.group({
@@ -54,5 +38,26 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
         endTime: [undefined, Validators.required]
       }, ComplexValidator.startBeforeEnd('startTime', 'endTime'))
     });
+  }
+
+  protected onApplicationChange(application: Application): any {
+    super.onApplicationChange(application);
+
+    const rental = <ShortTermRental>application.extension || new ShortTermRental();
+    const formValue = ShortTermRentalForm.from(application, rental);
+    this.applicationForm.patchValue(formValue);
+  }
+
+  protected update(form: ShortTermRentalForm): Application {
+    const application = super.update(form);
+    application.name = form.name;
+    application.startTime = form.rentalTimes.startTime;
+    application.endTime = form.rentalTimes.endTime;
+    application.extension = ShortTermRentalForm.to(form);
+
+    application.singleLocation.startTime = application.startTime;
+    application.singleLocation.endTime = application.endTime;
+
+    return application;
   }
 }

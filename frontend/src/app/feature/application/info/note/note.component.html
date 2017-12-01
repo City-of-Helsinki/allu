@@ -1,6 +1,6 @@
-<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)">
+<form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)" *ngIf="applicationChanges | async as application">
     <div class="row">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+        <customer [parentForm]="applicationForm" roleType="APPLICANT"
                   [readonly]="readonly" [contactRequired]="true"></customer>
     </div>
 
@@ -82,7 +82,6 @@
         <div class="col m12">
             <application-actions
                 [readonly]="readonly"
-                [applicationId]="application.id"
                 [form]="applicationForm"
                 [submitPending]="submitPending"></application-actions>
         </div>

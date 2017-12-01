@@ -16,7 +16,6 @@ import {applicationRoutes} from './application.routing';
 import {ApplicationResolve} from './application-resolve';
 import {CustomerComponent} from './info/customer/customer.component';
 import {ContactComponent} from './info/contact/contact.component';
-import {EventDetailsComponent} from './info/event/details/event-details.component';
 import {LocationDetailsComponent} from './info/location/location-details.component';
 import {ShortTermRentalComponent} from './info/short-term-rental/short-term-rental.component';
 import {ExcavationAnnouncementComponent} from './info/excavation-announcement/excavation-announcement.component';
@@ -79,7 +78,6 @@ import {SupervisionModule} from './supervision/supervision.module';
     LoadingComponent,
     CustomerComponent,
     ContactComponent,
-    EventDetailsComponent,
     LocationDetailsComponent,
     DefaultTextModalComponent,
     NoteComponent,

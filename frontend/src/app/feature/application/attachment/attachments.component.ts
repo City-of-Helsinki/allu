@@ -4,7 +4,7 @@ import * as filesaver from 'file-saver';
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
 import {Application} from '../../../model/application/application';
 import {MaterializeUtil} from '../../../util/materialize.util';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {AttachmentHub} from './attachment-hub';
 import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
 import {MatDialog} from '@angular/material';
@@ -30,12 +30,12 @@ export class AttachmentsComponent implements OnInit {
   hasFileOverDropzone = false;
 
   constructor(private attachmentHub: AttachmentHub,
-              private applicationState: ApplicationState,
+              private applicationStore: ApplicationStore,
               private dialog: MatDialog) {}
 
   ngOnInit() {
-    this.application = this.applicationState.application;
-    this.applicationState.allAttachments
+    this.application = this.applicationStore.snapshot.application;
+    this.applicationStore.allAttachments
       .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
       .subscribe(sorted => this.setAttachments(sorted));
   }
@@ -55,7 +55,7 @@ export class AttachmentsComponent implements OnInit {
 
   save(attachment: AttachmentInfo, index?: number) {
     if (this.application.id) {
-      this.applicationState.saveAttachment(this.application.id, attachment).subscribe(
+      this.applicationStore.saveAttachment(this.application.id, attachment).subscribe(
         saved => {
           MaterializeUtil.toast('Liite ' + saved.name + ' tallennettu', toastTime);
           Some(index).do(i => this.editableAttachments.splice(i, 1));
@@ -63,7 +63,7 @@ export class AttachmentsComponent implements OnInit {
         error => MaterializeUtil.toast('Liiteen ' + attachment.name + ' tallennus epäonnistui', toastTime)
       );
     } else {
-      this.applicationState.addAttachment(attachment);
+      this.applicationStore.addAttachment(attachment);
       Some(index).do(i => this.editableAttachments.splice(i, 1));
       MaterializeUtil.toast('Liite ' + attachment.name + ' lisätty hakemukselle', toastTime);
     }
@@ -96,7 +96,7 @@ export class AttachmentsComponent implements OnInit {
   }
 
   private onRemoveConfirm(attachment: AttachmentInfo, index?: number) {
-    this.applicationState.removeAttachment(attachment.id, index)
+    this.applicationStore.removeAttachment(attachment.id, index)
       .subscribe(status => {
           MaterializeUtil.toast('Liite ' + attachment.name + ' poistettu', toastTime);
         },

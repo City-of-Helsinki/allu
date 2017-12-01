@@ -8,7 +8,7 @@ import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/user/user';
 import {Observable} from 'rxjs/Observable';
 import {RoleType} from '../../model/user/role-type';
-import {ApplicationState} from '../../service/application/application-state';
+import {ApplicationStore} from '../../service/application/application-store';
 import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 import {ArrayUtil} from '../../util/array-util';
 
@@ -37,7 +37,7 @@ export class DecisionModalComponent implements OnInit {
 
   constructor(private dialogRef: MatDialogRef<DecisionModalComponent>,
               private userHub: UserHub,
-              private applicationState: ApplicationState,
+              private applicationStore: ApplicationStore,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -75,7 +75,7 @@ export class DecisionModalComponent implements OnInit {
   }
 
   private preferredHandler(): Observable<User> {
-    const app = this.applicationState.application;
+    const app = this.applicationStore.snapshot.application;
     const criteria = new UserSearchCriteria(RoleType.ROLE_PROCESS_APPLICATION, app.typeEnum, app.firstLocation.effectiveCityDistrictId);
     return this.userHub.searchUsers(criteria).map(preferred => ArrayUtil.first(preferred))
       .filter(preferred => !!preferred);

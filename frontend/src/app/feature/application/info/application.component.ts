@@ -5,7 +5,7 @@ import {Observable} from 'rxjs/Observable';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {Application} from '../../../model/application/application';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {SidebarItem, visibleFor} from '../../sidebar/sidebar-item';
 import {ProgressStep, stepFrom} from '../progressbar/progress-step';
@@ -35,14 +35,14 @@ export class ApplicationComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private applicationState: ApplicationState,
+              private applicationStore: ApplicationStore,
               private attachmentHub: AttachmentHub,
               private mapHub: MapHub,
               private supervisionTaskStore: SupervisionTaskStore) {
   }
 
   ngOnInit(): void {
-    this.application = this.applicationState.application;
+    this.application = this.applicationStore.snapshot.application;
     Some(this.application.id).do(id => this.supervisionTaskStore.loadTasks(id));
     this.verifyTypeExists(ApplicationType[this.application.type]);
 
@@ -51,7 +51,7 @@ export class ApplicationComponent implements OnInit {
       this.progressStep = stepFrom(ApplicationStatus[this.application.status], summary);
 
       this.defaultAttachmentsForArea(this.application.typeEnum).subscribe(
-        attachments => attachments.forEach(a => this.applicationState.addAttachment(a)),
+        attachments => attachments.forEach(a => this.applicationStore.addAttachment(a)),
         err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
 
       this.sidebarItems = this.createSidebar(summary);
@@ -62,19 +62,6 @@ export class ApplicationComponent implements OnInit {
     if (type === undefined) {
       // No known type so navigate back to type selection
       this.router.navigateByUrl('applications/location');
-    }
-  }
-
-  onTagChange(tags: Array<ApplicationTag>): void {
-    if (this.readonly) {
-      // on readonly mode we should save tags immediately
-      this.applicationState.saveTags(tags)
-        .subscribe(
-          app => {}, // Nothing to do with updated app
-          error => NotificationService.error(error)
-        );
-    } else {
-      this.applicationState.tags = tags;
     }
   }
 
@@ -97,14 +84,14 @@ export class ApplicationComponent implements OnInit {
 
   private get attachmentCount(): Observable<number> {
     return Observable.combineLatest(
-      this.applicationState.attachments,
-      this.applicationState.pendingAttachments,
+      this.applicationStore.attachments,
+      this.applicationStore.pendingAttachments,
       (saved, pending) => saved.length + pending.length
     );
   }
 
   private get commentCount(): Observable<number> {
-    return this.applicationState.comments.map(comments => comments.length);
+    return this.applicationStore.comments.map(comments => comments.length);
   }
 
   private get taskCount(): Observable<number> {
@@ -114,14 +101,14 @@ export class ApplicationComponent implements OnInit {
   private get invoicingWarn(): Observable<boolean> {
     const noRecipient = (app: Application) => !NumberUtil.isDefined(app.invoiceRecipientId);
     const isBillable = (app: Application) => !app.notBillable;
-    return this.applicationState.changes.map(app =>
-      noRecipient(app)
-      && isBillable(app)
-      && inHandling(app.statusEnum));
+    return this.applicationStore.changes.map(change =>
+      noRecipient(change.application)
+      && isBillable(change.application)
+      && inHandling(change.application.statusEnum));
   }
 
   private defaultAttachmentsForArea(applicationType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
-    if (this.applicationState.isNew) {
+    if (this.applicationStore.isNew) {
       return this.mapHub.fixedLocationAreaBySectionIds(this.application.firstLocation.fixedLocationIds)
         .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(applicationType, area.id));
     } else {

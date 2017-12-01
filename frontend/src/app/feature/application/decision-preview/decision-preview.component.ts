@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 import {Decision} from '../../../model/decision/Decision';
-import {ApplicationState} from '../../../service/application/application-state';
+import {ApplicationStore} from '../../../service/application/application-store';
 import {DecisionHub} from '../../../service/decision/decision-hub';
 
 @Component({
@@ -18,11 +18,11 @@ export class DecisionPreviewComponent implements OnInit {
   pdfLoaded: boolean;
 
   constructor(private sanitizer: DomSanitizer,
-              private applicationState: ApplicationState,
+              private applicationStore: ApplicationStore,
               private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    this.decisionHub.fetch(this.applicationState.application.id)
+    this.decisionHub.fetch(this.applicationStore.snapshot.application.id)
         .subscribe(decision => this.providePdf(decision));
   }
   private providePdf(decision: Decision): void {
