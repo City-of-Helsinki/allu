@@ -6,6 +6,10 @@
 /out-tsc
 /reports
 
+#compiled js
+/src/app/**/*.js
+!/src/app/js/**/*.js
+
 # dependencies
 /node_modules
 
