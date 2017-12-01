@@ -46,10 +46,8 @@ const initialState: ApplicationState = {
 export class ApplicationStore {
   private store = new BehaviorSubject<ApplicationState>(initialState);
 
-  constructor(private router: Router,
-              private applicationHub: ApplicationHub,
+  constructor(private applicationHub: ApplicationHub,
               private customerHub: CustomerHub,
-              private projectHub: ProjectHub,
               private attachmentHub: AttachmentHub,
               private commentHub: CommentHub) {
   }
@@ -201,7 +199,7 @@ export class ApplicationStore {
     return this.saveCustomersAndContacts(application)
       .switchMap(app => this.saveApplication(app))
       .switchMap(app => this.savePending(app))
-      .switchMap(app => this.saved(app));
+      .do(app => this.saved(app));
   }
 
   delete(id: number): Observable<HttpResponse> {
@@ -273,14 +271,7 @@ export class ApplicationStore {
     return result.asObservable();
   }
 
-  private saved(application: Application): Observable<Application> {
+  private saved(application: Application): void {
     this.store.next({...this.snapshot, application, tags: application.applicationTags});
-    // We had related project so navigate back to project page
-    Some(this.snapshot.relatedProject)
-      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id)
-        .subscribe(project => this.router.navigate(['/projects', project.id])));
-
-    this.router.navigate(['applications', application.id, 'summary']);
-    return Observable.of(application);
   }
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {InvoicingInfoForm} from './invoicing-info/invoicing-info.form';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
@@ -8,23 +8,30 @@ import {Application} from '../../../model/application/application';
 import {Customer} from '../../../model/customer/customer';
 import {CustomerForm} from '../../customerregistry/customer/customer.form';
 import {CustomerHub} from '../../../service/customer/customer-hub';
+import {Subject} from 'rxjs/Subject';
+import {MatDialog} from '@angular/material';
+import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
+import {CanComponentDeactivate} from '../../../service/common/can-deactivate-guard';
+import {findTranslation} from '../../../util/translations';
 
 @Component({
   selector: 'invoicing',
   templateUrl: './invoicing.component.html',
   styleUrls: []
 })
-export class InvoicingComponent implements OnInit {
+export class InvoicingComponent implements OnInit, OnDestroy, CanComponentDeactivate {
 
   applicationId: number;
   infoForm: FormGroup;
 
   private recipientForm: FormGroup;
   private notBillableCtrl: FormControl;
+  private destroy = new Subject<boolean>();
 
   constructor(private applicationStore: ApplicationStore,
               private fb: FormBuilder,
-              private customerHub: CustomerHub) {
+              private customerHub: CustomerHub,
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -34,10 +41,14 @@ export class InvoicingComponent implements OnInit {
     this.notBillableCtrl = <FormControl>this.infoForm.get('notBillable');
   }
 
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+  }
+
   onSubmit(): void {
     this.saveApplicationInfo()
       .subscribe(
-        rows => NotificationService.translateMessage('invoice.action.save'),
+        () => this.saved(),
         error => NotificationService.errorMessage(error));
   }
 
@@ -51,7 +62,6 @@ export class InvoicingComponent implements OnInit {
     const invoicingInfo: InvoicingInfoForm = this.infoForm.getRawValue();
     application.notBillable = invoicingInfo.notBillable;
     application.notBillableReason = invoicingInfo.notBillable ? invoicingInfo.notBillableReason : undefined;
-
 
     return this.saveCustomer()
       .switchMap(customer => {
@@ -67,6 +77,51 @@ export class InvoicingComponent implements OnInit {
       return this.customerHub.saveCustomer(customer);
     } else {
       return Observable.of(customer);
+    }
+  }
+
+  private saved(): void {
+    NotificationService.translateMessage('invoice.action.save');
+    this.infoForm.markAsPristine();
+  }
+
+  canDeactivate(): Observable<boolean> | boolean {
+    if (this.infoForm.dirty) {
+      return this.confirmChanges();
+    } else {
+      return true;
+    }
+  }
+
+  private confirmChanges(): Observable<boolean> {
+    const confirmType = this.infoForm.valid ? 'confirmSave' : 'confirmDiscard';
+    const data = {
+      title: findTranslation(['invoice', confirmType, 'title']),
+      description: findTranslation(['invoice', confirmType, 'description']),
+      confirmText: findTranslation(['invoice', confirmType, 'confirmText']),
+      cancelText: findTranslation(['invoice', confirmType, 'cancelText'])
+    };
+
+    if (this.infoForm.valid) {
+      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed()
+        .switchMap(save => this.saveChanges(save));
+    } else {
+      return this.dialog.open(ConfirmDialogComponent, {data}).afterClosed();
+    }
+  }
+
+  private saveChanges(save: boolean): Observable<boolean> {
+    if (save) {
+      return this.saveApplicationInfo()
+        .map(() => {
+          NotificationService.translateMessage('invoice.action.save');
+          return true;
+        }).catch(error => {
+          NotificationService.errorMessage(error);
+          return Observable.of(false);
+        });
+    } else {
+      return Observable.of(true);
     }
   }
 }

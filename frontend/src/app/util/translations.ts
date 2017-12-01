@@ -825,6 +825,18 @@ export const translations = {
       workIdMissing: 'Työnumero puuttuu',
       invoiceReferenceMissing: 'Laskutusviite puuttuu',
       notBillableReasonMissing: 'Korvauksettomuuden peruste puuttuu'
+    },
+    confirmSave: {
+      title: 'Tallennetaanko muutokset',
+      description: 'Sinulla on tallentamattomia muutoksia. Haluatko tallentaa ne?',
+      confirmText: 'Tallenna',
+      cancelText: 'Hylkää'
+    },
+    confirmDiscard: {
+      title: 'Hylätäänkö muutokset',
+      description: 'Sinulla on keskeneräisiä muutoksia. Hylätäänkö muutokset?',
+      confirmText: 'Hylkää',
+      cancelText: 'Palaa muokkaamaan'
     }
   },
   chargeBasis: {

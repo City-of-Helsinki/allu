@@ -1,5 +1,5 @@
 import {AfterContentInit, OnDestroy, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
@@ -15,6 +15,7 @@ import {CustomerWithContacts} from '../../../model/customer/customer-with-contac
 import {Subject} from 'rxjs/Subject';
 import {Observable} from 'rxjs/Observable';
 import {SidebarItemType} from '../../sidebar/sidebar-item';
+import {ProjectHub} from '../../../service/project/project-hub';
 
 export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy, AfterContentInit {
 
@@ -31,7 +32,9 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
   constructor(protected fb: FormBuilder,
               protected route: ActivatedRoute,
-              protected applicationStore: ApplicationStore) {}
+              protected applicationStore: ApplicationStore,
+              private router: Router,
+              private projectHub: ProjectHub) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -75,16 +78,7 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     const application = this.update(value);
     application.extension.terms = value.terms;
 
-    this.applicationStore.save(application)
-      .subscribe(
-        app => {
-          NotificationService.message(findTranslation('application.action.saved'));
-          this.submitPending = false;
-        },
-        err => {
-          NotificationService.error(err);
-          this.submitPending = false;
-        });
+    this.save(application);
   }
 
   get hasPropertyDeveloper(): boolean {
@@ -141,5 +135,27 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
       this.applicationForm.enable();
       this.applicationStore.applicationChange(this.update(this.applicationForm.getRawValue()));
     }
+  }
+
+  private save(application: Application) {
+    this.applicationStore.save(application)
+      .subscribe(
+        app => this.applicationSaved(app),
+        err => {
+          NotificationService.error(err);
+          this.submitPending = false;
+        });
+  }
+
+  private applicationSaved(application: Application): void {
+    NotificationService.message(findTranslation('application.action.saved'));
+    this.submitPending = false;
+
+    // We had related project so navigate back to project page
+    Some(this.applicationStore.snapshot.relatedProject)
+      .do(projectId => this.projectHub.addProjectApplication(projectId, application.id)
+        .subscribe(project => this.router.navigate(['/projects', project.id])));
+
+    this.router.navigate(['applications', application.id, 'summary']);
   }
 }

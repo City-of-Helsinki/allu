@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
@@ -8,6 +8,7 @@ import {ComplexValidator} from '../../../../util/complex-validator';
 import {ShortTermRental} from '../../../../model/application/short-term-rental/short-term-rental';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 @Component({
   selector: 'short-term-rental',
@@ -17,8 +18,13 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class ShortTermRentalComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
-    super(fb, route, applicationStore);
+  constructor(
+    fb: FormBuilder,
+    route: ActivatedRoute,
+    applicationStore: ApplicationStore,
+    router: Router,
+    projectHub: ProjectHub) {
+    super(fb, route, applicationStore, router, projectHub);
   }
 
   ngOnInit(): any {

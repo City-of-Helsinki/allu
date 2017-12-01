@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {Application} from '../../../../model/application/application';
@@ -9,6 +9,7 @@ import {ApplicationStore} from '../../../../service/application/application-stor
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {ApplicationStatus} from '../../../../model/application/application-status';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 @Component({
   selector: 'cable-report',
@@ -20,8 +21,13 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
 
   showCableInfo = false;
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
-    super(fb, route, applicationStore);
+  constructor(
+    fb: FormBuilder,
+    route: ActivatedRoute,
+    applicationStore: ApplicationStore,
+    router: Router,
+    projectHub: ProjectHub) {
+    super(fb, route, applicationStore, router, projectHub);
   }
 
   ngOnInit(): any {

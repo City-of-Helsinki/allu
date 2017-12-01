@@ -43,6 +43,7 @@ import {ConfigService} from '../../service/config/config.service';
 import {SupervisionWorkqueueModule} from '../supervision-workqueue/supervision-workqueue.module';
 import {UserService} from '../../service/user/user-service';
 import {DownloadModule} from '../download/download.module';
+import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
 
 
 @NgModule({
@@ -84,6 +85,7 @@ import {DownloadModule} from '../download/download.module';
     MapHub,
     UIStateHub,
     AuthGuard,
+    CanDeactivateGuard,
     ApplicationStore,
     LocationState,
     ErrorHandler,

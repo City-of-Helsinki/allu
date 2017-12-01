@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {MatDatepicker} from '@angular/material';
@@ -17,6 +17,7 @@ import {NumberUtil} from '../../../../util/number.util';
 import {TimeUtil} from '../../../../util/time.util';
 import {Some} from '../../../../util/option';
 import {IconConfig} from '../../../common/icon-config';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 @Component({
   selector: 'excavation-announcement',
@@ -33,11 +34,14 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   private cableReportIdentifierCtrl: FormControl;
 
-  constructor(private applicationHub: ApplicationHub,
-              fb: FormBuilder,
-              route: ActivatedRoute,
-              applicationStore: ApplicationStore) {
-    super(fb, route, applicationStore);
+  constructor(
+    private applicationHub: ApplicationHub,
+    fb: FormBuilder,
+    route: ActivatedRoute,
+    applicationStore: ApplicationStore,
+    router: Router,
+    projectHub: ProjectHub) {
+    super(fb, route, applicationStore, router, projectHub);
   }
 
   ngOnInit(): any {

@@ -1,5 +1,13 @@
-import {Component, Inject, Input} from '@angular/core';
+import {Component, Inject} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
+import {Some} from '../../../util/option';
+
+export interface ConfirmDialogData {
+  title: string;
+  description: string;
+  confirmText: string;
+  cancelText: string;
+}
 
 @Component({
   selector: 'confirm-dialog',
@@ -9,16 +17,17 @@ import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
   ]
 })
 export class ConfirmDialogComponent {
-  @Input() confirmText = 'Vahvista';
-  @Input() cancelText = 'Peruuta';
-
   title = 'Haluatko varmasti suorittaa toiminnon';
   description = '';
+  confirmText = 'Vahvista';
+  cancelText = 'Peruuta';
 
   constructor(public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: {title: string, description: string}) {
-    this.title = data.title || this.title;
-    this.description = data.description || this.description;
+              @Inject(MAT_DIALOG_DATA) public data: ConfirmDialogData) {
+    this.title = Some(data.title).orElse(this.title);
+    this.description = Some(data.description).orElse(this.description);
+    this.confirmText = Some(data.confirmText).orElse(this.confirmText);
+    this.cancelText = Some(data.cancelText).orElse(this.cancelText);
   }
 
   cancel() {

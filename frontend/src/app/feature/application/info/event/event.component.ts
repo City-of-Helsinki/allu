@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 import {Application} from '../../../../model/application/application';
 import {EventForm} from './event.form';
@@ -13,6 +13,7 @@ import {EventNature} from '../../../../model/application/event/event-nature';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {BillingType} from '../../../../model/application/billing-type';
 import {EnumUtil} from '../../../../util/enum.util';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 
 @Component({
@@ -24,8 +25,13 @@ import {EnumUtil} from '../../../../util/enum.util';
 export class EventComponent extends ApplicationInfoBaseComponent implements OnInit {
   billingTypes = EnumUtil.enumValues(BillingType);
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
-    super(fb, route, applicationStore);
+  constructor(
+    fb: FormBuilder,
+    route: ActivatedRoute,
+    applicationStore: ApplicationStore,
+    router: Router,
+    projectHub: ProjectHub) {
+    super(fb, route, applicationStore, router, projectHub);
   }
 
   ngOnInit(): any {

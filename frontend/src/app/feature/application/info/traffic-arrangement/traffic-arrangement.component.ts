@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 import {Application} from '../../../../model/application/application';
 import {ComplexValidator} from '../../../../util/complex-validator';
@@ -7,6 +7,7 @@ import {ApplicationStore} from '../../../../service/application/application-stor
 import {TrafficArrangement} from '../../../../model/application/traffic-arrangement/traffic-arrangement';
 import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 
 @Component({
@@ -17,8 +18,13 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 })
 export class TrafficArrangementComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
-    super(fb, route, applicationStore);
+  constructor(
+    fb: FormBuilder,
+    route: ActivatedRoute,
+    applicationStore: ApplicationStore,
+    router: Router,
+    projectHub: ProjectHub) {
+    super(fb, route, applicationStore, router, projectHub);
   }
 
   ngOnInit(): any {

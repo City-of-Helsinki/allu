@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {FormBuilder, Validators} from '@angular/forms';
 
 import {ComplexValidator} from '../../../../util/complex-validator';
@@ -8,6 +8,7 @@ import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
 import {Application} from '../../../../model/application/application';
+import {ProjectHub} from '../../../../service/project/project-hub';
 
 @Component({
   selector: 'note',
@@ -17,8 +18,13 @@ import {Application} from '../../../../model/application/application';
 })
 export class NoteComponent extends ApplicationInfoBaseComponent implements OnInit {
 
-  constructor(fb: FormBuilder, route: ActivatedRoute, applicationStore: ApplicationStore) {
-    super(fb, route, applicationStore);
+  constructor(
+    fb: FormBuilder,
+    route: ActivatedRoute,
+    applicationStore: ApplicationStore,
+    router: Router,
+    projectHub: ProjectHub) {
+    super(fb, route, applicationStore, router, projectHub);
   }
 
   ngOnInit(): any {
