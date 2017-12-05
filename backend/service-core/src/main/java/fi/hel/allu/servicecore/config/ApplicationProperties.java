@@ -971,4 +971,39 @@ public class ApplicationProperties {
   public String getReleasePendingInvoiceUrl() {
     return getModelServiceUrl("/applications/invoices/{id}/release-pending");
   }
+
+  /**
+  * @return url for getting deposit by application id.
+   */
+  public String getDepositByApplicationIdUrl() {
+    return getModelServiceUrl("/applications/{id}/deposit");
+  }
+
+  /**
+   * @return url for getting deposit by id
+   */
+  public String getDepositByIdUrl() {
+    return getModelServiceUrl("/deposit/{id}");
+  }
+
+  /**
+   * @return url for creating new deposit
+   */
+  public String getDepositCreateUrl() {
+    return getModelServiceUrl("/deposit");
+  }
+
+  /**
+   * @return url for updating deposit
+   */
+  public String getDepositUpdateUrl() {
+    return getModelServiceUrl("/deposit/{id}");
+  }
+
+  /**
+   * @return url for deleting deposit
+   */
+  public String getDepositDeleteUrl() {
+    return getModelServiceUrl("/deposit/{id}");
+  }
 }
