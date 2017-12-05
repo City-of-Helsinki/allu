@@ -3,7 +3,7 @@ import {ActivatedRouteSnapshot, CanActivate, RouterStateSnapshot} from '@angular
 import {Observable} from 'rxjs/Observable';
 import {AuthService} from './auth.service';
 import {ConfigService} from '../config/config.service';
-import {REDIRECT_URL} from '../../util/local-storage';
+import {REDIRECT_URL} from '../../../util/local-storage';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

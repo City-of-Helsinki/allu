@@ -1,6 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
-import {REDIRECT_URL} from '../../util/local-storage';
+import {REDIRECT_URL} from '../../../util/local-storage';
 
 /**
  * Landing page component for OAuth2 login.
