@@ -12,6 +12,7 @@ import java.util.List;
 public class ApplicationProperties {
 
   private boolean production;
+  private String versionNumber;
   private String geocodeUrl;
   private String streetSearchUrl;
   private String wfsUsername;
@@ -28,6 +29,7 @@ public class ApplicationProperties {
 
   @Autowired
   public ApplicationProperties(@Value("${production}") boolean production,
+                               @Value("${version.number}") String versionNumber,
                                @Value("${wfs.template.street.geocode}") @NotEmpty String geocodeUrl,
                                @Value("${wfs.template.street.search}") @NotEmpty String streetSearchUrl,
                                @Value("${wfs.username}") @NotEmpty String wfsUsername,
@@ -42,6 +44,7 @@ public class ApplicationProperties {
                                @Value("${oauth2.x509.certificate}") @NotEmpty String oauth2Certificate,
                                @Value("#{'${anonymous.access.paths:}'.split(',')}") @NotNull List<String> anonymousAccessPaths) {
     this.production = production;
+    this.versionNumber = versionNumber;
     this.geocodeUrl = geocodeUrl;
     this.streetSearchUrl = streetSearchUrl;
     this.wfsUsername = wfsUsername;
@@ -176,5 +179,12 @@ public class ApplicationProperties {
    */
   public List<String> getAnonymousAccessPaths() {
     return anonymousAccessPaths;
+  }
+
+  /**
+   * Get version number
+   */
+  public String getVersionNumber() {
+    return versionNumber;
   }
 }

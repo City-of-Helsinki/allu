@@ -26,6 +26,7 @@ public class ConfigController {
     uiConfiguration = new UIConfiguration();
     uiConfiguration.setProduction(applicationProperties.isProduction());
     uiConfiguration.setOauth2AuthorizationEndpointUrl(createOAuthAuthorizationEndpointUrl(applicationProperties));
+    uiConfiguration.setVersionNumber(applicationProperties.getVersionNumber());
   }
 
   /**

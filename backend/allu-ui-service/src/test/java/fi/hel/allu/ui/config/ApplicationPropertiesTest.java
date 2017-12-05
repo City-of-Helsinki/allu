@@ -9,6 +9,7 @@ public class ApplicationPropertiesTest {
   public void testCreateValidUrl() throws Exception {
     ApplicationProperties props = new ApplicationProperties(
         false,
+        "1.1",
         "localhost/geocode",
         "9090",
         "localhost",

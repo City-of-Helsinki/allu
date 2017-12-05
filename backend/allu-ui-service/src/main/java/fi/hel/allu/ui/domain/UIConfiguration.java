@@ -6,6 +6,7 @@ package fi.hel.allu.ui.domain;
 public class UIConfiguration {
   public Boolean production;
   public String oauth2AuthorizationEndpointUrl;
+  public String versionNumber;
 
   /**
    * @return true, if executing in production system.
@@ -27,5 +28,16 @@ public class UIConfiguration {
 
   public void setOauth2AuthorizationEndpointUrl(String oauth2AuthorizationEndpointUrl) {
     this.oauth2AuthorizationEndpointUrl = oauth2AuthorizationEndpointUrl;
+  }
+
+  /**
+   * @return Version number
+   */
+  public String getVersionNumber() {
+    return versionNumber;
+  }
+
+  public void setVersionNumber(String versionNumber) {
+    this.versionNumber = versionNumber;
   }
 }
