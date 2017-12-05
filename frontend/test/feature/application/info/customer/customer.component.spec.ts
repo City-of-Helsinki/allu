@@ -12,8 +12,8 @@ import {CustomerWithContacts} from '../../../../../src/app/model/customer/custom
 import {CustomerRoleType} from '../../../../../src/app/model/customer/customer-role-type';
 import {Component, Input} from '@angular/core';
 import {Contact} from '../../../../../src/app/model/customer/contact';
-import {ApplicationStoreMock, CustomerHubMock} from '../../../../mocks';
-import {ApplicationStore} from '../../../../../src/app/service/application/application-store';
+import {CustomerHubMock} from '../../../../mocks';
+import {Application} from '../../../../../src/app/model/application/application';
 
 const headerText = 'Hakija';
 
@@ -37,7 +37,7 @@ describe('CustomerComponent', () => {
   let fixture: ComponentFixture<CustomerComponent>;
   let page: CustomerPage;
   let parentForm: FormGroup;
-  let applicationStore: ApplicationStoreMock;
+  const application = new Application();
 
   class CustomerPage {
     cardTitle: HTMLElement;
@@ -71,8 +71,7 @@ describe('CustomerComponent', () => {
       declarations: [CustomerComponent, MockContactComponent, CustomerInfoComponent],
       providers: [
         {provide: FormBuilder, useValue: new FormBuilder()},
-        {provide: CustomerHub, useClass: CustomerHubMock},
-        {provide: ApplicationStore, useClass: ApplicationStoreMock}
+        {provide: CustomerHub, useClass: CustomerHubMock}
       ]
     }).compileComponents();
   }));
@@ -82,22 +81,20 @@ describe('CustomerComponent', () => {
     comp = fixture.componentInstance;
     const fb = new FormBuilder();
     parentForm = fb.group({});
+
     comp.parentForm = parentForm;
     comp.readonly = false;
-
-    applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
-    applicationStore._application.customersWithContacts = [new CustomerWithContacts(CustomerRoleType.APPLICANT)];
-    fixture.detectChanges();
+    comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT);
     page = new CustomerPage();
-    page.addPageElements();
   });
 
   it('should show header text from input', fakeAsync(() => {
     fixture.detectChanges();
+    page.addPageElements();
     expect(page.cardTitle.textContent).toContain(headerText);
   }));
 
-  it('should fill the form with input customer', fakeAsync(() => {
+  it('should fill the form with input customer', () => {
     const customer = new Customer();
     customer.id = 1;
     customer.name = 'NameTest';
@@ -108,30 +105,35 @@ describe('CustomerComponent', () => {
     customer.phone = 'phoneTest';
     customer.email = 'emailTest';
 
-    applicationStore._application.customersWithContacts = [new CustomerWithContacts(CustomerRoleType.APPLICANT, customer)];
+    comp.customerWithContacts = new CustomerWithContacts(CustomerRoleType.APPLICANT, customer);
     comp.readonly = false;
     comp.ngOnInit();
     fixture.detectChanges();
-    tick();
-    expect(page.customerNameInput.value).toEqual(customer.name);
-    expect(page.registryKeyInput.value).toEqual(customer.registryKey);
-    expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
-    expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
-    expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
-    expect(page.customerPhoneInput.value).toEqual(customer.phone);
-    expect(page.customerEmailInput.value).toEqual(customer.email);
-  }));
+    fixture.whenStable().then(() => {
+      page.addPageElements();
+      expect(page.customerNameInput.value).toEqual(customer.name);
+      expect(page.registryKeyInput.value).toEqual(customer.registryKey);
+      expect(page.customerAddressInput.value).toEqual(customer.postalAddress.streetAddress);
+      expect(page.customerPostalCodeInput.value).toEqual(customer.postalAddress.postalCode);
+      expect(page.customerCityInput.value).toEqual(customer.postalAddress.city);
+      expect(page.customerPhoneInput.value).toEqual(customer.phone);
+      expect(page.customerEmailInput.value).toEqual(customer.email);
+    });
+  });
 
   it('should disable fields if readonly', () => {
     comp.readonly = true;
     comp.ngOnInit();
     fixture.detectChanges();
-    expect(page.customerNameInput.disabled).toBeTruthy();
-    expect(page.registryKeyInput.disabled).toBeTruthy();
-    expect(page.customerAddressInput.disabled).toBeTruthy();
-    expect(page.customerPostalCodeInput.disabled).toBeTruthy();
-    expect(page.customerCityInput.disabled).toBeTruthy();
-    expect(page.customerPhoneInput.disabled).toBeTruthy();
-    expect(page.customerEmailInput.disabled).toBeTruthy();
+    fixture.whenStable().then(() => {
+      page.addPageElements();
+      expect(page.customerNameInput.disabled).toBeTruthy();
+      expect(page.registryKeyInput.disabled).toBeTruthy();
+      expect(page.customerAddressInput.disabled).toBeTruthy();
+      expect(page.customerPostalCodeInput.disabled).toBeTruthy();
+      expect(page.customerCityInput.disabled).toBeTruthy();
+      expect(page.customerPhoneInput.disabled).toBeTruthy();
+      expect(page.customerEmailInput.disabled).toBeTruthy();
+    });
   });
 });

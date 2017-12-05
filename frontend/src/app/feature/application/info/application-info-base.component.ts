@@ -48,15 +48,15 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
       .forEach(summary => {
         this.readonly = summary || !canBeEdited(this.applicationStore.snapshot.application.statusEnum);
       });
-  }
 
-  ngAfterContentInit(): void {
     this.applicationChanges = this.applicationStore.application;
 
     this.applicationChanges
       .takeUntil(this.destroy)
       .subscribe(app => this.onApplicationChange(app));
+  }
 
+  ngAfterContentInit(): void {
     if (this.readonly) {
       this.applicationForm.disable();
     }

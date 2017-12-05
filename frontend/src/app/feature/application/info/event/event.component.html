@@ -1,11 +1,12 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)" *ngIf="applicationChanges | async as application">
   <div class="row">
-    <customer [parentForm]="applicationForm" roleType="APPLICANT"
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
               [readonly]="readonly" [showRepresentative]="true" [contactRequired]="!hasRepresentative"></customer>
   </div>
 
   <div class="row" *ngIf="hasRepresentative">
-    <customer [parentForm]="applicationForm" roleType="REPRESENTATIVE" [readonly]="readonly"></customer>
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative"
+              roleType="REPRESENTATIVE" [readonly]="readonly"></customer>
   </div>
 
   <div class="row">

@@ -2,7 +2,7 @@
     <div class="col m6">
         <mat-card class="customer-card">
             <mat-card-title>
-                {{['customer.role', roleType, 'title'] | translation}}
+                {{['customer.role', customerWithContacts.uiRoleType, 'title'] | translation}}
                 <button mat-icon-button type="button" *ngIf="canBeEdited()" (click)="edit()" class="align-with-text">
                     <mat-icon>mode_edit</mat-icon>
                 </button>
@@ -15,13 +15,13 @@
                                (customerChange)="onCustomerChange($event)"></customer-info>
                 <div class="row form-group">
                     <div class="col m6 height-fix-bottom" *ngIf="showRepresentative">
-                        <mat-checkbox [checked]="parentForm.value.hasRepresentative" [disabled]="readonly"
+                        <mat-checkbox [checked]="parentForm.getRawValue().hasRepresentative" [disabled]="readonly"
                                      (change)="onRepresentativeChange($event.checked)">
                             {{'customer.handledByRepresentative' | translation}}
                         </mat-checkbox>
                     </div>
                     <div class="col m6 height-fix-bottom" *ngIf="showPropertyDeveloper">
-                        <mat-checkbox [checked]="parentForm.value.hasPropertyDeveloper" [disabled]="readonly"
+                        <mat-checkbox [checked]="parentForm.getRawValue().hasPropertyDeveloper" [disabled]="readonly"
                                      (change)="onPropertyDeveloperChange($event.checked)">
                             {{'customer.hasPropertyDeveloper' | translation}}
                         </mat-checkbox>
@@ -31,5 +31,5 @@
         </mat-card>
     </div>
 </form>
-<contact #contacts [parentForm]="parentForm" [customerRoleType]="roleType"
+<contact #contacts [parentForm]="parentForm" [customerRoleType]="customerWithContacts.uiRoleType"
          [readonly]="readonly" [contactRequired]="contactRequired"></contact>
