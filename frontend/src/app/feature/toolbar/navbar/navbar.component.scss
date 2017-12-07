@@ -1,9 +1,8 @@
-:host {
-  padding: 0 85px;
-  display: flex;
-  align-items:center;
-  height: 100%;
-  min-height: 100%;
-  width: 80%;
+nav a {
+  height: 50px;
+}
+
+[fxLayout="row"] {
+  margin-bottom: 0px;
 }
 

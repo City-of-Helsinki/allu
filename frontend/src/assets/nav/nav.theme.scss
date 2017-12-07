@@ -21,7 +21,8 @@
   nav {
     background: mat-color($primary, 500);
 
-    .active {
+    .active,
+    a.active {
       background: mat-color($primary, 900);
     }
   }
