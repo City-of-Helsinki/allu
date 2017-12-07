@@ -1,7 +1,16 @@
-<img src="assets/svg/allu-logo.svg">
-<navbar *ngIf="authenticated"></navbar>
-<div class="nav-controls" *ngIf="authenticated">
+<div fxLayout="row" fxFill class="toolbar">
+  <div fxFlex="250px" fxFlexAlign="center" class="logo">
+    <div>
+      <img src="assets/svg/allu-logo.svg">
+    </div>
+    <div class="version">{{version | async}}</div>
+  </div>
+  <div fxFlex>
+    <navbar *ngIf="authenticated"></navbar>
+  </div>
+  <div fxflex fxFlexAlign="center" class="nav-controls" *ngIf="authenticated">
     <a [routerLink]="['/logout']">KIRJAUDU ULOS</a>
+  </div>
 </div>
 
 
