@@ -1,6 +1,9 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,24 +20,8 @@ public class DepositService {
   private DepositDao depositDao;
   private ApplicationDao applicationDao;
 
-  /**
-   * Deposit related application tag types
-   */
-  private enum DepositApplicationTagType {
-    UNPAID_DEPOSIT(ApplicationTagType.DEPOSIT_REQUESTED, ApplicationTagType.DEPOSIT_PAID),
-    PAID_DEPOSIT(ApplicationTagType.DEPOSIT_PAID, ApplicationTagType.DEPOSIT_REQUESTED);
-    private ApplicationTagType tag;
-    private ApplicationTagType replacedTag;
-
-    private DepositApplicationTagType(ApplicationTagType tag, ApplicationTagType replacedTag) {
-      this.tag = tag;
-      this.replacedTag = replacedTag;
-    }
-
-    private static DepositApplicationTagType forDeposit(Deposit deposit) {
-      return deposit.isPaid() ? DepositApplicationTagType.PAID_DEPOSIT : DepositApplicationTagType.UNPAID_DEPOSIT;
-    }
-  }
+  private static final List<ApplicationTagType> depositTags = Arrays.asList(
+      ApplicationTagType.DEPOSIT_REQUESTED, ApplicationTagType.DEPOSIT_PAID);
 
   @Autowired
   public DepositService(DepositDao depositDao, ApplicationDao applicationDao) {
@@ -60,9 +47,9 @@ public class DepositService {
   }
 
   private void addDepositTagForApplication(Deposit deposit) {
-    ApplicationTagType tagType = DepositApplicationTagType.forDeposit(deposit).tag;
-    ApplicationTag tag = new ApplicationTag(deposit.getCreatorId(), tagType, ZonedDateTime.now());
-    applicationDao.addTag(deposit.getApplicationId(), tag);
+    deposit.getStatus().tag
+      .map(tagType -> new ApplicationTag(deposit.getCreatorId(), tagType, ZonedDateTime.now()))
+      .ifPresent(tag -> applicationDao.addTag(deposit.getApplicationId(), tag));
   }
 
   /**
@@ -71,8 +58,8 @@ public class DepositService {
   public Deposit update(int id, Deposit deposit) {
     deposit.setId(id);
     Deposit updated = depositDao.update(deposit);
+    depositTags.forEach(tag -> applicationDao.removeTagByType(deposit.getApplicationId(), tag));
     addDepositTagForApplication(deposit);
-    applicationDao.removeTagByType(deposit.getApplicationId(), DepositApplicationTagType.forDeposit(deposit).replacedTag);
     return updated;
   }
 
@@ -82,6 +69,6 @@ public class DepositService {
   public void delete(int depositId) {
     Deposit deposit = depositDao.findById(depositId);
     depositDao.delete(depositId);
-    applicationDao.removeTagByType(deposit.getApplicationId(), DepositApplicationTagType.forDeposit(deposit).tag);
+    depositTags.forEach(tag -> applicationDao.removeTagByType(deposit.getApplicationId(), tag));
   }
 }

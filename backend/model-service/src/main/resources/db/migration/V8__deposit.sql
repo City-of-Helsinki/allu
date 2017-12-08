@@ -3,7 +3,7 @@ create table allu.deposit (
   application_id integer unique not null references allu.application(id) on delete cascade,
   amount integer not null,
   reason text,
-  paid boolean not null default false,
+  status text not null default 'UNPAID_DEPOSIT',
   creator_id integer references allu.user(id),
   creation_time timestamp with time zone not null
 );

@@ -1,0 +1,42 @@
+<form [formGroup]="depositForm" (ngSubmit)="onSubmit()">
+  <h1 mat-dialog-title>{{'deposit.modal.title' | translation}}</h1>
+  <div mat-dialog-content>
+    <div fxLayout="row">
+      <div fxFlex="30">
+        <mat-form-field class="input-full-width">
+          <input matInput type="number" formControlName="amount" required
+                 [placeholder]="'deposit.amount' | translation" />
+          <span matSuffix>€</span>
+          <mat-error *ngIf="depositForm.get('amount').hasError('required')">
+            {{'deposit.field.amountMissing' | translation}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-form-field class="input-full-width">
+          <textarea matInput matTextareaAutosize formControlName="reason"
+                    [placeholder]="'deposit.reason' | translation"></textarea>
+        </mat-form-field>
+      </div>
+    </div>
+    <div fxLayout="row">
+      <div fxFlex>
+        <mat-button-toggle-group formControlName="status">
+          <mat-button-toggle *ngFor="let status of depositStatuses" [value]="status">
+            {{['deposit.status', status] | translation}}
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+  </div>
+  <div mat-dialog-actions>
+    <button type="submit" mat-raised-button color="primary" [disabled]="!depositForm.valid">
+      {{'common.button.save' | translation}}
+    </button>
+    <button type="button" mat-raised-button color="primary" (click)="cancel()">
+      {{'common.button.cancel' | translation}}
+    </button>
+  </div>
+</form>

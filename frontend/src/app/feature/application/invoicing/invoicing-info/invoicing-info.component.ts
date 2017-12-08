@@ -15,6 +15,11 @@ import {
 } from '../../../customerregistry/customer/customer-modal.component';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {NumberUtil} from '../../../../util/number.util';
+import {DEPOSIT_MODAL_CONFIG, DepositModalComponent} from '../deposit/deposit-modal.component';
+import {NotificationService} from '../../../../service/notification/notification.service';
+import {Deposit} from '../../../../model/application/invoice/deposit';
+import {ObjectUtil} from '../../../../util/object.util';
+import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
 
 @Component({
   selector: 'invoicing-info',
@@ -27,13 +32,10 @@ export class InvoicingInfoComponent implements OnInit {
 
   @Input() form: FormGroup;
 
-  customerTypes = EnumUtil.enumValues(CustomerType);
-  invoicePartitions = EnumUtil.enumValues(InvoicePartition);
   recipientForm: FormGroup;
 
   private notBillableCtrl: FormControl;
   private notBillableReasonCtrl: FormControl;
-  private dialogRef: MatDialogRef<CustomerModalComponent>;
 
   constructor(private applicationStore: ApplicationStore,
               private customerHub: CustomerHub,
@@ -44,10 +46,7 @@ export class InvoicingInfoComponent implements OnInit {
     this.recipientForm = <FormGroup>this.form.get('invoiceRecipient');
     this.notBillableCtrl = <FormControl>this.form.get('notBillable');
     this.notBillableReasonCtrl = <FormControl>this.form.get('notBillableReason');
-
-    const app = this.applicationStore.snapshot.application;
-    this.patchInfo(app);
-    Some(app.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
+    this.initForm();
     this.notBillableCtrl.valueChanges.subscribe(value => this.onNotBillableChange(value));
   }
 
@@ -58,11 +57,42 @@ export class InvoicingInfoComponent implements OnInit {
   }
 
   editCustomer(): void {
-    this.dialogRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, CUSTOMER_MODAL_CONFIG);
-    this.dialogRef.componentInstance.customerId = this.recipientForm.value.id;
-    this.dialogRef.afterClosed()
+    const customerModalRef = this.dialog.open<CustomerModalComponent>(CustomerModalComponent, CUSTOMER_MODAL_CONFIG);
+    customerModalRef.componentInstance.customerId = this.recipientForm.value.id;
+    customerModalRef.afterClosed()
       .filter(customer => !!customer)
       .subscribe(customer => this.recipientForm.patchValue(CustomerForm.fromCustomer(customer)));
+  }
+
+  editDeposit(): void {
+    const deposit = this.currentDeposit();
+    const config = {...DEPOSIT_MODAL_CONFIG, data: {deposit: deposit}};
+
+    const depositModalRef = this.dialog.open<DepositModalComponent>(DepositModalComponent, config);
+    depositModalRef.afterClosed()
+      .filter(result => !!result)
+      .switchMap(result => this.applicationStore.saveDeposit(result))
+      .subscribe(
+        result => NotificationService.translateMessage('deposit.action.save'),
+        error => NotificationService.error(error));
+  }
+
+  nextDepositStatus(): void {
+    const deposit = this.currentDeposit();
+    deposit.status = deposit.status + 1;
+    this.applicationStore.saveDeposit(deposit)
+      .subscribe(
+        result => NotificationService.translateMessage('deposit.action.save'),
+        error => NotificationService.error(error));
+  }
+
+  get hasDeposit(): boolean {
+    return !!this.form.getRawValue().depositStatus;
+  }
+
+  get canChangeDepositStatus(): boolean {
+    const deposit = this.applicationStore.snapshot.deposit;
+    return deposit ? deposit.status < DepositStatusType.RETURNED_DEPOSIT : false;
   }
 
   get billable(): boolean {
@@ -77,11 +107,26 @@ export class InvoicingInfoComponent implements OnInit {
     return this.recipientForm.getRawValue().invoicingProhibited && this.billable;
   }
 
-  private patchInfo(application: Application): void {
-    this.form.patchValue({
-      notBillable: application.notBillable,
-      notBillableReason: application.notBillableReason
+  private initForm(): void {
+    this.applicationStore.application.subscribe(app => {
+      Some(app.invoiceRecipientId).do(id => this.findAndPatchCustomer(id));
+
+      this.form.patchValue({
+        notBillable: app.notBillable,
+        notBillableReason: app.notBillableReason
+      });
     });
+
+    this.applicationStore.deposit
+      .filter(deposit => !!deposit)
+      .subscribe(deposit => this.form.patchValue({
+          depositAmount: deposit.amountEuro,
+          depositReason: deposit.reason,
+          depositStatus: deposit.uiStatus
+        })
+      );
+
+    this.applicationStore.loadDeposit().subscribe();
   }
 
   private findAndPatchCustomer(id: number): void {
@@ -104,5 +149,10 @@ export class InvoicingInfoComponent implements OnInit {
     Object.keys(this.recipientForm.controls)
       .filter(key => ALWAYS_ENABLED_FIELDS.indexOf(key) < 0)
       .forEach(key => this.recipientForm.get(key).disable({emitEvent: false}));
+  }
+
+  private currentDeposit(): Deposit {
+    const applicationId = this.applicationStore.snapshot.application.id;
+    return this.applicationStore.snapshot.deposit || Deposit.forApplication(applicationId);
   }
 }

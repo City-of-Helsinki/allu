@@ -13,6 +13,8 @@ import {InvoiceHub} from '../../../service/application/invoice/invoice-hub';
 import {ChargeBasisDiscountComponent} from './charge-basis/discount/charge-basis-discount.component';
 import {ChargeBasisNegligenceFeeComponent} from './charge-basis/negligence-fee/charge-basis-negligence-fee.component';
 import {ChargeBasisAdditionalFeeComponent} from './charge-basis/additional-fee/charge-basis-additional-fee.component';
+import {DepositModalComponent} from './deposit/deposit-modal.component';
+import {DepositService} from '../../../service/application/deposit/deposit.service';
 
 @NgModule({
   imports: [
@@ -29,14 +31,17 @@ import {ChargeBasisAdditionalFeeComponent} from './charge-basis/additional-fee/c
     ChargeBasisEntryModalComponent,
     ChargeBasisDiscountComponent,
     ChargeBasisNegligenceFeeComponent,
-    ChargeBasisAdditionalFeeComponent
+    ChargeBasisAdditionalFeeComponent,
+    DepositModalComponent
   ],
   providers: [
     InvoiceHub,
-    InvoiceService
+    InvoiceService,
+    DepositService
   ],
   entryComponents: [
-    ChargeBasisEntryModalComponent
+    ChargeBasisEntryModalComponent,
+    DepositModalComponent
   ]
 })
 export class InvoicingModule {}

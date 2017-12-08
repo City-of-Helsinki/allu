@@ -451,6 +451,11 @@
                             <column>creation_time</column>
                             <type>java.time.ZonedDateTime</type>
                         </typeMapping>
+                        <typeMapping>
+                            <table>deposit</table>
+                            <column>status</column>
+                            <type>fi.hel.allu.model.querydsl.StringToDepositStatusType</type>
+                        </typeMapping>
                     </typeMappings>
                     <spatial>true</spatial>
                     <schemaPattern>allu</schemaPattern>

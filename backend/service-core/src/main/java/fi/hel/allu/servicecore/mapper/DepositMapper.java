@@ -12,9 +12,9 @@ public class DepositMapper {
         depositJson.getApplicationId(),
         depositJson.getAmount(),
         depositJson.getReason(),
-        depositJson.isPaid(),
+        depositJson.getStatus(),
         depositJson.getCreationTime(),
-        depositJson.getCreator() != null ? depositJson.getCreator().getId() : null
+        null
      );
   }
 
@@ -27,7 +27,7 @@ public class DepositMapper {
         deposit.getApplicationId(),
         deposit.getAmount(),
         deposit.getReason(),
-        deposit.isPaid(),
+        deposit.getStatus(),
         deposit.getCreationTime(),
         creator
      );

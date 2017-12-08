@@ -32,19 +32,50 @@
         <mat-card-content>
           <div fxLayout="row" fxLayoutWrap>
             <div fxFlex class="height-fix-bottom">
-              <mat-checkbox formControlName="notBillable">Ei laskuteta</mat-checkbox>
+              <mat-checkbox formControlName="notBillable">{{'invoice.info.notBillable' | translation}}</mat-checkbox>
             </div>
           </div>
           <div fxLayout="row">
             <div fxFlex *ngIf="!billable">
               <mat-form-field class="input-full-width">
-                <input matInput type="text" formControlName="notBillableReason" placeholder="Perustelu*"/>
+                <input matInput type="text" formControlName="notBillableReason" required
+                       [placeholder]="'invoice.info.notBillableReason' | translation"/>
                 <mat-hint>
                   <field-error [form]="form" field="notBillableReason" hasError="required">
                     {{'invoice.field.notBillableReasonMissing' | translation}}
                   </field-error>
                 </mat-hint>
               </mat-form-field>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutWrap>
+            <div fxFlex="50">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="depositAmount"
+                       [placeholder]="'deposit.amount' | translation"/>
+                <span matSuffix>€</span>
+              </mat-form-field>
+            </div>
+
+          </div>
+          <div fxLayout="row" fxLayoutWrap>
+            <div fxFlex="100">
+              <mat-form-field class="input-full-width">
+                <textarea matInput matTextareaAutosize formControlName="depositReason"
+                       [placeholder]="'deposit.reason' | translation"></textarea>
+              </mat-form-field>
+            </div>
+          </div>
+          <div fxLayout="row" fxLayoutWrap>
+            <div>
+              <button type="button" mat-raised-button color="primary"
+                      *ngIf="canChangeDepositStatus" (click)="nextDepositStatus()">
+                {{['deposit.changeStatus', form.getRawValue().depositStatus] | translation}}
+              </button>
+              <button type="button" mat-raised-button color="primary" (click)="editDeposit()">
+                <span *ngIf="!hasDeposit">{{'deposit.add' | translation}}</span>
+                <span *ngIf="hasDeposit">{{'deposit.edit' | translation}}</span>
+              </button>
             </div>
           </div>
         </mat-card-content>

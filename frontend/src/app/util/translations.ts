@@ -156,10 +156,8 @@ export const translations = {
     },
     pricing: {
       ecoCompass: 'Hakijalla Ekokompassi tapahtuma -sertifikaatti (-30 %)',
-      notBillable: 'Korvauksetta',
       salesActivity: 'Tapahtuma sisältää kaupallista toimintaa (veloitetaan 50% normaalista hinnasta)',
       heavyStructure: 'Urheilutapahtuma sisältää raskaita rakenteita tai osallistujille maksullinen (veloitetaan 50% normaalista hinnasta)',
-      notBillableReason: 'Peruste korvauksettomuudelle',
       commercial: 'Kaupallinen',
       largeSalesArea: 'Iso myyntialue (0,8 m x 3,0 m)',
       calculatedPrice: 'Hinta'
@@ -797,7 +795,9 @@ export const translations = {
   invoice: {
     info: {
       address: 'Laskutusosoite',
-      depositAndOthers: 'Vakuus ja muut tiedot'
+      depositAndOthers: 'Vakuus ja muut tiedot',
+      notBillable: 'Ei laskuteta',
+      notBillableReason: 'Peruste'
     },
     negligenceFeeType: {
       START_BEFORE_PERMIT: 'Aloitus ennen luvan saantia',
@@ -837,6 +837,35 @@ export const translations = {
       description: 'Sinulla on keskeneräisiä muutoksia. Hylätäänkö muutokset?',
       confirmText: 'Hylkää',
       cancelText: 'Palaa muokkaamaan'
+    }
+  },
+  deposit: {
+    modal: {
+      title: 'Vakuus'
+    },
+    amount: 'Vakuus',
+    reason: 'Vakuuden peruste',
+    status: {
+      UNPAID_DEPOSIT: 'Asetettu',
+      PAID_DEPOSIT: 'Maksettu',
+      RETURNED_DEPOSIT: 'Palautettu'
+    },
+    add: 'Aseta vakuus',
+    edit: 'Muokkaa vakuutta',
+    changeStatus: {
+      UNPAID_DEPOSIT: 'Merkitse maksetuksi',
+      PAID_DEPOSIT: 'Merkitse palautetuksi'
+    },
+    field: {
+      amountMissing: 'Vakuus puuttuu'
+    },
+    action: {
+      save: 'Vakuus tallennettu'
+    },
+    error: {
+      fetch: 'Vakuuden hakeminen epäonnistui',
+      save: 'Vakuuden tallentaminen epäonnistui',
+      remove: 'Vakuuden poistaminen epäonnistui'
     }
   },
   chargeBasis: {

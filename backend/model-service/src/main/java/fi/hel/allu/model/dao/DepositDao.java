@@ -25,7 +25,8 @@ public class DepositDao {
   @Autowired
   private SQLQueryFactory queryFactory;
 
-  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(deposit.id, deposit.applicationId);
+  public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS = Arrays.asList(deposit.id, deposit.applicationId,
+      deposit.creatorId, deposit.creationTime);
 
   private final QBean<Deposit> depositBean = bean(Deposit.class, deposit.all());
 

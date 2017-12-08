@@ -19,6 +19,8 @@ import {ObjectUtil} from '../../util/object.util';
 import {CustomerHub} from '../customer/customer-hub';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
+import {Deposit} from '../../model/application/invoice/deposit';
+import {DepositService} from './deposit/deposit.service';
 
 export interface ApplicationState {
   application?: Application;
@@ -29,6 +31,7 @@ export interface ApplicationState {
   tab?: SidebarItemType;
   relatedProject?: number;
   isCopy?: boolean;
+  deposit?: Deposit;
 }
 
 const initialState: ApplicationState = {
@@ -40,6 +43,7 @@ const initialState: ApplicationState = {
   tab: 'BASIC_INFO',
   relatedProject: undefined,
   isCopy: false,
+  deposit: undefined
 };
 
 @Injectable()
@@ -49,7 +53,8 @@ export class ApplicationStore {
   constructor(private applicationHub: ApplicationHub,
               private customerHub: CustomerHub,
               private attachmentHub: AttachmentHub,
-              private commentHub: CommentHub) {
+              private commentHub: CommentHub,
+              private depositService: DepositService) {
   }
 
   get snapshot(): ApplicationState {
@@ -219,6 +224,24 @@ export class ApplicationStore {
 
   changeIsCopy(isCopy: boolean) {
     this.store.next({...this.snapshot, isCopy});
+  }
+
+  loadDeposit(): Observable<Deposit> {
+    const appId = this.snapshot.application.id;
+    return this.depositService.fetchByApplication(appId)
+      .do(deposit => this.store.next({...this.snapshot, deposit}));
+  }
+
+  get deposit(): Observable<Deposit> {
+    return this.store.map(state => state.deposit).distinctUntilChanged();
+  }
+
+  saveDeposit(deposit: Deposit): Observable<Deposit> {
+    return this.depositService.save(deposit)
+      .do(saved => {
+        this.load(deposit.applicationId).subscribe();
+        this.store.next({...this.snapshot, deposit: saved});
+      });
   }
 
   private saveAttachments(applicationId: number, attachments: Array<AttachmentInfo>): Observable<Array<AttachmentInfo>> {

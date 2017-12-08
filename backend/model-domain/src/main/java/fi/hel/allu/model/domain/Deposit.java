@@ -3,6 +3,7 @@ package fi.hel.allu.model.domain;
 import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
+import fi.hel.allu.common.domain.types.DepositStatusType;
 
 /**
  * Deposit of application
@@ -15,18 +16,19 @@ public class Deposit {
   @NotNull
   private Integer amount;
   private String reason;
-  private boolean paid;
+  @NotNull
+  private DepositStatusType status;
 
   private Integer creatorId;
   private ZonedDateTime creationTime;
 
-  public Deposit(Integer id, Integer applicationId, Integer amount, String reason, boolean paid, ZonedDateTime creationTime,
-      Integer creatorId) {
+  public Deposit(Integer id, Integer applicationId, Integer amount, String reason, DepositStatusType status,
+                 ZonedDateTime creationTime, Integer creatorId) {
     this.id = id;
     this.applicationId = applicationId;
     this.amount = amount;
     this.reason = reason;
-    this.paid = paid;
+    this.status = status;
     this.creationTime = creationTime;
     this.creatorId = creatorId;
   }
@@ -79,14 +81,14 @@ public class Deposit {
   }
 
   /**
-   * Is deposit paid
+   * Current status of deposit
    */
-  public boolean isPaid() {
-    return paid;
+  public DepositStatusType getStatus() {
+    return status;
   }
 
-  public void setPaid(boolean paid) {
-    this.paid = paid;
+  public void setStatus(DepositStatusType status) {
+    this.status = status;
   }
 
   /**

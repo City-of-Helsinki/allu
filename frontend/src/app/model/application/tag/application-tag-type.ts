@@ -45,7 +45,6 @@ export const manualTagTypes = [
   ApplicationTagType.WAITING,
   ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
   ApplicationTagType.STATEMENT_REQUESTED,
-  ApplicationTagType.DEPOSIT_PAID,
   ApplicationTagType.COMPENSATION_CLARIFICATION,
   ApplicationTagType.PAYMENT_BASIS_CORRECTION
 ];

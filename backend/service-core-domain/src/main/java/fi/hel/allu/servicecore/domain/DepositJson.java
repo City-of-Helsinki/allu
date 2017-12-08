@@ -3,6 +3,7 @@ package fi.hel.allu.servicecore.domain;
 import java.time.ZonedDateTime;
 
 import javax.validation.constraints.NotNull;
+import fi.hel.allu.common.domain.types.DepositStatusType;
 
 /**
  * Deposit for application
@@ -16,7 +17,7 @@ public class DepositJson {
   @NotNull
   private Integer amount;
   private String reason;
-  private boolean paid;
+  private DepositStatusType status;
   private ZonedDateTime creationTime;
   private UserJson creator;
 
@@ -24,13 +25,13 @@ public class DepositJson {
     // For serialization
   }
 
-  public DepositJson(Integer id, Integer applicationId, Integer amount, String reason, boolean paid, ZonedDateTime creationTime,
-      UserJson creator) {
+  public DepositJson(Integer id, Integer applicationId, Integer amount, String reason, DepositStatusType status,
+                     ZonedDateTime creationTime, UserJson creator) {
     this.id = id;
     this.applicationId = applicationId;
     this.amount = amount;
     this.reason = reason;
-    this.paid = paid;
+    this.status = status;
     this.creator = creator;
     this.creationTime = creationTime;
   }
@@ -80,14 +81,14 @@ public class DepositJson {
   }
 
   /**
-   * Is deposit paid
+   * Current status of deposit
    */
-  public boolean isPaid() {
-    return paid;
+  public DepositStatusType getStatus() {
+    return status;
   }
 
-  public void setPaid(boolean paid) {
-    this.paid = paid;
+  public void setStatus(DepositStatusType status) {
+    this.status = status;
   }
 
   /**
