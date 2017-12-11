@@ -2,7 +2,6 @@ import {Note} from '../../../../model/application/note/note';
 import {TimePeriod} from '../time-period';
 import {Application} from '../../../../model/application/application';
 import {ApplicationForm} from '../application-form';
-import {CustomerWithContactsForm} from '../../../customerregistry/customer/customer-with-contacts.form';
 
 export class NoteForm implements ApplicationForm {
   constructor(

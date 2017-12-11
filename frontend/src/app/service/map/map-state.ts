@@ -23,7 +23,7 @@ import GeoJSONOptions = L.GeoJSONOptions;
 
 const alluIcon = L.icon({
   iconUrl: 'assets/images/marker-icon.png',
-  shadowUrl: 'assets/images/marker-shadow.png'
+  shadowUrl: undefined
 });
 
 export class ShapeAdded {

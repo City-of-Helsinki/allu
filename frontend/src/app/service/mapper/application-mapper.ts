@@ -10,6 +10,7 @@ import {TimeUtil} from '../../util/time.util';
 import {ApplicationTagMapper} from './application-tag-mapper';
 import {CommentMapper} from '../application/comment/comment-mapper';
 import {DistributionMapper} from './distribution-mapper';
+import {Some} from '../../util/option';
 
 export class ApplicationMapper {
 
@@ -36,9 +37,9 @@ export class ApplicationMapper {
     application.decisionDistributionType = backendApplication.decisionDistributionType;
     application.decisionPublicityType = backendApplication.decisionPublicityType;
     application.decisionDistributionList = DistributionMapper.mapBackendList(backendApplication.decisionDistributionList);
-    application.attachmentList = (backendApplication.attachmentList)
-      ? backendApplication.attachmentList.map((attachment) => AttachmentInfoMapper.mapBackend(attachment))
-      : undefined;
+    application.attachmentList = Some(backendApplication.attachmentList)
+      .map(attachments => attachments.map((attachment) => AttachmentInfoMapper.mapBackend(attachment)))
+      .orElse(undefined);
     application.calculatedPrice = backendApplication.calculatedPrice;
     application.applicationTags = ApplicationTagMapper.mapBackendList(backendApplication.applicationTags);
     application.comments = CommentMapper.mapBackendList(backendApplication.comments);

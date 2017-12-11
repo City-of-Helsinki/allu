@@ -6,13 +6,10 @@ import {EventForm} from './event.form';
 import {ApplicationType} from '../../../../model/application/type/application-type';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {Some} from '../../../../util/option';
 import {Event} from '../../../../model/application/event/event';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
 import {EventNature} from '../../../../model/application/event/event-nature';
 import {ComplexValidator} from '../../../../util/complex-validator';
-import {BillingType} from '../../../../model/application/billing-type';
-import {EnumUtil} from '../../../../util/enum.util';
 import {ProjectHub} from '../../../../service/project/project-hub';
 
 
@@ -23,7 +20,6 @@ import {ProjectHub} from '../../../../service/project/project-hub';
   styleUrls: []
 })
 export class EventComponent extends ApplicationInfoBaseComponent implements OnInit {
-  billingTypes = EnumUtil.enumValues(BillingType);
 
   constructor(
     fb: FormBuilder,

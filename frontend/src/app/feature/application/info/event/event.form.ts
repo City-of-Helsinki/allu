@@ -20,7 +20,8 @@ export class EventForm implements ApplicationForm {
               public structureArea?: number,
               public structureDescription?: string,
               public structureTimes?: TimePeriod,
-              public calculatedPrice?: number
+              public calculatedPrice?: number,
+              public terms?: string
             ) {
     this.eventTimes = eventTimes || new TimePeriod();
     this.structureTimes = structureTimes || new TimePeriod();
@@ -43,7 +44,8 @@ export class EventForm implements ApplicationForm {
       event.structureArea,
       event.structureDescription,
       new TimePeriod(event.structureStartTime, event.structureEndTime),
-      application.calculatedPriceEuro);
+      application.calculatedPriceEuro,
+      event.terms);
   }
 
   static toEvent(form: EventForm, type: ApplicationType): Event {
@@ -64,6 +66,7 @@ export class EventForm implements ApplicationForm {
     event.structureDescription = form.structureDescription;
     event.structureStartTime = form.structureTimes.startTime;
     event.structureEndTime = form.structureTimes.endTime;
+    event.terms = form.terms;
     return event;
   }
 }

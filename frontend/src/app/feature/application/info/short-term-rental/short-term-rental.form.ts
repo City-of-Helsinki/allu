@@ -10,7 +10,8 @@ export class ShortTermRentalForm implements ApplicationForm {
     public rentalTimes?: TimePeriod,
     public commercial?: boolean,
     public largeSalesArea?: boolean,
-    public calculatedPrice?: number) {}
+    public calculatedPrice?: number,
+    public terms?: string) {}
 
   static from(application: Application, rental: ShortTermRental): ShortTermRentalForm {
     return new ShortTermRentalForm(
@@ -19,7 +20,8 @@ export class ShortTermRentalForm implements ApplicationForm {
       new TimePeriod(application.startTime, application.endTime),
       rental.commercial,
       rental.largeSalesArea,
-      application.calculatedPriceEuro
+      application.calculatedPriceEuro,
+      rental.terms
     );
   }
 
@@ -28,6 +30,7 @@ export class ShortTermRentalForm implements ApplicationForm {
     rental.description = form.description;
     rental.commercial = form.commercial;
     rental.largeSalesArea = form.largeSalesArea;
+    rental.terms = form.terms;
     return rental;
   }
 }

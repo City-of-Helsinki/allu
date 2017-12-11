@@ -76,7 +76,6 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
 
     const value = form.getRawValue();
     const application = this.update(value);
-    application.extension.terms = value.terms;
 
     this.save(application);
   }

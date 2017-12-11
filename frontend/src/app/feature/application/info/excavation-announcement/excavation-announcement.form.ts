@@ -22,7 +22,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     public cableReportId?: number,
     public additionalInfo?: string,
     public trafficArrangements?: string,
-    public trafficArrangementImpedimentType?: string) {}
+    public trafficArrangementImpedimentType?: string,
+    public terms?: string) {}
 
   static to(form: ExcavationAnnouncementForm): ExcavationAnnouncement {
     const ea = new ExcavationAnnouncement();
@@ -44,6 +45,7 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
     ea.additionalInfo = form.additionalInfo;
     ea.trafficArrangements = form.trafficArrangements;
     ea.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
+    ea.terms = form.terms;
     return ea;
   }
 
@@ -66,7 +68,8 @@ export class ExcavationAnnouncementForm implements ApplicationForm {
       excavation.cableReportId,
       excavation.additionalInfo,
       excavation.trafficArrangements,
-      excavation.trafficArrangementImpedimentType
+      excavation.trafficArrangementImpedimentType,
+      excavation.terms
     );
   }
 }

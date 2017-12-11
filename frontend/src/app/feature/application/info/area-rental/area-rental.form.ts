@@ -11,7 +11,8 @@ export class AreaRentalForm implements ApplicationForm {
     public calculatedPrice?: number,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
-    public additionalInfo?: string
+    public additionalInfo?: string,
+    public terms?: string
   ) {}
 
   static to(form: AreaRentalForm): AreaRental {
@@ -21,6 +22,7 @@ export class AreaRentalForm implements ApplicationForm {
     areaRental.trafficArrangements = form.trafficArrangements;
     areaRental.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     areaRental.additionalInfo = form.additionalInfo;
+    areaRental.terms = form.terms;
     return areaRental;
   }
 
@@ -32,7 +34,8 @@ export class AreaRentalForm implements ApplicationForm {
       application.calculatedPriceEuro,
       areaRental.trafficArrangements,
       areaRental.trafficArrangementImpedimentType,
-      areaRental.additionalInfo
+      areaRental.additionalInfo,
+      areaRental.terms
     );
   }
 }

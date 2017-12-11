@@ -11,7 +11,8 @@ export class TrafficArrangementForm implements ApplicationForm {
     public calculatedPrice?: number,
     public trafficArrangements?: string,
     public trafficArrangementImpedimentType?: string,
-    public additionalInfo?: string
+    public additionalInfo?: string,
+    public terms?: string
   ) {}
 
   static to(form: TrafficArrangementForm): TrafficArrangement {
@@ -21,6 +22,7 @@ export class TrafficArrangementForm implements ApplicationForm {
     arrangement.trafficArrangements = form.trafficArrangements;
     arrangement.trafficArrangementImpedimentType = form.trafficArrangementImpedimentType;
     arrangement.additionalInfo = form.additionalInfo;
+    arrangement.terms = form.terms;
     return arrangement;
   }
 
@@ -32,7 +34,8 @@ export class TrafficArrangementForm implements ApplicationForm {
       application.calculatedPriceEuro,
       arrangement.trafficArrangements,
       arrangement.trafficArrangementImpedimentType,
-      arrangement.additionalInfo
+      arrangement.additionalInfo,
+      arrangement.terms
     );
   }
 }

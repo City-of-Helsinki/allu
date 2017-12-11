@@ -42,7 +42,9 @@ export class ApplicationExtensionMapper {
       case ApplicationType.SHORT_TERM_RENTAL:
         return new ShortTermRental(
           backendExtension.description,
-          backendExtension.commercial);
+          backendExtension.commercial,
+          backendExtension.largeSalesArea,
+          backendExtension.terms);
       case ApplicationType.CABLE_REPORT:
         return new CableReport(
           TimeUtil.dateFromBackend(backendExtension.validityTime),
@@ -163,7 +165,9 @@ export class ApplicationExtensionMapper {
     return {
       applicationType: rental.applicationType,
       description: rental.description,
-      commercial: rental.commercial
+      commercial: rental.commercial,
+      largeSalesArea: rental.largeSalesArea,
+      terms: rental.terms
     };
   }
 
