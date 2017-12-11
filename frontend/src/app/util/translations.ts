@@ -610,6 +610,11 @@ export const translations = {
             start: 'Klikkaa karttaa lisätäksesi pisteen.'
           }
         },
+        circlemarker: {
+          tooltip: {
+            start: 'Klikkaa karttaa lisätäksesi pisteen.'
+          }
+        },
         polygon: {
           tooltip: {
             start: 'Aloita kuvion piirtäminen klikkaamalla.',
@@ -647,6 +652,10 @@ export const translations = {
           cancel: {
             title: 'Peruuta muokkaukset, hylkää kaikki muutokset.',
             text: 'Peruuta'
+          },
+          clearAll: {
+            title: 'Poista kaikki',
+            text: 'Poista kaikki'
           }
         },
         buttons: {

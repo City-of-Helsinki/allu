@@ -89,6 +89,7 @@ export class MapState {
       // todo: this <false>false can be removed when typescript compiler allows type parameter of | false
       polyline: <false>false,
       marker: <false>false,
+      circlemarker: <false>false,
       polygon: {
         shapeOptions: pathStyle.DEFAULT_DRAW,
         allowIntersection: false,
