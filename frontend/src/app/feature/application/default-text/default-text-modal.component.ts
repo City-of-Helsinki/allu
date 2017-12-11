@@ -47,7 +47,7 @@ export class DefaultTextModalComponent implements OnInit {
     this.typeName = DefaultTextType[this.type];
   }
 
-  add(defaultText: DefaultText) {
+  add(defaultText?: DefaultText) {
     const added = defaultText ? defaultText : DefaultText.ofType(this.applicationType, this.type);
     this.defaultTexts.push(this.createEntry(added));
   }
