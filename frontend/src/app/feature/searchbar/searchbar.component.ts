@@ -1,6 +1,5 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {Subscription} from 'rxjs/Subscription';
 
 import {MapHub} from '../../service/map/map-hub';
 import {PostalAddress} from '../../model/common/postal-address';
@@ -11,6 +10,7 @@ import {StringUtil} from '../../util/string.util';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {MapSearchFilter} from '../../service/map-search-filter';
+import {Subject} from 'rxjs/Subject';
 
 enum BarType {
   SIMPLE,
@@ -34,8 +34,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   matchingAddresses: Observable<Array<PostalAddress>>;
   statusTypes = EnumUtil.enumValues(ApplicationStatus);
 
-  private coordinateSubscription: Subscription;
-  private searchFilterSubscription: Subscription;
+  private destroy = new Subject<boolean>();
 
   constructor(private fb: FormBuilder, private mapHub: MapHub) {
     this.addressControl = this.fb.control('');
@@ -48,14 +47,16 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.searchFilterSubscription = this.mapHub.searchFilter()
-      .subscribe(filter => this.searchForm.patchValue(filter, {emitEvent: false}));
+    this.searchForm.patchValue(this.mapHub.searchFilterSnapshot());
 
-    this.coordinateSubscription = this.mapHub.coordinates()
+    this.mapHub.coordinates()
+      .takeUntil(this.destroy)
       .filter(coords => !coords.isDefined())
       .subscribe(coords => NotificationService.message('Osoitetta ei löytynyt', 4000));
 
-    this.searchForm.valueChanges.subscribe(form => this.notifySearchUpdated(form));
+    this.searchForm.valueChanges
+      .takeUntil(this.destroy)
+      .subscribe(form => this.notifySearchUpdated(form));
 
     this.matchingAddresses = this.addressControl.valueChanges
       .debounceTime(300)
@@ -65,8 +66,8 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.coordinateSubscription.unsubscribe();
-    this.searchFilterSubscription.unsubscribe();
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   public notifySearchUpdated(filter: MapSearchFilter): void {

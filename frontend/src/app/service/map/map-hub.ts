@@ -15,6 +15,7 @@ import {FixedLocationSection} from '../../model/common/fixed-location-section';
 import {Location} from '../../model/common/location';
 import {NotificationService} from '../notification/notification.service';
 import {defaultFilter, MapSearchFilter} from '../map-search-filter';
+import {ObjectUtil} from '../../util/object.util';
 
 
 @Injectable()
@@ -103,6 +104,8 @@ export class MapHub {
   }
 
   public searchFilter = () => this.mapSearchFilter$.asObservable();
+
+  public searchFilterSnapshot = () => ObjectUtil.clone(this.mapSearchFilter$.getValue());
 
   /**
    * Used to notify changes in map's currently visible area
