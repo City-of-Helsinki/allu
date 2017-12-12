@@ -32,7 +32,6 @@ import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
 import {CommaSeparatedPipe} from '../../pipe/comma-separated.pipe';
 import {FileSelectDirective} from '../application/attachment/file-select.directive';
 import {InputBoxComponent, InputBoxInputDirective} from './input-box/input-box.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {InputWarningDirective} from './validation/input-warning.directive';
 import {AvailableToDirective} from '../../service/authorization/available-to.directive';
 import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
@@ -40,7 +39,6 @@ import {BottomBarComponent} from './bottom-bar/bottom-bar.component';
 @NgModule({
   imports: [
     CommonModule,
-    BrowserAnimationsModule,
     MatButtonModule,
     MatDialogModule
   ],

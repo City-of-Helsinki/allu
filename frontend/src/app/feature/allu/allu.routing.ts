@@ -7,6 +7,7 @@ import {LoginComponent} from '../../feature/login/login.component';
 import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {HandlerModalComponent} from '../common/handlerModal/handler-modal.component';
 import {Oauth2Component} from '../oauth2/oauth2.component';
+import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 
 export const rootRoutes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -17,7 +18,7 @@ export const rootRoutes: Routes = [
   { path: 'supervision-tasks', component: SupervisionWorkqueueComponent, canActivate: [AuthGuard], children: [
     { path: 'handler', component: HandlerModalComponent, canActivate: [AuthGuard] }
   ]},
-  { path: 'login', component: LoginComponent },
+  { path: 'login', component: LoginComponent, canActivate: [CanActivateLogin] },
   { path: 'logout', component: LoginComponent },
   { path: 'oauth2', component: Oauth2Component, canActivate: [AuthGuard]},
   { path: '**', redirectTo: 'home' }

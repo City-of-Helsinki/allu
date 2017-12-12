@@ -44,6 +44,7 @@ import {SupervisionWorkqueueModule} from '../supervision-workqueue/supervision-w
 import {UserService} from '../../service/user/user-service';
 import {DownloadModule} from '../download/download.module';
 import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
+import {CanActivateLogin} from '../../service/authorization/can-activate-login';
 
 
 @NgModule({
@@ -86,6 +87,7 @@ import {CanDeactivateGuard} from '../../service/common/can-deactivate-guard';
     UIStateHub,
     AuthGuard,
     CanDeactivateGuard,
+    CanActivateLogin,
     ApplicationStore,
     LocationState,
     ErrorHandler,
