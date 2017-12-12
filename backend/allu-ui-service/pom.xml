@@ -103,7 +103,16 @@
                 <groupId>pl.project13.maven</groupId>
                 <artifactId>git-commit-id-plugin</artifactId>
                 <version>2.2.4</version>
-                <configuration>
+                <executions>
+                  <execution>
+                    <id>git-commit-id</id>
+                    <goals>
+                      <goal>revision</goal>
+                    </goals>
+                    <phase>validate</phase>
+                  </execution>
+                 </executions>
+                 <configuration>
                   <generateGitPropertiesFile>false</generateGitPropertiesFile>
                   <includeOnlyProperties>
                     <includeOnlyProperty>git.commit.id.*</includeOnlyProperty>
