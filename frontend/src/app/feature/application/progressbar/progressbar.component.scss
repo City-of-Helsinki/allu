@@ -7,6 +7,18 @@
     margin-bottom: 0px;
   }
 
+  .progress-header {
+    min-width: 250px;
+
+    a {
+      color: mat-color($allu-primary, 500);
+    }
+
+    a:hover {
+      color: mat-color($allu-primary, 300)
+    }
+  }
+
   .progress-label p {
     color: mat-color($allu-primary, 300);
     font-weight: bold;

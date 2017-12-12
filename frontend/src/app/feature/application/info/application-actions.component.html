@@ -30,10 +30,10 @@
         <button *ngIf="showHandling" mat-raised-button type="button" color="primary" (click)="moveToHandling()">
           {{'application.button.toHandling' | translation | uppercase}}
         </button>
-        <button *ngIf="showDecision" [disabled]="decisionDisabled" mat-raised-button type="button" color="primary" (click)="toDecisionmaking()">
-          {{'application.button.toDecision' | translation | uppercase}}
-        </button>
       </ng-container>
+      <button *ngIf="showDecision" [disabled]="decisionDisabled" mat-raised-button type="button" color="primary" (click)="toDecisionmaking()">
+        {{'application.button.toDecision' | translation | uppercase}}
+      </button>
     </div>
   </div>
 </bottom-bar>

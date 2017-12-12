@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
@@ -6,7 +6,6 @@ import {UrlUtil} from '../../../util/url.util';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
-import {ApplicationTag} from '../../../model/application/tag/application-tag';
 import {SidebarItem, visibleFor} from '../../sidebar/sidebar-item';
 import {ProgressStep, stepFrom} from '../progressbar/progress-step';
 import {ApplicationStatus, inHandling} from '../../../model/application/application-status';
@@ -18,6 +17,7 @@ import {findTranslation} from '../../../util/translations';
 import {Option, Some} from '../../../util/option';
 import {SupervisionTaskStore} from '../../../service/supervision/supervision-task-store';
 import {NumberUtil} from '../../../util/number.util';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'application',
@@ -27,11 +27,13 @@ import {NumberUtil} from '../../../util/number.util';
     './application.component.scss'
   ]
 })
-export class ApplicationComponent implements OnInit {
+export class ApplicationComponent implements OnInit, OnDestroy {
   progressStep: ProgressStep;
-  application: Application;
+  applicationChanges: Observable<Application>;
   readonly: boolean;
   sidebarItems: Array<SidebarItem> = [];
+
+  private destroy = new Subject<boolean>();
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -42,42 +44,56 @@ export class ApplicationComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.application = this.applicationStore.snapshot.application;
-    Some(this.application.id).do(id => this.supervisionTaskStore.loadTasks(id));
-    this.verifyTypeExists(ApplicationType[this.application.type]);
-
-    UrlUtil.urlPathContains(this.route, 'summary').forEach(summary => {
-      this.readonly = summary;
-      this.progressStep = stepFrom(ApplicationStatus[this.application.status], summary);
-
-      this.defaultAttachmentsForArea(this.application.typeEnum).subscribe(
-        attachments => attachments.forEach(a => this.applicationStore.addAttachment(a)),
-        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
-
-      this.sidebarItems = this.createSidebar(summary);
-    });
+    this.applicationChanges = this.applicationStore.application;
+    this.applicationChanges
+      .takeUntil(this.destroy)
+      .subscribe(app => this.onApplicationChange(app));
   }
 
-  verifyTypeExists(type: ApplicationType) {
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
+
+  private onApplicationChange(application: Application): void {
+    Some(application.id).do(id => this.supervisionTaskStore.loadTasks(id));
+    this.verifyTypeExists(ApplicationType[application.type]);
+
+    UrlUtil.urlPathContains(this.route, 'summary')
+      .takeUntil(this.destroy)
+      .forEach(summary => {
+        this.readonly = summary;
+        this.progressStep = stepFrom(ApplicationStatus[application.status], summary);
+
+        this.defaultAttachmentsForArea(application)
+          .takeUntil(this.destroy)
+          .subscribe(
+            attachments => attachments.forEach(a => this.applicationStore.addAttachment(a)),
+            err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
+
+        this.sidebarItems = this.createSidebar(application.typeEnum, summary);
+      });
+  }
+
+  private verifyTypeExists(type: ApplicationType) {
     if (type === undefined) {
       // No known type so navigate back to type selection
       this.router.navigateByUrl('applications/location');
     }
   }
 
-  private createSidebar(summary: boolean): Array<SidebarItem> {
+  private createSidebar(applicationType: ApplicationType, summary: boolean): Array<SidebarItem> {
       const sidebar: Array<SidebarItem> = [
         { type: 'BASIC_INFO' },
         { type: 'ATTACHMENTS', count: this.attachmentCount }
       ];
 
       if (summary) {
-        this.sidebarItem({type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
-        this.sidebarItem({type: 'HISTORY'}).do(item => sidebar.push(item));
-        this.sidebarItem({type: 'DECISION'}).do(item => sidebar.push(item));
-        this.sidebarItem({type: 'SUPERVISION', count: this.taskCount}).do(item => sidebar.push(item));
-        this.sidebarItem({type: 'INVOICING', warn: this.invoicingWarn})
-          .do(item => sidebar.push(item));
+        this.sidebarItem(applicationType, {type: 'COMMENTS', count: this.commentCount}).do(item => sidebar.push(item));
+        this.sidebarItem(applicationType, {type: 'HISTORY'}).do(item => sidebar.push(item));
+        this.sidebarItem(applicationType, {type: 'DECISION'}).do(item => sidebar.push(item));
+        this.sidebarItem(applicationType, {type: 'SUPERVISION', count: this.taskCount}).do(item => sidebar.push(item));
+        this.sidebarItem(applicationType, {type: 'INVOICING', warn: this.invoicingWarn}).do(item => sidebar.push(item));
       }
       return sidebar;
   }
@@ -107,17 +123,17 @@ export class ApplicationComponent implements OnInit {
       && inHandling(change.application.statusEnum));
   }
 
-  private defaultAttachmentsForArea(applicationType: ApplicationType): Observable<Array<DefaultAttachmentInfo>> {
+  private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {
     if (this.applicationStore.isNew) {
-      return this.mapHub.fixedLocationAreaBySectionIds(this.application.firstLocation.fixedLocationIds)
-        .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(applicationType, area.id));
+      return this.mapHub.fixedLocationAreaBySectionIds(application.firstLocation.fixedLocationIds)
+        .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.typeEnum, area.id));
     } else {
       return Observable.of([]);
     }
   }
 
-  private sidebarItem(item: SidebarItem): Option<SidebarItem> {
-    return Some(visibleFor(this.application.type, item.type))
+  private sidebarItem(appType: ApplicationType, item: SidebarItem): Option<SidebarItem> {
+    return Some(visibleFor(ApplicationType[appType], item.type))
       .filter(visible => visible)
       .map(visible => item);
   }

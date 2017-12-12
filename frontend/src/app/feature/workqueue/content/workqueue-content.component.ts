@@ -121,7 +121,7 @@ export class WorkQueueContentComponent implements OnInit, OnDestroy {
   }
 
   private getNavigation(application: Application): Array<any> {
-    if (ApplicationStatus[application.status] >= ApplicationStatus.DECISION) {
+    if (ApplicationStatus[application.status] === ApplicationStatus.DECISIONMAKING) {
       return ['applications', application.id, 'decision'];
     } else {
       return ['applications', application.id, 'summary'];

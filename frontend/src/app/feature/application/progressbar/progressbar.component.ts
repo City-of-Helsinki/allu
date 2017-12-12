@@ -1,6 +1,9 @@
-import {Component, Input, OnInit, OnChanges, SimpleChanges, ChangeDetectionStrategy} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input, OnInit} from '@angular/core';
 import {Application} from '../../../model/application/application';
 import {ProgressStep} from './progress-step';
+import {Some} from '../../../util/option';
+import {findTranslation} from '../../../util/translations';
+import {NumberUtil} from '../../../util/number.util';
 
 @Component({
   selector: 'progressbar',
@@ -10,7 +13,7 @@ import {ProgressStep} from './progress-step';
   ],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProgressbarComponent implements OnInit, OnChanges {
+export class ProgressbarComponent implements OnInit {
   @Input() step: number;
   @Input() application: Application;
   width: number;
@@ -22,10 +25,15 @@ export class ProgressbarComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.width = this.calculateWidth(this.step);
     this.status = this.application ? this.application.status : undefined;
+    this.identifier = Some(this.application)
+      .map(app => app.applicationId)
+      .orElse(findTranslation('application.newApplication'));
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.identifier = this.hasId(this.application) ? this.application.applicationId : 'UUSI HAKEMUS';
+  get existingApplication(): boolean {
+    return Some(this.application)
+      .map(app => NumberUtil.isDefined(app.id))
+      .orElse(false);
   }
 
   private calculateWidth(step: ProgressStep): number {
@@ -43,9 +51,5 @@ export class ProgressbarComponent implements OnInit, OnChanges {
       default:
         return  0;
     }
-  }
-
-  private hasId(application: Application): boolean {
-    return !!application && !!application.id;
   }
 }

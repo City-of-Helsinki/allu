@@ -1,29 +1,34 @@
-<mat-toolbar class="row">
-  <span class="col m4 l2">
-    <span>{{identifier}}</span>
+<mat-toolbar fxLayout="row">
+  <div fxFlex="15" class="progress-header">
+    <span *ngIf="!existingApplication">{{identifier | uppercase}}</span>
+    <a *ngIf="existingApplication" [routerLink]="['/applications', application.id, 'summary']">{{identifier | uppercase}}</a>
     <span *ngIf="status" class="application-status-text">{{['application.status', status] | translation}}</span>
-  </span>
-  <div class="col m8 l10 progress-label">
-    <div class="col s2 center-align">
-      <p>Sijainti</p>
+  </div>
+  <div fxFlex="85" class="progress-label">
+    <div fxLayout="row">
+      <div fxFlex class="center-align">
+        <p>{{'application.progress.location' | translation}}</p>
+      </div>
+      <div fxFlex class="center-align">
+        <p>{{'application.progress.basicInfo' | translation}}</p>
+      </div>
+      <div fxFlex class="center-align">
+        <p>{{'application.progress.summary' | translation}}</p>
+      </div>
+      <div fxFlex class="center-align">
+        <p>{{'application.progress.handling' | translation}}</p>
+      </div>
+      <div fxFlex class="center-align">
+        <p>{{'application.progress.decision' | translation}}</p>
+      </div>
+      <div fxFlex class="center-align">
+        <p>{{'application.progress.supervision' | translation}}</p>
+      </div>
     </div>
-    <div class="col s2 center-align">
-      <p>Perustiedot</p>
-    </div>
-    <div class="col s2 center-align">
-      <p>Yhteenveto</p>
-    </div>
-    <div class="col s2 center-align">
-      <p>Käsittely</p>
-    </div>
-    <div class="col s2 center-align">
-      <p>Päätös</p>
-    </div>
-    <div class="col s2 center-align">
-      <p>Valvonta</p>
-    </div>
-    <div class="s12 progress">
-      <mat-progress-bar color="accent" [value]="width"></mat-progress-bar>
+    <div fxLayout="row">
+      <div fxFlex class="progress">
+        <mat-progress-bar color="accent" [value]="width"></mat-progress-bar>
+      </div>
     </div>
   </div>
 </mat-toolbar>

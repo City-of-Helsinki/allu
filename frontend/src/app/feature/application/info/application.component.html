@@ -1,10 +1,12 @@
-<progressbar [step]="progressStep" [application]="application"></progressbar>
+<progressbar [step]="progressStep" [application]="applicationChanges | async"></progressbar>
 <tagbar [readonly]="readonly"></tagbar>
-<div class="row application">
-  <div class="col s3 m2 l1">
+<div fxLayout="row">
+  <!--  class="col s3 m2 l1" -->
+  <div fxFlex="0 1 auto">
     <sidebar [items]="sidebarItems"></sidebar>
   </div>
-  <div class="col s9 m10 l11">
+  <!--  class="col s9 m10 l11" -->
+  <div fxFlex="90">
     <router-outlet></router-outlet>
   </div>
 </div>

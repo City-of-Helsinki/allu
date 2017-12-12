@@ -16,6 +16,7 @@ export const translations = {
     admin: 'YLLÄPITO'
   },
   application: {
+    newApplication: 'Uusi hakemus',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
@@ -31,6 +32,14 @@ export const translations = {
     action: {
       saved: 'Hakemus tallennettu',
       deleted: 'Hakemus poistettu'
+    },
+    progress: {
+      location: 'Sijainti',
+      basicInfo: 'Perustiedot',
+      summary: 'Yhteenveto',
+      handling: 'Käsittly',
+      decision: 'Päätös',
+      supervision: 'Valvonta'
     },
     status: {
       PRE_RESERVED: 'Alustava varaus',
