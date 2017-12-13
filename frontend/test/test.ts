@@ -12,6 +12,7 @@ import {
   platformBrowserDynamicTesting
 } from '@angular/platform-browser-dynamic/testing';
 import '../src/app/rxjs-extensions';
+import {NoopAnimationsModule} from '@angular/platform-browser/animations';
 
 // Unfortunately there's no typing for the `__karma__` variable. Just declare it as any.
 declare const __karma__: any;
@@ -21,8 +22,8 @@ declare const require: any;
 __karma__.loaded = function () {};
 
 // First, initialize the Angular testing environment.
-getTestBed().initTestEnvironment(
-  BrowserDynamicTestingModule,
+getTestBed().initTestEnvironment([
+  BrowserDynamicTestingModule, NoopAnimationsModule],
   platformBrowserDynamicTesting()
 );
 // Then we find all the tests.
