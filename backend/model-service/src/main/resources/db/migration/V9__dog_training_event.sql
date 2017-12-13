@@ -29,7 +29,7 @@ insert into allu.fixed_location values (DEFAULT, get_area_id('Talinhuipun kentt�
 insert into allu.fixed_location values (DEFAULT, get_area_id('Tattarisuon täyttömäen kenttä'), NULL, 'DOG_TRAINING_EVENT', true);
 insert into allu.fixed_location values (DEFAULT, get_area_id('Viilarintien kenttä'), NULL, 'DOG_TRAINING_EVENT', true);
 
-update allu.fixed_location as flTo set (geometry) =
+update allu.fixed_location as flTo set geometry =
 (select geometry
  from allu.fixed_location flFrom
  where flFrom.application_kind = 'DOG_TRAINING_FIELD'
