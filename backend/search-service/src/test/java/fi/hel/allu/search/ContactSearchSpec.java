@@ -5,8 +5,10 @@ import com.greghaskins.spectrum.Spectrum;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
+import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 import fi.hel.allu.search.service.ContactSearchService;
+import fi.hel.allu.search.service.CustomerIndexConductor;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 
 import org.elasticsearch.client.Client;
@@ -46,7 +48,7 @@ public class ContactSearchSpec {
       beforeEach(() -> {
         contactSearchService = new ContactSearchService(
                 elasticSearchMappingConfig,
-            client);
+            client, new CustomerIndexConductor());
       });
       describe("findByField", ()-> {
         context("with single inserted contact", ()-> {
@@ -144,7 +146,7 @@ public class ContactSearchSpec {
       beforeEach(() -> {
         applicationSearchService = new ApplicationSearchService(
                 elasticSearchMappingConfig,
-            client);
+            client, new ApplicationIndexConductor());
       });
 
       describe("findByField", () -> {

@@ -56,24 +56,19 @@ public class GenericSearchService {
 
   private ElasticSearchMappingConfig elasticSearchMappingConfig;
   private Client client;
-  private ObjectMapper objectMapper;
-  private String indexName;
-  private String tempIndexName;
   private String indexTypeName;
-  private boolean syncActive = false;
+  private ObjectMapper objectMapper;
+  private IndexConductor indexConductor;
 
   protected GenericSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
       Client client,
-      String indexName,
-      String tempIndexName,
-      String indexTypeName) {
+      String indexTypeName, IndexConductor indexConductor) {
     this.elasticSearchMappingConfig = elasticSearchMappingConfig;
     this.client = client;
-    this.indexName = indexName;
-    this.tempIndexName = tempIndexName;
     this.indexTypeName = indexTypeName;
     this.objectMapper = new ObjectMapper();
+    this.indexConductor = indexConductor;
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
@@ -85,9 +80,9 @@ public class GenericSearchService {
    * @param indexedObject   Data added to search index.
    */
   public void insert(String id, Object indexedObject) {
-    insertInto(indexName, id, indexedObject);
-    if (syncActive) {
-      insertInto(tempIndexName, id, indexedObject);
+    insertInto(indexConductor.getIndexName(), id, indexedObject);
+    if (indexConductor.isSyncActive()) {
+      insertInto(indexConductor.getTempIndexName(), id, indexedObject);
     }
   }
 
@@ -111,9 +106,9 @@ public class GenericSearchService {
    * @param idToIndexedObject   A map having object id as key and indexed object as value.
    */
   public void bulkInsert(Map<String, Object> idToIndexedObject) {
-    bulkInsertInto(indexName, idToIndexedObject);
-    if (syncActive) {
-      bulkInsertInto(tempIndexName, idToIndexedObject);
+    bulkInsertInto(indexConductor.getIndexName(), idToIndexedObject);
+    if (indexConductor.isSyncActive()) {
+      bulkInsertInto(indexConductor.getTempIndexName(), idToIndexedObject);
     }
   }
 
@@ -134,9 +129,9 @@ public class GenericSearchService {
    * @param idToUpdatedObject Map having id of the updated object as key and object that will be updated to search index as JSON.
    */
   public void bulkUpdate(Map<String, Object> idToUpdatedObject) {
-    bulkUpdateInto(indexName, idToUpdatedObject);
-    if (syncActive) {
-      bulkUpdateInto(tempIndexName, idToUpdatedObject);
+    bulkUpdateInto(indexConductor.getIndexName(), idToUpdatedObject);
+    if (indexConductor.isSyncActive()) {
+      bulkUpdateInto(indexConductor.getTempIndexName(), idToUpdatedObject);
     }
   }
 
@@ -154,9 +149,9 @@ public class GenericSearchService {
    * @param id              Id to be deleted.
    */
   public void delete(String id) {
-    deleteFrom(indexName, id);
-    if (syncActive) {
-      deleteFrom(tempIndexName, id);
+    deleteFrom(indexConductor.getIndexName(), id);
+    if (indexConductor.isSyncActive()) {
+      deleteFrom(indexConductor.getTempIndexName(), id);
     }
   }
 
@@ -184,7 +179,8 @@ public class GenericSearchService {
       }
 
       // TODO: paging to search results. Before paging is implemented, the maximum number of results is configured below (100)
-      SearchRequestBuilder srBuilder = client.prepareSearch(indexName).setSize(100).setTypes(indexTypeName).setQuery(qb);
+      SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexName()).setSize(100)
+          .setTypes(indexTypeName).setQuery(qb);
 
       if (queryParameters.getSort() != null) {
         SortBuilder sb = SortBuilders.fieldSort(queryParameters.getSort().field);
@@ -196,7 +192,8 @@ public class GenericSearchService {
         srBuilder.addSort(sb);
       }
 
-      logger.debug("Searching index {} with the following query:\n {}", indexName, srBuilder.toString());
+      logger.debug("Searching index {} with the following query:\n {}", indexConductor.getIndexName(),
+          srBuilder.toString());
 
       SearchResponse response = srBuilder.setFetchSource("id","").execute().actionGet();
       return iterateIntSearchResponse(response);
@@ -214,7 +211,8 @@ public class GenericSearchService {
    */
   public <T> Optional<T> findObjectById(String id, Class<T> valueType) {
     QueryBuilder qb = QueryBuilders.matchQuery("_id", id);
-    SearchRequestBuilder srBuilder = client.prepareSearch(indexName).setTypes(indexTypeName).setQuery(qb);
+    SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexName()).setTypes(indexTypeName)
+        .setQuery(qb);
     logger.debug("Finding object with the following query:\n {}", srBuilder.toString());
     SearchResponse response = srBuilder.execute().actionGet();
     if (response != null) {
@@ -236,8 +234,8 @@ public class GenericSearchService {
   /**
    * Deletes search index and re-initializes new index with the correct mapping.
    */
-  public void deleteIndex(String index) {
-    DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(index)).actionGet();
+  public void deleteIndex(String indexName) {
+    DeleteIndexResponse response = client.admin().indices().delete(new DeleteIndexRequest(indexName)).actionGet();
     if (response == null || !response.isAcknowledged()) {
       throw new SearchException("Unable to delete application index");
     } else {
@@ -247,14 +245,14 @@ public class GenericSearchService {
   }
 
   public void deleteIndex() {
-    deleteIndex(indexName);
+    deleteIndex(indexConductor.getIndexName());
   }
 
   /**
    * Force index refresh. Use for testing only.
    */
   public void refreshIndex() {
-    client.admin().indices().prepareRefresh(indexName).execute().actionGet();
+    client.admin().indices().prepareRefresh(indexConductor.getIndexName()).execute().actionGet();
   }
 
   private UpdateRequest updateRequestInto(String indexName, String id, Object indexedObject) {

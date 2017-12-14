@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 public class ContactSearchService extends GenericSearchService {
 
   @Autowired
-  public ContactSearchService(ElasticSearchMappingConfig elasticSearchMappingConfig, Client client) {
-    super(elasticSearchMappingConfig, client, ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME, null,
-        ElasticSearchMappingConfig.CONTACT_TYPE_NAME);
+  public ContactSearchService(ElasticSearchMappingConfig elasticSearchMappingConfig, Client client,
+      CustomerIndexConductor customerIndexConductor) {
+    super(elasticSearchMappingConfig, client, ElasticSearchMappingConfig.CONTACT_TYPE_NAME, customerIndexConductor);
   }
 
 }

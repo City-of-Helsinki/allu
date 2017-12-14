@@ -4,7 +4,9 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerIndexConductor;
 import fi.hel.allu.search.service.ProjectSearchService;
 
 import org.elasticsearch.client.Client;
@@ -35,12 +37,15 @@ public class ProjectSearchTest {
   @Before
   public void setUp() throws Exception {
     ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
+    ApplicationIndexConductor conductor = new ApplicationIndexConductor();
     projectSearchService = new ProjectSearchService(
         elasticSearchMappingConfig,
-        client);
+        client,
+        conductor);
     applicationSearchService = new ApplicationSearchService(
         elasticSearchMappingConfig,
-        client);
+        client,
+        conductor);
   }
 
   @Test

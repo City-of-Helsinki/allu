@@ -6,7 +6,9 @@ import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.domain.RoleTypedCustomerES;
+import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerIndexConductor;
 import fi.hel.allu.search.service.CustomerSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
 
@@ -43,10 +45,12 @@ public class CustomerSearchTest {
     ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
     customerSearchService = new CustomerSearchService(
         elasticSearchMappingConfig,
-        client);
+        client,
+        new CustomerIndexConductor());
     applicationSearchService = new ApplicationSearchService(
         elasticSearchMappingConfig,
-        client);
+        client,
+        new ApplicationIndexConductor());
   }
 
   @Test

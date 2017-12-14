@@ -7,6 +7,7 @@ import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
+import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
 
 import org.elasticsearch.client.Client;
@@ -42,7 +43,7 @@ public class ApplicationSearchTest {
     ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
     applicationSearchService = new ApplicationSearchService(
         elasticSearchMappingConfig,
-        client);
+        client, new ApplicationIndexConductor());
   }
 
   @Test
