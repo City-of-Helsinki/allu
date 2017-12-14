@@ -2,9 +2,14 @@ package fi.hel.allu.search;
 
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
-import fi.hel.allu.search.domain.*;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.domain.ApplicationES;
+import fi.hel.allu.search.domain.CustomerES;
+import fi.hel.allu.search.domain.QueryParameters;
+import fi.hel.allu.search.domain.RoleTypedCustomerES;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
+
 import org.elasticsearch.client.Client;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +21,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppTestConfig.class)
@@ -27,23 +34,19 @@ public class CustomerSearchTest {
   @Autowired
   private Client client;
 
-  private GenericSearchService customerSearchService;
-  private GenericSearchService applicationSearchService;
+  private CustomerSearchService customerSearchService;
+  private ApplicationSearchService applicationSearchService;
 
 
   @Before
   public void setUp() throws Exception {
     ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-    customerSearchService = new GenericSearchService(
+    customerSearchService = new CustomerSearchService(
         elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME,
-        ElasticSearchMappingConfig.CUSTOMER_TYPE_NAME);
-    applicationSearchService = new GenericSearchService(
+        client);
+    applicationSearchService = new ApplicationSearchService(
         elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+        client);
   }
 
   @Test

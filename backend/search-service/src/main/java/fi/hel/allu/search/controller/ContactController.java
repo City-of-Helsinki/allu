@@ -1,18 +1,19 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationWithContactsES;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.ContactSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
-import org.elasticsearch.client.Client;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,23 +24,14 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/contacts")
 public class ContactController {
-  private GenericSearchService contactSearchService;
-  private GenericSearchService applicationSearchService;
+  private ContactSearchService contactSearchService;
+  private ApplicationSearchService applicationSearchService;
 
   @Autowired
-  public ContactController(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client) {
-    contactSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME,
-        ElasticSearchMappingConfig.CONTACT_TYPE_NAME);
-    applicationSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+  public ContactController(ContactSearchService contactSearchService,
+      ApplicationSearchService applicationSearchService) {
+    this.contactSearchService = contactSearchService;
+    this.applicationSearchService = applicationSearchService;
   }
 
   @RequestMapping(method = RequestMethod.POST)

@@ -25,6 +25,6 @@ public class ElasticSearchConfigOnStartup implements ApplicationListener<Applica
    */
   @Override
   public void onApplicationEvent(final ApplicationReadyEvent event) {
-    elasticSearchMappingConfig.initializeIndex();
+    elasticSearchMappingConfig.initializeIndices();
   }
 }

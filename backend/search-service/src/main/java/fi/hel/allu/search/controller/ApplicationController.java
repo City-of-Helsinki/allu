@@ -1,16 +1,16 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.GenericSearchService;
-import org.elasticsearch.client.Client;
+import fi.hel.allu.search.service.ApplicationSearchService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -19,17 +19,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/applications")
 public class ApplicationController {
 
-  private GenericSearchService applicationSearchService;
+  private ApplicationSearchService applicationSearchService;
 
   @Autowired
-  public ApplicationController(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client) {
-    applicationSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+  public ApplicationController(ApplicationSearchService applicationSearchService) {
+    this.applicationSearchService = applicationSearchService;
   }
 
   @RequestMapping(method = RequestMethod.POST)

@@ -1,11 +1,14 @@
 package fi.hel.allu.search;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.ContactSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
+
 import org.elasticsearch.client.Client;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +28,8 @@ public class ContactSearchSpec {
   @Autowired
   private Client client;
 
-  private GenericSearchService contactSearchService;
-  private GenericSearchService applicationSearchService;
+  private ContactSearchService contactSearchService;
+  private ApplicationSearchService applicationSearchService;
   private QueryParameters params;
 
   private ContactES testContact = new ContactES(1, "testable name", true);
@@ -41,11 +44,9 @@ public class ContactSearchSpec {
 
     describe("contactSearchService", () -> {
       beforeEach(() -> {
-        contactSearchService = new GenericSearchService(
+        contactSearchService = new ContactSearchService(
                 elasticSearchMappingConfig,
-                client,
-                ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME,
-                ElasticSearchMappingConfig.CONTACT_TYPE_NAME);
+            client);
       });
       describe("findByField", ()-> {
         context("with single inserted contact", ()-> {
@@ -141,11 +142,9 @@ public class ContactSearchSpec {
 
     describe("applicationSearchService", ()-> {
       beforeEach(() -> {
-        applicationSearchService = new GenericSearchService(
+        applicationSearchService = new ApplicationSearchService(
                 elasticSearchMappingConfig,
-                client,
-                ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-                ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+            client);
       });
 
       describe("findByField", () -> {

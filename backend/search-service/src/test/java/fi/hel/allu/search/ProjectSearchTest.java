@@ -4,7 +4,9 @@ import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.ProjectSearchService;
+
 import org.elasticsearch.client.Client;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,24 +27,20 @@ public class ProjectSearchTest {
 
   @Autowired
   private Client client;
-  private GenericSearchService projectSearchService;
-  private GenericSearchService applicationSearchService;
+  private ProjectSearchService projectSearchService;
+  private ApplicationSearchService applicationSearchService;
 
   private static final String projectName = "testiname";
 
   @Before
   public void setUp() throws Exception {
     ElasticSearchMappingConfig elasticSearchMappingConfig = SearchTestUtil.searchIndexSetup(client);
-    projectSearchService = new GenericSearchService(
+    projectSearchService = new ProjectSearchService(
         elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.PROJECT_TYPE_NAME);
-    applicationSearchService = new GenericSearchService(
+        client);
+    applicationSearchService = new ApplicationSearchService(
         elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+        client);
   }
 
   @Test

@@ -1,19 +1,20 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
-import org.elasticsearch.client.Client;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,23 +26,14 @@ import java.util.stream.Collectors;
 @RequestMapping("/customers")
 public class CustomerController {
 
-  private GenericSearchService customerSearchService;
-  private GenericSearchService applicationSearchService;
+  private CustomerSearchService customerSearchService;
+  private ApplicationSearchService applicationSearchService;
 
   @Autowired
-  public CustomerController(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client) {
-    customerSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME,
-        ElasticSearchMappingConfig.CUSTOMER_TYPE_NAME);
-    applicationSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+  public CustomerController(CustomerSearchService customerSearchService,
+      ApplicationSearchService applicationSearchService) {
+    this.customerSearchService = customerSearchService;
+    this.applicationSearchService = applicationSearchService;
   }
 
   @RequestMapping(method = RequestMethod.POST)

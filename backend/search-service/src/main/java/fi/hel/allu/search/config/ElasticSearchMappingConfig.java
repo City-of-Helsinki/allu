@@ -25,6 +25,7 @@ import java.util.Collections;
 public class ElasticSearchMappingConfig {
 
   public static final String APPLICATION_INDEX_NAME = "applications";
+  public static final String APPLICATION_TEMP_INDEX_NAME = "applications_temp";
   public static final String CUSTOMER_INDEX_NAME = "customers";
 
   public static final String APPLICATION_TYPE_NAME = "application";
@@ -44,26 +45,42 @@ public class ElasticSearchMappingConfig {
     this.client = client;
   }
 
-  public void initializeIndex() {
+  /**
+   * Initialize single ElasticSearch index
+   *
+   * @param indexName the name of the index. Must be a known name.
+   */
+  public void initializeIndex(String indexName) {
     try {
-      CreateIndexRequestBuilder createIndexRequestBuilder =
-          client.admin().indices().prepareCreate(APPLICATION_INDEX_NAME).setSettings(getIndexSettingsForApplication());
-      createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultApplicationsIndex());
-      createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
-      createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
-      createIndexRequestBuilder.execute().actionGet();
+      if (APPLICATION_INDEX_NAME.equals(indexName) || APPLICATION_TEMP_INDEX_NAME.equals(indexName)) {
+        CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
+            .setSettings(getIndexSettingsForApplication());
+        createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultApplicationsIndex());
+        createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
+        createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
+        createIndexRequestBuilder.execute().actionGet();
+      } else if (CUSTOMER_INDEX_NAME.equals(indexName)) {
+        CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
+            .setSettings(getIndexSettingsForCustomer());
+        createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultCustomersIndex());
+        createIndexRequestBuilder.addMapping(CUSTOMER_TYPE_NAME, getMappingBuilderForCustomer());
+        createIndexRequestBuilder.execute().actionGet();
+      } else {
+        logger.error("Unknown ElasticSearch index name " + indexName);
+        throw new IllegalArgumentException("Unknown ElasticSearch index name " + indexName);
+      }
     } catch (ResourceAlreadyExistsException e) {
-      logger.info("ElasticSearch mapping for index " + APPLICATION_INDEX_NAME  + " not created, because it exists already.");
+      logger.info("ElasticSearch mapping for index " + indexName + " not created, because it exists already.");
     }
-    try {
-      CreateIndexRequestBuilder createIndexRequestBuilder =
-          client.admin().indices().prepareCreate(CUSTOMER_INDEX_NAME).setSettings(getIndexSettingsForCustomer());
-      createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultCustomersIndex());
-      createIndexRequestBuilder.addMapping(CUSTOMER_TYPE_NAME, getMappingBuilderForCustomer());
-      createIndexRequestBuilder.execute().actionGet();
-    } catch (ResourceAlreadyExistsException e) {
-      logger.info("ElasticSearch mapping for index " + CUSTOMER_INDEX_NAME  + " not created, because it exists already.");
-    }
+  }
+
+  /**
+   * Initialize ElasticSearch mappings for all known indices.
+   */
+  public void initializeIndices() {
+    initializeIndex(APPLICATION_INDEX_NAME);
+    initializeIndex(APPLICATION_TEMP_INDEX_NAME);
+    initializeIndex(CUSTOMER_INDEX_NAME);
   }
 
   /**

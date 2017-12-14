@@ -4,11 +4,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import fi.hel.allu.common.exception.SearchException;
 import fi.hel.allu.common.util.RecurringApplication;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.QueryParameter;
 import fi.hel.allu.search.domain.QueryParameters;
+
 import org.elasticsearch.action.DocWriteRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexResponse;
@@ -56,16 +58,20 @@ public class GenericSearchService {
   private Client client;
   private ObjectMapper objectMapper;
   private String indexName;
+  private String tempIndexName;
   private String indexTypeName;
+  private boolean syncActive = false;
 
-  public GenericSearchService(
+  protected GenericSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
       Client client,
       String indexName,
+      String tempIndexName,
       String indexTypeName) {
     this.elasticSearchMappingConfig = elasticSearchMappingConfig;
     this.client = client;
     this.indexName = indexName;
+    this.tempIndexName = tempIndexName;
     this.indexTypeName = indexTypeName;
     this.objectMapper = new ObjectMapper();
     objectMapper.registerModule(new JavaTimeModule());
@@ -79,13 +85,20 @@ public class GenericSearchService {
    * @param indexedObject   Data added to search index.
    */
   public void insert(String id, Object indexedObject) {
+    insertInto(indexName, id, indexedObject);
+    if (syncActive) {
+      insertInto(tempIndexName, id, indexedObject);
+    }
+  }
+
+  private void insertInto(String indexName, String id, Object indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
       IndexResponse response =
           client.prepareIndex(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
       if (response.status() != RestStatus.CREATED) {
-        throw new SearchException("Unable to insert record to " + indexTypeName + " with id " + id);
+        throw new SearchException("Unable to insert record to " + indexName + " with id " + id);
       }
     } catch (JsonProcessingException e) {
       throw new SearchException(e);
@@ -98,8 +111,16 @@ public class GenericSearchService {
    * @param idToIndexedObject   A map having object id as key and indexed object as value.
    */
   public void bulkInsert(Map<String, Object> idToIndexedObject) {
+    bulkInsertInto(indexName, idToIndexedObject);
+    if (syncActive) {
+      bulkInsertInto(tempIndexName, idToIndexedObject);
+    }
+  }
+
+  private void bulkInsertInto(String indexName, Map<String, Object> idToIndexedObject) {
     List<DocWriteRequest> indexRequests =
-        idToIndexedObject.entrySet().stream().map(entry -> createRequest(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        idToIndexedObject.entrySet().stream()
+            .map(entry -> createRequestInto(indexName, entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
     executeBulk(indexRequests);
   }
@@ -113,8 +134,16 @@ public class GenericSearchService {
    * @param idToUpdatedObject Map having id of the updated object as key and object that will be updated to search index as JSON.
    */
   public void bulkUpdate(Map<String, Object> idToUpdatedObject) {
+    bulkUpdateInto(indexName, idToUpdatedObject);
+    if (syncActive) {
+      bulkUpdateInto(tempIndexName, idToUpdatedObject);
+    }
+  }
+
+  private void bulkUpdateInto(String indexName, Map<String, Object> idToUpdatedObject) {
     List<DocWriteRequest> updateRequests =
-        idToUpdatedObject.entrySet().stream().map(entry -> updateRequest(entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        idToUpdatedObject.entrySet().stream()
+            .map(entry -> updateRequestInto(indexName, entry.getKey(), entry.getValue())).collect(Collectors.toList());
 
     executeBulk(updateRequests);
   }
@@ -125,6 +154,13 @@ public class GenericSearchService {
    * @param id              Id to be deleted.
    */
   public void delete(String id) {
+    deleteFrom(indexName, id);
+    if (syncActive) {
+      deleteFrom(tempIndexName, id);
+    }
+  }
+
+  private void deleteFrom(String indexName, String id) {
     DeleteResponse response = client.prepareDelete(indexName, indexTypeName, id).get();
     if (response == null || response.status() != RestStatus.OK) {
       throw new SearchException("Unable to delete record, id = " + id);
@@ -206,7 +242,7 @@ public class GenericSearchService {
       throw new SearchException("Unable to delete application index");
     } else {
       // make sure index with proper configuration exists for later use
-      elasticSearchMappingConfig.initializeIndex();
+      elasticSearchMappingConfig.initializeIndex(indexName);
     }
   }
 
@@ -221,7 +257,7 @@ public class GenericSearchService {
     client.admin().indices().prepareRefresh(indexName).execute().actionGet();
   }
 
-  private UpdateRequest updateRequest(String id, Object indexedObject) {
+  private UpdateRequest updateRequestInto(String indexName, String id, Object indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       logger.debug("Creating update request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
@@ -236,7 +272,7 @@ public class GenericSearchService {
     }
   }
 
-  private IndexRequest createRequest(String id, Object indexedObject) {
+  private IndexRequest createRequestInto(String indexName, String id, Object indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       logger.debug("Creating create request object in search index: {}", objectMapper.writeValueAsString(indexedObject));
