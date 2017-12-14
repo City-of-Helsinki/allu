@@ -7,8 +7,11 @@ import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.domain.*;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +19,6 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -76,6 +78,17 @@ public class ApplicationService {
   @Transactional(readOnly = true)
   public List<Application> findByLocation(LocationSearchCriteria lsc) {
     return applicationDao.findActiveByLocation(lsc);
+  }
+
+  /**
+   * Find all applications, with paging
+   *
+   * @param pageRequest the paging request
+   * @return a page of applications
+   */
+  @Transactional(readOnly = true)
+  public Page<Application> findAll(Pageable pageRequest) {
+    return applicationDao.findAll(pageRequest);
   }
 
   /**
@@ -286,4 +299,5 @@ public class ApplicationService {
     }
 
   }
+
 }

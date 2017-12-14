@@ -2,6 +2,7 @@ package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
 import com.greghaskins.spectrum.Variable;
+
 import fi.hel.allu.common.types.AttachmentType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Application;
@@ -9,10 +10,13 @@ import fi.hel.allu.model.domain.AttachmentInfo;
 import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
 import fi.hel.allu.model.testUtils.TestCommon;
-import org.geolatte.geom.builder.DSL.*;
+
+import org.geolatte.geom.builder.DSL.Polygon2DToken;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.time.ZonedDateTime;
@@ -108,6 +112,27 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
             applicationLocations.forEach(al -> assertNull(locationDao.findById(al.getId()).orElse(null)));
           });
         });
+      });
+    });
+    describe("ApplicationDao.findAll", () -> {
+      beforeEach(() -> {
+        for (int i = 0; i < 15; ++i) {
+          application = applicationDao.insert(testCommon.dummyOutdoorApplication("Dummy " + i, "Handler " + i));
+          assertNotNull(application.getId());
+        }
+      });
+
+      it("Can fetch 5 applications in ascendind ID order", () -> {
+        Page<Application> page = applicationDao.findAll(new PageRequest(1, 5));
+        assertEquals(5, page.getSize());
+        List<Application> elements = page.getContent();
+        assertEquals(5, elements.size());
+        int prevId = Integer.MIN_VALUE;
+        for (int i = 0; i < elements.size(); ++i) {
+          int id = elements.get(i).getId();
+          assertTrue(prevId < id);
+          prevId = id;
+        }
       });
     });
   }

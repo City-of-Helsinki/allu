@@ -20,6 +20,9 @@ import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -153,6 +156,22 @@ public class ApplicationDao {
         .filter(types -> !types.isEmpty())
         .map(statusTypes -> application.status.in(statusTypes))
         .orElse(Expressions.TRUE);
+  }
+
+  /**
+   * Find all applications, with paging
+   *
+   * @param pageRequest page request
+   * @return a page of applications
+   */
+  @Transactional(readOnly = true)
+  public Page<Application> findAll(Pageable pageRequest) {
+    int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
+    List<Application> applications = queryFactory.select(applicationBean).from(application)
+        .orderBy(application.id.asc()).offset(offset).limit(count).fetch();
+    long total = queryFactory.select(applicationBean).from(application).fetchCount();
+    return new PageImpl<>(populateDependencies(applications), pageRequest, total);
   }
 
   /**
