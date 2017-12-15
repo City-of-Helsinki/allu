@@ -30,6 +30,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.index.reindex.ReindexAction;
 import org.elasticsearch.rest.RestStatus;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.SearchHits;
@@ -200,6 +201,56 @@ public class GenericSearchService {
     } catch (IOException e) {
       throw new SearchException(e);
     }
+  }
+
+  /**
+   * Prepare for sync: delete the temporary index and mark sync active
+   */
+  public void prepareSync() {
+    if (indexConductor.tryStartSync()) {
+      try {
+        deleteIndex(indexConductor.getTempIndexName());
+        indexConductor.setSyncActive();
+      } catch(Exception e) {
+        indexConductor.setSyncPassive();
+        throw e;
+      }
+    }
+  }
+
+  /**
+   * Insert objects to temporary index for syncing them to ElasticSearch.
+   *
+   * @param objectsToSync list of objects to sync into temporary index.
+   * @param keyMapper lambda from object to its key.
+   */
+  public void syncData(List<E> objectsToSync, Function<E, String> keyMapper) {
+    if (indexConductor.isSyncActive()) {
+      bulkInsertInto(indexConductor.getTempIndexName(), objectsToSync, keyMapper);
+    }
+  }
+
+  /**
+   * End sync operation: move everything from temp index to main index.
+   */
+  public void endSync() {
+    if (indexConductor.tryDeactivateSync()) {
+      try {
+        deleteIndex(indexConductor.getIndexName());
+        reindex(indexConductor.getTempIndexName(), indexConductor.getIndexName());
+        indexConductor.setSyncPassive();
+      } catch (Exception e) {
+        indexConductor.setSyncActive();
+        throw e;
+      }
+      // OK if this fails
+      deleteIndex(indexConductor.getTempIndexName());
+    }
+  }
+
+  /* Reindex data from one index to another */
+  private void reindex(String fromIndexName, String toIndexName) {
+    ReindexAction.INSTANCE.newRequestBuilder(client).source(fromIndexName).destination(toIndexName).get();
   }
 
   /**
