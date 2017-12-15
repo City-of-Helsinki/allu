@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class CustomerIndexConductor extends IndexConductor {
 
   public CustomerIndexConductor() {
-    super(ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME, null);
+    super(ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME, ElasticSearchMappingConfig.CUSTOMER_TEMP_INDEX_NAME);
   }
 
 }

@@ -27,6 +27,7 @@ public class ElasticSearchMappingConfig {
   public static final String APPLICATION_INDEX_NAME = "applications";
   public static final String APPLICATION_TEMP_INDEX_NAME = "applications_temp";
   public static final String CUSTOMER_INDEX_NAME = "customers";
+  public static final String CUSTOMER_TEMP_INDEX_NAME = "customers_temp";
 
   public static final String APPLICATION_TYPE_NAME = "application";
   public static final String PROJECT_TYPE_NAME = "project";
@@ -59,7 +60,7 @@ public class ElasticSearchMappingConfig {
         createIndexRequestBuilder.addMapping(APPLICATION_TYPE_NAME, getMappingBuilderForApplication());
         createIndexRequestBuilder.addMapping(PROJECT_TYPE_NAME, getMappingBuilderForProject());
         createIndexRequestBuilder.execute().actionGet();
-      } else if (CUSTOMER_INDEX_NAME.equals(indexName)) {
+      } else if (CUSTOMER_INDEX_NAME.equals(indexName) || CUSTOMER_TEMP_INDEX_NAME.equals(indexName)) {
         CreateIndexRequestBuilder createIndexRequestBuilder = client.admin().indices().prepareCreate(indexName)
             .setSettings(getIndexSettingsForCustomer());
         createIndexRequestBuilder.addMapping("_default_", getMappingBuilderForDefaultCustomersIndex());
@@ -81,6 +82,7 @@ public class ElasticSearchMappingConfig {
     initializeIndex(APPLICATION_INDEX_NAME);
     initializeIndex(APPLICATION_TEMP_INDEX_NAME);
     initializeIndex(CUSTOMER_INDEX_NAME);
+    initializeIndex(CUSTOMER_TEMP_INDEX_NAME);
   }
 
   /**
