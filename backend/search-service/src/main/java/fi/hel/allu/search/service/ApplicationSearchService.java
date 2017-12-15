@@ -1,19 +1,26 @@
 package fi.hel.allu.search.service;
 
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
+import fi.hel.allu.search.domain.ApplicationES;
 
 import org.elasticsearch.client.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ApplicationSearchService extends GenericSearchService {
+public class ApplicationSearchService extends GenericSearchService<ApplicationES> {
 
   @Autowired
-  public ApplicationSearchService(ElasticSearchMappingConfig elasticSearchMappingConfig, Client client,
+  public ApplicationSearchService(
+      ElasticSearchMappingConfig elasticSearchMappingConfig,
+      Client client,
       ApplicationIndexConductor applicationIndexConductor) {
-    super(elasticSearchMappingConfig, client, ElasticSearchMappingConfig.APPLICATION_TYPE_NAME,
-        applicationIndexConductor);
+    super(elasticSearchMappingConfig,
+        client,
+        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME,
+        applicationIndexConductor,
+        a -> a.getId().toString(),
+        ApplicationES.class);
   }
 
 }

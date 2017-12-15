@@ -49,11 +49,12 @@ public class CustomersIndexUtil {
    * @param applicationWithContactsESs  List of <code>ApplicationWithContactES</code> objects whose update map is requested.
    * @return A map having application id as key and ES update structure as value.
    */
-  public static Map<String, Map> getContactsUpdateStructure(List<ApplicationWithContactsES> applicationWithContactsESs) {
+  public static Map<Integer, Map> getContactsUpdateStructure(
+      List<ApplicationWithContactsES> applicationWithContactsESs) {
     Map<Integer, List<ApplicationWithContactsES>> applicationIdToATC = applicationWithContactsESs.stream()
         .collect(groupingBy(ApplicationWithContactsES::getApplicationId));
     return applicationIdToATC.entrySet().stream().collect(
-        Collectors.toMap(entry -> Integer.toString(entry.getKey()), entry -> getSingleContactsUpdateStructure(entry.getValue())));
+        Collectors.toMap(entry -> entry.getKey(), entry -> getSingleContactsUpdateStructure(entry.getValue())));
   }
 
   /**

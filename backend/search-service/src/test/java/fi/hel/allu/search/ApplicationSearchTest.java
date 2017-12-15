@@ -56,13 +56,13 @@ public class ApplicationSearchTest {
     applicationES.setStatus(new StatusTypeES(StatusType.PENDING));
     applicationES.setApplicationTypeData(createApplicationTypeData());
 
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
   }
 
   @Test
   public void testFindByField() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", "testi");
     applicationSearchService.refreshIndex();
@@ -75,7 +75,7 @@ public class ApplicationSearchTest {
   @Test
   public void testFindByFieldPartial() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
     applicationSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("applicationId", "TP00");
@@ -99,9 +99,9 @@ public class ApplicationSearchTest {
     applicationES2.setName("a 2");
     ApplicationES applicationES3 = createApplication(3);
     applicationES3.setName("b 1");
-    applicationSearchService.insert(applicationES1.getId().toString(), applicationES1);
-    applicationSearchService.insert(applicationES2.getId().toString(), applicationES2);
-    applicationSearchService.insert(applicationES3.getId().toString(), applicationES3);
+    applicationSearchService.insert(applicationES1);
+    applicationSearchService.insert(applicationES2);
+    applicationSearchService.insert(applicationES3);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter("handler.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
@@ -160,9 +160,9 @@ public class ApplicationSearchTest {
         new LocationES("Zviimonen 777", "00100", "Sinki", 3, "Vika lisätieto"),
         new LocationES("Ckolmas osoite 5", "00100", "Sinki", 4, "Kolmoslisätieto")));
 
-    applicationSearchService.insert(applicationES1.getId().toString(), applicationES1);
-    applicationSearchService.insert(applicationES2.getId().toString(), applicationES2);
-    applicationSearchService.insert(applicationES3.getId().toString(), applicationES3);
+    applicationSearchService.insert(applicationES1);
+    applicationSearchService.insert(applicationES2);
+    applicationSearchService.insert(applicationES3);
     applicationSearchService.refreshIndex();
 
     QueryParameters params = new QueryParameters();
@@ -208,9 +208,9 @@ public class ApplicationSearchTest {
     applicationES2.setStatus(new StatusTypeES(StatusType.HANDLING));
     applicationES3.setStatus(new StatusTypeES(StatusType.DECISION));
 
-    applicationSearchService.insert(applicationES1.getId().toString(), applicationES1);
-    applicationSearchService.insert(applicationES2.getId().toString(), applicationES2);
-    applicationSearchService.insert(applicationES3.getId().toString(), applicationES3);
+    applicationSearchService.insert(applicationES1);
+    applicationSearchService.insert(applicationES2);
+    applicationSearchService.insert(applicationES3);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter(
@@ -240,7 +240,7 @@ public class ApplicationSearchTest {
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT,
             SearchTestUtil.createCustomerWithContacts(customerES, createContacts())));
     applicationES.setCustomers(roleTypedCustomerES);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
 
     QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "kontakti");
     applicationSearchService.refreshIndex();
@@ -253,7 +253,7 @@ public class ApplicationSearchTest {
   @Test
   public void testFindByMultipleHandlers() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter("handler.userName", Arrays.asList("notexisting1", USERNAME, "notexisting2"));
@@ -270,7 +270,7 @@ public class ApplicationSearchTest {
   @Test
   public void testFindByMultipleStatuses() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
 
     QueryParameters params = new QueryParameters();
     QueryParameter parameter = new QueryParameter("status.value", Arrays.asList(StatusType.PENDING.name(), StatusType.CANCELLED.name()));
@@ -287,7 +287,7 @@ public class ApplicationSearchTest {
   @Test
   public void testFindByDateField() {
     ApplicationES applicationES = createApplication(1);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
     applicationSearchService.refreshIndex();
 
     QueryParameters params = new QueryParameters();
@@ -317,12 +317,12 @@ public class ApplicationSearchTest {
   @Test
   public void testUpdateApplication() {
     ApplicationES applicationES = createApplication(100);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
 
     final String newName = "Päivitetty testi";
     applicationES.setName(newName);
 
-    applicationSearchService.bulkUpdate(Collections.singletonMap(applicationES.getId().toString(), applicationES));
+    applicationSearchService.bulkUpdate(Collections.singletonList(applicationES));
     applicationSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", newName);
@@ -339,7 +339,7 @@ public class ApplicationSearchTest {
         ZonedDateTime.parse("2016-08-05T06:23:04.000Z"),
         RecurringApplication.MAX_END_TIME);
     applicationES.setRecurringApplication(recurringApplication);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
     applicationSearchService.refreshIndex();
 
 
@@ -393,7 +393,7 @@ public class ApplicationSearchTest {
         ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
         RecurringApplication.MAX_END_TIME);
     applicationES.setRecurringApplication(recurringApplication);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
     applicationSearchService.refreshIndex();
 
     // test period completely outside recurring period
@@ -444,7 +444,7 @@ public class ApplicationSearchTest {
         ZonedDateTime.parse("2016-04-05T10:23:04.000Z"),
         ZonedDateTime.parse("2020-04-05T10:23:04.000Z"));
     applicationESWithEndYear.setRecurringApplication(recurringApplication);
-    applicationSearchService.insert(applicationESWithEndYear.getId().toString(), applicationESWithEndYear);
+    applicationSearchService.insert(applicationESWithEndYear);
     applicationSearchService.refreshIndex();
 
     // find within period, but before begin year

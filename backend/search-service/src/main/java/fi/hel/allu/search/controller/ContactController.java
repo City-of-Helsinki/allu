@@ -36,24 +36,22 @@ public class ContactController {
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Void> create(@RequestBody List<ContactES> contactES) {
-    Map<String, Object> idToContact = contactES.stream().collect(Collectors.toMap(c -> Integer.toString(c.getId()), c -> c));
-    contactSearchService.bulkInsert(idToContact);
+    contactSearchService.bulkInsert(contactES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<ContactES> contactESs) {
-    Map<String, Object> idToContact = contactESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    contactSearchService.bulkUpdate(idToContact);
+    contactSearchService.bulkUpdate(contactESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/applications", method = RequestMethod.PUT)
   public ResponseEntity<Void> updateContactsOfApplications(@RequestBody List<ApplicationWithContactsES> applicationWithContacts) {
-    Map<String, Object> contactsUpdateStructure =
+    Map<Integer, Object> contactsUpdateStructure =
         CustomersIndexUtil.getContactsUpdateStructure(applicationWithContacts).entrySet().stream().collect(
-            Collectors.toMap(cus -> cus.getKey(), cus -> cus.getValue())); // rather silly way to cast Map<String, Map> to Map<String, Object>
-    applicationSearchService.bulkUpdate(contactsUpdateStructure);
+            Collectors.toMap(cus -> cus.getKey(), cus -> cus.getValue())); // rather silly way to cast Map<Integer, Map> to Map<Integer, Object>
+    applicationSearchService.partialUpdate(contactsUpdateStructure);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

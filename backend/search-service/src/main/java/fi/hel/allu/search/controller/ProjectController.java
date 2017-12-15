@@ -13,8 +13,6 @@ import javax.validation.Valid;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/projects")
@@ -30,7 +28,7 @@ public class ProjectController {
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Void> create(@RequestBody ProjectES projectES) {
-    projectSearchService.insert(projectES.getId().toString(), projectES);
+    projectSearchService.insert(projectES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -39,14 +37,13 @@ public class ProjectController {
       @PathVariable String id,
       @RequestBody(required = true) ProjectES projectES) {
     projectES.setId(Integer.parseInt(id));
-    projectSearchService.bulkUpdate(Collections.singletonMap(projectES.getId().toString(), projectES));
+    projectSearchService.bulkUpdate(Collections.singletonList(projectES));
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody(required = true) List<ProjectES> projectESs) {
-    Map<String, Object> idToProject = projectESs.stream().collect(Collectors.toMap(p -> p.getId().toString(), p -> p));
-    projectSearchService.bulkUpdate(idToProject);
+    projectSearchService.bulkUpdate(projectESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

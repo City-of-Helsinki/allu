@@ -6,7 +6,6 @@ import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.search.domain.QueryParameters;
 import fi.hel.allu.search.service.ApplicationIndexConductor;
 import fi.hel.allu.search.service.ApplicationSearchService;
-import fi.hel.allu.search.service.CustomerIndexConductor;
 import fi.hel.allu.search.service.ProjectSearchService;
 
 import org.elasticsearch.client.Client;
@@ -51,7 +50,7 @@ public class ProjectSearchTest {
   @Test
   public void testInsertProject() {
     ProjectES projectES = createProject(1, 2);
-    projectSearchService.insert(projectES.getId().toString(), projectES);
+    projectSearchService.insert(projectES);
   }
 
   @Test
@@ -59,8 +58,8 @@ public class ProjectSearchTest {
     ProjectES projectES = createProject(1, 2);
     ApplicationES applicationES = ApplicationSearchTest.createApplication(123);
     // insert both project and application to catch possible property type mismatches: project first and then application
-    projectSearchService.insert(projectES.getId().toString(), projectES);
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    projectSearchService.insert(projectES);
+    applicationSearchService.insert(applicationES);
   }
 
   @Test
@@ -68,14 +67,14 @@ public class ProjectSearchTest {
     ProjectES projectES = createProject(1, 2);
     ApplicationES applicationES = ApplicationSearchTest.createApplication(123);
     // insert both project and application to catch possible property type mismatches: : application first and then project
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
-    projectSearchService.insert(projectES.getId().toString(), projectES);
+    applicationSearchService.insert(applicationES);
+    projectSearchService.insert(projectES);
   }
 
   @Test
   public void testFindByField() {
     ProjectES projectES = createProject(1, 2);
-    projectSearchService.insert(projectES.getId().toString(), projectES);
+    projectSearchService.insert(projectES);
     QueryParameters params = SearchTestUtil.createQueryParameters("name", projectName);
     projectSearchService.refreshIndex();
     List<Integer> appList = projectSearchService.findByField(params);

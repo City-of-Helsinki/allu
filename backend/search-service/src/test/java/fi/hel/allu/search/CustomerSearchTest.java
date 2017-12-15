@@ -56,13 +56,13 @@ public class CustomerSearchTest {
   @Test
   public void testInsertApplication() {
     CustomerES customerES = createCustomer(TEST_NAME, 1);
-    customerSearchService.insert(customerES.getId().toString(), customerES);
+    customerSearchService.insert(customerES);
   }
 
   @Test
   public void testFindByField() {
     CustomerES customerES = createCustomer(TEST_NAME, 1);
-    customerSearchService.insert(customerES.getId().toString(), customerES);
+    customerSearchService.insert(customerES);
     QueryParameters params = SearchTestUtil.createQueryParameters("name", TEST_NAME);
     customerSearchService.refreshIndex();
     List<Integer> appList = customerSearchService.findByField(params);
@@ -75,9 +75,9 @@ public class CustomerSearchTest {
   @Test
   public void testFindById() {
     CustomerES customerES = createCustomer(TEST_NAME, 1);
-    customerSearchService.insert(customerES.getId().toString(), customerES);
+    customerSearchService.insert(customerES);
     customerSearchService.refreshIndex();
-    Optional<CustomerES> insertedCustomerES = customerSearchService.findObjectById("1", CustomerES.class);
+    Optional<CustomerES> insertedCustomerES = customerSearchService.findObjectById("1");
     assertTrue(insertedCustomerES.isPresent());
     assertEquals(customerES.getName(), insertedCustomerES.get().getName());
     assertEquals(customerES.getRegistryKey(), insertedCustomerES.get().getRegistryKey());
@@ -90,10 +90,10 @@ public class CustomerSearchTest {
     CustomerES customerES2 = createCustomer("baabeli aapeli", 2);
     CustomerES customerES3 = createCustomer("aapeli baabeli", 3);
     CustomerES customerES4 = createCustomer("ei löydy", 4);
-    customerSearchService.insert(customerES1.getId().toString(), customerES1);
-    customerSearchService.insert(customerES2.getId().toString(), customerES2);
-    customerSearchService.insert(customerES3.getId().toString(), customerES3);
-    customerSearchService.insert(customerES4.getId().toString(), customerES4);
+    customerSearchService.insert(customerES1);
+    customerSearchService.insert(customerES2);
+    customerSearchService.insert(customerES3);
+    customerSearchService.insert(customerES4);
 
     customerSearchService.refreshIndex();
 
@@ -113,9 +113,9 @@ public class CustomerSearchTest {
     customerES2.setRegistryKey("9233-2311");
     CustomerES customerES3 = createCustomer("3", 3);
     customerES3.setRegistryKey("9222-5551");
-    customerSearchService.insert(customerES1.getId().toString(), customerES1);
-    customerSearchService.insert(customerES2.getId().toString(), customerES2);
-    customerSearchService.insert(customerES3.getId().toString(), customerES3);
+    customerSearchService.insert(customerES1);
+    customerSearchService.insert(customerES2);
+    customerSearchService.insert(customerES3);
 
     customerSearchService.refreshIndex();
 
@@ -159,7 +159,7 @@ public class CustomerSearchTest {
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES)));
     applicationES.setCustomers(roleTypedCustomerES);
 
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
 
     final String updatedName = "updated name";
     final String updatedKey = "updated key";
@@ -182,7 +182,7 @@ public class CustomerSearchTest {
     assertEquals(1, appList.size());
 
     Map customersMap = CustomersIndexUtil.getCustomerUpdateStructure(Collections.singletonList(CustomerRoleType.APPLICANT), customerES);
-    applicationSearchService.bulkUpdate(Collections.singletonMap(applicationES.getId().toString(), customersMap));
+    applicationSearchService.partialUpdate(Collections.singletonMap(applicationES.getId(), customersMap));
     applicationSearchService.refreshIndex();
 
     // should find by name
@@ -210,14 +210,14 @@ public class CustomerSearchTest {
     RoleTypedCustomerES roleTypedCustomerES =
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT, SearchTestUtil.createCustomerWithContacts(customerES1)));
     applicationES1.setCustomers(roleTypedCustomerES);
-    applicationSearchService.insert(applicationES1.getId().toString(), applicationES1);
+    applicationSearchService.insert(applicationES1);
 
     ApplicationES applicationES2 = ApplicationSearchTest.createApplication(101);
     CustomerES customerES2 = createCustomer("second customer", 321);
     roleTypedCustomerES =
         new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.PROPERTY_DEVELOPER, SearchTestUtil.createCustomerWithContacts(customerES2)));
     applicationES2.setCustomers(roleTypedCustomerES);
-    applicationSearchService.insert(applicationES2.getId().toString(), applicationES2);
+    applicationSearchService.insert(applicationES2);
 
     final String updatedName1 = "updated name1";
     final String updatedKey1 = "updated key1";
@@ -230,14 +230,14 @@ public class CustomerSearchTest {
     customerES2.setRegistryKey(updatedKey2);
     applicationES2.getCustomers().getPropertyDeveloper().setCustomer(customerES2);
 
-    HashMap<String, Object> idToUpdateData = new HashMap<>();
+    HashMap<Integer, Object> idToUpdateData = new HashMap<>();
     idToUpdateData.put(
-        applicationES1.getId().toString(),
+        applicationES1.getId(),
         CustomersIndexUtil.getCustomerUpdateStructure(Collections.singletonList(CustomerRoleType.APPLICANT), customerES1));
     idToUpdateData.put(
-        applicationES2.getId().toString(),
+        applicationES2.getId(),
         CustomersIndexUtil.getCustomerUpdateStructure(Collections.singletonList(CustomerRoleType.PROPERTY_DEVELOPER), customerES2));
-    applicationSearchService.bulkUpdate(idToUpdateData);
+    applicationSearchService.partialUpdate(idToUpdateData);
     applicationSearchService.refreshIndex();
 
     // should find by updated name

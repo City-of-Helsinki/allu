@@ -47,12 +47,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
  * Generic ElasticSearch functionality for different kinds of searches.
  */
-public class GenericSearchService {
+public class GenericSearchService<T> {
   private static final Logger logger = LoggerFactory.getLogger(GenericSearchService.class);
 
   private ElasticSearchMappingConfig elasticSearchMappingConfig;
@@ -60,16 +61,34 @@ public class GenericSearchService {
   private String indexTypeName;
   private ObjectMapper objectMapper;
   private IndexConductor indexConductor;
+  private Function<T, String> keyMapper;
+  private Class<T> valueType;
 
+  /**
+   * Instantiate a search service.
+   *
+   * @param elasticSearchMappingConfig {@link ElasticSearchMappingConfig} to use
+   * @param client The ElasticSearch client
+   * @param indexTypeName Type name in index
+   * @param indexConductor An index conductor for managing/tracking the index
+   *          state
+   * @param keyMapper Lambda from element to its key
+   * @param valueType The element's class type for JSON parsing
+   */
   protected GenericSearchService(
       ElasticSearchMappingConfig elasticSearchMappingConfig,
       Client client,
-      String indexTypeName, IndexConductor indexConductor) {
+      String indexTypeName,
+      IndexConductor indexConductor,
+      Function<T, String> keyMapper,
+      Class<T> valueType) {
     this.elasticSearchMappingConfig = elasticSearchMappingConfig;
     this.client = client;
     this.indexTypeName = indexTypeName;
     this.objectMapper = new ObjectMapper();
     this.indexConductor = indexConductor;
+    this.keyMapper = keyMapper;
+    this.valueType = valueType;
     objectMapper.registerModule(new JavaTimeModule());
     objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
   }
@@ -77,19 +96,20 @@ public class GenericSearchService {
   /**
    * Insert given JSON to search index using given type.
    *
-   * @param id              Id of the object added to search index.
    * @param indexedObject   Data added to search index.
    */
-  public void insert(String id, Object indexedObject) {
-    insertInto(indexConductor.getIndexName(), id, indexedObject);
+  public void insert(T indexedObject) {
+    insertInto(indexConductor.getIndexName(), indexedObject);
     if (indexConductor.isSyncActive()) {
-      insertInto(indexConductor.getTempIndexName(), id, indexedObject);
+      insertInto(indexConductor.getTempIndexName(), indexedObject);
     }
   }
 
-  private void insertInto(String indexName, String id, Object indexedObject) {
+  /* Insert into given index */
+  private void insertInto(String indexName, T indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
+      String id = keyMapper.apply(indexedObject);
       logger.debug("Inserting new object to search index {}: {}", indexName, objectMapper.writeValueAsString(indexedObject));
       IndexResponse response =
           client.prepareIndex(indexName, indexTypeName, id).setSource(json, XContentType.JSON).get();
@@ -104,42 +124,67 @@ public class GenericSearchService {
   /**
    * Bulk insert objects to search index.
    *
-   * @param idToIndexedObject   A map having object id as key and indexed object as value.
+   * @param objectsToInsert List of objects that will be inserted to search
+   *          index as JSON.
    */
-  public void bulkInsert(Map<String, Object> idToIndexedObject) {
-    bulkInsertInto(indexConductor.getIndexName(), idToIndexedObject);
+  public void bulkInsert(List<T> objectsToInsert) {
+    bulkInsertInto(indexConductor.getIndexName(), objectsToInsert);
     if (indexConductor.isSyncActive()) {
-      bulkInsertInto(indexConductor.getTempIndexName(), idToIndexedObject);
+      bulkInsertInto(indexConductor.getTempIndexName(), objectsToInsert);
     }
   }
 
-  private void bulkInsertInto(String indexName, Map<String, Object> idToIndexedObject) {
+  /* Bulk insert into given index */
+  private void bulkInsertInto(String indexName, List<T> objectsToInsert) {
     List<DocWriteRequest> indexRequests =
-        idToIndexedObject.entrySet().stream()
-            .map(entry -> createRequestInto(indexName, entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        objectsToInsert.stream().map(entry -> createRequestInto(indexName, keyMapper.apply(entry), entry))
+            .collect(Collectors.toList());
 
     executeBulk(indexRequests);
   }
 
   /**
-   * Bulk update of the search index. This method can be used for partial updating existing object. If the value of <code>Map</code>
-   * is a <code>Map</code>, the key of the value map is used as name of nested document to update. For example, if you want to update
-   * application.customer with new customer, you can provide a following parameter (pseudocode)
-   * <code> Map<applicationId, Map<"customer", customerObject>> </></code>.
+   * Bulk update of the search index.
    *
-   * @param idToUpdatedObject Map having id of the updated object as key and object that will be updated to search index as JSON.
+   * @param objectsToUpdate List of objects that will be updated to search index
+   *          as JSON.
+   * @param keyMapper lambda from object to its key
    */
-  public void bulkUpdate(Map<String, Object> idToUpdatedObject) {
-    bulkUpdateInto(indexConductor.getIndexName(), idToUpdatedObject);
+  public void bulkUpdate(List<T> objectsToUpdate) {
+
+    bulkUpdateInto(indexConductor.getIndexName(), objectsToUpdate);
     if (indexConductor.isSyncActive()) {
-      bulkUpdateInto(indexConductor.getTempIndexName(), idToUpdatedObject);
+      bulkUpdateInto(indexConductor.getTempIndexName(), objectsToUpdate);
     }
   }
 
-  private void bulkUpdateInto(String indexName, Map<String, Object> idToUpdatedObject) {
+  private void bulkUpdateInto(String indexName, List<T> objectsToUpdate) {
     List<DocWriteRequest> updateRequests =
-        idToUpdatedObject.entrySet().stream()
-            .map(entry -> updateRequestInto(indexName, entry.getKey(), entry.getValue())).collect(Collectors.toList());
+        objectsToUpdate.stream().map(entry -> updateRequestInto(indexName, keyMapper.apply(entry), entry))
+            .collect(Collectors.toList());
+
+    executeBulk(updateRequests);
+  }
+
+  /**
+   * Partial update: instead of updating whole objects, only modify a subset of
+   * them.
+   *
+   * @param idToPartialUpdateObj Map where key is the key of the object to
+   *          partially update and value is an object (or map) containing the
+   *          fields to modify and their new values.
+   */
+  public void partialUpdate(Map<Integer, Object> idToPartialUpdateObj) {
+    partialUpdateInto(indexConductor.getIndexName(), idToPartialUpdateObj);
+    if (indexConductor.isSyncActive()) {
+      partialUpdateInto(indexConductor.getTempIndexName(), idToPartialUpdateObj);
+    }
+  }
+
+  public void partialUpdateInto(String indexName, Map<Integer, Object> idToPartialUpdateObj) {
+    List<DocWriteRequest> updateRequests = idToPartialUpdateObj.entrySet().stream()
+        .map(entry -> updateRequestInto(indexName, entry.getKey().toString(), entry.getValue()))
+        .collect(Collectors.toList());
 
     executeBulk(updateRequests);
   }
@@ -224,9 +269,9 @@ public class GenericSearchService {
    * @param objectsToSync list of objects to sync into temporary index.
    * @param keyMapper lambda from object to its key.
    */
-  public void syncData(List<E> objectsToSync, Function<E, String> keyMapper) {
+  public void syncData(List<T> objectsToSync) {
     if (indexConductor.isSyncActive()) {
-      bulkInsertInto(indexConductor.getTempIndexName(), objectsToSync, keyMapper);
+      bulkInsertInto(indexConductor.getTempIndexName(), objectsToSync);
     }
   }
 
@@ -256,11 +301,10 @@ public class GenericSearchService {
   /**
    * Finds an object from ElasticSearch with given id.
    *
-   * @param id          Id of the searched object.
-   * @param valueType   Type of the object.
+   * @param id Id of the searched object.
    * @return Found value.
    */
-  public <T> Optional<T> findObjectById(String id, Class<T> valueType) {
+  public Optional<T> findObjectById(String id) {
     QueryBuilder qb = QueryBuilders.matchQuery("_id", id);
     SearchRequestBuilder srBuilder = client.prepareSearch(indexConductor.getIndexName()).setTypes(indexTypeName)
         .setQuery(qb);
@@ -321,7 +365,7 @@ public class GenericSearchService {
     }
   }
 
-  private IndexRequest createRequestInto(String indexName, String id, Object indexedObject) {
+  private IndexRequest createRequestInto(String indexName, String id, T indexedObject) {
     try {
       byte[] json = objectMapper.writeValueAsBytes(indexedObject);
       logger.debug("Creating create request object in search index: {}", objectMapper.writeValueAsString(indexedObject));

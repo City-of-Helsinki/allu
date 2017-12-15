@@ -38,14 +38,13 @@ public class CustomerController {
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Void> create(@RequestBody CustomerES customerES) {
-    customerSearchService.insert(customerES.getId().toString(), customerES);
+    customerSearchService.insert(customerES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<CustomerES> customerESses) {
-    Map<String, Object> idToCustomer = customerESses.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    customerSearchService.bulkUpdate(idToCustomer);
+    customerSearchService.bulkUpdate(customerESses);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -53,12 +52,12 @@ public class CustomerController {
   public ResponseEntity<Void> updateCustomerOfApplications(
       @PathVariable String id,
       @RequestBody Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleTypes) {
-    CustomerES customerES = customerSearchService.findObjectById(id, CustomerES.class)
+    CustomerES customerES = customerSearchService.findObjectById(id)
         .orElseThrow(() -> new NoSuchEntityException("No such customer in ElasticSearch", id));
-    Map<String, Object> idToCustomer = applicationIdToCustomerRoleTypes.entrySet().stream().collect(Collectors.toMap(
-        acrt -> Integer.toString(acrt.getKey()),
+    Map<Integer, Object> idToCustomer = applicationIdToCustomerRoleTypes.entrySet().stream().collect(Collectors.toMap(
+        acrt -> acrt.getKey(),
         acrt -> CustomersIndexUtil.getCustomerUpdateStructure(acrt.getValue(), customerES)));
-    applicationSearchService.bulkUpdate(idToCustomer);
+    applicationSearchService.partialUpdate(idToCustomer);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

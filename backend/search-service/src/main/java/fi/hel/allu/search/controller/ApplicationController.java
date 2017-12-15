@@ -13,7 +13,6 @@ import javax.validation.Valid;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/applications")
@@ -28,14 +27,13 @@ public class ApplicationController {
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Void> create(@RequestBody ApplicationES applicationES) {
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<ApplicationES> applicationESs) {
-    Map<String, Object> idToApplication = applicationESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    applicationSearchService.bulkUpdate(idToApplication);
+    applicationSearchService.bulkUpdate(applicationESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -48,9 +46,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/partialupdate", method = RequestMethod.PUT)
   public ResponseEntity<Void> partialUpdate(@RequestBody Map<Integer, Object> idToPartialUpdateObj) {
-    Map<String, Object> idToApplication = idToPartialUpdateObj.entrySet().stream()
-        .collect(Collectors.toMap(idToPU -> Integer.toString(idToPU.getKey()), idToPU -> idToPU.getValue()));
-    applicationSearchService.bulkUpdate(idToApplication);
+    applicationSearchService.partialUpdate(idToPartialUpdateObj);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
