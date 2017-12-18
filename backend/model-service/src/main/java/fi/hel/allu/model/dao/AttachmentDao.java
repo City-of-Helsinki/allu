@@ -19,8 +19,11 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
+import static com.querydsl.sql.SQLExpressions.select;
+import static com.querydsl.sql.SQLExpressions.union;
 import static fi.hel.allu.QApplicationAttachment.applicationAttachment;
 import static fi.hel.allu.QAttachment.attachment;
+import static fi.hel.allu.QAttachmentData.attachmentData;
 import static fi.hel.allu.QDefaultAttachment.defaultAttachment;
 import static fi.hel.allu.QDefaultAttachmentApplicationType.defaultAttachmentApplicationType;
 
@@ -62,6 +65,23 @@ public class AttachmentDao {
   }
 
   /**
+   * Find attachment size by attachment id
+   */
+  @Transactional(readOnly = true)
+  public Optional<Long> getSizeByAttachmentId(int attachmentId) {
+    Long size = null;
+    Integer attachmentDataId = getAttachmentDataIdForAttachment(attachmentId);
+    if (attachmentDataId != null) {
+      size = queryFactory.select(attachmentData.size)
+          .from(attachmentData)
+          .where(attachmentData.id.eq(attachmentDataId))
+          .fetchOne();
+    }
+    return Optional.ofNullable(size);
+  }
+
+
+  /**
    * Find default attachment info by Id
    */
   @Transactional(readOnly = true)
@@ -73,7 +93,7 @@ public class AttachmentDao {
             attachment.type,
             attachment.name,
             attachment.description,
-            attachment.size,
+            attachment.attachmentDataId,
             attachment.creationTime,
             defaultAttachment.id,
             defaultAttachment.deleted,
@@ -97,7 +117,7 @@ public class AttachmentDao {
           result.get(attachment.type),
           result.get(attachment.name),
           result.get(attachment.description),
-          result.get(attachment.size),
+          result.get(attachment.attachmentDataId),
           result.get(attachment.creationTime),
           defaultAttachmentId,
           applicationTypes,
@@ -181,10 +201,12 @@ public class AttachmentDao {
   @Transactional
   public void delete(int applicationId, int id) {
     removeLinkApplicationToAttachment(applicationId, id);
+    Integer attachmentDataId = getAttachmentDataIdForAttachment(id);
     long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
     if (changed == 0) {
       throw new NoSuchEntityException("Deleting attachment failed", Integer.toString(id));
     }
+    deleteAttachmentData(attachmentDataId);
   }
 
   /**
@@ -204,15 +226,32 @@ public class AttachmentDao {
           .where(defaultAttachmentApplicationType.defaultAttachmentId.eq(defaultAttachmentId)).execute();
       queryFactory.delete(applicationAttachment).where(applicationAttachment.attachmentId.eq(id)).execute();
       queryFactory.delete(defaultAttachment).where(defaultAttachment.attachmentId.eq(id)).execute();
+      Integer attachmentDataId = getAttachmentDataIdForAttachment(id);
       long changed = queryFactory.delete(attachment).where(attachment.id.eq(id)).execute();
       if (changed == 0) {
         throw new NoSuchEntityException("Deleting attachment failed", Integer.toString(id));
       }
+      deleteAttachmentData(attachmentDataId);
     } else {
       queryFactory.update(defaultAttachment)
           .set(defaultAttachment.deleted, true)
           .where(defaultAttachment.attachmentId.eq(id))
           .execute();
+    }
+  }
+
+  private Integer getAttachmentDataIdForAttachment(int attachmentId) {
+    return queryFactory.select(attachment.attachmentDataId).from(attachment).where(attachment.id.eq(attachmentId)).fetchOne();
+  }
+
+  /**
+   * Delete attachment data if no attachments references to it
+   * @param attachmentDataId
+   */
+  private void deleteAttachmentData(int attachmentDataId) {
+    long count = queryFactory.select(attachment.id).from(attachment).where(attachment.attachmentDataId.eq(attachmentDataId)).fetchCount();
+    if (count == 0) {
+      queryFactory.delete(attachmentData).where(attachmentData.id.eq(attachmentDataId)).execute();
     }
   }
 
@@ -262,7 +301,10 @@ public class AttachmentDao {
    */
   @Transactional
   public Optional<byte[]> getData(int id) {
-    byte[] data = queryFactory.select(attachment.data).from(attachment).where(attachment.id.eq(id)).fetchOne();
+    byte[] data = queryFactory.select(attachmentData.data)
+        .from(attachment)
+        .join(attachmentData).on(attachment.attachmentDataId.eq(attachmentData.id))
+        .where(attachment.id.eq(id)).fetchOne();
     return Optional.ofNullable(data);
   }
 
@@ -297,17 +339,30 @@ public class AttachmentDao {
   }
 
   private int insertCommon(AttachmentInfo info, byte[] data) {
+    Integer attachmentDataId = insertAttachmentData(data);
     info.setId(null); // Don't respect any ID given, let database assign the ID.
-    info.setSize((long) data.length);
+    info.setAttachmentDataId(null); // Don't respect any ID given, let database assign the ID.
     info.setCreationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(attachment).populate(info)
-        .set(attachment.data, data) // Set data also
+        .set(attachment.attachmentDataId, attachmentDataId) // Assign attachment data ID
         .executeWithKey(attachment.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
     }
     return id;
   }
+
+  private Integer insertAttachmentData(byte[] data) {
+    Long size = Long.valueOf(data.length);
+    Integer id = queryFactory.insert(attachmentData)
+        .set(attachmentData.data, data)
+        .set(attachmentData.size, size).executeWithKey(attachmentData.id);
+    if (id == null) {
+      throw new QueryException("Failed to insert record");
+    }
+    return id;
+  }
+
 
   private void updateDefaultAttachmentApplicationTypes(int defaultAttachmentId, List<ApplicationType> applicationTypes) {
     queryFactory.delete(defaultAttachmentApplicationType)
@@ -319,5 +374,22 @@ public class AttachmentDao {
               .set(defaultAttachmentApplicationType.applicationType, at)
               .execute());
     }
+  }
+
+  /**
+   * Delete all unreferenced attachments and attachment data
+   */
+  @SuppressWarnings("unchecked")
+  @Transactional
+  public void deleteUnreferencedAttachments() {
+    queryFactory.delete(attachment)
+    .where(attachment.id.notIn(
+        union(select(applicationAttachment.attachmentId).from(applicationAttachment),
+            select(defaultAttachment.attachmentId).from(defaultAttachment))))
+    .execute();
+    queryFactory.delete(attachmentData)
+    .where(attachmentData.id.notIn(
+        select(attachment.attachmentDataId).from(attachment)))
+    .execute();
   }
 }

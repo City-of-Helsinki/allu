@@ -61,6 +61,19 @@ public class AttachmentController {
   }
 
   /**
+   * Get the size of attachment data (bytes) by attachment id
+   *
+   * @param attachmentId
+   *          The attachment's ID.
+   */
+  @RequestMapping(value = "/{attachmentId}/size", method = RequestMethod.GET)
+  public ResponseEntity<Long> getAttachmentSize(@PathVariable int attachmentId) {
+    Long size = attachmentDao.getSizeByAttachmentId(attachmentId)
+        .orElseThrow(() -> new NoSuchEntityException("Attachment data not found for attachment.", Integer.toString(attachmentId)));
+    return new ResponseEntity<>(size, HttpStatus.OK);
+  }
+
+  /**
    * Get the attachment info by it's id
    *
    * @param attachmentId
@@ -73,6 +86,7 @@ public class AttachmentController {
         .orElseThrow(() -> new NoSuchEntityException("Attachment not found", Integer.toString(attachmentId)));
     return new ResponseEntity<>(attachmentInfo, HttpStatus.OK);
   }
+
 
   /**
    * Update attachment info.

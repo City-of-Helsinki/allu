@@ -1,11 +1,11 @@
 package fi.hel.allu.servicecore.service;
 
-import fi.hel.allu.common.domain.types.ApplicationType;
-import fi.hel.allu.model.domain.AttachmentInfo;
-import fi.hel.allu.model.domain.DefaultAttachmentInfo;
-import fi.hel.allu.servicecore.config.ApplicationProperties;
-import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
-import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +18,12 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+import fi.hel.allu.common.domain.types.ApplicationType;
+import fi.hel.allu.model.domain.AttachmentInfo;
+import fi.hel.allu.model.domain.DefaultAttachmentInfo;
+import fi.hel.allu.servicecore.config.ApplicationProperties;
+import fi.hel.allu.servicecore.domain.AttachmentInfoJson;
+import fi.hel.allu.servicecore.domain.DefaultAttachmentInfoJson;
 
 @Service
 public class AttachmentService {
@@ -225,6 +226,17 @@ public class AttachmentService {
         attachmentId);
   }
 
+  /**
+   * Gets size of attachment data (bytes)
+   * @param attachmentId attachment's ID
+   * @return size in bytes
+   */
+  public Long getAttachmentSize(int attachmentId) {
+    return restTemplate.getForObject(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_ATTACHMENT_GET_SIZE), Long.class,
+        attachmentId);
+  }
+
   private HttpEntity<?> createMultipartRequest(AttachmentInfo info, MultipartFile data)
       throws IOException {
     // Generate suitable multi-part request...
@@ -250,7 +262,7 @@ public class AttachmentService {
     result.setName(attachmentInfoJson.getName());
     result.setDescription(attachmentInfoJson.getDescription());
     result.setCreationTime(attachmentInfoJson.getCreationTime());
-    result.setSize(attachmentInfoJson.getSize());
+    result.setAttachmentDataId(attachmentInfoJson.getAttachmentDataId());
     if (attachmentInfoJson instanceof DefaultAttachmentInfoJson) {
       DefaultAttachmentInfoJson defaultAttachmentInfoJson = (DefaultAttachmentInfoJson) attachmentInfoJson;
       result.setDefaultAttachmentId(defaultAttachmentInfoJson.getDefaultAttachmentId());
@@ -269,7 +281,7 @@ public class AttachmentService {
     result.setName(attachmentInfo.getName());
     result.setDescription(attachmentInfo.getDescription());
     result.setCreationTime(attachmentInfo.getCreationTime());
-    result.setSize(attachmentInfo.getSize());
+    result.setSize(getAttachmentSize(attachmentInfo.getId()));
     if (attachmentInfo instanceof DefaultAttachmentInfo) {
       DefaultAttachmentInfo defaultAttachmentInfo = (DefaultAttachmentInfo) attachmentInfo;
       result.setDefaultAttachmentId(defaultAttachmentInfo.getDefaultAttachmentId());

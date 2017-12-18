@@ -85,6 +85,12 @@ public class ApplicationProperties {
   public static final String PATH_MODEL_ATTACHMENT_GET_DATA = "/attachments/{attachmentId}/data";
 
   /**
+   * Model-service path to get attachment data size
+   */
+  public static final String PATH_MODEL_ATTACHMENT_GET_SIZE = "/attachments/{attachmentId}/size";
+
+
+  /**
    * Model-service path to store decision
    */
   public static final String PATH_MODEL_DECISION_STORE = "/applications/{id}/decision";

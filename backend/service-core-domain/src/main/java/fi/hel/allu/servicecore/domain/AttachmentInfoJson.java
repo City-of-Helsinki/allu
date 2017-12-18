@@ -18,6 +18,7 @@ public class AttachmentInfoJson {
   private String name;
   private String description;
   private Long size;
+  private Integer attachmentDataId;
   private ZonedDateTime creationTime;
 
   /**
@@ -99,6 +100,17 @@ public class AttachmentInfoJson {
 
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
+  }
+
+  /**
+   * Database ID of the attachment data.
+   */
+  public Integer getAttachmentDataId() {
+    return attachmentDataId;
+  }
+
+  public void setAttachmentDataId(Integer attachmentDataId) {
+    this.attachmentDataId = attachmentDataId;
   }
 
 }

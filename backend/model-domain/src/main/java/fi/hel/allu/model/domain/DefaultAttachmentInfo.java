@@ -23,12 +23,12 @@ public class DefaultAttachmentInfo extends AttachmentInfo {
       AttachmentType type,
       String name,
       String description,
-      Long size,
+      Integer attachmentDataId,
       ZonedDateTime creationTime,
       Integer defaultAttachmentId,
       List<ApplicationType> applicationTypes,
       Integer fixedLocationAreaId) {
-    super(id, userId, type, name, description, size, creationTime);
+    super(id, userId, type, name, description, attachmentDataId, creationTime);
     this.defaultAttachmentId = defaultAttachmentId;
     this.applicationTypes = applicationTypes;
     this.fixedLocationAreaId = fixedLocationAreaId;

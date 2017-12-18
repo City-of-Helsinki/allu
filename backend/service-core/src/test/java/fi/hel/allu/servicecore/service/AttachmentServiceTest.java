@@ -139,7 +139,6 @@ public class AttachmentServiceTest {
   }
 
   private void checkThatIsMockResult(AttachmentInfoJson result) {
-    assertEquals(9999L, result.getSize().longValue());
     assertEquals("Mock attachment", result.getDescription());
     assertEquals("Mock.pdf", result.getName());
     assertEquals(12, result.getId().intValue());
@@ -159,7 +158,6 @@ public class AttachmentServiceTest {
     attachmentInfo.setUserId(USER_ID);
     attachmentInfo.setName("Mock.pdf");
     attachmentInfo.setDescription("Mock attachment");
-    attachmentInfo.setSize(9999L);
     attachmentInfo.setCreationTime(ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]"));
     return attachmentInfo;
   }

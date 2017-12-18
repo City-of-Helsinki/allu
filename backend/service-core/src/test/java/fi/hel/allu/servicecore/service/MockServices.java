@@ -364,7 +364,6 @@ public abstract class MockServices {
       info.setId(123 + i);
       info.setCreationTime(ZonedDateTime.now());
       info.setDescription(String.format("Attachment %d", i));
-      info.setSize(123L * i);
       attachmentInfoArray[i] = info;
     }
     return new ResponseEntity<>(attachmentInfoArray, HttpStatus.OK);

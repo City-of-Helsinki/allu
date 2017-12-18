@@ -14,7 +14,7 @@ public class AttachmentInfo {
   private AttachmentType type;
   private String name;
   private String description;
-  private Long size;
+  private Integer attachmentDataId;
   private ZonedDateTime creationTime;
 
   public AttachmentInfo() {
@@ -25,14 +25,14 @@ public class AttachmentInfo {
                         AttachmentType type,
                         String name,
                         String description,
-                        Long size,
+                        Integer attachmentDataId,
                         ZonedDateTime creationTime) {
     this.id = id;
     this.userId = userId;
     this.type = type;
     this.name = name;
     this.description = description;
-    this.size = size;
+    this.attachmentDataId = attachmentDataId;
     this.creationTime = creationTime;
   }
 
@@ -93,14 +93,14 @@ public class AttachmentInfo {
   }
 
   /**
-   * @return the size
+   * @return id of the attachment data
    */
-  public Long getSize() {
-    return size;
+  public Integer getAttachmentDataId() {
+    return attachmentDataId;
   }
 
-  public void setSize(Long size) {
-    this.size = size;
+  public void setAttachmentDataId(Integer attachmentDataId) {
+    this.attachmentDataId = attachmentDataId;
   }
 
   /**
@@ -113,5 +113,4 @@ public class AttachmentInfo {
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
   }
-
 }

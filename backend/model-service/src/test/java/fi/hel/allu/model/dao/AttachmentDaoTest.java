@@ -64,7 +64,7 @@ public class AttachmentDaoTest {
     AttachmentInfo info = newInfo();
     byte[] data = generateTestData(3243);
     AttachmentInfo inserted = attachmentDao.insert(application.getId(), info, data);
-    Assert.assertEquals(inserted.getSize().longValue(), data.length);
+    Assert.assertNotNull(inserted.getAttachmentDataId());
   }
 
   @Test
@@ -72,7 +72,7 @@ public class AttachmentDaoTest {
     DefaultAttachmentInfo dai = newDefaultInfo();
     byte[] data = generateTestData(3243);
     DefaultAttachmentInfo inserted = attachmentDao.insertDefault(dai, data);
-    Assert.assertEquals(data.length, inserted.getSize().longValue());
+    Assert.assertNotNull(inserted.getAttachmentDataId());
     Assert.assertEquals(1, inserted.getApplicationTypes().size());
     Assert.assertEquals(ApplicationType.EVENT, inserted.getApplicationTypes().get(0));
   }
@@ -132,8 +132,8 @@ public class AttachmentDaoTest {
   public void testFindDefault() throws Exception {
     DefaultAttachmentInfo dai = newDefaultInfo();
     byte[] data = generateTestData(3243);
-    DefaultAttachmentInfo inserted1 = attachmentDao.insertDefault(dai, data);
-    DefaultAttachmentInfo inserted2 = attachmentDao.insertDefault(dai, data);
+    attachmentDao.insertDefault(dai, data);
+    attachmentDao.insertDefault(dai, data);
     DefaultAttachmentInfo inserted3 = attachmentDao.insertDefault(dai, data);
     attachmentDao.deleteDefault(inserted3.getId());
     // deleted should not be available anymore
@@ -196,7 +196,6 @@ public class AttachmentDaoTest {
     DefaultAttachmentInfo inserted = attachmentDao.insertDefault(dai, data);
     inserted.setFixedLocationAreaId(2);
     DefaultAttachmentInfo updated = attachmentDao.updateDefault(inserted.getId(), inserted);
-    Assert.assertEquals(data.length, updated.getSize().longValue());
     Assert.assertEquals(1, updated.getApplicationTypes().size());
     Assert.assertEquals(2, (int) updated.getFixedLocationAreaId());
   }
@@ -228,6 +227,16 @@ public class AttachmentDaoTest {
     // Test: reading data from non-existent info should also return null:
     readData = attachmentDao.getData(otherId + goodId);
     Assert.assertFalse(readData.isPresent());
+  }
+
+  @Test
+  public void testGetAttachmentSize() {
+    AttachmentInfo info = newInfo();
+    byte[] testData = generateTestData(543210);
+    Assert.assertEquals(543210, testData.length);
+    info = attachmentDao.insert(application.getId(), info, testData);
+    int attachmentId = info.getId();
+    Assert.assertEquals(attachmentDao.getSizeByAttachmentId(attachmentId).get(), Long.valueOf(543210));
   }
 
   @Test
@@ -272,7 +281,7 @@ public class AttachmentDaoTest {
     public TestAttachmentInfo(
         AttachmentInfo info,
         Integer applicationId) {
-      super(info.getId(), info.getUserId(), info.getType(), info.getName(), info.getDescription(), info.getSize(), info.getCreationTime());
+      super(info.getId(), info.getUserId(), info.getType(), info.getName(), info.getDescription(), info.getAttachmentDataId(), info.getCreationTime());
       this.applicationId = applicationId;
     }
   }
@@ -303,7 +312,7 @@ public class AttachmentDaoTest {
     Assert.assertEquals(expected.getId(), actual.getId());
     Assert.assertEquals(expected.getName(), actual.getName());
     Assert.assertEquals(expected.getDescription(), actual.getDescription());
-    Assert.assertEquals(expected.getSize(), actual.getSize());
+    Assert.assertEquals(expected.getAttachmentDataId(), actual.getAttachmentDataId());
     Assert.assertEquals(expected.getCreationTime(), actual.getCreationTime());
   }
 

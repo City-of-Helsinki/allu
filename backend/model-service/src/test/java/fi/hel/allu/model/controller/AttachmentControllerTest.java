@@ -105,11 +105,9 @@ public class AttachmentControllerTest {
     String infoUri = String.format("/attachments/%d", stored.getId());
     AttachmentInfo updatedInfo = newInfo();
     updatedInfo.setName("Muokattu hakemus");
-    updatedInfo.setSize(99210L);
     ResultActions resultActions = wtc.perform(put(infoUri), updatedInfo).andExpect(status().isOk());
     AttachmentInfo updateResult = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
     assertEquals(updatedInfo.getName(), updateResult.getName());
-    assertEquals(updatedInfo.getSize(), updateResult.getSize());
     // Verify that reading the same attachment info now gives the updated data
     resultActions = wtc.perform(get(infoUri)).andExpect(status().isOk());
     AttachmentInfo readInfo = wtc.parseObjectFromResult(resultActions, AttachmentInfo.class);
@@ -197,7 +195,6 @@ public class AttachmentControllerTest {
     Assert.assertEquals(expected.getId(), actual.getId());
     Assert.assertEquals(expected.getName(), actual.getName());
     Assert.assertEquals(expected.getDescription(), actual.getDescription());
-    Assert.assertEquals(expected.getSize(), actual.getSize());
     Assert.assertEquals(expected.getCreationTime(), actual.getCreationTime());
   }
 

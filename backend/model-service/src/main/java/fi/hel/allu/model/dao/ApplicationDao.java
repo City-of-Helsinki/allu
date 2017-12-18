@@ -63,6 +63,7 @@ public class ApplicationDao {
   private StructureMetaDao structureMetaDao;
   private DistributionEntryDao distributionEntryDao;
   private CustomerDao customerDao;
+  private AttachmentDao attachmentDao;
 
   final QBean<Application> applicationBean = bean(Application.class, application.all());
   final QBean<ApplicationTag> applicationTagBean = bean(ApplicationTag.class, applicationTag.all());
@@ -73,12 +74,14 @@ public class ApplicationDao {
       ApplicationSequenceDao applicationSequenceDao,
       DistributionEntryDao distributionEntryDao,
       StructureMetaDao structureMetaDao,
-      CustomerDao customerDao) {
+      CustomerDao customerDao,
+      AttachmentDao attachmentDao) {
     this.queryFactory = queryFactory;
     this.applicationSequenceDao = applicationSequenceDao;
     this.distributionEntryDao = distributionEntryDao;
     this.structureMetaDao = structureMetaDao;
     this.customerDao = customerDao;
+    this.attachmentDao = attachmentDao;
   }
 
   @Transactional(readOnly = true)
@@ -299,7 +302,6 @@ public class ApplicationDao {
    *
    * @param id application's database ID.
    */
-  @SuppressWarnings("unchecked")
   @Transactional
   public void deleteNote(int id) {
     ApplicationType applicationType = queryFactory.select(application.type).from(application)
@@ -314,11 +316,7 @@ public class ApplicationDao {
      * application directly, so ON DELETE CASCADE can't be used to automatically
      * clean it up):
      */
-    queryFactory.delete(attachment)
-        .where(attachment.id.notIn(
-            union(select(applicationAttachment.attachmentId).from(applicationAttachment),
-                select(defaultAttachment.attachmentId).from(defaultAttachment))))
-        .execute();
+    attachmentDao.deleteUnreferencedAttachments();
   }
 
   /**
