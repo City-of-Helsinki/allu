@@ -1,11 +1,16 @@
 package fi.hel.allu.search;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.service.ApplicationIndexConductor;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.ContactSearchService;
+import fi.hel.allu.search.service.CustomerIndexConductor;
 import fi.hel.allu.search.util.CustomersIndexUtil;
+
 import org.elasticsearch.client.Client;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +30,8 @@ public class ContactSearchSpec {
   @Autowired
   private Client client;
 
-  private GenericSearchService contactSearchService;
-  private GenericSearchService applicationSearchService;
+  private ContactSearchService contactSearchService;
+  private ApplicationSearchService applicationSearchService;
   private QueryParameters params;
 
   private ContactES testContact = new ContactES(1, "testable name", true);
@@ -41,16 +46,14 @@ public class ContactSearchSpec {
 
     describe("contactSearchService", () -> {
       beforeEach(() -> {
-        contactSearchService = new GenericSearchService(
+        contactSearchService = new ContactSearchService(
                 elasticSearchMappingConfig,
-                client,
-                ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME,
-                ElasticSearchMappingConfig.CONTACT_TYPE_NAME);
+            client, new CustomerIndexConductor());
       });
       describe("findByField", ()-> {
         context("with single inserted contact", ()-> {
           beforeEach(() -> {
-            contactSearchService.insert(Integer.toString(testContact.getId()), testContact);
+            contactSearchService.insert(testContact);
             contactSearchService.refreshIndex();
           });
 
@@ -88,9 +91,9 @@ public class ContactSearchSpec {
 
           beforeEach(() -> {
             params = SearchTestUtil.createQueryParameters("name", "searchstr");
-            contactSearchService.insert(Integer.toString(contact1.getId()), contact1);
-            contactSearchService.insert(Integer.toString(contact2.getId()), contact2);
-            contactSearchService.insert(Integer.toString(contact3.getId()), contact3);
+            contactSearchService.insert(contact1);
+            contactSearchService.insert(contact2);
+            contactSearchService.insert(contact3);
             contactSearchService.refreshIndex();
           });
 
@@ -118,11 +121,11 @@ public class ContactSearchSpec {
 
         context("with bulk inserted contacts", ()-> {
           beforeEach(()-> {
-            Map<String, Object> idToContact = new HashMap<>();
-            idToContact.put("1", new ContactES(1, "alpha one searchstr", true));
-            idToContact.put("2", new ContactES(2, "beta two searchstr", true));
-            idToContact.put("3", new ContactES(3, "gamma three searchstr", true));
-            contactSearchService.bulkInsert(idToContact);
+            List<ContactES> contacts = new ArrayList<>();
+            contacts.add(new ContactES(1, "alpha one searchstr", true));
+            contacts.add(new ContactES(2, "beta two searchstr", true));
+            contacts.add(new ContactES(3, "gamma three searchstr", true));
+            contactSearchService.bulkInsert(contacts);
             contactSearchService.refreshIndex();
           });
           it("should find all inserted contacts", () -> {
@@ -141,11 +144,9 @@ public class ContactSearchSpec {
 
     describe("applicationSearchService", ()-> {
       beforeEach(() -> {
-        applicationSearchService = new GenericSearchService(
+        applicationSearchService = new ApplicationSearchService(
                 elasticSearchMappingConfig,
-                client,
-                ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-                ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+            client, new ApplicationIndexConductor());
       });
 
       describe("findByField", () -> {
@@ -158,7 +159,7 @@ public class ContactSearchSpec {
                   new RoleTypedCustomerES(Collections.singletonMap(CustomerRoleType.APPLICANT,
                           SearchTestUtil.createCustomerWithContacts(customerES, contacts)));
           applicationES.setCustomers(roleTypedCustomerES);
-          applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+          applicationSearchService.insert(applicationES);
           applicationSearchService.refreshIndex();
         });
 
@@ -179,7 +180,7 @@ public class ContactSearchSpec {
                     applicationES.getId(), CustomerRoleType.CONTRACTOR, Collections.singletonList(new ContactES(100, "kontraktori", true)));
             Map contactsMap =
                     CustomersIndexUtil.getContactsUpdateStructure(Arrays.asList(applicationWithContactsES1, applicationWithContactsES2));
-            applicationSearchService.bulkUpdate(contactsMap);
+            applicationSearchService.partialUpdate(contactsMap);
             applicationSearchService.refreshIndex();
           });
 

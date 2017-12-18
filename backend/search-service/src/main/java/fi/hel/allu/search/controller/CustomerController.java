@@ -1,19 +1,20 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.search.domain.CustomerES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.CustomerSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
-import org.elasticsearch.client.Client;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,35 +26,25 @@ import java.util.stream.Collectors;
 @RequestMapping("/customers")
 public class CustomerController {
 
-  private GenericSearchService customerSearchService;
-  private GenericSearchService applicationSearchService;
+  private CustomerSearchService customerSearchService;
+  private ApplicationSearchService applicationSearchService;
 
   @Autowired
-  public CustomerController(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client) {
-    customerSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME,
-        ElasticSearchMappingConfig.CUSTOMER_TYPE_NAME);
-    applicationSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+  public CustomerController(CustomerSearchService customerSearchService,
+      ApplicationSearchService applicationSearchService) {
+    this.customerSearchService = customerSearchService;
+    this.applicationSearchService = applicationSearchService;
   }
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Void> create(@RequestBody CustomerES customerES) {
-    customerSearchService.insert(customerES.getId().toString(), customerES);
+    customerSearchService.insert(customerES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<CustomerES> customerESses) {
-    Map<String, Object> idToCustomer = customerESses.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    customerSearchService.bulkUpdate(idToCustomer);
+    customerSearchService.bulkUpdate(customerESses);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -61,12 +52,12 @@ public class CustomerController {
   public ResponseEntity<Void> updateCustomerOfApplications(
       @PathVariable String id,
       @RequestBody Map<Integer, List<CustomerRoleType>> applicationIdToCustomerRoleTypes) {
-    CustomerES customerES = customerSearchService.findObjectById(id, CustomerES.class)
+    CustomerES customerES = customerSearchService.findObjectById(id)
         .orElseThrow(() -> new NoSuchEntityException("No such customer in ElasticSearch", id));
-    Map<String, Object> idToCustomer = applicationIdToCustomerRoleTypes.entrySet().stream().collect(Collectors.toMap(
-        acrt -> Integer.toString(acrt.getKey()),
+    Map<Integer, Object> idToCustomer = applicationIdToCustomerRoleTypes.entrySet().stream().collect(Collectors.toMap(
+        acrt -> acrt.getKey(),
         acrt -> CustomersIndexUtil.getCustomerUpdateStructure(acrt.getValue(), customerES)));
-    applicationSearchService.bulkUpdate(idToCustomer);
+    applicationSearchService.partialUpdate(idToCustomer);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

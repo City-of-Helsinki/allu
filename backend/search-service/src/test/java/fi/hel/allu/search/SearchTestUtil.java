@@ -2,6 +2,7 @@ package fi.hel.allu.search;
 
 import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.*;
+
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.index.IndexNotFoundException;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_INDEX_NAME;
+import static fi.hel.allu.search.config.ElasticSearchMappingConfig.APPLICATION_TEMP_INDEX_NAME;
 import static fi.hel.allu.search.config.ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME;
 
 public class SearchTestUtil {
@@ -20,15 +22,17 @@ public class SearchTestUtil {
     try {
       // delete indexes
       client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_INDEX_NAME)).actionGet();
+      client.admin().indices().delete(new DeleteIndexRequest(APPLICATION_TEMP_INDEX_NAME)).actionGet();
       client.admin().indices().delete(new DeleteIndexRequest(CUSTOMER_INDEX_NAME)).actionGet();
     } catch (IndexNotFoundException e) {
       System.out.println("Index not found for deleting...");
     }
 
-    elasticSearchMappingConfig.initializeIndex();
+    elasticSearchMappingConfig.initializeIndices();
 
     try {
       client.admin().indices().prepareGetMappings(APPLICATION_INDEX_NAME).get();
+      client.admin().indices().prepareGetMappings(APPLICATION_TEMP_INDEX_NAME).get();
       client.admin().indices().prepareGetMappings(CUSTOMER_INDEX_NAME).get();
     } catch (IndexNotFoundException e) {
       System.out.println("Warning, indexes were not created immediately... test may fail because of this");

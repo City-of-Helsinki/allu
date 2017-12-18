@@ -1,18 +1,19 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationWithContactsES;
 import fi.hel.allu.search.domain.ContactES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.GenericSearchService;
+import fi.hel.allu.search.service.ApplicationSearchService;
+import fi.hel.allu.search.service.ContactSearchService;
 import fi.hel.allu.search.util.CustomersIndexUtil;
-import org.elasticsearch.client.Client;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,45 +24,34 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/contacts")
 public class ContactController {
-  private GenericSearchService contactSearchService;
-  private GenericSearchService applicationSearchService;
+  private ContactSearchService contactSearchService;
+  private ApplicationSearchService applicationSearchService;
 
   @Autowired
-  public ContactController(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client) {
-    contactSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.CUSTOMER_INDEX_NAME,
-        ElasticSearchMappingConfig.CONTACT_TYPE_NAME);
-    applicationSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+  public ContactController(ContactSearchService contactSearchService,
+      ApplicationSearchService applicationSearchService) {
+    this.contactSearchService = contactSearchService;
+    this.applicationSearchService = applicationSearchService;
   }
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Void> create(@RequestBody List<ContactES> contactES) {
-    Map<String, Object> idToContact = contactES.stream().collect(Collectors.toMap(c -> Integer.toString(c.getId()), c -> c));
-    contactSearchService.bulkInsert(idToContact);
+    contactSearchService.bulkInsert(contactES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<ContactES> contactESs) {
-    Map<String, Object> idToContact = contactESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    contactSearchService.bulkUpdate(idToContact);
+    contactSearchService.bulkUpdate(contactESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/applications", method = RequestMethod.PUT)
   public ResponseEntity<Void> updateContactsOfApplications(@RequestBody List<ApplicationWithContactsES> applicationWithContacts) {
-    Map<String, Object> contactsUpdateStructure =
+    Map<Integer, Object> contactsUpdateStructure =
         CustomersIndexUtil.getContactsUpdateStructure(applicationWithContacts).entrySet().stream().collect(
-            Collectors.toMap(cus -> cus.getKey(), cus -> cus.getValue())); // rather silly way to cast Map<String, Map> to Map<String, Object>
-    applicationSearchService.bulkUpdate(contactsUpdateStructure);
+            Collectors.toMap(cus -> cus.getKey(), cus -> cus.getValue())); // rather silly way to cast Map<Integer, Map> to Map<Integer, Object>
+    applicationSearchService.partialUpdate(contactsUpdateStructure);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 

@@ -1,12 +1,18 @@
 package fi.hel.allu.model.controller;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.*;
+import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.dao.DistributionEntryDao;
+import fi.hel.allu.model.dao.HistoryDao;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.InvoiceService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -82,6 +88,16 @@ public class ApplicationController {
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   public ResponseEntity<List<Application>> findByLocation(@Valid @RequestBody LocationSearchCriteria lsc) {
     return new ResponseEntity<>(applicationService.findByLocation(lsc), HttpStatus.OK);
+  }
+
+  /**
+   * Find all applications, with paging support
+   *
+   * @param pageRequest page request for the search
+   */
+  @RequestMapping()
+  public ResponseEntity<Page<Application>> findAll(@PageableDefault(page = 0, size = 100) Pageable pageRequest) {
+    return new ResponseEntity<>(applicationService.findAll(pageRequest), HttpStatus.OK);
   }
 
   /**

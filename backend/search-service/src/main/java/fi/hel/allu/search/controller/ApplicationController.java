@@ -1,47 +1,39 @@
 package fi.hel.allu.search.controller;
 
-import fi.hel.allu.search.config.ElasticSearchMappingConfig;
 import fi.hel.allu.search.domain.ApplicationES;
 import fi.hel.allu.search.domain.QueryParameters;
-import fi.hel.allu.search.service.GenericSearchService;
-import org.elasticsearch.client.Client;
+import fi.hel.allu.search.service.ApplicationSearchService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/applications")
 public class ApplicationController {
 
-  private GenericSearchService applicationSearchService;
+  private ApplicationSearchService applicationSearchService;
 
   @Autowired
-  public ApplicationController(
-      ElasticSearchMappingConfig elasticSearchMappingConfig,
-      Client client) {
-    applicationSearchService = new GenericSearchService(
-        elasticSearchMappingConfig,
-        client,
-        ElasticSearchMappingConfig.APPLICATION_INDEX_NAME,
-        ElasticSearchMappingConfig.APPLICATION_TYPE_NAME);
+  public ApplicationController(ApplicationSearchService applicationSearchService) {
+    this.applicationSearchService = applicationSearchService;
   }
 
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Void> create(@RequestBody ApplicationES applicationES) {
-    applicationSearchService.insert(applicationES.getId().toString(), applicationES);
+    applicationSearchService.insert(applicationES);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
   @RequestMapping(value = "/update", method = RequestMethod.PUT)
   public ResponseEntity<Void> update(@RequestBody List<ApplicationES> applicationESs) {
-    Map<String, Object> idToApplication = applicationESs.stream().collect(Collectors.toMap(a -> a.getId().toString(), a -> a));
-    applicationSearchService.bulkUpdate(idToApplication);
+    applicationSearchService.bulkUpdate(applicationESs);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
@@ -54,9 +46,7 @@ public class ApplicationController {
    */
   @RequestMapping(value = "/partialupdate", method = RequestMethod.PUT)
   public ResponseEntity<Void> partialUpdate(@RequestBody Map<Integer, Object> idToPartialUpdateObj) {
-    Map<String, Object> idToApplication = idToPartialUpdateObj.entrySet().stream()
-        .collect(Collectors.toMap(idToPU -> Integer.toString(idToPU.getKey()), idToPU -> idToPU.getValue()));
-    applicationSearchService.bulkUpdate(idToApplication);
+    applicationSearchService.partialUpdate(idToPartialUpdateObj);
     return new ResponseEntity<>(HttpStatus.OK);
   }
 
