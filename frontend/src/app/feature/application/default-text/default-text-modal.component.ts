@@ -2,7 +2,6 @@ import {Component, Input, OnInit} from '@angular/core';
 import {MatDialogRef} from '@angular/material';
 import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 
-import {ApplicationHub} from '../../../service/application/application-hub';
 import {DefaultText} from '../../../model/application/cable-report/default-text';
 import {DefaultTextType} from '../../../model/application/default-text-type';
 import {translations} from '../../../util/translations';
@@ -10,6 +9,7 @@ import {StringUtil} from '../../../util/string.util';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {ApplicationType} from '../../../model/application/type/application-type';
 import {NumberUtil} from '../../../util/number.util';
+import {DefaultTextService} from '../../../service/application/default-text.service';
 
 export const DEFAULT_TEXT_MODAL_CONFIG = {disableClose: false, width: '800px'};
 
@@ -30,7 +30,7 @@ export class DefaultTextModalComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<DefaultTextModalComponent>,
               private fb: FormBuilder,
-              private applicationHub: ApplicationHub) {
+              private defaultTextService: DefaultTextService) {
     this.defaultTexts = fb.array([]);
     this.defaultTextform = fb.group({
       defaultTexts: this.defaultTexts
@@ -38,7 +38,7 @@ export class DefaultTextModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.applicationHub.loadDefaultTexts(this.applicationType)
+    this.defaultTextService.load(this.applicationType)
       .map(texts => texts.filter(text => text.type === this.type))
       .subscribe(
         texts => texts.forEach(text => this.add(text)),
@@ -54,7 +54,7 @@ export class DefaultTextModalComponent implements OnInit {
 
   remove(index, text: DefaultText) {
     if (NumberUtil.isDefined(text.id)) {
-      this.applicationHub.removeDefaultText(text.id)
+      this.defaultTextService.remove(text.id)
         .subscribe(
           result => this.defaultTexts.removeAt(index),
           error => NotificationService.error(error)

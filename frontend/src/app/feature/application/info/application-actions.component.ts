@@ -10,6 +10,7 @@ import {Application} from '../../../model/application/application';
 import {Some} from '../../../util/option';
 import {NumberUtil} from '../../../util/number.util';
 import {Subscription} from 'rxjs/Subscription';
+import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
 
 @Component({
   selector: 'application-actions',
@@ -26,11 +27,15 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   @Input() status: string;
   @Input() submitPending: boolean;
 
+  MODIFY_ROLES = MODIFY_ROLES.map(role => RoleType[role]);
+
   showDecision = true;
   decisionDisabled = false;
   showHandling = true;
+  showEdit = true;
   showDelete = false;
   showCancel = false;
+  showReplace = false;
   applicationId: number;
 
   private applicationSub: Subscription;
@@ -46,6 +51,8 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
       this.showHandling = status < ApplicationStatus.HANDLING;
       this.showDelete = app.typeEnum === ApplicationType.NOTE;
       this.showCancel = status < ApplicationStatus.DECISION;
+      this.showEdit = status < ApplicationStatus.DECISION;
+      this.showReplace = status === ApplicationStatus.DECISION;
       this.applicationId = app.id;
     });
   }
@@ -61,6 +68,16 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
     application.locations = application.locations.map(loc => loc.copyAsNew());
     this.applicationStore.applicationCopy = application;
     this.router.navigate(['/applications/edit']);
+  }
+
+  replace(): void {
+    this.applicationStore.replace()
+      .subscribe(
+        (application) => {
+          NotificationService.translateMessage('application.action.replaced');
+          this.router.navigate(['/applications', application.id, 'summary']);
+        },
+        (error) => NotificationService.translateMessage(error));
   }
 
   moveToHandling(): void {

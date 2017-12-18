@@ -1,7 +1,10 @@
 <mat-toolbar fxLayout="row">
-  <div fxFlex="15" class="progress-header">
+  <div fxFlex="400px" class="progress-header">
     <span *ngIf="!existingApplication">{{identifier | uppercase}}</span>
-    <a *ngIf="existingApplication" [routerLink]="['/applications', application.id, 'summary']">{{identifier | uppercase}}</a>
+    <a *ngIf="existingApplication" [routerLink]="['/applications', application.id, 'summary']">
+      <span *ngIf="application.replacesApplicationId !== undefined">{{'application.replacing' | translation}} - </span>
+      <span>{{identifier | uppercase}}</span>
+    </a>
     <span *ngIf="status" class="application-status-text">{{['application.status', status] | translation}}</span>
   </div>
   <div fxFlex="85" class="progress-label">

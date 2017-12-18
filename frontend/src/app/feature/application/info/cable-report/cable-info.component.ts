@@ -1,19 +1,19 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {FormGroup, FormBuilder, FormArray} from '@angular/forms';
+import {FormArray, FormBuilder, FormGroup} from '@angular/forms';
 import {MatDialog, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
 import {EnumUtil} from '../../../../util/enum.util';
 import {DefaultTextType} from '../../../../model/application/default-text-type';
-import {translations, findTranslation} from '../../../../util/translations';
-import {ApplicationHub} from '../../../../service/application/application-hub';
+import {findTranslation, translations} from '../../../../util/translations';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {DefaultText, DefaultTextMap} from '../../../../model/application/cable-report/default-text';
-import {DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG} from '../../default-text/default-text-modal.component';
+import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../../default-text/default-text-modal.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {Some} from '../../../../util/option';
 import {NotificationService} from '../../../../service/notification/notification.service';
 import {ApplicationType} from '../../../../model/application/type/application-type';
+import {DefaultTextService} from '../../../../service/application/default-text.service';
 
 @Component({
   selector: 'cable-info',
@@ -31,7 +31,7 @@ export class CableInfoComponent implements OnInit {
   defaultTexts: DefaultTextMap = {};
   dialogRef: MatDialogRef<DefaultTextModalComponent>;
 
-  constructor(private applicationHub: ApplicationHub,
+  constructor(private defaultTextService: DefaultTextService,
               private fb: FormBuilder,
               private dialog: MatDialog) {
   }
@@ -39,7 +39,7 @@ export class CableInfoComponent implements OnInit {
   ngOnInit(): void {
     this.cableInfoEntries = Some(this.cableInfoEntries).orElse(this.fb.array([]));
     this.initForm();
-    this.applicationHub.loadDefaultTexts(ApplicationType.CABLE_REPORT).subscribe(texts => this.setDefaultTexts(texts));
+    this.defaultTextService.load(ApplicationType.CABLE_REPORT).subscribe(texts => this.setDefaultTexts(texts));
 
     if (this.readonly) {
       this.cableInfoForm.disable();
@@ -65,8 +65,8 @@ export class CableInfoComponent implements OnInit {
     this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
       this.dialogRef = undefined;
 
-      Observable.forkJoin(defaultTexts.map(dt => this.applicationHub.saveDefaultText(dt)))
-        .switchMap(result => this.applicationHub.loadDefaultTexts(ApplicationType.CABLE_REPORT))
+      Observable.forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt)))
+        .switchMap(result => this.defaultTextService.load(ApplicationType.CABLE_REPORT))
         .subscribe(
           texts => {
             this.setDefaultTexts(texts);

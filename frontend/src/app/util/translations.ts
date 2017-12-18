@@ -17,12 +17,14 @@ export const translations = {
   },
   application: {
     newApplication: 'Uusi hakemus',
+    replacing: 'Korvaava päätös',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
       handlerChangeFailed: 'Hakemuksen käsittelijän vaihto epäonnistui',
       searchFailed: 'Hakemuksen hakeminen epäonnistui',
       saveFailed: 'Hakemuksen tallentaminen epäonnistui',
+      replaceFailed: 'Hakemuksen korvaaminen epäonnistui',
       deleteFailed: 'Hakemuksen poistaminen epäonnistui',
       tagUpdateFailed: 'Hakemuksen tarkenteiden tallentaminen epäonnistui',
       toHandling: 'Hakemuksen käsittelyyn siirtäminen epäonnistui',
@@ -31,6 +33,7 @@ export const translations = {
     },
     action: {
       saved: 'Hakemus tallennettu',
+      replaced: 'Korvaava hakemus luotu',
       deleted: 'Hakemus poistettu'
     },
     progress: {
@@ -299,6 +302,7 @@ export const translations = {
     },
     button: {
       copy: 'Kopioi uudeksi',
+      replace: 'Korvaava päätös',
       toSummary: 'Yhteenvetoon',
       toHandling: 'Käsittelyyn',
       toDecision: 'Päättämiseen'

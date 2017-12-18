@@ -5,13 +5,13 @@ import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 
 import {Application} from '../../../model/application/application';
-import {ApplicationHub} from '../../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
 import {ProjectForm} from './project.form';
 import {Project} from '../../../model/project/project';
 import {emailValidator} from '../../../util/complex-validator';
 import {ProjectState} from '../../../service/project/project-state';
 import {NotificationService} from '../../../service/notification/notification.service';
+import {ApplicationService} from '../../../service/application/application.service';
 
 
 @Component({
@@ -28,7 +28,7 @@ export class ProjectEditComponent {
   private parentProject: number;
 
   constructor(private router: Router, private route: ActivatedRoute,
-              private applicationHub: ApplicationHub,
+              private applicationService: ApplicationService,
               private projectState: ProjectState,
               private fb: FormBuilder) {
     this.initForm();
@@ -46,7 +46,7 @@ export class ProjectEditComponent {
       .debounceTime(300)
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
-      .switchMap(search => this.applicationHub.searchApplications(search))
+      .switchMap(search => this.applicationService.search(search))
       .catch(err => NotificationService.errorCatch(err, []));
   }
 

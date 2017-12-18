@@ -28,3 +28,13 @@ export enum RoleType {
    */
   ROLE_ADMIN
 }
+
+// Roles who can modify Allu info
+export const MODIFY_ROLES = [
+  RoleType.ROLE_CREATE_APPLICATION,
+  RoleType.ROLE_PROCESS_APPLICATION,
+  RoleType.ROLE_DECISION,
+  RoleType.ROLE_SUPERVISE,
+  RoleType.ROLE_INVOICING,
+  RoleType.ROLE_ADMIN
+];

@@ -11,7 +11,6 @@ import {ApplicationModule} from '../application/application.module';
 import {ApplicationService} from '../../service/application/application.service';
 import {LocationService} from '../../service/location.service';
 import {MapHub} from '../../service/map/map-hub';
-import {ApplicationHub} from '../../service/application/application-hub';
 import {UIStateHub} from '../../service/ui-state/ui-state-hub';
 import {AuthGuard} from '../../service/authorization/auth-guard.service';
 import {AlluComponent} from './allu.component';
@@ -77,7 +76,6 @@ import {CanActivateLogin} from '../../service/authorization/can-activate-login';
   bootstrap: [AlluComponent],
   providers: [
     ApplicationService,
-    ApplicationHub,
     UserService,
     LocationService,
     CustomerService,

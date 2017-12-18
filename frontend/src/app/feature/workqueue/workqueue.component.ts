@@ -5,7 +5,6 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import {MatDialog, MatDialogRef, MatTabChangeEvent} from '@angular/material';
 
 import {Application} from '../../model/application/application';
-import {ApplicationHub} from '../../service/application/application-hub';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
 import {EnumUtil} from '../../util/enum.util';
 import {Sort} from '../../model/common/sort';
@@ -19,6 +18,7 @@ import {WorkQueueTab} from './workqueue-tab';
 import {NotificationService} from '../../service/notification/notification.service';
 import {ConnectableObservable} from 'rxjs/observable/ConnectableObservable';
 import {Subscription} from 'rxjs/Subscription';
+import {ApplicationService} from '../../service/application/application.service';
 
 @Component({
   selector: 'workqueue',
@@ -39,7 +39,7 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
   private sort: Sort;
   private searchQuerySub: Subscription;
 
-  constructor(private applicationHub: ApplicationHub,
+  constructor(private applicationService: ApplicationService,
               private workqueueHub: WorkQueueHub,
               private dialog: MatDialog,
               private userHub: UserHub,
@@ -111,22 +111,22 @@ export class WorkQueueComponent implements OnInit, OnDestroy {
     if (this.tab === WorkQueueTab.COMMON) {
       return this.workqueueHub.searchApplicationsSharedByGroup(query);
     } else if (this.tab === WorkQueueTab.OWN) {
-      return this.applicationHub.searchApplications(query)
+      return this.applicationService.search(query)
         .map(apps => apps.filter(app => !app.waiting));
     } else {
-      return this.applicationHub.searchApplications(query);
+      return this.applicationService.search(query);
     }
   }
 
   private changeHandler(handler: User, ids: Array<number>): void {
-    this.applicationHub.changeHandler(handler.id, ids).subscribe(
+    this.applicationService.changeHandler(handler.id, ids).subscribe(
       () => NotificationService.message('Hakemuksien käsittelijä vaihdettu'),
       () => NotificationService.errorMessage('Hakemuksien käsittelijän vaihtaminen epäonnistui'),
       () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view
   }
 
   private removeHandler(ids: Array<number>): void {
-    this.applicationHub.removeHandler(ids).subscribe(
+    this.applicationService.removeHandler(ids).subscribe(
       () => NotificationService.message('Käsittelijä poistettu hakemuksilta'),
       () => NotificationService.errorMessage('Käsittelijän poistaminen hakemuksilta epäonnistui'),
       () => this.queryChanged(this.applicationQuery.getValue())); // refresh the view

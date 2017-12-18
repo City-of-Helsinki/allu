@@ -1,10 +1,7 @@
 import {Injectable} from '@angular/core';
-import {Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
-import {ApplicationHub} from './application-hub';
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
-import {ProjectHub} from '../project/project-hub';
 import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 import {AttachmentHub} from '../../feature/application/attachment/attachment-hub';
 import {Subject} from 'rxjs/Subject';
@@ -21,6 +18,7 @@ import {ApplicationStatus} from '../../model/application/application-status';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {Deposit} from '../../model/application/invoice/deposit';
 import {DepositService} from './deposit/deposit.service';
+import {ApplicationService} from './application.service';
 
 export interface ApplicationState {
   application?: Application;
@@ -50,7 +48,7 @@ const initialState: ApplicationState = {
 export class ApplicationStore {
   private store = new BehaviorSubject<ApplicationState>(initialState);
 
-  constructor(private applicationHub: ApplicationHub,
+  constructor(private applicationService: ApplicationService,
               private customerHub: CustomerHub,
               private attachmentHub: AttachmentHub,
               private commentHub: CommentHub,
@@ -93,6 +91,11 @@ export class ApplicationStore {
     });
   }
 
+  replace(): Observable<Application> {
+    return this.applicationService.replace(this.snapshot.application.id)
+      .do(replacement => this.applicationChange(replacement));
+  }
+
   get tags(): Observable<Array<ApplicationTag>> {
     return this.store.map(change => change.tags).distinctUntilChanged();
   }
@@ -107,7 +110,7 @@ export class ApplicationStore {
       throw new Error('Cannot save tags when application state has no saved application');
     }
 
-    return this.applicationHub.saveTags(applicationId, tags)
+    return this.applicationService.saveTags(applicationId, tags)
       .do(savedTags => this.changeTags(savedTags));
   }
 
@@ -168,7 +171,7 @@ export class ApplicationStore {
   }
 
   loadAttachments(applicationId: number): Observable<Array<AttachmentInfo>> {
-    return this.applicationHub.getAttachments(applicationId)
+    return this.applicationService.getAttachments(applicationId)
       .do(attachments => this.store.next({...this.snapshot, attachments}));
   }
 
@@ -188,7 +191,7 @@ export class ApplicationStore {
   }
 
   load(id: number): Observable<Application> {
-    return this.applicationHub.getApplication(id)
+    return this.applicationService.get(id)
       .do(application => {
         this.store.next({
           ...this.snapshot,
@@ -208,13 +211,13 @@ export class ApplicationStore {
   }
 
   delete(id: number): Observable<HttpResponse> {
-    return this.applicationHub.delete(id)
+    return this.applicationService.remove(id)
       .do(response => this.reset());
   }
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     const appId = id || this.snapshot.application.id;
-    return this.applicationHub.changeStatus(appId, status, changeInfo)
+    return this.applicationService.changeStatus(appId, status, changeInfo)
       .do(application => this.applicationChange(application));
   }
 
@@ -271,7 +274,7 @@ export class ApplicationStore {
 
   private saveApplication(application: Application): Observable<Application> {
     application.applicationTags = this.snapshot.tags;
-    return this.applicationHub.save(application);
+    return this.applicationService.save(application);
   }
 
   private savePending(application: Application) {

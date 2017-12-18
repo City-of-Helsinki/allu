@@ -1,15 +1,15 @@
-import {Component, OnInit, Input} from '@angular/core';
-import {FormBuilder, FormGroup, FormControl} from '@angular/forms';
+import {Component, Input, OnInit} from '@angular/core';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {ApplicationType} from '../../../model/application/type/application-type';
-import {MatDialogRef, MatDialog} from '@angular/material';
+import {MatDialog, MatDialogRef} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
-import {DefaultTextModalComponent, DEFAULT_TEXT_MODAL_CONFIG} from '../default-text/default-text-modal.component';
+import {DEFAULT_TEXT_MODAL_CONFIG, DefaultTextModalComponent} from '../default-text/default-text-modal.component';
 import {DefaultText} from '../../../model/application/cable-report/default-text';
-import {ApplicationHub} from '../../../service/application/application-hub';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {DefaultTextType} from '../../../model/application/default-text-type';
 import {Some} from '../../../util/option';
 import {findTranslation} from '../../../util/translations';
+import {DefaultTextService} from '../../../service/application/default-text.service';
 
 @Component({
   selector: 'terms',
@@ -30,12 +30,12 @@ export class TermsComponent implements OnInit {
 
   constructor(private fb: FormBuilder,
               private dialog: MatDialog,
-              private applicationHub: ApplicationHub) {}
+              private defaultTextService: DefaultTextService) {}
 
   ngOnInit(): void {
     this.termsControl = this.fb.control({value: this.terms, disabled: this.readonly});
     this.form.addControl('terms', this.termsControl);
-    this.applicationHub.loadDefaultTexts(this.applicationType).subscribe(
+    this.defaultTextService.load(this.applicationType).subscribe(
       dts => this.defaultTexts = dts,
       err => NotificationService.error(err)
     );
@@ -56,8 +56,8 @@ export class TermsComponent implements OnInit {
     this.dialogRef.afterClosed().subscribe((defaultTexts: Array<DefaultText>) => {
       this.dialogRef = undefined;
 
-      Observable.forkJoin(defaultTexts.map(dt => this.applicationHub.saveDefaultText(dt)))
-        .switchMap(result => this.applicationHub.loadDefaultTexts(this.applicationType))
+      Observable.forkJoin(defaultTexts.map(dt => this.defaultTextService.save(dt)))
+        .switchMap(result => this.defaultTextService.load(this.applicationType))
         .subscribe(
           texts => {
             this.defaultTexts = texts;

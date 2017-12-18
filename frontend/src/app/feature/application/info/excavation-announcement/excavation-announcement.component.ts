@@ -4,7 +4,6 @@ import {FormBuilder, FormControl, Validators} from '@angular/forms';
 import {Observable} from 'rxjs/Observable';
 import {MatDatepicker} from '@angular/material';
 import {Application} from '../../../../model/application/application';
-import {ApplicationHub} from '../../../../service/application/application-hub';
 import {AbstractControlWarn, ComplexValidator} from '../../../../util/complex-validator';
 import {ExcavationAnnouncementForm} from './excavation-announcement.form';
 import {ApplicationSearchQuery} from '../../../../model/search/ApplicationSearchQuery';
@@ -18,6 +17,7 @@ import {TimeUtil} from '../../../../util/time.util';
 import {Some} from '../../../../util/option';
 import {IconConfig} from '../../../common/icon-config';
 import {ProjectHub} from '../../../../service/project/project-hub';
+import {ApplicationService} from '../../../../service/application/application.service';
 
 @Component({
   selector: 'excavation-announcement',
@@ -35,7 +35,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   private cableReportIdentifierCtrl: FormControl;
 
   constructor(
-    private applicationHub: ApplicationHub,
+    private applicationService: ApplicationService,
     fb: FormBuilder,
     route: ActivatedRoute,
     applicationStore: ApplicationStore,
@@ -51,7 +51,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
       .debounceTime(300)
       .distinctUntilChanged()
       .map(id => ApplicationSearchQuery.forIdAndTypes(id, [ApplicationType[ApplicationType.CABLE_REPORT]]))
-      .switchMap(search => this.applicationHub.searchApplications(search))
+      .switchMap(search => this.applicationService.search(search))
       .catch(err => NotificationService.errorCatch(err, []));
   }
 
@@ -134,7 +134,7 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
 
   private patchRelatedCableReport(excavation: ExcavationAnnouncement): void {
     if (NumberUtil.isDefined(excavation.cableReportId)) {
-      this.applicationHub.getApplication(excavation.cableReportId)
+      this.applicationService.get(excavation.cableReportId)
         .subscribe(cableReport => this.applicationForm.patchValue({cableReportIdentifier: cableReport.applicationId}));
     }
   }

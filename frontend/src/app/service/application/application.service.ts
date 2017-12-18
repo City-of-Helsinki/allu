@@ -44,6 +44,9 @@ export class ApplicationService {
     this.statusToUrl.set(ApplicationStatus.FINISHED, 'finished');
   }
 
+  /**
+   * Fetches single application
+   */
   public get(id: number): Observable<Application> {
     return this.authHttp.get(APPLICATIONS_URL + '/' + id)
       .map(response => response.json())
@@ -66,6 +69,9 @@ export class ApplicationService {
     }
   }
 
+  /**
+   * Fetches applications based on given search query
+   */
   public search(searchQuery: ApplicationSearchQuery): Observable<Array<Application>> {
     const searchUrl = APPLICATIONS_URL + SEARCH;
 
@@ -77,6 +83,9 @@ export class ApplicationService {
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.searchFailed')));
   }
 
+  /**
+   * Saves given application (new / update) and returns saved application
+   */
   public save(application: Application): Observable<Application> {
     if (application.id) {
       const url = APPLICATIONS_URL + '/' + application.id;
@@ -93,6 +102,9 @@ export class ApplicationService {
     }
   }
 
+  /**
+   * Deletes given application (only NOTE-types can be deleted)
+   */
   public remove(id: number): Observable<HttpResponse> {
     const url = APPLICATIONS_URL + '/note/' + id;
     return this.authHttp.delete(url)
@@ -100,13 +112,20 @@ export class ApplicationService {
       .catch(error => this.errorHandler.handle(error, findTranslation('comment.error.remove')));
   }
 
+  /**
+   * Loads metadata for given application type
+   */
   public loadMetadata(applicationType: string): Observable<StructureMeta> {
     return this.authHttp.get(METADATA_URL + '/' + applicationType)
       .map(response => StructureMetaMapper.mapBackend(response.json()))
       .catch(error => this.errorHandler.handle(error, 'Loading metadata failed'));
   }
 
-  public statusChange(appId: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
+  /**
+   * Changes applications status according to statusChange.
+   * Returns updated application.
+   */
+  public changeStatus(appId: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {
     const url = STATUS_URL
       .replace(':appId', String(appId))
       .replace(':statusPart', this.statusToUrl.get(status));
@@ -116,18 +135,27 @@ export class ApplicationService {
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.statusChangeFailed')));
   }
 
-  public handlerChange(handler: number, applicationIds: Array<number>): Observable<any> {
+  /**
+   * Changes handler of given applications. Does not return anytyhing. Use Observable's subscribe complete.
+   */
+  public changeHandler(handler: number, applicationIds: Array<number>): Observable<any> {
     const url = APPLICATIONS_URL + '/handler/' + handler;
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
-  public handlerRemove(applicationIds: Array<number>): Observable<any> {
+  /**
+   * Removes handler of given applications. Does not return anything. Use Observable's subscribe complete.
+   */
+  public removeHandler(applicationIds: Array<number>): Observable<any> {
     const url = APPLICATIONS_URL + '/handler/remove';
     return this.authHttp.put(url, JSON.stringify(applicationIds))
       .catch(error => this.errorHandler.handle(error, findTranslation('application.error.handlerChangeFailed')));
   }
 
+  /**
+   * Saves tags for application specified by id
+   */
   public saveTags(appId: number, tags: Array<ApplicationTag>): Observable<Array<ApplicationTag>> {
     const url = TAGS_URL.replace(':appId', String(appId));
     return this.authHttp.put(url, JSON.stringify(ApplicationTagMapper.mapFrontendList(tags)))
@@ -140,6 +168,16 @@ export class ApplicationService {
     return this.authHttp.get(url)
       .map(response => response.json())
       .map(infos => infos.map(info => AttachmentInfoMapper.mapBackend(info)));
+  }
+
+  replace(id: number): Observable<Application> {
+    const url = `${APPLICATIONS_URL}/${id}/replace`;
+    return Observable.empty();
+
+    // TODO: Enable this after backend supports replacing applications
+    /*return this.authHttp.post(url, undefined)
+      .map(response => ApplicationMapper.mapBackend(response.json()))
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replaceFailed')));*/
   }
 }
 

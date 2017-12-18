@@ -26,6 +26,7 @@ export class ApplicationStoreMock {
 
   constructor() {
     this._application = new Application(1);
+    this._application.statusEnum = ApplicationStatus.PENDING;
     const location = new Location(1);
     location.cityDistrictId = 1;
     this._application.locations.push(location);
@@ -53,6 +54,10 @@ export class ApplicationStoreMock {
 
   delete(id: number): Observable<HttpResponse> {
     return Observable.of(new HttpResponse(HttpStatus.OK));
+  }
+
+  replace(): Observable<Application> {
+    return Observable.empty();
   }
 
   changeStatus(id: number, status: ApplicationStatus, changeInfo?: StatusChangeInfo): Observable<Application> {

@@ -7,7 +7,6 @@ import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery'
 import {ApplicationStatus} from '../../model/application/application-status';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
-import {ApplicationHub} from '../../service/application/application-hub';
 import {UserHub} from '../../service/user/user-hub';
 import {User} from '../../model/user/user';
 import {FormBuilder, FormGroup} from '@angular/forms';
@@ -15,6 +14,7 @@ import {Sort} from '../../model/common/sort';
 import {MapHub} from '../../service/map/map-hub';
 import {CityDistrict} from '../../model/common/city-district';
 import {NotificationService} from '../../service/notification/notification.service';
+import {ApplicationService} from '../../service/application/application.service';
 
 @Component({
   selector: 'search',
@@ -30,7 +30,7 @@ export class SearchComponent implements OnInit {
   applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
   applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
 
-  constructor(private applicationHub: ApplicationHub,
+  constructor(private applicationService: ApplicationService,
               private userHub: UserHub,
               private mapHub: MapHub,
               private router: Router,
@@ -65,12 +65,14 @@ export class SearchComponent implements OnInit {
   }
 
   search(): void {
-    this.applicationHub.searchApplications(ApplicationSearchQuery.from(this.queryForm.value, this.sort)).subscribe(
-      apps => this.applications = apps,
-      err => {
-        NotificationService.error(err);
-        this.applications = [];
-      }
+    const query = ApplicationSearchQuery.from(this.queryForm.value, this.sort);
+    this.applicationService.search(query)
+      .subscribe(
+        apps => this.applications = apps,
+        err => {
+          NotificationService.error(err);
+          this.applications = [];
+        }
     );
   }
 

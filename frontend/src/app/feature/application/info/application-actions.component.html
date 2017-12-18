@@ -1,15 +1,22 @@
 <bottom-bar fxLayout="row" fxFlexAlign="space-between">
   <div fxFlex fxFlexAlign="center" *ngIf="readonly">
-    <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-      <button mat-raised-button type="button" color="primary" [routerLink]="['/applications', applicationId, 'edit']">
-        {{'common.button.edit' | translation | uppercase}}
-      </button>
-      <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
-        {{'application.button.copy' | translation | uppercase}}
-      </button>
-      <button *ngIf="showDelete" mat-raised-button type="button" color="primary" (click)="delete()">
-        {{'common.button.remove' | translation | uppercase}}
-      </button>
+    <div>
+      <ng-container *availableTo="MODIFY_ROLES">
+        <button *ngIf="showReplace" mat-raised-button type="button" color="primary" (click)="replace()">
+          {{'application.button.replace' | translation | uppercase}}
+        </button>
+      </ng-container>
+      <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+        <button *ngIf="showEdit" mat-raised-button type="button" color="primary" [routerLink]="['/applications', applicationId, 'edit']">
+          {{'common.button.edit' | translation | uppercase}}
+        </button>
+        <button mat-raised-button type="button" color="primary" (click)="copyApplicationAsNew()">
+          {{'application.button.copy' | translation | uppercase}}
+        </button>
+        <button *ngIf="showDelete" mat-raised-button type="button" color="primary" (click)="delete()">
+          {{'common.button.remove' | translation | uppercase}}
+        </button>
+      </ng-container>
     </div>
   </div>
   <div fxFlex></div>

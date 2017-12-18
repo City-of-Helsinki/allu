@@ -37,4 +37,6 @@ export interface BackendApplication {
   notBillable: boolean;
   notBillableReason?: string;
   invoiceRecipientId?: number;
+  replacesApplicationId?: number;
+  replacedApplicationId?: number;
 }

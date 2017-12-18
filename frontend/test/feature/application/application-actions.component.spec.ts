@@ -73,6 +73,37 @@ describe('ApplicationActionsComponent', () => {
     expect(editBtn.getAttribute('ng-reflect-router-link')).toEqual('/applications,' + String(applicationId) + ',edit');
   });
 
+  it('should hide edit button for decided application', () => {
+    applicationStore._application.statusEnum = ApplicationStatus.DECISION;
+    setAndInit(true);
+    expect(getButtonWithText(de, findTranslation('common.button.edit').toUpperCase())).toBeUndefined();
+  });
+
+  it('should show replace button for decided application and hide for others', () => {
+    applicationStore._application.statusEnum = ApplicationStatus.DECISION;
+    setAndInit(true);
+    expect(getButtonWithText(de, findTranslation('application.button.replace').toUpperCase())).toBeDefined();
+    applicationStore._application.statusEnum = ApplicationStatus.HANDLING;
+    setAndInit(true);
+    expect(getButtonWithText(de, findTranslation('application.button.replace').toUpperCase())).toBeUndefined();
+  });
+
+  it('should replace application', fakeAsync(() => {
+    applicationStore._application.statusEnum = ApplicationStatus.DECISION;
+    setAndInit(true);
+    spyOn(router, 'navigate');
+    spyOn(applicationStore, 'replace').and.returnValue(applicationStore.application);
+    spyOn(NotificationService, 'translateMessage');
+
+    const replaceBtn = getButtonWithText(de, findTranslation('application.button.replace').toUpperCase());
+    replaceBtn.click()
+    tickAndDetect();
+
+    expect(applicationStore.replace).toHaveBeenCalled();
+    expect(NotificationService.translateMessage).toHaveBeenCalled();
+    expect(router.navigate).toHaveBeenCalledWith(['/applications', applicationId, 'summary']);
+  }));
+
   it('should copy application as new', () => {
     setAndInit(true);
     spyOn(router, 'navigate');
@@ -136,7 +167,7 @@ describe('ApplicationActionsComponent', () => {
     applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.returnValue(Observable.of(applicationStore.application));
+    spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
     spyOn(NotificationService, 'translateMessage');
 
     const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase());
@@ -226,7 +257,7 @@ describe('ApplicationActionsComponent', () => {
     applicationStore._application.invoiceRecipientId = 1;
     setAndInit(true);
     spyOn(router, 'navigate');
-    spyOn(applicationStore, 'changeStatus').and.returnValue(Observable.of(applicationStore._application));
+    spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
     spyOn(NotificationService, 'translateMessage');
 
     const decisionBtn = getButtonWithText(de, findTranslation('application.button.toDecision').toUpperCase());

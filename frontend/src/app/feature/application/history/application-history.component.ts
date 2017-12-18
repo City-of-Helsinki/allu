@@ -8,11 +8,11 @@ import {ApplicationChange} from '../../../model/application/application-change/a
 import {UserHub} from '../../../service/user/user-hub';
 import {User} from '../../../model/user/user';
 import {ApplicationHistoryDetailsComponent} from './application-history-details.component';
-import {ApplicationHub} from '../../../service/application/application-hub';
 import {StructureMeta} from '../../../model/application/meta/structure-meta';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {ApplicationHistoryFormatter} from '../../../service/history/application-history-formatter';
+import {ApplicationService} from '../../../service/application/application.service';
 
 @Component({
   selector: 'application-history',
@@ -28,14 +28,14 @@ export class ApplicationHistoryComponent implements OnInit {
   meta: StructureMeta;
 
   constructor(private applicationStore: ApplicationStore,
-              private applicationHub: ApplicationHub,
+              private applicationService: ApplicationService,
               private historyHub: HistoryHub,
               private userHub: UserHub,
               private dialog: MatDialog,
               protected formatter: ApplicationHistoryFormatter) {}
 
   ngOnInit(): void {
-    this.applicationHub.loadMetaData(this.applicationStore.snapshot.application.type).subscribe(meta => {
+    this.applicationService.loadMetadata(this.applicationStore.snapshot.application.type).subscribe(meta => {
       this.meta = meta;
       this.formatter.setMeta(meta);
       this.history = this.historyHub.applicationHistory(this.applicationStore.snapshot.application.id);

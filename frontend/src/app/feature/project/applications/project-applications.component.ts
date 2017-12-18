@@ -5,12 +5,12 @@ import {Subject} from 'rxjs/Subject';
 import {Application} from '../../../model/application/application';
 import {Project} from '../../../model/project/project';
 import {ApplicationSearchQuery} from '../../../model/search/ApplicationSearchQuery';
-import {ApplicationHub} from '../../../service/application/application-hub';
 import {ContentRow} from '../../../model/common/content-row';
 import {Sort} from '../../../model/common/sort';
 import {UI_PIPE_DATE_FORMAT} from '../../../util/time.util';
 import {ProjectState} from '../../../service/project/project-state';
 import {NotificationService} from '../../../service/notification/notification.service';
+import {ApplicationService} from '../../../service/application/application.service';
 
 
 @Component({
@@ -28,7 +28,8 @@ export class ProjectApplicationsComponent implements OnInit {
   sort: Sort = new Sort(undefined, undefined);
   dateFormat = UI_PIPE_DATE_FORMAT;
 
-  constructor(private router: Router, private applicationHub: ApplicationHub,
+  constructor(private router: Router,
+              private applicationService: ApplicationService,
               private projectState: ProjectState) {}
 
   ngOnInit(): void {
@@ -40,7 +41,7 @@ export class ProjectApplicationsComponent implements OnInit {
       .debounceTime(300)
       .distinctUntilChanged()
       .map(idSearch => ApplicationSearchQuery.forApplicationId(idSearch))
-      .switchMap(search => this.applicationHub.searchApplications(search))
+      .switchMap(search => this.applicationService.search(search))
       .catch(err => NotificationService.errorCatch(err, []));
   }
 

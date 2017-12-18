@@ -49,7 +49,9 @@ export class Application {
     public comments?: Array<Comment>,
     public notBillable: boolean = false,
     public notBillableReason?: string,
-    public invoiceRecipientId?: number) {
+    public invoiceRecipientId?: number,
+    public replacesApplicationId?: number,
+    public replacedApplicationId?: number) {
     this.locations = locations || [];
     this.customersWithContacts = customersWithContacts || [];
     this.attachmentList = attachmentList || [];
@@ -123,6 +125,10 @@ export class Application {
 
   get statusEnum(): ApplicationStatus {
     return ApplicationStatus[this.status];
+  }
+
+  set statusEnum(status: ApplicationStatus) {
+    this.status = ApplicationStatus[status];
   }
 
   get kinds() {

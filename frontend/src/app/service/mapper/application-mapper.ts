@@ -46,6 +46,8 @@ export class ApplicationMapper {
     application.notBillable = backendApplication.notBillable;
     application.notBillableReason = backendApplication.notBillableReason;
     application.invoiceRecipientId = backendApplication.invoiceRecipientId;
+    application.replacesApplicationId = backendApplication.replacesApplicationId;
+    application.replacedApplicationId = backendApplication.replacedApplicationId;
     return application;
   }
 
@@ -77,7 +79,9 @@ export class ApplicationMapper {
       applicationTags: ApplicationTagMapper.mapFrontendList(application.applicationTags),
       notBillable: application.notBillable,
       notBillableReason: application.notBillableReason,
-      invoiceRecipientId: application.invoiceRecipientId
+      invoiceRecipientId: application.invoiceRecipientId,
+      replacedApplicationId: application.replacedApplicationId,
+      replacesApplicationId: application.replacesApplicationId
     };
   }
 }
