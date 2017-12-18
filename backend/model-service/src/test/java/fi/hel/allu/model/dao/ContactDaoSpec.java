@@ -1,23 +1,27 @@
 package fi.hel.allu.model.dao;
 
 import com.greghaskins.spectrum.Spectrum;
+
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.PostalAddress;
 import fi.hel.allu.model.domain.PostalAddressItem;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
 import org.junit.Assert;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static com.greghaskins.spectrum.dsl.specification.Specification.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Spectrum.class)
 @SpringBootTest(classes = ModelApplication.class)
@@ -121,6 +125,32 @@ public class ContactDaoSpec extends SpeccyTestBase {
         });
       });
     });
+
+    describe("ContactDao.findAll", () -> {
+      beforeEach(() -> {
+        List<Contact> contacts = new ArrayList<>();
+        for (int i = 0; i < 15; ++i) {
+          contacts.add(dummyContact(i));
+        }
+        List<Contact> inserted = contactDao.insert(contacts);
+        assertEquals(inserted.size(), contacts.size());
+        inserted.forEach(c -> assertNotNull(c.getId()));
+      });
+
+      it("Can fetch 5 contacts in ascendind ID order", () -> {
+        Page<Contact> page = contactDao.findAll(new PageRequest(1, 5));
+        assertEquals(5, page.getSize());
+        List<Contact> elements = page.getContent();
+        assertEquals(5, elements.size());
+        int prevId = Integer.MIN_VALUE;
+        for (int i = 0; i < elements.size(); ++i) {
+          int id = elements.get(i).getId();
+          assertTrue(prevId < id);
+          prevId = id;
+        }
+      });
+    });
+
   }
 
   private void assertContact(Contact assertedContact) {
@@ -133,5 +163,15 @@ public class ContactDaoSpec extends SpeccyTestBase {
     Assert.assertEquals(testPostalAddress.getStreetAddress(), postalAddressItem.getPostalAddress().getStreetAddress());
     Assert.assertEquals(testPostalAddress.getPostalCode(), postalAddressItem.getPostalAddress().getPostalCode());
     Assert.assertEquals(testPostalAddress.getCity(), postalAddressItem.getPostalAddress().getCity());
+  }
+
+  private Contact dummyContact(int i) {
+    int customerId = testCommon.insertPerson().getId();
+    Contact contact = new Contact();
+    contact.setCustomerId(customerId);
+    contact.setEmail("test@email.fi");
+    contact.setName("test name");
+    contact.setPostalAddress(testPostalAddress);
+    return contact;
   }
 }

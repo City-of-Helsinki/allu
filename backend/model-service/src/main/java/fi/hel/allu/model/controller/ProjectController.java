@@ -4,12 +4,17 @@ import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Project;
 import fi.hel.allu.model.service.ProjectService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -24,7 +29,7 @@ public class ProjectController {
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)
   public ResponseEntity<Project> find(@PathVariable int id) {
-    return new ResponseEntity<Project>(projectService.find(id), HttpStatus.OK);
+    return new ResponseEntity<>(projectService.find(id), HttpStatus.OK);
   }
 
   /**
@@ -37,6 +42,16 @@ public class ProjectController {
   public ResponseEntity<List<Project>> findByIds(@RequestBody List<Integer> ids) {
     List<Project> projects = projectService.findByIds(ids);
     return new ResponseEntity<>(projects, HttpStatus.OK);
+  }
+
+  /**
+   * Find all projects, with paging support
+   *
+   * @param pageRequest page request for the search
+   */
+  @RequestMapping()
+  public ResponseEntity<Page<Project>> findAll(@PageableDefault(page = 0, size = 100) Pageable pageRequest) {
+    return new ResponseEntity<>(projectService.findAll(pageRequest), HttpStatus.OK);
   }
 
   /**
@@ -71,7 +86,7 @@ public class ProjectController {
    */
   @RequestMapping(method = RequestMethod.POST)
   public ResponseEntity<Project> insert(@Valid @RequestBody(required = true) Project project) {
-    return new ResponseEntity<Project>(projectService.insert(project), HttpStatus.OK);
+    return new ResponseEntity<>(projectService.insert(project), HttpStatus.OK);
   }
 
   /**
@@ -82,7 +97,7 @@ public class ProjectController {
    */
   @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
   public ResponseEntity<Project> update(@PathVariable int id, @Valid @RequestBody(required = true) Project project) {
-    return new ResponseEntity<Project>(projectService.update(id, project), HttpStatus.OK);
+    return new ResponseEntity<>(projectService.update(id, project), HttpStatus.OK);
   }
 
   /**

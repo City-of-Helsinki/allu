@@ -8,6 +8,9 @@ import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,9 +52,20 @@ public class CustomerController {
   }
 
   /**
-   * Find customers by their business ids. Several customers may have the same business id.
+   * Find all customers, with paging support
    *
-   * @param businessId  Business id to be searched.
+   * @param pageRequest page request for the search
+   */
+  @RequestMapping()
+  public ResponseEntity<Page<Customer>> findAll(@PageableDefault(page = 0, size = 100) Pageable pageRequest) {
+    return new ResponseEntity<>(customerService.findAll(pageRequest), HttpStatus.OK);
+  }
+
+  /**
+   * Find customers by their business ids. Several customers may have the same
+   * business id.
+   *
+   * @param businessId Business id to be searched.
    * @return list of found customers
    */
   @RequestMapping(value = "/businessid/{businessId}", method = RequestMethod.GET)

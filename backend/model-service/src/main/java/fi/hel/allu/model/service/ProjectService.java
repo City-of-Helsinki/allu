@@ -9,6 +9,8 @@ import fi.hel.allu.model.domain.Location;
 import fi.hel.allu.model.domain.Project;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,10 +56,22 @@ public class ProjectService {
   }
 
   /**
+   * Find all projects, with paging
+   *
+   * @param pageRequest the paging request
+   * @return a page of projects
+   */
+  @Transactional(readOnly = true)
+  public Page<Project> findAll(Pageable pageRequest) {
+    return projectDao.findAll(pageRequest);
+  }
+
+  /**
    * Resolve parent and grandparents of the given project.
    *
-   * @param   projectId   Project id whose parents should be resolved.
-   * @return  List of projects, which has the given project as first item and most grandparent project as last item.
+   * @param projectId Project id whose parents should be resolved.
+   * @return List of projects, which has the given project as first item and
+   *         most grandparent project as last item.
    */
   @Transactional(readOnly = true)
   public List<Project> findProjectParents(Integer projectId) {
