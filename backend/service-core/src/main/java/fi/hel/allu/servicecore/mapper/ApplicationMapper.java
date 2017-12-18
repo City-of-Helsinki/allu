@@ -128,7 +128,7 @@ public class ApplicationMapper {
     applicationJson.setStatus(application.getStatus());
     applicationJson.setType(application.getType());
     applicationJson.setKindsWithSpecifiers(application.getKindsWithSpecifiers());
-    applicationJson.setApplicationTags(createTagJson(application.getApplicationTags()));
+    applicationJson.setApplicationTags(createTagsJson(application.getApplicationTags()));
     applicationJson.setMetadataVersion(application.getMetadataVersion());
     applicationJson.setCreationTime(application.getCreationTime());
     applicationJson.setStartTime(application.getStartTime());
@@ -256,13 +256,17 @@ public class ApplicationMapper {
             .collect(Collectors.toList());
   }
 
-  public List<ApplicationTagJson> createTagJson(List<ApplicationTag> tags) {
+  public List<ApplicationTagJson> createTagsJson(List<ApplicationTag> tags) {
     if (tags == null) {
       return null;
     }
     return tags.stream()
-            .map(t -> new ApplicationTagJson(t.getAddedBy(), t.getType(), t.getCreationTime()))
+            .map(t -> createTagJson(t))
             .collect(Collectors.toList());
+  }
+
+  public ApplicationTagJson createTagJson(ApplicationTag tag) {
+    return new ApplicationTagJson(tag.getAddedBy(), tag.getType(), tag.getCreationTime());
   }
 
   public List<String> createTagES(List<ApplicationTagJson> tagJsons) {

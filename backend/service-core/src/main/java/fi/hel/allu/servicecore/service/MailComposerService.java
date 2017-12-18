@@ -62,11 +62,16 @@ public class MailComposerService {
     String subject = String.format(subjectFor(applicationJson.getType()), applicationJson.getApplicationId());
     List<String> emailRecipients = decisionDetailsJson.getDecisionDistributionList().stream()
         .filter(entry -> entry.getEmail() != null).map(entry -> entry.getEmail()).collect(Collectors.toList());
-    Stream<Attachment> attachments = applicationJson.getAttachmentList().stream()
-        .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())));
-    String messageBody = messageBodyFor(applicationJson, decisionDetailsJson.getMessageBody());
-    alluMailService.sendDecision(applicationJson.getId(), emailRecipients, subject,
-        String.format("%s.pdf", applicationJson.getApplicationId()), messageBody, attachments);
+
+    if (!emailRecipients.isEmpty()) {
+      Stream<Attachment> attachments = applicationJson.getAttachmentList().stream()
+          .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())));
+      String messageBody = messageBodyFor(applicationJson, decisionDetailsJson.getMessageBody());
+      alluMailService.sendDecision(applicationJson.getId(), emailRecipients, subject,
+          String.format("%s.pdf", applicationJson.getApplicationId()), messageBody, attachments);
+    } else {
+      logger.warn("No email recipients");
+    }
   }
 
   private String messageBodyFor(ApplicationJson applicationJson, String accompanyingMessage) {

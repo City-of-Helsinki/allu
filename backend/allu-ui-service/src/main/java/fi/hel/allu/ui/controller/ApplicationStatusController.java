@@ -50,33 +50,35 @@ public class ApplicationStatusController {
     @RequestMapping(value = "/{id}/status/decisionmaking", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
     public ResponseEntity<ApplicationJson> changeStatusToDecisionMaking(
-            @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
+        @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
         commentService.addDecisionProposalComment(id, info);
         return new ResponseEntity<>(applicationServiceComposer.changeStatus(
-            id, StatusType.DECISIONMAKING, info.getHandler()), HttpStatus.OK);
+            id, StatusType.DECISIONMAKING, info), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/decision", method = RequestMethod.PUT)
     @PreAuthorize("@decisionSecurityService.canMakeDecision(#id)")
-    public ResponseEntity<ApplicationJson> changeStatusToDecision(@PathVariable int id) throws IOException {
-    ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.DECISION);
+    public ResponseEntity<ApplicationJson> changeStatusToDecision(
+        @PathVariable int id, @RequestBody StatusChangeInfoJson info) throws IOException {
+        ApplicationJson applicationJson = applicationServiceComposer.changeStatus(id, StatusType.DECISION, info);
         decisionService.generateDecision(id, applicationJson);
-    return new ResponseEntity<>(applicationJson, HttpStatus.OK);
+        return new ResponseEntity<>(applicationJson, HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/rejected", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-    public ResponseEntity<ApplicationJson> changeStatusToRejected(@PathVariable int id, @RequestBody StatusChangeInfoJson changeInfo) {
-        commentService.addRejectComment(id, changeInfo.getComment());
-        return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.REJECTED), HttpStatus.OK);
+    public ResponseEntity<ApplicationJson> changeStatusToRejected(
+        @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
+        commentService.addRejectComment(id, info.getComment());
+        return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.REJECTED, info), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/toPreparation", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_DECISION')")
-    public ResponseEntity<ApplicationJson> changeStatusToReturnedToPreparation(@PathVariable int id, @RequestBody StatusChangeInfoJson changeInfo) {
-        commentService.addReturnComment(id, changeInfo.getComment());
-        return new ResponseEntity<>(applicationServiceComposer.changeStatus(
-            id, StatusType.RETURNED_TO_PREPARATION, changeInfo.getHandler()), HttpStatus.OK);
+    public ResponseEntity<ApplicationJson> changeStatusToReturnedToPreparation(
+        @PathVariable int id, @RequestBody StatusChangeInfoJson info) {
+        commentService.addReturnComment(id, info.getComment());
+        return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.RETURNED_TO_PREPARATION, info), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/finished", method = RequestMethod.PUT)

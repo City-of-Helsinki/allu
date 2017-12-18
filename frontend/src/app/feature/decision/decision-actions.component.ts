@@ -15,6 +15,7 @@ import {ApplicationStore} from '../../service/application/application-store';
 import {StatusChangeInfo} from '../../model/application/status-change-info';
 import {Some} from '../../util/option';
 import {DecisionDetails} from '../../model/decision/decision-details';
+import {DistributionType} from '../../model/common/distribution-type';
 
 
 @Component({
@@ -40,10 +41,12 @@ export class DecisionActionsComponent {
   }
 
   public decision(status: string): void {
-    const dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, DECISION_MODAL_CONFIG);
-    const component = dialogRef.componentInstance;
-    component.status = status;
-    component.distributionList = this.application.decisionDistributionList;
+    const config = {...DECISION_MODAL_CONFIG};
+    config.data.status = ApplicationStatus[status];
+    config.data.distributionList = this.application.decisionDistributionList;
+    config.data.distributionType = DistributionType[this.application.decisionDistributionType];
+
+    const dialogRef = this.dialog.open<DecisionModalComponent>(DecisionModalComponent, config);
     dialogRef.afterClosed()
       .subscribe((result: DecisionConfirmation) => this.decisionConfirmed(result));
   }

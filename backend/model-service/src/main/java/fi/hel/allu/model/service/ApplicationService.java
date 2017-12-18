@@ -187,6 +187,18 @@ public class ApplicationService {
   }
 
   /**
+   * Add single tag to application
+   *
+   * @param applicationId Application's database ID
+   * @param tag Tag to add
+   * @return added tag
+   */
+  @Transactional
+  public ApplicationTag addTag(int applicationId, ApplicationTag tag) {
+    return applicationDao.addTag(applicationId, tag);
+  }
+
+  /**
    * Update (replace) applications tags with new ones
    * @param applicationId Id of the application to be changed.
    * @param tags New tags

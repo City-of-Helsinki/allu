@@ -1,3 +1,5 @@
+@import '../../../assets/colors';
+
 .modal-footer {
   .btn, .btn-flat {
     float: right;
@@ -8,6 +10,7 @@
 h2 {
   font-size: 16px;
   font-weight: normal;
-  margin: 0 0 20px;
+  margin: 0;
   display: block;
+  color: mat-color($allu-primary, 500);
 }

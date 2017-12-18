@@ -17,6 +17,7 @@ import org.springframework.web.client.RestTemplate;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -109,6 +110,22 @@ public class ApplicationService {
   }
 
   /**
+   * Adds single tag to given application
+   * @param id Id of the application.
+   * @param tagJson new tag to be added
+   * @return added tag
+   */
+  public ApplicationTagJson addTag(int id, ApplicationTagJson tagJson) {
+    UserJson currentUser = userService.getCurrentUser();
+    return Optional.of(tagJson)
+        .map(t -> tagWithUserInfo(currentUser, tagJson))
+        .map(t -> new ApplicationTag(t.getAddedBy(), t.getType(), t.getCreationTime()))
+        .map(t -> restTemplate.postForEntity(applicationProperties.getTagUrl(), t, ApplicationTag.class, id))
+        .map(response -> applicationMapper.createTagJson(response.getBody()))
+        .get();
+  }
+
+  /**
    * Update (replace) applications tags with new ones
    * @param id Id of the application to be changed.
    * @param tags New tags
@@ -125,7 +142,7 @@ public class ApplicationService {
             new HttpEntity<>(tagsWithUserInfo),
             ApplicationTag[].class,
             id);
-    return applicationMapper.createTagJson(Arrays.asList(response.getBody()));
+    return applicationMapper.createTagsJson(Arrays.asList(response.getBody()));
   }
 
   /**
@@ -137,7 +154,7 @@ public class ApplicationService {
   public List<ApplicationTagJson> findTagsByApplicationId(int id) {
     ResponseEntity<ApplicationTag[]> tagsResult = restTemplate.getForEntity(
         applicationProperties.getTagsUrl(), ApplicationTag[].class, id);
-    return applicationMapper.createTagJson(Arrays.asList(tagsResult.getBody()));
+    return applicationMapper.createTagsJson(Arrays.asList(tagsResult.getBody()));
   }
 
   /**

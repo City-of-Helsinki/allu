@@ -48,7 +48,9 @@ public enum ApplicationTagType {
   // työn valmistuminen hyväksytty
   WORK_READY_ACCEPTED(WORK_READY_REPORTED, WORK_READY_REJECTED),
   // laskutettavan sap-tunnus ei tiedossa
-  SAP_ID_MISSING;
+  SAP_ID_MISSING,
+  // Päätös lähettämättä
+  DECISION_NOT_SENT;
 
   private List<ApplicationTagType> replaces;
 

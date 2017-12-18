@@ -2,6 +2,7 @@ package fi.hel.allu.servicecore.service;
 
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.DistributionType;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
@@ -13,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
+import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -191,13 +194,15 @@ public class ApplicationServiceComposer {
    * Change application's status to new status
    * @param applicationId application to change
    * @param newStatus new status for application
-   * @param newHandler assign application to new handler
+   * @param info additional info for status change
    * @return updated application
    */
-  public ApplicationJson changeStatus(int applicationId, StatusType newStatus, Integer newHandler) {
+  public ApplicationJson changeStatus(int applicationId, StatusType newStatus, StatusChangeInfoJson info) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
-    changeHandlerOnStatusChange(application, newHandler);
+    Optional.ofNullable(info)
+        .map(StatusChangeInfoJson::getHandler)
+        .ifPresent(handler -> changeHandlerOnStatusChange(application, handler));
 
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
 
@@ -260,14 +265,17 @@ public class ApplicationServiceComposer {
    * @param applicationId        the application's Id.
    * @param decisionDetailsJson  details about the decision
    */
-  public void sendDecision(int applicationId, DecisionDetailsJson decisionDetailsJson)
-  {
+  public void sendDecision(int applicationId, DecisionDetailsJson decisionDetailsJson) {
     ApplicationJson applicationJson = replaceDistributionList(applicationId,
         decisionDetailsJson.getDecisionDistributionList());
+
+    if (DistributionType.PAPER.equals(applicationJson.getDecisionDistributionType())) {
+      ApplicationTagJson tag = new ApplicationTagJson(null, ApplicationTagType.DECISION_NOT_SENT, ZonedDateTime.now());
+      applicationService.addTag(applicationId, tag);
+    }
+
     mailComposerService.sendDecision(applicationJson, decisionDetailsJson);
   }
-
-
 
   /*
    * Replaces distribution list of an application.

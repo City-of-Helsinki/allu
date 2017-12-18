@@ -192,7 +192,8 @@ export const translations = {
         WORK_READY_REPORTED: 'Työn valmistuminen ilmoitettu',
         WORK_READY_ACCEPTED: 'Työn valmistuminen hyväksytty',
         WORK_READY_REJECTED: 'Työn valmistuminen hylätty',
-        SAP_ID_MISSING: 'Laskutettavan SAP-tunnus puuttuu'
+        SAP_ID_MISSING: 'Laskutettavan SAP-tunnus puuttuu',
+        DECISION_NOT_SENT: 'Päätös lähettämättä'
       },
       action: {
         PRELIMINARY_SUPERVISION_REQUESTED: 'Aloitusvalvontapyyntö',

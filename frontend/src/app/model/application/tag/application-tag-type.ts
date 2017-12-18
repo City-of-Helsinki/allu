@@ -38,7 +38,9 @@ export enum ApplicationTagType {
   // työn valmistuminen hyväksytty
   WORK_READY_ACCEPTED,
   // laskutettavan sap-tunnus ei tiedossa
-  SAP_ID_MISSING
+  SAP_ID_MISSING,
+  // Päätös lähettämättä
+  DECISION_NOT_SENT
 }
 
 export const manualTagTypes = [
@@ -46,5 +48,6 @@ export const manualTagTypes = [
   ApplicationTagType.ADDITIONAL_INFORMATION_REQUESTED,
   ApplicationTagType.STATEMENT_REQUESTED,
   ApplicationTagType.COMPENSATION_CLARIFICATION,
-  ApplicationTagType.PAYMENT_BASIS_CORRECTION
+  ApplicationTagType.PAYMENT_BASIS_CORRECTION,
+  ApplicationTagType.DECISION_NOT_SENT
 ];

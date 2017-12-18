@@ -447,15 +447,18 @@ public class ApplicationDao {
    * Add single tag to application
    *
    * @param applicationId Application's database ID
-   * @param applicationTag Tag to add
+   * @param tag Tag to add
+   * @return existing tag if there is one, otherwise added tag
    */
   @Transactional
-  public void addTag(int applicationId, ApplicationTag tag) {
-    if (queryFactory.select(applicationTag.all()).from(applicationTag)
+  public ApplicationTag addTag(int applicationId, ApplicationTag tag) {
+    ApplicationTag existing = queryFactory.select(applicationTagBean)
+        .from(applicationTag)
         .where(applicationTag.applicationId.eq(applicationId).and(applicationTag.type.eq(tag.getType())))
-        .fetchCount() == 0) {
-      insertSingleTag(applicationId, tag);
-    }
+        .fetchFirst();
+
+    return Optional.ofNullable(existing)
+        .orElseGet(() -> insertSingleTag(applicationId, tag));
   }
 
   /**
@@ -524,9 +527,10 @@ public class ApplicationDao {
     }
   }
 
-  private void insertSingleTag(int applicationId, ApplicationTag tag) {
+  private ApplicationTag insertSingleTag(int applicationId, ApplicationTag tag) {
     tag.setApplicationId(applicationId);
-    queryFactory.insert(applicationTag).populate(tag).execute();
+    Integer id = queryFactory.insert(applicationTag).populate(tag).executeWithKey(applicationTag.id);
+    return queryFactory.select(applicationTagBean).from(applicationTag).where(applicationTag.id.eq(id)).fetchOne();
   }
 
   private void replaceRecurringPeriods(Application application) {

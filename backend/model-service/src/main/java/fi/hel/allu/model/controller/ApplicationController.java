@@ -145,6 +145,17 @@ public class ApplicationController {
   }
 
   /**
+   * Add single tag to application
+   *
+   * @param id Application's database ID
+   * @param tag Tag to add
+   */
+  @RequestMapping(value = "/{id}/tag", method = RequestMethod.POST)
+  public ResponseEntity<ApplicationTag> addTag(@PathVariable int id, @RequestBody ApplicationTag tag) {
+    return new ResponseEntity<>(applicationService.addTag(id, tag), HttpStatus.OK);
+  }
+
+  /**
    * Update (replace) applications tags with new ones
    * @param id Id of the application to be changed.
    * @param tags New tags

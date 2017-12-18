@@ -1,5 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import {MatDialogRef} from '@angular/material';
+import {Component, Inject, Input, OnInit} from '@angular/core';
+import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {DistributionEntry} from '../../model/common/distribution-entry';
@@ -11,8 +11,22 @@ import {RoleType} from '../../model/user/role-type';
 import {ApplicationStore} from '../../service/application/application-store';
 import {UserSearchCriteria} from '../../model/user/user-search-criteria';
 import {ArrayUtil} from '../../util/array-util';
+import {DistributionType} from '../../model/common/distribution-type';
 
-export const DECISION_MODAL_CONFIG = {width: '800px'};
+interface DecisionModalData {
+  status: ApplicationStatus;
+  distributionList: Array<DistributionEntry>;
+  distributionType: DistributionType;
+}
+
+export const DECISION_MODAL_CONFIG = {
+  width: '800px',
+  data: {
+    status: undefined,
+    distributionList: [],
+    distributionType: DistributionType.EMAIL
+  }
+};
 
 export interface DecisionConfirmation {
   status: ApplicationStatus;
@@ -28,8 +42,10 @@ export interface DecisionConfirmation {
   styleUrls: ['./decision-modal.component.scss']
 })
 export class DecisionModalComponent implements OnInit {
-  @Input() status: string;
-  @Input() distributionList: Array<DistributionEntry> = [];
+  status: string;
+  distributionList: Array<DistributionEntry>;
+  emailDistribution: boolean;
+  handlerSelection: boolean;
 
   decisionForm: FormGroup;
 
@@ -38,6 +54,7 @@ export class DecisionModalComponent implements OnInit {
   constructor(private dialogRef: MatDialogRef<DecisionModalComponent>,
               private userHub: UserHub,
               private applicationStore: ApplicationStore,
+              @Inject(MAT_DIALOG_DATA) public data: DecisionModalData,
               private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -46,11 +63,13 @@ export class DecisionModalComponent implements OnInit {
       emailMessage: ['']
     });
 
-    if (ApplicationStatus.RETURNED_TO_PREPARATION === ApplicationStatus[this.status]) {
-      this.handlers = this.userHub.getByRole(RoleType.ROLE_PROCESS_APPLICATION);
-      this.decisionForm.addControl('handler', this.fb.control(undefined, Validators.required));
-      this.preferredHandler().subscribe(preferred => this.decisionForm.patchValue({handler: preferred.id}));
-    }
+    this.status = ApplicationStatus[this.data.status];
+    this.distributionList = this.data.distributionList;
+    this.emailDistribution = DistributionType.EMAIL === this.data.distributionType;
+    this.handlerSelection = DistributionType.PAPER === this.data.distributionType
+      || this.data.status === ApplicationStatus.RETURNED_TO_PREPARATION;
+
+    this.initHandlers(this.handlerSelection);
   }
 
   confirm() {
@@ -72,6 +91,14 @@ export class DecisionModalComponent implements OnInit {
   private decisionDistribution(): Array<DistributionEntry> {
     return this.decisionForm.value.distributionRows
       .map(d => DistributionEntryForm.to(d));
+  }
+
+  private initHandlers(handlerSelection: boolean): void {
+    if (handlerSelection) {
+      this.handlers = this.userHub.getByRole(RoleType.ROLE_PROCESS_APPLICATION);
+      this.decisionForm.addControl('handler', this.fb.control(undefined, Validators.required));
+      this.preferredHandler().subscribe(preferred => this.decisionForm.patchValue({handler: preferred.id}));
+    }
   }
 
   private preferredHandler(): Observable<User> {
