@@ -6,7 +6,7 @@
           <div fxLayout="row" fxFlexAlign="space-between">
             <div fxFlex>
               {{'invoice.info.address' | translation}}
-              <button mat-icon-button type="button" class="align-with-text" *ngIf="canBeEdited()" (click)="editCustomer()">
+              <button mat-icon-button type="button" class="align-with-text" *ngIf="customerCanBeEdited()" (click)="editCustomer()">
                 <mat-icon>mode_edit</mat-icon>
               </button>
             </div>

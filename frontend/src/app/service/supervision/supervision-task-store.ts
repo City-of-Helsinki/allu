@@ -4,12 +4,14 @@ import {Observable} from 'rxjs/Observable';
 import {SupervisionTask} from '../../model/application/supervision/supervision-task';
 import {HttpResponse} from '../../util/http-response';
 import {SupervisionTaskService} from './supervision-task.service';
+import {ApplicationStore} from '../application/application-store';
 
 @Injectable()
 export class SupervisionTaskStore {
   private tasks$ = new BehaviorSubject<Array<SupervisionTask>>([]);
 
-  constructor(private supervisionTaskService: SupervisionTaskService) {
+  constructor(private supervisionTaskService: SupervisionTaskService,
+              private applicationStore: ApplicationStore) {
   }
 
   get tasks(): Observable<Array<SupervisionTask>> {
@@ -24,21 +26,25 @@ export class SupervisionTaskStore {
   saveTask(applicationId: number, task: SupervisionTask): Observable<SupervisionTask> {
     task.applicationId = applicationId;
     return this.supervisionTaskService.save(task)
-      .do(saved => this.loadTasks(applicationId));
+      .do(() => this.loadTasks(applicationId))
+      .do(() => this.applicationStore.load(applicationId).subscribe());
   }
 
   removeTask(applicationId: number, taskId: number): Observable<HttpResponse> {
     return this.supervisionTaskService.remove(taskId)
-      .do(response => this.loadTasks(applicationId));
+      .do(() => this.loadTasks(applicationId))
+      .do(() => this.applicationStore.load(applicationId).subscribe());
   }
 
   approve(task: SupervisionTask): Observable<SupervisionTask> {
     return this.supervisionTaskService.approve(task)
-      .do(saved => this.loadTasks(task.applicationId));
+      .do(() => this.loadTasks(task.applicationId))
+      .do(() => this.applicationStore.load(task.applicationId).subscribe());
   }
 
   reject(task: SupervisionTask, newSupervisionDate: Date): Observable<SupervisionTask> {
     return this.supervisionTaskService.reject(task, newSupervisionDate)
-      .do(saved => this.loadTasks(task.applicationId));
+      .do(() => this.loadTasks(task.applicationId))
+      .do(() => this.applicationStore.load(task.applicationId).subscribe());
   }
 }

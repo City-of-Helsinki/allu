@@ -30,12 +30,10 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
     // login page is handling also logout in case user navigates to login page with logout URL
-    UrlUtil.urlPathContains(this.route, 'logout')
-      .filter(logout => logout)
-      .subscribe(logout =>  {
-        this.authentication.logout();
-        this.showLogoutInfo = true;
-      });
+    if (UrlUtil.urlPathContains(this.route, 'logout')) {
+      this.authentication.logout();
+      this.showLogoutInfo = true;
+    }
   }
 }
 

@@ -120,18 +120,14 @@ describe('ContactComponent', () => {
     expect(getMdIconButton(page.contacts[0], 'clear')).toBeUndefined();
   }));
 
-  it('should show edit button when application is in edit mode', fakeAsync(() => {
+  it('should show edit button always', fakeAsync(() => {
     comp.readonly = false;
     detectChangesAndUpdate();
-    const editBtn = getMdIconButton(page.contacts[0], 'mode_edit');
-    expect(editBtn).toBeDefined();
-  }));
+    expect(getMdIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
 
-  it('should hide edit button when application is in summary mode', fakeAsync(() => {
-    comp.readonly = true;
+    comp.readonly = false;
     detectChangesAndUpdate();
-    const editBtn = getMdIconButton(page.contacts[0], 'mode_edit');
-    expect(editBtn).toBeUndefined();
+    expect(getMdIconButton(page.contacts[0], 'mode_edit')).toBeDefined();
   }));
 
   it('should clear other fields when name is edited', fakeAsync(() => {

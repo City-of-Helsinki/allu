@@ -20,6 +20,7 @@ import {NotificationService} from '../../../../service/notification/notification
 import {Deposit} from '../../../../model/application/invoice/deposit';
 import {ObjectUtil} from '../../../../util/object.util';
 import {DepositStatusType} from '../../../../model/application/invoice/deposit-status-type';
+import {applicationCanBeEdited} from '../../../../model/application/application-status';
 
 @Component({
   selector: 'invoicing-info',
@@ -99,7 +100,7 @@ export class InvoicingInfoComponent implements OnInit {
     return !this.notBillableCtrl.value;
   }
 
-  canBeEdited(): boolean {
+  customerCanBeEdited(): boolean {
     return NumberUtil.isDefined(this.recipientForm.value.id) && this.billable;
   }
 
@@ -115,6 +116,10 @@ export class InvoicingInfoComponent implements OnInit {
         notBillable: app.notBillable,
         notBillableReason: app.notBillableReason
       });
+
+      if (!applicationCanBeEdited(app.statusEnum)) {
+        this.form.disable();
+      }
     });
 
     this.applicationStore.deposit

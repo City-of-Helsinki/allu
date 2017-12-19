@@ -5,7 +5,7 @@ import {Application} from '../../../model/application/application';
 import {ApplicationStore} from '../../../service/application/application-store';
 import {UrlUtil} from '../../../util/url.util';
 import {ApplicationForm} from './application-form';
-import {ApplicationStatus, canBeEdited} from '../../../model/application/application-status';
+import {ApplicationStatus, applicationCanBeEdited} from '../../../model/application/application-status';
 import {NotificationService} from '../../../service/notification/notification.service';
 import {findTranslation} from '../../../util/translations';
 import {Some} from '../../../util/option';
@@ -43,11 +43,8 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
 
-    UrlUtil.urlPathContains(this.route.parent, 'summary')
-      .filter(contains => contains)
-      .forEach(summary => {
-        this.readonly = summary || !canBeEdited(this.applicationStore.snapshot.application.statusEnum);
-      });
+    this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary')
+      || !applicationCanBeEdited(this.applicationStore.snapshot.application.statusEnum);
 
     this.applicationChanges = this.applicationStore.application;
 

@@ -59,20 +59,16 @@ export class ApplicationComponent implements OnInit, OnDestroy {
     Some(application.id).do(id => this.supervisionTaskStore.loadTasks(id));
     this.verifyTypeExists(ApplicationType[application.type]);
 
-    UrlUtil.urlPathContains(this.route, 'summary')
+    this.readonly = UrlUtil.urlPathContains(this.route, 'summary');
+    this.progressStep = stepFrom(ApplicationStatus[application.status], this.readonly);
+
+    this.defaultAttachmentsForArea(application)
       .takeUntil(this.destroy)
-      .forEach(summary => {
-        this.readonly = summary;
-        this.progressStep = stepFrom(ApplicationStatus[application.status], summary);
+      .subscribe(
+        attachments => attachments.forEach(a => this.applicationStore.addAttachment(a)),
+        err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
 
-        this.defaultAttachmentsForArea(application)
-          .takeUntil(this.destroy)
-          .subscribe(
-            attachments => attachments.forEach(a => this.applicationStore.addAttachment(a)),
-            err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
-
-        this.sidebarItems = this.createSidebar(application.typeEnum, summary);
-      });
+    this.sidebarItems = this.createSidebar(application.typeEnum, this.readonly);
   }
 
   private verifyTypeExists(type: ApplicationType) {

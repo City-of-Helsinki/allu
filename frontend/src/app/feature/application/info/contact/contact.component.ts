@@ -64,7 +64,7 @@ export class ContactComponent implements OnInit {
   }
 
   canBeEdited(contact: Contact): boolean {
-    return NumberUtil.isDefined(contact.id) && !this.readonly;
+    return NumberUtil.isDefined(contact.id);
   }
 
   canBeRemoved(): boolean {

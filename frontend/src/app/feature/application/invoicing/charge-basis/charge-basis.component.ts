@@ -12,6 +12,8 @@ import {ChargeBasisType} from '../../../../model/application/invoice/charge-basi
 import {ChargeBasisUnit} from '../../../../model/application/invoice/charge-basis-unit';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {Subject} from 'rxjs/Subject';
+import {Application} from '../../../../model/application/application';
+import {applicationCanBeEdited} from '../../../../model/application/application-status';
 
 
 @Component({
@@ -24,7 +26,8 @@ import {Subject} from 'rxjs/Subject';
 export class ChargeBasisComponent implements OnInit, OnDestroy {
   form: FormGroup;
   chargeBasisEntries: FormArray;
-  calculatedPrice: Observable<number>;
+  calculatedPrice: number;
+  canBeEdited = true;
 
   private dialogRef: MatDialogRef<ChargeBasisEntryModalComponent>;
   private destroy = new Subject<boolean>();
@@ -42,14 +45,11 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.applicationStore.application
       .takeUntil(this.destroy)
-      .switchMap(app => this.invoiceHub.loadChargeBasisEntries(app.id))
-      .subscribe(entries => {}, error => NotificationService.error(error));
+      .subscribe(app => this.onApplicationChange(app));
 
     this.invoiceHub.chargeBasisEntries
       .takeUntil(this.destroy)
       .subscribe(entries => this.entriesUpdated(entries));
-
-    this.calculatedPrice = this.applicationStore.application.map(app => app.calculatedPriceEuro);
   }
 
   ngOnDestroy(): void {
@@ -87,6 +87,15 @@ export class ChargeBasisComponent implements OnInit, OnDestroy {
   showMinimal(value: ChargeBasisEntryForm): boolean {
     return value.type === ChargeBasisType[ChargeBasisType.DISCOUNT]
       || value.unit === ChargeBasisUnit[ChargeBasisUnit.PERCENT];
+  }
+
+  private onApplicationChange(app: Application): void {
+    this.calculatedPrice = app.calculatedPriceEuro;
+    this.canBeEdited = applicationCanBeEdited(app.statusEnum);
+
+    this.invoiceHub.loadChargeBasisEntries(app.id)
+      .takeUntil(this.destroy)
+      .subscribe(() => {}, error => NotificationService.error(error));
   }
 
   private entriesUpdated(entries: Array<ChargeBasisEntry>): void {

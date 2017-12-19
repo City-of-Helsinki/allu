@@ -63,7 +63,7 @@ export class CustomerComponent implements OnInit, OnDestroy {
   }
 
   canBeEdited(): boolean {
-    return !this.readonly && Some(this.customerForm.value).map(val => val.id).orElse(false);
+    return Some(this.customerForm.value).map(val => val.id).orElse(false);
   }
 
   edit(): void {
