@@ -57,7 +57,9 @@ public class CustomerController {
    * @param pageRequest page request for the search
    */
   @RequestMapping()
-  public ResponseEntity<Page<Customer>> findAll(@PageableDefault(page = 0, size = 100) Pageable pageRequest) {
+  public ResponseEntity<Page<Customer>> findAll(
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+      Pageable pageRequest) {
     return new ResponseEntity<>(customerService.findAll(pageRequest), HttpStatus.OK);
   }
 

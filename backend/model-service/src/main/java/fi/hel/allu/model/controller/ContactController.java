@@ -49,7 +49,9 @@ public class ContactController {
    * @param pageRequest page request for the search
    */
   @RequestMapping()
-  public ResponseEntity<Page<Contact>> findAll(@PageableDefault(page = 0, size = 100) Pageable pageRequest) {
+  public ResponseEntity<Page<Contact>> findAll(
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+      Pageable pageRequest) {
     return new ResponseEntity<>(customerService.findAllContacts(pageRequest), HttpStatus.OK);
   }
 

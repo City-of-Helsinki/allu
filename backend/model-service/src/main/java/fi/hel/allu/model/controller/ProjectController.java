@@ -50,7 +50,9 @@ public class ProjectController {
    * @param pageRequest page request for the search
    */
   @RequestMapping()
-  public ResponseEntity<Page<Project>> findAll(@PageableDefault(page = 0, size = 100) Pageable pageRequest) {
+  public ResponseEntity<Page<Project>> findAll(
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+      Pageable pageRequest) {
     return new ResponseEntity<>(projectService.findAll(pageRequest), HttpStatus.OK);
   }
 
