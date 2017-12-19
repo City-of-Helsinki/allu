@@ -224,6 +224,9 @@ export const translations = {
       invoiceRecipientMissing: 'Laskutettavaa asiakasta ei ole valittu'
     },
     common: {
+      startTime: 'Voimassaolon aloitus',
+      endTime: 'Voimassaolon lopetus',
+      area: 'Pinta-ala',
       field: {
         validityStartTimeMissing: 'Voimassaolon aloitus puuttuu',
         validityEndTimeMissing: 'Voimassaolon lopetus puuttuu',
@@ -266,6 +269,11 @@ export const translations = {
       }
     },
     shortTermRental: {
+      info: 'Vuokrauksen tiedot',
+      name: 'Vuokrauksen nimi',
+      description: 'Vuokrauksen kuvaus',
+      commercial: 'Kaupallinen',
+      nonCommercial: 'Ei kaupallinen',
       field: {
         descriptionMissing: 'Vuokrauksen kuvaus puuttuu',
         rentalStartTimeMissing: 'Vuokrauksen alkuaika puuttuu',

@@ -1,113 +1,123 @@
 <form [formGroup]="applicationForm" (ngSubmit)="onSubmit(applicationForm)" *ngIf="applicationChanges | async as application">
-    <div class="row">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
-                  [readonly]="readonly" [showRepresentative]="true" [contactRequired]="!hasRepresentative"></customer>
-    </div>
+  <div class="row">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.applicant"
+              [readonly]="readonly" [showRepresentative]="true" [contactRequired]="!hasRepresentative"></customer>
+  </div>
 
-    <div class="row" *ngIf="hasRepresentative">
-        <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative" [readonly]="readonly"></customer>
-    </div>
+  <div class="row" *ngIf="hasRepresentative">
+    <customer [parentForm]="applicationForm" [customerWithContacts]="application.representative" [readonly]="readonly"></customer>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-        <mat-card>
-            <mat-card-title>Vuokrauksen tiedot</mat-card-title>
-            <mat-card-content>
-                <div class="row form-group">
-                    <div class="col m6">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="text" formControlName="name" placeholder="Vuokrauksen nimi*"/>
-                            <mat-hint>
-                                <field-error [form]="applicationForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
-                                <field-error [form]="applicationForm" field="name" hasError="minlength">{{'application.field.nameShort' | translation}}</field-error>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-                    <div class="col m6">
-                        <mat-form-field class="input-full-width">
-                            <textarea matInput matTextareaAutosize formControlName="description" placeholder="Vuokrauksen kuvaus*"></textarea>
-                            <mat-hint>
-                                <field-error [form]="applicationForm" field="description" hasError="required">
-                                    {{'application.shortTermRental.field.descriptionMissing' | translation}}
-                                </field-error>
-                            </mat-hint>
-                        </mat-form-field>
-                    </div>
-                    <div formGroupName="rentalTimes">
-                        <div class="col m3">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä*"
-                                       [matDatepicker]="startTimePicker"/>
-                                <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                <mat-datepicker #startTimePicker></mat-datepicker>
-                                <mat-hint>
-                                    <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
-                                        {{'application.shortTermRental.field.rentalStartTimeMissing' | translation}}
-                                    </field-error>
-                                    <field-error [form]="applicationForm" field="rentalTimes" hasError="startBeforeEnd">
-                                        {{'application.shortTermRental.field.startBeforeEnd' | translation}}
-                                    </field-error>
-                                </mat-hint>
-                            </mat-form-field>
-                        </div>
-                        <div class="col m3">
-                            <mat-form-field class="input-full-width">
-                                <input matInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä*"
-                                       [matDatepicker]="endTimePicker"/>
-                                <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
-                                <mat-datepicker #endTimePicker></mat-datepicker>
-                                <mat-hint>
-                                    <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
-                                        {{'application.shortTermRental.field.rentalEndTimeMissing' | translation}}
-                                    </field-error>
-                                </mat-hint>
-                            </mat-form-field>
-                        </div>
-                    </div>
-                    <div class="col m6">
-                        <mat-form-field class="input-full-width">
-                            <input matInput type="number" formControlName="area" placeholder="Pinta-ala"/>
-                        </mat-form-field>
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
+  <div class="row">
+    <div class="col m12">
+      <mat-card>
+        <mat-card-title>{{'application.shortTermRental.info' | translation}}</mat-card-title>
+        <mat-card-content>
+          <div class="row form-group">
+            <div class="col m6">
+              <mat-form-field class="input-full-width">
+                <input matInput type="text" formControlName="name" required
+                       [placeholder]="'application.shortTermRental.name' | translation"/>
+                <mat-hint>
+                  <field-error [form]="applicationForm" field="name" hasError="required">{{'application.field.nameMissing' | translation}}</field-error>
+                  <field-error [form]="applicationForm" field="name" hasError="minlength">{{'application.field.nameShort' | translation}}</field-error>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div class="col m6">
+              <mat-form-field class="input-full-width">
+                            <textarea matInput matTextareaAutosize formControlName="description" required
+                                      [placeholder]="'application.shortTermRental.description' | translation"></textarea>
+                <mat-hint>
+                  <field-error [form]="applicationForm" field="description" hasError="required">
+                    {{'application.shortTermRental.field.descriptionMissing' | translation}}
+                  </field-error>
+                </mat-hint>
+              </mat-form-field>
+            </div>
+            <div formGroupName="rentalTimes">
+              <div class="col m3">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="startTime" required
+                         [placeholder]="'application.common.startTime' | translation"
+                         [matDatepicker]="startTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="startTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #startTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm.get('rentalTimes')" field="startTime" hasError="required">
+                      {{'application.common.field.validityStartTimeMissing' | translation}}
+                    </field-error>
+                    <field-error [form]="applicationForm" field="rentalTimes" hasError="startBeforeEnd">
+                      {{'application.common.field.validityStartBeforeEnd' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+              <div class="col m3">
+                <mat-form-field class="input-full-width">
+                  <input matInput type="text" formControlName="endTime" required
+                         [placeholder]="'application.common.endTime' | translation"
+                         [matDatepicker]="endTimePicker"/>
+                  <mat-datepicker-toggle matSuffix [for]="endTimePicker" [disabled]="readonly"></mat-datepicker-toggle>
+                  <mat-datepicker #endTimePicker></mat-datepicker>
+                  <mat-hint>
+                    <field-error [form]="applicationForm.get('rentalTimes')" field="endTime" hasError="required">
+                      {{'application.common.field.validityEdntTimeMissing' | translation}}
+                    </field-error>
+                  </mat-hint>
+                </mat-form-field>
+              </div>
+            </div>
+            <div class="col m6">
+              <mat-form-field class="input-full-width">
+                <input matInput type="number" formControlName="area"
+                       [placeholder]="'application.common.area' | translation"/>
+              </mat-form-field>
+            </div>
+            <div class="col m6" *ngIf="showCommercial">
+              <mat-slide-toggle formControlName="commercial">
+                {{commercialLabel | translation}}
+              </mat-slide-toggle>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
     </div>
-    </div>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-            <pricing-info [form]="applicationForm" [kind]="application.kind"></pricing-info>
-        </div>
+  <div class="row">
+    <div class="col m12">
+      <pricing-info [form]="applicationForm" [kind]="application.kind"></pricing-info>
     </div>
+  </div>
 
-    <div class="row" *ngIf="readonly">
-        <div class="col m12">
-            <location-details [application]="application" [readonly]="readonly"></location-details>
-        </div>
+  <div class="row" *ngIf="readonly">
+    <div class="col m12">
+      <location-details [application]="application" [readonly]="readonly"></location-details>
     </div>
+  </div>
 
-    <div class="row" *ngIf="showTerms">
-        <div class="col m12">
-            <terms [form]="applicationForm"
-                   [applicationType]="application.typeEnum"
-                   [terms]="application.extension.terms"
-                   [readonly]="readonly"></terms>
-        </div>
+  <div class="row" *ngIf="showTerms">
+    <div class="col m12">
+      <terms [form]="applicationForm"
+             [applicationType]="application.typeEnum"
+             [terms]="application.extension.terms"
+             [readonly]="readonly"></terms>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-            <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
-        </div>
+  <div class="row">
+    <div class="col m12">
+      <distribution [form]="applicationForm" [application]="application" [readonly]="readonly"></distribution>
     </div>
+  </div>
 
-    <div class="row">
-        <div class="col m12">
-            <application-actions
-                [readonly]="readonly"
-                [form]="applicationForm"
-                [submitPending]="submitPending"></application-actions>
-        </div>
+  <div class="row">
+    <div class="col m12">
+      <application-actions
+        [readonly]="readonly"
+        [form]="applicationForm"
+        [submitPending]="submitPending"></application-actions>
     </div>
+  </div>
 </form>
