@@ -293,6 +293,19 @@ public class GenericSearchService<T> {
     }
   }
 
+  /**
+   * Cancel sync: delete the temporary index and go to "sync not active" state
+   */
+  public void cancelSync() {
+    if (indexConductor.tryDeactivateSync()) {
+      try {
+        deleteIndex(indexConductor.getTempIndexName());
+      } finally {
+        indexConductor.setSyncPassive();
+      }
+    }
+  }
+
   /* Reindex data from one index to another */
   private void reindex(String fromIndexName, String toIndexName) {
     ReindexAction.INSTANCE.newRequestBuilder(client).source(fromIndexName).destination(toIndexName).get();

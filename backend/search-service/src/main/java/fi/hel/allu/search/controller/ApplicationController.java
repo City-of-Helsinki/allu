@@ -66,4 +66,28 @@ public class ApplicationController {
   public ResponseEntity<List<Integer>> search(@Valid @RequestBody QueryParameters queryParameters) {
     return new ResponseEntity<>(applicationSearchService.findByField(queryParameters), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/sync/start", method = RequestMethod.POST)
+  public ResponseEntity<Void> startSync() {
+    applicationSearchService.prepareSync();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/sync/commit", method = RequestMethod.POST)
+  public ResponseEntity<Void> commitSync() {
+    applicationSearchService.endSync();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/sync/cancel", method = RequestMethod.POST)
+  public ResponseEntity<Void> cancelSync() {
+    applicationSearchService.cancelSync();
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
+  @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
+  public ResponseEntity<Void> syncData(@Valid @RequestBody List<ApplicationES> applicationESs) {
+    applicationSearchService.syncData(applicationESs);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

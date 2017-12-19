@@ -71,4 +71,11 @@ public class ContactController {
   public ResponseEntity<List<Integer>> search(@Valid @RequestBody QueryParameters queryParameters) {
     return new ResponseEntity<>(contactSearchService.findByField(queryParameters), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
+  public ResponseEntity<Void> syncData(@Valid @RequestBody List<ContactES> contactESs) {
+    contactSearchService.syncData(contactESs);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 }
