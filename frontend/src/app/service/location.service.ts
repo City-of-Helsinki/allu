@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {Geocoordinates} from '../model/common/geocoordinates';
 import {GeocoordinatesMapper} from './mapper/geocoordinates-mapper';
-import {StreetAddress} from '../model/common/street-address';
+import {DEFAULT_STREET_AREA_NUMBER, StreetAddress} from '../model/common/street-address';
 import {MapUtil} from './map/map.util';
 import {UIStateHub} from './ui-state/ui-state-hub';
 import {HttpUtil} from './../util/http.util';
@@ -33,9 +33,8 @@ export class LocationService {
     private uiState: UIStateHub) {}
 
   public geocode(address: string): Observable<Option<Geocoordinates>> {
-    const searchUrl = this.geocodeUrl(address);
-
-    return this.authHttp.get(searchUrl)
+    return this.authHttp.get(this.geocodeUrl(address))
+      .catch(error => this.handleNotFound(error, address))
       .map(response => response.json())
       .map(response => GeocoordinatesMapper.mapBackend(response, this.mapService))
       .map(coordinates => Some(coordinates))
@@ -64,11 +63,18 @@ export class LocationService {
       .catch(err => this.uiState.addError(HttpUtil.extractMessage(err)));
   }
 
-  private geocodeUrl(address: string) {
-    const streetAddress = StreetAddress.fromAddressString(address);
+  private geocodeUrl(address: string, defaultStreetNumber?: number) {
+    const streetAddress = StreetAddress.fromAddressString(address, defaultStreetNumber);
     return ADDRESS_URL + GEOCODE_URL
       + '/' + streetAddress.streetName
       + '/' + streetAddress.streetNumber;
+  }
+
+  private handleNotFound(error: any, address: string): Observable<any> {
+    const httpError = HttpUtil.extractHttpResponse(error);
+    return httpError.status === HttpStatus.NOT_FOUND
+      ? this.authHttp.get(this.geocodeUrl(address, DEFAULT_STREET_AREA_NUMBER))
+      : error;
   }
 
   private handleGeocodeError(errorResponse: any): Observable<Option<Geocoordinates>> {
