@@ -12,6 +12,8 @@ import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.FieldChange;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -76,13 +78,14 @@ public class CustomerService {
   }
 
   /**
-   * Find all customers
+   * Find all customers, with paging
    *
-   * @return list of all customers
+   * @param pageRequest the paging request
+   * @return a page of customers
    */
   @Transactional(readOnly = true)
-  public List<Customer> findAll() {
-    return customerDao.findAll();
+  public Page<Customer> findAll(Pageable pageRequest) {
+    return customerDao.findAll(pageRequest);
   }
 
   /**
@@ -149,6 +152,17 @@ public class CustomerService {
   @Transactional(readOnly = true)
   public List<Contact> findContacts(List<Integer> ids) {
     return contactDao.findByIds(ids);
+  }
+
+  /**
+   * Find all contacts, with paging
+   *
+   * @param pageRequest the paging request
+   * @return a page of contacts
+   */
+  @Transactional(readOnly = true)
+  public Page<Contact> findAllContacts(Pageable pageRequest) {
+    return contactDao.findAll(pageRequest);
   }
 
   /**

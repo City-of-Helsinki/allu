@@ -8,6 +8,9 @@ import fi.hel.allu.model.service.ApplicationService;
 import fi.hel.allu.model.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -49,9 +52,22 @@ public class CustomerController {
   }
 
   /**
-   * Find customers by their business ids. Several customers may have the same business id.
+   * Find all customers, with paging support
    *
-   * @param businessId  Business id to be searched.
+   * @param pageRequest page request for the search
+   */
+  @RequestMapping()
+  public ResponseEntity<Page<Customer>> findAll(
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE)
+      Pageable pageRequest) {
+    return new ResponseEntity<>(customerService.findAll(pageRequest), HttpStatus.OK);
+  }
+
+  /**
+   * Find customers by their business ids. Several customers may have the same
+   * business id.
+   *
+   * @param businessId Business id to be searched.
    * @return list of found customers
    */
   @RequestMapping(value = "/businessid/{businessId}", method = RequestMethod.GET)
@@ -79,16 +95,6 @@ public class CustomerController {
   @RequestMapping(value = "/invoicerecipients/{id}/applications", method = RequestMethod.GET)
   public ResponseEntity<List<Integer>> findApplicationIdsByInvoiceRecipient(@PathVariable int id) {
     return new ResponseEntity<>(applicationService.findByInvoiceRecipient(id), HttpStatus.OK);
-  }
-
-  /**
-   * Find all customers in the database
-   *
-   * @return list of customers
-   */
-  @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<Customer>> findAllCustomers() {
-    return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
   }
 
   /**

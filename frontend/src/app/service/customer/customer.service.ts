@@ -30,13 +30,6 @@ export class CustomerService {
       .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')));
   }
 
-  public fetchAllCustomers(): Observable<Array<Customer>> {
-    return this.authHttp.get(CUSTOMERS_URL)
-      .map(response => response.json())
-      .map(customers => customers.map(c => CustomerMapper.mapBackend(c)))
-      .catch(error => this.errorHandler.handle(error, findTranslation('customer.error.fetch')));
-  }
-
   public findCustomerById(id: number): Observable<Customer> {
     const url = CUSTOMERS_URL + '/' + id;
     return this.authHttp.get(url)

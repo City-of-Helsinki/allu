@@ -1,12 +1,8 @@
 package fi.hel.allu.ui.controller;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
+import fi.hel.allu.servicecore.domain.*;
+import fi.hel.allu.servicecore.service.ContactService;
+import fi.hel.allu.servicecore.service.CustomerService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,9 +10,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import fi.hel.allu.servicecore.domain.*;
-import fi.hel.allu.servicecore.service.ContactService;
-import fi.hel.allu.servicecore.service.CustomerService;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Controller for managing customer information.
@@ -42,12 +42,6 @@ public class CustomerController {
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
   public ResponseEntity<List<CustomerJson>> findByIds(@RequestBody List<Integer> ids) {
     return new ResponseEntity<>(customerService.getCustomersById(ids), HttpStatus.OK);
-  }
-
-  @RequestMapping(method = RequestMethod.GET)
-  @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<CustomerJson>> findAll() {
-    return new ResponseEntity<>(customerService.findAllCustomers(), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}/contacts", method = RequestMethod.GET)

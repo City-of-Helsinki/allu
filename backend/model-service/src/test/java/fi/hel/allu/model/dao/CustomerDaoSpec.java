@@ -8,9 +8,12 @@ import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.model.ModelApplication;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.testUtils.SpeccyTestBase;
+
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.util.Arrays;
@@ -72,9 +75,9 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertEquals(testCustomer.getPostalAddress().getStreetAddress(), customer.getPostalAddress().getStreetAddress());
         });
         it("should find all customers", () -> {
-          List<Customer> customers = customerDao.findAll();
-          assertFalse(customers.isEmpty());
-          Customer customer = customers.get(0);
+          Page<Customer> customers = customerDao.findAll(new PageRequest(0, Integer.MAX_VALUE));
+          assertTrue(customers.getSize() > 0);
+          Customer customer = customers.getContent().get(0);
           assertEquals(testCustomer.getName(), customer.getName());
           assertEquals(testCustomer.getPhone(), customer.getPhone());
         });
@@ -162,5 +165,37 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertEquals(insertedCustomer.getId(), customers.get(0).getId());
       });
     });
+
+    describe("CustomerDao.findAll", () -> {
+      beforeEach(() -> {
+        for (int i = 0; i < 15; ++i) {
+          Customer customer = customerDao.insert(dummyCustomer(i));
+          assertNotNull(customer.getId());
+        }
+      });
+
+      it("Can fetch 5 customers in ascendind ID order", () -> {
+        Page<Customer> page = customerDao.findAll(new PageRequest(1, 5));
+        assertEquals(5, page.getSize());
+        List<Customer> elements = page.getContent();
+        assertEquals(5, elements.size());
+        int prevId = Integer.MIN_VALUE;
+        for (int i = 0; i < elements.size(); ++i) {
+          int id = elements.get(i).getId();
+          assertTrue(prevId < id);
+          prevId = id;
+        }
+      });
+    });
+  }
+
+  private Customer dummyCustomer(int i) {
+    Customer customer = new Customer();
+    customer.setType(CustomerType.PERSON);
+    customer.setName("Customer " + i);
+    customer.setRegistryKey("Registry " + i);
+    customer.setPhone("Phone " + i);
+    customer.setPostalAddress(new PostalAddress("Street " + i, "Postal code " + i, "City " + i));
+    return customer;
   }
 }

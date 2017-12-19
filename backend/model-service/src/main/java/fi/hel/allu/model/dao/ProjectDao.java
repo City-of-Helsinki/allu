@@ -4,8 +4,12 @@ import com.querydsl.core.types.QBean;
 import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Project;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QProject.project;
 
 @Repository
@@ -37,6 +42,22 @@ public class ProjectDao {
   @Transactional(readOnly = true)
   public List<Project> findProjectChildren(int id) {
     return queryFactory.select(projectBean).from(project).where(project.parentId.eq(id)).fetch();
+  }
+
+  /**
+   * Find all projects, with paging
+   *
+   * @param pageRequest page request
+   * @return a page of projects
+   */
+  @Transactional(readOnly = true)
+  public Page<Project> findAll(Pageable pageRequest) {
+    int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
+    List<Project> projects = queryFactory.select(projectBean).from(project)
+        .orderBy(project.id.asc()).offset(offset).limit(count).fetch();
+    long total = queryFactory.select(projectBean).from(project).fetchCount();
+    return new PageImpl<>(projects, pageRequest, total);
   }
 
   @Transactional

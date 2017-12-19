@@ -73,8 +73,8 @@ public class CustomerControllerTest {
         userId);
 
     // Now check Jaakko got there.
-    wtc.perform(get("/customers")).andExpect(status().isOk())
-        .andExpect(jsonPath("$[0].id", is(result.getId()))).andExpect(jsonPath("$[0].name", is("Jaakko Jokkela")));
+    wtc.perform(get("/customers/" + result.getId())).andExpect(status().isOk())
+        .andExpect(jsonPath("$.id", is(result.getId()))).andExpect(jsonPath("$.name", is("Jaakko Jokkela")));
   }
 
   @Test

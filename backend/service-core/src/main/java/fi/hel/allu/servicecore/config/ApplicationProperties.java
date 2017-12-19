@@ -617,13 +617,6 @@ public class ApplicationProperties {
   }
 
   /**
-   * @return URL for getting all customers.
-   */
-  public String getCustomersUrl() {
-    return getModelServiceUrl("/customers");
-  }
-
-  /**
    * @return URL for creating a customer..
    */
   public String getCustomerCreateUrl() {

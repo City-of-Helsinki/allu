@@ -1,12 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
@@ -27,6 +20,16 @@ import fi.hel.allu.model.domain.Contact;
 import fi.hel.allu.model.domain.Customer;
 import fi.hel.allu.model.domain.CustomerWithContacts;
 import fi.hel.allu.model.domain.PostalAddress;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
@@ -87,16 +90,27 @@ public class CustomerDao {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Find all customers, with paging
+   *
+   * @param pageRequest page request
+   * @return a page of customers
+   */
   @Transactional(readOnly = true)
-  public List<Customer> findAll() {
+  public Page<Customer> findAll(Pageable pageRequest) {
+    int offset = (pageRequest == null) ? 0 : pageRequest.getOffset();
+    int count = (pageRequest == null) ? 100 : pageRequest.getPageSize();
     List<Tuple> customerPostalAddress = queryFactory
         .select(customerBean, postalAddressBean)
         .from(customer)
-        .leftJoin(postalAddress).on(customer.postalAddressId.eq(postalAddress.id)).fetch();
+        .leftJoin(postalAddress).on(customer.postalAddressId.eq(postalAddress.id))
+        .orderBy(customer.id.asc()).offset(offset).limit(count).fetch();
+    long total = queryFactory.select(customerBean).from(customer).fetchCount();
 
-    return customerPostalAddress.stream()
+    List<Customer> customers = customerPostalAddress.stream()
         .map(apa -> PostalAddressUtil.mapPostalAddress(apa).get(0, Customer.class))
         .collect(Collectors.toList());
+    return new PageImpl<>(customers, pageRequest, total);
   }
 
   @Transactional(readOnly = true)
