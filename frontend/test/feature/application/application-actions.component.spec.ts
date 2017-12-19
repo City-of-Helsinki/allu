@@ -117,10 +117,10 @@ describe('ApplicationActionsComponent', () => {
     const copyAsNewBtn = getButtonWithText(de, findTranslation('application.button.copy').toUpperCase());
     copyAsNewBtn.click();
 
-    expect(applicationStore._application.id).toBeUndefined();
-    expect(applicationStore._application.attachmentList).toEqual([]);
-    expect(applicationStore._application.locations.length).toEqual(1);
-    expect(applicationStore._application.locations[0].startTime).toEqual(location.startTime);
+    expect(applicationStore._applicationCopy.id).toBeUndefined();
+    expect(applicationStore._applicationCopy.attachmentList).toEqual([]);
+    expect(applicationStore._applicationCopy.locations.length).toEqual(1);
+    expect(applicationStore._applicationCopy.locations[0].startTime).toEqual(location.startTime);
     expect(router.navigate).toHaveBeenCalledWith(['/applications/edit']);
   });
 

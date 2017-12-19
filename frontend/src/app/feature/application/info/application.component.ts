@@ -68,7 +68,7 @@ export class ApplicationComponent implements OnInit, OnDestroy {
         attachments => attachments.forEach(a => this.applicationStore.addAttachment(a)),
         err => NotificationService.errorMessage(findTranslation('attachment.error.defaultAttachmentByArea')));
 
-    this.sidebarItems = this.createSidebar(application.typeEnum, this.readonly);
+    this.sidebarItems = Some(application.typeEnum).map(type => this.createSidebar(type, this.readonly)).orElse([]);
   }
 
   private verifyTypeExists(type: ApplicationType) {
@@ -120,12 +120,11 @@ export class ApplicationComponent implements OnInit, OnDestroy {
   }
 
   private defaultAttachmentsForArea(application: Application): Observable<Array<DefaultAttachmentInfo>> {
-    if (this.applicationStore.isNew) {
-      return this.mapHub.fixedLocationAreaBySectionIds(application.firstLocation.fixedLocationIds)
-        .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.typeEnum, area.id));
-    } else {
-      return Observable.of([]);
-    }
+    return Some(application.firstLocation)
+      .map(loc => loc.fixedLocationIds)
+      .map(ids => this.mapHub.fixedLocationAreaBySectionIds(ids)
+        .switchMap(area => this.attachmentHub.defaultAttachmentInfosByArea(application.typeEnum, area.id)))
+      .orElse(Observable.of([]));
   }
 
   private sidebarItem(appType: ApplicationType, item: SidebarItem): Option<SidebarItem> {

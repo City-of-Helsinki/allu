@@ -11,6 +11,7 @@ import {Some} from '../../../util/option';
 import {NumberUtil} from '../../../util/number.util';
 import {Subscription} from 'rxjs/Subscription';
 import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
+import {ObjectUtil} from '../../../util/object.util';
 
 @Component({
   selector: 'application-actions',
@@ -62,11 +63,11 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   copyApplicationAsNew(): void {
-    const application = this.applicationStore.snapshot.application;
+    const application = ObjectUtil.clone(this.applicationStore.snapshot.application);
     application.id = undefined;
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
-    this.applicationStore.applicationCopy = application;
+    this.applicationStore.applicationCopyChange(application);
     this.router.navigate(['/applications/edit']);
   }
 

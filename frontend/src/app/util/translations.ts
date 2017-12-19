@@ -40,7 +40,7 @@ export const translations = {
       location: 'Sijainti',
       basicInfo: 'Perustiedot',
       summary: 'Yhteenveto',
-      handling: 'Käsittly',
+      handling: 'Käsittely',
       decision: 'Päätös',
       supervision: 'Valvonta'
     },

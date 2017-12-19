@@ -22,6 +22,7 @@ import {Comment} from '../src/app/model/application/comment/comment';
  */
 export class ApplicationStoreMock {
   public _application: Application;
+  public _applicationCopy: Application;
   public comments$ = new Subject<Array<Comment>>();
 
   constructor() {
@@ -48,8 +49,8 @@ export class ApplicationStoreMock {
     return Observable.of({application: this._application});
   }
 
-  set applicationCopy(app: Application) {
-    this._application = app;
+  applicationCopyChange(app: Application) {
+    this._applicationCopy = app;
   }
 
   delete(id: number): Observable<HttpResponse> {

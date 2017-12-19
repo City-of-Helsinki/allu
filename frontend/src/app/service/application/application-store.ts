@@ -22,25 +22,25 @@ import {ApplicationService} from './application.service';
 
 export interface ApplicationState {
   application?: Application;
+  applicationCopy?: Application;
   tags?: Array<ApplicationTag>;
   pendingAttachments?: Array<AttachmentInfo>;
   attachments?: Array<AttachmentInfo>;
   comments?: Array<Comment>;
   tab?: SidebarItemType;
   relatedProject?: number;
-  isCopy?: boolean;
   deposit?: Deposit;
 }
 
-const initialState: ApplicationState = {
+export const initialState: ApplicationState = {
   application: new Application(),
+  applicationCopy: undefined,
   tags: [],
   pendingAttachments: [],
   attachments: [],
   comments: [],
   tab: 'BASIC_INFO',
   relatedProject: undefined,
-  isCopy: false,
   deposit: undefined
 };
 
@@ -69,7 +69,9 @@ export class ApplicationStore {
   }
 
   get application(): Observable<Application> {
-    return this.store.map(change => change.application).distinctUntilChanged();
+    return this.store.map(change => change.application)
+      .distinctUntilChanged()
+      .filter(app => !!app);
   }
 
   applicationChange(application: Application) {
@@ -83,12 +85,24 @@ export class ApplicationStore {
     return this.snapshot.application.id === undefined;
   }
 
-  set applicationCopy(application: Application) {
+  applicationCopyChange(application: Application) {
     this.store.next({
       ...this.snapshot,
-      application: application,
-      isCopy: true
+      applicationCopy: ObjectUtil.clone(application)
     });
+  }
+
+  newOrCopy(): Application {
+    const copy = ObjectUtil.clone(this.snapshot.applicationCopy);
+    if (copy) {
+      this.store.next({
+        ...initialState,
+        application: copy
+      });
+    } else {
+      this.reset();
+    }
+    return this.snapshot.application;
   }
 
   replace(): Observable<Application> {
@@ -223,10 +237,6 @@ export class ApplicationStore {
 
   changeRelatedProject(projectId: number) {
     this.store.next({...this.snapshot, relatedProject: projectId});
-  }
-
-  changeIsCopy(isCopy: boolean) {
-    this.store.next({...this.snapshot, isCopy});
   }
 
   loadDeposit(): Observable<Deposit> {

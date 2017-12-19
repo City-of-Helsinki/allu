@@ -4,8 +4,9 @@ import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
-import {ApplicationStore} from '../../service/application/application-store';
+import {ApplicationStore, initialState} from '../../service/application/application-store';
 import {NotificationService} from '../../service/notification/notification.service';
+import {ObjectUtil} from '../../util/object.util';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -21,7 +22,7 @@ export class ApplicationResolve implements Resolve<Application> {
       .map(id => this.applicationStore.load(id)
         .do(app => this.loadComments(id))
         .catch(err => this.handleError(err)))
-      .orElse(this.newOrCopy());
+      .orElse(Observable.of(this.applicationStore.newOrCopy()));
   }
 
   private loadComments(id: number) {
@@ -35,14 +36,5 @@ export class ApplicationResolve implements Resolve<Application> {
     NotificationService.error(err);
     this.router.navigate(['/applications']);
     return Observable.of(new Application());
-  }
-
-  private newOrCopy(): Observable<Application> {
-    if (this.applicationStore.snapshot.isCopy) {
-      this.applicationStore.changeIsCopy(false);
-    } else {
-      this.applicationStore.reset();
-    }
-    return Observable.of(this.applicationStore.snapshot.application);
   }
 }
