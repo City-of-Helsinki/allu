@@ -75,9 +75,9 @@ public class CustomerDaoSpec extends SpeccyTestBase {
           assertEquals(testCustomer.getPostalAddress().getStreetAddress(), customer.getPostalAddress().getStreetAddress());
         });
         it("should find all customers", () -> {
-          List<Customer> customers = customerDao.findAll();
-          assertFalse(customers.isEmpty());
-          Customer customer = customers.get(0);
+          Page<Customer> customers = customerDao.findAll(new PageRequest(0, Integer.MAX_VALUE));
+          assertTrue(customers.getSize() > 0);
+          Customer customer = customers.getContent().get(0);
           assertEquals(testCustomer.getName(), customer.getName());
           assertEquals(testCustomer.getPhone(), customer.getPhone());
         });

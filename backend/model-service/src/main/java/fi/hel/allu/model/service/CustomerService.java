@@ -78,16 +78,6 @@ public class CustomerService {
   }
 
   /**
-   * Find all customers
-   *
-   * @return list of all customers
-   */
-  @Transactional(readOnly = true)
-  public List<Customer> findAll() {
-    return customerDao.findAll();
-  }
-
-  /**
    * Find all customers, with paging
    *
    * @param pageRequest the paging request

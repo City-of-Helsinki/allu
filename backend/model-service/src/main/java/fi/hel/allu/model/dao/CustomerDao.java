@@ -1,15 +1,5 @@
 package fi.hel.allu.model.dao;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Expression;
@@ -26,10 +16,22 @@ import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
-import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.domain.Contact;
+import fi.hel.allu.model.domain.Customer;
+import fi.hel.allu.model.domain.CustomerWithContacts;
+import fi.hel.allu.model.domain.PostalAddress;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
-import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
 import static fi.hel.allu.QContact.contact;
@@ -82,18 +84,6 @@ public class CustomerDao {
         .from(customer)
         .leftJoin(postalAddress).on(customer.postalAddressId.eq(postalAddress.id))
         .where(customer.id.in(ids)).fetch();
-
-    return customerPostalAddress.stream()
-        .map(apa -> PostalAddressUtil.mapPostalAddress(apa).get(0, Customer.class))
-        .collect(Collectors.toList());
-  }
-
-  @Transactional(readOnly = true)
-  public List<Customer> findAll() {
-    List<Tuple> customerPostalAddress = queryFactory
-        .select(customerBean, postalAddressBean)
-        .from(customer)
-        .leftJoin(postalAddress).on(customer.postalAddressId.eq(postalAddress.id)).fetch();
 
     return customerPostalAddress.stream()
         .map(apa -> PostalAddressUtil.mapPostalAddress(apa).get(0, Customer.class))

@@ -2,8 +2,8 @@ package fi.hel.allu.model.service;
 
 import com.greghaskins.spectrum.Spectrum;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.dao.ContactDao;
 import fi.hel.allu.model.dao.CustomerDao;
 import fi.hel.allu.model.dao.HistoryDao;
@@ -85,19 +85,6 @@ public class CustomerServiceSpec extends SpeccyTestBase {
           assertEquals(CUSTOMERS, returned);
         });
       }); // Find by multiple IDs
-
-      describe("Find all customers", () -> {
-        final List<Customer> CUSTOMERS = Collections.singletonList(dummyCustomer(112));
-
-        beforeEach(() -> {
-          Mockito.when(customerDao.findAll()).thenReturn(CUSTOMERS);
-        });
-
-        it("Should return the customers", () -> {
-          List<Customer> returned = customerService.findAll();
-          assertEquals(CUSTOMERS, returned);
-        });
-      }); // Find all customers
 
       describe("Update customer", () -> {
         final int CUSTOMER_ID = 123;

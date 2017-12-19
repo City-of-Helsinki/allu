@@ -187,16 +187,6 @@ public class CustomerService {
         .collect(Collectors.toList());
   }
 
-  public List<CustomerJson> findAllCustomers() {
-    ResponseEntity<Customer[]> customerResult =
-        restTemplate.getForEntity(
-            applicationProperties.getCustomersUrl(),
-            Customer[].class);
-    return Arrays.stream(customerResult.getBody())
-        .map(customer -> customerMapper.createCustomerJson(customer))
-        .collect(Collectors.toList());
-  }
-
   /**
    * Find customers by given fields.
    *

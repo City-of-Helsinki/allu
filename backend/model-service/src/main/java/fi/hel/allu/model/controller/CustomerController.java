@@ -96,16 +96,6 @@ public class CustomerController {
   }
 
   /**
-   * Find all customers in the database
-   *
-   * @return list of customers
-   */
-  @RequestMapping(method = RequestMethod.GET)
-  public ResponseEntity<List<Customer>> findAllCustomers() {
-    return new ResponseEntity<>(customerService.findAll(), HttpStatus.OK);
-  }
-
-  /**
    * Update customer data
    *
    * @param id Customer's database ID
