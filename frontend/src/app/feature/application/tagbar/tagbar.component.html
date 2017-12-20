@@ -5,7 +5,7 @@
             {{app.uiStartTime}} - {{app.uiEndTime}}
           </span>
         </ng-container>
-        <span>Tunnisteet:</span>
+        <span>{{'application.tags' | translation}}:</span>
         <mat-chip-list>
             <mat-chip class="slim-chip" color="accent" selected="true" *ngFor="let tag of tags | async; let i = index;">
                 {{['application.tag.type', tag.type] | translation}}

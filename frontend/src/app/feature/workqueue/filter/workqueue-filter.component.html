@@ -4,37 +4,42 @@
         <div class="row row-slim">
             <div class="col s2">
                 <mat-form-field class="input-full-width">
-                    <mat-select formControlName="type" [multiple]="true" placeholder="Hakemuksen tyyppi" class="input-full-width" selected="1">
+                    <mat-select formControlName="type" [multiple]="true" class="input-full-width"
+                                [placeholder]="'applicationSearch.type' | translation" selected="1">
                         <mat-option *ngFor="let type of applicationTypes" [value]="type">{{['application.type', type] | translation}}</mat-option>
-                        <mat-option *ngIf="tab==='COMMON'" value="common">Yhteiset hakemustyypit</mat-option>
+                        <mat-option *ngIf="tab==='COMMON'" value="common">{{'workqueue.commonTypes' | translation}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
             <div class="col s2" [hidden]="tab==='OWN'">
                 <mat-form-field class="input-full-width">
-                    <mat-select formControlName="handler" [multiple]="true" placeholder="Hakemuksen käsittelijä" class="input-full-width">
+                    <mat-select formControlName="handler" [multiple]="true" class="input-full-width"
+                                [placeholder]="'applicationSearch.handler' | translation">
                         <mat-option *ngFor="let handler of handlers" [value]="handler.userName">{{handler.realName}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
             <div class="col s2">
                 <mat-form-field class="input-full-width">
-                    <mat-select formControlName="status" [multiple]="true" placeholder="Hakemuksen tila" class="input-full-width">
+                    <mat-select formControlName="status" [multiple]="true" class="input-full-width"
+                                [placeholder]="'applicationSearch.status' | translation">
                         <mat-option *ngFor="let status of applicationStatuses" [value]="status">{{['application.status', status] | translation}}</mat-option>
-                        <mat-option *ngIf="tab==='COMMON'" value="common">Yhteiset tilat</mat-option>
+                        <mat-option *ngIf="tab==='COMMON'" value="common">{{'workqueue.commonStatuses' | translation}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
             <div class="col s2">
                 <mat-form-field class="input-full-width">
-                    <mat-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
+                    <mat-select formControlName="districts" [multiple]="true" class="input-full-width"
+                                [placeholder]="'application.cityDistrict' | translation">
                         <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
             <div class="col s2">
                 <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
+                    <input matInput type="text" formControlName="startTime"
+                           [placeholder]="'applicationSearch.startTime' | translation"
                            [matDatepicker]="startTimePicker"/>
                     <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
                     <mat-datepicker #startTimePicker></mat-datepicker>
@@ -42,7 +47,8 @@
             </div>
             <div class="col s2">
                 <mat-form-field class="input-full-width">
-                    <input matInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
+                    <input matInput type="text" formControlName="endTime"
+                           [placeholder]="'applicationSearch.endTime' | translation"
                            [matDatepicker]="endTimePicker"/>
                     <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
                     <mat-datepicker #endTimePicker></mat-datepicker>
@@ -50,7 +56,7 @@
             </div>
             <div *ngIf="tab !== 'WAITING'" class="col s12 item-bar">
                 <div class="item-bar-content">
-                    <span>Tunnisteet:</span>
+                    <span>{{'application.tags' | translation}}:</span>
                     <selection-group formControlName="tags">
                         <selection-item *ngFor="let type of tagTypes" [item]="type" selectType="CHIP">
                             {{['application.tag.type', type] | translation}}

@@ -4,17 +4,17 @@
         <th>
             <mat-checkbox [(ngModel)]="allSelected" (click)="checkAll()"></mat-checkbox>
         </th>
-        <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
-        <th sortBy="applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">Tunnus</th>
-        <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
-        <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
-        <th>Hanke</th>
-        <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
-        <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">Katuosoite</th>
-        <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">Kaupunginosa</th>
-        <th>Saapunut</th>
-        <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
-        <th>Kommentit</th>
+        <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' | translation}}</th>
+        <th sortBy="applicationId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicationId' | translation}}</th>
+        <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.type.title' | translation}}</th>
+        <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.status.title' | translation}}</th>
+        <th>{{'project.title' | translation}}</th>
+        <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicant' | translation}}</th>
+        <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.streetAddress' | translation}}</th>
+        <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.cityDistrict' | translation}}</th>
+        <th sortBy="creationTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.creationTime' | translation}}</th>
+        <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.startTime' | translation}}</th>
+        <th>{{'application.comments' | translation}}</th>
     </tr>
     </thead>
     <tbody>
@@ -40,7 +40,9 @@
             <td class="clickable">{{row.application.uiStartTime}}</td>
             <td class="clickable">
                     <span *ngIf="row.application.comments.length">
-                        <button mat-raised-button type="button" color="primary" (click)="showComments(row.application.id)">NÄYTÄ</button>
+                        <button mat-raised-button type="button" color="primary" (click)="showComments(row.application.id)">
+                          {{'common.button.show' | translation | uppercase}}
+                        </button>
                     </span>
             </td>
         </tr>
@@ -49,7 +51,7 @@
             (click)="goToApplication($event.target.cellIndex, row.application)"
             (mouseenter)="onMouseEnter(i)" (mouseleave)="onMouseLeave(i)">
             <td></td>
-            <td colspan="1" class="row-title">Tunnisteet</td>
+            <td colspan="1" class="row-title">{{'application.tags' | translation}}</td>
             <td colspan="10">
                 <mat-chip-list>
                     <mat-chip *ngFor="let tag of row.application.applicationTags" [selected]="tagSelected(tag.type)"

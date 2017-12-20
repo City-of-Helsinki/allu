@@ -5,12 +5,14 @@
       <div class="row">
         <div class="col m4 s6">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="applicationId" placeholder="Hakemuksen tunnus"/>
+            <input matInput type="text" formControlName="applicationId"
+                   [placeholder]="'applicationSearch.applicationId' | translation"/>
           </mat-form-field>
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="type" [multiple]="true" placeholder="Hakemuksen tyyppi" class="input-full-width">
+            <mat-select formControlName="type" [multiple]="true"
+                        [placeholder]="'applicationSearch.type' | translation" class="input-full-width">
               <mat-option *ngFor="let option of applicationTypeStrings" [value]="option">
                 {{ ['application.type', option] | translation }}
               </mat-option>
@@ -19,7 +21,8 @@
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="status" [multiple]="true" placeholder="Hakemuksen tila" class="input-full-width">
+            <mat-select formControlName="status" [multiple]="true"
+                        [placeholder]="'applicationSearch.status' | translation" class="input-full-width">
               <mat-option *ngFor="let option of applicationStatusStrings" [value]="option">
                 {{ ['application.status', option] | translation }}
               </mat-option>
@@ -28,41 +31,48 @@
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="districts" [multiple]="true" placeholder="Kaupunginosa" class="input-full-width">
+            <mat-select formControlName="districts" [multiple]="true"
+                        [placeholder]="'application.cityDistrict' | translation" class="input-full-width">
               <mat-option *ngFor="let district of districts | async" [value]="district.id">{{district.name}}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <mat-select formControlName="handler" [multiple]="true" placeholder="Hakemuksen käsittelijä" class="input-full-width">
+            <mat-select formControlName="handler" [multiple]="true"
+                        [placeholder]="'applicationSearch.handler' | translation" class="input-full-width">
               <mat-option *ngFor="let handler of handlers | async" [value]="handler.userName">{{handler.realName}}</mat-option>
             </mat-select>
           </mat-form-field>
         </div>
         <div class="col m4 s6">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="address" placeholder="Osoite"/>
+            <input matInput type="text" formControlName="address"
+                   [placeholder]="'applicationSearch.address' | translation"/>
           </mat-form-field>
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="applicant" placeholder="Hakija"/>
+            <input matInput type="text" formControlName="applicant"
+                   [placeholder]="'application.applicant' | translation"/>
           </mat-form-field>
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="contact" placeholder="Yhteyshenkilö"/>
+            <input matInput type="text" formControlName="contact"
+                   [placeholder]="'application.contact' | translation"/>
           </mat-form-field>
         </div>
         <div class="col m2 s6">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="freeText" placeholder="Vapaa tekstihaku"/>
+            <input matInput type="text" formControlName="freeText"
+                   [placeholder]="'common.freeTextSearch' | translation"/>
           </mat-form-field>
         </div>
         <div class="col m1 s6">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="startTime" placeholder="Alkupäivämäärä"
+            <input matInput type="text" formControlName="startTime"
+                   [placeholder]="'applicationSearch.startTime' | translation"
                    [matDatepicker]="startTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="startTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #startTimePicker></mat-datepicker>
@@ -70,7 +80,8 @@
         </div>
         <div class="col m1 s6">
           <mat-form-field class="input-full-width">
-            <input matInput type="text" formControlName="endTime" placeholder="Loppupäivämäärä"
+            <input matInput type="text" formControlName="endTime"
+                   [placeholder]="'applicationSearch.endTime' | translation"
                    [matDatepicker]="endTimePicker"/>
             <mat-datepicker-toggle matSuffix [for]="endTimePicker"></mat-datepicker-toggle>
             <mat-datepicker #endTimePicker></mat-datepicker>
@@ -88,16 +99,16 @@
       <table class="bordered responsive-table">
         <thead>
         <tr>
-          <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">Käsittelijä</th>
-          <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">Nimi</th>
-          <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">Tyyppi</th>
-          <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">Tila</th>
+          <th sortBy="handler.userName" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.handler' | translation}}</th>
+          <th sortBy="name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.name' | translation}}</th>
+          <th sortBy="type" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.type.title' | translation}}</th>
+          <th sortBy="status" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.status.title' | translation}}</th>
           <th>Hanke</th>
-          <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">Hakija</th>
-          <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">Katuosoite</th>
-          <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">Kaupunginosa</th>
-          <th>Saapunut</th>
-          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">Aloitus</th>
+          <th sortBy="customers.applicant.customer.name" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.applicant' | translation}}</th>
+          <th sortBy="locations.streetAddress" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.streetAddress' | translation}}</th>
+          <th sortBy="locations.cityDistrictId" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.cityDistrict' | translation}}</th>
+          <th sortBy="creationTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.creationTime' | translation}}</th>
+          <th sortBy="startTime" [currentSort]="sort" (onSortChange)="sortBy($event)">{{'application.startTime' | translation}}</th>
         </tr>
         </thead>
         <tbody>

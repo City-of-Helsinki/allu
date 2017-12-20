@@ -18,6 +18,18 @@ export const translations = {
   application: {
     newApplication: 'Uusi hakemus',
     replacing: 'Korvaava päätös',
+    handler: 'Käsittelijä',
+    name: 'Nimi',
+    applicationId: 'Tunnus',
+    applicant: 'Hakija',
+    contact: 'Yhteyshenkilö',
+    streetAddress: 'Katuosoite',
+    cityDistrict: 'Kaupunginosa',
+    creationTime: 'Saapunut',
+    startTime: 'Aloitus',
+    endTime: 'Lopetus',
+    comments: 'Kommentit',
+    tags: 'Tunnisteet',
     error: {
       fetch: 'Hakemuksen hakeminen epäonnistui',
       statusChangeFailed: 'Päätöksen tallentaminen epäonnistui',
@@ -45,6 +57,7 @@ export const translations = {
       supervision: 'Valvonta'
     },
     status: {
+      title: 'Tila',
       PRE_RESERVED: 'Alustava varaus',
       PENDING: 'Hakemus saapunut',
       HANDLING: 'Käsittelyssä',
@@ -61,6 +74,7 @@ export const translations = {
       CANCELLED: 'Hakemus peruttu'
     },
     type: {
+      title: 'Tyyppi',
       EVENT: 'Tapahtuma',
       SHORT_TERM_RENTAL: 'Lyhytaikainen maanvuokraus',
       CABLE_REPORT: 'Johtoselvitys',
@@ -175,6 +189,7 @@ export const translations = {
       calculatedPrice: 'Hinta'
     },
     tag: {
+      listTitle: 'Tunnisteet',
       type: {
         ADDITIONAL_INFORMATION_REQUESTED: 'Täydennyspyyntö lähetetty',
         STATEMENT_REQUESTED: 'Lausunnolla',
@@ -321,7 +336,17 @@ export const translations = {
       cancelText: 'Hylkää'
     }
   },
+  applicationSearch: {
+    applicationId: 'Hakemuksen tunnus',
+    type: 'Hakemuksen tyyppi',
+    status: 'Hakemuksen tila',
+    handler: 'Hakemuksen käsittelijä',
+    address: 'Osoite',
+    startTime: 'Alkupäivämäärä',
+    endTime: 'Loppupäivämäärä',
+  },
   project: {
+    title: 'Hanke',
     field: {
       nameMissing: 'Hankkeen nimi puuttuu',
       ownerNameMissing: 'Hankkeen omistaja puuttu',
@@ -570,6 +595,7 @@ export const translations = {
     underpass: 'Altakuljettava'
   },
   common: {
+    freeTextSearch: 'Vapaa tekstihaku',
     field: {
       usernameMissing: 'Käyttäjänimi puuttuu',
       nameMissing: 'Nimi puuttuu',
@@ -589,7 +615,8 @@ export const translations = {
       cancel: 'PERUUTA',
       remove: 'POISTA',
       edit: 'MUOKKAA',
-      home: 'Etusivulle'
+      home: 'Etusivulle',
+      show: 'Näytä'
     },
     error: {
       downloadFailed: 'Tiedoston lataus epäonnistui'
@@ -969,7 +996,9 @@ export const translations = {
       OWN: 'Omat',
       COMMON:  'Yhteiset',
       WAITING: 'Odottaa'
-    }
+    },
+    commonTypes: 'Yhteiset hakemustyypit',
+    commonStatuses: 'Yhteiset tilat'
   },
   history: {
     error: {
