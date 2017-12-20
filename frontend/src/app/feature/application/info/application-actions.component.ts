@@ -12,6 +12,9 @@ import {NumberUtil} from '../../../util/number.util';
 import {Subscription} from 'rxjs/Subscription';
 import {MODIFY_ROLES, RoleType} from '../../../model/user/role-type';
 import {ObjectUtil} from '../../../util/object.util';
+import {ConfirmDialogComponent} from '../../common/confirm-dialog/confirm-dialog.component';
+import {MatDialog} from '@angular/material';
+import {findTranslation} from '../../../util/translations';
 
 @Component({
   selector: 'application-actions',
@@ -41,7 +44,9 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   private applicationSub: Subscription;
 
-  constructor(private router: Router, private applicationStore: ApplicationStore) {
+  constructor(private router: Router,
+              private applicationStore: ApplicationStore,
+              private dialog: MatDialog) {
   }
 
   ngOnInit(): void {
@@ -106,14 +111,27 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
 
   cancel(): void {
     if (this.applicationStore.snapshot.application.statusEnum < ApplicationStatus.DECISION) {
-      this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.CANCELLED)
-        .subscribe(app => {
-            NotificationService.translateMessage('application.statusChange.CANCELLED');
-            this.applicationStore.applicationChange(app);
-            this.router.navigate(['/workqueue']);
-          },
-          err => NotificationService.translateErrorMessage('application.error.cancel'));
+      const data = {
+        title: findTranslation('application.confirmCancel.title'),
+        confirmText: findTranslation('application.confirmCancel.confirmText'),
+        cancelText: findTranslation('application.confirmCancel.cancelText')
+      };
+
+      this.dialog.open(ConfirmDialogComponent, { data })
+        .afterClosed()
+        .filter(result => result) // Ignore no answers
+        .subscribe(() => this.cancelApplication());
     }
+  }
+
+  private cancelApplication(): void {
+    this.applicationStore.changeStatus(this.applicationStore.snapshot.application.id, ApplicationStatus.CANCELLED)
+      .subscribe(app => {
+          NotificationService.translateMessage('application.statusChange.CANCELLED');
+          this.applicationStore.applicationChange(app);
+          this.router.navigate(['/workqueue']);
+        },
+        err => NotificationService.translateErrorMessage('application.error.cancel'));
   }
 
   private moveToDecisionMaking(): Observable<Application> {

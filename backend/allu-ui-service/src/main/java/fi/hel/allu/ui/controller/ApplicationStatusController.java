@@ -32,7 +32,7 @@ public class ApplicationStatusController {
     @RequestMapping(value = "/{id}/status/cancelled", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
     public ResponseEntity<ApplicationJson> changeStatusToCancelled(@PathVariable int id) {
-        return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.CANCELLED), HttpStatus.OK);
+        return new ResponseEntity<>(applicationServiceComposer.changeStatus(id, StatusType.CANCELLED, new StatusChangeInfoJson()), HttpStatus.OK);
     }
 
     @RequestMapping(value = "/{id}/status/pending", method = RequestMethod.PUT)

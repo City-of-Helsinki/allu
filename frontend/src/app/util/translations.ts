@@ -314,6 +314,11 @@ export const translations = {
       toSummary: 'Yhteenvetoon',
       toHandling: 'Käsittelyyn',
       toDecision: 'Päättämiseen'
+    },
+    confirmCancel: {
+      title: 'Haluatko varmasti perua hakemuksen',
+      confirmText: 'Hyväksy',
+      cancelText: 'Hylkää'
     }
   },
   project: {

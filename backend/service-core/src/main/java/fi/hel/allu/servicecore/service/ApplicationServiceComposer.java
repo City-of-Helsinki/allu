@@ -200,9 +200,10 @@ public class ApplicationServiceComposer {
   public ApplicationJson changeStatus(int applicationId, StatusType newStatus, StatusChangeInfoJson info) {
     logger.debug("change status: application {}, new status {}", applicationId, newStatus);
     Application application = applicationService.changeApplicationStatus(applicationId, newStatus);
-    Optional.ofNullable(info)
-        .map(StatusChangeInfoJson::getHandler)
-        .ifPresent(handler -> changeHandlerOnStatusChange(application, handler));
+
+    if (info != null) {
+      changeHandlerOnStatusChange(application, info.getHandler());
+    }
 
     ApplicationJson applicationJson = applicationJsonService.getFullyPopulatedApplication(application);
 
@@ -301,6 +302,8 @@ public class ApplicationServiceComposer {
       updateApplicationHandler(newHandler, Collections.singletonList(application.getId()));
     } else if (StatusType.HANDLING.equals(application.getStatus()) && application.getHandler() == null) {
       updateApplicationHandler(userService.getCurrentUser().getId(), Collections.singletonList(application.getId()));
+    } else if (StatusType.CANCELLED.equals(application.getStatus())) {
+      removeApplicationHandler(Collections.singletonList(application.getId()));
     }
   }
 

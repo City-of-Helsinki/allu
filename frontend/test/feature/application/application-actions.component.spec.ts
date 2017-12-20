@@ -1,4 +1,4 @@
-import {DebugElement} from '@angular/core';
+import {DebugElement, TemplateRef} from '@angular/core';
 import {FormGroup, FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {async, ComponentFixture, fakeAsync, TestBed, tick} from '@angular/core/testing';
 import {By} from '@angular/platform-browser';
@@ -18,6 +18,19 @@ import {Observable} from 'rxjs/Observable';
 import {HttpResponse, HttpStatus} from '../../../src/app/util/http-response';
 import {NotificationService} from '../../../src/app/service/notification/notification.service';
 import {ApplicationStatus} from '../../../src/app/model/application/application-status';
+import {MatDialog} from '@angular/material';
+
+class MatDialogRefMock {
+  afterClosed(): Observable<any> {
+    return Observable.empty();
+  }
+}
+
+class MatDialogMock {
+  open(componentOrTemplateRef: any, config?: any): any {
+    return undefined;
+  }
+}
 
 describe('ApplicationActionsComponent', () => {
   let comp: ApplicationActionsComponent;
@@ -25,6 +38,7 @@ describe('ApplicationActionsComponent', () => {
   let de: DebugElement;
   let router: RouterMock;
   let applicationStore: ApplicationStoreMock;
+  let dialog: MatDialogMock;
   const currentUserMock = CurrentUserMock.create(true, true);
   const applicationId = 15;
   const form = new FormGroup({});
@@ -44,7 +58,8 @@ describe('ApplicationActionsComponent', () => {
       providers: [
         {provide: Router, useClass: RouterMock},
         {provide: ActivatedRoute},
-        {provide: ApplicationStore, useClass: ApplicationStoreMock}
+        {provide: ApplicationStore, useClass: ApplicationStoreMock},
+        {provide: MatDialog, useClass: MatDialogMock}
       ]
     }).overrideDirective(AvailableToDirective, availableToDirectiveMockMeta(currentUserMock))
     .compileComponents();
@@ -56,6 +71,7 @@ describe('ApplicationActionsComponent', () => {
     de = fixture.debugElement;
     router = TestBed.get(Router) as RouterMock;
     applicationStore = TestBed.get(ApplicationStore) as ApplicationStoreMock;
+    dialog = TestBed.get(MatDialog) as MatDialogMock;
 
     applicationStore._application.id  = applicationId;
     comp.form = form;
@@ -96,7 +112,7 @@ describe('ApplicationActionsComponent', () => {
     spyOn(NotificationService, 'translateMessage');
 
     const replaceBtn = getButtonWithText(de, findTranslation('application.button.replace').toUpperCase());
-    replaceBtn.click()
+    replaceBtn.click();
     tickAndDetect();
 
     expect(applicationStore.replace).toHaveBeenCalled();
@@ -163,12 +179,16 @@ describe('ApplicationActionsComponent', () => {
     expect(getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase())).toBeUndefined();
   });
 
-  it('should change application as canceled', fakeAsync(() => {
+  it('should change application as canceled on approve', fakeAsync(() => {
     applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
     setAndInit(true);
     spyOn(router, 'navigate');
     spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
     spyOn(NotificationService, 'translateMessage');
+
+    const dialogRef = new MatDialogRefMock();
+    spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(true));
+    spyOn(dialog, 'open').and.returnValue(dialogRef);
 
     const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase());
     cancelBtn.click();
@@ -177,6 +197,26 @@ describe('ApplicationActionsComponent', () => {
     expect(applicationStore.changeStatus).toHaveBeenCalledWith(applicationId, ApplicationStatus.CANCELLED);
     expect(NotificationService.translateMessage).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(['/workqueue']);
+  }));
+
+  it('should ignore cancel when cancel not approved', fakeAsync(() => {
+    applicationStore._application.status = ApplicationStatus[ApplicationStatus.HANDLING];
+    setAndInit(true);
+    spyOn(router, 'navigate');
+    spyOn(applicationStore, 'changeStatus').and.returnValue(applicationStore.application);
+    spyOn(NotificationService, 'translateMessage');
+
+    const dialogRef = new MatDialogRefMock();
+    spyOn(dialogRef, 'afterClosed').and.returnValue(Observable.of(false));
+    spyOn(dialog, 'open').and.returnValue(dialogRef);
+
+    const cancelBtn = getButtonWithText(de, findTranslation('common.button.cancel').toUpperCase());
+    cancelBtn.click();
+    tickAndDetect();
+
+    expect(applicationStore.changeStatus).not.toHaveBeenCalled();
+    expect(NotificationService.translateMessage).not.toHaveBeenCalled();
+    expect(router.navigate).not.toHaveBeenCalled();
   }));
 
   it('should show move to handling depending on status', () => {
