@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl, SafeUrl} from '@angular/platform-browser';
 import {Application} from '../../model/application/application';
 import {DecisionHub} from '../../service/decision/decision-hub';
@@ -6,19 +6,23 @@ import {Decision} from '../../model/decision/Decision';
 import {stepFrom} from '../application/progressbar/progress-step';
 import {ApplicationStatus} from '../../model/application/application-status';
 import {ApplicationStore} from '../../service/application/application-store';
-import {StatusChangeInfo} from '../../model/application/status-change-info';
+import {Observable} from 'rxjs/Observable';
+import {NumberUtil} from '../../util/number.util';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'decision',
   templateUrl: './decision.component.html',
   styleUrls: ['./decision.component.scss']
 })
-export class DecisionComponent implements OnInit {
-  application: Application;
+export class DecisionComponent implements OnInit, OnDestroy {
+  applicationChanges: Observable<Application>;
   progressStep: number;
   pdfUrl: SafeResourceUrl;
   pdfDownloadUrl: SafeUrl;
   pdfLoaded: boolean;
+
+  private destroy = new Subject<boolean>();
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -26,14 +30,24 @@ export class DecisionComponent implements OnInit {
     private decisionHub: DecisionHub) {}
 
   ngOnInit(): void {
-    this.application = this.applicationStore.snapshot.application;
-    this.progressStep = stepFrom(ApplicationStatus[this.application.status]);
-    this.decisionHub.fetch(this.application.id)
-      .subscribe(decision => this.providePdf(decision));
+    this.applicationChanges = this.applicationStore.application;
+    this.applicationChanges
+      .takeUntil(this.destroy)
+      .filter(app => NumberUtil.isDefined(app.id))
+      .subscribe(app => {
+        this.progressStep = stepFrom(ApplicationStatus[app.status]);
+        this.decisionHub.fetch(app.id)
+          .subscribe(decision => this.providePdf(decision));
+    });
   }
 
-  onDecisionConfirm(changeInfo: StatusChangeInfo): void {
-    this.decisionHub.fetch(this.application.id)
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
+  }
+
+  onDecisionConfirm(): void {
+    this.decisionHub.fetch(this.applicationStore.snapshot.application.id)
       .subscribe(decision => this.providePdf(decision));
   }
 

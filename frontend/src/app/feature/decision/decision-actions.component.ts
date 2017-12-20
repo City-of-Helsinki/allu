@@ -1,10 +1,10 @@
-import {Component, EventEmitter, Input, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {Router} from '@angular/router';
 import {MatDialog} from '@angular/material';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
-import {ApplicationStatus} from '../../model/application/application-status';
+import {ApplicationStatus, inHandling} from '../../model/application/application-status';
 import {findTranslation} from '../../util/translations';
 import {NotificationService} from '../../service/notification/notification.service';
 import {DECISION_MODAL_CONFIG, DecisionConfirmation, DecisionModalComponent} from './decision-modal.component';
@@ -23,14 +23,27 @@ import {DistributionType} from '../../model/common/distribution-type';
   templateUrl: './decision-actions.component.html',
   styleUrls: ['./decision-actions.component.scss']
 })
-export class DecisionActionsComponent {
+export class DecisionActionsComponent implements OnInit, OnChanges {
   @Input() application: Application;
   @Output() onDecisionConfirm = new EventEmitter<StatusChangeInfo>();
+
+  showProposal = false;
+  showDecision = false;
 
   constructor(private applicationStore: ApplicationStore,
               private decisionHub: DecisionHub,
               private router: Router,
               private dialog: MatDialog) {}
+
+  ngOnInit(): void {
+  }
+
+
+  ngOnChanges(changes: SimpleChanges): void {
+    const status = this.application.statusEnum;
+    this.showProposal = inHandling(status);
+    this.showDecision = ApplicationStatus.DECISIONMAKING === status;
+  }
 
   public decisionProposal(proposalType: string): void {
     const dialogRef = this.dialog.open<DecisionProposalModalComponent>(DecisionProposalModalComponent, DECISION_PROPOSAL_MODAL_CONFIG);
@@ -68,7 +81,6 @@ export class DecisionActionsComponent {
           this.applicationStore.loadComments(this.application.id).subscribe(); // Reload comments so they are updated in decision component
           NotificationService.message(findTranslation('application.statusChange.DECISIONMAKING'));
           this.applicationStore.applicationChange(app);
-          this.application = app;
           this.onDecisionConfirm.emit(changeInfo);
         }, err => NotificationService.errorMessage(findTranslation('application.error.toDecisionmaking')));
     }

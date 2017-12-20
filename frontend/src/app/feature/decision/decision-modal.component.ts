@@ -1,4 +1,4 @@
-import {Component, Inject, Input, OnInit} from '@angular/core';
+import {Component, Inject, OnInit} from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ApplicationStatus} from '../../model/application/application-status';
@@ -65,7 +65,8 @@ export class DecisionModalComponent implements OnInit {
 
     this.status = ApplicationStatus[this.data.status];
     this.distributionList = this.data.distributionList;
-    this.emailDistribution = DistributionType.EMAIL === this.data.distributionType;
+    this.emailDistribution = DistributionType.EMAIL === this.data.distributionType
+      && this.data.status !== ApplicationStatus.RETURNED_TO_PREPARATION;
     this.handlerSelection = DistributionType.PAPER === this.data.distributionType
       || this.data.status === ApplicationStatus.RETURNED_TO_PREPARATION;
 
@@ -89,8 +90,8 @@ export class DecisionModalComponent implements OnInit {
   }
 
   private decisionDistribution(): Array<DistributionEntry> {
-    return this.decisionForm.value.distributionRows
-      .map(d => DistributionEntryForm.to(d));
+    const rows = this.decisionForm.value.distributionRows || [];
+    return rows.map(d => DistributionEntryForm.to(d));
   }
 
   private initHandlers(handlerSelection: boolean): void {

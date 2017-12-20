@@ -11,7 +11,6 @@ import {ApplicationStore} from '../../../service/application/application-store';
   styleUrls: ['./decision-proposal.component.scss']
 })
 export class DecisionProposalComponent implements OnInit {
-  @Input() applicationId;
   proposals: Observable<Array<Comment>>;
 
   constructor(private applicationStore: ApplicationStore) {

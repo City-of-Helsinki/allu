@@ -27,7 +27,7 @@
           <textarea matInput matTextareaAutosize formControlName="emailMessage" placeholder="Sähköpostiviesti"></textarea>
         </mat-form-field>
       </div>
-      <div fxFlex="100">
+      <div fxFlex="100" *ngIf="status !== 'RETURNED_TO_PREPARATION'">
         <h2>Päätöksen jakelu</h2>
         <distribution-list [form]="decisionForm" [distributionList]="distributionList"></distribution-list>
       </div>

@@ -11,7 +11,7 @@ export enum ApplicationStatus {
 }
 
 export function applicationCanBeEdited(status: ApplicationStatus): boolean {
-  return status < ApplicationStatus.DECISIONMAKING;
+  return status ? status < ApplicationStatus.DECISIONMAKING : true;
 }
 
 export function inHandling(status: ApplicationStatus): boolean {

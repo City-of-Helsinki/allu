@@ -43,9 +43,6 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
     this.applicationForm.addControl('hasPropertyDeveloper', this.hasPropertyDeveloperCtrl);
     this.applicationForm.addControl('hasRepresentative', this.hasRepresentativeCtrl);
 
-    this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary')
-      || !applicationCanBeEdited(this.applicationStore.snapshot.application.statusEnum);
-
     this.applicationChanges = this.applicationStore.application;
 
     this.applicationChanges
@@ -100,6 +97,9 @@ export abstract class ApplicationInfoBaseComponent implements OnInit, OnDestroy,
       hasRepresentative: application.representative.customerId,
       invoiceRecipientId: application.invoiceRecipientId
     });
+
+    this.readonly = UrlUtil.urlPathContains(this.route.parent, 'summary')
+      || !applicationCanBeEdited(application.statusEnum);
   }
 
   /**

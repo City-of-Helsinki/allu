@@ -1,5 +1,5 @@
-<div [ngSwitch]="application.status">
-    <div class="action-row" *ngSwitchCase="'HANDLING'">
+<div class="action-row">
+    <ng-container *ngIf="showProposal">
         <ng-container *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
             <div class="action-item">
                 <button mat-raised-button type="button" color="primary" class="modal-trigger" (click)="decisionProposal('PROPOSE_APPROVAL')">
@@ -12,8 +12,8 @@
                 </button>
             </div>
         </ng-container>
-    </div>
-    <div class="action-row" *ngSwitchCase="'DECISIONMAKING'">
+    </ng-container>
+    <ng-container *ngIf="showDecision">
         <ng-container *ngIf="application.type === 'CABLE_REPORT'">
             <ng-container *availableTo="['ROLE_PROCESS_APPLICATION', 'ROLE_DECISION']">
                 <div class="action-item">
@@ -34,6 +34,5 @@
                 </div>
             </ng-container>
         </ng-container>
-    </div>
-    <div class="action-row" *ngSwitchDefault></div>
-</div>
+    </ng-container>
+ </div>
