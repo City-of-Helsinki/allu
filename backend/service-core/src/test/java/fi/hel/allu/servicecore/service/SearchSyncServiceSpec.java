@@ -60,9 +60,15 @@ public class SearchSyncServiceSpec {
         setupRestTemplate(2, 2, 2, 2);
         searchSyncService.sync();
         Mockito.verify(restTemplate).postForEntity(START_SEARCH_SYNC_URL, null, Void.class);
-        Mockito.verify(restTemplate).postForEntity(COMMIT_SEARCH_SYNC_URL, null, Void.class);
+        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_APPLICATIONS_URL), Mockito.eq(HttpMethod.POST),
+            Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
+        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_PROJECTS_URL), Mockito.eq(HttpMethod.POST),
+            Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
         Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_CUSTOMERS_URL), Mockito.eq(HttpMethod.POST),
             Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
+        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_CONTACTS_URL), Mockito.eq(HttpMethod.POST),
+            Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
+        Mockito.verify(restTemplate).postForEntity(COMMIT_SEARCH_SYNC_URL, null, Void.class);
       });
       it("Cancels on failure", () -> {
         setupRestTemplate(2, 2, 0, 2);
