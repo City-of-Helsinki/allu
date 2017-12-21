@@ -32,6 +32,14 @@ export class TimeUtil {
     return m ? m.toDate() : undefined;
   }
 
+  public static toStartDate(date: Date): Date {
+    return date ? moment(date).startOf('day').toDate() : undefined;
+  }
+
+  public static toEndDate(date: Date): Date {
+    return date ? moment(date).endOf('day').toDate() : undefined;
+  }
+
   public static getStartDateFromUi(dateString: string): Date {
     return dateString ? moment(dateString, UI_DATE_FORMAT).startOf('day').toDate() : undefined;
   }

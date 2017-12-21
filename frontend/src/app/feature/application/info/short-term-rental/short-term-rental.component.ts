@@ -10,6 +10,7 @@ import {ApplicationStore} from '../../../../service/application/application-stor
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ProjectHub} from '../../../../service/project/project-hub';
 import {ApplicationKind} from '../../../../model/application/type/application-kind';
+import {TimeUtil} from '../../../../util/time.util';
 
 const COMMERCIAL = 'application.shortTermRental.commercial';
 const NON_COMMERCIAL = 'application.shortTermRental.nonCommercial';
@@ -74,8 +75,8 @@ export class ShortTermRentalComponent extends ApplicationInfoBaseComponent imple
   protected update(form: ShortTermRentalForm): Application {
     const application = super.update(form);
     application.name = form.name;
-    application.startTime = form.rentalTimes.startTime;
-    application.endTime = form.rentalTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.rentalTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.rentalTimes.endTime);
     application.extension = ShortTermRentalForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

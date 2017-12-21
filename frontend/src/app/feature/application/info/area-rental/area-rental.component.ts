@@ -9,6 +9,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {AreaRental} from '../../../../model/application/area-rental/area-rental';
 import {AreaRentalForm} from './area-rental.form';
 import {ProjectHub} from '../../../../service/project/project-hub';
+import {TimeUtil} from '../../../../util/time.util';
 
 
 @Component({
@@ -57,8 +58,8 @@ export class AreaRentalComponent extends ApplicationInfoBaseComponent implements
   protected update(form: AreaRentalForm): Application {
     const application = super.update(form);
     application.name = 'Aluevuokraus'; // Area rentals have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
     application.extension = AreaRentalForm.to(form);
 
     application.firstLocation.startTime = application.startTime;

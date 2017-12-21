@@ -10,6 +10,7 @@ import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {CableReport} from '../../../../model/application/cable-report/cable-report';
 import {ApplicationStatus} from '../../../../model/application/application-status';
 import {ProjectHub} from '../../../../service/project/project-hub';
+import {TimeUtil} from '../../../../util/time.util';
 
 @Component({
   selector: 'cable-report',
@@ -64,8 +65,8 @@ export class CableReportComponent extends ApplicationInfoBaseComponent implement
   protected update(form: CableReportForm): Application {
     const application = super.update(form);
     application.name = 'Johtoselvitys'; // Cable reports have no name so set default
-    application.startTime = form.reportTimes.startTime;
-    application.endTime = form.reportTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.reportTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.reportTimes.endTime);
     const extension = <CableReport>application.extension;
     application.extension = CableReportForm.to(form, extension.validityTime);
 

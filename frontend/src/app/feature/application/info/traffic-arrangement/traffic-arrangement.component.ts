@@ -8,6 +8,7 @@ import {TrafficArrangement} from '../../../../model/application/traffic-arrangem
 import {TrafficArrangementForm} from './traffic-arrangement.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ProjectHub} from '../../../../service/project/project-hub';
+import {TimeUtil} from '../../../../util/time.util';
 
 
 @Component({
@@ -49,8 +50,8 @@ export class TrafficArrangementComponent extends ApplicationInfoBaseComponent im
   protected update(form: TrafficArrangementForm): Application {
     const application = super.update(form);
     application.name = 'Liikennejärjestely'; // Traffic arrangements have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
     application.extension = TrafficArrangementForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

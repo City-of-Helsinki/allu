@@ -6,7 +6,7 @@ import {ComplexValidator} from '../../../../util/complex-validator';
 import {ApplicationStore} from '../../../../service/application/application-store';
 import {NoteForm} from './note.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
-import {MAX_YEAR, MIN_YEAR} from '../../../../util/time.util';
+import {MAX_YEAR, MIN_YEAR, TimeUtil} from '../../../../util/time.util';
 import {Application} from '../../../../model/application/application';
 import {ProjectHub} from '../../../../service/project/project-hub';
 
@@ -51,8 +51,8 @@ export class NoteComponent extends ApplicationInfoBaseComponent implements OnIni
   protected update(form: NoteForm) {
     const application = super.update(form);
     application.name = form.name;
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
     application.recurringEndYear = form.recurringEndYear;
     application.extension = NoteForm.to(form);
 

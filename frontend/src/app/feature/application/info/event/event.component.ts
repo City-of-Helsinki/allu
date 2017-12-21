@@ -11,6 +11,7 @@ import {ApplicationKind} from '../../../../model/application/type/application-ki
 import {EventNature} from '../../../../model/application/event/event-nature';
 import {ComplexValidator} from '../../../../util/complex-validator';
 import {ProjectHub} from '../../../../service/project/project-hub';
+import {TimeUtil} from '../../../../util/time.util';
 
 
 @Component({
@@ -76,8 +77,8 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
   protected update(form: EventForm): Application {
     const application = super.update(form);
     application.name = form.name;
-    application.startTime = form.structureTimes.startTime || form.eventTimes.startTime;
-    application.endTime = form.structureTimes.endTime || form.eventTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.structureTimes.startTime || form.eventTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.structureTimes.endTime || form.eventTimes.endTime);
     application.type = ApplicationType[ApplicationType.EVENT];
     application.extension = EventForm.toEvent(form, ApplicationType.EVENT);
     return application;
@@ -85,8 +86,8 @@ export class EventComponent extends ApplicationInfoBaseComponent implements OnIn
 
   private event(application: Application): Event {
     const event = <Event>application.extension || new Event();
-    event.eventStartTime = event.eventStartTime || application.startTime;
-    event.eventEndTime = event.eventEndTime || application.endTime;
+    event.eventStartTime = TimeUtil.toStartDate(event.eventStartTime || application.startTime);
+    event.eventEndTime = TimeUtil.toEndDate(event.eventEndTime || application.endTime);
     event.applicationType = ApplicationType[ApplicationType.EVENT];
 
     application.singleLocation.startTime = application.startTime;

@@ -122,8 +122,8 @@ export class ExcavationAnnouncementComponent extends ApplicationInfoBaseComponen
   protected update(form: ExcavationAnnouncementForm): Application {
     const application = super.update(form);
     application.name = 'Kaivuilmoitus'; // Cable reports have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
     application.extension = ExcavationAnnouncementForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

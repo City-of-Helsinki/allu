@@ -9,6 +9,7 @@ import {PlacementContract} from '../../../../model/application/placement-contrac
 import {PlacementContractForm} from './placement-contract.form';
 import {ApplicationInfoBaseComponent} from '../application-info-base.component';
 import {ProjectHub} from '../../../../service/project/project-hub';
+import {TimeUtil} from '../../../../util/time.util';
 
 
 @Component({
@@ -54,8 +55,8 @@ export class PlacementContractComponent extends ApplicationInfoBaseComponent imp
   protected update(form: PlacementContractForm): Application {
     const application = super.update(form);
     application.name = 'Sijoitussopimus'; // Placement contracts have no name so set default
-    application.startTime = form.validityTimes.startTime;
-    application.endTime = form.validityTimes.endTime;
+    application.startTime = TimeUtil.toStartDate(form.validityTimes.startTime);
+    application.endTime = TimeUtil.toEndDate(form.validityTimes.endTime);
     application.extension = PlacementContractForm.to(form);
 
     application.singleLocation.startTime = application.startTime;

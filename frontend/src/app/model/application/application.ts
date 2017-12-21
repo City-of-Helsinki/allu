@@ -74,16 +74,8 @@ export class Application {
     return TimeUtil.getUiDateString(this.startTime);
   }
 
-  set uiStartTime(dateString: string) {
-    this.startTime = TimeUtil.getStartDateFromUi(dateString);
-  }
-
   get uiEndTime(): string {
     return TimeUtil.getUiDateString(this.endTime);
-  }
-
-  set uiEndTime(dateString: string) {
-    this.endTime = TimeUtil.getEndDateFromUi(dateString);
   }
 
   get recurringEndYear() {
