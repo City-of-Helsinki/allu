@@ -40,7 +40,7 @@ public class ApplicationDaoTest {
   DistributionEntry testDistributionEntry;
 
   @Before
-  public void init() {
+  public void init() throws Exception {
     testDistributionEntry = new DistributionEntry();
     testDistributionEntry.setDistributionType(DistributionType.PAPER);
     testDistributionEntry.setEmail("foobar@foo.fi");
@@ -225,8 +225,10 @@ public class ApplicationDaoTest {
     application.setEndTime(time0.plusDays(100));
     applicationIds.add(applicationDao.insert(application).getId());
     application.setEndTime(time0.plusDays(30));
+    application.setApplicationId(null);
     applicationIds.add(applicationDao.insert(application).getId());
     application.setEndTime(time0.plusDays(10));
+    application.setApplicationId(null);
     applicationIds.add(applicationDao.insert(application).getId());
 
     // Find all that end within two weeks -- should return only the last
@@ -307,9 +309,12 @@ public class ApplicationDaoTest {
     application.setEndTime(time0.plusDays(100));
     applicationIds.add(applicationDao.insert(application).getId());
     application.setEndTime(time0.plusDays(30));
+    application.setApplicationId(null);
     applicationIds.add(applicationDao.insert(application).getId());
     application.setEndTime(time0.plusDays(10));
+    application.setApplicationId(null);
     applicationIds.add(applicationDao.insert(application).getId());
+    application.setApplicationId(null);
     applicationIds.add(applicationDao.insert(application).getId());
     long inserted = applicationDao.markReminderSent(applicationIds);
     assertEquals(applicationIds.size(), inserted);

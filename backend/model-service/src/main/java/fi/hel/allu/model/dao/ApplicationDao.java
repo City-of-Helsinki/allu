@@ -1,5 +1,16 @@
 package fi.hel.allu.model.dao;
 
+import java.time.ZonedDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.QueryException;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Path;
@@ -19,33 +30,18 @@ import fi.hel.allu.common.util.TimeUtil;
 import fi.hel.allu.model.domain.*;
 import fi.hel.allu.model.querydsl.ExcludingMapper;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.ZonedDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.Projections.bean;
 import static com.querydsl.sql.SQLExpressions.select;
 import static com.querydsl.sql.SQLExpressions.selectDistinct;
-import static com.querydsl.sql.SQLExpressions.union;
 import static fi.hel.allu.QApplication.application;
-import static fi.hel.allu.QApplicationAttachment.applicationAttachment;
 import static fi.hel.allu.QApplicationCustomer.applicationCustomer;
 import static fi.hel.allu.QApplicationCustomerContact.applicationCustomerContact;
 import static fi.hel.allu.QApplicationKind.applicationKind;
 import static fi.hel.allu.QApplicationReminder.applicationReminder;
 import static fi.hel.allu.QApplicationTag.applicationTag;
-import static fi.hel.allu.QAttachment.attachment;
 import static fi.hel.allu.QContact.contact;
-import static fi.hel.allu.QDefaultAttachment.defaultAttachment;
 import static fi.hel.allu.QKindSpecifier.kindSpecifier;
 import static fi.hel.allu.QLocation.location;
 import static fi.hel.allu.QLocationGeometry.locationGeometry;
@@ -59,7 +55,7 @@ public class ApplicationDao {
   /** Fields that won't be updated in regular updates */
   public static final List<Path<?>> UPDATE_READ_ONLY_FIELDS =
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
-          application.metadataVersion, application.handler);
+          application.metadataVersion, application.handler, application.replacedByApplicationId, application.replacesApplicationId);
 
   private SQLQueryFactory queryFactory;
   private ApplicationSequenceDao applicationSequenceDao;
@@ -299,7 +295,8 @@ public class ApplicationDao {
 
   @Transactional
   public Application insert(Application appl) {
-    appl.setApplicationId(createApplicationId(appl.getType()));
+    // Use application id from application if present, otherwise generate id.
+    appl.setApplicationId(Optional.ofNullable(appl.getApplicationId()).orElse(createApplicationId(appl.getType())));
     appl.setStatus(StatusType.PENDING);
     appl.setCreationTime(ZonedDateTime.now());
     appl.setMetadataVersion(structureMetaDao.getLatestMetadataVersion());
@@ -547,6 +544,8 @@ public class ApplicationDao {
   }
 
   private ApplicationTag insertSingleTag(int applicationId, ApplicationTag tag) {
+    // Let the database assign ID
+    tag.setId(null);
     tag.setApplicationId(applicationId);
     Integer id = queryFactory.insert(applicationTag).populate(tag).executeWithKey(applicationTag.id);
     return queryFactory.select(applicationTagBean).from(applicationTag).where(applicationTag.id.eq(id)).fetchOne();
@@ -644,4 +643,15 @@ public class ApplicationDao {
     return applicationIds;
   }
 
+  public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
+    attachmentDao.copyApplicationAttachments(copyFromApplicationId, copyToApplicationId);
+  }
+
+  public void setApplicationReplaced(int replacedApplicationId, int replacingApplicationId) {
+    queryFactory
+        .update(application)
+        .set(application.replacedByApplicationId, replacingApplicationId)
+        .where(application.id.eq(replacedApplicationId))
+        .execute();
+  }
 }

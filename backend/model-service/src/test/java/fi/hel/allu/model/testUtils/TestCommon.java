@@ -80,7 +80,6 @@ public class TestCommon {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.EVENT);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OUTDOOREVENT, Collections.emptyList()));
-    app.setApplicationId("TP1600001");
     app.setExtension(dummyOutdoorEvent());
     return app;
   }
@@ -89,7 +88,6 @@ public class TestCommon {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.SHORT_TERM_RENTAL);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.BRIDGE_BANNER, Collections.emptyList()));
-    app.setApplicationId("VL1600001");
     app.setExtension(dummyBridgeBannerEvent());
     return app;
   }
@@ -98,7 +96,6 @@ public class TestCommon {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.AREA_RENTAL);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.OTHER, Collections.emptyList()));
-    app.setApplicationId("AL1700001");
     app.setExtension(dummyAreaRentalEvent());
     return app;
   }
@@ -107,7 +104,6 @@ public class TestCommon {
     Application app = dummyBasicApplication(name, handler);
     app.setType(ApplicationType.NOTE);
     app.setKindsWithSpecifiers(Collections.singletonMap(ApplicationKind.STATEMENT, Collections.emptyList()));
-    app.setApplicationId("MP1700001");
     app.setExtension(dummyNote());
     return app;
   }

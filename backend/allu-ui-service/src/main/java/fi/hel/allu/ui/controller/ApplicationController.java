@@ -305,4 +305,13 @@ public class ApplicationController {
     return new ResponseEntity<>(invoiceService.findByApplication(id), HttpStatus.OK);
   }
 
+  /**
+   * Replaces (creates a copy) application with given application ID.
+   */
+  @RequestMapping(value = "/{id}/replace",  method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('ROLE_PROCESS_APPLICATION')")
+  public ResponseEntity<ApplicationJson> replace(@PathVariable int id) {
+    return new ResponseEntity<>(applicationServiceComposer.replaceApplication(id), HttpStatus.OK);
+  }
+
 }

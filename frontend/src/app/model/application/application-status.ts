@@ -7,7 +7,8 @@ export enum ApplicationStatus {
   DECISION,
   REJECTED,
   FINISHED,
-  CANCELLED
+  CANCELLED,
+  REPLACED
 }
 
 export function applicationCanBeEdited(status: ApplicationStatus): boolean {

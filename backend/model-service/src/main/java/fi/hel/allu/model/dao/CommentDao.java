@@ -100,4 +100,18 @@ public class CommentDao {
       throw new NoSuchEntityException("Deleting comment failed", Integer.toString(commentId));
     }
   }
+
+  /**
+   * Copy application comments from application to another application
+   */
+  @Transactional
+  public void copyApplicationComments(Integer copyFromApplicationId, Integer copyToApplicationId) {
+    List<Comment> comments = findByApplicationId(copyFromApplicationId);
+    comments.forEach(c -> copyForApplication(c, copyToApplicationId));
+  }
+
+  private void copyForApplication(Comment comment, Integer copyToApplicationId) {
+    comment.setId(null);
+    insert(comment, copyToApplicationId);
+  }
 }

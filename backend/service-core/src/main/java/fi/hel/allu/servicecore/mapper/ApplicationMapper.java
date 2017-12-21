@@ -150,7 +150,8 @@ public class ApplicationMapper {
     applicationJson.setNotBillableReason(application.getNotBillableReason());
     applicationJson.setCustomersWithContacts(customerMapper.createWithContactsJson(application));
     applicationJson.setInvoiceRecipientId(application.getInvoiceRecipientId());
-
+    applicationJson.setReplacedByApplicationId(application.getReplacedByApplicationId());
+    applicationJson.setReplacesApplicationId(application.getReplacesApplicationId());
     return applicationJson;
   }
 

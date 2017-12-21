@@ -172,12 +172,9 @@ export class ApplicationService {
 
   replace(id: number): Observable<Application> {
     const url = `${APPLICATIONS_URL}/${id}/replace`;
-    return Observable.empty();
-
-    // TODO: Enable this after backend supports replacing applications
-    /*return this.authHttp.post(url, undefined)
+    return this.authHttp.post(url, undefined)
       .map(response => ApplicationMapper.mapBackend(response.json()))
-      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replaceFailed')));*/
+      .catch(error => this.errorHandler.handle(error, findTranslation('application.error.replaceFailed')));
   }
 }
 

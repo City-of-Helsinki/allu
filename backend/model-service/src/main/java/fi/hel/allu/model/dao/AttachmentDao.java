@@ -340,11 +340,14 @@ public class AttachmentDao {
 
   private int insertCommon(AttachmentInfo info, byte[] data) {
     Integer attachmentDataId = insertAttachmentData(data);
+    info.setAttachmentDataId(attachmentDataId);
+    return insertAttachmentInfo(info, attachmentDataId);
+  }
+
+  private int insertAttachmentInfo(AttachmentInfo info, Integer attachmentDataId) {
     info.setId(null); // Don't respect any ID given, let database assign the ID.
-    info.setAttachmentDataId(null); // Don't respect any ID given, let database assign the ID.
     info.setCreationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(attachment).populate(info)
-        .set(attachment.attachmentDataId, attachmentDataId) // Assign attachment data ID
         .executeWithKey(attachment.id);
     if (id == null) {
       throw new QueryException("Failed to insert record");
@@ -391,5 +394,24 @@ public class AttachmentDao {
     .where(attachmentData.id.notIn(
         select(attachment.attachmentDataId).from(attachment)))
     .execute();
+  }
+
+  public void copyApplicationAttachments(Integer copyFromApplicationId, Integer copyToApplicationId) {
+    List<AttachmentInfo> infos = findByApplication(copyFromApplicationId);
+    infos.forEach(i -> copyForApplication(i, copyToApplicationId));
+  }
+
+  private void copyForApplication(AttachmentInfo info, Integer copyToApplicationId) {
+    Integer attachmentId = null;
+    if (isDefaultAttachment(info)) {
+      attachmentId = info.getId();
+    } else {
+      attachmentId = insertAttachmentInfo(info, info.getAttachmentDataId());
+    }
+    linkApplicationToAttachment(copyToApplicationId, attachmentId);
+  }
+
+  private boolean isDefaultAttachment(AttachmentInfo info) {
+    return info.getType().isDefaultAttachment();
   }
 }

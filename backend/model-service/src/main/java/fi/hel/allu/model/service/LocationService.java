@@ -142,4 +142,14 @@ public class LocationService {
       }
     }
   }
+
+  /**
+   * Copy application locations from application to another application
+   */
+  @Transactional
+  public void copyApplicationLocations(Integer copyFromApplicationId, Integer copyToApplicationId) {
+    List<Location> locations = findByApplicationId(copyFromApplicationId);
+    locations.forEach(l -> l.setApplicationId(copyToApplicationId));
+    insert(locations);
+  }
 }

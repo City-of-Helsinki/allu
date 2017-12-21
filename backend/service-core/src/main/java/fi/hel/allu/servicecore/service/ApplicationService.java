@@ -14,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.sun.mail.iap.Response;
+
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
@@ -264,6 +266,14 @@ public class ApplicationService {
     ParameterizedTypeReference<List<Integer>> typeRef =
         new ParameterizedTypeReference<List<Integer>>() {};
     return restTemplate.exchange(applicationProperties.getInvoiceRecipientsApplicationsUrl(), HttpMethod.GET, null, typeRef, customerId).getBody();
+  }
+
+
+  // Replace application with given ID and return ID of the replacing application
+  public int replaceApplication(int applicationId) {
+    return restTemplate.exchange(
+        applicationProperties.getModelServiceUrl(ApplicationProperties.PATH_MODEL_APPLICATION_REPLACE), HttpMethod.POST,
+        null, Integer.class, applicationId).getBody();
   }
 }
 

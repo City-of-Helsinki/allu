@@ -76,6 +76,10 @@ public class ApplicationJson {
   private Map<ApplicationKind, List<ApplicationSpecifier>> kindsWithSpecifiers;
   private Integer invoiceRecipientId;
 
+  private Integer replacesApplicationId;
+  private Integer replacedByApplicationId;
+
+
   /**
   /**
    * in Finnish: Hakemuksen tunniste tietokannassa
@@ -464,5 +468,29 @@ public class ApplicationJson {
           .allMatch(e -> e.getValue().stream().allMatch(s -> e.getKey().equals(s.getKind())));
     }
     return true;
+  }
+
+  /**
+   * Get ID of the application which is replaced by this application.
+   * @return applicationId of the replaced application
+   */
+  public Integer getReplacesApplicationId() {
+    return replacesApplicationId;
+  }
+
+  public void setReplacesApplicationId(Integer replacesApplicationId) {
+    this.replacesApplicationId = replacesApplicationId;
+  }
+
+  /**
+   * Get ID of the application which has replaced this application.
+   * @return applicationId which has replaced this application
+   */
+  public Integer getReplacedByApplicationId() {
+    return replacedByApplicationId;
+  }
+
+  public void setReplacedByApplicationId(Integer replacedByApplicationId) {
+    this.replacedByApplicationId = replacedByApplicationId;
   }
 }

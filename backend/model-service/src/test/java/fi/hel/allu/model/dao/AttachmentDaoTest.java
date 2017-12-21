@@ -266,6 +266,7 @@ public class AttachmentDaoTest {
     for (int i = 0; i < 20; ++i) {
       info.setName(String.format("Attachment_%d.txt", i));
       info.setDescription(String.format("Attachment %d", i));
+      newApplication.setApplicationId(null);
       int applicationId = applicationDao.insert(newApplication).getId();
       AttachmentInfo attachmentInfo = attachmentDao.insert(applicationId, info, generateTestData(4321));
       TestAttachmentInfo testAttachmentInfo = new TestAttachmentInfo(attachmentInfo, applicationId);

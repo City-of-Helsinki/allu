@@ -146,6 +146,18 @@ public class ApplicationHistoryService {
     addChangeItem(applicationId, change);
   }
 
+  /**
+   * Add change item that describes application replacement
+   * @param applicationId
+   *          The applications ID
+   *
+   */
+  public void addApplicationReplaced(Integer applicationId) {
+    ChangeHistoryItem change = new ChangeHistoryItem();
+    change.setChangeType(ChangeType.REPLACED);
+    addChangeItem(applicationId, change);
+  }
+
   /*
    * Make the REST call to add given application change for given application
    * ID.

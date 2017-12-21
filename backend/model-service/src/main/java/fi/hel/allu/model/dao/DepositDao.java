@@ -3,6 +3,7 @@ package fi.hel.allu.model.dao;
 import java.time.ZonedDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -32,6 +33,7 @@ public class DepositDao {
 
   @Transactional
   public Deposit insert(Deposit newDeposit) {
+    newDeposit.setId(null);
     newDeposit.setCreationTime(ZonedDateTime.now());
     Integer id = queryFactory.insert(deposit).populate(newDeposit).executeWithKey(deposit.id);
     return findById(id);
@@ -67,5 +69,18 @@ public class DepositDao {
     if (deleted == 0) {
       throw new NoSuchEntityException("Attempted to delete non-existent deposit", id);
     }
+  }
+
+  /**
+   * Copy application deposit from application to another application
+   */
+  @Transactional
+  public void copyApplicationDeposit(Integer copyFromApplicationId, Integer copyToApplicationId) {
+    Optional.ofNullable(findByApplicationId(copyFromApplicationId)).ifPresent(d -> copyDepositForApplication(d, copyToApplicationId));
+  }
+
+  private void copyDepositForApplication(Deposit deposit, Integer copyToApplicationId) {
+    deposit.setApplicationId(copyToApplicationId);
+    insert(deposit);
   }
 }

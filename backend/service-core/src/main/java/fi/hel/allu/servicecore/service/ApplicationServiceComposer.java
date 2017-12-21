@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -315,5 +316,16 @@ public class ApplicationServiceComposer {
     List<ApplicationTagJson> updatedTags = applicationService.findTagsByApplicationId(id).stream()
         .filter(t -> !t.getType().equals(tagType)).collect(Collectors.toList());
     updateTags(id, updatedTags);
+  }
+
+  public ApplicationJson replaceApplication(int applicationId) {
+    Integer newApplicationId = applicationService.replaceApplication(applicationId);
+    applicationHistoryService.addApplicationReplaced(applicationId);
+    ApplicationJson replacingApplication = findApplicationById(newApplicationId);
+    ApplicationJson replacedApplication = findApplicationById(applicationId);
+    searchService.updateApplications(Collections.singletonList(replacedApplication));
+    searchService.insertApplication(replacingApplication);
+
+    return replacingApplication;
   }
 }

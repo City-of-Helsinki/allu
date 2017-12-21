@@ -1,13 +1,9 @@
 package fi.hel.allu.model.controller;
 
-import fi.hel.allu.common.exception.NoSuchEntityException;
-import fi.hel.allu.model.dao.AttachmentDao;
-import fi.hel.allu.model.dao.DecisionDao;
-import fi.hel.allu.model.dao.DistributionEntryDao;
-import fi.hel.allu.model.dao.HistoryDao;
-import fi.hel.allu.model.domain.*;
-import fi.hel.allu.model.service.ApplicationService;
-import fi.hel.allu.model.service.InvoiceService;
+import java.io.IOException;
+import java.util.List;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,10 +16,16 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.validation.Valid;
+import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.model.dao.AttachmentDao;
+import fi.hel.allu.model.dao.DecisionDao;
+import fi.hel.allu.model.dao.DistributionEntryDao;
+import fi.hel.allu.model.dao.HistoryDao;
+import fi.hel.allu.model.domain.*;
+import fi.hel.allu.model.service.ApplicationReplacementService;
+import fi.hel.allu.model.service.ApplicationService;
+import fi.hel.allu.model.service.InvoiceService;
 
-import java.io.IOException;
-import java.util.List;
 
 @RestController
 @RequestMapping("/applications")
@@ -39,6 +41,8 @@ public class ApplicationController {
 
   private DistributionEntryDao distributionEntryDao;
 
+  private ApplicationReplacementService applicationReplacementService;
+
   private InvoiceService invoiceService;
   @Autowired
   public ApplicationController(
@@ -47,13 +51,15 @@ public class ApplicationController {
       DecisionDao decisionDao,
       HistoryDao historyDao,
       DistributionEntryDao distributionEntryDao,
-      InvoiceService invoiceService) {
+      InvoiceService invoiceService,
+      ApplicationReplacementService applicationReplacementService) {
     this.applicationService = applicationService;
     this.attachmentDao = attachmentDao;
     this.decisionDao = decisionDao;
     this.historyDao = historyDao;
     this.distributionEntryDao = distributionEntryDao;
     this.invoiceService = invoiceService;
+    this.applicationReplacementService = applicationReplacementService;
   }
 
   /**
@@ -150,6 +156,19 @@ public class ApplicationController {
   public ResponseEntity<Application> insert(@Valid @RequestBody(required = true) Application application) {
     return new ResponseEntity<>(applicationService.insert(application), HttpStatus.OK);
   }
+
+  /**
+   * Replace (create a copy from) application
+   *
+   * @param applicationId
+   *          Id of the application to replace
+   * @return Id of the replacing application
+   */
+  @RequestMapping(value = "/{id}/replace", method = RequestMethod.POST)
+  public ResponseEntity<Integer> replace(@PathVariable int id) {
+    return new ResponseEntity<>(applicationReplacementService.replaceApplication(id), HttpStatus.OK);
+  }
+
 
   /**
    * Delete note and its related data

@@ -220,4 +220,16 @@ public class SupervisionTaskDao {
     cols.put(PathUtil.pathName(postalAddress.streetAddress), postalAddress.streetAddress);
     return cols;
   }
+
+  @Transactional
+  public void copySupervisionTasks(Integer copyFromApplicationId, Integer copyToApplicationId) {
+    List<SupervisionTask> tasks = findByApplicationId(copyFromApplicationId);
+    tasks.forEach(t -> copyForApplication(t, copyToApplicationId));
+  }
+
+  private void copyForApplication(SupervisionTask task, Integer applicationId) {
+    task.setId(null);
+    task.setApplicationId(applicationId);
+    insert(task);
+  }
 }

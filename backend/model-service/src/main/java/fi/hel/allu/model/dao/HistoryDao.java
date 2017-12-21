@@ -1,5 +1,13 @@
 package fi.hel.allu.model.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.querydsl.core.QueryException;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Path;
@@ -10,14 +18,8 @@ import com.querydsl.sql.SQLQueryFactory;
 import fi.hel.allu.model.domain.ChangeHistoryItem;
 import fi.hel.allu.model.domain.FieldChange;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static com.querydsl.core.types.Projections.bean;
+import static fi.hel.allu.QApplication.application;
 import static fi.hel.allu.QChangeHistory.changeHistory;
 import static fi.hel.allu.QFieldChange.fieldChange;
 
@@ -41,7 +43,28 @@ public class HistoryDao {
    */
   @Transactional(readOnly = true)
   public List<ChangeHistoryItem> getApplicationHistory(int applicationId) {
-    return getChangeHistory(changeHistory.applicationId.eq(applicationId));
+    List<Integer> applicationIds = new ArrayList<>();
+    // Get history also from replaced applications
+    getReplacedApplicationIds(applicationId, applicationIds);
+    applicationIds.add(applicationId);
+    return getChangeHistory(changeHistory.applicationId.in(applicationIds));
+  }
+
+  // Gets recursively all application ids replaced by application with given application ID
+  private void getReplacedApplicationIds(int applicationId, List<Integer> applicationIds) {
+    Integer replacedId = getReplacedApplicationId(applicationId);
+    if (replacedId != null) {
+      applicationIds.add(replacedId);
+      getReplacedApplicationIds(replacedId, applicationIds);
+    }
+  }
+
+  private Integer getReplacedApplicationId(int applicationId) {
+    return queryFactory
+        .select(application.replacesApplicationId)
+        .from(application)
+        .where(application.id.eq(applicationId)).fetchOne();
+
   }
 
   /**

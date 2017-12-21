@@ -105,6 +105,12 @@ public class ApplicationProperties {
    */
   public static final String PATH_PDF_GENERATE = "/generate?stylesheet={stylesheet}";
 
+
+  /**
+   * Model-service path to create a new application
+   */
+  public static final String PATH_MODEL_APPLICATION_REPLACE = "/applications/{id}/replace";
+
   /**
    * Create absolute url to model-service. Host and port values are read from
    * the application.properties.

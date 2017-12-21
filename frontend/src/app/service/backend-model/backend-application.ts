@@ -38,5 +38,5 @@ export interface BackendApplication {
   notBillableReason?: string;
   invoiceRecipientId?: number;
   replacesApplicationId?: number;
-  replacedApplicationId?: number;
+  replacedByApplicationId?: number;
 }

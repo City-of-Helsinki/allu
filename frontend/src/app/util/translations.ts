@@ -66,7 +66,8 @@ export const translations = {
       DECISION: 'Päätetty',
       REJECTED: 'Hylätty päätös',
       FINISHED: 'Valmis',
-      CANCELLED: 'Peruttu'
+      CANCELLED: 'Peruttu',
+      REPLACED: 'Korvattu'
     },
     statusChange: {
       HANDLING: 'Hakemus siirretty käsittelyyn',
@@ -1008,7 +1009,8 @@ export const translations = {
       type: {
         CREATED: 'Luotu',
         STATUS_CHANGED: 'Siirretty tilaan',
-        CONTENTS_CHANGED: 'Tietoja päivitetty'
+        CONTENTS_CHANGED: 'Tietoja päivitetty',
+        REPLACED: 'Korvattu'
       },
       field: {
         CUSTOMER: 'Asiakas',

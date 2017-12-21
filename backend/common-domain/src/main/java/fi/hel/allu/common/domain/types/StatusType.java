@@ -13,5 +13,6 @@ public enum StatusType {
   DECISION, // Päätetty
   REJECTED, // Hylätty päätös
   FINISHED, // Valmis
-  CANCELLED // Peruttu
+  CANCELLED, // Peruttu
+  REPLACED // Korvattu
 }
