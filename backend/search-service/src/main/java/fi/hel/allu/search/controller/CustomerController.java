@@ -77,4 +77,11 @@ public class CustomerController {
   public ResponseEntity<List<Integer>> search(@Valid @RequestBody QueryParameters queryParameters) {
     return new ResponseEntity<>(customerSearchService.findByField(queryParameters), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
+  public ResponseEntity<Void> syncData(@Valid @RequestBody List<CustomerES> customerESs) {
+    customerSearchService.syncData(customerESs);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
+
 }

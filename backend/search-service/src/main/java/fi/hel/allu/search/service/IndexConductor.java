@@ -12,7 +12,7 @@ public class IndexConductor {
   private AtomicReference<SyncState> syncState;
 
   private enum SyncState {
-    NOT_ACTIVE, ACTIVE, DEACTIVATING
+    NOT_ACTIVE, ACTIVE, ACTIVATING, DEACTIVATING
   };
 
   public IndexConductor(String indexName, String tempIndexName) {
@@ -34,7 +34,7 @@ public class IndexConductor {
   }
 
   public boolean tryStartSync() {
-    return syncState.compareAndSet(SyncState.NOT_ACTIVE, SyncState.ACTIVE);
+    return syncState.compareAndSet(SyncState.NOT_ACTIVE, SyncState.ACTIVATING);
   }
 
   public boolean tryDeactivateSync() {

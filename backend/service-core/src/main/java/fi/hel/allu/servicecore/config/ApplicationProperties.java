@@ -1018,4 +1018,81 @@ public class ApplicationProperties {
   public String getDepositDeleteUrl() {
     return getModelServiceUrl("/deposit/{id}");
   }
+
+  /**
+   * @return url to read all applications from database with paging
+   */
+  public String getAllApplicationsUrl() {
+    return getModelServiceUrl("/applications?page={page}&size={size}");
+  }
+
+  /**
+   * @return url to read all projects from database with paging
+   */
+  public String getAllProjectsUrl() {
+    return getModelServiceUrl("/projects?page={page}&size={size}");
+  }
+
+  /**
+   * @return url to read all customers from database with paging
+   */
+  public String getAllCustomersUrl() {
+    return getModelServiceUrl("/customers?page={page}&size={size}");
+  }
+
+  /**
+   * @return url to read all applications from database with paging
+   */
+  public String getAllContactsUrl() {
+    return getModelServiceUrl("/contacts?page={page}&size={size}");
+  }
+
+  /**
+   * @return url to start syncing data to search service
+   */
+  public String getStartSearchSyncUrl() {
+    return getSearchServiceUrl("/applications/sync/start");
+  }
+
+  /**
+   * @return url to commit syncing data to search service
+   */
+  public String getCommitSearchSyncUrl() {
+    return getSearchServiceUrl("/applications/sync/commit");
+  }
+
+  /**
+   * @return url to cancel syncing data to search service
+   */
+  public String getCancelSearchSyncUrl() {
+    return getSearchServiceUrl("/applications/sync/cancel");
+  }
+
+  /**
+   * @return url to send applications to search service while syncing
+   */
+  public String getSyncApplicationsUrl() {
+    return getSearchServiceUrl("/applications/sync/data");
+  }
+
+  /**
+   * @return url to send projects to search service while syncing
+   */
+  public String getSyncProjectsUrl() {
+    return getSearchServiceUrl("/projects/sync/data");
+  }
+
+  /**
+   * @return url to send customers to search service while syncing
+   */
+  public String getSyncCustomersUrl() {
+    return getSearchServiceUrl("/customers/sync/data");
+  }
+
+  /**
+   * @return url to send contacts to search service while syncing
+   */
+  public String getSyncContactsUrl() {
+    return getSearchServiceUrl("/contacts/sync/data");
+  }
 }

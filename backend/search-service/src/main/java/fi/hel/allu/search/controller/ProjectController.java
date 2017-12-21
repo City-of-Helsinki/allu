@@ -57,4 +57,10 @@ public class ProjectController {
   public ResponseEntity<List<Integer>> search(@Valid @RequestBody QueryParameters queryParameters) {
     return new ResponseEntity<>(projectSearchService.findByField(queryParameters), HttpStatus.OK);
   }
+
+  @RequestMapping(value = "/sync/data", method = RequestMethod.POST)
+  public ResponseEntity<Void> syncData(@Valid @RequestBody List<ProjectES> projectESs) {
+    projectSearchService.syncData(projectESs);
+    return new ResponseEntity<>(HttpStatus.OK);
+  }
 }

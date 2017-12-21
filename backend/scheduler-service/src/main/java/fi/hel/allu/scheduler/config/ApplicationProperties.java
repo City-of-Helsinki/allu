@@ -40,7 +40,7 @@ public class ApplicationProperties {
                                @Value("${model.service.port}") @NotEmpty String modelServicePort,
                                @Value("${ext.service.host}") @NotEmpty String extServiceHost,
                                @Value("${ext.service.port}") @NotEmpty String extServicePort,
-                               @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
+      @Value("#{'${email.allowed.addresses:}'.split(',')}") List<String> emailAllowedAddresses,
       @Value("${email.sender.address}") @NotEmpty String emailSenderAddress,
       @Value("${invoice.archivedir}") @NotEmpty String invoiceArchiveDir,
       @Value("${sap.ftp.invoice.host}") @NotEmpty String sapFtpInvoiceHost,
@@ -62,6 +62,8 @@ public class ApplicationProperties {
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
+    this.extServiceHost = extServiceHost;
+    this.extServicePort = extServicePort;
     this.emailAllowedAddresses = emailAllowedAddresses;
     this.emailSenderAddress = emailSenderAddress;
     this.invoiceArchiveDir = invoiceArchiveDir;
@@ -73,8 +75,6 @@ public class ApplicationProperties {
     this.customerSourceDir = customerSourceDir;
     this.customerArchiveDir = customerArchiveDir;
     this.failedCustomerUpdateDir = failedCustomerUpdateDir;
-    this.extServiceHost = extServiceHost;
-    this.extServicePort = extServicePort;
     this.sapFtpCustomerHost = sapFtpCustomerHost;
     this.sapFtpCustomerUser = sapFtpCustomerUser;
     this.sapFtpCustomerPassword = sapFtpCustomerPassword;
@@ -95,7 +95,6 @@ public class ApplicationProperties {
   private String getExtServiceUrl(String path) {
     return PATH_PREFIX + extServiceHost + ":" + extServicePort + path;
   }
-
 
   /**
    * @return url to check applications that are close to a notification deadline
