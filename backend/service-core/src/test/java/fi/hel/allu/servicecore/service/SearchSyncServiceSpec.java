@@ -60,13 +60,13 @@ public class SearchSyncServiceSpec {
         setupRestTemplate(2, 2, 2, 2);
         searchSyncService.sync();
         Mockito.verify(restTemplate).postForEntity(START_SEARCH_SYNC_URL, null, Void.class);
-        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_APPLICATIONS_URL), Mockito.eq(HttpMethod.POST),
+        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_APPLICATIONS_URL), Mockito.eq(HttpMethod.GET),
             Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
-        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_PROJECTS_URL), Mockito.eq(HttpMethod.POST),
+        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_PROJECTS_URL), Mockito.eq(HttpMethod.GET),
             Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
-        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_CUSTOMERS_URL), Mockito.eq(HttpMethod.POST),
+        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_CUSTOMERS_URL), Mockito.eq(HttpMethod.GET),
             Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
-        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_CONTACTS_URL), Mockito.eq(HttpMethod.POST),
+        Mockito.verify(restTemplate, times(2)).exchange(Mockito.eq(ALL_CONTACTS_URL), Mockito.eq(HttpMethod.GET),
             Mockito.any(), Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt());
         Mockito.verify(restTemplate).postForEntity(COMMIT_SEARCH_SYNC_URL, null, Void.class);
       });
@@ -124,7 +124,7 @@ public class SearchSyncServiceSpec {
         .thenReturn(new ResponseEntity<>(HttpStatus.OK));
     // Setup mocking for data fetchers
     Mockito
-        .when(restTemplate.exchange(Mockito.eq(ALL_APPLICATIONS_URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
+        .when(restTemplate.exchange(Mockito.eq(ALL_APPLICATIONS_URL), Mockito.eq(HttpMethod.GET), Mockito.any(),
             Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt()))
         .then(new Answer<ResponseEntity<Page<Application>>>() {
 
@@ -134,7 +134,7 @@ public class SearchSyncServiceSpec {
           }
         });
     Mockito
-        .when(restTemplate.exchange(Mockito.eq(ALL_PROJECTS_URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
+        .when(restTemplate.exchange(Mockito.eq(ALL_PROJECTS_URL), Mockito.eq(HttpMethod.GET), Mockito.any(),
             Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt()))
         .then(new Answer<ResponseEntity<Page<Project>>>() {
 
@@ -144,7 +144,7 @@ public class SearchSyncServiceSpec {
           }
         });
     Mockito
-        .when(restTemplate.exchange(Mockito.eq(ALL_CUSTOMERS_URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
+        .when(restTemplate.exchange(Mockito.eq(ALL_CUSTOMERS_URL), Mockito.eq(HttpMethod.GET), Mockito.any(),
             Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt()))
         .then(new Answer<ResponseEntity<Page<Customer>>>() {
 
@@ -154,7 +154,7 @@ public class SearchSyncServiceSpec {
           }
         });
     Mockito
-        .when(restTemplate.exchange(Mockito.eq(ALL_CONTACTS_URL), Mockito.eq(HttpMethod.POST), Mockito.any(),
+        .when(restTemplate.exchange(Mockito.eq(ALL_CONTACTS_URL), Mockito.eq(HttpMethod.GET), Mockito.any(),
             Mockito.any(ParameterizedTypeReference.class), Mockito.anyInt(), Mockito.anyInt()))
         .then(new Answer<ResponseEntity<Page<Contact>>>() {
 
