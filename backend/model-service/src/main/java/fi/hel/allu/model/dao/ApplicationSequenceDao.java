@@ -47,7 +47,7 @@ public class ApplicationSequenceDao {
     /** In Finnish: tapahtumalupa */
     TP(ApplicationType.EVENT),
     /** In Finnish: lyhytaikainen maanvuokraus */
-    VL(ApplicationType.SHORT_TERM_RENTAL),
+    VP(ApplicationType.SHORT_TERM_RENTAL),
     /** In Finnish: muistiinpano */
     MP(ApplicationType.NOTE);
 
