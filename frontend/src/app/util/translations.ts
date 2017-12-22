@@ -742,8 +742,16 @@ export const translations = {
       }
     }
   },
+  attachments: 'Liitteet',
   attachment: {
+    title: 'Liite',
+    addNew: 'Lisää liite',
+    select: 'Valitse liite',
+    description: 'Liitteen kuvaus',
+    decisionAttachment: 'Päätöksen liite',
+    unknownHandler: 'Tuntematon lisääjä',
     type: {
+      title: 'Liitteen tyyppi',
       ADDED_BY_CUSTOMER: 'Asiakkaan lisäämä liite',
       ADDED_BY_HANDLER: 'Käsittelijän lisäämä liite',
       DEFAULT: 'Hakemustyyppikohtainen vakioliite',

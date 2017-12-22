@@ -9,6 +9,7 @@ export class AttachmentInfo {
     public description?: string,
     public size?: number,
     public creationTime?: Date,
+    public decisionAttachment?: boolean,
     public handlerName?: string,
     public file?: any
   ) {}
@@ -32,6 +33,7 @@ export class AttachmentInfo {
       form.description,
       form.size,
       TimeUtil.getDateFromUi(form.creationTime),
+      form.decisionAttachment,
       form.handlerName,
       form.file
     );
@@ -44,6 +46,7 @@ export class AttachmentInfo {
       name: attachmentInfo.name,
       description: attachmentInfo.description,
       creationTime: attachmentInfo.uiCreationTime,
+      decisionAttachment: attachmentInfo.decisionAttachment,
       handlerName: attachmentInfo.handlerName,
       file: attachmentInfo.file
     };

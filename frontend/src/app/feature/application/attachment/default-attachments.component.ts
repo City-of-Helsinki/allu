@@ -18,11 +18,11 @@ export class DefaultAttachmentsComponent implements OnInit {
   @Input() applicationType: string;
   @Input() attachmentType: string;
   @Input() selectedAttachments: Array<DefaultAttachmentInfo> = [];
+  @Input() isAllowedToEdit = true;
   @Output() add = new EventEmitter<DefaultAttachmentInfo>();
   @Output() remove = new EventEmitter<DefaultAttachmentInfo>();
 
   defaultAttachments: Array<DefaultAttachmentInfo> = [];
-  isAllowedToEdit = false;
 
   constructor(private attachmentHub: AttachmentHub, private currentUser: CurrentUser) {}
 
@@ -32,7 +32,7 @@ export class DefaultAttachmentsComponent implements OnInit {
       .subscribe(das => this.defaultAttachments = das);
 
     this.currentUser.hasRole(['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION'])
-      .subscribe(hasValidRole => this.isAllowedToEdit = hasValidRole);
+      .subscribe(hasValidRole => this.isAllowedToEdit = this.isAllowedToEdit && hasValidRole);
   }
 
   onSelect(event: SelectionEvent): void {

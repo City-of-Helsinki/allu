@@ -20,6 +20,7 @@ public class AttachmentInfoJson {
   private Long size;
   private Integer attachmentDataId;
   private ZonedDateTime creationTime;
+  private boolean decisionAttachment;
 
   /**
    * The attachment ID -- created by database
@@ -113,4 +114,14 @@ public class AttachmentInfoJson {
     this.attachmentDataId = attachmentDataId;
   }
 
+  /**
+   * Indication if attachment should be included in decision distribution
+   */
+  public boolean isDecisionAttachment() {
+    return decisionAttachment;
+  }
+
+  public void setDecisionAttachment(Boolean decisionAttachment) {
+    this.decisionAttachment = decisionAttachment;
+  }
 }

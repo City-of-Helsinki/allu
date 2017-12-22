@@ -5,5 +5,6 @@ export interface BackendAttachmentInfo {
   description: string;
   size: number;
   creationTime: string;
+  decisionAttachment: boolean;
   handlerName: string;
 }

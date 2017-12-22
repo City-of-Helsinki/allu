@@ -1,37 +1,56 @@
-<mat-card>
+<form [formGroup]="attachmentForm" (ngSubmit)="save()">
+  <mat-card>
     <mat-card-title>
-        <div>Liite</div>
+      <div fxLayout="row" fxLayoutAlign="space-between">
+        <div fxFlex="200px">
+          {{'attachment.title' | translation}}
+        </div>
+        <div fxFlex="200px">
+          <mat-slide-toggle formControlName="decisionAttachment">
+            {{'attachment.decisionAttachment' | translation}}
+          </mat-slide-toggle>
+        </div>
+      </div>
     </mat-card-title>
     <mat-card-content>
-        <form [formGroup]="attachmentForm" (ngSubmit)="save()">
-            <div class="row">
-                <div class="col m6">
-                    <mat-form-field class="input-full-width">
-                        <mat-select formControlName="type" class="input-full-width" placeholder="Liitteen tyyppi">
-                            <mat-option *ngFor="let type of attachmentTypes" [value]="type">{{['attachment.type', type] | translation}}</mat-option>
-                        </mat-select>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col m6">
-                    <mat-form-field class="input-full-width">
-                        <input matInput type="text" (click)="realFileInput.click()" formControlName="name" placeholder="Hae liite">
-                    </mat-form-field>
+      <div fxLayout="row">
+        <div fxFlex="50">
+          <mat-form-field class="input-full-width">
+            <mat-select formControlName="type" class="input-full-width" required [placeholder]="'attachment.type.title' | translation">
+              <mat-option *ngFor="let type of attachmentTypes" [value]="type">{{['attachment.type', type] | translation}}</mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex="50">
+          <mat-form-field class="input-full-width">
+            <input matInput type="text" (click)="realFileInput.click()" required
+                   formControlName="name" [placeholder]="'attachment.select' | translation">
+          </mat-form-field>
 
-                    <input #realFileInput class="real-file-input" type="file" fileSelect
-                           (attachmentsSelected)="attachmentSelected($event)" />
-                </div>
-                <div class="col s12">
-                    <mat-form-field class="input-full-width">
-                        <textarea matInput matTextareaAutosize formControlName="description" placeholder="Liitteen kuvaus"></textarea>
-                    </mat-form-field>
-                </div>
-            </div>
-            <div class="row">
-                <button mat-raised-button type="submit" color="primary" [disabled]="!attachmentForm.valid">TALLENNA</button>
-                <button mat-raised-button type="button" color="primary" (click)="cancel()">PERUUTA</button>
-            </div>
-        </form>
+          <input #realFileInput class="real-file-input" type="file" fileSelect
+                 (attachmentsSelected)="attachmentSelected($event)" />
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex>
+          <mat-form-field class="input-full-width">
+            <textarea matInput matTextareaAutosize formControlName="description"
+                      [placeholder]="'attachment.description' | translation"></textarea>
+          </mat-form-field>
+        </div>
+      </div>
+      <div fxLayout="row" class="spaced-out">
+        <div fxFlex>
+          <button mat-raised-button type="submit" color="primary" [disabled]="!attachmentForm.valid">
+            {{'common.button.save' | translation}}
+          </button>
+          <button mat-raised-button type="button" color="primary" (click)="cancel()">
+            {{'common.button.cancel' | translation}}
+          </button>
+        </div>
+      </div>
     </mat-card-content>
-</mat-card>
+  </mat-card>
+</form>

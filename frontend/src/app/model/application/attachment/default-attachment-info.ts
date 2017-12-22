@@ -10,13 +10,14 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
     public description?: string,
     public size?: number,
     public creationTime?: Date,
+    public decisionAttachment?: boolean,
     public handlerName?: string,
     public file?: any,
     public defaultAttachmentId?: number,
     public applicationTypes?: Array<string>,
     public fixedLocationId?: number
   ) {
-    super(id, type, name, description, size, creationTime, handlerName, file);
+    super(id, type, name, description, size, creationTime, decisionAttachment, handlerName, file);
   }
 
   static fromForm(form: DefaultAttachmentInfoForm): DefaultAttachmentInfo {
@@ -27,6 +28,7 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
       form.description,
       form.size,
       TimeUtil.getDateFromUi(form.creationTime),
+      true,
       form.handlerName,
       form.file,
       form.defaultAttachmentId,
@@ -42,6 +44,7 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
       name: attachmentInfo.name,
       description: attachmentInfo.description,
       creationTime: attachmentInfo.uiCreationTime,
+      decisionAttachment: attachmentInfo.decisionAttachment,
       handlerName: attachmentInfo.handlerName,
       file: attachmentInfo.file,
       defaultAttachmentId: attachmentInfo.defaultAttachmentId,

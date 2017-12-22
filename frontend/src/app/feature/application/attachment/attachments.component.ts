@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as filesaver from 'file-saver';
 
 import {AttachmentInfo} from '../../../model/application/attachment/attachment-info';
@@ -11,6 +11,8 @@ import {MatDialog} from '@angular/material';
 import {TimeUtil} from '../../../util/time.util';
 import {Some} from '../../../util/option';
 import {AttachmentType, isCommon} from '../../../model/application/attachment/attachment-type';
+import {Subject} from 'rxjs/Subject';
+import {applicationCanBeEdited} from '../../../model/application/application-status';
 
 const toastTime = 4000;
 
@@ -21,13 +23,16 @@ const toastTime = 4000;
     './attachments.component.scss'
   ]
 })
-export class AttachmentsComponent implements OnInit {
+export class AttachmentsComponent implements OnInit, OnDestroy {
   application: Application;
   commonAttachments: AttachmentInfo[] = [];
   defaultAttachments: AttachmentInfo[] = [];
   defaultImages: AttachmentInfo[] = [];
   editableAttachments: AttachmentInfo[] = [];
   hasFileOverDropzone = false;
+  applicationCanBeEdited = true;
+
+  private destroy = new Subject<boolean>();
 
   constructor(private attachmentHub: AttachmentHub,
               private applicationStore: ApplicationStore,
@@ -35,9 +40,16 @@ export class AttachmentsComponent implements OnInit {
 
   ngOnInit() {
     this.application = this.applicationStore.snapshot.application;
+    this.applicationCanBeEdited = applicationCanBeEdited(this.application.statusEnum);
     this.applicationStore.allAttachments
+      .takeUntil(this.destroy)
       .map(attachments => attachments.sort((l, r) => TimeUtil.compareTo(r.creationTime, l.creationTime))) // sort latest first
       .subscribe(sorted => this.setAttachments(sorted));
+  }
+
+  ngOnDestroy(): void {
+    this.destroy.next(true);
+    this.destroy.unsubscribe();
   }
 
   addNewAttachment(attachment?: AttachmentInfo): void {
@@ -84,6 +96,10 @@ export class AttachmentsComponent implements OnInit {
 
   cancel(index: number): void {
     this.editableAttachments.splice(index, 1);
+  }
+
+  canEdit(attachment: AttachmentInfo): boolean {
+    return !attachment.decisionAttachment || this.applicationCanBeEdited;
   }
 
   download(attachment: AttachmentInfo) {

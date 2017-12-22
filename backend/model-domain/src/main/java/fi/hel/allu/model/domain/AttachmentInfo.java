@@ -16,6 +16,7 @@ public class AttachmentInfo {
   private String description;
   private Integer attachmentDataId;
   private ZonedDateTime creationTime;
+  private boolean decisionAttachment;
 
   public AttachmentInfo() {
   }
@@ -26,7 +27,8 @@ public class AttachmentInfo {
                         String name,
                         String description,
                         Integer attachmentDataId,
-                        ZonedDateTime creationTime) {
+                        ZonedDateTime creationTime,
+                        boolean decisionAttachment) {
     this.id = id;
     this.userId = userId;
     this.type = type;
@@ -34,6 +36,7 @@ public class AttachmentInfo {
     this.description = description;
     this.attachmentDataId = attachmentDataId;
     this.creationTime = creationTime;
+    this.decisionAttachment = decisionAttachment;
   }
 
   public Integer getId() {
@@ -112,5 +115,16 @@ public class AttachmentInfo {
 
   public void setCreationTime(ZonedDateTime creationTime) {
     this.creationTime = creationTime;
+  }
+
+  /**
+   * Indication if attachment should be included in decision distribution
+   */
+  public boolean isDecisionAttachment() {
+    return decisionAttachment;
+  }
+
+  public void setDecisionAttachment(boolean decisionAttachment) {
+    this.decisionAttachment = decisionAttachment;
   }
 }

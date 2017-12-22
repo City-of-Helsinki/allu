@@ -13,6 +13,7 @@ export class AttachmentInfoMapper {
       backendAttachmentInfo.description,
       backendAttachmentInfo.size,
       new Date(backendAttachmentInfo.creationTime),
+      backendAttachmentInfo.decisionAttachment,
       backendAttachmentInfo.handlerName,
       undefined);
   }
@@ -26,6 +27,7 @@ export class AttachmentInfoMapper {
       description: attachmentInfo.description,
       size: attachmentInfo.size,
       creationTime: (attachmentInfo.creationTime) ? attachmentInfo.creationTime.toISOString() : undefined,
+      decisionAttachment: attachmentInfo.decisionAttachment,
       handlerName: attachmentInfo.handlerName
     } : undefined;
   }

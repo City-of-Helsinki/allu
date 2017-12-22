@@ -44,6 +44,7 @@ public class MailComposerServiceSpec {
         final int APPLICATION_ID = 911;
         final int ATTACHMENT_ID_1 = 111;
         final int ATTACHMENT_ID_2 = 222;
+        final int ATTACHMENT_ID_3 = 333;
         final Supplier<ApplicationJson> mockApplication = let(() -> Mockito.mock(ApplicationJson.class));
         final List<DistributionEntryJson> distribution = Collections
             .singletonList(emailDistribution("Pekka Pekanpekka", "pekkapekanpekka@pekka.org"));
@@ -53,12 +54,16 @@ public class MailComposerServiceSpec {
           Mockito.when(mockApplication.get().getApplicationId()).thenReturn("HK_BLEU");
           Mockito.when(mockApplication.get().getType()).thenReturn(ApplicationType.NOTE);
           Mockito.when(mockApplication.get().getDecisionDistributionList()).thenReturn(distribution);
-          Mockito.when(mockApplication.get().getAttachmentList())
-              .thenReturn(Arrays.asList(attachment("eka", ATTACHMENT_ID_1), attachment("toka", ATTACHMENT_ID_2)));
           Mockito.when(attachmentService.getAttachmentData(Mockito.anyInt())).thenReturn("ATTACHMENTDATA".getBytes());
         });
 
-        it("Sends e-mail with two attachments", () -> {
+        it("Sends e-mail with two decision attachments", () -> {
+          Mockito.when(mockApplication.get().getAttachmentList())
+              .thenReturn(Arrays.asList(
+                  attachment("eka", ATTACHMENT_ID_1, true),
+                  attachment("toka", ATTACHMENT_ID_2, true),
+                  attachment("kolmas", ATTACHMENT_ID_3, false)));
+
           DecisionDetailsJson decisionDetailsJson = new DecisionDetailsJson();
           decisionDetailsJson.setDecisionDistributionList(distribution);
           decisionDetailsJson.setMessageBody("MessageBody");
@@ -82,11 +87,11 @@ public class MailComposerServiceSpec {
     return distributionEntryJson;
   }
 
-  private AttachmentInfoJson attachment(String name, int id) {
+  private AttachmentInfoJson attachment(String name, int id, boolean decisionAttachment) {
     AttachmentInfoJson attachmentInfoJson = new AttachmentInfoJson();
     attachmentInfoJson.setName(name);
     attachmentInfoJson.setId(id);
+    attachmentInfoJson.setDecisionAttachment(decisionAttachment);
     return attachmentInfoJson;
   }
-
 }

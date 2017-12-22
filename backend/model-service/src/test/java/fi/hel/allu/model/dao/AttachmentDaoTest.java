@@ -282,7 +282,9 @@ public class AttachmentDaoTest {
     public TestAttachmentInfo(
         AttachmentInfo info,
         Integer applicationId) {
-      super(info.getId(), info.getUserId(), info.getType(), info.getName(), info.getDescription(), info.getAttachmentDataId(), info.getCreationTime());
+      super(info.getId(), info.getUserId(), info.getType(), info.getName(),
+          info.getDescription(), info.getAttachmentDataId(), info.getCreationTime(),
+          info.isDecisionAttachment());
       this.applicationId = applicationId;
     }
   }

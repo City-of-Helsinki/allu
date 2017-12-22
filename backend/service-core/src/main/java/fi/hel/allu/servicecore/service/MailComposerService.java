@@ -65,7 +65,9 @@ public class MailComposerService {
 
     if (!emailRecipients.isEmpty()) {
       Stream<Attachment> attachments = applicationJson.getAttachmentList().stream()
+          .filter(ai -> ai.isDecisionAttachment())
           .map(ai -> new Attachment(ai.getName(), attachmentService.getAttachmentData(ai.getId())));
+
       String messageBody = messageBodyFor(applicationJson, decisionDetailsJson.getMessageBody());
       alluMailService.sendDecision(applicationJson.getId(), emailRecipients, subject,
           String.format("%s.pdf", applicationJson.getApplicationId()), messageBody, attachments);

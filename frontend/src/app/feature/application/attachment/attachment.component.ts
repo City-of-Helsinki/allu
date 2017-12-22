@@ -11,6 +11,7 @@ import {AttachmentType} from '../../../model/application/attachment/attachment-t
 })
 export class AttachmentComponent implements OnInit {
   @Input() attachment: AttachmentInfo = new AttachmentInfo();
+  @Input() decisionAttachmentDisabled = false;
   @Output() onCancel = new EventEmitter<void>();
   @Output() onSave = new EventEmitter<AttachmentInfo>();
 
@@ -20,20 +21,22 @@ export class AttachmentComponent implements OnInit {
     AttachmentType[AttachmentType.ADDED_BY_HANDLER]
   ];
 
-  constructor(fb: FormBuilder) {
-    this.attachmentForm = fb.group({
+  constructor(private fb: FormBuilder) {
+  }
+
+  ngOnInit(): void {
+    this.attachmentForm = this.fb.group({
       id: [],
       type: ['', Validators.required],
       name:  ['', Validators.required],
       description: [],
       size: [],
       creationTime: [],
+      decisionAttachment: [{value: false, disabled: this.decisionAttachmentDisabled}],
       handlerName: [],
       file: []
     });
-  }
 
-  ngOnInit(): void {
     this.attachmentForm.patchValue(AttachmentInfo.toForm(this.attachment));
 
     if (!!this.attachment.id) {

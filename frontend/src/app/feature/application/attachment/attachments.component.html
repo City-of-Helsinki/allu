@@ -1,10 +1,10 @@
-<h1 class="content-header">Liitteet</h1>
-<div class="row" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-    <div class="col m12 col-centered">
+<h1 class="content-header">{{'attachments' | translation | uppercase}}</h1>
+<div fxLayout="row" fxLayoutAlign="center" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+    <div fxFlex>
         <div fileDrop (onFileDrop)="onFileDrop($event)" (onFileOver)="fileOverDropzone($event)"
              class="file-drop-zone" [ngClass]="{'file-over-drop-zone': hasFileOverDropzone}">
             <button mat-raised-button type="button" color="primary" (click)="addNewAttachment()">
-                LISÄÄ LIITE
+                {{'attachment.addNew' | translation}}
                 <mat-icon>file_upload</mat-icon>
             </button>
         </div>
@@ -13,41 +13,55 @@
 <div class="row">
     <ul class="card-list">
         <li *ngFor="let attachment of editableAttachments; let i = index;">
-            <attachment [attachment]="attachment" (onCancel)="cancel(i)" (onSave)="save($event, i)"></attachment>
+            <attachment [attachment]="attachment"
+                        [decisionAttachmentDisabled]="!applicationCanBeEdited"
+                        (onCancel)="cancel(i)" (onSave)="save($event, i)"></attachment>
         </li>
 
         <li *ngFor="let attachment of commonAttachments; let i = index;">
             <mat-card class="slim-card">
                 <div *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-                    <div class="clickable" (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
+                    <div class="clickable" *ngIf="canEdit(attachment)"
+                         (click)="remove(attachment, i)"><i class="material-icons">clear</i></div>
                 </div>
                 <div *ngIf="attachment.id !== undefined">
                     <i class="material-icons clickable" (click)="download(attachment)">file_download</i>
                 </div>
                 <mat-card-content class="card-content">
-                    <div>
+                  <div fxLayout="row" fxLayoutWrap>
+                    <div fxFlex>
                         <b>{{['attachment.type', attachment.type] | translation}}:</b> {{attachment.name}}
                     </div>
-                    <div>
-                        <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
-                        <span *ngIf="!attachment.handlerName">Ei käsittelijää</span>
+                    <div fxFlex *ngIf="attachment.decisionAttachment">
+                      {{'attachment.decisionAttachment' | translation}}
                     </div>
-                    <div>
+                    <div fxFlex>
+                        <span *ngIf="attachment.handlerName">{{attachment.handlerName}}</span>
+                        <span *ngIf="!attachment.handlerName">{{'attachment.unknownHandler' | translation}}</span>
+                    </div>
+                    <div fxFlex>
                         {{attachment.uiCreationTime}}
                     </div>
-                    <div>
+                    <div fxFlex>
                         {{attachment.description}}
                     </div>
+                  </div>
                 </mat-card-content>
             </mat-card>
         </li>
         <li>
-            <default-attachments [selectedAttachments]="defaultAttachments" [applicationType]="application.type"
-                                 attachmentType="DEFAULT" (add)="save($event)" (remove)="remove($event)"></default-attachments>
+            <default-attachments [selectedAttachments]="defaultAttachments"
+                                 [applicationType]="application.type"
+                                 [isAllowedToEdit]="applicationCanBeEdited"
+                                 attachmentType="DEFAULT"
+                                 (add)="save($event)" (remove)="remove($event)"></default-attachments>
         </li>
         <li>
-            <default-attachments [selectedAttachments]="defaultImages" [applicationType]="application.type"
-                                 attachmentType="DEFAULT_IMAGE" (add)="save($event)" (remove)="remove($event)"></default-attachments>
+            <default-attachments [selectedAttachments]="defaultImages"
+                                 [applicationType]="application.type"
+                                 [isAllowedToEdit]="applicationCanBeEdited"
+                                 attachmentType="DEFAULT_IMAGE"
+                                 (add)="save($event)" (remove)="remove($event)"></default-attachments>
         </li>
     </ul>
 </div>

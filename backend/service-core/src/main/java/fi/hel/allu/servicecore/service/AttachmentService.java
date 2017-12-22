@@ -263,11 +263,13 @@ public class AttachmentService {
     result.setDescription(attachmentInfoJson.getDescription());
     result.setCreationTime(attachmentInfoJson.getCreationTime());
     result.setAttachmentDataId(attachmentInfoJson.getAttachmentDataId());
+    result.setDecisionAttachment(attachmentInfoJson.isDecisionAttachment());
     if (attachmentInfoJson instanceof DefaultAttachmentInfoJson) {
       DefaultAttachmentInfoJson defaultAttachmentInfoJson = (DefaultAttachmentInfoJson) attachmentInfoJson;
       result.setDefaultAttachmentId(defaultAttachmentInfoJson.getDefaultAttachmentId());
       result.setApplicationTypes(defaultAttachmentInfoJson.getApplicationTypes());
       result.setFixedLocationAreaId(defaultAttachmentInfoJson.getFixedLocationId());
+      result.setDecisionAttachment(true);
     }
     return result;
   }
@@ -282,6 +284,7 @@ public class AttachmentService {
     result.setDescription(attachmentInfo.getDescription());
     result.setCreationTime(attachmentInfo.getCreationTime());
     result.setSize(getAttachmentSize(attachmentInfo.getId()));
+    result.setDecisionAttachment(attachmentInfo.isDecisionAttachment());
     if (attachmentInfo instanceof DefaultAttachmentInfo) {
       DefaultAttachmentInfo defaultAttachmentInfo = (DefaultAttachmentInfo) attachmentInfo;
       result.setDefaultAttachmentId(defaultAttachmentInfo.getDefaultAttachmentId());

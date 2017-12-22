@@ -95,6 +95,7 @@ public class AttachmentDao {
             attachment.description,
             attachment.attachmentDataId,
             attachment.creationTime,
+            attachment.decisionAttachment,
             defaultAttachment.id,
             defaultAttachment.deleted,
             defaultAttachment.locationAreaId)
@@ -119,6 +120,7 @@ public class AttachmentDao {
           result.get(attachment.description),
           result.get(attachment.attachmentDataId),
           result.get(attachment.creationTime),
+          result.get(attachment.decisionAttachment),
           defaultAttachmentId,
           applicationTypes,
           result.get(defaultAttachment.locationAreaId)
