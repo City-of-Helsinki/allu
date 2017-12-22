@@ -146,7 +146,7 @@ public class SearchSyncService {
     ParameterizedTypeReference<Page<Application>> typeref = new ParameterizedTypeReference<Page<Application>>() {
     };
     return talkToServer("Fetch applications", () -> restTemplate
-        .exchange(applicationProperties.getAllApplicationsUrl(), HttpMethod.POST, null, typeref, pageNum, PAGE_SIZE));
+        .exchange(applicationProperties.getAllApplicationsUrl(), HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
   void sendApplications(List<ApplicationES> apps) {
@@ -158,7 +158,7 @@ public class SearchSyncService {
     ParameterizedTypeReference<Page<Project>> typeref = new ParameterizedTypeReference<Page<Project>>() {
     };
     return talkToServer("Fetch projects", () -> restTemplate.exchange(applicationProperties.getAllProjectsUrl(),
-        HttpMethod.POST, null, typeref, pageNum, PAGE_SIZE));
+        HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
   void sendProjects(List<ProjectES> projects) {
@@ -170,7 +170,7 @@ public class SearchSyncService {
     ParameterizedTypeReference<Page<Customer>> typeref = new ParameterizedTypeReference<Page<Customer>>() {
     };
     return talkToServer("Fetch customers", () -> restTemplate.exchange(applicationProperties.getAllCustomersUrl(),
-        HttpMethod.POST, null, typeref, pageNum, PAGE_SIZE));
+        HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
   void sendCustomers(List<CustomerES> customers) {
@@ -182,7 +182,7 @@ public class SearchSyncService {
     ParameterizedTypeReference<Page<Contact>> typeref = new ParameterizedTypeReference<Page<Contact>>() {
     };
     return talkToServer("Fetch contacts", () -> restTemplate.exchange(applicationProperties.getAllContactsUrl(),
-        HttpMethod.POST, null, typeref, pageNum, PAGE_SIZE));
+        HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
   }
 
   void sendContacts(List<ContactES> contacts) {
