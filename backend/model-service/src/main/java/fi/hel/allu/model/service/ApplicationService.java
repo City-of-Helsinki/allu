@@ -44,18 +44,18 @@ public class ApplicationService {
   }
 
   /**
-   * Find application by application ID
+   * Find application by application ID. Returns also replaced applications.
    *
    * @param id
    * @return the application
    */
   @Transactional(readOnly = true)
   public Application findById(int id) {
-    List<Application> applications = applicationDao.findByIds(Collections.singletonList(id));
-    if (applications.size() != 1) {
+    Application application = applicationDao.findById(id);
+    if (application == null) {
       throw new NoSuchEntityException("Application not found", Integer.toString(id));
     }
-    return applications.get(0);
+    return application;
   }
 
   /**

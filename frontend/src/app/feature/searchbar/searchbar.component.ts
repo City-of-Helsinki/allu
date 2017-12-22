@@ -8,7 +8,7 @@ import {NotificationService} from '../../service/notification/notification.servi
 import {ArrayUtil} from '../../util/array-util';
 import {StringUtil} from '../../util/string.util';
 import {EnumUtil} from '../../util/enum.util';
-import {ApplicationStatus} from '../../model/application/application-status';
+import {ApplicationStatus, searchable} from '../../model/application/application-status';
 import {MapSearchFilter} from '../../service/map-search-filter';
 import {Subject} from 'rxjs/Subject';
 
@@ -32,7 +32,7 @@ export class SearchbarComponent implements OnInit, OnDestroy {
   searchForm: FormGroup;
   addressControl: FormControl;
   matchingAddresses: Observable<Array<PostalAddress>>;
-  statusTypes = EnumUtil.enumValues(ApplicationStatus);
+  statusTypes = searchable.map(status => ApplicationStatus[status]);
 
   private destroy = new Subject<boolean>();
 

@@ -14,6 +14,7 @@ import fi.hel.allu.QPostalAddress;
 import fi.hel.allu.common.domain.types.ApplicationTagType;
 import fi.hel.allu.common.domain.types.CustomerRoleType;
 import fi.hel.allu.common.domain.types.CustomerType;
+import fi.hel.allu.common.domain.types.StatusType;
 import fi.hel.allu.common.exception.NoSuchEntityException;
 import fi.hel.allu.model.common.PostalAddressUtil;
 import fi.hel.allu.model.domain.Contact;
@@ -213,7 +214,7 @@ public class CustomerDao {
         .select(application.invoiceRecipientId)
         .from(application)
         .join(tag).on(tag.applicationId.eq(application.id))
-        .where(tag.type.eq(ApplicationTagType.SAP_ID_MISSING)).
+        .where(application.status.ne(StatusType.REPLACED).and(tag.type.eq(ApplicationTagType.SAP_ID_MISSING))).
         fetch();
     return customerIds;
   }

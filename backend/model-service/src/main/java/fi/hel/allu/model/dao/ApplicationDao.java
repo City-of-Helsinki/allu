@@ -57,6 +57,8 @@ public class ApplicationDao {
       Arrays.asList(application.status, application.decisionMaker, application.decisionTime, application.creationTime,
           application.metadataVersion, application.handler, application.replacedByApplicationId, application.replacesApplicationId);
 
+  private static final BooleanExpression APPLICATION_NOT_REPLACED = application.status.ne(StatusType.REPLACED);
+
   private SQLQueryFactory queryFactory;
   private ApplicationSequenceDao applicationSequenceDao;
   private StructureMetaDao structureMetaDao;
@@ -83,9 +85,20 @@ public class ApplicationDao {
     this.attachmentDao = attachmentDao;
   }
 
+  /**
+   * Returns also replaced application.
+   */
+  @Transactional
+  public Application findById(int id) {
+    Application app = queryFactory.select(applicationBean).from(application).where(application.id.eq(id)).fetchOne();
+    Optional.ofNullable(app).ifPresent(a -> populateDependencies(Collections.singletonList(a)));
+    return app;
+  }
+
   @Transactional(readOnly = true)
   public List<Application> findByIds(List<Integer> ids) {
-    List<Application> appl = queryFactory.select(applicationBean).from(application).where(application.id.in(ids)).fetch();
+    List<Application> appl = queryFactory.select(applicationBean).from(application)
+        .where(application.id.in(ids).and(APPLICATION_NOT_REPLACED)).fetch();
     return populateDependencies(appl);
   }
 
@@ -102,7 +115,6 @@ public class ApplicationDao {
     BooleanExpression recurringCondition = recurringCondition(lsc);
     BooleanExpression statusExpression = statusCondition(lsc);
     BooleanExpression geometryExpression = statusExpression.and(locationGeometry.geometry.intersects(lsc.getIntersects()));
-
     if (strictStartEndTimeCondition != null) {
       // Time based where conditions are used only if at least start or end time is defined in search query.
       // Both recurring and start/end time conditions are checked, because only recurring applications have recurring_period rows in database
@@ -116,7 +128,7 @@ public class ApplicationDao {
             .join(location).on(locationGeometry.locationId.eq(location.id))
             .join(application).on(location.applicationId.eq(application.id))
             .leftJoin(recurringPeriod).on(recurringPeriod.applicationId.eq(application.id))
-            .where(geometryExpression));
+            .where(geometryExpression.and(APPLICATION_NOT_REPLACED)));
 
     List<Application> applications =
         queryFactory.select(applicationBean).from(application).where(condition).fetch();
@@ -217,7 +229,7 @@ public class ApplicationDao {
     if (statusTypes != null && ! statusTypes.isEmpty()) {
       whereCondition = whereCondition.and(application.status.in(statusTypes));
     }
-    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition).fetch();
+    List<Integer> applications = queryFactory.select(application.id).from(application).where(whereCondition.and(APPLICATION_NOT_REPLACED)).fetch();
     return applications;
   }
 
@@ -404,7 +416,7 @@ public class ApplicationDao {
     if (updated != 1) {
       throw new NoSuchEntityException("Attempted to update status of non-existent application", Integer.toString(applicationId));
     }
-    return findByIds(Collections.singletonList(applicationId)).get(0);
+    return findById(applicationId);
   }
 
   /**

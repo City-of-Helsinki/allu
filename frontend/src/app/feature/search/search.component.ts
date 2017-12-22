@@ -4,7 +4,7 @@ import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
 import {ApplicationSearchQuery} from '../../model/search/ApplicationSearchQuery';
-import {ApplicationStatus} from '../../model/application/application-status';
+import {ApplicationStatus, searchable} from '../../model/application/application-status';
 import {EnumUtil} from '../../util/enum.util';
 import {ApplicationType} from '../../model/application/type/application-type';
 import {UserHub} from '../../service/user/user-hub';
@@ -27,7 +27,7 @@ export class SearchComponent implements OnInit {
   applications: Array<Application>;
   handlers: Observable<Array<User>>;
   districts: Observable<Array<CityDistrict>>;
-  applicationStatusStrings = EnumUtil.enumValues(ApplicationStatus);
+  applicationStatusStrings = searchable.map(status => ApplicationStatus[status]);
   applicationTypeStrings = EnumUtil.enumValues(ApplicationType);
 
   constructor(private applicationService: ApplicationService,
