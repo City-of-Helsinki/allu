@@ -296,4 +296,10 @@ public class ApplicationProperties {
     return getExtServiceUrl("/v1/customers/saporder/count");
   }
 
+  /**
+   * @return url for starting search sync.
+   */
+  public String getStartSearchSyncUrl() {
+    return getExtServiceUrl("/v1/search/sync");
+  }
 }

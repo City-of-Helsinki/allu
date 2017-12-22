@@ -1,13 +1,10 @@
 package fi.hel.allu.scheduler.controller;
 
+import fi.hel.allu.scheduler.service.*;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import fi.hel.allu.scheduler.service.ApplicantReminderService;
-import fi.hel.allu.scheduler.service.InvoicingService;
-import fi.hel.allu.scheduler.service.SapCustomerNotificationService;
-import fi.hel.allu.scheduler.service.SapCustomerService;
 
 
 /**
@@ -19,14 +16,17 @@ public class ScheduleRunner {
   private InvoicingService invoicingService;
   private SapCustomerService sapCustomerService;
   private SapCustomerNotificationService sapCustomerNotificationService;
+  private SearchSynchService searchSyncService;
 
   @Autowired
   public ScheduleRunner(ApplicantReminderService applicantReminderService, InvoicingService invoicingService,
-      SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService) {
+      SapCustomerService sapCustomerService, SapCustomerNotificationService sapCustomerNotificationService,
+      SearchSynchService searchSynchService) {
     this.applicantReminderService = applicantReminderService;
     this.invoicingService = invoicingService;
     this.sapCustomerService = sapCustomerService;
     this.sapCustomerNotificationService = sapCustomerNotificationService;
+    this.searchSyncService = searchSynchService;
   }
 
   @Scheduled(cron = "${applicantReminder.cronstring}")
@@ -50,4 +50,10 @@ public class ScheduleRunner {
   public void sendCustomerNotifications() {
     sapCustomerNotificationService.sendSapCustomerNotificationEmails();
   }
+
+  @Scheduled(cron = "${search.sync.cronstring}")
+  public void syncSearchData() {
+    searchSyncService.startSearchSync();
+  }
+
 }
