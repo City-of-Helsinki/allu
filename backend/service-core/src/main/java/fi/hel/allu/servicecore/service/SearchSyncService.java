@@ -11,6 +11,7 @@ import fi.hel.allu.search.domain.ProjectES;
 import fi.hel.allu.servicecore.config.ApplicationProperties;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import fi.hel.allu.servicecore.util.RestResponsePage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -57,6 +59,7 @@ public class SearchSyncService {
    * Sync application, project, customer, and contact data from model-service to
    * search-service
    */
+  @Async
   public void sync() {
     logger.debug("Database sync started");
     startSync();
@@ -118,7 +121,7 @@ public class SearchSyncService {
     Page<T> fromModel;
     do {
       fromModel = fetcher.apply(page);
-      if (fromModel.hasContent()) {
+      if (fromModel.getNumberOfElements() > 0) {
         List<U> toSearch = fromModel.getContent().stream().map(mapper).collect(Collectors.toList());
         sender.accept(toSearch);
       }
@@ -143,7 +146,7 @@ public class SearchSyncService {
   }
 
   Page<Application> fetchApplications(int pageNum) {
-    ParameterizedTypeReference<Page<Application>> typeref = new ParameterizedTypeReference<Page<Application>>() {
+    ParameterizedTypeReference<RestResponsePage<Application>> typeref = new ParameterizedTypeReference<RestResponsePage<Application>>() {
     };
     return talkToServer("Fetch applications", () -> restTemplate
         .exchange(applicationProperties.getAllApplicationsUrl(), HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
@@ -155,7 +158,7 @@ public class SearchSyncService {
   }
 
   Page<Project> fetchProjects(int pageNum) {
-    ParameterizedTypeReference<Page<Project>> typeref = new ParameterizedTypeReference<Page<Project>>() {
+    ParameterizedTypeReference<RestResponsePage<Project>> typeref = new ParameterizedTypeReference<RestResponsePage<Project>>() {
     };
     return talkToServer("Fetch projects", () -> restTemplate.exchange(applicationProperties.getAllProjectsUrl(),
         HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
@@ -167,7 +170,7 @@ public class SearchSyncService {
   }
 
   Page<Customer> fetchCustomers(int pageNum) {
-    ParameterizedTypeReference<Page<Customer>> typeref = new ParameterizedTypeReference<Page<Customer>>() {
+    ParameterizedTypeReference<RestResponsePage<Customer>> typeref = new ParameterizedTypeReference<RestResponsePage<Customer>>() {
     };
     return talkToServer("Fetch customers", () -> restTemplate.exchange(applicationProperties.getAllCustomersUrl(),
         HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
@@ -179,7 +182,7 @@ public class SearchSyncService {
   }
 
   Page<Contact> fetchContacts(int pageNum) {
-    ParameterizedTypeReference<Page<Contact>> typeref = new ParameterizedTypeReference<Page<Contact>>() {
+    ParameterizedTypeReference<RestResponsePage<Contact>> typeref = new ParameterizedTypeReference<RestResponsePage<Contact>>() {
     };
     return talkToServer("Fetch contacts", () -> restTemplate.exchange(applicationProperties.getAllContactsUrl(),
         HttpMethod.GET, null, typeref, pageNum, PAGE_SIZE));
