@@ -1,24 +1,24 @@
 <ul>
-    <li *ngFor="let proposal of proposals | async">
-        <mat-card>
-            <mat-card-title>
-                {{['comment.type', proposal.type] | translation}}
-            </mat-card-title>
-            <mat-card-content>
-                <div class="row">
-                    <div class="col m12">
-                        <div class="save-info">
-                            <span>{{proposal.user.realName}} {{proposal.uiCreateTime}}</span>
-                            <span *ngIf="proposal.updateTime">- Päivitetty {{proposal.uiUpdateTime}}</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col m12">
-                        {{proposal.text}}
-                    </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
-    </li>
+  <li *ngFor="let proposal of proposals | async">
+    <mat-card>
+      <mat-card-title>
+        {{['comment.type', proposal.type] | translation}}
+      </mat-card-title>
+      <mat-card-content>
+        <div class="row">
+          <div class="col m12">
+            <div class="save-info">
+              <span>{{proposal.user.realName}} {{proposal.uiCreateTime}}</span>
+              <span *ngIf="proposal.updateTime">- {{'comment.updated' | translation}} {{proposal.uiUpdateTime}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col m12">
+            {{proposal.text}}
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </li>
 </ul>

@@ -1,12 +1,11 @@
 import {Injectable} from '@angular/core';
-import {Resolve, ActivatedRouteSnapshot, Router} from '@angular/router';
+import {ActivatedRouteSnapshot, Resolve, Router} from '@angular/router';
 import {Observable} from 'rxjs/Observable';
 
 import {Application} from '../../model/application/application';
 import {Some} from '../../util/option';
-import {ApplicationStore, initialState} from '../../service/application/application-store';
+import {ApplicationStore} from '../../service/application/application-store';
 import {NotificationService} from '../../service/notification/notification.service';
-import {ObjectUtil} from '../../util/object.util';
 
 @Injectable()
 export class ApplicationResolve implements Resolve<Application> {
@@ -22,7 +21,7 @@ export class ApplicationResolve implements Resolve<Application> {
       .map(id => this.applicationStore.load(id)
         .do(app => this.loadComments(id))
         .catch(err => this.handleError(err)))
-      .orElse(Observable.of(this.applicationStore.newOrCopy()));
+      .orElseGet(() => Observable.of(this.applicationStore.newOrCopy()));
   }
 
   private loadComments(id: number) {

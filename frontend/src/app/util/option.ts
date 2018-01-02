@@ -5,6 +5,7 @@ export interface Option<A> {
   do(fn: (a: A) => any): void;
   filter(predicate: (a: A) => boolean): Option<A>;
   orElse(val: A): A;
+  orElseGet(fn: () => A): A;
 }
 
 export class NoneOpt implements Option<any> {
@@ -31,6 +32,10 @@ export class NoneOpt implements Option<any> {
 
   orElse(val: any): any {
     return val;
+  }
+
+  orElseGet(fn: () => any): any {
+    return fn();
   }
 }
 
@@ -62,6 +67,10 @@ export class SomeOpt<T> implements Option<T> {
   }
 
   orElse(val: T): T {
+    return this.val;
+  }
+
+  orElseGet(fn: () => T): T {
     return this.val;
   }
 }

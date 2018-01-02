@@ -1,47 +1,45 @@
-<div class="row">
-    <mat-card *ngIf="application">
-        <mat-card-title>Hakemuksen perustiedot</mat-card-title>
-        <mat-card-content>
-            <div class="row">
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Hakemuksen tyyppi</mat-card-subtitle>
-                    <div>{{['application.type', application.type] | translation}}</div>
-                </div>
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Hakemus saapunut</mat-card-subtitle>
-                    <div>{{application.uiApplicationCreationTime}}</div>
-                </div>
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Hakemuksen laji</mat-card-subtitle>
-                    <div>
-                        <span *ngFor="let kind of application.uiKinds; let last=last">
-                            {{['application.kind', kind] | translation | commaSeparated: last}}
-                        </span>
-                    </div>
-                </div>
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Arvioitu aloitus</mat-card-subtitle>
-                    <div>{{application.startTime | date:'shortDate'}}</div>
-                </div>
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Hakemuksen nimi</mat-card-subtitle>
-                    <div>{{application.name}}</div>
-                </div>
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Arvioitu päättyminen</mat-card-subtitle>
-                    <div>{{application.endTime |  date:'shortDate' }}</div>
-                </div>
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Sijainti</mat-card-subtitle>
-                    <div *ngIf="!application.firstLocation.postalAddress.streetAddress">-</div>
-                    <div>{{application.firstLocation.postalAddress.streetAddress}}</div>
-                </div>
-                <div class="col l6 m12 info-field">
-                    <mat-card-subtitle class="card-subtitle-slim">Käsittelijä</mat-card-subtitle>
-                    <div *ngIf="!application.handler">-</div>
-                    <div>{{application.handler?.realName}}</div>
-                </div>
-            </div>
-        </mat-card-content>
-    </mat-card>
-</div>
+<mat-card *ngIf="application">
+  <mat-card-title>{{'applicationInfo.title' | translation}}</mat-card-title>
+  <mat-card-content>
+    <div class="row">
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.type' | translation}}</mat-card-subtitle>
+        <div>{{['application.type', application.type] | translation}}</div>
+      </div>
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.creationTime' | translation}}</mat-card-subtitle>
+        <div>{{application.uiApplicationCreationTime}}</div>
+      </div>
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.kinds' | translation}}</mat-card-subtitle>
+        <div>
+          <span *ngFor="let kind of application.uiKinds; let last=last">
+              {{['application.kind', kind] | translation | commaSeparated: last}}
+          </span>
+        </div>
+      </div>
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.startTime' | translation}}</mat-card-subtitle>
+        <div>{{application.startTime | date:'shortDate'}}</div>
+      </div>
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.name' | translation}}</mat-card-subtitle>
+        <div>{{application.name}}</div>
+      </div>
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.endTime' | translation}}</mat-card-subtitle>
+        <div>{{application.endTime |  date:'shortDate' }}</div>
+      </div>
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.location' | translation}}</mat-card-subtitle>
+        <div *ngIf="!application.firstLocation.postalAddress.streetAddress">-</div>
+        <div>{{application.firstLocation.postalAddress.streetAddress}}</div>
+      </div>
+      <div class="col l6 m12 info-field">
+        <mat-card-subtitle class="card-subtitle-slim">{{'applicationInfo.handler' | translation}}</mat-card-subtitle>
+        <div *ngIf="!application.handler">-</div>
+        <div>{{application.handler?.realName}}</div>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

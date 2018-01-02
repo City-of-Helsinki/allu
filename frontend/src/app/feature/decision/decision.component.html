@@ -2,16 +2,28 @@
   <progressbar [step]="progressStep" [application]="application"></progressbar>
   <div fxLayout="row" class="content-main spaced-out">
     <div fxFlex="33">
-      <application-basic-info [application]="application"></application-basic-info>
-      <decision-proposal></decision-proposal>
-      <mat-card>
-        <mat-card-title>
-          {{'decision.attachments' | translation}}
-        </mat-card-title>
-        <mat-card-content>
-          <attachment-thumbnails [attachments]="decisionAttachments | async"></attachment-thumbnails>
-        </mat-card-content>
-      </mat-card>
+      <div fxLayout="row">
+        <div fxFlex>
+          <application-basic-info [application]="application"></application-basic-info>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex>
+          <decision-proposal></decision-proposal>
+        </div>
+      </div>
+      <div fxLayout="row">
+        <div fxFlex>
+          <mat-card>
+            <mat-card-title>
+              {{'decision.attachments' | translation}}
+            </mat-card-title>
+            <mat-card-content>
+              <attachment-thumbnails [attachments]="decisionAttachments | async"></attachment-thumbnails>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </div>
     </div>
     <div fxFlex="66" class="content-pdf" *ngIf="pdfLoaded">
       <div class="pdf-header"></div>

@@ -346,6 +346,17 @@ export const translations = {
     startTime: 'Alkupäivämäärä',
     endTime: 'Loppupäivämäärä',
   },
+  applicationInfo: {
+    title: 'Hakemuksen perustiedot',
+    type: 'Hakemuksen tyyppi',
+    creationTime: 'Hakemus saapunut',
+    kinds: 'Hakemuksen laji(t)',
+    startTime: 'Arvioitu aloitus',
+    endTime: 'Arvioitu päättyminen',
+    name: 'Hakemuksen nimi',
+    location: 'Sijainti',
+    handler: 'Käsittelijä'
+  },
   project: {
     title: 'Hanke',
     field: {
@@ -779,6 +790,7 @@ export const translations = {
       PROPOSE_APPROVAL: 'Ehdotettu hyväksyttäväksi',
       PROPOSE_REJECT: 'Ehdotettu hylättäväksi'
     },
+    updated: 'Päivitetty',
     error: {
       fetch: 'Kommenttien hakeminen epäonnistui',
       save: 'Kommentin tallentaminen epäonnistui',
