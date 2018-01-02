@@ -259,6 +259,7 @@ public class AttachmentService {
     DefaultAttachmentInfo result = new DefaultAttachmentInfo();
     result.setId(attachmentInfoJson.getId());
     result.setType(attachmentInfoJson.getType());
+    result.setMimeType(attachmentInfoJson.getMimeType());
     result.setName(attachmentInfoJson.getName());
     result.setDescription(attachmentInfoJson.getDescription());
     result.setCreationTime(attachmentInfoJson.getCreationTime());
@@ -280,6 +281,7 @@ public class AttachmentService {
     result.setId(attachmentInfo.getId());
     result.setHandlerName(userService.getCurrentUser().getRealName());
     result.setType(attachmentInfo.getType());
+    result.setMimeType(attachmentInfo.getMimeType());
     result.setName(attachmentInfo.getName());
     result.setDescription(attachmentInfo.getDescription());
     result.setCreationTime(attachmentInfo.getCreationTime());

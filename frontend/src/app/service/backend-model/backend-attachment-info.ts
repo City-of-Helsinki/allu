@@ -1,6 +1,7 @@
 export interface BackendAttachmentInfo {
   id: number;
   type: string;
+  mimeType: string;
   name: string;
   description: string;
   size: number;

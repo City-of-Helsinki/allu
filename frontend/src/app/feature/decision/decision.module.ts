@@ -11,6 +11,7 @@ import {ProgressBarModule} from '../application/progressbar/progressbar.module';
 import {DistributionModule} from '../application/distribution/distribution.module';
 import {DecisionProposalModalComponent} from './proposal/decision-proposal-modal.component';
 import {DecisionProposalComponent} from './proposal/decision-proposal.component';
+import {AttachmentThumbnailsComponent} from './attachment-thumbnails.component';
 
 @NgModule({
   imports: [
@@ -26,7 +27,8 @@ import {DecisionProposalComponent} from './proposal/decision-proposal.component'
     DecisionModalComponent,
     ApplicationBasicInfoComponent,
     DecisionProposalModalComponent,
-    DecisionProposalComponent
+    DecisionProposalComponent,
+    AttachmentThumbnailsComponent
   ],
   providers: [
     DecisionHub,

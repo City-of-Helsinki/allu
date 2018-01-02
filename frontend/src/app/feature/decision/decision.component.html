@@ -1,22 +1,30 @@
 <ng-container *ngIf="applicationChanges | async as application">
   <progressbar [step]="progressStep" [application]="application"></progressbar>
-  <div class="row content-main">
-      <div class="col s4">
-          <application-basic-info [application]="application"></application-basic-info>
-          <decision-proposal></decision-proposal>
-      </div>
-      <div class="col s8 content-pdf" *ngIf="pdfLoaded">
-          <div class="pdf-header"></div>
-          <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
-              <p>Päätöksen näyttäminen ei onnistu selaimellasi. Voit ladata sen <a [href]="pdfDownloadUrl">tästä</a></p>
-          </object>
-          <decision-actions [application]="application" (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
-      </div>
-      <div class="col s8 content-placeholder" *ngIf="!pdfLoaded">
-          <div class="pdf-header"></div>
-          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-          <img src="assets/images/decision-placeholder.png" alt="Decision placeholder"/>
-          <decision-actions [application]="application"></decision-actions>
-      </div>
+  <div fxLayout="row" class="content-main spaced-out">
+    <div fxFlex="33">
+      <application-basic-info [application]="application"></application-basic-info>
+      <decision-proposal></decision-proposal>
+      <mat-card>
+        <mat-card-title>
+          {{'decision.attachments' | translation}}
+        </mat-card-title>
+        <mat-card-content>
+          <attachment-thumbnails [attachments]="decisionAttachments | async"></attachment-thumbnails>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <div fxFlex="66" class="content-pdf" *ngIf="pdfLoaded">
+      <div class="pdf-header"></div>
+      <object [data]="pdfUrl" type="application/pdf" height="100%" width="100%">
+        <p>Päätöksen näyttäminen ei onnistu selaimellasi. Voit ladata sen <a [href]="pdfDownloadUrl">tästä</a></p>
+      </object>
+      <decision-actions [application]="application" (onDecisionConfirm)="onDecisionConfirm()"></decision-actions>
+    </div>
+    <div fxFlex="80" class="content-placeholder" *ngIf="!pdfLoaded">
+      <div class="pdf-header"></div>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      <img src="assets/images/decision-placeholder.png" alt="Decision placeholder"/>
+      <decision-actions [application]="application"></decision-actions>
+    </div>
   </div>
 </ng-container>

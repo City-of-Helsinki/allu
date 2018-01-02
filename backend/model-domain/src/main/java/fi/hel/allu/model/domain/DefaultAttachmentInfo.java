@@ -21,6 +21,7 @@ public class DefaultAttachmentInfo extends AttachmentInfo {
       Integer id,
       Integer userId,
       AttachmentType type,
+      String mimeType,
       String name,
       String description,
       Integer attachmentDataId,
@@ -29,7 +30,7 @@ public class DefaultAttachmentInfo extends AttachmentInfo {
       Integer defaultAttachmentId,
       List<ApplicationType> applicationTypes,
       Integer fixedLocationAreaId) {
-    super(id, userId, type, name, description, attachmentDataId, creationTime, true);
+    super(id, userId, type, mimeType, name, description, attachmentDataId, creationTime, true);
     this.defaultAttachmentId = defaultAttachmentId;
     this.applicationTypes = applicationTypes;
     this.fixedLocationAreaId = fixedLocationAreaId;

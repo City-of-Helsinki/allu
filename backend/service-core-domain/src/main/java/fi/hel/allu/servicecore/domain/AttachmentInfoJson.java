@@ -14,6 +14,7 @@ public class AttachmentInfoJson {
   private String handlerName;
   @NotNull(message = "{attachment.type}")
   private AttachmentType type;
+  private String mimeType;
   @NotNull(message = "{attachment.name}")
   private String name;
   private String description;
@@ -57,6 +58,17 @@ public class AttachmentInfoJson {
 
   public void setType(AttachmentType type) {
     this.type = type;
+  }
+
+  /**
+   * Attachments mime type
+   */
+  public String getMimeType() {
+    return mimeType;
+  }
+
+  public void setMimeType(String mimeType) {
+    this.mimeType = mimeType;
   }
 
   /**

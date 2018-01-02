@@ -12,6 +12,7 @@ public class AttachmentInfo {
   private Integer userId;
   @NotNull
   private AttachmentType type;
+  private String mimeType;
   private String name;
   private String description;
   private Integer attachmentDataId;
@@ -24,6 +25,7 @@ public class AttachmentInfo {
   public AttachmentInfo(Integer id,
                         Integer userId,
                         AttachmentType type,
+                        String mimeType,
                         String name,
                         String description,
                         Integer attachmentDataId,
@@ -32,6 +34,7 @@ public class AttachmentInfo {
     this.id = id;
     this.userId = userId;
     this.type = type;
+    this.mimeType = mimeType;
     this.name = name;
     this.description = description;
     this.attachmentDataId = attachmentDataId;
@@ -71,6 +74,17 @@ public class AttachmentInfo {
 
   public void setType(AttachmentType type) {
     this.type = type;
+  }
+
+  /**
+   * Attachments mime type
+   */
+  public String getMimeType() {
+    return mimeType;
+  }
+
+  public void setMimeType(String mimeType) {
+    this.mimeType = mimeType;
   }
 
   /**

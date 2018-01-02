@@ -75,7 +75,7 @@ export class AttachmentService {
       .map(infos => infos.map(info => DefaultAttachmentInfoMapper.mapBackend(info)));
   }
 
-  saveDefaultAttachments(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
+  saveDefaultAttachment(attachment: DefaultAttachmentInfo): Observable<DefaultAttachmentInfo> {
     if (attachment.id) {
       return this.updateDefaultAttachmentInfo(attachment);
     } else {
@@ -112,7 +112,7 @@ export class AttachmentService {
 
       uploader.onErrorItem = (item, response, status, headers) => uploadSubject.error(response);
       uploader.onCompleteAll = () => uploadSubject.complete();
-      uploader.addToQueue(files);
+      uploader.addToQueue(<File[]>files);
       uploader.uploadAll();
     } else {
       uploadSubject.complete();

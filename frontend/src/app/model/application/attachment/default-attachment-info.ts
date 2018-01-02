@@ -6,24 +6,26 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
   constructor(
     public id?: number,
     public type?: string,
+    public mimeType?: string,
     public name?: string,
     public description?: string,
     public size?: number,
     public creationTime?: Date,
     public decisionAttachment?: boolean,
     public handlerName?: string,
-    public file?: any,
+    public file?:  Blob | File,
     public defaultAttachmentId?: number,
     public applicationTypes?: Array<string>,
     public fixedLocationId?: number
   ) {
-    super(id, type, name, description, size, creationTime, decisionAttachment, handlerName, file);
+    super(id, type, mimeType, name, description, size, creationTime, decisionAttachment, handlerName, file);
   }
 
   static fromForm(form: DefaultAttachmentInfoForm): DefaultAttachmentInfo {
     return new DefaultAttachmentInfo(
       form.id,
       form.type,
+      form.mimeType,
       form.name,
       form.description,
       form.size,
@@ -41,6 +43,7 @@ export class DefaultAttachmentInfo extends AttachmentInfo {
     return {
       id: attachmentInfo.id,
       type: attachmentInfo.type,
+      mimeType: attachmentInfo.mimeType,
       name: attachmentInfo.name,
       description: attachmentInfo.description,
       creationTime: attachmentInfo.uiCreationTime,

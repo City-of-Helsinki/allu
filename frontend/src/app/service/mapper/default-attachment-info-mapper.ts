@@ -9,6 +9,7 @@ export class DefaultAttachmentInfoMapper {
     return new DefaultAttachmentInfo(
       backendAttachmentInfo.id,
       backendAttachmentInfo.type,
+      backendAttachmentInfo.mimeType,
       backendAttachmentInfo.name,
       backendAttachmentInfo.description,
       backendAttachmentInfo.size,
@@ -26,6 +27,7 @@ export class DefaultAttachmentInfoMapper {
       {
         id: attachmentInfo.id,
         type: attachmentInfo.type,
+        mimeType: attachmentInfo.mimeType,
         name: attachmentInfo.name,
         description: attachmentInfo.description,
         size: attachmentInfo.size,

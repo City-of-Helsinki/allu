@@ -56,7 +56,7 @@ export class AttachmentHub {
   /**
    * Saves given default attachment
    */
-  saveDefaultAttachments = (attachment: DefaultAttachmentInfo) => this.attachmentService.saveDefaultAttachments(attachment);
+  saveDefaultAttachment = (attachment: DefaultAttachmentInfo) => this.attachmentService.saveDefaultAttachment(attachment);
 
   /**
    * Removes given default attachment by id

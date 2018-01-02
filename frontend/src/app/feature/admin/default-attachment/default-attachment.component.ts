@@ -77,7 +77,8 @@ export class DefaultAttachmentComponent implements OnInit {
   save(): void {
     const attachmentInfo = DefaultAttachmentInfo.fromForm(this.attachmentForm.value);
     attachmentInfo.file = this.file;
-    this.attachmentHub.saveDefaultAttachments(attachmentInfo).subscribe(
+    attachmentInfo.mimeType = this.file.type;
+    this.attachmentHub.saveDefaultAttachment(attachmentInfo).subscribe(
       attachment => {
         MaterializeUtil.toast('Liite ' + attachment.name + ' tallennettu');
         this.router.navigate(['../'], { relativeTo: this.route });

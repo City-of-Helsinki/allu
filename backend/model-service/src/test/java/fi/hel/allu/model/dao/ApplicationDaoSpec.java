@@ -70,7 +70,7 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
 
         context("Has attachment", () -> {
           beforeEach(() -> {
-            attachmentInfo = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_CUSTOMER, "Test.dat",
+            attachmentInfo = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_CUSTOMER, "mimeTYpe", "Test.dat",
                 "Test attachment", 2, ZonedDateTime.parse("2017-07-03T10:15:30+03:00[Europe/Helsinki]"), true);
             attachmentInfo = attachmentDao.insert(application.getId(), attachmentInfo, new byte[123]);
             assertNotNull(attachmentInfo.getId());
@@ -88,8 +88,8 @@ public class ApplicationDaoSpec extends SpeccyTestBase {
 
             beforeEach(() -> {
               otherApplicationId.set(testCommon.insertApplication("Other", "Other handler"));
-              AttachmentInfo ai = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_HANDLER, "TestToo.dat",
-                  "Test attachment, too", 12,
+              AttachmentInfo ai = new AttachmentInfo(null, 1, AttachmentType.ADDED_BY_HANDLER, "mimeTYpe",
+                  "TestToo.dat", "Test attachment, too", 12,
                   ZonedDateTime.parse("2017-02-15T16:43:12+02:00[Europe/Helsinki]"), true);
               otherAttachmentId.set(attachmentDao.insert(otherApplicationId.get(), ai, new byte[123]).getId());
             });

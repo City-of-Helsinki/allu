@@ -9,6 +9,7 @@ import {ApplicationStore} from '../../service/application/application-store';
 import {Observable} from 'rxjs/Observable';
 import {NumberUtil} from '../../util/number.util';
 import {Subject} from 'rxjs/Subject';
+import {AttachmentInfo} from '../../model/application/attachment/attachment-info';
 
 @Component({
   selector: 'decision',
@@ -17,6 +18,7 @@ import {Subject} from 'rxjs/Subject';
 })
 export class DecisionComponent implements OnInit, OnDestroy {
   applicationChanges: Observable<Application>;
+  decisionAttachments: Observable<Array<AttachmentInfo>>;
   progressStep: number;
   pdfUrl: SafeResourceUrl;
   pdfDownloadUrl: SafeUrl;
@@ -31,6 +33,9 @@ export class DecisionComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.applicationChanges = this.applicationStore.application;
+    this.decisionAttachments = this.applicationStore.attachments
+      .map(attachments => attachments.filter(a => a.decisionAttachment));
+
     this.applicationChanges
       .takeUntil(this.destroy)
       .filter(app => NumberUtil.isDefined(app.id))

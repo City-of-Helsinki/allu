@@ -482,6 +482,7 @@ export const translations = {
   },
   decision: {
     selectHandler: 'Valitse käsittelijä',
+    attachments: 'Päätöksen liitteet',
     type: {
       DECISION: {
         title: 'Päätä hakemus',

@@ -1,0 +1,9 @@
+<div fxLayout="row">
+  <div fxFlex="128px"
+       class="attachment-thumbnail clickable"
+       *ngFor="let thumbnail of thumbnails"
+       (click)="download(thumbnail)">
+    <mat-icon class="mat-icon-36" color="accent">{{thumbnail.icon}}</mat-icon>
+    <div class="thumbnail-name">{{thumbnail.name}}</div>
+  </div>
+</div>

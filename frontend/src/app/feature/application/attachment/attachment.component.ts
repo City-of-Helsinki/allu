@@ -47,6 +47,7 @@ export class AttachmentComponent implements OnInit {
   save(): void {
     const form = this.attachmentForm.value;
     const attachment = AttachmentInfo.fromForm(form);
+    attachment.mimeType = form.file.type;
     this.onSave.emit(attachment);
   }
 
