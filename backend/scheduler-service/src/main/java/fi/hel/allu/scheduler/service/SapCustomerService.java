@@ -11,9 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -126,20 +124,12 @@ public class SapCustomerService {
       restTemplate.exchange(
           applicationProperties.getCustomerUpdateUrl(),
           HttpMethod.PATCH,
-          new HttpEntity<>(customer, createAuthenticationHeader()), Void.class);
+          new HttpEntity<>(customer, authenticationService.createAuthenticationHeader()), Void.class);
     } catch (Exception e) {
       logger.warn("Failed to update customer", e);
       return false;
     }
     return true;
-  }
-
-  private HttpHeaders createAuthenticationHeader() {
-    authenticationService.requestToken();
-    return new HttpHeaders() {{
-      setContentType(MediaType.APPLICATION_JSON);
-        set(AUTHORIZATION, "Bearer " + authenticationService.getBearerToken());
-    }};
   }
 
   private void archiveCustomerFile(File customerFile) {

@@ -1,9 +1,7 @@
 package fi.hel.allu.scheduler.service;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import fi.hel.allu.common.util.ResourceUtil;
+import fi.hel.allu.scheduler.config.ApplicationProperties;
 
 import org.apache.commons.lang3.text.StrSubstitutor;
 import org.eclipse.jetty.util.StringUtil;
@@ -11,14 +9,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import fi.hel.allu.common.util.ResourceUtil;
-import fi.hel.allu.scheduler.config.ApplicationProperties;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class SapCustomerNotificationService {
@@ -55,7 +53,7 @@ public class SapCustomerNotificationService {
 
   private Integer getNumberOfCustomersWaitingSapNumber() {
     return restTemplate.exchange(applicationProperties.getNrOfInvoiceRecipientsWithoutSapNumberUrl(), HttpMethod.GET,
-        new HttpEntity<String>(createAuthenticationHeader()), Integer.class).getBody();
+        new HttpEntity<String>(authenticationService.createAuthenticationHeader()), Integer.class).getBody();
   }
 
   private void sendMail(Integer numberOfCustomersWaitingSapNumber) {
@@ -75,14 +73,6 @@ public class SapCustomerNotificationService {
     result.put("nrOfCustomers", nrOfCustomers.toString());
     result.put("customerOrderUrl",  applicationProperties.getCustomerDownloadUrl());
     return result;
-  }
-
-  private HttpHeaders createAuthenticationHeader() {
-    authenticationService.requestToken();
-    return new HttpHeaders() {{
-      setContentType(MediaType.APPLICATION_JSON);
-        set(AUTHORIZATION, "Bearer " + authenticationService.getBearerToken());
-    }};
   }
 
 }

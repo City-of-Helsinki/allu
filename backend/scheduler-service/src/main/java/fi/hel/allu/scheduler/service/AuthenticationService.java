@@ -46,4 +46,13 @@ public class AuthenticationService {
   public String getBearerToken() {
     return bearerToken;
   }
+
+  public HttpHeaders createAuthenticationHeader() {
+    requestToken();
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_JSON);
+    headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + getBearerToken());
+    return headers;
+  }
+
 }
