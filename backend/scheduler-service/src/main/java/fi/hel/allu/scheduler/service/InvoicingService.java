@@ -1,5 +1,6 @@
 package fi.hel.allu.scheduler.service;
 
+import fi.hel.allu.common.util.ResourceUtil;
 import fi.hel.allu.model.domain.Application;
 import fi.hel.allu.model.domain.Invoice;
 import fi.hel.allu.sap.mapper.AlluMapper;
@@ -7,7 +8,10 @@ import fi.hel.allu.sap.marshaller.AlluMarshaller;
 import fi.hel.allu.sap.model.SalesOrder;
 import fi.hel.allu.sap.model.SalesOrderContainer;
 import fi.hel.allu.scheduler.config.ApplicationProperties;
+import freemarker.template.utility.StringUtil;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrSubstitutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Service for sending invoices
@@ -38,17 +43,20 @@ public class InvoicingService {
   private static final String INVOICE_FILE_PREFIX = "MTIL_IN_ID341_";
   private static final DateTimeFormatter INVOICE_DATETIME_FORMATTER = DateTimeFormatter
       .ofPattern("yyyyMMddHHmmssSSS");
+  private static final String MAIL_TEMPLATE = "/templates/invoice-notification-mail-template.txt";
 
   private RestTemplate restTemplate;
   private ApplicationProperties applicationProperties;
   private SftpService sftpService;
+  private AlluMailService alluMailService;
 
   @Autowired
   public InvoicingService(RestTemplate restTemplate, ApplicationProperties applicationProperties,
-      SftpService sftpService) {
+      SftpService sftpService, AlluMailService alluMailService) {
     this.restTemplate = restTemplate;
     this.applicationProperties = applicationProperties;
     this.sftpService = sftpService;
+    this.alluMailService = alluMailService;
   }
 
   @PostConstruct
@@ -72,6 +80,7 @@ public class InvoicingService {
     salesOrderContainer.setSalesOrders(salesOrders);
     if (sendToSap(salesOrderContainer)) {
       markInvoicesSent(invoices.stream().map(i -> i.getId()).collect(Collectors.toList()));
+      sendNotificationEmail(applicationsById.values().stream().map(a -> a.getApplicationId()).collect(Collectors.toList()));
     }
   }
 
@@ -118,5 +127,29 @@ public class InvoicingService {
 
   private void markInvoicesSent(List<Integer> invoiceIds) {
     restTemplate.postForObject(applicationProperties.getMarkInvoicesSentUrl(), invoiceIds, Void.class);
+  }
+
+  private void sendNotificationEmail(List<String> applicationIds) {
+    String receiverEmail = applicationProperties.getInvoiceNotificationReceiverEmail();
+    if (StringUtils.isEmpty(receiverEmail)) {
+      return;
+    }
+    String subject = applicationProperties.getInvoiceNotificationSubject();
+    String mailTemplate = null;
+    try {
+      mailTemplate = ResourceUtil.readClassPathResource(MAIL_TEMPLATE);
+      String body = StrSubstitutor.replace(mailTemplate, mailVariables(applicationIds));
+      alluMailService.sendEmail(Collections.singletonList(receiverEmail), subject, body);
+    } catch (IOException e) {
+      logger.error("Error reading mail template: " + e);
+    }
+  }
+
+  private Map<String, String> mailVariables(List<String> applicationIds) {
+    Map<String, String> result = new HashMap<>();
+    result.put("sentDate", ZonedDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+    result.put("nrOfInvoices", String.valueOf(applicationIds.size()));
+    result.put("invoiceApplicationIds", String.join(", ", applicationIds));
+    return result;
   }
 }

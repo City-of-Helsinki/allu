@@ -34,6 +34,8 @@ public class ApplicationProperties {
   private String customerNotificationReceiverEmail;
   private String customerNotificationSubject;
   private String uiBaseUrl;
+  private String invoiceNotificationReceiverEmail;
+  private String invoiceNotificationSubject;
 
   @Autowired
   public ApplicationProperties(@Value("${model.service.host}") @NotEmpty String modelServiceHost,
@@ -59,6 +61,8 @@ public class ApplicationProperties {
       @Value("${service.authkey}") @NotEmpty String serviceAuth,
       @Value("${customer.notification.receiveremail}") String customerNotificationReceiverEmail,
       @Value("${customer.notification.subject}") @NotEmpty String customerNotificationSubject,
+      @Value("${invoice.notification.receiveremail}") String invoiceNotificationReceiverEmail,
+      @Value("${invoice.notification.subject}") @NotEmpty String invoiceNotificationSubject,
       @Value("${ui.baseurl}") @NotEmpty String uiBaseUrl) {
     this.modelServiceHost = modelServiceHost;
     this.modelServicePort = modelServicePort;
@@ -83,6 +87,8 @@ public class ApplicationProperties {
     this.serviceAuth = serviceAuth;
     this.customerNotificationReceiverEmail = customerNotificationReceiverEmail;
     this.customerNotificationSubject = customerNotificationSubject;
+    this.invoiceNotificationReceiverEmail = invoiceNotificationReceiverEmail;
+    this.invoiceNotificationSubject = invoiceNotificationSubject;
     this.uiBaseUrl = uiBaseUrl;
   }
 
@@ -301,5 +307,19 @@ public class ApplicationProperties {
    */
   public String getStartSearchSyncUrl() {
     return getExtServiceUrl("/v1/search/sync");
+  }
+
+  /**
+  * Get receiver email for SAP invoice notifications
+  */
+  public String getInvoiceNotificationReceiverEmail() {
+    return invoiceNotificationReceiverEmail;
+  }
+
+  /**
+   * Get email subject for SAP invoice notifications
+   */
+  public String getInvoiceNotificationSubject() {
+    return invoiceNotificationSubject;
   }
 }

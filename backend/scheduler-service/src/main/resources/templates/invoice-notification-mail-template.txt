@@ -1,0 +1,9 @@
+Allusta lähetetty ${sentDate} ${nrOfInvoices} uutta laskua.
+
+Liittymänumero: 341
+
+Laskujen hakemustunnukset:
+${invoiceApplicationIds}
+
+
+Tämän sähköpostin lähettäjä on tekninen osoite.
