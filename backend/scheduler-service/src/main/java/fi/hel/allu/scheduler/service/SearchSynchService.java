@@ -30,7 +30,7 @@ public class SearchSynchService {
    * Start syncing data from model service to search service
    */
   public void startSearchSync() {
-    restTemplate.exchange(applicationProperties.getStartSearchSyncUrl(), HttpMethod.GET,
+    restTemplate.exchange(applicationProperties.getStartSearchSyncUrl(), HttpMethod.POST,
         new HttpEntity<String>(authenticationService.createAuthenticationHeader()), Void.class);
   }
 

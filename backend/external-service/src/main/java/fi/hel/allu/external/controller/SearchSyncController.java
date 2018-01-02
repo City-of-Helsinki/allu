@@ -20,7 +20,7 @@ public class SearchSyncController {
     this.searchSyncService = searchSyncService;
   }
 
-  @RequestMapping(value = "/sync", method = RequestMethod.GET)
+  @RequestMapping(value = "/sync", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_SERVICE')")
   public ResponseEntity<Void> startSync() {
     searchSyncService.sync();
