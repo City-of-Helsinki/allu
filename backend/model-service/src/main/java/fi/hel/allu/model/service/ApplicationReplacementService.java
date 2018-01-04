@@ -1,13 +1,17 @@
 package fi.hel.allu.model.service;
 
 import java.time.ZonedDateTime;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.hel.allu.common.domain.types.StatusType;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.dao.ApplicationDao;
 import fi.hel.allu.model.dao.CommentDao;
 import fi.hel.allu.model.dao.DepositDao;
@@ -21,6 +25,8 @@ import fi.hel.allu.model.domain.*;
 public class ApplicationReplacementService {
 
   private static final String VERSION_NUMBER_SEPARATOR = "-";
+  private static final Set<CommentType> COMMENT_TYPES_NOT_COPIED = new HashSet<>(Arrays.asList(CommentType.PROPOSE_APPROVAL,
+      CommentType.PROPOSE_REJECT));
 
   private ApplicationService applicationService;
   private ApplicationDao applicationDao;
@@ -82,7 +88,7 @@ public class ApplicationReplacementService {
   }
 
   private void copyApplicationRelatedData(int applicationId, Application replacingApplication) {
-    commentDao.copyApplicationComments(applicationId, replacingApplication.getId());
+    commentDao.copyApplicationComments(applicationId, replacingApplication.getId(), COMMENT_TYPES_NOT_COPIED);
     applicationDao.copyApplicationAttachments(applicationId, replacingApplication.getId());
     supervisionTaskDao.copySupervisionTasks(applicationId, replacingApplication.getId());
     depositDao.copyApplicationDeposit(applicationId, replacingApplication.getId());

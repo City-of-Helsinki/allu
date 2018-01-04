@@ -5,6 +5,7 @@ import com.querydsl.sql.SQLQueryFactory;
 import com.querydsl.sql.dml.DefaultMapper;
 
 import fi.hel.allu.common.exception.NoSuchEntityException;
+import fi.hel.allu.common.types.CommentType;
 import fi.hel.allu.model.domain.Comment;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.querydsl.core.types.Projections.bean;
 import static fi.hel.allu.QApplicationComment.applicationComment;
@@ -102,11 +105,15 @@ public class CommentDao {
   }
 
   /**
-   * Copy application comments from application to another application
+   * Copy application comments from application to another application. Filters out comments with
+   * types in given set.
    */
   @Transactional
-  public void copyApplicationComments(Integer copyFromApplicationId, Integer copyToApplicationId) {
-    List<Comment> comments = findByApplicationId(copyFromApplicationId);
+  public void copyApplicationComments(Integer copyFromApplicationId, Integer copyToApplicationId, Set<CommentType> typesNotCopied) {
+    List<Comment> comments = findByApplicationId(copyFromApplicationId)
+        .stream()
+        .filter(c -> !typesNotCopied.contains(c.getType()))
+        .collect(Collectors.toList());
     comments.forEach(c -> copyForApplication(c, copyToApplicationId));
   }
 
