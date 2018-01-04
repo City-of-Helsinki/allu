@@ -68,8 +68,9 @@ export class ApplicationActionsComponent implements OnInit, OnDestroy {
   }
 
   copyApplicationAsNew(): void {
-    const application = ObjectUtil.clone(this.applicationStore.snapshot.application);
+    const application = this.applicationStore.snapshot.application;
     application.id = undefined;
+    application.applicationId = undefined;
     application.attachmentList = [];
     application.locations = application.locations.map(loc => loc.copyAsNew());
     this.applicationStore.applicationCopyChange(application);

@@ -56,7 +56,7 @@ export class ApplicationStore {
   }
 
   get snapshot(): ApplicationState {
-    return this.store.getValue();
+    return ObjectUtil.clone(this.store.getValue());
   }
 
   get changes(): Observable<ApplicationState> {
@@ -92,15 +92,13 @@ export class ApplicationStore {
     });
   }
 
-  newOrCopy(): Application {
-    const copy = ObjectUtil.clone(this.snapshot.applicationCopy);
+  currentOrCopy(): Application {
+    const copy = this.snapshot.applicationCopy;
     if (copy) {
       this.store.next({
         ...initialState,
         application: copy
       });
-    } else {
-      this.reset();
     }
     return this.snapshot.application;
   }
