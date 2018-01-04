@@ -59,6 +59,7 @@ public class Application {
   private Integer invoiceRecipientId;
   private Integer replacesApplicationId;
   private Integer replacedByApplicationId;
+  private String customerReference;
 
   /**
    * in Finnish: Hakemuksen tunniste
@@ -399,6 +400,17 @@ public class Application {
   }
 
   /**
+   * Get customer reference
+   */
+  public String getCustomerReference() {
+    return customerReference;
+  }
+
+  public void setCustomerReference(String customerReference) {
+    this.customerReference = customerReference;
+  }
+
+  /**
    * Get the application kind for this application -- only works correctly with
    * application types that don't have multiple kinds.
    *
@@ -425,4 +437,5 @@ public class Application {
   public boolean hasTypeAndKind(ApplicationType type, ApplicationKind kind) {
     return type == this.type && kindsWithSpecifiers != null && kindsWithSpecifiers.containsKey(kind);
   }
+
 }

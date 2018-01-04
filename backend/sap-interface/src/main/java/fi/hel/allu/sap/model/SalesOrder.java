@@ -112,7 +112,7 @@ public class SalesOrder {
   }
 
   /**
-   * Ostotilausnumero (35 merkkiä), valinnainen
+   * Asiakkaan viite (35 merkkiä), valinnainen
    */
   @XmlElement(name = "PONumber")
   public String getPoNumber() {

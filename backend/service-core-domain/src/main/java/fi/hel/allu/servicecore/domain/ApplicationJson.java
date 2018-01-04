@@ -79,6 +79,7 @@ public class ApplicationJson {
   private Integer replacesApplicationId;
   private Integer replacedByApplicationId;
 
+  private String customerReference;
 
   /**
   /**
@@ -492,5 +493,16 @@ public class ApplicationJson {
 
   public void setReplacedByApplicationId(Integer replacedByApplicationId) {
     this.replacedByApplicationId = replacedByApplicationId;
+  }
+
+  /**
+   * Get customer reference
+   */
+  public String getCustomerReference() {
+    return customerReference;
+  }
+
+  public void setCustomerReference(String customerReference) {
+    this.customerReference = customerReference;
   }
 }
