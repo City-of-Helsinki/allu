@@ -1,34 +1,32 @@
 <mat-sidenav-container>
-    <mat-sidenav mode="over" [opened]="sidenavOpen">
-        <div class="sidenav-header flex-container">
-            <h1 class="flex-item">Tarkennettu haku</h1>
-            <button type="button" class="btn-right" (click)="hideAdvancedSearch()"><mat-icon>clear</mat-icon></button>
-        </div>
-        <div class="row">
-            <div class="col m12">
-                <searchbar *ngIf="sidenavOpen" barType="ADVANCED"></searchbar>
-            </div>
-
-            <div class="col m12"><h1>Hakutulokset</h1></div>
-            <div class="col m12">
-                <application-list>Ladataan hakemuksia</application-list>
-            </div>
-        </div>
-    </mat-sidenav>
-    <div class="mapcontainer">
-        <div *ngIf="!sidenavOpen" class="map-overlay">
-            <searchbar barType="SIMPLE" (onShowAdvanced)="showAdvancedSearch()"></searchbar>
-        </div>
-        <map [zoom]="true" [draw]="true" [selection]="true">Ladataan karttaa</map>
-        <div class="map-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
-            <button mat-fab color="accent" [routerLink]="['/applications/location']"
-                    matTooltip="Uusi hakemus" matTooltipPosition="above">
-                <mat-icon>filter_none</mat-icon>
-            </button>
-            <button mat-fab color="accent" [routerLink]="['/projects/edit']"
-                    matTooltip="Uusi hanke" matTooltipPosition="above">
-                <mat-icon>line_style</mat-icon>
-            </button>
-        </div>
+  <mat-sidenav mode="over" [opened]="sidenavOpen">
+    <div class="sidenav-header flex-container">
+      <h1 class="flex-item">Tarkennettu haku</h1>
+      <button type="button" class="btn-right" (click)="hideAdvancedSearch()"><mat-icon>clear</mat-icon></button>
     </div>
+    <div class="row">
+      <div class="col m12">
+        <searchbar *ngIf="sidenavOpen" barType="ADVANCED"></searchbar>
+      </div>
+
+      <div class="col m12"><h1>Hakutulokset</h1></div>
+      <div class="col m12">
+        <application-list>Ladataan hakemuksia</application-list>
+      </div>
+    </div>
+  </mat-sidenav>
+  <div class="mapcontainer">
+    <div *ngIf="!sidenavOpen" class="map-overlay">
+      <searchbar barType="SIMPLE" (onShowAdvanced)="showAdvancedSearch()"></searchbar>
+    </div>
+    <map [zoom]="true" [draw]="true" [selection]="true">Ladataan karttaa</map>
+    <div class="map-action-buttons" *availableTo="['ROLE_CREATE_APPLICATION', 'ROLE_PROCESS_APPLICATION']">
+      <button mat-fab color="accent" (click)="newApplication()" matTooltip="Uusi hakemus" matTooltipPosition="above">
+        <mat-icon>filter_none</mat-icon>
+      </button>
+      <button mat-fab color="accent" [routerLink]="['/projects/edit']" matTooltip="Uusi hanke" matTooltipPosition="above">
+        <mat-icon>line_style</mat-icon>
+      </button>
+    </div>
+  </div>
 </mat-sidenav-container>

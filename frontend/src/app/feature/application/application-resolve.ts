@@ -21,7 +21,7 @@ export class ApplicationResolve implements Resolve<Application> {
       .map(id => this.applicationStore.load(id)
         .do(app => this.loadComments(id))
         .catch(err => this.handleError(err)))
-      .orElseGet(() => Observable.of(this.applicationStore.newOrCopy()));
+      .orElseGet(() => Observable.of(this.applicationStore.currentOrCopy()));
   }
 
   private loadComments(id: number) {
