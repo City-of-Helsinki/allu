@@ -7,11 +7,15 @@ import fi.hel.allu.servicecore.domain.*;
 import fi.hel.allu.servicecore.mapper.ApplicationMapper;
 import fi.hel.allu.servicecore.mapper.CustomerMapper;
 import fi.hel.allu.servicecore.mapper.ProjectMapper;
+import fi.hel.allu.servicecore.util.PageRequestBuilder;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.*;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
@@ -173,8 +177,8 @@ public class SearchService {
    * @param queryParameters list of query parameters
    * @return List of ids of found applications.
    */
-  public List<Integer> searchApplication(QueryParameters queryParameters) {
-    return search(applicationProperties.getApplicationSearchUrl(), queryParameters);
+  public List<Integer> searchApplication(QueryParameters queryParameters, Pageable pageRequest) {
+    return search(applicationProperties.getApplicationSearchUrl(), queryParameters, pageRequest);
   }
 
   /**
@@ -183,8 +187,8 @@ public class SearchService {
    * @param queryParameters list of query parameters
    * @return List of ids of found projects.
    */
-  public List<Integer> searchProject(QueryParameters queryParameters) {
-    return search(applicationProperties.getProjectSearchUrl(), queryParameters);
+  public List<Integer> searchProject(QueryParameters queryParameters, Pageable pageRequest) {
+    return search(applicationProperties.getProjectSearchUrl(), queryParameters, pageRequest);
   }
 
   /**
@@ -193,8 +197,8 @@ public class SearchService {
    * @param queryParameters list of query parameters
    * @return List of ids of found customers.
    */
-  public List<Integer> searchCustomer(QueryParameters queryParameters) {
-    return search(applicationProperties.getCustomerSearchUrl(), queryParameters);
+  public List<Integer> searchCustomer(QueryParameters queryParameters, Pageable pageRequest) {
+    return search(applicationProperties.getCustomerSearchUrl(), queryParameters, pageRequest);
   }
 
   /**
@@ -203,8 +207,8 @@ public class SearchService {
    * @param queryParameters list of query parameters
    * @return List of ids of found contacts.
    */
-  public List<Integer> searchContact(QueryParameters queryParameters) {
-    return search(applicationProperties.getContactSearchUrl(), queryParameters);
+  public List<Integer> searchContact(QueryParameters queryParameters, Pageable pageRequest) {
+    return search(applicationProperties.getContactSearchUrl(), queryParameters, pageRequest);
   }
 
   public void updateCustomerOfApplications(
@@ -239,9 +243,10 @@ public class SearchService {
   }
 
 
-  private List<Integer> search(String searchUrl, QueryParameters queryParameters) {
+  private List<Integer> search(String searchUrl, QueryParameters queryParameters, Pageable pageRequest) {
+    URI targetUri = PageRequestBuilder.fromUriString(searchUrl, pageRequest);
     ResponseEntity<Integer[]> searchResult = restTemplate.postForEntity(
-        searchUrl, queryParameters, Integer[].class);
+        targetUri, queryParameters, Integer[].class);
 
     return Arrays.asList(searchResult.getBody());
   }

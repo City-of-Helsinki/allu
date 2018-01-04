@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
+import org.springframework.data.domain.Pageable;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,7 +72,8 @@ public class ApplicationServiceComposerTest {
     ApplicationJson applicationJson3 = new ApplicationJson();
     applicationJson3.setId(1);
 
-    Mockito.when(searchService.searchApplication(Matchers.any(QueryParameters.class))).thenReturn(idsInOrder);
+    Mockito.when(searchService.searchApplication(Matchers.any(QueryParameters.class), Matchers.any(Pageable.class)))
+        .thenReturn(idsInOrder);
     Mockito.when(applicationService.findApplicationsById(idsInOrder)).thenReturn(applications);
 
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applications.get(0))).thenReturn(applicationJson1);
@@ -79,7 +81,7 @@ public class ApplicationServiceComposerTest {
     Mockito.when(applicationJsonService.getFullyPopulatedApplication(applications.get(2))).thenReturn(applicationJson3);
 
     Mockito.when(queryParametersJson.getQueryParameters()).thenReturn(Collections.singletonList(Mockito.mock(QueryParameterJson.class)));
-    List<ApplicationJson> applicationJsons = applicationServiceComposer.search(queryParametersJson);
+    List<ApplicationJson> applicationJsons = applicationServiceComposer.search(queryParametersJson, null);
 
     assertEquals(idsInOrder.get(0), applicationJsons.get(0).getId());
     assertEquals(idsInOrder.get(1), applicationJsons.get(1).getId());

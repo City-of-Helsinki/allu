@@ -7,13 +7,17 @@ import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.service.ApplicationServiceComposer;
 import fi.hel.allu.servicecore.service.ProjectService;
 import fi.hel.allu.servicecore.service.ProjectServiceComposer;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -34,8 +38,9 @@ public class ProjectController {
 
   @RequestMapping(value = "/search", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ProjectJson>> search(@Valid @RequestBody QueryParametersJson queryParameters) {
-    return new ResponseEntity<>(projectServiceComposer.search(queryParameters), HttpStatus.OK);
+  public ResponseEntity<List<ProjectJson>> search(@Valid @RequestBody QueryParametersJson queryParameters,
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
+    return new ResponseEntity<>(projectServiceComposer.search(queryParameters, pageRequest), HttpStatus.OK);
   }
 
   @RequestMapping(value = "/{id}", method = RequestMethod.GET)

@@ -3,7 +3,10 @@ package fi.hel.allu.ui.controller;
 import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.service.WorkQueueService;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
+
 import java.util.List;
 
 /**
@@ -26,7 +30,9 @@ public class WorkQueueController {
 
   @RequestMapping(method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('ROLE_VIEW')")
-  public ResponseEntity<List<ApplicationJson>> searchSharedByGroup(@Valid @RequestBody QueryParametersJson queryParameters) {
-    return new ResponseEntity<>(workQueueService.searchSharedByGroup(queryParameters), HttpStatus.OK);
+  public ResponseEntity<List<ApplicationJson>> searchSharedByGroup(
+      @Valid @RequestBody QueryParametersJson queryParameters,
+      @PageableDefault(page = Constants.DEFAULT_PAGE_NUMBER, size = Constants.DEFAULT_PAGE_SIZE) Pageable pageRequest) {
+    return new ResponseEntity<>(workQueueService.searchSharedByGroup(queryParameters, pageRequest), HttpStatus.OK);
   }
 }

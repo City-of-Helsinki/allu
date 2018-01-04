@@ -7,7 +7,9 @@ import fi.hel.allu.servicecore.domain.ApplicationJson;
 import fi.hel.allu.servicecore.domain.QueryParameterJson;
 import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.domain.UserJson;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -48,7 +50,7 @@ public class WorkQueueService {
    * @param   queryParametersJson   Original query, which will get user specific filtering added.
    * @return  List of applications matching the given search query.
    */
-  public List<ApplicationJson> searchSharedByGroup(QueryParametersJson queryParametersJson) {
+  public List<ApplicationJson> searchSharedByGroup(QueryParametersJson queryParametersJson, Pageable pageRequest) {
     // find application type and status query parameters, if any
     Map<Boolean, List<QueryParameterJson>> partitionedByType =
         partitionByField(queryParametersJson.getQueryParameters(), QueryParameter.FIELD_NAME_APPLICATION_TYPE);
@@ -75,7 +77,7 @@ public class WorkQueueService {
             otherParameters,
             Arrays.asList(applicationTypeParameter, statusParameter)));
 
-    return applicationServiceComposer.search(queryParametersJson);
+    return applicationServiceComposer.search(queryParametersJson, pageRequest);
   }
 
   private Map<Boolean, List<QueryParameterJson>> partitionByField(List<QueryParameterJson> queryParameters, String fieldName) {
@@ -88,7 +90,7 @@ public class WorkQueueService {
   }
 
   private <T> List<T> mergeLists(List<T> a, List<T> b) {
-    Set<T> merged = new HashSet<T>(a);
+    Set<T> merged = new HashSet<>(a);
     merged.addAll(b);
     return new ArrayList<>(merged);
   }

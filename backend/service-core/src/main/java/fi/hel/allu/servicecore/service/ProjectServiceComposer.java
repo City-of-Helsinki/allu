@@ -7,6 +7,7 @@ import fi.hel.allu.servicecore.domain.QueryParametersJson;
 import fi.hel.allu.servicecore.mapper.QueryParameterMapper;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -42,9 +43,10 @@ public class ProjectServiceComposer {
    * @param   queryParameters   Parameters for search query.
    * @return  found projects in the order defined by query.
    */
-  public List<ProjectJson> search(QueryParametersJson queryParameters) {
+  public List<ProjectJson> search(QueryParametersJson queryParameters, Pageable pageRequest) {
     List<ProjectJson> resultList = Collections.emptyList();
-    List<Integer> ids = searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters));
+    List<Integer> ids = searchService.searchProject(QueryParameterMapper.mapToQueryParameters(queryParameters),
+        pageRequest);
     resultList = projectService.findByIds(ids);
     SearchService.orderByIdList(ids, resultList, (projectJson) -> projectJson.getId());
     return resultList;
