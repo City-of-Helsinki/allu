@@ -17,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -65,7 +67,7 @@ public class CustomerSearchTest {
     customerSearchService.insert(customerES);
     QueryParameters params = SearchTestUtil.createQueryParameters("name", TEST_NAME);
     customerSearchService.refreshIndex();
-    List<Integer> appList = customerSearchService.findByField(params);
+    List<Integer> appList = customerSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
     assertEquals(1, (int) appList.get(0));
@@ -98,9 +100,9 @@ public class CustomerSearchTest {
     customerSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", "baabeli");
-    params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
 
-    List<Integer> appList = customerSearchService.findByField(params);
+    List<Integer> appList = customerSearchService.findByField(params,
+        new PageRequest(0, 100, Direction.ASC, "name.alphasort"));
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(3, 2, 1), appList);
   }
@@ -121,33 +123,33 @@ public class CustomerSearchTest {
 
     // test finding partial and sorting alphabetically: 9
     QueryParameters params = SearchTestUtil.createQueryParameters("registryKey", "9");
-    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
 
-    List<Integer> appList = customerSearchService.findByField(params);
+    List<Integer> appList = customerSearchService.findByField(params,
+        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort"));
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(3, 2, 1), appList);
 
     // test searching only from beginning of word (dash is part of word)
     params = SearchTestUtil.createQueryParameters("registryKey", "9222");
-    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
 
-    appList = customerSearchService.findByField(params);
+    appList = customerSearchService.findByField(params,
+        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort"));
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(3), appList);
 
     // test full string search
     params = SearchTestUtil.createQueryParameters("registryKey", "9444-9231");
-    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
 
-    appList = customerSearchService.findByField(params);
+    appList = customerSearchService.findByField(params,
+        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort"));
     assertEquals(1, appList.size());
     assertEquals(Arrays.asList(1), appList);
 
     // test searching beginning of word after dash
     params = SearchTestUtil.createQueryParameters("registryKey", "23");
-    params.setSort(new QueryParameters.Sort("registryKey.alphasort", QueryParameters.Sort.Direction.ASC));
 
-    appList = customerSearchService.findByField(params);
+    appList = customerSearchService.findByField(params,
+        new PageRequest(0, 100, Direction.ASC, "registryKey.alphasort"));
     assertEquals(1, appList.size());
   }
 
@@ -173,12 +175,12 @@ public class CustomerSearchTest {
 
     // should find by application name
     params = SearchTestUtil.createQueryParameters("name", applicationES.getName());
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
 
     // should find by inserted name
     params = SearchTestUtil.createQueryParameters("customers.applicant.customer.name", TEST_NAME);
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
 
     Map customersMap = CustomersIndexUtil.getCustomerUpdateStructure(Collections.singletonList(CustomerRoleType.APPLICANT), customerES);
@@ -187,17 +189,17 @@ public class CustomerSearchTest {
 
     // should find by name
     params = SearchTestUtil.createQueryParameters("customers.applicant.customer.name", updatedName);
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
 
     // should find by updated registry key
     params = SearchTestUtil.createQueryParameters("customers.applicant.customer.registryKey", updatedKey);
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
 
     // should still find by application name
     params = SearchTestUtil.createQueryParameters("name", applicationES.getName());
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
 
     applicationSearchService.delete("100");
@@ -242,18 +244,18 @@ public class CustomerSearchTest {
 
     // should find by updated name
     QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.customer.name", updatedName1);
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
     params = SearchTestUtil.createQueryParameters("customers.propertyDeveloper.customer.name", updatedName2);
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
 
     // should find by updated registry key
     params = SearchTestUtil.createQueryParameters("customers.applicant.customer.registryKey", updatedKey1);
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
     params = SearchTestUtil.createQueryParameters("customers.propertyDeveloper.customer.registryKey", updatedKey2);
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
 
     applicationSearchService.delete("100");

@@ -14,6 +14,8 @@ import fi.hel.allu.search.util.CustomersIndexUtil;
 import org.elasticsearch.client.Client;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContextManager;
 
@@ -60,13 +62,13 @@ public class ContactSearchSpec {
           context("when searching with existing name", ()-> {
             it("should find contact by full name", () -> {
               params = SearchTestUtil.createQueryParameters("name", testContact.getName());
-              List<Integer> contacts = contactSearchService.findByField(params);
+              List<Integer> contacts = contactSearchService.findByField(params, null);
               assertEquals(1, contacts.size());
               assertEquals(1, (int) contacts.get(0));
             });
             it("should find contact by partial name", () -> {
               params = SearchTestUtil.createQueryParameters("name", testContact.getName().substring(0, 3));
-              List<Integer> contacts = contactSearchService.findByField(params);
+              List<Integer> contacts = contactSearchService.findByField(params, null);
               assertEquals(1, contacts.size());
               assertEquals(1, (int) contacts.get(0));
             });
@@ -74,7 +76,7 @@ public class ContactSearchSpec {
           context("when searching with non-existing name", ()-> {
             it("should not find contact", () -> {
               params = SearchTestUtil.createQueryParameters("name", "non-existent");
-              List<Integer> contacts = contactSearchService.findByField(params);
+              List<Integer> contacts = contactSearchService.findByField(params, null);
               assertEquals(0, contacts.size());
             });
           });
@@ -98,17 +100,17 @@ public class ContactSearchSpec {
           });
 
           it("should find all inserted contacts", ()-> {
-            List<Integer> contacts = contactSearchService.findByField(params);
+            List<Integer> contacts = contactSearchService.findByField(params, null);
             assertEquals(3, contacts.size());
           });
           it("should sort found contacts by name in alphabetical order with ASC sorting parameter", () -> {
-            params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
-            List<Integer> contacts = contactSearchService.findByField(params);
+            List<Integer> contacts = contactSearchService.findByField(params,
+                new PageRequest(0, 100, Direction.ASC, "name.alphasort"));
             assertEquals(Arrays.asList(1, 2, 3), contacts);
           });
           it("should sort found contacts by name in inverted alphabetical order with DESC sorting parameter", () -> {
-            params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.DESC));
-            List<Integer> contacts = contactSearchService.findByField(params);
+            List<Integer> contacts = contactSearchService.findByField(params,
+                new PageRequest(0, 100, Direction.DESC, "name.alphasort"));
             assertEquals(Arrays.asList(3, 2, 1), contacts);
           });
 
@@ -129,13 +131,13 @@ public class ContactSearchSpec {
             contactSearchService.refreshIndex();
           });
           it("should find all inserted contacts", () -> {
-            List<Integer> contacts = contactSearchService.findByField(params);
+            List<Integer> contacts = contactSearchService.findByField(params, null);
             assertEquals(3, contacts.size());
           });
           it("should sort found contacts by name in alphabetical order with ASC sorting parameter", ()->{
             QueryParameters params = SearchTestUtil.createQueryParameters("name", "searchstr");
-            params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
-            List<Integer> contacts = contactSearchService.findByField(params);
+            List<Integer> contacts = contactSearchService.findByField(params,
+                new PageRequest(0, 100, Direction.ASC, "name.alphasort"));
             assertEquals(Arrays.asList(1, 2, 3), contacts);
           });
         });
@@ -165,7 +167,7 @@ public class ContactSearchSpec {
 
         it("should find contacts stored in ElasticSearch", ()-> {
           QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "kontakti");
-          List<Integer> appList = applicationSearchService.findByField(params);
+          List<Integer> appList = applicationSearchService.findByField(params, null);
           assertNotNull(appList);
           assertEquals(1, appList.size());
         });
@@ -186,14 +188,14 @@ public class ContactSearchSpec {
 
           it("should find applications updated contact of a customer", () -> {
             params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "updated 1");
-            List<Integer> appList = applicationSearchService.findByField(params);
+            List<Integer> appList = applicationSearchService.findByField(params, null);
             assertNotNull(appList);
             assertEquals(1, appList.size());
           });
 
           it("should find applications freshly inserted contact of a customer", () -> {
             params = SearchTestUtil.createQueryParameters("customers.contractor.contacts.name", "kontraktori");
-            List<Integer> appList = applicationSearchService.findByField(params);
+            List<Integer> appList = applicationSearchService.findByField(params, null);
             assertNotNull(appList);
             assertEquals(1, appList.size());
           });

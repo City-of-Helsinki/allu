@@ -15,6 +15,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -66,7 +68,7 @@ public class ApplicationSearchTest {
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", "testi");
     applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
     applicationSearchService.delete("1");
@@ -79,12 +81,12 @@ public class ApplicationSearchTest {
     applicationSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("applicationId", "TP00");
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
 
     params = SearchTestUtil.createQueryParameters("applicationId", "TP000001");
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
 
@@ -108,9 +110,9 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
+    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "name.alphasort");
     applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, pageRequest);
     assertNotNull(appList);
     assertEquals(3, appList.size());
     assertEquals(2, appList.get(0).intValue());
@@ -119,6 +121,22 @@ public class ApplicationSearchTest {
     applicationSearchService.delete("1");
     applicationSearchService.delete("2");
     applicationSearchService.delete("3");
+  }
+
+  @Test
+  public void testPagedSearch() {
+    for (int i = 10; i < 99; ++i) {
+      ApplicationES applicationES = createApplication(i);
+      applicationES.setName("Application #" + i);
+      applicationSearchService.insert(applicationES);
+    }
+    applicationSearchService.refreshIndex();
+    QueryParameters parameters = new QueryParameters();
+    parameters.setQueryParameters(Collections.singletonList(new QueryParameter("handler.userName", USERNAME)));
+    List<Integer> appList = applicationSearchService.findByField(parameters,
+        new PageRequest(2, 10, Direction.ASC, "name.alphasort"));
+    assertEquals(10, appList.size());
+    assertEquals(Arrays.asList(30, 31, 32, 33, 34, 35, 36, 37, 38, 39), appList);
   }
 
   @Test
@@ -172,28 +190,28 @@ public class ApplicationSearchTest {
 
     List<QueryParameter> parameterList = new ArrayList<>(Arrays.asList(nameParameter, handlerNameParameter, customerNameParameter));
     params.setQueryParameters(parameterList);
-    params.setSort(new QueryParameters.Sort("name.alphasort", QueryParameters.Sort.Direction.ASC));
-    List<Integer> appList = applicationSearchService.findByField(params);
+    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "name.alphasort");
+    List<Integer> appList = applicationSearchService.findByField(params, pageRequest);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    params.setSort(new QueryParameters.Sort("handler.userName.alphasort", QueryParameters.Sort.Direction.ASC));
-    appList = applicationSearchService.findByField(params);
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "handler.userName.alphasort");
+    appList = applicationSearchService.findByField(params, pageRequest);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    params.setSort(new QueryParameters.Sort("customers.applicant.customer.name.alphasort", QueryParameters.Sort.Direction.ASC));
-    appList = applicationSearchService.findByField(params);
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "customers.applicant.customer.name.alphasort");
+    appList = applicationSearchService.findByField(params, pageRequest);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    params.setSort(new QueryParameters.Sort("locations.streetAddress.alphasort", QueryParameters.Sort.Direction.ASC));
-    appList = applicationSearchService.findByField(params);
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "locations.streetAddress.alphasort");
+    appList = applicationSearchService.findByField(params, pageRequest);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
 
-    params.setSort(new QueryParameters.Sort("locations.cityDistrictId", QueryParameters.Sort.Direction.ASC));
-    appList = applicationSearchService.findByField(params);
+    pageRequest = new PageRequest(0, 100, Direction.ASC, "locations.cityDistrictId");
+    appList = applicationSearchService.findByField(params, pageRequest);
     assertEquals(3, appList.size());
     assertEquals(Arrays.asList(1, 2, 3), appList);
   }
@@ -218,9 +236,9 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    params.setSort(new QueryParameters.Sort("status.ordinal", QueryParameters.Sort.Direction.ASC));
+    PageRequest pageRequest = new PageRequest(0, 100, Direction.ASC, "status.ordinal");
     applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, pageRequest);
     assertNotNull(appList);
     assertEquals(3, appList.size());
     // results should be sorted by the enumeration order of StatusType
@@ -244,7 +262,7 @@ public class ApplicationSearchTest {
 
     QueryParameters params = SearchTestUtil.createQueryParameters("customers.applicant.contacts.name", "kontakti");
     applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
     applicationSearchService.delete("1");
@@ -261,7 +279,7 @@ public class ApplicationSearchTest {
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
     applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
     applicationSearchService.delete("1");
@@ -278,7 +296,7 @@ public class ApplicationSearchTest {
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
     applicationSearchService.refreshIndex();
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
     applicationSearchService.delete("1");
@@ -297,7 +315,7 @@ public class ApplicationSearchTest {
     List<QueryParameter> parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(1, appList.size());
 
@@ -307,7 +325,7 @@ public class ApplicationSearchTest {
     parameterList = new ArrayList<>();
     parameterList.add(parameter);
     params.setQueryParameters(parameterList);
-    appList = applicationSearchService.findByField(params);
+    appList = applicationSearchService.findByField(params, null);
     assertNotNull(appList);
     assertEquals(0, appList.size());
 
@@ -326,7 +344,7 @@ public class ApplicationSearchTest {
     applicationSearchService.refreshIndex();
 
     QueryParameters params = SearchTestUtil.createQueryParameters("name", newName);
-    List<Integer> appList = applicationSearchService.findByField(params);
+    List<Integer> appList = applicationSearchService.findByField(params, null);
     assertEquals(1, appList.size());
     applicationSearchService.delete("100");
   }
@@ -347,39 +365,39 @@ public class ApplicationSearchTest {
     List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
         ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
     // test period completely outside recurring period, after recurring period
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-08-10T06:23:04.000Z"),
         ZonedDateTime.parse("2016-09-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
     // test period completely within recurring period
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-07-10T06:23:04.000Z"),
         ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // test period partially within recurring period
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-05-10T06:23:04.000Z"),
         ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
 
     // test period partially within recurring period (beginning of test period) and that overlaps with two calendar years.
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-07-04T06:23:04.000Z"),
         ZonedDateTime.parse("2017-07-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
 
     // test period partially within recurring period (end of test period) and that overlaps with two calendar years
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2015-12-04T06:23:04.000Z"),
         ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
 
     applicationSearchService.delete("100");
@@ -400,36 +418,36 @@ public class ApplicationSearchTest {
     List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-06-10T06:23:04.000Z"),
         ZonedDateTime.parse("2016-06-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
     // test period completely within recurring period, in the first period
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2015-11-10T06:23:04.000Z"),
         ZonedDateTime.parse("2015-11-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // test period completely within recurring period, in the second period
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-01-10T06:23:04.000Z"),
         ZonedDateTime.parse("2016-02-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // test period longer than one year, match in the end of long period
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2010-05-10T06:23:04.000Z"),
         ZonedDateTime.parse("2016-07-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // test period longer than one year, match in the beginning of long period
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-03-10T06:23:04.000Z"),
         ZonedDateTime.parse("2018-07-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2018-03-10T06:23:04.000Z"),
         ZonedDateTime.parse("2020-07-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
 
     applicationSearchService.delete("100");
@@ -451,68 +469,68 @@ public class ApplicationSearchTest {
     List<Integer> appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2013-03-10T06:23:04.000Z"),
         ZonedDateTime.parse("2014-03-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
     // find outside period, on initial year
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2014-03-10T06:23:04.000Z"),
         ZonedDateTime.parse("2015-03-11T06:07:08.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
     // find within period, but after end year
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2021-03-10T06:23:04.000Z"),
         ZonedDateTime.parse("2021-03-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
     // find within period, after initial year
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2019-03-10T06:23:04.000Z"),
         ZonedDateTime.parse("2019-03-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // find within period, on the final year
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2020-03-10T06:23:04.000Z"),
         ZonedDateTime.parse("2020-03-11T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // find outside period, on the final year
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2020-04-06T06:23:04.000Z"),
         ZonedDateTime.parse("2020-04-07T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
     // find within period, no end time
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2016-04-04T06:23:04.000Z"),
         null
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // find within recurring period, no end time
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2017-05-04T06:23:04.000Z"),
         null
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // find outside recurring period, no end time
     appList = applicationSearchService.findByField(createRecurringQuery(
         ZonedDateTime.parse("2021-01-04T06:23:04.000Z"),
         null
-    ));
+    ), null);
     assertEquals(0, appList.size());
 
     // find within period, no start time
     appList = applicationSearchService.findByField(createRecurringQuery(
         null,
         ZonedDateTime.parse("2015-12-04T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(1, appList.size());
     // find outside recurring period, no start time
     appList = applicationSearchService.findByField(createRecurringQuery(
         null,
         ZonedDateTime.parse("2015-05-04T06:23:04.000Z")
-    ));
+    ), null);
     assertEquals(0, appList.size());
 
     applicationSearchService.delete("100");
